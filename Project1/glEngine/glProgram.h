@@ -1,0 +1,27 @@
+#pragma once
+#include "glad/glad.h"
+#include <map>
+#include <iostream>
+#include "glVertexAttribute.h"
+#include "glUniform.h"
+
+class glProgram
+{
+	// active attributes
+	std::map<std::string, glVertexAttribute *> attributes;
+	std::map<std::string, glUniform *> uniforms;
+
+public:
+	GLuint id;
+	glProgram(const std::string vertexShader, const std::string fragmentShader);
+	void run(void);
+	glVertexAttribute *get_attribute(const std::string name);
+	glUniform *get_uniform(const std::string name);
+	void set_uniform(const std::string name, GLint id);
+	void set_uniform(const std::string name, GLfloat r, GLfloat g, GLfloat b);
+	void set_uniform(const std::string name, GLfloat r, GLfloat g, GLfloat b, GLfloat a);
+	void set_uniform(const std::string name, glm::mat4 &mat4);
+	void set_uniform(const std::string name, glm::vec4 &vec4);
+	void set_uniform(const std::string name, glm::vec3 &vec3);
+	~glProgram();
+};
