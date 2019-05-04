@@ -1,5 +1,6 @@
 #include "Geometry.h"
-#include "glVertexAttribute.h"
+#include "glEngine/glVertexAttribute.h"
+#include "glEngine/glBufferAttribute.h"
 
 Geometry::Geometry()
 {

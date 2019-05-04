@@ -1,7 +1,6 @@
 #pragma once
 #include <iostream>
 #include "glEngine/glProgram.h"
-#include "glBufferAttribute.h"
 #include <map>
 #include <iostream>
 

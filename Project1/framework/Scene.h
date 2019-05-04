@@ -1,9 +1,8 @@
 #pragma once
 #include <list>
-#include "Mesh.h"
+#include "framework/Mesh.h"
 #include "framework/AmbientLight.h"
-#include "Camera.h"
-#include "glEngine/glProgram.h"
+#include "framework/Camera.h"
 
 class Scene
 {

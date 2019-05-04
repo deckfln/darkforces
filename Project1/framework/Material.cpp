@@ -1,6 +1,5 @@
 #include "Material.h"
-#include "glBufferAttribute.h"
-
+#include "glEngine/glTexture.h"
 
 Material::Material()
 {

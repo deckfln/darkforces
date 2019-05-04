@@ -1,8 +1,6 @@
 #pragma once
 #include <iostream>
 #include <list>
-#include "glTexture.h"
-#include "glBufferAttribute.h"
 #include "glEngine/glProgram.h"
 #include "Uniform.h"
 #include "Texture.h"

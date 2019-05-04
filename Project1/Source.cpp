@@ -9,11 +9,11 @@
 #include "include/stb_image.h"
 #include "framework/DiffuseMaterial.h"
 #include "framework/MaterialBasic.h"
-#include "Camera.h"
-#include "Mesh.h"
+#include "framework/Camera.h"
+#include "framework/Mesh.h"
 #include "framework/BoxGeometry.h"
 #include "framework/PointLight.h"
-#include "Scene.h"
+#include "framework/Scene.h"
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {

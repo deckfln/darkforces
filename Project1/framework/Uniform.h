@@ -2,7 +2,7 @@
 #include <iostream>
 #include <glm/glm.hpp>
 #include "glEngine/glProgram.h"
-#include "glTexture.h"
+#include "glEngine/glTexture.h"
 
 class Uniform
 {
