@@ -4,10 +4,10 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include "glEngine/glProgram.h"
+#include "Object3D.h"
 
-class Camera
+class Camera: public Object3D
 {
-	glm::vec3 position;
 	glm::vec3 target;
 	glm::vec3 direction;
 	glm::vec3 up;

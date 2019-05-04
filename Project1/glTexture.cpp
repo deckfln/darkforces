@@ -40,15 +40,40 @@ glTexture::glTexture(std::string _uniform, std::string file)
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
-void glTexture::bind(glProgram &program)
+glTexture::glTexture(std::string _uniform, Texture *texture)
+{
+	uniform = _uniform;
+	glGenTextures(1, &id);
+	glActiveTexture(GL_TEXTURE0 + currentTextureUnit);
+	glBindTexture(GL_TEXTURE_2D, id);
+
+	// set the texture wrapping/filtering options (on the currently bound texture object)
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	// load and generate the texture
+	int width, height, nrChannels;
+	unsigned char *data = texture->get_info(&width, &height, &nrChannels);
+	GLuint pixels;
+
+	switch (nrChannels) {
+	case 3: pixels = GL_RGB; break;
+	case 4: pixels = GL_RGBA; break;
+	}
+	glTexImage2D(GL_TEXTURE_2D, 0, pixels, width, height, 0, pixels, GL_UNSIGNED_BYTE, data);
+	glGenerateMipmap(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, 0);
+}
+
+void glTexture::bind(void)
 {
 	textureUnit = currentTextureUnit;
 
 	glActiveTexture(GL_TEXTURE0 + currentTextureUnit);
 	glBindTexture(GL_TEXTURE_2D, id);
 	currentTextureUnit++;
-
-	program.set_uniform(uniform, textureUnit);
 }
 
 GLint glTexture::get_textureUnit(void)

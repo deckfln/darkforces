@@ -16,8 +16,9 @@ public:
 	glProgram(const std::string vertexShader, const std::string fragmentShader);
 	void run(void);
 	glVertexAttribute *get_attribute(const std::string name);
-	glUniform *get_uniform(const std::string name);
+	glUniform *get_uniform(std::string name);
 	void set_uniform(const std::string name, GLint id);
+	void set_uniform(const std::string name, GLfloat f);
 	void set_uniform(const std::string name, GLfloat r, GLfloat g, GLfloat b);
 	void set_uniform(const std::string name, GLfloat r, GLfloat g, GLfloat b, GLfloat a);
 	void set_uniform(const std::string name, glm::mat4 &mat4);

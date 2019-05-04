@@ -1,6 +1,6 @@
 #include "List.h"
 #include "glad/glad.h"
-#include "Shader.h"
+#include "glEngine/glShader.h"
 
 List::List()
 {
@@ -14,7 +14,7 @@ Element *List::Add(const std::string source, GLuint type)
 	// is it already on the list
 	Element *current = first;
 	for (current = first; current != nullptr; current = current->get_next()) {
-		if (type == ((Shader *)current)->get_type() && strcmp(source.c_str(), current->get_source()) == 0) {
+		if (type == ((glShader *)current)->get_type() && strcmp(source.c_str(), current->get_source()) == 0) {
 			current->add_reference();
 			return current;
 		}
@@ -35,7 +35,7 @@ Element *List::Add(const std::string source, GLuint type)
 	return shader;
 }
 
-void List::Remove(Shader *shader)
+void List::Remove(glShader *shader)
 {
 }
 

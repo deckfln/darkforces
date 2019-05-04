@@ -5,14 +5,17 @@
 
 class Object3D
 {
-	glm::mat4 model;
-
 protected:
+	glm::mat4 model;
 	glm::vec3 position;
+	glm::vec3 scale;
+	Object3D &modelMatrix(void);
 
 public:
 	Object3D();
-	void rotate(float angle, glm::vec3 &axis);
-	void translate(glm::vec3 &vector);
+	Object3D &rotate(float angle, glm::vec3 &axis);
+	Object3D &translate(glm::vec3 &vector);
+	Object3D &set_scale(glm::vec3 &_scale);
+	glm::vec3 &get_position(void);
 	~Object3D();
 };

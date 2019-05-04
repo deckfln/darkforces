@@ -1,10 +1,10 @@
-#include "Shader.h"
+#include "glShader.h"
 #include <iostream>
 #include <fstream>
 #include <sstream>
 
 
-Shader::Shader(const std::string shader_file, GLuint _type)
+glShader::glShader(const std::string shader_file, GLuint _type)
 {
 	// 1. retrieve the vertex/fragment source code from filePath
 	std::string code;
@@ -25,7 +25,8 @@ Shader::Shader(const std::string shader_file, GLuint _type)
 	}
 	catch (std::ifstream::failure e)
 	{
-		std::cout << "ERROR::SHADER::FILE_NOT_SUCCESFULLY_READ" << std::endl;
+		std::cout << "ERROR::SHADER " <<shader_file << " ::FILE_NOT_SUCCESFULLY_READ" << std::endl;
+		exit(-1);
 	}
 
 	source = code;
@@ -44,20 +45,21 @@ Shader::Shader(const std::string shader_file, GLuint _type)
 	{
 		glGetShaderInfoLog(id, 512, NULL, infoLog);
 		std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
+		exit(-1);
 	}
 }
 
-const std::string Shader::get_source(void)
+const std::string glShader::get_source(void)
 {
 	return source;
 }
 
-GLuint Shader::get_type(void)
+GLuint glShader::get_type(void)
 {
 	return type;
 }
 
-Shader::~Shader()
+glShader::~glShader()
 {
 	glDeleteShader(id);
 }

@@ -1,5 +1,5 @@
 #pragma once
-#include "Shader.h"
+#include "glEngine/glShader.h"
 #include <iostream>
 
 class List
@@ -11,7 +11,7 @@ class List
 public:
 	List();
 	Element *Add(const std::string source, GLuint type);
-	void Remove(Shader *shader);
+	void Remove(glShader *shader);
 	~List();
 };
 

@@ -3,7 +3,7 @@
 #include "glad/glad.h"
 #include "Element.h"
 
-class Shader
+class glShader
 {
 	std::string source;
 	GLuint type;
@@ -11,8 +11,8 @@ class Shader
 public:
 	GLuint id;
 
-	Shader(const std::string shader_file, GLuint type);
+	glShader(const std::string shader_file, GLuint type);
 	const std::string get_source(void);
 	GLuint get_type(void);
-	~Shader();
+	~glShader();
 };

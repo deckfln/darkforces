@@ -4,6 +4,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include "framework/Texture.h"
 
 class glUniform
 {
@@ -24,6 +25,7 @@ public:
 	const std::string get_name(void);
 	void set_table(void);
 	void set_value(GLint id);
+	void set_value(GLfloat id);
 	void set_value(GLfloat r, GLfloat g, GLfloat b);
 	void set_value(GLfloat r, GLfloat g, GLfloat b, GLfloat a);
 	void set_value(glm::mat4 &mat4);

@@ -1,5 +1,5 @@
 #include "glUniform.h"
-
+#include <iostream>
 
 
 glUniform::glUniform()
@@ -44,6 +44,11 @@ glUniform::glUniform(GLchar *_name, GLsizei _length, GLsizei _size, GLenum _type
 		single_type = GL_FLOAT;
 		single_size = 16*sizeof(GLfloat);
 		single_nb = 4;
+		break;
+	case GL_SAMPLER_2D:
+		single_type = GL_INT;
+		single_size = sizeof(GLint);
+		single_nb = 1;
 		break;
 	}
 }
@@ -97,15 +102,27 @@ void glUniform::set_table(void)
 void glUniform::set_value(GLint id)
 {
 	if (type != GL_SAMPLER_2D) {
+		std::cout << "glUniform::set_value " << name.c_str() << " not G_SAMPLER_2D" << std::endl;
 		exit(-1);
 	}
 
 	glUniform1i(location, id);
 }
 
+void glUniform::set_value(GLfloat f)
+{
+	if (type != GL_FLOAT) {
+		std::cout << "glUniform::set_value " << name.c_str() << " not G_FLOAT" << std::endl;
+		exit(-1);
+	}
+
+	glUniform1f(location, f);
+}
+
 void glUniform::set_value(GLfloat r, GLfloat g, GLfloat b)
 {
 	if (type != GL_FLOAT_VEC3) {
+		std::cout << "glUniform::set_value " << name.c_str() << " not G_FLOAT_VEC3" << std::endl;
 		exit(-1);
 	}
 
@@ -115,6 +132,7 @@ void glUniform::set_value(GLfloat r, GLfloat g, GLfloat b)
 void glUniform::set_value(GLfloat r, GLfloat g, GLfloat b, GLfloat a)
 {
 	if (type != GL_FLOAT_VEC4) {
+		std::cout << "glUniform::set_value " << name.c_str() << " not G_FLOAT_VEC4" << std::endl;
 		exit(-1);
 	}
 
@@ -124,6 +142,7 @@ void glUniform::set_value(GLfloat r, GLfloat g, GLfloat b, GLfloat a)
 void glUniform::set_value(glm::vec4 &vec4)
 {
 	if (type != GL_FLOAT_VEC4) {
+		std::cout << "glUniform::set_value " << name.c_str() << " not G_FLOAT_VEC4" << std::endl;
 		exit(-1);
 	}
 
@@ -133,6 +152,7 @@ void glUniform::set_value(glm::vec4 &vec4)
 void glUniform::set_value(glm::vec3 &vec3)
 {
 	if (type != GL_FLOAT_VEC3) {
+		std::cout << "glUniform::set_value " << name.c_str() << " not G_FLOAT_VEC3" << std::endl;
 		exit(-1);
 	}
 
@@ -142,6 +162,7 @@ void glUniform::set_value(glm::vec3 &vec3)
 void glUniform::set_value(glm::mat4 &mat4)
 {
 	if (type != GL_FLOAT_MAT4) {
+		std::cout << "glUniform::set_value " << name.c_str() << " not G_FLOAT_MAT4" << std::endl;
 		exit(-1);
 	}
 

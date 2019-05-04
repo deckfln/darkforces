@@ -2,25 +2,31 @@
 #include "glad/glad.h"
 
 
-Mesh::Mesh(glProgram &program, Geometry &_geometry, Material &_material):
+Mesh::Mesh(Geometry &_geometry, Material *_material):
 	geometry(_geometry),
-	material(_material),
-	vao(program, geometry, material)
+	material(_material)
 {
-	model = glm::mat4(1.0f);
 }
 
-void Mesh::set_uniforms(glProgram &program)
+void Mesh::draw(void)
 {
-	program.set_uniform("model", model);
-}
+	glProgram &program = material->get_program();
 
-void Mesh::draw(glProgram &program)
-{
+	if (vao == nullptr) {
+		vao = new glVertexArray(geometry, material);
+	}
+	modelMatrix();
 	program.set_uniform("model", model);
+
 	glTexture::resetTextureUnit();
-	material.bindTextures(program);
-	vao.draw(GL_TRIANGLES);
+	material->bindTextures();
+	material->set_uniforms();
+	vao->draw(GL_TRIANGLES);
+}
+
+glProgram &Mesh::run(void)
+{
+	return material->run();
 }
 
 Mesh::~Mesh()

@@ -1,6 +1,7 @@
 #pragma once
 #include "glad/glad.h"
 #include "glEngine/glProgram.h"
+#include "framework/Texture.h"
 
 class glTexture
 {
@@ -11,7 +12,8 @@ class glTexture
 	GLuint textureUnit;
 public:
 	glTexture(std::string uniform, std::string file);
-	void bind(glProgram &program);
+	glTexture(std::string uniform, Texture *texture);
+	void bind(void);
 	static void resetTextureUnit(void) { currentTextureUnit = 0; };
 	GLint get_textureUnit(void);
 	~glTexture();

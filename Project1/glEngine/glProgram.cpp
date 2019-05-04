@@ -1,5 +1,5 @@
 #include "glProgram.h"
-#include "Shader.h"
+#include "glShader.h"
 #include <iostream>
 #include "List.h"
 #include "glad/glad.h"
@@ -8,8 +8,8 @@ List Shaders;
 
 glProgram::glProgram(const std::string vertexShader, const std::string fragmentShader)
 {
-	Shader *vertex = new Shader(vertexShader, GL_VERTEX_SHADER);
-	Shader *fragment = new Shader(fragmentShader, GL_FRAGMENT_SHADER);
+	glShader *vertex = new glShader(vertexShader, GL_VERTEX_SHADER);
+	glShader *fragment = new glShader(fragmentShader, GL_FRAGMENT_SHADER);
 
 	// link shaders
 	id = glCreateProgram();
@@ -65,17 +65,17 @@ glVertexAttribute *glProgram::get_attribute(const std::string name)
 {
 	glVertexAttribute *attr = attributes[name];
 	if (!attr) {
-		std::cout << "glProgram::get_attribute" << name.c_str() << " mising";
+		std::cout << "glProgram::get_attribute " << name.c_str() << " mising" << std::endl;
 		return NULL;
 	}
 	return attr;
 }
 
-glUniform *glProgram::get_uniform(const std::string name)
+glUniform *glProgram::get_uniform(std::string name)
 {
 	glUniform *attr = uniforms[name];
 	if (!attr) {
-		std::cout << " mising";
+		std::cout << "glProgram::get_uniform " << name.c_str() << " mising" << std::endl;
 	}
 	return attr;
 }
@@ -85,6 +85,13 @@ void glProgram::set_uniform(const std::string name, GLint id)
 	glUniform *uniform = get_uniform(name);
 	if (uniform)
 		uniform->set_value(id);
+}
+
+void glProgram::set_uniform(const std::string name, GLfloat f)
+{
+	glUniform *uniform = get_uniform(name);
+	if (uniform)
+		uniform->set_value(f);
 }
 
 void glProgram::set_uniform(const std::string name, GLfloat r, GLfloat g, GLfloat b)

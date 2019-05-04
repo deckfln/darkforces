@@ -9,12 +9,12 @@
 class AmbientLight: public Object3D
 {
 protected:
-	glm::vec4 color;
+	glm::vec3 ambient;
 
 public:
 	AmbientLight();
-	AmbientLight(glm::vec4 &_color);
-	AmbientLight(float r, float g, float b, float strenght);
-	void set_uniform(glProgram &program);
+	AmbientLight(glm::vec3 &_color);
+	AmbientLight(float r, float g, float b);
+	virtual void set_uniform(glProgram &program);
 	~AmbientLight();
 };
