@@ -2,12 +2,11 @@
 #include <glm/glm.hpp>
 
 #include "glEngine/glProgram.h"
-#include "AmbientLight.h"
+#include "Light.h"
 
-class DirectionLight: public AmbientLight
+class DirectionLight: public Light
 {
 protected:
-	glm::vec3 direction;
 	glm::vec3 diffuse;
 	glm::vec3 specular;
 

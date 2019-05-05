@@ -12,7 +12,9 @@
 #include "framework/Camera.h"
 #include "framework/Mesh.h"
 #include "framework/BoxGeometry.h"
+#include "framework/DirectionLight.h"
 #include "framework/PointLight.h"
+#include "framework/SpotLight.h"
 #include "framework/Scene.h"
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
@@ -76,7 +78,14 @@ int main()
 	/*
 	 * Lights
 	 */
-	PointLight directional(
+	/*
+	DirectionLight light(
+		glm::vec3(0.0),
+		glm::vec3(0.2f, 0.2f, 0.2f),
+		glm::vec3(0.5f, 0.5f, 0.5f),
+		glm::vec3(1.0f, 1.0f, 1.0f)
+	);
+	PointLight light(
 		glm::vec3(), 
 		glm::vec3(0.2f, 0.2f, 0.2f),
 		glm::vec3(0.5f, 0.5f, 0.5f),
@@ -85,7 +94,20 @@ int main()
 		0.09,
 		0.032
 		);
+	*/
+	SpotLight light(
+		glm::vec3(0),
+		glm::vec3(0,0,-1),
 
+		glm::vec3(0.2f, 0.2f, 0.2f),
+		glm::vec3(0.5f, 0.5f, 0.5f),
+		glm::vec3(1.0f, 1.0f, 1.0f),
+		1.0,
+		0.09,
+		0.032,
+		glm::cos(glm::radians(12.5f)),
+		glm::cos(glm::radians(17.5f))
+	);
 	BoxGeometry geometry;
 
 	Texture *t1 = new Texture("images/container2.png");
@@ -93,6 +115,8 @@ int main()
 	DiffuseMaterial material(t1, t2, 64);
 
 	Mesh cube(geometry, &material);
+	Mesh cube1(geometry, &material);
+	cube1.translate(0.5, 0, -3);
 
 	glm::vec4 white(1.0);
 	MaterialBasic basic(white);
@@ -103,8 +127,9 @@ int main()
 
 	Scene scene;
 	scene.addCamera(&camera).
-		addLight(&directional).
+		addLight(&light).
 		addMesh(&cube).
+		addMesh(&cube1).
 		addMesh(&fLight);
 
 	// uncomment this call to draw in wireframe polygons.
@@ -127,10 +152,10 @@ int main()
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		float radius = 2;
-		lightPos.x = sin(glfwGetTime()/2) * radius;
-		lightPos.z = cos(glfwGetTime()/2) * radius;
-		directional.translate(lightPos);
-		
+		lightPos.x = sin(glfwGetTime() / 2) * radius;
+		lightPos.z = cos(glfwGetTime() / 2) * radius;
+		light.translate(lightPos);
+
 		fLight.translate(lightPos);
 
 		scene.draw();

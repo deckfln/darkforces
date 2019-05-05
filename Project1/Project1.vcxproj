@@ -126,7 +126,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="framework\AmbientLight.cpp" />
+    <ClCompile Include="framework\Light.cpp" />
     <ClCompile Include="framework\BoxGeometry.cpp" />
     <ClCompile Include="framework\Camera.cpp" />
     <ClCompile Include="framework\DiffuseMaterial.cpp" />
@@ -139,6 +139,7 @@
     <ClCompile Include="framework\PointLight.cpp" />
     <ClCompile Include="framework\Scene.cpp" />
     <ClCompile Include="framework\SphereGemeotry.cpp" />
+    <ClCompile Include="framework\SpotLight.cpp" />
     <ClCompile Include="framework\Texture.cpp" />
     <ClCompile Include="framework\Uniform.cpp" />
     <ClCompile Include="glEngine\glBufferAttribute.cpp" />
@@ -156,7 +157,7 @@
     <ClCompile Include="stb.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="framework\AmbientLight.h" />
+    <ClInclude Include="framework\Light.h" />
     <ClInclude Include="framework\BoxGeometry.h" />
     <ClInclude Include="framework\Camera.h" />
     <ClInclude Include="framework\DiffuseMaterial.h" />
@@ -169,6 +170,7 @@
     <ClInclude Include="framework\PointLight.h" />
     <ClInclude Include="framework\Scene.h" />
     <ClInclude Include="framework\SphereGemeotry.h" />
+    <ClInclude Include="framework\SpotLight.h" />
     <ClInclude Include="framework\Texture.h" />
     <ClInclude Include="framework\Uniform.h" />
     <ClInclude Include="glEngine\glBufferAttribute.h" />

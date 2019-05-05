@@ -6,15 +6,15 @@
 #include "glEngine/glProgram.h"
 #include "Object3D.h"
 
-class AmbientLight: public Object3D
+class Light: public Object3D
 {
 protected:
 	glm::vec3 ambient;
 
 public:
-	AmbientLight();
-	AmbientLight(glm::vec3 &_color);
-	AmbientLight(float r, float g, float b);
+	Light();
+	Light(glm::vec3 &_color);
+	Light(float r, float g, float b);
 	virtual void set_uniform(glProgram &program);
-	~AmbientLight();
+	~Light();
 };

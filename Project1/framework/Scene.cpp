@@ -18,7 +18,7 @@ Scene &Scene::addMesh(Mesh *mesh)
 	return *this;
 }
 
-Scene &Scene::addLight(AmbientLight *light)
+Scene &Scene::addLight(Light *light)
 {
 	lights[current_light++] = light;
 	return *this;

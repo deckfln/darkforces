@@ -22,6 +22,14 @@ Object3D &Object3D::translate(glm::vec3 &vector)
 	return *this;
 }
 
+Object3D &Object3D::translate(float x, float y, float z)
+{
+	position.x = x;
+	position.y = y;
+	position.z = z;
+	return *this;
+}
+
 Object3D &Object3D::set_scale(glm::vec3 &_scale)
 {
 	scale = _scale;

@@ -1,7 +1,7 @@
 #pragma once
-#include "AmbientLight.h"
+#include "Light.h"
 
-class PointLight: public AmbientLight
+class PointLight: public Light
 {
 	glm::vec3 diffuse;
 	glm::vec3 specular;
