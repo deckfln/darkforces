@@ -63,7 +63,6 @@ void Scene::draw(void)
 	}
 
 	// draw all meshes per material
-	std::map <std::string, std::list <Mesh *>> ::iterator hashes;
 	std::list <Mesh *> listOfMeshes;
 
 	for (auto hashes : meshesPerMaterial) {
@@ -78,8 +77,14 @@ void Scene::draw(void)
 		program->set_uniform("viewPos", camera->get_position());
 
 		// setup lights
-		for (int i = 0; i < current_light; i++) {
-			lights[i]->set_uniform(program, i);
+		int i;
+		for (auto type : lightsByType) {
+			i = 0;
+			for (auto light : type.second) {
+				light->set_uniform(program, i);
+
+				i++;
+			}
 		}
 
 		for (auto mesh: listOfMeshes) {
@@ -90,4 +95,7 @@ void Scene::draw(void)
 
 Scene::~Scene()
 {
+	for (auto program : programs) {
+		delete program.second;
+	}
 }

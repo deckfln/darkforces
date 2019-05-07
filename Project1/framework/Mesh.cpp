@@ -34,4 +34,6 @@ std::string Mesh::getMaterialHash(void)
 
 Mesh::~Mesh()
 {
+	if (vao != nullptr) 
+		delete vao;
 }
