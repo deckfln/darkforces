@@ -6,10 +6,14 @@
 
 List Shaders;
 
-glProgram::glProgram(const std::string vertexShader, const std::string fragmentShader)
+glProgram::glProgram(void)
 {
-	glShader *vertex = new glShader(vertexShader, GL_VERTEX_SHADER);
-	glShader *fragment = new glShader(fragmentShader, GL_FRAGMENT_SHADER);
+}
+
+glProgram::glProgram(const std::string vertexShader, const std::string fragmentShader, const std::string defines)
+{
+	glShader *vertex = new glShader(vertexShader, defines, GL_VERTEX_SHADER);
+	glShader *fragment = new glShader(fragmentShader, defines, GL_FRAGMENT_SHADER);
 
 	// link shaders
 	id = glCreateProgram();

@@ -19,8 +19,9 @@ class Mesh: public Object3D
 
 public:
 	Mesh(Geometry &_geometry, Material *_material);
-	void set_uniforms(glProgram &program);
-	glProgram &run(void);
-	void draw(void);
+	std::string getMaterialHash(void);
+	Material *get_material(void);
+	void set_uniforms(glProgram *program);
+	void draw(glProgram *);
 	~Mesh();
 };

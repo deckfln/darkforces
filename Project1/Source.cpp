@@ -85,6 +85,8 @@ int main()
 		glm::vec3(0.5f, 0.5f, 0.5f),
 		glm::vec3(1.0f, 1.0f, 1.0f)
 	);
+	*/
+
 	PointLight light(
 		glm::vec3(), 
 		glm::vec3(0.2f, 0.2f, 0.2f),
@@ -94,7 +96,8 @@ int main()
 		0.09,
 		0.032
 		);
-	*/
+	
+	/*
 	SpotLight light(
 		glm::vec3(0),
 		glm::vec3(0,0,-1),
@@ -108,6 +111,7 @@ int main()
 		glm::cos(glm::radians(12.5f)),
 		glm::cos(glm::radians(17.5f))
 	);
+	*/
 	BoxGeometry geometry;
 
 	Texture *t1 = new Texture("images/container2.png");

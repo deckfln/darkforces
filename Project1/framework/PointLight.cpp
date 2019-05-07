@@ -16,17 +16,22 @@ PointLight::PointLight(glm::vec3 _position, glm::vec3 _color, glm::vec3 _diffuse
 
 {
 	position = _position;
+	uniform_prefix = "pointlights";
+	type = 2;
+	shader_define = "POINT_LIGHTS";
 }
 
-void PointLight::set_uniform(glProgram &program)
+std::string PointLight::set_uniform(glProgram *program, int index)
 {
-	Light::set_uniform(program);
-	program.set_uniform("light.position", position);
-	program.set_uniform("light.diffuse", diffuse);
-	program.set_uniform("light.specular", specular);
-	program.set_uniform("light.constant", constant);
-	program.set_uniform("light.linear", linear);
-	program.set_uniform("light.quadratic", quadratic);
+	std::string prefix = Light::set_uniform(program, index);
+	program->set_uniform(prefix + ".position", position);
+	program->set_uniform(prefix + ".diffuse", diffuse);
+	program->set_uniform(prefix + ".specular", specular);
+	program->set_uniform(prefix + ".constant", constant);
+	program->set_uniform(prefix + ".linear", linear);
+	program->set_uniform(prefix + ".quadratic", quadratic);
+
+	return prefix;
 }
 
 PointLight::~PointLight()

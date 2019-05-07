@@ -8,25 +8,28 @@ Mesh::Mesh(Geometry &_geometry, Material *_material):
 {
 }
 
-void Mesh::draw(void)
+void Mesh::draw(glProgram *program)
 {
-	glProgram &program = material->get_program();
-
 	if (vao == nullptr) {
-		vao = new glVertexArray(geometry, material);
+		vao = new glVertexArray(geometry, program);
 	}
 	modelMatrix();
-	program.set_uniform("model", model);
+	program->set_uniform("model", model);
 
 	glTexture::resetTextureUnit();
 	material->bindTextures();
-	material->set_uniforms();
+	material->set_uniforms(program);
 	vao->draw(GL_TRIANGLES);
 }
 
-glProgram &Mesh::run(void)
+Material *Mesh::get_material(void)
 {
-	return material->run();
+	return material;
+}
+
+std::string Mesh::getMaterialHash(void)
+{
+	return material->hash();
 }
 
 Mesh::~Mesh()

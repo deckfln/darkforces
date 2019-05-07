@@ -34,17 +34,17 @@ Uniform::Uniform(std::string _name, glTexture *t) :
 	type = GL_SAMPLER_2D;
 }
 
-void Uniform::set_uniform(glProgram &program)
+void Uniform::set_uniform(glProgram *program)
 {
 	switch (type) {
 	case GL_FLOAT:
-		program.set_uniform(name, *(GLfloat *)data);
+		program->set_uniform(name, *(GLfloat *)data);
 		break;
 	case GL_FLOAT_VEC4:
-		program.set_uniform(name, *(glm::vec4 *)data);
+		program->set_uniform(name, *(glm::vec4 *)data);
 		break;
 	case GL_SAMPLER_2D:
-		program.set_uniform(name, ((glTexture *)data)->get_textureUnit());
+		program->set_uniform(name, ((glTexture *)data)->get_textureUnit());
 		break;
 	}
 }

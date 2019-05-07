@@ -4,7 +4,7 @@
 #include <sstream>
 
 
-glShader::glShader(const std::string shader_file, GLuint _type)
+glShader::glShader(const std::string shader_file, const std::string defines, GLuint _type)
 {
 	// 1. retrieve the vertex/fragment source code from filePath
 	std::string code;
@@ -30,10 +30,14 @@ glShader::glShader(const std::string shader_file, GLuint _type)
 	}
 
 	source = code;
+	int hasDefines = source.find("#define DEFINES");
+	if (hasDefines >= 0) {
+		source.replace(hasDefines, sizeof("#define DEFINES"), defines);
+	}
 	type = _type;
 	id = glCreateShader(_type);
 
-	const char *cc = code.c_str();
+	const char *cc = source.c_str();
 	glShaderSource(id, 1, &cc, NULL);
 	glCompileShader(id);
 

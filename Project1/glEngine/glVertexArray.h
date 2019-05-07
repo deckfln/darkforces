@@ -11,7 +11,7 @@ class glVertexArray
 	Geometry &geometry;
 
 public:
-	glVertexArray(Geometry &, Material *material);
+	glVertexArray(Geometry &, glProgram *program);
 	void bind(void);
 	static void unbind(void);
 	void draw(GLenum mode);

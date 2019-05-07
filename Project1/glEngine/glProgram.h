@@ -13,7 +13,8 @@ class glProgram
 
 public:
 	GLuint id;
-	glProgram(const std::string vertexShader, const std::string fragmentShader);
+	glProgram(void);
+	glProgram(const std::string vertexShader, const std::string fragmentShader, const std::string defines);
 	void run(void);
 	glVertexAttribute *get_attribute(const std::string name);
 	glUniform *get_uniform(std::string name);

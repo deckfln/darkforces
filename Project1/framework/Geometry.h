@@ -21,7 +21,7 @@ public:
 	Geometry& addVertices(std::string _name, GLuint _type, void *_data, GLsizei itemSize, GLsizei len, GLuint _sizeof_element);
 	Geometry& addIndex(std::string _name, GLuint _type, void *_data, GLsizei itemSize, GLsizei len, GLuint _sizeof_element);
 	Geometry& addAttribute(std::string _name, GLuint _type, void *_data, GLsizei itemSize, GLsizei len, GLuint _sizeof_element);
-	void enable_attributes(glProgram &program);
+	void enable_attributes(glProgram *program);
 	int get_count(void);
 	void draw(GLenum mode);
 	~Geometry();

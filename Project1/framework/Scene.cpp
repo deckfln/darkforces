@@ -1,6 +1,8 @@
 #include "Scene.h"
 #include <iterator> 
-
+#include <map>
+#include <list>
+#include <string>
 
 Scene::Scene()
 {
@@ -26,20 +28,63 @@ Scene &Scene::addLight(Light *light)
 
 void Scene::draw(void)
 {
+	// count number of lights
+	std::map <std::string, std::list <Light *>> lightsByType;
+
+	for (int i = 0; i < current_light; i++) {
+		lightsByType[ lights[i]->getDefine() ].push_front(lights[i]);
+	}
+
+	// pre-processor
+	std::string defines;
+
+	std::string codeLights="";
+	for (auto type : lightsByType) {
+		codeLights += type.first + ":" + std::to_string(type.second.size());
+		defines += "#define " + type.first + " " + std::to_string(type.second.size()) + "\n";
+	}
+
+	// create a map of materials vs meshes
+	std::map<std::string, std::list <Mesh *>> meshesPerMaterial;
+
 	std::list <Mesh *> ::iterator it;
-	for (it = meshes.begin(); it != meshes.end(); ++it) {
-		glProgram &program = (*it)->run();
+	std::string code;
+	for (auto it : meshes) {
+		code = it->getMaterialHash() + codeLights;
+
+		meshesPerMaterial[code].push_front(it);
+
+		// Create the program if it is not already there
+		if (programs.count(code) == 0) {
+			Material *material = it->get_material();
+
+			programs[code] = new glProgram(material->get_vertexShader(), material->get_fragmentShader(), defines);;
+		}
+	}
+
+	// draw all meshes per material
+	std::map <std::string, std::list <Mesh *>> ::iterator hashes;
+	std::list <Mesh *> listOfMeshes;
+
+	for (auto hashes : meshesPerMaterial) {
+		code = hashes.first;
+		listOfMeshes = hashes.second;
+
+		glProgram *program = programs[code];
+		program->run();
 
 		// setup camera
 		camera->set_uniforms(program);
-		program.set_uniform("viewPos", camera->get_position());
+		program->set_uniform("viewPos", camera->get_position());
 
 		// setup lights
-		for (int i=0; i<current_light; i++) {
-			lights[i]->set_uniform(program);
+		for (int i = 0; i < current_light; i++) {
+			lights[i]->set_uniform(program, i);
 		}
 
-		(*it)->draw();
+		for (auto mesh: listOfMeshes) {
+			mesh->draw(program);
+		}
 	}
 }
 

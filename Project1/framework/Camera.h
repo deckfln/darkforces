@@ -17,7 +17,7 @@ class Camera: public Object3D
 	glm::mat4 projection;
 public:
 	Camera(int height, int width);
-	void set_uniforms(glProgram &program);
+	void set_uniforms(glProgram *program);
 	void translate(glm::vec3 &translation);
 	void translate(float x, float y, float z);
 	void lookAt(glm::vec3 &target);

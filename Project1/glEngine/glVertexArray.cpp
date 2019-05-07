@@ -2,14 +2,14 @@
 #include "glVertexAttribute.h"
 
 
-glVertexArray::glVertexArray(Geometry &_geometry, Material *_material):
+glVertexArray::glVertexArray(Geometry &_geometry, glProgram *program):
 	geometry(_geometry)
 {
 	// bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
 	glGenVertexArrays(1, &id);
 	glBindVertexArray(id);
 
-	geometry.enable_attributes(_material->get_program());
+	geometry.enable_attributes(program);
 
 	// remember: do NOT unbind the EBO while a VAO is active as the bound element buffer object IS stored in the VAO; keep the EBO bound.
 	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);

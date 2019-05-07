@@ -7,18 +7,23 @@ DirectionLight::DirectionLight(glm::vec3 _direction, glm::vec3 _color, glm::vec3
 	specular(_specular)
 {
 	position = _direction;
+	uniform_prefix = "dirlights";
+	type = 1;
+	shader_define = "DIRECTION_LIGHTS";
 }
 
 DirectionLight::DirectionLight()
 {
 }
 
-void DirectionLight::set_uniform(glProgram &program)
+std::string DirectionLight::set_uniform(glProgram *program, int index)
 {
-	Light::set_uniform(program);
-	program.set_uniform("light.direction", position);
-	program.set_uniform("light.diffuse", diffuse);
-	program.set_uniform("light.specular", specular);
+	std::string prefix = Light::set_uniform(program);
+	program->set_uniform(prefix + ".direction", position);
+	program->set_uniform(prefix + ".diffuse", diffuse);
+	program->set_uniform(prefix + ".specular", specular);
+
+	return prefix;
 }
 
 DirectionLight::~DirectionLight()

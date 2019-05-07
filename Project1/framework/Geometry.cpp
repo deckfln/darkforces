@@ -32,13 +32,13 @@ Geometry& Geometry::addAttribute(std::string _name, GLuint _type, void *_data, G
 	return *this;
 }
 
-void Geometry::enable_attributes(glProgram &program)
+void Geometry::enable_attributes(glProgram *program)
 {
 	// vertex attribute
 	if (index != nullptr) {
 		index->bind();
 	}
-	glVertexAttribute *va = program.get_attribute(vertices->get_name());
+	glVertexAttribute *va = program->get_attribute(vertices->get_name());
 	if (va) {
 		va->EnableVertex(vertices);
 	}
@@ -47,7 +47,7 @@ void Geometry::enable_attributes(glProgram &program)
 	glBufferAttribute *attribute;
 	for (int i = 0; i < current_attribute; i++) {
 		attribute = attributes[i];
-		glVertexAttribute *va = program.get_attribute(attribute->get_name());
+		glVertexAttribute *va = program->get_attribute(attribute->get_name());
 		if (va) {
 			va->EnableVertex(attribute);
 		}

@@ -13,6 +13,6 @@ class PointLight: public Light
 public:
 	PointLight();
 	PointLight(glm::vec3 _position, glm::vec3 _color, glm::vec3 _diffuse, glm::vec3 _specular, float constant, float linear, float quadatric);
-	void set_uniform(glProgram &program);
+	std::string set_uniform(glProgram *program, int index = -1);
 	~PointLight();
 };

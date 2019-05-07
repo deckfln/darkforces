@@ -1,8 +1,11 @@
 #include "Light.h"
-
+#include <string>
 
 Light::Light(glm::vec3 & _color):
-	ambient(_color)
+	ambient(_color),
+	uniform_prefix("ambient"),
+	type(0),
+	shader_define("AMBIENT_LIGHT")
 {
 }
 
@@ -15,9 +18,21 @@ Light::Light()
 {
 }
 
-void Light::set_uniform(glProgram &program)
+std::string &Light::getDefine(void)
 {
-	program.set_uniform("light.ambient", ambient);
+	return shader_define;
+}
+
+std::string Light::set_uniform(glProgram *program, int index)
+{
+	std::string prefix = uniform_prefix;
+	if (index >= 0) {
+		prefix += "[" + std::to_string(index) + "]";
+	}
+
+	program->set_uniform(prefix + ".ambient", ambient);
+
+	return prefix;
 }
 
 Light::~Light()

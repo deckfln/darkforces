@@ -61,10 +61,10 @@ void Camera::lookAt(float x, float y, float z)
 	view = glm::lookAt(position, target, up);
 }
 
-void Camera::set_uniforms(glProgram &program)
+void Camera::set_uniforms(glProgram *program)
 {
-	program.set_uniform("view", view);
-	program.set_uniform("projection", projection);
+	program->set_uniform("view", view);
+	program->set_uniform("projection", projection);
 }
 
 Camera::~Camera()

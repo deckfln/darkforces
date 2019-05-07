@@ -1,20 +1,27 @@
 #pragma once
 #include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
+#include <string>
+#include <List>
 
 #include "glEngine/glProgram.h"
 #include "Object3D.h"
+#include "Uniform.h"
 
 class Light: public Object3D
 {
 protected:
+	int type;
+	std::string uniform_prefix;
+	std::string shader_define;
 	glm::vec3 ambient;
+
+	std::list <Uniform *> uniforms;
 
 public:
 	Light();
 	Light(glm::vec3 &_color);
 	Light(float r, float g, float b);
-	virtual void set_uniform(glProgram &program);
+	std::string &getDefine(void);
+	virtual std::string set_uniform(glProgram *program, int index = -1);
 	~Light();
 };

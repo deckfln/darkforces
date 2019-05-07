@@ -1,4 +1,6 @@
 #include "Material.h"
+#include <string>
+#include <functional>
 #include "glEngine/glTexture.h"
 
 Material::Material()
@@ -35,11 +37,11 @@ Material &Material::addUniform(Uniform *uniform)
 	return *this;
 }
 
-void Material::set_uniforms(void)
+void Material::set_uniforms(glProgram *program)
 {
 	std::list <Uniform *> ::iterator it;
 	for (it = uniforms.begin(); it != uniforms.end(); ++it) {
-		(*it)->set_uniform(*program);
+		(*it)->set_uniform(program);
 	}
 }
 
@@ -51,20 +53,19 @@ void Material::bindTextures(void)
 	}
 }
 
-glProgram &Material::run(void)
+const std::string &Material::get_vertexShader(void)
 {
-	if (program == nullptr) {
-		program = new glProgram(vertexShader, fragmentShader);
-	}
-
-	program->run();
-
-	return *program;
+	return vertexShader;
 }
 
-glProgram &Material::get_program(void)
+const std::string &Material::get_fragmentShader(void)
 {
-	return *program;
+	return fragmentShader;
+}
+
+std::string Material::hash(void)
+{
+	return vertexShader+fragmentShader;
 }
 
 Material::~Material()
