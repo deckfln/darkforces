@@ -8,10 +8,10 @@ class glVertexArray
 {
 	GLuint id;
 	int count;
-	Geometry &geometry;
+	Geometry *geometry;
 
 public:
-	glVertexArray(Geometry &, glProgram *program);
+	glVertexArray(Geometry *, glProgram *program);
 	void bind(void);
 	static void unbind(void);
 	void draw(GLenum mode);

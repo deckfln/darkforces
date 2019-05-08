@@ -10,6 +10,7 @@
 #include "Texture.h"
 #include "Geometry.h"
 #include "DiffuseMaterial.h"
+#include "Mesh.h"
 
 Loader::Loader(const std::string _file):
 	file(_file)
@@ -33,7 +34,7 @@ void Loader::processNode(aiNode *node, const aiScene *scene)
 	for (unsigned int i = 0; i < node->mNumMeshes; i++)
 	{
 		aiMesh *mesh = scene->mMeshes[node->mMeshes[i]];
-		processMesh(mesh, scene);
+		meshes.push_back( processMesh(mesh, scene));
 	}
 	// then do the same for each of its children
 	for (unsigned int i = 0; i < node->mNumChildren; i++)
@@ -42,7 +43,7 @@ void Loader::processNode(aiNode *node, const aiScene *scene)
 	}
 }
 
-void Loader::processMesh(aiMesh *mesh, const aiScene *scene)
+Mesh *Loader::processMesh(aiMesh *mesh, const aiScene *scene)
 {
 	/*
 	 * build the geometry
@@ -90,7 +91,6 @@ void Loader::processMesh(aiMesh *mesh, const aiScene *scene)
 
 	} 
 	unsigned int *indice = (unsigned int *)calloc(k, sizeof(unsigned int));
-	geometry->addIndex(indice, 1, k * sizeof(unsigned int), sizeof(unsigned int));
 
 	k = 0;
 	for (unsigned int i = 0; i < mesh->mNumFaces; i++)
@@ -101,10 +101,12 @@ void Loader::processMesh(aiMesh *mesh, const aiScene *scene)
 			k++;
 		}
 	}
+	geometry->addIndex(indice, 1, k * sizeof(unsigned int), sizeof(unsigned int));
 
 	/*
 	 * build the material
 	 */
+	DiffuseMaterial *material = nullptr;
 	if (mesh->mMaterialIndex >= 0)
 	{
 		aiMaterial *aimaterial = scene->mMaterials[mesh->mMaterialIndex];
@@ -118,7 +120,6 @@ void Loader::processMesh(aiMesh *mesh, const aiScene *scene)
 		float shininess;
 		aimaterial->Get(AI_MATKEY_SHININESS, shininess);
 
-		DiffuseMaterial *material;
 		if (specular.size() > 0) {
 			material = new DiffuseMaterial(diffuse[0], specular[0], shininess);
 		}
@@ -126,6 +127,10 @@ void Loader::processMesh(aiMesh *mesh, const aiScene *scene)
 			material = new DiffuseMaterial(diffuse[0], nullptr, shininess);
 		}
 	}
+
+	Mesh *nmesh = new Mesh(geometry, material);
+
+	return nmesh;
 }
 
 
@@ -144,6 +149,11 @@ std::vector<Texture *> Loader::loadMaterialTextures(aiMaterial *mat, aiTextureTy
 	}
 
 	return textures;
+}
+
+std::vector<Mesh *>Loader::get_meshes(void)
+{
+	return meshes;
 }
 
 Loader::~Loader()

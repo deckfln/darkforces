@@ -2,7 +2,7 @@
 #include "glad/glad.h"
 
 
-Mesh::Mesh(Geometry &_geometry, Material *_material):
+Mesh::Mesh(Geometry *_geometry, Material *_material):
 	geometry(_geometry),
 	material(_material)
 {

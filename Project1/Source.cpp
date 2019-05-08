@@ -114,22 +114,24 @@ int main()
 	);
 
 	Loader loader("models/stormtrooper/stormtrooper.dae");
+	std::vector<Mesh *>meshes = loader.get_meshes();
 
 	BoxGeometry geometry;
-
+	/*
 	Texture *t1 = new Texture("images/container2.png");
 	Texture *t2 = new Texture("images/container2_specular.png");
 	DiffuseMaterial material(t1, nullptr, 64);
 
-	Mesh cube(geometry, &material);
-	Mesh cube1(geometry, &material);
+	Mesh cube(&geometry, &material);
+	Mesh cube1(&geometry, &material);
 	cube1.translate(0.5, 0, -3);
+	*/
 
 	glm::vec4 white(1.0);
 
 	MaterialBasic basic(white);
-	Mesh fLight(geometry, &basic);
-	Mesh fLight2(geometry, &basic);
+	Mesh fLight(&geometry, &basic);
+	Mesh fLight2(&geometry, &basic);
 	
 	glm::vec3 half(0.1);
 	fLight.set_scale(half);
@@ -139,10 +141,16 @@ int main()
 	scene.addCamera(&camera).
 		addLight(&light).
 		addLight(&light2).
+		/*
 		addMesh(&cube).
 		addMesh(&cube1).
+		*/
 		addMesh(&fLight).
 		addMesh(&fLight2);
+
+	for (auto mesh : meshes) {
+		scene.addMesh(mesh);
+	}
 
 	// uncomment this call to draw in wireframe polygons.
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);

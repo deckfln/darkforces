@@ -12,16 +12,15 @@
 
 class Mesh: public Object3D
 {
-	Geometry &geometry;
+	Geometry *geometry;
 	Material *material;
 
 	glVertexArray *vao;
 
 public:
-	Mesh(Geometry &_geometry, Material *_material);
+	Mesh(Geometry *_geometry, Material *_material);
 	std::string getMaterialHash(void);
 	Material *get_material(void);
-	void set_uniforms(glProgram *program);
 	void draw(glProgram *);
 	~Mesh();
 };

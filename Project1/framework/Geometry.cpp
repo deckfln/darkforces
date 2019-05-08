@@ -19,7 +19,7 @@ Geometry&  Geometry::addVertices(std::string _name, void *_data, GLsizei itemSiz
 
 Geometry&  Geometry::addIndex(void *_data, GLsizei itemSize, GLsizei len, GLuint _sizeof_element)
 {
-	index = new glBufferAttribute("_index", GL_INDEX_ARRAY, _data, itemSize, len, _sizeof_element);
+	index = new glBufferAttribute("_index", GL_ELEMENT_ARRAY_BUFFER, _data, itemSize, len, _sizeof_element);
 	indexedGeometry = true;
 
 	return *this;
