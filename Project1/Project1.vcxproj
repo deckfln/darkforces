@@ -132,6 +132,7 @@
     <ClCompile Include="framework\DiffuseMaterial.cpp" />
     <ClCompile Include="framework\DirectionLight.cpp" />
     <ClCompile Include="framework\Geometry.cpp" />
+    <ClCompile Include="framework\Loader.cpp" />
     <ClCompile Include="framework\Material.cpp" />
     <ClCompile Include="framework\MaterialBasic.cpp" />
     <ClCompile Include="framework\Mesh.cpp" />
@@ -163,6 +164,7 @@
     <ClInclude Include="framework\DiffuseMaterial.h" />
     <ClInclude Include="framework\DirectionLight.h" />
     <ClInclude Include="framework\Geometry.h" />
+    <ClInclude Include="framework\Loader.h" />
     <ClInclude Include="framework\Material.h" />
     <ClInclude Include="framework\MaterialBasic.h" />
     <ClInclude Include="framework\Mesh.h" />

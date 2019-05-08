@@ -49,7 +49,12 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 diffuse, vec3 world, vec
     // combine results
     vec3 ambient  = light.ambient * diffuse;
     vec3 ndiffuse  = light.diffuse * diff * diffuse;
-    vec3 specular = light.specular * spec * vec3(texture(material.specular, TexCoord));
+
+	#ifdef SPECULAR_MAP
+	    vec3 specular = light.specular * spec * vec3(texture(material.specular, TexCoord));
+	#else
+		vec3 specular = light.specular * spec * vec3(1.0);
+	#endif
 
     ambient  *= attenuation;
     diffuse  *= attenuation;
@@ -84,7 +89,12 @@ vec3 CalcDirLight(DirectionlLight light, vec3 normal, vec3 diffuse)
     vec3 viewDir = normalize(viewPos - world);
     vec3 reflectDir = reflect(-lightDir, normal);  
     float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
-    vec3 specular = light.specular * spec * texture(material.specular, TexCoord).rgb;  
+
+	#ifdef SPECULAR_MAP
+	    vec3 specular = light.specular * spec * texture(material.specular, TexCoord).rgb;  
+	#else
+		vec3 specular = light.specular * spec * vec3(1.0);
+	#endif
 
 	return ambient + ndiffuse + specular;
 }
@@ -121,7 +131,13 @@ vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 diffuse, vec3 world, vec3 
     // specular
     vec3 reflectDir = reflect(-lightDir, normal);  
     float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
-    vec3 specular = light.specular * spec * texture(material.specular, TexCoord).rgb;  
+
+	#ifdef SPECULAR_MAP
+	    vec3 specular = light.specular * spec * texture(material.specular, TexCoord).rgb;  
+	#else
+		vec3 specular = light.specular * spec * vec3(1.0);
+	#endif
+
     
     // spotlight (soft edges)
     float theta = dot(lightDir, normalize(-light.direction)); 

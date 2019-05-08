@@ -1,6 +1,10 @@
 #include "Material.h"
 #include <string>
 #include <functional>
+#include <iostream>
+#include <fstream>
+#include <sstream>
+
 #include "glEngine/glTexture.h"
 
 Material::Material()
@@ -9,7 +13,9 @@ Material::Material()
 
 Material::Material(std::string _vertexShader, std::string _fragmentShader):
 	vertexShader(_vertexShader),
-	fragmentShader(_fragmentShader)
+	fragmentShader(_fragmentShader),
+	vertexShaderCode(""),
+	fragmentShaderCode("")
 {
 }
 
@@ -23,10 +29,11 @@ Material& Material::addTexture(std::string uniform, Texture *texture)
 	return *this;
 }
 
-Material &Material::addShaders(std::string _vertexShader, std::string _fragmentShader)
+Material &Material::addShaders(std::string _vertexShader, std::string _fragmentShader, const std::string _defines)
 {
 	vertexShader = _vertexShader;
 	fragmentShader = _fragmentShader;
+	defines = _defines;
 
 	return *this;
 }
@@ -55,17 +62,62 @@ void Material::bindTextures(void)
 
 const std::string &Material::get_vertexShader(void)
 {
-	return vertexShader;
+	if (vertexShaderCode != "") {
+		return vertexShaderCode;
+	}
+	vertexShaderCode = get_shader(vertexShader);
+
+	return vertexShaderCode;
 }
 
 const std::string &Material::get_fragmentShader(void)
 {
-	return fragmentShader;
+	if (fragmentShaderCode != "") {
+		return fragmentShaderCode;
+	}
+	fragmentShaderCode = get_shader(fragmentShader);
+
+	return fragmentShaderCode;
 }
 
 std::string Material::hash(void)
 {
 	return vertexShader+fragmentShader;
+}
+
+std::string Material::get_shader(const std::string shader_file)
+{
+	// 1. retrieve the vertex/fragment source code from filePath
+	std::string code;
+	std::ifstream file;
+
+	// ensure ifstream objects can throw exceptions:
+	file.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+	try
+	{
+		// open files
+		file.open(shader_file);
+		std::stringstream vShaderStream;
+		// read file's buffer contents into streams
+		vShaderStream << file.rdbuf();
+		// close file handlers
+		file.close();
+		// convert stream into string
+		code = vShaderStream.str();
+	}
+	catch (std::ifstream::failure e)
+	{
+		std::cout << "ERROR::SHADER " << shader_file << " ::FILE_NOT_SUCCESFULLY_READ" << std::endl;
+		exit(-1);
+	}
+
+	int hasDefines = code.find("#define DEFINES");
+	if (hasDefines >= 0) {
+		std::string _defines = defines + "\n#define DEFINES\n";
+		code.replace(hasDefines, sizeof("#define DEFINES"), _defines);
+	}
+
+	return code;
 }
 
 Material::~Material()

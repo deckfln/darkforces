@@ -1,6 +1,7 @@
 #include "Geometry.h"
 #include "glEngine/glVertexAttribute.h"
 #include "glEngine/glBufferAttribute.h"
+#include "../glad/glad.h"
 
 Geometry::Geometry()
 {
@@ -8,17 +9,17 @@ Geometry::Geometry()
 	index = nullptr;
 }
 
-Geometry&  Geometry::addVertices(std::string _name, GLuint _type, void *_data, GLsizei itemSize, GLsizei len, GLuint _sizeof_element)
+Geometry&  Geometry::addVertices(std::string _name, void *_data, GLsizei itemSize, GLsizei len, GLuint _sizeof_element)
 {
-	vertices = new glBufferAttribute(_name, _type, _data, itemSize, len, _sizeof_element);
+	vertices = new glBufferAttribute(_name, GL_ARRAY_BUFFER, _data, itemSize, len, _sizeof_element);
 	indexedGeometry = false;
 
 	return *this;
 }
 
-Geometry&  Geometry::addIndex(std::string _name, GLuint _type, void *_data, GLsizei itemSize, GLsizei len, GLuint _sizeof_element)
+Geometry&  Geometry::addIndex(void *_data, GLsizei itemSize, GLsizei len, GLuint _sizeof_element)
 {
-	index = new glBufferAttribute(_name, _type, _data, itemSize, len, _sizeof_element);
+	index = new glBufferAttribute("_index", GL_INDEX_ARRAY, _data, itemSize, len, _sizeof_element);
 	indexedGeometry = true;
 
 	return *this;
@@ -74,5 +75,10 @@ Geometry::~Geometry()
 	if (index != nullptr) {
 		delete index;
 	}
-	//TODO: delete attributes
+
+	delete vertices;
+
+	for (int i = 0; i < current_attribute; i++) {
+		delete attributes[current_attribute];
+	}
 }

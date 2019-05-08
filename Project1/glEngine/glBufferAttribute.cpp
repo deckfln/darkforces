@@ -45,5 +45,6 @@ void glBufferAttribute::bind()
 
 glBufferAttribute::~glBufferAttribute()
 {
+	free(data);
 	delete vbo;
 }
