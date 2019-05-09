@@ -126,6 +126,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="framework\geometries\PlaneGeometry.cpp" />
     <ClCompile Include="framework\Light.cpp" />
     <ClCompile Include="framework\BoxGeometry.cpp" />
     <ClCompile Include="framework\Camera.cpp" />
@@ -154,10 +155,12 @@
     <ClCompile Include="glad.c" />
     <ClCompile Include="glEngine\glProgram.cpp" />
     <ClCompile Include="List.cpp" />
+    <ClCompile Include="Reference.cpp" />
     <ClCompile Include="Source.cpp" />
     <ClCompile Include="stb.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="framework\geometries\PlaneGeometry.h" />
     <ClInclude Include="framework\Light.h" />
     <ClInclude Include="framework\BoxGeometry.h" />
     <ClInclude Include="framework\Camera.h" />
@@ -187,6 +190,7 @@
     <ClInclude Include="include\stb_image.h" />
     <ClInclude Include="KHR\khrplatform.h" />
     <ClInclude Include="List.h" />
+    <ClInclude Include="Reference.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\fragment.glsl" />

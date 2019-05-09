@@ -12,6 +12,7 @@
 #include "framework/Camera.h"
 #include "framework/Mesh.h"
 #include "framework/BoxGeometry.h"
+#include "framework/geometries/PlaneGeometry.h"
 #include "framework/DirectionLight.h"
 #include "framework/PointLight.h"
 #include "framework/SpotLight.h"
@@ -74,8 +75,8 @@ int main()
 	 * Camera
 	 */
 	Camera camera(SCR_WIDTH, SCR_HEIGHT);
-	camera.lookAt(0, 0, 0);
-	camera.translate(3, 3, 3);
+	camera.lookAt(0, 2, 0);
+	camera.translate(5, 5, 5);
 
 	/*
 	 * Lights
@@ -116,31 +117,32 @@ int main()
 	Loader loader("models/stormtrooper/stormtrooper.dae");
 	std::vector<Mesh *>meshes = loader.get_meshes();
 
-	BoxGeometry geometry;
-	/*
-	Texture *t1 = new Texture("images/container2.png");
-	Texture *t2 = new Texture("images/container2_specular.png");
-	DiffuseMaterial material(t1, nullptr, 64);
-
-	Mesh cube(&geometry, &material);
-	Mesh cube1(&geometry, &material);
-	cube1.translate(0.5, 0, -3);
-	*/
-
+	// lights
+	BoxGeometry *geometry = new BoxGeometry();
 	glm::vec4 white(1.0);
 
-	MaterialBasic basic(white);
-	Mesh fLight(&geometry, &basic);
-	Mesh fLight2(&geometry, &basic);
+	MaterialBasic *basic = new MaterialBasic(white);
+	Mesh fLight(geometry, basic);
+	Mesh fLight2(geometry, basic);
 	
 	glm::vec3 half(0.1);
 	fLight.set_scale(half);
 	fLight2.set_scale(half);
 
+	// floor
+	Texture *t1 = new Texture("images/container2.png");
+	Texture *t2 = new Texture("images/container2_specular.png");
+	DiffuseMaterial *material = new DiffuseMaterial(t1, nullptr, 64);
+
+	Mesh plane(new PlaneGeometry(1, 1), material);
+
+	/*
+	*/
 	Scene scene;
 	scene.addCamera(&camera).
 		addLight(&light).
 		addLight(&light2).
+		addMesh(&plane).
 		/*
 		addMesh(&cube).
 		addMesh(&cube1).
@@ -173,11 +175,13 @@ int main()
 
 		float radius = 2;
 		lightPos.x = sin(glfwGetTime() / 2) * radius;
+		lightPos.y = 1;
 		lightPos.z = cos(glfwGetTime() / 2) * radius;
 		light.translate(lightPos);
 		fLight.translate(lightPos);
 
 		lightPos.x = sin(glfwGetTime() / 4) * radius;
+		lightPos.y = 3;
 		lightPos.z = cos(glfwGetTime() / 4) * radius;
 		light2.translate(lightPos);
 		fLight2.translate(lightPos);

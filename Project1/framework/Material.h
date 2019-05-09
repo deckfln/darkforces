@@ -1,11 +1,13 @@
 #pragma once
 #include <iostream>
 #include <list>
-#include "glEngine/glProgram.h"
+
+#include "../Reference.h"
+#include "../glEngine/glProgram.h"
 #include "Uniform.h"
 #include "Texture.h"
 
-class Material
+class Material: public Reference
 {
 	std::string vertexShader;
 	std::string fragmentShader;

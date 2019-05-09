@@ -1,10 +1,12 @@
 #pragma once
 #include <iostream>
-#include "glEngine/glProgram.h"
 #include <map>
 #include <iostream>
 
-class Geometry
+#include "glEngine/glProgram.h"
+#include "../Reference.h"
+
+class Geometry: public Reference
 {
 	glBufferAttribute *index;
 	glBufferAttribute *vertices;

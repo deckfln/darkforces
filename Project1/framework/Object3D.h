@@ -3,7 +3,9 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-class Object3D
+#include "../Reference.h"
+
+class Object3D : public Reference
 {
 protected:
 	glm::mat4 model;

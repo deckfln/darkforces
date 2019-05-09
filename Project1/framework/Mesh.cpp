@@ -6,6 +6,8 @@ Mesh::Mesh(Geometry *_geometry, Material *_material):
 	geometry(_geometry),
 	material(_material)
 {
+	geometry->reference();
+	material->reference();
 }
 
 void Mesh::draw(glProgram *program)
@@ -34,6 +36,12 @@ std::string Mesh::getMaterialHash(void)
 
 Mesh::~Mesh()
 {
+	if (geometry->dereference())
+		delete geometry;
+
+	if (material->dereference())
+		delete material;
+
 	if (vao != nullptr) 
 		delete vao;
 }
