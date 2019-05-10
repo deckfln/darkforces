@@ -60,6 +60,11 @@ glProgram::glProgram(const std::string vertexShader, const std::string fragmentS
 	}
 }
 
+GLuint glProgram::getID(void)
+{
+	return id;
+}
+
 void glProgram::run(void)
 {
 	glUseProgram(id);

@@ -10,9 +10,16 @@ Object3D::Object3D():
 {
 }
 
-Object3D &Object3D::rotate(float t, glm::vec3 &axis)
+Object3D &Object3D::set_name(std::string _name)
 {
-	model = glm::rotate(model, t, axis);
+	name = _name;
+
+	return *this;
+}
+
+Object3D &Object3D::rotate(glm::vec3 &_rotation)
+{
+	rotation = _rotation;
 	return *this;
 }
 
@@ -36,12 +43,25 @@ Object3D &Object3D::set_scale(glm::vec3 &_scale)
 	return *this;
 }
 
+glm::vec3 Object3D::get_scale(void)
+{
+	return scale;
+}
+
+Object3D &Object3D::set_scale(float _scale)
+{
+	scale *= _scale;
+	return *this;
+}
+
 Object3D &Object3D::modelMatrix(void)
 {
+	glm::mat4 rotationMatrix = glm::rotate(rotation.x, glm::vec3(1, 0, 0));
+
 	glm::mat4 scaleMatrix = glm::scale(scale);
 	glm::mat4 translateMatrix = glm::translate(position);
 	// model = glm::rotate(model, rotation);
-	model = translateMatrix * scaleMatrix;
+	model = translateMatrix * scaleMatrix * rotationMatrix;
 
 	return *this;
 }

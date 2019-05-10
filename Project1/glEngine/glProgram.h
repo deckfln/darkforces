@@ -10,11 +10,12 @@ class glProgram
 	// active attributes
 	std::map<std::string, glVertexAttribute *> attributes;
 	std::map<std::string, glUniform *> uniforms;
+	GLuint id;
 
 public:
-	GLuint id;
 	glProgram(void);
 	glProgram(const std::string vertexShader, const std::string fragmentShader, const std::string defines);
+	GLuint getID(void);
 	void run(void);
 	glVertexAttribute *get_attribute(const std::string name);
 	glUniform *get_uniform(std::string name);

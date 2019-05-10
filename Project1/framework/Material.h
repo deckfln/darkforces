@@ -9,6 +9,7 @@
 
 class Material: public Reference
 {
+	int id;
 	std::string vertexShader;
 	std::string fragmentShader;
 	std::string defines;
@@ -29,9 +30,12 @@ public:
 	Material &addTexture(std::string uniform, Texture *texture);
 	Material &addShaders(std::string vertexShader, std::string fragmentShader, const std::string defines = "");
 	Material &addUniform(Uniform *uniform);
-	std::string hash(void);
+	
+	std::string hashCode(void);
+
 	const std::string &get_vertexShader(void);
 	const std::string &get_fragmentShader(void);
+	const int getID(void);
 
 	void bindTextures(void);
 	void set_uniforms(glProgram *program);

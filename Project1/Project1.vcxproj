@@ -136,6 +136,7 @@
     <ClCompile Include="framework\Loader.cpp" />
     <ClCompile Include="framework\Material.cpp" />
     <ClCompile Include="framework\MaterialBasic.cpp" />
+    <ClCompile Include="framework\materials\OutlineMaterial.cpp" />
     <ClCompile Include="framework\Mesh.cpp" />
     <ClCompile Include="framework\Object3D.cpp" />
     <ClCompile Include="framework\PointLight.cpp" />
@@ -170,6 +171,7 @@
     <ClInclude Include="framework\Loader.h" />
     <ClInclude Include="framework\Material.h" />
     <ClInclude Include="framework\MaterialBasic.h" />
+    <ClInclude Include="framework\materials\OutlineMaterial.h" />
     <ClInclude Include="framework\Mesh.h" />
     <ClInclude Include="framework\Object3D.h" />
     <ClInclude Include="framework\PointLight.h" />
@@ -196,9 +198,11 @@
     <None Include="shaders\fragment.glsl" />
     <None Include="shaders\fragment_basic.glsl" />
     <None Include="shaders\fragment_diffuse.glsl" />
+    <None Include="shaders\fragment_outline.glsl" />
     <None Include="shaders\vertex.glsl" />
     <None Include="shaders\vertex_basic.glsl" />
     <None Include="shaders\vertex_diffuse.glsl" />
+    <None Include="shaders\vertex_outline.glsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -4,6 +4,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <math.h>
 
 #include "glEngine/glProgram.h"
 #include "include/stb_image.h"
@@ -134,7 +135,10 @@ int main()
 	Texture *t2 = new Texture("images/container2_specular.png");
 	DiffuseMaterial *material = new DiffuseMaterial(t1, nullptr, 64);
 
-	Mesh plane(new PlaneGeometry(1, 1), material);
+	Mesh plane(new PlaneGeometry(8, 8), material);
+
+	glm::vec3 deg(3.1415 / 2, 0, 0);
+	plane.rotate(deg);
 
 	/*
 	*/
@@ -151,6 +155,7 @@ int main()
 		addMesh(&fLight2);
 
 	for (auto mesh : meshes) {
+		mesh->outline(true);
 		scene.addMesh(mesh);
 	}
 
@@ -171,7 +176,7 @@ int main()
 		// ------
 		glEnable(GL_DEPTH_TEST);
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
 		float radius = 2;
 		lightPos.x = sin(glfwGetTime() / 2) * radius;

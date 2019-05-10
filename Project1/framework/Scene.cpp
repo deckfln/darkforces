@@ -4,6 +4,13 @@
 #include <list>
 #include <string>
 
+#include "../glad/glad.h"
+#include "materials/OutlineMaterial.h"
+
+glm::vec4 yellow(255, 255, 0, 255);
+OutlineMaterial _material(yellow);
+glProgram *_outline_program = nullptr;
+
 Scene::Scene()
 {
 }
@@ -28,6 +35,10 @@ Scene &Scene::addLight(Light *light)
 
 void Scene::draw(void)
 {
+	if (_outline_program == nullptr) {
+		_outline_program = new glProgram(_material.get_vertexShader(), _material.get_fragmentShader(), "");
+	}
+
 	// count number of lights
 	std::map <std::string, std::list <Light *>> lightsByType;
 
@@ -44,30 +55,43 @@ void Scene::draw(void)
 		defines += "#define " + type.first + " " + std::to_string(type.second.size()) + "\n";
 	}
 
-	// create a map of materials vs meshes
-	std::map<std::string, std::list <Mesh *>> meshesPerMaterial;
+	// create a map of materials shaders vs meshes
+	//    [shaderCode][materialID] = [mesh1, mesh2]
+	std::map<std::string, std::map<int, std::list <Mesh *>>> meshesPerMaterial;
+	Material *material;
 
 	std::list <Mesh *> ::iterator it;
 	std::string code;
+	int materialID;
+
 	for (auto it : meshes) {
-		code = it->getMaterialHash() + codeLights;
+		if (it->is_visible()) {
+			material = it->get_material();
+			code = material->hashCode() + codeLights;
+			materialID = material->getID();
 
-		meshesPerMaterial[code].push_front(it);
+			meshesPerMaterial[code][materialID].push_front(it);
+			materials[materialID] = material;
 
-		// Create the program if it is not already there
-		if (programs.count(code) == 0) {
-			Material *material = it->get_material();
-
-			programs[code] = new glProgram(material->get_vertexShader(), material->get_fragmentShader(), defines);;
+			// Create the shader program if it is not already there
+			if (programs.count(code) == 0) {
+				programs[code] = new glProgram(material->get_vertexShader(), material->get_fragmentShader(), defines);
+			}
 		}
 	}
 
-	// draw all meshes per material
-	std::list <Mesh *> listOfMeshes;
+	glEnable(GL_STENCIL_TEST);
+	glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+	glStencilFunc(GL_ALWAYS, 1, 0xFF);
 
-	for (auto hashes : meshesPerMaterial) {
-		code = hashes.first;
-		listOfMeshes = hashes.second;
+	// draw all meshes per material
+	std::map <int, std::list <Mesh *>> listOfMaterials;
+	std::list <Mesh *> listOfMeshes;
+	std::list <Mesh *> listOfOutlinedMeshes;
+
+	for (auto shader : meshesPerMaterial) {
+		code = shader.first;
+		listOfMaterials = shader.second;
 
 		glProgram *program = programs[code];
 		program->run();
@@ -87,10 +111,48 @@ void Scene::draw(void)
 			}
 		}
 
-		for (auto mesh: listOfMeshes) {
-			mesh->draw(program);
+		for (auto ids : listOfMaterials) {
+			materialID = ids.first;
+			listOfMeshes = ids.second;
+
+			glTexture::resetTextureUnit();
+			material = materials[materialID];
+
+			material->bindTextures();
+			material->set_uniforms(program);
+
+			for (auto mesh : listOfMeshes) {
+				if (mesh->is_outlined()) {
+					// write in the stencil buffer for outlined objects
+					// record the object for later drawing
+					glStencilMask(0xff);
+					listOfOutlinedMeshes.push_front(mesh);
+				}
+				else {
+					glStencilMask(0x00);
+				}
+
+				mesh->draw(program);
+			}
 		}
 	}
+
+	// draw the ouline of the outlined object
+	if (listOfOutlinedMeshes.size() > 0) {
+		_outline_program->run();
+		_material.set_uniforms(_outline_program);
+
+		camera->set_uniforms(_outline_program);
+
+		glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
+		glStencilMask(0x00);
+
+		for (auto mesh : listOfOutlinedMeshes) {
+			mesh->draw(_outline_program);
+		}
+	}
+
+	glDisable(GL_STENCIL_TEST);
 }
 
 Scene::~Scene()

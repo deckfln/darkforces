@@ -7,7 +7,11 @@
 
 #include "glEngine/glTexture.h"
 
-Material::Material()
+int _materialID = 0;
+
+Material::Material():
+	fragmentShaderCode(""),
+	id(_materialID++)
 {
 }
 
@@ -15,7 +19,8 @@ Material::Material(std::string _vertexShader, std::string _fragmentShader):
 	vertexShader(_vertexShader),
 	fragmentShader(_fragmentShader),
 	vertexShaderCode(""),
-	fragmentShaderCode("")
+	fragmentShaderCode(""),
+	id(_materialID++)
 {
 }
 
@@ -42,6 +47,11 @@ Material &Material::addUniform(Uniform *uniform)
 {
 	uniforms.push_front(uniform);
 	return *this;
+}
+
+const int Material::getID(void)
+{
+	return id;
 }
 
 void Material::set_uniforms(glProgram *program)
@@ -80,7 +90,7 @@ const std::string &Material::get_fragmentShader(void)
 	return fragmentShaderCode;
 }
 
-std::string Material::hash(void)
+std::string Material::hashCode(void)
 {
 	return vertexShader+fragmentShader;
 }

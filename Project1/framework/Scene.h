@@ -8,6 +8,7 @@
 class Scene
 {
 	std::map <std::string, glProgram *> programs;
+	std::map <int, Material *> materials;
 
 	std::list <Mesh *> meshes;
 	Light *lights[10];
