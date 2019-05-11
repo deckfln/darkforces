@@ -8,7 +8,7 @@ class MaterialBasic: public Material
 
 public:
 	MaterialBasic();
-	MaterialBasic(glm::vec4 &_color);
+	MaterialBasic(glm::vec4 *_color);
 	~MaterialBasic();
 };
 

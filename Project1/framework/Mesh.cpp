@@ -8,6 +8,8 @@ Mesh::Mesh(Geometry *_geometry, Material *_material):
 	visible(true),
 	outlined(false)
 {
+	classID |= MESH;
+
 	geometry->reference();
 	material->reference();
 }
@@ -42,8 +44,7 @@ void Mesh::draw(glProgram *program)
 	if (vao.count(id) == 0) {
 		vao[id] = new glVertexArray(geometry, program);
 	}
-	modelMatrix();
-	program->set_uniform("model", model);
+	program->set_uniform("model", worldMatrix);
 
 	vao[id]->draw(GL_TRIANGLES);
 }

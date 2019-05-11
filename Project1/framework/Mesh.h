@@ -10,6 +10,8 @@
 
 #include "Object3D.h"
 
+constexpr auto MESH = 1;
+
 class Mesh: public Object3D
 {
 	Geometry *geometry;

@@ -6,7 +6,7 @@ OutlineMaterial::OutlineMaterial() :
 {
 }
 
-OutlineMaterial::OutlineMaterial(glm::vec4 &_color):
+OutlineMaterial::OutlineMaterial(glm::vec4 *_color):
 	Material("shaders/vertex_outline.glsl", "shaders/fragment_outline.glsl"),
 	color("color", _color)
 {

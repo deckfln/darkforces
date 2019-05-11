@@ -122,13 +122,16 @@ int main()
 	BoxGeometry *geometry = new BoxGeometry();
 	glm::vec4 white(1.0);
 
-	MaterialBasic *basic = new MaterialBasic(white);
+	MaterialBasic *basic = new MaterialBasic(&white);
 	Mesh fLight(geometry, basic);
 	Mesh fLight2(geometry, basic);
 	
 	glm::vec3 half(0.1);
-	fLight.set_scale(half);
-	fLight2.set_scale(half);
+	fLight.set_scale(half).set_name("light");
+	fLight2.set_scale(half).set_name("light2");
+
+	light.addChild(&fLight);
+	light2.addChild(&fLight2);
 
 	// floor
 	Texture *t1 = new Texture("images/container2.png");
@@ -140,23 +143,18 @@ int main()
 	glm::vec3 deg(3.1415 / 2, 0, 0);
 	plane.rotate(deg);
 
-	/*
-	*/
+	// init the scene
+	glm::vec4 yellow(255, 255, 0, 255);
 	Scene scene;
 	scene.addCamera(&camera).
 		addLight(&light).
 		addLight(&light2).
-		addMesh(&plane).
-		/*
-		addMesh(&cube).
-		addMesh(&cube1).
-		*/
-		addMesh(&fLight).
-		addMesh(&fLight2);
+		setOutline(&yellow).
+		addChild(&plane);
 
 	for (auto mesh : meshes) {
 		mesh->outline(true);
-		scene.addMesh(mesh);
+		scene.addChild(mesh);
 	}
 
 	// uncomment this call to draw in wireframe polygons.
@@ -183,13 +181,11 @@ int main()
 		lightPos.y = 1;
 		lightPos.z = cos(glfwGetTime() / 2) * radius;
 		light.translate(lightPos);
-		fLight.translate(lightPos);
 
 		lightPos.x = sin(glfwGetTime() / 4) * radius;
 		lightPos.y = 3;
 		lightPos.z = cos(glfwGetTime() / 4) * radius;
 		light2.translate(lightPos);
-		fLight2.translate(lightPos);
 
 		scene.draw();
 

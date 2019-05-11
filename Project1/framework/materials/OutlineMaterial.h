@@ -8,6 +8,6 @@ class OutlineMaterial : public Material
 
 public:
 	OutlineMaterial();
-	OutlineMaterial(glm::vec4 &_color);
+	OutlineMaterial(glm::vec4 *_color);
 	~OutlineMaterial();
 };

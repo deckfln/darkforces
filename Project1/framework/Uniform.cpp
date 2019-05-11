@@ -6,10 +6,10 @@ Uniform::Uniform()
 {
 }
 
-Uniform::Uniform(std::string _name, glm::vec4 &v4):
+Uniform::Uniform(std::string _name, glm::vec4 *v4):
 	name(_name)
 {
-	data = &v4;
+	data = v4;
 	type = GL_FLOAT_VEC4;
 }
 

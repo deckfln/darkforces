@@ -6,7 +6,7 @@ MaterialBasic::MaterialBasic() :
 {
 }
 
-MaterialBasic::MaterialBasic(glm::vec4 &_color):
+MaterialBasic::MaterialBasic(glm::vec4 *_color):
 	Material("shaders/vertex_basic.glsl", "shaders/fragment_basic.glsl"),
 	color("color", _color)
 {
