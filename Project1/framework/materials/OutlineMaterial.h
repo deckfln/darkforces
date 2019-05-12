@@ -4,7 +4,7 @@
 
 class OutlineMaterial : public Material
 {
-	Uniform color;
+	Uniform *color = nullptr;
 
 public:
 	OutlineMaterial();

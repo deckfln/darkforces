@@ -17,6 +17,7 @@ public:
 	Uniform(std::string _name, GLfloat *f);
 	Uniform(std::string _name, glTexture *y);
 	void set_uniform(glProgram *);
+	void *get_value(void);
 	~Uniform();
 };
 

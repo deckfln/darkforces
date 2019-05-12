@@ -7,12 +7,12 @@ class glTexture
 {
 	static int currentTextureUnit;
 
-	std::string uniform;
-	GLuint id;
-	GLuint textureUnit;
+	GLuint id = -1;
+	GLuint textureUnit = 0;
 public:
-	glTexture(std::string uniform, std::string file);
-	glTexture(std::string uniform, Texture *texture);
+	glTexture(int width, int height, int format);
+	glTexture(Texture *texture);
+	GLuint getID(void);
 	void bind(void);
 	static void resetTextureUnit(void) { currentTextureUnit = 0; };
 	GLint get_textureUnit(void);

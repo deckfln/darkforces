@@ -12,8 +12,7 @@ DiffuseMaterial::DiffuseMaterial():
 DiffuseMaterial::DiffuseMaterial(Texture *_diffuse, Texture *_specular, float _shininess):
 	diffuse(_diffuse),
 	specular(_specular),
-	shininess(_shininess),
-	uniform("material.shininess", &shininess)
+	shininess(_shininess)
 {
 	if (_specular != nullptr) {
 		addShaders("shaders/vertex_diffuse.glsl", "shaders/fragment_diffuse.glsl", "#define SPECULAR_MAP");
@@ -24,7 +23,8 @@ DiffuseMaterial::DiffuseMaterial(Texture *_diffuse, Texture *_specular, float _s
 	}
 	addTexture("material.diffuse", diffuse);
 
-	addUniform(&uniform);
+	uniform = new Uniform("material.shininess", &shininess);
+	addUniform(uniform);
 }
 
 DiffuseMaterial::~DiffuseMaterial()

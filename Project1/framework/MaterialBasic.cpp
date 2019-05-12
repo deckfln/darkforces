@@ -7,10 +7,10 @@ MaterialBasic::MaterialBasic() :
 }
 
 MaterialBasic::MaterialBasic(glm::vec4 *_color):
-	Material("shaders/vertex_basic.glsl", "shaders/fragment_basic.glsl"),
-	color("color", _color)
+	Material("shaders/vertex_basic.glsl", "shaders/fragment_basic.glsl")
 {
-	addUniform(&color);
+	color = new Uniform("color", _color);
+	addUniform(color);
 }
 
 

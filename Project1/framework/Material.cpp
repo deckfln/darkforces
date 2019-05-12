@@ -26,10 +26,19 @@ Material::Material(std::string _vertexShader, std::string _fragmentShader):
 
 Material& Material::addTexture(std::string uniform, Texture *texture)
 {
-	glTexture *glTex = new glTexture(uniform, texture);
+	glTexture *glTex = new glTexture(texture);
 	textures.push_front(glTex);
 
 	addUniform(new Uniform(uniform, glTex));
+
+	return *this;
+}
+
+Material& Material::addTexture(std::string uniform, glTexture *texture)
+{
+	textures.push_front(texture);
+
+	addUniform(new Uniform(uniform, texture));
 
 	return *this;
 }
@@ -132,8 +141,11 @@ std::string Material::get_shader(const std::string shader_file)
 
 Material::~Material()
 {
-	std::list <glTexture *> ::iterator it;
-	for (it = textures.begin(); it != textures.end(); ++it) {
-		delete (*it);
+	for (auto texture: textures) {
+		delete texture;
+	}
+
+	for (auto uniform : uniforms) {
+		delete uniform;
 	}
 }

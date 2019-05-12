@@ -9,7 +9,7 @@ uniform mat4 projection;
 void main()
 {
 	// move outward the vertice unlong the normal
-	vec3 pos = aPos + aNormal * 0.01;
+	vec3 pos = aPos + aNormal * 0.02;
 
 	gl_Position = projection * view * model * vec4(pos, 1.0);
 }

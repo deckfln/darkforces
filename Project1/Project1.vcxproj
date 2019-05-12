@@ -126,6 +126,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="framework\FrameBuffer.cpp" />
+    <ClCompile Include="framework\fwPostProcessing.cpp" />
     <ClCompile Include="framework\geometries\PlaneGeometry.cpp" />
     <ClCompile Include="framework\Light.cpp" />
     <ClCompile Include="framework\BoxGeometry.cpp" />
@@ -147,6 +149,8 @@
     <ClCompile Include="framework\Uniform.cpp" />
     <ClCompile Include="glEngine\glBufferAttribute.cpp" />
     <ClCompile Include="glEngine\glBufferObject.cpp" />
+    <ClCompile Include="glEngine\glFrameBuffer.cpp" />
+    <ClCompile Include="glEngine\glRenderBuffer.cpp" />
     <ClCompile Include="glEngine\glShader.cpp" />
     <ClCompile Include="glEngine\glTexture.cpp" />
     <ClCompile Include="glEngine\glUniform.cpp" />
@@ -161,6 +165,8 @@
     <ClCompile Include="stb.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="framework\FrameBuffer.h" />
+    <ClInclude Include="framework\fwPostProcessing.h" />
     <ClInclude Include="framework\geometries\PlaneGeometry.h" />
     <ClInclude Include="framework\Light.h" />
     <ClInclude Include="framework\BoxGeometry.h" />
@@ -182,7 +188,10 @@
     <ClInclude Include="framework\Uniform.h" />
     <ClInclude Include="glEngine\glBufferAttribute.h" />
     <ClInclude Include="glEngine\glBufferObject.h" />
+    <ClInclude Include="glEngine\glFrameBuffer.h" />
+    <ClInclude Include="glEngine\glRenderBuffer.h" />
     <ClInclude Include="glEngine\glShader.h" />
+    <ClInclude Include="glEngine\glTexture.h" />
     <ClInclude Include="glEngine\glUniform.h" />
     <ClInclude Include="glEngine\glVertexArray.h" />
     <ClInclude Include="glEngine\glVertexAttribute.h" />
@@ -199,6 +208,8 @@
     <None Include="shaders\fragment_basic.glsl" />
     <None Include="shaders\fragment_diffuse.glsl" />
     <None Include="shaders\fragment_outline.glsl" />
+    <None Include="shaders\screen_fragment.glsl" />
+    <None Include="shaders\screen_vertex.glsl" />
     <None Include="shaders\vertex.glsl" />
     <None Include="shaders\vertex_basic.glsl" />
     <None Include="shaders\vertex_diffuse.glsl" />

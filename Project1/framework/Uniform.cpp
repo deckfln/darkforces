@@ -34,6 +34,11 @@ Uniform::Uniform(std::string _name, glTexture *t) :
 	type = GL_SAMPLER_2D;
 }
 
+void *Uniform::get_value(void)
+{
+	return data;
+}
+
 void Uniform::set_uniform(glProgram *program)
 {
 	switch (type) {

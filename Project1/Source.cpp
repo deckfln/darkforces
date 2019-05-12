@@ -18,12 +18,22 @@
 #include "framework/PointLight.h"
 #include "framework/SpotLight.h"
 #include "framework/Scene.h"
+#include "framework/FrameBuffer.h"
+#include "framework/fwPostProcessing.h"
 
 #include "framework/Loader.h"
 
+// settings
+unsigned int SCR_WIDTH = 800;
+unsigned int SCR_HEIGHT = 600;
+
+Camera camera(SCR_WIDTH, SCR_HEIGHT);
+
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
-	glViewport(0, 0, width, height);
+	SCR_WIDTH = width;
+	SCR_HEIGHT = height;
+	camera.set_ratio(width, height);
 }
 
 void processInput(GLFWwindow *window)
@@ -34,10 +44,6 @@ void processInput(GLFWwindow *window)
 
 const std::string vertexShader = "shaders/vertex.glsl";
 const std::string fragmentShader = "shaders/fragment.glsl";
-
-// settings
-const unsigned int SCR_WIDTH = 800;
-const unsigned int SCR_HEIGHT = 600;
 
 int main()
 {
@@ -75,7 +81,6 @@ int main()
 	/*
 	 * Camera
 	 */
-	Camera camera(SCR_WIDTH, SCR_HEIGHT);
 	camera.lookAt(0, 2, 0);
 	camera.translate(5, 5, 5);
 
@@ -157,6 +162,12 @@ int main()
 		scene.addChild(mesh);
 	}
 
+	// FRAME BUFFER
+	FrameBuffer frameBuffer(SCR_WIDTH, SCR_HEIGHT);
+	glTexture *tex = frameBuffer.get_colorBuffer();
+	Uniform source("screenTexture", tex);
+	fwPostProcessing postProcessing("shaders/screen_vertex.glsl", "shaders/screen_fragment.glsl", &source);
+
 	// uncomment this call to draw in wireframe polygons.
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
@@ -170,8 +181,10 @@ int main()
 		// -----
 		processInput(window);
 
-		// render
-		// ------
+		// render 1st pass
+
+		frameBuffer.bind();
+
 		glEnable(GL_DEPTH_TEST);
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
@@ -188,6 +201,12 @@ int main()
 		light2.translate(lightPos);
 
 		scene.draw();
+
+		frameBuffer.unbind();
+
+		// render 2nd pass
+		glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
+		postProcessing.draw();
 
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
 		// -------------------------------------------------------------------------------

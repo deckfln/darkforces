@@ -14,6 +14,6 @@ public:
 	glVertexArray(Geometry *, glProgram *program);
 	void bind(void);
 	static void unbind(void);
-	void draw(GLenum mode);
+	void draw(GLenum mode= GL_TRIANGLES);
 	~glVertexArray();
 };

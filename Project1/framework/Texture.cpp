@@ -13,6 +13,13 @@ Texture::Texture(std::string file)
 	data = stbi_load(file.c_str(), &width, &height, &nrChannels, 0);
 }
 
+Texture::Texture(int _width, int _height, int format) :
+	width(_width),
+	height(_height),
+	nrChannels(format)
+{
+}
+
 unsigned char *Texture::get_info(int *_width, int *_height, int *_nrChannels)
 {
 	*_width = width;
@@ -23,5 +30,7 @@ unsigned char *Texture::get_info(int *_width, int *_height, int *_nrChannels)
 
 Texture::~Texture()
 {
-	stbi_image_free(data);
+	if (data != nullptr) {
+		stbi_image_free(data);
+	}
 }

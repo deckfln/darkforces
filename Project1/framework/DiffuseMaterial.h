@@ -5,10 +5,10 @@
 
 class DiffuseMaterial: public Material
 {
-	Texture *diffuse;
-	Texture *specular;
-	float shininess;
-	Uniform uniform;
+	Texture *diffuse = nullptr;
+	Texture *specular = nullptr;
+	float shininess = 0;
+	Uniform *uniform = nullptr;
 
 public:
 	DiffuseMaterial();

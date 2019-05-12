@@ -4,7 +4,7 @@
 
 class MaterialBasic: public Material
 {
-	Uniform color;
+	Uniform *color= nullptr;
 
 public:
 	MaterialBasic();

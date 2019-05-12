@@ -28,6 +28,7 @@ public:
 	Material();
 	Material(std::string vertexShader, std::string fragmentShader);
 	Material &addTexture(std::string uniform, Texture *texture);
+	Material &addTexture(std::string uniform, glTexture *texture);
 	Material &addShaders(std::string vertexShader, std::string fragmentShader, const std::string defines = "");
 	Material &addUniform(Uniform *uniform);
 	

@@ -10,6 +10,11 @@ Camera::Camera(int width, int height):
 	projection = glm::perspective(glm::radians(45.0f), (float)width / (float)height, 0.1f, 100.0f);
 }
 
+void Camera::set_ratio(int width, int height)
+{
+	projection = glm::perspective(glm::radians(45.0f), (float)width / (float)height, 0.1f, 100.0f);
+}
+
 void Camera::translate(glm::vec3 &translation)
 {
 	position = translation;
