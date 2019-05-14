@@ -66,6 +66,16 @@ void Camera::lookAt(float x, float y, float z)
 	view = glm::lookAt(position, target, up);
 }
 
+glm::mat4 Camera::GetViewMatrix(void)
+{
+	return glm::lookAt(position, right, up);
+}
+
+glm::mat4 Camera::GetProjectionMatrix(void)
+{
+	return projection;
+}
+
 void Camera::set_uniforms(glProgram *program)
 {
 	program->set_uniform("view", view);

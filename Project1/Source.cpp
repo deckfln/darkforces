@@ -20,6 +20,8 @@
 #include "framework/Scene.h"
 #include "framework/FrameBuffer.h"
 #include "framework/fwPostProcessing.h"
+#include "framework/fwSkybox.h"
+#include "framework/controls/fwOrbitControl.h"
 
 #include "framework/Loader.h"
 
@@ -28,12 +30,36 @@ unsigned int SCR_WIDTH = 800;
 unsigned int SCR_HEIGHT = 600;
 
 Camera camera(SCR_WIDTH, SCR_HEIGHT);
+int Button = 0;
 
-void framebuffer_size_callback(GLFWwindow* window, int width, int height)
+fwOrbitControl control(&camera);
+
+static void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
 	SCR_WIDTH = width;
 	SCR_HEIGHT = height;
 	camera.set_ratio(width, height);
+}
+
+static void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
+{
+	if (button == GLFW_MOUSE_BUTTON_RIGHT)
+		switch (action) {
+		case GLFW_PRESS:
+			Button = GLFW_MOUSE_BUTTON_RIGHT;
+			break;
+		case GLFW_RELEASE:
+			Button = 0;
+			break;
+		}
+}
+
+static void cursor_position_callback(GLFWwindow* window, double xpos, double ypos)
+{
+	float x = xpos / SCR_WIDTH;
+	float y = ypos / SCR_HEIGHT;
+
+	control.mouseEvent(Button, x, y);
 }
 
 void processInput(GLFWwindow *window)
@@ -68,7 +94,10 @@ int main()
 		return -1;
 	}
 	glfwMakeContextCurrent(window);
+
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+	glfwSetCursorPosCallback(window, cursor_position_callback);
+	glfwSetMouseButtonCallback(window, mouse_button_callback);
 
 	// glad: load all OpenGL function pointers
 	// ---------------------------------------
@@ -168,6 +197,17 @@ int main()
 	Uniform source("screenTexture", tex);
 	fwPostProcessing postProcessing("shaders/screen_vertex.glsl", "shaders/screen_fragment.glsl", &source);
 
+	// Skybox
+	std::string skyboxes[] = { 
+		"images/skybox/right.jpg",
+		"images/skybox/left.jpg",
+		"images/skybox/top.jpg",
+		"images/skybox/bottom.jpg",
+		"images/skybox/front.jpg",
+		"images/skybox/back.jpg" };
+
+	fwSkybox skybox(skyboxes);
+
 	// uncomment this call to draw in wireframe polygons.
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
@@ -185,9 +225,10 @@ int main()
 
 		frameBuffer.bind();
 
-		glEnable(GL_DEPTH_TEST);
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+		glEnable(GL_DEPTH_TEST);
 
 		float radius = 2;
 		lightPos.x = sin(glfwGetTime() / 2) * radius;
@@ -201,6 +242,8 @@ int main()
 		light2.translate(lightPos);
 
 		scene.draw();
+
+		skybox.draw(&camera);
 
 		frameBuffer.unbind();
 

@@ -3,6 +3,7 @@
 #include <glm/glm.hpp>
 #include "glEngine/glProgram.h"
 #include "glEngine/glTexture.h"
+#include "glEngine/glCubeTexture.h"
 
 class Uniform
 {
@@ -16,6 +17,7 @@ public:
 	Uniform(std::string _name, GLint *id);
 	Uniform(std::string _name, GLfloat *f);
 	Uniform(std::string _name, glTexture *y);
+	Uniform(std::string _name, glCubeTexture *y);
 	void set_uniform(glProgram *);
 	void *get_value(void);
 	~Uniform();

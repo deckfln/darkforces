@@ -5,6 +5,11 @@
 
 int glTexture::currentTextureUnit = 0;
 
+glTexture::glTexture()
+{
+
+}
+
 glTexture::glTexture(int width, int height, int format)
 {
 	glGenTextures(1, &id);
@@ -34,7 +39,7 @@ glTexture::glTexture(Texture *texture)
 	// load and generate the texture
 	int width, height, nrChannels;
 	unsigned char *data = texture->get_info(&width, &height, &nrChannels);
-	GLuint pixels;
+	GLuint pixels=GL_RGB;
 
 	switch (nrChannels) {
 	case 3: pixels = GL_RGB; break;

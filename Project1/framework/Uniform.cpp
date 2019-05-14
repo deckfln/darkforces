@@ -34,6 +34,13 @@ Uniform::Uniform(std::string _name, glTexture *t) :
 	type = GL_SAMPLER_2D;
 }
 
+Uniform::Uniform(std::string _name, glCubeTexture *t) :
+	name(_name)
+{
+	data = t;
+	type = GL_TEXTURE_CUBE_MAP;
+}
+
 void *Uniform::get_value(void)
 {
 	return data;
@@ -50,6 +57,9 @@ void Uniform::set_uniform(glProgram *program)
 		break;
 	case GL_SAMPLER_2D:
 		program->set_uniform(name, ((glTexture *)data)->get_textureUnit());
+		break;
+	case GL_TEXTURE_CUBE_MAP:
+		program->set_uniform(name, ((glCubeTexture *)data)->get_textureUnit());
 		break;
 	}
 }

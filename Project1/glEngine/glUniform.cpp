@@ -101,7 +101,7 @@ void glUniform::set_table(void)
 
 void glUniform::set_value(GLint id)
 {
-	if (type != GL_SAMPLER_2D) {
+	if (type != GL_SAMPLER_2D && type != GL_SAMPLER_CUBE) {
 		std::cout << "glUniform::set_value " << name.c_str() << " not G_SAMPLER_2D" << std::endl;
 		exit(-1);
 	}

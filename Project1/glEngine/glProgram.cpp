@@ -74,7 +74,7 @@ glVertexAttribute *glProgram::get_attribute(const std::string name)
 {
 	glVertexAttribute *attr = attributes[name];
 	if (!attr) {
-		std::cout << "glProgram::get_attribute " << name.c_str() << " mising" << std::endl;
+		//std::cout << "glProgram::get_attribute " << name.c_str() << " mising" << std::endl;
 		return NULL;
 	}
 	return attr;
@@ -84,7 +84,7 @@ glUniform *glProgram::get_uniform(std::string name)
 {
 	glUniform *attr = uniforms[name];
 	if (!attr) {
-		std::cout << "glProgram::get_uniform " << name.c_str() << " mising" << std::endl;
+		//std::cout << "glProgram::get_uniform " << name.c_str() << " mising" << std::endl;
 	}
 	return attr;
 }

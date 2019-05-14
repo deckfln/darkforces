@@ -126,7 +126,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="framework\controls\fwOrbitControl.cpp" />
     <ClCompile Include="framework\FrameBuffer.cpp" />
+    <ClCompile Include="framework\fwSkybox.cpp" />
     <ClCompile Include="framework\fwPostProcessing.cpp" />
     <ClCompile Include="framework\geometries\PlaneGeometry.cpp" />
     <ClCompile Include="framework\Light.cpp" />
@@ -149,6 +151,7 @@
     <ClCompile Include="framework\Uniform.cpp" />
     <ClCompile Include="glEngine\glBufferAttribute.cpp" />
     <ClCompile Include="glEngine\glBufferObject.cpp" />
+    <ClCompile Include="glEngine\glCubeTexture.cpp" />
     <ClCompile Include="glEngine\glFrameBuffer.cpp" />
     <ClCompile Include="glEngine\glRenderBuffer.cpp" />
     <ClCompile Include="glEngine\glShader.cpp" />
@@ -165,7 +168,9 @@
     <ClCompile Include="stb.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="framework\controls\fwOrbitControl.h" />
     <ClInclude Include="framework\FrameBuffer.h" />
+    <ClInclude Include="framework\fwSkybox.h" />
     <ClInclude Include="framework\fwPostProcessing.h" />
     <ClInclude Include="framework\geometries\PlaneGeometry.h" />
     <ClInclude Include="framework\Light.h" />
@@ -188,6 +193,7 @@
     <ClInclude Include="framework\Uniform.h" />
     <ClInclude Include="glEngine\glBufferAttribute.h" />
     <ClInclude Include="glEngine\glBufferObject.h" />
+    <ClInclude Include="glEngine\glCubeTexture.h" />
     <ClInclude Include="glEngine\glFrameBuffer.h" />
     <ClInclude Include="glEngine\glRenderBuffer.h" />
     <ClInclude Include="glEngine\glShader.h" />
@@ -204,6 +210,8 @@
     <ClInclude Include="Reference.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="shaders\cubemap_fragment.glsl" />
+    <None Include="shaders\cubemap_vertex.glsl" />
     <None Include="shaders\fragment.glsl" />
     <None Include="shaders\fragment_basic.glsl" />
     <None Include="shaders\fragment_diffuse.glsl" />

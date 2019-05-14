@@ -23,5 +23,7 @@ public:
 	void translate(float x, float y, float z);
 	void lookAt(glm::vec3 &target);
 	void lookAt(float x, float y, float z);
+	glm::mat4 GetViewMatrix(void);
+	glm::mat4 GetProjectionMatrix(void);
 	~Camera();
 };
