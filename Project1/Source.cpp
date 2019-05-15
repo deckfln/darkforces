@@ -180,8 +180,7 @@ int main()
 	// init the scene
 	glm::vec4 yellow(255, 255, 0, 255);
 	Scene scene;
-	scene.addCamera(&camera).
-		addLight(&light).
+	scene.addLight(&light).
 		addLight(&light2).
 		setOutline(&yellow).
 		addChild(&plane);
@@ -241,7 +240,7 @@ int main()
 		lightPos.z = cos(glfwGetTime() / 4) * radius;
 		light2.translate(lightPos);
 
-		scene.draw();
+		scene.draw(&camera);
 
 		skybox.draw(&camera);
 

@@ -10,12 +10,6 @@ Scene::Scene()
 {
 }
 
-Scene &Scene::addCamera(Camera *_camera)
-{
-	camera = _camera;
-	return *this;
-}
-
 Scene &Scene::addLight(Light *light)
 {
 	addChild(light);
@@ -65,7 +59,7 @@ void Scene::parseChildren(Object3D *root, std::map<std::string, std::map<int, st
 	}
 }
 
-void Scene::draw(void)
+void Scene::draw(Camera *camera)
 {
 	if (outline_material != nullptr && outline_program == nullptr) {
 		outline_program = new glProgram(outline_material->get_vertexShader(), outline_material->get_fragmentShader(), "");

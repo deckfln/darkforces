@@ -17,15 +17,13 @@ class Scene : public Object3D
 
 	Light *lights[10];
 	int current_light;
-	Camera *camera;
 
 	void parseChildren(Object3D *root, std::map<std::string, std::map<int, std::list <Mesh *>>> &meshesPerMaterial, std::string &codeLights, std::string &defines);
 
 public:
 	Scene();
-	Scene &addCamera(Camera *camera);
 	Scene &addLight(Light *light);
 	Scene &setOutline(glm::vec4 *_color);
-	void draw(void);
+	void draw(Camera *camera);
 	~Scene();
 };
