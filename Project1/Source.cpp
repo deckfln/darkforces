@@ -43,15 +43,7 @@ static void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 
 static void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 {
-	if (button == GLFW_MOUSE_BUTTON_RIGHT)
-		switch (action) {
-		case GLFW_PRESS:
-			Button = GLFW_MOUSE_BUTTON_RIGHT;
-			break;
-		case GLFW_RELEASE:
-			Button = 0;
-			break;
-		}
+	control.mouseButton(button, action);
 }
 
 static void cursor_position_callback(GLFWwindow* window, double xpos, double ypos)
@@ -59,7 +51,7 @@ static void cursor_position_callback(GLFWwindow* window, double xpos, double ypo
 	float x = xpos / SCR_WIDTH;
 	float y = ypos / SCR_HEIGHT;
 
-	control.mouseEvent(Button, x, y);
+	control.mouseMove(x, y);
 }
 
 void processInput(GLFWwindow *window)
@@ -111,7 +103,7 @@ int main()
 	 * Camera
 	 */
 	camera.lookAt(0, 2, 0);
-	camera.translate(5, 5, 5);
+	camera.translate(0, 3.5, 3.5);
 
 	/*
 	 * Lights

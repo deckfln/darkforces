@@ -8,34 +8,44 @@ fwOrbitControl::fwOrbitControl(Camera *_camera):
 
 }
 
-void fwOrbitControl::mouseEvent(int button, float xpos, float ypos)
+void fwOrbitControl::mouseButton(int button, int action)
 {
-	if (button == GLFW_MOUSE_BUTTON_RIGHT) {
-		if (!managed) {
-			startx = xpos;
-			starty = ypos;
+	if (button == GLFW_MOUSE_BUTTON_LEFT) {
+		if (action == GLFW_PRESS) {
 			managed = true;
+			startx = starty = -1;
+		}
+		else {
+			managed = false;
 		}
 	}
-	else {
-		managed = false;
-	}
+}
 
+void fwOrbitControl::mouseMove(float xpos, float ypos)
+{
 	if (managed) {
+		float xdir = 0;
+		float ydir = 0;
+
+		if (startx != -1) {
+			// find direction
+			xdir = xpos - startx ;
+			ydir = ypos - starty;
+		}
 		float radius = 5;
 
-		// find direction
-		float xdir = xpos - startx;
-		float ydir = ypos - starty;
 
-		theta += xdir* 0.1;
-		phi += ydir * 0.1;
+		theta += ydir;
+		phi += xdir;
 
-		float x = radius * cos(phi)*sin(theta);
-		float y = radius * sin(phi)*sin(theta);
-		float z = radius * cos(theta);
+		float z = radius * cos(phi)*sin(theta);
+		float x = radius * sin(phi)*sin(theta);
+		float y = radius * cos(theta);
 
 		camera->translate(x, y, z);
+
+		startx = xpos;
+		starty = ypos;
 	}
 }
 
