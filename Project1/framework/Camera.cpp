@@ -80,6 +80,7 @@ void Camera::set_uniforms(glProgram *program)
 {
 	program->set_uniform("view", view);
 	program->set_uniform("projection", projection);
+	program->set_uniform("viewPos", position);
 }
 
 Camera::~Camera()

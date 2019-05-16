@@ -114,7 +114,6 @@ void Scene::draw(Camera *camera)
 
 		// setup camera
 		camera->set_uniforms(program);
-		program->set_uniform("viewPos", camera->get_position());
 
 		// setup lights
 		int i;
