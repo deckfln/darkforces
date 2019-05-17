@@ -11,13 +11,7 @@ out vec3 world;
 
 uniform mat4 model;
 
-
-layout (std140) uniform Camera
-{
-	mat4 view;
-	mat4 projection;
-	vec3 viewPos;
-};
+#include "include/camera.glsl"
 
 void main()
 {

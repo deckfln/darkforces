@@ -5,6 +5,7 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <regex>
 
 #include "glad/glad.h"
 
@@ -87,6 +88,32 @@ std::string fwPostProcessing::get_shader(const std::string shader_file)
 	{
 		std::cout << "ERROR::SHADER " << shader_file << " ::FILE_NOT_SUCCESFULLY_READ" << std::endl;
 		exit(-1);
+	}
+
+	// deal with all includes
+	const std::regex re_basename("(.*)/");
+	std::smatch base_match;
+	std::string path = "";
+
+	if (std::regex_search(shader_file, base_match, re_basename)) {
+		path = base_match[1].str();
+	}
+
+	const std::regex re("#include \"([^\"]*)\"");
+
+	int hasInclude = 1;
+	while ((hasInclude = code.find("#include")) >= 0) {
+		if (std::regex_search(code, base_match, re)) {
+			// The first sub_match is the whole string; the next
+			// sub_match is the first parenthesized expression.
+			if (base_match.size() == 2) {
+				std::string line = base_match[0].str();
+				std::string file = base_match[1].str();
+
+				std::string include = get_shader(path + "/" + file);
+				code.replace(hasInclude, sizeof(line) + 2, include);
+			}
+		}
 	}
 
 	return code;
