@@ -104,6 +104,9 @@ void Scene::draw(Camera *camera)
 	std::list <Mesh *> listOfMeshes;
 	std::list <Mesh *> listOfOutlinedMeshes;
 
+	// setup camera
+	camera->set_uniformBuffer();
+
 	for (auto shader : meshesPerMaterial) {
 		// draw all ojects sharing the same shader
 		code = shader.first;
@@ -111,9 +114,7 @@ void Scene::draw(Camera *camera)
 
 		glProgram *program = programs[code];
 		program->run();
-
-		// setup camera
-		camera->set_uniforms(program);
+		camera->bind_uniformBuffer(program);
 
 		// setup lights
 		int i;

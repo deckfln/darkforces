@@ -10,8 +10,14 @@ out vec3 normal;
 out vec3 world;
 
 uniform mat4 model;
-uniform mat4 view;
-uniform mat4 projection;
+
+
+layout (std140) uniform Camera
+{
+	mat4 view;
+	mat4 projection;
+	vec3 viewPos;
+};
 
 void main()
 {

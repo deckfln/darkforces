@@ -10,6 +10,8 @@ class glProgram
 	// active attributes
 	std::map<std::string, glVertexAttribute *> attributes;
 	std::map<std::string, glUniform *> uniforms;
+	std::map<std::string, int> uniformBufferBindingPoints;
+
 	GLuint id;
 
 public:
@@ -19,6 +21,7 @@ public:
 	void run(void);
 	glVertexAttribute *get_attribute(const std::string name);
 	glUniform *get_uniform(std::string name);
+	bool bindBufferAttribute(std::string name, int bindingPoint);
 	void set_uniform(const std::string name, GLint id);
 	void set_uniform(const std::string name, GLfloat f);
 	void set_uniform(const std::string name, GLfloat r, GLfloat g, GLfloat b);

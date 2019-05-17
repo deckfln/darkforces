@@ -3,7 +3,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-#include "glEngine/glProgram.h"
+#include "../glEngine/glUniformBuffer.h"
+#include "../glEngine/glProgram.h"
 #include "Object3D.h"
 
 class Camera: public Object3D
@@ -15,6 +16,9 @@ class Camera: public Object3D
 
 	glm::mat4 view;
 	glm::mat4 projection;
+
+	glUniformBuffer *ubo = nullptr;
+
 public:
 	Camera(int height, int width);
 	void set_ratio(int width, int height);
@@ -23,7 +27,12 @@ public:
 	void translate(float x, float y, float z);
 	void lookAt(glm::vec3 &target);
 	void lookAt(float x, float y, float z);
+
 	glm::mat4 GetViewMatrix(void);
 	glm::mat4 GetProjectionMatrix(void);
+
+	void set_uniformBuffer(void);
+	void bind_uniformBuffer(glProgram *program);
+
 	~Camera();
 };

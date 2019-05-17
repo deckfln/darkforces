@@ -80,6 +80,22 @@ glVertexAttribute *glProgram::get_attribute(const std::string name)
 	return attr;
 }
 
+bool glProgram::bindBufferAttribute(std::string name, int bindingPoint)
+{
+	if (uniformBufferBindingPoints.count(name) == 0) {
+		GLuint blockIndex = glGetUniformBlockIndex(id, name.c_str());
+
+		if (blockIndex >= 0) {
+			glUniformBlockBinding(id, blockIndex, bindingPoint);
+		}
+
+		uniformBufferBindingPoints[name] = blockIndex;
+		return true;
+	}
+
+	return false;
+}
+
 glUniform *glProgram::get_uniform(std::string name)
 {
 	glUniform *attr = uniforms[name];

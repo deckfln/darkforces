@@ -12,7 +12,13 @@ struct Material {
     float     shininess;
 }; 
 
-uniform vec3 viewPos;
+layout (std140) uniform Camera
+{
+	mat4 view;
+	mat4 projection;
+	vec3 viewPos;
+};
+
 uniform Material material;
 
 #define DEFINES

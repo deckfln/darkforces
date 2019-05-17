@@ -83,6 +83,28 @@ void Camera::set_uniforms(glProgram *program)
 	program->set_uniform("viewPos", position);
 }
 
+void Camera::set_uniformBuffer(void)
+{
+	if (ubo == nullptr) {
+		ubo = new glUniformBuffer(2 * sizeof(glm::mat4) + sizeof(glm::vec3));
+	}
+
+	glm::mat4 camera[2] = { view, projection };
+
+	ubo->bind();
+	ubo->map(glm::value_ptr(camera[0]), 0, sizeof(camera));
+	ubo->map(glm::value_ptr(position), sizeof(camera), sizeof(position));
+	ubo->bind();
+}
+
+void Camera::bind_uniformBuffer(glProgram *program)
+{
+	ubo->bind(program, "Camera");
+}
+
 Camera::~Camera()
 {
+	if (ubo != nullptr) {
+		delete ubo;
+	}
 }

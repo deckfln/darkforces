@@ -158,6 +158,7 @@
     <ClCompile Include="glEngine\glShader.cpp" />
     <ClCompile Include="glEngine\glTexture.cpp" />
     <ClCompile Include="glEngine\glUniform.cpp" />
+    <ClCompile Include="glEngine\glUniformBuffer.cpp" />
     <ClCompile Include="glEngine\glVertexArray.cpp" />
     <ClCompile Include="glEngine\glVertexAttribute.cpp" />
     <ClCompile Include="Element.cpp" />
@@ -202,6 +203,7 @@
     <ClInclude Include="glEngine\glShader.h" />
     <ClInclude Include="glEngine\glTexture.h" />
     <ClInclude Include="glEngine\glUniform.h" />
+    <ClInclude Include="glEngine\glUniformBuffer.h" />
     <ClInclude Include="glEngine\glVertexArray.h" />
     <ClInclude Include="glEngine\glVertexAttribute.h" />
     <ClInclude Include="Element.h" />

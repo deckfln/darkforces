@@ -1,6 +1,8 @@
 #pragma once
 #include <list>
 #include "../glEngine/glProgram.h"
+#include "../glEngine/glUniformBuffer.h"
+
 #include "Object3D.h"
 #include "framework/Mesh.h"
 #include "framework/Light.h"
