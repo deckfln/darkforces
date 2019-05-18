@@ -1,10 +1,82 @@
 #include "glProgram.h"
-#include "glShader.h"
+
 #include <iostream>
+#include <string>
+#include <functional>
+#include <iostream>
+#include <fstream>
+#include <sstream>
+#include <regex>
+
+#include "glShader.h"
+
 #include "List.h"
 #include "glad/glad.h"
 
 List Shaders;
+
+std::string load_shader_file(const std::string shader_file, std::string defines)
+{
+	// 1. retrieve the vertex/fragment source code from filePath
+	std::string code;
+	std::ifstream file;
+
+	// ensure ifstream objects can throw exceptions:
+	file.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+	try
+	{
+		// open files
+		file.open(shader_file);
+		std::stringstream vShaderStream;
+		// read file's buffer contents into streams
+		vShaderStream << file.rdbuf();
+		// close file handlers
+		file.close();
+		// convert stream into string
+		code = vShaderStream.str();
+	}
+	catch (std::ifstream::failure e)
+	{
+		std::cout << "ERROR::SHADER " << shader_file << " ::FILE_NOT_SUCCESFULLY_READ" << std::endl;
+		exit(-1);
+	}
+
+	// deal with all includes
+	const std::regex re_basename("(.*)/");
+	std::smatch base_match;
+	std::string path = "";
+
+	if (std::regex_search(shader_file, base_match, re_basename)) {
+		path = base_match[1].str();
+	}
+
+	const std::regex re("#include \"([^\"]*)\"");
+
+	int hasInclude = 1;
+	while ((hasInclude = code.find("#include")) >= 0) {
+		if (std::regex_search(code, base_match, re)) {
+			// The first sub_match is the whole string; the next
+			// sub_match is the first parenthesized expression.
+			if (base_match.size() == 2) {
+				std::string line = base_match[0].str();
+				std::string file = base_match[1].str();
+
+				std::string include = load_shader_file(path + "/" + file, defines);
+				code.replace(hasInclude, sizeof(line) + 2, include);
+			}
+		}
+	}
+
+	// deal with provided defines
+
+	int hasDefines = code.find("#define DEFINES");
+	if (hasDefines >= 0) {
+		std::string _defines = defines + "\n#define DEFINES\n";
+		code.replace(hasDefines, sizeof("#define DEFINES"), _defines);
+	}
+
+	return code;
+}
 
 glProgram::glProgram(void)
 {

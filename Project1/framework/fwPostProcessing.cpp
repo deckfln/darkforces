@@ -33,8 +33,8 @@ float quadUvs[] = { // vertex attributes for a quad that fills the entire screen
 
 fwPostProcessing::fwPostProcessing(std::string _vertexShader, std::string _fragmentShader, Uniform *_source)
 {
-	std::string vertex = get_shader(_vertexShader);
-	std::string fragment = get_shader(_fragmentShader);
+	std::string vertex = load_shader_file(_vertexShader, "");
+	std::string fragment = load_shader_file(_fragmentShader, "");
 
 	program = new glProgram(vertex, fragment, "");
 
@@ -62,61 +62,6 @@ void fwPostProcessing::draw(void)
 	tex->resetTextureUnit();
 	tex->bind();
 	quad->draw();
-}
-
-std::string fwPostProcessing::get_shader(const std::string shader_file)
-{
-	// 1. retrieve the vertex/fragment source code from filePath
-	std::string code;
-	std::ifstream file;
-
-	// ensure ifstream objects can throw exceptions:
-	file.exceptions(std::ifstream::failbit | std::ifstream::badbit);
-	try
-	{
-		// open files
-		file.open(shader_file);
-		std::stringstream vShaderStream;
-		// read file's buffer contents into streams
-		vShaderStream << file.rdbuf();
-		// close file handlers
-		file.close();
-		// convert stream into string
-		code = vShaderStream.str();
-	}
-	catch (std::ifstream::failure e)
-	{
-		std::cout << "ERROR::SHADER " << shader_file << " ::FILE_NOT_SUCCESFULLY_READ" << std::endl;
-		exit(-1);
-	}
-
-	// deal with all includes
-	const std::regex re_basename("(.*)/");
-	std::smatch base_match;
-	std::string path = "";
-
-	if (std::regex_search(shader_file, base_match, re_basename)) {
-		path = base_match[1].str();
-	}
-
-	const std::regex re("#include \"([^\"]*)\"");
-
-	int hasInclude = 1;
-	while ((hasInclude = code.find("#include")) >= 0) {
-		if (std::regex_search(code, base_match, re)) {
-			// The first sub_match is the whole string; the next
-			// sub_match is the first parenthesized expression.
-			if (base_match.size() == 2) {
-				std::string line = base_match[0].str();
-				std::string file = base_match[1].str();
-
-				std::string include = get_shader(path + "/" + file);
-				code.replace(hasInclude, sizeof(line) + 2, include);
-			}
-		}
-	}
-
-	return code;
 }
 
 fwPostProcessing::~fwPostProcessing()

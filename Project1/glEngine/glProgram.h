@@ -5,6 +5,8 @@
 #include "glVertexAttribute.h"
 #include "glUniform.h"
 
+std::string load_shader_file(const std::string shader_file, std::string defines);
+
 class glProgram
 {
 	// active attributes

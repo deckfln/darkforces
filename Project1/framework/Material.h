@@ -22,8 +22,6 @@ class Material: public Reference
 	std::list <Uniform *> uniforms;
 	std::list <glTexture *> textures;
 
-	std::string get_shader(const std::string shader_file);
-
 public:
 	Material();
 	Material(std::string vertexShader, std::string fragmentShader);
