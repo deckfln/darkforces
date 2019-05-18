@@ -5,9 +5,9 @@
 
 #include "../glEngine/glUniformBuffer.h"
 #include "../glEngine/glProgram.h"
-#include "Object3D.h"
+#include "fwObject3D.h"
 
-class Camera: public Object3D
+class Camera: public fwObject3D
 {
 	glm::vec3 target;
 	glm::vec3 direction;

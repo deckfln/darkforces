@@ -7,7 +7,7 @@
 #include "framework/DirectionLight.h"
 #include "framework/PointLight.h"
 #include "framework/SpotLight.h"
-#include "framework/Scene.h"
+#include "framework/fwScene.h"
 #include "framework/fwSkybox.h"
 #include "framework/controls/fwOrbitControl.h"
 
@@ -17,7 +17,7 @@ class myApp : public fwApp
 	PointLight *light;
 	SpotLight *light2;
 	fwSkybox *skybox;
-	Scene *scene;
+	fwScene *scene;
 	fwOrbitControl *control;
 	glm::vec4 *yellow;
 	glm::vec4 *white;

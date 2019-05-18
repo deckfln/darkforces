@@ -143,9 +143,9 @@
     <ClCompile Include="framework\MaterialBasic.cpp" />
     <ClCompile Include="framework\materials\OutlineMaterial.cpp" />
     <ClCompile Include="framework\Mesh.cpp" />
-    <ClCompile Include="framework\Object3D.cpp" />
+    <ClCompile Include="framework\fwObject3D.cpp" />
     <ClCompile Include="framework\PointLight.cpp" />
-    <ClCompile Include="framework\Scene.cpp" />
+    <ClCompile Include="framework\fwScene.cpp" />
     <ClCompile Include="framework\SphereGemeotry.cpp" />
     <ClCompile Include="framework\SpotLight.cpp" />
     <ClCompile Include="framework\Texture.cpp" />
@@ -188,9 +188,9 @@
     <ClInclude Include="framework\MaterialBasic.h" />
     <ClInclude Include="framework\materials\OutlineMaterial.h" />
     <ClInclude Include="framework\Mesh.h" />
-    <ClInclude Include="framework\Object3D.h" />
+    <ClInclude Include="framework\fwObject3D.h" />
     <ClInclude Include="framework\PointLight.h" />
-    <ClInclude Include="framework\Scene.h" />
+    <ClInclude Include="framework\fwScene.h" />
     <ClInclude Include="framework\SphereGemeotry.h" />
     <ClInclude Include="framework\SpotLight.h" />
     <ClInclude Include="framework\Texture.h" />

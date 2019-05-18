@@ -1,4 +1,4 @@
-#include "Scene.h"
+#include "fwScene.h"
 #include <iterator> 
 #include <map>
 #include <list>
@@ -6,11 +6,11 @@
 
 #include "../glad/glad.h"
 
-Scene::Scene()
+fwScene::fwScene()
 {
 }
 
-Scene &Scene::addLight(Light *light)
+fwScene &fwScene::addLight(Light *light)
 {
 	addChild(light);
 
@@ -18,20 +18,20 @@ Scene &Scene::addLight(Light *light)
 	return *this;
 }
 
-Scene &Scene::setOutline(glm::vec4 *_color)
+fwScene &fwScene::setOutline(glm::vec4 *_color)
 {
 	outline_material = new OutlineMaterial(_color);
 	return *this;
 }
 
-void Scene::parseChildren(Object3D *root, std::map<std::string, std::map<int, std::list <Mesh *>>> &meshesPerMaterial, std::string &codeLights, std::string &defines)
+void fwScene::parseChildren(fwObject3D *root, std::map<std::string, std::map<int, std::list <Mesh *>>> &meshesPerMaterial, std::string &codeLights, std::string &defines)
 {
 	Material *material;
 	Mesh *mesh;
 	std::string code;
 	int materialID;
 
-	std::list <Object3D *> _children = root->get_children();
+	std::list <fwObject3D *> _children = root->get_children();
 
 	for (auto child : _children) {
 		parseChildren(child, meshesPerMaterial, codeLights, defines);
@@ -59,7 +59,7 @@ void Scene::parseChildren(Object3D *root, std::map<std::string, std::map<int, st
 	}
 }
 
-void Scene::draw(Camera *camera)
+void fwScene::draw(Camera *camera)
 {
 	if (outline_material != nullptr && outline_program == nullptr) {
 		outline_program = new glProgram(outline_material->get_vertexShader(), outline_material->get_fragmentShader(), "");
@@ -173,7 +173,7 @@ void Scene::draw(Camera *camera)
 	glDisable(GL_STENCIL_TEST);
 }
 
-Scene::~Scene()
+fwScene::~fwScene()
 {
 	if (outline_program != nullptr) {
 		delete outline_program;

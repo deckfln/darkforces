@@ -8,11 +8,11 @@
 #include "glEngine/glProgram.h"
 #include "glEngine/glVertexArray.h"
 
-#include "Object3D.h"
+#include "fwObject3D.h"
 
 constexpr auto MESH = 1;
 
-class Mesh: public Object3D
+class Mesh: public fwObject3D
 {
 	Geometry *geometry;
 	Material *material;

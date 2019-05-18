@@ -94,7 +94,7 @@ myApp::myApp(std::string name, int width, int height):
 
 	// init the scene
 	yellow = new glm::vec4(255, 255, 0, 255);
-	scene = new Scene();
+	scene = new fwScene();
 	scene->addLight(light).
 		addLight(light2).
 		setOutline(yellow).

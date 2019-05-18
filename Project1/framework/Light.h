@@ -4,10 +4,10 @@
 #include <List>
 
 #include "glEngine/glProgram.h"
-#include "Object3D.h"
+#include "fwObject3D.h"
 #include "Uniform.h"
 
-class Light: public Object3D
+class Light: public fwObject3D
 {
 protected:
 	int type;
