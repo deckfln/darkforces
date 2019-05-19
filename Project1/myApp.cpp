@@ -101,8 +101,8 @@ myApp::myApp(std::string name, int width, int height):
 		addChild(plane);
 
 	for (auto mesh : meshes) {
-		mesh->show_normalHelper(true);
-		//mesh->outline(true);
+		//mesh->show_normalHelper(true);
+		mesh->outline(true);
 		scene->addChild(mesh);
 	}
 

@@ -103,10 +103,6 @@ void fwScene::draw(Camera *camera)
 
 	parseChildren(this, meshesPerMaterial, codeLights, defines);
 
-	glEnable(GL_STENCIL_TEST);
-	glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
-	glStencilFunc(GL_ALWAYS, 1, 0xFF);
-
 	// draw all meshes per material
 	std::map <int, std::list <fwMesh *>> listOfMaterials;
 	std::list <fwMesh *> listOfMeshes;
@@ -148,54 +144,66 @@ void fwScene::draw(Camera *camera)
 			material->set_uniforms(program);
 
 			for (auto mesh : listOfMeshes) {
-				if (mesh->is_normalHelper()) {
-					normalHelperdMeshes.push_front(mesh);
-				}
 
-					// draw all objects
 				if (mesh->is_outlined()) {
 					// write in the stencil buffer for outlined objects
 					// record the object for later drawing
+					glClear(GL_STENCIL_BUFFER_BIT);
+					glEnable(GL_STENCIL_TEST);
+					glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+					glStencilFunc(GL_ALWAYS, 1, 0xFF);
+
 					glStencilMask(0xff);
-					listOfOutlinedMeshes.push_front(mesh);
-				}
-				else {
-					glStencilMask(0x00);
 				}
 
+				/*
+				 * main draw call
+				 */
 				mesh->draw(program);
+
+				/*
+				 * Outlined draw call
+				 */
+				if (mesh->is_outlined()) {
+					// break execution flow
+					glProgram *previous = program;
+
+					outline_program->run();
+					outline_material->set_uniforms(outline_program);
+
+					camera->set_uniforms(outline_program);
+
+					glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
+					glStencilMask(0x00);
+
+					mesh->draw(outline_program);
+
+					glDisable(GL_STENCIL_TEST);
+
+					// restore execution flow
+					program->run();
+				}
+
+				/*
+				 * normal helper draw call
+				 */
+				if (mesh->is_normalHelper()) {
+					// break execution flow
+					glProgram *previous = program;
+
+					if (normalHelper_program == nullptr) {
+						normalHelper_program = new glProgram(normalHelper.get_vertexShader(), normalHelper.get_fragmentShader(), normalHelper.get_geometryShader(), defines);
+					}
+					normalHelper_program->run();
+
+					mesh->draw(normalHelper_program);
+
+					// restore execution flow
+					program->run();
+				}
 			}
 		}
 	}
-
-	// draw the ouline of the outlined object
-	if (outline_material && listOfOutlinedMeshes.size() > 0) {
-		outline_program->run();
-		outline_material->set_uniforms(outline_program);
-
-		camera->set_uniforms(outline_program);
-
-		glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
-		glStencilMask(0x00);
-
-		for (auto mesh : listOfOutlinedMeshes) {
-			mesh->draw(outline_program);
-		}
-	}
-
-	// draw the normalHelper of objects
-	if (normalHelperdMeshes.size() > 0) {
-		if (normalHelper_program == nullptr) {
-			normalHelper_program = new glProgram(normalHelper.get_vertexShader(), normalHelper.get_fragmentShader(), normalHelper.get_geometryShader(), defines);
-		}
-
-		normalHelper_program->run();
-		for (auto mesh : normalHelperdMeshes) {
-			mesh->draw(normalHelper_program);
-		}
-	}
-
-	glDisable(GL_STENCIL_TEST);
 }
 
 fwScene::~fwScene()
