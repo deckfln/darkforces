@@ -3,8 +3,10 @@
 #include <map>
 #include <iostream>
 
-#include "glEngine/glProgram.h"
 #include "../Reference.h"
+#include "../glEngine/glBufferAttribute.h"
+#include "../glEngine/glVertexArray.h"
+#include "../glEngine/glProgram.h"
 
 class Geometry: public Reference
 {
@@ -20,11 +22,11 @@ class Geometry: public Reference
 
 public:
 	Geometry();
-	Geometry& addVertices(std::string _name, void *_data, GLsizei itemSize, GLsizei len, GLuint _sizeof_element);
-	Geometry& addIndex(void *_data, GLsizei itemSize, GLsizei len, GLuint _sizeof_element);
-	Geometry& addAttribute(std::string _name, GLuint _type, void *_data, GLsizei itemSize, GLsizei len, GLuint _sizeof_element);
+	Geometry& addVertices(std::string _name, void *_data, GLsizei itemSize, GLsizei len, GLuint _sizeof_element, bool delete_on_exit=true);
+	Geometry& addIndex(void *_data, GLsizei itemSize, GLsizei len, GLuint _sizeof_element, bool delete_on_exit = true);
+	Geometry& addAttribute(std::string _name, GLuint _type, void *_data, GLsizei itemSize, GLsizei len, GLuint _sizeof_element, bool delete_on_exit = true);
 	void enable_attributes(glProgram *program);
 	int get_count(void);
-	void draw(GLenum mode);
+	void draw(GLenum mode, glVertexArray *);
 	~Geometry();
 };

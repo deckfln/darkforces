@@ -129,6 +129,7 @@
     <ClCompile Include="framework\controls\fwOrbitControl.cpp" />
     <ClCompile Include="framework\FrameBuffer.cpp" />
     <ClCompile Include="framework\fwApp.cpp" />
+    <ClCompile Include="framework\fwInstancedMesh.cpp" />
     <ClCompile Include="framework\fwMesh.cpp" />
     <ClCompile Include="framework\fwSkybox.cpp" />
     <ClCompile Include="framework\fwPostProcessing.cpp" />
@@ -155,6 +156,8 @@
     <ClCompile Include="glEngine\glBufferObject.cpp" />
     <ClCompile Include="glEngine\glCubeTexture.cpp" />
     <ClCompile Include="glEngine\glFrameBuffer.cpp" />
+    <ClCompile Include="glEngine\glInstancedBufferAttribute.cpp" />
+    <ClCompile Include="glEngine\glInstancedVertexArray.cpp" />
     <ClCompile Include="glEngine\glRenderBuffer.cpp" />
     <ClCompile Include="glEngine\glShader.cpp" />
     <ClCompile Include="glEngine\glTexture.cpp" />
@@ -175,6 +178,7 @@
     <ClInclude Include="framework\controls\fwOrbitControl.h" />
     <ClInclude Include="framework\FrameBuffer.h" />
     <ClInclude Include="framework\fwApp.h" />
+    <ClInclude Include="framework\fwInstancedMesh.h" />
     <ClInclude Include="framework\fwMesh.h" />
     <ClInclude Include="framework\fwSkybox.h" />
     <ClInclude Include="framework\fwPostProcessing.h" />
@@ -201,6 +205,8 @@
     <ClInclude Include="glEngine\glBufferObject.h" />
     <ClInclude Include="glEngine\glCubeTexture.h" />
     <ClInclude Include="glEngine\glFrameBuffer.h" />
+    <ClInclude Include="glEngine\glInstancedBufferAttribute.h" />
+    <ClInclude Include="glEngine\glInstancedVertexArray.h" />
     <ClInclude Include="glEngine\glRenderBuffer.h" />
     <ClInclude Include="glEngine\glShader.h" />
     <ClInclude Include="glEngine\glTexture.h" />

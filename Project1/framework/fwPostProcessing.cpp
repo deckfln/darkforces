@@ -42,11 +42,13 @@ fwPostProcessing::fwPostProcessing(std::string _vertexShader, std::string _fragm
 	source = _source;
 	source->set_uniform(program);
 
-	Geometry *geometry = new Geometry();
-	geometry->addVertices("aPos", quadVertices, 2, sizeof(quadVertices), sizeof(float));
-	geometry->addAttribute("aTexCoord", GL_ARRAY_BUFFER, quadUvs, 2, sizeof(quadUvs), sizeof(float));
+	geometry = new Geometry();
+	geometry->addVertices("aPos", quadVertices, 2, sizeof(quadVertices), sizeof(float), false);
+	geometry->addAttribute("aTexCoord", GL_ARRAY_BUFFER, quadUvs, 2, sizeof(quadUvs), sizeof(float), false);
 
-	quad = new glVertexArray(geometry, program);
+	quad = new glVertexArray();
+	geometry->enable_attributes(program);
+	quad->unbind();
 }
 
 void fwPostProcessing::draw(void)
@@ -61,11 +63,12 @@ void fwPostProcessing::draw(void)
 	glTexture *tex = (glTexture *)source->get_value();
 	tex->resetTextureUnit();
 	tex->bind();
-	quad->draw();
+	geometry->draw(GL_TRIANGLES, quad);
 }
 
 fwPostProcessing::~fwPostProcessing()
 {
 	delete program;
 	delete quad;
+	delete geometry;
 }

@@ -14,6 +14,7 @@ class glVertexAttribute
 	GLenum single_type;
 	GLuint single_size;
 	GLuint single_nb;
+
 public:
 	glVertexAttribute(void);
 	glVertexAttribute(GLchar *name, GLsizei length, GLsizei size, GLenum type, GLint location);

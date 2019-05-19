@@ -1,19 +1,20 @@
 #include "myApp.h"
 
 #include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
+#include <glm/gtx/transform.hpp>
 #include <math.h>
 
 #include "include/stb_image.h"
 #include "framework/DiffuseMaterial.h"
 #include "framework/MaterialBasic.h"
 #include "framework/fwMesh.h"
+#include "framework/fwInstancedMesh.h"
 #include "framework/BoxGeometry.h"
 #include "framework/geometries/PlaneGeometry.h"
 
 #include "framework/Loader.h"
 
-myApp::myApp(std::string name, int width, int height):
+myApp::myApp(std::string name, int width, int height) :
 	fwApp(name, width, height)
 {
 	camera = new Camera(width, height);
@@ -78,6 +79,7 @@ myApp::myApp(std::string name, int width, int height):
 	glm::vec3 half(0.1);
 	fLight->set_scale(half).set_name("light");
 	fLight2->set_scale(half).set_name("light2");
+	fLight->draw_wireframe(true);
 
 	light->addChild(fLight);
 	light2->addChild(fLight2);
@@ -100,10 +102,15 @@ myApp::myApp(std::string name, int width, int height):
 		setOutline(yellow).
 		addChild(plane);
 
+	glm::mat4 positions[2];
+	positions[0] = glm::translate(glm::vec3(-1,0, 0));
+	positions[1] = glm::translate(glm::vec3(1, 0, 0));
+
 	for (auto mesh : meshes) {
+		fwInstancedMesh *instancedMesh = new fwInstancedMesh(mesh->get_geometry(), mesh->get_material(), 2, positions);
 		//mesh->show_normalHelper(true);
-		mesh->outline(true);
-		scene->addChild(mesh);
+		instancedMesh->outline(true);
+		scene->addChild(instancedMesh);
 	}
 
 	// Skybox

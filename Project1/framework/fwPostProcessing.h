@@ -3,8 +3,9 @@
 
 #include "framework/Uniform.h"
 
-#include "glEngine/glProgram.h"
-#include "glEngine/glVertexArray.h"
+#include "../glEngine/glProgram.h"
+#include "../glEngine/glVertexArray.h"
+#include "Geometry.h"
 
 class fwPostProcessing
 {
@@ -12,6 +13,7 @@ class fwPostProcessing
 	GLuint quadVBO;
 	glProgram *program;
 	glVertexArray *quad;
+	Geometry *geometry;
 	Uniform *source;
 
 public:

@@ -7,6 +7,7 @@
 #include "../glad/glad.h"
 
 #include "materials/NormalHelperMaterial.h"
+#include "fwInstancedMesh.h"
 
 static NormalHelperMaterial normalHelper;
 static glProgram *normalHelper_program = nullptr;
@@ -49,19 +50,27 @@ void fwScene::parseChildren(fwObject3D *root, std::map<std::string, std::map<int
 		mesh = (fwMesh *)child;
 
 		if (mesh->is_visible()) {
+			std::string local_defines = defines;
+
 			material = mesh->get_material();
 			code = material->hashCode() + codeLights;
 			materialID = material->getID();
 
+			if (mesh->is_class(INSTANCED_MESH)) {
+				local_defines += "#define INSTANCED\n";
+				code += "INSTANCED";
+			}
+
 			meshesPerMaterial[code][materialID].push_front(mesh);
 			materials[materialID] = material;
+
 
 			// Create the shader program if it is not already there
 			if (programs.count(code) == 0) {
 				std::string vertex = material->get_vertexShader();
 				std::string fragment = material->get_fragmentShader();
 				std::string geometry = material->get_geometryShader();
-				programs[code] = new glProgram(vertex, fragment, geometry, defines);
+				programs[code] = new glProgram(vertex, fragment, geometry, local_defines);
 			}
 		}
 	}

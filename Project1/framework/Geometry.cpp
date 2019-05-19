@@ -9,25 +9,25 @@ Geometry::Geometry()
 	index = nullptr;
 }
 
-Geometry&  Geometry::addVertices(std::string _name, void *_data, GLsizei itemSize, GLsizei len, GLuint _sizeof_element)
+Geometry&  Geometry::addVertices(std::string _name, void *_data, GLsizei itemSize, GLsizei len, GLuint _sizeof_element, bool delete_on_exit)
 {
-	vertices = new glBufferAttribute(_name, GL_ARRAY_BUFFER, _data, itemSize, len, _sizeof_element);
+	vertices = new glBufferAttribute(_name, GL_ARRAY_BUFFER, _data, itemSize, len, _sizeof_element, delete_on_exit);
 	indexedGeometry = false;
 
 	return *this;
 }
 
-Geometry&  Geometry::addIndex(void *_data, GLsizei itemSize, GLsizei len, GLuint _sizeof_element)
+Geometry&  Geometry::addIndex(void *_data, GLsizei itemSize, GLsizei len, GLuint _sizeof_element, bool delete_on_exit)
 {
-	index = new glBufferAttribute("_index", GL_ELEMENT_ARRAY_BUFFER, _data, itemSize, len, _sizeof_element);
+	index = new glBufferAttribute("_index", GL_ELEMENT_ARRAY_BUFFER, _data, itemSize, len, _sizeof_element, delete_on_exit);
 	indexedGeometry = true;
 
 	return *this;
 }
 
-Geometry& Geometry::addAttribute(std::string _name, GLuint _type, void *_data, GLsizei itemSize, GLsizei len, GLuint _sizeof_element)
+Geometry& Geometry::addAttribute(std::string _name, GLuint _type, void *_data, GLsizei itemSize, GLsizei len, GLuint _sizeof_element, bool delete_on_exit)
 {
-	attributes[current_attribute] = new	glBufferAttribute(_name, _type, _data, itemSize, len, _sizeof_element);
+	attributes[current_attribute] = new	glBufferAttribute(_name, _type, _data, itemSize, len, _sizeof_element, delete_on_exit);
 	current_attribute++;
 
 	return *this;
@@ -60,13 +60,13 @@ int Geometry::get_count(void)
 	return count;
 }
 
-void Geometry::draw(GLenum mode)
+void Geometry::draw(GLenum mode, glVertexArray *va)
 {
 	if (index != nullptr) {
-		glDrawElements(mode, index->get_count(), GL_UNSIGNED_INT, 0);
+		va->draw(mode, true, index->get_count());
 	}
 	else {
-		glDrawArrays(mode, 0, vertices->get_count());
+		va->draw(mode, false, vertices->get_count());
 	}
 }
 

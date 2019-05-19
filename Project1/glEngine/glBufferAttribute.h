@@ -15,11 +15,13 @@ class glBufferAttribute
 	GLuint itemSize;
 	GLuint count;
 	GLuint sizeof_element;
-	
+
+	bool delete_on_exit = true;	// delete data on exit
+
 	glBufferObject *vbo;
 
 public:
-	glBufferAttribute(std::string _name, GLuint _type, void *_data, GLsizei itemSize, GLsizei len, GLuint _sizeof_element);
+	glBufferAttribute(std::string _name, GLuint _type, void *_data, GLsizei itemSize, GLsizei len, GLuint _sizeof_element, bool delete_on_exit = true);
 	GLuint get_size(void);
 	GLvoid *get_data();
 	GLuint get_elements(void);
@@ -27,5 +29,6 @@ public:
 	const GLuint get_count(void);
 	void bind();
 	const std::string get_name(void);
+	virtual int get_divisor(void) { return 0; };
 	~glBufferAttribute();
 };

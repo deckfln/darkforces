@@ -69,13 +69,15 @@ fwSkybox::fwSkybox(std::string *textures)
 	program = new glProgram(vertex, fragment, "", "");
 
 	program->run();
-	Uniform *uniform = new Uniform("skybox", texture);
+	uniform = new Uniform("skybox", texture);
 	uniform->set_uniform(program);
 
-	Geometry *geometry = new Geometry();
-	geometry->addVertices("aPos", skyboxVertices, 3, sizeof(skyboxVertices), sizeof(float));
+	geometry = new Geometry();
+	geometry->addVertices("aPos", skyboxVertices, 3, sizeof(skyboxVertices), sizeof(float), false);
 
-	cube = new glVertexArray(geometry, program);
+	cube = new glVertexArray();
+	geometry->enable_attributes(program);
+	cube->unbind();
 }
 
 void fwSkybox::draw(Camera *camera)
@@ -93,8 +95,7 @@ void fwSkybox::draw(Camera *camera)
 	texture->resetTextureUnit();
 	texture->bind();
 
-
-	cube->draw();
+	geometry->draw(GL_TRIANGLES, cube);
 	glDepthFunc(GL_LESS); // set depth function back to default
 }
 
@@ -129,5 +130,8 @@ std::string fwSkybox::get_shader(const std::string shader_file)
 
 fwSkybox::~fwSkybox()
 {
-
+	delete program;
+	delete cube;
+	delete geometry;
+	delete uniform;
 }

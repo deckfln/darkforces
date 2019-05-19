@@ -1,14 +1,15 @@
 #include "glBufferAttribute.h"
 
-glBufferAttribute::glBufferAttribute(std::string _name, GLuint _type, void *_data, GLsizei _itemSize, GLsizei _len, GLuint _sizeof_element)
+glBufferAttribute::glBufferAttribute(std::string _name, GLuint _type, void *_data, GLsizei _itemSize, GLsizei _len, GLuint _sizeof_element, bool _delete_on_exit):
+	name(_name),
+	type(_type),
+	data(_data),
+	len(_len),
+	itemSize(_itemSize),
+	sizeof_element(_sizeof_element),
+	delete_on_exit(_delete_on_exit)
 {
-	name = _name;
-	type = _type;
-	data  =_data;
-	len = _len;
-	itemSize = _itemSize;
 	count = len / (_sizeof_element * itemSize);
-	sizeof_element = _sizeof_element;
 
 	vbo = new glBufferObject(type, len, data);
 }
@@ -45,6 +46,8 @@ void glBufferAttribute::bind()
 
 glBufferAttribute::~glBufferAttribute()
 {
-	delete data;
+	if (delete_on_exit)
+		delete data;
+
 	delete vbo;
 }

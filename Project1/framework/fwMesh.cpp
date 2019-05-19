@@ -48,22 +48,35 @@ bool fwMesh::is_normalHelper(void)
 	return normalHelper;
 }
 
+fwMesh &fwMesh::draw_wireframe(bool _wireframe)
+{
+	wireFrame = _wireframe;
+	return *this;
+}
+
 void fwMesh::draw(glProgram *program)
 {
 	// create one VAO by shader class
 
 	GLuint id = program->getID();
 	if (vao.count(id) == 0) {
-		vao[id] = new glVertexArray(geometry, program);
+		vao[id] = new glVertexArray();
+		geometry->enable_attributes(program);
+		vao[id]->unbind();
 	}
 	program->set_uniform("model", worldMatrix);
 
-	vao[id]->draw(GL_TRIANGLES);
+	geometry->draw(wireFrame ? GL_LINES : GL_TRIANGLES, vao[id]);
 }
 
 Material *fwMesh::get_material(void)
 {
 	return material;
+}
+
+Geometry *fwMesh::get_geometry(void)
+{
+	return geometry;
 }
 
 std::string fwMesh::getMaterialHash(void)

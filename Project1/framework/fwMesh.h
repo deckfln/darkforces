@@ -14,19 +14,22 @@ constexpr auto MESH = 1;
 
 class fwMesh: public fwObject3D
 {
-	Geometry *geometry = nullptr;
-	Material *material = nullptr;
-
-	std::map<GLuint, glVertexArray *>vao;
-
 	bool visible = true;
 	bool outlined = false;
 	bool normalHelper = false;
 
+protected:
+	Geometry *geometry = nullptr;
+	Material *material = nullptr;
+	std::map<GLuint, glVertexArray *>vao;
+	bool wireFrame = false;
+
 public:
 	fwMesh(Geometry *_geometry, Material *_material);
+
 	std::string getMaterialHash(void);
 	Material *get_material(void);
+	Geometry *get_geometry(void);
 
 	fwMesh &set_visible(bool _visible = true);
 	bool is_visible(void);
@@ -37,6 +40,8 @@ public:
 	fwMesh &show_normalHelper(bool _helper);
 	bool is_normalHelper(void);
 
-	void draw(glProgram *);
+	fwMesh &draw_wireframe(bool _wireframe);
+
+	virtual void draw(glProgram *);
 	~fwMesh();
 };

@@ -1,15 +1,16 @@
 #version 330 core
+#define DEFINES
+
 layout (location = 0) in vec3 aPos;
 layout (location = 1) in vec3 aNormal;
 
+#ifdef INSTANCED
+layout (location = 2) in mat4 model;
+#else
 uniform mat4 model;
+#endif
 
-layout (std140) uniform Camera
-{
-	mat4 view;
-	mat4 projection;
-	vec3 viewPos;
-};
+#include "include/camera.glsl"
 
 void main()
 {
