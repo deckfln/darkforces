@@ -12,27 +12,31 @@
 
 constexpr auto MESH = 1;
 
-class Mesh: public fwObject3D
+class fwMesh: public fwObject3D
 {
-	Geometry *geometry;
-	Material *material;
+	Geometry *geometry = nullptr;
+	Material *material = nullptr;
 
 	std::map<GLuint, glVertexArray *>vao;
 
-	bool visible;
-	bool outlined;
+	bool visible = true;
+	bool outlined = false;
+	bool normalHelper = false;
 
 public:
-	Mesh(Geometry *_geometry, Material *_material);
+	fwMesh(Geometry *_geometry, Material *_material);
 	std::string getMaterialHash(void);
 	Material *get_material(void);
 
-	Mesh &set_visible(bool _visible = true);
+	fwMesh &set_visible(bool _visible = true);
 	bool is_visible(void);
 
-	Mesh &outline(bool _outlined);
+	fwMesh &outline(bool _outlined);
 	bool is_outlined(void);
 
+	fwMesh &show_normalHelper(bool _helper);
+	bool is_normalHelper(void);
+
 	void draw(glProgram *);
-	~Mesh();
+	~fwMesh();
 };

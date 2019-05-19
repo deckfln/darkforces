@@ -12,10 +12,12 @@ class Material: public Reference
 	int id;
 	std::string vertexShader;
 	std::string fragmentShader;
+	std::string geometryShader;
 	std::string defines;
 
 	std::string vertexShaderCode;
 	std::string fragmentShaderCode;
+	std::string geometryShaderCode;
 
 	int current_texture = 0;
 
@@ -24,7 +26,7 @@ class Material: public Reference
 
 public:
 	Material();
-	Material(std::string vertexShader, std::string fragmentShader);
+	Material(std::string vertexShader, std::string fragmentShader, std::string geometryShader);
 	Material &addTexture(std::string uniform, Texture *texture);
 	Material &addTexture(std::string uniform, glTexture *texture);
 	Material &addShaders(std::string vertexShader, std::string fragmentShader, const std::string defines = "");
@@ -34,6 +36,7 @@ public:
 
 	const std::string &get_vertexShader(void);
 	const std::string &get_fragmentShader(void);
+	const std::string &get_geometryShader(void);
 	const int getID(void);
 
 	void bindTextures(void);

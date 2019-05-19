@@ -84,9 +84,6 @@
     <ClCompile Include="framework\Camera.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="framework\Mesh.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
     <ClCompile Include="framework\Uniform.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
@@ -142,6 +139,12 @@
       <Filter>Fichiers sources</Filter>
     </ClCompile>
     <ClCompile Include="framework\fwScene.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="framework\fwMesh.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="framework\materials\NormalHelperMaterial.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
   </ItemGroup>
@@ -212,9 +215,6 @@
     <ClInclude Include="framework\Camera.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="framework\Mesh.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
     <ClInclude Include="framework\Uniform.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
@@ -273,6 +273,12 @@
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
     <ClInclude Include="framework\fwScene.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="framework\fwMesh.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="framework\materials\NormalHelperMaterial.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
   </ItemGroup>

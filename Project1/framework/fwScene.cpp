@@ -6,6 +6,11 @@
 
 #include "../glad/glad.h"
 
+#include "materials/NormalHelperMaterial.h"
+
+static NormalHelperMaterial normalHelper;
+static glProgram *normalHelper_program = nullptr;
+
 fwScene::fwScene()
 {
 }
@@ -24,10 +29,10 @@ fwScene &fwScene::setOutline(glm::vec4 *_color)
 	return *this;
 }
 
-void fwScene::parseChildren(fwObject3D *root, std::map<std::string, std::map<int, std::list <Mesh *>>> &meshesPerMaterial, std::string &codeLights, std::string &defines)
+void fwScene::parseChildren(fwObject3D *root, std::map<std::string, std::map<int, std::list <fwMesh *>>> &meshesPerMaterial, std::string &codeLights, std::string &defines)
 {
 	Material *material;
-	Mesh *mesh;
+	fwMesh *mesh;
 	std::string code;
 	int materialID;
 
@@ -41,7 +46,7 @@ void fwScene::parseChildren(fwObject3D *root, std::map<std::string, std::map<int
 			continue;
 		}
 
-		mesh = (Mesh *)child;
+		mesh = (fwMesh *)child;
 
 		if (mesh->is_visible()) {
 			material = mesh->get_material();
@@ -53,7 +58,10 @@ void fwScene::parseChildren(fwObject3D *root, std::map<std::string, std::map<int
 
 			// Create the shader program if it is not already there
 			if (programs.count(code) == 0) {
-				programs[code] = new glProgram(material->get_vertexShader(), material->get_fragmentShader(), defines);
+				std::string vertex = material->get_vertexShader();
+				std::string fragment = material->get_fragmentShader();
+				std::string geometry = material->get_geometryShader();
+				programs[code] = new glProgram(vertex, fragment, geometry, defines);
 			}
 		}
 	}
@@ -62,7 +70,7 @@ void fwScene::parseChildren(fwObject3D *root, std::map<std::string, std::map<int
 void fwScene::draw(Camera *camera)
 {
 	if (outline_material != nullptr && outline_program == nullptr) {
-		outline_program = new glProgram(outline_material->get_vertexShader(), outline_material->get_fragmentShader(), "");
+		outline_program = new glProgram(outline_material->get_vertexShader(), outline_material->get_fragmentShader(), "", "");
 	}
 
 	// update all elements on the scene
@@ -86,10 +94,10 @@ void fwScene::draw(Camera *camera)
 
 	// create a map of materials shaders vs meshes
 	//    [shaderCode][materialID] = [mesh1, mesh2]
-	std::map<std::string, std::map<int, std::list <Mesh *>>> meshesPerMaterial;
+	std::map<std::string, std::map<int, std::list <fwMesh *>>> meshesPerMaterial;
 	Material *material;
 
-	std::list <Mesh *> ::iterator it;
+	std::list <fwMesh *> ::iterator it;
 	std::string code;
 	int materialID;
 
@@ -100,9 +108,10 @@ void fwScene::draw(Camera *camera)
 	glStencilFunc(GL_ALWAYS, 1, 0xFF);
 
 	// draw all meshes per material
-	std::map <int, std::list <Mesh *>> listOfMaterials;
-	std::list <Mesh *> listOfMeshes;
-	std::list <Mesh *> listOfOutlinedMeshes;
+	std::map <int, std::list <fwMesh *>> listOfMaterials;
+	std::list <fwMesh *> listOfMeshes;
+	std::list <fwMesh *> listOfOutlinedMeshes;
+	std::list <fwMesh *> normalHelperdMeshes;
 
 	// setup camera
 	camera->set_uniformBuffer();
@@ -139,7 +148,11 @@ void fwScene::draw(Camera *camera)
 			material->set_uniforms(program);
 
 			for (auto mesh : listOfMeshes) {
-				// draw all objects
+				if (mesh->is_normalHelper()) {
+					normalHelperdMeshes.push_front(mesh);
+				}
+
+					// draw all objects
 				if (mesh->is_outlined()) {
 					// write in the stencil buffer for outlined objects
 					// record the object for later drawing
@@ -167,6 +180,18 @@ void fwScene::draw(Camera *camera)
 
 		for (auto mesh : listOfOutlinedMeshes) {
 			mesh->draw(outline_program);
+		}
+	}
+
+	// draw the normalHelper of objects
+	if (normalHelperdMeshes.size() > 0) {
+		if (normalHelper_program == nullptr) {
+			normalHelper_program = new glProgram(normalHelper.get_vertexShader(), normalHelper.get_fragmentShader(), normalHelper.get_geometryShader(), defines);
+		}
+
+		normalHelper_program->run();
+		for (auto mesh : normalHelperdMeshes) {
+			mesh->draw(normalHelper_program);
 		}
 	}
 

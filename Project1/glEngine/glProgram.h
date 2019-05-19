@@ -18,7 +18,7 @@ class glProgram
 
 public:
 	glProgram(void);
-	glProgram(const std::string vertexShader, const std::string fragmentShader, const std::string defines);
+	glProgram(const std::string vertexShader, const std::string fragmentShader, const std::string geometryShader, const std::string defines);
 	GLuint getID(void);
 	void run(void);
 	glVertexAttribute *get_attribute(const std::string name);

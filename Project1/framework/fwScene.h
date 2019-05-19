@@ -4,7 +4,7 @@
 #include "../glEngine/glUniformBuffer.h"
 
 #include "fwObject3D.h"
-#include "framework/Mesh.h"
+#include "framework/fwMesh.h"
 #include "framework/Light.h"
 #include "framework/Camera.h"
 #include "materials/OutlineMaterial.h"
@@ -20,7 +20,7 @@ class fwScene : public fwObject3D
 	Light *lights[10];
 	int current_light;
 
-	void parseChildren(fwObject3D *root, std::map<std::string, std::map<int, std::list <Mesh *>>> &meshesPerMaterial, std::string &codeLights, std::string &defines);
+	void parseChildren(fwObject3D *root, std::map<std::string, std::map<int, std::list <fwMesh *>>> &meshesPerMaterial, std::string &codeLights, std::string &defines);
 
 public:
 	fwScene();

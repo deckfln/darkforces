@@ -10,7 +10,7 @@
 #include "Texture.h"
 #include "Geometry.h"
 #include "DiffuseMaterial.h"
-#include "Mesh.h"
+#include "fwMesh.h"
 
 Loader::Loader(const std::string _file):
 	file(_file)
@@ -43,7 +43,7 @@ void Loader::processNode(aiNode *node, const aiScene *scene)
 	}
 }
 
-Mesh *Loader::processMesh(aiMesh *mesh, const aiScene *scene)
+fwMesh *Loader::processMesh(aiMesh *mesh, const aiScene *scene)
 {
 	/*
 	 * build the geometry
@@ -128,7 +128,7 @@ Mesh *Loader::processMesh(aiMesh *mesh, const aiScene *scene)
 		}
 	}
 
-	Mesh *nmesh = new Mesh(geometry, material);
+	fwMesh *nmesh = new fwMesh(geometry, material);
 
 	return nmesh;
 }
@@ -151,7 +151,7 @@ std::vector<Texture *> Loader::loadMaterialTextures(aiMaterial *mat, aiTextureTy
 	return textures;
 }
 
-std::vector<Mesh *>Loader::get_meshes(void)
+std::vector<fwMesh *>Loader::get_meshes(void)
 {
 	return meshes;
 }

@@ -1,8 +1,8 @@
-#include "Mesh.h"
+#include "fwMesh.h"
 #include "glad/glad.h"
 
 
-Mesh::Mesh(Geometry *_geometry, Material *_material):
+fwMesh::fwMesh(Geometry *_geometry, Material *_material):
 	geometry(_geometry),
 	material(_material),
 	visible(true),
@@ -14,29 +14,41 @@ Mesh::Mesh(Geometry *_geometry, Material *_material):
 	material->reference();
 }
 
-Mesh &Mesh::set_visible(bool _visible)
+fwMesh &fwMesh::set_visible(bool _visible)
 {
 	visible = _visible;
 	return *this;
 }
 
-bool Mesh::is_visible(void)
+bool fwMesh::is_visible(void)
 {
 	return visible;
 }
 
-Mesh &Mesh::outline(bool _outlined)
+fwMesh &fwMesh::outline(bool _outlined)
 {
 	outlined = _outlined;
 	return *this;
 }
 
-bool Mesh::is_outlined(void)
+bool fwMesh::is_outlined(void)
 {
 	return outlined;
 }
 
-void Mesh::draw(glProgram *program)
+fwMesh &fwMesh::show_normalHelper(bool _helper)
+{
+	normalHelper = _helper;
+
+	return *this;
+}
+
+bool fwMesh::is_normalHelper(void)
+{
+	return normalHelper;
+}
+
+void fwMesh::draw(glProgram *program)
 {
 	// create one VAO by shader class
 
@@ -49,17 +61,17 @@ void Mesh::draw(glProgram *program)
 	vao[id]->draw(GL_TRIANGLES);
 }
 
-Material *Mesh::get_material(void)
+Material *fwMesh::get_material(void)
 {
 	return material;
 }
 
-std::string Mesh::getMaterialHash(void)
+std::string fwMesh::getMaterialHash(void)
 {
 	return material->hashCode();
 }
 
-Mesh::~Mesh()
+fwMesh::~fwMesh()
 {
 	if (geometry->dereference())
 		delete geometry;

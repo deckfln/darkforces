@@ -82,16 +82,22 @@ glProgram::glProgram(void)
 {
 }
 
-glProgram::glProgram(const std::string vertexShader, const std::string fragmentShader, const std::string defines)
+glProgram::glProgram(const std::string vertexShader, const std::string fragmentShader, const std::string geometryShader, const std::string defines)
 {
 	glShader *vertex = new glShader(vertexShader, defines, GL_VERTEX_SHADER);
 	glShader *fragment = new glShader(fragmentShader, defines, GL_FRAGMENT_SHADER);
-
+	glShader *geometry = nullptr;
+	if (geometryShader != "") {
+		geometry = new glShader(geometryShader, defines, GL_GEOMETRY_SHADER);
+	}
 	// link shaders
 	id = glCreateProgram();
 
 	glAttachShader(id, vertex->id);
 	glAttachShader(id, fragment->id);
+	if (geometry) {
+		glAttachShader(id, geometry->id);
+	}
 	glLinkProgram(id);
 
 	// check for linking errors
@@ -129,6 +135,11 @@ glProgram::glProgram(const std::string vertexShader, const std::string fragmentS
 
 		glUniform *uniform = new glUniform(name, length, size, type, location);
 		uniforms[name] = uniform;
+	}
+	delete vertex;
+	delete fragment;
+	if (geometry) {
+		delete geometry;
 	}
 }
 

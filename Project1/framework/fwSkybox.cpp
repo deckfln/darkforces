@@ -66,7 +66,7 @@ fwSkybox::fwSkybox(std::string *textures)
 	std::string vertex = get_shader("shaders/cubemap_vertex.glsl");
 	std::string fragment = get_shader("shaders/cubemap_fragment.glsl");
 
-	program = new glProgram(vertex, fragment, "");
+	program = new glProgram(vertex, fragment, "", "");
 
 	program->run();
 	Uniform *uniform = new Uniform("skybox", texture);

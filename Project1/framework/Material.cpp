@@ -16,11 +16,10 @@ Material::Material():
 {
 }
 
-Material::Material(std::string _vertexShader, std::string _fragmentShader):
+Material::Material(std::string _vertexShader, std::string _fragmentShader, std::string _geometryShader):
 	vertexShader(_vertexShader),
 	fragmentShader(_fragmentShader),
-	vertexShaderCode(""),
-	fragmentShaderCode(""),
+	geometryShader(_geometryShader),
 	id(_materialID++)
 {
 }
@@ -98,6 +97,20 @@ const std::string &Material::get_fragmentShader(void)
 	fragmentShaderCode = load_shader_file(fragmentShader, defines);
 
 	return fragmentShaderCode;
+}
+
+const std::string &Material::get_geometryShader(void)
+{
+	if (geometryShader == "") {
+		return geometryShaderCode;
+	}
+
+	if (geometryShaderCode != "") {
+		return geometryShaderCode;
+	}
+	geometryShaderCode = load_shader_file(geometryShader, defines);
+
+	return geometryShaderCode;
 }
 
 std::string Material::hashCode(void)

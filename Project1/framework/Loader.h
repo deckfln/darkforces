@@ -6,20 +6,20 @@
 #include <assimp/scene.h>
 
 #include "Texture.h"
-#include "Mesh.h"
+#include "fwMesh.h"
 
 class Loader 
 {
 	const std::string file;
 	std::string directory;
-	std::vector<Mesh *> meshes;
+	std::vector<fwMesh *> meshes;
 
 	void processNode(aiNode *node, const aiScene *scene);
-	Mesh *processMesh(aiMesh *mesh, const aiScene *scene);
+	fwMesh *processMesh(aiMesh *mesh, const aiScene *scene);
 	std::vector<Texture *> loadMaterialTextures(aiMaterial *mat, aiTextureType type);
 
 public:
 	Loader(const std::string _file);
-	std::vector<Mesh *>get_meshes(void);
+	std::vector<fwMesh *>get_meshes(void);
 	~Loader();
 };

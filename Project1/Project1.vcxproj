@@ -129,6 +129,7 @@
     <ClCompile Include="framework\controls\fwOrbitControl.cpp" />
     <ClCompile Include="framework\FrameBuffer.cpp" />
     <ClCompile Include="framework\fwApp.cpp" />
+    <ClCompile Include="framework\fwMesh.cpp" />
     <ClCompile Include="framework\fwSkybox.cpp" />
     <ClCompile Include="framework\fwPostProcessing.cpp" />
     <ClCompile Include="framework\geometries\PlaneGeometry.cpp" />
@@ -141,8 +142,8 @@
     <ClCompile Include="framework\Loader.cpp" />
     <ClCompile Include="framework\Material.cpp" />
     <ClCompile Include="framework\MaterialBasic.cpp" />
+    <ClCompile Include="framework\materials\NormalHelperMaterial.cpp" />
     <ClCompile Include="framework\materials\OutlineMaterial.cpp" />
-    <ClCompile Include="framework\Mesh.cpp" />
     <ClCompile Include="framework\fwObject3D.cpp" />
     <ClCompile Include="framework\PointLight.cpp" />
     <ClCompile Include="framework\fwScene.cpp" />
@@ -174,6 +175,7 @@
     <ClInclude Include="framework\controls\fwOrbitControl.h" />
     <ClInclude Include="framework\FrameBuffer.h" />
     <ClInclude Include="framework\fwApp.h" />
+    <ClInclude Include="framework\fwMesh.h" />
     <ClInclude Include="framework\fwSkybox.h" />
     <ClInclude Include="framework\fwPostProcessing.h" />
     <ClInclude Include="framework\geometries\PlaneGeometry.h" />
@@ -186,8 +188,8 @@
     <ClInclude Include="framework\Loader.h" />
     <ClInclude Include="framework\Material.h" />
     <ClInclude Include="framework\MaterialBasic.h" />
+    <ClInclude Include="framework\materials\NormalHelperMaterial.h" />
     <ClInclude Include="framework\materials\OutlineMaterial.h" />
-    <ClInclude Include="framework\Mesh.h" />
     <ClInclude Include="framework\fwObject3D.h" />
     <ClInclude Include="framework\PointLight.h" />
     <ClInclude Include="framework\fwScene.h" />

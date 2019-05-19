@@ -7,7 +7,7 @@
 #include "include/stb_image.h"
 #include "framework/DiffuseMaterial.h"
 #include "framework/MaterialBasic.h"
-#include "framework/Mesh.h"
+#include "framework/fwMesh.h"
 #include "framework/BoxGeometry.h"
 #include "framework/geometries/PlaneGeometry.h"
 
@@ -65,15 +65,15 @@ myApp::myApp(std::string name, int width, int height):
 	);
 
 	Loader loader("models/stormtrooper/stormtrooper.dae");
-	std::vector<Mesh *>meshes = loader.get_meshes();
+	std::vector<fwMesh *>meshes = loader.get_meshes();
 
 	// lights
 	BoxGeometry *geometry = new BoxGeometry();
 	glm::vec4 *white = new glm::vec4(1.0);
 
 	MaterialBasic *basic = new MaterialBasic(white);
-	Mesh *fLight = new Mesh(geometry, basic);
-	Mesh *fLight2 = new Mesh(geometry, basic);
+	fwMesh *fLight = new fwMesh(geometry, basic);
+	fwMesh *fLight2 = new fwMesh(geometry, basic);
 
 	glm::vec3 half(0.1);
 	fLight->set_scale(half).set_name("light");
@@ -87,7 +87,7 @@ myApp::myApp(std::string name, int width, int height):
 	Texture *t2 = new Texture("images/container2_specular.png");
 	DiffuseMaterial *material = new DiffuseMaterial(t1, nullptr, 64);
 
-	Mesh *plane = new Mesh(new PlaneGeometry(8, 8), material);
+	fwMesh *plane = new fwMesh(new PlaneGeometry(8, 8), material);
 
 	glm::vec3 deg(3.1415 / 2, 0, 0);
 	plane->rotate(deg);
@@ -101,7 +101,8 @@ myApp::myApp(std::string name, int width, int height):
 		addChild(plane);
 
 	for (auto mesh : meshes) {
-		mesh->outline(true);
+		mesh->show_normalHelper(true);
+		//mesh->outline(true);
 		scene->addChild(mesh);
 	}
 

@@ -36,7 +36,7 @@ fwPostProcessing::fwPostProcessing(std::string _vertexShader, std::string _fragm
 	std::string vertex = load_shader_file(_vertexShader, "");
 	std::string fragment = load_shader_file(_fragmentShader, "");
 
-	program = new glProgram(vertex, fragment, "");
+	program = new glProgram(vertex, fragment, "", "");
 
 	program->run();
 	source = _source;
