@@ -11,6 +11,8 @@
 
 static NormalHelperMaterial normalHelper;
 static glProgram *normalHelper_program = nullptr;
+static glProgram *outline_program = nullptr;
+static glProgram *outline_instanced_program = nullptr;
 
 fwScene::fwScene()
 {
@@ -176,16 +178,30 @@ void fwScene::draw(Camera *camera)
 				if (mesh->is_outlined()) {
 					// break execution flow
 					glProgram *previous = program;
+					glProgram *current = nullptr;
 
-					outline_program->run();
-					outline_material->set_uniforms(outline_program);
+					if (mesh->is_class(INSTANCED_MESH)) {
+						if (outline_instanced_program == nullptr) {
+							outline_instanced_program = new glProgram(outline_material->get_vertexShader(), outline_material->get_fragmentShader(), "", "#define INSTANCED");
+						}
+						current = outline_instanced_program;
+					}
+					else {
+						if (outline_program == nullptr) {
+							outline_program = new glProgram(outline_material->get_vertexShader(), outline_material->get_fragmentShader(), "", "");
+						}
+						current = outline_program;
+					}
 
-					camera->set_uniforms(outline_program);
+					current->run();
+					outline_material->set_uniforms(current);
+
+					camera->set_uniforms(current);
 
 					glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
 					glStencilMask(0x00);
 
-					mesh->draw(outline_program);
+					mesh->draw(current);
 
 					glDisable(GL_STENCIL_TEST);
 

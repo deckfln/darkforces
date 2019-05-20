@@ -15,7 +15,6 @@ class fwScene : public fwObject3D
 	std::map <int, Material *> materials;
 
 	OutlineMaterial *outline_material = nullptr;
-	glProgram *outline_program = nullptr;
 
 	Light *lights[10];
 	int current_light;
