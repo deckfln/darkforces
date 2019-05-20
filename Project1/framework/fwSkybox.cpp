@@ -72,7 +72,7 @@ fwSkybox::fwSkybox(std::string *textures)
 	uniform = new Uniform("skybox", texture);
 	uniform->set_uniform(program);
 
-	geometry = new Geometry();
+	geometry = new fwGeometry();
 	geometry->addVertices("aPos", skyboxVertices, 3, sizeof(skyboxVertices), sizeof(float), false);
 
 	cube = new glVertexArray();

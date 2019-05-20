@@ -1,4 +1,4 @@
-#include "Material.h"
+#include "fwMaterial.h"
 #include <string>
 #include <functional>
 #include <iostream>
@@ -10,13 +10,13 @@
 
 int _materialID = 0;
 
-Material::Material():
+fwMaterial::fwMaterial():
 	fragmentShaderCode(""),
 	id(_materialID++)
 {
 }
 
-Material::Material(std::string _vertexShader, std::string _fragmentShader, std::string _geometryShader):
+fwMaterial::fwMaterial(std::string _vertexShader, std::string _fragmentShader, std::string _geometryShader):
 	vertexShader(_vertexShader),
 	fragmentShader(_fragmentShader),
 	geometryShader(_geometryShader),
@@ -24,7 +24,7 @@ Material::Material(std::string _vertexShader, std::string _fragmentShader, std::
 {
 }
 
-Material& Material::addTexture(std::string uniform, Texture *texture)
+fwMaterial& fwMaterial::addTexture(std::string uniform, Texture *texture)
 {
 	glTexture *glTex = new glTexture(texture);
 	textures.push_front(glTex);
@@ -34,7 +34,7 @@ Material& Material::addTexture(std::string uniform, Texture *texture)
 	return *this;
 }
 
-Material& Material::addTexture(std::string uniform, glTexture *texture)
+fwMaterial& fwMaterial::addTexture(std::string uniform, glTexture *texture)
 {
 	textures.push_front(texture);
 
@@ -43,7 +43,7 @@ Material& Material::addTexture(std::string uniform, glTexture *texture)
 	return *this;
 }
 
-Material &Material::addShaders(std::string _vertexShader, std::string _fragmentShader, const std::string _defines)
+fwMaterial &fwMaterial::addShaders(std::string _vertexShader, std::string _fragmentShader, const std::string _defines)
 {
 	vertexShader = _vertexShader;
 	fragmentShader = _fragmentShader;
@@ -52,18 +52,18 @@ Material &Material::addShaders(std::string _vertexShader, std::string _fragmentS
 	return *this;
 }
 
-Material &Material::addUniform(Uniform *uniform)
+fwMaterial &fwMaterial::addUniform(Uniform *uniform)
 {
 	uniforms.push_front(uniform);
 	return *this;
 }
 
-const int Material::getID(void)
+const int fwMaterial::getID(void)
 {
 	return id;
 }
 
-void Material::set_uniforms(glProgram *program)
+void fwMaterial::set_uniforms(glProgram *program)
 {
 	std::list <Uniform *> ::iterator it;
 	for (it = uniforms.begin(); it != uniforms.end(); ++it) {
@@ -71,7 +71,7 @@ void Material::set_uniforms(glProgram *program)
 	}
 }
 
-void Material::bindTextures(void)
+void fwMaterial::bindTextures(void)
 {
 	std::list <glTexture *> ::iterator it;
 	for (it = textures.begin(); it != textures.end(); ++it) {
@@ -79,7 +79,7 @@ void Material::bindTextures(void)
 	}
 }
 
-const std::string &Material::get_vertexShader(void)
+const std::string &fwMaterial::get_vertexShader(void)
 {
 	if (vertexShaderCode != "") {
 		return vertexShaderCode;
@@ -89,7 +89,7 @@ const std::string &Material::get_vertexShader(void)
 	return vertexShaderCode;
 }
 
-const std::string &Material::get_fragmentShader(void)
+const std::string &fwMaterial::get_fragmentShader(void)
 {
 	if (fragmentShaderCode != "") {
 		return fragmentShaderCode;
@@ -99,7 +99,7 @@ const std::string &Material::get_fragmentShader(void)
 	return fragmentShaderCode;
 }
 
-const std::string &Material::get_geometryShader(void)
+const std::string &fwMaterial::get_geometryShader(void)
 {
 	if (geometryShader == "") {
 		return geometryShaderCode;
@@ -113,12 +113,12 @@ const std::string &Material::get_geometryShader(void)
 	return geometryShaderCode;
 }
 
-std::string Material::hashCode(void)
+std::string fwMaterial::hashCode(void)
 {
 	return vertexShader+fragmentShader;
 }
 
-Material::~Material()
+fwMaterial::~fwMaterial()
 {
 	for (auto texture: textures) {
 		delete texture;

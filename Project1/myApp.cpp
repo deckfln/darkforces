@@ -5,12 +5,12 @@
 #include <math.h>
 
 #include "include/stb_image.h"
-#include "framework/DiffuseMaterial.h"
-#include "framework/MaterialBasic.h"
+#include "framework/fwDiffuseMaterial.h"
+#include "framework/fwMaterialBasic.h"
 #include "framework/fwMesh.h"
 #include "framework/fwInstancedMesh.h"
 #include "framework/BoxGeometry.h"
-#include "framework/geometries/PlaneGeometry.h"
+#include "framework/geometries/fwPlaneGeometry.h"
 
 #include "framework/Loader.h"
 
@@ -72,7 +72,7 @@ myApp::myApp(std::string name, int width, int height) :
 	BoxGeometry *geometry = new BoxGeometry();
 	glm::vec4 *white = new glm::vec4(1.0);
 
-	MaterialBasic *basic = new MaterialBasic(white);
+	fwMaterialBasic *basic = new fwMaterialBasic(white);
 	fwMesh *fLight = new fwMesh(geometry, basic);
 	fwMesh *fLight2 = new fwMesh(geometry, basic);
 
@@ -87,9 +87,9 @@ myApp::myApp(std::string name, int width, int height) :
 	// floor
 	Texture *t1 = new Texture("images/container2.png");
 	Texture *t2 = new Texture("images/container2_specular.png");
-	DiffuseMaterial *material = new DiffuseMaterial(t1, nullptr, 64);
+	fwDiffuseMaterial *material = new fwDiffuseMaterial(t1, nullptr, 64);
 
-	fwMesh *plane = new fwMesh(new PlaneGeometry(8, 8), material);
+	fwMesh *plane = new fwMesh(new fwPlaneGeometry(8, 8), material);
 
 	glm::vec3 deg(3.1415 / 2, 0, 0);
 	plane->rotate(deg);

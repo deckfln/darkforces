@@ -3,8 +3,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <map>
-#include "framework/Geometry.h"
-#include "framework/Material.h"
+#include "fwGeometry.h"
+#include "fwMaterial.h"
 #include "glEngine/glProgram.h"
 #include "glEngine/glVertexArray.h"
 
@@ -19,17 +19,17 @@ class fwMesh: public fwObject3D
 	bool normalHelper = false;
 
 protected:
-	Geometry *geometry = nullptr;
-	Material *material = nullptr;
+	fwGeometry *geometry = nullptr;
+	fwMaterial *material = nullptr;
 	std::map<GLuint, glVertexArray *>vao;
 	bool wireFrame = false;
 
 public:
-	fwMesh(Geometry *_geometry, Material *_material);
+	fwMesh(fwGeometry *_geometry, fwMaterial *_material);
 
 	std::string getMaterialHash(void);
-	Material *get_material(void);
-	Geometry *get_geometry(void);
+	fwMaterial *get_material(void);
+	fwGeometry *get_geometry(void);
 
 	fwMesh &set_visible(bool _visible = true);
 	bool is_visible(void);

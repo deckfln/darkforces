@@ -8,8 +8,8 @@
 
 #include "Loader.h"
 #include "Texture.h"
-#include "Geometry.h"
-#include "DiffuseMaterial.h"
+#include "fwGeometry.h"
+#include "fwDiffuseMaterial.h"
 #include "fwMesh.h"
 
 Loader::Loader(const std::string _file):
@@ -52,7 +52,7 @@ fwMesh *Loader::processMesh(aiMesh *mesh, const aiScene *scene)
 	glm::vec3 *normal = (glm::vec3 *)calloc(mesh->mNumVertices, sizeof(glm::vec3));
 	glm::vec2 *uv = (glm::vec2 *)calloc(mesh->mNumVertices, sizeof(glm::vec2));
 
-	Geometry *geometry = new Geometry();
+	fwGeometry *geometry = new fwGeometry();
 
 	for (unsigned int i = 0; i < mesh->mNumVertices; i++)
 	{
@@ -106,7 +106,7 @@ fwMesh *Loader::processMesh(aiMesh *mesh, const aiScene *scene)
 	/*
 	 * build the material
 	 */
-	DiffuseMaterial *material = nullptr;
+	fwDiffuseMaterial *material = nullptr;
 	if (mesh->mMaterialIndex >= 0)
 	{
 		aiMaterial *aimaterial = scene->mMaterials[mesh->mMaterialIndex];
@@ -121,10 +121,10 @@ fwMesh *Loader::processMesh(aiMesh *mesh, const aiScene *scene)
 		aimaterial->Get(AI_MATKEY_SHININESS, shininess);
 
 		if (specular.size() > 0) {
-			material = new DiffuseMaterial(diffuse[0], specular[0], shininess);
+			material = new fwDiffuseMaterial(diffuse[0], specular[0], shininess);
 		}
 		else {
-			material = new DiffuseMaterial(diffuse[0], nullptr, shininess);
+			material = new fwDiffuseMaterial(diffuse[0], nullptr, shininess);
 		}
 	}
 

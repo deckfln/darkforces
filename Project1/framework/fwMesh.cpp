@@ -2,7 +2,7 @@
 #include "glad/glad.h"
 
 
-fwMesh::fwMesh(Geometry *_geometry, Material *_material):
+fwMesh::fwMesh(fwGeometry *_geometry, fwMaterial *_material):
 	geometry(_geometry),
 	material(_material),
 	visible(true),
@@ -69,12 +69,12 @@ void fwMesh::draw(glProgram *program)
 	geometry->draw(wireFrame ? GL_LINES : GL_TRIANGLES, vao[id]);
 }
 
-Material *fwMesh::get_material(void)
+fwMaterial *fwMesh::get_material(void)
 {
 	return material;
 }
 
-Geometry *fwMesh::get_geometry(void)
+fwGeometry *fwMesh::get_geometry(void)
 {
 	return geometry;
 }

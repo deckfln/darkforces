@@ -1,15 +1,15 @@
-#include "Geometry.h"
+#include "fwGeometry.h"
 #include "glEngine/glVertexAttribute.h"
 #include "glEngine/glBufferAttribute.h"
 #include "../glad/glad.h"
 
-Geometry::Geometry()
+fwGeometry::fwGeometry()
 {
 	vertices = nullptr;
 	index = nullptr;
 }
 
-Geometry&  Geometry::addVertices(std::string _name, void *_data, GLsizei itemSize, GLsizei len, GLuint _sizeof_element, bool delete_on_exit)
+fwGeometry&  fwGeometry::addVertices(std::string _name, void *_data, GLsizei itemSize, GLsizei len, GLuint _sizeof_element, bool delete_on_exit)
 {
 	vertices = new glBufferAttribute(_name, GL_ARRAY_BUFFER, _data, itemSize, len, _sizeof_element, delete_on_exit);
 	indexedGeometry = false;
@@ -17,7 +17,7 @@ Geometry&  Geometry::addVertices(std::string _name, void *_data, GLsizei itemSiz
 	return *this;
 }
 
-Geometry&  Geometry::addIndex(void *_data, GLsizei itemSize, GLsizei len, GLuint _sizeof_element, bool delete_on_exit)
+fwGeometry&  fwGeometry::addIndex(void *_data, GLsizei itemSize, GLsizei len, GLuint _sizeof_element, bool delete_on_exit)
 {
 	index = new glBufferAttribute("_index", GL_ELEMENT_ARRAY_BUFFER, _data, itemSize, len, _sizeof_element, delete_on_exit);
 	indexedGeometry = true;
@@ -25,7 +25,7 @@ Geometry&  Geometry::addIndex(void *_data, GLsizei itemSize, GLsizei len, GLuint
 	return *this;
 }
 
-Geometry& Geometry::addAttribute(std::string _name, GLuint _type, void *_data, GLsizei itemSize, GLsizei len, GLuint _sizeof_element, bool delete_on_exit)
+fwGeometry& fwGeometry::addAttribute(std::string _name, GLuint _type, void *_data, GLsizei itemSize, GLsizei len, GLuint _sizeof_element, bool delete_on_exit)
 {
 	attributes[current_attribute] = new	glBufferAttribute(_name, _type, _data, itemSize, len, _sizeof_element, delete_on_exit);
 	current_attribute++;
@@ -33,7 +33,7 @@ Geometry& Geometry::addAttribute(std::string _name, GLuint _type, void *_data, G
 	return *this;
 }
 
-void Geometry::enable_attributes(glProgram *program)
+void fwGeometry::enable_attributes(glProgram *program)
 {
 	// vertex attribute
 	if (index != nullptr) {
@@ -55,12 +55,12 @@ void Geometry::enable_attributes(glProgram *program)
 	}
 }
 
-int Geometry::get_count(void)
+int fwGeometry::get_count(void)
 {
 	return count;
 }
 
-void Geometry::draw(GLenum mode, glVertexArray *va)
+void fwGeometry::draw(GLenum mode, glVertexArray *va)
 {
 	if (index != nullptr) {
 		va->draw(mode, true, index->get_count());
@@ -70,7 +70,7 @@ void Geometry::draw(GLenum mode, glVertexArray *va)
 	}
 }
 
-Geometry::~Geometry()
+fwGeometry::~fwGeometry()
 {
 	if (index != nullptr) {
 		delete index;

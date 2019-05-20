@@ -1,15 +1,15 @@
-#include "DiffuseMaterial.h"
+#include "fwDiffuseMaterial.h"
 
 
 
-DiffuseMaterial::DiffuseMaterial():
+fwDiffuseMaterial::fwDiffuseMaterial():
 	diffuse(nullptr),
 	specular(nullptr),
 	shininess(0)
 {
 }
 
-DiffuseMaterial::DiffuseMaterial(Texture *_diffuse, Texture *_specular, float _shininess):
+fwDiffuseMaterial::fwDiffuseMaterial(Texture *_diffuse, Texture *_specular, float _shininess):
 	diffuse(_diffuse),
 	specular(_specular),
 	shininess(_shininess)
@@ -27,6 +27,6 @@ DiffuseMaterial::DiffuseMaterial(Texture *_diffuse, Texture *_specular, float _s
 	addUniform(uniform);
 }
 
-DiffuseMaterial::~DiffuseMaterial()
+fwDiffuseMaterial::~fwDiffuseMaterial()
 {
 }

@@ -7,14 +7,14 @@
 #include "framework/fwMesh.h"
 #include "framework/Light.h"
 #include "framework/Camera.h"
-#include "materials/OutlineMaterial.h"
+#include "materials/fwOutlineMaterial.h"
 
 class fwScene : public fwObject3D
 {
 	std::map <std::string, glProgram *> programs;
-	std::map <int, Material *> materials;
+	std::map <int, fwMaterial *> materials;
 
-	OutlineMaterial *outline_material = nullptr;
+	fwOutlineMaterial *outline_material = nullptr;
 
 	Light *lights[10];
 	int current_light;

@@ -2,7 +2,7 @@
 #include "glad/glad.h"
 #include "../glEngine/glInstancedVertexArray.h"
 
-fwInstancedMesh::fwInstancedMesh(Geometry *_geometry, Material *_material, int _instances, glm::mat4 *_positions):
+fwInstancedMesh::fwInstancedMesh(fwGeometry *_geometry, fwMaterial *_material, int _instances, glm::mat4 *_positions):
 	fwMesh(_geometry, _material),
 	instances(_instances)
 {

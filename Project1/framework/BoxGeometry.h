@@ -1,8 +1,8 @@
 #pragma once
-#include "framework/Geometry.h"
+#include "fwGeometry.h"
 
 class BoxGeometry :
-	public Geometry
+	public fwGeometry
 {
 public:
 	BoxGeometry();

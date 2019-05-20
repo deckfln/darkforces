@@ -42,7 +42,7 @@ fwPostProcessing::fwPostProcessing(std::string _vertexShader, std::string _fragm
 	source = _source;
 	source->set_uniform(program);
 
-	geometry = new Geometry();
+	geometry = new fwGeometry();
 	geometry->addVertices("aPos", quadVertices, 2, sizeof(quadVertices), sizeof(float), false);
 	geometry->addAttribute("aTexCoord", GL_ARRAY_BUFFER, quadUvs, 2, sizeof(quadUvs), sizeof(float), false);
 

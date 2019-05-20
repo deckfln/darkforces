@@ -6,10 +6,10 @@
 
 #include "../glad/glad.h"
 
-#include "materials/NormalHelperMaterial.h"
+#include "materials/fwNormalHelperMaterial.h"
 #include "fwInstancedMesh.h"
 
-static NormalHelperMaterial normalHelper;
+static fwNormalHelperMaterial normalHelper;
 static glProgram *normalHelper_program = nullptr;
 static glProgram *outline_program = nullptr;
 static glProgram *outline_instanced_program = nullptr;
@@ -28,13 +28,13 @@ fwScene &fwScene::addLight(Light *light)
 
 fwScene &fwScene::setOutline(glm::vec4 *_color)
 {
-	outline_material = new OutlineMaterial(_color);
+	outline_material = new fwOutlineMaterial(_color);
 	return *this;
 }
 
 void fwScene::parseChildren(fwObject3D *root, std::map<std::string, std::map<int, std::list <fwMesh *>>> &meshesPerMaterial, std::string &codeLights, std::string &defines)
 {
-	Material *material;
+	fwMaterial *material;
 	fwMesh *mesh;
 	std::string code;
 	int materialID;
@@ -106,7 +106,7 @@ void fwScene::draw(Camera *camera)
 	// create a map of materials shaders vs meshes
 	//    [shaderCode][materialID] = [mesh1, mesh2]
 	std::map<std::string, std::map<int, std::list <fwMesh *>>> meshesPerMaterial;
-	Material *material;
+	fwMaterial *material;
 
 	std::list <fwMesh *> ::iterator it;
 	std::string code;

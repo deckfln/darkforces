@@ -11,7 +11,7 @@ class fwInstancedMesh : public fwMesh
 	int instances;
 
 public:
-	fwInstancedMesh(Geometry *_geometry, Material *_material, int instances, glm::mat4 *_positions);
+	fwInstancedMesh(fwGeometry *_geometry, fwMaterial *_material, int instances, glm::mat4 *_positions);
 	void draw(glProgram *);
 	~fwInstancedMesh();
 };

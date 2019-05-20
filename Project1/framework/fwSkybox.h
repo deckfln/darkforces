@@ -6,7 +6,7 @@
 #include "../glEngine/glCubeTexture.h"
 
 #include "Camera.h"
-#include "Geometry.h"
+#include "fwGeometry.h"
 #include "Uniform.h"
 
 class fwSkybox
@@ -15,7 +15,7 @@ class fwSkybox
 	glCubeTexture *texture = nullptr;
 	glProgram *program = nullptr;
 	glVertexArray *cube = nullptr;
-	Geometry *geometry = nullptr;
+	fwGeometry *geometry = nullptr;
 	Uniform *uniform = nullptr;
 	std::string get_shader(const std::string shader_file);
 

@@ -1,8 +1,8 @@
-#include "PlaneGeometry.h"
+#include "fwPlaneGeometry.h"
 #include <math.h>
 
 
-PlaneGeometry::PlaneGeometry(float width, float height, int widthSegments, int heightSegments)
+fwPlaneGeometry::fwPlaneGeometry(float width, float height, int widthSegments, int heightSegments)
 {
 	float width_half = width / 2;
 	float height_half = height / 2;
@@ -94,6 +94,6 @@ PlaneGeometry::PlaneGeometry(float width, float height, int widthSegments, int h
 }
 
 
-PlaneGeometry::~PlaneGeometry()
+fwPlaneGeometry::~fwPlaneGeometry()
 {
 }

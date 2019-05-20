@@ -7,7 +7,7 @@
 #include "Uniform.h"
 #include "Texture.h"
 
-class Material: public Reference
+class fwMaterial: public Reference
 {
 	int id;
 	std::string vertexShader;
@@ -25,12 +25,12 @@ class Material: public Reference
 	std::list <glTexture *> textures;
 
 public:
-	Material();
-	Material(std::string vertexShader, std::string fragmentShader, std::string geometryShader);
-	Material &addTexture(std::string uniform, Texture *texture);
-	Material &addTexture(std::string uniform, glTexture *texture);
-	Material &addShaders(std::string vertexShader, std::string fragmentShader, const std::string defines = "");
-	Material &addUniform(Uniform *uniform);
+	fwMaterial();
+	fwMaterial(std::string vertexShader, std::string fragmentShader, std::string geometryShader);
+	fwMaterial &addTexture(std::string uniform, Texture *texture);
+	fwMaterial &addTexture(std::string uniform, glTexture *texture);
+	fwMaterial &addShaders(std::string vertexShader, std::string fragmentShader, const std::string defines = "");
+	fwMaterial &addUniform(Uniform *uniform);
 	
 	std::string hashCode(void);
 
@@ -41,5 +41,5 @@ public:
 
 	void bindTextures(void);
 	void set_uniforms(glProgram *program);
-	~Material();
+	~fwMaterial();
 };

@@ -5,7 +5,7 @@
 
 #include "../glEngine/glProgram.h"
 #include "../glEngine/glVertexArray.h"
-#include "Geometry.h"
+#include "fwGeometry.h"
 
 class fwPostProcessing
 {
@@ -13,7 +13,7 @@ class fwPostProcessing
 	GLuint quadVBO;
 	glProgram *program;
 	glVertexArray *quad;
-	Geometry *geometry;
+	fwGeometry *geometry;
 	Uniform *source;
 
 public:
