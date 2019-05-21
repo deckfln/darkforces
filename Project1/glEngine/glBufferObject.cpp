@@ -18,6 +18,12 @@ void glBufferObject::bind(void)
 	glBindBuffer(type, buffer);
 }
 
+void glBufferObject::update(int offset, int size, void *data)
+{
+	glBindBuffer(type, buffer);
+	glBufferSubData(type, offset, size, data);
+}
+
 void glBufferObject::unbind(void)
 {
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);

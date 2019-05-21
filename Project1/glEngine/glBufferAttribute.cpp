@@ -44,6 +44,17 @@ void glBufferAttribute::bind()
 	vbo->bind();
 }
 
+void glBufferAttribute::update(int offset, int size)
+{
+	int le = sizeof_element * itemSize;
+
+	if (size == -1) {
+		// update the whole buffer
+		size = count;
+	}
+	vbo->update(offset * le, size * le, (char *)data + offset * le);
+}
+
 glBufferAttribute::~glBufferAttribute()
 {
 	if (delete_on_exit)

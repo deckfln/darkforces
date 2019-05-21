@@ -102,16 +102,15 @@ myApp::myApp(std::string name, int width, int height) :
 		setOutline(yellow).
 		addChild(plane);
 
-	glm::mat4 positions[2];
 	positions[0] = glm::translate(glm::vec3(-1,0, 0));
 	positions[1] = glm::translate(glm::vec3(1, 0, 0));
 
-	for (auto mesh : meshes) {
-		fwInstancedMesh *instancedMesh = new fwInstancedMesh(mesh->get_geometry(), mesh->get_material(), 2, positions);
-		//mesh->show_normalHelper(true);
-		instancedMesh->outline(true);
-		scene->addChild(instancedMesh);
-	}
+	fwMesh *mesh = meshes[0];
+	instancedMesh = new fwInstancedMesh(mesh->get_geometry(), mesh->get_material(), 2, positions);
+	
+	//mesh->show_normalHelper(true);
+	instancedMesh->outline(true);
+	scene->addChild(instancedMesh);
 
 	// Skybox
 	std::string skyboxes[] = {
@@ -132,6 +131,10 @@ void myApp::resize(int width, int height)
 
 void myApp::draw(void)
 {
+	// move instanced model 2
+	positions[1] = glm::translate(glm::vec3(1, sin(glfwGetTime() / 2) * 2, 0));
+	instancedMesh->update_position(1, 1);
+
 	glm::vec3 lightPos;
 
 	float radius = 2;
@@ -160,4 +163,5 @@ myApp::~myApp()
 	delete scene;
 	delete yellow;
 	delete white;
+	delete instancedMesh;
 }

@@ -27,6 +27,7 @@ public:
 	GLuint get_elements(void);
 	GLuint get_type(void);
 	const GLuint get_count(void);
+	void update(int offset = 0, int size = -1);
 	void bind();
 	const std::string get_name(void);
 	virtual int get_divisor(void) { return 0; };

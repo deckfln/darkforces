@@ -7,6 +7,11 @@ glInstancedVertexArray::glInstancedVertexArray(int _instances) :
 
 }
 
+void glInstancedVertexArray::set_instances(int _instances)
+{
+	instances = _instances;
+}
+
 void glInstancedVertexArray::draw(GLenum mode, bool indexed, int count)
 {
 	bind(); 
