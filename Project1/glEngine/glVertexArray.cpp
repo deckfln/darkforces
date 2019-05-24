@@ -26,8 +26,8 @@ void glVertexArray::bind(void)
 
 void glVertexArray::unbind(void)
 {
+	//glBufferObject::unbind();
 	glBindVertexArray(0);
-	glBufferObject::unbind();
 }
 
 void glVertexArray::draw(GLenum mode, bool indexed, int count)
@@ -40,8 +40,6 @@ void glVertexArray::draw(GLenum mode, bool indexed, int count)
 	else {
 		glDrawArrays(mode, 0, count);
 	}
-
-	glVertexArray::unbind();
 }
 
 glVertexArray::~glVertexArray()

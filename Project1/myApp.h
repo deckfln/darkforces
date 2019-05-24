@@ -4,9 +4,9 @@
 
 #include "framework/fwApp.h"
 #include "framework/Camera.h"
-#include "framework/DirectionLight.h"
-#include "framework/PointLight.h"
-#include "framework/SpotLight.h"
+#include "framework/lights/fwDirectionLight.h"
+#include "framework/lights/fwPointLight.h"
+#include "framework/lights/fwSpotLight.h"
 #include "framework/fwScene.h"
 #include "framework/fwSkybox.h"
 #include "framework/controls/fwOrbitControl.h"
@@ -15,8 +15,8 @@
 class myApp : public fwApp
 {
 	Camera *camera;
-	PointLight *light;
-	SpotLight *light2;
+	fwPointLight *light;
+	fwSpotLight *light2;
 	fwSkybox *skybox;
 	fwScene *scene;
 	fwOrbitControl *control;

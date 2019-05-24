@@ -13,8 +13,6 @@ class fwMaterial: public Reference
 	std::string vertexShader;
 	std::string fragmentShader;
 	std::string geometryShader;
-	std::string defines;
-
 	std::string vertexShaderCode;
 	std::string fragmentShaderCode;
 	std::string geometryShaderCode;
@@ -23,6 +21,9 @@ class fwMaterial: public Reference
 
 	std::list <Uniform *> uniforms;
 	std::list <glTexture *> textures;
+
+protected:
+	std::string defines;
 
 public:
 	fwMaterial();

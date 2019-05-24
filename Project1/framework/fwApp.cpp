@@ -111,6 +111,8 @@ void fwApp::run(void)
 {
 	currentApp = this;
 
+	glEnable(GL_DEPTH_TEST);
+
 	while (!glfwWindowShouldClose(window))
 	{
 		// input
@@ -123,10 +125,8 @@ void fwApp::run(void)
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
-		glEnable(GL_DEPTH_TEST);
-
 		draw();
-
+		
 		frameBuffer->unbind();
 
 		// render 2nd pass

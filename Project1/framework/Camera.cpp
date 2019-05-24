@@ -86,7 +86,7 @@ void Camera::set_uniforms(glProgram *program)
 void Camera::set_uniformBuffer(void)
 {
 	if (ubo == nullptr) {
-		ubo = new glUniformBuffer(2 * sizeof(glm::mat4) + sizeof(glm::vec3));
+		ubo = new glUniformBuffer(2 * sizeof(glm::mat4) + sizeof(glm::vec3) + 4);
 	}
 
 	glm::mat4 camera[2] = { view, projection };

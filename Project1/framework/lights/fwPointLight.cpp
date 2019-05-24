@@ -1,13 +1,11 @@
-#include "framework/PointLight.h"
+#include "fwPointLight.h"
 
-
-
-PointLight::PointLight()
+fwPointLight::fwPointLight()
 {
 }
 
-PointLight::PointLight(glm::vec3 _position, glm::vec3 _color, glm::vec3 _diffuse, glm::vec3 _specular, float _constant, float _linear, float _quadatric):
-	Light(_color),
+fwPointLight::fwPointLight(glm::vec3 _position, glm::vec3 _color, glm::vec3 _diffuse, glm::vec3 _specular, float _constant, float _linear, float _quadatric):
+	fwLight(_color),
 	diffuse(_diffuse),
 	specular(_specular),
 	constant(_constant),
@@ -21,9 +19,9 @@ PointLight::PointLight(glm::vec3 _position, glm::vec3 _color, glm::vec3 _diffuse
 	shader_define = "POINT_LIGHTS";
 }
 
-std::string PointLight::set_uniform(glProgram *program, int index)
+std::string fwPointLight::set_uniform(glProgram *program, int index)
 {
-	std::string prefix = Light::set_uniform(program, index);
+	std::string prefix = fwLight::set_uniform(program, index);
 	program->set_uniform(prefix + ".position", position);
 	program->set_uniform(prefix + ".diffuse", diffuse);
 	program->set_uniform(prefix + ".specular", specular);
@@ -34,6 +32,6 @@ std::string PointLight::set_uniform(glProgram *program, int index)
 	return prefix;
 }
 
-PointLight::~PointLight()
+fwPointLight::~fwPointLight()
 {
 }

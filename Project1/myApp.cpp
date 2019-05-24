@@ -5,11 +5,12 @@
 #include <math.h>
 
 #include "include/stb_image.h"
+#include "framework/lights/fwDirectionLight.h"
 #include "framework/fwDiffuseMaterial.h"
 #include "framework/fwMaterialBasic.h"
 #include "framework/fwMesh.h"
 #include "framework/fwInstancedMesh.h"
-#include "framework/BoxGeometry.h"
+#include "framework/geometries/fwBoxGeometry.h"
 #include "framework/geometries/fwPlaneGeometry.h"
 
 #include "framework/Loader.h"
@@ -26,14 +27,14 @@ myApp::myApp(std::string name, int width, int height) :
 	/*
 	 * Camera
 	 */
-	camera->lookAt(0, 2, 0);
-	camera->translate(0, 3.5, 3.5);
+	camera->lookAt(0, 0, 0);
+	camera->translate(0, 0, 3);
 
 	/*
 	 * Lights
 	 */
 	 /*
-	 DirectionLight light(
+	 fwDirectionLight light(
 		 glm::vec3(0.0),
 		 glm::vec3(0.2f, 0.2f, 0.2f),
 		 glm::vec3(0.5f, 0.5f, 0.5f),
@@ -41,7 +42,7 @@ myApp::myApp(std::string name, int width, int height) :
 	 );
 	 */
 
-	light = new PointLight(
+	light = new fwPointLight(
 		glm::vec3(),
 		glm::vec3(0, 0.2f, 0),
 		glm::vec3(0, 0.5f, 0),
@@ -51,7 +52,17 @@ myApp::myApp(std::string name, int width, int height) :
 		0.032
 	);
 
-	light2 = new SpotLight(
+	fwPointLight *light3 = new fwPointLight(
+		glm::vec3(0, 0, 0),
+		glm::vec3(0.01, 0.01, 0.01),	// ambient
+		glm::vec3(1, 1, 1),				// diffuse
+		glm::vec3(0.3, 0.3f, 0.3),		// specular
+		1.0,							// attenuation constant
+		0.00,							// attenuation linear
+		0.0								// attenuation quadatic
+	);
+
+	light2 = new fwSpotLight(
 		glm::vec3(0),
 		glm::vec3(0, 0, -1),
 
@@ -69,7 +80,7 @@ myApp::myApp(std::string name, int width, int height) :
 	std::vector<fwMesh *>meshes = loader.get_meshes();
 
 	// lights
-	BoxGeometry *geometry = new BoxGeometry();
+	fwBoxGeometry *geometry = new fwBoxGeometry();
 	glm::vec4 *white = new glm::vec4(1.0);
 
 	fwMaterialBasic *basic = new fwMaterialBasic(white);
@@ -82,23 +93,25 @@ myApp::myApp(std::string name, int width, int height) :
 	fLight->draw_wireframe(true);
 
 	light->addChild(fLight);
-	light2->addChild(fLight2);
+	light3->addChild(fLight2);
 
 	// floor
-	Texture *t1 = new Texture("images/container2.png");
+	Texture *t1 = new Texture("images/wood.png");
 	Texture *t2 = new Texture("images/container2_specular.png");
-	fwDiffuseMaterial *material = new fwDiffuseMaterial(t1, nullptr, 64);
+	fwDiffuseMaterial *material = new fwDiffuseMaterial(t1, nullptr, 32);
 
-	fwMesh *plane = new fwMesh(new fwPlaneGeometry(8, 8), material);
+	fwMesh *plane = new fwMesh(new fwPlaneGeometry(10, 10), material);
 
-	glm::vec3 deg(3.1415 / 2, 0, 0);
+	glm::vec3 deg(-3.1415 / 2, 0, 0);
 	plane->rotate(deg);
+	plane->show_normalHelper(true);
+	glm::vec3 tr(0, -0.5, 0);
+	plane->translate(tr);
 
 	// init the scene
 	yellow = new glm::vec4(255, 255, 0, 255);
 	scene = new fwScene();
-	scene->addLight(light).
-		addLight(light2).
+	scene->addLight(light3).
 		setOutline(yellow).
 		addChild(plane);
 
@@ -110,7 +123,7 @@ myApp::myApp(std::string name, int width, int height) :
 	
 	//mesh->show_normalHelper(true);
 	instancedMesh->outline(true);
-	scene->addChild(instancedMesh);
+	//scene->addChild(instancedMesh);
 
 	// Skybox
 	std::string skyboxes[] = {

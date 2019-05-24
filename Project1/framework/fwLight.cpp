@@ -1,7 +1,7 @@
-#include "Light.h"
+#include "fwLight.h"
 #include <string>
 
-Light::Light(glm::vec3 & _color):
+fwLight::fwLight(glm::vec3 & _color):
 	ambient(_color),
 	uniform_prefix("ambient"),
 	type(0),
@@ -9,21 +9,21 @@ Light::Light(glm::vec3 & _color):
 {
 }
 
-Light::Light(float r, float g, float b):
+fwLight::fwLight(float r, float g, float b):
 	ambient(r, g, b)
 {
 }
 
-Light::Light()
+fwLight::fwLight()
 {
 }
 
-std::string &Light::getDefine(void)
+std::string &fwLight::getDefine(void)
 {
 	return shader_define;
 }
 
-std::string Light::set_uniform(glProgram *program, int index)
+std::string fwLight::set_uniform(glProgram *program, int index)
 {
 	std::string prefix = uniform_prefix;
 	if (index >= 0) {
@@ -35,6 +35,6 @@ std::string Light::set_uniform(glProgram *program, int index)
 	return prefix;
 }
 
-Light::~Light()
+fwLight::~fwLight()
 {
 }

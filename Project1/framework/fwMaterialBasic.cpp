@@ -13,7 +13,17 @@ fwMaterialBasic::fwMaterialBasic(glm::vec4 *_color):
 	addUniform(color);
 }
 
+void fwMaterialBasic::addDiffuseMap(Texture *_diffuse)
+{
+	addTexture("map", _diffuse);
+	defines += "#define DIFFUSE_MAP\n";
+}
 
 fwMaterialBasic::~fwMaterialBasic()
 {
+	if (color != nullptr)
+		delete color;
+
+	if (map != nullptr)
+		delete map;
 }

@@ -64,6 +64,8 @@ void fwPostProcessing::draw(void)
 	tex->resetTextureUnit();
 	tex->bind();
 	geometry->draw(GL_TRIANGLES, quad);
+
+	glEnable(GL_DEPTH_TEST);
 }
 
 fwPostProcessing::~fwPostProcessing()

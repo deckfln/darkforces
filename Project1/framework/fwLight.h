@@ -7,7 +7,7 @@
 #include "fwObject3D.h"
 #include "Uniform.h"
 
-class Light: public fwObject3D
+class fwLight: public fwObject3D
 {
 protected:
 	int type;
@@ -18,10 +18,10 @@ protected:
 	std::list <Uniform *> uniforms;
 
 public:
-	Light();
-	Light(glm::vec3 &_color);
-	Light(float r, float g, float b);
+	fwLight();
+	fwLight(glm::vec3 &_color);
+	fwLight(float r, float g, float b);
 	std::string &getDefine(void);
 	virtual std::string set_uniform(glProgram *program, int index = -1);
-	~Light();
+	~fwLight();
 };

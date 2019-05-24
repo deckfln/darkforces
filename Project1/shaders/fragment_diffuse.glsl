@@ -12,12 +12,7 @@ struct Material {
     float     shininess;
 }; 
 
-layout (std140) uniform Camera
-{
-	mat4 view;
-	mat4 projection;
-	vec3 viewPos;
-};
+#include "include/camera.glsl"
 
 uniform Material material;
 
@@ -38,35 +33,42 @@ struct PointLight {
 
 uniform PointLight pointlights[POINT_LIGHTS];
 
-vec3 CalcPointLight(PointLight light, vec3 normal, vec3 diffuse, vec3 world, vec3 viewDir)
+vec3 CalcPointLight(PointLight light, vec3 normal, vec3 color, vec3 world, vec3 viewDir)
 {
 	vec3 lightDir = normalize(light.position - world);
 
-    // diffuse shading
-    float diff = max(dot(normal, lightDir), 0.0);
-
-    // specular shading
-    vec3 reflectDir = reflect(-lightDir, normal);
-    float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
     // attenuation
     float distance    = length(light.position - world);
     float attenuation = 1.0 / (light.constant + light.linear * distance +  light.quadratic * (distance * distance));    
 
+    // diffuse shading
+    float diff = max(dot(lightDir, normal), 0.0);
+
+    // specular shading
+
+	// blinn-phong
+	vec3 halfwayDir = normalize(lightDir + viewDir);
+    float spec = pow(max(dot(normal, halfwayDir), 0.0), material.shininess);
+
+	// phong
+	//vec3 reflectDir = reflect(-lightDir, normal);
+    //float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
+
     // combine results
-    vec3 ambient  = light.ambient * diffuse;
-    vec3 ndiffuse  = light.diffuse * diff * diffuse;
+    vec3 ambient  = light.ambient * color;
+    vec3 diffuse  = light.diffuse * diff * color;
 
 	#ifdef SPECULAR_MAP
 	    vec3 specular = light.specular * spec * vec3(texture(material.specular, TexCoord));
 	#else
-		vec3 specular = light.specular * spec * vec3(1.0);
+		vec3 specular = light.specular * spec;
 	#endif
-
+	
     ambient  *= attenuation;
     diffuse  *= attenuation;
     specular *= attenuation;
-
-	return ambient + ndiffuse + specular;
+	
+	return ambient + diffuse + specular;
 }
 
 #endif

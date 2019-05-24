@@ -18,7 +18,7 @@ fwScene::fwScene()
 {
 }
 
-fwScene &fwScene::addLight(Light *light)
+fwScene &fwScene::addLight(fwLight *light)
 {
 	addChild(light);
 
@@ -88,7 +88,7 @@ void fwScene::draw(Camera *camera)
 	updateWorldMatrix(nullptr);
 
 	// count number of lights
-	std::map <std::string, std::list <Light *>> lightsByType;
+	std::map <std::string, std::list <fwLight *>> lightsByType;
 
 	for (int i = 0; i < current_light; i++) {
 		lightsByType[ lights[i]->getDefine() ].push_front(lights[i]);

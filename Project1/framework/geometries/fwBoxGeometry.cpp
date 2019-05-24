@@ -1,4 +1,4 @@
-#include "BoxGeometry.h"
+#include "fwBoxGeometry.h"
 
 
 float _vertices[] = {
@@ -134,7 +134,7 @@ float _normals[] = {
 };
 
 
-BoxGeometry::BoxGeometry()
+fwBoxGeometry::fwBoxGeometry()
 {
 	float *vertices = (float *)malloc(sizeof(_vertices));
 	float *normals = (float *)malloc(sizeof(_normals));
@@ -150,6 +150,6 @@ BoxGeometry::BoxGeometry()
 }
 
 
-BoxGeometry::~BoxGeometry()
+fwBoxGeometry::~fwBoxGeometry()
 {
 }
