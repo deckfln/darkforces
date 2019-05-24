@@ -1,7 +1,7 @@
 #pragma once
 
 #include <math.h>
-#include "../Camera.h"
+#include "../fwCamera.h"
 
 const float pi = 3.1415926535897;
 
@@ -13,10 +13,10 @@ class fwOrbitControl
 	float theta = pi/4;
 	float phi = 0;
 
-	Camera *camera = nullptr;
+	fwCamera *camera = nullptr;
 
 public:
-	fwOrbitControl(Camera *);
+	fwOrbitControl(fwCamera *);
 	void mouseButton(int button, int action);
 	void mouseMove(float xpos, float ypos);
 	~fwOrbitControl();

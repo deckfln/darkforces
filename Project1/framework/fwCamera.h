@@ -7,7 +7,7 @@
 #include "../glEngine/glProgram.h"
 #include "fwObject3D.h"
 
-class Camera: public fwObject3D
+class fwCamera: public fwObject3D
 {
 	glm::vec3 target;
 	glm::vec3 direction;
@@ -20,7 +20,7 @@ class Camera: public fwObject3D
 	glUniformBuffer *ubo = nullptr;
 
 public:
-	Camera(int height, int width);
+	fwCamera(int height, int width);
 	void set_ratio(int width, int height);
 	void set_uniforms(glProgram *program);
 	void translate(glm::vec3 &translation);
@@ -34,5 +34,5 @@ public:
 	void set_uniformBuffer(void);
 	void bind_uniformBuffer(glProgram *program);
 
-	~Camera();
+	~fwCamera();
 };

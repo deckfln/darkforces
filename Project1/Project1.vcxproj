@@ -136,7 +136,7 @@
     <ClCompile Include="framework\fwPostProcessing.cpp" />
     <ClCompile Include="framework\geometries\fwBoxGeometry.cpp" />
     <ClCompile Include="framework\geometries\fwPlaneGeometry.cpp" />
-    <ClCompile Include="framework\Camera.cpp" />
+    <ClCompile Include="framework\fwCamera.cpp" />
     <ClCompile Include="framework\fwDiffuseMaterial.cpp" />
     <ClCompile Include="framework\fwGeometry.cpp" />
     <ClCompile Include="framework\lights\fwDirectionLight.cpp" />
@@ -185,7 +185,7 @@
     <ClInclude Include="framework\fwPostProcessing.h" />
     <ClInclude Include="framework\geometries\fwBoxGeometry.h" />
     <ClInclude Include="framework\geometries\fwPlaneGeometry.h" />
-    <ClInclude Include="framework\Camera.h" />
+    <ClInclude Include="framework\fwCamera.h" />
     <ClInclude Include="framework\fwDiffuseMaterial.h" />
     <ClInclude Include="framework\fwGeometry.h" />
     <ClInclude Include="framework\lights\fwDirectionLight.h" />

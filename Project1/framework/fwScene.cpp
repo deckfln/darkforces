@@ -78,7 +78,7 @@ void fwScene::parseChildren(fwObject3D *root, std::map<std::string, std::map<int
 	}
 }
 
-void fwScene::draw(Camera *camera)
+void fwScene::draw(fwCamera *camera)
 {
 	if (outline_material != nullptr && outline_program == nullptr) {
 		outline_program = new glProgram(outline_material->get_vertexShader(), outline_material->get_fragmentShader(), "", "");

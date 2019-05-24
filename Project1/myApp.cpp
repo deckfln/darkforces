@@ -18,14 +18,14 @@
 myApp::myApp(std::string name, int width, int height) :
 	fwApp(name, width, height)
 {
-	camera = new Camera(width, height);
+	camera = new fwCamera(width, height);
 	int Button = 0;
 
 	control = new fwOrbitControl(camera);
 	bindControl(control);
 
 	/*
-	 * Camera
+	 * fwCamera
 	 */
 	camera->lookAt(0, 0, 0);
 	camera->translate(0, 0, 3);

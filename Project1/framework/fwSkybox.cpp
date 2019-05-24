@@ -80,7 +80,7 @@ fwSkybox::fwSkybox(std::string *textures)
 	cube->unbind();
 }
 
-void fwSkybox::draw(Camera *camera)
+void fwSkybox::draw(fwCamera *camera)
 {
 	glDepthFunc(GL_LEQUAL);  // change depth function so depth test passes when values are equal to depth buffer's content
 	program->run();

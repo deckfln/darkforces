@@ -5,7 +5,7 @@
 #include "../glEngine/glVertexArray.h"
 #include "../glEngine/glCubeTexture.h"
 
-#include "Camera.h"
+#include "fwCamera.h"
 #include "fwGeometry.h"
 #include "Uniform.h"
 
@@ -21,6 +21,6 @@ class fwSkybox
 
 public:
 	fwSkybox(std::string *textures);
-	void draw(Camera *camera);
+	void draw(fwCamera *camera);
 	~fwSkybox();
 };

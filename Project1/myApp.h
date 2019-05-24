@@ -3,7 +3,7 @@
 #include <glm/glm.hpp>
 
 #include "framework/fwApp.h"
-#include "framework/Camera.h"
+#include "framework/fwCamera.h"
 #include "framework/lights/fwDirectionLight.h"
 #include "framework/lights/fwPointLight.h"
 #include "framework/lights/fwSpotLight.h"
@@ -14,7 +14,7 @@
 
 class myApp : public fwApp
 {
-	Camera *camera;
+	fwCamera *camera;
 	fwPointLight *light;
 	fwSpotLight *light2;
 	fwSkybox *skybox;

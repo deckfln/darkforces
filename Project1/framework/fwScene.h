@@ -6,7 +6,7 @@
 #include "fwObject3D.h"
 #include "fwMesh.h"
 #include "fwLight.h"
-#include "framework/Camera.h"
+#include "framework/fwCamera.h"
 #include "materials/fwOutlineMaterial.h"
 
 class fwScene : public fwObject3D
@@ -25,6 +25,6 @@ public:
 	fwScene();
 	fwScene &addLight(fwLight *light);
 	fwScene &setOutline(glm::vec4 *_color);
-	void draw(Camera *camera);
+	void draw(fwCamera *camera);
 	~fwScene();
 };

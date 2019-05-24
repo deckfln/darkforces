@@ -1,8 +1,8 @@
-#include "Camera.h"
+#include "fwCamera.h"
 
 
 
-Camera::Camera(int width, int height):
+fwCamera::fwCamera(int width, int height):
 	up(0.0f, 1.0f, 0.0f)
 {
 	view = glm::mat4(1.0f);
@@ -10,12 +10,12 @@ Camera::Camera(int width, int height):
 	projection = glm::perspective(glm::radians(45.0f), (float)width / (float)height, 0.1f, 100.0f);
 }
 
-void Camera::set_ratio(int width, int height)
+void fwCamera::set_ratio(int width, int height)
 {
 	projection = glm::perspective(glm::radians(45.0f), (float)width / (float)height, 0.1f, 100.0f);
 }
 
-void Camera::translate(glm::vec3 &translation)
+void fwCamera::translate(glm::vec3 &translation)
 {
 	position = translation;
 
@@ -27,7 +27,7 @@ void Camera::translate(glm::vec3 &translation)
 	view = glm::lookAt(position, target, up);
 }
 
-void Camera::translate(const float x, const float y, const float z)
+void fwCamera::translate(const float x, const float y, const float z)
 {
 	position.x = x;
 	position.y = y;
@@ -41,7 +41,7 @@ void Camera::translate(const float x, const float y, const float z)
 	view = glm::lookAt(position, target, up);
 }
 
-void Camera::lookAt(glm::vec3 &_target)
+void fwCamera::lookAt(glm::vec3 &_target)
 {
 	target = _target;
 	direction = glm::normalize(position - target);
@@ -52,7 +52,7 @@ void Camera::lookAt(glm::vec3 &_target)
 	view = glm::lookAt(position, target, up);
 }
 
-void Camera::lookAt(float x, float y, float z)
+void fwCamera::lookAt(float x, float y, float z)
 {
 	target.x = x;
 	target.y = y;
@@ -66,24 +66,24 @@ void Camera::lookAt(float x, float y, float z)
 	view = glm::lookAt(position, target, up);
 }
 
-glm::mat4 Camera::GetViewMatrix(void)
+glm::mat4 fwCamera::GetViewMatrix(void)
 {
 	return glm::lookAt(position, right, up);
 }
 
-glm::mat4 Camera::GetProjectionMatrix(void)
+glm::mat4 fwCamera::GetProjectionMatrix(void)
 {
 	return projection;
 }
 
-void Camera::set_uniforms(glProgram *program)
+void fwCamera::set_uniforms(glProgram *program)
 {
 	program->set_uniform("view", view);
 	program->set_uniform("projection", projection);
 	program->set_uniform("viewPos", position);
 }
 
-void Camera::set_uniformBuffer(void)
+void fwCamera::set_uniformBuffer(void)
 {
 	if (ubo == nullptr) {
 		ubo = new glUniformBuffer(2 * sizeof(glm::mat4) + sizeof(glm::vec3) + 4);
@@ -97,12 +97,12 @@ void Camera::set_uniformBuffer(void)
 	ubo->bind();
 }
 
-void Camera::bind_uniformBuffer(glProgram *program)
+void fwCamera::bind_uniformBuffer(glProgram *program)
 {
 	ubo->bind(program, "Camera");
 }
 
-Camera::~Camera()
+fwCamera::~fwCamera()
 {
 	if (ubo != nullptr) {
 		delete ubo;

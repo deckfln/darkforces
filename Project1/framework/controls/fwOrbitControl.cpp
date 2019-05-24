@@ -2,7 +2,7 @@
 
 #include <GLFW/glfw3.h>
 
-fwOrbitControl::fwOrbitControl(Camera *_camera):
+fwOrbitControl::fwOrbitControl(fwCamera *_camera):
 	camera(_camera)
 {
 
