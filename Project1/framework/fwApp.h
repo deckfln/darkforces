@@ -24,6 +24,7 @@ public:
 
 	void mouseButton(int button, int action);
 	void mouseMove(double xpos, double ypos);
+	void mouseScroll(double xpos, double ypos);
 	void resizeEvent(int _width, int _height);
 
 	void run(void);

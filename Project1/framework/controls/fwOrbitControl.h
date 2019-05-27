@@ -12,12 +12,16 @@ class fwOrbitControl
 	float starty;
 	float theta = pi/4;
 	float phi = 0;
+	float m_radius = 5;
 
 	fwCamera *camera = nullptr;
 
+	void update(void);
+
 public:
-	fwOrbitControl(fwCamera *);
+	fwOrbitControl(fwCamera *, float radius = 5);
 	void mouseButton(int button, int action);
 	void mouseMove(float xpos, float ypos);
+	void mouseScroll(float xoffset, float yoffset);
 	~fwOrbitControl();
 };

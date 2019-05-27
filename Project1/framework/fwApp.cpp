@@ -23,6 +23,11 @@ static void cursor_position_callback(GLFWwindow* window, double xpos, double ypo
 	currentApp->mouseMove(xpos, ypos);
 }
 
+static void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
+{
+	currentApp->mouseScroll(xoffset, yoffset);
+}
+
 /***
  *
  */
@@ -68,6 +73,7 @@ fwApp::fwApp(std::string name, int _width, int _height):
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 	glfwSetCursorPosCallback(window, cursor_position_callback);
 	glfwSetMouseButtonCallback(window, mouse_button_callback);
+	glfwSetScrollCallback(window, scroll_callback);
 }
 
 void fwApp::bindControl(fwOrbitControl *_control)
@@ -102,6 +108,12 @@ void fwApp::mouseMove(double xpos, double ypos)
 
 	if (control)
 		control->mouseMove(x, y);
+}
+
+void fwApp::mouseScroll(double xoffset, double yoffset)
+{
+	if (control)
+		control->mouseScroll(xoffset, yoffset);
 }
 
 /***

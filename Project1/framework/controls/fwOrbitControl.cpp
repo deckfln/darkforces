@@ -2,15 +2,17 @@
 
 #include <GLFW/glfw3.h>
 
-fwOrbitControl::fwOrbitControl(fwCamera *_camera):
-	camera(_camera)
+fwOrbitControl::fwOrbitControl(fwCamera *_camera, float _radius):
+	camera(_camera),
+	m_radius(_radius)
 {
 
 }
 
 void fwOrbitControl::mouseButton(int button, int action)
 {
-	if (button == GLFW_MOUSE_BUTTON_LEFT) {
+	switch (button) {
+	case GLFW_MOUSE_BUTTON_LEFT:
 		if (action == GLFW_PRESS) {
 			managed = true;
 			startx = starty = -1;
@@ -18,7 +20,16 @@ void fwOrbitControl::mouseButton(int button, int action)
 		else {
 			managed = false;
 		}
+		break;
+	case GLFW_MOUSE_BUTTON_MIDDLE:
+		break;
 	}
+}
+
+void fwOrbitControl::mouseScroll(float xoffset, float yoffset)
+{
+	m_radius -= yoffset;
+	update();
 }
 
 void fwOrbitControl::mouseMove(float xpos, float ypos)
@@ -32,21 +43,23 @@ void fwOrbitControl::mouseMove(float xpos, float ypos)
 			xdir = xpos - startx ;
 			ydir = ypos - starty;
 		}
-		float radius = 8;
-
-
 		theta += ydir;
 		phi += xdir;
 
-		float z = radius * cos(phi)*sin(theta);
-		float x = radius * sin(phi)*sin(theta);
-		float y = radius * cos(theta);
-
-		camera->translate(x, y, z);
+		update();
 
 		startx = xpos;
 		starty = ypos;
 	}
+}
+
+void fwOrbitControl::update(void)
+{
+	float z = m_radius * cos(phi)*sin(theta);
+	float x = m_radius * sin(phi)*sin(theta);
+	float y = m_radius * cos(theta);
+
+	camera->translate(x, y, z);
 }
 
 fwOrbitControl::~fwOrbitControl()
