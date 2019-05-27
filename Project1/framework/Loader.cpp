@@ -56,7 +56,7 @@ fwMesh *Loader::processMesh(aiMesh *mesh, const aiScene *scene)
 
 	for (unsigned int i = 0; i < mesh->mNumVertices; i++)
 	{
-		// process vertex positions, normals and texture coordinates
+		// process vertex m_positions, normals and texture coordinates
 		position[i].x = mesh->mVertices[i].x;
 		position[i].y = mesh->mVertices[i].y;
 		position[i].z = mesh->mVertices[i].z;

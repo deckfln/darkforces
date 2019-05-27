@@ -14,16 +14,15 @@
 
 class myApp : public fwApp
 {
-	fwCamera *camera;
-	fwPointLight *light;
-	fwSpotLight *light2;
-	fwSkybox *skybox;
-	fwScene *scene;
-	fwOrbitControl *control;
+	fwCamera *m_camera;
+	fwDirectionLight *m_light;
+	fwSkybox *m_skybox;
+	fwScene *m_scene;
+	fwOrbitControl *m_control;
 	glm::vec4 *yellow;
 	glm::vec4 *white;
-	glm::mat4 positions[2];
-	fwInstancedMesh *instancedMesh;
+	glm::mat4 m_positions[3];
+	fwInstancedMesh *m_instancedMesh;
 
 public:
 	myApp(std::string name,  int width, int height);

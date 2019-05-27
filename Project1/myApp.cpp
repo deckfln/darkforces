@@ -18,28 +18,28 @@
 myApp::myApp(std::string name, int width, int height) :
 	fwApp(name, width, height)
 {
-	camera = new fwCamera(width, height);
+	m_camera = new fwCamera(width, height);
 	int Button = 0;
 
-	control = new fwOrbitControl(camera);
-	bindControl(control);
+	m_control = new fwOrbitControl(m_camera);
+	bindControl(m_control);
 
 	/*
 	 * fwCamera
 	 */
-	camera->lookAt(0, 0, 0);
-	camera->translate(0, 0, 3);
+	m_camera->lookAt(0, 0, 0);
+	m_camera->translate(0, 0, 3);
 
 	/*
 	 * Lights
 	 */
-	 fwDirectionLight *light = new fwDirectionLight(
+	 m_light = new fwDirectionLight(
 		 glm::vec3(-2.0f, 4.0f, -1.0f),
 		 glm::vec3(0.2, 0.2, 0.2),
 		 glm::vec3(0.8f, 0.8f, 0.8f),
 		 glm::vec3(0.7f, 0.7f, 0.7f)
 	 );
-	 light->castShadow(true);
+	 m_light->castShadow(true);
 
 	// lights
 	fwBoxGeometry *geometry = new fwBoxGeometry();
@@ -51,7 +51,7 @@ myApp::myApp(std::string name, int width, int height) :
 	glm::vec3 half(0.1);
 	fLight->set_scale(half).set_name("light");
 
-	light->addChild(fLight);
+	m_light->addChild(fLight);
 
 	// floor
 	Texture *t1 = new Texture("images/wood.png");
@@ -61,31 +61,25 @@ myApp::myApp(std::string name, int width, int height) :
 	plane->set_name("floor");
 	plane->receiveShadow(true);
 
-	// box1
+	// box
 	t1 = new Texture("images/container2.png");
 	Texture *t2 = new Texture("images/container2_specular.png");
 	material = new fwDiffuseMaterial(t1, nullptr, 32);
 
-	fwMesh *box1 = new fwMesh(geometry, material);
-	box1->translate(0.5, 0.5, 0);
-	box1->castShadow(true);
-	box1->set_name("box1");
-	box1->receiveShadow(true);
+	m_positions[0] = glm::translate(glm::vec3(0.5, 0.5, 0.5));
+	m_positions[1] = glm::translate(glm::vec3(2, 0, 1));
 
-	// box2
-	fwMesh *box2 = new fwMesh(geometry, material);
-	box2->translate(2, 0, 1);
-	box2->castShadow(true);
-	box2->set_name("box2");
-	box2->receiveShadow(true);
+	glm::mat4 rotationMatrix = glm::rotate(glm::radians(60.0f), glm::vec3(1, 0, 0));
+	glm::mat4 scaleMatrix = glm::scale(glm::vec3(0.25, 0.25, 0.25));
+	glm::mat4 translateMatrix = glm::translate(glm::vec3(-1, 0, 2));
 
-	// box3
-	fwMesh *box3 = new fwMesh(geometry, material);
-	glm::vec3 r(glm::radians(60.0f), 0, glm::radians(60.0f));
-	box3->set_scale(0.25).rotate(r).translate(-1, 0, 2);
-	box3->castShadow(true);
-	box3->set_name("box3");
-	box3->receiveShadow(true);
+	m_positions[2] = translateMatrix * scaleMatrix * rotationMatrix;
+
+	m_instancedMesh = new fwInstancedMesh(geometry, material, 3, m_positions);
+	m_instancedMesh->translate(0.5, 0.5, 0);
+	m_instancedMesh->castShadow(true);
+	m_instancedMesh->set_name("box1");
+	m_instancedMesh->receiveShadow(true);
 
 	glm::vec3 deg(-3.1415 / 2, 0, 0);
 	plane->rotate(deg);
@@ -93,18 +87,16 @@ myApp::myApp(std::string name, int width, int height) :
 	glm::vec3 tr(0, -0.5, 0);
 	plane->translate(tr);
 
-	// init the scene
+	// init the m_scene
 	yellow = new glm::vec4(255, 255, 0, 255);
-	scene = new fwScene();
-	scene->addLight(light).
+	m_scene = new fwScene();
+	m_scene->addLight(m_light).
 		setOutline(yellow).
 		addChild(plane).
-		addChild(box1).
-		addChild(box2).
-		addChild(box3);
+		addChild(m_instancedMesh);
 
-	positions[0] = glm::translate(glm::vec3(-1,0, 0));
-	positions[1] = glm::translate(glm::vec3(1, 0, 0));
+	m_positions[0] = glm::translate(glm::vec3(-1,0, 0));
+	m_positions[1] = glm::translate(glm::vec3(1, 0, 0));
 
 	// Skybox
 	std::string skyboxes[] = {
@@ -115,30 +107,40 @@ myApp::myApp(std::string name, int width, int height) :
 		"images/skybox/front.jpg",
 		"images/skybox/back.jpg" };
 
-	skybox = new fwSkybox(skyboxes);
+	m_skybox = new fwSkybox(skyboxes);
 }
 
 void myApp::resize(int width, int height)
 {
-	camera->set_ratio(width, height);
+	m_camera->set_ratio(width, height);
 }
 
 void myApp::draw(void)
 {
-	scene->draw(camera);
+	m_positions[0] = glm::translate(glm::vec3(1, sin(glfwGetTime() / 2) * 2, 0));
+	m_instancedMesh->update_position(0, 1);
 
-	skybox->draw(camera);
+	glm::vec3 lightPos;
+
+	float radius = 2;
+	lightPos.x = sin(glfwGetTime() / 2) * radius;
+	lightPos.y = 1;
+	lightPos.z = cos(glfwGetTime() / 2) * radius;
+	m_light->translate(lightPos);
+
+	m_scene->draw(m_camera);
+
+	m_skybox->draw(m_camera);
 }
 
 myApp::~myApp()
 {
-	delete camera;
-	delete light;
-	delete light2;
-	delete skybox;
-	delete control;
-	delete scene;
+	delete m_camera;
+	delete m_light;
+	delete m_skybox;
+	delete m_control;
+	delete m_scene;
 	delete yellow;
 	delete white;
-	delete instancedMesh;
+	delete m_instancedMesh;
 }

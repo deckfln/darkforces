@@ -19,7 +19,7 @@ class fwScene : public fwObject3D
 	fwLight *lights[10];
 	int current_light;
 
-	void allChildren(fwObject3D *root, std::list <fwMesh *> &meshes);
+	void allChildren(fwObject3D *root, std::list <fwMesh *> &meshes, std::list <fwMesh *> &instances);
 	void parseChildren(fwObject3D *root, std::map<std::string, std::map<int, std::list <fwMesh *>>> &meshesPerMaterial, std::string &codeLights, std::string &defines, bool withShadow);
 
 public:

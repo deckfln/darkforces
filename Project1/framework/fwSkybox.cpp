@@ -15,7 +15,7 @@
 #include "../include/stb_image.h"
 
 float skyboxVertices[] = {
-	// positions          
+	// m_positions          
 	-1.0f,  1.0f, -1.0f,
 	-1.0f, -1.0f, -1.0f,
 	 1.0f, -1.0f, -1.0f,
@@ -87,12 +87,12 @@ void fwSkybox::draw(fwCamera *camera)
 	camera->set_uniforms(program);
 	camera->bind_uniformBuffer(program);
 	/*
-	glm::mat4 view = glm::mat4(glm::mat3(camera->GetViewMatrix()));
-	glm::mat4 projection = camera->GetProjectionMatrix();
+	glm::mat4 view = glm::mat4(glm::mat3(m_camera->GetViewMatrix()));
+	glm::mat4 projection = m_camera->GetProjectionMatrix();
 	program->set_uniform("view", view);
 	program->set_uniform("projection", projection);
 	*/
-	// camera->set_uniforms(program);
+	// m_camera->set_uniforms(program);
 	texture->resetTextureUnit();
 	texture->bind();
 

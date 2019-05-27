@@ -32,7 +32,7 @@ std::string fwLight::set_uniform(glProgram *program, int index)
 
 	program->set_uniform(prefix + ".ambient", ambient);
 
-	// upload the light space matrix if there is a camera
+	// upload the m_light space matrix if there is a m_camera
 	if (shadowCamera != nullptr) {
 		glm::mat4 matrix = shadowCamera->GetMatrix();
 		program->set_uniform(prefix + ".matrix", matrix);

@@ -17,6 +17,7 @@ static glProgram *normalHelper_program = nullptr;
 static glProgram *outline_program = nullptr;
 static glProgram *outline_instanced_program = nullptr;
 static glProgram *depth_program = nullptr;
+static glProgram *depth_instanced_program = nullptr;
 
 fwScene::fwScene()
 {
@@ -36,14 +37,14 @@ fwScene &fwScene::setOutline(glm::vec4 *_color)
 	return *this;
 }
 
-void fwScene::allChildren(fwObject3D *root, std::list <fwMesh *> &meshes)
+void fwScene::allChildren(fwObject3D *root, std::list <fwMesh *> &meshes, std::list <fwMesh *> &instances)
 {
 	fwMesh *mesh;
 
 	std::list <fwObject3D *> _children = root->get_children();
 
 	for (auto child : _children) {
-		allChildren(child, meshes);
+		allChildren(child, meshes, instances);
 
 		// only display meshes
 		if (!child->is_class(MESH)) {
@@ -53,7 +54,12 @@ void fwScene::allChildren(fwObject3D *root, std::list <fwMesh *> &meshes)
 		mesh = (fwMesh *)child;
 
 		if (mesh->is_visible()) {
-			meshes.push_front(mesh);
+			if (mesh->is_class(INSTANCED_MESH)) {
+				instances.push_front(mesh);
+			}
+			else {
+				meshes.push_front(mesh);
+			}
 		}
 	}
 }
@@ -115,10 +121,12 @@ void fwScene::draw(fwCamera *camera)
 		outline_program = new glProgram(outline_material->get_vertexShader(), outline_material->get_fragmentShader(), "", "");
 	}
 
-	// update all elements on the scene
+	// update all elements on the m_scene
 	updateWorldMatrix(nullptr);
 
-	// 1st pass Draw shadows 
+	/*
+	 * 1st pass Draw shadows 
+	 */
 	bool hasShadowLights = false;
 	for (int i = 0; i < current_light; i++) {
 		fwLight *light = lights[i];
@@ -128,20 +136,36 @@ void fwScene::draw(fwCamera *camera)
 			if (depth_program == nullptr) {
 				depth_program = new glProgram(materialDepth.get_vertexShader(), materialDepth.get_fragmentShader(), "", "");
 			}
+			if (depth_instanced_program == nullptr) {
+				depth_instanced_program = new glProgram(materialDepth.get_vertexShader(), materialDepth.get_fragmentShader(), "", "#define INSTANCED\n");
+			}
 
-			// draw in the light shadowmap from the POV of the light
+			// draw in the m_light shadowmap from the POV of the m_light
 			light->startShadowMap();
 			light->setShadowCamera(depth_program);
 
 			// get all objects to draw
 			std::list <fwMesh *> meshes;
-			allChildren(this, meshes);
+			std::list <fwMesh *> instances;
+			allChildren(this, meshes, instances);
+
+			// 1st pass: single meshes
 
 			depth_program->run();
 
 			for (auto mesh : meshes) {
 				if (mesh->castShadow()) {
 					mesh->draw(depth_program);
+				}
+			}
+
+			// 2nd pass: instanced meshes
+
+			depth_instanced_program->run();
+
+			for (auto mesh : instances) {
+				if (mesh->castShadow()) {
+					mesh->draw(depth_instanced_program);
 				}
 			}
 
@@ -181,9 +205,12 @@ void fwScene::draw(fwCamera *camera)
 	std::list <fwMesh *> listOfOutlinedMeshes;
 	std::list <fwMesh *> normalHelperdMeshes;
 
-	// setup camera
+	// setup m_camera
 	camera->set_uniformBuffer();
 
+	/*
+	 * 2nd pass : draw objects
+	 */
 	for (auto shader : meshesPerMaterial) {
 		// draw all ojects sharing the same shader
 		code = shader.first;
@@ -296,14 +323,6 @@ void fwScene::draw(fwCamera *camera)
 
 fwScene::~fwScene()
 {
-	if (outline_program != nullptr) {
-		delete outline_program;
-	}
-
-	if (outline_material != nullptr) {
-		delete outline_material;
-	}
-
 	for (auto program : programs) {
 		delete program.second;
 	}
