@@ -55,6 +55,9 @@ void fwLight::startShadowMap(void)
 {
 	shadowMap->bind();
 	shadowMap->clear();
+
+	glGetIntegerv(GL_CULL_FACE_MODE, &m_previousCulling);
+	glCullFace(GL_FRONT);
 }
 
 void fwLight::setShadowCamera(glProgram *program)
@@ -67,6 +70,7 @@ void fwLight::setShadowCamera(glProgram *program)
 void fwLight::stopShadowMap(void)
 {
 	shadowMap->unbind();
+	glCullFace(m_previousCulling);
 }
 
 fwLight::~fwLight()

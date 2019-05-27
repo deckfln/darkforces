@@ -22,6 +22,7 @@ protected:
 	std::list <Uniform *> uniforms;
 
 	fwCamera *shadowCamera = nullptr;
+	GLint m_previousCulling;
 
 public:
 	fwLight();

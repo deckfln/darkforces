@@ -118,7 +118,7 @@ void fwScene::draw(fwCamera *camera)
 	// update all elements on the scene
 	updateWorldMatrix(nullptr);
 
-	// Draw shadows : 
+	// 1st pass Draw shadows 
 	bool hasShadowLights = false;
 	for (int i = 0; i < current_light; i++) {
 		fwLight *light = lights[i];

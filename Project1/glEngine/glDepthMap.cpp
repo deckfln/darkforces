@@ -5,7 +5,7 @@ glDepthMap::glDepthMap(int _width, int _height) :
 {
 	bind();
 	// need to read back in next stage => use a TextureBuffer
-	depth = new glTexture(_width, _height, GL_DEPTH_COMPONENT);
+	depth = new glDepthTexture(_width, _height);
 	bindTexture(depth, GL_DEPTH_ATTACHMENT);
 	glDrawBuffer(GL_NONE);	// no color buffer
 	glReadBuffer(GL_NONE);
@@ -17,7 +17,7 @@ void glDepthMap::clear(void)
 	glClear(GL_DEPTH_BUFFER_BIT);
 }
 
-glTexture *glDepthMap::getDepthTexture(void)
+glDepthTexture *glDepthMap::getDepthTexture(void)
 {
 	return depth;
 }

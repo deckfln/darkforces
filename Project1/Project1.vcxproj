@@ -171,6 +171,7 @@
     <ClCompile Include="Element.cpp" />
     <ClCompile Include="glad.c" />
     <ClCompile Include="glEngine\glProgram.cpp" />
+    <ClCompile Include="glEngine\textures\glDepthTexture.cpp" />
     <ClCompile Include="List.cpp" />
     <ClCompile Include="myApp.cpp" />
     <ClCompile Include="Reference.cpp" />
@@ -223,6 +224,7 @@
     <ClInclude Include="Element.h" />
     <ClInclude Include="glad\glad.h" />
     <ClInclude Include="glEngine\glProgram.h" />
+    <ClInclude Include="glEngine\textures\glDepthTexture.h" />
     <ClInclude Include="include\stb_image.h" />
     <ClInclude Include="KHR\khrplatform.h" />
     <ClInclude Include="List.h" />

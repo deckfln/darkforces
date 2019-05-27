@@ -1,14 +1,15 @@
 #pragma once
 
 #include "glFrameBuffer.h"
+#include "textures/glDepthTexture.h"
 
 class glDepthMap: public glFrameBuffer
 {
-	glTexture *depth;
+	glDepthTexture *depth;
 
 public:
 	glDepthMap(int width, int height);
 	void clear(void);
-	glTexture *getDepthTexture(void);
+	glDepthTexture *getDepthTexture(void);
 	~glDepthMap();
 };
