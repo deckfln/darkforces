@@ -3,7 +3,7 @@
 #include "glad/glad.h"
 #include <GLFW/glfw3.h>
 
-#include "framework/FrameBuffer.h"
+#include "glEngine/glColorMap.h"
 #include "framework/fwPostProcessing.h"
 #include "framework/controls/fwOrbitControl.h"
 
@@ -12,7 +12,7 @@ class fwApp
 	int height;
 	int width;
 	GLFWwindow* window = nullptr;
-	FrameBuffer *frameBuffer = nullptr;
+	glColorMap *colorMap = nullptr;
 	fwPostProcessing *postProcessing = nullptr;
 	fwOrbitControl *control = nullptr;
 	Uniform *source = nullptr;

@@ -60,8 +60,8 @@ fwApp::fwApp(std::string name, int _width, int _height):
 	}
 
 	// FRAME BUFFER
-	frameBuffer = new FrameBuffer(width, height);
-	glTexture *tex = frameBuffer->get_colorBuffer();
+	colorMap = new glColorMap(width, height);
+	glTexture *tex = colorMap->getColorTexture();
 	source = new Uniform("screenTexture", tex);
 	postProcessing = new fwPostProcessing("shaders/screen_vertex.glsl", "shaders/screen_fragment.glsl", source);
 
@@ -119,17 +119,17 @@ void fwApp::run(void)
 		// -----
 		processInput(window);
 
-		// render 1st pass
-		frameBuffer->bind();
+		// 1st pass : shadows
 
-		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+		// 2nd pass : render to color buffer
+		colorMap->bind();
+		colorMap->clear();
 
 		draw();
 		
-		frameBuffer->unbind();
+		colorMap->unbind();
 
-		// render 2nd pass
+		// 3rd pass : postprocessing
 		glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
 		postProcessing->draw();
 
@@ -145,7 +145,7 @@ void fwApp::run(void)
  */
 fwApp::~fwApp()
 {
-	delete frameBuffer;
+	delete colorMap;
 	delete postProcessing;
 	delete source;
 

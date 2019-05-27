@@ -62,7 +62,7 @@ std::string load_shader_file(const std::string shader_file, std::string defines)
 				std::string file = base_match[1].str();
 
 				std::string include = load_shader_file(path + "/" + file, defines);
-				code.replace(hasInclude, sizeof(line) + 2, include);
+				code.replace(hasInclude, line.length(), include);
 			}
 		}
 	}
@@ -235,6 +235,14 @@ void glProgram::set_uniform(const std::string name, glm::vec3 &vec3)
 	glUniform *uniform = get_uniform(name);
 	if (uniform)
 		uniform->set_value(vec3);
+}
+
+void glProgram::set_uniform(const std::string name, glTexture *texture)
+{
+	glUniform *uniform = get_uniform(name);
+	if (uniform) {
+		uniform->set_value(texture->bind());
+	}
 }
 
 glProgram::~glProgram()

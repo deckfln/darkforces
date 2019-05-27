@@ -25,6 +25,9 @@ protected:
 
 	std::list <fwObject3D *> children;
 
+	bool m_castShadow = false;
+	bool m_receiveShadow = false;
+
 public:
 	fwObject3D();
 
@@ -43,6 +46,12 @@ public:
 	std::list <fwObject3D *> &get_children(void);
 
 	void updateWorldMatrix(fwObject3D *parent, bool force = false);
+
+	virtual bool castShadow(void) { return m_castShadow; }
+	virtual bool castShadow(bool s) { m_castShadow = s; return s; }
+
+	bool receiveShadow(void) { return m_receiveShadow; }
+	bool receiveShadow(bool s) { m_receiveShadow = s; return s; }
 
 	fwObject3D &addChild(fwObject3D *);
 

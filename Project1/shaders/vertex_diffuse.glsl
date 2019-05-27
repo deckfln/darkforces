@@ -17,6 +17,22 @@ out vec2 TexCoord;
 out vec3 normal;
 out vec3 world;
 
+#ifdef SHADOWMAP
+#if DIRECTION_LIGHTS > 0
+	struct DirectionlLight {
+		vec3 direction;
+
+		vec3 ambient;
+		vec3 diffuse;
+		vec3 specular;
+
+		mat4 matrix;
+		sampler2D shadowMap;
+	};
+	uniform DirectionlLight dirlights[DIRECTION_LIGHTS];
+	out vec4 dirLight_world[DIRECTION_LIGHTS];
+#endif
+#endif
 
 #include "include/camera.glsl"
 
@@ -25,6 +41,14 @@ void main()
 	world = vec3(model * vec4(aPos, 1.0));
     normal = mat3(transpose(inverse(model))) * aNormal;  
     TexCoord = aTexCoord;
-    
+ 
+#ifdef SHADOWMAP
+#if DIRECTION_LIGHTS > 0
+	for (int i=0; i<DIRECTION_LIGHTS; i++) {
+		dirLight_world[i] = dirlights[i].matrix * vec4(world, 1.0);
+	}
+#endif
+#endif
+
     gl_Position = projection * view * vec4(world, 1.0);
 }

@@ -1,29 +1,36 @@
 #include "glFrameBuffer.h"
 
-glFrameBuffer::glFrameBuffer()
+glFrameBuffer::glFrameBuffer(int _width, int _height):
+	height(_height),
+	width(_width)
 {
 	glGenFramebuffers(1, &id);
 }
 
-void glFrameBuffer::bind(GLuint target)
+void glFrameBuffer::bind()
 {
-	latest_bind = target;
-	glBindFramebuffer(target, id);
+	// push the current framebuffer
+	glGetIntegerv(GL_FRAMEBUFFER_BINDING, &m_prevFBO);
+	glGetIntegerv(GL_VIEWPORT, m_prevViewport);
+
+	glViewport(0, 0, width, height);
+	glBindFramebuffer(type, id);
 }
 
 void glFrameBuffer::bindTexture(glTexture *texture, GLuint attachment)
 {
-	glFramebufferTexture2D(latest_bind, attachment, GL_TEXTURE_2D, texture->getID(), 0);
+	glFramebufferTexture2D(type, attachment, GL_TEXTURE_2D, texture->getID(), 0);
 }
 
 void glFrameBuffer::bindDepth(glRenderBuffer *depth_stencil)
 {
-	glFramebufferRenderbuffer(latest_bind, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, depth_stencil->getID());
+	glFramebufferRenderbuffer(type, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, depth_stencil->getID());
 }
 
 void glFrameBuffer::unbind(void)
 {
-	glBindFramebuffer(latest_bind, 0);
+	glBindFramebuffer(type, m_prevFBO);
+	glViewport(m_prevViewport[0], m_prevViewport[1], m_prevViewport[2], m_prevViewport[3]);
 }
 
 glFrameBuffer::~glFrameBuffer()

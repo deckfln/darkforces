@@ -1,9 +1,11 @@
 #include <iostream>
+#include <stack>
 #include "glTexture.h"
 #include "include/stb_image.h"
 #include "glad/glad.h"
 
 int glTexture::currentTextureUnit = 0;
+static std::stack<int> stack;
 
 glTexture::glTexture()
 {
@@ -15,13 +17,26 @@ glTexture::glTexture(int width, int height, int format)
 	glGenTextures(1, &id);
 	glBindTexture(GL_TEXTURE_2D, id);
 
+	int type = -1;
+	int filter = -1;
+
+	switch (format) {
+	case GL_RGBA: 
+		type = GL_UNSIGNED_BYTE;
+		filter = GL_LINEAR;
+		break;
+	case GL_DEPTH_COMPONENT:
+		type = GL_FLOAT;
+		filter = GL_NEAREST;
+		break;
+	}
 	// set the texture wrapping/filtering options (on the currently bound texture object)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filter);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filter);
 
-	glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, NULL);
+	glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, type, NULL);
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
@@ -55,13 +70,26 @@ GLuint glTexture::getID(void)
 	return id;
 }
 
-void glTexture::bind(void)
+void glTexture::PushTextureUnit(void)
+{
+	stack.push(currentTextureUnit);
+}
+
+void glTexture::PopTextureUnit(void)
+{
+	currentTextureUnit = stack.top();
+	stack.pop();
+}
+
+GLint glTexture::bind(void)
 {
 	textureUnit = currentTextureUnit;
 
 	glActiveTexture(GL_TEXTURE0 + currentTextureUnit);
 	glBindTexture(GL_TEXTURE_2D, id);
 	currentTextureUnit++;
+
+	return textureUnit;
 }
 
 GLint glTexture::get_textureUnit(void)

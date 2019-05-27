@@ -1,6 +1,5 @@
 #pragma once
 #include "glad/glad.h"
-#include "glEngine/glProgram.h"
 #include "framework/Texture.h"
 
 class glTexture
@@ -15,8 +14,10 @@ public:
 	glTexture(int width, int height, int format);
 	glTexture(Texture *texture);
 	GLuint getID(void);
-	void bind(void);
+	GLint bind(void);
 	static void resetTextureUnit(void) { currentTextureUnit = 0; };
+	static void PushTextureUnit(void);
+	static void PopTextureUnit(void);
 	GLint get_textureUnit(void);
 	~glTexture();
 };

@@ -7,12 +7,16 @@
 #include "../glad/glad.h"
 
 #include "materials/fwNormalHelperMaterial.h"
+#include "materials/fwDepthMaterial.h"
 #include "fwInstancedMesh.h"
 
 static fwNormalHelperMaterial normalHelper;
+static fwDepthMaterial materialDepth;
+
 static glProgram *normalHelper_program = nullptr;
 static glProgram *outline_program = nullptr;
 static glProgram *outline_instanced_program = nullptr;
+static glProgram *depth_program = nullptr;
 
 fwScene::fwScene()
 {
@@ -32,7 +36,29 @@ fwScene &fwScene::setOutline(glm::vec4 *_color)
 	return *this;
 }
 
-void fwScene::parseChildren(fwObject3D *root, std::map<std::string, std::map<int, std::list <fwMesh *>>> &meshesPerMaterial, std::string &codeLights, std::string &defines)
+void fwScene::allChildren(fwObject3D *root, std::list <fwMesh *> &meshes)
+{
+	fwMesh *mesh;
+
+	std::list <fwObject3D *> _children = root->get_children();
+
+	for (auto child : _children) {
+		allChildren(child, meshes);
+
+		// only display meshes
+		if (!child->is_class(MESH)) {
+			continue;
+		}
+
+		mesh = (fwMesh *)child;
+
+		if (mesh->is_visible()) {
+			meshes.push_front(mesh);
+		}
+	}
+}
+
+void fwScene::parseChildren(fwObject3D *root, std::map<std::string, std::map<int, std::list <fwMesh *>>> &meshesPerMaterial, std::string &codeLights, std::string &defines, bool withShadow)
 {
 	fwMaterial *material;
 	fwMesh *mesh;
@@ -42,7 +68,7 @@ void fwScene::parseChildren(fwObject3D *root, std::map<std::string, std::map<int
 	std::list <fwObject3D *> _children = root->get_children();
 
 	for (auto child : _children) {
-		parseChildren(child, meshesPerMaterial, codeLights, defines);
+		parseChildren(child, meshesPerMaterial, codeLights, defines, withShadow);
 
 		// only display meshes
 		if (!child->is_class(MESH)) {
@@ -61,6 +87,11 @@ void fwScene::parseChildren(fwObject3D *root, std::map<std::string, std::map<int
 			if (mesh->is_class(INSTANCED_MESH)) {
 				local_defines += "#define INSTANCED\n";
 				code += "INSTANCED";
+			}
+
+			if (withShadow && mesh->receiveShadow()) {
+				local_defines += "#define SHADOWMAP\n";
+				code += "SHADOWMAP";
 			}
 
 			meshesPerMaterial[code][materialID].push_front(mesh);
@@ -87,6 +118,37 @@ void fwScene::draw(fwCamera *camera)
 	// update all elements on the scene
 	updateWorldMatrix(nullptr);
 
+	// Draw shadows : 
+	bool hasShadowLights = false;
+	for (int i = 0; i < current_light; i++) {
+		fwLight *light = lights[i];
+		if (light->castShadow()) {
+			hasShadowLights = true;
+
+			if (depth_program == nullptr) {
+				depth_program = new glProgram(materialDepth.get_vertexShader(), materialDepth.get_fragmentShader(), "", "");
+			}
+
+			// draw in the light shadowmap from the POV of the light
+			light->startShadowMap();
+			light->setShadowCamera(depth_program);
+
+			// get all objects to draw
+			std::list <fwMesh *> meshes;
+			allChildren(this, meshes);
+
+			depth_program->run();
+
+			for (auto mesh : meshes) {
+				if (mesh->castShadow()) {
+					mesh->draw(depth_program);
+				}
+			}
+
+			light->stopShadowMap();
+		}
+	}
+
 	// count number of lights
 	std::map <std::string, std::list <fwLight *>> lightsByType;
 
@@ -96,7 +158,6 @@ void fwScene::draw(fwCamera *camera)
 
 	// pre-processor
 	std::string defines;
-
 	std::string codeLights="";
 	for (auto type : lightsByType) {
 		codeLights += type.first + ":" + std::to_string(type.second.size());
@@ -112,7 +173,7 @@ void fwScene::draw(fwCamera *camera)
 	std::string code;
 	int materialID;
 
-	parseChildren(this, meshesPerMaterial, codeLights, defines);
+	parseChildren(this, meshesPerMaterial, codeLights, defines, hasShadowLights);
 
 	// draw all meshes per material
 	std::map <int, std::list <fwMesh *>> listOfMaterials;
@@ -129,6 +190,8 @@ void fwScene::draw(fwCamera *camera)
 		listOfMaterials = shader.second;
 
 		glProgram *program = programs[code];
+		glTexture::resetTextureUnit();
+
 		program->run();
 		camera->bind_uniformBuffer(program);
 
@@ -148,10 +211,9 @@ void fwScene::draw(fwCamera *camera)
 			materialID = ids.first;
 			listOfMeshes = ids.second;
 
-			glTexture::resetTextureUnit();
+			glTexture::PushTextureUnit();
 			material = materials[materialID];
 
-			material->bindTextures();
 			material->set_uniforms(program);
 
 			for (auto mesh : listOfMeshes) {
@@ -195,8 +257,7 @@ void fwScene::draw(fwCamera *camera)
 
 					current->run();
 					outline_material->set_uniforms(current);
-
-					camera->set_uniforms(current);
+					camera->bind_uniformBuffer(current);
 
 					glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
 					glStencilMask(0x00);
@@ -220,6 +281,7 @@ void fwScene::draw(fwCamera *camera)
 						normalHelper_program = new glProgram(normalHelper.get_vertexShader(), normalHelper.get_fragmentShader(), normalHelper.get_geometryShader(), defines);
 					}
 					normalHelper_program->run();
+					camera->bind_uniformBuffer(normalHelper_program);
 
 					mesh->draw(normalHelper_program);
 
@@ -227,6 +289,7 @@ void fwScene::draw(fwCamera *camera)
 					program->run();
 				}
 			}
+			glTexture::PopTextureUnit();
 		}
 	}
 }

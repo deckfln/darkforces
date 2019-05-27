@@ -14,5 +14,6 @@ public:
 	fwDirectionLight();
 	fwDirectionLight(glm::vec3 _direction, glm::vec3 _color, glm::vec3 _diffuse, glm::vec3 _specular);
 	std::string set_uniform(glProgram *program, int index = -1);
+	bool castShadow(bool s);
 	~fwDirectionLight();
 };

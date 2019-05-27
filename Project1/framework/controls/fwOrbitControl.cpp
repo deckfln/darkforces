@@ -32,7 +32,7 @@ void fwOrbitControl::mouseMove(float xpos, float ypos)
 			xdir = xpos - startx ;
 			ydir = ypos - starty;
 		}
-		float radius = 5;
+		float radius = 8;
 
 
 		theta += ydir;

@@ -4,6 +4,7 @@
 #include <iostream>
 #include "glVertexAttribute.h"
 #include "glUniform.h"
+#include "glTexture.h"
 
 std::string load_shader_file(const std::string shader_file, std::string defines);
 
@@ -31,5 +32,6 @@ public:
 	void set_uniform(const std::string name, glm::mat4 &mat4);
 	void set_uniform(const std::string name, glm::vec4 &vec4);
 	void set_uniform(const std::string name, glm::vec3 &vec3);
+	void set_uniform(const std::string name, glTexture *);
 	~glProgram();
 };

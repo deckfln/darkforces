@@ -126,8 +126,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="framework\camera\fwOrthographicCamera.cpp" />
     <ClCompile Include="framework\controls\fwOrbitControl.cpp" />
-    <ClCompile Include="framework\FrameBuffer.cpp" />
     <ClCompile Include="framework\fwApp.cpp" />
     <ClCompile Include="framework\fwInstancedMesh.cpp" />
     <ClCompile Include="framework\fwLight.cpp" />
@@ -145,6 +145,7 @@
     <ClCompile Include="framework\Loader.cpp" />
     <ClCompile Include="framework\fwMaterial.cpp" />
     <ClCompile Include="framework\fwMaterialBasic.cpp" />
+    <ClCompile Include="framework\materials\fwDepthMaterial.cpp" />
     <ClCompile Include="framework\materials\fwNormalHelperMaterial.cpp" />
     <ClCompile Include="framework\materials\fwOutlineMaterial.cpp" />
     <ClCompile Include="framework\fwObject3D.cpp" />
@@ -154,7 +155,9 @@
     <ClCompile Include="framework\Uniform.cpp" />
     <ClCompile Include="glEngine\glBufferAttribute.cpp" />
     <ClCompile Include="glEngine\glBufferObject.cpp" />
+    <ClCompile Include="glEngine\glColorMap.cpp" />
     <ClCompile Include="glEngine\glCubeTexture.cpp" />
+    <ClCompile Include="glEngine\glDepthMap.cpp" />
     <ClCompile Include="glEngine\glFrameBuffer.cpp" />
     <ClCompile Include="glEngine\glInstancedBufferAttribute.cpp" />
     <ClCompile Include="glEngine\glInstancedVertexArray.cpp" />
@@ -175,8 +178,8 @@
     <ClCompile Include="stb.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="framework\camera\fwOrthographicCamera.h" />
     <ClInclude Include="framework\controls\fwOrbitControl.h" />
-    <ClInclude Include="framework\FrameBuffer.h" />
     <ClInclude Include="framework\fwApp.h" />
     <ClInclude Include="framework\fwInstancedMesh.h" />
     <ClInclude Include="framework\fwLight.h" />
@@ -194,6 +197,7 @@
     <ClInclude Include="framework\Loader.h" />
     <ClInclude Include="framework\fwMaterial.h" />
     <ClInclude Include="framework\fwMaterialBasic.h" />
+    <ClInclude Include="framework\materials\fwDepthMaterial.h" />
     <ClInclude Include="framework\materials\fwNormalHelperMaterial.h" />
     <ClInclude Include="framework\materials\fwOutlineMaterial.h" />
     <ClInclude Include="framework\fwObject3D.h" />
@@ -203,7 +207,9 @@
     <ClInclude Include="framework\Uniform.h" />
     <ClInclude Include="glEngine\glBufferAttribute.h" />
     <ClInclude Include="glEngine\glBufferObject.h" />
+    <ClInclude Include="glEngine\glColorMap.h" />
     <ClInclude Include="glEngine\glCubeTexture.h" />
+    <ClInclude Include="glEngine\glDepthMap.h" />
     <ClInclude Include="glEngine\glFrameBuffer.h" />
     <ClInclude Include="glEngine\glInstancedBufferAttribute.h" />
     <ClInclude Include="glEngine\glInstancedVertexArray.h" />

@@ -85,6 +85,7 @@ void fwSkybox::draw(fwCamera *camera)
 	glDepthFunc(GL_LEQUAL);  // change depth function so depth test passes when values are equal to depth buffer's content
 	program->run();
 	camera->set_uniforms(program);
+	camera->bind_uniformBuffer(program);
 	/*
 	glm::mat4 view = glm::mat4(glm::mat3(camera->GetViewMatrix()));
 	glm::mat4 projection = camera->GetProjectionMatrix();

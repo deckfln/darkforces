@@ -1,6 +1,10 @@
 #include "fwCamera.h"
 
 
+fwCamera::fwCamera()
+{
+
+}
 
 fwCamera::fwCamera(int width, int height):
 	up(0.0f, 1.0f, 0.0f)
@@ -8,11 +12,13 @@ fwCamera::fwCamera(int width, int height):
 	view = glm::mat4(1.0f);
 
 	projection = glm::perspective(glm::radians(45.0f), (float)width / (float)height, 0.1f, 100.0f);
+	m_matrix = projection * view;
 }
 
 void fwCamera::set_ratio(int width, int height)
 {
 	projection = glm::perspective(glm::radians(45.0f), (float)width / (float)height, 0.1f, 100.0f);
+	m_matrix = projection * view;
 }
 
 void fwCamera::translate(glm::vec3 &translation)
@@ -25,6 +31,7 @@ void fwCamera::translate(glm::vec3 &translation)
 	up = glm::cross(direction, right);
 
 	view = glm::lookAt(position, target, up);
+	m_matrix = projection * view;
 }
 
 void fwCamera::translate(const float x, const float y, const float z)
@@ -39,6 +46,7 @@ void fwCamera::translate(const float x, const float y, const float z)
 	up = glm::cross(direction, right);
 
 	view = glm::lookAt(position, target, up);
+	m_matrix = projection * view;
 }
 
 void fwCamera::lookAt(glm::vec3 &_target)
@@ -50,6 +58,7 @@ void fwCamera::lookAt(glm::vec3 &_target)
 	up = glm::cross(direction, right);
 
 	view = glm::lookAt(position, target, up);
+	m_matrix = projection * view;
 }
 
 void fwCamera::lookAt(float x, float y, float z)
@@ -64,16 +73,22 @@ void fwCamera::lookAt(float x, float y, float z)
 	up = glm::cross(direction, right);
 
 	view = glm::lookAt(position, target, up);
+	m_matrix = projection * view;
 }
 
 glm::mat4 fwCamera::GetViewMatrix(void)
 {
-	return glm::lookAt(position, right, up);
+	return view;
 }
 
 glm::mat4 fwCamera::GetProjectionMatrix(void)
 {
 	return projection;
+}
+
+glm::mat4 &fwCamera::GetMatrix(void)
+{
+	return m_matrix;
 }
 
 void fwCamera::set_uniforms(glProgram *program)

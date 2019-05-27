@@ -56,7 +56,7 @@ void Uniform::set_uniform(glProgram *program)
 		program->set_uniform(name, *(glm::vec4 *)data);
 		break;
 	case GL_SAMPLER_2D:
-		program->set_uniform(name, ((glTexture *)data)->get_textureUnit());
+		program->set_uniform(name, (glTexture *)data);
 		break;
 	case GL_TEXTURE_CUBE_MAP:
 		program->set_uniform(name, ((glCubeTexture *)data)->get_textureUnit());

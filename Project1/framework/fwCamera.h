@@ -9,6 +9,7 @@
 
 class fwCamera: public fwObject3D
 {
+protected:
 	glm::vec3 target;
 	glm::vec3 direction;
 	glm::vec3 up;
@@ -16,10 +17,12 @@ class fwCamera: public fwObject3D
 
 	glm::mat4 view;
 	glm::mat4 projection;
+	glm::mat4 m_matrix;	// transformation matrix projection * view
 
 	glUniformBuffer *ubo = nullptr;
 
 public:
+	fwCamera();
 	fwCamera(int height, int width);
 	void set_ratio(int width, int height);
 	void set_uniforms(glProgram *program);
@@ -30,6 +33,7 @@ public:
 
 	glm::mat4 GetViewMatrix(void);
 	glm::mat4 GetProjectionMatrix(void);
+	glm::mat4 &GetMatrix(void);
 
 	void set_uniformBuffer(void);
 	void bind_uniformBuffer(glProgram *program);
