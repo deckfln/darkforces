@@ -64,7 +64,7 @@ void fwMesh::draw(glProgram *program)
 		geometry->enable_attributes(program);
 		vao[id]->unbind();
 	}
-	program->set_uniform("model", worldMatrix);
+	program->set_uniform("model", m_worldMatrix);
 
 	geometry->draw(wireFrame ? GL_LINES : GL_TRIANGLES, vao[id]);
 }

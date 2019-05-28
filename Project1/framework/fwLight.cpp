@@ -62,7 +62,7 @@ void fwLight::startShadowMap(void)
 
 void fwLight::setShadowCamera(glProgram *program)
 {
-	shadowCamera->translate(position);
+	shadowCamera->translate(m_Position);
 	shadowCamera->set_uniformBuffer();
 	shadowCamera->bind_uniformBuffer(program);
 }

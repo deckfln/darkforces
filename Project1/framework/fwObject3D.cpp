@@ -1,12 +1,13 @@
 #include "fwObject3D.h"
 #include <glm/gtc/matrix_transform.hpp> 
 #include <glm/gtx/transform.hpp>
+#include <glm/gtx/norm.hpp>
 
 
 fwObject3D::fwObject3D():
-	position(0),
-	scale(1),
-	modelMatrix(1)
+	m_Position(0),
+	m_Scale(1),
+	m_modelMatrix(1)
 {
 }
 
@@ -24,87 +25,96 @@ bool fwObject3D::is_class(int _classID)
 
 fwObject3D &fwObject3D::rotate(glm::vec3 &_rotation)
 {
-	rotation = _rotation;
+	m_Rotation = _rotation;
 	updated = true;
 	return *this;
 }
 
 fwObject3D &fwObject3D::translate(glm::vec3 &vector)
 {
-	position = vector;
+	m_Position = vector;
 	updated = true;
 	return *this;
 }
 
 fwObject3D &fwObject3D::translate(float x, float y, float z)
 {
-	position.x = x;
-	position.y = y;
-	position.z = z;
+	m_Position.x = x;
+	m_Position.y = y;
+	m_Position.z = z;
 	updated = true;
 	return *this;
 }
 
 fwObject3D &fwObject3D::set_scale(glm::vec3 &_scale)
 {
-	scale = _scale;
+	m_Scale = _scale;
 	updated = true;
 	return *this;
 }
 
 glm::vec3 fwObject3D::get_scale(void)
 {
-	return scale;
+	return m_Scale;
 }
 
 fwObject3D &fwObject3D::set_scale(float _scale)
 {
 	updated = true;
-	scale *= _scale;
+	m_Scale *= _scale;
 	return *this;
 }
 
 fwObject3D &fwObject3D::addChild(fwObject3D *mesh)
 {
-	children.push_front(mesh);
+	m_children.push_front(mesh);
 	return *this;
 }
 
 void fwObject3D::updateWorldMatrix(fwObject3D *parent, bool force)
 {
 	if (updated) {
-		glm::mat4 rotationMatrix = glm::rotate(rotation.x, glm::vec3(1, 0, 0));
+		glm::mat4 rotationMatrix = glm::rotate(m_Rotation.x, glm::vec3(1, 0, 0));
 
-		glm::mat4 scaleMatrix = glm::scale(scale);
-		glm::mat4 translateMatrix = glm::translate(position);
+		glm::mat4 scaleMatrix = glm::scale(m_Scale);
+		glm::mat4 translateMatrix = glm::translate(m_Position);
 		// model = glm::rotate(model, rotation);
-		modelMatrix = translateMatrix * scaleMatrix * rotationMatrix;
+		m_modelMatrix = translateMatrix * scaleMatrix * rotationMatrix;
 	}
 
 	if (updated or force) {
 		if (parent) {
-			worldMatrix = parent->worldMatrix * modelMatrix;
+			m_worldMatrix = parent->m_worldMatrix * m_modelMatrix;
 		}
 		else {
-			worldMatrix = modelMatrix;
+			m_worldMatrix = m_modelMatrix;
 		}
 
 		force = true;
 	}
 
-	for (auto child : children) {
+	for (auto child : m_children) {
 		child->updateWorldMatrix(this, force);
 	}
 }
 
 glm::vec3 &fwObject3D::get_position(void)
 {
-	return position;
+	return m_Position;
 }
 
 std::list <fwObject3D *> &fwObject3D::get_children(void)
 {
-	return children;
+	return m_children;
+}
+
+/*
+ */
+float fwObject3D::sqDistanceTo(fwObject3D *to)
+{
+	debug = glm::distance2(m_Position, to->m_Position);
+
+	return debug;
 }
 
 fwObject3D::~fwObject3D()

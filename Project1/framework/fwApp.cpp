@@ -131,7 +131,9 @@ void fwApp::run(void)
 		// -----
 		processInput(window);
 
-		// 1st pass : shadows
+		glEnable(GL_CULL_FACE);
+		//glCullFace(GL_FRONT);
+		//glFrontFace(GL_CCW);
 
 		// 2nd pass : render to color buffer
 		colorMap->bind();
@@ -142,6 +144,7 @@ void fwApp::run(void)
 		colorMap->unbind();
 
 		// 3rd pass : postprocessing
+		//glCullFace(GL_BACK);
 		glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
 		postProcessing->draw();
 

@@ -23,41 +23,41 @@ void fwCamera::set_ratio(int width, int height)
 
 void fwCamera::translate(glm::vec3 &translation)
 {
-	position = translation;
+	m_Position = translation;
 
-	direction = glm::normalize(position - target);
+	direction = glm::normalize(m_Position - target);
 	glm::vec3 _up = glm::vec3(0.0f, 1.0f, 0.0f);
 	right = glm::normalize(glm::cross(_up, direction));
 	up = glm::cross(direction, right);
 
-	view = glm::lookAt(position, target, up);
+	view = glm::lookAt(m_Position, target, up);
 	m_matrix = projection * view;
 }
 
 void fwCamera::translate(const float x, const float y, const float z)
 {
-	position.x = x;
-	position.y = y;
-	position.z = z;
+	m_Position.x = x;
+	m_Position.y = y;
+	m_Position.z = z;
 
-	direction = glm::normalize(position - target);
+	direction = glm::normalize(m_Position - target);
 	glm::vec3 _up = glm::vec3(0.0f, 1.0f, 0.0f);
 	right = glm::normalize(glm::cross(_up, direction));
 	up = glm::cross(direction, right);
 
-	view = glm::lookAt(position, target, up);
+	view = glm::lookAt(m_Position, target, up);
 	m_matrix = projection * view;
 }
 
 void fwCamera::lookAt(glm::vec3 &_target)
 {
 	target = _target;
-	direction = glm::normalize(position - target);
+	direction = glm::normalize(m_Position - target);
 	glm::vec3 _up = glm::vec3(0.0f, 1.0f, 0.0f);
 	right = glm::normalize(glm::cross(_up, direction));
 	up = glm::cross(direction, right);
 
-	view = glm::lookAt(position, target, up);
+	view = glm::lookAt(m_Position, target, up);
 	m_matrix = projection * view;
 }
 
@@ -67,12 +67,12 @@ void fwCamera::lookAt(float x, float y, float z)
 	target.y = y;
 	target.z = z;
 
-	direction = glm::normalize(position - target);
+	direction = glm::normalize(m_Position - target);
 	glm::vec3 _up = glm::vec3(0.0f, 1.0f, 0.0f);
 	right = glm::normalize(glm::cross(_up, direction));
 	up = glm::cross(direction, right);
 
-	view = glm::lookAt(position, target, up);
+	view = glm::lookAt(m_Position, target, up);
 	m_matrix = projection * view;
 }
 
@@ -95,7 +95,7 @@ void fwCamera::set_uniforms(glProgram *program)
 {
 	program->set_uniform("view", view);
 	program->set_uniform("projection", projection);
-	program->set_uniform("viewPos", position);
+	program->set_uniform("viewPos", m_Position);
 }
 
 void fwCamera::set_uniformBuffer(void)
@@ -108,7 +108,7 @@ void fwCamera::set_uniformBuffer(void)
 
 	ubo->bind();
 	ubo->map(glm::value_ptr(camera[0]), 0, sizeof(camera));
-	ubo->map(glm::value_ptr(position), sizeof(camera), sizeof(position));
+	ubo->map(glm::value_ptr(m_Position), sizeof(camera), sizeof(m_Position));
 	ubo->bind();
 }
 

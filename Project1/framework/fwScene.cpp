@@ -115,6 +115,7 @@ void fwScene::parseChildren(fwObject3D *root, std::map<std::string, std::map<int
 	}
 }
 
+
 void fwScene::draw(fwCamera *camera)
 {
 	if (outline_material != nullptr && outline_program == nullptr) {
@@ -152,6 +153,9 @@ void fwScene::draw(fwCamera *camera)
 			// 1st pass: single meshes
 
 			depth_program->run();
+
+			// draw neareast first
+			meshes.sort([camera](fwMesh *a, fwMesh *b) { return a->sqDistanceTo(camera) < b->sqDistanceTo(camera); });
 
 			for (auto mesh : meshes) {
 				if (mesh->castShadow()) {
@@ -237,6 +241,9 @@ void fwScene::draw(fwCamera *camera)
 			// draw all ojects sharing the material
 			materialID = ids.first;
 			listOfMeshes = ids.second;
+
+			// draw neareast first
+			listOfMeshes.sort([camera](fwMesh *a, fwMesh *b) { return a->sqDistanceTo(camera) < b->sqDistanceTo(camera); });
 
 			glTexture::PushTextureUnit();
 			material = materials[materialID];

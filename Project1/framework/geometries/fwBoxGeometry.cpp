@@ -2,135 +2,137 @@
 
 
 float _vertices[] = {
-	-0.5f, -0.5f, -0.5f,
-	 0.5f, -0.5f, -0.5f,
-	 0.5f,  0.5f, -0.5f,
-	 0.5f,  0.5f, -0.5f,
-	-0.5f,  0.5f, -0.5f,
-	-0.5f, -0.5f, -0.5f,
-
-	-0.5f, -0.5f,  0.5f,
-	 0.5f, -0.5f,  0.5f,
-	 0.5f,  0.5f,  0.5f,
-	 0.5f,  0.5f,  0.5f,
-	-0.5f,  0.5f,  0.5f,
-	-0.5f, -0.5f,  0.5f,
-
-	-0.5f,  0.5f,  0.5f,
-	-0.5f,  0.5f, -0.5f,
-	-0.5f, -0.5f, -0.5f,
-	-0.5f, -0.5f, -0.5f,
-	-0.5f, -0.5f,  0.5f,
-	-0.5f,  0.5f,  0.5f,
-
-	 0.5f,  0.5f,  0.5f,
-	 0.5f,  0.5f, -0.5f,
-	 0.5f, -0.5f, -0.5f,
-	 0.5f, -0.5f, -0.5f,
-	 0.5f, -0.5f,  0.5f,
-	 0.5f,  0.5f,  0.5f,
-
-	-0.5f, -0.5f, -0.5f,
-	 0.5f, -0.5f, -0.5f,
-	 0.5f, -0.5f,  0.5f,
-	 0.5f, -0.5f,  0.5f,
-	-0.5f, -0.5f,  0.5f,
-	-0.5f, -0.5f, -0.5f,
-
-	-0.5f,  0.5f, -0.5f,
-	 0.5f,  0.5f, -0.5f,
-	 0.5f,  0.5f,  0.5f,
-	 0.5f,  0.5f,  0.5f,
-	-0.5f,  0.5f,  0.5f,
-	-0.5f,  0.5f, -0.5f
+	// back face
+	-1.0f, -1.0f, -1.0f, // bottom-left
+	 1.0f,  1.0f, -1.0f, // top-right
+	 1.0f, -1.0f, -1.0f, // bottom-right         
+	 1.0f,  1.0f, -1.0f, // top-right
+	-1.0f, -1.0f, -1.0f, // bottom-left
+	-1.0f,  1.0f, -1.0f, // top-left
+	// front face
+	-1.0f, -1.0f,  1.0f, // bottom-left
+	 1.0f, -1.0f,  1.0f, // bottom-right
+	 1.0f,  1.0f,  1.0f, // top-right
+	 1.0f,  1.0f,  1.0f, // top-right
+	-1.0f,  1.0f,  1.0f, // top-left
+	-1.0f, -1.0f,  1.0f, // bottom-left
+	// left face
+	-1.0f,  1.0f,  1.0f, // top-right
+	-1.0f,  1.0f, -1.0f, // top-left
+	-1.0f, -1.0f, -1.0f, // bottom-left
+	-1.0f, -1.0f, -1.0f, // bottom-left
+	-1.0f, -1.0f,  1.0f, // bottom-right
+	-1.0f,  1.0f,  1.0f, // top-right
+	// right face
+	 1.0f,  1.0f,  1.0f, // top-left
+	 1.0f, -1.0f, -1.0f, // bottom-right
+	 1.0f,  1.0f, -1.0f, // top-right         
+	 1.0f, -1.0f, -1.0f, // bottom-right
+	 1.0f,  1.0f,  1.0f, // top-left
+	 1.0f, -1.0f,  1.0f, // bottom-left     
+	// bottom face
+	-1.0f, -1.0f, -1.0f, // top-right
+	 1.0f, -1.0f, -1.0f, // top-left
+	 1.0f, -1.0f,  1.0f, // bottom-left
+	 1.0f, -1.0f,  1.0f, // bottom-left
+	-1.0f, -1.0f,  1.0f, // bottom-right
+	-1.0f, -1.0f, -1.0f, // top-right
+	// top face
+	-1.0f,  1.0f, -1.0f, // top-left
+	 1.0f,  1.0f , 1.0f, // bottom-right
+	 1.0f,  1.0f, -1.0f, // top-right     
+	 1.0f,  1.0f,  1.0f, // bottom-right
+	-1.0f,  1.0f, -1.0f, // top-left
+	-1.0f,  1.0f,  1.0f // bottom-left        
 };
 
 float _uvs[] = {
-	0.0f, 0.0f,
-	1.0f, 0.0f,
-	1.0f, 1.0f,
-	1.0f, 1.0f,
-	0.0f, 1.0f,
-	0.0f, 0.0f,
-
-	0.0f, 0.0f,
-	1.0f, 0.0f,
-	1.0f, 1.0f,
-	1.0f, 1.0f,
-	0.0f, 1.0f,
-	0.0f, 0.0f,
-
-	1.0f, 0.0f,
-	1.0f, 1.0f,
-	0.0f, 1.0f,
-	0.0f, 1.0f,
-	0.0f, 0.0f,
-	1.0f, 0.0f,
-
-	1.0f, 0.0f,
-	1.0f, 1.0f,
-	0.0f, 1.0f,
-	0.0f, 1.0f,
-	0.0f, 0.0f,
-	1.0f, 0.0f,
-
-	0.0f, 1.0f,
-	1.0f, 1.0f,
-	1.0f, 0.0f,
-	1.0f, 0.0f,
-	0.0f, 0.0f,
-	0.0f, 1.0f,
-
-	0.0f, 1.0f,
-	1.0f, 1.0f,
-	1.0f, 0.0f,
-	1.0f, 0.0f,
-	0.0f, 0.0f,
-	0.0f, 1.0f
+	0.0f, 0.0f, // bottom-left
+	1.0f, 1.0f, // top-right
+	1.0f, 0.0f, // bottom-right         
+	1.0f, 1.0f, // top-right
+	0.0f, 0.0f, // bottom-left
+	0.0f, 1.0f, // top-left
+	// front face
+	0.0f, 0.0f, // bottom-left
+	1.0f, 0.0f, // bottom-right
+	1.0f, 1.0f, // top-right
+	1.0f, 1.0f, // top-right
+	0.0f, 1.0f, // top-left
+	0.0f, 0.0f, // bottom-left
+	// left face
+	1.0f, 0.0f, // top-right
+	1.0f, 1.0f, // top-left
+	0.0f, 1.0f, // bottom-left
+	0.0f, 1.0f, // bottom-left
+	0.0f, 0.0f, // bottom-right
+	1.0f, 0.0f, // top-right
+	// right face
+	1.0f, 0.0f, // top-left
+	0.0f, 1.0f, // bottom-right
+	1.0f, 1.0f, // top-right         
+	0.0f, 1.0f, // bottom-right
+	1.0f, 0.0f, // top-left
+	0.0f, 0.0f, // bottom-left     
+	// bottom face
+	0.0f, 1.0f, // top-right
+	1.0f, 1.0f, // top-left
+	1.0f, 0.0f, // bottom-left
+	1.0f, 0.0f, // bottom-left
+	0.0f, 0.0f, // bottom-right
+	0.0f, 1.0f, // top-right
+	// top face
+	0.0f, 1.0f, // top-left
+	1.0f, 0.0f, // bottom-right
+	1.0f, 1.0f, // top-right     
+	1.0f, 0.0f, // bottom-right
+	0.0f, 1.0f, // top-left
+	0.0f, 0.0f  // bottom-left        
 };
 
 float _normals[] = {
-	0.0f,  0.0f, -1.0f,
-	0.0f,  0.0f, -1.0f,
-	0.0f,  0.0f, -1.0f,
-	0.0f,  0.0f, -1.0f,
-	0.0f,  0.0f, -1.0f,
-	0.0f,  0.0f, -1.0f,
-
-	0.0f,  0.0f, 1.0f,
-	0.0f,  0.0f, 1.0f,
-	0.0f,  0.0f, 1.0f,
-	0.0f,  0.0f, 1.0f,
-	0.0f,  0.0f, 1.0f,
-	0.0f,  0.0f, 1.0f,
-
-	-1.0f,  0.0f,  0.0f,
-	-1.0f,  0.0f,  0.0f,
-	-1.0f,  0.0f,  0.0f,
-	-1.0f,  0.0f,  0.0f,
-	-1.0f,  0.0f,  0.0f,
-	-1.0f,  0.0f,  0.0f,
-
-	1.0f,  0.0f,  0.0f,
-	1.0f,  0.0f,  0.0f,
-	1.0f,  0.0f,  0.0f,
-	1.0f,  0.0f,  0.0f,
-	1.0f,  0.0f,  0.0f,
-	1.0f,  0.0f,  0.0f,
-
-	0.0f, -1.0f,  0.0f,
-	0.0f, -1.0f,  0.0f,
-	0.0f, -1.0f,  0.0f,
-	0.0f, -1.0f,  0.0f,
-	0.0f, -1.0f,  0.0f,
-	0.0f, -1.0f,  0.0f,
-
-	0.0f,  1.0f,  0.0f,
-	0.0f,  1.0f,  0.0f,
-	0.0f,  1.0f,  0.0f,
-	0.0f,  1.0f,  0.0f,
-	0.0f,  1.0f,  0.0f,
-	0.0f,  1.0f,  0.0f
+	// back face
+	0.0f,  0.0f, -1.0f, // bottom-left
+	0.0f,  0.0f, -1.0f, // top-right
+	0.0f,  0.0f, -1.0f, // bottom-right         
+	0.0f,  0.0f, -1.0f, // top-right
+	0.0f,  0.0f, -1.0f, // bottom-left
+	0.0f,  0.0f, -1.0f, // top-left
+	// front face
+	0.0f,  0.0f,  1.0f, // bottom-left
+	0.0f,  0.0f,  1.0f, // bottom-right
+	0.0f,  0.0f,  1.0f, // top-right
+	0.0f,  0.0f,  1.0f, // top-right
+	0.0f,  0.0f,  1.0f, // top-left
+	0.0f,  0.0f,  1.0f, // bottom-left
+	// left face
+	-1.0f,  0.0f,  0.0f, // top-right
+	-1.0f,  0.0f,  0.0f, // top-left
+	-1.0f,  0.0f,  0.0f, // bottom-left
+	-1.0f,  0.0f,  0.0f, // bottom-left
+	-1.0f,  0.0f,  0.0f, // bottom-right
+	-1.0f,  0.0f,  0.0f, // top-right
+	// right face
+	1.0f,  0.0f,  0.0f, // top-left
+	1.0f,  0.0f,  0.0f, // bottom-right
+	1.0f,  0.0f,  0.0f, // top-right         
+	1.0f,  0.0f,  0.0f, // bottom-right
+	1.0f,  0.0f,  0.0f, // top-left
+	1.0f,  0.0f,  0.0f, // bottom-left     
+	// bottom face
+	0.0f, -1.0f,  0.0f, // top-right
+	0.0f, -1.0f,  0.0f, // top-left
+	0.0f, -1.0f,  0.0f, // bottom-left
+	0.0f, -1.0f,  0.0f, // bottom-left
+	0.0f, -1.0f,  0.0f, // bottom-right
+	0.0f, -1.0f,  0.0f, // top-right
+	// top face
+	0.0f,  1.0f,  0.0f, // top-left
+	0.0f,  1.0f,  0.0f, // bottom-right
+	0.0f,  1.0f,  0.0f, // top-right     
+	0.0f,  1.0f,  0.0f, // bottom-right
+	0.0f,  1.0f,  0.0f, // top-left
+	0.0f,  1.0f,  0.0f // bottom-left        
 };
 
 

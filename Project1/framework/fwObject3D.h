@@ -10,20 +10,22 @@
 
 class fwObject3D : public Reference
 {
+	float debug;
+
 protected:
 	std::string name;
 	int classID = 0;
 
-	glm::mat4 modelMatrix;	// model space matrix
-	glm::mat4 worldMatrix;	// world space matrix (including children)
+	glm::mat4 m_modelMatrix;	// model space matrix
+	glm::mat4 m_worldMatrix;	// world space matrix (including children)
 
-	glm::vec3 position;
-	glm::vec3 scale;
-	glm::vec3 rotation;
+	glm::vec3 m_Position;
+	glm::vec3 m_Scale;
+	glm::vec3 m_Rotation;
 
 	bool updated = true;	// if the matrix components have been update (or are new)
 
-	std::list <fwObject3D *> children;
+	std::list <fwObject3D *> m_children;
 
 	bool m_castShadow = false;
 	bool m_receiveShadow = false;
@@ -54,6 +56,8 @@ public:
 	bool receiveShadow(bool s) { m_receiveShadow = s; return s; }
 
 	fwObject3D &addChild(fwObject3D *);
+
+	float sqDistanceTo(fwObject3D *to);
 
 	~fwObject3D();
 };

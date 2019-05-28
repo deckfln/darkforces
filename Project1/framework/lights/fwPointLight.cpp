@@ -13,7 +13,7 @@ fwPointLight::fwPointLight(glm::vec3 _position, glm::vec3 _color, glm::vec3 _dif
 	quadratic(_quadatric)
 
 {
-	position = _position;
+	m_Position = _position;
 	uniform_prefix = "pointlights";
 	type = 2;
 	shader_define = "POINT_LIGHTS";
@@ -22,7 +22,7 @@ fwPointLight::fwPointLight(glm::vec3 _position, glm::vec3 _color, glm::vec3 _dif
 std::string fwPointLight::set_uniform(glProgram *program, int index)
 {
 	std::string prefix = fwLight::set_uniform(program, index);
-	program->set_uniform(prefix + ".position", position);
+	program->set_uniform(prefix + ".position", m_Position);
 	program->set_uniform(prefix + ".diffuse", diffuse);
 	program->set_uniform(prefix + ".specular", specular);
 	program->set_uniform(prefix + ".constant", constant);

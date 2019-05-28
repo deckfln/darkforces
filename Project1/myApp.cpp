@@ -61,9 +61,15 @@ myApp::myApp(std::string name, int width, int height) :
 	plane->set_name("floor");
 	plane->receiveShadow(true);
 
+	glm::vec3 deg(-3.1415 / 2, 0, 0);
+	plane->rotate(deg);
+	glm::vec3 tr(0, -0.5, 0);
+	plane->translate(tr);
+
 	// box
 	t1 = new fwTexture("images/container2.png");
 	fwTexture *t2 = new fwTexture("images/container2_specular.png");
+
 	material = new fwDiffuseMaterial(t1, nullptr, 32);
 
 	m_positions[0] = glm::translate(glm::vec3(0.5, 0.5, 0.5));
@@ -80,12 +86,6 @@ myApp::myApp(std::string name, int width, int height) :
 	m_instancedMesh->castShadow(true);
 	m_instancedMesh->set_name("box1");
 	m_instancedMesh->receiveShadow(true);
-
-	glm::vec3 deg(-3.1415 / 2, 0, 0);
-	plane->rotate(deg);
-	plane->show_normalHelper(true);
-	glm::vec3 tr(0, -0.5, 0);
-	plane->translate(tr);
 
 	// init the m_scene
 	yellow = new glm::vec4(255, 255, 0, 255);
