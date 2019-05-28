@@ -63,8 +63,18 @@ myApp::myApp(std::string name, int width, int height) :
 
 	glm::vec3 deg(-3.1415 / 2, 0, 0);
 	plane->rotate(deg);
-	glm::vec3 tr(0, -0.5, 0);
-	plane->translate(tr);
+	glm::vec3 tr1(0, -0.5, 0);
+	plane->translate(tr1);
+
+	// window
+	t1 = new fwTexture("images/blending_transparent_window.png");
+	material = new fwDiffuseMaterial(t1, nullptr, 32);
+
+	fwMesh *window = new fwMesh(new fwPlaneGeometry(5, 5), material);
+	window->set_name("window");
+	glm::vec3 tr(3, 3, 3);
+	window->translate(tr);
+	window->transparent(true);
 
 	// box
 	t1 = new fwTexture("images/container2.png");
@@ -87,14 +97,6 @@ myApp::myApp(std::string name, int width, int height) :
 	m_instancedMesh->set_name("box1");
 	m_instancedMesh->receiveShadow(true);
 
-	// init the m_scene
-	yellow = new glm::vec4(255, 255, 0, 255);
-	m_scene = new fwScene();
-	m_scene->addLight(m_light).
-		setOutline(yellow).
-		addChild(plane).
-		addChild(m_instancedMesh);
-
 	m_positions[0] = glm::translate(glm::vec3(-1,0, 0));
 	m_positions[1] = glm::translate(glm::vec3(1, 0, 0));
 
@@ -108,6 +110,16 @@ myApp::myApp(std::string name, int width, int height) :
 		"images/skybox/back.jpg" };
 
 	m_skybox = new fwSkybox(skyboxes);
+
+	// init the m_scene
+	yellow = new glm::vec4(255, 255, 0, 255);
+	m_scene = new fwScene();
+	m_scene->addLight(m_light).
+		setOutline(yellow).
+		addChild(plane).
+		addChild(m_instancedMesh).
+		addChild(window);
+	m_scene->background(m_skybox);
 }
 
 void myApp::resize(int width, int height)
@@ -129,8 +141,6 @@ void myApp::draw(void)
 	m_light->translate(lightPos);
 
 	m_scene->draw(m_camera);
-
-	m_skybox->draw(m_camera);
 }
 
 myApp::~myApp()

@@ -64,7 +64,17 @@ void fwScene::allChildren(fwObject3D *root, std::list <fwMesh *> &meshes, std::l
 	}
 }
 
-void fwScene::parseChildren(fwObject3D *root, std::map<std::string, std::map<int, std::list <fwMesh *>>> &meshesPerMaterial, std::string &codeLights, std::string &defines, bool withShadow)
+/**
+ * pase all meshes, build
+ *  list of opaque object, aranged by code > material > list of mshes
+ *  list of transparent objects
+ */
+void fwScene::parseChildren(fwObject3D *root, 
+	std::map<std::string, std::map<int, std::list <fwMesh *>>> &opaqueMeshPerMaterial, 
+	std::list <fwMesh *> &transparentMeshes,
+	std::string &codeLights,
+	std::string &defines, 
+	bool withShadow)
 {
 	fwMaterial *material;
 	fwMesh *mesh;
@@ -74,7 +84,7 @@ void fwScene::parseChildren(fwObject3D *root, std::map<std::string, std::map<int
 	std::list <fwObject3D *> _children = root->get_children();
 
 	for (auto child : _children) {
-		parseChildren(child, meshesPerMaterial, codeLights, defines, withShadow);
+		parseChildren(child, opaqueMeshPerMaterial, transparentMeshes, codeLights, defines, withShadow);
 
 		// only display meshes
 		if (!child->is_class(MESH)) {
@@ -100,10 +110,6 @@ void fwScene::parseChildren(fwObject3D *root, std::map<std::string, std::map<int
 				code += "SHADOWMAP";
 			}
 
-			meshesPerMaterial[code][materialID].push_front(mesh);
-			materials[materialID] = material;
-
-
 			// Create the shader program if it is not already there
 			if (programs.count(code) == 0) {
 				std::string vertex = material->get_vertexShader();
@@ -111,10 +117,95 @@ void fwScene::parseChildren(fwObject3D *root, std::map<std::string, std::map<int
 				std::string geometry = material->get_geometryShader();
 				programs[code] = new glProgram(vertex, fragment, geometry, local_defines);
 			}
+
+			if (mesh->is_transparent()) {
+				transparentMeshes.push_front(mesh);
+				mesh->extra(programs[code]);
+			}
+			else {
+				opaqueMeshPerMaterial[code][materialID].push_front(mesh);
+				materials[materialID] = material;
+			}
 		}
 	}
 }
 
+/**
+ * Draw a single mesh by program, apply outlone and normalHelpder if needed
+ */
+void fwScene::drawMesh(fwCamera *camera, fwMesh *mesh, glProgram *program, std::string defines)
+{
+	if (mesh->is_outlined()) {
+		// write in the stencil buffer for outlined objects
+		// record the object for later drawing
+		glClear(GL_STENCIL_BUFFER_BIT);
+		glEnable(GL_STENCIL_TEST);
+		glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+		glStencilFunc(GL_ALWAYS, 1, 0xFF);
+
+		glStencilMask(0xff);
+	}
+
+	/*
+		* main draw call
+		*/
+	mesh->draw(program);
+
+	/*
+		* Outlined draw call
+		*/
+	if (mesh->is_outlined()) {
+		// break execution flow
+		glProgram *previous = program;
+		glProgram *current = nullptr;
+
+		if (mesh->is_class(INSTANCED_MESH)) {
+			if (outline_instanced_program == nullptr) {
+				outline_instanced_program = new glProgram(outline_material->get_vertexShader(), outline_material->get_fragmentShader(), "", "#define INSTANCED");
+			}
+			current = outline_instanced_program;
+		}
+		else {
+			if (outline_program == nullptr) {
+				outline_program = new glProgram(outline_material->get_vertexShader(), outline_material->get_fragmentShader(), "", "");
+			}
+			current = outline_program;
+		}
+
+		current->run();
+		outline_material->set_uniforms(current);
+		camera->bind_uniformBuffer(current);
+
+		glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
+		glStencilMask(0x00);
+
+		mesh->draw(current);
+
+		glDisable(GL_STENCIL_TEST);
+
+		// restore execution flow
+		program->run();
+	}
+
+	/*
+		* normal helper draw call
+		*/
+	if (mesh->is_normalHelper()) {
+		// break execution flow
+		glProgram *previous = program;
+
+		if (normalHelper_program == nullptr) {
+			normalHelper_program = new glProgram(normalHelper.get_vertexShader(), normalHelper.get_fragmentShader(), normalHelper.get_geometryShader(), defines);
+		}
+		normalHelper_program->run();
+		camera->bind_uniformBuffer(normalHelper_program);
+
+		mesh->draw(normalHelper_program);
+
+		// restore execution flow
+		program->run();
+	}
+}
 
 void fwScene::draw(fwCamera *camera)
 {
@@ -195,13 +286,14 @@ void fwScene::draw(fwCamera *camera)
 	// create a map of materials shaders vs meshes
 	//    [shaderCode][materialID] = [mesh1, mesh2]
 	std::map<std::string, std::map<int, std::list <fwMesh *>>> meshesPerMaterial;
+	std::list <fwMesh *> transparentMeshes;
 	fwMaterial *material;
 
 	std::list <fwMesh *> ::iterator it;
 	std::string code;
 	int materialID;
 
-	parseChildren(this, meshesPerMaterial, codeLights, defines, hasShadowLights);
+	parseChildren(this, meshesPerMaterial, transparentMeshes, codeLights, defines, hasShadowLights);
 
 	// draw all meshes per material
 	std::map <int, std::list <fwMesh *>> listOfMaterials;
@@ -213,7 +305,7 @@ void fwScene::draw(fwCamera *camera)
 	camera->set_uniformBuffer();
 
 	/*
-	 * 2nd pass : draw objects
+	 * 2nd pass : draw opaque objects
 	 */
 	for (auto shader : meshesPerMaterial) {
 		// draw all ojects sharing the same shader
@@ -251,81 +343,55 @@ void fwScene::draw(fwCamera *camera)
 			material->set_uniforms(program);
 
 			for (auto mesh : listOfMeshes) {
-
-				if (mesh->is_outlined()) {
-					// write in the stencil buffer for outlined objects
-					// record the object for later drawing
-					glClear(GL_STENCIL_BUFFER_BIT);
-					glEnable(GL_STENCIL_TEST);
-					glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
-					glStencilFunc(GL_ALWAYS, 1, 0xFF);
-
-					glStencilMask(0xff);
-				}
-
-				/*
-				 * main draw call
-				 */
-				mesh->draw(program);
-
-				/*
-				 * Outlined draw call
-				 */
-				if (mesh->is_outlined()) {
-					// break execution flow
-					glProgram *previous = program;
-					glProgram *current = nullptr;
-
-					if (mesh->is_class(INSTANCED_MESH)) {
-						if (outline_instanced_program == nullptr) {
-							outline_instanced_program = new glProgram(outline_material->get_vertexShader(), outline_material->get_fragmentShader(), "", "#define INSTANCED");
-						}
-						current = outline_instanced_program;
-					}
-					else {
-						if (outline_program == nullptr) {
-							outline_program = new glProgram(outline_material->get_vertexShader(), outline_material->get_fragmentShader(), "", "");
-						}
-						current = outline_program;
-					}
-
-					current->run();
-					outline_material->set_uniforms(current);
-					camera->bind_uniformBuffer(current);
-
-					glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
-					glStencilMask(0x00);
-
-					mesh->draw(current);
-
-					glDisable(GL_STENCIL_TEST);
-
-					// restore execution flow
-					program->run();
-				}
-
-				/*
-				 * normal helper draw call
-				 */
-				if (mesh->is_normalHelper()) {
-					// break execution flow
-					glProgram *previous = program;
-
-					if (normalHelper_program == nullptr) {
-						normalHelper_program = new glProgram(normalHelper.get_vertexShader(), normalHelper.get_fragmentShader(), normalHelper.get_geometryShader(), defines);
-					}
-					normalHelper_program->run();
-					camera->bind_uniformBuffer(normalHelper_program);
-
-					mesh->draw(normalHelper_program);
-
-					// restore execution flow
-					program->run();
-				}
+				drawMesh(camera, mesh, program, defines);
 			}
+
 			glTexture::PopTextureUnit();
 		}
 	}
+
+	/*
+	 * 3rd pass : draw skybox
+	 */
+	if (m_pBackground != nullptr) {
+		m_pBackground->draw(camera);
+	}
+
+	/*
+	 * 4th pass : draw transparent objects
+	 *	sorted from far to near
+	 */
+	transparentMeshes.sort([camera](fwMesh *a, fwMesh *b) { return a->sqDistanceTo(camera) > b->sqDistanceTo(camera); });
+
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	for (auto mesh: transparentMeshes) {
+		material = mesh->get_material();
+
+		glProgram *program = (glProgram *)mesh->extra();
+		camera->bind_uniformBuffer(program);
+
+		glTexture::resetTextureUnit();
+
+		program->run();
+
+		// setup lights
+		int i;
+		for (auto type : lightsByType) {
+			i = 0;
+			for (auto light : type.second) {
+				light->set_uniform(program, i);
+
+				i++;
+			}
+		}
+
+		material->set_uniforms(program);
+		drawMesh(camera, mesh, program, defines);
+	}
+
+	glDisable(GL_BLEND);
+
 }
 
 fwScene::~fwScene()

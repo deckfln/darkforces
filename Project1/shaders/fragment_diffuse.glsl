@@ -210,7 +210,7 @@ uniform Material material;
 
 void main()
 {
-	vec3 color = texture(material.diffuse, TexCoord).rgb;
+	vec4 color = texture(material.diffuse, TexCoord);
 
     // diffuse 
     vec3 norm = normalize(normal);
@@ -222,20 +222,20 @@ void main()
 
 #if DIRECTION_LIGHTS > 0
     for(int i = 0; i < DIRECTION_LIGHTS; i++)
-        dirlight += CalcDirLight(dirlights[i], i, norm, color);
+        dirlight += CalcDirLight(dirlights[i], i, norm, color.rgb);
 #endif
 
 #if POINT_LIGHTS > 0
     for(int i = 0; i < POINT_LIGHTS; i++)
-		pointlight += CalcPointLight(pointlights[i], norm, color, world, viewDir);
+		pointlight += CalcPointLight(pointlights[i], norm, color.rgb, world, viewDir);
 #endif
 
 #if SPOT_LIGHTS > 0
     for(int i = 0; i < SPOT_LIGHTS; i++)
-		spotlight += CalcSpotLight(spotlights[i], norm, color, world, viewDir);
+		spotlight += CalcSpotLight(spotlights[i], norm, color.rgb, world, viewDir);
 #endif
 
     vec3 result = clamp(dirlight + pointlight + spotlight, .0, 1.0);
 
-    FragColor = vec4(result, 1.0);
+    FragColor = vec4(result, color.a);
 }

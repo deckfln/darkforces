@@ -8,6 +8,7 @@
 #include "fwLight.h"
 #include "framework/fwCamera.h"
 #include "materials/fwOutlineMaterial.h"
+#include "fwSkybox.h"
 
 class fwScene : public fwObject3D
 {
@@ -19,13 +20,24 @@ class fwScene : public fwObject3D
 	fwLight *lights[10];
 	int current_light;
 
+	fwSkybox *m_pBackground = nullptr;
+
 	void allChildren(fwObject3D *root, std::list <fwMesh *> &meshes, std::list <fwMesh *> &instances);
-	void parseChildren(fwObject3D *root, std::map<std::string, std::map<int, std::list <fwMesh *>>> &meshesPerMaterial, std::string &codeLights, std::string &defines, bool withShadow);
+	void parseChildren(fwObject3D *root,
+		std::map<std::string, std::map<int, std::list <fwMesh *>>> &opaqueMeshPerMaterial,
+		std::list <fwMesh *> &transparentMeshes,
+		std::string &codeLights,
+		std::string &defines,
+		bool withShadow);
+	void drawMesh(fwCamera *camera, fwMesh *mesh, glProgram *glProgram, std::string defines);
 
 public:
 	fwScene();
 	fwScene &addLight(fwLight *light);
 	fwScene &setOutline(glm::vec4 *_color);
+
+	fwScene &background(fwSkybox *_background) { m_pBackground = _background; return *this; };
+
 	void draw(fwCamera *camera);
 	~fwScene();
 };
