@@ -349,12 +349,6 @@
     <None Include="shaders\vertex_outline.glsl">
       <Filter>Fichiers de ressources</Filter>
     </None>
-    <None Include="shaders\screen_fragment.glsl">
-      <Filter>Fichiers de ressources</Filter>
-    </None>
-    <None Include="shaders\screen_vertex.glsl">
-      <Filter>Fichiers de ressources</Filter>
-    </None>
     <None Include="shaders\cubemap_fragment.glsl">
       <Filter>Fichiers de ressources</Filter>
     </None>

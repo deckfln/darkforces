@@ -1,6 +1,8 @@
 #version 330 core
 out vec4 FragColor;
 
+#define DEFINES
+
 in vec2 TexCoord;
 
 uniform sampler2D screenTexture;
@@ -27,6 +29,7 @@ float kernel[9] = float[](
     1.0 / 16, 2.0 / 16, 1.0 / 16  
 );
 
+/*
     vec3 sampleTex[9];
     for(int i = 0; i < 9; i++)
     {
@@ -35,6 +38,12 @@ float kernel[9] = float[](
     vec3 col = vec3(0.0);
     for(int i = 0; i < 9; i++)
         col += sampleTex[i] * kernel[i];
-    
+*/
+
     FragColor = texture(screenTexture, TexCoord.st);
+
+#ifdef GAMMA_CORRECTION
+    // apply gamma correction
+    FragColor.rgb = pow(FragColor.rgb, vec3(1.0/GAMMA_CORRECTION));
+#endif
 }  

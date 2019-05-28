@@ -17,7 +17,7 @@ class fwPostProcessing
 	fwUniform *source;
 
 public:
-	fwPostProcessing(std::string _vertexShader, std::string _fragmentShader, fwUniform *_source);
+	fwPostProcessing(std::string _vertexShader, std::string _fragmentShader, fwUniform *_source, std::string defines);
 	void draw(void);
 	~fwPostProcessing();
 };

@@ -20,7 +20,7 @@ class fwApp
 	void processInput(GLFWwindow *window);
 
 public:
-	fwApp(std::string name, int _width, int _height);
+	fwApp(std::string name, int _width, int _height, std::string post_processing, std::string defines);
 
 	void mouseButton(int button, int action);
 	void mouseMove(double xpos, double ypos);

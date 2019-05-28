@@ -238,8 +238,6 @@
     <None Include="shaders\fragment_basic.glsl" />
     <None Include="shaders\fragment_diffuse.glsl" />
     <None Include="shaders\fragment_outline.glsl" />
-    <None Include="shaders\screen_fragment.glsl" />
-    <None Include="shaders\screen_vertex.glsl" />
     <None Include="shaders\vertex.glsl" />
     <None Include="shaders\vertex_basic.glsl" />
     <None Include="shaders\vertex_diffuse.glsl" />

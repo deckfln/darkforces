@@ -31,7 +31,7 @@ static void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 /***
  *
  */
-fwApp::fwApp(std::string name, int _width, int _height):
+fwApp::fwApp(std::string name, int _width, int _height, std::string post_processing, std::string defines):
 	height(_height),
 	width(_width)
 {
@@ -68,7 +68,7 @@ fwApp::fwApp(std::string name, int _width, int _height):
 	colorMap = new glColorMap(width, height);
 	glTexture *tex = colorMap->getColorTexture();
 	source = new fwUniform("screenTexture", tex);
-	postProcessing = new fwPostProcessing("shaders/screen_vertex.glsl", "shaders/screen_fragment.glsl", source);
+	postProcessing = new fwPostProcessing(post_processing + "/vertex.glsl", post_processing + "/fragment.glsl", source, defines);
 
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 	glfwSetCursorPosCallback(window, cursor_position_callback);

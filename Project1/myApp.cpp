@@ -16,7 +16,7 @@
 #include "framework/Loader.h"
 
 myApp::myApp(std::string name, int width, int height) :
-	fwApp(name, width, height)
+	fwApp(name, width, height, "shaders/gamma", "#define GAMMA_CORRECTION 2.2\n")
 {
 	m_camera = new fwCamera(width, height);
 	int Button = 0;
