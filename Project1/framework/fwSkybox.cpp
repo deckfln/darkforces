@@ -69,7 +69,7 @@ fwSkybox::fwSkybox(std::string *textures)
 	program = new glProgram(vertex, fragment, "", "");
 
 	program->run();
-	uniform = new Uniform("skybox", texture);
+	uniform = new fwUniform("skybox", texture);
 	uniform->set_uniform(program);
 
 	geometry = new fwGeometry();

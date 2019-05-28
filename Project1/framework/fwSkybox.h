@@ -7,7 +7,7 @@
 
 #include "fwCamera.h"
 #include "fwGeometry.h"
-#include "Uniform.h"
+#include "fwUniform.h"
 
 class fwSkybox
 {
@@ -16,7 +16,7 @@ class fwSkybox
 	glProgram *program = nullptr;
 	glVertexArray *cube = nullptr;
 	fwGeometry *geometry = nullptr;
-	Uniform *uniform = nullptr;
+	fwUniform *uniform = nullptr;
 	std::string get_shader(const std::string shader_file);
 
 public:

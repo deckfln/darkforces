@@ -5,21 +5,21 @@
 #include "glEngine/glTexture.h"
 #include "glEngine/glCubeTexture.h"
 
-class Uniform
+class fwUniform
 {
 	std::string name;
 	void *data;
 	int type;
 
 public:
-	Uniform();
-	Uniform(std::string _name, glm::vec4 *_v4);
-	Uniform(std::string _name, GLint *id);
-	Uniform(std::string _name, GLfloat *f);
-	Uniform(std::string _name, glTexture *y);
-	Uniform(std::string _name, glCubeTexture *y);
+	fwUniform();
+	fwUniform(std::string _name, glm::vec4 *_v4);
+	fwUniform(std::string _name, GLint *id);
+	fwUniform(std::string _name, GLfloat *f);
+	fwUniform(std::string _name, glTexture *y);
+	fwUniform(std::string _name, glCubeTexture *y);
 	void set_uniform(glProgram *);
 	void *get_value(void);
-	~Uniform();
+	~fwUniform();
 };
 

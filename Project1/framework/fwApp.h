@@ -15,7 +15,7 @@ class fwApp
 	glColorMap *colorMap = nullptr;
 	fwPostProcessing *postProcessing = nullptr;
 	fwOrbitControl *control = nullptr;
-	Uniform *source = nullptr;
+	fwUniform *source = nullptr;
 
 	void processInput(GLFWwindow *window);
 

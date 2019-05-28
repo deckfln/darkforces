@@ -9,7 +9,7 @@ fwDiffuseMaterial::fwDiffuseMaterial():
 {
 }
 
-fwDiffuseMaterial::fwDiffuseMaterial(Texture *_diffuse, Texture *_specular, float _shininess):
+fwDiffuseMaterial::fwDiffuseMaterial(fwTexture *_diffuse, fwTexture *_specular, float _shininess):
 	diffuse(_diffuse),
 	specular(_specular),
 	shininess(_shininess)
@@ -23,7 +23,7 @@ fwDiffuseMaterial::fwDiffuseMaterial(Texture *_diffuse, Texture *_specular, floa
 	}
 	addTexture("material.diffuse", diffuse);
 
-	uniform = new Uniform("material.shininess", &shininess);
+	uniform = new fwUniform("material.shininess", &shininess);
 	addUniform(uniform);
 }
 

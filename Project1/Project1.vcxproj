@@ -151,8 +151,8 @@
     <ClCompile Include="framework\fwObject3D.cpp" />
     <ClCompile Include="framework\fwScene.cpp" />
     <ClCompile Include="framework\SphereGemeotry.cpp" />
-    <ClCompile Include="framework\Texture.cpp" />
-    <ClCompile Include="framework\Uniform.cpp" />
+    <ClCompile Include="framework\fwTexture.cpp" />
+    <ClCompile Include="framework\fwUniform.cpp" />
     <ClCompile Include="glEngine\glBufferAttribute.cpp" />
     <ClCompile Include="glEngine\glBufferObject.cpp" />
     <ClCompile Include="glEngine\glColorMap.cpp" />
@@ -204,8 +204,8 @@
     <ClInclude Include="framework\fwObject3D.h" />
     <ClInclude Include="framework\fwScene.h" />
     <ClInclude Include="framework\SphereGemeotry.h" />
-    <ClInclude Include="framework\Texture.h" />
-    <ClInclude Include="framework\Uniform.h" />
+    <ClInclude Include="framework\fwTexture.h" />
+    <ClInclude Include="framework\fwUniform.h" />
     <ClInclude Include="glEngine\glBufferAttribute.h" />
     <ClInclude Include="glEngine\glBufferObject.h" />
     <ClInclude Include="glEngine\glColorMap.h" />

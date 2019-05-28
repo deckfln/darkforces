@@ -67,7 +67,7 @@ fwApp::fwApp(std::string name, int _width, int _height):
 	// FRAME BUFFER
 	colorMap = new glColorMap(width, height);
 	glTexture *tex = colorMap->getColorTexture();
-	source = new Uniform("screenTexture", tex);
+	source = new fwUniform("screenTexture", tex);
 	postProcessing = new fwPostProcessing("shaders/screen_vertex.glsl", "shaders/screen_fragment.glsl", source);
 
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);

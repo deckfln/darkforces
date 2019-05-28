@@ -5,7 +5,7 @@
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 
-#include "Texture.h"
+#include "fwTexture.h"
 #include "fwMesh.h"
 
 class Loader 
@@ -16,7 +16,7 @@ class Loader
 
 	void processNode(aiNode *node, const aiScene *scene);
 	fwMesh *processMesh(aiMesh *mesh, const aiScene *scene);
-	std::vector<Texture *> loadMaterialTextures(aiMaterial *mat, aiTextureType type);
+	std::vector<fwTexture *> loadMaterialTextures(aiMaterial *mat, aiTextureType type);
 
 public:
 	Loader(const std::string _file);

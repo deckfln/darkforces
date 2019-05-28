@@ -9,11 +9,11 @@ fwMaterialBasic::fwMaterialBasic() :
 fwMaterialBasic::fwMaterialBasic(glm::vec4 *_color):
 	fwMaterial("shaders/vertex_basic.glsl", "shaders/fragment_basic.glsl", "")
 {
-	color = new Uniform("color", _color);
+	color = new fwUniform("color", _color);
 	addUniform(color);
 }
 
-void fwMaterialBasic::addDiffuseMap(Texture *_diffuse)
+void fwMaterialBasic::addDiffuseMap(fwTexture *_diffuse)
 {
 	addTexture("map", _diffuse);
 	defines += "#define DIFFUSE_MAP\n";

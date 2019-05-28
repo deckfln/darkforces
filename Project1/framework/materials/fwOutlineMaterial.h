@@ -1,10 +1,10 @@
 #pragma once
 #include "../fwMaterial.h"
-#include "../Uniform.h"
+#include "../fwUniform.h"
 
 class fwOutlineMaterial : public fwMaterial
 {
-	Uniform *color = nullptr;
+	fwUniform *color = nullptr;
 
 public:
 	fwOutlineMaterial();

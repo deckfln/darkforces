@@ -1,18 +1,18 @@
 #pragma once
 #include "fwMaterial.h"
-#include "Texture.h"
-#include "Uniform.h"
+#include "fwTexture.h"
+#include "fwUniform.h"
 
 class fwDiffuseMaterial: public fwMaterial
 {
-	Texture *diffuse = nullptr;
-	Texture *specular = nullptr;
+	fwTexture *diffuse = nullptr;
+	fwTexture *specular = nullptr;
 	float shininess = 0;
-	Uniform *uniform = nullptr;
+	fwUniform *uniform = nullptr;
 
 public:
 	fwDiffuseMaterial();
-	fwDiffuseMaterial(Texture *diffuse, Texture *specular, float shininess);
+	fwDiffuseMaterial(fwTexture *diffuse, fwTexture *specular, float shininess);
 	~fwDiffuseMaterial();
 };
 

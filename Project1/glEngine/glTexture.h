@@ -1,6 +1,6 @@
 #pragma once
 #include "glad/glad.h"
-#include "framework/Texture.h"
+#include "framework/fwTexture.h"
 
 class glTexture
 {
@@ -12,7 +12,7 @@ protected:
 public:
 	glTexture();
 	glTexture(int width, int height, int format);
-	glTexture(Texture *texture);
+	glTexture(fwTexture *texture);
 	GLuint getID(void);
 	GLint bind(void);
 	static void resetTextureUnit(void) { currentTextureUnit = 0; };

@@ -31,7 +31,7 @@ float quadUvs[] = { // vertex attributes for a quad that fills the entire screen
 	1.0f, 1.0f
 };
 
-fwPostProcessing::fwPostProcessing(std::string _vertexShader, std::string _fragmentShader, Uniform *_source)
+fwPostProcessing::fwPostProcessing(std::string _vertexShader, std::string _fragmentShader, fwUniform *_source)
 {
 	std::string vertex = load_shader_file(_vertexShader, "");
 	std::string fragment = load_shader_file(_fragmentShader, "");

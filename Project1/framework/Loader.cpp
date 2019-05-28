@@ -7,7 +7,7 @@
 #include "glEngine/glBufferAttribute.h"
 
 #include "Loader.h"
-#include "Texture.h"
+#include "fwTexture.h"
 #include "fwGeometry.h"
 #include "fwDiffuseMaterial.h"
 #include "fwMesh.h"
@@ -114,8 +114,8 @@ fwMesh *Loader::processMesh(aiMesh *mesh, const aiScene *scene)
 		aiString name;
 		aimaterial->Get(AI_MATKEY_NAME, name);
 
-		std::vector<Texture *> diffuse = loadMaterialTextures(aimaterial, aiTextureType_DIFFUSE);
-		std::vector<Texture *> specular = loadMaterialTextures(aimaterial, aiTextureType_SPECULAR);
+		std::vector<fwTexture *> diffuse = loadMaterialTextures(aimaterial, aiTextureType_DIFFUSE);
+		std::vector<fwTexture *> specular = loadMaterialTextures(aimaterial, aiTextureType_SPECULAR);
 
 		float shininess;
 		aimaterial->Get(AI_MATKEY_SHININESS, shininess);
@@ -134,9 +134,9 @@ fwMesh *Loader::processMesh(aiMesh *mesh, const aiScene *scene)
 }
 
 
-std::vector<Texture *> Loader::loadMaterialTextures(aiMaterial *mat, aiTextureType type)
+std::vector<fwTexture *> Loader::loadMaterialTextures(aiMaterial *mat, aiTextureType type)
 {
-	std::vector<Texture *> textures;
+	std::vector<fwTexture *> textures;
 
 	for (int i = mat->GetTextureCount(type) - 1; i >= 0; i--)
 	{
@@ -145,7 +145,7 @@ std::vector<Texture *> Loader::loadMaterialTextures(aiMaterial *mat, aiTextureTy
 
 		std::string file = directory + "/" + str.C_Str();
 
-		textures.push_back(new Texture(file));
+		textures.push_back(new fwTexture(file));
 	}
 
 	return textures;

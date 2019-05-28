@@ -1,7 +1,7 @@
 #pragma once
 #include <iostream>
 
-class Texture
+class fwTexture
 {
 	std::string name;
 	unsigned char *data = nullptr;
@@ -10,10 +10,10 @@ class Texture
 	int nrChannels;
 
 public:
-	Texture();
-	Texture(std::string file);
-	Texture(int width, int height, int format);
+	fwTexture();
+	fwTexture(std::string file);
+	fwTexture(int width, int height, int format);
 	unsigned char *get_info(int *width, int *height, int *nrChannels);
-	~Texture();
+	~fwTexture();
 };
 

@@ -4,8 +4,8 @@
 
 #include "../Reference.h"
 #include "../glEngine/glProgram.h"
-#include "Uniform.h"
-#include "Texture.h"
+#include "fwUniform.h"
+#include "fwTexture.h"
 
 class fwMaterial: public Reference
 {
@@ -19,7 +19,7 @@ class fwMaterial: public Reference
 
 	int current_texture = 0;
 
-	std::list <Uniform *> uniforms;
+	std::list <fwUniform *> uniforms;
 	std::list <glTexture *> textures;
 
 protected:
@@ -28,10 +28,10 @@ protected:
 public:
 	fwMaterial();
 	fwMaterial(std::string vertexShader, std::string fragmentShader, std::string geometryShader);
-	fwMaterial &addTexture(std::string uniform, Texture *texture);
+	fwMaterial &addTexture(std::string uniform, fwTexture *texture);
 	fwMaterial &addTexture(std::string uniform, glTexture *texture);
 	fwMaterial &addShaders(std::string vertexShader, std::string fragmentShader, const std::string defines = "");
-	fwMaterial &addUniform(Uniform *uniform);
+	fwMaterial &addUniform(fwUniform *uniform);
 	
 	std::string hashCode(void);
 

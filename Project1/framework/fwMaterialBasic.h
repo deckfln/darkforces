@@ -1,17 +1,17 @@
 #pragma once
 #include "fwMaterial.h"
-#include "Uniform.h"
-#include "Texture.h"
+#include "fwUniform.h"
+#include "fwTexture.h"
 
 class fwMaterialBasic: public fwMaterial
 {
-	Uniform *color= nullptr;
-	Uniform *map = nullptr;
+	fwUniform *color= nullptr;
+	fwUniform *map = nullptr;
 
 public:
 	fwMaterialBasic();
 	fwMaterialBasic(glm::vec4 *_color);
-	void addDiffuseMap(Texture *_diffuse);
+	void addDiffuseMap(fwTexture *_diffuse);
 	~fwMaterialBasic();
 };
 

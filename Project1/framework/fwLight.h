@@ -7,7 +7,7 @@
 #include "../glEngine/glDepthMap.h"
 #include "fwObject3D.h"
 #include "fwCamera.h"
-#include "Uniform.h"
+#include "fwUniform.h"
 
 class fwLight: public fwObject3D
 {
@@ -19,7 +19,7 @@ protected:
 	std::string shader_define;
 	glm::vec3 ambient;
 
-	std::list <Uniform *> uniforms;
+	std::list <fwUniform *> uniforms;
 
 	fwCamera *shadowCamera = nullptr;
 	GLint m_previousCulling;

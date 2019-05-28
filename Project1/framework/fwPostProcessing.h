@@ -1,7 +1,7 @@
 #pragma once
 #include <list>
 
-#include "framework/Uniform.h"
+#include "framework/fwUniform.h"
 
 #include "../glEngine/glProgram.h"
 #include "../glEngine/glVertexArray.h"
@@ -14,10 +14,10 @@ class fwPostProcessing
 	glProgram *program;
 	glVertexArray *quad;
 	fwGeometry *geometry;
-	Uniform *source;
+	fwUniform *source;
 
 public:
-	fwPostProcessing(std::string _vertexShader, std::string _fragmentShader, Uniform *_source);
+	fwPostProcessing(std::string _vertexShader, std::string _fragmentShader, fwUniform *_source);
 	void draw(void);
 	~fwPostProcessing();
 };

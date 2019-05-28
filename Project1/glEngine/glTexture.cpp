@@ -40,7 +40,7 @@ glTexture::glTexture(int width, int height, int format)
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
-glTexture::glTexture(Texture *texture)
+glTexture::glTexture(fwTexture *texture)
 {
 	glGenTextures(1, &id);
 	glBindTexture(GL_TEXTURE_2D, id);

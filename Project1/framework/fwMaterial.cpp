@@ -24,12 +24,12 @@ fwMaterial::fwMaterial(std::string _vertexShader, std::string _fragmentShader, s
 {
 }
 
-fwMaterial& fwMaterial::addTexture(std::string uniform, Texture *texture)
+fwMaterial& fwMaterial::addTexture(std::string uniform, fwTexture *texture)
 {
 	glTexture *glTex = new glTexture(texture);
 	textures.push_front(glTex);
 
-	addUniform(new Uniform(uniform, glTex));
+	addUniform(new fwUniform(uniform, glTex));
 
 	return *this;
 }
@@ -38,7 +38,7 @@ fwMaterial& fwMaterial::addTexture(std::string uniform, glTexture *texture)
 {
 	textures.push_front(texture);
 
-	addUniform(new Uniform(uniform, texture));
+	addUniform(new fwUniform(uniform, texture));
 
 	return *this;
 }
@@ -52,7 +52,7 @@ fwMaterial &fwMaterial::addShaders(std::string _vertexShader, std::string _fragm
 	return *this;
 }
 
-fwMaterial &fwMaterial::addUniform(Uniform *uniform)
+fwMaterial &fwMaterial::addUniform(fwUniform *uniform)
 {
 	uniforms.push_front(uniform);
 	return *this;
@@ -65,7 +65,7 @@ const int fwMaterial::getID(void)
 
 void fwMaterial::set_uniforms(glProgram *program)
 {
-	std::list <Uniform *> ::iterator it;
+	std::list <fwUniform *> ::iterator it;
 	for (it = uniforms.begin(); it != uniforms.end(); ++it) {
 		(*it)->set_uniform(program);
 	}

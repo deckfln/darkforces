@@ -54,7 +54,7 @@ myApp::myApp(std::string name, int width, int height) :
 	m_light->addChild(fLight);
 
 	// floor
-	Texture *t1 = new Texture("images/wood.png");
+	fwTexture *t1 = new fwTexture("images/wood.png");
 	fwDiffuseMaterial *material = new fwDiffuseMaterial(t1, nullptr, 32);
 
 	fwMesh *plane = new fwMesh(new fwPlaneGeometry(10, 10), material);
@@ -62,8 +62,8 @@ myApp::myApp(std::string name, int width, int height) :
 	plane->receiveShadow(true);
 
 	// box
-	t1 = new Texture("images/container2.png");
-	Texture *t2 = new Texture("images/container2_specular.png");
+	t1 = new fwTexture("images/container2.png");
+	fwTexture *t2 = new fwTexture("images/container2_specular.png");
 	material = new fwDiffuseMaterial(t1, nullptr, 32);
 
 	m_positions[0] = glm::translate(glm::vec3(0.5, 0.5, 0.5));
@@ -124,7 +124,7 @@ void myApp::draw(void)
 
 	float radius = 2;
 	lightPos.x = sin(glfwGetTime() / 2) * radius;
-	lightPos.y = 1;
+	lightPos.y = 4;
 	lightPos.z = cos(glfwGetTime() / 2) * radius;
 	m_light->translate(lightPos);
 
