@@ -63,8 +63,8 @@ fwSkybox::fwSkybox(std::string *textures)
 {
 	texture = new glCubeTexture(textures);
 
-	std::string vertex = get_shader("shaders/cubemap_vertex.glsl");
-	std::string fragment = get_shader("shaders/cubemap_fragment.glsl");
+	std::string vertex = load_shader_file("shaders/cubemap_vertex.glsl", "");
+	std::string fragment = load_shader_file("shaders/cubemap_fragment.glsl", "");
 
 	program = new glProgram(vertex, fragment, "", "");
 
@@ -84,7 +84,6 @@ void fwSkybox::draw(fwCamera *camera)
 {
 	glDepthFunc(GL_LEQUAL);  // change depth function so depth test passes when values are equal to depth buffer's content
 	program->run();
-	camera->set_uniforms(program);
 	camera->bind_uniformBuffer(program);
 	/*
 	glm::mat4 view = glm::mat4(glm::mat3(m_camera->GetViewMatrix()));

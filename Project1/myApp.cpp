@@ -27,8 +27,7 @@ myApp::myApp(std::string name, int width, int height) :
 	/*
 	 * fwCamera
 	 */
-	m_camera->lookAt(0, 0, 0);
-	m_camera->translate(0, 0, 3);
+	m_camera->translate(-6.859210, 20.333462, 22.371893);
 
 	/*
 	 * Lights

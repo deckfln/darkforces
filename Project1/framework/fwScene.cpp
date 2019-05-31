@@ -74,7 +74,8 @@ void fwScene::parseChildren(fwObject3D *root,
 	std::list <fwMesh *> &transparentMeshes,
 	std::string &codeLights,
 	std::string &defines, 
-	bool withShadow)
+	bool withShadow,
+	fwCamera *camera)
 {
 	fwMaterial *material;
 	fwMesh *mesh;
@@ -84,7 +85,7 @@ void fwScene::parseChildren(fwObject3D *root,
 	std::list <fwObject3D *> _children = root->get_children();
 
 	for (auto child : _children) {
-		parseChildren(child, opaqueMeshPerMaterial, transparentMeshes, codeLights, defines, withShadow);
+		parseChildren(child, opaqueMeshPerMaterial, transparentMeshes, codeLights, defines, withShadow, camera);
 
 		// only display meshes
 		if (!child->is_class(MESH)) {
@@ -93,7 +94,7 @@ void fwScene::parseChildren(fwObject3D *root,
 
 		mesh = (fwMesh *)child;
 
-		if (mesh->is_visible()) {
+		if (mesh->is_visible() && camera->is_inFrustum(mesh)) {
 			std::string local_defines = defines;
 
 			material = mesh->get_material();
@@ -293,7 +294,7 @@ void fwScene::draw(fwCamera *camera)
 	std::string code;
 	int materialID;
 
-	parseChildren(this, meshesPerMaterial, transparentMeshes, codeLights, defines, hasShadowLights);
+	parseChildren(this, meshesPerMaterial, transparentMeshes, codeLights, defines, hasShadowLights, camera);
 
 	// draw all meshes per material
 	std::map <int, std::list <fwMesh *>> listOfMaterials;

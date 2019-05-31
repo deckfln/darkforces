@@ -5,6 +5,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <glm/gtc/quaternion.hpp>
 
 #include "../Reference.h"
 
@@ -22,6 +23,7 @@ protected:
 	glm::vec3 m_Position;
 	glm::vec3 m_Scale;
 	glm::vec3 m_Rotation;
+	glm::quat m_quaternion;
 
 	bool updated = true;	// if the matrix components have been update (or are new)
 
@@ -55,6 +57,7 @@ public:
 	bool receiveShadow(void) { return m_receiveShadow; }
 	bool receiveShadow(bool s) { m_receiveShadow = s; return s; }
 
+	glm::mat4 &worldMatrix(void) { return m_worldMatrix; }
 	fwObject3D &addChild(fwObject3D *);
 
 	float sqDistanceTo(fwObject3D *to);

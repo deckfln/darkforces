@@ -3,12 +3,7 @@ layout (location = 0) in vec3 aPos;
 
 out vec3 TexCoords;
 
-layout (std140) uniform Camera
-{
-	mat4 view;
-	mat4 projection;
-	vec3 viewPos;
-};
+#include "include/camera.glsl"
 
 void main()
 {

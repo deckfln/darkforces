@@ -3,7 +3,6 @@
 #include <glm/gtx/transform.hpp>
 #include <glm/gtx/norm.hpp>
 
-
 fwObject3D::fwObject3D():
 	m_Position(0),
 	m_Scale(1),
@@ -26,6 +25,7 @@ bool fwObject3D::is_class(int _classID)
 fwObject3D &fwObject3D::rotate(glm::vec3 &_rotation)
 {
 	m_Rotation = _rotation;
+	m_quaternion= glm::quat(glm::vec3(_rotation.x, _rotation.y, _rotation.z));
 	updated = true;
 	return *this;
 }
@@ -74,8 +74,8 @@ fwObject3D &fwObject3D::addChild(fwObject3D *mesh)
 void fwObject3D::updateWorldMatrix(fwObject3D *parent, bool force)
 {
 	if (updated) {
-		glm::mat4 rotationMatrix = glm::rotate(m_Rotation.x, glm::vec3(1, 0, 0));
-
+		//glm::mat4 rotationMatrix = glm::rotate(m_Rotation.x, glm::vec3(1, 0, 0));
+		glm::mat4 rotationMatrix = glm::toMat4(m_quaternion);
 		glm::mat4 scaleMatrix = glm::scale(m_Scale);
 		glm::mat4 translateMatrix = glm::translate(m_Position);
 		// model = glm::rotate(model, rotation);

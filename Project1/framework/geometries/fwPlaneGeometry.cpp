@@ -85,10 +85,10 @@ fwPlaneGeometry::fwPlaneGeometry(float width, float height, int widthSegments, i
 	len_uvs *= sizeof(glm::vec2);
 	len_indices *= sizeof(int);
 
-	addVertices("aPos", vertices, 3, len_vertices, sizeof(glm::vec3));
+	addVertices("aPos", vertices, 3, len_vertices, sizeof(float));
 
-	addAttribute("aTexCoord", GL_ARRAY_BUFFER, uvs, 2, len_uvs, sizeof(glm::vec2));
-	addAttribute("aNormal", GL_ARRAY_BUFFER, normals, 3, len_vertices, sizeof(glm::vec3));
+	addAttribute("aTexCoord", GL_ARRAY_BUFFER, uvs, 2, len_uvs, sizeof(float));
+	addAttribute("aNormal", GL_ARRAY_BUFFER, normals, 3, len_vertices, sizeof(float));
 
 	addIndex(indices, 1,len_indices, sizeof(unsigned int));
 }

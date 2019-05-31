@@ -5,7 +5,9 @@
 
 #include "../glEngine/glUniformBuffer.h"
 #include "../glEngine/glProgram.h"
+
 #include "fwObject3D.h"
+#include "fwFrustum.h"
 
 class fwCamera: public fwObject3D
 {
@@ -18,8 +20,13 @@ protected:
 	glm::mat4 view;
 	glm::mat4 projection;
 	glm::mat4 m_matrix;	// transformation matrix projection * view
+	glm::mat4 m_projScreenMatrix;	// projection * inverse(matrix)
 
 	glUniformBuffer *ubo = nullptr;
+
+	fwFrustum m_frustum;
+
+	void update(void);
 
 public:
 	fwCamera();
@@ -34,6 +41,8 @@ public:
 	glm::mat4 GetViewMatrix(void);
 	glm::mat4 GetProjectionMatrix(void);
 	glm::mat4 &GetMatrix(void);
+
+	bool is_inFrustum(fwMesh *mesh);
 
 	void set_uniformBuffer(void);
 	void bind_uniformBuffer(glProgram *program);

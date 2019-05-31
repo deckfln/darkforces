@@ -28,7 +28,8 @@ class fwScene : public fwObject3D
 		std::list <fwMesh *> &transparentMeshes,
 		std::string &codeLights,
 		std::string &defines,
-		bool withShadow);
+		bool withShadow,
+		fwCamera *camera);
 	void drawMesh(fwCamera *camera, fwMesh *mesh, glProgram *glProgram, std::string defines);
 
 public:

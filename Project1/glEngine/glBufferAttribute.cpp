@@ -55,6 +55,13 @@ void glBufferAttribute::update(int offset, int size)
 	vbo->update(offset * le, size * le, (char *)data + offset * le);
 }
 
+void *glBufferAttribute::get_index(const int index)
+{
+	int le = sizeof_element * itemSize;
+
+	return (char *)data + index * le;
+}
+
 glBufferAttribute::~glBufferAttribute()
 {
 	if (delete_on_exit)

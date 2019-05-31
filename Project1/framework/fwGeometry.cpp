@@ -1,7 +1,14 @@
 #include "fwGeometry.h"
+
+#include <glm/gtx/norm.hpp>
+#include <math.h>
+
+#include "math/fwBox3.h"
+
 #include "glEngine/glVertexAttribute.h"
 #include "glEngine/glBufferAttribute.h"
 #include "../glad/glad.h"
+
 
 fwGeometry::fwGeometry()
 {
@@ -68,6 +75,33 @@ void fwGeometry::draw(GLenum mode, glVertexArray *va)
 	else {
 		va->draw(mode, false, vertices->get_count());
 	}
+}
+
+fwSphere *fwGeometry::computeBoundingsphere(void)
+{
+	fwBox3 box;
+	if (m_pBoundingsphere == nullptr) {
+		m_pBoundingsphere = new fwSphere();
+	}
+
+	if (vertices) {
+		glm::vec3 &center = m_pBoundingsphere->center();
+		box.setFromBufferAttribute(vertices);
+		box.get_center(center);
+		
+		// hoping to find a boundingSphere with a radius smaller than the
+		// boundingSphere of the boundingBox: sqrt(3) smaller in the best case
+
+		float maxRadiusSq = 0;
+		for (unsigned int i = 0; i < vertices->get_count(); ++i) {
+			glm::vec3 *v = (glm::vec3 *)vertices->get_index(i);
+			maxRadiusSq = fmax(maxRadiusSq, glm::distance2(center, *v));
+		}
+
+		m_pBoundingsphere->radius(sqrt(maxRadiusSq));
+	}
+
+	return m_pBoundingsphere;
 }
 
 fwGeometry::~fwGeometry()
