@@ -15,7 +15,7 @@
 class myApp : public fwApp
 {
 	fwCamera *m_camera;
-	fwDirectionLight *m_light;
+	fwPointLight *m_light;
 	fwSkybox *m_skybox;
 	fwScene *m_scene;
 	fwOrbitControl *m_control;

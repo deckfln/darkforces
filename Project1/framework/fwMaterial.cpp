@@ -47,7 +47,7 @@ fwMaterial &fwMaterial::addShaders(std::string _vertexShader, std::string _fragm
 {
 	vertexShader = _vertexShader;
 	fragmentShader = _fragmentShader;
-	defines = _defines;
+	m_defines = _defines;
 
 	return *this;
 }
@@ -84,7 +84,7 @@ const std::string &fwMaterial::get_vertexShader(void)
 	if (vertexShaderCode != "") {
 		return vertexShaderCode;
 	}
-	vertexShaderCode = load_shader_file(vertexShader, defines);
+	vertexShaderCode = load_shader_file(vertexShader, m_defines);
 
 	return vertexShaderCode;
 }
@@ -94,7 +94,7 @@ const std::string &fwMaterial::get_fragmentShader(void)
 	if (fragmentShaderCode != "") {
 		return fragmentShaderCode;
 	}
-	fragmentShaderCode = load_shader_file(fragmentShader, defines);
+	fragmentShaderCode = load_shader_file(fragmentShader, m_defines);
 
 	return fragmentShaderCode;
 }
@@ -108,14 +108,14 @@ const std::string &fwMaterial::get_geometryShader(void)
 	if (geometryShaderCode != "") {
 		return geometryShaderCode;
 	}
-	geometryShaderCode = load_shader_file(geometryShader, defines);
+	geometryShaderCode = load_shader_file(geometryShader, m_defines);
 
 	return geometryShaderCode;
 }
 
 std::string fwMaterial::hashCode(void)
 {
-	return vertexShader+fragmentShader;
+	return vertexShader+fragmentShader+m_defines;
 }
 
 fwMaterial::~fwMaterial()

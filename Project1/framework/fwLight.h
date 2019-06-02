@@ -32,7 +32,7 @@ public:
 	std::string &getDefine(void);
 	virtual std::string set_uniform(glProgram *program, int index = -1);
 
-	bool castShadow(bool s = true);
+	virtual bool castShadow(bool s);
 
 	void startShadowMap(void);
 	void setShadowCamera(glProgram *program);

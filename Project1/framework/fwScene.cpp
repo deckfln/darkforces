@@ -113,6 +113,7 @@ void fwScene::parseChildren(fwObject3D *root,
 
 			// Create the shader program if it is not already there
 			if (programs.count(code) == 0) {
+				local_defines += material->defines();
 				std::string vertex = material->get_vertexShader();
 				std::string fragment = material->get_fragmentShader();
 				std::string geometry = material->get_geometryShader();
@@ -223,7 +224,7 @@ void fwScene::draw(fwCamera *camera)
 	bool hasShadowLights = false;
 	for (int i = 0; i < current_light; i++) {
 		fwLight *light = lights[i];
-		if (light->castShadow()) {
+		if (((fwObject3D *)light)->castShadow()) {
 			hasShadowLights = true;
 
 			if (depth_program == nullptr) {
@@ -256,7 +257,7 @@ void fwScene::draw(fwCamera *camera)
 			}
 
 			// 2nd pass: instanced meshes
-
+			// TODO: sort instances by distance from the light
 			depth_instanced_program->run();
 
 			for (auto mesh : instances) {
@@ -336,6 +337,7 @@ void fwScene::draw(fwCamera *camera)
 			listOfMeshes = ids.second;
 
 			// draw neareast first
+			// TODO: sort instances by distance from the light
 			listOfMeshes.sort([camera](fwMesh *a, fwMesh *b) { return a->sqDistanceTo(camera) < b->sqDistanceTo(camera); });
 
 			glTexture::PushTextureUnit();

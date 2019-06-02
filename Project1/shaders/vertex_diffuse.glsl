@@ -17,6 +17,20 @@ out vec2 TexCoord;
 out vec3 normal;
 out vec3 world;
 
+#ifdef NORMALMAP
+	layout (location = 5) in vec3 aTangent;
+	out mat3 tbn;
+
+	void computeTBN(mat3 normalMatrix, vec3 normal, vec3 tangent)
+	{
+		vec3 T = normalize(normalMatrix * aTangent);
+		vec3 N = normalize(normalMatrix * aNormal);
+		T = normalize(T - dot(T, N) * N);
+		vec3 B = cross(N, T);
+		tbn = mat3(T, B, N);
+	}
+#endif
+
 #ifdef SHADOWMAP
 #if DIRECTION_LIGHTS > 0
 	struct DirectionlLight {
@@ -41,7 +55,11 @@ void main()
 	world = vec3(model * vec4(aPos, 1.0));
     normal = mat3(transpose(inverse(model))) * aNormal;  
     TexCoord = aTexCoord;
- 
+
+#ifdef NORMALMAP
+	computeTBN(mat3(transpose(inverse(model))), aNormal, aTangent);
+#endif
+
 #ifdef SHADOWMAP
 #if DIRECTION_LIGHTS > 0
 	for (int i=0; i<DIRECTION_LIGHTS; i++) {

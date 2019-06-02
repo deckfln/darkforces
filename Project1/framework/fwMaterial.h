@@ -23,10 +23,12 @@ class fwMaterial: public Reference
 	std::list <glTexture *> textures;
 
 protected:
-	std::string defines;
+	int m_type = 0;
+	std::string m_defines;
 
 public:
 	fwMaterial();
+	int type(int flag) { return m_type & flag; };
 	fwMaterial(std::string vertexShader, std::string fragmentShader, std::string geometryShader);
 	fwMaterial &addTexture(std::string uniform, fwTexture *texture);
 	fwMaterial &addTexture(std::string uniform, glTexture *texture);
@@ -39,6 +41,7 @@ public:
 	const std::string &get_fragmentShader(void);
 	const std::string &get_geometryShader(void);
 	const int getID(void);
+	const std::string defines(void) { return m_defines; };
 
 	void bindTextures(void);
 	void set_uniforms(glProgram *program);

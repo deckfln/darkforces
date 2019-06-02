@@ -16,7 +16,7 @@ fwMaterialBasic::fwMaterialBasic(glm::vec4 *_color):
 void fwMaterialBasic::addDiffuseMap(fwTexture *_diffuse)
 {
 	addTexture("map", _diffuse);
-	defines += "#define DIFFUSE_MAP\n";
+	m_defines += "#define DIFFUSE_MAP\n";
 }
 
 fwMaterialBasic::~fwMaterialBasic()

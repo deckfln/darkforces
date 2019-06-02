@@ -32,13 +32,16 @@ myApp::myApp(std::string name, int width, int height) :
 	/*
 	 * Lights
 	 */
-	 m_light = new fwDirectionLight(
-		 glm::vec3(-2.0f, 4.0f, -1.0f),
-		 glm::vec3(0.2, 0.2, 0.2),
-		 glm::vec3(0.8f, 0.8f, 0.8f),
-		 glm::vec3(0.7f, 0.7f, 0.7f)
-	 );
-	 m_light->castShadow(true);
+	m_light = new fwPointLight(
+		glm::vec3(),
+		glm::vec3(0.3, 0.3, 0.3),
+		glm::vec3(0.8, 0.8, 0.8),
+		glm::vec3(1.0, 1.0, 1.0),
+		1.0,
+		0.09,
+		0.032
+	);
+	 m_light->set_name("light");
 
 	// lights
 	fwBoxGeometry *geometry = new fwBoxGeometry();
@@ -48,13 +51,15 @@ myApp::myApp(std::string name, int width, int height) :
 	fwMesh *fLight = new fwMesh(geometry, basic);
 
 	glm::vec3 half(0.1);
-	fLight->set_scale(half).set_name("light");
+	fLight->set_scale(half).set_name("light_impersonator");
 
 	m_light->addChild(fLight);
 
 	// floor
-	fwTexture *t1 = new fwTexture("images/wood.png");
-	fwDiffuseMaterial *material = new fwDiffuseMaterial(t1, nullptr, 32);
+	fwTexture *t1 = new fwTexture("images/brickwall.jpg");
+	fwTexture *t2 = new fwTexture("images/brickwall_normal.jpg");
+	fwDiffuseMaterial *material = new fwDiffuseMaterial(t1, 32);
+	material->normalMap(t2);
 
 	fwMesh *plane = new fwMesh(new fwPlaneGeometry(10, 10), material);
 	plane->set_name("floor");
@@ -67,7 +72,7 @@ myApp::myApp(std::string name, int width, int height) :
 
 	// window
 	t1 = new fwTexture("images/blending_transparent_window.png");
-	material = new fwDiffuseMaterial(t1, nullptr, 32);
+	material = new fwDiffuseMaterial(t1, 32);
 
 	fwMesh *window = new fwMesh(new fwPlaneGeometry(5, 5), material);
 	window->set_name("window");
@@ -77,9 +82,10 @@ myApp::myApp(std::string name, int width, int height) :
 
 	// box
 	t1 = new fwTexture("images/container2.png");
-	fwTexture *t2 = new fwTexture("images/container2_specular.png");
+	t2 = new fwTexture("images/container2_specular.png");
 
-	material = new fwDiffuseMaterial(t1, nullptr, 32);
+	material = new fwDiffuseMaterial(t1, 32);
+	material->specularMap(t2);
 
 	m_positions[0] = glm::translate(glm::vec3(0.5, 0.5, 0.5));
 	m_positions[1] = glm::translate(glm::vec3(2, 0, 1));

@@ -9,6 +9,7 @@ in vec3 world;
 struct Material {
     sampler2D diffuse;
     sampler2D specular;
+    sampler2D normalMap;
     float     shininess;
 }; 
 
@@ -17,6 +18,10 @@ struct Material {
 uniform Material material;
 
 #define DEFINES
+
+#ifdef NORMALMAP
+	in mat3 tbn;
+#endif
 
 #ifdef SHADOWMAP
 	float ShadowCalculation(vec4 fragPosLightSpace, sampler2D shadowMap)
@@ -214,6 +219,12 @@ void main()
 
     // diffuse 
     vec3 norm = normalize(normal);
+#ifdef NORMALMAP
+	norm = texture(material.normalMap, TexCoord).rgb;
+	norm = normalize(norm * 2.0 - 1.0);   
+	norm = normalize(tbn * norm); 
+#endif
+
     vec3 viewDir = normalize(viewPos - world);
 
 	vec3 dirlight;

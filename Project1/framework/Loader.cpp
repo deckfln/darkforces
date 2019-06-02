@@ -120,11 +120,9 @@ fwMesh *Loader::processMesh(aiMesh *mesh, const aiScene *scene)
 		float shininess;
 		aimaterial->Get(AI_MATKEY_SHININESS, shininess);
 
+		material = new fwDiffuseMaterial(diffuse[0], shininess);
 		if (specular.size() > 0) {
-			material = new fwDiffuseMaterial(diffuse[0], specular[0], shininess);
-		}
-		else {
-			material = new fwDiffuseMaterial(diffuse[0], nullptr, shininess);
+			material->specularMap(specular[0]);
 		}
 	}
 

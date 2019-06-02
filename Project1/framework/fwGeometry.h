@@ -19,7 +19,7 @@ class fwGeometry: public Reference
 
 	int max_attributes = 10;
 	int current_attribute = 0;
-	glBufferAttribute *attributes[10];
+	std::map <const std::string, glBufferAttribute *> attributes;
 
 	fwSphere *m_pBoundingsphere = nullptr;
 
@@ -34,6 +34,7 @@ public:
 
 	fwSphere *boundingsphere(void) { return m_pBoundingsphere; };
 	fwSphere *computeBoundingsphere(void);
+	void computeTangent(void);
 
 	void draw(GLenum mode, glVertexArray *);
 	~fwGeometry();

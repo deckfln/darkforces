@@ -62,6 +62,7 @@ fwObject3D &fwObject3D::set_scale(float _scale)
 {
 	updated = true;
 	m_Scale *= _scale;
+	updated = true;
 	return *this;
 }
 
@@ -73,16 +74,19 @@ fwObject3D &fwObject3D::addChild(fwObject3D *mesh)
 
 void fwObject3D::updateWorldMatrix(fwObject3D *parent, bool force)
 {
-	if (updated) {
+	//FIXME : checking the updated flag is bad => will not detect the shadowCamera projection
+	//if (updated) {
 		//glm::mat4 rotationMatrix = glm::rotate(m_Rotation.x, glm::vec3(1, 0, 0));
 		glm::mat4 rotationMatrix = glm::toMat4(m_quaternion);
 		glm::mat4 scaleMatrix = glm::scale(m_Scale);
 		glm::mat4 translateMatrix = glm::translate(m_Position);
 		// model = glm::rotate(model, rotation);
 		m_modelMatrix = translateMatrix * scaleMatrix * rotationMatrix;
-	}
+		//updated = false;
+		//force = true;
+	//}
 
-	if (updated or force) {
+	if (updated || force) {
 		if (parent) {
 			m_worldMatrix = parent->m_worldMatrix * m_modelMatrix;
 		}

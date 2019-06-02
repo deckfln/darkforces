@@ -1,2 +1,3 @@
 28/05/19	cameraHelpler to show directional shadow
 28/05/19	sort instancedMesh by distance to camera (draw nearest first)
+31/05/19	void fwObject3D::updateWorldMatrix = > FIXME : checking the updated flag is bad => will not detect the shadowCamera projection

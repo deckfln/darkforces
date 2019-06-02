@@ -51,7 +51,7 @@ public:
 
 	void updateWorldMatrix(fwObject3D *parent, bool force = false);
 
-	virtual bool castShadow(void) { return m_castShadow; }
+	bool castShadow(void) { return m_castShadow; }
 	virtual bool castShadow(bool s) { m_castShadow = s; return s; }
 
 	bool receiveShadow(void) { return m_receiveShadow; }
