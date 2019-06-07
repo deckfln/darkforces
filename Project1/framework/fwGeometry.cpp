@@ -16,7 +16,7 @@ fwGeometry::fwGeometry()
 	index = nullptr;
 }
 
-fwGeometry& fwGeometry::addVertices(std::string _name, void *_data, GLsizei itemSize, GLsizei len, GLuint _sizeof_element, bool delete_on_exit)
+fwGeometry& fwGeometry::addVertices(const std::string _name, void *_data, GLsizei itemSize, GLsizei len, GLuint _sizeof_element, bool delete_on_exit)
 {
 	vertices = new glBufferAttribute(_name, GL_ARRAY_BUFFER, _data, itemSize, len, _sizeof_element, delete_on_exit);
 	indexedGeometry = false;
@@ -32,9 +32,10 @@ fwGeometry& fwGeometry::addIndex(void *_data, GLsizei itemSize, GLsizei len, GLu
 	return *this;
 }
 
-fwGeometry& fwGeometry::addAttribute(std::string _name, GLuint _type, void *_data, GLsizei itemSize, GLsizei len, GLuint _sizeof_element, bool delete_on_exit)
+fwGeometry& fwGeometry::addAttribute(const std::string name, GLuint type, void *data, GLsizei itemSize, GLsizei len, GLuint sizeof_element, bool delete_on_exit)
 {
-	attributes[_name] = new	glBufferAttribute(_name, _type, _data, itemSize, len, _sizeof_element, delete_on_exit);
+	glBufferAttribute *ba = new	glBufferAttribute(name, type, data, itemSize, len, sizeof_element, delete_on_exit);
+	attributes[name] = ba;
 
 	return *this;
 }

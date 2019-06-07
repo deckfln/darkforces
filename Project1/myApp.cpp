@@ -12,6 +12,7 @@
 #include "framework/fwInstancedMesh.h"
 #include "framework/geometries/fwBoxGeometry.h"
 #include "framework/geometries/fwPlaneGeometry.h"
+#include "framework/fwSprite.h"
 
 #include "framework/Loader.h"
 
@@ -105,6 +106,18 @@ myApp::myApp(std::string name, int width, int height) :
 	m_positions[0] = glm::translate(glm::vec3(-1,0, 0));
 	m_positions[1] = glm::translate(glm::vec3(1, 0, 0));
 
+	// sprite
+	glm::vec3 *sprites = (glm::vec3 *)calloc(4, sizeof(glm::vec3));
+	sprites[0].z = -4;
+	sprites[1].z = -2;
+	sprites[2].z = 0;
+	sprites[3].z = 2;
+	t1 = new fwTexture("images/fireworks_red.jpg");
+
+	fwSprite *sprite = new fwSprite(sprites, 4, t1);
+
+	sprite->set_name("sprite");
+
 	// Skybox
 	std::string skyboxes[] = {
 		"images/skybox/right.jpg",
@@ -123,7 +136,8 @@ myApp::myApp(std::string name, int width, int height) :
 		setOutline(yellow).
 		addChild(plane).
 		addChild(m_instancedMesh).
-		addChild(window);
+		addChild(window).
+		addChild(sprite);
 	m_scene->background(m_skybox);
 }
 

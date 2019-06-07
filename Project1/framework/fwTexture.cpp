@@ -6,11 +6,11 @@ fwTexture::fwTexture()
 {
 }
 
-fwTexture::fwTexture(std::string file)
+fwTexture::fwTexture(const std::string file) :
+	name(file)
 {
 	// load and generate the texture
-	name = file;
-	data = stbi_load(file.c_str(), &width, &height, &nrChannels, 0);
+	data = stbi_load(name.c_str(), &width, &height, &nrChannels, 0);
 }
 
 fwTexture::fwTexture(int _width, int _height, int format) :

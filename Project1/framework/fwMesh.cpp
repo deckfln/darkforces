@@ -3,6 +3,11 @@
 
 #include "fwDiffuseMaterial.h"
 
+fwMesh::fwMesh()
+{
+	classID |= MESH;
+}
+
 fwMesh::fwMesh(fwGeometry *_geometry, fwMaterial *_material):
 	geometry(_geometry),
 	material(_material),

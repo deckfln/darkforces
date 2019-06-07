@@ -27,6 +27,7 @@ protected:
 	bool wireFrame = false;
 
 public:
+	fwMesh();
 	fwMesh(fwGeometry *_geometry, fwMaterial *_material);
 
 	std::string getMaterialHash(void);

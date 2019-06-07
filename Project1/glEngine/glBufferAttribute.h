@@ -8,7 +8,7 @@
 
 class glBufferAttribute
 {
-	std::string name;
+	const std::string name;
 	GLuint type;
 	void *data;
 	GLsizei len;
@@ -21,7 +21,7 @@ class glBufferAttribute
 	glBufferObject *vbo;
 
 public:
-	glBufferAttribute(std::string _name, GLuint _type, void *_data, GLsizei itemSize, GLsizei len, GLuint _sizeof_element, bool delete_on_exit = true);
+	glBufferAttribute(const std::string _name, GLuint _type, void *_data, GLsizei itemSize, GLsizei len, GLuint _sizeof_element, bool delete_on_exit = true);
 	GLuint get_size(void);
 	GLvoid *get_data();
 	GLuint get_elements(void);

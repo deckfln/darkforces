@@ -3,7 +3,7 @@
 
 class fwTexture
 {
-	std::string name;
+	const std::string name;
 	unsigned char *data = nullptr;
 	int width;
 	int height;
@@ -11,7 +11,7 @@ class fwTexture
 
 public:
 	fwTexture();
-	fwTexture(std::string file);
+	fwTexture(const std::string file);
 	fwTexture(int width, int height, int format);
 	unsigned char *get_info(int *width, int *height, int *nrChannels);
 	~fwTexture();
