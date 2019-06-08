@@ -1,6 +1,11 @@
 #include "glBufferAttribute.h"
 
-glBufferAttribute::glBufferAttribute(std::string _name, GLuint _type, void *_data, GLsizei _itemSize, GLsizei _len, GLuint _sizeof_element, bool _delete_on_exit):
+glBufferAttribute::glBufferAttribute()
+{
+
+}
+
+glBufferAttribute::glBufferAttribute(const std::string _name, GLuint _type, void *_data, GLsizei _itemSize, GLsizei _len, GLuint _sizeof_element, bool _delete_on_exit):
 	name(_name),
 	type(_type),
 	data(_data),

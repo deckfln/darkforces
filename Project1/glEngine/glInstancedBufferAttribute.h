@@ -1,9 +1,9 @@
 #pragma once
 #include <iostream>
 #include "glad/glad.h"
-#include "glBufferAttribute.h"
+#include "glDynamicBufferAttribute.h"
 
-class glInstancedBufferAttribute : public glBufferAttribute
+class glInstancedBufferAttribute : public glDynamicBufferAttribute
 {
 	int divisor = 0;
 

@@ -9,7 +9,7 @@ class glBufferObject
 
 public:
 	glBufferObject(void);
-	glBufferObject(GLuint _type, GLuint size, void *data);
+	glBufferObject(GLuint _type, GLuint size, void *data, int flag=GL_STATIC_DRAW);
 	void bind(void);
 	void update(int offset, int size, void *data);
 	static void unbind(void);

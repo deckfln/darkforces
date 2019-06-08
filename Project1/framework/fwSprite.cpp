@@ -9,7 +9,7 @@ fwSprite::fwSprite(glm::vec3 *position, int nb, fwTexture *texture)
 	classID |= SPRITE;
 
 	geometry = new fwGeometry();
-	geometry->addVertices("aPos", position, 3, sizeof(glm::vec3) * nb, sizeof(float));
+	geometry->addDynamicVertices("aPos", position, 3, sizeof(glm::vec3) * nb, sizeof(float));
 
 	material = new fwSpriteMaterial();
 	material->addTexture("texture", texture);

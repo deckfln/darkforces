@@ -4,13 +4,13 @@ glBufferObject::glBufferObject(void)
 {
 }
 
-glBufferObject::glBufferObject(GLuint _type, GLuint size, void *data)
+glBufferObject::glBufferObject(GLuint _type, GLuint size, void *data, int flag)
 {
 	type = _type;
 	glGenBuffers(1, &buffer);
 
 	glBindBuffer(type, buffer);
-	glBufferData(type, size, data, GL_STATIC_DRAW);
+	glBufferData(type, size, data, flag);
 }
 
 void glBufferObject::bind(void)

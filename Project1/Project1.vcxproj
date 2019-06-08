@@ -164,6 +164,7 @@
     <ClCompile Include="glEngine\glColorMap.cpp" />
     <ClCompile Include="glEngine\glCubeTexture.cpp" />
     <ClCompile Include="glEngine\glDepthMap.cpp" />
+    <ClCompile Include="glEngine\glDynamicBufferAttribute.cpp" />
     <ClCompile Include="glEngine\glFrameBuffer.cpp" />
     <ClCompile Include="glEngine\glInstancedBufferAttribute.cpp" />
     <ClCompile Include="glEngine\glInstancedVertexArray.cpp" />
@@ -223,6 +224,7 @@
     <ClInclude Include="glEngine\glColorMap.h" />
     <ClInclude Include="glEngine\glCubeTexture.h" />
     <ClInclude Include="glEngine\glDepthMap.h" />
+    <ClInclude Include="glEngine\glDynamicBufferAttribute.h" />
     <ClInclude Include="glEngine\glFrameBuffer.h" />
     <ClInclude Include="glEngine\glInstancedBufferAttribute.h" />
     <ClInclude Include="glEngine\glInstancedVertexArray.h" />
