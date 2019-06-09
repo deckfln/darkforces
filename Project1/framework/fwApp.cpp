@@ -68,7 +68,13 @@ fwApp::fwApp(std::string name, int _width, int _height, std::string post_process
 	colorMap = new glColorMap(width*2, height*2);
 	glTexture *tex = colorMap->getColorTexture();
 	source = new fwUniform("screenTexture", tex);
+
+	m_pixelsize.x = 1.0 / (width*2.0);
+	m_pixelsize.y = 1.0 / (height*2.0);
+	fwUniform *pixelsize = new fwUniform("pixelsize", &m_pixelsize);
+
 	postProcessing = new fwPostProcessing(post_processing + "/vertex.glsl", post_processing + "/fragment.glsl", source, defines);
+	postProcessing->addUniform(pixelsize);
 
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 	glfwSetCursorPosCallback(window, cursor_position_callback);
@@ -91,6 +97,10 @@ void fwApp::resizeEvent(int _width, int _height)
 {
 	width = _width;
 	height = _height;
+
+	glm::vec2 cm = colorMap->size();
+	m_pixelsize.x = 1.0 / cm.x;
+	m_pixelsize.y = 1.0 / cm.y;
 
 	SCR_WIDTH = width;
 	SCR_HEIGHT = height;

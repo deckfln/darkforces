@@ -237,6 +237,13 @@ void glProgram::set_uniform(const std::string name, glm::vec3 &vec3)
 		uniform->set_value(vec3);
 }
 
+void glProgram::set_uniform(const std::string name, glm::vec2 &vec2)
+{
+	glUniform *uniform = get_uniform(name);
+	if (uniform)
+		uniform->set_value(vec2);
+}
+
 void glProgram::set_uniform(const std::string name, glTexture *texture)
 {
 	glUniform *uniform = get_uniform(name);

@@ -32,6 +32,7 @@ public:
 	void set_uniform(const std::string name, glm::mat4 &mat4);
 	void set_uniform(const std::string name, glm::vec4 &vec4);
 	void set_uniform(const std::string name, glm::vec3 &vec3);
+	void set_uniform(const std::string name, glm::vec2 &vec2);
 	void set_uniform(const std::string name, glTexture *);
 	~glProgram();
 };

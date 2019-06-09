@@ -1,6 +1,6 @@
 #pragma once
 #include <stack>
-
+#include <glm/glm.hpp>
 #include "glad/glad.h"
 #include "glTexture.h"
 #include "glRenderBuffer.h"
@@ -14,8 +14,7 @@ class glFrameBuffer
 	GLint m_prevViewport[4];
 
 protected:
-	int width;
-	int height;
+	glm::vec2 m_size;
 	int type = GL_FRAMEBUFFER;
 
 public:
@@ -26,5 +25,6 @@ public:
 	void bindDepth(glRenderBuffer *depth_stencil);
 	void unbind(void);
 	void resize(int _width, int _height);
+	glm::vec2 &size(void);
 	~glFrameBuffer();
 };

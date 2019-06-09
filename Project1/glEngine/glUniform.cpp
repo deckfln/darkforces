@@ -159,6 +159,16 @@ void glUniform::set_value(glm::vec3 &vec3)
 	glUniform3fv(location, 1, glm::value_ptr(vec3));
 }
 
+void glUniform::set_value(glm::vec2 &vec2)
+{
+	if (type != GL_FLOAT_VEC2) {
+		std::cout << "glUniform::set_value " << name.c_str() << " not G_FLOAT_VEC2" << std::endl;
+		exit(-1);
+	}
+
+	glUniform2fv(location, 1, glm::value_ptr(vec2));
+}
+
 void glUniform::set_value(glm::mat4 &mat4)
 {
 	if (type != GL_FLOAT_MAT4) {

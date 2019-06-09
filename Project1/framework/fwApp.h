@@ -2,6 +2,7 @@
 
 #include "glad/glad.h"
 #include <GLFW/glfw3.h>
+#include <glm/glm.hpp>
 
 #include "glEngine/glColorMap.h"
 #include "framework/fwPostProcessing.h"
@@ -11,12 +12,13 @@ class fwApp
 {
 	int height;
 	int width;
+	glm::vec2 m_pixelsize;
 	GLFWwindow* window = nullptr;
 	glColorMap *colorMap = nullptr;
 	fwPostProcessing *postProcessing = nullptr;
 	fwOrbitControl *control = nullptr;
 	fwUniform *source = nullptr;
-
+	
 	void processInput(GLFWwindow *window);
 
 public:

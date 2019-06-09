@@ -6,11 +6,11 @@ glColorMap::glColorMap(int _width, int _height):
 	bind();
 
 	// need to read back in next stage => use a TextureBuffer
-	color = new glTexture(width, height, GL_RGBA);
+	color = new glTexture(m_size.x, m_size.y, GL_RGBA);
 	bindTexture(color, GL_COLOR_ATTACHMENT0);
 
 	// don't need to read the content of the depth & stencil buffer later => use a RenderBuffer
-	depth_stencil = new glRenderBuffer(width, height);
+	depth_stencil = new glRenderBuffer(m_size.x, m_size.y);
 
 	bindDepth(depth_stencil);
 	unbind();

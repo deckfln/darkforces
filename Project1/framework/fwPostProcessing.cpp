@@ -51,6 +51,13 @@ fwPostProcessing::fwPostProcessing(std::string _vertexShader, std::string _fragm
 	quad->unbind();
 }
 
+fwPostProcessing &fwPostProcessing::addUniform(fwUniform *uniform)
+{
+	m_uniforms.push_front(uniform);
+
+	return *this;
+}
+
 void fwPostProcessing::draw(void)
 {
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -60,6 +67,11 @@ void fwPostProcessing::draw(void)
 	glClear(GL_COLOR_BUFFER_BIT);
 
 	program->run();
+
+	for (auto uniform : m_uniforms) {
+		uniform->set_uniform(program);
+	}
+
 	glTexture *tex = (glTexture *)source->get_value();
 	tex->resetTextureUnit();
 	tex->bind();

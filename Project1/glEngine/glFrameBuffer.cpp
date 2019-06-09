@@ -1,8 +1,7 @@
 #include "glFrameBuffer.h"
 
 glFrameBuffer::glFrameBuffer(int _width, int _height):
-	height(_height),
-	width(_width)
+	m_size(_width, _height)
 {
 	glGenFramebuffers(1, &id);
 }
@@ -13,7 +12,7 @@ void glFrameBuffer::bind()
 	glGetIntegerv(GL_FRAMEBUFFER_BINDING, &m_prevFBO);
 	glGetIntegerv(GL_VIEWPORT, m_prevViewport);
 
-	glViewport(0, 0, width, height);
+	glViewport(0, 0, m_size.x, m_size.y);
 	glBindFramebuffer(type, id);
 }
 
@@ -35,8 +34,13 @@ void glFrameBuffer::unbind(void)
 
 void glFrameBuffer::resize(int _width, int _height)
 {
-	height = _height;
-	width = _width;
+	m_size.x = _height;
+	m_size.y = _width;
+}
+
+glm::vec2 &glFrameBuffer::size(void)
+{
+	return m_size;
 }
 
 glFrameBuffer::~glFrameBuffer()

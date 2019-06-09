@@ -16,8 +16,11 @@ class fwPostProcessing
 	fwGeometry *geometry;
 	fwUniform *source;
 
+	std::list <fwUniform *> m_uniforms;
+
 public:
 	fwPostProcessing(std::string _vertexShader, std::string _fragmentShader, fwUniform *_source, std::string defines);
+	fwPostProcessing &addUniform(fwUniform *uniform);
 	void draw(void);
 	~fwPostProcessing();
 };
