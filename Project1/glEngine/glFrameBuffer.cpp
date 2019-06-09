@@ -33,6 +33,12 @@ void glFrameBuffer::unbind(void)
 	glViewport(m_prevViewport[0], m_prevViewport[1], m_prevViewport[2], m_prevViewport[3]);
 }
 
+void glFrameBuffer::resize(int _width, int _height)
+{
+	height = _height;
+	width = _width;
+}
+
 glFrameBuffer::~glFrameBuffer()
 {
 	glDeleteFramebuffers(1, &id);

@@ -65,7 +65,7 @@ fwApp::fwApp(std::string name, int _width, int _height, std::string post_process
 	}
 
 	// FRAME BUFFER
-	colorMap = new glColorMap(width, height);
+	colorMap = new glColorMap(width*2, height*2);
 	glTexture *tex = colorMap->getColorTexture();
 	source = new fwUniform("screenTexture", tex);
 	postProcessing = new fwPostProcessing(post_processing + "/vertex.glsl", post_processing + "/fragment.glsl", source, defines);
@@ -92,6 +92,8 @@ void fwApp::resizeEvent(int _width, int _height)
 	width = _width;
 	height = _height;
 
+	SCR_WIDTH = width;
+	SCR_HEIGHT = height;
 	resize(width, height);
 }
 

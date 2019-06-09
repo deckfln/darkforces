@@ -25,5 +25,6 @@ public:
 	void bindTexture(glTexture *texture, GLuint attachment= GL_COLOR_ATTACHMENT0);
 	void bindDepth(glRenderBuffer *depth_stencil);
 	void unbind(void);
+	void resize(int _width, int _height);
 	~glFrameBuffer();
 };
