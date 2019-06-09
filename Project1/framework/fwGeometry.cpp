@@ -2,6 +2,7 @@
 
 #include <glm/gtx/norm.hpp>
 #include <math.h>
+#include <exception>
 
 #include "math/fwBox3.h"
 
@@ -43,7 +44,8 @@ fwGeometry& fwGeometry::addIndex(void *_data, GLsizei itemSize, GLsizei len, GLu
 fwGeometry& fwGeometry::addAttribute(const std::string name, GLuint type, void *data, GLsizei itemSize, GLsizei len, GLuint sizeof_element, bool delete_on_exit)
 {
 	glBufferAttribute *ba = new	glBufferAttribute(name, type, data, itemSize, len, sizeof_element, delete_on_exit);
-	attributes[name] = ba;
+	std::pair<const std::string, glBufferAttribute *> in(name, ba);
+	attributes.insert(in);
 
 	return *this;
 }
@@ -142,12 +144,13 @@ void fwGeometry::computeTangent(void)
 
 	glBufferAttribute *uvs = attributes["aTexCoord"];
 
-	glm::vec3 *tangents = (glm::vec3 *)calloc(vertices->get_count(), sizeof(glm::vec3));
+	int nb_vertices = vertices->get_count();
+	glm::vec3 *tangents = new glm::vec3 [nb_vertices];
 	glm::vec3 *_vertices = (glm::vec3 *)vertices->get_data();
 	glm::vec2 *_uv = (glm::vec2 *)uvs->get_data();
 
-	if (index != nullptr) {
-		for (unsigned int i = 0; i < vertices->get_count(); i += 3) {
+	if (index == nullptr) {
+		for (int i = 0; i < nb_vertices; i += 3) {
 			v0 = _vertices + i;
 			v1 = _vertices + (i + 1);
 			v2 = _vertices + (i + 2);
@@ -169,7 +172,6 @@ void fwGeometry::computeTangent(void)
 			Tangent.x = f * (DeltaV2 * Edge1.x - DeltaV1 * Edge2.x);
 			Tangent.y = f * (DeltaV2 * Edge1.y - DeltaV1 * Edge2.y);
 			Tangent.z = f * (DeltaV2 * Edge1.z - DeltaV1 * Edge2.z);
-
 			tangents[i] += Tangent;
 			tangents[i + 1] += Tangent;
 			tangents[i + 2] += Tangent;
@@ -177,17 +179,19 @@ void fwGeometry::computeTangent(void)
 	}
 	else {
 		GLint *_index = (GLint *)index->get_data();
-		int k;
-		for (unsigned int i = 0; i < index->get_count(); i += 3) {
-			k = _index[i];
+		int k0, k1, k2;
+		for (int i = 0; i < index->get_count(); i += 3) {
+			k0 = _index[i];
+			k1 = _index[i + 1];
+			k2 = _index[i + 2];
 
-			v0 = _vertices + k;
-			v1 = _vertices + (k + 1);
-			v2 = _vertices + (k + 2);
+			v0 = _vertices + k0;
+			v1 = _vertices + k1;
+			v2 = _vertices + k2;
 
-			uv0 = _uv + k;
-			uv1 = _uv + (k + 1);
-			uv2 = _uv + (k + 2);
+			uv0 = _uv + k0;
+			uv1 = _uv + k1;
+			uv2 = _uv + k2;
 
 			Edge1 = *v1 - *v0;
 			Edge2 = *v2 - *v0;
@@ -203,18 +207,18 @@ void fwGeometry::computeTangent(void)
 			Tangent.y = f * (DeltaV2 * Edge1.y - DeltaV1 * Edge2.y);
 			Tangent.z = f * (DeltaV2 * Edge1.z - DeltaV1 * Edge2.z);
 
-			tangents[k] += Tangent;
-			tangents[k + 1] += Tangent;
-			tangents[k + 2] += Tangent;
+			tangents[k0] += Tangent;
+			tangents[k1] += Tangent;
+			tangents[k2] += Tangent;
 		}
 
 	}
 
-	for (unsigned int i = 0; i < vertices->get_count(); i += 3) {
+	for (int i = 0; i < nb_vertices; i++) {
 		tangents[i] = glm::normalize(tangents[i]);
 	}
 
-	addAttribute("aTangent", GL_ARRAY_BUFFER, tangents, 3, vertices->get_count() * sizeof(glm::vec3), sizeof(float), true);
+	addAttribute("tangent", GL_ARRAY_BUFFER, tangents, 3, nb_vertices * sizeof(glm::vec3), sizeof(float), true);
 }
 
 /**

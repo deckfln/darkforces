@@ -18,12 +18,12 @@ out vec3 normal;
 out vec3 world;
 
 #ifdef NORMALMAP
-	layout (location = 5) in vec3 aTangent;
+	layout (location = 5) in vec3 tangent;
 	out mat3 tbn;
 
 	void computeTBN(mat3 normalMatrix, vec3 normal, vec3 tangent)
 	{
-		vec3 T = normalize(normalMatrix * aTangent);
+		vec3 T = normalize(normalMatrix * tangent);
 		vec3 N = normalize(normalMatrix * aNormal);
 		T = normalize(T - dot(T, N) * N);
 		vec3 B = cross(N, T);
@@ -57,7 +57,7 @@ void main()
     TexCoord = aTexCoord;
 
 #ifdef NORMALMAP
-	computeTBN(mat3(transpose(inverse(model))), aNormal, aTangent);
+	computeTBN(mat3(transpose(inverse(model))), aNormal, tangent);
 #endif
 
 #ifdef SHADOWMAP

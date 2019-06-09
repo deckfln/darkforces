@@ -48,9 +48,9 @@ fwMesh *Loader::processMesh(aiMesh *mesh, const aiScene *scene)
 	/*
 	 * build the geometry
 	 */
-	glm::vec3 *position = (glm::vec3 *)calloc(mesh->mNumVertices, sizeof(glm::vec3));
-	glm::vec3 *normal = (glm::vec3 *)calloc(mesh->mNumVertices, sizeof(glm::vec3));
-	glm::vec2 *uv = (glm::vec2 *)calloc(mesh->mNumVertices, sizeof(glm::vec2));
+	glm::vec3 *position = new glm::vec3 [mesh->mNumVertices];
+	glm::vec3 *normal = new glm::vec3 [mesh->mNumVertices];
+	glm::vec2 *uv = new glm::vec2 [mesh->mNumVertices];
 
 	fwGeometry *geometry = new fwGeometry();
 
@@ -90,7 +90,7 @@ fwMesh *Loader::processMesh(aiMesh *mesh, const aiScene *scene)
 			k++;
 
 	} 
-	unsigned int *indice = (unsigned int *)calloc(k, sizeof(unsigned int));
+	unsigned int *indice = new unsigned int [k];
 
 	k = 0;
 	for (unsigned int i = 0; i < mesh->mNumFaces; i++)

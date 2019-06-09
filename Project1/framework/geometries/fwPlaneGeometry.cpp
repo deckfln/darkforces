@@ -18,14 +18,14 @@ fwPlaneGeometry::fwPlaneGeometry(float width, float height, int widthSegments, i
 
 	// buffers
 	int len_indices = 6 * gridX * gridY;
-	int *indices = (int *)calloc(len_indices, sizeof(int));
+	int *indices = new int [len_indices];
 
 	int len_vertices = gridX1*gridX1;
 	int len_uvs = gridX1*gridX1;
 
-	glm::vec3 *vertices = (glm::vec3 *)calloc(len_vertices, sizeof(glm::vec3));
-	glm::vec3 *normals = (glm::vec3 *)calloc(len_vertices, sizeof(glm::vec3));
-	glm::vec2 *uvs = (glm::vec2 *)calloc(len_uvs, sizeof(glm::vec2));
+	glm::vec3 *vertices = new glm::vec3 [len_vertices];
+	glm::vec3 *normals = new glm::vec3 [len_vertices];
+	glm::vec2 *uvs = new glm::vec2 [len_uvs];
 
 	// generate vertices, normals and uvs
 	int v = 0;
