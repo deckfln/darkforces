@@ -27,7 +27,7 @@ fwDiffuseMaterial &fwDiffuseMaterial::specularMap(fwTexture *_specular)
 {
 	specular = _specular;
 	addTexture("material.specular", specular);
-	m_defines += "#define SPCULAR_MAP\n";
+	m_defines += "#define SPECULAR_MAP\n";
 	return *this;
 }
 

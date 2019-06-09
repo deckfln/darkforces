@@ -72,7 +72,6 @@ myApp::myApp(std::string name, int width, int height) :
 	plane->translate(tr1);
 
 	// window
-	/*
 	t1 = new fwTexture("images/blending_transparent_window.png");
 	material = new fwDiffuseMaterial(t1, 32);
 
@@ -81,7 +80,7 @@ myApp::myApp(std::string name, int width, int height) :
 	glm::vec3 tr(3, 3, 3);
 	window->translate(tr);
 	window->transparent(true);
-	*/
+
 	// box
 	t1 = new fwTexture("images/container2.png");
 	t2 = new fwTexture("images/container2_specular.png");
@@ -108,7 +107,6 @@ myApp::myApp(std::string name, int width, int height) :
 	m_positions[1] = glm::translate(glm::vec3(1, 0, 0));
 
 	// sprite
-	/*
 	glm::vec3 *sprites = new glm::vec3 [4];
 	sprites[0].z = -4;
 	sprites[1].z = -2;
@@ -119,7 +117,7 @@ myApp::myApp(std::string name, int width, int height) :
 	fwSprite *sprite = new fwSprite(sprites, 4, t1);
 
 	sprite->set_name("sprite");
-	*/
+
 	// Skybox
 	std::string skyboxes[] = {
 		"images/skybox/right.jpg",
@@ -137,9 +135,9 @@ myApp::myApp(std::string name, int width, int height) :
 	m_scene->addLight(m_light).
 		setOutline(yellow).
 		addChild(plane).
-		addChild(m_instancedMesh);
-//		addChild(window).
-//		addChild(sprite);
+		addChild(m_instancedMesh).
+		addChild(window).
+		addChild(sprite);
 	m_scene->background(m_skybox);
 }
 
