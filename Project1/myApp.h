@@ -26,7 +26,7 @@ class myApp : public fwApp
 
 public:
 	myApp(std::string name,  int width, int height);
-	void draw(void);
+	void draw(glColorMap *colorMap);
 	void resize(int x, int y);
 	~myApp();
 };

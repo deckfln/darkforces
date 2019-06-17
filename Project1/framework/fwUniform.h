@@ -21,6 +21,6 @@ public:
 	fwUniform(std::string _name, glCubeTexture *y);
 	void set_uniform(glProgram *);
 	void *get_value(void);
+	void set(void *_data);
 	~fwUniform();
 };
-

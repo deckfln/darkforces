@@ -147,6 +147,7 @@
     <ClCompile Include="framework\Loader.cpp" />
     <ClCompile Include="framework\fwMaterial.cpp" />
     <ClCompile Include="framework\fwMaterialBasic.cpp" />
+    <ClCompile Include="framework\materials\fwBloomMateria.cpp" />
     <ClCompile Include="framework\materials\fwDepthMaterial.cpp" />
     <ClCompile Include="framework\materials\fwNormalHelperMaterial.cpp" />
     <ClCompile Include="framework\materials\fwOutlineMaterial.cpp" />
@@ -156,6 +157,7 @@
     <ClCompile Include="framework\math\fwBox3.cpp" />
     <ClCompile Include="framework\math\fwPlane.cpp" />
     <ClCompile Include="framework\math\fwSphere.cpp" />
+    <ClCompile Include="framework\postprocessing\fwBloom.cpp" />
     <ClCompile Include="framework\SphereGemeotry.cpp" />
     <ClCompile Include="framework\fwTexture.cpp" />
     <ClCompile Include="framework\fwUniform.cpp" />
@@ -207,6 +209,7 @@
     <ClInclude Include="framework\Loader.h" />
     <ClInclude Include="framework\fwMaterial.h" />
     <ClInclude Include="framework\fwMaterialBasic.h" />
+    <ClInclude Include="framework\materials\fwBloomMaterial.h" />
     <ClInclude Include="framework\materials\fwDepthMaterial.h" />
     <ClInclude Include="framework\materials\fwNormalHelperMaterial.h" />
     <ClInclude Include="framework\materials\fwOutlineMaterial.h" />
@@ -216,6 +219,7 @@
     <ClInclude Include="framework\math\fwBox3.h" />
     <ClInclude Include="framework\math\fwPlane.h" />
     <ClInclude Include="framework\math\fwSphere.h" />
+    <ClInclude Include="framework\postprocessing\fwBloom.h" />
     <ClInclude Include="framework\SphereGemeotry.h" />
     <ClInclude Include="framework\fwTexture.h" />
     <ClInclude Include="framework\fwUniform.h" />

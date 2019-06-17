@@ -1,7 +1,7 @@
 #pragma once
 #include <iostream>
 #include <list>
-
+#include <map>
 #include "../Reference.h"
 #include "../glEngine/glProgram.h"
 #include "fwUniform.h"
@@ -16,6 +16,8 @@ class fwMaterial: public Reference
 	std::string vertexShaderCode;
 	std::string fragmentShaderCode;
 	std::string geometryShaderCode;
+	std::map <const std::string, std::string> shaders;
+	std::map <const std::string, std::string> shaderCode;
 
 	int current_texture = 0;
 
@@ -34,12 +36,14 @@ public:
 	fwMaterial &addTexture(std::string uniform, glTexture *texture);
 	fwMaterial &addShaders(std::string vertexShader, std::string fragmentShader, const std::string defines = "");
 	fwMaterial &addUniform(fwUniform *uniform);
-	
+	fwMaterial &addShader(const std::string name, std::string file);
+
 	std::string hashCode(void);
 
 	const std::string &get_vertexShader(void);
 	const std::string &get_fragmentShader(void);
 	const std::string &get_geometryShader(void);
+	const std::string &get_shader(const std::string name);
 	const int getID(void);
 	const std::string defines(void) { return m_defines; };
 

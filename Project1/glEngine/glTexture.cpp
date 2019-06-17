@@ -12,18 +12,16 @@ glTexture::glTexture()
 
 }
 
-glTexture::glTexture(int width, int height, int format)
+glTexture::glTexture(int width, int height, int format, int filter)
 {
 	glGenTextures(1, &id);
 	glBindTexture(GL_TEXTURE_2D, id);
 
 	int type = -1;
-	int filter = -1;
 
 	switch (format) {
 	case GL_RGBA: 
 		type = GL_UNSIGNED_BYTE;
-		filter = GL_LINEAR;
 		break;
 	case GL_DEPTH_COMPONENT:
 		type = GL_FLOAT;

@@ -53,6 +53,11 @@ void *fwUniform::get_value(void)
 	return data;
 }
 
+void fwUniform::set(void *_data)
+{
+	data = _data;
+}
+
 void fwUniform::set_uniform(glProgram *program)
 {
 	switch (type) {

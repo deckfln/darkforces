@@ -1,5 +1,7 @@
 #version 330 core
-out vec4 FragColor;
+layout (location = 0) out vec4 FragColor;
+layout (location = 1) out vec4 BrightColor;
+
 // uniform vec4 ourColor;
 in vec3 ourColor;
 in vec2 TexCoord;
@@ -248,5 +250,15 @@ void main()
 
     vec3 result = clamp(dirlight + pointlight + spotlight, .0, 1.0);
 
+	// color output
     FragColor = vec4(result, color.a);
+
+	// bloom output
+	float luminance = 0.2126 * color.r + 0.7152 * color.g + 0.0722 * color.b;
+	if (luminance > 0.8) {
+		BrightColor = color;
+	}
+	else {
+		BrightColor = vec4 (0.0, 0.0, 0.0, 0.0);
+	}
 }

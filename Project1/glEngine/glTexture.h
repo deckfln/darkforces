@@ -11,7 +11,7 @@ protected:
 	GLuint textureUnit = 0;
 public:
 	glTexture();
-	glTexture(int width, int height, int format);
+	glTexture(int width, int height, int format, int filter=GL_LINEAR);
 	glTexture(fwTexture *texture);
 	GLuint getID(void);
 	GLint bind(void);

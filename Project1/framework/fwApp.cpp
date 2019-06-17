@@ -65,8 +65,8 @@ fwApp::fwApp(std::string name, int _width, int _height, std::string post_process
 	}
 
 	// FRAME BUFFER
-	colorMap = new glColorMap(width*2, height*2);
-	glTexture *tex = colorMap->getColorTexture();
+	colorMap = new glColorMap(width*2, height*2, 2);
+	glTexture *tex = colorMap->getColorTexture(0);
 	source = new fwUniform("screenTexture", tex);
 
 	m_pixelsize.x = 1.0 / (width*2.0);
@@ -151,7 +151,7 @@ void fwApp::run(void)
 		colorMap->bind();
 		colorMap->clear();
 
-		draw();
+		draw(colorMap);
 		
 		colorMap->unbind();
 

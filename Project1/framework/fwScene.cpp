@@ -8,7 +8,9 @@
 
 #include "materials/fwNormalHelperMaterial.h"
 #include "materials/fwDepthMaterial.h"
+#include "materials/fwBloomMaterial.h"
 #include "fwInstancedMesh.h"
+#include "postprocessing/fwBloom.h"
 
 static fwNormalHelperMaterial normalHelper;
 static fwDepthMaterial materialDepth;
@@ -18,6 +20,8 @@ static glProgram *outline_program = nullptr;
 static glProgram *outline_instanced_program = nullptr;
 static glProgram *depth_program = nullptr;
 static glProgram *depth_instanced_program = nullptr;
+
+static fwBloom Bloom;
 
 fwScene::fwScene()
 {
@@ -209,7 +213,7 @@ void fwScene::drawMesh(fwCamera *camera, fwMesh *mesh, glProgram *program, std::
 	}
 }
 
-void fwScene::draw(fwCamera *camera)
+void fwScene::draw(fwCamera *camera, glColorMap *colorMap)
 {
 	if (outline_material != nullptr && outline_program == nullptr) {
 		outline_program = new glProgram(outline_material->get_vertexShader(), outline_material->get_fragmentShader(), "", "");
@@ -307,7 +311,8 @@ void fwScene::draw(fwCamera *camera)
 	camera->set_uniformBuffer();
 
 	/*
-	 * 2nd pass : draw opaque objects
+	 * 2nd pass : draw opaque objects => FBO 0
+	 *            record bright pixels => FBO 1
 	 */
 	for (auto shader : meshesPerMaterial) {
 		// draw all ojects sharing the same shader
@@ -353,15 +358,23 @@ void fwScene::draw(fwCamera *camera)
 		}
 	}
 
+	// remove the bloom buffer
+	colorMap->bindColors(1);		// deactivate all color buffers but the first
+
 	/*
-	 * 3rd pass : draw skybox
+	 * 4th pass : draw skybox
 	 */
 	if (m_pBackground != nullptr) {
 		m_pBackground->draw(camera);
 	}
 
 	/*
-	 * 4th pass : draw transparent objects
+	 * 3rd pass : merge bloom buffer on the color buffer
+	 */
+	Bloom.draw(colorMap);
+
+	/*
+	 * 5th pass : draw transparent objects
 	 *	sorted from far to near
 	 */
 	transparentMeshes.sort([camera](fwMesh *a, fwMesh *b) { return a->sqDistanceTo(camera) > b->sqDistanceTo(camera); });
@@ -395,6 +408,7 @@ void fwScene::draw(fwCamera *camera)
 
 	glDisable(GL_BLEND);
 
+	colorMap->bindColors(2);		// activate all buffers
 }
 
 fwScene::~fwScene()

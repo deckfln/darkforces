@@ -46,12 +46,12 @@ myApp::myApp(std::string name, int width, int height) :
 
 	// lights
 	fwBoxGeometry *geometry = new fwBoxGeometry();
-	glm::vec4 *white = new glm::vec4(1.0);
+	glm::vec4 *white = new glm::vec4(0.0, 0.0, 1.0, 1.0);
 
 	fwMaterialBasic *basic = new fwMaterialBasic(white);
 	fwMesh *fLight = new fwMesh(geometry, basic);
 
-	glm::vec3 half(0.1);
+	glm::vec3 half(0.5);
 	fLight->set_scale(half).set_name("light_impersonator");
 
 	m_light->addChild(fLight);
@@ -146,7 +146,7 @@ void myApp::resize(int width, int height)
 	m_camera->set_ratio(width, height);
 }
 
-void myApp::draw(void)
+void myApp::draw(glColorMap *colorMap)
 {
 	m_positions[0] = glm::translate(glm::vec3(1, sin(glfwGetTime() / 2) * 2, 0));
 	m_instancedMesh->update_position(0, 1);
@@ -159,7 +159,7 @@ void myApp::draw(void)
 	lightPos.z = cos(glfwGetTime() / 2) * radius;
 	m_light->translate(lightPos);
 
-	m_scene->draw(m_camera);
+	m_scene->draw(m_camera, colorMap);
 }
 
 myApp::~myApp()

@@ -89,6 +89,22 @@ const std::string &fwMaterial::get_vertexShader(void)
 	return vertexShaderCode;
 }
 
+fwMaterial &fwMaterial::addShader(const std::string name, std::string file)
+{
+	shaders[name] = file;
+	return *this;
+}
+
+const std::string &fwMaterial::get_shader(const std::string name)
+{
+	if (shaderCode[name] != "") {
+		return shaderCode[name];
+	}
+	shaderCode[name] = load_shader_file(shaders[name], m_defines);
+
+	return shaderCode[name];
+}
+
 const std::string &fwMaterial::get_fragmentShader(void)
 {
 	if (fragmentShaderCode != "") {

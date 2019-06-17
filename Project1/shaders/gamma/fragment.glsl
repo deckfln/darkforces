@@ -31,6 +31,8 @@ float kernel[9] = float[](
 );
 
 	float alpha = texture(screenTexture, TexCoord.st).a;
+
+/*
 	vec3 color;
 	for (int i=0; i<3; i++) {
 		for (int j=0; j<3; j++) {
@@ -38,7 +40,6 @@ float kernel[9] = float[](
 		}
 	}
 	color /= 9;
-/*
     vec3 sampleTex[9];
     for(int i = 0; i < 9; i++)
     {
@@ -49,7 +50,7 @@ float kernel[9] = float[](
         col += sampleTex[i] * kernel[i];
 */
 
-    // vec3 color = texture(screenTexture, TexCoord.st);
+    vec3 color = texture(screenTexture, TexCoord.st).rgb;
 
 #ifdef GAMMA_CORRECTION
     // apply gamma correction

@@ -9,6 +9,7 @@
 #include "framework/fwCamera.h"
 #include "materials/fwOutlineMaterial.h"
 #include "fwSkybox.h"
+#include "../glEngine/glColorMap.h"
 
 class fwScene : public fwObject3D
 {
@@ -39,6 +40,6 @@ public:
 
 	fwScene &background(fwSkybox *_background) { m_pBackground = _background; return *this; };
 
-	void draw(fwCamera *camera);
+	void draw(fwCamera *camera, glColorMap *colorMap);
 	~fwScene();
 };

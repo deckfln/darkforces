@@ -31,7 +31,7 @@ public:
 
 	void run(void);
 	void bindControl(fwOrbitControl *control);
-	virtual void draw(void) {};
+	virtual void draw(glColorMap *colorMap) {};
 	virtual void resize(int x, int y) {};
 	~fwApp();
 };
