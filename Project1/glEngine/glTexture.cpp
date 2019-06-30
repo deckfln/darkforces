@@ -55,6 +55,8 @@ glTexture::glTexture(fwTexture *texture)
 	GLuint pixels=GL_RGB;
 
 	switch (nrChannels) {
+	case 1: pixels = GL_RED; break;
+	case 2: pixels = GL_RG; break;
 	case 3: pixels = GL_RGB; break;
 	case 4: pixels = GL_RGBA; break;
 	}

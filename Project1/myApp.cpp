@@ -83,7 +83,7 @@ myApp::myApp(std::string name, int width, int height) :
 
 	// box
 	t1 = new fwTexture("images/container2.png");
-	t2 = new fwTexture("images/container2_specular.png");
+	t2 = new fwTexture("images/container2_specular.png", 1);	// specular maps only need 1 channel
 
 	material = new fwDiffuseMaterial(t1, 32);
 	material->specularMap(t2);

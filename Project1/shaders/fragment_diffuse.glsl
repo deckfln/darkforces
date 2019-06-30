@@ -98,7 +98,7 @@ uniform Material material;
 		vec3 diffuse  = light.diffuse * diff * color;
 
 		#ifdef SPECULAR_MAP
-			vec3 specular = light.specular * spec * vec3(texture(material.specular, TexCoord));
+			vec3 specular = light.specular * spec * texture(material.specular, TexCoord).r;
 		#else
 			vec3 specular = light.specular * spec;
 		#endif
