@@ -26,6 +26,7 @@ glShader::glShader(const std::string code, const std::string defines, GLuint _ty
 	{
 		glGetShaderInfoLog(id, 512, NULL, infoLog);
 		std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
+		std::cout << cc << std::endl;
 		exit(-1);
 	}
 }

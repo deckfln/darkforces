@@ -11,14 +11,14 @@
 
 class fwObject3D : public Reference
 {
-	float debug;
+	float debug = 0;
 
 protected:
 	std::string name;
 	int classID = 0;
 
 	glm::mat4 m_modelMatrix;	// model space matrix
-	glm::mat4 m_worldMatrix;	// world space matrix (including children)
+	glm::mat4 m_worldMatrix = glm::mat4(0);	// world space matrix (including children)
 
 	glm::vec3 m_Position;
 	glm::vec3 m_Scale;

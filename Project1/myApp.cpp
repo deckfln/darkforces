@@ -64,7 +64,7 @@ myApp::myApp(std::string name, int width, int height) :
 
 	fwMesh *plane = new fwMesh(new fwPlaneGeometry(10, 10), material);
 	plane->set_name("floor");
-	plane->receiveShadow(true);
+	// plane->receiveShadow(true);
 
 	glm::vec3 deg(-3.1415 / 2, 0, 0);
 	plane->rotate(deg);
@@ -99,9 +99,9 @@ myApp::myApp(std::string name, int width, int height) :
 
 	m_instancedMesh = new fwInstancedMesh(geometry, material, 3, m_positions);
 	m_instancedMesh->translate(0.5, 0.5, 0);
-	m_instancedMesh->castShadow(true);
+	// m_instancedMesh->castShadow(true);
 	m_instancedMesh->set_name("box1");
-	m_instancedMesh->receiveShadow(true);
+	// m_instancedMesh->receiveShadow(true);
 
 	m_positions[0] = glm::translate(glm::vec3(-1,0, 0));
 	m_positions[1] = glm::translate(glm::vec3(1, 0, 0));
@@ -130,7 +130,7 @@ myApp::myApp(std::string name, int width, int height) :
 	m_skybox = new fwSkybox(skyboxes);
 
 	// init the m_scene
-	yellow = new glm::vec4(255, 255, 0, 255);
+	glm::vec3 *yellow = new glm::vec3(255, 255, 0);
 	m_scene = new fwScene();
 	m_scene->addLight(m_light).
 		setOutline(yellow).
@@ -146,7 +146,7 @@ void myApp::resize(int width, int height)
 	m_camera->set_ratio(width, height);
 }
 
-void myApp::draw(glColorMap *colorMap)
+void myApp::draw(fwForwardRenderer *renderer)
 {
 	m_positions[0] = glm::translate(glm::vec3(1, sin(glfwGetTime() / 2) * 2, 0));
 	m_instancedMesh->update_position(0, 1);
@@ -159,7 +159,7 @@ void myApp::draw(glColorMap *colorMap)
 	lightPos.z = cos(glfwGetTime() / 2) * radius;
 	m_light->translate(lightPos);
 
-	m_scene->draw(m_camera, colorMap);
+	renderer->draw (m_camera, m_scene);
 }
 
 myApp::~myApp()
@@ -169,7 +169,6 @@ myApp::~myApp()
 	delete m_skybox;
 	delete m_control;
 	delete m_scene;
-	delete yellow;
 	delete white;
 	delete m_instancedMesh;
 }

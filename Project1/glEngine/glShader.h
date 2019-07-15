@@ -1,7 +1,6 @@
 #pragma once
 #include <iostream>
-#include "glad/glad.h"
-#include "Element.h"
+#include "../glad/glad.h"
 
 class glShader
 {

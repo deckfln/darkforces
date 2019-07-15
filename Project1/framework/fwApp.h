@@ -1,12 +1,13 @@
 #pragma once
 
-#include "glad/glad.h"
+#include "../glad/glad.h"
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 
-#include "glEngine/glColorMap.h"
-#include "framework/fwPostProcessing.h"
-#include "framework/controls/fwOrbitControl.h"
+#include "../glEngine/glColorMap.h"
+#include "fwPostProcessing.h"
+#include "controls/fwOrbitControl.h"
+#include "render/fwForwardRenderer.h"
 
 class fwApp
 {
@@ -31,7 +32,7 @@ public:
 
 	void run(void);
 	void bindControl(fwOrbitControl *control);
-	virtual void draw(glColorMap *colorMap) {};
+	virtual void draw(fwForwardRenderer *renderer) {};
 	virtual void resize(int x, int y) {};
 	~fwApp();
 };

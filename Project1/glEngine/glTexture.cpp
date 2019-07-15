@@ -1,8 +1,8 @@
 #include <iostream>
 #include <stack>
 #include "glTexture.h"
-#include "include/stb_image.h"
-#include "glad/glad.h"
+#include "../include/stb_image.h"
+#include "../glad/glad.h"
 
 int glTexture::currentTextureUnit = 0;
 static std::stack<int> stack;
@@ -12,16 +12,31 @@ glTexture::glTexture()
 
 }
 
-glTexture::glTexture(int width, int height, int format, int filter)
+glTexture::glTexture(int width, int height, int format, int channels, int filter)
 {
 	glGenTextures(1, &id);
 	glBindTexture(GL_TEXTURE_2D, id);
 
 	int type = -1;
 
+	if (channels < 0) {
+		channels = format;
+	}
+	else {
+		switch (channels) {
+		case 1: channels = GL_RED; break;
+		case 2: channels = GL_RG; break;
+		case 3: channels = GL_RGB; break;
+		case 4: channels = GL_RGBA; break;
+		}
+	}
+
 	switch (format) {
 	case GL_RGBA: 
 		type = GL_UNSIGNED_BYTE;
+		break;
+	case GL_RGB16F:
+		type = GL_FLOAT;
 		break;
 	case GL_DEPTH_COMPONENT:
 		type = GL_FLOAT;
@@ -34,7 +49,7 @@ glTexture::glTexture(int width, int height, int format, int filter)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filter);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filter);
 
-	glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, type, NULL);
+	glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, channels, type, NULL);
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
 

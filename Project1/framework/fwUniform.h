@@ -1,15 +1,15 @@
 #pragma once
 #include <iostream>
 #include <glm/glm.hpp>
-#include "glEngine/glProgram.h"
-#include "glEngine/glTexture.h"
-#include "glEngine/glCubeTexture.h"
+#include "../glEngine/glProgram.h"
+#include "../glEngine/glTexture.h"
+#include "../glEngine/glCubeTexture.h"
 
 class fwUniform
 {
 	std::string name;
-	void *data;
-	int type;
+	void *data = nullptr;
+	int type = -1;
 
 public:
 	fwUniform();

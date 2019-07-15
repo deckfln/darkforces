@@ -5,8 +5,8 @@
 #include <map>
 #include "fwGeometry.h"
 #include "fwMaterial.h"
-#include "glEngine/glProgram.h"
-#include "glEngine/glVertexArray.h"
+#include "../glEngine/glProgram.h"
+#include "../glEngine/glVertexArray.h"
 
 #include "fwObject3D.h"
 

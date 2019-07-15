@@ -5,9 +5,9 @@ class fwTexture
 {
 	const std::string name;
 	unsigned char *data = nullptr;
-	int width;
-	int height;
-	int nrChannels;
+	int width = 0;
+	int height = 0;
+	int nrChannels = 0;
 
 public:
 	fwTexture();

@@ -1,5 +1,5 @@
 #pragma once
-#include "glad/glad.h"
+#include "../glad/glad.h"
 #include <map>
 #include <iostream>
 #include "glVertexAttribute.h"

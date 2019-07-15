@@ -72,13 +72,13 @@ uniform Material material;
 
 	uniform PointLight pointlights[POINT_LIGHTS];
 
-	vec3 CalcPointLight(PointLight light, vec3 normal, vec3 color, vec3 world, vec3 viewDir)
+	vec3 CalcPointLight(int i, vec3 normal, vec3 color, vec3 world, vec3 viewDir)
 	{
-		vec3 lightDir = normalize(light.position - world);
+		vec3 lightDir = normalize(pointlights[i].position - world);
 
 		// attenuation
-		float distance    = length(light.position - world);
-		float attenuation = 1.0 / (light.constant + light.linear * distance +  light.quadratic * (distance * distance));    
+		float distance    = length(pointlights[i].position - world);
+		float attenuation = 1.0 / (pointlights[i].constant + pointlights[i].linear * distance +  pointlights[i].quadratic * (distance * distance));    
 
 		// diffuse shading
 		float diff = max(dot(lightDir, normal), 0.0);
@@ -94,13 +94,13 @@ uniform Material material;
 		//float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
 
 		// combine results
-		vec3 ambient  = light.ambient * color;
-		vec3 diffuse  = light.diffuse * diff * color;
+		vec3 ambient  = pointlights[i].ambient * color;
+		vec3 diffuse  = pointlights[i].diffuse * diff * color;
 
 		#ifdef SPECULAR_MAP
-			vec3 specular = light.specular * spec * texture(material.specular, TexCoord).r;
+			vec3 specular = pointlights[i].specular * spec * texture(material.specular, TexCoord).r;
 		#else
-			vec3 specular = light.specular * spec;
+			vec3 specular = pointlights[i].specular * spec;
 		#endif
 	
 		ambient  *= attenuation;
@@ -129,14 +129,14 @@ uniform Material material;
 	in vec4 dirLight_world[DIRECTION_LIGHTS];
 	#endif
 
-	vec3 CalcDirLight(DirectionlLight light, int i, vec3 normal, vec3 color)
+	vec3 CalcDirLight(int i, vec3 normal, vec3 color)
 	{
 		// ambient
-		vec3 ambient = light.ambient;
+		vec3 ambient = dirlights[i].ambient;
 
-		vec3 lightDir = normalize(light.direction);
+		vec3 lightDir = normalize(dirlights[i].direction);
 		float diff = max(dot(normal, lightDir), 0.0);
-		vec3 diffuse = light.diffuse * diff;  
+		vec3 diffuse = dirlights[i].diffuse * diff;  
     
 		// specular
 		vec3 viewDir = normalize(viewPos - world);
@@ -144,14 +144,14 @@ uniform Material material;
 		float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
 
 		#ifdef SPECULAR_MAP
-			vec3 specular = light.specular * spec * texture(material.specular, TexCoord).rgb;  
+			vec3 specular = dirlights[i].specular * spec * texture(material.specular, TexCoord).rgb;  
 		#else
-			vec3 specular = light.specular * spec;
+			vec3 specular = dirlights[i].specular * spec;
 		#endif
 
 		#ifdef SHADOWMAP
 			// calculate shadow
-			float shadow = ShadowCalculation(dirLight_world[i], light.shadowMap);                      
+			float shadow = ShadowCalculation(dirLight_world[i], dirlights[i].shadowMap);                      
 			return (ambient + (1.0 - shadow) * (diffuse + specular)) * color;  
 		#else
 			return (ambient + diffuse + specular) * color;
@@ -177,36 +177,36 @@ uniform Material material;
 
 	uniform SpotLight spotlights[SPOT_LIGHTS];
 
-	vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 diffuse, vec3 world, vec3 viewDir)
+	vec3 CalcSpotLight(int i, vec3 normal, vec3 diffuse, vec3 world, vec3 viewDir)
 	{
-		vec3 ambient  = light.ambient * diffuse;
+		vec3 ambient  = spotlights[i].ambient * diffuse;
 
 		// diffuse 
-		vec3 lightDir = normalize(light.position - world);
+		vec3 lightDir = normalize(spotlights[i].position - world);
 		float diff = max(dot(normal, lightDir), 0.0);
-		vec3 ndiffuse = light.diffuse * diff * diffuse;  
+		vec3 ndiffuse = spotlights[i].diffuse * diff * diffuse;  
     
 		// specular
 		vec3 reflectDir = reflect(-lightDir, normal);  
 		float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
 
 		#ifdef SPECULAR_MAP
-			vec3 specular = light.specular * spec * texture(material.specular, TexCoord).rgb;  
+			vec3 specular = spotlights[i].specular * spec * texture(material.specular, TexCoord).rgb;  
 		#else
-			vec3 specular = light.specular * spec * vec3(1.0);
+			vec3 specular = spotlights[i].specular * spec * vec3(1.0);
 		#endif
 
     
 		// spotlight (soft edges)
-		float theta = dot(lightDir, normalize(-light.direction)); 
-		float epsilon = (light.cutOff - light.outerCutOff);
-		float intensity = clamp((theta - light.outerCutOff) / epsilon, 0.0, 1.0);
+		float theta = dot(lightDir, normalize(-spotlights[i].direction)); 
+		float epsilon = (light.cutOff - spotlights[i].outerCutOff);
+		float intensity = clamp((theta - spotlights[i].outerCutOff) / epsilon, 0.0, 1.0);
 		diffuse  *= intensity;
 		specular *= intensity;
     
 		// attenuation
-		float distance    = length(light.position - world);
-		float attenuation = 1.0 / (light.constant + light.linear * distance + light.quadratic * (distance * distance));    
+		float distance    = length(spotlights[i].position - world);
+		float attenuation = 1.0 / (light.constant + spotlights[i].linear * distance + spotlights[i].quadratic * (distance * distance));    
 		ambient  *= attenuation; 
 		diffuse   *= attenuation;
 		specular *= attenuation;
@@ -235,17 +235,17 @@ void main()
 
 #if DIRECTION_LIGHTS > 0
     for(int i = 0; i < DIRECTION_LIGHTS; i++)
-        dirlight += CalcDirLight(dirlights[i], i, norm, color.rgb);
+        dirlight += CalcDirLight(i, norm, color.rgb);
 #endif
 
 #if POINT_LIGHTS > 0
     for(int i = 0; i < POINT_LIGHTS; i++)
-		pointlight += CalcPointLight(pointlights[i], norm, color.rgb, world, viewDir);
+		pointlight += CalcPointLight(i, norm, color.rgb, world, viewDir);
 #endif
 
 #if SPOT_LIGHTS > 0
     for(int i = 0; i < SPOT_LIGHTS; i++)
-		spotlight += CalcSpotLight(spotlights[i], norm, color.rgb, world, viewDir);
+		spotlight += CalcSpotLight(i, norm, color.rgb, world, viewDir);
 #endif
 
     vec3 result = clamp(dirlight + pointlight + spotlight, .0, 1.0);

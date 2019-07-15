@@ -1,7 +1,7 @@
 #pragma once
 #include <list>
 
-#include "framework/fwUniform.h"
+#include "fwUniform.h"
 
 #include "../glEngine/glProgram.h"
 #include "../glEngine/glVertexArray.h"

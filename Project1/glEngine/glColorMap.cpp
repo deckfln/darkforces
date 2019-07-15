@@ -1,6 +1,6 @@
 #include "glColorMap.h"
 
-static unsigned int attachments[2] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
+static unsigned int attachments[] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3 };
 
 glColorMap::glColorMap(int _width, int _height, int _colorBuffers):
 	glFrameBuffer(_width, _height),

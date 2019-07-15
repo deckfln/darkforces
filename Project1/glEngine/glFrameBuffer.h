@@ -1,7 +1,7 @@
 #pragma once
 #include <stack>
 #include <glm/glm.hpp>
-#include "glad/glad.h"
+#include "../glad/glad.h"
 #include "glTexture.h"
 #include "glRenderBuffer.h"
 

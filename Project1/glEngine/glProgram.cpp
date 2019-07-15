@@ -10,8 +10,8 @@
 
 #include "glShader.h"
 
-#include "List.h"
-#include "glad/glad.h"
+#include "../List.h"
+#include "../glad/glad.h"
 
 List Shaders;
 
@@ -248,7 +248,9 @@ void glProgram::set_uniform(const std::string name, glTexture *texture)
 {
 	glUniform *uniform = get_uniform(name);
 	if (uniform) {
-		uniform->set_value(texture->bind());
+		int id = texture->bind();
+		// std::cout << "glProgram::set_uniform " << name.c_str() << " : " << id << std::endl;
+		uniform->set_value(id);
 	}
 }
 

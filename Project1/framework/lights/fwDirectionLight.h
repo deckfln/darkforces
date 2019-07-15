@@ -1,7 +1,7 @@
 #pragma once
 #include <glm/glm.hpp>
 
-#include "glEngine/glProgram.h"
+#include "../../glEngine/glProgram.h"
 #include "../fwLight.h"
 
 class fwDirectionLight: public fwLight

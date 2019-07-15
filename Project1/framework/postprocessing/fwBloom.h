@@ -9,8 +9,8 @@
 
 class fwBloom
 {
-	GLuint quadVAO;
-	GLuint quadVBO;
+	GLuint quadVAO = -1;
+	GLuint quadVBO = -1;
 	glVertexArray *quad = nullptr;
 	fwGeometry *geometry = nullptr;
 	fwUniform *source = nullptr;

@@ -1,6 +1,6 @@
 #pragma once
 #include <iostream>
-#include "glad/glad.h"
+#include "../glad/glad.h"
 #include "glDynamicBufferAttribute.h"
 
 class glInstancedBufferAttribute : public glDynamicBufferAttribute

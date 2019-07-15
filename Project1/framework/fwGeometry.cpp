@@ -6,8 +6,8 @@
 
 #include "math/fwBox3.h"
 
-#include "glEngine/glVertexAttribute.h"
-#include "glEngine/glBufferAttribute.h"
+#include "../glEngine/glVertexAttribute.h"
+#include "../glEngine/glBufferAttribute.h"
 #include "../glad/glad.h"
 
 

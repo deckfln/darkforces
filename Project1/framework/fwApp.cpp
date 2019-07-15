@@ -1,5 +1,6 @@
 #include "fwapp.h"
 
+#include "render/fwForwardRenderer.h"
 #include <iostream>
 
 // settings
@@ -7,6 +8,7 @@ unsigned int SCR_WIDTH = 800;
 unsigned int SCR_HEIGHT = 600;
 
 static fwApp *currentApp = nullptr;
+static fwForwardRenderer* renderer = nullptr;
 
 static void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
@@ -64,9 +66,10 @@ fwApp::fwApp(std::string name, int _width, int _height, std::string post_process
 		std::cout << "Failed to initialize GLAD" << std::endl;
 	}
 
-	// FRAME BUFFER
-	colorMap = new glColorMap(width*2, height*2, 2);
-	glTexture *tex = colorMap->getColorTexture(0);
+	renderer = new fwForwardRenderer(SCR_WIDTH, SCR_HEIGHT);
+
+	// post processing buffer
+	glTexture *tex = renderer->getColorTexture();
 	source = new fwUniform("screenTexture", tex);
 
 	m_pixelsize.x = 1.0 / (width*2.0);
@@ -148,12 +151,11 @@ void fwApp::run(void)
 		//glFrontFace(GL_CCW);
 
 		// 2nd pass : render to color buffer
-		colorMap->bind();
-		colorMap->clear();
+		renderer->start();
 
-		draw(colorMap);
+		draw(renderer);
 		
-		colorMap->unbind();
+		renderer->stop();
 
 		// 3rd pass : postprocessing
 		//glCullFace(GL_BACK);

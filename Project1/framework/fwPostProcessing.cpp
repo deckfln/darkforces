@@ -7,7 +7,7 @@
 #include <sstream>
 #include <regex>
 
-#include "glad/glad.h"
+#include "../glad/glad.h"
 
 float quadVertices[] = { // vertex attributes for a quad that fills the entire screen in Normalized Device Coordinates.
 	// m_positions   // texCoords

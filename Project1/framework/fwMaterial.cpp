@@ -6,7 +6,7 @@
 #include <sstream>
 #include <regex>
 
-#include "glEngine/glTexture.h"
+#include "../glEngine/glTexture.h"
 
 int _materialID = 0;
 

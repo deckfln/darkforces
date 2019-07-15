@@ -1,6 +1,6 @@
 #pragma once
-#include "glad/glad.h"
-#include "framework/fwTexture.h"
+#include "../glad/glad.h"
+#include "../framework/fwTexture.h"
 
 class glTexture
 {
@@ -11,7 +11,7 @@ protected:
 	GLuint textureUnit = 0;
 public:
 	glTexture();
-	glTexture(int width, int height, int format, int filter=GL_LINEAR);
+	glTexture(int width, int height, int format, int channels = -1, int filter=GL_LINEAR);
 	glTexture(fwTexture *texture);
 	GLuint getID(void);
 	GLint bind(void);

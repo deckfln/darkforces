@@ -1,5 +1,5 @@
 #include "fwTexture.h"
-#include "include/stb_image.h"
+#include "../include/stb_image.h"
 
 
 fwTexture::fwTexture()

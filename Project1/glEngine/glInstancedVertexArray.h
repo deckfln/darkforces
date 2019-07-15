@@ -1,5 +1,5 @@
 #pragma once
-#include "glad/glad.h"
+#include "../glad/glad.h"
 #include "glVertexArray.h"
 
 class glInstancedVertexArray : public glVertexArray

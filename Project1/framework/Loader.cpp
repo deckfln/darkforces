@@ -4,7 +4,7 @@
 
 #include <glm/glm.hpp>
 
-#include "glEngine/glBufferAttribute.h"
+#include "../glEngine/glBufferAttribute.h"
 
 #include "Loader.h"
 #include "fwTexture.h"

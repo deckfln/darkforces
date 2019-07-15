@@ -19,14 +19,13 @@ class myApp : public fwApp
 	fwSkybox *m_skybox;
 	fwScene *m_scene;
 	fwOrbitControl *m_control;
-	glm::vec4 *yellow;
 	glm::vec4 *white;
 	glm::mat4 m_positions[3];
 	fwInstancedMesh *m_instancedMesh;
 
 public:
 	myApp(std::string name,  int width, int height);
-	void draw(glColorMap *colorMap);
+	void draw(fwForwardRenderer *renderer);
 	void resize(int x, int y);
 	~myApp();
 };

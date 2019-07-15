@@ -1,6 +1,6 @@
 #pragma once
 #include <iostream>
-#include "glad/glad.h"
+#include "../glad/glad.h"
 #include "glBufferObject.h"
 
 #define ARRAY_SIZE_OF_ELEMENT(array) sizeof(array[0])
