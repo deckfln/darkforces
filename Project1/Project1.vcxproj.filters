@@ -189,13 +189,13 @@
     <ClCompile Include="glEngine\glDynamicBufferAttribute.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="framework\materials\fwBloomMateria.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
     <ClCompile Include="framework\postprocessing\fwBloom.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
     <ClCompile Include="framework\render\fwForwardRenderer.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="framework\materials\fwBloomMaterial.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
   </ItemGroup>

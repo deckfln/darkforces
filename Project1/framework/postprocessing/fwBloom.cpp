@@ -45,8 +45,8 @@ void fwBloom::draw(glColorMap *colorMap)
 {
 	if (Bloom_program == nullptr) {
 		Bloom_program = new glProgram(Bloom.get_vertexShader(), Bloom.get_fragmentShader(), "", "");
-		Expand_program = new glProgram(Bloom.get_vertexShader(), Bloom.get_shader("expand"), "", "");
-		Copy_program = new glProgram(Bloom.get_vertexShader(), Bloom.get_shader("copy"), "", "");
+		Expand_program = new glProgram(Bloom.get_vertexShader(), Bloom.get_shader(BLOOM_COPY), "", "");
+		Copy_program = new glProgram(Bloom.get_vertexShader(), Bloom.get_shader(BLOOM_EXPAND), "", "");
 
 		geometry = new fwGeometry();
 		quad = new glVertexArray();

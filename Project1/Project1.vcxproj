@@ -147,7 +147,7 @@
     <ClCompile Include="framework\Loader.cpp" />
     <ClCompile Include="framework\fwMaterial.cpp" />
     <ClCompile Include="framework\fwMaterialBasic.cpp" />
-    <ClCompile Include="framework\materials\fwBloomMateria.cpp" />
+    <ClCompile Include="framework\materials\fwBloomMaterial.cpp" />
     <ClCompile Include="framework\materials\fwDepthMaterial.cpp" />
     <ClCompile Include="framework\materials\fwNormalHelperMaterial.cpp" />
     <ClCompile Include="framework\materials\fwOutlineMaterial.cpp" />

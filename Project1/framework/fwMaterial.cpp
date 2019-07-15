@@ -11,17 +11,16 @@
 int _materialID = 0;
 
 fwMaterial::fwMaterial():
-	fragmentShaderCode(""),
 	id(_materialID++)
 {
 }
 
 fwMaterial::fwMaterial(std::string _vertexShader, std::string _fragmentShader, std::string _geometryShader):
-	vertexShader(_vertexShader),
-	fragmentShader(_fragmentShader),
-	geometryShader(_geometryShader),
 	id(_materialID++)
 {
+	addShader(VERTEX_SHADER, _vertexShader);
+	addShader(GEOMETRY_SHADER, _geometryShader);
+	addShader(FRAGMENT_SHADER, _fragmentShader);
 }
 
 fwMaterial& fwMaterial::addTexture(std::string uniform, fwTexture *texture)
@@ -43,15 +42,17 @@ fwMaterial& fwMaterial::addTexture(std::string uniform, glTexture *texture)
 	return *this;
 }
 
+/*
 fwMaterial &fwMaterial::addShaders(std::string _vertexShader, std::string _fragmentShader, const std::string _defines)
 {
-	vertexShader = _vertexShader;
-	fragmentShader = _fragmentShader;
+	addShader(VERTEX_SHADER, _vertexShader);
+	addShader(FRAGMENT_SHADER, _fragmentShader);
+
 	m_defines = _defines;
 
 	return *this;
 }
-
+*/
 fwMaterial &fwMaterial::addUniform(fwUniform *uniform)
 {
 	uniforms.push_front(uniform);
@@ -65,68 +66,52 @@ const int fwMaterial::getID(void)
 
 void fwMaterial::set_uniforms(glProgram *program)
 {
-	std::list <fwUniform *> ::iterator it;
-	for (it = uniforms.begin(); it != uniforms.end(); ++it) {
-		(*it)->set_uniform(program);
+	for (auto uniform: uniforms) {
+		uniform->set_uniform(program);
 	}
 }
 
 void fwMaterial::bindTextures(void)
 {
-	std::list <glTexture *> ::iterator it;
-	for (it = textures.begin(); it != textures.end(); ++it) {
-		(*it)->bind();
+	for (auto texture: textures) {
+		texture->bind();
 	}
 }
 
 const std::string &fwMaterial::get_vertexShader(void)
 {
-	if (vertexShaderCode != "") {
-		return vertexShaderCode;
-	}
-	vertexShaderCode = load_shader_file(vertexShader, m_defines);
-
-	return vertexShaderCode;
+	return get_shader(VERTEX_SHADER);
 }
 
-fwMaterial &fwMaterial::addShader(const std::string name, std::string file)
+const std::string& fwMaterial::get_geometryShader(void)
 {
-	shaders[name] = file;
+	return get_shader(GEOMETRY_SHADER);
+}
+
+const std::string& fwMaterial::get_fragmentShader(void)
+{
+	return get_shader(FRAGMENT_SHADER);
+}
+
+fwMaterial &fwMaterial::addShader(int shader, std::string file, RenderType render)
+{
+	files[render][shader] = file; 
 	return *this;
 }
 
-const std::string &fwMaterial::get_shader(const std::string name)
+const std::string &fwMaterial::get_shader(int shader, RenderType render)
 {
-	if (shaderCode[name] != "") {
-		return shaderCode[name];
-	}
-	shaderCode[name] = load_shader_file(shaders[name], m_defines);
+	std::string code = shaders[render][shader];
 
-	return shaderCode[name];
-}
-
-const std::string &fwMaterial::get_fragmentShader(void)
-{
-	if (fragmentShaderCode != "") {
-		return fragmentShaderCode;
-	}
-	fragmentShaderCode = load_shader_file(fragmentShader, m_defines);
-
-	return fragmentShaderCode;
-}
-
-const std::string &fwMaterial::get_geometryShader(void)
-{
-	if (geometryShader == "") {
-		return geometryShaderCode;
+	if (code == "") {
+		std::string file = files[render][shader];
+		if (file == "") {
+			return "";
+		}
+		code = shaders[render][shader] = load_shader_file(file, m_defines);
 	}
 
-	if (geometryShaderCode != "") {
-		return geometryShaderCode;
-	}
-	geometryShaderCode = load_shader_file(geometryShader, m_defines);
-
-	return geometryShaderCode;
+	return code;
 }
 
 std::string fwMaterial::hashCode(void)

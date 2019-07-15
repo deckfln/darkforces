@@ -7,17 +7,23 @@
 #include "fwUniform.h"
 #include "fwTexture.h"
 
+enum RenderType {FORWARD_RENDER, DEFERED_RENDER};
+enum ShaderType {VERTEX_SHADER, GEOMETRY_SHADER, FRAGMENT_SHADER};
+
+const int MAX_SHADERS = 10;
+
 class fwMaterial: public Reference
 {
 	int id;
-	std::string vertexShader;
-	std::string fragmentShader;
-	std::string geometryShader;
-	std::string vertexShaderCode;
-	std::string fragmentShaderCode;
-	std::string geometryShaderCode;
-	std::map <const std::string, std::string> shaders;
-	std::map <const std::string, std::string> shaderCode;
+	std::string vertexShader = "";
+	std::string fragmentShader = "";
+	std::string geometryShader = "";
+	std::string vertexShaderCode = "";
+	std::string fragmentShaderCode = "";
+	std::string geometryShaderCode = "";
+
+	std::map <int, std::map <int, std::string>> files;
+	std::map <int, std::map <int, std::string>> shaders;
 
 	int current_texture = 0;
 
@@ -34,16 +40,16 @@ public:
 	fwMaterial(std::string vertexShader, std::string fragmentShader, std::string geometryShader);
 	fwMaterial &addTexture(std::string uniform, fwTexture *texture);
 	fwMaterial &addTexture(std::string uniform, glTexture *texture);
-	fwMaterial &addShaders(std::string vertexShader, std::string fragmentShader, const std::string defines = "");
+	// fwMaterial &addShaders(std::string vertexShader, std::string fragmentShader, const std::string defines = "");
 	fwMaterial &addUniform(fwUniform *uniform);
-	fwMaterial &addShader(const std::string name, std::string file);
+	fwMaterial &addShader(int shader, std::string file, RenderType render = FORWARD_RENDER);
 
 	std::string hashCode(void);
 
 	const std::string &get_vertexShader(void);
 	const std::string &get_fragmentShader(void);
 	const std::string &get_geometryShader(void);
-	const std::string &get_shader(const std::string name);
+	const std::string &get_shader(int shader, RenderType render = FORWARD_RENDER);
 	const int getID(void);
 	const std::string defines(void) { return m_defines; };
 
