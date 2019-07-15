@@ -5,7 +5,7 @@
 
 #define DIFFUSE_MATERIAL 1
 
-class fwDiffuseMaterial: public fwMaterial
+class fwMaterialDiffuse: public fwMaterial
 {
 	fwTexture *diffuse = nullptr;
 	fwTexture *specular = nullptr;
@@ -14,11 +14,11 @@ class fwDiffuseMaterial: public fwMaterial
 	fwUniform *uniform = nullptr;
 
 public:
-	fwDiffuseMaterial();
-	fwDiffuseMaterial(fwTexture *diffuse, float shininess);
-	fwDiffuseMaterial &specularMap(fwTexture *_specular);
-	fwDiffuseMaterial &normalMap(fwTexture *_normal);
+	fwMaterialDiffuse();
+	fwMaterialDiffuse(fwTexture *diffuse, float shininess);
+	fwMaterialDiffuse &specularMap(fwTexture *_specular);
+	fwMaterialDiffuse &normalMap(fwTexture *_normal);
 	fwTexture *normalMap(void);
-	~fwDiffuseMaterial();
+	~fwMaterialDiffuse();
 };
 

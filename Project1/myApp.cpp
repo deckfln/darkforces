@@ -6,7 +6,7 @@
 
 #include "include/stb_image.h"
 #include "framework/lights/fwDirectionLight.h"
-#include "framework/fwDiffuseMaterial.h"
+#include "framework/fwMaterialDiffuse.h"
 #include "framework/fwMaterialBasic.h"
 #include "framework/fwMesh.h"
 #include "framework/fwInstancedMesh.h"
@@ -59,7 +59,7 @@ myApp::myApp(std::string name, int width, int height) :
 	// floor
 	fwTexture *t1 = new fwTexture("images/brickwall.jpg");
 	fwTexture *t2 = new fwTexture("images/brickwall_normal.jpg");
-	fwDiffuseMaterial *material = new fwDiffuseMaterial(t1, 32);
+	fwMaterialDiffuse *material = new fwMaterialDiffuse(t1, 32);
 	material->normalMap(t2);
 
 	fwMesh *plane = new fwMesh(new fwPlaneGeometry(10, 10), material);
@@ -73,7 +73,7 @@ myApp::myApp(std::string name, int width, int height) :
 
 	// window
 	t1 = new fwTexture("images/blending_transparent_window.png");
-	material = new fwDiffuseMaterial(t1, 32);
+	material = new fwMaterialDiffuse(t1, 32);
 
 	fwMesh *window = new fwMesh(new fwPlaneGeometry(5, 5), material);
 	window->set_name("window");
@@ -85,7 +85,7 @@ myApp::myApp(std::string name, int width, int height) :
 	t1 = new fwTexture("images/container2.png");
 	t2 = new fwTexture("images/container2_specular.png", 1);	// specular maps only need 1 channel
 
-	material = new fwDiffuseMaterial(t1, 32);
+	material = new fwMaterialDiffuse(t1, 32);
 	material->specularMap(t2);
 
 	m_positions[0] = glm::translate(glm::vec3(0.5, 0.5, 0.5));

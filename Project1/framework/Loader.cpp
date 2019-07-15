@@ -9,7 +9,7 @@
 #include "Loader.h"
 #include "fwTexture.h"
 #include "fwGeometry.h"
-#include "fwDiffuseMaterial.h"
+#include "fwMaterialDiffuse.h"
 #include "fwMesh.h"
 
 Loader::Loader(const std::string _file):
@@ -106,7 +106,7 @@ fwMesh *Loader::processMesh(aiMesh *mesh, const aiScene *scene)
 	/*
 	 * build the material
 	 */
-	fwDiffuseMaterial *material = nullptr;
+	fwMaterialDiffuse *material = nullptr;
 	if (mesh->mMaterialIndex >= 0)
 	{
 		aiMaterial *aimaterial = scene->mMaterials[mesh->mMaterialIndex];
@@ -120,7 +120,7 @@ fwMesh *Loader::processMesh(aiMesh *mesh, const aiScene *scene)
 		float shininess;
 		aimaterial->Get(AI_MATKEY_SHININESS, shininess);
 
-		material = new fwDiffuseMaterial(diffuse[0], shininess);
+		material = new fwMaterialDiffuse(diffuse[0], shininess);
 		if (specular.size() > 0) {
 			material->specularMap(specular[0]);
 		}

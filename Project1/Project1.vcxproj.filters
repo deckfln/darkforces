@@ -114,9 +114,6 @@
     <ClCompile Include="framework\fwMaterial.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="framework\fwDiffuseMaterial.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
     <ClCompile Include="framework\fwMaterialBasic.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
@@ -196,6 +193,9 @@
       <Filter>Fichiers sources</Filter>
     </ClCompile>
     <ClCompile Include="framework\materials\fwBloomMaterial.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="framework\fwMaterialDiffuse.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
   </ItemGroup>
@@ -299,9 +299,6 @@
     <ClInclude Include="framework\fwMaterial.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="framework\fwDiffuseMaterial.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
     <ClInclude Include="framework\fwMaterialBasic.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
@@ -381,6 +378,9 @@
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
     <ClInclude Include="framework\render\fwForwardRenderer.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="framework\fwMaterialDiffuse.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
   </ItemGroup>

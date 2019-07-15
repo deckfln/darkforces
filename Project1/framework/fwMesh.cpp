@@ -1,7 +1,7 @@
 #include "fwMesh.h"
 #include "../glad/glad.h"
 
-#include "fwDiffuseMaterial.h"
+#include "fwMaterialDiffuse.h"
 
 fwMesh::fwMesh()
 {
@@ -20,7 +20,7 @@ fwMesh::fwMesh(fwGeometry *_geometry, fwMaterial *_material):
 	material->reference();
 
 	// for a material map, compute the tangent for each normal
-	if (material->type(DIFFUSE_MATERIAL) && ((fwDiffuseMaterial *)material)->normalMap()) {
+	if (material->type(DIFFUSE_MATERIAL) && ((fwMaterialDiffuse *)material)->normalMap()) {
 		geometry->computeTangent();
 	}
 }

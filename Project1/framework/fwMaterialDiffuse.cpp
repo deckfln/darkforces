@@ -1,4 +1,4 @@
-#include "fwDiffuseMaterial.h"
+#include "fwMaterialDiffuse.h"
 
 
 
@@ -27,7 +27,7 @@ fwMaterialDiffuse::fwMaterialDiffuse(fwTexture *_diffuse, float _shininess):
 	addUniform(uniform);
 }
 
-fwMaterialDiffuse &fwMaterialDiffuse::specularMap(fwTexture *_specular)
+fwMaterialDiffuse & fwMaterialDiffuse::specularMap(fwTexture *_specular)
 {
 	specular = _specular;
 	addTexture("material.specular", specular);
@@ -35,7 +35,7 @@ fwMaterialDiffuse &fwMaterialDiffuse::specularMap(fwTexture *_specular)
 	return *this;
 }
 
-fwMaterialDiffuse &fwMaterialDiffuse::normalMap(fwTexture *_normal)
+fwMaterialDiffuse & fwMaterialDiffuse::normalMap(fwTexture *_normal)
 {
 	m_normalMap = _normal;
 	addTexture("material.normalMap", m_normalMap);
@@ -43,7 +43,7 @@ fwMaterialDiffuse &fwMaterialDiffuse::normalMap(fwTexture *_normal)
 	return *this;
 }
 
-fwTexture *fwMaterialDiffuse::normalMap(void)
+fwTexture * fwMaterialDiffuse::normalMap(void)
 {
 	return m_normalMap;
 }
