@@ -1,5 +1,10 @@
 #include "glFrameBuffer.h"
 
+glFrameBuffer::glFrameBuffer()
+{
+
+}
+
 glFrameBuffer::glFrameBuffer(int _width, int _height):
 	m_size(_width, _height)
 {

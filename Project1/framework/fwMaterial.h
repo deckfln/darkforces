@@ -49,7 +49,7 @@ public:
 	const std::string &get_vertexShader(void);
 	const std::string &get_fragmentShader(void);
 	const std::string &get_geometryShader(void);
-	const std::string &get_shader(int shader, RenderType render = FORWARD_RENDER);
+	const std::string get_shader(int shader, RenderType render = FORWARD_RENDER);
 	const int getID(void);
 	const std::string defines(void) { return m_defines; };
 

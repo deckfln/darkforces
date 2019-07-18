@@ -102,9 +102,9 @@ void fwForwardRenderer::parseChildren(fwObject3D* root,
 			// Create the shader program if it is not already there
 			if (programs.count(code) == 0) {
 				local_defines += material->defines();
-				std::string vertex = material->get_vertexShader();
-				std::string fragment = material->get_fragmentShader();
-				std::string geometry = material->get_geometryShader();
+				const std::string &vertex = material->get_shader(VERTEX_SHADER);
+				const std::string &fragment = material->get_shader(FRAGMENT_SHADER);
+				const std::string &geometry = material->get_shader(GEOMETRY_SHADER);
 				programs[code] = new glProgram(vertex, fragment, geometry, local_defines);
 			}
 
@@ -197,7 +197,7 @@ void fwForwardRenderer::drawMesh(fwCamera* camera, fwMesh* mesh, glProgram* prog
 	}
 }
 
-void fwForwardRenderer::draw(fwCamera* camera, fwScene *scene)
+glTexture *fwForwardRenderer::draw(fwCamera* camera, fwScene *scene)
 {
 	if (outline_material != nullptr && outline_program == nullptr) {
 		outline_program = new glProgram(outline_material->get_vertexShader(), outline_material->get_fragmentShader(), "", "");
@@ -394,6 +394,8 @@ void fwForwardRenderer::draw(fwCamera* camera, fwScene *scene)
 	glDisable(GL_BLEND);
 
 	//colorMap->bindColors(2);		// activate all buffers
+
+	return colorMap->getColorTexture(0);
 }
 
 fwForwardRenderer::fwForwardRenderer(int width, int height)
@@ -416,6 +418,11 @@ void fwForwardRenderer::start(void)
 void fwForwardRenderer::stop(void)
 {
 	colorMap->unbind();
+}
+
+glm::vec2 fwForwardRenderer::size(void)
+{
+	return colorMap->size();
 }
 
 fwForwardRenderer::~fwForwardRenderer()

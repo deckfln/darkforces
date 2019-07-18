@@ -11,11 +11,12 @@
 #include "framework/fwSkybox.h"
 #include "framework/controls/fwOrbitControl.h"
 #include "framework/fwInstancedMesh.h"
+#include "framework/fwRenderer.h"
 
 class myApp : public fwApp
 {
 	fwCamera *m_camera;
-	fwPointLight *m_light;
+	fwDirectionLight *m_light;
 	fwSkybox *m_skybox;
 	fwScene *m_scene;
 	fwOrbitControl *m_control;
@@ -25,7 +26,7 @@ class myApp : public fwApp
 
 public:
 	myApp(std::string name,  int width, int height);
-	void draw(fwForwardRenderer *renderer);
+	glTexture *draw(fwRenderer *renderer);
 	void resize(int x, int y);
 	~myApp();
 };

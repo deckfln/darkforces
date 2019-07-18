@@ -133,6 +133,7 @@
     <ClCompile Include="framework\fwInstancedMesh.cpp" />
     <ClCompile Include="framework\fwLight.cpp" />
     <ClCompile Include="framework\fwMesh.cpp" />
+    <ClCompile Include="framework\fwRenderer.cpp" />
     <ClCompile Include="framework\fwSkybox.cpp" />
     <ClCompile Include="framework\fwPostProcessing.cpp" />
     <ClCompile Include="framework\fwSprite.cpp" />
@@ -149,6 +150,7 @@
     <ClCompile Include="framework\fwMaterialBasic.cpp" />
     <ClCompile Include="framework\materials\fwBloomMaterial.cpp" />
     <ClCompile Include="framework\materials\fwDepthMaterial.cpp" />
+    <ClCompile Include="framework\materials\fwMaterialDirectionalLight.cpp" />
     <ClCompile Include="framework\materials\fwNormalHelperMaterial.cpp" />
     <ClCompile Include="framework\materials\fwOutlineMaterial.cpp" />
     <ClCompile Include="framework\fwObject3D.cpp" />
@@ -158,7 +160,9 @@
     <ClCompile Include="framework\math\fwPlane.cpp" />
     <ClCompile Include="framework\math\fwSphere.cpp" />
     <ClCompile Include="framework\postprocessing\fwBloom.cpp" />
+    <ClCompile Include="framework\postprocessing\fwPPDirectLight.cpp" />
     <ClCompile Include="framework\render\fwForwardRenderer.cpp" />
+    <ClCompile Include="framework\render\fwRendererDefered.cpp" />
     <ClCompile Include="framework\SphereGemeotry.cpp" />
     <ClCompile Include="framework\fwTexture.cpp" />
     <ClCompile Include="framework\fwUniform.cpp" />
@@ -169,6 +173,7 @@
     <ClCompile Include="glEngine\glDepthMap.cpp" />
     <ClCompile Include="glEngine\glDynamicBufferAttribute.cpp" />
     <ClCompile Include="glEngine\glFrameBuffer.cpp" />
+    <ClCompile Include="glEngine\glGBuffer.cpp" />
     <ClCompile Include="glEngine\glInstancedBufferAttribute.cpp" />
     <ClCompile Include="glEngine\glInstancedVertexArray.cpp" />
     <ClCompile Include="glEngine\glRenderBuffer.cpp" />
@@ -212,6 +217,7 @@
     <ClInclude Include="framework\fwMaterialBasic.h" />
     <ClInclude Include="framework\materials\fwBloomMaterial.h" />
     <ClInclude Include="framework\materials\fwDepthMaterial.h" />
+    <ClInclude Include="framework\materials\fwMaterialDirectionalLight.h" />
     <ClInclude Include="framework\materials\fwNormalHelperMaterial.h" />
     <ClInclude Include="framework\materials\fwOutlineMaterial.h" />
     <ClInclude Include="framework\fwObject3D.h" />
@@ -221,7 +227,9 @@
     <ClInclude Include="framework\math\fwPlane.h" />
     <ClInclude Include="framework\math\fwSphere.h" />
     <ClInclude Include="framework\postprocessing\fwBloom.h" />
+    <ClInclude Include="framework\postprocessing\fwPPDirectLight.h" />
     <ClInclude Include="framework\render\fwForwardRenderer.h" />
+    <ClInclude Include="framework\render\fwRendererDefered.h" />
     <ClInclude Include="framework\SphereGemeotry.h" />
     <ClInclude Include="framework\fwTexture.h" />
     <ClInclude Include="framework\fwUniform.h" />
@@ -232,6 +240,7 @@
     <ClInclude Include="glEngine\glDepthMap.h" />
     <ClInclude Include="glEngine\glDynamicBufferAttribute.h" />
     <ClInclude Include="glEngine\glFrameBuffer.h" />
+    <ClInclude Include="glEngine\glGBuffer.h" />
     <ClInclude Include="glEngine\glInstancedBufferAttribute.h" />
     <ClInclude Include="glEngine\glInstancedVertexArray.h" />
     <ClInclude Include="glEngine\glRenderBuffer.h" />

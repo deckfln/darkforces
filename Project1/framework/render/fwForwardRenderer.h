@@ -8,8 +8,9 @@
 #include "../../glEngine/glColorMap.h"
 #include "../fwCamera.h"
 #include "../fwScene.h"
+#include "../fwRenderer.h"
 
-class fwForwardRenderer
+class fwForwardRenderer: public fwRenderer
 {
 	glColorMap *colorMap = nullptr;
 	std::map <std::string, glProgram*> programs;
@@ -29,10 +30,11 @@ private:
 
 public:
 	fwForwardRenderer(int width, int height);
-	void draw(fwCamera* camera, fwScene* scene);
+	glTexture *draw(fwCamera* camera, fwScene* scene);
 	glTexture* getColorTexture(void);
 	void start(void);
 	void stop(void);
+	glm::vec2 size(void);
 
 	~fwForwardRenderer();
 };

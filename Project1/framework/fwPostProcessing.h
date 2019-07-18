@@ -21,6 +21,6 @@ class fwPostProcessing
 public:
 	fwPostProcessing(std::string _vertexShader, std::string _fragmentShader, fwUniform *_source, std::string defines);
 	fwPostProcessing &addUniform(fwUniform *uniform);
-	void draw(void);
+	void draw(glTexture *color);
 	~fwPostProcessing();
 };

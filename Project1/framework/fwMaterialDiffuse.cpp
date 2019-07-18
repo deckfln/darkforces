@@ -8,7 +8,8 @@ fwMaterialDiffuse::fwMaterialDiffuse():
 	shininess(0)
 {
 	addShader(VERTEX_SHADER, "shaders/vertex_diffuse.glsl");
-	addShader(FRAGMENT_SHADER, "shaders/fragment_diffuse.glsl");
+	addShader(FRAGMENT_SHADER, "shaders/fragment_diffuse.glsl", FORWARD_RENDER);
+	addShader(FRAGMENT_SHADER, "shaders/gbuffer/fragment.glsl", DEFERED_RENDER);
 
 	m_type |= DIFFUSE_MATERIAL;
 }
@@ -21,10 +22,13 @@ fwMaterialDiffuse::fwMaterialDiffuse(fwTexture *_diffuse, float _shininess):
 
 	addShader(VERTEX_SHADER, "shaders/vertex_diffuse.glsl");
 	addShader(FRAGMENT_SHADER, "shaders/fragment_diffuse.glsl");
+	addShader(FRAGMENT_SHADER, "shaders/gbuffer/fragment.glsl", DEFERED_RENDER);
 	addTexture("material.diffuse", diffuse);
 
 	uniform = new fwUniform("material.shininess", &shininess);
 	addUniform(uniform);
+
+	m_type |= DIFFUSE_MATERIAL;
 }
 
 fwMaterialDiffuse & fwMaterialDiffuse::specularMap(fwTexture *_specular)

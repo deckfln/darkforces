@@ -7,15 +7,14 @@
 #include "../glEngine/glColorMap.h"
 #include "fwPostProcessing.h"
 #include "controls/fwOrbitControl.h"
-#include "render/fwForwardRenderer.h"
+#include "fwRenderer.h"
 
 class fwApp
 {
-	int height;
-	int width;
-	glm::vec2 m_pixelsize;
+	int height = 0;
+	int width = 0;
+	glm::vec2 m_pixelsize = glm::vec2(0);
 	GLFWwindow* window = nullptr;
-	glColorMap *colorMap = nullptr;
 	fwPostProcessing *postProcessing = nullptr;
 	fwOrbitControl *control = nullptr;
 	fwUniform *source = nullptr;
@@ -32,7 +31,7 @@ public:
 
 	void run(void);
 	void bindControl(fwOrbitControl *control);
-	virtual void draw(fwForwardRenderer *renderer) {};
+	virtual glTexture* draw(fwRenderer *renderer) { return nullptr; };
 	virtual void resize(int x, int y) {};
 	~fwApp();
 };

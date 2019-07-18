@@ -1,14 +1,15 @@
 #include "fwapp.h"
 
-#include "render/fwForwardRenderer.h"
 #include <iostream>
+
+#include "render/fwRendererDefered.h"
 
 // settings
 unsigned int SCR_WIDTH = 800;
 unsigned int SCR_HEIGHT = 600;
 
 static fwApp *currentApp = nullptr;
-static fwForwardRenderer* renderer = nullptr;
+static fwRendererDefered* renderer = nullptr;
 
 static void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
@@ -66,11 +67,10 @@ fwApp::fwApp(std::string name, int _width, int _height, std::string post_process
 		std::cout << "Failed to initialize GLAD" << std::endl;
 	}
 
-	renderer = new fwForwardRenderer(SCR_WIDTH, SCR_HEIGHT);
+	renderer = new fwRendererDefered(SCR_WIDTH, SCR_HEIGHT);
 
 	// post processing buffer
-	glTexture *tex = renderer->getColorTexture();
-	source = new fwUniform("screenTexture", tex);
+	source = new fwUniform("screenTexture", (glTexture *)nullptr);
 
 	m_pixelsize.x = 1.0 / (width*2.0);
 	m_pixelsize.y = 1.0 / (height*2.0);
@@ -101,7 +101,7 @@ void fwApp::resizeEvent(int _width, int _height)
 	width = _width;
 	height = _height;
 
-	glm::vec2 cm = colorMap->size();
+	glm::vec2 cm = renderer->size();
 	m_pixelsize.x = 1.0 / cm.x;
 	m_pixelsize.y = 1.0 / cm.y;
 
@@ -153,14 +153,14 @@ void fwApp::run(void)
 		// 2nd pass : render to color buffer
 		renderer->start();
 
-		draw(renderer);
+		glTexture *color = draw(renderer);
 		
 		renderer->stop();
 
 		// 3rd pass : postprocessing
 		//glCullFace(GL_BACK);
 		glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
-		postProcessing->draw();
+		postProcessing->draw(color);
 
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
 		// -------------------------------------------------------------------------------
@@ -174,7 +174,7 @@ void fwApp::run(void)
  */
 fwApp::~fwApp()
 {
-	delete colorMap;
+	delete renderer;
 	delete postProcessing;
 	delete source;
 

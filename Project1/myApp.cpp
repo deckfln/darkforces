@@ -17,7 +17,7 @@
 #include "framework/Loader.h"
 
 myApp::myApp(std::string name, int width, int height) :
-	fwApp(name, width, height, "shaders/gamma", "#define GAMMA_CORRECTION 2.2\n")
+	fwApp(name, width, height, "shaders/gamma", "#define GAMMA_CORRECTION 1\n")
 {
 	m_camera = new fwCamera(width, height);
 	int Button = 0;
@@ -33,14 +33,11 @@ myApp::myApp(std::string name, int width, int height) :
 	/*
 	 * Lights
 	 */
-	m_light = new fwPointLight(
+	m_light = new fwDirectionLight(
 		glm::vec3(),
 		glm::vec3(0.3, 0.3, 0.3),
 		glm::vec3(0.8, 0.8, 0.8),
-		glm::vec3(1.0, 1.0, 1.0),
-		1.0,
-		0.09,
-		0.032
+		glm::vec3(1.0, 1.0, 1.0)
 	);
 	 m_light->set_name("light");
 
@@ -59,7 +56,7 @@ myApp::myApp(std::string name, int width, int height) :
 	// floor
 	fwTexture *t1 = new fwTexture("images/brickwall.jpg");
 	fwTexture *t2 = new fwTexture("images/brickwall_normal.jpg");
-	fwMaterialDiffuse *material = new fwMaterialDiffuse(t1, 32);
+	fwMaterialDiffuse *material = new fwMaterialDiffuse(t1, 64);
 	material->normalMap(t2);
 
 	fwMesh *plane = new fwMesh(new fwPlaneGeometry(10, 10), material);
@@ -146,7 +143,7 @@ void myApp::resize(int width, int height)
 	m_camera->set_ratio(width, height);
 }
 
-void myApp::draw(fwForwardRenderer *renderer)
+glTexture *myApp::draw(fwRenderer *renderer)
 {
 	m_positions[0] = glm::translate(glm::vec3(1, sin(glfwGetTime() / 2) * 2, 0));
 	m_instancedMesh->update_position(0, 1);
@@ -159,7 +156,7 @@ void myApp::draw(fwForwardRenderer *renderer)
 	lightPos.z = cos(glfwGetTime() / 2) * radius;
 	m_light->translate(lightPos);
 
-	renderer->draw (m_camera, m_scene);
+	return renderer->draw (m_camera, m_scene);
 }
 
 myApp::~myApp()

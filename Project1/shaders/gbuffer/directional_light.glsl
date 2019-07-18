@@ -1,6 +1,9 @@
 #version 330 core
 out vec4 FragColor;
-out vec4 BrightColor;
+
+#include "../include/camera.glsl"
+
+#define DEFINES
 
 // from vextex
 in vec2 TexCoord;
@@ -9,8 +12,7 @@ in vec2 TexCoord;
 uniform sampler2D gColor;
 uniform sampler2D gNormal;
 uniform sampler2D gWorld;
-
-uniform vec3 viewPos;
+uniform sampler2D gMaterial;
 
 struct DirectionlLight {
 	vec3 direction;
@@ -24,14 +26,6 @@ struct DirectionlLight {
 };
 
 uniform DirectionlLight dirlights[DIRECTION_LIGHTS];
-
-#include "../include/camera.glsl"
-
-#define DEFINES
-
-#ifdef NORMALMAP
-	in mat3 tbn;
-#endif
 
 #ifdef SHADOWMAP
 	float ShadowCalculation(vec4 fragPosLightSpace, sampler2D shadowMap)
@@ -69,32 +63,28 @@ uniform DirectionlLight dirlights[DIRECTION_LIGHTS];
 in vec4 dirLight_world[DIRECTION_LIGHTS];
 #endif
 
-vec3 CalcDirLight(DirectionlLight light, int i, vec3 normal, vec3 color, vec3 world, float specular)
+vec3 CalcDirLight(int i, vec3 normal, vec3 color, vec3 world, float shininess, float specular_map)
 {
 	// ambient
-	vec3 ambient = light.ambient;
+	vec3 ambient = dirlights[i].ambient;
 
-	vec3 lightDir = normalize(light.direction);
+	vec3 lightDir = normalize(dirlights[i].direction);
 	float diff = max(dot(normal, lightDir), 0.0);
-	vec3 diffuse = light.diffuse * diff;  
+	vec3 diffuse = dirlights[i].diffuse * diff;  
     
 	// specular
 	vec3 viewDir = normalize(viewPos - world);
 	vec3 reflectDir = reflect(-lightDir, normal);  
-	float spec = pow(max(dot(viewDir, reflectDir), 0.0), specular);
+	float spec = pow(max(dot(viewDir, reflectDir), 0.0), shininess);
 
-	#ifdef SPECULAR_MAP
-		vec3 s = light.specular * spec * texture(material.specular, TexCoord).rgb;  
-	#else
-		vec3 s = light.specular * spec;
-	#endif
+	vec3 specular = dirlights[i].specular * spec * specular_map;  
 
 	#ifdef SHADOWMAP
 		// calculate shadow
 		float shadow = ShadowCalculation(dirLight_world[i], light.shadowMap);                      
 		return (ambient + (1.0 - shadow) * (diffuse + s)) * color;  
 	#else
-		return (ambient + diffuse + s) * color;
+		return (ambient + diffuse + specular) * color;
 	#endif
 }
 
@@ -104,32 +94,20 @@ void main()
     vec3 world = texture(gWorld, TexCoord).rgb;
     vec3 normal = texture(gNormal, TexCoord).rgb;
     vec3 color = texture(gColor, TexCoord).rgb;
-    float specular = texture(gColor, TexCoord).a;
+	vec3 material = texture(gMaterial, TexCoord).rgb;
+
+    float shininess = material.r * 256;
+    float specular_map = material.g;
 
     // diffuse 
     vec3 norm = normalize(normal);
-#ifdef NORMALMAP
-	norm = texture(material.normalMap, TexCoord).rgb;
-	norm = normalize(norm * 2.0 - 1.0);   
-	norm = normalize(tbn * norm); 
-#endif
 
     vec3 viewDir = normalize(viewPos - world);
 
-	vec3 dirlight;
+	vec3 dirlight = vec3(0);
 
     for(int i = 0; i < DIRECTION_LIGHTS; i++)
-        dirlight += CalcDirLight(dirlights[i], i, norm, color, world, specular);
+        dirlight += CalcDirLight(i, normal, color, world, shininess, specular_map);
 
-	// color output
     FragColor = vec4(dirlight, 1.0);
-
-	// bloom output
-	float luminance = 0.2126 * color.r + 0.7152 * color.g + 0.0722 * color.b;
-	if (luminance > 0.8) {
-		BrightColor = vec4(color, 1.0);
-	}
-	else {
-		BrightColor = vec4 (0.0, 0.0, 0.0, 0.0);
-	}
 }

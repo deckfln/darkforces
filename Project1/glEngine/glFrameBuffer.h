@@ -7,17 +7,18 @@
 
 class glFrameBuffer
 {
-	GLuint id;
-	GLuint texture;
-	GLuint latest_bind;
-	GLint m_prevFBO;
-	GLint m_prevViewport[4];
+	GLuint id = -1;
+	GLuint texture = -1;
+	GLuint latest_bind = -1;
+	GLint m_prevFBO = -1;
+	GLint m_prevViewport[4] = { -1, -1, -1,-1 };
 
 protected:
-	glm::vec2 m_size;
+	glm::vec2 m_size = glm::vec2(0);
 	int type = GL_FRAMEBUFFER;
 
 public:
+	glFrameBuffer();
 	glFrameBuffer(int width, int height);
 	void bind();
 	virtual void clear(void) {};

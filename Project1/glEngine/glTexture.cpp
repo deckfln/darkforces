@@ -32,7 +32,10 @@ glTexture::glTexture(int width, int height, int format, int channels, int filter
 	}
 
 	switch (format) {
-	case GL_RGBA: 
+	case GL_RED:
+	case GL_RG:
+	case GL_RGB:
+	case GL_RGBA:
 		type = GL_UNSIGNED_BYTE;
 		break;
 	case GL_RGB16F:

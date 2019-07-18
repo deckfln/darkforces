@@ -40,7 +40,6 @@ fwPostProcessing::fwPostProcessing(std::string _vertexShader, std::string _fragm
 
 	program->run();
 	source = _source;
-	source->set_uniform(program);
 
 	geometry = new fwGeometry();
 	geometry->addVertices("aPos", quadVertices, 2, sizeof(quadVertices), sizeof(float), false);
@@ -58,7 +57,7 @@ fwPostProcessing &fwPostProcessing::addUniform(fwUniform *uniform)
 	return *this;
 }
 
-void fwPostProcessing::draw(void)
+void fwPostProcessing::draw(glTexture *color)
 {
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glDisable(GL_DEPTH_TEST); // disable depth test so screen-space quad isn't discarded due to depth test.
@@ -68,13 +67,19 @@ void fwPostProcessing::draw(void)
 
 	program->run();
 
+	color->resetTextureUnit();
+	source->set(color);
+	source->set_uniform(program);
+
 	for (auto uniform : m_uniforms) {
 		uniform->set_uniform(program);
 	}
 
+	/*
 	glTexture *tex = (glTexture *)source->get_value();
 	tex->resetTextureUnit();
 	tex->bind();
+	*/
 	geometry->draw(GL_TRIANGLES, quad);
 
 	glEnable(GL_DEPTH_TEST);

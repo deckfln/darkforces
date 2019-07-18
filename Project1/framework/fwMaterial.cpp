@@ -99,19 +99,18 @@ fwMaterial &fwMaterial::addShader(int shader, std::string file, RenderType rende
 	return *this;
 }
 
-const std::string &fwMaterial::get_shader(int shader, RenderType render)
+const std::string fwMaterial::get_shader(int shader, RenderType render)
 {
-	std::string code = shaders[render][shader];
-
-	if (code == "") {
+	//TODO: return a reference to the real code instead of a copy of the string 
+	if (shaders[render][shader] == "") {
 		std::string file = files[render][shader];
 		if (file == "") {
 			return "";
 		}
-		code = shaders[render][shader] = load_shader_file(file, m_defines);
+		shaders[render][shader] = load_shader_file(file, m_defines);
 	}
 
-	return code;
+	return shaders[render][shader];
 }
 
 std::string fwMaterial::hashCode(void)
