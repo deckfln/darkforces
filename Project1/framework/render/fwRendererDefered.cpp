@@ -3,8 +3,16 @@
 #include "../fwInstancedMesh.h"
 #include "../postprocessing/fwPPDirectLight.h"
 #include "../lights/fwDirectionLight.h"
+#include "../materials/fwDepthMaterial.h"
+#include "../materials/fwNormalHelperMaterial.h"
+#include "../materials/fwDepthMaterial.h"
+#include "../materials/fwBloomMaterial.h"
+#include "../postprocessing/fwBloom.h"
 
 static fwPPDirectLight DirectionalLight;
+static fwDepthMaterial materialDepth;
+static glProgram* depth_program = nullptr;
+static glProgram* depth_instanced_program = nullptr;
 
 fwRendererDefered::fwRendererDefered(int width, int height)
 {
@@ -99,6 +107,58 @@ glTexture *fwRendererDefered::draw(fwCamera* camera, fwScene* scene)
 	// update all elements on the m_scene
 	scene->updateWorldMatrix(nullptr);
 
+	/*
+	 * 1st pass Draw shadows
+	*/
+	bool hasShadowLights = false;
+	std::list <fwLight*> lights = scene->get_lights();
+	for (auto light : lights) {
+		if (((fwObject3D*)light)->castShadow()) {
+			hasShadowLights = true;
+
+			if (depth_program == nullptr) {
+				depth_program = new glProgram(materialDepth.get_shader(VERTEX_SHADER), materialDepth.get_shader(FRAGMENT_SHADER), "", "");
+			}
+			if (depth_instanced_program == nullptr) {
+				depth_instanced_program = new glProgram(materialDepth.get_shader(VERTEX_SHADER), materialDepth.get_shader(FRAGMENT_SHADER), "", "#define INSTANCED\n");
+			}
+
+			// draw in the m_light shadowmap from the POV of the m_light
+			light->startShadowMap();
+			light->setShadowCamera(depth_program);
+
+			// get all objects to draw
+			std::list <fwMesh*> meshes;
+			std::list <fwMesh*> instances;
+			getAllChildren(scene, meshes, instances);
+
+			// 1st pass: single meshes
+
+			depth_program->run();
+
+			// draw neareast first
+			meshes.sort([camera](fwMesh* a, fwMesh* b) { return a->sqDistanceTo(camera) < b->sqDistanceTo(camera); });
+
+			for (auto mesh : meshes) {
+				if (mesh->castShadow()) {
+					mesh->draw(depth_program);
+				}
+			}
+
+			// 2nd pass: instanced meshes
+			// TODO: sort instances by distance from the light
+			depth_instanced_program->run();
+
+			for (auto mesh : instances) {
+				if (mesh->castShadow()) {
+					mesh->draw(depth_instanced_program);
+				}
+			}
+
+			light->stopShadowMap();
+		}
+	}
+
 	// create a map of materials shaders vs meshes
 	//    [shaderCode][materialID] = [mesh1, mesh2]
 	std::map<std::string, std::map<int, std::list <fwMesh*>>> meshesPerMaterial;
@@ -122,7 +182,7 @@ glTexture *fwRendererDefered::draw(fwCamera* camera, fwScene* scene)
 	camera->set_uniformBuffer();
 
 	/*
-	 * 1nd pass : draw opaque objects
+	 * 2nd pass : draw opaque objects
 	 */
 	for (auto shader : meshesPerMaterial) {
 		// draw all ojects sharing the same shader
@@ -157,10 +217,9 @@ glTexture *fwRendererDefered::draw(fwCamera* camera, fwScene* scene)
 	}
 
 	/*
-	 * 2nd pass : lighting
+	 * 3rd pass : directional lighting
 	 */
 	// list all directional lights
-	std::list <fwLight*> lights = scene->get_lights();
 	std::list <fwDirectionLight *> directionals;
 
 	for (auto light : lights) {
@@ -181,6 +240,7 @@ glTexture *fwRendererDefered::draw(fwCamera* camera, fwScene* scene)
 	/*
 	 * 3rd pass : draw skybox
 	 */
+	//TODO: use a stencil to draw the background where there is no GBuffer used
 	outBuffer->bind();
 
 	fwSkybox* background = scene->background();

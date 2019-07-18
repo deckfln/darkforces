@@ -31,23 +31,6 @@ out vec3 world;
 	}
 #endif
 
-#ifdef SHADOWMAP
-#if DIRECTION_LIGHTS > 0
-	struct DirectionlLight {
-		vec3 direction;
-
-		vec3 ambient;
-		vec3 diffuse;
-		vec3 specular;
-
-		mat4 matrix;
-		sampler2D shadowMap;
-	};
-	uniform DirectionlLight dirlights[DIRECTION_LIGHTS];
-	out vec4 dirLight_world[DIRECTION_LIGHTS];
-#endif
-#endif
-
 #include "../include/camera.glsl"
 
 void main()
@@ -58,14 +41,6 @@ void main()
 
 #ifdef NORMALMAP
 	computeTBN(mat3(transpose(inverse(model))), aNormal, tangent);
-#endif
-
-#ifdef SHADOWMAP
-#if DIRECTION_LIGHTS > 0
-	for (int i=0; i<DIRECTION_LIGHTS; i++) {
-		dirLight_world[i] = dirlights[i].matrix * vec4(world, 1.0);
-	}
-#endif
 #endif
 
     gl_Position = projection * view * vec4(world, 1.0);

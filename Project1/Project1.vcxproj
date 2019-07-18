@@ -201,6 +201,7 @@
     <ClInclude Include="framework\fwInstancedMesh.h" />
     <ClInclude Include="framework\fwLight.h" />
     <ClInclude Include="framework\fwMesh.h" />
+    <ClInclude Include="framework\fwRenderer.h" />
     <ClInclude Include="framework\fwSkybox.h" />
     <ClInclude Include="framework\fwPostProcessing.h" />
     <ClInclude Include="framework\fwSprite.h" />

@@ -25,33 +25,6 @@ void fwForwardRenderer::setOutline(glm::vec4* _color)
 	outline_material = new fwOutlineMaterial(_color);
 }
 
-void fwForwardRenderer::allChildren(fwObject3D* root, std::list <fwMesh*>& meshes, std::list <fwMesh*>& instances)
-{
-	fwMesh* mesh;
-
-	std::list <fwObject3D*> _children = root->get_children();
-
-	for (auto child : _children) {
-		allChildren(child, meshes, instances);
-
-		// only display meshes
-		if (!child->is_class(MESH)) {
-			continue;
-		}
-
-		mesh = (fwMesh*)child;
-
-		if (mesh->is_visible()) {
-			if (mesh->is_class(INSTANCED_MESH)) {
-				instances.push_front(mesh);
-			}
-			else {
-				meshes.push_front(mesh);
-			}
-		}
-	}
-}
-
 /**
  * pase all meshes, build
  *  list of opaque object, aranged by code > material > list of mshes
@@ -229,7 +202,7 @@ glTexture *fwForwardRenderer::draw(fwCamera* camera, fwScene *scene)
 			// get all objects to draw
 			std::list <fwMesh*> meshes;
 			std::list <fwMesh*> instances;
-			allChildren(scene, meshes, instances);
+			getAllChildren(scene, meshes, instances);
 
 			// 1st pass: single meshes
 

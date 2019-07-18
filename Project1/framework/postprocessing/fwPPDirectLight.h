@@ -15,10 +15,12 @@ class fwPPDirectLight
 {
 	GLuint quadVAO = -1;
 	GLuint quadVBO = -1;
-	glVertexArray *quad = nullptr;
+	glVertexArray* quad[2] = { nullptr, nullptr };
 	fwGeometry *geometry = nullptr;
 	fwUniform *source = nullptr;
 	glColorMap* m_colorMap = nullptr;
+
+	void drawLight(std::list <fwDirectionLight*>lights, glGBuffer *colorMap, glProgram* program, glVertexArray* quad);
 
 public:
 	fwPPDirectLight();

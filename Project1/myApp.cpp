@@ -39,7 +39,8 @@ myApp::myApp(std::string name, int width, int height) :
 		glm::vec3(0.8, 0.8, 0.8),
 		glm::vec3(1.0, 1.0, 1.0)
 	);
-	 m_light->set_name("light");
+	m_light->set_name("light");
+	m_light->castShadow(true);
 
 	// lights
 	fwBoxGeometry *geometry = new fwBoxGeometry();
@@ -61,7 +62,7 @@ myApp::myApp(std::string name, int width, int height) :
 
 	fwMesh *plane = new fwMesh(new fwPlaneGeometry(10, 10), material);
 	plane->set_name("floor");
-	// plane->receiveShadow(true);
+	plane->receiveShadow(true);
 
 	glm::vec3 deg(-3.1415 / 2, 0, 0);
 	plane->rotate(deg);
@@ -96,9 +97,9 @@ myApp::myApp(std::string name, int width, int height) :
 
 	m_instancedMesh = new fwInstancedMesh(geometry, material, 3, m_positions);
 	m_instancedMesh->translate(0.5, 0.5, 0);
-	// m_instancedMesh->castShadow(true);
+	m_instancedMesh->castShadow(true);
 	m_instancedMesh->set_name("box1");
-	// m_instancedMesh->receiveShadow(true);
+	m_instancedMesh->receiveShadow(true);
 
 	m_positions[0] = glm::translate(glm::vec3(-1,0, 0));
 	m_positions[1] = glm::translate(glm::vec3(1, 0, 0));
