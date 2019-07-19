@@ -100,12 +100,17 @@ glColorMap *fwPPDirectLight::draw(glGBuffer *colorMap, std::list <fwDirectionLig
 
 	}
 
+	//TODO: add a set/restore for depth testing
+	glDisable(GL_DEPTH_TEST);
+
 	// no shadow lights
 	int shd = NO_SHADOW;
 	if (((fwObject3D*)lights.front())->castShadow()) {
 		shd = SHADOW;
 	}
 	drawLight(lights, colorMap, Light_program[shd], quad[shd]);
+
+	glEnable(GL_DEPTH_TEST);
 
 	return m_colorMap;
 }

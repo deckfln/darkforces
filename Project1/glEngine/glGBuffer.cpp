@@ -31,6 +31,11 @@ glGBuffer::glGBuffer(int _width, int _height):
 	unbind();
 }
 
+glRenderBuffer* glGBuffer::get_stencil(void)
+{
+	return depth_stencil;
+}
+
 glTexture* glGBuffer::getColorTexture(int nb)
 {
 	switch(nb) {

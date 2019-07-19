@@ -15,6 +15,7 @@ class glGBuffer : public glFrameBuffer
 public:
 	glGBuffer();
 	glGBuffer(int _width, int _height);
+	glRenderBuffer* get_stencil(void);
 	void clear(void);
 	glTexture* getColorTexture(int nb=0);
 	~glGBuffer();

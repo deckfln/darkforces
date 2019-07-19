@@ -4,4 +4,4 @@
 #4	18/07/19	implement basic material on defered renderer
 
 bug
-#1	18/07/19	skybox background not displayed with defered renderer
+#1	18/07/19	FIXED skybox background not displayed with defered renderer

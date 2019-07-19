@@ -18,5 +18,6 @@ public:
 	void clear(void);
 	glTexture *getColorTexture(int index);
 	void bindColors(int colorBuffers);
+	glRenderBuffer* get_stencil(void);
 	~glColorMap();
 };

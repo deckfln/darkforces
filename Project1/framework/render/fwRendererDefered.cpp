@@ -23,7 +23,6 @@ fwRendererDefered::fwRendererDefered(int width, int height)
 void fwRendererDefered::start(void)
 {
 	colorMap->bind();
-	colorMap->clear();
 }
 
 void fwRendererDefered::stop(void)
@@ -184,6 +183,16 @@ glTexture *fwRendererDefered::draw(fwCamera* camera, fwScene* scene)
 	/*
 	 * 2nd pass : draw opaque objects
 	 */
+
+	// record the stencil for the background draw
+	glEnable(GL_STENCIL_TEST);
+	glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+	glStencilFunc(GL_ALWAYS, 255, 0xFF);
+
+	glStencilMask(0xff);
+
+	colorMap->clear();
+
 	for (auto shader : meshesPerMaterial) {
 		// draw all ojects sharing the same shader
 		code = shader.first;
@@ -215,6 +224,8 @@ glTexture *fwRendererDefered::draw(fwCamera* camera, fwScene* scene)
 			glTexture::PopTextureUnit();
 		}
 	}
+	glStencilFunc(GL_ALWAYS, 0, 0xFF);
+	glDisable(GL_STENCIL_TEST);
 
 	/*
 	 * 3rd pass : directional lighting
@@ -240,14 +251,28 @@ glTexture *fwRendererDefered::draw(fwCamera* camera, fwScene* scene)
 	/*
 	 * 3rd pass : draw skybox
 	 */
-	//TODO: use a stencil to draw the background where there is no GBuffer used
 	outBuffer->bind();
 
 	fwSkybox* background = scene->background();
 	if (background != nullptr) {
+		// ignore the depth buffer test
+		glRenderBuffer* previous = outBuffer->get_stencil();
+		outBuffer->bindDepth(colorMap->get_stencil());
+
+		glEnable(GL_STENCIL_TEST);
+		glStencilFunc(GL_NOTEQUAL, 255, 0xFF);
+		glStencilMask(0x00);
+
+		glDisable(GL_DEPTH_TEST);
+
 		background->draw(camera);
+
+		outBuffer->bindDepth(previous);
+		glEnable(GL_DEPTH_TEST);
+		glDisable(GL_STENCIL_TEST);
 	}
 
+	//TODO: add bloom effect
 	return outBuffer->getColorTexture(0);
 }
 

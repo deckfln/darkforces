@@ -33,6 +33,11 @@ void glColorMap::clear(void)
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 }
 
+glRenderBuffer* glColorMap::get_stencil(void)
+{
+	return depth_stencil;
+}
+
 glTexture *glColorMap::getColorTexture(int index)
 {
 	if (index >= 0 && index < m_colorBuffers)
