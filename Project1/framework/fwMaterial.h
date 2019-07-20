@@ -30,9 +30,10 @@ class fwMaterial: public Reference
 	std::list <fwUniform *> uniforms;
 	std::list <glTexture *> textures;
 
+
 protected:
 	int m_type = 0;
-	std::string m_defines;
+	std::string m_defines = "";
 
 public:
 	fwMaterial();

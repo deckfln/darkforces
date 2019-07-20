@@ -87,29 +87,37 @@ vec3 CalcDirLight(int i, vec3 normal, vec3 color, vec3 world, float shininess, f
 void main()
 {
     // retrieve data from G-buffer
-    vec3 world = texture(gWorld, TexCoord).rgb;
-    vec3 normal = texture(gNormal, TexCoord).rgb;
     vec3 color = texture(gColor, TexCoord).rgb;
-	vec3 material = texture(gMaterial, TexCoord).rgb;
+    vec3 normal = texture(gNormal, TexCoord).rgb;
 
-    float shininess = material.r * 256;
-    float specular_map = material.g;
-
-    // diffuse 
-    vec3 norm = normalize(normal);
-
-    vec3 viewDir = normalize(viewPos - world);
-
-	vec3 dirlight = vec3(0);
-
-    for(int i = 0; i < DIRECTION_LIGHTS; i++) {
-#ifdef SHADOWMAP
-		vec4 dirLight_world = dirlights[i].matrix * vec4(world, 1.0);
-        dirlight += CalcDirLight(i, normal, color, world, shininess, specular_map, dirLight_world);
-#else
-        dirlight += CalcDirLight(i, normal, color, world, shininess, specular_map, vec4(0));
-#endif
+	if (normal == vec3(0)) {
+		// basic material
+		FragColor = vec4(color, 1.0);
 	}
+	else {
+		// diffuse material
+		vec3 world = texture(gWorld, TexCoord).rgb;
+		vec3 material = texture(gMaterial, TexCoord).rgb;
 
-    FragColor = vec4(dirlight, 1.0);
+		float shininess = material.r * 256;
+		float specular_map = material.g;
+
+		// diffuse 
+		vec3 norm = normalize(normal);
+
+		vec3 viewDir = normalize(viewPos - world);
+
+		vec3 dirlight = vec3(0);
+
+		for(int i = 0; i < DIRECTION_LIGHTS; i++) {
+#ifdef SHADOWMAP
+			vec4 dirLight_world = dirlights[i].matrix * vec4(world, 1.0);
+			dirlight += CalcDirLight(i, normal, color, world, shininess, specular_map, dirLight_world);
+#else
+		dirlight += CalcDirLight(i, normal, color, world, shininess, specular_map, vec4(0));
+#endif
+		}
+
+		FragColor = vec4(dirlight, 1.0);
+	}
 }

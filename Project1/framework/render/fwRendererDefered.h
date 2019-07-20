@@ -12,10 +12,7 @@
 
 class fwRendererDefered: public fwRenderer
 {
-	glGBuffer* colorMap = nullptr;
-	std::map <std::string, glProgram*> programs;
-	std::map <int, fwMaterial*> materials;
-
+	glGBuffer* m_colorMap = nullptr;
 private:
 	void drawMesh(fwCamera* camera, fwMesh* mesh, glProgram* program);
 

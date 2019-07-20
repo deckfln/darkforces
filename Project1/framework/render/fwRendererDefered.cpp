@@ -3,31 +3,31 @@
 #include "../fwInstancedMesh.h"
 #include "../postprocessing/fwPPDirectLight.h"
 #include "../lights/fwDirectionLight.h"
-#include "../materials/fwDepthMaterial.h"
+#include "../materials/fwMaterialDepth.h"
 #include "../materials/fwNormalHelperMaterial.h"
-#include "../materials/fwDepthMaterial.h"
+#include "../materials/fwMaterialDepth.h"
 #include "../materials/fwBloomMaterial.h"
 #include "../postprocessing/fwBloom.h"
 
 static fwPPDirectLight DirectionalLight;
-static fwDepthMaterial materialDepth;
+static fwMaterialDepth materialDepth;
 static glProgram* depth_program = nullptr;
 static glProgram* depth_instanced_program = nullptr;
 
 fwRendererDefered::fwRendererDefered(int width, int height)
 {
 	// FRAME BUFFER
-	colorMap = new glGBuffer(width * 2, height * 2);
+	m_colorMap = new glGBuffer(width * 2, height * 2);
 }
 
 void fwRendererDefered::start(void)
 {
-	colorMap->bind();
+	m_colorMap->bind();
 }
 
 void fwRendererDefered::stop(void)
 {
-	colorMap->unbind();
+	m_colorMap->unbind();
 }
 
 /**
@@ -81,21 +81,20 @@ void fwRendererDefered::parseChildren(fwObject3D* root,
 			}
 
 			// Create the shader program if it is not already there
-			if (programs.count(code) == 0) {
-				local_defines += material->defines();
+			if (m_programs.count(code) == 0) {
 				const std::string vertex = material->get_shader(VERTEX_SHADER);
 				const std::string geometry = material->get_shader(GEOMETRY_SHADER);
 				const std::string fragment = material->get_shader(FRAGMENT_SHADER, DEFERED_RENDER);
-				programs[code] = new glProgram(vertex, fragment, geometry, local_defines);
+				m_programs[code] = new glProgram(vertex, fragment, geometry, local_defines);
 			}
 
 			if (mesh->is_transparent()) {
 				transparentMeshes.push_front(mesh);
-				mesh->extra(programs[code]);
+				mesh->extra(m_programs[code]);
 			}
 			else {
 				opaqueMeshPerMaterial[code][materialID].push_front(mesh);
-				materials[materialID] = material;
+				m_materials[materialID] = material;
 			}
 		}
 	}
@@ -191,14 +190,14 @@ glTexture *fwRendererDefered::draw(fwCamera* camera, fwScene* scene)
 
 	glStencilMask(0xff);
 
-	colorMap->clear();
+	m_colorMap->clear();
 
 	for (auto shader : meshesPerMaterial) {
 		// draw all ojects sharing the same shader
 		code = shader.first;
 		listOfMaterials = shader.second;
 
-		glProgram* program = programs[code];
+		glProgram* program = m_programs[code];
 		glTexture::resetTextureUnit();
 
 		program->run();
@@ -213,7 +212,7 @@ glTexture *fwRendererDefered::draw(fwCamera* camera, fwScene* scene)
 			listOfMeshes.sort([camera](fwMesh* a, fwMesh* b) { return a->sqDistanceTo(camera) < b->sqDistanceTo(camera); });
 
 			glTexture::PushTextureUnit();
-			material = materials[materialID];
+			material = m_materials[materialID];
 
 			material->set_uniforms(program);
 
@@ -241,7 +240,7 @@ glTexture *fwRendererDefered::draw(fwCamera* camera, fwScene* scene)
 
 	glColorMap* outBuffer = nullptr;
 	if (directionals.size() > 0) {
-		outBuffer = DirectionalLight.draw(colorMap, directionals);
+		outBuffer = DirectionalLight.draw(m_colorMap, directionals);
 	}
 	else {
 		// FIXME
@@ -257,7 +256,7 @@ glTexture *fwRendererDefered::draw(fwCamera* camera, fwScene* scene)
 	if (background != nullptr) {
 		// ignore the depth buffer test
 		glRenderBuffer* previous = outBuffer->get_stencil();
-		outBuffer->bindDepth(colorMap->get_stencil());
+		outBuffer->bindDepth(m_colorMap->get_stencil());
 
 		glEnable(GL_STENCIL_TEST);
 		glStencilFunc(GL_NOTEQUAL, 255, 0xFF);
@@ -278,15 +277,15 @@ glTexture *fwRendererDefered::draw(fwCamera* camera, fwScene* scene)
 
 glm::vec2 fwRendererDefered::size(void)
 {
-	return colorMap->size();
+	return m_colorMap->size();
 }
 
 glTexture* fwRendererDefered::getColorTexture(void)
 {
-	return colorMap->getColorTexture();
+	return m_colorMap->getColorTexture();
 }
 
 fwRendererDefered::~fwRendererDefered()
 {
-	delete colorMap;
+	delete m_colorMap;
 }

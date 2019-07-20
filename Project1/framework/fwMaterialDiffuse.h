@@ -11,7 +11,6 @@ class fwMaterialDiffuse: public fwMaterial
 	fwTexture *specular = nullptr;
 	fwTexture *m_normalMap = nullptr;
 	float shininess = 0;
-	fwUniform *uniform = nullptr;
 
 public:
 	fwMaterialDiffuse();

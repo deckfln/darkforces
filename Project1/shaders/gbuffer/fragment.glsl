@@ -10,6 +10,8 @@ in vec2 TexCoord;
 in vec3 normal;
 in vec3 world;
 
+#define DEFINES
+
 struct Material {
     sampler2D diffuse;
     sampler2D specular;
@@ -21,15 +23,15 @@ struct Material {
 
 uniform Material material;
 
-#define DEFINES
-
 #ifdef NORMALMAP
 	in mat3 tbn;
 #endif
 
 void main()
 {
-	vec4 color = texture(material.diffuse, TexCoord);
+	vec4 color;
+
+	color = texture(material.diffuse, TexCoord);
 
     // diffuse 
     vec3 norm = normalize(normal);
@@ -47,7 +49,7 @@ void main()
 	#endif
 
     gFragColor = color.rgb;
-	gNormal = norm;
 	gWorld = world;
+	gNormal = norm;
 	gMaterial = vec3(shininess, specular, 1.0);
 }

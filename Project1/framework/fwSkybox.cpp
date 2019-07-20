@@ -82,7 +82,7 @@ fwSkybox::fwSkybox(std::string *textures)
 
 void fwSkybox::draw(fwCamera *camera)
 {
-	glDepthFunc(GL_LEQUAL);  // change depth function so depth test passes when values are equal to depth buffer's content
+	glDisable(GL_DEPTH_TEST);  
 	program->run();
 	camera->bind_uniformBuffer(program);
 	/*
@@ -96,7 +96,7 @@ void fwSkybox::draw(fwCamera *camera)
 	texture->bind();
 
 	geometry->draw(GL_TRIANGLES, cube);
-	glDepthFunc(GL_LESS); // set depth function back to default
+	glEnable(GL_DEPTH_TEST);
 }
 
 std::string fwSkybox::get_shader(const std::string shader_file)

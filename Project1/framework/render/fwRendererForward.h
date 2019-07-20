@@ -10,11 +10,9 @@
 #include "../fwScene.h"
 #include "../fwRenderer.h"
 
-class fwForwardRenderer: public fwRenderer
+class fwRendererForward: public fwRenderer
 {
-	glColorMap *colorMap = nullptr;
-	std::map <std::string, glProgram*> programs;
-	std::map <int, fwMaterial*> materials;
+	glColorMap *m_colorMap = nullptr;
 
 private:
 	void allChildren(fwObject3D* root, std::list <fwMesh*>& meshes, std::list <fwMesh*>& instances);
@@ -29,12 +27,12 @@ private:
 	void setOutline(glm::vec4* _color);
 
 public:
-	fwForwardRenderer(int width, int height);
+	fwRendererForward(int width, int height);
 	glTexture *draw(fwCamera* camera, fwScene* scene);
 	glTexture* getColorTexture(void);
 	void start(void);
 	void stop(void);
 	glm::vec2 size(void);
 
-	~fwForwardRenderer();
+	~fwRendererForward();
 };

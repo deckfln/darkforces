@@ -149,7 +149,7 @@
     <ClCompile Include="framework\fwMaterial.cpp" />
     <ClCompile Include="framework\fwMaterialBasic.cpp" />
     <ClCompile Include="framework\materials\fwBloomMaterial.cpp" />
-    <ClCompile Include="framework\materials\fwDepthMaterial.cpp" />
+    <ClCompile Include="framework\materials\fwMaterialDepth.cpp" />
     <ClCompile Include="framework\materials\fwMaterialDirectionalLight.cpp" />
     <ClCompile Include="framework\materials\fwNormalHelperMaterial.cpp" />
     <ClCompile Include="framework\materials\fwOutlineMaterial.cpp" />
@@ -161,8 +161,8 @@
     <ClCompile Include="framework\math\fwSphere.cpp" />
     <ClCompile Include="framework\postprocessing\fwBloom.cpp" />
     <ClCompile Include="framework\postprocessing\fwPPDirectLight.cpp" />
-    <ClCompile Include="framework\render\fwForwardRenderer.cpp" />
     <ClCompile Include="framework\render\fwRendererDefered.cpp" />
+    <ClCompile Include="framework\render\fwRendererForward.cpp" />
     <ClCompile Include="framework\SphereGemeotry.cpp" />
     <ClCompile Include="framework\fwTexture.cpp" />
     <ClCompile Include="framework\fwUniform.cpp" />
@@ -217,7 +217,7 @@
     <ClInclude Include="framework\fwMaterial.h" />
     <ClInclude Include="framework\fwMaterialBasic.h" />
     <ClInclude Include="framework\materials\fwBloomMaterial.h" />
-    <ClInclude Include="framework\materials\fwDepthMaterial.h" />
+    <ClInclude Include="framework\materials\fwMaterialDepth.h" />
     <ClInclude Include="framework\materials\fwMaterialDirectionalLight.h" />
     <ClInclude Include="framework\materials\fwNormalHelperMaterial.h" />
     <ClInclude Include="framework\materials\fwOutlineMaterial.h" />
@@ -229,8 +229,8 @@
     <ClInclude Include="framework\math\fwSphere.h" />
     <ClInclude Include="framework\postprocessing\fwBloom.h" />
     <ClInclude Include="framework\postprocessing\fwPPDirectLight.h" />
-    <ClInclude Include="framework\render\fwForwardRenderer.h" />
     <ClInclude Include="framework\render\fwRendererDefered.h" />
+    <ClInclude Include="framework\render\fwRendererForward.h" />
     <ClInclude Include="framework\SphereGemeotry.h" />
     <ClInclude Include="framework\fwTexture.h" />
     <ClInclude Include="framework\fwUniform.h" />

@@ -11,6 +11,7 @@ fwMaterialDiffuse::fwMaterialDiffuse():
 	addShader(FRAGMENT_SHADER, "shaders/fragment_diffuse.glsl", FORWARD_RENDER);
 	addShader(FRAGMENT_SHADER, "shaders/gbuffer/fragment.glsl", DEFERED_RENDER);
 
+	m_defines = "#define MATERIAL_DIFFUSE\n";
 	m_type |= DIFFUSE_MATERIAL;
 }
 
@@ -25,9 +26,10 @@ fwMaterialDiffuse::fwMaterialDiffuse(fwTexture *_diffuse, float _shininess):
 	addShader(FRAGMENT_SHADER, "shaders/gbuffer/fragment.glsl", DEFERED_RENDER);
 	addTexture("material.diffuse", diffuse);
 
-	uniform = new fwUniform("material.shininess", &shininess);
+	fwUniform *uniform = new fwUniform("material.shininess", &shininess);
 	addUniform(uniform);
 
+	m_defines = "#define MATERIAL_DIFFUSE\n";
 	m_type |= DIFFUSE_MATERIAL;
 }
 

@@ -1,15 +1,15 @@
-#include "fwForwardRenderer.h"
+#include "fwRendererForward.h"
 
 #include "../../glad/glad.h"
 
 #include "../materials/fwNormalHelperMaterial.h"
-#include "../materials/fwDepthMaterial.h"
+#include "../materials/fwMaterialDepth.h"
 #include "../materials/fwBloomMaterial.h"
 #include "../fwInstancedMesh.h"
 #include "../postprocessing/fwBloom.h"
 
 static fwNormalHelperMaterial normalHelper;
-static fwDepthMaterial materialDepth;
+static fwMaterialDepth materialDepth;
 fwOutlineMaterial* outline_material = nullptr;
 
 static glProgram* normalHelper_program = nullptr;
@@ -20,7 +20,7 @@ static glProgram* depth_instanced_program = nullptr;
 
 static fwBloom Bloom;
 
-void fwForwardRenderer::setOutline(glm::vec4* _color)
+void fwRendererForward::setOutline(glm::vec4* _color)
 {
 	outline_material = new fwOutlineMaterial(_color);
 }
@@ -30,7 +30,7 @@ void fwForwardRenderer::setOutline(glm::vec4* _color)
  *  list of opaque object, aranged by code > material > list of mshes
  *  list of transparent objects
  */
-void fwForwardRenderer::parseChildren(fwObject3D* root,
+void fwRendererForward::parseChildren(fwObject3D* root,
 	std::map<std::string, std::map<int, std::list <fwMesh*>>>& opaqueMeshPerMaterial,
 	std::list <fwMesh*>& transparentMeshes,
 	std::string& codeLights,
@@ -73,21 +73,21 @@ void fwForwardRenderer::parseChildren(fwObject3D* root,
 			}
 
 			// Create the shader program if it is not already there
-			if (programs.count(code) == 0) {
+			if (m_programs.count(code) == 0) {
 				local_defines += material->defines();
 				const std::string &vertex = material->get_shader(VERTEX_SHADER);
 				const std::string &fragment = material->get_shader(FRAGMENT_SHADER);
 				const std::string &geometry = material->get_shader(GEOMETRY_SHADER);
-				programs[code] = new glProgram(vertex, fragment, geometry, local_defines);
+				m_programs[code] = new glProgram(vertex, fragment, geometry, local_defines);
 			}
 
 			if (mesh->is_transparent()) {
 				transparentMeshes.push_front(mesh);
-				mesh->extra(programs[code]);
+				mesh->extra(m_programs[code]);
 			}
 			else {
 				opaqueMeshPerMaterial[code][materialID].push_front(mesh);
-				materials[materialID] = material;
+				m_materials[materialID] = material;
 			}
 		}
 	}
@@ -96,7 +96,7 @@ void fwForwardRenderer::parseChildren(fwObject3D* root,
 /**
  * Draw a single mesh by program, apply outlone and normalHelpder if needed
  */
-void fwForwardRenderer::drawMesh(fwCamera* camera, fwMesh* mesh, glProgram* program, std::string defines)
+void fwRendererForward::drawMesh(fwCamera* camera, fwMesh* mesh, glProgram* program, std::string defines)
 {
 	if (mesh->is_outlined()) {
 		// write in the stencil buffer for outlined objects
@@ -170,7 +170,7 @@ void fwForwardRenderer::drawMesh(fwCamera* camera, fwMesh* mesh, glProgram* prog
 	}
 }
 
-glTexture *fwForwardRenderer::draw(fwCamera* camera, fwScene *scene)
+glTexture *fwRendererForward::draw(fwCamera* camera, fwScene *scene)
 {
 	if (outline_material != nullptr && outline_program == nullptr) {
 		outline_program = new glProgram(outline_material->get_vertexShader(), outline_material->get_fragmentShader(), "", "");
@@ -276,7 +276,7 @@ glTexture *fwForwardRenderer::draw(fwCamera* camera, fwScene *scene)
 		code = shader.first;
 		listOfMaterials = shader.second;
 
-		glProgram* program = programs[code];
+		glProgram* program = m_programs[code];
 		glTexture::resetTextureUnit();
 
 		program->run();
@@ -303,7 +303,7 @@ glTexture *fwForwardRenderer::draw(fwCamera* camera, fwScene *scene)
 			listOfMeshes.sort([camera](fwMesh* a, fwMesh* b) { return a->sqDistanceTo(camera) < b->sqDistanceTo(camera); });
 
 			glTexture::PushTextureUnit();
-			material = materials[materialID];
+			material = m_materials[materialID];
 
 			material->set_uniforms(program);
 
@@ -368,41 +368,41 @@ glTexture *fwForwardRenderer::draw(fwCamera* camera, fwScene *scene)
 
 	//colorMap->bindColors(2);		// activate all buffers
 
-	return colorMap->getColorTexture(0);
+	return m_colorMap->getColorTexture(0);
 }
 
-fwForwardRenderer::fwForwardRenderer(int width, int height)
+fwRendererForward::fwRendererForward(int width, int height)
 {
 	// FRAME BUFFER
-	colorMap = new glColorMap(width * 2, height * 2, 2);
+	m_colorMap = new glColorMap(width * 2, height * 2, 2);
 }
 
-glTexture* fwForwardRenderer::getColorTexture(void)
+glTexture* fwRendererForward::getColorTexture(void)
 {
-	return colorMap->getColorTexture(0);
+	return m_colorMap->getColorTexture(0);
 }
 
-void fwForwardRenderer::start(void) 
+void fwRendererForward::start(void) 
 {
-	colorMap->bind();
-	colorMap->clear();
+	m_colorMap->bind();
+	m_colorMap->clear();
 }
 
-void fwForwardRenderer::stop(void)
+void fwRendererForward::stop(void)
 {
-	colorMap->unbind();
+	m_colorMap->unbind();
 }
 
-glm::vec2 fwForwardRenderer::size(void)
+glm::vec2 fwRendererForward::size(void)
 {
-	return colorMap->size();
+	return m_colorMap->size();
 }
 
-fwForwardRenderer::~fwForwardRenderer()
+fwRendererForward::~fwRendererForward()
 {
-	delete colorMap;
+	delete m_colorMap;
 
-	for (auto program : programs) {
+	for (auto program : m_programs) {
 		delete program.second;
 	}
 }
