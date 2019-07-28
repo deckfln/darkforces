@@ -1,9 +1,15 @@
 #version 330 core
-out vec4 FragColor;
+#define DEFINES
+
+layout (location = 0) out vec4 FragColor;
 
 #include "../include/camera.glsl"
 
-#define DEFINES
+#ifdef BLOOMMAP
+layout (location = 1) out vec4 BrightColor;
+#include "../bloom/luminance.glsl"
+#endif
+
 
 // from vextex
 in vec2 TexCoord;
@@ -28,35 +34,35 @@ struct DirectionlLight {
 uniform DirectionlLight dirlights[DIRECTION_LIGHTS];
 
 #ifdef SHADOWMAP
-	float ShadowCalculation(vec4 fragPosLightSpace, int i)
-	{
-		// perform perspective divide
-		vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
-		// transform to [0,1] range
-		projCoords = projCoords * 0.5 + 0.5;
+float ShadowCalculation(vec4 fragPosLightSpace, int i)
+{
+	// perform perspective divide
+	vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
+	// transform to [0,1] range
+	projCoords = projCoords * 0.5 + 0.5;
 
-		// get closest depth value from light's perspective (using [0,1] range fragPosLight as coords)
-		float closestDepth = texture(dirlights[i].shadowMap, projCoords.xy).r; 
-		// get depth of current fragment from light's perspective
-		float currentDepth = projCoords.z;
-		// check whether current frag pos is in shadow
-		float bias = 0.005;
-		float shadow = 0.0; 
+	// get closest depth value from light's perspective (using [0,1] range fragPosLight as coords)
+	float closestDepth = texture(dirlights[i].shadowMap, projCoords.xy).r; 
+	// get depth of current fragment from light's perspective
+	float currentDepth = projCoords.z;
+	// check whether current frag pos is in shadow
+	float bias = 0.005;
+	float shadow = 0.0; 
 
-		if(projCoords.z <= 1.0) {
-			// PCF
-			vec2 texelSize = 1.0 / textureSize(dirlights[i].shadowMap, 0);
-			for(int x = -1; x <= 1; ++x) {
-				for(int y = -1; y <= 1; ++y) {
-					float pcfDepth = texture(dirlights[i].shadowMap, projCoords.xy + vec2(x, y) * texelSize).r; 
-					shadow += currentDepth - bias > pcfDepth  ? 1.0 : 0.0;        
-				}    
-			}
-			shadow /= 9.0;		
+	if(projCoords.z <= 1.0) {
+		// PCF
+		vec2 texelSize = 1.0 / textureSize(dirlights[i].shadowMap, 0);
+		for(int x = -1; x <= 1; ++x) {
+			for(int y = -1; y <= 1; ++y) {
+				float pcfDepth = texture(dirlights[i].shadowMap, projCoords.xy + vec2(x, y) * texelSize).r; 
+				shadow += currentDepth - bias > pcfDepth  ? 1.0 : 0.0;        
+			}    
 		}
+		shadow /= 9.0;		
+	}
 
-		return shadow;
-	}  
+	return shadow;
+}  
 #endif
 
 vec3 CalcDirLight(int i, vec3 normal, vec3 color, vec3 world, float shininess, float specular_map, vec4 dirLight_world)
@@ -119,5 +125,17 @@ void main()
 		}
 
 		FragColor = vec4(dirlight, 1.0);
+
 	}
+
+#ifdef BLOOMMAP
+	// bloom output
+	float luminance = czm_luminance(color.rgb);
+	if (luminance < 0.1) {
+		BrightColor = FragColor;
+	}
+	else {
+		BrightColor = vec4 (0);
+	}
+#endif
 }

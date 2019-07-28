@@ -2,6 +2,8 @@
 
 #include <iostream>
 
+#include "fwRenderer.h"
+#include "render/fwRendererForward.h"
 #include "render/fwRendererDefered.h"
 
 // settings
@@ -9,7 +11,7 @@ unsigned int SCR_WIDTH = 800;
 unsigned int SCR_HEIGHT = 600;
 
 static fwApp *currentApp = nullptr;
-static fwRendererDefered* renderer = nullptr;
+static fwRenderer* renderer = nullptr;
 
 static void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
@@ -159,7 +161,6 @@ void fwApp::run(void)
 
 		// 3rd pass : postprocessing
 		//glCullFace(GL_BACK);
-		glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
 		postProcessing->draw(color);
 
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)

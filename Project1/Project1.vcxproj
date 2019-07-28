@@ -159,8 +159,8 @@
     <ClCompile Include="framework\math\fwBox3.cpp" />
     <ClCompile Include="framework\math\fwPlane.cpp" />
     <ClCompile Include="framework\math\fwSphere.cpp" />
-    <ClCompile Include="framework\postprocessing\fwBloom.cpp" />
-    <ClCompile Include="framework\postprocessing\fwPPDirectLight.cpp" />
+    <ClCompile Include="framework\postprocessing\fwPostProcessingBloom.cpp" />
+    <ClCompile Include="framework\postprocessing\fwPostProcessingDirectLight.cpp" />
     <ClCompile Include="framework\render\fwRendererDefered.cpp" />
     <ClCompile Include="framework\render\fwRendererForward.cpp" />
     <ClCompile Include="framework\SphereGemeotry.cpp" />
@@ -227,8 +227,8 @@
     <ClInclude Include="framework\math\fwBox3.h" />
     <ClInclude Include="framework\math\fwPlane.h" />
     <ClInclude Include="framework\math\fwSphere.h" />
-    <ClInclude Include="framework\postprocessing\fwBloom.h" />
-    <ClInclude Include="framework\postprocessing\fwPPDirectLight.h" />
+    <ClInclude Include="framework\postprocessing\fwPostProcessingBloom.h" />
+    <ClInclude Include="framework\postprocessing\fwPostProcessingDirectLight.h" />
     <ClInclude Include="framework\render\fwRendererDefered.h" />
     <ClInclude Include="framework\render\fwRendererForward.h" />
     <ClInclude Include="framework\SphereGemeotry.h" />

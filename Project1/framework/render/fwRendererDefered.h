@@ -9,10 +9,13 @@
 #include "../fwCamera.h"
 #include "../fwScene.h"
 #include "../fwRenderer.h"
+#include "../postprocessing/fwPostProcessingBloom.h"
 
 class fwRendererDefered: public fwRenderer
 {
-	glGBuffer* m_colorMap = nullptr;
+	//glGBuffer* m_colorMap = nullptr;
+	fwPostProcessingBloom* m_bloom = nullptr;
+
 private:
 	void drawMesh(fwCamera* camera, fwMesh* mesh, glProgram* program);
 
@@ -24,8 +27,6 @@ private:
 public:
 	fwRendererDefered(int width, int height);
 	glTexture* draw(fwCamera* camera, fwScene* scene);
-	void start(void);
-	void stop(void);
 	glm::vec2 size(void);
 	glTexture* getColorTexture(void);
 

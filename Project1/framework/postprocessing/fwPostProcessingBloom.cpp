@@ -1,4 +1,4 @@
-#include "fwBloom.h"
+#include "fwPostProcessingBloom.h"
 
 #include <string>
 #include <functional>
@@ -37,16 +37,22 @@ static glProgram *Bloom_program = nullptr;
 static glProgram *Expand_program = nullptr;
 static glProgram *Copy_program = nullptr;
 
-fwBloom::fwBloom(void)
+fwPostProcessingBloom::fwPostProcessingBloom(int _width, int _height)
 {
+	m_pBloom_texture = new glTexture(_width, _height, GL_RGBA);
 }
 
-void fwBloom::draw(glColorMap *colorMap)
+glTexture* fwPostProcessingBloom::get_bloom_texture(void)
+{
+	return m_pBloom_texture;
+}
+
+void fwPostProcessingBloom::draw(glColorMap *colorMap)
 {
 	if (Bloom_program == nullptr) {
-		Bloom_program = new glProgram(Bloom.get_vertexShader(), Bloom.get_fragmentShader(), "", "");
-		Expand_program = new glProgram(Bloom.get_vertexShader(), Bloom.get_shader(BLOOM_COPY), "", "");
-		Copy_program = new glProgram(Bloom.get_vertexShader(), Bloom.get_shader(BLOOM_EXPAND), "", "");
+		Bloom_program = new glProgram(Bloom.get_shader(VERTEX_SHADER), Bloom.get_shader(FRAGMENT_SHADER), "", "");
+		Expand_program = new glProgram(Bloom.get_shader(VERTEX_SHADER), Bloom.get_shader(BLOOM_EXPAND), "", "");
+		Copy_program = new glProgram(Bloom.get_shader(VERTEX_SHADER), Bloom.get_shader(BLOOM_COPY), "", "");
 
 		geometry = new fwGeometry();
 		quad = new glVertexArray();
@@ -57,9 +63,10 @@ void fwBloom::draw(glColorMap *colorMap)
 		quad->unbind();
 
 		glm::vec2 size = colorMap->size();
-		m_pingBloomBuffer[0] = new glColorMap(size.x, size.y, 1);
-		m_pingBloomBuffer[1] = new glColorMap(size.x, size.y, 1);
-		m_pingBloomBuffer[2] = new glColorMap(size.x, size.y, 1);
+		m_pingBloomBuffer[0] = new glColorMap(size.x, size.y, 1, 0, nullptr);
+		m_pingBloomBuffer[1] = new glColorMap(size.x, size.y, 1, 0, nullptr);
+		m_pingBloomBuffer[2] = new glColorMap(size.x, size.y, 1, 0, nullptr);
+
 	}
 
 	glDisable(GL_DEPTH_TEST);								// disable depth test so screen-space quad isn't discarded due to depth test.
@@ -68,10 +75,11 @@ void fwBloom::draw(glColorMap *colorMap)
 	Expand_program->run();
 	glTexture::resetTextureUnit();
 
+	Bloom.setSourceTexture(m_pBloom_texture);	// set color buffer 1 as source of the bloom program
+	Bloom.set_uniforms(Expand_program);
+
 	m_pingBloomBuffer[0]->bind();								// write out to the ping pong buffer
 	m_pingBloomBuffer[0]->clear();
-	Bloom.setSourceTexture(colorMap->getColorTexture(1));	// set color buffer 1 as source of the bloom program
-	Bloom.set_uniforms(Expand_program);
 	geometry->draw(GL_TRIANGLES, quad);
 	/*
 	Bloom_program->run();
@@ -102,10 +110,10 @@ void fwBloom::draw(glColorMap *colorMap)
 	*/
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	m_pingBloomBuffer[0]->unbind();								// write out to the ping pong buffer
 
 	Copy_program->run();
 	glTexture::resetTextureUnit();
-	colorMap->bind();										// write out to the source buffer
 	Bloom.setSourceTexture(m_pingBloomBuffer[0]->getColorTexture(0));	// set color buffer 1 as source of the bloom program
 	Bloom.set_uniforms(Copy_program);
 	geometry->draw(GL_TRIANGLES, quad);
@@ -114,6 +122,6 @@ void fwBloom::draw(glColorMap *colorMap)
 	glDisable(GL_BLEND);
 }
 
-fwBloom::~fwBloom()
+fwPostProcessingBloom::~fwPostProcessingBloom()
 {
 }

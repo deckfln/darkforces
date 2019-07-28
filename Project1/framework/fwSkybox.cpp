@@ -59,7 +59,7 @@ float skyboxVertices[] = {
 	 1.0f, -1.0f,  1.0f
 };
 
-fwSkybox::fwSkybox(std::string *textures)
+fwSkybox::fwSkybox(std::string* textures)
 {
 	texture = new glCubeTexture(textures);
 
@@ -80,9 +80,19 @@ fwSkybox::fwSkybox(std::string *textures)
 	cube->unbind();
 }
 
-void fwSkybox::draw(fwCamera *camera)
+void fwSkybox::draw(fwCamera *camera, int renderMode)
 {
-	glDisable(GL_DEPTH_TEST);  
+	if (renderMode == GL_STENCIL_TEST) {
+		glEnable(GL_STENCIL_TEST);
+		glStencilFunc(GL_NOTEQUAL, 255, 0xFF);
+		glStencilMask(0x00);
+
+		glDisable(GL_DEPTH_TEST);
+	}
+	else {
+		glDepthFunc(GL_LEQUAL);  // change depth function so depth test passes when values are equal to depth buffer's content
+	}
+
 	program->run();
 	camera->bind_uniformBuffer(program);
 	/*
@@ -96,7 +106,14 @@ void fwSkybox::draw(fwCamera *camera)
 	texture->bind();
 
 	geometry->draw(GL_TRIANGLES, cube);
-	glEnable(GL_DEPTH_TEST);
+
+	if (renderMode == GL_STENCIL_TEST) {
+		glEnable(GL_DEPTH_TEST);
+		glDisable(GL_STENCIL_TEST);
+	}
+	else {
+		glDepthFunc(GL_LESS);  // change depth function so depth test passes when values are equal to depth buffer's content
+	}
 }
 
 std::string fwSkybox::get_shader(const std::string shader_file)

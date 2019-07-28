@@ -2,26 +2,29 @@
 
 static unsigned int attachments[] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3 };
 
-glGBuffer::glGBuffer()
-{
-}
-
 glGBuffer::glGBuffer(int _width, int _height):
-	glFrameBuffer(_width, _height)
+	glColorMap(_width, _height)
 {
+	m_size.x = _width;
+	m_size.y = _height;
+	m_totalBuffers = m_allocatedBuffers = 4;
+	m_mask = GL_COLORMAP_DEPTH | GL_COLORMAP_STENCIL;
+
 	bind();
 
-	color = new glTexture(m_size.x, m_size.y, GL_RGB);
-	bindTexture(color, GL_COLOR_ATTACHMENT0);
+	colors = new glTexture * [m_totalBuffers];
 
-	normal = new glTexture(m_size.x, m_size.y, GL_RGB16F, 3, GL_NEAREST);
-	bindTexture(normal, GL_COLOR_ATTACHMENT1);
+	colors[GBUFFER_COLOR] = new glTexture(m_size.x, m_size.y, GL_RGBA);
+	bindTexture(colors[GBUFFER_COLOR], GL_COLOR_ATTACHMENT0);
 
-	world = new glTexture(m_size.x, m_size.y, GL_RGB16F, 3, GL_NEAREST);
-	bindTexture(world, GL_COLOR_ATTACHMENT2);
+	colors[GBUFFER_NORMAL] = new glTexture(m_size.x, m_size.y, GL_RGB16F, 3, GL_NEAREST);
+	bindTexture(colors[GBUFFER_NORMAL], GL_COLOR_ATTACHMENT1);
 
-	material = new glTexture(m_size.x, m_size.y, GL_RGB, 3, GL_NEAREST);
-	bindTexture(material, GL_COLOR_ATTACHMENT3);
+	colors[GBUFFER_WORLD] = new glTexture(m_size.x, m_size.y, GL_RGB16F, 3, GL_NEAREST);
+	bindTexture(colors[GBUFFER_WORLD], GL_COLOR_ATTACHMENT2);
+
+	colors[GBUFFER_MATERIAL] = new glTexture(m_size.x, m_size.y, GL_RGB, 3, GL_NEAREST);
+	bindTexture(colors[GBUFFER_MATERIAL], GL_COLOR_ATTACHMENT3);
 
 	glDrawBuffers(4, attachments);
 
@@ -31,32 +34,6 @@ glGBuffer::glGBuffer(int _width, int _height):
 	unbind();
 }
 
-glRenderBuffer* glGBuffer::get_stencil(void)
-{
-	return depth_stencil;
-}
-
-glTexture* glGBuffer::getColorTexture(int nb)
-{
-	switch(nb) {
-	case 0: return color; break;
-	case 1: return normal; break;
-	case 2: return world; break;
-	case 3: return material; break;
-	}
-}
-
-void glGBuffer::clear(void)
-{
-	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-}
-
 glGBuffer::~glGBuffer()
 {
-	delete depth_stencil;
-	delete world;
-	delete normal;
-	delete color;
-	delete material;
 }

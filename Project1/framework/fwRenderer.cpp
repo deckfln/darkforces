@@ -33,6 +33,22 @@ void fwRenderer::getAllChildren(fwObject3D* root, std::list <fwMesh*>& meshes, s
 	}
 }
 
+glm::vec2 fwRenderer::size(void)
+{
+	return m_colorMap->size();
+}
+
+void fwRenderer::start(void)
+{
+	m_colorMap->bind();
+	m_colorMap->clear();
+}
+
+void fwRenderer::stop(void)
+{
+	m_colorMap->unbind();
+}
+
 fwRenderer::~fwRenderer()
 {
 }

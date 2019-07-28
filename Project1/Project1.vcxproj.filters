@@ -183,9 +183,6 @@
     <ClCompile Include="glEngine\glDynamicBufferAttribute.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="framework\postprocessing\fwBloom.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
     <ClCompile Include="framework\materials\fwBloomMaterial.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
@@ -198,9 +195,6 @@
     <ClCompile Include="glEngine\glGBuffer.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="framework\postprocessing\fwPPDirectLight.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
     <ClCompile Include="framework\materials\fwMaterialDirectionalLight.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
@@ -211,6 +205,12 @@
       <Filter>Fichiers sources</Filter>
     </ClCompile>
     <ClCompile Include="framework\materials\fwMaterialDepth.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="framework\postprocessing\fwPostProcessingBloom.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="framework\postprocessing\fwPostProcessingDirectLight.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
   </ItemGroup>
@@ -386,9 +386,6 @@
     <ClInclude Include="framework\materials\fwBloomMaterial.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="framework\postprocessing\fwBloom.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
     <ClInclude Include="framework\fwMaterialDiffuse.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
@@ -396,9 +393,6 @@
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
     <ClInclude Include="glEngine\glGBuffer.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="framework\postprocessing\fwPPDirectLight.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
     <ClInclude Include="framework\materials\fwMaterialDirectionalLight.h">
@@ -411,6 +405,12 @@
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
     <ClInclude Include="framework\materials\fwMaterialDepth.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="framework\postprocessing\fwPostProcessingBloom.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="framework\postprocessing\fwPostProcessingDirectLight.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
   </ItemGroup>

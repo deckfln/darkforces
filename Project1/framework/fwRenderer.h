@@ -9,6 +9,8 @@
 class fwRenderer
 {
 protected:
+	glColorMap* m_colorMap = nullptr;
+
 	std::map <std::string, glProgram*> m_programs;
 	std::map <int, fwMaterial*> m_materials;
 	void getAllChildren(fwObject3D* root, std::list <fwMesh*>& meshes, std::list <fwMesh*>& instances);
@@ -17,8 +19,9 @@ public:
 	fwRenderer();
 
 	virtual glTexture* draw(fwCamera* camera, fwScene* scene) { return nullptr; };
-	virtual void start(void) {};
-	virtual void stop(void) {};
+	void start(void);
+	void stop(void);
+	glm::vec2 size(void);
 
 	~fwRenderer();
 };

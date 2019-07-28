@@ -21,6 +21,6 @@ class fwSkybox
 
 public:
 	fwSkybox(std::string *textures);
-	void draw(fwCamera *camera);
+	void draw(fwCamera *camera, int renderMode);
 	~fwSkybox();
 };

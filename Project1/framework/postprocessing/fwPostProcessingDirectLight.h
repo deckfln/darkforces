@@ -11,7 +11,7 @@
 #include "../fwGeometry.h"
 #include "../lights/fwDirectionLight.h"
 
-class fwPPDirectLight
+class fwPostProcessingDirectLight
 {
 	GLuint quadVAO = -1;
 	GLuint quadVBO = -1;
@@ -19,11 +19,11 @@ class fwPPDirectLight
 	fwGeometry *geometry = nullptr;
 	fwUniform *source = nullptr;
 	glColorMap* m_colorMap = nullptr;
-
+	glTexture* m_pBloomTexture = nullptr;
 	void drawLight(std::list <fwDirectionLight*>lights, glGBuffer *colorMap, glProgram* program, glVertexArray* quad);
 
 public:
-	fwPPDirectLight();
+	fwPostProcessingDirectLight(glTexture* bloom_texture = nullptr);
 	glColorMap *draw(glGBuffer*map, std::list <fwDirectionLight *>lights);
-	~fwPPDirectLight();
+	~fwPostProcessingDirectLight();
 };

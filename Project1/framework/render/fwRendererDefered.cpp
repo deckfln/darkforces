@@ -1,15 +1,15 @@
 #include "fwRendererDefered.h"
 
 #include "../fwInstancedMesh.h"
-#include "../postprocessing/fwPPDirectLight.h"
+#include "../postprocessing/fwPostProcessingDirectLight.h"
 #include "../lights/fwDirectionLight.h"
 #include "../materials/fwMaterialDepth.h"
 #include "../materials/fwNormalHelperMaterial.h"
 #include "../materials/fwMaterialDepth.h"
 #include "../materials/fwBloomMaterial.h"
-#include "../postprocessing/fwBloom.h"
+#include "../postprocessing/fwPostProcessingBloom.h"
 
-static fwPPDirectLight DirectionalLight;
+static fwPostProcessingDirectLight *DirectionalLight;
 static fwMaterialDepth materialDepth;
 static glProgram* depth_program = nullptr;
 static glProgram* depth_instanced_program = nullptr;
@@ -18,16 +18,11 @@ fwRendererDefered::fwRendererDefered(int width, int height)
 {
 	// FRAME BUFFER
 	m_colorMap = new glGBuffer(width * 2, height * 2);
-}
 
-void fwRendererDefered::start(void)
-{
-	m_colorMap->bind();
-}
+	// bloom texture
+	m_bloom = new fwPostProcessingBloom(width * 2, height * 2);
 
-void fwRendererDefered::stop(void)
-{
-	m_colorMap->unbind();
+	DirectionalLight = new fwPostProcessingDirectLight(m_bloom->get_bloom_texture());
 }
 
 /**
@@ -189,8 +184,9 @@ glTexture *fwRendererDefered::draw(fwCamera* camera, fwScene* scene)
 	glStencilFunc(GL_ALWAYS, 255, 0xFF);
 
 	glStencilMask(0xff);
+	glClear(GL_STENCIL_BUFFER_BIT);
 
-	m_colorMap->clear();
+	//m_colorMap->clear();
 
 	for (auto shader : meshesPerMaterial) {
 		// draw all ojects sharing the same shader
@@ -227,7 +223,7 @@ glTexture *fwRendererDefered::draw(fwCamera* camera, fwScene* scene)
 	glDisable(GL_STENCIL_TEST);
 
 	/*
-	 * 3rd pass : directional lighting
+	 * 3rd pass : directional lighting + generate bloom buffer
 	 */
 	// list all directional lights
 	std::list <fwDirectionLight *> directionals;
@@ -240,7 +236,7 @@ glTexture *fwRendererDefered::draw(fwCamera* camera, fwScene* scene)
 
 	glColorMap* outBuffer = nullptr;
 	if (directionals.size() > 0) {
-		outBuffer = DirectionalLight.draw(m_colorMap, directionals);
+		outBuffer = DirectionalLight->draw((glGBuffer*)m_colorMap, directionals);
 	}
 	else {
 		// FIXME
@@ -258,20 +254,18 @@ glTexture *fwRendererDefered::draw(fwCamera* camera, fwScene* scene)
 		glRenderBuffer* previous = outBuffer->get_stencil();
 		outBuffer->bindDepth(m_colorMap->get_stencil());
 
-		glEnable(GL_STENCIL_TEST);
-		glStencilFunc(GL_NOTEQUAL, 255, 0xFF);
-		glStencilMask(0x00);
-
-		glDisable(GL_DEPTH_TEST);
-
-		background->draw(camera);
+		background->draw(camera, GL_STENCIL_TEST);
 
 		outBuffer->bindDepth(previous);
-		glEnable(GL_DEPTH_TEST);
-		glDisable(GL_STENCIL_TEST);
 	}
 
-	//TODO: add bloom effect
+	/*
+	 * 4th pass: bloom pass
+	 */
+	if (m_bloom) {
+		m_bloom->draw(outBuffer);
+	}
+
 	return outBuffer->getColorTexture(0);
 }
 
@@ -282,7 +276,7 @@ glm::vec2 fwRendererDefered::size(void)
 
 glTexture* fwRendererDefered::getColorTexture(void)
 {
-	return m_colorMap->getColorTexture();
+	return m_colorMap->getColorTexture(GBUFFER_COLOR);
 }
 
 fwRendererDefered::~fwRendererDefered()

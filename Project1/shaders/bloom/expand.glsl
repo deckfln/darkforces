@@ -18,26 +18,23 @@ void main()
 	vec2 center = TexCoord.st;		// at the center of the pixel
 
 	vec2 offst = center;
-	vec4 source = texture(screenTexture, center);
+	vec4 pixel = texture(screenTexture, center);
 
-	if (source.a != 0) {
-		FragColor = source;
-	}
-	else {
-		vec4 color = vec4(0);
-		float total = 0;
+	int total = 0;
+	float alpha = 0;
 
-		for(int i = -10; i < 11; i++)
-		{
-			for(int j = -10; j < 11; j++) {
-				vec4 pixel = texture(screenTexture, center + vec2(i * pixelsize.x, j * pixelsize.y));
+	for(int i = -10; i < 11; i++)
+	{
+		for(int j = -10; j < 11; j++) {
+			vec4 v = texture(screenTexture, center + vec2(i * pixelsize.x, j * pixelsize.y));
 
-				if (pixel.a != 0) {
-					color = max(pixel, color);
-					total++;
-				}
+			if (v.rgb != vec3(0)) {
+				pixel = max(pixel, v);
+				alpha += pixel.a;
 			}
+			total++;
 		}
-		FragColor = vec4(color.x, color.y, color.z, total / 220);
 	}
+
+	FragColor = vec4(pixel.rgb, alpha/total * 2);
 }  

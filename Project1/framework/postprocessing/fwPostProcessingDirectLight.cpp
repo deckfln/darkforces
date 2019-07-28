@@ -1,4 +1,4 @@
-#include "fwPPDirectLight.h"
+#include "fwPostProcessingDirectLight.h"
 
 #include <string>
 #include <functional>
@@ -33,24 +33,18 @@ static float quadUvs[] = { // vertex attributes for a quad that fills the entire
 };
 
 static fwMaterialDirectionalLight Light;
-enum {NO_SHADOW, SHADOW};
+enum { NO_SHADOW, SHADOW };
 static glProgram* Light_program[2] = { nullptr, nullptr };
 static bool init = false;
 
-fwPPDirectLight::fwPPDirectLight(void)
+fwPostProcessingDirectLight::fwPostProcessingDirectLight(glTexture* bloom_texture)
 {
+	m_pBloomTexture = bloom_texture;
 }
 
-void fwPPDirectLight::drawLight(std::list <fwDirectionLight*>lights, glGBuffer* colorMap, glProgram *program, glVertexArray *quad)
+void fwPostProcessingDirectLight::drawLight(std::list <fwDirectionLight*>lights, glGBuffer* gbuffer, glProgram* program, glVertexArray* quad)
 {
 	program->run();
-
-	// setup the GBuffer source
-	Light.setSourceTexture(colorMap->getColorTexture(0),
-		colorMap->getColorTexture(1),
-		colorMap->getColorTexture(2),
-		colorMap->getColorTexture(3)
-	);
 
 	// setup lights
 	int i = 0;
@@ -65,10 +59,21 @@ void fwPPDirectLight::drawLight(std::list <fwDirectionLight*>lights, glGBuffer* 
 
 	m_colorMap->bind();
 	m_colorMap->clear();
+
+	if (m_pBloomTexture != nullptr) {
+		m_colorMap->bindColors(2);	// activate bloom buffer
+	}
+
 	geometry->draw(GL_TRIANGLES, quad);
+
+	if (m_pBloomTexture != nullptr) {
+		m_colorMap->bindColors(1);	// deactivate boom buffer
+	}
+
+	m_colorMap->unbind();
 }
 
-glColorMap *fwPPDirectLight::draw(glGBuffer *colorMap, std::list <fwDirectionLight *>lights)
+glColorMap* fwPostProcessingDirectLight::draw(glGBuffer* gbuffer, std::list <fwDirectionLight*>lights)
 {
 	if (!init) {
 		init = true;
@@ -79,6 +84,24 @@ glColorMap *fwPPDirectLight::draw(glGBuffer *colorMap, std::list <fwDirectionLig
 		std::string vertex = Light.get_shader(VERTEX_SHADER);
 		std::string fragment = Light.get_shader(FRAGMENT_SHADER);
 
+		// Bloom ?
+		if (m_pBloomTexture != nullptr) {
+			define += "#define BLOOMMAP\n";
+
+			// setup the bloom source
+			if (m_pBloomTexture != nullptr) {
+				Light.setBloomTexture(m_pBloomTexture);
+			}
+
+			// setup the GBuffer source
+			Light.setSourceTexture(gbuffer->getColorTexture(0),
+				gbuffer->getColorTexture(1),
+				gbuffer->getColorTexture(2),
+				gbuffer->getColorTexture(3)
+			);
+		}
+
+		// shaders without shadow
 		Light_program[NO_SHADOW] = new glProgram(vertex, fragment, "", define);
 
 		// with shadow program
@@ -95,26 +118,26 @@ glColorMap *fwPPDirectLight::draw(glGBuffer *colorMap, std::list <fwDirectionLig
 			quad[i]->unbind();
 		}
 
-		glm::vec2 size = colorMap->size();
-		m_colorMap = new glColorMap(size.x, size.y, 1);
-
+		glm::vec2 size = gbuffer->size();
+		m_colorMap = new glColorMap(size.x, size.y, 1, 0, m_pBloomTexture);	// 1 outgoing color buffer, no depthmap & no stencil map
 	}
 
 	//TODO: add a set/restore for depth testing
 	glDisable(GL_DEPTH_TEST);
+
 
 	// no shadow lights
 	int shd = NO_SHADOW;
 	if (((fwObject3D*)lights.front())->castShadow()) {
 		shd = SHADOW;
 	}
-	drawLight(lights, colorMap, Light_program[shd], quad[shd]);
+	drawLight(lights, gbuffer, Light_program[shd], quad[shd]);
 
 	glEnable(GL_DEPTH_TEST);
 
 	return m_colorMap;
 }
 
-fwPPDirectLight::~fwPPDirectLight()
+fwPostProcessingDirectLight::~fwPostProcessingDirectLight()
 {
 }

@@ -8,10 +8,13 @@ fwMaterialDirectionalLight::fwMaterialDirectionalLight() :
 	m_normalUniform = new fwUniform("gNormal", (glTexture*)nullptr);
 	m_worldUniform = new fwUniform("gWorld", (glTexture*)nullptr);
 	m_materialUniform = new fwUniform("gMaterial", (glTexture*)nullptr);
+	m_pBloomUniform = new fwUniform("bloom", (glTexture*)nullptr);
+
 	addUniform(m_colorUniform);
 	addUniform(m_normalUniform);
 	addUniform(m_worldUniform);
 	addUniform(m_materialUniform);
+	addUniform(m_pBloomUniform);
 }
 
 void fwMaterialDirectionalLight::setSourceTexture(glTexture *color, glTexture *normal, glTexture *world, glTexture *material)
@@ -20,6 +23,11 @@ void fwMaterialDirectionalLight::setSourceTexture(glTexture *color, glTexture *n
 	m_normalUniform->set(normal);
 	m_worldUniform->set(world);
 	m_materialUniform->set(material);
+}
+
+void fwMaterialDirectionalLight::setBloomTexture(glTexture* bloom)
+{
+	m_pBloomUniform->set(bloom);
 }
 
 fwMaterialDirectionalLight::~fwMaterialDirectionalLight()

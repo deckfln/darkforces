@@ -6,7 +6,7 @@
 #include "../materials/fwMaterialDepth.h"
 #include "../materials/fwBloomMaterial.h"
 #include "../fwInstancedMesh.h"
-#include "../postprocessing/fwBloom.h"
+#include "../postprocessing/fwPostProcessingBloom.h"
 
 static fwNormalHelperMaterial normalHelper;
 static fwMaterialDepth materialDepth;
@@ -18,7 +18,7 @@ static glProgram* outline_instanced_program = nullptr;
 static glProgram* depth_program = nullptr;
 static glProgram* depth_instanced_program = nullptr;
 
-static fwBloom Bloom;
+static fwPostProcessingBloom *Bloom = nullptr;
 
 void fwRendererForward::setOutline(glm::vec4* _color)
 {
@@ -189,10 +189,10 @@ glTexture *fwRendererForward::draw(fwCamera* camera, fwScene *scene)
 			hasShadowLights = true;
 
 			if (depth_program == nullptr) {
-				depth_program = new glProgram(materialDepth.get_vertexShader(), materialDepth.get_fragmentShader(), "", "");
+				depth_program = new glProgram(materialDepth.get_shader(VERTEX_SHADER), materialDepth.get_shader(FRAGMENT_SHADER), "", "");
 			}
 			if (depth_instanced_program == nullptr) {
-				depth_instanced_program = new glProgram(materialDepth.get_vertexShader(), materialDepth.get_fragmentShader(), "", "#define INSTANCED\n");
+				depth_instanced_program = new glProgram(materialDepth.get_shader(VERTEX_SHADER), materialDepth.get_shader(FRAGMENT_SHADER), "", "#define INSTANCED\n");
 			}
 
 			// draw in the m_light shadowmap from the POV of the m_light
@@ -267,6 +267,9 @@ glTexture *fwRendererForward::draw(fwCamera* camera, fwScene *scene)
 	// setup m_camera
 	camera->set_uniformBuffer();
 
+	//m_colorMap->bind();
+	//m_colorMap->clear();
+
 	/*
 	 * 2nd pass : draw opaque objects => FBO 0
 	 *            record bright pixels => FBO 1
@@ -316,20 +319,22 @@ glTexture *fwRendererForward::draw(fwCamera* camera, fwScene *scene)
 	}
 
 	// remove the bloom buffer
-	// colorMap->bindColors(1);		// deactivate all color buffers but the first
+	m_colorMap->bindColors(1);		// deactivate all color buffers but the first
 
 	/*
 	 * 4th pass : draw skybox
 	 */
 	fwSkybox* background = scene->background();
 	if (background != nullptr) {
-		background->draw(camera);
+		background->draw(camera, GL_DEPTH_TEST);
 	}
 
 	/*
 	 * 3rd pass : merge bloom buffer on the color buffer
 	 */
-	 // Bloom.draw(colorMap);
+	if (Bloom != nullptr) {
+		Bloom->draw(m_colorMap);
+	}
 
 	 /*
 	  * 5th pass : draw transparent objects
@@ -366,7 +371,7 @@ glTexture *fwRendererForward::draw(fwCamera* camera, fwScene *scene)
 
 	glDisable(GL_BLEND);
 
-	//colorMap->bindColors(2);		// activate all buffers
+	m_colorMap->bindColors(2);		// activate all buffers
 
 	return m_colorMap->getColorTexture(0);
 }
@@ -374,28 +379,16 @@ glTexture *fwRendererForward::draw(fwCamera* camera, fwScene *scene)
 fwRendererForward::fwRendererForward(int width, int height)
 {
 	// FRAME BUFFER
-	m_colorMap = new glColorMap(width * 2, height * 2, 2);
+	Bloom = new fwPostProcessingBloom(width*2, height*2);
+
+	m_colorMap = new glColorMap(width * 2, height * 2, 1, GL_COLORMAP_DEPTH | GL_COLORMAP_STENCIL,
+		Bloom->get_bloom_texture()
+	);
 }
 
 glTexture* fwRendererForward::getColorTexture(void)
 {
 	return m_colorMap->getColorTexture(0);
-}
-
-void fwRendererForward::start(void) 
-{
-	m_colorMap->bind();
-	m_colorMap->clear();
-}
-
-void fwRendererForward::stop(void)
-{
-	m_colorMap->unbind();
-}
-
-glm::vec2 fwRendererForward::size(void)
-{
-	return m_colorMap->size();
 }
 
 fwRendererForward::~fwRendererForward()

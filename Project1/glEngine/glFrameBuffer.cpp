@@ -28,7 +28,12 @@ void glFrameBuffer::bindTexture(glTexture *texture, GLuint attachment)
 
 void glFrameBuffer::bindDepth(glRenderBuffer *depth_stencil)
 {
-	glFramebufferRenderbuffer(type, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, depth_stencil->getID());
+	if (depth_stencil != nullptr) {
+		glFramebufferRenderbuffer(type, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, depth_stencil->getID());
+	}
+	else {
+		glFramebufferRenderbuffer(type, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, 0);
+	}
 }
 
 void glFrameBuffer::unbind(void)

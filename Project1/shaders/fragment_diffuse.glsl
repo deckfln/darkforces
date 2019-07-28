@@ -16,6 +16,7 @@ struct Material {
 }; 
 
 #include "include/camera.glsl"
+#include "bloom/luminance.glsl"
 
 uniform Material material;
 
@@ -24,6 +25,7 @@ uniform Material material;
 #ifdef NORMALMAP
 	in mat3 tbn;
 #endif
+
 
 #ifdef SHADOWMAP
 	float ShadowCalculation(vec4 fragPosLightSpace, sampler2D shadowMap)
@@ -254,11 +256,11 @@ void main()
     FragColor = vec4(result, color.a);
 
 	// bloom output
-	float luminance = 0.2126 * color.r + 0.7152 * color.g + 0.0722 * color.b;
-	if (luminance > 0.8) {
+	float luminance = czm_luminance(color.rgb);
+	if (luminance < 0.1) {
 		BrightColor = color;
 	}
 	else {
-		BrightColor = vec4 (0.0, 0.0, 0.0, 0.0);
+		BrightColor = vec4 (0);
 	}
 }

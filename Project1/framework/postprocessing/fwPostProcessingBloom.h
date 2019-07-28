@@ -7,7 +7,7 @@
 #include "../fwUniform.h"
 #include "../fwGeometry.h"
 
-class fwBloom
+class fwPostProcessingBloom
 {
 	GLuint quadVAO = -1;
 	GLuint quadVBO = -1;
@@ -15,9 +15,11 @@ class fwBloom
 	fwGeometry *geometry = nullptr;
 	fwUniform *source = nullptr;
 	glColorMap *m_pingBloomBuffer[3] = { nullptr, nullptr, nullptr };
+	glTexture* m_pBloom_texture = nullptr;
 
 public:
-	fwBloom();
+	fwPostProcessingBloom(int _width, int _height);
+	glTexture* get_bloom_texture(void);
 	void draw(glColorMap *map);
-	~fwBloom();
+	~fwPostProcessingBloom();
 };
