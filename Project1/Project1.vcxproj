@@ -128,7 +128,11 @@
   <ItemGroup>
     <ClCompile Include="framework\camera\fwOrthographicCamera.cpp" />
     <ClCompile Include="framework\controls\fwOrbitControl.cpp" />
+    <ClCompile Include="framework\fwAnimation.cpp" />
+    <ClCompile Include="framework\fwAnimationBone.cpp" />
+    <ClCompile Include="framework\fwAnimationKeyframe.cpp" />
     <ClCompile Include="framework\fwApp.cpp" />
+    <ClCompile Include="framework\fwBoneInfo.cpp" />
     <ClCompile Include="framework\fwFrustum.cpp" />
     <ClCompile Include="framework\fwInstancedMesh.cpp" />
     <ClCompile Include="framework\fwLight.cpp" />
@@ -159,6 +163,7 @@
     <ClCompile Include="framework\math\fwBox3.cpp" />
     <ClCompile Include="framework\math\fwPlane.cpp" />
     <ClCompile Include="framework\math\fwSphere.cpp" />
+    <ClCompile Include="framework\mesh\fwMeshSkinned.cpp" />
     <ClCompile Include="framework\postprocessing\fwPostProcessingBloom.cpp" />
     <ClCompile Include="framework\postprocessing\fwPostProcessingDirectLight.cpp" />
     <ClCompile Include="framework\render\fwRendererDefered.cpp" />
@@ -196,7 +201,11 @@
   <ItemGroup>
     <ClInclude Include="framework\camera\fwOrthographicCamera.h" />
     <ClInclude Include="framework\controls\fwOrbitControl.h" />
+    <ClInclude Include="framework\fwAnimation.h" />
+    <ClInclude Include="framework\fwAnimationBone.h" />
+    <ClInclude Include="framework\fwAnimationKeyframe.h" />
     <ClInclude Include="framework\fwApp.h" />
+    <ClInclude Include="framework\fwBoneInfo.h" />
     <ClInclude Include="framework\fwFrustum.h" />
     <ClInclude Include="framework\fwInstancedMesh.h" />
     <ClInclude Include="framework\fwLight.h" />
@@ -227,6 +236,7 @@
     <ClInclude Include="framework\math\fwBox3.h" />
     <ClInclude Include="framework\math\fwPlane.h" />
     <ClInclude Include="framework\math\fwSphere.h" />
+    <ClInclude Include="framework\mesh\fwMeshSkinned.h" />
     <ClInclude Include="framework\postprocessing\fwPostProcessingBloom.h" />
     <ClInclude Include="framework\postprocessing\fwPostProcessingDirectLight.h" />
     <ClInclude Include="framework\render\fwRendererDefered.h" />

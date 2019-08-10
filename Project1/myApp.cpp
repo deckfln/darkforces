@@ -104,6 +104,9 @@ myApp::myApp(std::string name, int width, int height) :
 	m_positions[0] = glm::translate(glm::vec3(-1,0, 0));
 	m_positions[1] = glm::translate(glm::vec3(1, 0, 0));
 
+	// model
+	Loader* loader = new Loader("models/stormtrooper/stormtrooper.dae");
+
 	// sprite
 	glm::vec3 *sprites = new glm::vec3 [4];
 	sprites[0].z = -4;

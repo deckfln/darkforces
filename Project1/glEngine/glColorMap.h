@@ -1,7 +1,7 @@
 #pragma once
 
 #include <list>
-#include <map>;
+#include <map>
 
 #include "../glEngine/glFrameBuffer.h"
 #include "../glEngine/glRenderBuffer.h"

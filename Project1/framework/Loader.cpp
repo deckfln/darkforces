@@ -3,6 +3,7 @@
 #include <assimp/postprocess.h>
 
 #include <glm/glm.hpp>
+#include <map>
 
 #include "../glEngine/glBufferAttribute.h"
 
@@ -11,6 +12,19 @@
 #include "fwGeometry.h"
 #include "fwMaterialDiffuse.h"
 #include "fwMesh.h"
+#include "mesh/fwMeshSkinned.h"
+#include "fwAnimation.h"
+
+static glm::mat4 aiMatrix4x4ToGlm(const aiMatrix4x4& from)
+{
+	glm::mat4 to;
+	//the a,b,c,d in assimp is the row ; the 1,2,3,4 is the column
+	to[0][0] = from.a1; to[1][0] = from.a2; to[2][0] = from.a3; to[3][0] = from.a4;
+	to[0][1] = from.b1; to[1][1] = from.b2; to[2][1] = from.b3; to[3][1] = from.b4;
+	to[0][2] = from.c1; to[1][2] = from.c2; to[2][2] = from.c3; to[3][2] = from.c4;
+	to[0][3] = from.d1; to[1][3] = from.d2; to[2][3] = from.d3; to[3][3] = from.d4;
+	return to;
+}
 
 Loader::Loader(const std::string _file):
 	file(_file)
@@ -25,22 +39,37 @@ Loader::Loader(const std::string _file):
 	}
 	directory = file.substr(0, file.find_last_of('/'));
 
-	processNode(scene->mRootNode, scene);
+	fwBoneInfo *m_root = processNode(scene->mRootNode, nullptr, scene, 0);
+
+	for (unsigned int i = 0; i < scene->mNumAnimations; i++) {
+		processAnimation(scene->mAnimations[i], m_root);
+	}
+
 }
 
-void Loader::processNode(aiNode *node, const aiScene *scene)
+fwBoneInfo* Loader::processNode(aiNode *node, fwBoneInfo *parent, const aiScene *scene, int level)
 {
+	std::cout << std::string(level, '*') << " " << node->mName.data << " " << node->mNumMeshes << std::endl;
+
 	// process all the node's meshes (if any)
 	for (unsigned int i = 0; i < node->mNumMeshes; i++)
 	{
 		aiMesh *mesh = scene->mMeshes[node->mMeshes[i]];
 		meshes.push_back( processMesh(mesh, scene));
 	}
+
+	fwBoneInfo *bone = new fwBoneInfo(node->mName.data, aiMatrix4x4ToGlm(node->mTransformation));
+	m_bones[node->mName.data] = bone;
+
 	// then do the same for each of its children
 	for (unsigned int i = 0; i < node->mNumChildren; i++)
 	{
-		processNode(node->mChildren[i], scene);
+		fwBoneInfo *child = processNode(node->mChildren[i], bone, scene, level+1);
+		bone->addBone(child);
+		child->parent(bone);
 	}
+
+	return bone;
 }
 
 fwMesh *Loader::processMesh(aiMesh *mesh, const aiScene *scene)
@@ -126,11 +155,63 @@ fwMesh *Loader::processMesh(aiMesh *mesh, const aiScene *scene)
 		}
 	}
 
-	fwMesh *nmesh = new fwMesh(geometry, material);
+	if (mesh->mNumBones == 0) {
+		fwMesh* fwmesh;
+		fwmesh = new fwMesh(geometry, material);
+		return fwmesh;
+	}
 
-	return nmesh;
+	/*
+	 * build a skinned mesh
+	 */
+	fwMeshSkinned *fwmesh = new fwMeshSkinned(geometry, material);
+	int vertices = mesh->mNumVertices;
+
+	glm::ivec4* bonesID = new glm::ivec4[vertices];
+	glm::vec4* bonesWeights = new glm::vec4[vertices];
+	unsigned short* nbBonesPerVertices = new unsigned short[vertices]();	// initialize to ZERO : https://stackoverflow.com/questions/2204176/how-to-initialise-memory-with-new-operator-in-c
+	std::list <std::string> boneNames;
+
+	fwBoneInfo* bone = nullptr;
+
+	for (unsigned int boneID = 0; boneID < mesh->mNumBones; boneID++) {
+		aiBone* aib = mesh->mBones[boneID];
+		bone = m_bones[aib->mName.data];
+
+		if (bone) {
+			boneNames.push_back(aib->mName.data);
+			bone->setIndex(boneID);
+
+			for (unsigned int j = 0; j < aib->mNumWeights; j++) {
+				GLint vertexID = aib->mWeights[j].mVertexId;
+				float weight = aib->mWeights[j].mWeight;
+
+				unsigned short nbBonesPerVertice = nbBonesPerVertices[vertexID];
+
+				if (nbBonesPerVertice > 3) {
+					std::cout << "Too many bones for vertex" << std::endl;
+					break;
+				}
+
+				bonesWeights[vertexID][nbBonesPerVertice] = weight;
+				bonesID[vertexID][nbBonesPerVertice] = boneID;
+
+				nbBonesPerVertices[vertexID]++;
+			}
+
+			bone->setOffset(aiMatrix4x4ToGlm(aib->mOffsetMatrix));
+		}
+	}
+
+	// find root of the skeleton: the upper name that is also present in the list of bones
+	fwBoneInfo *root = bone->getRoot(boneNames);
+
+	fwmesh->bonesID(bonesID);
+	fwmesh->bonesWeights(bonesWeights);
+	fwmesh->skeleton(root);
+
+	return fwmesh;
 }
-
 
 std::vector<fwTexture *> Loader::loadMaterialTextures(aiMaterial *mat, aiTextureType type)
 {
@@ -152,6 +233,60 @@ std::vector<fwTexture *> Loader::loadMaterialTextures(aiMaterial *mat, aiTexture
 std::vector<fwMesh *>Loader::get_meshes(void)
 {
 	return meshes;
+}
+
+fwAnimation* Loader::processAnimation(aiAnimation* root, fwBoneInfo* skeleton)
+{
+	fwAnimation* animation = new fwAnimation(root->mName.data, root->mDuration, skeleton);
+
+	std::map <double, glm::vec3> positions;
+	std::map <double, glm::vec4> rotations;
+
+	for (unsigned int i = 0; i < root->mNumChannels; i++) {
+		aiNodeAnim* node = root->mChannels[i];
+		std::string name(node->mNodeName.data);
+
+		for (unsigned int j = 0; j < node->mNumPositionKeys; j++) {
+			aiVectorKey *key = &node->mPositionKeys[j];
+			double time = key->mTime;
+			fwAnimationKeyframe* keyframe = animation->keyframes(time);
+			fwAnimationBone* boneInfo = keyframe->bone(name);
+
+			if (boneInfo == nullptr) {
+				std::cout << "cannot find bone " << name << std::endl;
+				continue;
+			}
+			boneInfo->translation(glm::vec3(key->mValue.x, key->mValue.y, key->mValue.z));
+		}
+
+		for (unsigned int j = 0; j < node->mNumRotationKeys; j++) {
+			aiQuatKey* key = &node->mRotationKeys[j];
+			double time = key->mTime;
+			fwAnimationKeyframe* keyframe = animation->keyframes(time);
+			fwAnimationBone* boneInfo = keyframe->bone(name);
+
+			if (boneInfo == nullptr) {
+				std::cout << "cannot find bone " << name << std::endl;
+				continue;
+			}
+			boneInfo->rotation(glm::vec4(key->mValue.x, key->mValue.y, key->mValue.z, key->mValue.w));
+		}
+
+		for (unsigned int j = 0; j < node->mNumScalingKeys; j++) {
+			aiVectorKey* key = &node->mScalingKeys[j];
+			double time = key->mTime;
+			fwAnimationKeyframe* keyframe = animation->keyframes(time);
+			fwAnimationBone* boneInfo = keyframe->bone(name);
+
+			if (boneInfo == nullptr) {
+				std::cout << "cannot find bone " << name << std::endl;
+				continue;
+			}
+			boneInfo->scale(glm::vec3(key->mValue.x, key->mValue.y, key->mValue.z));
+		}
+	}
+
+	return animation;
 }
 
 Loader::~Loader()
