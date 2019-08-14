@@ -7,7 +7,7 @@ fwTexture::fwTexture()
 }
 
 fwTexture::fwTexture(const std::string file, int nb_channels_to_read):
-	name(file)
+	name("c:/dev/project1/project1/"+file)
 {
 	// load and generate the texture
 	data = stbi_load(name.c_str(), &width, &height, &nrChannels, nb_channels_to_read);

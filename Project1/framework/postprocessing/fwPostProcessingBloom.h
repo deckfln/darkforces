@@ -14,7 +14,7 @@ class fwPostProcessingBloom
 	glVertexArray *quad = nullptr;
 	fwGeometry *geometry = nullptr;
 	fwUniform *source = nullptr;
-	glColorMap *m_pingBloomBuffer[3] = { nullptr, nullptr, nullptr };
+	glColorMap *m_pingBloomBuffer[4] = { nullptr, nullptr, nullptr, nullptr };
 	glTexture* m_pBloom_texture = nullptr;
 
 public:

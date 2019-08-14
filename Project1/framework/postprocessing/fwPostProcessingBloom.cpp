@@ -63,24 +63,31 @@ void fwPostProcessingBloom::draw(glColorMap *colorMap)
 		quad->unbind();
 
 		glm::vec2 size = colorMap->size();
-		m_pingBloomBuffer[0] = new glColorMap(size.x, size.y, 1, 0, nullptr);
-		m_pingBloomBuffer[1] = new glColorMap(size.x, size.y, 1, 0, nullptr);
-		m_pingBloomBuffer[2] = new glColorMap(size.x, size.y, 1, 0, nullptr);
-
+		m_pingBloomBuffer[0] = new glColorMap(size.x/2, size.y/2, 1, 0, nullptr);
+		m_pingBloomBuffer[1] = new glColorMap(size.x/4, size.y/4, 1, 0, nullptr);
+		m_pingBloomBuffer[2] = new glColorMap(size.x/8, size.y/8, 1, 0, nullptr);
+		m_pingBloomBuffer[3] = new glColorMap(size.x / 16.0, size.y / 16.0, 1, 0, nullptr);
 	}
 
 	glDisable(GL_DEPTH_TEST);								// disable depth test so screen-space quad isn't discarded due to depth test.
 
 	// copy into bloom buffer and expand the objects
 	Expand_program->run();
-	glTexture::resetTextureUnit();
 
-	Bloom.setSourceTexture(m_pBloom_texture);	// set color buffer 1 as source of the bloom program
-	Bloom.set_uniforms(Expand_program);
+	glTexture* previous = m_pBloom_texture;
+	for (int i = 0; i < 4; i++) {
+		glTexture::resetTextureUnit();
 
-	m_pingBloomBuffer[0]->bind();								// write out to the ping pong buffer
-	m_pingBloomBuffer[0]->clear();
-	geometry->draw(GL_TRIANGLES, quad);
+		Bloom.setSourceTexture(previous);	// set color buffer 1 as source of the bloom program
+		Bloom.set_uniforms(Expand_program);
+
+		m_pingBloomBuffer[i]->bind();								// write out to the ping pong buffer
+		m_pingBloomBuffer[i]->clear();
+		geometry->draw(GL_TRIANGLES, quad);
+
+		previous = m_pingBloomBuffer[i]->getColorTexture(0);
+	}
+
 	/*
 	Bloom_program->run();
 	int source = 0;
@@ -114,7 +121,10 @@ void fwPostProcessingBloom::draw(glColorMap *colorMap)
 
 	Copy_program->run();
 	glTexture::resetTextureUnit();
-	Bloom.setSourceTexture(m_pingBloomBuffer[0]->getColorTexture(0));	// set color buffer 1 as source of the bloom program
+	Bloom.setSourceTexture(m_pingBloomBuffer[0]->getColorTexture(0), 0);	// set color buffer 1 as source of the bloom program
+	Bloom.setSourceTexture(m_pingBloomBuffer[1]->getColorTexture(0), 1);	// set color buffer 1 as source of the bloom program
+	Bloom.setSourceTexture(m_pingBloomBuffer[2]->getColorTexture(0), 2);	// set color buffer 1 as source of the bloom program
+	Bloom.setSourceTexture(m_pingBloomBuffer[3]->getColorTexture(0), 3);	// set color buffer 1 as source of the bloom program
 	Bloom.set_uniforms(Copy_program);
 	geometry->draw(GL_TRIANGLES, quad);
 

@@ -26,7 +26,7 @@ std::string load_shader_file(const std::string shader_file, std::string defines)
 	try
 	{
 		// open files
-		file.open(shader_file);
+		file.open("c:/dev/project1/project1/"+shader_file);
 		std::stringstream vShaderStream;
 		// read file's buffer contents into streams
 		vShaderStream << file.rdbuf();

@@ -7,6 +7,12 @@ in vec2 TexCoord;
 
 uniform sampler2D screenTexture;
 
+const float kernel[25] = float[](1.0, 4.0, 7.0, 4.0, 1.0,
+								4.0, 16.0, 26.0, 16.0, 4.0,
+								7.0, 26.0, 41.0, 26.0, 7.0,
+								4.0, 16.0, 26.0, 16.0, 4.0,
+								1.0, 4.0, 7.0, 4.0, 1.0);
+
 void main()
 {
 	vec2 texturepixels = textureSize(screenTexture, 0);
@@ -22,19 +28,17 @@ void main()
 
 	int total = 0;
 	float alpha = 0;
+	int p = 0;
 
-	for(int i = -10; i < 11; i++)
+	for(int i = -2; i < 3; i++)
 	{
-		for(int j = -10; j < 11; j++) {
-			vec4 v = texture(screenTexture, center + vec2(i * pixelsize.x, j * pixelsize.y));
+		for(int j = -2; j < 3; j++) {
+			vec4 v = texture(screenTexture, center + vec2(i * pixelsize.x, j * pixelsize.y)) * kernel[p];
 
-			if (v.rgb != vec3(0)) {
-				pixel = max(pixel, v);
-				alpha += pixel.a;
-			}
-			total++;
+			pixel += v;
+			p++;
 		}
 	}
 
-	FragColor = vec4(pixel.rgb, alpha/total * 2);
-}  
+	FragColor = vec4(pixel / 273.0);
+}

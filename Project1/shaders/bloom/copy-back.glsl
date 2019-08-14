@@ -6,6 +6,9 @@ out vec4 FragColor;
 in vec2 TexCoord;
 
 uniform sampler2D screenTexture;
+uniform sampler2D screenTexture2;
+uniform sampler2D screenTexture3;
+uniform sampler2D screenTexture4;
 
 void main()
 {
@@ -17,7 +20,7 @@ void main()
 
 	vec2 center = TexCoord.st + hpixelsize;		// at the center of the pixel
 
-	vec4 result = texture(screenTexture, center);
+	vec4 result = texture(screenTexture, center) + texture(screenTexture2, center) + texture(screenTexture3, center)+ texture(screenTexture4, center);
 
     FragColor = result;
-}  
+}
