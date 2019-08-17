@@ -142,8 +142,17 @@ void fwApp::run(void)
 
 	glEnable(GL_DEPTH_TEST);
 
+	double current = GetTickCount64();
+	time_t start = GetTickCount64();
+	int fps = 0;
+
 	while (!glfwWindowShouldClose(window))
 	{
+		if (GetTickCount64() - start > 30000) {
+			break;
+		}
+		fps++;
+
 		// input
 		// -----
 		processInput(window);
@@ -153,6 +162,7 @@ void fwApp::run(void)
 		//glFrontFace(GL_CCW);
 
 		// 2nd pass : render to color buffer
+		double delta = GetTickCount64() - current;
 		renderer->start();
 
 		glTexture *color = draw(renderer);
@@ -167,7 +177,15 @@ void fwApp::run(void)
 		// -------------------------------------------------------------------------------
 		glfwSwapBuffers(window);
 		glfwPollEvents();
+
+		double next = current + 33.33333;
+		delta = next - GetTickCount64();
+		if (delta > 0)
+			Sleep(delta);
+		current = next;
 	}
+
+	std::cout << fps << std::endl;
 }
 
 /***

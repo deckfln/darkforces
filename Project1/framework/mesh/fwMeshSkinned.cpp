@@ -16,7 +16,7 @@ fwMeshSkinned::fwMeshSkinned(fwGeometry* _geometry, fwMaterial* _material, fwBon
 void fwMeshSkinned::animate(fwBoneInfo *bone, glm::mat4 &parent)
 {
 	int id = bone->id();
-	std::cout << bone->name() << " " << id << std::endl;
+	// std::cout << bone->name() << " " << id << std::endl;
 	glm::mat4 globalTransform = parent * bone->transform();
 	if (id >= 0) {
 		m_bonesTransform[id] = m_GlobalInverseTransform * globalTransform * bone->offset();
