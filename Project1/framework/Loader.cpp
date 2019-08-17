@@ -190,15 +190,41 @@ fwMesh *Loader::processMesh(aiMesh *mesh, const aiScene *scene)
 				unsigned short nbBonesPerVertice = nbBonesPerVertices[vertexID];
 
 				if (nbBonesPerVertice > 3) {
-					std::cout << "Too many bones for vertex " << vertexID << std::endl;
-					//TODO refactor the weights by keeping the 4 more importants
-					continue;
+					// std::cout << "Too many bones for vertex " << vertexID << std::endl;
+					//refactor the weights by keeping the 4 more importants
+					float wmin = weight;
+					int index_wmin = -1;
+					for (auto i = 0; i < nbBonesPerVertice; i++) {
+						if (bonesWeights[vertexID][i] < wmin) {
+							index_wmin = i;
+							wmin = bonesWeights[vertexID][i];
+						}
+					}
+
+					if (index_wmin > 0) {
+						// IF the least important weight is the new one => discard
+						// ELSE replace the least important with the new one
+						bonesWeights[vertexID][index_wmin] = weight;
+						bonesID[vertexID][index_wmin] = boneID;
+					}
+
+					// and refactor the remaining ones (sum of the existing <=> 1.0)
+					float sum = 0;
+					for (auto i = 0; i < nbBonesPerVertice; i++) {
+						sum += bonesWeights[vertexID][i];
+					}
+					for (auto i = 0; i < nbBonesPerVertice; i++) {
+						bonesWeights[vertexID][i] = bonesWeights[vertexID][i] * 1.0 / sum;
+					}
+				}
+				else {
+					// add the weight to the list
+					bonesWeights[vertexID][nbBonesPerVertice] = weight;
+					bonesID[vertexID][nbBonesPerVertice] = boneID;
+
+					nbBonesPerVertices[vertexID]++;
 				}
 
-				bonesWeights[vertexID][nbBonesPerVertice] = weight;
-				bonesID[vertexID][nbBonesPerVertice] = boneID;
-
-				nbBonesPerVertices[vertexID]++;
 			}
 
 			glm::mat4 offset = aiMatrix4x4ToGlm(aib->mOffsetMatrix);
