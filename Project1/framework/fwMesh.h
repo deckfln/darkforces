@@ -19,6 +19,7 @@ class fwMesh: public fwObject3D
 	bool normalHelper = false;
 	bool m_transparent = false;
 	void *m_pExtra = nullptr;
+	std::list <fwUniform*> m_uniforms;	// meshes can have dedicated uniforms (not included in the material)
 
 protected:
 	fwGeometry *geometry = nullptr;
@@ -29,6 +30,9 @@ protected:
 public:
 	fwMesh();
 	fwMesh(fwGeometry *_geometry, fwMaterial *_material);
+
+	fwMesh& addUniform(fwUniform* uniform);
+	void set_uniforms(glProgram* program);
 
 	std::string getMaterialHash(void);
 	fwMaterial *get_material(void);

@@ -7,9 +7,15 @@ layout (location = 2) in vec2 aTexCoord;
 layout (location = 3) in vec3 aNormal;
 
 #ifdef INSTANCED
-layout (location = 4) in mat4 model;
+	layout (location = 4) in mat4 model;
 #else
-uniform mat4 model;
+	uniform mat4 model;
+#endif
+
+#ifdef SKINNED
+	layout (location = 5) in ivec4 bonesID;
+	layout (location = 6) in vec4 bonesWeight;
+	uniform mat4 gBones[64];
 #endif
 
 out vec3 ourColor;
@@ -18,7 +24,7 @@ out vec3 normal;
 out vec3 world;
 
 #ifdef NORMALMAP
-	layout (location = 5) in vec3 tangent;
+	layout (location = 7) in vec3 tangent;
 	out mat3 tbn;
 
 	void computeTBN(mat3 normalMatrix, vec3 normal, vec3 tangent)
@@ -52,12 +58,25 @@ out vec3 world;
 
 void main()
 {
-	world = vec3(model * vec4(aPos, 1.0));
-    normal = mat3(transpose(inverse(model))) * aNormal;  
+	mat4 transform;
+
+#ifdef SKINNED
+    mat4 BoneTransform = gBones[bonesID[0]] * bonesWeight[0];
+    BoneTransform += gBones[bonesID[1]] * bonesWeight[1];
+    BoneTransform += gBones[bonesID[2]] * bonesWeight[2];
+    BoneTransform += gBones[bonesID[3]] * bonesWeight[3];
+
+	transform = BoneTransform * model;
+#else
+	transform = model;
+#endif
+
+	world = vec3(transform * vec4(aPos, 1.0));
+    normal = mat3(transpose(inverse(transform))) * aNormal;  
     TexCoord = aTexCoord;
 
 #ifdef NORMALMAP
-	computeTBN(mat3(transpose(inverse(model))), aNormal, tangent);
+	computeTBN(mat3(transpose(inverse(transform))), aNormal, tangent);
 #endif
 
 #ifdef SHADOWMAP

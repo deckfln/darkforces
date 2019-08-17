@@ -1,6 +1,7 @@
 #include "fwRendererDefered.h"
 
 #include "../fwInstancedMesh.h"
+#include "../mesh/fwMeshSkinned.h"
 #include "../postprocessing/fwPostProcessingDirectLight.h"
 #include "../lights/fwDirectionLight.h"
 #include "../materials/fwMaterialDepth.h"
@@ -73,6 +74,11 @@ void fwRendererDefered::parseChildren(fwObject3D* root,
 			if (mesh->is_class(INSTANCED_MESH)) {
 				local_defines += "#define INSTANCED\n";
 				code += "INSTANCED";
+			}
+
+			if (mesh->is_class(SKINNED_MESH)) {
+				local_defines += "#define SKINNED\n";
+				code += "SKINNED";
 			}
 
 			// Create the shader program if it is not already there

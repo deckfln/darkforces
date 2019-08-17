@@ -30,7 +30,7 @@ Loader::Loader(const std::string _file):
 	file(_file)
 {
 	Assimp::Importer import;
-	const aiScene *scene = import.ReadFile(file, aiProcess_Triangulate | aiProcess_FlipUVs);
+	const aiScene *scene = import.ReadFile(file, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_JoinIdenticalVertices);
 
 	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
 	{
@@ -49,7 +49,7 @@ Loader::Loader(const std::string _file):
 
 fwBoneInfo* Loader::processNode(aiNode *node, fwBoneInfo *parent, const aiScene *scene, int level)
 {
-	std::cout << std::string(level, '*') << " " << node->mName.data << " " << node->mNumMeshes << std::endl;
+	// std::cout << std::string(level, '*') << " " << node->mName.data << " " << node->mNumMeshes << std::endl;
 
 	// process all the node's meshes (if any)
 	for (unsigned int i = 0; i < node->mNumMeshes; i++)
@@ -58,7 +58,8 @@ fwBoneInfo* Loader::processNode(aiNode *node, fwBoneInfo *parent, const aiScene 
 		meshes.push_back( processMesh(mesh, scene));
 	}
 
-	fwBoneInfo *bone = new fwBoneInfo(node->mName.data, aiMatrix4x4ToGlm(node->mTransformation));
+	glm::mat4 transform = aiMatrix4x4ToGlm(node->mTransformation);
+	fwBoneInfo *bone = new fwBoneInfo(node->mName.data, transform);
 	m_bones[node->mName.data] = bone;
 
 	// then do the same for each of its children
@@ -164,12 +165,12 @@ fwMesh *Loader::processMesh(aiMesh *mesh, const aiScene *scene)
 	/*
 	 * build a skinned mesh
 	 */
-	fwMeshSkinned *fwmesh = new fwMeshSkinned(geometry, material);
 	int vertices = mesh->mNumVertices;
 
-	glm::ivec4* bonesID = new glm::ivec4[vertices];
-	glm::vec4* bonesWeights = new glm::vec4[vertices];
+	glm::ivec4* bonesID = new glm::ivec4[vertices]();	// init with 0
+	glm::vec4* bonesWeights = new glm::vec4[vertices](); // init with 0
 	unsigned short* nbBonesPerVertices = new unsigned short[vertices]();	// initialize to ZERO : https://stackoverflow.com/questions/2204176/how-to-initialise-memory-with-new-operator-in-c
+
 	std::list <std::string> boneNames;
 
 	fwBoneInfo* bone = nullptr;
@@ -189,8 +190,9 @@ fwMesh *Loader::processMesh(aiMesh *mesh, const aiScene *scene)
 				unsigned short nbBonesPerVertice = nbBonesPerVertices[vertexID];
 
 				if (nbBonesPerVertice > 3) {
-					std::cout << "Too many bones for vertex" << std::endl;
-					break;
+					std::cout << "Too many bones for vertex " << vertexID << std::endl;
+					//TODO refactor the weights by keeping the 4 more importants
+					continue;
 				}
 
 				bonesWeights[vertexID][nbBonesPerVertice] = weight;
@@ -199,16 +201,22 @@ fwMesh *Loader::processMesh(aiMesh *mesh, const aiScene *scene)
 				nbBonesPerVertices[vertexID]++;
 			}
 
-			bone->setOffset(aiMatrix4x4ToGlm(aib->mOffsetMatrix));
+			glm::mat4 offset = aiMatrix4x4ToGlm(aib->mOffsetMatrix);
+			bone->offset(offset);
+		}
+		else {
+			std::cout << "Loader::processMesh " << aib->mName.data << " unknown" << std::endl;
 		}
 	}
 
 	// find root of the skeleton: the upper name that is also present in the list of bones
 	fwBoneInfo *root = bone->getRoot(boneNames);
 
-	fwmesh->bonesID(bonesID);
-	fwmesh->bonesWeights(bonesWeights);
-	fwmesh->skeleton(root);
+	geometry->addAttribute("bonesID", GL_ARRAY_BUFFER, bonesID, 4, vertices * sizeof(glm::vec4), sizeof(unsigned int), true);
+	geometry->addAttribute("bonesWeight", GL_ARRAY_BUFFER, bonesWeights, 4, vertices * sizeof(glm::vec4), sizeof(float), true);
+
+	glm::mat4 globalInverseTransform = inverse(aiMatrix4x4ToGlm(scene->mRootNode->mTransformation));
+	fwMeshSkinned* fwmesh = new fwMeshSkinned(geometry, material, root, globalInverseTransform);
 
 	return fwmesh;
 }

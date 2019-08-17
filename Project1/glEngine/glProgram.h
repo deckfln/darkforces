@@ -6,6 +6,8 @@
 #include "glUniform.h"
 #include "glTexture.h"
 
+extern std::string ShaderRoot;
+
 std::string load_shader_file(const std::string shader_file, std::string defines);
 
 class glProgram
@@ -34,5 +36,6 @@ public:
 	void set_uniform(const std::string name, glm::vec3 &vec3);
 	void set_uniform(const std::string name, glm::vec2 &vec2);
 	void set_uniform(const std::string name, glTexture *);
+	void set_uniform(const std::string name, glm::mat4 *, int size=1);
 	~glProgram();
 };

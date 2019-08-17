@@ -48,6 +48,14 @@ fwUniform::fwUniform(std::string _name, glCubeTexture *t) :
 	type = GL_TEXTURE_CUBE_MAP;
 }
 
+fwUniform::fwUniform(std::string _name, glm::mat4* t, int size) :
+	name(_name),
+	data(t),
+	m_size(size),
+	type(GL_FLOAT_MAT4)
+{
+}
+
 void *fwUniform::get_value(void)
 {
 	return data;
@@ -75,6 +83,9 @@ void fwUniform::set_uniform(glProgram *program)
 		break;
 	case GL_TEXTURE_CUBE_MAP:
 		program->set_uniform(name, ((glCubeTexture *)data)->get_textureUnit());
+		break;
+	case GL_FLOAT_MAT4:
+		program->set_uniform(name, (glm::mat4 *)data, m_size);
 		break;
 	}
 }

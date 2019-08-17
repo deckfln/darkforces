@@ -13,6 +13,8 @@
 #include "../List.h"
 #include "../glad/glad.h"
 
+std::string ShaderRoot = "c:/dev/project1/project1/";
+
 List Shaders;
 
 std::string load_shader_file(const std::string shader_file, std::string defines)
@@ -26,7 +28,7 @@ std::string load_shader_file(const std::string shader_file, std::string defines)
 	try
 	{
 		// open files
-		file.open("c:/dev/project1/project1/"+shader_file);
+		file.open(ShaderRoot + shader_file);
 		std::stringstream vShaderStream;
 		// read file's buffer contents into streams
 		vShaderStream << file.rdbuf();
@@ -242,6 +244,13 @@ void glProgram::set_uniform(const std::string name, glm::vec2 &vec2)
 	glUniform *uniform = get_uniform(name);
 	if (uniform)
 		uniform->set_value(vec2);
+}
+
+void glProgram::set_uniform(const std::string name, glm::mat4 *mat4, int size)
+{
+	glUniform* uniform = get_uniform(name);
+	if (uniform)
+		uniform->set_value(mat4, size);
 }
 
 void glProgram::set_uniform(const std::string name, glTexture *texture)

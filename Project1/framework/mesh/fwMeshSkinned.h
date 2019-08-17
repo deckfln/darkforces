@@ -3,8 +3,10 @@
 #include <map>
 
 #include "../fwMesh.h"
-#include "..//fwBoneInfo.h"
-#include "..//fwAnimation.h"
+#include "../fwBoneInfo.h"
+#include "../fwAnimation.h"
+
+constexpr auto SKINNED_MESH = 2;
 
 class fwMeshSkinned : public fwMesh
 {
@@ -14,12 +16,15 @@ class fwMeshSkinned : public fwMesh
 	std::map <const std::string, unsigned int> m_bonesIndex;
 	fwBoneInfo* m_skeleton = nullptr;
 	std::map <const std::string, fwAnimation*> m_animations;
+	glm::mat4 *m_bonesTransform = nullptr;
+	void animate(fwBoneInfo* bone, glm::mat4& parent);
+	glm::mat4 m_GlobalInverseTransform = glm::mat4(1.0);
 
 public:
-	fwMeshSkinned(fwGeometry* _geometry, fwMaterial* _material);
+	fwMeshSkinned(fwGeometry* _geometry, fwMaterial* _material, fwBoneInfo *root, glm::mat4 &globalInverseTransform);
 	void bonesIndex(std::map <const std::string, unsigned int> &bonesIndex);
-	void bonesID(glm::ivec4 *);
-	void bonesWeights(glm::vec4 *);
+	void bonesID(glm::ivec4 *, int nb);
+	void bonesWeights(glm::vec4 *, int nb);
 	void addAnimation(const std::string name, fwAnimation* animation);
 	fwBoneInfo* skeleton(void) { return m_skeleton; };
 	fwBoneInfo* skeleton(fwBoneInfo* skeleton) { m_skeleton = skeleton;  return m_skeleton; };

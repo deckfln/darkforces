@@ -10,6 +10,7 @@ class fwUniform
 	std::string name;
 	void *data = nullptr;
 	int type = -1;
+	int m_size = 0;	// if this is an array of value
 
 public:
 	fwUniform();
@@ -19,6 +20,7 @@ public:
 	fwUniform(std::string _name, GLfloat *f);
 	fwUniform(std::string _name, glTexture *y);
 	fwUniform(std::string _name, glCubeTexture *y);
+	fwUniform(std::string _name, glm::mat4* t, int size);
 	void set_uniform(glProgram *);
 	void *get_value(void);
 	void set(void *_data);

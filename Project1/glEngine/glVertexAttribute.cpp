@@ -37,6 +37,13 @@ glVertexAttribute::glVertexAttribute(GLchar *_name, GLsizei _length, GLsizei _si
 		single_size = sizeof(GLfloat);
 		single_nb = 4;
 		break;
+	case GL_INT_VEC4:
+		single_type = GL_INT;
+		single_size = sizeof(GLint);
+		single_nb = 4;
+		break;
+	default:
+		std::cout << "Unkown vertex attribute type " << name << " " << type << std::endl;
 	}
 }
 
@@ -56,7 +63,8 @@ void glVertexAttribute::EnableVertex(glBufferAttribute *vba)
 
 	int divisor = vba->get_divisor();
 
-	if (type == GL_FLOAT_MAT4) {
+	switch (type) {
+	case GL_FLOAT_MAT4:
 		for (int i = 0; i < 4; i++) {
 			glVertexAttribPointer(location + i, single_nb, single_type, GL_FALSE, sizeof(glm::mat4), (void*)(i * sizeof(glm::vec4)));
 			glEnableVertexAttribArray(location + i);
@@ -64,8 +72,15 @@ void glVertexAttribute::EnableVertex(glBufferAttribute *vba)
 			if (divisor > 0)
 				glVertexAttribDivisor(location + i, divisor);
 		}
-	}
-	else {
+		break;
+	case GL_INT_VEC4:
+		glVertexAttribIPointer(location, single_nb, single_type, 0, (void*)0);
+		glEnableVertexAttribArray(location);
+
+		if (divisor > 0)
+			glVertexAttribDivisor(location, divisor);
+		break;
+	default:
 		glVertexAttribPointer(location, single_nb, single_type, GL_FALSE, 0, (void*)0);
 		glEnableVertexAttribArray(location);
 

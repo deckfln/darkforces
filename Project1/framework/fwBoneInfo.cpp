@@ -2,10 +2,10 @@
 
 #include <algorithm>
 
-fwBoneInfo::fwBoneInfo(std::string name, glm::mat4 transform)
+fwBoneInfo::fwBoneInfo(std::string name, glm::mat4 &transform):
+	m_name(name),
+	m_transform(transform)
 {
-	m_name = name;
-	m_transform = transform;
 }
 
 fwBoneInfo::fwBoneInfo(glm::mat4 offset, float* weights)

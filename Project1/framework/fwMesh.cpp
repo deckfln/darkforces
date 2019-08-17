@@ -65,6 +65,19 @@ fwMesh &fwMesh::draw_wireframe(bool _wireframe)
 	return *this;
 }
 
+fwMesh& fwMesh::addUniform(fwUniform* uniform)
+{
+	m_uniforms.push_front(uniform);
+	return *this;
+}
+
+void fwMesh::set_uniforms(glProgram* program)
+{
+	for (auto uniform : m_uniforms) {
+		uniform->set_uniform(program);
+	}
+}
+
 void fwMesh::draw(glProgram *program)
 {
 	// create one VAO by shader class
@@ -76,6 +89,7 @@ void fwMesh::draw(glProgram *program)
 		vao[id]->unbind();
 	}
 	program->set_uniform("model", m_worldMatrix);
+	this->set_uniforms(program);
 
 	geometry->draw(wireFrame ? GL_LINES : GL_TRIANGLES, vao[id]);
 }
