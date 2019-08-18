@@ -9,10 +9,16 @@ class fwAnimation {
 	std::string m_name;
 	double m_Duration;
 	fwBoneInfo* m_skeleton;
-	std::map<double, fwAnimationKeyframe*> m_keyframes;
+
+	time_t m_startAt = 0;
 
 public:
 	fwAnimation(std::string name, double duration, fwBoneInfo* skeleton);
-	fwAnimationKeyframe* keyframes(double time);
+
+	std::string& name(void) { return m_name; };
+
+	void reset(void);
+	void update(glm::mat4 *target);
+
 	~fwAnimation();
 };

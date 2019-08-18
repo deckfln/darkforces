@@ -1,8 +1,11 @@
 #pragma once
 
 #include <string>
+#include <map>
 #include <list>
 #include <glm/glm.hpp>
+
+#include "fwAnimationKeyframe.h"
 
 class fwBoneInfo
 {
@@ -13,6 +16,7 @@ class fwBoneInfo
 	float* m_pWeights = nullptr;
 	std::list <fwBoneInfo*> m_children;
 	fwBoneInfo* m_parent = nullptr;
+	std::map <time_t, fwAnimationKeyframe*> m_keyframes;
 
 public:
 	fwBoneInfo(std::string name, glm::mat4 &transform);
@@ -30,8 +34,14 @@ public:
 
 	fwBoneInfo* parent(void) { return m_parent; };
 	fwBoneInfo* parent(fwBoneInfo* parent) { m_parent = parent; return parent; };
-	fwBoneInfo* getRoot(std::list<std::string> &);
+
 	std::string& name(void) { return m_name; };
+
+	fwBoneInfo* bone(const std::string name);
+
+	fwAnimationKeyframe* keyframes(time_t time);
+
+	fwBoneInfo* getRoot(std::list<std::string> &);
 	unsigned id(void) { return m_id; };
 	~fwBoneInfo();
 };

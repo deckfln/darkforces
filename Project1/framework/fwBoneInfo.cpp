@@ -37,6 +37,39 @@ fwBoneInfo* fwBoneInfo::getRoot(std::list<std::string> &names)
 	return nullptr;
 }
 
+/*
+ * find the children whose name is name
+ */
+fwBoneInfo* fwBoneInfo::bone(const std::string name)
+{
+	if (m_name == name) {
+		return this;
+	}
+
+	fwBoneInfo* ret = nullptr;
+	for (auto child : m_children) {
+		ret = bone(name);
+		if (ret) {
+			return ret;
+		}
+	}
+
+	return nullptr;
+}
+
+/*
+ * find or allocate a keyframe
+ */
+fwAnimationKeyframe* fwBoneInfo::keyframes(time_t time)
+{
+	fwAnimationKeyframe* keyframe = m_keyframes[time];
+	if (keyframe == nullptr) {
+		keyframe = m_keyframes[time] = new fwAnimationKeyframe(time);
+	}
+
+	return keyframe;
+}
+
 fwBoneInfo::~fwBoneInfo()
 {
 	delete m_pWeights;

@@ -42,7 +42,12 @@ Loader::Loader(const std::string _file):
 	fwBoneInfo *m_root = processNode(scene->mRootNode, nullptr, scene, 0);
 
 	for (unsigned int i = 0; i < scene->mNumAnimations; i++) {
-		processAnimation(scene->mAnimations[i], m_root);
+		fwAnimation *sceneAnimation = processAnimation(scene->mAnimations[i], m_root);
+
+		for (auto mesh : meshes) {
+			// extract the mesh specific animation from the scene animation
+			((fwMeshSkinned*)mesh)->addAnimation(sceneAnimation);
+		}
 	}
 
 }
@@ -159,6 +164,7 @@ fwMesh *Loader::processMesh(aiMesh *mesh, const aiScene *scene)
 	if (mesh->mNumBones == 0) {
 		fwMesh* fwmesh;
 		fwmesh = new fwMesh(geometry, material);
+		fwmesh->set_name(mesh->mName.data);
 		return fwmesh;
 	}
 
@@ -276,47 +282,53 @@ fwAnimation* Loader::processAnimation(aiAnimation* root, fwBoneInfo* skeleton)
 	std::map <double, glm::vec3> positions;
 	std::map <double, glm::vec4> rotations;
 
+	fwBoneInfo* boneInfo = nullptr;
+	fwAnimationKeyframe* keyframe = nullptr;
+	glm::vec3 v3;
+	glm::quat quat;
+
 	for (unsigned int i = 0; i < root->mNumChannels; i++) {
 		aiNodeAnim* node = root->mChannels[i];
 		std::string name(node->mNodeName.data);
 
+		boneInfo = skeleton->bone(name);
+		if (boneInfo == nullptr) {
+			std::cout << "cannot find bone " << name << std::endl;
+			continue;
+		}
+
 		for (unsigned int j = 0; j < node->mNumPositionKeys; j++) {
 			aiVectorKey *key = &node->mPositionKeys[j];
-			double time = key->mTime;
-			fwAnimationKeyframe* keyframe = animation->keyframes(time);
-			fwAnimationBone* boneInfo = keyframe->bone(name);
+			time_t time = key->mTime * 1000;
+			keyframe = boneInfo->keyframes(time);
 
-			if (boneInfo == nullptr) {
-				std::cout << "cannot find bone " << name << std::endl;
-				continue;
-			}
-			boneInfo->translation(glm::vec3(key->mValue.x, key->mValue.y, key->mValue.z));
+			v3.x = key->mValue.x;
+			v3.y = key->mValue.y;
+			v3.z = key->mValue.z;
+			keyframe->translation(v3);
 		}
 
 		for (unsigned int j = 0; j < node->mNumRotationKeys; j++) {
 			aiQuatKey* key = &node->mRotationKeys[j];
-			double time = key->mTime;
-			fwAnimationKeyframe* keyframe = animation->keyframes(time);
-			fwAnimationBone* boneInfo = keyframe->bone(name);
+			time_t time = key->mTime * 1000;
+			keyframe = boneInfo->keyframes(time);
 
-			if (boneInfo == nullptr) {
-				std::cout << "cannot find bone " << name << std::endl;
-				continue;
-			}
-			boneInfo->rotation(glm::vec4(key->mValue.x, key->mValue.y, key->mValue.z, key->mValue.w));
+			quat.x = key->mValue.x;
+			quat.y = key->mValue.y;
+			quat.z = key->mValue.z;
+			quat.w = key->mValue.w;
+			keyframe->rotation(quat);
 		}
 
 		for (unsigned int j = 0; j < node->mNumScalingKeys; j++) {
 			aiVectorKey* key = &node->mScalingKeys[j];
-			double time = key->mTime;
-			fwAnimationKeyframe* keyframe = animation->keyframes(time);
-			fwAnimationBone* boneInfo = keyframe->bone(name);
+			time_t time = key->mTime * 1000;
+			keyframe = boneInfo->keyframes(time);
 
-			if (boneInfo == nullptr) {
-				std::cout << "cannot find bone " << name << std::endl;
-				continue;
-			}
-			boneInfo->scale(glm::vec3(key->mValue.x, key->mValue.y, key->mValue.z));
+			v3.x = key->mValue.x;
+			v3.y = key->mValue.y;
+			v3.z = key->mValue.z;
+			keyframe->scale(v3);
 		}
 	}
 

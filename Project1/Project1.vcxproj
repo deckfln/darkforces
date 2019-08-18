@@ -129,7 +129,6 @@
     <ClCompile Include="framework\camera\fwOrthographicCamera.cpp" />
     <ClCompile Include="framework\controls\fwOrbitControl.cpp" />
     <ClCompile Include="framework\fwAnimation.cpp" />
-    <ClCompile Include="framework\fwAnimationBone.cpp" />
     <ClCompile Include="framework\fwAnimationKeyframe.cpp" />
     <ClCompile Include="framework\fwApp.cpp" />
     <ClCompile Include="framework\fwBoneInfo.cpp" />
@@ -202,7 +201,6 @@
     <ClInclude Include="framework\camera\fwOrthographicCamera.h" />
     <ClInclude Include="framework\controls\fwOrbitControl.h" />
     <ClInclude Include="framework\fwAnimation.h" />
-    <ClInclude Include="framework\fwAnimationBone.h" />
     <ClInclude Include="framework\fwAnimationKeyframe.h" />
     <ClInclude Include="framework\fwApp.h" />
     <ClInclude Include="framework\fwBoneInfo.h" />

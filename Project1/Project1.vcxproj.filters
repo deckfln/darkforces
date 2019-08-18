@@ -222,9 +222,6 @@
     <ClCompile Include="framework\fwAnimation.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="framework\fwAnimationBone.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
     <ClCompile Include="framework\fwAnimationKeyframe.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
@@ -435,9 +432,6 @@
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
     <ClInclude Include="framework\fwAnimation.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="framework\fwAnimationBone.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
     <ClInclude Include="framework\fwAnimationKeyframe.h">
