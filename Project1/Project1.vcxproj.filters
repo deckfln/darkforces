@@ -57,9 +57,6 @@
     <ClCompile Include="glEngine\glVertexAttribute.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="framework\Loader.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
     <ClCompile Include="Reference.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
@@ -219,10 +216,13 @@
     <ClCompile Include="framework\fwBoneInfo.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
+    <ClCompile Include="framework\fwAnimationKeyframe.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
     <ClCompile Include="framework\fwAnimation.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="framework\fwAnimationKeyframe.cpp">
+    <ClCompile Include="framework\Loader.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
   </ItemGroup>
@@ -264,9 +264,6 @@
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
     <ClInclude Include="glEngine\glVertexAttribute.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="framework\Loader.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
     <ClInclude Include="Reference.h">
@@ -431,10 +428,10 @@
     <ClInclude Include="framework\mesh\fwMeshSkinned.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="framework\fwAnimation.h">
+    <ClInclude Include="framework\fwAnimationKeyframe.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="framework\fwAnimationKeyframe.h">
+    <ClInclude Include="framework\fwAnimation.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
   </ItemGroup>

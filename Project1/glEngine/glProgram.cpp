@@ -13,7 +13,7 @@
 #include "../List.h"
 #include "../glad/glad.h"
 
-std::string ShaderRoot = "c:/dev/project1/project1/";
+std::string ShaderRoot = "D:/dev/project1/project1/";
 
 List Shaders;
 

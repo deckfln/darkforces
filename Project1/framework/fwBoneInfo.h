@@ -40,6 +40,7 @@ public:
 	fwBoneInfo* bone(const std::string name);
 
 	fwAnimationKeyframe* keyframes(time_t time);
+	void interpolate(time_t start, time_t end, float inbetween_t, glm::mat4* target, glm::mat4& parent, glm::mat4& GlobalInverseTransform);
 
 	fwBoneInfo* getRoot(std::list<std::string> &);
 	unsigned id(void) { return m_id; };

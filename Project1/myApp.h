@@ -12,6 +12,7 @@
 #include "framework/controls/fwOrbitControl.h"
 #include "framework/fwInstancedMesh.h"
 #include "framework/fwRenderer.h"
+#include "framework/mesh/fwMeshSkinned.h"
 
 class myApp : public fwApp
 {
@@ -23,10 +24,12 @@ class myApp : public fwApp
 	glm::vec4 *white;
 	glm::mat4 m_positions[3];
 	fwInstancedMesh *m_instancedMesh;
+	fwMeshSkinned* m_stormtrooper;
 
 public:
 	myApp(std::string name,  int width, int height);
-	glTexture *draw(fwRenderer *renderer);
+	glTexture *draw(time_t delta, fwRenderer *renderer);
 	void resize(int x, int y);
+	void keypress(void);
 	~myApp();
 };

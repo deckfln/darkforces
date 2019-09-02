@@ -148,9 +148,9 @@
     <ClCompile Include="framework\lights\fwDirectionLight.cpp" />
     <ClCompile Include="framework\lights\fwPointLight.cpp" />
     <ClCompile Include="framework\lights\fwSpotLight.cpp" />
-    <ClCompile Include="framework\Loader.cpp" />
     <ClCompile Include="framework\fwMaterial.cpp" />
     <ClCompile Include="framework\fwMaterialBasic.cpp" />
+    <ClCompile Include="framework\Loader.cpp" />
     <ClCompile Include="framework\materials\fwBloomMaterial.cpp" />
     <ClCompile Include="framework\materials\fwMaterialDepth.cpp" />
     <ClCompile Include="framework\materials\fwMaterialDirectionalLight.cpp" />
@@ -220,7 +220,6 @@
     <ClInclude Include="framework\lights\fwDirectionLight.h" />
     <ClInclude Include="framework\lights\fwPointLight.h" />
     <ClInclude Include="framework\lights\fwSpotLight.h" />
-    <ClInclude Include="framework\Loader.h" />
     <ClInclude Include="framework\fwMaterial.h" />
     <ClInclude Include="framework\fwMaterialBasic.h" />
     <ClInclude Include="framework\materials\fwBloomMaterial.h" />

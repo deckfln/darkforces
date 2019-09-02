@@ -17,6 +17,6 @@ public:
 	void rotation(glm::quat& rotation) {		m_rotation = rotation;	};
 	void scale(glm::vec3& scale) {		m_scale = scale;	};
 
-	void interpolate(fwAnimationKeyframe* next, float delta, glm::mat4* target);
+	glm::mat4 interpolate(fwAnimationKeyframe* next, float delta);
 	~fwAnimationKeyframe();
 };

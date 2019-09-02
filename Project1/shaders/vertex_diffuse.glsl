@@ -66,7 +66,7 @@ void main()
     BoneTransform += gBones[bonesID[2]] * bonesWeight[2];
     BoneTransform += gBones[bonesID[3]] * bonesWeight[3];
 
-	transform = BoneTransform * model;
+	transform = model * BoneTransform;
 #else
 	transform = model;
 #endif

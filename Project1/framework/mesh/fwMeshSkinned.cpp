@@ -27,10 +27,11 @@ void fwMeshSkinned::bonesIndex(std::map <const std::string, unsigned int>& bones
 	m_bonesIndex = bonesIndex;
 }
 
-void fwMeshSkinned::addAnimation(fwAnimation* animation)
+void fwMeshSkinned::addAnimation(fwAnimation* sceneAnimation)
 {
-	// find each keyframe starting at root bone
-	m_animations[animation->name()] = animation->extract(m_skeleton);
+	// find the mesh in the scene animation
+	sceneAnimation->skeleton(m_skeleton);
+	m_animations[sceneAnimation->name()] = sceneAnimation;
 }
 
 /*
@@ -74,23 +75,19 @@ void fwMeshSkinned::stop(void)
 /*
  * run the current animation
  */
-void fwMeshSkinned::update(void)
+void fwMeshSkinned::update(time_t delta)
 {
 	if (m_currentAnimation == nullptr) {
 		// no running animation
 		return;
 	}
 
-	m_currentAnimation->update(m_bonesTransform);
+	m_currentAnimation->update(delta, m_bonesTransform, m_GlobalInverseTransform);
 }
 
 fwMeshSkinned::~fwMeshSkinned()
 {
-	delete m_bonesOffset;
-	delete m_bonesID;
-	delete m_bonesWeights;
-	delete m_bonesTransform;
-	
+
 	for (auto animation : m_animations) {
 		delete animation.second;
 	}

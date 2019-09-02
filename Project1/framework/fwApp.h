@@ -31,7 +31,9 @@ public:
 
 	void run(void);
 	void bindControl(fwOrbitControl *control);
-	virtual glTexture* draw(fwRenderer *renderer) { return nullptr; };
+	virtual glTexture* draw(time_t delta, fwRenderer *renderer) { return nullptr; };
 	virtual void resize(int x, int y) {};
+	virtual void keypress(void) {};
+
 	~fwApp();
 };

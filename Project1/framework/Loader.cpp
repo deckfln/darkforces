@@ -1,5 +1,8 @@
+#include "Loader.h"
+
 #include <iostream>
 
+#include <assimp/Importer.hpp>
 #include <assimp/postprocess.h>
 
 #include <glm/glm.hpp>
@@ -7,7 +10,6 @@
 
 #include "../glEngine/glBufferAttribute.h"
 
-#include "Loader.h"
 #include "fwTexture.h"
 #include "fwGeometry.h"
 #include "fwMaterialDiffuse.h"
@@ -49,7 +51,6 @@ Loader::Loader(const std::string _file):
 			((fwMeshSkinned*)mesh)->addAnimation(sceneAnimation);
 		}
 	}
-
 }
 
 fwBoneInfo* Loader::processNode(aiNode *node, fwBoneInfo *parent, const aiScene *scene, int level)
@@ -74,7 +75,6 @@ fwBoneInfo* Loader::processNode(aiNode *node, fwBoneInfo *parent, const aiScene 
 		bone->addBone(child);
 		child->parent(bone);
 	}
-
 	return bone;
 }
 
@@ -256,7 +256,6 @@ fwMesh *Loader::processMesh(aiMesh *mesh, const aiScene *scene)
 std::vector<fwTexture *> Loader::loadMaterialTextures(aiMaterial *mat, aiTextureType type)
 {
 	std::vector<fwTexture *> textures;
-
 	for (int i = mat->GetTextureCount(type) - 1; i >= 0; i--)
 	{
 		aiString str;
@@ -266,7 +265,6 @@ std::vector<fwTexture *> Loader::loadMaterialTextures(aiMaterial *mat, aiTexture
 
 		textures.push_back(new fwTexture(file));
 	}
-
 	return textures;
 }
 
@@ -277,8 +275,7 @@ std::vector<fwMesh *>Loader::get_meshes(void)
 
 fwAnimation* Loader::processAnimation(aiAnimation* root, fwBoneInfo* skeleton)
 {
-	fwAnimation* animation = new fwAnimation(root->mName.data, root->mDuration, skeleton);
-
+	fwAnimation* animation = new fwAnimation(root->mName.data, root->mDuration * 1000, skeleton);
 	std::map <double, glm::vec3> positions;
 	std::map <double, glm::vec4> rotations;
 
@@ -286,10 +283,12 @@ fwAnimation* Loader::processAnimation(aiAnimation* root, fwBoneInfo* skeleton)
 	fwAnimationKeyframe* keyframe = nullptr;
 	glm::vec3 v3;
 	glm::quat quat;
+	std::map <time_t, bool> keyframes;
 
 	for (unsigned int i = 0; i < root->mNumChannels; i++) {
 		aiNodeAnim* node = root->mChannels[i];
 		std::string name(node->mNodeName.data);
+		time_t time;
 
 		boneInfo = skeleton->bone(name);
 		if (boneInfo == nullptr) {
@@ -299,18 +298,19 @@ fwAnimation* Loader::processAnimation(aiAnimation* root, fwBoneInfo* skeleton)
 
 		for (unsigned int j = 0; j < node->mNumPositionKeys; j++) {
 			aiVectorKey *key = &node->mPositionKeys[j];
-			time_t time = key->mTime * 1000;
+			time = key->mTime * 1000;
 			keyframe = boneInfo->keyframes(time);
 
 			v3.x = key->mValue.x;
 			v3.y = key->mValue.y;
 			v3.z = key->mValue.z;
 			keyframe->translation(v3);
+			keyframes[time] = true;
 		}
 
 		for (unsigned int j = 0; j < node->mNumRotationKeys; j++) {
 			aiQuatKey* key = &node->mRotationKeys[j];
-			time_t time = key->mTime * 1000;
+			time = key->mTime * 1000;
 			keyframe = boneInfo->keyframes(time);
 
 			quat.x = key->mValue.x;
@@ -318,20 +318,23 @@ fwAnimation* Loader::processAnimation(aiAnimation* root, fwBoneInfo* skeleton)
 			quat.z = key->mValue.z;
 			quat.w = key->mValue.w;
 			keyframe->rotation(quat);
+			keyframes[time] = true;
 		}
 
 		for (unsigned int j = 0; j < node->mNumScalingKeys; j++) {
 			aiVectorKey* key = &node->mScalingKeys[j];
-			time_t time = key->mTime * 1000;
+			time = key->mTime * 1000;
 			keyframe = boneInfo->keyframes(time);
 
 			v3.x = key->mValue.x;
 			v3.y = key->mValue.y;
 			v3.z = key->mValue.z;
 			keyframe->scale(v3);
+			keyframes[time] = true;
 		}
 	}
 
+	animation->keyframes(keyframes);
 	return animation;
 }
 

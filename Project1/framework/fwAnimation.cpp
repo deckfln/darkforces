@@ -1,9 +1,10 @@
 #include "fwAnimation.h"
 
-#include <sysinfoapi.h>
+#include <iostream>
+#include <windows.h>
 #include <vector>
 
-fwAnimation::fwAnimation(std::string name, double duration, fwBoneInfo* skeleton) :
+fwAnimation::fwAnimation(std::string name, time_t duration, fwBoneInfo* skeleton) :
 	m_name(name),
 	m_Duration(duration),
 	m_skeleton(skeleton)
@@ -13,39 +14,75 @@ fwAnimation::fwAnimation(std::string name, double duration, fwBoneInfo* skeleton
 
 void fwAnimation::reset(void)
 {
-	m_startAt = GetTickCount64();
+	m_currentTime = 0;
 }
 
-void fwAnimation::update(glm::mat4 *target)
+void fwAnimation::keyframes(std::map<time_t, bool>& keyframes)
 {
-	time_t now = GetTickCount64();
-	time_t delta = m_startAt - now;
+	
+	m_nbKeyframes = keyframes.size();
+	m_keyframes = new time_t[m_nbKeyframes + 1]();
 
-	if (delta > m_Duration) {
-		delta = 0;
-		m_startAt = GetTickCount64();
+	int i = 0;
+	time_t first = -1, last = 0;
+
+	for (auto const& keyframe : keyframes) {
+		if (first < 0) {
+			first = keyframe.first;
+		}
+
+		last = keyframe.first;
+		m_keyframes[i] = last;
+
+		i++;
 	}
+
+	m_keyframes[m_nbKeyframes] = first + last;
+}
+
+void fwAnimation::update(time_t delta, glm::mat4 *target, glm::mat4& GlobalInverseTransform)
+{
+	m_currentTime += delta;
 
 	// find the interval
-	std::vector<time_t> times;
-	for (auto const& keyframe : m_keyframes) {
-		times.push_back(keyframe.first);
-	}
+	glm::mat4 identity(1);
 
-	for (auto i = 0; i < times.size() - 1; i++) {
-		if (delta > times[i] && delta < times[i + 1]) {
-			time_t prev_t = times[i];
-			time_t next_t = times[i + 1];
-			float inbetween_t = (delta - prev_t) * 1.0 / (next_t - prev_t);
+	time_t prev_t = m_keyframes[m_currentFrame];
+	time_t next_t = m_keyframes[m_currentFrame + 1];
 
-			fwAnimationKeyframe* prev = m_keyframes[prev_t];
-			fwAnimationKeyframe* next = m_keyframes[next_t];
+	while (m_currentTime >= next_t) {
+		m_currentFrame++;
 
-			prev->interpolate(next, inbetween_t, target);
+		if (m_currentFrame >= m_nbKeyframes) {
+			m_currentFrame = 0;
+			m_currentTime = 0;
+
+			prev_t = m_keyframes[0];
+			next_t = m_keyframes[1];
 		}
+		else {
+			prev_t = m_keyframes[m_currentFrame];
+			next_t = m_keyframes[m_currentFrame + 1];
+		}
+
+		delta = (m_currentTime - prev_t);
 	}
+
+	float inbetween_t = delta * 1.0 / (next_t - prev_t);
+
+	std::string x = std::to_string(m_currentTime) +" " + std::to_string(delta) + " " + std::to_string(prev_t) + " " + std::to_string(next_t) + " " + std::to_string(inbetween_t) + "\n";
+	debug += x;
+
+	// interpolate the fwAnimationKeyframes
+	if (m_currentFrame + 1 >= m_nbKeyframes) {
+		// wrap the cycle
+		next_t = m_keyframes[0];
+	}
+	m_skeleton->interpolate(prev_t, next_t, inbetween_t, target, identity, GlobalInverseTransform);
 }
 
 fwAnimation::~fwAnimation()
 {
+	std::cout <<debug ;
+	delete m_keyframes;
 }

@@ -35,7 +35,7 @@ public:
 
 	void run(const std::string animation);
 	void stop(void);
-	void update(void);
+	void update(time_t delta);
 
 	~fwMeshSkinned();
 };

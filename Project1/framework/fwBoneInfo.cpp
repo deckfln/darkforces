@@ -48,7 +48,7 @@ fwBoneInfo* fwBoneInfo::bone(const std::string name)
 
 	fwBoneInfo* ret = nullptr;
 	for (auto child : m_children) {
-		ret = bone(name);
+		ret = child->bone(name);
 		if (ret) {
 			return ret;
 		}
@@ -68,6 +68,22 @@ fwAnimationKeyframe* fwBoneInfo::keyframes(time_t time)
 	}
 
 	return keyframe;
+}
+
+/*
+ *
+ */
+void fwBoneInfo::interpolate(time_t start, time_t end, float inbetween_t, glm::mat4* target, glm::mat4 &parent, glm::mat4 &GlobalInverseTransform)
+{
+	fwAnimationKeyframe* pStart = m_keyframes[start];
+	fwAnimationKeyframe* pEnd = m_keyframes[end];
+
+	glm::mat4 globalTransform = parent * pStart->interpolate(pEnd, inbetween_t);
+	target[m_id] = GlobalInverseTransform * globalTransform * m_offset;
+
+	for (auto child : m_children) {
+		child->interpolate(start, end, inbetween_t, target, globalTransform, GlobalInverseTransform);
+	}
 }
 
 fwBoneInfo::~fwBoneInfo()

@@ -96,6 +96,9 @@ void fwApp::processInput(GLFWwindow *window)
 {
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, true);
+
+	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
+		this->keypress();
 }
 
 void fwApp::resizeEvent(int _width, int _height)
@@ -142,13 +145,24 @@ void fwApp::run(void)
 
 	glEnable(GL_DEPTH_TEST);
 
-	double current = GetTickCount64();
+	time_t current = GetTickCount64();
 	time_t start = GetTickCount64();
+	time_t next = current + 33;
+	time_t elapsed = 0;
+	time_t wait = 0;
+	time_t now;
+	time_t time_budget = 33;
+	time_t last_frame_time = 33;
+
+	std::string s;
+
 	int fps = 0;
 
 	while (!glfwWindowShouldClose(window))
 	{
-		if (GetTickCount64() - start > 30000) {
+		current = GetTickCount64();
+
+		if (current - start > 300000) {
 			break;
 		}
 		fps++;
@@ -162,10 +176,9 @@ void fwApp::run(void)
 		//glFrontFace(GL_CCW);
 
 		// 2nd pass : render to color buffer
-		double delta = GetTickCount64() - current;
 		renderer->start();
 
-		glTexture *color = draw(renderer);
+		glTexture *color = draw(last_frame_time, renderer);
 		
 		renderer->stop();
 
@@ -178,14 +191,27 @@ void fwApp::run(void)
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 
-		double next = current + 33.33333;
-		delta = next - GetTickCount64();
-		if (delta > 0)
-			Sleep(delta);
-		current = next;
+		now = GetTickCount64();
+		elapsed = now - current;
+
+		if (elapsed < time_budget) {
+			wait = time_budget - elapsed;
+			Sleep(wait);
+			last_frame_time = time_budget;
+			time_budget = 33;
+			next = current + time_budget;
+			// s += "short " + std::to_string(elapsed) + " " + std::to_string(wait) + " " + std::to_string(current)  +">>"+ std::to_string(now) +">>"+ std::to_string(next) + "\n";
+		}
+		else {
+			time_budget = 33 * ((elapsed / 33) + 1);
+			next = current + time_budget;
+			time_budget = next - now;
+			last_frame_time = elapsed;
+			//s += "long " + std::to_string(elapsed) + " " + std::to_string(time_budget) + " " + std::to_string(current) + ">>" + std::to_string(now) + ">>" + std::to_string(next) + "\n";
+		}
 	}
 
-	std::cout << fps << std::endl;
+	std::cout << s << std::endl;
 }
 
 /***

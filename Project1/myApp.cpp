@@ -16,7 +16,7 @@
 
 #include "framework/Loader.h"
 
-const std::string root = "c:/dev/project1/project1/";
+const std::string root = "D:/dev/project1/project1/";
 
 myApp::myApp(std::string name, int width, int height) :
 	fwApp(name, width, height, "shaders/gamma", "#define GAMMA_CORRECTION 1\n")
@@ -108,7 +108,12 @@ myApp::myApp(std::string name, int width, int height) :
 
 	// model
 	Loader* loader = new Loader(root+"models/stormtrooper/stormtrooper.dae");
-	fwMesh* stormtrooper = loader->get_meshes()[0];
+	m_stormtrooper = (fwMeshSkinned *)loader->get_meshes()[0];
+	glm::vec3 rot(-pi / 2, 0, 0);
+	m_stormtrooper->rotate(rot);
+	glm::vec3 v(-2, 0, 0);
+	m_stormtrooper->translate(v);
+	m_stormtrooper->run("");
 
 	// sprite
 	glm::vec3 *sprites = new glm::vec3 [4];
@@ -142,7 +147,7 @@ myApp::myApp(std::string name, int width, int height) :
 		addChild(m_instancedMesh).
 		addChild(window).
 		addChild(sprite).
-		addChild(stormtrooper);
+		addChild(m_stormtrooper);
 	m_scene->background(m_skybox);
 }
 
@@ -151,7 +156,7 @@ void myApp::resize(int width, int height)
 	m_camera->set_ratio(width, height);
 }
 
-glTexture *myApp::draw(fwRenderer *renderer)
+glTexture *myApp::draw(time_t delta, fwRenderer *renderer)
 {
 	m_positions[0] = glm::translate(glm::vec3(1, sin(glfwGetTime() / 2) * 2, 0));
 	m_instancedMesh->update_position(0, 1);
@@ -163,8 +168,13 @@ glTexture *myApp::draw(fwRenderer *renderer)
 	lightPos.y = 4;
 	lightPos.z = cos(glfwGetTime() / 2) * radius;
 	m_light->translate(lightPos);
+	m_stormtrooper->update(delta);
 
 	return renderer->draw (m_camera, m_scene);
+}
+
+void myApp::keypress()
+{
 }
 
 myApp::~myApp()
@@ -176,4 +186,5 @@ myApp::~myApp()
 	delete m_scene;
 	delete white;
 	delete m_instancedMesh;
+	delete m_stormtrooper;
 }
