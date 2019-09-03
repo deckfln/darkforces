@@ -9,7 +9,7 @@
 
 class fwBoneInfo
 {
-	unsigned m_id = -1;
+	int m_id = -1;		// Position of the bone in the bonesTraform matrix: -1 => not present
 	std::string m_name;
 	glm::mat4 m_offset = glm::mat4(1);			// Offset in the skeleton
 	glm::mat4 m_transform = glm::mat4(1);		// T-POSE

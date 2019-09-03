@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <glm/gtc/matrix_transform.hpp> 
+#include <glm/gtc/quaternion.hpp>
 #include <glm/gtx/transform.hpp>
 
 fwAnimationKeyframe::fwAnimationKeyframe(time_t time) :

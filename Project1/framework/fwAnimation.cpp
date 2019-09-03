@@ -40,9 +40,9 @@ void fwAnimation::keyframes(std::map<time_t, bool>& keyframes)
 	m_keyframes[m_nbKeyframes] = first + last;
 }
 
-void fwAnimation::update(time_t delta, glm::mat4 *target, glm::mat4& GlobalInverseTransform)
+void fwAnimation::update(time_t elapsed, glm::mat4 *target, glm::mat4& GlobalInverseTransform)
 {
-	m_currentTime += delta;
+	m_currentTime += elapsed;
 
 	// find the interval
 	glm::mat4 identity(1);
@@ -64,15 +64,14 @@ void fwAnimation::update(time_t delta, glm::mat4 *target, glm::mat4& GlobalInver
 			prev_t = m_keyframes[m_currentFrame];
 			next_t = m_keyframes[m_currentFrame + 1];
 		}
-
-		delta = (m_currentTime - prev_t);
 	}
 
+	time_t delta = (m_currentTime - prev_t);
 	float inbetween_t = delta * 1.0 / (next_t - prev_t);
-
-	std::string x = std::to_string(m_currentTime) +" " + std::to_string(delta) + " " + std::to_string(prev_t) + " " + std::to_string(next_t) + " " + std::to_string(inbetween_t) + "\n";
+	/*
+	std::string x = std::to_string(elapsed) + " " + std::to_string(m_currentTime) +" " + std::to_string(delta) + " " + std::to_string(prev_t) + " " + std::to_string(next_t) + " " + std::to_string(inbetween_t) + "\n";
 	debug += x;
-
+	*/
 	// interpolate the fwAnimationKeyframes
 	if (m_currentFrame + 1 >= m_nbKeyframes) {
 		// wrap the cycle
@@ -83,6 +82,9 @@ void fwAnimation::update(time_t delta, glm::mat4 *target, glm::mat4& GlobalInver
 
 fwAnimation::~fwAnimation()
 {
+	/*
 	std::cout <<debug ;
+	*/
+	std::cout << "fwanimation:~fwAnimation" << std::endl;
 	delete m_keyframes;
 }

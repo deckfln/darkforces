@@ -43,6 +43,8 @@ void fwMeshSkinned::t_pose(fwBoneInfo* bone, glm::mat4& parent)
 	// std::cout << bone->name() << " " << id << std::endl;
 	glm::mat4 globalTransform = parent * bone->transform();
 	if (id >= 0) {
+		// id == -1 => the bone is not present in the bonesTrasform matrix
+		assert(id < 64);
 		m_bonesTransform[id] = m_GlobalInverseTransform * globalTransform * bone->offset();
 	}
 
@@ -87,8 +89,11 @@ void fwMeshSkinned::update(time_t delta)
 
 fwMeshSkinned::~fwMeshSkinned()
 {
-
 	for (auto animation : m_animations) {
 		delete animation.second;
 	}
+
+	delete m_bonesTransform;
+
+	delete m_skeleton;
 }

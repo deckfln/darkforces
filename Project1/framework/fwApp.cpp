@@ -165,7 +165,11 @@ void fwApp::run(void)
 		if (current - start > 300000) {
 			break;
 		}
+
 		fps++;
+		if ((fps % 3) == 0) {
+			time_budget++;	// compensate for the 33.33333ms that we round to 33ms
+		}
 
 		// input
 		// -----
@@ -219,11 +223,17 @@ void fwApp::run(void)
  */
 fwApp::~fwApp()
 {
+	std::cout << "fwApp:~fwApp: renderer" << std::endl;
 	delete renderer;
+
+	std::cout << "fwApp:~fwApp: postprocessing" << std::endl;
 	delete postProcessing;
+
+	std::cout << "fwApp:~fwApp: source" << std::endl;
 	delete source;
 
 	// glfw: terminate, clearing all previously allocated GLFW resources.
 	// ------------------------------------------------------------------
+	std::cout << "fwApp:~fwApp: terminate" << std::endl;
 	glfwTerminate();
 }

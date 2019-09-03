@@ -156,6 +156,48 @@ void myApp::resize(int width, int height)
 	m_camera->set_ratio(width, height);
 }
 
+static time_t progress[] = {
+33,
+		62,
+		4,
+		33,
+	33,
+	33,
+	33,
+	33,
+	33,
+	33,
+	33,
+	33,
+	33,
+	33,
+	33,
+	33,
+	33,
+	33,
+	33,
+	33,
+	33,
+	33,
+	33,
+	33,
+	33,
+	33,
+	33,
+	33,
+	33,
+	33,
+	33,
+	33,
+	33,
+	33,
+	33,
+	33,
+	33
+};
+static int pFrame = 0;
+static int current = 0;
+
 glTexture *myApp::draw(time_t delta, fwRenderer *renderer)
 {
 	m_positions[0] = glm::translate(glm::vec3(1, sin(glfwGetTime() / 2) * 2, 0));
@@ -168,6 +210,15 @@ glTexture *myApp::draw(time_t delta, fwRenderer *renderer)
 	lightPos.y = 4;
 	lightPos.z = cos(glfwGetTime() / 2) * radius;
 	m_light->translate(lightPos);
+	/*
+	if (++current == 5) {
+		if (pFrame == 22) {
+			std::cout << pFrame << std::endl;
+		}
+		m_stormtrooper->update(progress[pFrame++]);
+		current = 0;
+	}
+	*/
 	m_stormtrooper->update(delta);
 
 	return renderer->draw (m_camera, m_scene);
@@ -179,12 +230,27 @@ void myApp::keypress()
 
 myApp::~myApp()
 {
+	std::cout << "myApp:~myApp: camera" << std::endl;
 	delete m_camera;
+
+	std::cout << "myApp:~myApp: lights" << std::endl;
 	delete m_light;
+
+	std::cout << "myApp:~myApp: skybox" << std::endl;
 	delete m_skybox;
+
+	std::cout << "myApp:~myApp: control" << std::endl;
 	delete m_control;
+
+	std::cout << "myApp:~myApp: scene" << std::endl;
 	delete m_scene;
+
+	std::cout << "myApp:~myApp: white" << std::endl;
 	delete white;
+
+	std::cout << "myApp:~myApp: instancedMesh" << std::endl;
 	delete m_instancedMesh;
+
+	std::cout << "myApp:~myApp: stormtrooper" << std::endl;
 	delete m_stormtrooper;
 }

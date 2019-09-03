@@ -1,6 +1,7 @@
 #include "fwBoneInfo.h"
 
 #include <algorithm>
+#include <iostream>
 
 fwBoneInfo::fwBoneInfo(std::string name, glm::mat4 &transform):
 	m_name(name),
@@ -79,7 +80,12 @@ void fwBoneInfo::interpolate(time_t start, time_t end, float inbetween_t, glm::m
 	fwAnimationKeyframe* pEnd = m_keyframes[end];
 
 	glm::mat4 globalTransform = parent * pStart->interpolate(pEnd, inbetween_t);
-	target[m_id] = GlobalInverseTransform * globalTransform * m_offset;
+
+	if (m_id >= 0) {
+		//m_id == -1 => the bone is nor present in the bonesTransform matrix
+		assert(m_id < 64);
+		target[m_id] = GlobalInverseTransform * globalTransform * m_offset;
+	}
 
 	for (auto child : m_children) {
 		child->interpolate(start, end, inbetween_t, target, globalTransform, GlobalInverseTransform);
@@ -88,5 +94,10 @@ void fwBoneInfo::interpolate(time_t start, time_t end, float inbetween_t, glm::m
 
 fwBoneInfo::~fwBoneInfo()
 {
+	std::cout << "fwBoneInfo:~fwBoneInfo" << std::endl;
+
+	for (auto child : m_children) {
+		delete child;
+	}
 	delete m_pWeights;
 }
