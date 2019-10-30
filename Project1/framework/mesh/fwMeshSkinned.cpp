@@ -60,6 +60,10 @@ void fwMeshSkinned::t_pose(fwBoneInfo* bone, glm::mat4& parent)
 void fwMeshSkinned::run(const std::string animation)
 {
 	m_currentAnimation = m_animations[animation];
+	if (m_currentAnimation == nullptr) {
+		std::cout << "fwMeshSkinned::run animation *" << animation << "* missing" << std::endl;
+		exit(-1);
+	}
 	m_currentAnimation->reset();
 }
 
