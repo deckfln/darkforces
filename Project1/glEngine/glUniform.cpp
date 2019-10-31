@@ -106,7 +106,12 @@ void glUniform::set_value(GLint id)
 		exit(-1);
 	}
 
-	glUniform1i(location, id);
+	GLint* lcache = (GLint*)&cache;
+
+	if (id != lcache[0]) {
+		glUniform1i(location, id);
+		lcache[0] = id;
+	}
 }
 
 void glUniform::set_value(GLfloat f)

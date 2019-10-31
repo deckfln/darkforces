@@ -16,7 +16,7 @@
 
 #include "framework/Loader.h"
 
-const std::string root = "D:/dev/project1/project1/";
+const std::string root = "c:/dev/project1/project1/";
 
 myApp::myApp(std::string name, int width, int height) :
 	fwApp(name, width, height, "shaders/gamma", "#define GAMMA_CORRECTION 1\n")

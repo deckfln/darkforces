@@ -6,6 +6,7 @@
 
 int glTexture::currentTextureUnit = 0;
 static std::stack<int> stack;
+static int textureUnitBinding[16] = {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1};
 
 glTexture::glTexture()
 {
@@ -103,8 +104,13 @@ GLint glTexture::bind(void)
 {
 	textureUnit = currentTextureUnit;
 
-	glActiveTexture(GL_TEXTURE0 + currentTextureUnit);
-	glBindTexture(GL_TEXTURE_2D, id);
+	if (textureUnitBinding[textureUnit] != id) {
+		glActiveTexture(GL_TEXTURE0 + textureUnit);
+		glBindTexture(GL_TEXTURE_2D, id);
+	}
+	else {
+		textureUnit = -1;	// texture is already bound, inform upstream
+	}
 	currentTextureUnit++;
 
 	return textureUnit;

@@ -18,6 +18,8 @@ class glUniform
 	GLuint single_size;
 	GLuint single_nb;
 
+	glm::mat4 cache;	// allocate maximum memory to store any sort of uniform
+
 public:
 	glUniform();
 	glUniform(GLchar *name, GLsizei length, GLsizei size, GLenum type, GLint location);

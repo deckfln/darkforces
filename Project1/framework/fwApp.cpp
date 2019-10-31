@@ -6,6 +6,8 @@
 #include "render/fwRendererForward.h"
 #include "render/fwRendererDefered.h"
 
+const int caped_fps = FALSE;
+
 // settings
 unsigned int SCR_WIDTH = 800;
 unsigned int SCR_HEIGHT = 600;
@@ -162,7 +164,7 @@ void fwApp::run(void)
 	{
 		current = GetTickCount64();
 
-		if (current - start > 300000) {
+		if (current - start > 30000) {
 			break;
 		}
 
@@ -195,27 +197,29 @@ void fwApp::run(void)
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 
-		now = GetTickCount64();
-		elapsed = now - current;
+		if (caped_fps) {
+			now = GetTickCount64();
+			elapsed = now - current;
 
-		if (elapsed < time_budget) {
-			wait = time_budget - elapsed;
-			Sleep(wait);
-			last_frame_time = time_budget;
-			time_budget = 33;
-			next = current + time_budget;
-			// s += "short " + std::to_string(elapsed) + " " + std::to_string(wait) + " " + std::to_string(current)  +">>"+ std::to_string(now) +">>"+ std::to_string(next) + "\n";
-		}
-		else {
-			time_budget = 33 * ((elapsed / 33) + 1);
-			next = current + time_budget;
-			time_budget = next - now;
-			last_frame_time = elapsed;
-			//s += "long " + std::to_string(elapsed) + " " + std::to_string(time_budget) + " " + std::to_string(current) + ">>" + std::to_string(now) + ">>" + std::to_string(next) + "\n";
+			if (elapsed < time_budget) {
+				wait = time_budget - elapsed;
+				Sleep(wait);
+				last_frame_time = time_budget;
+				time_budget = 33;
+				next = current + time_budget;
+				// s += "short " + std::to_string(elapsed) + " " + std::to_string(wait) + " " + std::to_string(current)  +">>"+ std::to_string(now) +">>"+ std::to_string(next) + "\n";
+			}
+			else {
+				time_budget = 33 * ((elapsed / 33) + 1);
+				next = current + time_budget;
+				time_budget = next - now;
+				last_frame_time = elapsed;
+				//s += "long " + std::to_string(elapsed) + " " + std::to_string(time_budget) + " " + std::to_string(current) + ">>" + std::to_string(now) + ">>" + std::to_string(next) + "\n";
+			}
 		}
 	}
 
-	std::cout << s << std::endl;
+	std::cout << "Frames " << fps << std::endl;
 }
 
 /***

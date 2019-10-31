@@ -13,7 +13,7 @@
 #include "../List.h"
 #include "../glad/glad.h"
 
-std::string ShaderRoot = "D:/dev/project1/project1/";
+std::string ShaderRoot = "c:/dev/project1/project1/";
 
 List Shaders;
 
@@ -39,7 +39,7 @@ std::string load_shader_file(const std::string shader_file, std::string defines)
 	}
 	catch (std::ifstream::failure e)
 	{
-		std::cout << "ERROR::SHADER " << shader_file << " ::FILE_NOT_SUCCESFULLY_READ" << std::endl;
+		std::cout << "glProgram::load_shader_file " << shader_file << " ::FILE_NOT_SUCCESFULLY_READ" << std::endl;
 		exit(-1);
 	}
 
@@ -259,7 +259,10 @@ void glProgram::set_uniform(const std::string name, glTexture *texture)
 	if (uniform) {
 		int id = texture->bind();
 		// std::cout << "glProgram::set_uniform " << name.c_str() << " : " << id << std::endl;
-		uniform->set_value(id);
+		if (id != -1) {
+			// texture was not yet bound to texture unit, need to upload to the uniform
+			uniform->set_value(id);
+		}
 	}
 }
 
