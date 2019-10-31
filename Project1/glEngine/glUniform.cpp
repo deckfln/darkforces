@@ -121,7 +121,12 @@ void glUniform::set_value(GLfloat f)
 		exit(-1);
 	}
 
-	glUniform1f(location, f);
+	GLfloat* lcache = (GLfloat*)&cache;
+
+	if (f != lcache[0]) {
+		glUniform1f(location, f);
+		lcache[0] = f;
+	}
 }
 
 void glUniform::set_value(GLfloat r, GLfloat g, GLfloat b)
@@ -151,7 +156,12 @@ void glUniform::set_value(glm::vec4 &vec4)
 		exit(-1);
 	}
 
-	glUniform4fv(location, 1, glm::value_ptr(vec4));
+	glm::vec4* lcache = (glm::vec4*)&cache;
+
+	if (vec4 != lcache[0]) {
+		glUniform4fv(location, 1, glm::value_ptr(vec4));
+		lcache[0] = vec4;
+	}
 }
 
 void glUniform::set_value(glm::vec3 &vec3)
@@ -161,7 +171,12 @@ void glUniform::set_value(glm::vec3 &vec3)
 		exit(-1);
 	}
 
-	glUniform3fv(location, 1, glm::value_ptr(vec3));
+	glm::vec3* lcache = (glm::vec3*) & cache;
+
+	if (vec3 != lcache[0]) {
+		glUniform3fv(location, 1, glm::value_ptr(vec3));
+		lcache[0] = vec3;
+	}
 }
 
 void glUniform::set_value(glm::vec2 &vec2)
@@ -171,7 +186,12 @@ void glUniform::set_value(glm::vec2 &vec2)
 		exit(-1);
 	}
 
-	glUniform2fv(location, 1, glm::value_ptr(vec2));
+	glm::vec2* lcache = (glm::vec2*) & cache;
+
+	if (vec2 != lcache[0]) {
+		glUniform2fv(location, 1, glm::value_ptr(vec2));
+		lcache[0] = vec2;
+	}
 }
 
 void glUniform::set_value(glm::mat4 &mat4)
@@ -181,7 +201,12 @@ void glUniform::set_value(glm::mat4 &mat4)
 		exit(-1);
 	}
 
-	glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(mat4));
+	glm::mat4* lcache = (glm::mat4*) & cache;
+
+	if (mat4 != lcache[0]) {
+		glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(mat4));
+		lcache[0] = mat4;
+	}
 }
 
 void glUniform::set_value(glm::mat4 *mat4, int size)
