@@ -14,7 +14,7 @@ class fwObject3D : public Reference
 	float debug = 0;
 
 protected:
-	std::string name;
+	std::string m_name;
 	int classID = 0;
 
 	glm::mat4 m_modelMatrix;	// model space matrix
@@ -37,6 +37,7 @@ public:
 
 	bool is_class(int classID);
 	fwObject3D &set_name(std::string _name);
+	std::string& name(void) { return m_name;	};
 
 	fwObject3D &rotate(glm::vec3 &rotation);
 	fwObject3D &translate(glm::vec3 &vector);

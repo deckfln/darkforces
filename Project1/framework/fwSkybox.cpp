@@ -102,8 +102,7 @@ void fwSkybox::draw(fwCamera *camera, int renderMode)
 	program->set_uniform("projection", projection);
 	*/
 	// m_camera->set_uniforms(program);
-	texture->resetTextureUnit();
-	texture->bind();
+	program->set_uniform("skybox", texture);
 
 	geometry->draw(GL_TRIANGLES, cube);
 

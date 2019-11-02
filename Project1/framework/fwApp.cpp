@@ -164,7 +164,7 @@ void fwApp::run(void)
 	{
 		current = GetTickCount64();
 
-		if (current - start > 30000) {
+		if (current - start > 300000) {
 			break;
 		}
 

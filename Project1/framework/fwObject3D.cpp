@@ -12,7 +12,7 @@ fwObject3D::fwObject3D():
 
 fwObject3D &fwObject3D::set_name(std::string _name)
 {
-	name = _name;
+	m_name = _name;
 
 	return *this;
 }

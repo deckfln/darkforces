@@ -257,11 +257,11 @@ void glProgram::set_uniform(const std::string name, glTexture *texture)
 {
 	glUniform *uniform = get_uniform(name);
 	if (uniform) {
-		int id = texture->bind();
+		int textureUnit = texture->bind();
 		// std::cout << "glProgram::set_uniform " << name.c_str() << " : " << id << std::endl;
-		if (id != -1) {
+		if (textureUnit != -1) {
 			// texture was not yet bound to texture unit, need to upload to the uniform
-			uniform->set_value(id);
+			uniform->set_value(textureUnit);
 		}
 	}
 }

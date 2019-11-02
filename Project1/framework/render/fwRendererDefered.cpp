@@ -216,6 +216,9 @@ glTexture *fwRendererDefered::draw(fwCamera* camera, fwScene* scene)
 			glTexture::PushTextureUnit();
 			material = m_materials[materialID];
 
+			if (listOfMeshes.front()->name() == "stormtrooper") {
+				printf("debug");
+			}
 			material->set_uniforms(program);
 
 			for (auto mesh : listOfMeshes) {

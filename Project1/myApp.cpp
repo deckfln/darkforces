@@ -109,6 +109,7 @@ myApp::myApp(std::string name, int width, int height) :
 	// model
 	Loader* loader = new Loader(root+"models/stormtrooper/stormtrooper.dae");
 	m_stormtrooper = (fwMeshSkinned *)loader->get_meshes()[0];
+	m_stormtrooper->set_name("stormtrooper");
 	glm::vec3 rot(-pi / 2, 0, 0);
 	m_stormtrooper->rotate(rot);
 	glm::vec3 v(-2, 0, 0);

@@ -8,7 +8,7 @@ protected:
 	static int currentTextureUnit;
 
 	GLuint id = -1;
-	GLuint textureUnit = 0;
+	GLuint textureUnit = -1;
 public:
 	glTexture();
 	glTexture(int width, int height, int format, int channels = -1, int filter=GL_LINEAR);
