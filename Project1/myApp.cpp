@@ -107,14 +107,14 @@ myApp::myApp(std::string name, int width, int height) :
 	m_positions[1] = glm::translate(glm::vec3(1, 0, 0));
 
 	// model
-	Loader* loader = new Loader(root+"models/stormtrooper/stormtrooper.dae");
+	Loader* loader = new Loader(root+"models/marie-jane/marie-jane.dae");
 	m_stormtrooper = (fwMeshSkinned *)loader->get_meshes()[0];
 	m_stormtrooper->set_name("stormtrooper");
 	glm::vec3 rot(-pi / 2, 0, 0);
 	m_stormtrooper->rotate(rot);
 	glm::vec3 v(-2, 0, 0);
 	m_stormtrooper->translate(v);
-	m_stormtrooper->run("");
+	m_stormtrooper->run("walking");
 
 	// sprite
 	glm::vec3 *sprites = new glm::vec3 [4];
