@@ -333,7 +333,9 @@ void Loader::createFwMesh(const aiScene *scene)
 
 			// add the layer attribute
 			// TODO: the layers may be non-sequential : layer 3, layer 5, layer 8 : need to convert to 0,1,2
-			geometry->addAttribute("aLayer", GL_ARRAY_BUFFER, &tmpMesh->Layers[0], 1, tmpMesh->nVertices * sizeof(unsigned int), sizeof(unsigned int));
+			length = tmpMesh->Layers.size() * sizeof(float);
+
+			geometry->addAttribute("aLayer", GL_ARRAY_BUFFER, &tmpMesh->Layers[0], 1, length, sizeof(float));
 
 			// merge the list of textures into a texturearray
 			fwTextures* diffuse = new fwTextures(diffuses);

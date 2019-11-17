@@ -38,8 +38,8 @@ out vec3 world;
 #endif
 
 #ifdef TEXTURE_ARRAY
-	layout (location = 8) in int aLayer;	// target layer for texture arrays
-	out int layer;
+	in float aLayer;	// target layer for texture arrays
+	flat out float layer;	// flat = do not interpolate
 #endif
 
 #ifdef SHADOWMAP

@@ -7,6 +7,7 @@
 #include <regex>
 
 #include "../glEngine/glTexture.h"
+#include "../glEngine/glTextureArray.h"
 
 int _materialID = 0;
 
@@ -38,6 +39,16 @@ fwMaterial& fwMaterial::addTexture(std::string uniform, glTexture *texture)
 	textures.push_front(texture);
 
 	addUniform(new fwUniform(uniform, texture));
+
+	return *this;
+}
+
+fwMaterial& fwMaterial::addTextures(std::string uniform, fwTextures* textures)
+{
+	glTextureArray* glTex = new glTextureArray(textures);
+	m_textureArrays.push_front(glTex);
+
+	addUniform(new fwUniform(uniform, glTex));
 
 	return *this;
 }
@@ -121,6 +132,10 @@ std::string fwMaterial::hashCode(void)
 fwMaterial::~fwMaterial()
 {
 	for (auto texture: textures) {
+		delete texture;
+	}
+
+	for (auto texture : m_textureArrays) {
 		delete texture;
 	}
 

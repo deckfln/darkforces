@@ -19,8 +19,6 @@ fwMaterialDiffuse::fwMaterialDiffuse(fwTexture *_diffuse, float _shininess):
 	diffuse(_diffuse),
 	shininess(_shininess)
 {
-	m_type |= DIFFUSE_MATERIAL;
-
 	addShader(VERTEX_SHADER, "shaders/vertex_diffuse.glsl");
 	addShader(FRAGMENT_SHADER, "shaders/fragment_diffuse.glsl");
 	addShader(FRAGMENT_SHADER, "shaders/gbuffer/fragment.glsl", DEFERED_RENDER);
@@ -37,12 +35,10 @@ fwMaterialDiffuse::fwMaterialDiffuse(fwTextures* _diffuse, float _shininess) :
 	diffuse((fwTexture *)_diffuse),
 	shininess(_shininess)
 {
-	m_type |= DIFFUSE_MATERIAL;
-
 	addShader(VERTEX_SHADER, "shaders/vertex_diffuse.glsl");
 	addShader(FRAGMENT_SHADER, "shaders/fragment_diffuse.glsl");
 	addShader(FRAGMENT_SHADER, "shaders/gbuffer/fragment.glsl", DEFERED_RENDER);
-	addTexture("material.diffuse", diffuse);
+	addTextures("material.diffuse", _diffuse);
 
 	fwUniform* uniform = new fwUniform("material.shininess", &shininess);
 	addUniform(uniform);

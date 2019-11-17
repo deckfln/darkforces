@@ -73,7 +73,7 @@ fwTextures::fwTextures(const std::list<fwTexture*> textures)
 			exit(-1);
 		}
 
-		memcpy(m_data + size * i, m_data, size);
+		memcpy(m_data + size * i, data, size);
 
 		i++;
 	}
@@ -147,7 +147,7 @@ fwTextures::~fwTextures()
 
 	if (m_data) {
 		// delete the mega buffer
-		delete m_data;
+		delete[] m_data;
 		m_data = nullptr;
 	}
 }

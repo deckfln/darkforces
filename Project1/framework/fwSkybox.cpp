@@ -70,6 +70,7 @@ fwSkybox::fwSkybox(std::string* textures)
 
 	program->run();
 	uniform = new fwUniform("skybox", texture);
+	//TODO : the skybox textureID == 1 here
 	uniform->set_uniform(program);
 
 	geometry = new fwGeometry();

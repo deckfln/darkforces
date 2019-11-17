@@ -1,4 +1,7 @@
 #version 330 core
+
+#define DEFINES
+
 layout (location = 0) out vec3 gFragColor;
 layout (location = 1) out vec3 gNormal;
 layout (location = 2) out vec3 gWorld;
@@ -9,13 +12,20 @@ in vec3 ourColor;
 in vec2 TexCoord;
 in vec3 normal;
 in vec3 world;
-
-#define DEFINES
+#ifdef TEXTURE_ARRAY
+	flat in float layer;
+#endif
 
 struct Material {
+#ifdef TEXTURE_ARRAY
+    sampler2DArray diffuse;
+    sampler2DArray specular;
+    sampler2DArray normalMap;
+#else
     sampler2D diffuse;
     sampler2D specular;
     sampler2D normalMap;
+#endif
     float     shininess;
 }; 
 
@@ -31,7 +41,11 @@ void main()
 {
 	vec4 color;
 
+#ifdef TEXTURE_ARRAY
+	color = texture(material.diffuse, vec3(TexCoord.x, TexCoord.y, layer));
+#else
 	color = texture(material.diffuse, TexCoord);
+#endif
 
     // diffuse 
     vec3 norm = normalize(normal);

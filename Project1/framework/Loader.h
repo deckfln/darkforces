@@ -19,7 +19,7 @@ struct tempMesh
 	std::vector <glm::vec3> position;
 	std::vector<glm::vec3> Normals;
 	std::vector <glm::vec2> UVs;
-	std::vector<unsigned int> Layers;
+	std::vector<float> Layers;
 	std::vector<glm::ivec4> bonesID;
 	std::vector<glm::vec4> bonesWeights;
 

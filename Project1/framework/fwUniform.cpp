@@ -88,6 +88,9 @@ void fwUniform::set_uniform(glProgram *program)
 	case GL_SAMPLER_2D:
 		program->set_uniform(name, (glTexture *)data);
 		break;
+	case GL_TEXTURE_2D_ARRAY:
+		program->set_uniform(name, (glTexture*)data);
+		break;
 	case GL_TEXTURE_CUBE_MAP:
 		program->set_uniform(name, ((glCubeTexture *)data)->get_textureUnit());
 		break;

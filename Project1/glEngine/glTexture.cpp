@@ -126,7 +126,7 @@ GLint glTexture::bind(void)
 				c_textureUnitBinding[i] = this;
 
 				glActiveTexture(GL_TEXTURE0 + i);  //reserve texture0 for new textures
-				glBindTexture(GL_TEXTURE_2D, id);
+				_bind(id);
 
 				unit = textureUnit = i;
 

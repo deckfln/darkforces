@@ -22,6 +22,7 @@ protected:
 		}
 	}
 
+	virtual void _bind(GLint id) { glBindTexture(GL_TEXTURE_2D, id); }
 
 public:
 	glTexture();
