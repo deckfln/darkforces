@@ -55,8 +55,6 @@ void fwPostProcessingDirectLight::drawLight(std::list <fwDirectionLight*>lights,
 
 	Light.set_uniforms(program);
 
-	glTexture::resetTextureUnit();
-
 	m_colorMap->bind();
 	m_colorMap->clear();
 

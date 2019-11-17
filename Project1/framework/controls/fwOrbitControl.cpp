@@ -26,17 +26,17 @@ void fwOrbitControl::mouseButton(int button, int action)
 	}
 }
 
-void fwOrbitControl::mouseScroll(float xoffset, float yoffset)
+void fwOrbitControl::mouseScroll(double xoffset, double yoffset)
 {
 	m_radius -= yoffset;
 	update();
 }
 
-void fwOrbitControl::mouseMove(float xpos, float ypos)
+void fwOrbitControl::mouseMove(double xpos, double ypos)
 {
 	if (managed) {
-		float xdir = 0;
-		float ydir = 0;
+		double xdir = 0;
+		double ydir = 0;
 
 		if (startx != -1) {
 			// find direction

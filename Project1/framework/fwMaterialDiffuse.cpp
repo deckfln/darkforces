@@ -33,11 +33,40 @@ fwMaterialDiffuse::fwMaterialDiffuse(fwTexture *_diffuse, float _shininess):
 	m_type |= DIFFUSE_MATERIAL;
 }
 
+fwMaterialDiffuse::fwMaterialDiffuse(fwTextures* _diffuse, float _shininess) :
+	diffuse((fwTexture *)_diffuse),
+	shininess(_shininess)
+{
+	m_type |= DIFFUSE_MATERIAL;
+
+	addShader(VERTEX_SHADER, "shaders/vertex_diffuse.glsl");
+	addShader(FRAGMENT_SHADER, "shaders/fragment_diffuse.glsl");
+	addShader(FRAGMENT_SHADER, "shaders/gbuffer/fragment.glsl", DEFERED_RENDER);
+	addTexture("material.diffuse", diffuse);
+
+	fwUniform* uniform = new fwUniform("material.shininess", &shininess);
+	addUniform(uniform);
+
+	m_defines = "#define MATERIAL_DIFFUSE\n";
+	m_defines += "#define TEXTURE_ARRAY\n";
+
+	m_type |= DIFFUSE_MATERIAL;
+}
+
 fwMaterialDiffuse & fwMaterialDiffuse::specularMap(fwTexture *_specular)
 {
 	specular = _specular;
 	addTexture("material.specular", specular);
 	m_defines += "#define SPECULAR_MAP\n";
+	return *this;
+}
+
+fwMaterialDiffuse& fwMaterialDiffuse::specularMap(fwTextures* _specular)
+{
+	specular = (fwTexture *)_specular;
+	addTexture("material.specular", specular);
+	m_defines += "#define SPECULAR_MAP\n";
+	m_defines += "#define SPECULAR_MAPS\n";
 	return *this;
 }
 

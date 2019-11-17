@@ -15,7 +15,9 @@ class fwMaterialDiffuse: public fwMaterial
 public:
 	fwMaterialDiffuse();
 	fwMaterialDiffuse(fwTexture *diffuse, float shininess);
+	fwMaterialDiffuse(fwTextures* diffuse, float shininess);
 	fwMaterialDiffuse &specularMap(fwTexture *_specular);
+	fwMaterialDiffuse& specularMap(fwTextures* _specular);
 	fwMaterialDiffuse &normalMap(fwTexture *_normal);
 	fwTexture *normalMap(void);
 	~fwMaterialDiffuse();

@@ -4,22 +4,11 @@
 #include "../include/stb_image.h"
 #include "../glad/glad.h"
 
-int glTexture::currentTextureUnit = 0;
-
-static int max_TextureUnits = -1;
+int glTexture::c_currentTextureUnit = 0;
+int glTexture::c_max_TextureUnits = -1;
+glTexture** glTexture::c_textureUnitBinding = nullptr;
 
 static std::stack<int> stack;
-static glTexture **textureUnitBinding;
-
-static void _initTextureUnits(void)
-{
-	glGetIntegerv(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &max_TextureUnits);
-	max_TextureUnits -= 2;	// reserve texture0 for new textures
-	textureUnitBinding = new (glTexture * [max_TextureUnits]);
-	for (auto i = 0; i < max_TextureUnits; i++) {
-		textureUnitBinding[i] = nullptr;
-	}
-}
 
 glTexture::glTexture()
 {
@@ -30,10 +19,10 @@ glTexture::glTexture(int width, int height, int format, int channels, int filter
 {
 	glGenTextures(1, &id);
 
-	if (max_TextureUnits < 0) {
-		_initTextureUnits();
+	if (c_max_TextureUnits < 0) {
+		initTextureUnits();
 	}
-	glActiveTexture(GL_TEXTURE0 + max_TextureUnits);	// new texture are alway bound to the last texture
+	glActiveTexture(GL_TEXTURE0 + c_max_TextureUnits);	// new texture are alway bound to the last texture
 	glBindTexture(GL_TEXTURE_2D, id);
 
 	int type = -1;
@@ -78,10 +67,10 @@ glTexture::glTexture(int width, int height, int format, int channels, int filter
 glTexture::glTexture(fwTexture* texture)
 {
 	glGenTextures(1, &id);
-	if (max_TextureUnits < 0) {
-		_initTextureUnits();
+	if (c_max_TextureUnits < 0) {
+		initTextureUnits();
 	}
-	glActiveTexture(GL_TEXTURE0 + max_TextureUnits);	// new texture are alway bound to the last texture
+	glActiveTexture(GL_TEXTURE0 + c_max_TextureUnits);	// new texture are alway bound to the last texture
 	glBindTexture(GL_TEXTURE_2D, id);
 
 	// set the texture wrapping/filtering options (on the currently bound texture object)
@@ -113,28 +102,28 @@ GLuint glTexture::getID(void)
 
 void glTexture::PushTextureUnit(void)
 {
-	stack.push(currentTextureUnit);
+	stack.push(c_currentTextureUnit);
 }
 
 void glTexture::PopTextureUnit(void)
 {
-	currentTextureUnit = stack.top();
+	c_currentTextureUnit = stack.top();
 	stack.pop();
 }
 
 GLint glTexture::bind(void)
 {
-	if (max_TextureUnits < 0) {
-		_initTextureUnits();
+	if (c_max_TextureUnits < 0) {
+		initTextureUnits();
 	}
 
 	// check if the texture is already bound to a textureUnit
 	if (textureUnit == -1) {
 		int unit = -2;
-		for (auto i = 0; i < max_TextureUnits; i++) {
-			if (textureUnitBinding[i] == nullptr) {
+		for (auto i = 0; i < c_max_TextureUnits; i++) {
+			if (c_textureUnitBinding[i] == nullptr) {
 				// reached the end of bound texures. the texture is not yet bound
-				textureUnitBinding[i] = this;
+				c_textureUnitBinding[i] = this;
 
 				glActiveTexture(GL_TEXTURE0 + i);  //reserve texture0 for new textures
 				glBindTexture(GL_TEXTURE_2D, id);

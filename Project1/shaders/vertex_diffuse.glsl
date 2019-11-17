@@ -37,6 +37,11 @@ out vec3 world;
 	}
 #endif
 
+#ifdef TEXTURE_ARRAY
+	layout (location = 8) in int aLayer;	// target layer for texture arrays
+	out int layer;
+#endif
+
 #ifdef SHADOWMAP
 #if DIRECTION_LIGHTS > 0
 	struct DirectionlLight {
@@ -85,6 +90,10 @@ void main()
 		dirLight_world[i] = dirlights[i].matrix * vec4(world, 1.0);
 	}
 #endif
+#endif
+
+#ifdef TEXTURE_ARRAY
+	layer = aLayer;
 #endif
 
     gl_Position = projection * view * vec4(world, 1.0);

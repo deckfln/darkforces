@@ -280,7 +280,6 @@ glTexture *fwRendererForward::draw(fwCamera* camera, fwScene *scene)
 		listOfMaterials = shader.second;
 
 		glProgram* program = m_programs[code];
-		glTexture::resetTextureUnit();
 
 		program->run();
 		camera->bind_uniformBuffer(program);
@@ -349,8 +348,6 @@ glTexture *fwRendererForward::draw(fwCamera* camera, fwScene *scene)
 
 		glProgram* program = (glProgram*)mesh->extra();
 		camera->bind_uniformBuffer(program);
-
-		glTexture::resetTextureUnit();
 
 		program->run();
 

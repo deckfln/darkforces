@@ -1,4 +1,7 @@
 #version 330 core
+
+#define DEFINES
+
 layout (location = 0) out vec4 FragColor;
 layout (location = 1) out vec4 BrightColor;
 
@@ -7,11 +10,20 @@ in vec3 ourColor;
 in vec2 TexCoord;
 in vec3 normal;
 in vec3 world;
+#ifdef TEXTURE_ARRAY
+	in int layer
+#endif
 
 struct Material {
+#ifdef TEXTURE_ARRAY
+    sampler2DArray diffuse;
+    sampler2DArray specular;
+    sampler2DArray normalMap;
+#else
     sampler2D diffuse;
     sampler2D specular;
     sampler2D normalMap;
+#endif
     float     shininess;
 }; 
 
@@ -19,8 +31,6 @@ struct Material {
 #include "bloom/luminance.glsl"
 
 uniform Material material;
-
-#define DEFINES
 
 #ifdef NORMALMAP
 	in mat3 tbn;
@@ -219,7 +229,13 @@ uniform Material material;
 
 void main()
 {
-	vec4 color = texture(material.diffuse, TexCoord);
+	vec4 color;
+
+#ifdef TEXTURE_ARRAY
+	color = texture(material.diffuse, vec3(TexCoord, layer));
+#else
+	color = texture(material.diffuse, TexCoord);
+#endif
 
     // diffuse 
     vec3 norm = normalize(normal);

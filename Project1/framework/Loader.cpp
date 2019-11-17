@@ -43,10 +43,13 @@ Loader::Loader(const std::string _file):
 
 	fwBoneInfo *m_root = processNode(scene->mRootNode, nullptr, scene, 0);
 
+	// convert temporary meshes to fwMesh
+	createFwMesh(scene);
+
 	for (unsigned int i = 0; i < scene->mNumAnimations; i++) {
 		fwAnimation *sceneAnimation = processAnimation(scene->mAnimations[i], m_root);
 
-		for (auto mesh : meshes) {
+		for (auto mesh : m_meshes) {
 			// extract the mesh specific animation from the scene animation
 			((fwMeshSkinned*)mesh)->addAnimation(sceneAnimation);
 		}
@@ -58,10 +61,12 @@ fwBoneInfo* Loader::processNode(aiNode *node, fwBoneInfo *parent, const aiScene 
 	// std::cout << std::string(level, '*') << " " << node->mName.data << " " << node->mNumMeshes << std::endl;
 
 	// process all the node's meshes (if any)
+	//if (node->mNumMeshes > 1) { node->mNumMeshes = 1; }
 	for (unsigned int i = 0; i < node->mNumMeshes; i++)
 	{
 		aiMesh *mesh = scene->mMeshes[node->mMeshes[i]];
-		meshes.push_back( processMesh(mesh, scene));
+		//m_meshes.push_back( processMesh_v1(mesh, scene));
+		processMesh_v2(mesh, scene);
 	}
 
 	glm::mat4 transform = aiMatrix4x4ToGlm(node->mTransformation);
@@ -78,43 +83,77 @@ fwBoneInfo* Loader::processNode(aiNode *node, fwBoneInfo *parent, const aiScene 
 	return bone;
 }
 
-fwMesh *Loader::processMesh(aiMesh *mesh, const aiScene *scene)
+/**
+ * Parse a aiMesh to create/update a tempMesh
+ *
+ **/
+void Loader::processMesh_v2(aiMesh* mesh, const aiScene* scene)
 {
+	tempMesh* tmpMesh = nullptr;
+	glm::vec3* position = nullptr;
+	glm::vec3* normal = nullptr;
+	glm::vec2* uv = nullptr;
+	unsigned int* indices = nullptr;
+	unsigned int* layer = nullptr;
+	int baseVertex = 0;
+
 	/*
-	 * build the geometry
+	 * lookup for the mesh and extract pointers to the base of the data
 	 */
-	glm::vec3 *position = new glm::vec3 [mesh->mNumVertices];
-	glm::vec3 *normal = new glm::vec3 [mesh->mNumVertices];
-	glm::vec2 *uv = new glm::vec2 [mesh->mNumVertices];
+	const std::string name = mesh->mName.data;
 
-	fwGeometry *geometry = new fwGeometry();
+	if (m_dMeshes.count(name)) {
+		// the mesh already exists => probably a multi-material mesh
+		tmpMesh = m_dMeshes[name];
+	}
+	else {
+		m_dMeshes[name] = tmpMesh = new tempMesh;
 
+		tmpMesh->position.resize(128);
+		tmpMesh->Normals.resize(128);
+		tmpMesh->UVs.resize(128);
+		tmpMesh->Indices.resize(128);
+		tmpMesh->Layers.resize(128);
+		tmpMesh->bonesID.resize(1);
+		tmpMesh->bonesWeights.resize(1);
+	}
+
+	// build the base
+	baseVertex = tmpMesh->nVertices;
+
+	// resize the arrays
+	tmpMesh->nVertices += mesh->mNumVertices;
+
+	tmpMesh->position.resize(tmpMesh->nVertices);
+	tmpMesh->Normals.resize(tmpMesh->nVertices);
+	tmpMesh->UVs.resize(tmpMesh->nVertices);
+	tmpMesh->Layers.resize(tmpMesh->nVertices);
+
+	/*
+	 *
+	 */
 	for (unsigned int i = 0; i < mesh->mNumVertices; i++)
 	{
 		// process vertex m_positions, normals and texture coordinates
-		position[i].x = mesh->mVertices[i].x;
-		position[i].y = mesh->mVertices[i].y;
-		position[i].z = mesh->mVertices[i].z;
+		tmpMesh->position[baseVertex + i].x = mesh->mVertices[i].x;
+		tmpMesh->position[baseVertex + i].y = mesh->mVertices[i].y;
+		tmpMesh->position[baseVertex + i].z = mesh->mVertices[i].z;
 
-		normal[i].x = mesh->mNormals[i].x;
-		normal[i].y = mesh->mNormals[i].y;
-		normal[i].z = mesh->mNormals[i].z;
+		tmpMesh->Normals[baseVertex + i].x = mesh->mNormals[i].x;
+		tmpMesh->Normals[baseVertex + i].y = mesh->mNormals[i].y;
+		tmpMesh->Normals[baseVertex + i].z = mesh->mNormals[i].z;
 
 		if (mesh->mTextureCoords[0]) // does the mesh contain texture coordinates?
 		{
-			uv[i].x = mesh->mTextureCoords[0][i].x;
-			uv[i].y = mesh->mTextureCoords[0][i].y;
+			tmpMesh->UVs[baseVertex + i].x = mesh->mTextureCoords[0][i].x;
+			tmpMesh->UVs[baseVertex + i].y = mesh->mTextureCoords[0][i].y;
 		}
-		else
-			uv[i] = glm::vec2(0.0f, 0.0f);
+		else {
+			tmpMesh->UVs[baseVertex + i] = glm::vec2(0.0f, 0.0f);
+		}
+
+		tmpMesh->Layers[baseVertex + i] = mesh->mMaterialIndex;
 	}
-
-	int length = mesh->mNumVertices * sizeof(glm::vec3);
-	geometry->addVertices("aPos", position, 3, length, sizeof(glm::vec3));
-	geometry->addAttribute("aNormal", GL_ARRAY_BUFFER, normal, 3, length, sizeof(glm::vec3));
-
-	length = mesh->mNumVertices * sizeof(glm::vec2);
-	geometry->addAttribute("aTexCoord", GL_ARRAY_BUFFER, uv, 3, length, sizeof(glm::vec2));
 
 	// process indices
 	int k = 0;
@@ -124,48 +163,24 @@ fwMesh *Loader::processMesh(aiMesh *mesh, const aiScene *scene)
 		for (unsigned int j = 0; j < face.mNumIndices; j++)
 			k++;
 
-	} 
-	unsigned int *indice = new unsigned int [k];
+	}
+
+	int baseIndex = tmpMesh->nIndices;
+	tmpMesh->nIndices += k;
+	tmpMesh->Indices.resize( tmpMesh->nIndices );
 
 	k = 0;
 	for (unsigned int i = 0; i < mesh->mNumFaces; i++)
 	{
 		aiFace face = mesh->mFaces[i];
 		for (unsigned int j = 0; j < face.mNumIndices; j++) {
-			indice[k] = face.mIndices[j];
+			tmpMesh->Indices[baseIndex  + k] = baseVertex + face.mIndices[j];
 			k++;
-		}
-	}
-	geometry->addIndex(indice, 1, k * sizeof(unsigned int), sizeof(unsigned int));
-
-	/*
-	 * build the material
-	 */
-	fwMaterialDiffuse *material = nullptr;
-	if (mesh->mMaterialIndex >= 0)
-	{
-		aiMaterial *aimaterial = scene->mMaterials[mesh->mMaterialIndex];
-
-		aiString name;
-		aimaterial->Get(AI_MATKEY_NAME, name);
-
-		std::vector<fwTexture *> diffuse = loadMaterialTextures(aimaterial, aiTextureType_DIFFUSE);
-		std::vector<fwTexture *> specular = loadMaterialTextures(aimaterial, aiTextureType_SPECULAR);
-
-		float shininess;
-		aimaterial->Get(AI_MATKEY_SHININESS, shininess);
-
-		material = new fwMaterialDiffuse(diffuse[0], shininess);
-		if (specular.size() > 0) {
-			material->specularMap(specular[0]);
 		}
 	}
 
 	if (mesh->mNumBones == 0) {
-		fwMesh* fwmesh;
-		fwmesh = new fwMesh(geometry, material);
-		fwmesh->set_name(mesh->mName.data);
-		return fwmesh;
+		return;
 	}
 
 	/*
@@ -173,21 +188,26 @@ fwMesh *Loader::processMesh(aiMesh *mesh, const aiScene *scene)
 	 */
 	int vertices = mesh->mNumVertices;
 
-	glm::ivec4* bonesID = new glm::ivec4[vertices]();	// init with 0
-	glm::vec4* bonesWeights = new glm::vec4[vertices](); // init with 0
+	tmpMesh->bonesID.resize(tmpMesh->nVertices);
+	tmpMesh->bonesWeights.resize(tmpMesh->nVertices);
+
 	unsigned short* nbBonesPerVertices = new unsigned short[vertices]();	// initialize to ZERO : https://stackoverflow.com/questions/2204176/how-to-initialise-memory-with-new-operator-in-c
 
-	std::list <std::string> boneNames;
-
 	fwBoneInfo* bone = nullptr;
+	int finalBoneId;	// position of the one in the merged meshes
 
 	for (unsigned int boneID = 0; boneID < mesh->mNumBones; boneID++) {
 		aiBone* aib = mesh->mBones[boneID];
 		bone = m_bones[aib->mName.data];
 
 		if (bone) {
-			boneNames.push_back(aib->mName.data);
-			bone->setIndex(boneID);
+			finalBoneId = bone->id();
+
+			if (finalBoneId < 0) {
+				tmpMesh->boneNames.push_back(aib->mName.data);
+				finalBoneId = bone->setIndex(tmpMesh->nBones);
+				tmpMesh->nBones++;
+			}
 
 			for (unsigned int j = 0; j < aib->mNumWeights; j++) {
 				GLint vertexID = aib->mWeights[j].mVertexId;
@@ -198,35 +218,35 @@ fwMesh *Loader::processMesh(aiMesh *mesh, const aiScene *scene)
 				if (nbBonesPerVertice > 3) {
 					// std::cout << "Too many bones for vertex " << vertexID << std::endl;
 					//refactor the weights by keeping the 4 more importants
-					float wmin = weight;
+					double wmin = weight;
 					int index_wmin = -1;
 					for (auto i = 0; i < nbBonesPerVertice; i++) {
-						if (bonesWeights[vertexID][i] < wmin) {
+						if (tmpMesh->bonesWeights[baseVertex + vertexID][i] < wmin) {
 							index_wmin = i;
-							wmin = bonesWeights[vertexID][i];
+							wmin = tmpMesh->bonesWeights[baseVertex + vertexID][i];
 						}
 					}
 
 					if (index_wmin > 0) {
 						// IF the least important weight is the new one => discard
 						// ELSE replace the least important with the new one
-						bonesWeights[vertexID][index_wmin] = weight;
-						bonesID[vertexID][index_wmin] = boneID;
+						tmpMesh->bonesWeights[baseVertex + vertexID][index_wmin] = weight;
+						tmpMesh->bonesID[baseVertex + vertexID][index_wmin] = finalBoneId;
 					}
 
 					// and refactor the remaining ones (sum of the existing <=> 1.0)
 					float sum = 0;
 					for (auto i = 0; i < nbBonesPerVertice; i++) {
-						sum += bonesWeights[vertexID][i];
+						sum += tmpMesh->bonesWeights[baseVertex + vertexID][i];
 					}
 					for (auto i = 0; i < nbBonesPerVertice; i++) {
-						bonesWeights[vertexID][i] = bonesWeights[vertexID][i] * 1.0 / sum;
+						tmpMesh->bonesWeights[baseVertex + vertexID][i] = tmpMesh->bonesWeights[baseVertex + vertexID][i] * 1.0 / sum;
 					}
 				}
 				else {
 					// add the weight to the list
-					bonesWeights[vertexID][nbBonesPerVertice] = weight;
-					bonesID[vertexID][nbBonesPerVertice] = boneID;
+					tmpMesh->bonesWeights[baseVertex + vertexID][nbBonesPerVertice] = weight;
+					tmpMesh->bonesID[baseVertex + vertexID][nbBonesPerVertice] = finalBoneId;
 
 					nbBonesPerVertices[vertexID]++;
 				}
@@ -235,42 +255,166 @@ fwMesh *Loader::processMesh(aiMesh *mesh, const aiScene *scene)
 
 			glm::mat4 offset = aiMatrix4x4ToGlm(aib->mOffsetMatrix);
 			bone->offset(offset);
+
+			tmpMesh->lastBone = bone;
 		}
 		else {
 			std::cout << "Loader::processMesh " << aib->mName.data << " unknown" << std::endl;
 		}
 	}
 
-	// find root of the skeleton: the upper name that is also present in the list of bones
-	fwBoneInfo *root = bone->getRoot(boneNames);
-
-	geometry->addAttribute("bonesID", GL_ARRAY_BUFFER, bonesID, 4, vertices * sizeof(glm::vec4), sizeof(unsigned int), true);
-	geometry->addAttribute("bonesWeight", GL_ARRAY_BUFFER, bonesWeights, 4, vertices * sizeof(glm::vec4), sizeof(float), true);
-
-	glm::mat4 globalInverseTransform = inverse(aiMatrix4x4ToGlm(scene->mRootNode->mTransformation));
-	fwMeshSkinned* fwmesh = new fwMeshSkinned(geometry, material, root, globalInverseTransform);
-
-	return fwmesh;
+	delete[] nbBonesPerVertices;
 }
 
-std::vector<fwTexture *> Loader::loadMaterialTextures(aiMaterial *mat, aiTextureType type)
+/**
+ * parse all tempMesh to create fwMesh
+ **/
+void Loader::createFwMesh(const aiScene *scene)
 {
-	std::vector<fwTexture *> textures;
-	for (int i = mat->GetTextureCount(type) - 1; i >= 0; i--)
+	fwMaterialDiffuse* material = nullptr;
+
+	// for each tmp mesh create a fwMesh of sort
+	for (auto const& dMesh : m_dMeshes) {
+		tempMesh* tmpMesh = dMesh.second;
+
+		assert(tmpMesh != nullptr);
+
+		fwGeometry* geometry = new fwGeometry();
+		int length = tmpMesh->nVertices * sizeof(glm::vec3);
+		geometry->addVertices("aPos", &tmpMesh->position[0], 3, length, sizeof(glm::vec3));
+		geometry->addAttribute("aNormal", GL_ARRAY_BUFFER, &tmpMesh->Normals[0], 3, length, sizeof(glm::vec3));
+
+		length = tmpMesh->nIndices * sizeof(unsigned int);
+		geometry->addIndex(&tmpMesh->Indices[0], 1, length, sizeof(unsigned int));
+
+		length = tmpMesh->nVertices * sizeof(glm::vec2);
+		geometry->addAttribute("aTexCoord", GL_ARRAY_BUFFER, &tmpMesh->UVs[0], 3, length, sizeof(glm::vec2));
+
+		// count the number of materials
+		std::map<unsigned int, bool> materials;
+		for (auto layer: tmpMesh->Layers) {
+			materials[layer] = true;
+		}
+
+		// load needed textures
+		std::list<fwTexture*> diffuses;
+		std::list<fwTexture*> speculars;
+		std::list<float> shininesses;
+
+		for (auto material: materials) {
+			aiMaterial* aimaterial = scene->mMaterials[material.first];
+
+			aiString name;
+			aimaterial->Get(AI_MATKEY_NAME, name);
+
+			fwTexture* diffuse = loadMaterialTextures(aimaterial, aiTextureType_DIFFUSE);
+			fwTexture* specular = loadMaterialTextures(aimaterial, aiTextureType_SPECULAR);
+
+			float shininess;
+			aimaterial->Get(AI_MATKEY_SHININESS, shininess);
+
+			diffuses.push_back(diffuse);
+			shininesses.push_back(shininess);
+			if (specular != nullptr) {
+				speculars.push_back(specular);
+			}
+		}
+
+		if (materials.size() == 1) {
+			// single texture material
+
+			material = new fwMaterialDiffuse(diffuses.front(), shininesses.front());
+			if (speculars.size() > 0) {
+				material->specularMap(speculars.front());
+			}
+		}
+		else {
+			// multiple textures material
+
+			// add the layer attribute
+			// TODO: the layers may be non-sequential : layer 3, layer 5, layer 8 : need to convert to 0,1,2
+			geometry->addAttribute("aLayer", GL_ARRAY_BUFFER, &tmpMesh->Layers[0], 1, tmpMesh->nVertices * sizeof(unsigned int), sizeof(unsigned int));
+
+			// merge the list of textures into a texturearray
+			fwTextures* diffuse = new fwTextures(diffuses);
+			fwTextures* specular = nullptr;
+			if (speculars.size() > 0) {
+				specular = new fwTextures(speculars);
+			}
+			material = new fwMaterialDiffuse(diffuse, shininesses.front());
+			if (specular != nullptr) {
+				material->specularMap(specular);
+			}
+
+			// clean up the temporary textures
+			for (auto texture : diffuses) {
+				delete texture;
+			}
+			for (auto texture : speculars) {
+				delete texture;
+			}
+
+		}
+
+		fwMesh* fwmesh;
+		if (tmpMesh->nBones == 0) {
+			fwmesh = new fwMesh(geometry, material);
+			fwmesh->set_name(dMesh.first);
+		}
+		else {
+			fwBoneInfo *rootBone = tmpMesh->lastBone->getRoot(tmpMesh->boneNames);
+
+			geometry->addAttribute("bonesID", GL_ARRAY_BUFFER, &tmpMesh->bonesID[0], 4, tmpMesh->nVertices * sizeof(glm::vec4), sizeof(unsigned int), true);
+			geometry->addAttribute("bonesWeight", GL_ARRAY_BUFFER, &tmpMesh->bonesWeights[0], 4, tmpMesh->nVertices * sizeof(glm::vec4), sizeof(float), true);
+
+			glm::mat4 globalInverseTransform = inverse(aiMatrix4x4ToGlm(scene->mRootNode->mTransformation));
+			fwmesh = new fwMeshSkinned(geometry, material, rootBone, globalInverseTransform);
+		}
+		m_meshes.push_back(fwmesh);
+	}
+}
+
+/**
+ * create a texture or textures from the material
+ */
+fwTexture *Loader::loadMaterialTextures(aiMaterial *mat, aiTextureType type)
+{
+	int i = mat->GetTextureCount(type) - 1;
+	if (i < 0) {
+		return nullptr;
+	}
+
+	if (i == 0) {
+		aiString str;
+		mat->GetTexture(type, 0, &str);
+
+		std::string file = directory + "/" + str.C_Str();
+
+		return new fwTexture(file);
+	}
+
+	std::vector<std::string> files;
+	files.resize(i + 1);
+
+	for (; i >= 0; i--)
 	{
 		aiString str;
 		mat->GetTexture(type, i, &str);
 
 		std::string file = directory + "/" + str.C_Str();
 
-		textures.push_back(new fwTexture(file));
+		files[i] = file;
 	}
-	return textures;
+	return (fwTexture *)new fwTextures(i + 1, &files[0]);
 }
 
-std::vector<fwMesh *>Loader::get_meshes(void)
+fwMesh *Loader::get_meshes(int n)
 {
-	return meshes;
+	if (n >= 0 && n < m_meshes.size()) {
+		return m_meshes[n];
+	}
+
+	return nullptr;
 }
 
 fwAnimation* Loader::processAnimation(aiAnimation* root, fwBoneInfo* skeleton)

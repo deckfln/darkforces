@@ -125,8 +125,8 @@ void fwApp::mouseButton(int button, int action)
 
 void fwApp::mouseMove(double xpos, double ypos)
 {
-	float x = xpos / width;
-	float y = ypos / height;
+	double x = xpos / width;
+	double y = ypos / height;
 
 	if (control)
 		control->mouseMove(x, y);
@@ -164,9 +164,11 @@ void fwApp::run(void)
 	{
 		current = GetTickCount64();
 
+#ifdef BENCHMARK
 		if (current - start > 300000) {
 			break;
 		}
+#endif
 
 		fps++;
 		if ((fps % 3) == 0) {

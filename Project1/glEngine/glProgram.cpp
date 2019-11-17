@@ -8,12 +8,11 @@
 #include <sstream>
 #include <regex>
 
+#include "../config.h"
 #include "glShader.h"
 
 #include "../List.h"
 #include "../glad/glad.h"
-
-std::string ShaderRoot = "c:/dev/project1/project1/";
 
 List Shaders;
 
@@ -28,7 +27,7 @@ std::string load_shader_file(const std::string shader_file, std::string defines)
 	try
 	{
 		// open files
-		file.open(ShaderRoot + shader_file);
+		file.open(ROOT_FOLDER + shader_file);
 		std::stringstream vShaderStream;
 		// read file's buffer contents into streams
 		vShaderStream << file.rdbuf();

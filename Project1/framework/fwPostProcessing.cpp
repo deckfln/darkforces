@@ -67,7 +67,6 @@ void fwPostProcessing::draw(glTexture *color)
 
 	program->run();
 
-	color->resetTextureUnit();
 	source->set(color);
 	source->set_uniform(program);
 

@@ -3,6 +3,7 @@
 #include <glm/glm.hpp>
 #include "../glEngine/glProgram.h"
 #include "../glEngine/glTexture.h"
+#include "../glEngine/glTextureArray.h"
 #include "../glEngine/glCubeTexture.h"
 
 class fwUniform
@@ -19,6 +20,7 @@ public:
 	fwUniform(std::string _name, GLint *id);
 	fwUniform(std::string _name, GLfloat *f);
 	fwUniform(std::string _name, glTexture *y);
+	fwUniform(std::string _name, glTextureArray* y);
 	fwUniform(std::string _name, glCubeTexture *y);
 	fwUniform(std::string _name, glm::mat4* t, int size);
 	void set_uniform(glProgram *);

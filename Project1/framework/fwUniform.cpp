@@ -41,6 +41,13 @@ fwUniform::fwUniform(std::string _name, glTexture *t) :
 	type = GL_SAMPLER_2D;
 }
 
+fwUniform::fwUniform(std::string _name, glTextureArray* t) :
+	name(_name)
+{
+	data = t;
+	type = GL_TEXTURE_2D_ARRAY;
+}
+
 fwUniform::fwUniform(std::string _name, glCubeTexture *t) :
 	name(_name)
 {

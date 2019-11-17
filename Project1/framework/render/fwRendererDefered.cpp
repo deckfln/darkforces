@@ -200,7 +200,6 @@ glTexture *fwRendererDefered::draw(fwCamera* camera, fwScene* scene)
 		listOfMaterials = shader.second;
 
 		glProgram* program = m_programs[code];
-		glTexture::resetTextureUnit();
 
 		program->run();
 		camera->bind_uniformBuffer(program);

@@ -46,6 +46,7 @@ glUniform::glUniform(GLchar *_name, GLsizei _length, GLsizei _size, GLenum _type
 		single_nb = 4;
 		break;
 	case GL_SAMPLER_2D:
+	case GL_SAMPLER_2D_ARRAY:
 		single_type = GL_INT;
 		single_size = sizeof(GLint);
 		single_nb = 1;

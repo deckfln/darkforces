@@ -140,6 +140,7 @@
     <ClCompile Include="framework\fwSkybox.cpp" />
     <ClCompile Include="framework\fwPostProcessing.cpp" />
     <ClCompile Include="framework\fwSprite.cpp" />
+    <ClCompile Include="framework\fwTextures.cpp" />
     <ClCompile Include="framework\geometries\fwBoxGeometry.cpp" />
     <ClCompile Include="framework\geometries\fwPlaneGeometry.cpp" />
     <ClCompile Include="framework\fwCamera.cpp" />
@@ -183,6 +184,7 @@
     <ClCompile Include="glEngine\glRenderBuffer.cpp" />
     <ClCompile Include="glEngine\glShader.cpp" />
     <ClCompile Include="glEngine\glTexture.cpp" />
+    <ClCompile Include="glEngine\glTextureArray.cpp" />
     <ClCompile Include="glEngine\glUniform.cpp" />
     <ClCompile Include="glEngine\glUniformBuffer.cpp" />
     <ClCompile Include="glEngine\glVertexArray.cpp" />
@@ -198,6 +200,7 @@
     <ClCompile Include="stb.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="config.h" />
     <ClInclude Include="framework\camera\fwOrthographicCamera.h" />
     <ClInclude Include="framework\controls\fwOrbitControl.h" />
     <ClInclude Include="framework\fwAnimation.h" />
@@ -212,6 +215,7 @@
     <ClInclude Include="framework\fwSkybox.h" />
     <ClInclude Include="framework\fwPostProcessing.h" />
     <ClInclude Include="framework\fwSprite.h" />
+    <ClInclude Include="framework\fwTextures.h" />
     <ClInclude Include="framework\geometries\fwBoxGeometry.h" />
     <ClInclude Include="framework\geometries\fwPlaneGeometry.h" />
     <ClInclude Include="framework\fwCamera.h" />
@@ -222,6 +226,7 @@
     <ClInclude Include="framework\lights\fwSpotLight.h" />
     <ClInclude Include="framework\fwMaterial.h" />
     <ClInclude Include="framework\fwMaterialBasic.h" />
+    <ClInclude Include="framework\Loader.h" />
     <ClInclude Include="framework\materials\fwBloomMaterial.h" />
     <ClInclude Include="framework\materials\fwMaterialDepth.h" />
     <ClInclude Include="framework\materials\fwMaterialDirectionalLight.h" />
@@ -254,6 +259,7 @@
     <ClInclude Include="glEngine\glRenderBuffer.h" />
     <ClInclude Include="glEngine\glShader.h" />
     <ClInclude Include="glEngine\glTexture.h" />
+    <ClInclude Include="glEngine\glTextureArray.h" />
     <ClInclude Include="glEngine\glUniform.h" />
     <ClInclude Include="glEngine\glUniformBuffer.h" />
     <ClInclude Include="glEngine\glVertexArray.h" />

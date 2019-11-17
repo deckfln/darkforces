@@ -76,8 +76,6 @@ void fwPostProcessingBloom::draw(glColorMap *colorMap)
 
 	glTexture* previous = m_pBloom_texture;
 	for (int i = 0; i < 4; i++) {
-		glTexture::resetTextureUnit();
-
 		Bloom.setSourceTexture(previous);	// set color buffer 1 as source of the bloom program
 		Bloom.set_uniforms(Expand_program);
 
@@ -120,7 +118,6 @@ void fwPostProcessingBloom::draw(glColorMap *colorMap)
 	m_pingBloomBuffer[0]->unbind();								// write out to the ping pong buffer
 
 	Copy_program->run();
-	glTexture::resetTextureUnit();
 	Bloom.setSourceTexture(m_pingBloomBuffer[0]->getColorTexture(0), 0);	// set color buffer 1 as source of the bloom program
 	Bloom.setSourceTexture(m_pingBloomBuffer[1]->getColorTexture(0), 1);	// set color buffer 1 as source of the bloom program
 	Bloom.setSourceTexture(m_pingBloomBuffer[2]->getColorTexture(0), 2);	// set color buffer 1 as source of the bloom program

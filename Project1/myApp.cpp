@@ -4,6 +4,7 @@
 #include <glm/gtx/transform.hpp>
 #include <math.h>
 
+#include "config.h"
 #include "include/stb_image.h"
 #include "framework/lights/fwDirectionLight.h"
 #include "framework/fwMaterialDiffuse.h"
@@ -16,7 +17,6 @@
 
 #include "framework/Loader.h"
 
-const std::string root = "c:/dev/project1/project1/";
 
 myApp::myApp(std::string name, int width, int height) :
 	fwApp(name, width, height, "shaders/gamma", "#define GAMMA_CORRECTION 1\n")
@@ -57,8 +57,8 @@ myApp::myApp(std::string name, int width, int height) :
 	m_light->addChild(fLight);
 
 	// floor
-	fwTexture *t1 = new fwTexture(root+"images/brickwall.jpg");
-	fwTexture *t2 = new fwTexture(root+"images/brickwall_normal.jpg");
+	fwTexture *t1 = new fwTexture(ROOT_FOLDER + "/images/brickwall.jpg");
+	fwTexture *t2 = new fwTexture(ROOT_FOLDER + "/images/brickwall_normal.jpg");
 	fwMaterialDiffuse *material = new fwMaterialDiffuse(t1, 64);
 	material->normalMap(t2);
 
@@ -72,7 +72,7 @@ myApp::myApp(std::string name, int width, int height) :
 	plane->translate(tr1);
 
 	// window
-	t1 = new fwTexture(root+"images/blending_transparent_window.png");
+	t1 = new fwTexture(ROOT_FOLDER +"images/blending_transparent_window.png");
 	material = new fwMaterialDiffuse(t1, 32);
 
 	fwMesh *window = new fwMesh(new fwPlaneGeometry(5, 5), material);
@@ -82,8 +82,8 @@ myApp::myApp(std::string name, int width, int height) :
 	window->transparent(true);
 
 	// box
-	t1 = new fwTexture(root+"images/container2.png");
-	t2 = new fwTexture(root+"images/container2_specular.png", 1);	// specular maps only need 1 channel
+	t1 = new fwTexture(ROOT_FOLDER +"images/container2.png");
+	t2 = new fwTexture(ROOT_FOLDER +"images/container2_specular.png", 1);	// specular maps only need 1 channel
 
 	material = new fwMaterialDiffuse(t1, 32);
 	material->specularMap(t2);
@@ -107,14 +107,14 @@ myApp::myApp(std::string name, int width, int height) :
 	m_positions[1] = glm::translate(glm::vec3(1, 0, 0));
 
 	// model
-	Loader* loader = new Loader(root+"models/marie-jane/marie-jane.dae");
-	m_stormtrooper = (fwMeshSkinned *)loader->get_meshes()[0];
+	Loader* loader = new Loader(ROOT_FOLDER +"models/marie-jane/marie-jane.dae");
+	m_stormtrooper = (fwMeshSkinned *)loader->get_meshes(0);
 	m_stormtrooper->set_name("stormtrooper");
 	glm::vec3 rot(-pi / 2, 0, 0);
 	m_stormtrooper->rotate(rot);
 	glm::vec3 v(-2, 0, 0);
 	m_stormtrooper->translate(v);
-	m_stormtrooper->run("walking");
+//	m_stormtrooper->run("walking");
 
 	// sprite
 	glm::vec3 *sprites = new glm::vec3 [4];
@@ -122,7 +122,7 @@ myApp::myApp(std::string name, int width, int height) :
 	sprites[1].z = -2;
 	sprites[2].z = 0;
 	sprites[3].z = 2;
-	t1 = new fwTexture(root+"images/fireworks_red.jpg");
+	t1 = new fwTexture(ROOT_FOLDER +"images/fireworks_red.jpg");
 
 	fwSprite *sprite = new fwSprite(sprites, 4, t1);
 

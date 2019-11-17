@@ -6,8 +6,6 @@
 #include "glUniform.h"
 #include "glTexture.h"
 
-extern std::string ShaderRoot;
-
 std::string load_shader_file(const std::string shader_file, std::string defines);
 
 class glProgram

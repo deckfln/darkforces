@@ -3,16 +3,16 @@
 #include <math.h>
 #include "../fwCamera.h"
 
-const float pi = 3.1415926535897;
+const double pi = 3.1415926535897;
 
 class fwOrbitControl
 {
 	bool managed = false;
-	float startx;
-	float starty;
-	float theta = pi/4;
-	float phi = 0;
-	float m_radius = 5;
+	double startx;
+	double starty;
+	double theta = pi/4;
+	double phi = 0;
+	double m_radius = 5;
 
 	fwCamera *camera = nullptr;
 
@@ -21,7 +21,7 @@ class fwOrbitControl
 public:
 	fwOrbitControl(fwCamera *, float radius = 5);
 	void mouseButton(int button, int action);
-	void mouseMove(float xpos, float ypos);
-	void mouseScroll(float xoffset, float yoffset);
+	void mouseMove(double xpos, double ypos);
+	void mouseScroll(double xoffset, double yoffset);
 	~fwOrbitControl();
 };

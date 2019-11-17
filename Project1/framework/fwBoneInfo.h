@@ -24,7 +24,12 @@ public:
 	fwBoneInfo* addBone(fwBoneInfo*);
 	bool is(std::string name) { return m_name == name; };
 	std::list <fwBoneInfo*>& get_children(void) { return m_children; };
-	void setIndex(unsigned int index) { m_id = index; };
+	int setIndex(int index) {
+		if (m_id < 0) {
+			m_id = index;
+		}
+		return m_id;
+	}
 
 	void offset(glm::mat4 &offset) { m_offset = offset; };
 	glm::mat4& offset(void) { return m_offset; };
