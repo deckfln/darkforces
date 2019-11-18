@@ -130,12 +130,12 @@ myApp::myApp(std::string name, int width, int height) :
 
 	// Skybox
 	std::string skyboxes[] = {
-		"images/skybox/right.jpg",
-		"images/skybox/left.jpg",
-		"images/skybox/top.jpg",
-		"images/skybox/bottom.jpg",
-		"images/skybox/front.jpg",
-		"images/skybox/back.jpg" };
+		ROOT_FOLDER + "images/skybox/right.jpg",
+		ROOT_FOLDER + "images/skybox/left.jpg",
+		ROOT_FOLDER + "images/skybox/top.jpg",
+		ROOT_FOLDER + "images/skybox/bottom.jpg",
+		ROOT_FOLDER + "images/skybox/front.jpg",
+		ROOT_FOLDER + "images/skybox/back.jpg" };
 
 	m_skybox = new fwSkybox(skyboxes);
 
