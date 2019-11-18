@@ -89,10 +89,10 @@ void fwUniform::set_uniform(glProgram *program)
 		program->set_uniform(name, (glTexture *)data);
 		break;
 	case GL_TEXTURE_2D_ARRAY:
-		program->set_uniform(name, (glTexture*)data);
+		program->set_uniform(name, (glTexture *)data);
 		break;
 	case GL_TEXTURE_CUBE_MAP:
-		program->set_uniform(name, ((glCubeTexture *)data)->get_textureUnit());
+		program->set_uniform(name, (glTexture *)data);
 		break;
 	case GL_FLOAT_MAT4:
 		program->set_uniform(name, (glm::mat4 *)data, m_size);
