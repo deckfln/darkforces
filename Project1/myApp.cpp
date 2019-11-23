@@ -114,7 +114,7 @@ myApp::myApp(std::string name, int width, int height) :
 	m_stormtrooper->rotate(rot);
 	glm::vec3 v(-2, 0, 0);
 	m_stormtrooper->translate(v);
-//	m_stormtrooper->run("walking");
+	m_stormtrooper->run("idle");
 
 	// sprite
 	glm::vec3 *sprites = new glm::vec3 [4];

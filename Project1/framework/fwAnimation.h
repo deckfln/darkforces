@@ -3,12 +3,12 @@
 #include <map>
 #include <string>
 
-#include "fwBoneInfo.h"
+#include "fwBoneInfoAnimation.h"
 
 class fwAnimation {
 	std::string m_name;
 	time_t m_Duration;
-	fwBoneInfo* m_skeleton=nullptr;
+	fwBoneInfoAnimation* m_skeleton=nullptr;
 
 	time_t m_currentTime = 0;
 	int m_currentFrame = 0;
@@ -19,7 +19,7 @@ class fwAnimation {
 	std::string debug="";
 
 public:
-	fwAnimation(std::string name, time_t duration, fwBoneInfo* skeleton);
+	fwAnimation(std::string name, time_t duration, fwBoneInfoAnimation* skeleton);
 
 	std::string& name(void) { return m_name; };
 
@@ -28,6 +28,6 @@ public:
 	void reset(void);
 	void update(time_t delta, glm::mat4 *target, glm::mat4& GlobalInverseTransform);
 
-	void skeleton(fwBoneInfo* root) { m_skeleton = root; };
+	void skeleton(fwBoneInfoAnimation* root) { m_skeleton = root; };
 	~fwAnimation();
 };

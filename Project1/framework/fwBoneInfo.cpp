@@ -58,40 +58,6 @@ fwBoneInfo* fwBoneInfo::bone(const std::string name)
 	return nullptr;
 }
 
-/*
- * find or allocate a keyframe
- */
-fwAnimationKeyframe* fwBoneInfo::keyframes(time_t time)
-{
-	fwAnimationKeyframe* keyframe = m_keyframes[time];
-	if (keyframe == nullptr) {
-		keyframe = m_keyframes[time] = new fwAnimationKeyframe(time);
-	}
-
-	return keyframe;
-}
-
-/*
- *
- */
-void fwBoneInfo::interpolate(time_t start, time_t end, float inbetween_t, glm::mat4* target, glm::mat4 &parent, glm::mat4 &GlobalInverseTransform)
-{
-	fwAnimationKeyframe* pStart = m_keyframes[start];
-	fwAnimationKeyframe* pEnd = m_keyframes[end];
-
-	glm::mat4 globalTransform = parent * pStart->interpolate(pEnd, inbetween_t);
-
-	if (m_id >= 0) {
-		//m_id == -1 => the bone is nor present in the bonesTransform matrix
-		assert(m_id < 64);
-		target[m_id] = GlobalInverseTransform * globalTransform * m_offset;
-	}
-
-	for (auto child : m_children) {
-		child->interpolate(start, end, inbetween_t, target, globalTransform, GlobalInverseTransform);
-	}
-}
-
 fwBoneInfo::~fwBoneInfo()
 {
 	std::cout << "fwBoneInfo:~fwBoneInfo" << std::endl;

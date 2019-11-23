@@ -5,8 +5,6 @@
 #include <list>
 #include <glm/glm.hpp>
 
-#include "fwAnimationKeyframe.h"
-
 class fwBoneInfo
 {
 	int m_id = -1;		// Position of the bone in the bonesTraform matrix: -1 => not present
@@ -16,7 +14,6 @@ class fwBoneInfo
 	float* m_pWeights = nullptr;
 	std::list <fwBoneInfo*> m_children;
 	fwBoneInfo* m_parent = nullptr;
-	std::map <time_t, fwAnimationKeyframe*> m_keyframes;
 
 public:
 	fwBoneInfo(std::string name, glm::mat4 &transform);
@@ -43,9 +40,6 @@ public:
 	std::string& name(void) { return m_name; };
 
 	fwBoneInfo* bone(const std::string name);
-
-	fwAnimationKeyframe* keyframes(time_t time);
-	void interpolate(time_t start, time_t end, float inbetween_t, glm::mat4* target, glm::mat4& parent, glm::mat4& GlobalInverseTransform);
 
 	fwBoneInfo* getRoot(std::list<std::string> &);
 	unsigned id(void) { return m_id; };

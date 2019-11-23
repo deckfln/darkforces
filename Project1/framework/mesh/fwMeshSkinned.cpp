@@ -30,7 +30,6 @@ void fwMeshSkinned::bonesIndex(std::map <const std::string, unsigned int>& bones
 void fwMeshSkinned::addAnimation(fwAnimation* sceneAnimation)
 {
 	// find the mesh in the scene animation
-	sceneAnimation->skeleton(m_skeleton);
 	m_animations[sceneAnimation->name()] = sceneAnimation;
 }
 
@@ -97,7 +96,7 @@ fwMeshSkinned::~fwMeshSkinned()
 		delete animation.second;
 	}
 
-	delete m_bonesTransform;
+	delete[] m_bonesTransform;
 
 	delete m_skeleton;
 }

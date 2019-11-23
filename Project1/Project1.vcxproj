@@ -132,6 +132,7 @@
     <ClCompile Include="framework\fwAnimationKeyframe.cpp" />
     <ClCompile Include="framework\fwApp.cpp" />
     <ClCompile Include="framework\fwBoneInfo.cpp" />
+    <ClCompile Include="framework\fwBoneInfoAnimation.cpp" />
     <ClCompile Include="framework\fwFrustum.cpp" />
     <ClCompile Include="framework\fwInstancedMesh.cpp" />
     <ClCompile Include="framework\fwLight.cpp" />
@@ -207,6 +208,7 @@
     <ClInclude Include="framework\fwAnimationKeyframe.h" />
     <ClInclude Include="framework\fwApp.h" />
     <ClInclude Include="framework\fwBoneInfo.h" />
+    <ClInclude Include="framework\fwBoneInfoAnimation.h" />
     <ClInclude Include="framework\fwFrustum.h" />
     <ClInclude Include="framework\fwInstancedMesh.h" />
     <ClInclude Include="framework\fwLight.h" />

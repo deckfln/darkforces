@@ -16,6 +16,7 @@
 #include "fwMesh.h"
 #include "mesh/fwMeshSkinned.h"
 #include "fwAnimation.h"
+#include "fwBoneInfoAnimation.h"
 
 static glm::mat4 aiMatrix4x4ToGlm(const aiMatrix4x4& from)
 {
@@ -421,22 +422,24 @@ fwMesh *Loader::get_meshes(int n)
 
 fwAnimation* Loader::processAnimation(aiAnimation* root, fwBoneInfo* skeleton)
 {
-	fwAnimation* animation = new fwAnimation(root->mName.data, root->mDuration * 1000, skeleton);
 	std::map <double, glm::vec3> positions;
 	std::map <double, glm::vec4> rotations;
 
-	fwBoneInfo* boneInfo = nullptr;
+	fwBoneInfoAnimation* boneInfo = nullptr;
 	fwAnimationKeyframe* keyframe = nullptr;
 	glm::vec3 v3;
 	glm::quat quat;
 	std::map <time_t, bool> keyframes;
+
+	fwBoneInfoAnimation *animatedSkeleton = new fwBoneInfoAnimation(skeleton);	// clone the skeleton structure
+	fwAnimation* animation = new fwAnimation(root->mName.data, root->mDuration * 1000, animatedSkeleton);
 
 	for (unsigned int i = 0; i < root->mNumChannels; i++) {
 		aiNodeAnim* node = root->mChannels[i];
 		std::string name(node->mNodeName.data);
 		time_t time;
 
-		boneInfo = skeleton->bone(name);
+		boneInfo = animatedSkeleton->bone(name);
 		if (boneInfo == nullptr) {
 			std::cout << "cannot find bone " << name << std::endl;
 			continue;
