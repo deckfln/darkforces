@@ -269,6 +269,7 @@ glTexture *fwRendererDefered::draw(fwCamera* camera, fwScene* scene)
 	if (m_bloom) {
 		m_bloom->draw(outBuffer);
 	}
+
 	return outBuffer->getColorTexture(0);
 }
 
