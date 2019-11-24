@@ -8,3 +8,6 @@ DONE #4	18/07/19	implement basic material on defered renderer
 
 bug
 FIXED #1	18/07/19	skybox background not displayed with defered renderer
+#2	20/11/19	glBufferAttribute::~glBufferAttribute is trigger a memory error when deleting one object
+FIXED #3	23/11/19	marie-jane "running" right fore arm is doing a full circle between 2 keyframes
+#4	24/11/19	marie-jane "running" gets suspened at the end of the animation loop

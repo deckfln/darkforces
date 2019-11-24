@@ -491,4 +491,9 @@
       <Filter>Fichiers de ressources</Filter>
     </None>
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="todo.txt">
+      <Filter>Fichiers de ressources</Filter>
+    </Text>
+  </ItemGroup>
 </Project>

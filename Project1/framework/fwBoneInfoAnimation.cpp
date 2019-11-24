@@ -1,3 +1,4 @@
+#include <iostream>
 #include "fwBoneInfoAnimation.h"
 
 fwBoneInfoAnimation::fwBoneInfoAnimation(fwBoneInfo *_bone)
