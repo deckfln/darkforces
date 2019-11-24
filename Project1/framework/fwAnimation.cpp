@@ -55,8 +55,6 @@ void fwAnimation::update(time_t elapsed, glm::mat4 *target, glm::mat4& GlobalInv
 			prev_t = m_keyframes[m_currentFrame];
 			next_t = m_keyframes[m_currentFrame + 1];
 		}
-
-		std::cout << m_currentFrame << ":" << m_currentTime << " ! " << std::endl;
 	}
 
 	time_t delta = (m_currentTime - prev_t);

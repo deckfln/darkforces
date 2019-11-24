@@ -219,6 +219,10 @@ void fwApp::run(void)
 				//s += "long " + std::to_string(elapsed) + " " + std::to_string(time_budget) + " " + std::to_string(current) + ">>" + std::to_string(now) + ">>" + std::to_string(next) + "\n";
 			}
 		}
+		else {
+			now = GetTickCount64();
+			last_frame_time = now - current;
+		}
 	}
 
 	std::cout << "Frames " << fps << std::endl;
