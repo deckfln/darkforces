@@ -280,16 +280,31 @@ void Loader::createFwMesh(const aiScene *scene)
 
 		assert(tmpMesh != nullptr);
 
-		fwGeometry* geometry = new fwGeometry();
 		int length = tmpMesh->nVertices * sizeof(glm::vec3);
-		geometry->addVertices("aPos", &tmpMesh->position[0], 3, length, sizeof(glm::vec3));
-		geometry->addAttribute("aNormal", GL_ARRAY_BUFFER, &tmpMesh->Normals[0], 3, length, sizeof(glm::vec3));
 
+		// allocate a dedicated buffer
+		float* vertices = (float*)malloc(length);
+		memcpy(vertices, &tmpMesh->position[0], length);
+
+		float* normals = (float*)malloc(length);
+		memcpy(normals, &tmpMesh->Normals[0], length);
+
+		fwGeometry* geometry = new fwGeometry();
+		geometry->addVertices("aPos", vertices, 3, length, sizeof(glm::vec3));
+		geometry->addAttribute("aNormal", GL_ARRAY_BUFFER, normals, 3, length, sizeof(glm::vec3));
+
+		// allocate a dedicated buffer
 		length = tmpMesh->nIndices * sizeof(unsigned int);
-		geometry->addIndex(&tmpMesh->Indices[0], 1, length, sizeof(unsigned int));
+		GLuint* index = (GLuint*)malloc(length);
+		memcpy(index, &tmpMesh->Indices[0], length);
 
+		geometry->addIndex(index, 1, length, sizeof(unsigned int));
+
+		// allocate a dedicated buffer
 		length = tmpMesh->nVertices * sizeof(glm::vec2);
-		geometry->addAttribute("aTexCoord", GL_ARRAY_BUFFER, &tmpMesh->UVs[0], 3, length, sizeof(glm::vec2));
+		float* uvs = (float*)malloc(length);
+		memcpy(uvs, &tmpMesh->UVs[0], length);
+		geometry->addAttribute("aTexCoord", GL_ARRAY_BUFFER, uvs, 3, length, sizeof(glm::vec2));
 
 		// count the number of materials
 		std::map<unsigned int, bool> materials;
@@ -334,9 +349,13 @@ void Loader::createFwMesh(const aiScene *scene)
 
 			// add the layer attribute
 			// TODO: the layers may be non-sequential : layer 3, layer 5, layer 8 : need to convert to 0,1,2
-			length = tmpMesh->Layers.size() * sizeof(float);
 
-			geometry->addAttribute("aLayer", GL_ARRAY_BUFFER, &tmpMesh->Layers[0], 1, length, sizeof(float));
+			// allocate a dedicated buffer
+			length = tmpMesh->Layers.size() * sizeof(float);
+			float* layer = (float*)malloc(length);
+			memcpy(layer, &tmpMesh->Layers[0], length);
+
+			geometry->addAttribute("aLayer", GL_ARRAY_BUFFER, layer, 1, length, sizeof(float));
 
 			// merge the list of textures into a texturearray
 			fwTextures* diffuse = new fwTextures(diffuses);
@@ -367,13 +386,28 @@ void Loader::createFwMesh(const aiScene *scene)
 		else {
 			fwBoneInfo *rootBone = tmpMesh->lastBone->getRoot(tmpMesh->boneNames);
 
-			geometry->addAttribute("bonesID", GL_ARRAY_BUFFER, &tmpMesh->bonesID[0], 4, tmpMesh->nVertices * sizeof(glm::vec4), sizeof(unsigned int), true);
-			geometry->addAttribute("bonesWeight", GL_ARRAY_BUFFER, &tmpMesh->bonesWeights[0], 4, tmpMesh->nVertices * sizeof(glm::vec4), sizeof(float), true);
+			// allocate a dedicated buffer
+			length = tmpMesh->nVertices * sizeof(glm::ivec4);
+			GLuint* bonesID = (GLuint *)malloc(length);
+			memcpy(bonesID, &tmpMesh->bonesID[0], length);
 
+			geometry->addAttribute("bonesID", GL_ARRAY_BUFFER, bonesID, 4, length, sizeof(GLuint), true);
+
+			// allocate a dedicated buffer
+			length = tmpMesh->nVertices * sizeof(glm::vec4);
+			float* bonesW = (float *)malloc(length);
+			memcpy(bonesW, &tmpMesh->bonesWeights[0], length);
+
+			geometry->addAttribute("bonesWeight", GL_ARRAY_BUFFER, bonesW, 4, length, sizeof(float), true);
+
+			// create the skinned mesh
 			glm::mat4 globalInverseTransform = inverse(aiMatrix4x4ToGlm(scene->mRootNode->mTransformation));
 			fwmesh = new fwMeshSkinned(geometry, material, rootBone, globalInverseTransform);
 		}
 		m_meshes.push_back(fwmesh);
+
+		// delete the tmp mesh
+		delete tmpMesh;
 	}
 }
 
