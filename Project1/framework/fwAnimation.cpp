@@ -33,7 +33,7 @@ void fwAnimation::keyframes(std::map<time_t, bool>& keyframes)
 
 void fwAnimation::update(time_t elapsed, glm::mat4 *target, glm::mat4& GlobalInverseTransform)
 {
-	m_currentTime += elapsed;
+	m_currentTime += elapsed/10;
 
 	// find the interval
 	glm::mat4 identity(1);

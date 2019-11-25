@@ -14,4 +14,4 @@ bug
 #5				24/11/19	scene doesn't get resized when the window gets resized
 #6	FIXED		24/11/19	animation speed is not corelated to time but maximum frames
 #7				24/11/19	marie-jane "walking" doesn't display left boot
-#8				24/11/19	marie-jane all animations : face might be blackened (stencil buffer ?)
+#8	FIXED		24/11/19	marie-jane all animations : face might be blackened (stencil buffer ?)

@@ -231,27 +231,12 @@ void myApp::keypress()
 
 myApp::~myApp()
 {
-	std::cout << "myApp:~myApp: camera" << std::endl;
 	delete m_camera;
-
-	std::cout << "myApp:~myApp: lights" << std::endl;
 	delete m_light;
-
-	std::cout << "myApp:~myApp: skybox" << std::endl;
 	delete m_skybox;
-
-	std::cout << "myApp:~myApp: control" << std::endl;
 	delete m_control;
-
-	std::cout << "myApp:~myApp: scene" << std::endl;
 	delete m_scene;
-
-	std::cout << "myApp:~myApp: white" << std::endl;
 	delete white;
-
-	std::cout << "myApp:~myApp: instancedMesh" << std::endl;
 	delete m_instancedMesh;
-
-	std::cout << "myApp:~myApp: stormtrooper" << std::endl;
 	delete m_stormtrooper;
 }

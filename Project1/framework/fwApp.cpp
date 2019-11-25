@@ -115,6 +115,7 @@ void fwApp::resizeEvent(int _width, int _height)
 	SCR_WIDTH = width;
 	SCR_HEIGHT = height;
 	resize(width, height);
+	glViewport(0, 0, width, height);
 }
 
 void fwApp::mouseButton(int button, int action)
