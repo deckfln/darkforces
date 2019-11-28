@@ -6,7 +6,7 @@ fwOrbitControl::fwOrbitControl(fwCamera *_camera, float _radius):
 	camera(_camera),
 	m_radius(_radius)
 {
-
+	update();
 }
 
 void fwOrbitControl::mouseButton(int button, int action)
@@ -43,8 +43,8 @@ void fwOrbitControl::mouseMove(double xpos, double ypos)
 			xdir = xpos - startx ;
 			ydir = ypos - starty;
 		}
-		theta += ydir;
-		phi += xdir;
+		m_theta += ydir;
+		m_phi += xdir;
 
 		update();
 
@@ -55,9 +55,9 @@ void fwOrbitControl::mouseMove(double xpos, double ypos)
 
 void fwOrbitControl::update(void)
 {
-	float z = m_radius * cos(phi)*sin(theta);
-	float x = m_radius * sin(phi)*sin(theta);
-	float y = m_radius * cos(theta);
+	float z = m_radius * cos(m_phi)*sin(m_theta);
+	float x = m_radius * sin(m_phi)*sin(m_theta);
+	float y = m_radius * cos(m_theta);
 
 	camera->translate(x, y, z);
 }

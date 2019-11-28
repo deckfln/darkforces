@@ -1,17 +1,19 @@
-#1	28/05/19	cameraHelpler to show directional shadow
-#2	28/05/19	sort instancedMesh by distance to camera (draw nearest first)
-#3	31/05/19	void fwObject3D::updateWorldMatrix = > FIXME : checking the updated flag is bad => will not detect the shadowCamera projection
-DONE #4	18/07/19	implement basic material on defered renderer
-DONE #4	20/07/19	implement bloom on defered renderer
-#5	20/07/19	optimize glColorMap to NOT allocated depthBuffer if there is not need for it => postprocessing
-#6	20/07/19	optimize renderer + postprocessing to use ping-pong color textures => stop allocating a color texture for each postprocessing
+#1			28/05/19	cameraHelpler to show directional shadow
+#2			28/05/19	sort instancedMesh by distance to camera (draw nearest first)
+#3			31/05/19	void fwObject3D::updateWorldMatrix = > FIXME : checking the updated flag is bad => will not detect the shadowCamera projection
+#4	DONE	18/07/19	implement basic material on defered renderer
+#5	DONE	20/07/19	implement bloom on defered renderer
+#5			20/07/19	optimize glColorMap to NOT allocated depthBuffer if there is not need for it => postprocessing
+#6			20/07/19	optimize renderer + postprocessing to use ping-pong color textures => stop allocating a color texture for each postprocessing
+#7			25/11/19	skinned mesh to send shadows
 
 bug
 #1	FIXED		18/07/19	skybox background not displayed with defered renderer
 #2	FIXED		20/11/19	glBufferAttribute::~glBufferAttribute is trigger a memory error when deleting one object
 #3	FIXED		23/11/19	marie-jane "running" right fore arm is doing a full circle between 2 keyframes
 #4	FIXED		24/11/19	marie-jane "running" gets suspened at the end of the animation loop
-#5				24/11/19	scene doesn't get resized when the window gets resized
+#5	FIXED		24/11/19	scene doesn't get resized when the window gets resized
 #6	FIXED		24/11/19	animation speed is not corelated to time but maximum frames
 #7				24/11/19	marie-jane "walking" doesn't display left boot
 #8	FIXED		24/11/19	marie-jane all animations : face might be blackened (stencil buffer ?)
+#9				25/11/19	marie-jane head is masked when the bloomed cube is behind here

@@ -76,8 +76,6 @@ fwApp::fwApp(std::string name, int _width, int _height, std::string post_process
 	// post processing buffer
 	source = new fwUniform("screenTexture", (glTexture *)nullptr);
 
-	m_pixelsize.x = 1.0 / (width*2.0);
-	m_pixelsize.y = 1.0 / (height*2.0);
 	fwUniform *pixelsize = new fwUniform("pixelsize", &m_pixelsize);
 
 	postProcessing = new fwPostProcessing(post_processing + "/vertex.glsl", post_processing + "/fragment.glsl", source, defines);
@@ -116,6 +114,10 @@ void fwApp::resizeEvent(int _width, int _height)
 	SCR_HEIGHT = height;
 	resize(width, height);
 	glViewport(0, 0, width, height);
+
+	if (control) {
+		control->update();
+	}
 }
 
 void fwApp::mouseButton(int button, int action)
@@ -234,17 +236,11 @@ void fwApp::run(void)
  */
 fwApp::~fwApp()
 {
-	std::cout << "fwApp:~fwApp: renderer" << std::endl;
 	delete renderer;
-
-	std::cout << "fwApp:~fwApp: postprocessing" << std::endl;
 	delete postProcessing;
-
-	std::cout << "fwApp:~fwApp: source" << std::endl;
 	delete source;
 
 	// glfw: terminate, clearing all previously allocated GLFW resources.
 	// ------------------------------------------------------------------
-	std::cout << "fwApp:~fwApp: terminate" << std::endl;
 	glfwTerminate();
 }

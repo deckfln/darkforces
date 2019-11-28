@@ -24,13 +24,13 @@ myApp::myApp(std::string name, int width, int height) :
 	m_camera = new fwCamera(width, height);
 	int Button = 0;
 
-	m_control = new fwOrbitControl(m_camera);
+	m_control = new fwOrbitControl(m_camera, 20);
 	bindControl(m_control);
 
 	/*
 	 * fwCamera
 	 */
-	m_camera->translate(-6.859210, 20.333462, 22.371893);
+	//m_camera->translate(-6.859210, 20.333462, 22.371893);
 
 	/*
 	 * Lights
@@ -150,6 +150,9 @@ myApp::myApp(std::string name, int width, int height) :
 		addChild(sprite).
 		addChild(m_stormtrooper);
 	m_scene->background(m_skybox);
+
+	// mandatory to get all data together
+	resizeEvent(width, height);
 }
 
 void myApp::resize(int width, int height)
