@@ -110,9 +110,12 @@ myApp::myApp(std::string name, int width, int height) :
 	Loader* loader = new Loader(ROOT_FOLDER +"models/marie-jane/marie-jane.dae");
 	m_stormtrooper = (fwMeshSkinned *)loader->get_meshes(0);
 	m_stormtrooper->set_name("stormtrooper");
+	m_stormtrooper->castShadow(true);
+	m_stormtrooper->receiveShadow(true);
+	
 	glm::vec3 rot(-pi / 2, 0, 0);
 	m_stormtrooper->rotate(rot);
-	glm::vec3 v(-2, 0, 0);
+	glm::vec3 v(-1, -0.5, 0);
 	m_stormtrooper->translate(v);
 	m_stormtrooper->run("walking");
 

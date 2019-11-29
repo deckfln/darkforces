@@ -1,19 +1,20 @@
 #include "fwRenderer.h"
 
 #include "fwInstancedMesh.h"
+#include "mesh/fwMeshSkinned.h"
 
 fwRenderer::fwRenderer()
 {
 }
 
-void fwRenderer::getAllChildren(fwObject3D* root, std::list <fwMesh*>& meshes, std::list <fwMesh*>& instances)
+void fwRenderer::getAllChildren(fwObject3D* root, std::vector<std::list <fwMesh*>>& meshes)
 {
 	fwMesh* mesh;
 
 	std::list <fwObject3D*> _children = root->get_children();
 
 	for (auto child : _children) {
-		getAllChildren(child, meshes, instances);
+		getAllChildren(child, meshes);
 
 		// only display meshes
 		if (!child->is_class(MESH)) {
@@ -23,11 +24,14 @@ void fwRenderer::getAllChildren(fwObject3D* root, std::list <fwMesh*>& meshes, s
 		mesh = (fwMesh*)child;
 
 		if (mesh->is_visible()) {
-			if (mesh->is_class(INSTANCED_MESH)) {
-				instances.push_front(mesh);
+			if (mesh->is_class(SKINNED_MESH)) {
+				meshes[SKINNED].push_front(mesh);
+			}
+			else if (mesh->is_class(INSTANCED_MESH)) {
+				meshes[INSTANCED].push_front(mesh);
 			}
 			else {
-				meshes.push_front(mesh);
+				meshes[NORMAL].push_front(mesh);
 			}
 		}
 	}

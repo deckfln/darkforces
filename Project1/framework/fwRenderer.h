@@ -1,10 +1,18 @@
 #pragma once
 
 #include <list>
+#include <vector>
 
 #include "../glEngine/glProgram.h"
 #include "fwCamera.h"
 #include "fwScene.h"
+
+// list of possible meshes
+enum {
+	NORMAL,
+	INSTANCED,
+	SKINNED
+};
 
 class fwRenderer
 {
@@ -13,7 +21,7 @@ protected:
 
 	std::map <std::string, glProgram*> m_programs;
 	std::map <int, fwMaterial*> m_materials;
-	void getAllChildren(fwObject3D* root, std::list <fwMesh*>& meshes, std::list <fwMesh*>& instances);
+	void getAllChildren(fwObject3D* root, std::vector<std::list <fwMesh*>>& meshes);
 
 public:
 	fwRenderer();

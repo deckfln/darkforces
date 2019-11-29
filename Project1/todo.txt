@@ -5,7 +5,7 @@
 #5	DONE	20/07/19	implement bloom on defered renderer
 #5			20/07/19	optimize glColorMap to NOT allocated depthBuffer if there is not need for it => postprocessing
 #6			20/07/19	optimize renderer + postprocessing to use ping-pong color textures => stop allocating a color texture for each postprocessing
-#7			25/11/19	skinned mesh to send shadows
+#7	DONE	25/11/19	skinned mesh to send shadows
 
 bug
 #1	FIXED		18/07/19	skybox background not displayed with defered renderer

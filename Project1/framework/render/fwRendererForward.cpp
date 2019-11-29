@@ -200,18 +200,18 @@ glTexture *fwRendererForward::draw(fwCamera* camera, fwScene *scene)
 			light->setShadowCamera(depth_program);
 
 			// get all objects to draw
-			std::list <fwMesh*> meshes;
-			std::list <fwMesh*> instances;
-			getAllChildren(scene, meshes, instances);
+			std::vector<std::list <fwMesh*>> meshes;
+			meshes.resize(3);
+			getAllChildren(scene, meshes);
 
 			// 1st pass: single meshes
 
 			depth_program->run();
 
 			// draw neareast first
-			meshes.sort([camera](fwMesh* a, fwMesh* b) { return a->sqDistanceTo(camera) < b->sqDistanceTo(camera); });
+			meshes[NORMAL].sort([camera](fwMesh* a, fwMesh* b) { return a->sqDistanceTo(camera) < b->sqDistanceTo(camera); });
 
-			for (auto mesh : meshes) {
+			for (auto mesh : meshes[NORMAL]) {
 				if (mesh->castShadow()) {
 					mesh->draw(depth_program);
 				}
@@ -221,7 +221,7 @@ glTexture *fwRendererForward::draw(fwCamera* camera, fwScene *scene)
 			// TODO: sort instances by distance from the light
 			depth_instanced_program->run();
 
-			for (auto mesh : instances) {
+			for (auto mesh : meshes[INSTANCED]) {
 				if (mesh->castShadow()) {
 					mesh->draw(depth_instanced_program);
 				}
