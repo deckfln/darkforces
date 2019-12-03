@@ -38,8 +38,6 @@ void fwCamera::translate(const float x, const float y, const float z)
 	fwObject3D::translate(x, y, z);
 
 	update();
-
-	printf("%f:%f:%f\n", x, y, z);
 }
 
 void fwCamera::lookAt(glm::vec3 &_target)

@@ -35,8 +35,10 @@ public:
 	void set_uniforms(glProgram *program);
 	void translate(glm::vec3 &translation);
 	void translate(float x, float y, float z);
+
 	void lookAt(glm::vec3 &target);
 	void lookAt(float x, float y, float z);
+	glm::vec3 lookAt(void) { return target; };
 
 	glm::mat4 GetViewMatrix(void);
 	glm::mat4 GetProjectionMatrix(void);

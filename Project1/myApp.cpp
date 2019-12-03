@@ -56,6 +56,10 @@ myApp::myApp(std::string name, int width, int height) :
 
 	m_light->addChild(fLight);
 
+	// camera look at
+	geometry = new fwBoxGeometry();
+	m_fwCamera = new fwMesh(geometry, basic);
+
 	// floor
 	fwTexture *t1 = new fwTexture(ROOT_FOLDER + "/images/brickwall.jpg");
 	fwTexture *t2 = new fwTexture(ROOT_FOLDER + "/images/brickwall_normal.jpg");
@@ -151,7 +155,9 @@ myApp::myApp(std::string name, int width, int height) :
 		addChild(m_instancedMesh).
 		addChild(window).
 		addChild(sprite).
-		addChild(m_stormtrooper);
+		addChild(m_stormtrooper).
+		addChild(m_fwCamera);
+
 	m_scene->background(m_skybox);
 
 	// mandatory to get all data together
@@ -209,6 +215,9 @@ glTexture *myApp::draw(time_t delta, fwRenderer *renderer)
 {
 	m_positions[0] = glm::translate(glm::vec3(1, sin(glfwGetTime() / 2) * 2, 0));
 	m_instancedMesh->update_position(0, 1);
+
+	glm::vec3 p = m_camera->lookAt();
+	m_fwCamera->translate(p);
 
 	glm::vec3 lightPos;
 

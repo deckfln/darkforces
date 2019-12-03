@@ -16,15 +16,16 @@
 
 class myApp : public fwApp
 {
-	fwCamera *m_camera;
-	fwDirectionLight *m_light;
-	fwSkybox *m_skybox;
-	fwScene *m_scene;
-	fwOrbitControl *m_control;
-	glm::vec4 *white;
+	fwCamera *m_camera = nullptr;
+	fwDirectionLight *m_light = nullptr;
+	fwSkybox *m_skybox = nullptr;
+	fwScene* m_scene = nullptr;;
+	fwOrbitControl *m_control = nullptr;
+	glm::vec4 *white = nullptr;
 	glm::mat4 m_positions[3];
-	fwInstancedMesh *m_instancedMesh;
-	fwMeshSkinned* m_stormtrooper;
+	fwInstancedMesh *m_instancedMesh = nullptr;
+	fwMeshSkinned* m_stormtrooper = nullptr;
+	fwMesh* m_fwCamera = nullptr;
 
 public:
 	myApp(std::string name,  int width, int height);
