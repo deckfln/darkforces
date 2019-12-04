@@ -22,6 +22,7 @@ protected:
 	std::map <std::string, glProgram*> m_programs;
 	std::map <int, fwMaterial*> m_materials;
 	void getAllChildren(fwObject3D* root, std::vector<std::list <fwMesh*>>& meshes);
+	bool drawShadows(fwCamera* camera, fwScene* scene);
 
 public:
 	fwRenderer();

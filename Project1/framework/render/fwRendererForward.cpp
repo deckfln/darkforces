@@ -3,20 +3,17 @@
 #include "../../glad/glad.h"
 
 #include "../materials/fwNormalHelperMaterial.h"
-#include "../materials/fwMaterialDepth.h"
 #include "../materials/fwBloomMaterial.h"
 #include "../fwInstancedMesh.h"
+#include "../mesh/fwMeshSkinned.h"
 #include "../postprocessing/fwPostProcessingBloom.h"
 
 static fwNormalHelperMaterial normalHelper;
-static fwMaterialDepth materialDepth;
 fwOutlineMaterial* outline_material = nullptr;
 
 static glProgram* normalHelper_program = nullptr;
 static glProgram* outline_program = nullptr;
 static glProgram* outline_instanced_program = nullptr;
-static glProgram* depth_program = nullptr;
-static glProgram* depth_instanced_program = nullptr;
 
 static fwPostProcessingBloom *Bloom = nullptr;
 
@@ -65,6 +62,11 @@ void fwRendererForward::parseChildren(fwObject3D* root,
 			if (mesh->is_class(INSTANCED_MESH)) {
 				local_defines += "#define INSTANCED\n";
 				code += "INSTANCED";
+			}
+
+			if (mesh->is_class(SKINNED_MESH)) {
+				local_defines += "#define SKINNED\n";
+				code += "SKINNED";
 			}
 
 			if (withShadow && mesh->receiveShadow()) {
@@ -182,57 +184,11 @@ glTexture *fwRendererForward::draw(fwCamera* camera, fwScene *scene)
 	/*
 	 * 1st pass Draw shadows
 	 */
-	bool hasShadowLights = false;
-	std::list <fwLight*> lights = scene->get_lights();
-	for (auto light : lights) {
-		if (((fwObject3D*)light)->castShadow()) {
-			hasShadowLights = true;
-
-			if (depth_program == nullptr) {
-				depth_program = new glProgram(materialDepth.get_shader(VERTEX_SHADER), materialDepth.get_shader(FRAGMENT_SHADER), "", "");
-			}
-			if (depth_instanced_program == nullptr) {
-				depth_instanced_program = new glProgram(materialDepth.get_shader(VERTEX_SHADER), materialDepth.get_shader(FRAGMENT_SHADER), "", "#define INSTANCED\n");
-			}
-
-			// draw in the m_light shadowmap from the POV of the m_light
-			light->startShadowMap();
-			light->setShadowCamera(depth_program);
-
-			// get all objects to draw
-			std::vector<std::list <fwMesh*>> meshes;
-			meshes.resize(3);
-			getAllChildren(scene, meshes);
-
-			// 1st pass: single meshes
-
-			depth_program->run();
-
-			// draw neareast first
-			meshes[NORMAL].sort([camera](fwMesh* a, fwMesh* b) { return a->sqDistanceTo(camera) < b->sqDistanceTo(camera); });
-
-			for (auto mesh : meshes[NORMAL]) {
-				if (mesh->castShadow()) {
-					mesh->draw(depth_program);
-				}
-			}
-
-			// 2nd pass: instanced meshes
-			// TODO: sort instances by distance from the light
-			depth_instanced_program->run();
-
-			for (auto mesh : meshes[INSTANCED]) {
-				if (mesh->castShadow()) {
-					mesh->draw(depth_instanced_program);
-				}
-			}
-
-			light->stopShadowMap();
-		}
-	}
+	bool hasShadowLights = drawShadows(camera, scene);
 
 	// count number of lights
 	std::map <std::string, std::list <fwLight*>> lightsByType;
+	std::list <fwLight*> lights = scene->get_lights();
 
 	for (auto light : lights) {
 		lightsByType[light->getDefine()].push_front(light);

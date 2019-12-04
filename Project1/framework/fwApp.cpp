@@ -71,7 +71,7 @@ fwApp::fwApp(std::string name, int _width, int _height, std::string post_process
 		std::cout << "Failed to initialize GLAD" << std::endl;
 	}
 
-	renderer = new fwRendererDefered(SCR_WIDTH, SCR_HEIGHT);
+	renderer = new fwRendererForward(SCR_WIDTH, SCR_HEIGHT);
 
 	// post processing buffer
 	source = new fwUniform("screenTexture", (glTexture *)nullptr);

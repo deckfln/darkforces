@@ -11,7 +11,7 @@ in vec2 TexCoord;
 in vec3 normal;
 in vec3 world;
 #ifdef TEXTURE_ARRAY
-	in int layer;
+	flat in float layer;
 #endif
 
 struct Material {

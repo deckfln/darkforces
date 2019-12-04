@@ -135,6 +135,7 @@ glTexture *fwRendererDefered::draw(fwCamera* camera, fwScene* scene)
 
 			// draw neareast first
 			meshes[NORMAL].sort([camera](fwMesh* a, fwMesh* b) { return a->sqDistanceTo(camera) < b->sqDistanceTo(camera); });
+			meshes[SKINNED].sort([camera](fwMesh* a, fwMesh* b) { return a->sqDistanceTo(camera) < b->sqDistanceTo(camera); });
 
 			for (auto i = 0; i <= SKINNED; i++) {
 				depth_program[i]->run();
