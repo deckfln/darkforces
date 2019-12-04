@@ -109,46 +109,7 @@ glTexture *fwRendererDefered::draw(fwCamera* camera, fwScene* scene)
 	/*
 	 * 1st pass Draw shadows
 	*/
-	bool hasShadowLights = false;
-	std::list <fwLight*> lights = scene->get_lights();
-	for (auto light : lights) {
-		if (((fwObject3D*)light)->castShadow()) {
-			hasShadowLights = true;
-
-			if (depth_program[0] == nullptr) {
-				depth_program[NORMAL]= new glProgram(materialDepth.get_shader(VERTEX_SHADER), materialDepth.get_shader(FRAGMENT_SHADER), "", "");
-				depth_program[INSTANCED] = new glProgram(materialDepth.get_shader(VERTEX_SHADER), materialDepth.get_shader(FRAGMENT_SHADER), "", "#define INSTANCED\n");
-				depth_program[SKINNED] = new glProgram(materialDepth.get_shader(VERTEX_SHADER), materialDepth.get_shader(FRAGMENT_SHADER), "", "#define SKINNED\n");
-			}
-
-			// draw in the m_light shadowmap from the POV of the m_light
-			light->startShadowMap();
-			light->setShadowCamera(depth_program[NORMAL]);
-
-			// get all objects to draw
-			std::vector<std::list <fwMesh*>> meshes;
-			meshes.resize(3);
-			getAllChildren(scene, meshes);
-
-			// 1st pass: single meshes
-
-
-			// draw neareast first
-			meshes[NORMAL].sort([camera](fwMesh* a, fwMesh* b) { return a->sqDistanceTo(camera) < b->sqDistanceTo(camera); });
-			meshes[SKINNED].sort([camera](fwMesh* a, fwMesh* b) { return a->sqDistanceTo(camera) < b->sqDistanceTo(camera); });
-
-			for (auto i = 0; i <= SKINNED; i++) {
-				depth_program[i]->run();
-				for (auto mesh : meshes[i]) {
-					if (mesh->castShadow()) {
-						mesh->draw(depth_program[i]);
-					}
-				}
-			}
-
-			light->stopShadowMap();
-		}
-	}
+	bool hasShadowLights = drawShadows(camera, scene);
 
 	// create a map of materials shaders vs meshes
 	//    [shaderCode][materialID] = [mesh1, mesh2]
@@ -223,6 +184,7 @@ glTexture *fwRendererDefered::draw(fwCamera* camera, fwScene* scene)
 	 */
 	// list all directional lights
 	std::list <fwDirectionLight *> directionals;
+	std::list <fwLight*> lights = scene->get_lights();
 
 	for (auto light : lights) {
 		if (light->getDefine() == "DIRECTION_LIGHTS") {
