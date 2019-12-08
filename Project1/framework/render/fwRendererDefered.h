@@ -18,10 +18,12 @@ class fwRendererDefered: public fwRenderer
 
 private:
 	void drawMesh(fwCamera* camera, fwMesh* mesh, glProgram* program);
+	void drawMeshes(std::map<std::string, std::map<int, std::list <fwMesh*>>>& meshesPerMaterial, fwCamera* camera);
 
 	void parseChildren(fwObject3D* root,
 		std::map<std::string, std::map<int, std::list <fwMesh*>>>& opaqueMeshPerMaterial,
 		std::list <fwMesh*>& transparentMeshes,
+		std::map<std::string, std::map<int, std::list <fwMesh*>>>& particles,
 		fwCamera* camera);
 
 public:

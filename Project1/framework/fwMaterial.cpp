@@ -20,7 +20,9 @@ fwMaterial::fwMaterial(std::string _vertexShader, std::string _fragmentShader, s
 	id(_materialID++)
 {
 	addShader(VERTEX_SHADER, _vertexShader);
-	addShader(GEOMETRY_SHADER, _geometryShader);
+	if (_geometryShader != "") {
+		addShader(GEOMETRY_SHADER, _geometryShader);
+	}
 	addShader(FRAGMENT_SHADER, _fragmentShader);
 }
 
@@ -107,6 +109,7 @@ const std::string& fwMaterial::get_fragmentShader(void)
 fwMaterial &fwMaterial::addShader(int shader, std::string file, RenderType render)
 {
 	files[render][shader] = file; 
+	m_hash += file;
 	return *this;
 }
 
@@ -126,7 +129,7 @@ const std::string fwMaterial::get_shader(int shader, RenderType render)
 
 std::string fwMaterial::hashCode(void)
 {
-	return vertexShader+fragmentShader+m_defines;
+	return m_hash + m_defines;
 }
 
 fwMaterial::~fwMaterial()

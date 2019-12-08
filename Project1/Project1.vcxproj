@@ -137,10 +137,11 @@
     <ClCompile Include="framework\fwInstancedMesh.cpp" />
     <ClCompile Include="framework\fwLight.cpp" />
     <ClCompile Include="framework\fwMesh.cpp" />
+    <ClCompile Include="framework\fwParticles.cpp" />
     <ClCompile Include="framework\fwRenderer.cpp" />
     <ClCompile Include="framework\fwSkybox.cpp" />
     <ClCompile Include="framework\fwPostProcessing.cpp" />
-    <ClCompile Include="framework\fwSprite.cpp" />
+    <ClCompile Include="framework\fwSprites.cpp" />
     <ClCompile Include="framework\fwTextures.cpp" />
     <ClCompile Include="framework\geometries\fwBoxGeometry.cpp" />
     <ClCompile Include="framework\geometries\fwPlaneGeometry.cpp" />
@@ -213,10 +214,11 @@
     <ClInclude Include="framework\fwInstancedMesh.h" />
     <ClInclude Include="framework\fwLight.h" />
     <ClInclude Include="framework\fwMesh.h" />
+    <ClInclude Include="framework\fwParticles.h" />
     <ClInclude Include="framework\fwRenderer.h" />
     <ClInclude Include="framework\fwSkybox.h" />
     <ClInclude Include="framework\fwPostProcessing.h" />
-    <ClInclude Include="framework\fwSprite.h" />
+    <ClInclude Include="framework\fwSprites.h" />
     <ClInclude Include="framework\fwTextures.h" />
     <ClInclude Include="framework\geometries\fwBoxGeometry.h" />
     <ClInclude Include="framework\geometries\fwPlaneGeometry.h" />

@@ -16,9 +16,11 @@ const int MAX_SHADERS = 10;
 class fwMaterial: public Reference
 {
 	int id;
+	/*
 	std::string vertexShader = "";
 	std::string fragmentShader = "";
 	std::string geometryShader = "";
+	*/
 	std::string vertexShaderCode = "";
 	std::string fragmentShaderCode = "";
 	std::string geometryShaderCode = "";
@@ -32,6 +34,7 @@ class fwMaterial: public Reference
 	std::list <glTexture *> textures;
 	std::list <glTextureArray *> m_textureArrays;
 
+	std::string m_hash = "";
 
 protected:
 	int m_type = 0;
@@ -40,7 +43,7 @@ protected:
 public:
 	fwMaterial();
 	int type(int flag) { return m_type & flag; };
-	fwMaterial(std::string vertexShader, std::string fragmentShader, std::string geometryShader);
+	fwMaterial(std::string vertexShader, std::string fragmentShader, std::string geometryShader = "");
 	fwMaterial &addTexture(std::string uniform, fwTexture *texture);
 	fwMaterial &addTexture(std::string uniform, glTexture *texture);
 	fwMaterial& addTextures(std::string uniform, fwTextures* textures);

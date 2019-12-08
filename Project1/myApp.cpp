@@ -13,7 +13,7 @@
 #include "framework/fwInstancedMesh.h"
 #include "framework/geometries/fwBoxGeometry.h"
 #include "framework/geometries/fwPlaneGeometry.h"
-#include "framework/fwSprite.h"
+#include "framework/fwParticles.h"
 
 #include "framework/Loader.h"
 
@@ -55,10 +55,6 @@ myApp::myApp(std::string name, int width, int height) :
 	fLight->set_scale(half).set_name("light_impersonator");
 
 	m_light->addChild(fLight);
-
-	// camera look at
-	geometry = new fwBoxGeometry();
-	m_fwCamera = new fwMesh(geometry, basic);
 
 	// floor
 	fwTexture *t1 = new fwTexture(ROOT_FOLDER + "/images/brickwall.jpg");
@@ -123,17 +119,10 @@ myApp::myApp(std::string name, int width, int height) :
 	m_stormtrooper->translate(v);
 	m_stormtrooper->run("walking");
 
-	// sprite
-	glm::vec3 *sprites = new glm::vec3 [4];
-	sprites[0].z = -4;
-	sprites[1].z = -2;
-	sprites[2].z = 0;
-	sprites[3].z = 2;
-	t1 = new fwTexture(ROOT_FOLDER +"images/fireworks_red.jpg");
-
-	fwSprite *sprite = new fwSprite(sprites, 4, t1);
-
-	sprite->set_name("sprite");
+	// particles
+	m_particles = new fwParticles(128, ROOT_FOLDER + "images/fireworks_red.jpg", 20);
+	m_particles->set_name("sprite");
+	m_particles->start();
 
 	// Skybox
 	std::string skyboxes[] = {
@@ -151,12 +140,11 @@ myApp::myApp(std::string name, int width, int height) :
 	m_scene = new fwScene();
 	m_scene->addLight(m_light).
 		setOutline(yellow).
+		addChild(m_particles).
 		addChild(plane).
 		addChild(m_instancedMesh).
 		addChild(window).
-		addChild(sprite).
-		addChild(m_stormtrooper).
-		addChild(m_fwCamera);
+		addChild(m_stormtrooper);
 
 	m_scene->background(m_skybox);
 
@@ -216,9 +204,6 @@ glTexture *myApp::draw(time_t delta, fwRenderer *renderer)
 	m_positions[0] = glm::translate(glm::vec3(1, sin(glfwGetTime() / 2) * 2, 0));
 	m_instancedMesh->update_position(0, 1);
 
-	glm::vec3 p = m_camera->lookAt();
-	m_fwCamera->translate(p);
-
 	glm::vec3 lightPos;
 
 	float radius = 2;
@@ -236,6 +221,7 @@ glTexture *myApp::draw(time_t delta, fwRenderer *renderer)
 	}
 	*/
 	m_stormtrooper->update(delta);
+	m_particles->update(delta);
 
 	return renderer->draw (m_camera, m_scene);
 }

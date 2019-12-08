@@ -5,6 +5,11 @@ fwSphere::fwSphere()
 
 }
 
+fwSphere::fwSphere(float radius)
+{
+	m_radius = radius;
+}
+
 void fwSphere::applyMatrix4From(glm::mat4 &matrix, fwSphere *source)
 {
 	m_center = glm::vec3(matrix * glm::vec4(source->m_center, 1.0));

@@ -3,12 +3,13 @@
 
 class fwSphere
 {
-	glm::vec3 m_center;
+	glm::vec3 m_center = glm::vec3(0);
 	float m_radius = 0;
 	int m_cache = -1;
 
 public:
 	fwSphere();
+	fwSphere(float radius);
 	int cache(int _cache) { m_cache = _cache;  return _cache; }
 	int cache(void) { return m_cache; }
 	glm::vec3 &center(void) { return m_center; }

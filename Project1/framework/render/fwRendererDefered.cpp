@@ -2,6 +2,7 @@
 
 #include "../fwInstancedMesh.h"
 #include "../mesh/fwMeshSkinned.h"
+#include "../fwParticles.h"
 #include "../postprocessing/fwPostProcessingDirectLight.h"
 #include "../lights/fwDirectionLight.h"
 #include "../materials/fwMaterialDepth.h"
@@ -27,17 +28,6 @@ fwRendererDefered::fwRendererDefered(int width, int height)
 }
 
 /**
- * Draw a single mesh by program, apply outlone and normalHelpder if needed
- */
-void fwRendererDefered::drawMesh(fwCamera* camera, fwMesh* mesh, glProgram* program)
-{
-	/*
-		* main draw call
-		*/
-	mesh->draw(program);
-}
-
-/**
  * pase all meshes, build
  *  list of opaque object, aranged by code > material > list of mshes
  *  list of transparent objects
@@ -45,6 +35,7 @@ void fwRendererDefered::drawMesh(fwCamera* camera, fwMesh* mesh, glProgram* prog
 void fwRendererDefered::parseChildren(fwObject3D* root,
 	std::map<std::string, std::map<int, std::list <fwMesh*>>>& opaqueMeshPerMaterial,
 	std::list <fwMesh*>& transparentMeshes,
+	std::map<std::string, std::map<int, std::list <fwMesh*>>>& particles,
 	fwCamera* camera)
 {
 	fwMaterial* material;
@@ -55,7 +46,7 @@ void fwRendererDefered::parseChildren(fwObject3D* root,
 	std::list <fwObject3D*> _children = root->get_children();
 
 	for (auto child : _children) {
-		parseChildren(child, opaqueMeshPerMaterial, transparentMeshes, camera);
+		parseChildren(child, opaqueMeshPerMaterial, transparentMeshes, particles, camera);
 
 		// only display meshes
 		if (!child->is_class(MESH)) {
@@ -93,6 +84,11 @@ void fwRendererDefered::parseChildren(fwObject3D* root,
 				transparentMeshes.push_front(mesh);
 				mesh->extra(m_programs[code]);
 			}
+			else if (mesh->is_class(PARTICLES)) {
+				particles[code][materialID].push_front(mesh);
+				m_materials[materialID] = material;
+
+			}
 			else {
 				opaqueMeshPerMaterial[code][materialID].push_front(mesh);
 				m_materials[materialID] = material;
@@ -101,51 +97,27 @@ void fwRendererDefered::parseChildren(fwObject3D* root,
 	}
 }
 
-glTexture *fwRendererDefered::draw(fwCamera* camera, fwScene* scene)
+/**
+ * Draw a single mesh by program, apply outlone and normalHelpder if needed
+ */
+void fwRendererDefered::drawMesh(fwCamera* camera, fwMesh* mesh, glProgram* program)
 {
-	// update all elements on the m_scene
-	scene->updateWorldMatrix(nullptr);
-
 	/*
-	 * 1st pass Draw shadows
-	*/
-	bool hasShadowLights = drawShadows(camera, scene);
+		* main draw call
+		*/
+	mesh->draw(program);
+}
 
-	// create a map of materials shaders vs meshes
-	//    [shaderCode][materialID] = [mesh1, mesh2]
-	std::map<std::string, std::map<int, std::list <fwMesh*>>> meshesPerMaterial;
-	std::list <fwMesh*> transparentMeshes;
-	fwMaterial* material;
-
-	std::list <fwMesh*> ::iterator it;
+/*
+ *
+ */
+void fwRendererDefered::drawMeshes(std::map<std::string, std::map<int, std::list <fwMesh*>>> &meshesPerMaterial, fwCamera* camera)
+{
 	std::string code;
 	int materialID;
-
-	// build all shaders
-	parseChildren(scene, meshesPerMaterial, transparentMeshes, camera);
-
-	// draw all meshes per material
 	std::map <int, std::list <fwMesh*>> listOfMaterials;
 	std::list <fwMesh*> listOfMeshes;
-	std::list <fwMesh*> listOfOutlinedMeshes;
-	std::list <fwMesh*> normalHelperdMeshes;
-
-	// setup m_camera
-	camera->set_uniformBuffer();
-
-	/*
-	 * 2nd pass : draw opaque objects
-	 */
-
-	// record the stencil for the background draw
-	glEnable(GL_STENCIL_TEST);
-	glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
-	glStencilFunc(GL_ALWAYS, 255, 0xFF);
-
-	glStencilMask(0xff);
-	glClear(GL_STENCIL_BUFFER_BIT);
-
-	//m_colorMap->clear();
+	fwMaterial* material;
 
 	for (auto shader : meshesPerMaterial) {
 		// draw all ojects sharing the same shader
@@ -176,6 +148,62 @@ glTexture *fwRendererDefered::draw(fwCamera* camera, fwScene* scene)
 			glTexture::PopTextureUnit();
 		}
 	}
+}
+
+/*
+ *
+ */
+glTexture *fwRendererDefered::draw(fwCamera* camera, fwScene* scene)
+{
+	// update all elements on the m_scene
+	scene->updateWorldMatrix(nullptr);
+
+	/*
+	 * 1st pass Draw shadows
+	*/
+	bool hasShadowLights = drawShadows(camera, scene);
+
+	// create a map of materials shaders vs meshes
+	//    [shaderCode][materialID] = [mesh1, mesh2]
+	std::map<std::string, std::map<int, std::list <fwMesh*>>> meshesPerMaterial;
+	std::map<std::string, std::map<int, std::list <fwMesh*>>> particles;
+	std::list <fwMesh*> transparentMeshes;
+	fwMaterial* material;
+
+	std::list <fwMesh*> ::iterator it;
+	std::string code;
+	int materialID;
+
+	// build all shaders
+	parseChildren(scene, meshesPerMaterial, transparentMeshes, particles, camera);
+
+	// draw all meshes per material
+	std::map <int, std::list <fwMesh*>> listOfMaterials;
+	std::list <fwMesh*> listOfMeshes;
+	std::list <fwMesh*> listOfOutlinedMeshes;
+	std::list <fwMesh*> normalHelperdMeshes;
+
+	// setup m_camera
+	camera->set_uniformBuffer();
+
+	/*
+	 * 2nd pass : draw opaque objects
+	 */
+
+	// record the stencil for the background draw
+	glEnable(GL_STENCIL_TEST);
+	glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+	glStencilFunc(GL_ALWAYS, 255, 0xFF);
+
+	glStencilMask(0xff);
+	glClear(GL_STENCIL_BUFFER_BIT);
+
+	// draw opaque objects
+	drawMeshes(meshesPerMaterial, camera);
+
+	// draw particles
+	drawMeshes(particles, camera);
+
 	glStencilFunc(GL_ALWAYS, 0, 0xFF);
 	glDisable(GL_STENCIL_TEST);
 

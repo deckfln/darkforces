@@ -7,7 +7,7 @@
 #6			20/07/19	optimize renderer + postprocessing to use ping-pong color textures => stop allocating a color texture for each postprocessing
 #7	DONE	25/11/19	skinned mesh to send shadows
 #8		01/12/19	HDR rendering
-#9		01/12/19	GL accelerated particle engine
+#9		01/12/19	GPU accelerated particle engine
 #10	DONE	01/12/19	orbital camera translation
 #11		01/12/19	point ligth added to defered lighting (global)
 #12		01/12/19	point light volumetric deferred lighting
@@ -16,6 +16,8 @@
 #15		01/12/19	add transparent object rendering on deferred renderer
 #16		01/12/19	wireframe rendering
 #17		04/12/19	implement outlined shared in defered rendering
+#18	DONE	06/12/19	CPU based particle engine
+#19		08/12/19	implement RGBA color buffer on defered rendering
 
 bug
 #1	FIXED		18/07/19	skybox background not displayed with defered renderer

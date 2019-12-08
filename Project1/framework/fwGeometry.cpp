@@ -72,6 +72,22 @@ void fwGeometry::enable_attributes(glProgram *program)
 	}
 }
 
+/*
+ * force a dirty attribute to be uploaded to the GPU
+ */
+void fwGeometry::updateVertices(int offset, int size)
+{
+	vertices->update(offset, size);
+}
+
+void fwGeometry::updateAttribute(const std::string& name, int offset, int size)
+{
+	glBufferAttribute* attribute = attributes[name];
+	if (attribute) {
+		attribute->update(offset, size);
+	}
+}
+
 int fwGeometry::get_count(void)
 {
 	return count;
@@ -112,6 +128,18 @@ fwSphere *fwGeometry::computeBoundingsphere(void)
 		}
 
 		m_pBoundingsphere->radius(sqrt(maxRadiusSq));
+	}
+
+	return m_pBoundingsphere;
+}
+
+/**
+ * parse all vertices to compute a bounding sphere
+ */
+fwSphere* fwGeometry::setBoundingsphere(float radius)
+{
+	if (m_pBoundingsphere == nullptr) {
+		m_pBoundingsphere = new fwSphere(radius);
 	}
 
 	return m_pBoundingsphere;

@@ -13,6 +13,7 @@
 #include "framework/fwInstancedMesh.h"
 #include "framework/fwRenderer.h"
 #include "framework/mesh/fwMeshSkinned.h"
+#include "framework/fwParticles.h"
 
 class myApp : public fwApp
 {
@@ -26,6 +27,7 @@ class myApp : public fwApp
 	fwInstancedMesh *m_instancedMesh = nullptr;
 	fwMeshSkinned* m_stormtrooper = nullptr;
 	fwMesh* m_fwCamera = nullptr;
+	fwParticles* m_particles = nullptr;
 
 public:
 	myApp(std::string name,  int width, int height);

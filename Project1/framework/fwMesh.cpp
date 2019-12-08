@@ -78,16 +78,22 @@ void fwMesh::set_uniforms(glProgram* program)
 	}
 }
 
-void fwMesh::draw(glProgram *program)
+GLuint fwMesh::buildVAO(glProgram* program)
 {
 	// create one VAO by shader class
-
 	GLuint id = program->getID();
 	if (vao.count(id) == 0) {
 		vao[id] = new glVertexArray();
 		geometry->enable_attributes(program);
 		vao[id]->unbind();
 	}
+
+	return id;
+}
+
+void fwMesh::draw(glProgram *program)
+{
+	GLuint id = buildVAO(program);
 	program->set_uniform("model", m_worldMatrix);
 	this->set_uniforms(program);
 
@@ -107,6 +113,19 @@ fwGeometry *fwMesh::get_geometry(void)
 std::string fwMesh::getMaterialHash(void)
 {
 	return material->hashCode();
+}
+
+/*
+ * Refresh an attribute on the GPU
+ */
+void fwMesh::updateVertices(int offset, int size)
+{
+	geometry->updateVertices(offset, size);
+}
+
+void fwMesh::updateAttribute(const std::string &attribute, int offset, int size)
+{
+	geometry->updateAttribute(attribute, offset, size);
 }
 
 fwMesh::~fwMesh()

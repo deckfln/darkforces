@@ -1,3 +1,4 @@
+/*
 #version 330
 
 layout (points) in;
@@ -33,3 +34,4 @@ void main()
 
     EndPrimitive();
 }
+*/

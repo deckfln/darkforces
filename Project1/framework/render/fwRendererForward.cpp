@@ -6,6 +6,7 @@
 #include "../materials/fwBloomMaterial.h"
 #include "../fwInstancedMesh.h"
 #include "../mesh/fwMeshSkinned.h"
+#include "../fwSprites.h"
 #include "../postprocessing/fwPostProcessingBloom.h"
 
 static fwNormalHelperMaterial normalHelper;

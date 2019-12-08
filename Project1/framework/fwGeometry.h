@@ -29,12 +29,17 @@ public:
 	fwGeometry& addDynamicVertices(const std::string _name, void *_data, GLsizei itemSize, GLsizei len, GLuint _sizeof_element, bool delete_on_exit = true);
 	fwGeometry& addIndex(void *_data, GLsizei itemSize, GLsizei len, GLuint _sizeof_element, bool delete_on_exit = true);
 	fwGeometry& addAttribute(const std::string _name, GLuint _type, void *_data, GLsizei itemSize, GLsizei len, GLuint _sizeof_element, bool delete_on_exit = true);
-	
+
+	void updateVertices(int offset = 0, int size = -1);
+	void updateAttribute(const std::string &name, int offset=0, int size = -1);
+
 	void enable_attributes(glProgram *program);
+
 	int get_count(void);
 
 	fwSphere *boundingsphere(void) { return m_pBoundingsphere; };
 	fwSphere *computeBoundingsphere(void);
+	fwSphere* setBoundingsphere(float radius);
 	void computeTangent(void);
 
 	void draw(GLenum mode, glVertexArray *);
