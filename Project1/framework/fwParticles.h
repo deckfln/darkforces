@@ -10,6 +10,8 @@ protected:
 	glm::vec3 *m_positions = nullptr;
 	glm::vec3 *m_velocities = nullptr;
 	double *m_timer = nullptr;
+	bool* m_active = nullptr;
+	int* m_lifespan = nullptr;
 	bool m_run = false;
 	fwTexture* m_image;
 

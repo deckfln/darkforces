@@ -30,6 +30,7 @@ void fwSprites::draw(glProgram *program)
 {
 	// create one VAO by shader class
 	GLuint id = buildVAO(program);
+
 	//glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
 	glEnable(GL_PROGRAM_POINT_SIZE);
 	glEnable(GL_POINT_SMOOTH);

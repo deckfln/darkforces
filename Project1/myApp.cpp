@@ -122,6 +122,7 @@ myApp::myApp(std::string name, int width, int height) :
 	// particles
 	m_particles = new fwParticles(128, ROOT_FOLDER + "images/fireworks_red.jpg", 20);
 	m_particles->set_name("sprite");
+	m_particles->translate(0, 5, 0);
 	m_particles->start();
 
 	// Skybox

@@ -18,7 +18,7 @@ void main()
 {
 	vec4 color = texture2D(texture, gl_PointCoord.st);
 
-    gFragColor = vec3(0, 0, 1);
+    gFragColor = vec3(1.0, 1.0, 0);
 	gWorld = world;
 	gNormal = vec3(0);
 	gMaterial = vec3(0);

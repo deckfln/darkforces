@@ -88,15 +88,16 @@ GLuint fwMesh::buildVAO(glProgram* program)
 		vao[id]->unbind();
 	}
 
+	// update the mesh model
+	program->set_uniform("model", m_worldMatrix);
+	this->set_uniforms(program);
+
 	return id;
 }
 
 void fwMesh::draw(glProgram *program)
 {
 	GLuint id = buildVAO(program);
-	program->set_uniform("model", m_worldMatrix);
-	this->set_uniforms(program);
-
 	geometry->draw(wireFrame ? GL_LINES : GL_TRIANGLES, vao[id]);
 }
 
