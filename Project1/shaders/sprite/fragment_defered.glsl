@@ -5,9 +5,7 @@ layout (location = 2) out vec3 gWorld;
 layout (location = 3) out vec3 gMaterial;
 
 // uniform vec4 ourColor;
-in vec3 ourColor;
-in vec2 TexCoord;
-in vec3 normal;
+in vec3 color;
 in vec3 world;
 
 uniform sampler2D texture;
@@ -16,9 +14,8 @@ uniform sampler2D texture;
 
 void main()
 {
-	vec4 color = texture2D(texture, gl_PointCoord.st);
-
-    gFragColor = vec3(1.0, 1.0, 0);
+	// vec3 color = texture2D(texture, gl_PointCoord.st).rgb;
+    gFragColor = color;
 	gWorld = world;
 	gNormal = vec3(0);
 	gMaterial = vec3(0);

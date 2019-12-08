@@ -19,7 +19,7 @@
 #18	DONE	06/12/19	CPU based particle engine
 #19			08/12/19	implement RGBA color buffer on defered rendering
 #20	DONE	08/12/19	handle multiple particles engines with a model transformation
-#21			08/12/19	particle engine: handle colors per particles
+#21	DONE	08/12/19	particle engine: handle colors per particles
 
 bug
 #1	FIXED		18/07/19	skybox background not displayed with defered renderer

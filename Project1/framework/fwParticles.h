@@ -12,6 +12,7 @@ protected:
 	double *m_timer = nullptr;
 	bool* m_active = nullptr;
 	int* m_lifespan = nullptr;
+	glm::vec3* m_colors = nullptr;
 	bool m_run = false;
 	fwTexture* m_image;
 
