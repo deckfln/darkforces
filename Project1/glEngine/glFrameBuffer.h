@@ -14,7 +14,7 @@ class glFrameBuffer
 	GLint m_prevViewport[4] = { -1, -1, -1,-1 };
 
 protected:
-	glm::vec2 m_size = glm::vec2(0);
+	glm::ivec2 m_size = glm::ivec2(0);
 	int type = GL_FRAMEBUFFER;
 
 public:
@@ -26,6 +26,7 @@ public:
 	void bindDepth(glRenderBuffer *depth_stencil);
 	void unbind(void);
 	void resize(int _width, int _height);
-	glm::vec2 &size(void);
+	glm::ivec2 &size(void);
+	void copyFrom(glFrameBuffer* source, int mask);
 	~glFrameBuffer();
 };

@@ -14,14 +14,7 @@ class fwRendererForward: public fwRenderer
 {
 private:
 	void allChildren(fwObject3D* root, std::list <fwMesh*>& meshes, std::list <fwMesh*>& instances);
-	void parseChildren(fwObject3D* root,
-		std::map<std::string, std::map<int, std::list <fwMesh*>>>& opaqueMeshPerMaterial,
-		std::list <fwMesh*>& transparentMeshes,
-		std::string& codeLights,
-		std::string& defines,
-		bool withShadow,
-		fwCamera* camera);
-	void drawMesh(fwCamera* camera, fwMesh* mesh, glProgram* program, std::string defines);
+	void drawMesh(fwCamera* camera, fwMesh* mesh, glProgram* program, std::string &defines);
 	void setOutline(glm::vec4* _color);
 
 public:

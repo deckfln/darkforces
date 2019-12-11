@@ -48,9 +48,16 @@ void glFrameBuffer::resize(int _width, int _height)
 	m_size.y = _width;
 }
 
-glm::vec2 &glFrameBuffer::size(void)
+glm::ivec2 &glFrameBuffer::size(void)
 {
 	return m_size;
+}
+
+void glFrameBuffer::copyFrom(glFrameBuffer* source, int mask)
+{
+	glBindFramebuffer(GL_READ_FRAMEBUFFER, source->id);
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, id);
+	glBlitFramebuffer(0, 0, m_size.x, m_size.y, 0, 0, m_size.x, m_size.y, mask, GL_NEAREST);
 }
 
 glFrameBuffer::~glFrameBuffer()

@@ -24,82 +24,9 @@ void fwRendererForward::setOutline(glm::vec4* _color)
 }
 
 /**
- * pase all meshes, build
- *  list of opaque object, aranged by code > material > list of mshes
- *  list of transparent objects
- */
-void fwRendererForward::parseChildren(fwObject3D* root,
-	std::map<std::string, std::map<int, std::list <fwMesh*>>>& opaqueMeshPerMaterial,
-	std::list <fwMesh*>& transparentMeshes,
-	std::string& codeLights,
-	std::string& defines,
-	bool withShadow,
-	fwCamera* camera)
-{
-	fwMaterial* material;
-	fwMesh* mesh;
-	std::string code;
-	int materialID;
-
-	std::list <fwObject3D*> _children = root->get_children();
-
-	for (auto child : _children) {
-		parseChildren(child, opaqueMeshPerMaterial, transparentMeshes, codeLights, defines, withShadow, camera);
-
-		// only display meshes
-		if (!child->is_class(MESH)) {
-			continue;
-		}
-
-		mesh = (fwMesh*)child;
-
-		if (mesh->is_visible() && camera->is_inFrustum(mesh)) {
-			std::string local_defines = defines;
-
-			material = mesh->get_material();
-			code = material->hashCode() + codeLights;
-			materialID = material->getID();
-
-			if (mesh->is_class(INSTANCED_MESH)) {
-				local_defines += "#define INSTANCED\n";
-				code += "INSTANCED";
-			}
-
-			if (mesh->is_class(SKINNED_MESH)) {
-				local_defines += "#define SKINNED\n";
-				code += "SKINNED";
-			}
-
-			if (withShadow && mesh->receiveShadow()) {
-				local_defines += "#define SHADOWMAP\n";
-				code += "SHADOWMAP";
-			}
-
-			// Create the shader program if it is not already there
-			if (m_programs.count(code) == 0) {
-				local_defines += material->defines();
-				const std::string &vertex = material->get_shader(VERTEX_SHADER);
-				const std::string &fragment = material->get_shader(FRAGMENT_SHADER);
-				const std::string &geometry = material->get_shader(GEOMETRY_SHADER);
-				m_programs[code] = new glProgram(vertex, fragment, geometry, local_defines);
-			}
-
-			if (mesh->is_transparent()) {
-				transparentMeshes.push_front(mesh);
-				mesh->extra(m_programs[code]);
-			}
-			else {
-				opaqueMeshPerMaterial[code][materialID].push_front(mesh);
-				m_materials[materialID] = material;
-			}
-		}
-	}
-}
-
-/**
  * Draw a single mesh by program, apply outlone and normalHelpder if needed
  */
-void fwRendererForward::drawMesh(fwCamera* camera, fwMesh* mesh, glProgram* program, std::string defines)
+void fwRendererForward::drawMesh(fwCamera* camera, fwMesh* mesh, glProgram* program, std::string &defines)
 {
 	if (mesh->is_outlined()) {
 		// write in the stencil buffer for outlined objects
@@ -173,6 +100,9 @@ void fwRendererForward::drawMesh(fwCamera* camera, fwMesh* mesh, glProgram* prog
 	}
 }
 
+/*
+ * Draw all meshes on the scane 
+ */
 glTexture *fwRendererForward::draw(fwCamera* camera, fwScene *scene)
 {
 	if (outline_material != nullptr && outline_program == nullptr) {
@@ -189,37 +119,16 @@ glTexture *fwRendererForward::draw(fwCamera* camera, fwScene *scene)
 
 	// count number of lights
 	std::map <std::string, std::list <fwLight*>> lightsByType;
-	std::list <fwLight*> lights = scene->get_lights();
-
-	for (auto light : lights) {
-		lightsByType[light->getDefine()].push_front(light);
-	}
-
-	// pre-processor
 	std::string defines;
 	std::string codeLights = "";
-	for (auto type : lightsByType) {
-		codeLights += type.first + ":" + std::to_string(type.second.size());
-		defines += "#define " + type.first + " " + std::to_string(type.second.size()) + "\n";
-	}
+
+	preProcessLights(scene, lightsByType, defines, codeLights);
 
 	// create a map of materials shaders vs meshes
-	//    [shaderCode][materialID] = [mesh1, mesh2]
-	std::map<std::string, std::map<int, std::list <fwMesh*>>> meshesPerMaterial;
-	std::list <fwMesh*> transparentMeshes;
-	fwMaterial* material;
-
-	std::list <fwMesh*> ::iterator it;
-	std::string code;
-	int materialID;
-
-	parseChildren(scene, meshesPerMaterial, transparentMeshes, codeLights, defines, hasShadowLights, camera);
+	std::list <fwMesh*> meshesPerCategory[3];
+	parseChildren(scene, meshesPerCategory, camera);
 
 	// draw all meshes per material
-	std::map <int, std::list <fwMesh*>> listOfMaterials;
-	std::list <fwMesh*> listOfMeshes;
-	std::list <fwMesh*> listOfOutlinedMeshes;
-	std::list <fwMesh*> normalHelperdMeshes;
 
 	// setup m_camera
 	camera->set_uniformBuffer();
@@ -231,48 +140,22 @@ glTexture *fwRendererForward::draw(fwCamera* camera, fwScene *scene)
 	 * 2nd pass : draw opaque objects => FBO 0
 	 *            record bright pixels => FBO 1
 	 */
-	for (auto shader : meshesPerMaterial) {
-		// draw all ojects sharing the same shader
-		code = shader.first;
-		listOfMaterials = shader.second;
-
-		glProgram* program = m_programs[code];
-
-		program->run();
-		camera->bind_uniformBuffer(program);
-
-		// setup lights
-		int i;
-		for (auto type : lightsByType) {
-			i = 0;
-			for (auto light : type.second) {
-				light->set_uniform(program, i);
-
-				i++;
-			}
-		}
-
-		for (auto ids : listOfMaterials) {
-			// draw all ojects sharing the material
-			materialID = ids.first;
-			listOfMeshes = ids.second;
-
-			// draw neareast first
-			// TODO: sort instances by distance from the light
-			listOfMeshes.sort([camera](fwMesh* a, fwMesh* b) { return a->sqDistanceTo(camera) < b->sqDistanceTo(camera); });
-
-			glTexture::PushTextureUnit();
-			material = m_materials[materialID];
-
-			material->set_uniforms(program);
-
-			for (auto mesh : listOfMeshes) {
-				drawMesh(camera, mesh, program, defines);
-			}
-
-			glTexture::PopTextureUnit();
-		}
-	}
+	drawMeshes(
+		camera,
+		meshesPerCategory[RENDER_OPAQ],
+		defines,
+		codeLights,
+		lightsByType,
+		hasShadowLights
+	);
+	drawMeshes(
+		camera,
+		meshesPerCategory[RENDER_OPAQ_PARTICLES],
+		defines,
+		codeLights,
+		lightsByType,
+		hasShadowLights
+	);
 
 	// remove the bloom buffer
 	m_colorMap->bindColors(1);		// deactivate all color buffers but the first
@@ -296,34 +179,14 @@ glTexture *fwRendererForward::draw(fwCamera* camera, fwScene *scene)
 	  * 5th pass : draw transparent objects
 	  *	sorted from far to near
 	  */
-	transparentMeshes.sort([camera](fwMesh* a, fwMesh* b) { return a->sqDistanceTo(camera) > b->sqDistanceTo(camera); });
-
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	for (auto mesh : transparentMeshes) {
-		material = mesh->get_material();
-
-		glProgram* program = (glProgram*)mesh->extra();
-		camera->bind_uniformBuffer(program);
-
-		program->run();
-
-		// setup lights
-		int i;
-		for (auto type : lightsByType) {
-			i = 0;
-			for (auto light : type.second) {
-				light->set_uniform(program, i);
-
-				i++;
-			}
-		}
-
-		material->set_uniforms(program);
-		drawMesh(camera, mesh, program, defines);
-	}
-
-	glDisable(GL_BLEND);
+	drawTransparentMeshes(
+		camera,
+		meshesPerCategory[RENDER_TRANSPARENT],
+		defines,
+		codeLights,
+		lightsByType,
+		hasShadowLights
+	);
 
 	m_colorMap->bindColors(2);		// activate all buffers
 

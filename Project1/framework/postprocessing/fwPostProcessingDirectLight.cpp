@@ -116,13 +116,12 @@ glColorMap* fwPostProcessingDirectLight::draw(glGBuffer* gbuffer, std::list <fwD
 			quad[i]->unbind();
 		}
 
-		glm::vec2 size = gbuffer->size();
-		m_colorMap = new glColorMap(size.x, size.y, 1, 0, m_pBloomTexture);	// 1 outgoing color buffer, no depthmap & no stencil map
+		glm::ivec2 size = gbuffer->size();
+		m_colorMap = new glColorMap(size.x, size.y, 1, 3, m_pBloomTexture);	// 1 outgoing color buffer, no depthmap & no stencil map
 	}
 
 	//TODO: add a set/restore for depth testing
 	glDisable(GL_DEPTH_TEST);
-
 
 	// no shadow lights
 	int shd = NO_SHADOW;
@@ -132,6 +131,9 @@ glColorMap* fwPostProcessingDirectLight::draw(glGBuffer* gbuffer, std::list <fwD
 	drawLight(lights, gbuffer, Light_program[shd], quad[shd]);
 
 	glEnable(GL_DEPTH_TEST);
+
+	// copy depth buffer from the draw buffer into the target buffer
+	m_colorMap->copyFrom(gbuffer, GL_DEPTH_BUFFER_BIT);
 
 	return m_colorMap;
 }

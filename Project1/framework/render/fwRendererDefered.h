@@ -17,14 +17,9 @@ class fwRendererDefered: public fwRenderer
 	fwPostProcessingBloom* m_bloom = nullptr;
 
 private:
-	void drawMesh(fwCamera* camera, fwMesh* mesh, glProgram* program);
-	void drawMeshes(std::map<std::string, std::map<int, std::list <fwMesh*>>>& meshesPerMaterial, fwCamera* camera);
-
-	void parseChildren(fwObject3D* root,
-		std::map<std::string, std::map<int, std::list <fwMesh*>>>& opaqueMeshPerMaterial,
-		std::list <fwMesh*>& transparentMeshes,
-		std::map<std::string, std::map<int, std::list <fwMesh*>>>& particles,
-		fwCamera* camera);
+	void buildDeferedShader(std::list <fwMesh*>& meshes, fwCamera* camera, std::map<std::string, std::map<int, std::list <fwMesh*>>>& meshPerMaterial);
+	void drawMesh(fwCamera* camera, fwMesh* mesh, glProgram* program, std::string &defines);
+	void drawMeshes(std::list <fwMesh*>& meshesPerMaterial, fwCamera* camera);
 
 public:
 	fwRendererDefered(int width, int height);

@@ -32,75 +32,50 @@ fwRendererDefered::fwRendererDefered(int width, int height)
  *  list of opaque object, aranged by code > material > list of mshes
  *  list of transparent objects
  */
-void fwRendererDefered::parseChildren(fwObject3D* root,
-	std::map<std::string, std::map<int, std::list <fwMesh*>>>& opaqueMeshPerMaterial,
-	std::list <fwMesh*>& transparentMeshes,
-	std::map<std::string, std::map<int, std::list <fwMesh*>>>& particles,
-	fwCamera* camera)
+void fwRendererDefered::buildDeferedShader(std::list <fwMesh*>& meshes,	
+	fwCamera* camera,
+	std::map<std::string, std::map<int, std::list <fwMesh*>>>& meshPerMaterial
+	)
 {
 	fwMaterial* material;
-	fwMesh* mesh;
 	std::string code;
 	int materialID;
+	std::string local_defines;
 
-	std::list <fwObject3D*> _children = root->get_children();
+	for (auto mesh: meshes) {
+		local_defines = "";
 
-	for (auto child : _children) {
-		parseChildren(child, opaqueMeshPerMaterial, transparentMeshes, particles, camera);
+		material = mesh->get_material();
+		code = material->hashCode();
+		materialID = material->getID();
 
-		// only display meshes
-		if (!child->is_class(MESH)) {
-			continue;
+		if (mesh->is_class(INSTANCED_MESH)) {
+			local_defines += "#define INSTANCED\n";
+			code += "INSTANCED";
 		}
 
-		mesh = (fwMesh*)child;
-
-		if (mesh->is_visible() && camera->is_inFrustum(mesh)) {
-			std::string local_defines = "";
-
-			material = mesh->get_material();
-			code = material->hashCode();
-			materialID = material->getID();
-
-			if (mesh->is_class(INSTANCED_MESH)) {
-				local_defines += "#define INSTANCED\n";
-				code += "INSTANCED";
-			}
-
-			if (mesh->is_class(SKINNED_MESH)) {
-				local_defines += "#define SKINNED\n";
-				code += "SKINNED";
-			}
-
-			// Create the shader program if it is not already there
-			if (m_programs.count(code) == 0) {
-				const std::string vertex = material->get_shader(VERTEX_SHADER);
-				const std::string geometry = material->get_shader(GEOMETRY_SHADER);
-				const std::string fragment = material->get_shader(FRAGMENT_SHADER, DEFERED_RENDER);
-				m_programs[code] = new glProgram(vertex, fragment, geometry, local_defines);
-			}
-
-			if (mesh->is_transparent()) {
-				transparentMeshes.push_front(mesh);
-				mesh->extra(m_programs[code]);
-			}
-			else if (mesh->is_class(PARTICLES)) {
-				particles[code][materialID].push_front(mesh);
-				m_materials[materialID] = material;
-
-			}
-			else {
-				opaqueMeshPerMaterial[code][materialID].push_front(mesh);
-				m_materials[materialID] = material;
-			}
+		if (mesh->is_class(SKINNED_MESH)) {
+			local_defines += "#define SKINNED\n";
+			code += "SKINNED";
 		}
+
+		// Create the shader program if it is not already there
+		if (m_programs.count(code) == 0) {
+			const std::string vertex = material->get_shader(VERTEX_SHADER);
+			const std::string geometry = material->get_shader(GEOMETRY_SHADER);
+			const std::string fragment = material->get_shader(FRAGMENT_SHADER, DEFERED_RENDER);
+			m_programs[code] = new glProgram(vertex, fragment, geometry, local_defines);
+		}
+
+		m_materials[materialID] = material;
+		meshPerMaterial[code][materialID].push_front(mesh);
 	}
 }
 
 /**
  * Draw a single mesh by program, apply outlone and normalHelpder if needed
  */
-void fwRendererDefered::drawMesh(fwCamera* camera, fwMesh* mesh, glProgram* program)
+void fwRendererDefered::drawMesh(fwCamera* camera, fwMesh* mesh, glProgram* program, std::string &defines)
 {
 	/*
 		* main draw call
@@ -111,15 +86,19 @@ void fwRendererDefered::drawMesh(fwCamera* camera, fwMesh* mesh, glProgram* prog
 /*
  *
  */
-void fwRendererDefered::drawMeshes(std::map<std::string, std::map<int, std::list <fwMesh*>>> &meshesPerMaterial, fwCamera* camera)
+void fwRendererDefered::drawMeshes(std::list <fwMesh*> &meshes, fwCamera* camera)
 {
 	std::string code;
 	int materialID;
 	std::map <int, std::list <fwMesh*>> listOfMaterials;
 	std::list <fwMesh*> listOfMeshes;
 	fwMaterial* material;
+	std::string empty = "";
+	std::map<std::string, std::map<int, std::list <fwMesh*>>> meshPerMaterial;
 
-	for (auto shader : meshesPerMaterial) {
+	buildDeferedShader(meshes, camera, meshPerMaterial);
+
+	for (auto shader : meshPerMaterial) {
 		// draw all ojects sharing the same shader
 		code = shader.first;
 		listOfMaterials = shader.second;
@@ -142,7 +121,7 @@ void fwRendererDefered::drawMeshes(std::map<std::string, std::map<int, std::list
 			material->set_uniforms(program);
 
 			for (auto mesh : listOfMeshes) {
-				drawMesh(camera, mesh, program);
+				drawMesh(camera, mesh, program, empty);
 			}
 
 			glTexture::PopTextureUnit();
@@ -165,17 +144,17 @@ glTexture *fwRendererDefered::draw(fwCamera* camera, fwScene* scene)
 
 	// create a map of materials shaders vs meshes
 	//    [shaderCode][materialID] = [mesh1, mesh2]
-	std::map<std::string, std::map<int, std::list <fwMesh*>>> meshesPerMaterial;
-	std::map<std::string, std::map<int, std::list <fwMesh*>>> particles;
-	std::list <fwMesh*> transparentMeshes;
-	fwMaterial* material;
+	//std::map<std::string, std::map<int, std::list <fwMesh*>>> meshesPerMaterial;
+	//std::map<std::string, std::map<int, std::list <fwMesh*>>> particles;
+	//std::list <fwMesh*> transparentMeshes;
 
 	std::list <fwMesh*> ::iterator it;
 	std::string code;
-	int materialID;
 
-	// build all shaders
-	parseChildren(scene, meshesPerMaterial, transparentMeshes, particles, camera);
+	// sort objects by drawing order
+	std::list <fwMesh*> meshesPerCategory[3];
+	parseChildren(scene, meshesPerCategory, camera);
+	//parseChildren1(scene, meshesPerMaterial, transparentMeshes, particles, camera);
 
 	// draw all meshes per material
 	std::map <int, std::list <fwMesh*>> listOfMaterials;
@@ -199,16 +178,18 @@ glTexture *fwRendererDefered::draw(fwCamera* camera, fwScene* scene)
 	glClear(GL_STENCIL_BUFFER_BIT);
 
 	// draw opaque objects
-	drawMeshes(meshesPerMaterial, camera);
+	drawMeshes(meshesPerCategory[RENDER_OPAQ], camera);
 
-	// draw particles
-	drawMeshes(particles, camera);
+	/*
+	 * 3rd pass : draw opaque particles
+	 */
+	drawMeshes(meshesPerCategory[RENDER_OPAQ_PARTICLES], camera);
 
 	glStencilFunc(GL_ALWAYS, 0, 0xFF);
 	glDisable(GL_STENCIL_TEST);
 
 	/*
-	 * 3rd pass : directional lighting + generate bloom buffer
+	 * 4th pass : directional lighting + generate bloom buffer
 	 */
 	// list all directional lights
 	std::list <fwDirectionLight *> directionals;
@@ -222,6 +203,7 @@ glTexture *fwRendererDefered::draw(fwCamera* camera, fwScene* scene)
 
 	glColorMap* outBuffer = nullptr;
 	if (directionals.size() > 0) {
+		// DO NOT overwrite the depth buffer with merging to the quad
 		outBuffer = DirectionalLight->draw((glGBuffer*)m_colorMap, directionals);
 	}
 	else {
@@ -230,7 +212,7 @@ glTexture *fwRendererDefered::draw(fwCamera* camera, fwScene* scene)
 	}
 
 	/*
-	 * 3rd pass : draw skybox
+	 * 5th pass : draw skybox
 	 */
 	outBuffer->bind();
 
@@ -246,11 +228,28 @@ glTexture *fwRendererDefered::draw(fwCamera* camera, fwScene* scene)
 	}
 
 	/*
-	 * 4th pass: bloom pass
+	 * 6th pass: bloom pass
 	 */
 	if (m_bloom) {
 		m_bloom->draw(outBuffer);
 	}
+
+
+	/*
+	 * 7th pass : draw transparent objects with forward rendering
+	 */
+	std::map <std::string, std::list <fwLight*>> lightsByType;
+	std::string defines;
+	std::string codeLights = "";
+
+	preProcessLights(scene, lightsByType, defines, codeLights);
+	drawTransparentMeshes(
+		camera,
+		meshesPerCategory[RENDER_TRANSPARENT],
+		defines,
+		codeLights,
+		lightsByType,
+		hasShadowLights);
 
 	return outBuffer->getColorTexture(0);
 }
