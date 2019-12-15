@@ -96,6 +96,11 @@ glm::mat4 &fwCamera::GetMatrix(void)
 	return m_matrix;
 }
 
+void fwCamera::set_uniform(std::string name, std::string attr, glProgram* program)
+{
+
+}
+
 void fwCamera::set_uniforms(glProgram *program)
 {
 	program->set_uniform("view", view);

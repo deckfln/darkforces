@@ -20,9 +20,11 @@
 #21	DONE	08/12/19	particle engine: handle colors per particles
 #22			10/12/19	particle engine: create world space particles so the generator can move along
 #23			12/12/19	Add an FPS GUI
-#24			12/12/19	Point light shadows on forward rendering
+#24	DONE	12/12/19	Point light shadows on forward rendering
 #25			14/12/19	implement in_frustum for panoramic/orthographic cameras
 #26			14/12/19	check objects in_frustrum in fwRender:drawShadows
+#27			15/12/19	use shared buffer object to upload lights to the GPU
+#28			15/12/19	add PCF shadows
 
 bug
 #1	FIXED		18/07/19	skybox background not displayed with defered renderer

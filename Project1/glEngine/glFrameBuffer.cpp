@@ -23,7 +23,7 @@ void glFrameBuffer::bind()
 
 void glFrameBuffer::bindTexture(glTexture *texture, GLuint attachment)
 {
-	// let openGL find out what is the type of the texture (1D, 2D, 3D, cubmap ...)
+	//todo: let openGL find out what is the type of the texture (1D, 2D, 3D, cubmap ...)
 	glFramebufferTexture(type, attachment, texture->getID(), 0);
 }
 

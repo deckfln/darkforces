@@ -37,6 +37,8 @@ std::string fwLight::set_uniform(glProgram *program, int index)
 
 	// upload the m_light space matrix if there is a m_camera
 	if (m_shadowCamera != nullptr) {
+		//todo : why did I upload the cmera here
+		//m_shadowCamera->set_uniforms(program);
 		glm::mat4 matrix = m_shadowCamera->GetMatrix();
 		program->set_uniform(prefix + ".matrix", matrix);
 		program->set_uniform(prefix + ".shadowMap", m_shadowMap->getDepthTexture());

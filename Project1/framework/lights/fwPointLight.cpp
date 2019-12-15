@@ -35,7 +35,7 @@ bool fwPointLight::castShadow(bool s)
 		m_shadowMap = new glDepthCubeMap(1024, 1024);
 	}
 	if (s && m_shadowCamera == nullptr) {
-		m_shadowCamera = new fwCameraPanoramic(10, 1, 17.5);
+		m_shadowCamera = new fwCameraPanoramic(1, 1, 17.5);
 	}
 	return s;
 }
@@ -50,6 +50,9 @@ std::string fwPointLight::set_uniform(glProgram *program, int index)
 	program->set_uniform(prefix + ".linear", linear);
 	program->set_uniform(prefix + ".quadratic", quadratic);
 
+	if (m_shadowCamera) {
+		m_shadowCamera->set_uniform(prefix + ".far_plane", "far_plane", program);
+	}
 	return prefix;
 }
 

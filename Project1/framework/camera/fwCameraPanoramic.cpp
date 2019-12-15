@@ -1,5 +1,6 @@
 #include "fwCameraPanoramic.h"
 
+#include <string>
 
 fwCameraPanoramic::fwCameraPanoramic(float aspect, float _near, float _far) :
     m_far(_far)
@@ -23,12 +24,22 @@ void fwCameraPanoramic::update(void)
     m_frustum.setFromMatrix(m_projScreenMatrix);
 }
 
+void fwCameraPanoramic::set_uniform(std::string name, std::string attr, glProgram* program)
+{
+    if (attr == "far_plane") {
+        program->set_uniform(name, m_far);
+    }
+    else {
+        fwCamera::set_uniform(name, attr, program);
+    }
+}
+
 void fwCameraPanoramic::set_uniforms(glProgram* program)
 {
+    fwCamera::set_uniforms(program);
+
     //todo: if I use an array (explicit by the size), why do I have to search for tranforms[0]
     program->set_uniform("transforms[0]", m_transforms, 6);
-    program->set_uniform("projection", m_projection);
-    program->set_uniform("viewPos", m_Position);
     program->set_uniform("far_plane", m_far);
 }
 

@@ -1,6 +1,7 @@
-
 #version 330 core
 layout (location = 0) in vec3 aPos;
+
+#define DEFINES
 
 #ifdef INSTANCED
 	layout (location = 4) in mat4 model;

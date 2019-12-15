@@ -13,5 +13,6 @@ public:
 	fwCameraPanoramic(float aspect, float near, float far);
 	void update(void);
 	void set_uniforms(glProgram* program);
+	void set_uniform(std::string name, std::string attr, glProgram* program);
 	~fwCameraPanoramic();
 };
