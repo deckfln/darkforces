@@ -11,18 +11,20 @@
 
 class fwLight: public fwObject3D
 {
-	glDepthMap *shadowMap = nullptr;
-
 protected:
-	int type;
+	int type = 0;
 	std::string uniform_prefix;
 	std::string shader_define;
-	glm::vec3 ambient;
+	glm::vec3 ambient = glm::vec3(0);
 
 	std::list <fwUniform *> uniforms;
 
-	fwCamera *shadowCamera = nullptr;
-	GLint m_previousCulling;
+	fwCamera *m_shadowCamera = nullptr;
+	GLint m_previousCulling = 0;
+	glDepthMap *m_shadowMap = nullptr;
+
+	fwMaterial *m_materialDepth = nullptr;
+	glProgram **m_depth_program = nullptr;
 
 public:
 	fwLight();
@@ -31,11 +33,13 @@ public:
 
 	std::string &getDefine(void);
 	virtual std::string set_uniform(glProgram *program, int index = -1);
+	void shadowShaders(void);
 
 	virtual bool castShadow(bool s);
 
 	void startShadowMap(void);
-	void setShadowCamera(glProgram *program);
+	void runShadowProgram(int i);
+	glProgram* getShadowProgram(int i) { return m_depth_program[i]; };
 	void stopShadowMap(void);
 
 	~fwLight();

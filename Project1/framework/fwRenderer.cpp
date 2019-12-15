@@ -1,12 +1,10 @@
 #include "fwRenderer.h"
 
+#include "fwConstants.h"
+
 #include "fwInstancedMesh.h"
 #include "mesh/fwMeshSkinned.h"
 #include "fwParticles.h"
-#include "materials/fwMaterialDepth.h"
-
-static glProgram* depth_program[3] = { nullptr, nullptr, nullptr };
-static fwMaterialDepth materialDepth;
 
 fwRenderer::fwRenderer()
 {
@@ -33,13 +31,13 @@ void fwRenderer::getAllChildren(fwObject3D* root, std::vector<std::list <fwMesh*
 
 		if (mesh->is_visible()) {
 			if (mesh->is_class(SKINNED_MESH)) {
-				meshes[SKINNED].push_front(mesh);
+				meshes[FW_MESH_SKINNED].push_front(mesh);
 			}
 			else if (mesh->is_class(INSTANCED_MESH)) {
-				meshes[INSTANCED].push_front(mesh);
+				meshes[FW_MESH_INSTANCED].push_front(mesh);
 			}
 			else {
-				meshes[NORMAL].push_front(mesh);
+				meshes[FW_MESH_NORMAL].push_front(mesh);
 			}
 		}
 	}
@@ -118,13 +116,13 @@ void fwRenderer::parseChildren(fwObject3D* root, std::list <fwMesh *> meshes[], 
 
 		if (mesh->is_visible() && camera->is_inFrustum(mesh)) {
 			if (mesh->is_transparent()) {
-				meshes[RENDER_TRANSPARENT].push_front(mesh);
+				meshes[FW_RENDER_TRANSPARENT].push_front(mesh);
 			}
 			else if (mesh->is_class(PARTICLES)) {
-				meshes[RENDER_OPAQ_PARTICLES].push_front(mesh);
+				meshes[FW_RENDER_OPAQ_PARTICLES].push_front(mesh);
 			}
 			else {
-				meshes[RENDER_OPAQ].push_front(mesh);
+				meshes[FW_RENDER_OPAQ].push_front(mesh);
 			}
 		}
 	}
@@ -144,15 +142,8 @@ bool fwRenderer::drawShadows(fwCamera* camera, fwScene* scene)
 		if (((fwObject3D*)light)->castShadow()) {
 			hasShadowLights = true;
 
-			if (depth_program[0] == nullptr) {
-				depth_program[NORMAL] = new glProgram(materialDepth.get_shader(VERTEX_SHADER), materialDepth.get_shader(FRAGMENT_SHADER), "", "");
-				depth_program[INSTANCED] = new glProgram(materialDepth.get_shader(VERTEX_SHADER), materialDepth.get_shader(FRAGMENT_SHADER), "", "#define INSTANCED\n");
-				depth_program[SKINNED] = new glProgram(materialDepth.get_shader(VERTEX_SHADER), materialDepth.get_shader(FRAGMENT_SHADER), "", "#define SKINNED\n");
-			}
-
 			// draw in the m_light shadowmap from the POV of the m_light
 			light->startShadowMap();
-			light->setShadowCamera(depth_program[NORMAL]);
 
 			// get all objects to draw
 			std::vector<std::list <fwMesh*>> meshes;
@@ -163,14 +154,14 @@ bool fwRenderer::drawShadows(fwCamera* camera, fwScene* scene)
 
 
 			// draw neareast first
-			meshes[NORMAL].sort([camera](fwMesh* a, fwMesh* b) { return a->sqDistanceTo(camera) < b->sqDistanceTo(camera); });
-			meshes[SKINNED].sort([camera](fwMesh* a, fwMesh* b) { return a->sqDistanceTo(camera) < b->sqDistanceTo(camera); });
+			meshes[FW_MESH_NORMAL].sort([camera](fwMesh* a, fwMesh* b) { return a->sqDistanceTo(camera) < b->sqDistanceTo(camera); });
+			meshes[FW_MESH_SKINNED].sort([camera](fwMesh* a, fwMesh* b) { return a->sqDistanceTo(camera) < b->sqDistanceTo(camera); });
 
-			for (auto i = 0; i <= SKINNED; i++) {
-				depth_program[i]->run();
+			for (auto i = 0; i <= FW_MESH_SKINNED; i++) {
+				light->runShadowProgram(i);
 				for (auto mesh : meshes[i]) {
 					if (mesh->castShadow()) {
-						mesh->draw(depth_program[i]);
+						mesh->draw(light->getShadowProgram(i));
 					}
 				}
 			}

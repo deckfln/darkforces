@@ -5,11 +5,12 @@
 
 class glDepthMap: public glFrameBuffer
 {
-	glDepthTexture *depth;
+protected:
+	glTexture *m_depth;
 
 public:
 	glDepthMap(int width, int height);
 	void clear(void);
-	glDepthTexture *getDepthTexture(void);
+	glTexture *getDepthTexture(void);
 	~glDepthMap();
 };

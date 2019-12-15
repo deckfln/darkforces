@@ -1,18 +1,17 @@
 #include "fwRendererDefered.h"
 
+#include "../fwConstants.h"
+
 #include "../fwInstancedMesh.h"
 #include "../mesh/fwMeshSkinned.h"
 #include "../fwParticles.h"
 #include "../postprocessing/fwPostProcessingDirectLight.h"
 #include "../lights/fwDirectionLight.h"
-#include "../materials/fwMaterialDepth.h"
 #include "../materials/fwNormalHelperMaterial.h"
-#include "../materials/fwMaterialDepth.h"
 #include "../materials/fwBloomMaterial.h"
 #include "../postprocessing/fwPostProcessingBloom.h"
 
 static fwPostProcessingDirectLight *DirectionalLight;
-static fwMaterialDepth materialDepth;
 
 static glProgram* depth_program[3] = { nullptr, nullptr, nullptr };
 
@@ -178,12 +177,12 @@ glTexture *fwRendererDefered::draw(fwCamera* camera, fwScene* scene)
 	glClear(GL_STENCIL_BUFFER_BIT);
 
 	// draw opaque objects
-	drawMeshes(meshesPerCategory[RENDER_OPAQ], camera);
+	drawMeshes(meshesPerCategory[FW_RENDER_OPAQ], camera);
 
 	/*
 	 * 3rd pass : draw opaque particles
 	 */
-	drawMeshes(meshesPerCategory[RENDER_OPAQ_PARTICLES], camera);
+	drawMeshes(meshesPerCategory[FW_RENDER_OPAQ_PARTICLES], camera);
 
 	glStencilFunc(GL_ALWAYS, 0, 0xFF);
 	glDisable(GL_STENCIL_TEST);
@@ -245,7 +244,7 @@ glTexture *fwRendererDefered::draw(fwCamera* camera, fwScene* scene)
 	preProcessLights(scene, lightsByType, defines, codeLights);
 	drawTransparentMeshes(
 		camera,
-		meshesPerCategory[RENDER_TRANSPARENT],
+		meshesPerCategory[FW_RENDER_TRANSPARENT],
 		defines,
 		codeLights,
 		lightsByType,

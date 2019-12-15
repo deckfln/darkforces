@@ -198,9 +198,6 @@
     <ClCompile Include="framework\render\fwRendererForward.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="framework\materials\fwMaterialDepth.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
     <ClCompile Include="framework\postprocessing\fwPostProcessingBloom.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
@@ -235,6 +232,15 @@
       <Filter>Fichiers sources</Filter>
     </ClCompile>
     <ClCompile Include="framework\fwParticles.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="framework\camera\fwCameraPanoramic.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="glEngine\framebuffer\glDepthCubeMap.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="glEngine\textures\glCubeTextureDepth.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
   </ItemGroup>
@@ -422,9 +428,6 @@
     <ClInclude Include="framework\render\fwRendererForward.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="framework\materials\fwMaterialDepth.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
     <ClInclude Include="framework\postprocessing\fwPostProcessingBloom.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
@@ -462,6 +465,18 @@
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
     <ClInclude Include="framework\fwParticles.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="framework\camera\fwCameraPanoramic.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="glEngine\framebuffer\glDepthCubeMap.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="glEngine\textures\glCubeTextureDepth.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="framework\fwConstants.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
   </ItemGroup>

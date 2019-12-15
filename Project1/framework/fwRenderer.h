@@ -7,19 +7,6 @@
 #include "fwCamera.h"
 #include "fwScene.h"
 
-// list of possible meshes
-enum {
-	NORMAL,
-	INSTANCED,
-	SKINNED
-};
-
-enum {
-	RENDER_OPAQ,
-	RENDER_OPAQ_PARTICLES,
-	RENDER_TRANSPARENT
-};
-
 class fwRenderer
 {
 protected:

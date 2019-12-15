@@ -1,7 +1,11 @@
 #include "fwDirectionLight.h"
 
+#include "../fwConstants.h"
+
 #include "../camera/fwOrthographicCamera.h"
 
+static fwMaterial materialDepth = fwMaterial("shaders/depth/vertex.glsl", "shaders/depth/fragment.glsl", "");
+static glProgram *depth_program[3] = { nullptr, nullptr, nullptr };
 
 fwDirectionLight::fwDirectionLight(glm::vec3 _direction, glm::vec3 _color, glm::vec3 _diffuse, glm::vec3 _specular):
 	fwLight(_color),
@@ -12,6 +16,9 @@ fwDirectionLight::fwDirectionLight(glm::vec3 _direction, glm::vec3 _color, glm::
 	uniform_prefix = "dirlights";
 	type = 1;
 	shader_define = "DIRECTION_LIGHTS";
+
+	m_materialDepth = &materialDepth;
+	m_depth_program = depth_program;
 }
 
 fwDirectionLight::fwDirectionLight()
@@ -21,8 +28,8 @@ fwDirectionLight::fwDirectionLight()
 bool fwDirectionLight::castShadow(bool s)
 {
 	fwLight::castShadow(s);
-	if (s && shadowCamera == nullptr) {
-		shadowCamera = new fwOrthographicCamera(10, 1, 7.5);
+	if (s && m_shadowCamera == nullptr) {
+		m_shadowCamera = new fwOrthographicCamera(10, 1, 17.5);
 	}
 	return s;
 }

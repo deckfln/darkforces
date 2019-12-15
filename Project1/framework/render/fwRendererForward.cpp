@@ -1,5 +1,7 @@
 #include "fwRendererForward.h"
 
+#include "../fwConstants.h"
+
 #include "../../glad/glad.h"
 
 #include "../materials/fwNormalHelperMaterial.h"
@@ -142,7 +144,7 @@ glTexture *fwRendererForward::draw(fwCamera* camera, fwScene *scene)
 	 */
 	drawMeshes(
 		camera,
-		meshesPerCategory[RENDER_OPAQ],
+		meshesPerCategory[FW_RENDER_OPAQ],
 		defines,
 		codeLights,
 		lightsByType,
@@ -150,7 +152,7 @@ glTexture *fwRendererForward::draw(fwCamera* camera, fwScene *scene)
 	);
 	drawMeshes(
 		camera,
-		meshesPerCategory[RENDER_OPAQ_PARTICLES],
+		meshesPerCategory[FW_RENDER_OPAQ_PARTICLES],
 		defines,
 		codeLights,
 		lightsByType,
@@ -181,7 +183,7 @@ glTexture *fwRendererForward::draw(fwCamera* camera, fwScene *scene)
 	  */
 	drawTransparentMeshes(
 		camera,
-		meshesPerCategory[RENDER_TRANSPARENT],
+		meshesPerCategory[FW_RENDER_TRANSPARENT],
 		defines,
 		codeLights,
 		lightsByType,

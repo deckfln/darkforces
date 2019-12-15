@@ -18,7 +18,7 @@
 class myApp : public fwApp
 {
 	fwCamera *m_camera = nullptr;
-	fwDirectionLight *m_light = nullptr;
+	fwLight *m_light = nullptr;
 	fwSkybox *m_skybox = nullptr;
 	fwScene* m_scene = nullptr;;
 	fwOrbitControl *m_control = nullptr;

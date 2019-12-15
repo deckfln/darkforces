@@ -12,17 +12,17 @@ fwCamera::fwCamera(int width, int height):
 {
 	view = glm::mat4(1.0f);
 
-	projection = glm::perspective(glm::radians(25.0f), (float)width / (float)height, 1.0f, 1000.0f);
-	m_matrix = projection * view;
+	m_projection = glm::perspective(glm::radians(25.0f), (float)width / (float)height, 1.0f, 1000.0f);
+	m_matrix = m_projection * view;
 
 	update();
 }
 
 void fwCamera::set_ratio(int width, int height)
 {
-	projection = glm::perspective(glm::radians(45.0f), (float)width / (float)height, 0.1f, 100.0f);
-	m_matrix = projection * view;
-	m_projScreenMatrix = projection * inverse(m_matrix);
+	m_projection = glm::perspective(glm::radians(45.0f), (float)width / (float)height, 0.1f, 100.0f);
+	m_matrix = m_projection * view;
+	m_projScreenMatrix = m_projection * inverse(m_matrix);
 
 	m_frustum.setFromMatrix(m_projScreenMatrix);
 }
@@ -73,10 +73,10 @@ void fwCamera::update(void)
 
 	m_quaternion = glm::quatLookAt(-direction, up);
 
-	m_matrix = projection * view;
+	m_matrix = m_projection * view;
 
 	updateWorldMatrix(nullptr, false);
-	m_projScreenMatrix = projection * glm::inverse(m_worldMatrix);
+	m_projScreenMatrix = m_projection * glm::inverse(m_worldMatrix);
 
 	m_frustum.setFromMatrix(m_projScreenMatrix);
 }
@@ -88,7 +88,7 @@ glm::mat4 fwCamera::GetViewMatrix(void)
 
 glm::mat4 fwCamera::GetProjectionMatrix(void)
 {
-	return projection;
+	return m_projection;
 }
 
 glm::mat4 &fwCamera::GetMatrix(void)
@@ -99,7 +99,7 @@ glm::mat4 &fwCamera::GetMatrix(void)
 void fwCamera::set_uniforms(glProgram *program)
 {
 	program->set_uniform("view", view);
-	program->set_uniform("projection", projection);
+	program->set_uniform("projection", m_projection);
 	program->set_uniform("viewPos", m_Position);
 }
 
@@ -109,7 +109,7 @@ void fwCamera::set_uniformBuffer(void)
 		ubo = new glUniformBuffer(2 * sizeof(glm::mat4) + sizeof(glm::vec3) + 4);
 	}
 
-	glm::mat4 camera[2] = { view, projection };
+	glm::mat4 camera[2] = { view, m_projection };
 
 	ubo->bind();
 	ubo->map(glm::value_ptr(camera[0]), 0, sizeof(camera));

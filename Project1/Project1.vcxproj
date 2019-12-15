@@ -126,6 +126,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="framework\camera\fwCameraPanoramic.cpp" />
     <ClCompile Include="framework\camera\fwOrthographicCamera.cpp" />
     <ClCompile Include="framework\controls\fwOrbitControl.cpp" />
     <ClCompile Include="framework\fwAnimation.cpp" />
@@ -155,7 +156,6 @@
     <ClCompile Include="framework\fwMaterialBasic.cpp" />
     <ClCompile Include="framework\Loader.cpp" />
     <ClCompile Include="framework\materials\fwBloomMaterial.cpp" />
-    <ClCompile Include="framework\materials\fwMaterialDepth.cpp" />
     <ClCompile Include="framework\materials\fwMaterialDirectionalLight.cpp" />
     <ClCompile Include="framework\materials\fwNormalHelperMaterial.cpp" />
     <ClCompile Include="framework\materials\fwOutlineMaterial.cpp" />
@@ -173,6 +173,7 @@
     <ClCompile Include="framework\SphereGemeotry.cpp" />
     <ClCompile Include="framework\fwTexture.cpp" />
     <ClCompile Include="framework\fwUniform.cpp" />
+    <ClCompile Include="glEngine\framebuffer\glDepthCubeMap.cpp" />
     <ClCompile Include="glEngine\glBufferAttribute.cpp" />
     <ClCompile Include="glEngine\glBufferObject.cpp" />
     <ClCompile Include="glEngine\glColorMap.cpp" />
@@ -194,6 +195,7 @@
     <ClCompile Include="Element.cpp" />
     <ClCompile Include="glad.c" />
     <ClCompile Include="glEngine\glProgram.cpp" />
+    <ClCompile Include="glEngine\textures\glCubeTextureDepth.cpp" />
     <ClCompile Include="glEngine\textures\glDepthTexture.cpp" />
     <ClCompile Include="List.cpp" />
     <ClCompile Include="myApp.cpp" />
@@ -203,6 +205,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="config.h" />
+    <ClInclude Include="framework\camera\fwCameraPanoramic.h" />
     <ClInclude Include="framework\camera\fwOrthographicCamera.h" />
     <ClInclude Include="framework\controls\fwOrbitControl.h" />
     <ClInclude Include="framework\fwAnimation.h" />
@@ -210,6 +213,7 @@
     <ClInclude Include="framework\fwApp.h" />
     <ClInclude Include="framework\fwBoneInfo.h" />
     <ClInclude Include="framework\fwBoneInfoAnimation.h" />
+    <ClInclude Include="framework\fwConstants.h" />
     <ClInclude Include="framework\fwFrustum.h" />
     <ClInclude Include="framework\fwInstancedMesh.h" />
     <ClInclude Include="framework\fwLight.h" />
@@ -232,7 +236,6 @@
     <ClInclude Include="framework\fwMaterialBasic.h" />
     <ClInclude Include="framework\Loader.h" />
     <ClInclude Include="framework\materials\fwBloomMaterial.h" />
-    <ClInclude Include="framework\materials\fwMaterialDepth.h" />
     <ClInclude Include="framework\materials\fwMaterialDirectionalLight.h" />
     <ClInclude Include="framework\materials\fwNormalHelperMaterial.h" />
     <ClInclude Include="framework\materials\fwOutlineMaterial.h" />
@@ -250,6 +253,7 @@
     <ClInclude Include="framework\SphereGemeotry.h" />
     <ClInclude Include="framework\fwTexture.h" />
     <ClInclude Include="framework\fwUniform.h" />
+    <ClInclude Include="glEngine\framebuffer\glDepthCubeMap.h" />
     <ClInclude Include="glEngine\glBufferAttribute.h" />
     <ClInclude Include="glEngine\glBufferObject.h" />
     <ClInclude Include="glEngine\glColorMap.h" />
@@ -271,6 +275,7 @@
     <ClInclude Include="Element.h" />
     <ClInclude Include="glad\glad.h" />
     <ClInclude Include="glEngine\glProgram.h" />
+    <ClInclude Include="glEngine\textures\glCubeTextureDepth.h" />
     <ClInclude Include="glEngine\textures\glDepthTexture.h" />
     <ClInclude Include="include\stb_image.h" />
     <ClInclude Include="KHR\khrplatform.h" />

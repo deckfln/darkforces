@@ -23,7 +23,8 @@ void glFrameBuffer::bind()
 
 void glFrameBuffer::bindTexture(glTexture *texture, GLuint attachment)
 {
-	glFramebufferTexture2D(type, attachment, GL_TEXTURE_2D, texture->getID(), 0);
+	// let openGL find out what is the type of the texture (1D, 2D, 3D, cubmap ...)
+	glFramebufferTexture(type, attachment, texture->getID(), 0);
 }
 
 void glFrameBuffer::bindDepth(glRenderBuffer *depth_stencil)

@@ -21,37 +21,48 @@
 myApp::myApp(std::string name, int width, int height) :
 	fwApp(name, width, height, "shaders/gamma", "#define GAMMA_CORRECTION 1\n")
 {
-	m_camera = new fwCamera(width, height);
 	int Button = 0;
 
+	// camera
+	m_camera = new fwCamera(width, height);
+	//m_camera->translate(-6.859210, 20.333462, 22.371893);
+
+	// controls
 	m_control = new fwOrbitControl(m_camera, 20);
 	bindControl(m_control);
 
-	/*
-	 * fwCamera
-	 */
-	//m_camera->translate(-6.859210, 20.333462, 22.371893);
+	// shared geometry
+	fwBoxGeometry* geometry = new fwBoxGeometry();
 
 	/*
 	 * Lights
 	 */
+	/*
 	m_light = new fwDirectionLight(
 		glm::vec3(),
 		glm::vec3(0.3, 0.3, 0.3),
 		glm::vec3(0.8, 0.8, 0.8),
 		glm::vec3(1.0, 1.0, 1.0)
 	);
+	*/
+	m_light = new fwPointLight(
+		glm::vec3(),				// position
+		glm::vec3(0.3, 0.3, 0.3),	// Color
+		glm::vec3(0.8, 0.8, 0.8),	// Diffuse
+		glm::vec3(1.0, 1.0, 1.0),	// Specular
+		1.0,						// constant
+		0.14,						// linear
+		0.017						// quadratic
+	);
 	m_light->set_name("light");
 	m_light->castShadow(true);
 
-	// lights
-	fwBoxGeometry *geometry = new fwBoxGeometry();
 	glm::vec4 *white = new glm::vec4(0.0, 0.0, 1.0, 1.0);
 
 	fwMaterialBasic *basic = new fwMaterialBasic(white);
 	fwMesh *fLight = new fwMesh(geometry, basic);
 
-	glm::vec3 half(0.5);
+	glm::vec3 half(0.15);
 	fLight->set_scale(half).set_name("light_impersonator");
 
 	m_light->addChild(fLight);
@@ -207,9 +218,9 @@ glTexture *myApp::draw(time_t delta, fwRenderer *renderer)
 
 	glm::vec3 lightPos;
 
-	float radius = 2;
+	float radius = 4;
 	lightPos.x = sin(glfwGetTime() / 2) * radius;
-	lightPos.y = 4;
+	lightPos.y = 2;
 	lightPos.z = cos(glfwGetTime() / 2) * radius;
 	m_light->translate(lightPos);
 	/*
