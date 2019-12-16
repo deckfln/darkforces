@@ -15,6 +15,8 @@ static float _steel_colors[12][3] = {
 	{66, 18, 16}
 };
 
+static fwMaterial* particleMaterial = nullptr;
+
 fwParticles::fwParticles(int nb, const std::string& sprite, float radius) : 
 	fwSprites(nb)
 {
@@ -22,10 +24,12 @@ fwParticles::fwParticles(int nb, const std::string& sprite, float radius) :
 
 	m_positions = new glm::vec3[nb];
 	m_velocities = new glm::vec3[nb];
-	m_colors = new glm::vec3[nb];
+	m_origins = new glm::vec3[nb];
 	m_timer = new double[nb];
 	m_active = new bool[nb];
 	m_lifespan = new int[nb];
+
+	m_colors = new glm::vec3[nb];
 
 	for (auto i = 0; i < nb; i++) {
 		m_active[i] = false;
@@ -33,6 +37,13 @@ fwParticles::fwParticles(int nb, const std::string& sprite, float radius) :
 
 	m_image = new fwTexture(sprite);
 	set(m_positions, m_image, radius);
+
+	if (particleMaterial == nullptr) {
+		particleMaterial = new fwMaterial("shaders/sprite/particle/vertex.glsl", "shaders/sprite/fragment.glsl");
+		particleMaterial->addShader(FRAGMENT_SHADER, "shaders/sprite/fragment_defered.glsl", DEFERED_RENDER);
+		material = particleMaterial;
+	}
+
 	geometry->addAttribute("aColor", GL_ARRAY_BUFFER, m_colors, 3, sizeof(glm::vec3) * m_size, sizeof(float));
 }
 
@@ -40,6 +51,7 @@ void fwParticles::update_particle(int &spwanable, int i, double timer)
 {
 	glm::vec3* position = m_positions + i;
 	glm::vec3* velocity = m_velocities + i;
+	glm::vec3* origin = m_origins + i;
 	double *time = m_timer + i;
 	bool* active = m_active + i;
 	int* lifespan= m_lifespan + i;
@@ -61,15 +73,17 @@ void fwParticles::update_particle(int &spwanable, int i, double timer)
 			*lifespan = 0;
 
 			spwanable--;
+
+			*origin = m_Position;
 		}
 		else {
 			return;
 		}
 	}
 
-	position->x = velocity->x * *time;
-	position->y = -0.7 * 9.81 * (*time * *time) + velocity->y * *time;
-	position->z = velocity->z * *time;
+	position->x = velocity->x * *time + origin->x;
+	position->y = -0.7 * 9.81 * (*time * *time) + velocity->y * *time + origin->y;
+	position->z = velocity->z * *time + origin->z;
 
 	int color_index = *lifespan / 30;
 	if (color_index > 11) {
@@ -86,7 +100,7 @@ void fwParticles::update_particle(int &spwanable, int i, double timer)
 	(*lifespan)++;
 
 	// despawn particle
-	if (position->y + m_Position.y < 0) {
+	if (position->y < 0) {
 		*active = false;
 		spwanable++;
 	}
@@ -120,6 +134,7 @@ fwParticles::~fwParticles()
 	delete[] m_active;
 	delete[] m_lifespan;
 	delete[] m_colors;
+	delete[] m_origins;
 
 	delete m_image;
 }

@@ -171,9 +171,6 @@
     <ClCompile Include="framework\math\fwBox3.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="framework\materials\fwSpriteMaterial.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
     <ClCompile Include="glEngine\glDynamicBufferAttribute.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
@@ -399,9 +396,6 @@
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
     <ClInclude Include="framework\math\fwBox3.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="framework\materials\fwSpriteMaterial.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
     <ClInclude Include="glEngine\glDynamicBufferAttribute.h">

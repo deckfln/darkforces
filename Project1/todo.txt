@@ -18,7 +18,7 @@
 #18	DONE	06/12/19	CPU based particle engine
 #20	DONE	08/12/19	handle multiple particles engines with a model transformation
 #21	DONE	08/12/19	particle engine: handle colors per particles
-#22			10/12/19	particle engine: create world space particles so the generator can move along
+#22	DONE	10/12/19	particle engine: create world space particles so the generator can move along
 #23			12/12/19	Add an FPS GUI
 #24	DONE	12/12/19	Point light shadows on forward rendering
 #25			14/12/19	implement in_frustum for panoramic/orthographic cameras

@@ -223,6 +223,7 @@ glTexture *myApp::draw(time_t delta, fwRenderer *renderer)
 	lightPos.y = 2;
 	lightPos.z = cos(glfwGetTime() / 2) * radius;
 	m_light->translate(lightPos);
+
 	/*
 	if (++current == 5) {
 		if (pFrame == 22) {
@@ -233,6 +234,13 @@ glTexture *myApp::draw(time_t delta, fwRenderer *renderer)
 	}
 	*/
 	m_stormtrooper->update(delta);
+
+	radius = 6;
+	lightPos.x = sin(glfwGetTime() / 2) * radius;
+	lightPos.y = 5;
+	lightPos.z = cos(glfwGetTime() / 2) * radius;
+	m_particles->translate(lightPos);
+
 	m_particles->update(delta);
 
 	return renderer->draw (m_camera, m_scene);

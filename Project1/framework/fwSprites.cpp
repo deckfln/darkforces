@@ -1,8 +1,6 @@
 #include "fwSprites.h"
 
-#include "materials/fwSpriteMaterial.h"
-
-fwSpriteMaterial SpriteMaterial; 
+static fwMaterial* spriteMaterial = nullptr;
 
 fwSprites::fwSprites(int size) :
 	m_size(size)
@@ -22,7 +20,12 @@ void fwSprites::set(glm::vec3* position, fwTexture* texture, float radius)
 	geometry = new fwGeometry();
 	geometry->addVertices("aPos", position, 3, sizeof(glm::vec3) * m_size, sizeof(float));
 	geometry->setBoundingsphere(radius);
-	material = new fwSpriteMaterial();
+
+	if (spriteMaterial == nullptr) {
+		spriteMaterial = new fwMaterial("shaders/sprite/vertex.glsl", "shaders/sprite/fragment.glsl");
+		spriteMaterial->addShader(FRAGMENT_SHADER, "shaders/sprite/fragment_defered.glsl", DEFERED_RENDER);
+	}
+	material = spriteMaterial;
 	material->addTexture("texture", texture);
 }
 
@@ -44,5 +47,4 @@ void fwSprites::draw(glProgram *program)
 fwSprites::~fwSprites()
 {
 	delete geometry;
-	delete material;
 }

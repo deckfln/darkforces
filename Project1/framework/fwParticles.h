@@ -9,6 +9,7 @@ class fwParticles : public fwSprites
 protected:
 	glm::vec3 *m_positions = nullptr;
 	glm::vec3 *m_velocities = nullptr;
+	glm::vec3* m_origins = nullptr;
 	double *m_timer = nullptr;
 	bool* m_active = nullptr;
 	int* m_lifespan = nullptr;
