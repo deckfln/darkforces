@@ -25,6 +25,8 @@
 #26			14/12/19	check objects in_frustrum in fwRender:drawShadows
 #27			15/12/19	use shared buffer object to upload lights to the GPU
 #28			15/12/19	add PCF shadows
+#29			16/12/19	add multiple lights on defered render
+#30			16/12/19	optimize point lights rendering by checking the distance to the source
 
 bug
 #1	FIXED		18/07/19	skybox background not displayed with defered renderer

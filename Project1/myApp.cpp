@@ -47,12 +47,12 @@ myApp::myApp(std::string name, int width, int height) :
 	*/
 	m_light = new fwPointLight(
 		glm::vec3(),				// position
-		glm::vec3(0.5, 0.5, 0.5),	// Color
-		glm::vec3(0.8, 0.8, 0.8),	// Diffuse
+		glm::vec3(0.8, 0.8, 0.8),	// Color
+		glm::vec3(0.9, 0.9, 0.9),	// Diffuse
 		glm::vec3(1.0, 1.0, 1.0),	// Specular
 		1.0,						// constant
-		0.09,						// linear
-		0.032						// quadratic
+		0.022,						// linear
+		0.0019						// quadratic
 	);
 	m_light->set_name("light");
 	m_light->castShadow(true);

@@ -188,7 +188,7 @@ glTexture *fwRendererDefered::draw(fwCamera* camera, fwScene* scene)
 	glDisable(GL_STENCIL_TEST);
 
 	/*
-	 * 4th pass : directional lighting + generate bloom buffer
+	 * 4th pass : lighting + generate bloom buffer
 	 */
 	// list all directional lights
 	std::list <fwDirectionLight *> directionals;
