@@ -6,7 +6,6 @@
 #include "../fwInstancedMesh.h"
 #include "../mesh/fwMeshSkinned.h"
 #include "../fwParticles.h"
-#include "../postprocessing/fwPostProcessingDirectLight.h"
 #include "../lights/fwDirectionLight.h"
 #include "../materials/fwNormalHelperMaterial.h"
 #include "../materials/fwBloomMaterial.h"

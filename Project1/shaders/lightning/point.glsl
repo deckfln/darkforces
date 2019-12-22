@@ -13,6 +13,7 @@ struct PointLight {
 	float linear;
 	float quadratic;
 
+	float radius;
 	#ifdef SHADOWMAP
 		float far_plane;
 		samplerCube shadowMap;
@@ -42,11 +43,17 @@ uniform PointLight pointlights[POINT_LIGHTS];
 
 vec3 CalcPointLight(int i, vec3 normal, vec3 color, vec3 world, float shininess, float specular_map, vec3 viewDir)
 {
-	vec3 lightDir = normalize(pointlights[i].position - world);
+
+	vec3 lightDir = pointlights[i].position - world;
+	float distance    = length(lightDir);
+	if (distance > pointlights[i].radius) {
+		return vec3(0);
+	}
 
 	// attenuation
-	float distance    = length(lightDir);
 	float attenuation = 1.0 / (pointlights[i].constant + pointlights[i].linear * distance +  pointlights[i].quadratic * (distance * distance));    
+
+	lightDir = normalize(lightDir);
 
 	// diffuse shading
 	float diff = max(dot(lightDir, normal), 0.0);
