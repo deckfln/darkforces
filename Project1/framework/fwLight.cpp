@@ -10,6 +10,7 @@ fwLight::fwLight(glm::vec3 & _color):
 	type(0),
 	shader_define("AMBIENT_LIGHT")
 {
+	classID |= FW_LIGHT1;
 }
 
 fwLight::fwLight(float r, float g, float b):

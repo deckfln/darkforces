@@ -1,3 +1,4 @@
+#include <map>
 #include "fwRendererDefered.h"
 
 #include "../fwConstants.h"
@@ -9,11 +10,16 @@
 #include "../lights/fwDirectionLight.h"
 #include "../materials/fwNormalHelperMaterial.h"
 #include "../materials/fwBloomMaterial.h"
+#include "../materials/fwMaterialDeferedLights.h"
 #include "../postprocessing/fwPostProcessingBloom.h"
 
-static fwPostProcessingDirectLight *DirectionalLight;
-
 static glProgram* depth_program[3] = { nullptr, nullptr, nullptr };
+static std::map<std::string, glProgram*> light_programs;
+
+static float quadVertices[] = { -1.0f,  1.0f,	-1.0f, -1.0f,	 1.0f, -1.0f,	-1.0f,  1.0f,	 1.0f, -1.0f,	 1.0f,  1.0f };
+static float quadUvs[] = { 	0.0f, 1.0f,	0.0f, 0.0f,	1.0f, 0.0f,	0.0f, 1.0f,	1.0f, 0.0f,	1.0f, 1.0f };
+
+static fwMaterialDeferedLight deferedLights;
 
 fwRendererDefered::fwRendererDefered(int width, int height)
 {
@@ -23,7 +29,14 @@ fwRendererDefered::fwRendererDefered(int width, int height)
 	// bloom texture
 	m_bloom = new fwPostProcessingBloom(width * 2, height * 2);
 
-	DirectionalLight = new fwPostProcessingDirectLight(m_bloom->get_bloom_texture());
+	// final target for lightning
+	m_lightRendering = new glColorMap(width * 2, height * 2, 1, 3, m_bloom->get_bloom_texture());	// 1 outgoing color buffer, no depthmap & no stencil map
+	m_renderGeometry = new fwGeometry();
+
+	m_quad = new glVertexArray();
+	m_renderGeometry->addVertices("aPos", quadVertices, 2, sizeof(quadVertices), sizeof(float), false);
+	m_renderGeometry->addAttribute("aTexCoord", GL_ARRAY_BUFFER, quadUvs, 2, sizeof(quadUvs), sizeof(float), false);
+	m_quad->unbind();
 }
 
 /**
@@ -69,6 +82,106 @@ void fwRendererDefered::buildDeferedShader(std::list <fwMesh*>& meshes,
 		m_materials[materialID] = material;
 		meshPerMaterial[code][materialID].push_front(mesh);
 	}
+}
+
+/**
+ * Merge Multiple Rendering Target
+ */
+void fwRendererDefered::mergeMTR(fwScene *scene)
+{
+	// parse the lights in the scene to compute the code of the needed shader
+	std::list <fwLight*> lights = scene->get_lights();
+
+	int shadowmap = 0;
+	int directional_lights = 0;
+	int point_lights = 0;
+
+	for (auto light : lights) {
+		if (light->is_class(FW_DIRECTIONAL_LIGHT)) {
+			directional_lights++;
+		}
+		if (light->is_class(FW_POINT_LIGHT)) {
+			point_lights++;
+		}
+		if (((fwObject3D *)light)->castShadow()) {
+			shadowmap = 1;
+		}
+	}
+
+	std::string define = "";
+	if (shadowmap) {
+		define += "#define SHADOWMAP\n";
+	}
+	if (directional_lights > 0) {
+		define += "#define DIRECTION_LIGHTS " + std::to_string(directional_lights) + "\n";
+	}
+	if (point_lights) {
+		define += "#define POINT_LIGHTS " + std::to_string(point_lights) + "\n";
+	}
+
+	// Build the shader if it is missing
+	if (light_programs[define] == nullptr) {
+		std::string vertex = deferedLights.get_shader(VERTEX_SHADER);
+		std::string fragment = deferedLights.get_shader(FRAGMENT_SHADER);
+
+		// Bloom ?
+		if (m_bloom != nullptr) {
+			define += "#define BLOOMMAP\n";
+
+			// setup the bloom source
+			if (m_bloom != nullptr) {
+				deferedLights.setBloomTexture(m_bloom->get_bloom_texture());
+			}
+
+			// setup the GBuffer source
+			deferedLights.setSourceTexture(m_colorMap->getColorTexture(0),
+				m_colorMap->getColorTexture(1),
+				m_colorMap->getColorTexture(2),
+				m_colorMap->getColorTexture(3)
+			);
+		}
+
+		// shaders without shadow
+		light_programs[define] = new glProgram(vertex, fragment, "", define);
+
+		m_quad->bind();
+		m_renderGeometry->enable_attributes(light_programs[define]);
+		m_quad->unbind();
+	}
+
+	//TODO: add a set/restore for depth testing
+	glDisable(GL_DEPTH_TEST);
+
+	light_programs[define]->run();
+
+	// setup lights
+	int i = 0;
+	for (auto light : lights) {
+		light->set_uniform(light_programs[define], i);
+		i++;
+	}
+
+	deferedLights.set_uniforms(light_programs[define]);
+
+	m_lightRendering->bind();
+	m_lightRendering->clear();
+
+	if (m_bloom != nullptr) {
+		m_colorMap->bindColors(2);	// activate bloom buffer
+	}
+
+	m_renderGeometry->draw(GL_TRIANGLES, m_quad);
+
+	if (m_bloom != nullptr) {
+		m_lightRendering->bindColors(1);	// deactivate boom buffer
+	}
+
+	m_lightRendering->unbind();
+
+	glEnable(GL_DEPTH_TEST);
+
+	// copy depth buffer from the draw buffer into the target buffer
+	m_lightRendering->copyFrom(m_colorMap, GL_DEPTH_BUFFER_BIT);
 }
 
 /**
@@ -189,48 +302,31 @@ glTexture *fwRendererDefered::draw(fwCamera* camera, fwScene* scene)
 
 	/*
 	 * 4th pass : lighting + generate bloom buffer
+	 * DO NOT overwrite the depth buffer with merging to the quad
 	 */
-	// list all directional lights
-	std::list <fwDirectionLight *> directionals;
-	std::list <fwLight*> lights = scene->get_lights();
-
-	for (auto light : lights) {
-		if (light->getDefine() == "DIRECTION_LIGHTS") {
-			directionals.push_front((fwDirectionLight *)light);
-		}
-	}
-
-	glColorMap* outBuffer = nullptr;
-	if (directionals.size() > 0) {
-		// DO NOT overwrite the depth buffer with merging to the quad
-		outBuffer = DirectionalLight->draw((glGBuffer*)m_colorMap, directionals);
-	}
-	else {
-		// FIXME
-		// outBuffer = colorMap;
-	}
+	mergeMTR(scene);
 
 	/*
 	 * 5th pass : draw skybox
 	 */
-	outBuffer->bind();
+	m_lightRendering->bind();
 
 	fwSkybox* background = scene->background();
 	if (background != nullptr) {
 		// ignore the depth buffer test
-		glRenderBuffer* previous = outBuffer->get_stencil();
-		outBuffer->bindDepth(m_colorMap->get_stencil());
+		glRenderBuffer* previous = m_lightRendering->get_stencil();
+		m_lightRendering->bindDepth(m_colorMap->get_stencil());
 
 		background->draw(camera, GL_STENCIL_TEST);
 
-		outBuffer->bindDepth(previous);
+		m_lightRendering->bindDepth(previous);
 	}
 
 	/*
 	 * 6th pass: bloom pass
 	 */
 	if (m_bloom) {
-		m_bloom->draw(outBuffer);
+		m_bloom->draw(m_lightRendering);
 	}
 
 
@@ -250,7 +346,7 @@ glTexture *fwRendererDefered::draw(fwCamera* camera, fwScene* scene)
 		lightsByType,
 		hasShadowLights);
 
-	return outBuffer->getColorTexture(0);
+	return m_lightRendering->getColorTexture(0);
 }
 
 glm::vec2 fwRendererDefered::size(void)
@@ -266,4 +362,7 @@ glTexture* fwRendererDefered::getColorTexture(void)
 fwRendererDefered::~fwRendererDefered()
 {
 	delete m_colorMap;
+	delete m_bloom;
+	delete m_lightRendering;
+	delete m_renderGeometry;
 }

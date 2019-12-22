@@ -1,7 +1,7 @@
-#include "fwMaterialDirectionalLight.h"
+#include "fwMaterialDeferedLights.h"
 
-fwMaterialDirectionalLight::fwMaterialDirectionalLight() :
-	fwMaterial("shaders/quad_vertex.glsl", "shaders/GBuffer/directional_light.glsl", "")
+fwMaterialDeferedLight::fwMaterialDeferedLight() :
+	fwMaterial("shaders/quad_vertex.glsl", "shaders/GBuffer/lightning.glsl", "")
 
 {
 	m_colorUniform = new fwUniform("gColor", (glTexture *)nullptr);
@@ -17,7 +17,7 @@ fwMaterialDirectionalLight::fwMaterialDirectionalLight() :
 	addUniform(m_pBloomUniform);
 }
 
-void fwMaterialDirectionalLight::setSourceTexture(glTexture *color, glTexture *normal, glTexture *world, glTexture *material)
+void fwMaterialDeferedLight::setSourceTexture(glTexture *color, glTexture *normal, glTexture *world, glTexture *material)
 {
 	m_colorUniform->set(color);
 	m_normalUniform->set(normal);
@@ -25,11 +25,11 @@ void fwMaterialDirectionalLight::setSourceTexture(glTexture *color, glTexture *n
 	m_materialUniform->set(material);
 }
 
-void fwMaterialDirectionalLight::setBloomTexture(glTexture* bloom)
+void fwMaterialDeferedLight::setBloomTexture(glTexture* bloom)
 {
 	m_pBloomUniform->set(bloom);
 }
 
-fwMaterialDirectionalLight::~fwMaterialDirectionalLight()
+fwMaterialDeferedLight::~fwMaterialDeferedLight()
 {
 };

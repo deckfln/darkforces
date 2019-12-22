@@ -19,7 +19,8 @@ fwObject3D &fwObject3D::set_name(std::string _name)
 
 bool fwObject3D::is_class(int _classID)
 {
-	return classID & _classID;
+	int a= (classID & _classID) == _classID;
+	return a;
 }
 
 fwObject3D &fwObject3D::rotate(glm::vec3 &_rotation)

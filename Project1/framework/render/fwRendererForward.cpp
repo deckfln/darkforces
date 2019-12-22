@@ -10,6 +10,7 @@
 #include "../mesh/fwMeshSkinned.h"
 #include "../fwSprites.h"
 #include "../postprocessing/fwPostProcessingBloom.h"
+#include "../materials/fwMaterialDeferedLights.h"
 
 static fwNormalHelperMaterial normalHelper;
 fwOutlineMaterial* outline_material = nullptr;
@@ -19,6 +20,7 @@ static glProgram* outline_program = nullptr;
 static glProgram* outline_instanced_program = nullptr;
 
 static fwPostProcessingBloom *Bloom = nullptr;
+//static fwMaterialDirectionalLight Light;
 
 void fwRendererForward::setOutline(glm::vec4* _color)
 {

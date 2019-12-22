@@ -12,6 +12,7 @@ fwDirectionLight::fwDirectionLight(glm::vec3 _direction, glm::vec3 _color, glm::
 	diffuse(_diffuse),
 	specular(_specular)
 {
+	classID |= FW_DIRECTIONAL_LIGHT;
 	m_Position = _direction;
 	uniform_prefix = "dirlights";
 	type = 1;

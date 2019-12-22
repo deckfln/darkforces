@@ -20,9 +20,9 @@ protected:
 	glm::mat4 m_modelMatrix;	// model space matrix
 	glm::mat4 m_worldMatrix = glm::mat4(0);	// world space matrix (including children)
 
-	glm::vec3 m_Position;
-	glm::vec3 m_Scale;
-	glm::vec3 m_Rotation;
+	glm::vec3 m_Position = glm::vec3(0);
+	glm::vec3 m_Scale = glm::vec3(0);
+	glm::vec3 m_Rotation = glm::vec3(0);
 	glm::quat m_quaternion;
 
 	bool updated = true;	// if the matrix components have been update (or are new)

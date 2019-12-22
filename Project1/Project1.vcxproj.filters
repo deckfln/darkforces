@@ -186,9 +186,6 @@
     <ClCompile Include="glEngine\glGBuffer.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="framework\materials\fwMaterialDirectionalLight.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
     <ClCompile Include="framework\fwRenderer.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
@@ -196,9 +193,6 @@
       <Filter>Fichiers sources</Filter>
     </ClCompile>
     <ClCompile Include="framework\postprocessing\fwPostProcessingBloom.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="framework\postprocessing\fwPostProcessingDirectLight.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
     <ClCompile Include="framework\mesh\fwMeshSkinned.cpp">
@@ -238,6 +232,9 @@
       <Filter>Fichiers sources</Filter>
     </ClCompile>
     <ClCompile Include="glEngine\textures\glCubeTextureDepth.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="framework\materials\fwMaterialDeferedLights.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
   </ItemGroup>
@@ -413,9 +410,6 @@
     <ClInclude Include="glEngine\glGBuffer.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="framework\materials\fwMaterialDirectionalLight.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
     <ClInclude Include="framework\fwRenderer.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
@@ -423,9 +417,6 @@
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
     <ClInclude Include="framework\postprocessing\fwPostProcessingBloom.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="framework\postprocessing\fwPostProcessingDirectLight.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
     <ClInclude Include="framework\fwBoneInfo.h">
@@ -471,6 +462,9 @@
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
     <ClInclude Include="framework\fwConstants.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="framework\materials\fwMaterialDeferedLights.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
   </ItemGroup>

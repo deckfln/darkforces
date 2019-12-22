@@ -106,7 +106,7 @@ void main()
 
 	// bloom output
 	float luminance = czm_luminance(color.rgb);
-	if (luminance < 0.1) {
+	if (luminance > 0.7) {
 		BrightColor = color;
 	}
 	else {

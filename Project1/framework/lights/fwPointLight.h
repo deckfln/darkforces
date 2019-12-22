@@ -3,12 +3,12 @@
 
 class fwPointLight: public fwLight
 {
-	glm::vec3 diffuse;
-	glm::vec3 specular;
+	glm::vec3 diffuse = glm::vec3(0);
+	glm::vec3 specular = glm::vec3(0);
 
-	float constant;
-	float linear;
-	float quadratic;
+	float constant = 0;
+	float linear = 0;
+	float quadratic = 0;
 
 public:
 	fwPointLight();

@@ -34,11 +34,7 @@ void main()
     vec3 color = texture(gColor, TexCoord).rgb;
     vec3 normal = texture(gNormal, TexCoord).rgb;
 
-	if (normal == vec3(0)) {
-		// basic material
-		FragColor = vec4(color, 1.0);
-	}
-	else {
+	if (normal != vec3(0)) {
 		// diffuse material
 		vec3 world = texture(gWorld, TexCoord).rgb;
 		vec3 material = texture(gMaterial, TexCoord).rgb;
@@ -52,7 +48,6 @@ void main()
 		vec3 viewDir = normalize(viewPos - world);
 
 		vec3 dirlight = vec3(0);
-
 #if DIRECTION_LIGHTS > 0
 		for(int i = 0; i < DIRECTION_LIGHTS; i++) {
 #ifdef SHADOWMAP
@@ -64,19 +59,23 @@ void main()
 		}
 #endif
 
+		vec3 pointlight = vec3(0);
 #if POINT_LIGHTS > 0
-	    for(int i = 0; i < POINT_LIGHTS; i++)
+	    for(int i = 0; i < POINT_LIGHTS; i++) {
 			pointlight += CalcPointLight(i, norm, color, world, shininess, specular_map, viewDir);
 		}
 #endif
-		FragColor = vec4(dirlight, 1.0);
 
+		vec3 spotlight = vec3(0);
+
+	    color = clamp(dirlight + pointlight + spotlight, .0, 1.0);
 	}
+	FragColor = vec4(color, 1.0);
 
 #ifdef BLOOMMAP
 	// bloom output
-	float luminance = czm_luminance(color.rgb);
-	if (luminance > 0 && luminance < 0.1) {
+	float luminance = czm_luminance(color);
+	if (luminance > 0.7) {
 		BrightColor = FragColor;
 	}
 	else {
