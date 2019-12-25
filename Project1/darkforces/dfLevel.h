@@ -7,7 +7,8 @@
 class dfLevel
 {
 	std::string m_name;
-	std::vector<dfSector> m_sectors;
+	std::string m_level;
+	std::vector<dfSector *> m_sectors;
 
 public:
 	dfLevel(std::string name);

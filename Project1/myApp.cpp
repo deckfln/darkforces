@@ -17,11 +17,14 @@
 
 #include "framework/Loader.h"
 
+#include "darkforces/dfLevel.h"
 
 myApp::myApp(std::string name, int width, int height) :
 	fwApp(name, width, height, "shaders/gamma", "#define GAMMA_CORRECTION 1\n")
 {
 	int Button = 0;
+
+	dfLevel secbase("data/secbase.lev");
 
 	// camera
 	m_camera = new fwCamera(width, height);

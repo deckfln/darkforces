@@ -1,5 +1,5 @@
 #pragma once
 
-const std::string ROOT_FOLDER = "d:/dev/project1/project1/";
+const std::string ROOT_FOLDER = "c:/dev/project1/project1/";
 
 #define BENCHMARK

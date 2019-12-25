@@ -1,84 +1,103 @@
 #include "dfSector.h"
+#include <sstream>
+#include <fstream>
+#include <vector>
 
 #include <iostream>
 #include <glm/glm.hpp>
 
-dfSector::dfSector(std::fstream &infile)
+dfSector::dfSector(std::ifstream& infile)
 {
 	int nbVertices;
 	int currentVertice = 0;
-	glm::vec2* vertices = nullptr;
 
 	int nbWalls;
 	int currentWall = 0;
-	glm::vec2** walls_left = nullptr;
-	glm::vec2** walls_right = nullptr;
 
 	std::string line, dump;
-	std::istringstream iss(line);
 
+	// per line
 	while (std::getline(infile, line))
 	{
-		if (line.find("NAME") != std::string::npos) {
-			iss = line;
-			iss >> dump >> m_name;
-		}
-		else if (line.find("AMBIENT") != std::string::npos) {
-			iss = line;
-			iss >> dump >> m_ambient;
-		}
-		else if (line.find("FLOOR TEXTURE") != std::string::npos) {
-			// PASS
-		}
-		else if (line.find("FLOOR ALTITUDE") != std::string::npos) {
-			m_floorAltitude = std::stof(line.substr(20));
-		}
-		else if (line.find("CEILING TEXTURE") != std::string::npos) {
-			//PASS
-		}
-		else if (line.find("CEILING ALTITUDE") != std::string::npos) {
-			m_ceilingAltitute = std::stof(line.substr(20));
-		}
-		else if (line.find("SECOND ALTITUDE") != std::string::npos) {
-			//PASS
-		}
-		else if (line.find("SECOND ALTITUDE") != std::string::npos) {
-			//PASS
-		}
-		else if (line.find("VERTICES") != std::string::npos) {
-			nbVertices = std::stoi(line.substr(11));
-			vertices = new glm::vec2[nbVertices];
-		}
-		else if (line.find("X:") != std::string::npos) {
-			float x  = std::stoi(line.substr(7, 6));
-			float z = std::stoi(line.substr(20, 7));
-
-			vertices[currentVertice++] = glm::vec2(x, z);
-		}
-		else if (line.find("WALLS") != std::string::npos) {
-			nbWalls = std::stoi(line.substr(7, 3));
-			walls_left = new glm::vec2*[nbWalls];
-			walls_right = new glm::vec2 * [nbWalls];
-		}
-		else if (line.find("WALL LEFT") != std::string::npos) {
-			int left = std::stoi(line.substr(14, 4));
-			int right = std::stoi(line.substr(26, 4));
-
-			walls_left[currentWall] = vertices + left;
-			walls_right[currentWall] = vertices + right;
-
-			currentWall++;
-		}
-		else if (line.find("S e c t o r   D e f i n i t i o n") != std::string::npos) {
+		// end of sector
+		if (line.find("S e c t o r   D e f i n i t i o n") != std::string::npos) {
 			break;
 		}
-	}
 
-	delete[] vertices;
-	delete[] walls;
+		// ignore comment
+		if (line[0] == '#' || line.length() == 0) {
+			continue;
+		}
+
+		// per token
+		std::vector <std::string> tokens;
+
+		std::stringstream check1(line);
+		while (std::getline(check1, dump, ' '))
+		{
+			if (dump.length() > 0) {
+				tokens.push_back(dump);
+			}
+		}
+
+		if (tokens[0] == "NAME" && tokens.size() > 1) {
+			m_name = tokens[1];
+		}
+		else if (tokens[0] == "AMBIENT") {
+			m_ambient = std::stof(tokens[1]);
+		}
+		else if (tokens[0] == "FLOOR") {
+			if (tokens[1] == "TEXTURE") {
+				// PASS
+			}
+			else if (tokens[1] == "ALTITUDE") {
+				m_floorAltitude = std::stof(tokens[2]);
+			}
+		}
+		else if (tokens[0] == "CEILING") {
+			if (tokens[1] == "TEXTURE") {
+				//PASS
+			}
+			else if (tokens[1] == "ALTITUDE") {
+				m_ceilingAltitude = std::stof(tokens[2]);
+			}
+		}
+		else if (tokens[0] == "SECOND") {
+			if (tokens[1] == "ALTITUDE") {
+				//PASS
+			}
+			else if (tokens[1] == "ALTITUDE") {
+				//PASS
+			}
+		}
+		else if (tokens[0] == "VERTICES") {
+			nbVertices = std::stoi(tokens[1]);
+			m_vertices.resize(nbVertices);
+		}
+		else if (tokens[0] == "X:") {
+			float x  = std::stof(tokens[1]);
+			float z = std::stof(tokens[3]);
+
+			m_vertices[currentVertice++] = glm::vec2(x, z);
+		}
+		else if (tokens[0] == "WALLS") {
+			nbWalls = std::stoi(tokens[1]);
+			m_walls.resize(nbWalls);
+		}
+		else if (tokens[0] == "WALL") {
+			int left = std::stoi(tokens[2]);
+			int right = std::stoi(tokens[4]);
+			int adjoint = std::stoi(tokens[25]);
+			int mirror = std::stoi(tokens[27]);
+
+			m_walls[currentWall++] = new dfWall(left, right, adjoint, mirror);
+		}
+	}
 }
 
-~dfSector()
+dfSector::~dfSector()
 {
-
+	for (auto wall: m_walls) {
+		delete wall;
+	}
 }

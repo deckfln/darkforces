@@ -1,6 +1,8 @@
 #pragma once
 #include <string>
+#include <vector>
 #include <list>
+#include "dfWall.h"
 #include "../framework/fwMesh.h"
 
 class dfSector
@@ -9,10 +11,10 @@ class dfSector
 	float m_ambient = 0;
 	float m_floorAltitude = 0;
 	float m_ceilingAltitude = 0;
-
-	fwMesh m_mesh;
+	std::vector <dfWall*> m_walls;
+	std::vector <glm::vec2> m_vertices;
 
 public:
-	dfSector(std::fstream& infile);
+	dfSector(std::ifstream& infile);
 	~dfSector();
 };
