@@ -43,6 +43,9 @@ dfSector::dfSector(std::ifstream& infile)
 		if (tokens[0] == "NAME" && tokens.size() > 1) {
 			m_name = tokens[1];
 		}
+		if (tokens[0] == "LAYER") {
+			m_layer = std::stoi(tokens[1]);
+		}
 		else if (tokens[0] == "AMBIENT") {
 			m_ambient = std::stof(tokens[1]);
 		}
@@ -51,7 +54,7 @@ dfSector::dfSector(std::ifstream& infile)
 				// PASS
 			}
 			else if (tokens[1] == "ALTITUDE") {
-				m_floorAltitude = std::stof(tokens[2]);
+				m_floorAltitude = -std::stof(tokens[2]);
 			}
 		}
 		else if (tokens[0] == "CEILING") {
@@ -59,7 +62,7 @@ dfSector::dfSector(std::ifstream& infile)
 				//PASS
 			}
 			else if (tokens[1] == "ALTITUDE") {
-				m_ceilingAltitude = std::stof(tokens[2]);
+				m_ceilingAltitude = -std::stof(tokens[2]);
 			}
 		}
 		else if (tokens[0] == "SECOND") {

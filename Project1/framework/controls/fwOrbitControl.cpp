@@ -2,9 +2,10 @@
 
 #include <GLFW/glfw3.h>
 
-fwOrbitControl::fwOrbitControl(fwCamera *_camera, float _radius):
+fwOrbitControl::fwOrbitControl(fwCamera *_camera, float _radius, glm::vec3 lookAt):
 	camera(_camera),
-	m_radius(_radius)
+	m_radius(_radius),
+	m_lookAt(lookAt)
 {
 	update();
 }

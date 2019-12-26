@@ -24,14 +24,11 @@ myApp::myApp(std::string name, int width, int height) :
 {
 	int Button = 0;
 
-	dfLevel secbase("data/secbase.lev");
-
 	// camera
 	m_camera = new fwCamera(width, height);
-	//m_camera->translate(-6.859210, 20.333462, 22.371893);
 
 	// controls
-	m_control = new fwOrbitControl(m_camera, 20);
+	m_control = new fwOrbitControl(m_camera, 300, glm::vec3(200, 0, 200));
 	bindControl(m_control);
 
 	// shared geometry
@@ -69,6 +66,11 @@ myApp::myApp(std::string name, int width, int height) :
 	fLight->set_scale(half).set_name("light_impersonator");
 
 	m_light->addChild(fLight);
+
+	dfLevel secbase("data/secbase.lev");
+	fwMesh* level = new fwMesh(secbase.geometry(), basic);
+	level->set_name("secbase");
+	//level->draw_wireframe(true);
 
 	// floor
 	fwTexture *t1 = new fwTexture(ROOT_FOLDER + "/images/brickwall.jpg");
@@ -154,12 +156,7 @@ myApp::myApp(std::string name, int width, int height) :
 	glm::vec3 *yellow = new glm::vec3(255, 255, 0);
 	m_scene = new fwScene();
 	m_scene->addLight(m_light).
-		setOutline(yellow).
-		addChild(m_particles).
-		addChild(plane).
-		addChild(m_instancedMesh).
-		addChild(window).
-		addChild(m_stormtrooper);
+		addChild(level).addChild(plane);
 
 	m_scene->background(m_skybox);
 
