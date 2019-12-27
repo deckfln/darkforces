@@ -17,6 +17,8 @@ public:
 	fwTexture();
 	fwTexture(const std::string file, int nb_channels_to_read = 0);
 	fwTexture(int width, int height, int format);
+	fwTexture(unsigned char *data, int width, int height, int format);
+
 	unsigned char *get_info(int *width, int *height, int *nrChannels);
 	bool is(const int mclass) { return myclass & mclass; };
 	~fwTexture();

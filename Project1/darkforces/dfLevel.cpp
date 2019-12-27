@@ -7,6 +7,7 @@
 
 #include "../config.h"
 #include "../framework/geometries/fwPlaneGeometry.h"
+#include "../include/stb_image.h"
 
 dfLevel::dfLevel(std::string file)
 {
@@ -26,7 +27,9 @@ dfLevel::dfLevel(std::string file)
 		std::stringstream check1(line);
 		while (std::getline(check1, dump, ' '))
 		{
-			tokens.push_back(dump);
+			if (dump.length() > 0) {
+				tokens.push_back(dump);
+			}
 		}
 
 		if (tokens[0] == "LEV") {
@@ -37,6 +40,11 @@ dfLevel::dfLevel(std::string file)
 		}
 		else if (tokens[0] == "TEXTURES") {
 			int nbTextures = std::stoi(tokens[1]);
+			m_textures.resize(nbTextures);
+		}
+		else if (tokens[0] == "TEXTURE:") {
+			std::string bm = tokens[1];
+			loadGeometry(bm);
 		}
 		else if (tokens[0] == "NUMSECTORS") {
 			int nbSectors = std::stoi(tokens[1]);
@@ -49,11 +57,104 @@ dfLevel::dfLevel(std::string file)
 	}
 	infile.close();
 
-	convert2geometry();
+	compressTextures();	// load textures in a megatexture
+	convert2geometry();	// convert sectors to a geometry and apply the mega texture
 }
+
+/***
+ * Load a texture and store in the list of texture
+ */
+void dfLevel::loadGeometry(std::string file)
+{
+	int index = file.find(".BM");
+	file.replace(index, 3, ".png");
+	file = "data/textures/" + file;
+
+	dfTexture* texture = new dfTexture;
+	texture->data = stbi_load(file.c_str(), &texture->width, &texture->height, &texture->nrChannels, STBI_rgb);
+	texture->m_name = file;
+	m_textures[m_currentTexture++] = texture;
+}
+
 
 static float quadUvs[] = { 0.0f, 1.0f,	0.0f, 0.0f,	1.0f, 0.0f,	0.0f, 1.0f,	1.0f, 0.0f,	1.0f, 1.0f };
 
+/***
+ * compress all textures of the same size in megatexture
+ */
+void dfLevel::compressTextures(void)
+{
+	// count number of textures by size
+	std::list<dfTexture*> textures[4];
+
+	for (auto texture : m_textures) {
+		if (texture->width != 64) {
+			continue;
+		}
+		switch (texture->height) {
+		case 64:
+			textures[0].push_back(texture); break;
+		case 128:
+			textures[1].push_back(texture); break;
+		case 256:
+			textures[2].push_back(texture); break;
+		case 512:
+			textures[3].push_back(texture); break;
+		default:
+			printf("texture height > 512\n");
+		}
+	}
+
+	for (auto i = 0; i < 1; i++) {
+		// TODO : size for non-square texture
+		// 4 => 2x2
+		// 5 => 3x3
+		int size = ceil(sqrt(textures[i].size()));
+		int source_line = 0;
+		int dest_line = 0;
+
+		// TODO : memory for non-square texture
+		unsigned char* data = m_megatexture[i] = new unsigned char[size * size * 64 * 64 * 3];
+		
+		for (auto y = 0; y < size; y++) {
+			for (auto x = 0; x < size; x++) {
+				if (textures[i].size() == 0) {
+					break;
+				}
+
+				source_line = 0;
+				// TODO : position for non-square texture
+				dest_line = y * size * 64 * 64 * 3 + x * 64 * 3;
+
+				dfTexture* texture = textures[i].front();
+				for (auto p = 0; p < texture->height; p++) {
+					// copy one line of 64 bytes
+					memcpy(data + dest_line, texture->data + source_line, 64 * 3);
+					source_line += 64 * 3;
+					dest_line += size * 64 * 3;
+				}
+				// delete old source data
+				free(texture->data);
+				texture->data = nullptr;
+
+				// point to the megatexture
+				// TODO: y-offset for non-square texture
+				texture->m_texture = i;
+				texture->m_xoffset = x / size;
+				texture->m_yoffset = y / size;
+
+				textures[i].pop_front();
+			}
+		}
+
+		// create the fwTexture
+		m_fwtextures[i] = new fwTexture(m_megatexture[i], pow(2, i + 6) * size, pow(2, i+6) * size, 3);
+	}
+}
+
+/***
+ * create vertices for a rectangle
+ */
 static void addRectangle(std::vector <glm::vec3> &vertices, float x, float y, float z, float x1, float y1, float z1)
 {
 	int p = vertices.size();
@@ -142,5 +243,11 @@ dfLevel::~dfLevel()
 
 	for (auto sector : m_sectors) {
 		delete sector;
+	}
+	for (auto texture : m_textures) {
+		delete texture;
+	}
+	for (auto i = 0; i < 4; i++) {
+		delete m_megatexture[i];
 	}
 }

@@ -28,7 +28,7 @@ myApp::myApp(std::string name, int width, int height) :
 	m_camera = new fwCamera(width, height);
 
 	// controls
-	m_control = new fwOrbitControl(m_camera, 300, glm::vec3(200, 0, 200));
+	m_control = new fwOrbitControl(m_camera, 20, glm::vec3(0));
 	bindControl(m_control);
 
 	// shared geometry
@@ -75,8 +75,9 @@ myApp::myApp(std::string name, int width, int height) :
 	// floor
 	fwTexture *t1 = new fwTexture(ROOT_FOLDER + "/images/brickwall.jpg");
 	fwTexture *t2 = new fwTexture(ROOT_FOLDER + "/images/brickwall_normal.jpg");
-	fwMaterialDiffuse *material = new fwMaterialDiffuse(t1, 64);
-	material->normalMap(t2);
+	//fwMaterialDiffuse *material = new fwMaterialDiffuse(t1, 64);
+	//material->normalMap(t2);
+	fwMaterialDiffuse *material = new fwMaterialDiffuse(secbase.megatexture(0), 64);
 
 	fwMesh *plane = new fwMesh(new fwPlaneGeometry(10, 10), material);
 	plane->set_name("floor");

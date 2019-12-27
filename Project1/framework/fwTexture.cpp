@@ -26,6 +26,15 @@ fwTexture::fwTexture(int _width, int _height, int format) :
 {
 }
 
+fwTexture::fwTexture(unsigned char *data, int _width, int _height, int format) :
+	myclass(TEXTURE),
+	width(_width),
+	height(_height),
+	nrChannels(format),
+	m_data(data)
+{
+}
+
 unsigned char *fwTexture::get_info(int *_width, int *_height, int *_nrChannels)
 {
 	*_width = width;
