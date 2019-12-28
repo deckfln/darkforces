@@ -89,6 +89,7 @@ void dfLevel::compressTextures(void)
 
 	for (auto texture : m_textures) {
 		if (texture->width != 64) {
+			//TODO : deal with wider textures
 			continue;
 		}
 		switch (texture->height) {
@@ -98,58 +99,73 @@ void dfLevel::compressTextures(void)
 			textures[1].push_back(texture); break;
 		case 256:
 			textures[2].push_back(texture); break;
-		case 512:
-			textures[3].push_back(texture); break;
 		default:
 			printf("texture height > 512\n");
 		}
 	}
 
-	for (auto i = 0; i < 1; i++) {
-		// TODO : size for non-square texture
-		// 4 => 2x2
-		// 5 => 3x3
-		int size = ceil(sqrt(textures[i].size()));
-		int source_line = 0;
-		int dest_line = 0;
+	//TODO : optimize megatexture completion : square texture, block map, assign by empty blocks
 
-		// TODO : memory for non-square texture
-		unsigned char* data = m_megatexture[i] = new unsigned char[size * size * 64 * 64 * 3];
-		
-		for (auto y = 0; y < size; y++) {
-			for (auto x = 0; x < size; x++) {
-				if (textures[i].size() == 0) {
+	// evaluate the size of the megatexture (not square)
+
+	// height = 256 pixels + 1 row of 64 pixels per 64x256 pixels
+	int height = 256;
+	int width = 64 * textures[2].size();
+
+	// height = 256 pixels + 1 row of 64 pixels for 2 64x128 pixels
+	width += 64 * ceil(textures[1].size() / 2.0);
+
+	// height = 256 pixels + 1 row of 64 pixels for 4 64x54 pixels
+	width += 64 * ceil(textures[0].size() / 4.0);
+
+	m_megatexture = new unsigned char[height * width * 3];
+
+	int px = 0, py = 0;	// position on the 64x64 grid
+	int source_line = 0;
+	int dest_line = 0;
+
+	for (auto i = 2, block_height=4; i >= 0; i--, block_height /= 2) {
+		while (textures[i].size() > 0) {
+			source_line = 0;
+
+			dest_line = py * width *  64 * 3 + px * 64 * 3;
+
+			dfTexture* texture = textures[i].front();
+			for (auto p = 0; p < texture->height; p++) {
+				// copy one line of 64 bytes
+				memcpy(m_megatexture + dest_line, texture->data + source_line, 64 * 3);
+				source_line += 64 * 3;
+				dest_line += width * 3;
+			}
+
+			// point to the megatexture
+			texture->m_xoffset = px * 64.0 / width;
+			texture->m_yoffset = py * 64.0 / height;
+
+			texture->m_x1offset = (((px + 1) * 64.0) - 1) / width;
+			texture->m_y1offset = (((py + 1) * 64.0) - 1) / height;
+
+			// move down, if overlimit move to 0
+			py += block_height;
+			if (py >= 4) {
+				py = 0;
+				px++;
+				if (px > 19) {
+					i = 0;
 					break;
 				}
-
-				source_line = 0;
-				// TODO : position for non-square texture
-				dest_line = y * size * 64 * 64 * 3 + x * 64 * 3;
-
-				dfTexture* texture = textures[i].front();
-				for (auto p = 0; p < texture->height; p++) {
-					// copy one line of 64 bytes
-					memcpy(data + dest_line, texture->data + source_line, 64 * 3);
-					source_line += 64 * 3;
-					dest_line += size * 64 * 3;
-				}
-				// delete old source data
-				free(texture->data);
-				texture->data = nullptr;
-
-				// point to the megatexture
-				// TODO: y-offset for non-square texture
-				texture->m_texture = i;
-				texture->m_xoffset = x / size;
-				texture->m_yoffset = y / size;
-
-				textures[i].pop_front();
 			}
-		}
 
-		// create the fwTexture
-		m_fwtextures[i] = new fwTexture(m_megatexture[i], pow(2, i + 6) * size, pow(2, i+6) * size, 3);
+			// delete old source data
+			free(texture->data);
+			texture->data = nullptr;
+
+			textures[i].pop_front();
+		}
 	}
+
+	// create the fwTexture
+	m_fwtextures = new fwTexture(m_megatexture, width, height, 3);
 }
 
 /***
@@ -247,7 +263,6 @@ dfLevel::~dfLevel()
 	for (auto texture : m_textures) {
 		delete texture;
 	}
-	for (auto i = 0; i < 4; i++) {
-		delete m_megatexture[i];
-	}
+	//delete m_megatexture;
+	delete m_fwtextures;
 }
