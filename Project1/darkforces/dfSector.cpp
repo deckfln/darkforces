@@ -78,7 +78,7 @@ dfSector::dfSector(std::ifstream& infile)
 			m_vertices.resize(nbVertices);
 		}
 		else if (tokens[0] == "X:") {
-			float x  = std::stof(tokens[1]);
+			float x  = -std::stof(tokens[1]);
 			float z = std::stof(tokens[3]);
 
 			m_vertices[currentVertice++] = glm::vec2(x, z);

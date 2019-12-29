@@ -63,6 +63,7 @@ dfLevel::dfLevel(std::string file)
 
 /***
  * Load a texture and store in the list of texture
+ * TODO deal with animated textures : ZASWIT*
  */
 void dfLevel::loadGeometry(std::string file)
 {
@@ -77,92 +78,145 @@ void dfLevel::loadGeometry(std::string file)
 }
 
 /***
- * compress all textures of the same size in megatexture
+ * store all textures in a megatexture
+ * basic algorithm : use a square placement map, find an empty spot, store the texture. if no spot can be found, increase the texture size
  */
 void dfLevel::compressTextures(void)
 {
-	// count number of textures by size
-	std::list<dfTexture*> textures[4];
+	std::list<dfTexture*> sorted_textures;
+
+	// count number of 16x16 blocks
+	int blocks16x16=0;
+	int bx, by;
 
 	for (auto texture : m_textures) {
-		if (texture->width != 64) {
-			//TODO : deal with wider textures
-			continue;
-		}
-		switch (texture->height) {
-		case 64:
-			textures[0].push_back(texture); break;
-		case 128:
-			textures[1].push_back(texture); break;
-		case 256:
-			textures[2].push_back(texture); break;
-		default:
-			printf("texture height > 512\n");
-		}
+		bx = texture->width / 16;
+		by = texture->height / 16;
+		texture->bsize = bx * by;
+
+		blocks16x16 += texture->bsize;
+
+		sorted_textures.push_back(texture);
 	}
 
-	//TODO : optimize megatexture completion : square texture, block map, assign by empty blocks
+	// sort textures by size : big first
+	sorted_textures.sort([](dfTexture* a, dfTexture* b) { return a->bsize > b->bsize; });
 
-	// evaluate the size of the megatexture (not square)
+	// evaluate the size of the megatexture (square texture of 16x16 blocks)
+	int bsize = ceil(sqrt(blocks16x16));
 
-	// height = 256 pixels + 1 row of 64 pixels per 64x256 pixels
-	int height = 256;
-	int width = 64 * textures[2].size();
+	// try to place all objects on the map.
+	// if fail, increase the size of the map until we place all textures
 
-	// height = 256 pixels + 1 row of 64 pixels for 2 64x128 pixels
-	width += 64 * ceil(textures[1].size() / 2.0);
+	bool allplaced = false;
+	bool* placement_map;
+	int size;
 
-	// height = 256 pixels + 1 row of 64 pixels for 4 64x54 pixels
-	width += 64 * ceil(textures[0].size() / 4.0);
+	do {
+		// avaibility map of 16x16 blocks : false = available, true = used
+		placement_map = new bool[bsize * bsize]();
 
-	m_megatexture = new unsigned char[height * width * 3];
+		// megatexture in pixel (1 block = 16 pixel)
+		size = bsize * 16;
+		m_megatexture = new unsigned char[size * size * 3];
 
-	int px = 0, py = 0;	// position on the 64x64 grid
-	int source_line = 0;
-	int dest_line = 0;
+		// parse textures and place them on the megatexture
+		// find an available space on the map
+		int px, py;
+		int c = 0;
 
-	for (auto i = 2, block_height=4; i >= 0; i--, block_height /= 2) {
-		while (textures[i].size() > 0) {
-			source_line = 0;
+		allplaced = true;	// suppose we will be able to fit all textures
 
-			dest_line = py * width *  64 * 3 + px * 64 * 3;
+		for (auto texture : sorted_textures) {
+			bx = texture->width / 16;
+			by = texture->height / 16;
 
-			dfTexture* texture = textures[i].front();
-			for (auto p = 0; p < texture->height; p++) {
-				// copy one line of 64 bytes
-				memcpy(m_megatexture + dest_line, texture->data + source_line, 64 * 3);
-				source_line += 64 * 3;
-				dest_line += width * 3;
-			}
+			// find a spot of the placement map
+			px = py = 0;
+			bool ok = false;
 
-			// point to the megatexture
-			texture->m_xoffset = px * 64.0 / width;
-			texture->m_yoffset = py * 64.0 / height;
+			for (auto i = 0; i < bsize * bsize; i++) {
+				// test each position to find one we can start checking
+				if (!placement_map[py * bsize + px]) {
+					ok = true;	// suppose we have a spot
 
-			texture->m_x1offset = (((px + 1) * 64.0) - 1) / width;
-			texture->m_y1offset = (((py + 1) * 64.0) - 1) / height;
+					// check availability on the Y axis
+					for (auto y = py; y < py + by; y++) {
+						// check availability on the X axis
+						for (auto x = px; x < px + bx; x++) {
+							if (placement_map[y * bsize + x]) {
+								ok = false;	// actually, no we don't have a spot
+								break;
+							}
+						}
+					}
+				}
 
-			// move down, if overlimit move to 0
-			py += block_height;
-			if (py >= 4) {
-				py = 0;
-				px++;
-				if (px > 19) {
-					i = 0;
+				// found a spot
+				if (ok) {
 					break;
+				}
+
+				// progress along the placement map. 
+				px++;
+				if (px >= bsize - bx) {
+					px = 0;
+					py++;
+					if (py >= bsize - by) {
+						break;
+					}
 				}
 			}
 
-			// delete old source data
-			free(texture->data);
-			texture->data = nullptr;
+			// was not able to find a spot.
+			if (!ok) {
+				// need to increase the size of the map
+				allplaced = false;
+				bsize++;
+				delete placement_map;
+				delete m_megatexture;
 
-			textures[i].pop_front();
+				break;
+			}
+			c++;
+
+			// mark the object on the placement map
+			for (auto y = py; y < py + by; y++) {
+				for (auto x = px; x < px + bx; x++) {
+					placement_map[y * bsize + x] = true;
+				}
+			}
+
+			// copy the texture into the map
+			int source_line = 0;
+			int bytes = texture->width * 3;	// number of bytes per line
+			int dest_line = py * 16 * size * 3 + px * 16 * 3;
+
+			for (auto y = 0; y < texture->height; y++) {
+				// copy one line
+				memcpy(m_megatexture + dest_line, texture->data + source_line, bytes);
+				source_line += bytes;
+				dest_line += size * 3;
+			}
+
+			// point to the megatexture
+			texture->m_x1offset = px * 16.0 / size;
+			texture->m_y1offset = py * 16.0 / size;
+
+			texture->m_xoffset = (((px + bx) * 16.0) - 1) / size;
+			texture->m_yoffset = (((py + by) * 16.0) - 1) / size;
+
 		}
+	} while (!allplaced);
+
+	// delete old textures data
+	for (auto texture : sorted_textures) {
+		free(texture->data);
+		texture->data = nullptr;
 	}
 
 	// create the fwTexture
-	m_fwtextures = new fwTexture(m_megatexture, width, height, 3);
+	m_fwtextures = new fwTexture(m_megatexture, size, size, 3);
 }
 
 /***
