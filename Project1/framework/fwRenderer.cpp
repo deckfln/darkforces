@@ -114,7 +114,7 @@ void fwRenderer::parseChildren(fwObject3D* root, std::list <fwMesh *> meshes[], 
 
 		mesh = (fwMesh*)child;
 
-		if (mesh->is_visible() && camera->is_inFrustum(mesh)) {
+		if (mesh->is_visible() && (mesh->always_draw() || camera->is_inFrustum(mesh))) {
 			if (mesh->is_transparent()) {
 				meshes[FW_RENDER_TRANSPARENT].push_front(mesh);
 			}

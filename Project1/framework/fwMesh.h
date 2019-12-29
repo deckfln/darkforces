@@ -15,7 +15,8 @@ constexpr auto MESH = 1;
 
 class fwMesh: public fwObject3D
 {
-	bool visible = true;
+	bool visible = true;		// object is displayed in the scene
+	bool m_always_draw = false;	// ignore frustrum visibility and always draw
 	bool outlined = false;
 	bool normalHelper = false;
 	bool m_transparent = false;
@@ -45,6 +46,9 @@ public:
 
 	fwMesh &outline(bool _outlined);
 	bool is_outlined(void);
+
+	fwMesh& always_draw(bool al) { m_always_draw = al; return *this; };
+	bool always_draw(void) { return m_always_draw; };
 
 	fwMesh &transparent(bool _transparent) { m_transparent = _transparent; return *this; };
 	bool is_transparent(void) { return m_transparent; };

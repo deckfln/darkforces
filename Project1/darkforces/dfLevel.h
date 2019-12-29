@@ -28,8 +28,9 @@ class dfLevel
 
 	int m_currentTexture = 0;
 
+	std::vector <glm::vec3> m_vertices;
+	std::vector <glm::vec2> m_uvs;
 	fwGeometry* m_geometry = nullptr;
-	glm::vec3* m_vertices = nullptr;
 
 	unsigned char* m_megatexture;	// raw data 64x64, 64x128, 64x256, 64x512
 	fwTexture* m_fwtextures;			// fwTexture for the megatextures
@@ -37,10 +38,11 @@ class dfLevel
 	void convert2geometry(void);
 	void loadGeometry(std::string file);
 	void compressTextures(void);
+	void addRectangle(dfSector* sector, dfWall* wall, float z, float z1, int texture);
 
 public:
 	dfLevel(std::string name);
 	fwGeometry* geometry(void) { return m_geometry; };
-	fwTexture* megatexture(int i) { return m_fwtextures; };
+	fwTexture* texture() { return m_fwtextures; };
 	~dfLevel();
 };

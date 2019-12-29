@@ -76,9 +76,6 @@ void dfLevel::loadGeometry(std::string file)
 	m_textures[m_currentTexture++] = texture;
 }
 
-
-static float quadUvs[] = { 0.0f, 1.0f,	0.0f, 0.0f,	1.0f, 0.0f,	0.0f, 1.0f,	1.0f, 0.0f,	1.0f, 1.0f };
-
 /***
  * compress all textures of the same size in megatexture
  */
@@ -171,42 +168,68 @@ void dfLevel::compressTextures(void)
 /***
  * create vertices for a rectangle
  */
-static void addRectangle(std::vector <glm::vec3> &vertices, float x, float y, float z, float x1, float y1, float z1)
+void dfLevel::addRectangle(dfSector *sector, dfWall *wall, float z, float z1, int texture)
 {
-	int p = vertices.size();
-	vertices.resize(p + 6);
+	float x = sector->m_vertices[wall->m_left].x,
+		y = sector->m_vertices[wall->m_left].y,
+		x1 = sector->m_vertices[wall->m_right].x,
+		y1 = sector->m_vertices[wall->m_right].y;
+
+	int textureID = wall->m_tex[texture].x;
+
+	dfTexture* dfTexture = m_textures[textureID];
+	float xmegaoffset = dfTexture->m_xoffset;
+	float ymegaoffset = dfTexture->m_yoffset;
+
+	float x1megaoffset = dfTexture->m_x1offset;
+	float y1megaoffset = dfTexture->m_y1offset;
+
+	float xoffset = wall->m_tex[texture].y;
+	float yoffset = wall->m_tex[texture].z;
+	int height = abs(z1 - z);
+
+	int p = m_vertices.size();
+	m_vertices.resize(p + 6);
+	m_uvs.resize(p + 6);
 
 	// first triangle
-	vertices[p].x = x / 10;
-	vertices[p].z = y / 10;
-	vertices[p].y = z / 10;
+	m_vertices[p].x = x / 10;
+	m_vertices[p].z = y / 10;
+	m_vertices[p].y = z / 10;
+	m_uvs[p] = glm::vec2(xmegaoffset, ymegaoffset);
 
-	vertices[p + 1].x = x1 / 10;
-	vertices[p + 1].z = y1 / 10;
-	vertices[p + 1].y = z / 10;
+	m_vertices[p + 1].x = x1 / 10;
+	m_vertices[p + 1].z = y1 / 10;
+	m_vertices[p + 1].y = z / 10;
+	m_uvs[p + 1] = glm::vec2(x1megaoffset, ymegaoffset);
 
-	vertices[p + 2].x = x1 / 10;
-	vertices[p + 2].z = y1 / 10;
-	vertices[p + 2].y = z1 / 10;
+	m_vertices[p + 2].x = x1 / 10;
+	m_vertices[p + 2].z = y1 / 10;
+	m_vertices[p + 2].y = z1 / 10;
+	m_uvs[p + 2] = glm::vec2(x1megaoffset, y1megaoffset);
 
 	// second triangle
-	vertices[p + 3].x = x / 10;
-	vertices[p + 3].z = y / 10;
-	vertices[p + 3].y = z / 10;
+	m_vertices[p + 3].x = x / 10;
+	m_vertices[p + 3].z = y / 10;
+	m_vertices[p + 3].y = z / 10;
+	m_uvs[p + 3] = glm::vec2(xmegaoffset, ymegaoffset);
 
-	vertices[p + 4].x = x1 / 10;
-	vertices[p + 4].z = y1 / 10;
-	vertices[p + 4].y = z1 / 10;
+	m_vertices[p + 4].x = x1 / 10;
+	m_vertices[p + 4].z = y1 / 10;
+	m_vertices[p + 4].y = z1 / 10;
+	m_uvs[p + 4] = glm::vec2(x1megaoffset, y1megaoffset);
 
-	vertices[p + 5].x = x / 10;
-	vertices[p + 5].z = y / 10;
-	vertices[p + 5].y = z1 / 10;
+	m_vertices[p + 5].x = x / 10;
+	m_vertices[p + 5].z = y / 10;
+	m_vertices[p + 5].y = z1 / 10;
+	m_uvs[p + 5] = glm::vec2(xmegaoffset, y1megaoffset);
 }
 
+/**
+ * Convert a level into a megga textured mesh
+ */
 void dfLevel::convert2geometry(void)
 {
-	std::vector <glm::vec3> vertices;
-
 	int size = 0;
 	int p = 0;
 
@@ -215,12 +238,12 @@ void dfLevel::convert2geometry(void)
 			continue;
 		}
 		for (auto wall : sector->m_walls) {
-			// ignore portals
 			if (wall->m_adjoint < 0) {
 				// full wall
-				addRectangle(vertices,
-					sector->m_vertices[wall->m_left].x, sector->m_vertices[wall->m_left].y, sector->m_floorAltitude,
-					sector->m_vertices[wall->m_right].x, sector->m_vertices[wall->m_right].y, sector->m_ceilingAltitude
+				addRectangle(sector, wall,
+					sector->m_floorAltitude,
+					sector->m_ceilingAltitude,
+					DFWALL_TEXTURE_MID
 				);
 			}
 			else {
@@ -229,34 +252,31 @@ void dfLevel::convert2geometry(void)
 
 				if (portal->m_ceilingAltitude < sector->m_ceilingAltitude) {
 					// add a wall above the portal
-					addRectangle(vertices,
-						sector->m_vertices[wall->m_left].x, sector->m_vertices[wall->m_left].y, portal->m_ceilingAltitude,
-						sector->m_vertices[wall->m_right].x, sector->m_vertices[wall->m_right].y, sector->m_ceilingAltitude
+					addRectangle(sector, wall, 
+						portal->m_ceilingAltitude,
+						sector->m_ceilingAltitude,
+						DFWALL_TEXTURE_TOP
 					);
 				}
 				if (portal->m_floorAltitude > sector->m_floorAltitude) {
 					// add a wall below the portal
-					addRectangle(vertices,
-						sector->m_vertices[wall->m_left].x, sector->m_vertices[wall->m_left].y, sector->m_floorAltitude,
-						sector->m_vertices[wall->m_right].x, sector->m_vertices[wall->m_right].y, portal->m_floorAltitude
+					addRectangle(sector, wall,
+						sector->m_floorAltitude,
+						portal->m_floorAltitude,
+						DFWALL_TEXTURE_BOTTOM
 					);
 				}
 			}
 		}
 	}
 
-	m_vertices = new glm::vec3[vertices.size()];
-	memcpy(m_vertices, &vertices[0], vertices.size() * sizeof(glm::vec3));
-
 	m_geometry = new fwGeometry();
-	m_geometry->addVertices("aPos", m_vertices, 3, vertices.size() * sizeof(glm::vec3), sizeof(float), false);
-	m_geometry->addAttribute("aTexCoord", GL_ARRAY_BUFFER, quadUvs, 2, sizeof(quadUvs), sizeof(float), false);
+	m_geometry->addVertices("aPos", &m_vertices[0], 3, m_vertices.size() * sizeof(glm::vec3), sizeof(float), false);
+	m_geometry->addAttribute("aTexCoord", GL_ARRAY_BUFFER, &m_uvs[0], 2, m_uvs.size() * sizeof(glm::vec2), sizeof(float), false);
 }
 
 dfLevel::~dfLevel()
 {
-	delete[] m_vertices;
-
 	for (auto sector : m_sectors) {
 		delete sector;
 	}

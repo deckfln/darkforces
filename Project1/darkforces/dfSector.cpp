@@ -92,8 +92,16 @@ dfSector::dfSector(std::ifstream& infile)
 			int right = std::stoi(tokens[4]);
 			int adjoint = std::stoi(tokens[25]);
 			int mirror = std::stoi(tokens[27]);
+			glm::vec3 mid(std::stof(tokens[6]), std::stof(tokens[7]), std::stof(tokens[8]));
+			glm::vec3 top(std::stof(tokens[11]), std::stof(tokens[12]), std::stof(tokens[13]));
+			glm::vec3 bottom(std::stof(tokens[16]), std::stof(tokens[17]), std::stof(tokens[18]));
 
-			m_walls[currentWall++] = new dfWall(left, right, adjoint, mirror);
+			dfWall* wall = new dfWall(left, right, adjoint, mirror);
+			wall->m_tex[DFWALL_TEXTURE_BOTTOM] = bottom;
+			wall->m_tex[DFWALL_TEXTURE_MID] = mid;
+			wall->m_tex[DFWALL_TEXTURE_TOP] = top;
+
+			m_walls[currentWall++] = wall;
 		}
 	}
 }

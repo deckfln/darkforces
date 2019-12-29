@@ -29,7 +29,7 @@ void main()
 	vec4 color;
 
 #ifdef DIFFUSE_MAP
-	color = material.diffuse;
+	color = texture(material.diffuse, TexCoord);
 #else
 	color = material.color;
 #endif
