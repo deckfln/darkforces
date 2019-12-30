@@ -199,9 +199,9 @@ void dfLevel::compressTextures(void)
 				dest_line += size * 3;
 			}
 
-			// point to the megatexture
-			texture->m_xoffset = (((px + bx) * 16.0) - 1) / size;
-			texture->m_yoffset = (((py + by) * 16.0) - 1) / size;
+			// TODO point to the megatexture (use small epsilon to avoid texture bleeding)
+			texture->m_xoffset = (((px + bx) * 16.0)) / size;
+			texture->m_yoffset = (((py + by) * 16.0)) / size;
 
 			texture->m_mega_width = - bx * 16.0 / size;
 			texture->m_mega_height = - by * 16.0 / size;

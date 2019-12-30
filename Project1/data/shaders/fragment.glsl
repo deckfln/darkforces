@@ -32,6 +32,7 @@ void main()
 
 #ifdef DIFFUSE_MAP
 	vec2 uv = fract(TexCoord);
+
 	// convert the local texture UV into the MegaTexture uv
 	vec4 textureData = megatexture_idx[textureID];
 
