@@ -247,8 +247,8 @@ void dfLevel::addRectangle(dfSector *sector, dfWall *wall, float z, float z1, in
 
 	// convert height and length into local texture coordinates using pixel ratio
 	// ratio of texture pixel vs world position = 64 pixels for 8 clicks
-	float height = abs(z1 - z) * 8 / ypixel;
-	float width = length * 8 / xpixel;
+	float height = abs(z1 - z) * 8.0 / ypixel;
+	float width = length * 8.0 / xpixel;
 
 	// get local texture coordinates into megatexture
 	float xmegaoffset = dfTexture->m_xoffset;
@@ -276,13 +276,13 @@ void dfLevel::addRectangle(dfSector *sector, dfWall *wall, float z, float z1, in
 	m_vertices[p + 1].x = x1 / 10;
 	m_vertices[p + 1].z = y1 / 10;
 	m_vertices[p + 1].y = z / 10;
-	m_uvs[p + 1] = glm::vec2(1.0, 0);
+	m_uvs[p + 1] = glm::vec2(width, 0);
 	m_textureID[p + 1] = textureID;
 
 	m_vertices[p + 2].x = x1 / 10;
 	m_vertices[p + 2].z = y1 / 10;
 	m_vertices[p + 2].y = z1 / 10;
-	m_uvs[p + 2] = glm::vec2(1.0, 1.0);
+	m_uvs[p + 2] = glm::vec2(width, height);
 	m_textureID[p + 2] = textureID;
 
 	// second triangle
@@ -295,13 +295,13 @@ void dfLevel::addRectangle(dfSector *sector, dfWall *wall, float z, float z1, in
 	m_vertices[p + 4].x = x1 / 10;
 	m_vertices[p + 4].z = y1 / 10;
 	m_vertices[p + 4].y = z1 / 10;
-	m_uvs[p + 4] = glm::vec2(1.0, 1.0);
+	m_uvs[p + 4] = glm::vec2(width, height);
 	m_textureID[p + 4] = textureID;
 
 	m_vertices[p + 5].x = x / 10;
 	m_vertices[p + 5].z = y / 10;
 	m_vertices[p + 5].y = z1 / 10;
-	m_uvs[p + 5] = glm::vec2(0.0, 1.0);
+	m_uvs[p + 5] = glm::vec2(0.0, height);
 	m_textureID[p + 5] = textureID;
 }
 
