@@ -28,7 +28,7 @@ myApp::myApp(std::string name, int width, int height) :
 	m_camera = new fwCamera(width, height);
 
 	// controls
-	m_control = new fwOrbitControl(m_camera, 20, glm::vec3(0));
+	m_control = new fwOrbitControl(m_camera, 20, glm::vec3(-24, 0, 28));
 	bindControl(m_control);
 
 	// shared geometry

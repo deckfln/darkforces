@@ -250,15 +250,10 @@ void dfLevel::addRectangle(dfSector *sector, dfWall *wall, float z, float z1, in
 	float height = abs(z1 - z) * 8.0 / ypixel;
 	float width = length * 8.0 / xpixel;
 
-	// get local texture coordinates into megatexture
-	float xmegaoffset = dfTexture->m_xoffset;
-	float ymegaoffset = dfTexture->m_yoffset;
-
-	float x1megaoffset = dfTexture->m_mega_width;
-	float y1megaoffset = dfTexture->m_mega_height;
-
-	float xoffset = wall->m_tex[texture].y;
-	float yoffset = wall->m_tex[texture].z;
+	// get local texture offset on the wall
+	// TODO: current supposion : offset x 1 => 1 pixel from the begining on XXX width pixel texture
+	float xoffset = (wall->m_tex[texture].y * 8) / xpixel;
+	float yoffset = (wall->m_tex[texture].z * 8) / ypixel;
 
 	// resize the opengl buffers
 	int p = m_vertices.size();
@@ -270,38 +265,38 @@ void dfLevel::addRectangle(dfSector *sector, dfWall *wall, float z, float z1, in
 	m_vertices[p].x = x / 10;
 	m_vertices[p].z = y / 10;
 	m_vertices[p].y = z / 10;
-	m_uvs[p] = glm::vec2(0, 0);
+	m_uvs[p] = glm::vec2(xoffset, yoffset);
 	m_textureID[p] = textureID;
 
 	m_vertices[p + 1].x = x1 / 10;
 	m_vertices[p + 1].z = y1 / 10;
 	m_vertices[p + 1].y = z / 10;
-	m_uvs[p + 1] = glm::vec2(width, 0);
+	m_uvs[p + 1] = glm::vec2(width+xoffset, yoffset);
 	m_textureID[p + 1] = textureID;
 
 	m_vertices[p + 2].x = x1 / 10;
 	m_vertices[p + 2].z = y1 / 10;
 	m_vertices[p + 2].y = z1 / 10;
-	m_uvs[p + 2] = glm::vec2(width, height);
+	m_uvs[p + 2] = glm::vec2(width+xoffset, height+yoffset);
 	m_textureID[p + 2] = textureID;
 
 	// second triangle
 	m_vertices[p + 3].x = x / 10;
 	m_vertices[p + 3].z = y / 10;
 	m_vertices[p + 3].y = z / 10;
-	m_uvs[p + 3] = glm::vec2(0.0, 0.0);
+	m_uvs[p + 3] = glm::vec2(xoffset, yoffset);
 	m_textureID[p + 3] = textureID;
 
 	m_vertices[p + 4].x = x1 / 10;
 	m_vertices[p + 4].z = y1 / 10;
 	m_vertices[p + 4].y = z1 / 10;
-	m_uvs[p + 4] = glm::vec2(width, height);
+	m_uvs[p + 4] = glm::vec2(width+xoffset, height+yoffset);
 	m_textureID[p + 4] = textureID;
 
 	m_vertices[p + 5].x = x / 10;
 	m_vertices[p + 5].z = y / 10;
 	m_vertices[p + 5].y = z1 / 10;
-	m_uvs[p + 5] = glm::vec2(0.0, height);
+	m_uvs[p + 5] = glm::vec2(xoffset, height+yoffset);
 	m_textureID[p + 5] = textureID;
 }
 
