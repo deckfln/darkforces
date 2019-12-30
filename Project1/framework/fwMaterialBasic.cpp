@@ -22,6 +22,15 @@ fwMaterialBasic::fwMaterialBasic(glm::vec4 *_color):
 	addUniform(uniform);
 }
 
+fwMaterialBasic::fwMaterialBasic(std::string vertex_shader, std::string forward_fragment, std::string defered_fragment) :
+	fwMaterial(vertex_shader, forward_fragment, "")
+{
+	addShader(FRAGMENT_SHADER, defered_fragment, DEFERED_RENDER);
+
+	m_defines = "#define BASIC_MATERIAL\n";
+	m_type |= BASIC_MATERIAL;
+}
+
 void fwMaterialBasic::addDiffuseMap(fwTexture *_diffuse)
 {
 	m_defines += "#define DIFFUSE_MAP\n";

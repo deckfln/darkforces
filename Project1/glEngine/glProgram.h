@@ -35,5 +35,6 @@ public:
 	void set_uniform(const std::string name, glm::vec2 &vec2);
 	void set_uniform(const std::string name, glTexture *);
 	void set_uniform(const std::string name, glm::mat4 *, int size=1);
+	void set_uniform(const std::string name, glm::vec4*, int size = 1);
 	~glProgram();
 };

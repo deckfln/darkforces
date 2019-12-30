@@ -23,6 +23,7 @@ public:
 	fwUniform(std::string _name, glTextureArray* y);
 	fwUniform(std::string _name, glCubeTexture *y);
 	fwUniform(std::string _name, glm::mat4* t, int size);
+	fwUniform(std::string _name, glm::vec4* t, int size);
 	void set_uniform(glProgram *);
 	void *get_value(void);
 	void set(void *_data);

@@ -14,6 +14,7 @@
 #include "framework/fwRenderer.h"
 #include "framework/mesh/fwMeshSkinned.h"
 #include "framework/fwParticles.h"
+#include "darkforces/dfLevel.h"
 
 class myApp : public fwApp
 {
@@ -28,6 +29,7 @@ class myApp : public fwApp
 	fwMeshSkinned* m_stormtrooper = nullptr;
 	fwMesh* m_fwCamera = nullptr;
 	fwParticles* m_particles = nullptr;
+	dfLevel* secbase = nullptr;
 
 public:
 	myApp(std::string name,  int width, int height);

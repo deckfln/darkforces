@@ -63,6 +63,14 @@ fwUniform::fwUniform(std::string _name, glm::mat4* t, int size) :
 {
 }
 
+fwUniform::fwUniform(std::string _name, glm::vec4* t, int size) :
+	name(_name+"[0]"),
+	data(t),
+	m_size(size),
+	type(GL_FLOAT_VEC4)
+{
+}
+
 void *fwUniform::get_value(void)
 {
 	return data;
@@ -80,7 +88,13 @@ void fwUniform::set_uniform(glProgram *program)
 		program->set_uniform(name, *(GLfloat *)data);
 		break;
 	case GL_FLOAT_VEC4:
-		program->set_uniform(name, *(glm::vec4 *)data);
+		// TODO : for single vec4 it should be size 1
+		if (m_size == 0) {
+			program->set_uniform(name, *(glm::vec4*)data);
+		}
+		else {
+			program->set_uniform(name, (glm::vec4*)data, m_size);
+		}
 		break;
 	case GL_FLOAT_VEC2:
 		program->set_uniform(name, *(glm::vec2 *)data);

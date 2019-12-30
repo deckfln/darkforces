@@ -42,6 +42,11 @@ glVertexAttribute::glVertexAttribute(GLchar *_name, GLsizei _length, GLsizei _si
 		single_size = sizeof(GLint);
 		single_nb = 4;
 		break;
+	case GL_UNSIGNED_INT:
+		single_type = GL_UNSIGNED_INT;
+		single_size = sizeof(GLuint);
+		single_nb = 1;
+		break;
 	default:
 		std::cout << "Unkown vertex attribute type " << name << " " << type << std::endl;
 	}

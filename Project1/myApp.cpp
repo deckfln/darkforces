@@ -67,10 +67,11 @@ myApp::myApp(std::string name, int width, int height) :
 
 	m_light->addChild(fLight);
 
-	dfLevel secbase("data/secbase.lev");
-	fwMaterialBasic* walls = new fwMaterialBasic(white);
-	walls->addDiffuseMap(secbase.texture());
-	fwMesh* level = new fwMesh(secbase.geometry(), walls);
+	secbase = new dfLevel("data/secbase.lev");
+	fwMaterialBasic* dfBasic = new fwMaterialBasic("data/shaders/vertex.glsl", "", "data/shaders/fragment.glsl");
+	dfBasic->addDiffuseMap(secbase->texture());
+	dfBasic->addUniform(secbase->index());
+	fwMesh* level = new fwMesh(secbase->geometry(), dfBasic);
 	level->set_name("secbase");
 	level->always_draw(true);	// force display for debugging
 

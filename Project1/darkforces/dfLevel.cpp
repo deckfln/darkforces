@@ -200,12 +200,11 @@ void dfLevel::compressTextures(void)
 			}
 
 			// point to the megatexture
-			texture->m_x1offset = px * 16.0 / size;
-			texture->m_y1offset = py * 16.0 / size;
-
 			texture->m_xoffset = (((px + bx) * 16.0) - 1) / size;
 			texture->m_yoffset = (((py + by) * 16.0) - 1) / size;
 
+			texture->m_mega_width = - bx * 16.0 / size;
+			texture->m_mega_height = - by * 16.0 / size;
 		}
 	} while (!allplaced);
 
@@ -217,6 +216,15 @@ void dfLevel::compressTextures(void)
 
 	// create the fwTexture
 	m_fwtextures = new fwTexture(m_megatexture, size, size, 3);
+
+	// and the index
+	m_megatexture_idx.resize(m_textures.size());
+
+	int i = 0;
+	for (auto texture : m_textures) {
+		m_megatexture_idx[i++] = glm::vec4(texture->m_xoffset, texture->m_yoffset, texture->m_mega_width, texture->m_mega_height);
+	}
+	m_shader_idx = new fwUniform("megatexture_idx", &m_megatexture_idx[0], i);
 }
 
 /***
@@ -232,51 +240,69 @@ void dfLevel::addRectangle(dfSector *sector, dfWall *wall, float z, float z1, in
 	int textureID = wall->m_tex[texture].x;
 
 	dfTexture* dfTexture = m_textures[textureID];
+
+	float length = sqrt(pow(x - x1, 2) + pow(y - y1, 2));
+	float xpixel = dfTexture->width;
+	float ypixel = dfTexture->height;
+
+	// convert height and length into local texture coordinates using pixel ratio
+	// ratio of texture pixel vs world position = 64 pixels for 8 clicks
+	float height = abs(z1 - z) * 8 / ypixel;
+	float width = length * 8 / xpixel;
+
+	// get local texture coordinates into megatexture
 	float xmegaoffset = dfTexture->m_xoffset;
 	float ymegaoffset = dfTexture->m_yoffset;
 
-	float x1megaoffset = dfTexture->m_x1offset;
-	float y1megaoffset = dfTexture->m_y1offset;
+	float x1megaoffset = dfTexture->m_mega_width;
+	float y1megaoffset = dfTexture->m_mega_height;
 
 	float xoffset = wall->m_tex[texture].y;
 	float yoffset = wall->m_tex[texture].z;
-	int height = abs(z1 - z);
 
+	// resize the opengl buffers
 	int p = m_vertices.size();
 	m_vertices.resize(p + 6);
 	m_uvs.resize(p + 6);
+	m_textureID.resize(p + 6);
 
 	// first triangle
 	m_vertices[p].x = x / 10;
 	m_vertices[p].z = y / 10;
 	m_vertices[p].y = z / 10;
-	m_uvs[p] = glm::vec2(xmegaoffset, ymegaoffset);
+	m_uvs[p] = glm::vec2(0, 0);
+	m_textureID[p] = textureID;
 
 	m_vertices[p + 1].x = x1 / 10;
 	m_vertices[p + 1].z = y1 / 10;
 	m_vertices[p + 1].y = z / 10;
-	m_uvs[p + 1] = glm::vec2(x1megaoffset, ymegaoffset);
+	m_uvs[p + 1] = glm::vec2(1.0, 0);
+	m_textureID[p + 1] = textureID;
 
 	m_vertices[p + 2].x = x1 / 10;
 	m_vertices[p + 2].z = y1 / 10;
 	m_vertices[p + 2].y = z1 / 10;
-	m_uvs[p + 2] = glm::vec2(x1megaoffset, y1megaoffset);
+	m_uvs[p + 2] = glm::vec2(1.0, 1.0);
+	m_textureID[p + 2] = textureID;
 
 	// second triangle
 	m_vertices[p + 3].x = x / 10;
 	m_vertices[p + 3].z = y / 10;
 	m_vertices[p + 3].y = z / 10;
-	m_uvs[p + 3] = glm::vec2(xmegaoffset, ymegaoffset);
+	m_uvs[p + 3] = glm::vec2(0.0, 0.0);
+	m_textureID[p + 3] = textureID;
 
 	m_vertices[p + 4].x = x1 / 10;
 	m_vertices[p + 4].z = y1 / 10;
 	m_vertices[p + 4].y = z1 / 10;
-	m_uvs[p + 4] = glm::vec2(x1megaoffset, y1megaoffset);
+	m_uvs[p + 4] = glm::vec2(1.0, 1.0);
+	m_textureID[p + 4] = textureID;
 
 	m_vertices[p + 5].x = x / 10;
 	m_vertices[p + 5].z = y / 10;
 	m_vertices[p + 5].y = z1 / 10;
-	m_uvs[p + 5] = glm::vec2(xmegaoffset, y1megaoffset);
+	m_uvs[p + 5] = glm::vec2(0.0, 1.0);
+	m_textureID[p + 5] = textureID;
 }
 
 /**
@@ -324,9 +350,11 @@ void dfLevel::convert2geometry(void)
 		}
 	}
 
+	size = m_vertices.size();
 	m_geometry = new fwGeometry();
-	m_geometry->addVertices("aPos", &m_vertices[0], 3, m_vertices.size() * sizeof(glm::vec3), sizeof(float), false);
-	m_geometry->addAttribute("aTexCoord", GL_ARRAY_BUFFER, &m_uvs[0], 2, m_uvs.size() * sizeof(glm::vec2), sizeof(float), false);
+	m_geometry->addVertices("aPos", &m_vertices[0], 3, size * sizeof(glm::vec3), sizeof(float), false);
+	m_geometry->addAttribute("aTexCoord", GL_ARRAY_BUFFER, &m_uvs[0], 2, size * sizeof(glm::vec2), sizeof(float), false);
+	m_geometry->addAttribute("aTextureID", GL_ARRAY_BUFFER, &m_textureID[0], 1, size * sizeof(float), sizeof(float), false);
 }
 
 dfLevel::~dfLevel()

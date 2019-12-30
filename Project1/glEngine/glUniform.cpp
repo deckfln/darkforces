@@ -220,6 +220,16 @@ void glUniform::set_value(glm::mat4 *mat4, int size)
 	glUniformMatrix4fv(location, size, GL_FALSE, glm::value_ptr(mat4[0]));
 }
 
+void glUniform::set_value(glm::vec4* vec4, int size)
+{
+	if (type != GL_FLOAT_VEC4) {
+		std::cout << "glUniform::set_value " << name.c_str() << " not G_FLOAT_VEC4" << std::endl;
+		exit(-1);
+	}
+
+	glUniform4fv(location, size, glm::value_ptr(vec4[0]));
+}
+
 glUniform::~glUniform()
 {
 }
