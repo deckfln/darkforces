@@ -69,8 +69,9 @@ void fwControlThirdPerson::checkKeys(void)
 
 void fwControlThirdPerson::updateDirection(void)
 {
-	m_direction.x = cos(m_phi);
-	m_direction.z = sin(m_phi);
+	//TODO the direction is normalized, speed should be handled somewhere else
+	m_direction.x = cos(m_phi) / 3;
+	m_direction.z = sin(m_phi) / 3;
 	updateCamera();
 }
 
@@ -79,6 +80,12 @@ void fwControlThirdPerson::updateDirection(void)
  */
 void fwControlThirdPerson::updateCamera(void)
 {
+	// ask the collision engine what is the altitude of the target position
+	if (m_collision) {
+		float z = m_collision->ground(m_position);
+		m_position.y = z + 0.5;	// TODO : use the actor height
+	}
+
 	glm::vec3 lookAt(
 		2 * cos(m_phi)*sin(m_theta) + m_position.x,
 		cos(m_theta) + m_position.y,

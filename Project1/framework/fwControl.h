@@ -4,6 +4,7 @@
 #include <glm/vec3.hpp>
 
 #include "fwCamera.h"
+#include "fwCollision.h"
 
 const double pi = 3.1415926535897;
 
@@ -28,6 +29,8 @@ protected:
 	bool m_autoupdate = false;	// controler update itself without user action (like when the key is kept pressed)
 
 	fwCamera *camera = nullptr;
+	fwCollision* m_collision = nullptr;	// collision engine
+
 	virtual void updateCamera(void) {};
 
 public:
@@ -37,7 +40,7 @@ public:
 	void mouseMove(double xpos, double ypos);
 	void mouseScroll(double xoffset, double yoffset);
 	void keyEvent(int key, int scancode, int action);
-
+	void bind(fwCollision* collision) { m_collision = collision; };
 	virtual void update(void) {};
 	~fwControl();
 };

@@ -4,6 +4,7 @@
 #include <list>
 
 #include "dfSector.h"
+#include "../framework/fwAABBox.h"
 
 struct dfTexture {
 	std::string m_name;
@@ -21,12 +22,18 @@ struct dfTexture {
 	unsigned char* data;	// source data
 };
 
+struct dfLayer {
+	fwAABBox m_boundingBox;
+	std::list <dfSector*> m_sectors;
+};
+
 class dfLevel
 {
 	std::string m_name;
 	std::string m_level;
-	std::vector<dfSector *> m_sectors;
-	std::vector<dfTexture *> m_textures;
+	std::vector<dfSector *> m_sectors;		// all sectors of the level
+	std::vector<dfTexture *> m_textures;	// all textures of the level
+	std::vector<dfLayer> m_layers;	// space partioning of sectors
 
 	int m_currentTexture = 0;
 
@@ -44,6 +51,7 @@ class dfLevel
 	void convert2geometry(void);
 	void loadGeometry(std::string file);
 	void compressTextures(void);
+	void spacePartitioning(void);
 	void addRectangle(dfSector* sector, dfWall* wall, float z, float z1, int texture);
 
 public:
@@ -51,5 +59,6 @@ public:
 	fwGeometry* geometry(void) { return m_geometry; };
 	fwTexture* texture() { return m_fwtextures; };
 	fwUniform* index(void) { return m_shader_idx; };
+	dfSector* findSector(glm::vec3& position);
 	~dfLevel();
 };

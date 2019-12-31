@@ -18,6 +18,7 @@
 #include "framework/Loader.h"
 
 #include "darkforces/dfLevel.h"
+#include "darkforces/dfCollision.h"
 
 myApp::myApp(std::string name, int width, int height) :
 	fwApp(name, width, height, "shaders/gamma", "#define GAMMA_CORRECTION 1\n")
@@ -74,6 +75,9 @@ myApp::myApp(std::string name, int width, int height) :
 	fwMesh* level = new fwMesh(secbase->geometry(), dfBasic);
 	level->set_name("secbase");
 	level->always_draw(true);	// force display for debugging
+	dfCollision* m_collision = new dfCollision();
+	m_collision->bind(secbase);
+	m_control->bind(m_collision);
 
 	// floor
 	fwTexture *t1 = new fwTexture(ROOT_FOLDER + "/images/brickwall.jpg");

@@ -15,6 +15,7 @@ dfSector::dfSector(std::ifstream& infile)
 	int currentWall = 0;
 
 	std::string line, dump;
+	float min_x=99999, max_x=-99999, min_z=99999, max_z=-99999;	// build AABBox while parsing the vertices
 
 	// per line
 	while (std::getline(infile, line))
@@ -82,6 +83,12 @@ dfSector::dfSector(std::ifstream& infile)
 			float z = std::stof(tokens[3]);
 
 			m_vertices[currentVertice++] = glm::vec2(x, z);
+
+			// refresh the AABBox
+			if (x < min_x) min_x = x;
+			if (x > max_x) max_x = x;
+			if (z < min_z) min_z = z;
+			if (z > max_z) max_z = z;
 		}
 		else if (tokens[0] == "WALLS") {
 			nbWalls = std::stoi(tokens[1]);
@@ -104,6 +111,33 @@ dfSector::dfSector(std::ifstream& infile)
 			m_walls[currentWall++] = wall;
 		}
 	}
+
+	m_boundingBox = fwAABBox(min_x, max_x, m_floorAltitude, m_ceilingAltitude, min_z, max_z);
+}
+
+bool dfSector::isPointInside(glm::vec3 &p)
+{
+	// quick check against the 3D bounding box
+	if (!m_boundingBox.inside(p)) {
+		return false;
+	}
+
+	if (m_id == 188) {
+		printf("debug\n");
+	}
+	// https://stackoverflow.com/questions/217578/how-can-i-determine-whether-a-2d-point-is-within-a-polygon
+	// http://www.ecse.rpi.edu/Homepages/wrf/Research/Short_Notes/pnpoly.html
+	bool inside = false;
+	for (int i = 0, j = m_vertices.size() - 1; i < m_vertices.size(); j = i++)
+	{
+		if ((m_vertices[i].y > p.z) != (m_vertices[j].y > p.z) &&
+			p.x < (m_vertices[j].x - m_vertices[i].x) * (p.z - m_vertices[i].y) / (m_vertices[j].y - m_vertices[i].y) + m_vertices[i].x)
+		{
+			inside = !inside;
+		}
+	}
+
+	return inside;
 }
 
 dfSector::~dfSector()

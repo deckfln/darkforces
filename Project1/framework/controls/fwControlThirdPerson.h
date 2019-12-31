@@ -5,7 +5,7 @@
 
 #include "../fwControl.h"
 
-class fwControlThirdPerson : fwControl
+class fwControlThirdPerson : public fwControl
 {
 	glm::vec3 m_direction = glm::vec3(0);
 	glm::vec3 m_position = glm::vec3(0);

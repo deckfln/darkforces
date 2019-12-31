@@ -52,13 +52,20 @@ dfLevel::dfLevel(std::string file)
 		}
 		else if (tokens[0] == "SECTOR") {
 			int nSector = std::stoi(tokens[1]);
-			m_sectors[nSector] = new dfSector(infile);
+
+			dfSector* sector = new dfSector(infile);
+			sector->m_id = nSector;
+			int layer = sector->m_layer;
+
+			// record the sector in the global list
+			m_sectors[nSector] = sector;
 		}
 	}
 	infile.close();
 
 	compressTextures();	// load textures in a megatexture
 	convert2geometry();	// convert sectors to a geometry and apply the mega texture
+	spacePartitioning();	// partion of space for quick collision
 }
 
 /***
@@ -351,6 +358,47 @@ void dfLevel::convert2geometry(void)
 	m_geometry->addVertices("aPos", &m_vertices[0], 3, size * sizeof(glm::vec3), sizeof(float), false);
 	m_geometry->addAttribute("aTexCoord", GL_ARRAY_BUFFER, &m_uvs[0], 2, size * sizeof(glm::vec2), sizeof(float), false);
 	m_geometry->addAttribute("aTextureID", GL_ARRAY_BUFFER, &m_textureID[0], 1, size * sizeof(float), sizeof(float), false);
+}
+
+/**
+ * partition of sectors by layers for faster search
+ */
+void dfLevel::spacePartitioning(void)
+{
+	// get number of layers
+	int layer = 0, max_layers = 0;
+	for (auto sector : m_sectors) {
+		layer = sector->m_layer;
+		if (layer > max_layers) {
+			m_layers.resize(layer + 1);
+			max_layers++;
+		}
+
+		m_layers[layer].m_sectors.push_back(sector);
+		m_layers[layer].m_boundingBox.extend(sector->m_boundingBox);
+	}
+}
+
+/**
+ * return the sector fitting the position
+ */
+dfSector* dfLevel::findSector(glm::vec3& position)
+{
+	// position is in opengl space
+	glm::vec3 level_space = position;
+	level_space *= 10;
+
+	for (auto layer : m_layers) {
+		if (layer.m_boundingBox.inside(level_space)) {
+			for (auto sector : layer.m_sectors) {
+				if (sector->isPointInside(level_space)) {
+					return sector;
+				}
+			}
+		}
+	}
+
+	return nullptr;	// not here
 }
 
 dfLevel::~dfLevel()
