@@ -35,6 +35,11 @@ static void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 	currentApp->mouseScroll(xoffset, yoffset);
 }
 
+static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
+{
+	currentApp->keyEvent(key, scancode, action);
+}
+
 /***
  *
  */
@@ -85,11 +90,12 @@ fwApp::fwApp(std::string name, int _width, int _height, std::string post_process
 	glfwSetCursorPosCallback(window, cursor_position_callback);
 	glfwSetMouseButtonCallback(window, mouse_button_callback);
 	glfwSetScrollCallback(window, scroll_callback);
+	glfwSetKeyCallback(window, key_callback);
 }
 
-void fwApp::bindControl(fwOrbitControl *_control)
+void fwApp::bindControl(fwControl *_control)
 {
-	control = _control;
+	m_control = _control;
 }
 
 void fwApp::processInput(GLFWwindow *window)
@@ -114,16 +120,12 @@ void fwApp::resizeEvent(int _width, int _height)
 	SCR_HEIGHT = height;
 	resize(width, height);
 	glViewport(0, 0, width, height);
-
-	if (control) {
-		control->update();
-	}
 }
 
 void fwApp::mouseButton(int button, int action)
 {
-	if (control)
-		control->mouseButton(button, action);
+	if (m_control)
+		m_control->mouseButton(button, action);
 }
 
 void fwApp::mouseMove(double xpos, double ypos)
@@ -131,14 +133,20 @@ void fwApp::mouseMove(double xpos, double ypos)
 	double x = xpos / width;
 	double y = ypos / height;
 
-	if (control)
-		control->mouseMove(x, y);
+	if (m_control)
+		m_control->mouseMove(x, y);
 }
 
 void fwApp::mouseScroll(double xoffset, double yoffset)
 {
-	if (control)
-		control->mouseScroll(xoffset, yoffset);
+	if (m_control)
+		m_control->mouseScroll(xoffset, yoffset);
+}
+
+void fwApp::keyEvent(int key, int scancode, int action)
+{
+	if (m_control)
+		m_control->keyEvent(key, scancode, action);
 }
 
 /***
@@ -181,6 +189,8 @@ void fwApp::run(void)
 		// input
 		// -----
 		processInput(window);
+		if (m_control)
+			m_control->update();	// let the controler update itself if needed
 
 		glEnable(GL_CULL_FACE);
 		//glCullFace(GL_FRONT);

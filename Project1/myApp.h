@@ -10,6 +10,7 @@
 #include "framework/fwScene.h"
 #include "framework/fwSkybox.h"
 #include "framework/controls/fwOrbitControl.h"
+#include "framework/controls/fwControlThirdPerson.h"
 #include "framework/fwInstancedMesh.h"
 #include "framework/fwRenderer.h"
 #include "framework/mesh/fwMeshSkinned.h"
@@ -22,7 +23,7 @@ class myApp : public fwApp
 	fwLight *m_light = nullptr;
 	fwSkybox *m_skybox = nullptr;
 	fwScene* m_scene = nullptr;;
-	fwOrbitControl *m_control = nullptr;
+	fwControlThirdPerson* m_control = nullptr;
 	glm::vec4 *white = nullptr;
 	glm::mat4 m_positions[3];
 	fwInstancedMesh *m_instancedMesh = nullptr;

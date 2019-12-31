@@ -3,98 +3,59 @@
 #include <GLFW/glfw3.h>
 
 fwOrbitControl::fwOrbitControl(fwCamera *_camera, float _radius, glm::vec3 lookAt):
-	camera(_camera),
+	fwControl(_camera),
 	m_radius(_radius),
 	m_lookAt(lookAt)
 {
 	update();
 }
 
-void fwOrbitControl::mouseButton(int button, int action)
+void fwOrbitControl::_mouseButton(int action)
 {
-	m_button = button;
-
-	switch (button) {
+	switch (m_button) {
 	case GLFW_MOUSE_BUTTON_LEFT:
-		if (action == GLFW_PRESS) {
-			managed = true;
-			startx = starty = -1;
-		}
-		else {
-			managed = false;
-		}
 		break;
-
 	case GLFW_MOUSE_BUTTON_RIGHT:
-		if (action == GLFW_PRESS) {
-			managed = true;
-			startx = m_currentX;
-			starty = m_currentY;
-			m_camera = camera->get_position();
-			m_origLookAt = camera->lookAt();
-			m_inverseCamera = glm::inverse(camera->GetProjectionMatrix() * camera->GetViewMatrix());
-		}
-		else {
-			managed = false;
-		}
+		m_camera = camera->get_position();
+		m_origLookAt = camera->lookAt();
+		m_inverseCamera = glm::inverse(camera->GetProjectionMatrix() * camera->GetViewMatrix());
 		break;
 	case GLFW_MOUSE_BUTTON_MIDDLE:
 		break;
 	}
 }
 
-void fwOrbitControl::mouseScroll(double xoffset, double yoffset)
+void fwOrbitControl::_mouseScroll(double xoffset, double yoffset)
 {
 	m_radius -= yoffset;
-	update();
 }
 
-void fwOrbitControl::mouseMove(double xpos, double ypos)
+void fwOrbitControl::_mouseMove(float xdir, float ydir)
 {
-	m_currentX = xpos;
-	m_currentY = ypos;
+	switch (m_button) {
+	case GLFW_MOUSE_BUTTON_LEFT:
+		m_theta += ydir;
+		m_phi += xdir;
+		break;
 
-	if (managed) {
-		double xdir = 0;
-		double ydir = 0;
+	case GLFW_MOUSE_BUTTON_RIGHT:
+		// evaluate mouse movement on screen
+		// and project screen to space
+		glm::vec4 c((m_currentX - m_startx) * 50, (m_currentY - m_starty) * 50, -1.0, 1.0);
+		c = m_inverseCamera * c;
+		c.w = 1.0 / c.w;
+		c.x *= c.w;
+		c.y *= c.w;
+		c.z *= c.w;
 
-		switch (m_button) {
-		case GLFW_MOUSE_BUTTON_LEFT:
-			if (startx != -1) {
-				// find direction
-				xdir = xpos - startx;
-				ydir = ypos - starty;
-			}
-			m_theta += ydir;
-			m_phi += xdir;
-
-			startx = xpos;
-			starty = ypos;
-			break;
-
-		case GLFW_MOUSE_BUTTON_RIGHT:
-			// evaluate mouse movement on screen
-			// and project screen to space
-
-			glm::vec4 c((xpos - startx) * 50, (ypos - starty) * 50, -1.0, 1.0);
-			c = m_inverseCamera * c;
-			c.w = 1.0 / c.w;
-			c.x *= c.w;
-			c.y *= c.w;
-			c.z *= c.w;
-
-			// move the camera and the camera target
-			glm::vec3 delta = glm::vec3(c) - m_camera;
-			m_lookAt = m_origLookAt + delta;
-			break;
-		}
-
-		update();
-
+		// move the camera and the camera target
+		glm::vec3 delta = glm::vec3(c) - m_camera;
+		m_lookAt = m_origLookAt + delta;
+		break;
 	}
 }
 
-void fwOrbitControl::update(void)
+void fwOrbitControl::updateCamera(void)
 {
 	float z = m_radius * cos(m_phi)*sin(m_theta) + m_lookAt.z;
 	float x = m_radius * sin(m_phi)*sin(m_theta) + m_lookAt.x;

@@ -6,7 +6,7 @@
 
 #include "../glEngine/glColorMap.h"
 #include "fwPostProcessing.h"
-#include "controls/fwOrbitControl.h"
+#include "fwControl.h"
 #include "fwRenderer.h"
 
 class fwApp
@@ -16,7 +16,7 @@ class fwApp
 	glm::vec2 m_pixelsize = glm::vec2(0);
 	GLFWwindow* window = nullptr;
 	fwPostProcessing *postProcessing = nullptr;
-	fwOrbitControl *control = nullptr;
+	fwControl *m_control = nullptr;
 	fwUniform *source = nullptr;
 	
 	void processInput(GLFWwindow *window);
@@ -28,9 +28,10 @@ public:
 	void mouseMove(double xpos, double ypos);
 	void mouseScroll(double xpos, double ypos);
 	void resizeEvent(int _width, int _height);
+	void keyEvent(int key, int scancode, int action);
 
 	void run(void);
-	void bindControl(fwOrbitControl *control);
+	void bindControl(fwControl *control);
 	virtual glTexture* draw(time_t delta, fwRenderer *renderer) { return nullptr; };
 	virtual void resize(int x, int y) {};
 	virtual void keypress(void) {};

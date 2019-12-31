@@ -200,6 +200,7 @@ void dfLevel::compressTextures(void)
 			}
 
 			// TODO point to the megatexture (use small epsilon to avoid texture bleeding)
+			// https://gamedev.stackexchange.com/questions/46963/how-to-avoid-texture-bleeding-in-a-texture-atlas
 			texture->m_xoffset = (((px + bx) * 16.0)) / size;
 			texture->m_yoffset = (((py + by) * 16.0)) / size;
 

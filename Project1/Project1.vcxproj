@@ -131,12 +131,14 @@
     <ClCompile Include="darkforces\dfWall.cpp" />
     <ClCompile Include="framework\camera\fwCameraPanoramic.cpp" />
     <ClCompile Include="framework\camera\fwOrthographicCamera.cpp" />
+    <ClCompile Include="framework\controls\fwControlThirdPerson.cpp" />
     <ClCompile Include="framework\controls\fwOrbitControl.cpp" />
     <ClCompile Include="framework\fwAnimation.cpp" />
     <ClCompile Include="framework\fwAnimationKeyframe.cpp" />
     <ClCompile Include="framework\fwApp.cpp" />
     <ClCompile Include="framework\fwBoneInfo.cpp" />
     <ClCompile Include="framework\fwBoneInfoAnimation.cpp" />
+    <ClCompile Include="framework\fwControl.cpp" />
     <ClCompile Include="framework\fwFrustum.cpp" />
     <ClCompile Include="framework\fwInstancedMesh.cpp" />
     <ClCompile Include="framework\fwLight.cpp" />
@@ -211,6 +213,7 @@
     <ClInclude Include="darkforces\dfWall.h" />
     <ClInclude Include="framework\camera\fwCameraPanoramic.h" />
     <ClInclude Include="framework\camera\fwOrthographicCamera.h" />
+    <ClInclude Include="framework\controls\fwControlThirdPerson.h" />
     <ClInclude Include="framework\controls\fwOrbitControl.h" />
     <ClInclude Include="framework\fwAnimation.h" />
     <ClInclude Include="framework\fwAnimationKeyframe.h" />
@@ -218,6 +221,7 @@
     <ClInclude Include="framework\fwBoneInfo.h" />
     <ClInclude Include="framework\fwBoneInfoAnimation.h" />
     <ClInclude Include="framework\fwConstants.h" />
+    <ClInclude Include="framework\fwControl.h" />
     <ClInclude Include="framework\fwFrustum.h" />
     <ClInclude Include="framework\fwInstancedMesh.h" />
     <ClInclude Include="framework\fwLight.h" />
