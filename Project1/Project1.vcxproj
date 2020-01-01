@@ -289,6 +289,7 @@
     <ClInclude Include="glEngine\glProgram.h" />
     <ClInclude Include="glEngine\textures\glCubeTextureDepth.h" />
     <ClInclude Include="glEngine\textures\glDepthTexture.h" />
+    <ClInclude Include="include\earcut.hpp" />
     <ClInclude Include="include\stb_image.h" />
     <ClInclude Include="KHR\khrplatform.h" />
     <ClInclude Include="List.h" />

@@ -17,6 +17,9 @@ public:
 	float m_ambient = 0;
 	float m_floorAltitude = 0;
 	float m_ceilingAltitude = 0;
+	glm::vec3 m_floorTexture;
+	glm::vec3 m_ceilingTexture;
+
 	std::vector <dfWall*> m_walls;
 	std::vector <glm::vec2> m_vertices;
 

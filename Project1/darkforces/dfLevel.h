@@ -48,9 +48,11 @@ class dfLevel
 	std::vector<glm::vec4> m_megatexture_idx;// rg = texture start  ba = texture size
 	fwUniform* m_shader_idx = nullptr;
 
-	void convert2geometry(void);
-	void loadGeometry(std::string file);
-	void compressTextures(void);
+	void buildWalls(void);
+	void buildFloor(void);
+	void buildGeometry(void);
+	void loadBitmaps(std::string file);
+	void buildAtlasMap(void);
 	void spacePartitioning(void);
 	void addRectangle(dfSector* sector, dfWall* wall, float z, float z1, int texture);
 

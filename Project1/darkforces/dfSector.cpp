@@ -52,7 +52,11 @@ dfSector::dfSector(std::ifstream& infile)
 		}
 		else if (tokens[0] == "FLOOR") {
 			if (tokens[1] == "TEXTURE") {
-				// PASS
+				m_floorTexture = glm::vec3(
+					std::stof(tokens[2]),	// textureID
+					std::stof(tokens[3]),	// texture xoffset
+					-std::stof(tokens[4])	// texture yoffset
+				);
 			}
 			else if (tokens[1] == "ALTITUDE") {
 				m_floorAltitude = -std::stof(tokens[2]);
@@ -60,7 +64,11 @@ dfSector::dfSector(std::ifstream& infile)
 		}
 		else if (tokens[0] == "CEILING") {
 			if (tokens[1] == "TEXTURE") {
-				//PASS
+				m_ceilingTexture = glm::vec3(
+					std::stof(tokens[2]),	// textureID
+					std::stof(tokens[3]),	// texture xoffset
+					-std::stof(tokens[4])	// texture yoffset
+				);
 			}
 			else if (tokens[1] == "ALTITUDE") {
 				m_ceilingAltitude = -std::stof(tokens[2]);
@@ -122,9 +130,6 @@ bool dfSector::isPointInside(glm::vec3 &p)
 		return false;
 	}
 
-	if (m_id == 188) {
-		printf("debug\n");
-	}
 	// https://stackoverflow.com/questions/217578/how-can-i-determine-whether-a-2d-point-is-within-a-polygon
 	// http://www.ecse.rpi.edu/Homepages/wrf/Research/Short_Notes/pnpoly.html
 	bool inside = false;

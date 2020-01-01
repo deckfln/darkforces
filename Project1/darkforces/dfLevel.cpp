@@ -4,10 +4,12 @@
 #include <fstream>
 #include <iostream>
 #include <string>
+#include <array>
 
 #include "../config.h"
 #include "../framework/geometries/fwPlaneGeometry.h"
 #include "../include/stb_image.h"
+#include "../include/earcut.hpp"
 
 dfLevel::dfLevel(std::string file)
 {
@@ -44,7 +46,7 @@ dfLevel::dfLevel(std::string file)
 		}
 		else if (tokens[0] == "TEXTURE:") {
 			std::string bm = tokens[1];
-			loadGeometry(bm);
+			loadBitmaps(bm);
 		}
 		else if (tokens[0] == "NUMSECTORS") {
 			int nbSectors = std::stoi(tokens[1]);
@@ -63,8 +65,10 @@ dfLevel::dfLevel(std::string file)
 	}
 	infile.close();
 
-	compressTextures();	// load textures in a megatexture
-	convert2geometry();	// convert sectors to a geometry and apply the mega texture
+	buildAtlasMap();	// load textures in a megatexture
+	buildWalls();	// convert sectors walls to a geometry and apply the mega texture
+	buildFloor();		// convert sectors floor to a geometry
+	buildGeometry();
 	spacePartitioning();	// partion of space for quick collision
 }
 
@@ -72,7 +76,7 @@ dfLevel::dfLevel(std::string file)
  * Load a texture and store in the list of texture
  * TODO deal with animated textures : ZASWIT*
  */
-void dfLevel::loadGeometry(std::string file)
+void dfLevel::loadBitmaps(std::string file)
 {
 	int index = file.find(".BM");
 	file.replace(index, 3, ".png");
@@ -85,10 +89,10 @@ void dfLevel::loadGeometry(std::string file)
 }
 
 /***
- * store all textures in a megatexture
+ * store all textures in an atlas map
  * basic algorithm : use a square placement map, find an empty spot, store the texture. if no spot can be found, increase the texture size
  */
-void dfLevel::compressTextures(void)
+void dfLevel::buildAtlasMap(void)
 {
 	std::list<dfTexture*> sorted_textures;
 
@@ -180,7 +184,7 @@ void dfLevel::compressTextures(void)
 				// need to increase the size of the map
 				allplaced = false;
 				bsize++;
-				delete placement_map;
+				delete[] placement_map;
 				delete m_megatexture;
 
 				break;
@@ -254,7 +258,7 @@ void dfLevel::addRectangle(dfSector *sector, dfWall *wall, float z, float z1, in
 	float ypixel = dfTexture->height;
 
 	// convert height and length into local texture coordinates using pixel ratio
-	// ratio of texture pixel vs world position = 64 pixels for 8 clicks
+	// ratio of texture pixel vs world position = 64 pixels for 8 clicks => 8x1
 	float height = abs(z1 - z) * 8.0 / ypixel;
 	float width = length * 8.0 / xpixel;
 
@@ -309,9 +313,9 @@ void dfLevel::addRectangle(dfSector *sector, dfWall *wall, float z, float z1, in
 }
 
 /**
- * Convert a level into a megga textured mesh
+ * Convert a level into a mega textured mesh
  */
-void dfLevel::convert2geometry(void)
+void dfLevel::buildWalls(void)
 {
 	int size = 0;
 	int p = 0;
@@ -352,8 +356,125 @@ void dfLevel::convert2geometry(void)
 			}
 		}
 	}
+}
 
-	size = m_vertices.size();
+/**
+ * build the floor geometry by triangulating the shape
+ * apply texture by using an axis aligned 8x8 grid
+ */
+void dfLevel::buildFloor(void)
+{
+	for (auto sector : m_sectors) {
+		if (sector->m_layer != 1) {
+			continue;
+		}
+
+		// The number type to use for tessellation
+		using Coord = float;
+
+		// The index type. Defaults to uint32_t, but you can also pass uint16_t if you know that your
+		// data won't have more than 65536 vertices.
+		using N = uint32_t;
+
+		// Create array
+		using Point = std::array<Coord, 2>;
+		std::vector<std::vector<Point>> polygon;
+
+		// Fill polygon structure with actual data. Any winding order works.
+		// The first polyline defines the main polygon.
+		// Following polylines define holes.
+		polygon.resize(2);
+		polygon[0].resize(sector->m_vertices.size());
+
+		for (int i = 0; i < sector->m_vertices.size(); i++) {
+			polygon[0][i] = { sector->m_vertices[i].x, sector->m_vertices[i].y };
+		}
+
+		// Run tessellation
+		// Returns array of indices that refer to the vertices of the input polygon.
+		// e.g: the index 6 would refer to {25, 75} in this example.
+		// Three subsequent indices form a triangle. Output triangles are clockwise.
+		std::vector<N> indices = mapbox::earcut<N>(polygon);
+
+		// resize the opengl buffers
+		int p = m_vertices.size();
+		int vertices = indices.size() * 2;	// count the floor AND the ceiling
+		m_vertices.resize(p + vertices);
+		m_uvs.resize(p + vertices);
+		m_textureID.resize(p + vertices);
+
+		// use axis aligned texture UV, on a 8x8 grid
+		// ratio of texture pixel vs world position = 180 pixels for 24 clicks = 7.5x1
+		dfTexture* dfTexture = m_textures[sector->m_floorTexture.r];
+		float xpixel = dfTexture->width;
+		float ypixel = dfTexture->height;
+
+		// warning, triangles are looking downward
+		int currentVertice = 0, j;
+		for (auto i = 0; i < indices.size(); i++) {
+			int index = indices[i];
+
+			// reverse vertices 2 and 3 to look upward
+			switch (currentVertice) {
+			case 1: j = 1; break;
+			case 2: j = -1; break;
+			default: j = 0; break;
+			}
+			m_vertices[p + j].x = sector->m_vertices[index].x / 10.0;
+			m_vertices[p + j].y = sector->m_floorAltitude / 10.0;
+			m_vertices[p + j].z = sector->m_vertices[index].y / 10.0;
+
+			// get local texture offset on the floor
+			// TODO: current supposion : offset x 1 => 1 pixel from the begining on XXX width pixel texture
+			float xoffset = ((sector->m_vertices[index].x + sector->m_floorTexture.g) * 8) / xpixel;
+			float yoffset = ((sector->m_vertices[index].y + sector->m_floorTexture.b) * 8) / ypixel;
+
+			m_uvs[p + j] = glm::vec2(xoffset, yoffset);
+
+			m_textureID[p + j] = sector->m_floorTexture.r;
+
+			p++;
+			currentVertice = (currentVertice + 1) % 3;
+		}
+
+		// use axis aligned texture UV, on a 8x8 grid
+		// ratio of texture pixel vs world position = 180 pixels for 24 clicks = 7.5x1
+		dfTexture = m_textures[sector->m_ceilingTexture.r];
+		if (sector->m_ceilingTexture.r == 34.0) {
+			printf("debug");
+		}
+		xpixel = dfTexture->width;
+		ypixel = dfTexture->height;
+
+		// create the ceiling
+		for (auto i = 0; i < indices.size(); i++) {
+			int index = indices[i];
+
+			m_vertices[p].x = sector->m_vertices[index].x / 10.0;
+			m_vertices[p].y = sector->m_ceilingAltitude / 10.0;
+			m_vertices[p].z = sector->m_vertices[index].y / 10.0;
+
+			// use axis aligned texture UV, on a 8x8 grid
+			// ratio of texture pixel vs world position = 64 pixels for 8 clicks
+			float xoffset = ((sector->m_vertices[index].x + sector->m_ceilingTexture.g) * 8) / xpixel;
+			float yoffset = ((sector->m_vertices[index].y + sector->m_ceilingTexture.g) * 8) / ypixel;
+
+			m_uvs[p] = glm::vec2(xoffset, yoffset);
+
+			m_textureID[p] = sector->m_ceilingTexture.r;
+
+			p++;
+		}
+
+	}
+}
+
+/**
+ * Create the geometry
+ */
+void dfLevel::buildGeometry(void)
+{
+	int size = m_vertices.size();
 	m_geometry = new fwGeometry();
 	m_geometry->addVertices("aPos", &m_vertices[0], 3, size * sizeof(glm::vec3), sizeof(float), false);
 	m_geometry->addAttribute("aTexCoord", GL_ARRAY_BUFFER, &m_uvs[0], 2, size * sizeof(glm::vec2), sizeof(float), false);
