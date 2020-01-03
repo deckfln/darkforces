@@ -53,15 +53,15 @@ void fwControlThirdPerson::checkKeys(void)
 		m_position += m_direction;
 		updateCamera();
 	}
-	else if (m_currentKeys[GLFW_KEY_DOWN]) {
+	if (m_currentKeys[GLFW_KEY_DOWN]) {
 		m_position -= m_direction;
 		updateCamera();
 	}
-	else if (m_currentKeys[GLFW_KEY_LEFT]) {
+	if (m_currentKeys[GLFW_KEY_LEFT]) {
 		m_phi -= 0.1;
 		updateDirection();
 	}
-	else if (m_currentKeys[GLFW_KEY_RIGHT]) {
+	if (m_currentKeys[GLFW_KEY_RIGHT]) {
 		m_phi += 0.1;
 		updateDirection();
 	}
