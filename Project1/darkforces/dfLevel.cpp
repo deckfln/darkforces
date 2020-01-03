@@ -482,21 +482,44 @@ void dfLevel::buildGeometry(void)
 }
 
 /**
- * partition of sectors by layers for faster search
+ * partition of sectors into superSector
  */
 void dfLevel::spacePartitioning(void)
 {
-	// get number of layers
-	int layer = 0, max_layers = 0;
+	// convert sectors into super sectors
+	// build both a list to quickly sort and shrink and a vector to convert sectorID to superSectorID
+	std::vector<dfSuperSector*> vssectors;
+	vssectors.resize(m_sectors.size());
+	int i = 0;
 	for (auto sector : m_sectors) {
-		layer = sector->m_layer;
-		if (layer > max_layers) {
-			m_layers.resize(layer + 1);
-			max_layers++;
+		dfSuperSector *ssector = new dfSuperSector(sector);
+		m_supersectors.push_back(ssector);
+		vssectors[i++] = ssector;
+	}
+
+	// create the portals
+	for (auto &ssector : m_supersectors) {
+		ssector->buildPortals(m_sectors, vssectors);
+	}
+
+	// target 64 supersector
+	// TODO : define as a constant or a value based on the number of sectors
+	while (m_supersectors.size() > 64) {
+		m_supersectors.sort([](dfSuperSector* a, dfSuperSector* b) { return a->boundingBoxSurface() > b->boundingBoxSurface(); });
+
+		// pick the smallest sector and merge it to its smallest adjoint
+		dfSuperSector* smallest = m_supersectors.back();
+		dfSuperSector* smallest_adjoint = smallest->smallestAdjoint();
+		if (smallest_adjoint) {
+			smallest_adjoint->extend(smallest);
+		}
+		else {
+			// no adjoint left or empty sector
 		}
 
-		m_layers[layer].m_sectors.push_back(sector);
-		m_layers[layer].m_boundingBox.extend(sector->m_boundingBox);
+		// TODO will need to be deleted
+		//delete smallest;
+		m_supersectors.pop_back();
 	}
 }
 
@@ -506,16 +529,17 @@ void dfLevel::spacePartitioning(void)
 dfSector* dfLevel::findSector(glm::vec3& position)
 {
 	// position is in opengl space
+	// TODO should move the opengl <-> level space conversion on a central place
 	glm::vec3 level_space = position;
 	level_space *= 10;
+	dfSector* sector;
 
-	for (auto layer : m_layers) {
-		if (layer.m_boundingBox.inside(level_space)) {
-			for (auto sector : layer.m_sectors) {
-				if (sector->isPointInside(level_space)) {
-					return sector;
-				}
-			}
+	// std::cout << position.x << ":" << position.y << ":" << position.z << std::endl;
+	for (auto ssector: m_supersectors) {
+		sector = ssector->findSector(level_space);
+
+		if (sector) {
+			return sector;
 		}
 	}
 

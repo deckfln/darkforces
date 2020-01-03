@@ -35,6 +35,16 @@ void fwAABBox::extend(fwAABBox& box)
 	if (m_z1 < box.m_z1) m_z1 = box.m_z1;
 }
 
+float fwAABBox::surface(void)
+{
+	return (m_x1 - m_x) * (m_z1 - m_z);
+}
+
+float fwAABBox::volume(void)
+{
+	return (m_x1 - m_x) * (m_y1 - m_y) * (m_z1 - m_z);
+}
+
 fwAABBox::~fwAABBox()
 {
 }

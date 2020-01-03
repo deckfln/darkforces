@@ -129,6 +129,7 @@
     <ClCompile Include="darkforces\dfCollision.cpp" />
     <ClCompile Include="darkforces\dfLevel.cpp" />
     <ClCompile Include="darkforces\dfSector.cpp" />
+    <ClCompile Include="darkforces\dfSuperSector.cpp" />
     <ClCompile Include="darkforces\dfWall.cpp" />
     <ClCompile Include="framework\camera\fwCameraPanoramic.cpp" />
     <ClCompile Include="framework\camera\fwOrthographicCamera.cpp" />
@@ -214,6 +215,7 @@
     <ClInclude Include="darkforces\dfCollision.h" />
     <ClInclude Include="darkforces\dfLevel.h" />
     <ClInclude Include="darkforces\dfSector.h" />
+    <ClInclude Include="darkforces\dfSuperSector.h" />
     <ClInclude Include="darkforces\dfWall.h" />
     <ClInclude Include="framework\camera\fwCameraPanoramic.h" />
     <ClInclude Include="framework\camera\fwOrthographicCamera.h" />

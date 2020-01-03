@@ -5,6 +5,7 @@
 #include "dfWall.h"
 #include "../framework/fwMesh.h"
 #include "../framework/fwAABBox.h"
+#include "../framework/math/fwSphere.h"
 
 class dfSector
 {
@@ -22,9 +23,10 @@ public:
 
 	std::vector <dfWall*> m_walls;
 	std::vector <glm::vec2> m_vertices;
-
+	
 	dfSector(std::ifstream& infile);
 	bool inAABBox(glm::vec3& position) { return m_boundingBox.inside(position); };
 	bool isPointInside(glm::vec3& position);
+	float boundingBoxSurface(void);
 	~dfSector();
 };

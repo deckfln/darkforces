@@ -2,7 +2,6 @@
 #include <sstream>
 #include <fstream>
 #include <vector>
-
 #include <iostream>
 #include <glm/glm.hpp>
 
@@ -143,6 +142,14 @@ bool dfSector::isPointInside(glm::vec3 &p)
 	}
 
 	return inside;
+}
+
+/**
+ * return the surface of the sector bounding box
+ */
+float dfSector::boundingBoxSurface(void)
+{
+	return m_boundingBox.surface();
 }
 
 dfSector::~dfSector()

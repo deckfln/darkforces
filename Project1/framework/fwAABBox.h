@@ -12,5 +12,7 @@ public:
 	fwAABBox(float, float, float, float, float, float);
 	bool inside(glm::vec3& position);
 	void extend(fwAABBox& box);
+	float surface(void);
+	float volume(void);
 	~fwAABBox();
 };
