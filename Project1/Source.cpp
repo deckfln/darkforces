@@ -1,10 +1,11 @@
 #include <iostream>
 
 #include "myApp.h"
+#include "myDarkForces.h"
 
 int main()
 {
-	myApp myapp("LearnOpenGL", 800, 600);
+	myDarkForces myapp("LearnOpenGL", 800, 600);
 
 	myapp.run();
 	return 0;

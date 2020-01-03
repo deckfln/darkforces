@@ -208,6 +208,7 @@
     <ClCompile Include="myApp.cpp" />
     <ClCompile Include="Reference.cpp" />
     <ClCompile Include="Source.cpp" />
+    <ClCompile Include="myDarkForces.cpp" />
     <ClCompile Include="stb.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -291,6 +292,7 @@
     <ClInclude Include="glEngine\glProgram.h" />
     <ClInclude Include="glEngine\textures\glCubeTextureDepth.h" />
     <ClInclude Include="glEngine\textures\glDepthTexture.h" />
+    <ClInclude Include="myDarkForces.h" />
     <ClInclude Include="include\earcut.hpp" />
     <ClInclude Include="include\stb_image.h" />
     <ClInclude Include="KHR\khrplatform.h" />

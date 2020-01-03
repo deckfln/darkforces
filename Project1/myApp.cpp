@@ -17,8 +17,6 @@
 
 #include "framework/Loader.h"
 
-#include "darkforces/dfLevel.h"
-#include "darkforces/dfCollision.h"
 
 myApp::myApp(std::string name, int width, int height) :
 	fwApp(name, width, height, "shaders/gamma", "#define GAMMA_CORRECTION 1\n")
@@ -27,10 +25,11 @@ myApp::myApp(std::string name, int width, int height) :
 
 	// camera
 	m_camera = new fwCamera(width, height);
+	//m_camera->translate(-6.859210, 20.333462, 22.371893);
 
 	// controls
-	m_control = new fwControlThirdPerson(m_camera, glm::vec3(-24, 0.5, 28), glm::vec3(1, 0, 0));
-	bindControl((fwControl *)m_control);
+	m_control = (fwControl *)new fwOrbitControl(m_camera, 20, glm::vec3(0));
+	bindControl(m_control);
 
 	// shared geometry
 	fwBoxGeometry* geometry = new fwBoxGeometry();
@@ -38,14 +37,14 @@ myApp::myApp(std::string name, int width, int height) :
 	/*
 	 * Lights
 	 */
-	/*
-	m_light = new fwDirectionLight(
-		glm::vec3(),
-		glm::vec3(0.3, 0.3, 0.3),
-		glm::vec3(0.8, 0.8, 0.8),
-		glm::vec3(1.0, 1.0, 1.0)
-	);
-	*/
+	 /*
+	 m_light = new fwDirectionLight(
+		 glm::vec3(),
+		 glm::vec3(0.3, 0.3, 0.3),
+		 glm::vec3(0.8, 0.8, 0.8),
+		 glm::vec3(1.0, 1.0, 1.0)
+	 );
+	 */
 	m_light = new fwPointLight(
 		glm::vec3(),				// position
 		glm::vec3(0.8, 0.8, 0.8),	// Color
@@ -58,34 +57,23 @@ myApp::myApp(std::string name, int width, int height) :
 	m_light->set_name("light");
 	m_light->castShadow(true);
 
-	glm::vec4 *white = new glm::vec4(0.0, 0.0, 1.0, 1.0);
+	glm::vec4* white = new glm::vec4(0.0, 0.0, 1.0, 1.0);
 
-	fwMaterialBasic *basic = new fwMaterialBasic(white);
-	fwMesh *fLight = new fwMesh(geometry, basic);
+	fwMaterialBasic* basic = new fwMaterialBasic(white);
+	fwMesh* fLight = new fwMesh(geometry, basic);
 
 	glm::vec3 half(0.15);
 	fLight->set_scale(half).set_name("light_impersonator");
 
 	m_light->addChild(fLight);
 
-	secbase = new dfLevel("data/secbase.lev");
-	fwMaterialBasic* dfBasic = new fwMaterialBasic("data/shaders/vertex.glsl", "", "data/shaders/fragment.glsl");
-	dfBasic->addDiffuseMap(secbase->texture());
-	dfBasic->addUniform(secbase->index());
-	fwMesh* level = new fwMesh(secbase->geometry(), dfBasic);
-	level->set_name("secbase");
-	level->always_draw(true);	// force display for debugging
-	dfCollision* m_collision = new dfCollision();
-	m_collision->bind(secbase);
-	m_control->bind(m_collision);
-
 	// floor
-	fwTexture *t1 = new fwTexture(ROOT_FOLDER + "/images/brickwall.jpg");
-	fwTexture *t2 = new fwTexture(ROOT_FOLDER + "/images/brickwall_normal.jpg");
-	fwMaterialDiffuse *material = new fwMaterialDiffuse(t1, 64);
+	fwTexture* t1 = new fwTexture(ROOT_FOLDER + "/images/brickwall.jpg");
+	fwTexture* t2 = new fwTexture(ROOT_FOLDER + "/images/brickwall_normal.jpg");
+	fwMaterialDiffuse* material = new fwMaterialDiffuse(t1, 64);
 	material->normalMap(t2);
 
-	fwMesh *plane = new fwMesh(new fwPlaneGeometry(10, 10), material);
+	fwMesh* plane = new fwMesh(new fwPlaneGeometry(10, 10), material);
 	plane->set_name("floor");
 	plane->receiveShadow(true);
 
@@ -95,18 +83,18 @@ myApp::myApp(std::string name, int width, int height) :
 	plane->translate(tr1);
 
 	// window
-	t1 = new fwTexture(ROOT_FOLDER +"images/blending_transparent_window.png");
+	t1 = new fwTexture(ROOT_FOLDER + "images/blending_transparent_window.png");
 	material = new fwMaterialDiffuse(t1, 32);
 
-	fwMesh *window = new fwMesh(new fwPlaneGeometry(5, 5), material);
+	fwMesh* window = new fwMesh(new fwPlaneGeometry(5, 5), material);
 	window->set_name("window");
 	glm::vec3 tr(3, 3, 3);
 	window->translate(tr);
 	window->transparent(true);
 
 	// box
-	t1 = new fwTexture(ROOT_FOLDER +"images/container2.png");
-	t2 = new fwTexture(ROOT_FOLDER +"images/container2_specular.png", 1);	// specular maps only need 1 channel
+	t1 = new fwTexture(ROOT_FOLDER + "images/container2.png");
+	t2 = new fwTexture(ROOT_FOLDER + "images/container2_specular.png", 1);	// specular maps only need 1 channel
 
 	material = new fwMaterialDiffuse(t1, 32);
 	material->specularMap(t2);
@@ -126,16 +114,16 @@ myApp::myApp(std::string name, int width, int height) :
 	m_instancedMesh->set_name("box1");
 	m_instancedMesh->receiveShadow(true);
 
-	m_positions[0] = glm::translate(glm::vec3(-1,0, 0));
+	m_positions[0] = glm::translate(glm::vec3(-1, 0, 0));
 	m_positions[1] = glm::translate(glm::vec3(1, 0, 0));
 
 	// model
-	Loader* loader = new Loader(ROOT_FOLDER +"models/marie-jane/marie-jane.dae");
-	m_stormtrooper = (fwMeshSkinned *)loader->get_meshes(0);
+	Loader* loader = new Loader(ROOT_FOLDER + "models/marie-jane/marie-jane.dae");
+	m_stormtrooper = (fwMeshSkinned*)loader->get_meshes(0);
 	m_stormtrooper->set_name("stormtrooper");
 	m_stormtrooper->castShadow(true);
 	m_stormtrooper->receiveShadow(true);
-	
+
 	glm::vec3 rot(-pi / 2, 0, 0);
 	m_stormtrooper->rotate(rot);
 	glm::vec3 v(-1, -0.5, 0);
@@ -160,10 +148,15 @@ myApp::myApp(std::string name, int width, int height) :
 	m_skybox = new fwSkybox(skyboxes);
 
 	// init the m_scene
-	glm::vec3 *yellow = new glm::vec3(255, 255, 0);
+	glm::vec3* yellow = new glm::vec3(255, 255, 0);
 	m_scene = new fwScene();
 	m_scene->addLight(m_light).
-		addChild(level).addChild(plane);
+		setOutline(yellow).
+		addChild(m_particles).
+		addChild(plane).
+		addChild(m_instancedMesh).
+		addChild(window).
+		addChild(m_stormtrooper);
 
 	m_scene->background(m_skybox);
 
@@ -218,7 +211,7 @@ static time_t progress[] = {
 static int pFrame = 0;
 static int current = 0;
 
-glTexture *myApp::draw(time_t delta, fwRenderer *renderer)
+glTexture* myApp::draw(time_t delta, fwRenderer* renderer)
 {
 	m_positions[0] = glm::translate(glm::vec3(1, sin(glfwGetTime() / 2) * 2, 0));
 	m_instancedMesh->update_position(0, 1);
@@ -250,7 +243,7 @@ glTexture *myApp::draw(time_t delta, fwRenderer *renderer)
 
 	m_particles->update(delta);
 
-	return renderer->draw (m_camera, m_scene);
+	return renderer->draw(m_camera, m_scene);
 }
 
 void myApp::keypress()

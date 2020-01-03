@@ -15,25 +15,23 @@
 #include "framework/fwRenderer.h"
 #include "framework/mesh/fwMeshSkinned.h"
 #include "framework/fwParticles.h"
+#include "darkforces/dfLevel.h"
 
-class myApp : public fwApp
+class myDarkForces : public fwApp
 {
-	fwCamera *m_camera = nullptr;
-	fwLight *m_light = nullptr;
-	fwSkybox *m_skybox = nullptr;
+	fwCamera* m_camera = nullptr;
+	fwLight* m_light = nullptr;
+	fwSkybox* m_skybox = nullptr;
 	fwScene* m_scene = nullptr;;
-	fwControl* m_control = nullptr;
-	glm::vec4 *white = nullptr;
-	glm::mat4 m_positions[3];
-	fwInstancedMesh *m_instancedMesh = nullptr;
-	fwMeshSkinned* m_stormtrooper = nullptr;
+	fwControlThirdPerson* m_control = nullptr;
+	glm::vec4* white = nullptr;
 	fwMesh* m_fwCamera = nullptr;
-	fwParticles* m_particles = nullptr;
+	dfLevel* secbase = nullptr;
 
 public:
-	myApp(std::string name,  int width, int height);
-	glTexture *draw(time_t delta, fwRenderer *renderer);
+	myDarkForces(std::string name, int width, int height);
+	glTexture* draw(time_t delta, fwRenderer* renderer);
 	void resize(int x, int y);
 	void keypress(void);
-	~myApp();
+	~myDarkForces();
 };
