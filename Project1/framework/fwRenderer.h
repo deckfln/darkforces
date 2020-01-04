@@ -42,6 +42,7 @@ protected:
 		std::map <std::string, std::list <fwLight*>>& lightsByType,
 		bool withShadow
 	);
+	static void sortMeshes(std::list<fwMesh*>& meshes, glm::vec3 CameraPosition);
 
 public:
 	fwRenderer();

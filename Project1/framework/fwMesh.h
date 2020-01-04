@@ -20,7 +20,8 @@ class fwMesh: public fwObject3D
 	bool outlined = false;
 	bool normalHelper = false;
 	bool m_transparent = false;
-	int m_zorder = -1;			// for zorder > 0 force the drawing order(less is drawn first). Otherwise sort by distance
+	int m_zorder = 0;			// 0 => sort meshed by distance to the camera
+								// 1... => the app is sorting the meshes. 1 is drawn first, then 2 ....
 	void *m_pExtra = nullptr;
 	std::list <fwUniform*> m_uniforms;	// meshes can have dedicated uniforms (not included in the material)
 

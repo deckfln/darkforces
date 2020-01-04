@@ -226,8 +226,7 @@ void fwRendererDefered::drawMeshes(std::list <fwMesh*> &meshes, fwCamera* camera
 			materialID = ids.first;
 			listOfMeshes = ids.second;
 
-			// draw neareast first
-			listOfMeshes.sort([cameraPosition](fwMesh* a, fwMesh* b) { return a->sqDistance2boundingSphere(cameraPosition) < b->sqDistance2boundingSphere(cameraPosition); });
+			fwRenderer::sortMeshes(listOfMeshes, cameraPosition);
 
 			glTexture::PushTextureUnit();
 			material = m_materials[materialID];

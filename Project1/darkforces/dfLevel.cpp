@@ -377,7 +377,7 @@ void dfLevel::draw(fwCamera* camera, fwScene* scene)
 		m_lastSuperSector->visible(true);
 
 		// recusivly test the portals to make supersectors visible in the camera frustrum 
-		m_lastSuperSector->checkPortals(camera, 0);
+		m_lastSuperSector->checkPortals(camera, 1);
 	}
 	// ELSE outside of the map
 

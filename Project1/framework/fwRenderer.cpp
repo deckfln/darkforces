@@ -252,7 +252,7 @@ void fwRenderer::drawMeshes(
 
 			// draw neareast first
 			// TODO: sort instances by distance from the light
-			listOfMeshes.sort([cameraPosition](fwMesh* a, fwMesh* b) { return a->sqDistance2boundingSphere(cameraPosition) < b->sqDistance2boundingSphere(cameraPosition); });
+			sortMeshes(listOfMeshes, cameraPosition);
 
 			glTexture::PushTextureUnit();
 			material = m_materials[materialID];
@@ -293,6 +293,29 @@ void fwRenderer::drawTransparentMeshes(
 	);
 
 	glDisable(GL_BLEND);
+}
+
+/**
+ * Sort meshed by z-order && distance
+ */
+void fwRenderer::sortMeshes(std::list<fwMesh *>& meshes, glm::vec3 cameraPosition) 
+{
+	// draw neareast first. use both z-order and distance to camera
+	meshes.sort([cameraPosition](fwMesh* a, fwMesh* b) {
+		// zOrder's have priorities
+		if (a->zOrder() != 0 && b->zOrder() != 0) {
+			return a->zOrder() < b->zOrder();
+		}
+		// if one object has zOrder and not the other, it has priority
+		if (a->zOrder() != 0) {
+			return(true);
+		}
+		if (b->zOrder() != 0) {
+			return(false);
+		}
+		// if zOrder not defined, use distance**2
+		return a->sqDistance2boundingSphere(cameraPosition) < b->sqDistance2boundingSphere(cameraPosition);
+	});
 }
 
 glm::vec2 fwRenderer::size(void)
