@@ -189,6 +189,7 @@ void dfSuperSector::addRectangle(dfSector* sector, dfWall* wall, float z, float 
 	m_uvs.resize(p + 6);
 	m_textureID.resize(p + 6);
 
+	// TODO move ceonversion from level space to gl space in a dedicated function
 	// first triangle
 	m_vertices[p].x = x / 10;
 	m_vertices[p].z = y / 10;
@@ -416,15 +417,17 @@ void dfSuperSector::buildGeometry(std::vector<dfSector*>& sectors, std::vector<d
  * for any visible portal, add the attached supersector to the list of visible supersectors
  * and test the portals again. Avoid coming back to already visited supersectors
  */
-void dfSuperSector::checkPortals(fwCamera* camera)
+void dfSuperSector::checkPortals(fwCamera* camera, int zOrder)
 {
+	m_mesh->zOrder(zOrder);
+
 	for (auto& portal : m_portals) {
 		// WARNING : the camera is using opengl space, but the boundSphere are translated to gl space
 		if (camera->is_inFrustum(portal.m_boundingSphere)) {
 			dfSuperSector* target = portal.m_target;
 			if (!target->m_visible) {
 				target->m_visible = true;
-				target->checkPortals(camera);
+				target->checkPortals(camera, zOrder + 1);
 			}
 		}
 	}

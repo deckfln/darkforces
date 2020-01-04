@@ -209,6 +209,8 @@ void fwRendererDefered::drawMeshes(std::list <fwMesh*> &meshes, fwCamera* camera
 
 	buildDeferedShader(meshes, camera, meshPerMaterial);
 
+	glm::vec3 cameraPosition = camera->get_position();
+
 	for (auto shader : meshPerMaterial) {
 		// draw all ojects sharing the same shader
 		code = shader.first;
@@ -225,7 +227,7 @@ void fwRendererDefered::drawMeshes(std::list <fwMesh*> &meshes, fwCamera* camera
 			listOfMeshes = ids.second;
 
 			// draw neareast first
-			listOfMeshes.sort([camera](fwMesh* a, fwMesh* b) { return a->sqDistanceTo(camera) < b->sqDistanceTo(camera); });
+			listOfMeshes.sort([cameraPosition](fwMesh* a, fwMesh* b) { return a->sqDistance2boundingSphere(cameraPosition) < b->sqDistance2boundingSphere(cameraPosition); });
 
 			glTexture::PushTextureUnit();
 			material = m_materials[materialID];

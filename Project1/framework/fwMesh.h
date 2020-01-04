@@ -20,6 +20,7 @@ class fwMesh: public fwObject3D
 	bool outlined = false;
 	bool normalHelper = false;
 	bool m_transparent = false;
+	int m_zorder = -1;			// for zorder > 0 force the drawing order(less is drawn first). Otherwise sort by distance
 	void *m_pExtra = nullptr;
 	std::list <fwUniform*> m_uniforms;	// meshes can have dedicated uniforms (not included in the material)
 
@@ -61,8 +62,13 @@ public:
 
 	fwMesh &draw_wireframe(bool _wireframe);
 
+	int zOrder(void) { return m_zorder; };
+	void zOrder(int z) { m_zorder = z; };
+
 	void updateVertices(int offset = 0, int size = -1);
 	void updateAttribute(const std::string &attribute, int offset = 0, int size = -1);
+
+	float sqDistance2boundingSphere(glm::vec3 position);
 
 	virtual void draw(glProgram *);
 	~fwMesh();

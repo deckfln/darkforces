@@ -39,6 +39,7 @@ public:
 
 	fwSphere *boundingsphere(void) { return m_pBoundingsphere; };
 	fwSphere *computeBoundingsphere(void);
+	float sqDistance2boundingSphere(glm::vec3& position);
 	fwSphere* setBoundingsphere(float radius);
 	void computeTangent(void);
 

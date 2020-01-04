@@ -222,6 +222,8 @@ void fwRenderer::drawMeshes(
 		meshesPerMaterial
 	);
 
+	glm::vec3 cameraPosition = camera->get_position();
+
 	for (auto shader : meshesPerMaterial) {
 		// draw all ojects sharing the same shader
 		code = shader.first;
@@ -250,7 +252,7 @@ void fwRenderer::drawMeshes(
 
 			// draw neareast first
 			// TODO: sort instances by distance from the light
-			listOfMeshes.sort([camera](fwMesh* a, fwMesh* b) { return a->sqDistanceTo(camera) < b->sqDistanceTo(camera); });
+			listOfMeshes.sort([cameraPosition](fwMesh* a, fwMesh* b) { return a->sqDistance2boundingSphere(cameraPosition) < b->sqDistance2boundingSphere(cameraPosition); });
 
 			glTexture::PushTextureUnit();
 			material = m_materials[materialID];

@@ -129,6 +129,14 @@ void fwMesh::updateAttribute(const std::string &attribute, int offset, int size)
 	geometry->updateAttribute(attribute, offset, size);
 }
 
+/**
+ * SquareRoot distance from the camera to the center of the boundingSphere
+ */
+float fwMesh::sqDistance2boundingSphere(glm::vec3 position)
+{
+	return geometry->sqDistance2boundingSphere(position);
+}
+
 fwMesh::~fwMesh()
 {
 	if (geometry->dereference())

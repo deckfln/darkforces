@@ -72,7 +72,7 @@ public:
     int id(void) { return m_id; };
     void buildGeometry(std::vector<dfSector*>& sectors, std::vector<dfTexture*>& m_textures, fwMaterialBasic* material);
     fwGeometry* geometry(void) { return m_geometry; };
-    void checkPortals(fwCamera* camera);
+    void checkPortals(fwCamera* camera, int zOrder);
     void visible(bool v) { m_visible = v; };
     bool visible(void) { return m_visible; };
     void add2scene(fwScene* scene);

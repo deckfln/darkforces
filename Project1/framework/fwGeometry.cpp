@@ -133,6 +133,12 @@ fwSphere *fwGeometry::computeBoundingsphere(void)
 	return m_pBoundingsphere;
 }
 
+float fwGeometry::sqDistance2boundingSphere(glm::vec3& position)
+{
+	float debug = glm::distance2(m_pBoundingsphere->center(), position);
+	return debug;
+}
+
 /**
  * parse all vertices to compute a bounding sphere
  */

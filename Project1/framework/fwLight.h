@@ -8,6 +8,7 @@
 #include "fwObject3D.h"
 #include "fwCamera.h"
 #include "fwUniform.h"
+#include "fwMaterial.h"
 
 class fwLight: public fwObject3D
 {
