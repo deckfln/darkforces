@@ -364,7 +364,7 @@ void dfLevel::draw(fwCamera* camera, fwScene* scene)
 	glm::vec3 position = camera->get_position();
 
 	//TODO move the position to the feet of the player, but on the controler
-	position.y -= 0.3;
+	position.y -= 0.3f;
 
 	// mark all supersectors as NO VISBILE
 	for (auto ssector : m_supersectors) {

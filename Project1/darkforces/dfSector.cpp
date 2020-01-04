@@ -135,7 +135,7 @@ bool dfSector::isPointInside(glm::vec3 &p)
 	// https://stackoverflow.com/questions/217578/how-can-i-determine-whether-a-2d-point-is-within-a-polygon
 	// http://www.ecse.rpi.edu/Homepages/wrf/Research/Short_Notes/pnpoly.html
 	bool inside = false;
-	for (int i = 0, j = m_vertices.size() - 1; i < m_vertices.size(); j = i++)
+	for (unsigned int i = 0, j = m_vertices.size() - 1; i < m_vertices.size(); j = i++)
 	{
 		if ((m_vertices[i].y > p.y) != (m_vertices[j].y > p.y) &&
 			p.x < (m_vertices[j].x - m_vertices[i].x) * (p.y - m_vertices[i].y) / (m_vertices[j].y - m_vertices[i].y) + m_vertices[i].x)
