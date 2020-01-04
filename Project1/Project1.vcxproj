@@ -154,6 +154,7 @@
     <ClCompile Include="framework\fwSprites.cpp" />
     <ClCompile Include="framework\fwTextures.cpp" />
     <ClCompile Include="framework\geometries\fwBoxGeometry.cpp" />
+    <ClCompile Include="framework\geometries\fwGeometrySphere.cpp" />
     <ClCompile Include="framework\geometries\fwPlaneGeometry.cpp" />
     <ClCompile Include="framework\fwCamera.cpp" />
     <ClCompile Include="framework\fwMaterialDiffuse.cpp" />
@@ -177,7 +178,6 @@
     <ClCompile Include="framework\postprocessing\fwPostProcessingBloom.cpp" />
     <ClCompile Include="framework\render\fwRendererDefered.cpp" />
     <ClCompile Include="framework\render\fwRendererForward.cpp" />
-    <ClCompile Include="framework\SphereGemeotry.cpp" />
     <ClCompile Include="framework\fwTexture.cpp" />
     <ClCompile Include="framework\fwUniform.cpp" />
     <ClCompile Include="glEngine\framebuffer\glDepthCubeMap.cpp" />
@@ -217,6 +217,7 @@
     <ClInclude Include="darkforces\dfLevel.h" />
     <ClInclude Include="darkforces\dfSector.h" />
     <ClInclude Include="darkforces\dfSuperSector.h" />
+    <ClInclude Include="darkforces\dfTexture.h" />
     <ClInclude Include="darkforces\dfWall.h" />
     <ClInclude Include="framework\camera\fwCameraPanoramic.h" />
     <ClInclude Include="framework\camera\fwOrthographicCamera.h" />
@@ -242,6 +243,7 @@
     <ClInclude Include="framework\fwSprites.h" />
     <ClInclude Include="framework\fwTextures.h" />
     <ClInclude Include="framework\geometries\fwBoxGeometry.h" />
+    <ClInclude Include="framework\geometries\fwGeometrySphere.h" />
     <ClInclude Include="framework\geometries\fwPlaneGeometry.h" />
     <ClInclude Include="framework\fwCamera.h" />
     <ClInclude Include="framework\fwMaterialDiffuse.h" />
@@ -265,7 +267,6 @@
     <ClInclude Include="framework\postprocessing\fwPostProcessingBloom.h" />
     <ClInclude Include="framework\render\fwRendererDefered.h" />
     <ClInclude Include="framework\render\fwRendererForward.h" />
-    <ClInclude Include="framework\SphereGemeotry.h" />
     <ClInclude Include="framework\fwTexture.h" />
     <ClInclude Include="framework\fwUniform.h" />
     <ClInclude Include="glEngine\framebuffer\glDepthCubeMap.h" />

@@ -26,7 +26,7 @@ class myDarkForces : public fwApp
 	fwControlThirdPerson* m_control = nullptr;
 	glm::vec4* white = nullptr;
 	fwMesh* m_fwCamera = nullptr;
-	dfLevel* secbase = nullptr;
+	dfLevel* m_level = nullptr;
 
 public:
 	myDarkForces(std::string name, int width, int height);

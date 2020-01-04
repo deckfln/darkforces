@@ -113,6 +113,28 @@ std::list <fwObject3D *> &fwObject3D::get_children(void)
 	return m_children;
 }
 
+/**
+ * recusivility test if we can find an object
+ */
+bool fwObject3D::hasChild(fwObject3D* search)
+{
+	// check first level
+	for (auto child : m_children) {
+		if (child == search) {
+			return true;
+		}
+	}
+
+	// didn't find so check recusively
+	for (auto child : m_children) {
+		if (child->hasChild(search)) {
+			return true;
+		}
+	}
+
+	return false;	// sorry, not here
+}
+
 /*
  */
 float fwObject3D::sqDistanceTo(fwObject3D *to)

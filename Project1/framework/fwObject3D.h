@@ -48,7 +48,9 @@ public:
 	glm::vec3 get_scale(void);
 
 	glm::vec3 &get_position(void);
+	void position(glm::vec3& position) { m_Position = position; };
 	std::list <fwObject3D *> &get_children(void);
+	bool hasChild(fwObject3D* child);
 
 	void updateWorldMatrix(fwObject3D *parent, bool force = false);
 

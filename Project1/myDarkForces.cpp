@@ -63,15 +63,9 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 	fwMaterialBasic* basic = new fwMaterialBasic(white);
 	fwMesh* fLight = new fwMesh(geometry, basic);
 
-	secbase = new dfLevel("data/secbase.lev");
-	fwMaterialBasic* dfBasic = new fwMaterialBasic("data/shaders/vertex.glsl", "", "data/shaders/fragment.glsl");
-	dfBasic->addDiffuseMap(secbase->texture());
-	dfBasic->addUniform(secbase->index());
-	fwMesh* level = new fwMesh(secbase->geometry(), dfBasic);
-	level->set_name("secbase");
-	level->always_draw(true);	// force display for debugging
+	m_level = new dfLevel("data/secbase.lev");
 	dfCollision* m_collision = new dfCollision();
-	m_collision->bind(secbase);
+	m_collision->bind(m_level);
 	m_control->bind(m_collision);
 
 	// Skybox
@@ -88,8 +82,7 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 	// init the m_scene
 	glm::vec3* yellow = new glm::vec3(255, 255, 0);
 	m_scene = new fwScene();
-	m_scene->addLight(m_light).
-		addChild(level);
+	m_scene->addLight(m_light);
 
 	m_scene->background(m_skybox);
 
@@ -153,6 +146,9 @@ glTexture* myDarkForces::draw(time_t delta, fwRenderer* renderer)
 	lightPos.y = 2;
 	lightPos.z = cos(glfwGetTime() / 2) * radius;
 	m_light->translate(lightPos);
+
+	// update visible level sectors
+	m_level->draw(m_camera, m_scene);
 
 	return renderer->draw(m_camera, m_scene);
 }

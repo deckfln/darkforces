@@ -8,6 +8,7 @@
 
 #include "fwObject3D.h"
 #include "fwFrustum.h"
+#include "math/fwSphere.h"
 
 class fwCamera: public fwObject3D
 {
@@ -46,6 +47,7 @@ public:
 	glm::mat4 &GetMatrix(void);
 
 	bool is_inFrustum(fwMesh *mesh);
+	bool is_inFrustum(fwSphere& boundingSphere);
 
 	void set_uniformBuffer(void);
 	void bind_uniformBuffer(glProgram *program);

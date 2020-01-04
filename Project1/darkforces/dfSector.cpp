@@ -14,7 +14,7 @@ dfSector::dfSector(std::ifstream& infile)
 	int currentWall = 0;
 
 	std::string line, dump;
-	float min_x=99999, max_x=-99999, min_z=99999, max_z=-99999;	// build AABBox while parsing the vertices
+	float min_x=99999, max_x=-99999, min_y=99999, max_y=-99999;	// build AABBox while parsing the vertices
 
 	// per line
 	while (std::getline(infile, line))
@@ -94,8 +94,8 @@ dfSector::dfSector(std::ifstream& infile)
 			// refresh the AABBox
 			if (x < min_x) min_x = x;
 			if (x > max_x) max_x = x;
-			if (z < min_z) min_z = z;
-			if (z > max_z) max_z = z;
+			if (z < min_y) min_y = z;
+			if (z > max_y) max_y = z;
 		}
 		else if (tokens[0] == "WALLS") {
 			nbWalls = std::stoi(tokens[1]);
@@ -119,9 +119,12 @@ dfSector::dfSector(std::ifstream& infile)
 		}
 	}
 
-	m_boundingBox = fwAABBox(min_x, max_x, m_floorAltitude, m_ceilingAltitude, min_z, max_z);
+	m_boundingBox = fwAABBox(min_x, max_x, min_y, max_y, m_floorAltitude, m_ceilingAltitude);
 }
 
+/**
+ * check if point is inside the boundingbox and inside the 2D surface
+ */
 bool dfSector::isPointInside(glm::vec3 &p)
 {
 	// quick check against the 3D bounding box
@@ -134,8 +137,8 @@ bool dfSector::isPointInside(glm::vec3 &p)
 	bool inside = false;
 	for (int i = 0, j = m_vertices.size() - 1; i < m_vertices.size(); j = i++)
 	{
-		if ((m_vertices[i].y > p.z) != (m_vertices[j].y > p.z) &&
-			p.x < (m_vertices[j].x - m_vertices[i].x) * (p.z - m_vertices[i].y) / (m_vertices[j].y - m_vertices[i].y) + m_vertices[i].x)
+		if ((m_vertices[i].y > p.y) != (m_vertices[j].y > p.y) &&
+			p.x < (m_vertices[j].x - m_vertices[i].x) * (p.y - m_vertices[i].y) / (m_vertices[j].y - m_vertices[i].y) + m_vertices[i].x)
 		{
 			inside = !inside;
 		}

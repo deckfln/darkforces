@@ -4,12 +4,10 @@
 #include <fstream>
 #include <iostream>
 #include <string>
-#include <array>
 
 #include "../config.h"
 #include "../framework/geometries/fwPlaneGeometry.h"
 #include "../include/stb_image.h"
-#include "../include/earcut.hpp"
 
 dfLevel::dfLevel(std::string file)
 {
@@ -66,10 +64,8 @@ dfLevel::dfLevel(std::string file)
 	infile.close();
 
 	buildAtlasMap();	// load textures in a megatexture
-	buildWalls();	// convert sectors walls to a geometry and apply the mega texture
-	buildFloor();		// convert sectors floor to a geometry
-	buildGeometry();
-	spacePartitioning();	// partion of space for quick collision
+	spacePartitioning();// partion of space for quick collision
+	buildGeometry();	// build the geometry of each super sectors
 }
 
 /***
@@ -114,7 +110,7 @@ void dfLevel::buildAtlasMap(void)
 	sorted_textures.sort([](dfTexture* a, dfTexture* b) { return a->bsize > b->bsize; });
 
 	// evaluate the size of the megatexture (square texture of 16x16 blocks)
-	int bsize = ceil(sqrt(blocks16x16));
+	int bsize = (int)ceil(sqrt(blocks16x16));
 
 	// try to place all objects on the map.
 	// if fail, increase the size of the map until we place all textures
@@ -212,11 +208,11 @@ void dfLevel::buildAtlasMap(void)
 
 			// TODO point to the megatexture (use small epsilon to avoid texture bleeding)
 			// https://gamedev.stackexchange.com/questions/46963/how-to-avoid-texture-bleeding-in-a-texture-atlas
-			texture->m_xoffset = (((px + bx) * 16.0)) / size;
-			texture->m_yoffset = (((py + by) * 16.0)) / size;
+			texture->m_xoffset = (((px + bx) * (float)16.0)) / size;
+			texture->m_yoffset = (((py + by) * (float)16.0)) / size;
 
-			texture->m_mega_width = - bx * 16.0 / size;
-			texture->m_mega_height = - by * 16.0 / size;
+			texture->m_mega_width = - bx * (float)16.0 / size;
+			texture->m_mega_height = - by * (float)16.0 / size;
 		}
 	} while (!allplaced);
 
@@ -239,246 +235,18 @@ void dfLevel::buildAtlasMap(void)
 	m_shader_idx = new fwUniform("megatexture_idx", &m_megatexture_idx[0], i);
 }
 
-/***
- * create vertices for a rectangle
- */
-void dfLevel::addRectangle(dfSector *sector, dfWall *wall, float z, float z1, int texture)
-{
-	float x = sector->m_vertices[wall->m_left].x,
-		y = sector->m_vertices[wall->m_left].y,
-		x1 = sector->m_vertices[wall->m_right].x,
-		y1 = sector->m_vertices[wall->m_right].y;
-
-	int textureID = wall->m_tex[texture].x;
-
-	dfTexture* dfTexture = m_textures[textureID];
-
-	float length = sqrt(pow(x - x1, 2) + pow(y - y1, 2));
-	float xpixel = dfTexture->width;
-	float ypixel = dfTexture->height;
-
-	// convert height and length into local texture coordinates using pixel ratio
-	// ratio of texture pixel vs world position = 64 pixels for 8 clicks => 8x1
-	float height = abs(z1 - z) * 8.0 / ypixel;
-	float width = length * 8.0 / xpixel;
-
-	// get local texture offset on the wall
-	// TODO: current supposion : offset x 1 => 1 pixel from the begining on XXX width pixel texture
-	float xoffset = (wall->m_tex[texture].y * 8) / xpixel;
-	float yoffset = (wall->m_tex[texture].z * 8) / ypixel;
-
-	// resize the opengl buffers
-	int p = m_vertices.size();
-	m_vertices.resize(p + 6);
-	m_uvs.resize(p + 6);
-	m_textureID.resize(p + 6);
-
-	// first triangle
-	m_vertices[p].x = x / 10;
-	m_vertices[p].z = y / 10;
-	m_vertices[p].y = z / 10;
-	m_uvs[p] = glm::vec2(xoffset, yoffset);
-	m_textureID[p] = textureID;
-
-	m_vertices[p + 1].x = x1 / 10;
-	m_vertices[p + 1].z = y1 / 10;
-	m_vertices[p + 1].y = z / 10;
-	m_uvs[p + 1] = glm::vec2(width+xoffset, yoffset);
-	m_textureID[p + 1] = textureID;
-
-	m_vertices[p + 2].x = x1 / 10;
-	m_vertices[p + 2].z = y1 / 10;
-	m_vertices[p + 2].y = z1 / 10;
-	m_uvs[p + 2] = glm::vec2(width+xoffset, height+yoffset);
-	m_textureID[p + 2] = textureID;
-
-	// second triangle
-	m_vertices[p + 3].x = x / 10;
-	m_vertices[p + 3].z = y / 10;
-	m_vertices[p + 3].y = z / 10;
-	m_uvs[p + 3] = glm::vec2(xoffset, yoffset);
-	m_textureID[p + 3] = textureID;
-
-	m_vertices[p + 4].x = x1 / 10;
-	m_vertices[p + 4].z = y1 / 10;
-	m_vertices[p + 4].y = z1 / 10;
-	m_uvs[p + 4] = glm::vec2(width+xoffset, height+yoffset);
-	m_textureID[p + 4] = textureID;
-
-	m_vertices[p + 5].x = x / 10;
-	m_vertices[p + 5].z = y / 10;
-	m_vertices[p + 5].y = z1 / 10;
-	m_uvs[p + 5] = glm::vec2(xoffset, height+yoffset);
-	m_textureID[p + 5] = textureID;
-}
-
 /**
- * Convert a level into a mega textured mesh
- */
-void dfLevel::buildWalls(void)
-{
-	int size = 0;
-	int p = 0;
-
-	for (auto sector : m_sectors) {
-		if (sector->m_layer != 1) {
-			continue;
-		}
-		for (auto wall : sector->m_walls) {
-			if (wall->m_adjoint < 0) {
-				// full wall
-				addRectangle(sector, wall,
-					sector->m_floorAltitude,
-					sector->m_ceilingAltitude,
-					DFWALL_TEXTURE_MID
-				);
-			}
-			else {
-				// portal
-				dfSector *portal = m_sectors[wall->m_adjoint];
-
-				if (portal->m_ceilingAltitude < sector->m_ceilingAltitude) {
-					// add a wall above the portal
-					addRectangle(sector, wall, 
-						portal->m_ceilingAltitude,
-						sector->m_ceilingAltitude,
-						DFWALL_TEXTURE_TOP
-					);
-				}
-				if (portal->m_floorAltitude > sector->m_floorAltitude) {
-					// add a wall below the portal
-					addRectangle(sector, wall,
-						sector->m_floorAltitude,
-						portal->m_floorAltitude,
-						DFWALL_TEXTURE_BOTTOM
-					);
-				}
-			}
-		}
-	}
-}
-
-/**
- * build the floor geometry by triangulating the shape
- * apply texture by using an axis aligned 8x8 grid
- */
-void dfLevel::buildFloor(void)
-{
-	for (auto sector : m_sectors) {
-		if (sector->m_layer != 1) {
-			continue;
-		}
-
-		// The number type to use for tessellation
-		using Coord = float;
-
-		// The index type. Defaults to uint32_t, but you can also pass uint16_t if you know that your
-		// data won't have more than 65536 vertices.
-		using N = uint32_t;
-
-		// Create array
-		using Point = std::array<Coord, 2>;
-		std::vector<std::vector<Point>> polygon;
-
-		// Fill polygon structure with actual data. Any winding order works.
-		// The first polyline defines the main polygon.
-		// Following polylines define holes.
-		polygon.resize(2);
-		polygon[0].resize(sector->m_vertices.size());
-
-		for (int i = 0; i < sector->m_vertices.size(); i++) {
-			polygon[0][i] = { sector->m_vertices[i].x, sector->m_vertices[i].y };
-		}
-
-		// Run tessellation
-		// Returns array of indices that refer to the vertices of the input polygon.
-		// e.g: the index 6 would refer to {25, 75} in this example.
-		// Three subsequent indices form a triangle. Output triangles are clockwise.
-		std::vector<N> indices = mapbox::earcut<N>(polygon);
-
-		// resize the opengl buffers
-		int p = m_vertices.size();
-		int vertices = indices.size() * 2;	// count the floor AND the ceiling
-		m_vertices.resize(p + vertices);
-		m_uvs.resize(p + vertices);
-		m_textureID.resize(p + vertices);
-
-		// use axis aligned texture UV, on a 8x8 grid
-		// ratio of texture pixel vs world position = 180 pixels for 24 clicks = 7.5x1
-		dfTexture* dfTexture = m_textures[sector->m_floorTexture.r];
-		float xpixel = dfTexture->width;
-		float ypixel = dfTexture->height;
-
-		// warning, triangles are looking downward
-		int currentVertice = 0, j;
-		for (auto i = 0; i < indices.size(); i++) {
-			int index = indices[i];
-
-			// reverse vertices 2 and 3 to look upward
-			switch (currentVertice) {
-			case 1: j = 1; break;
-			case 2: j = -1; break;
-			default: j = 0; break;
-			}
-			m_vertices[p + j].x = sector->m_vertices[index].x / 10.0;
-			m_vertices[p + j].y = sector->m_floorAltitude / 10.0;
-			m_vertices[p + j].z = sector->m_vertices[index].y / 10.0;
-
-			// get local texture offset on the floor
-			// TODO: current supposion : offset x 1 => 1 pixel from the begining on XXX width pixel texture
-			float xoffset = ((sector->m_vertices[index].x + sector->m_floorTexture.g) * 8) / xpixel;
-			float yoffset = ((sector->m_vertices[index].y + sector->m_floorTexture.b) * 8) / ypixel;
-
-			m_uvs[p + j] = glm::vec2(xoffset, yoffset);
-
-			m_textureID[p + j] = sector->m_floorTexture.r;
-
-			p++;
-			currentVertice = (currentVertice + 1) % 3;
-		}
-
-		// use axis aligned texture UV, on a 8x8 grid
-		// ratio of texture pixel vs world position = 180 pixels for 24 clicks = 7.5x1
-		dfTexture = m_textures[sector->m_ceilingTexture.r];
-		if (sector->m_ceilingTexture.r == 34.0) {
-			printf("debug");
-		}
-		xpixel = dfTexture->width;
-		ypixel = dfTexture->height;
-
-		// create the ceiling
-		for (auto i = 0; i < indices.size(); i++) {
-			int index = indices[i];
-
-			m_vertices[p].x = sector->m_vertices[index].x / 10.0;
-			m_vertices[p].y = sector->m_ceilingAltitude / 10.0;
-			m_vertices[p].z = sector->m_vertices[index].y / 10.0;
-
-			// use axis aligned texture UV, on a 8x8 grid
-			// ratio of texture pixel vs world position = 64 pixels for 8 clicks
-			float xoffset = ((sector->m_vertices[index].x + sector->m_ceilingTexture.g) * 8) / xpixel;
-			float yoffset = ((sector->m_vertices[index].y + sector->m_ceilingTexture.g) * 8) / ypixel;
-
-			m_uvs[p] = glm::vec2(xoffset, yoffset);
-
-			m_textureID[p] = sector->m_ceilingTexture.r;
-
-			p++;
-		}
-
-	}
-}
-
-/**
- * Create the geometry
+ * create geometries for all super sectors
  */
 void dfLevel::buildGeometry(void)
 {
-	int size = m_vertices.size();
-	m_geometry = new fwGeometry();
-	m_geometry->addVertices("aPos", &m_vertices[0], 3, size * sizeof(glm::vec3), sizeof(float), false);
-	m_geometry->addAttribute("aTexCoord", GL_ARRAY_BUFFER, &m_uvs[0], 2, size * sizeof(glm::vec2), sizeof(float), false);
-	m_geometry->addAttribute("aTextureID", GL_ARRAY_BUFFER, &m_textureID[0], 1, size * sizeof(float), sizeof(float), false);
+	m_material = new fwMaterialBasic("data/shaders/vertex.glsl", "", "data/shaders/fragment.glsl");
+	m_material->addDiffuseMap(m_fwtextures);
+	m_material->addUniform(m_shader_idx);
+
+	for (auto ssector : m_supersectors) {
+		ssector->buildGeometry(m_sectors, m_textures, m_material);
+	}
 }
 
 /**
@@ -524,26 +292,99 @@ void dfLevel::spacePartitioning(void)
 }
 
 /**
- * return the sector fitting the position
+ * return the SuperSector fitting the position
  */
-dfSector* dfLevel::findSector(glm::vec3& position)
+dfSuperSector* dfLevel::findSuperSector(glm::vec3& position)
 {
 	// position is in opengl space
 	// TODO should move the opengl <-> level space conversion on a central place
 	glm::vec3 level_space = position;
 	level_space *= 10;
-	dfSector* sector;
 
 	// std::cout << position.x << ":" << position.y << ":" << position.z << std::endl;
+	for (auto ssector : m_supersectors) {
+		if (ssector->inAABBox(level_space)) {
+			return ssector;
+		}
+	}
+
+	return nullptr;	// not here
+}
+
+/**
+ * return the sector fitting the position
+ */
+dfSector* dfLevel::findSector(glm::vec3& position)
+{
+	dfSector* sector;
+	// std::cout << position.x << ":" << position.y << ":" << position.z << std::endl;
+
+	// position is in opengl space
+	// TODO should move the opengl <-> level space conversion on a central place
+	glm::vec3 level_space = position;
+	level_space *= 10;
+	float z = level_space.z;
+	level_space.z = level_space.y;
+	level_space.y = z;
+
+	// quick check on the last sector
+	if (m_lastSector) {
+		if (m_lastSector->isPointInside(level_space)) {
+			return m_lastSector;
+		}
+
+		// nope, so quick check on the last super sector
+		sector = m_lastSuperSector->findSector(level_space);
+		if (sector) {
+			m_lastSector = sector;
+			return sector;
+		}
+	}
+
+	// still nope, full search
 	for (auto ssector: m_supersectors) {
 		sector = ssector->findSector(level_space);
 
 		if (sector) {
+			m_lastSector = sector;
+			m_lastSuperSector = ssector;
 			return sector;
 		}
 	}
 
 	return nullptr;	// not here
+}
+
+/**
+ * parse the super sectors to find which one are in the camera frustrum
+ * use the portals to drill through portals
+ */
+void dfLevel::draw(fwCamera* camera, fwScene* scene)
+{
+	glm::vec3 position = camera->get_position();
+
+	//TODO move the position to the feet of the player, but on the controler
+	position.y -= 0.3;
+
+	// mark all supersectors as NO VISBILE
+	for (auto ssector : m_supersectors) {
+		ssector->visible(false);
+	}
+
+	// use the cached values to find the current super sector
+	dfSector *sector = findSector(position);
+	if (sector) {
+		m_lastSuperSector->visible(true);
+
+		// recusivly test the portals to make supersectors visible in the camera frustrum 
+		m_lastSuperSector->checkPortals(camera);
+	}
+	// ELSE outside of the map
+
+	// parse the scene to update the supersectors visibility
+	for (auto ssector : m_supersectors) {
+		ssector->add2scene(scene);
+	}
 }
 
 dfLevel::~dfLevel()

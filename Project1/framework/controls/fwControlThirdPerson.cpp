@@ -7,7 +7,7 @@ fwControlThirdPerson::fwControlThirdPerson(fwCamera* _camera, glm::vec3 position
 	m_position(position),
 	m_direction(direction)
 {
-	update();
+	updateCamera();
 }
 
 /**

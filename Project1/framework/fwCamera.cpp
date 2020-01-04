@@ -132,6 +132,15 @@ bool fwCamera::is_inFrustum(fwMesh *mesh)
 	return m_frustum.intersectsObject(mesh);
 }
 
+/**
+ * Test a WORLD positioning boundingSphere against the frustrum
+ * TODO convert the boundingSphere to a 3D object (Mesh, Object3D) than can be moved around
+ */
+bool fwCamera::is_inFrustum(fwSphere& boundingSphere)
+{
+	return m_frustum.intersectsSphere(boundingSphere, &boundingSphere);
+}
+
 fwCamera::~fwCamera()
 {
 	if (ubo != nullptr) {
