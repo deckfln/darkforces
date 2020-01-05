@@ -48,7 +48,7 @@ class dfSuperSector {
        
     std::vector <glm::vec3> m_vertices;		// level vertices
     std::vector <glm::vec2> m_uvs;			// UVs inside the source texture
-    std::vector <UINT> m_textureID;			// TextureID inside the megatexture
+    std::vector <float> m_textureID;			// TextureID inside the megatexture
 
     fwGeometry* m_geometry = nullptr;
     fwMesh* m_mesh = nullptr;
