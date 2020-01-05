@@ -165,6 +165,87 @@ void dfSuperSector::addRectangle(dfSector* sector, dfWall* wall, float z, float 
 		x1 = sector->m_vertices[wall->m_right].x,
 		y1 = sector->m_vertices[wall->m_right].y;
 
+	// if there is a sign on the wall, add a rectangle IN FRONT of the wall
+	if (wall->m_tex[DFWALL_TEXTURE_SIGN].r > 0) {
+		int textureID = (int)wall->m_tex[DFWALL_TEXTURE_SIGN].r;
+
+		dfTexture* dfTexture = textures[textureID];
+
+		float length = sqrt(pow(x - x1, 2) + pow(y - y1, 2));
+		float xpixel = (float)dfTexture->width;
+		float ypixel = (float)dfTexture->height;
+
+		glm::vec2 segment = glm::normalize(glm::vec2(x1 - x, y1 - y));
+		glm::vec2 start = sector->m_vertices[wall->m_left] + segment * (wall->m_tex[DFWALL_TEXTURE_SIGN].g - wall->m_tex[DFWALL_TEXTURE_MID].g);
+		glm::vec2 end = sector->m_vertices[wall->m_left] + segment * (wall->m_tex[DFWALL_TEXTURE_SIGN].g - wall->m_tex[DFWALL_TEXTURE_MID].g + xpixel / 8.0f);
+
+		// wall normals
+		glm::vec3 normal = glm::normalize(glm::vec3(-segment.y, segment.x, 0));	//  and (dy, -dx).
+
+		// create a copy of the wall and shrink to the size and position of the sign
+		// ratio of texture pixel vs world position = 64 pixels for 8 clicks => 8x1
+		glm::vec3 sign_p = glm::vec3(
+			start.x,
+			start.y,
+			z - (wall->m_tex[DFWALL_TEXTURE_SIGN].b + wall->m_tex[DFWALL_TEXTURE_MID].b)
+		);
+		glm::vec3 sign_p1 = glm::vec3(
+			end.x,
+			end.y,
+			z - (wall->m_tex[DFWALL_TEXTURE_SIGN].b + +wall->m_tex[DFWALL_TEXTURE_MID].b) + ypixel / 8.0f
+		);
+
+		// move the the wall along the normal
+		sign_p += normal / 10.0f;
+		sign_p1 += normal / 10.0f;
+
+		// resize the opengl buffers
+		int p = m_vertices.size();
+		m_vertices.resize(p + 6);
+		m_uvs.resize(p + 6);
+		m_textureID.resize(p + 6);
+
+		// TODO move conversion from level space to gl space in a dedicated function
+		// first triangle
+		m_vertices[p].x = sign_p.x / 10;
+		m_vertices[p].z = sign_p.y / 10;
+		m_vertices[p].y = sign_p.z / 10;
+		m_uvs[p] = glm::vec2(0, 0);
+		m_textureID[p] = textureID;
+
+		m_vertices[p + 1].x = sign_p1.x / 10;
+		m_vertices[p + 1].z = sign_p1.y / 10;
+		m_vertices[p + 1].y = sign_p.z / 10;
+		m_uvs[p + 1] = glm::vec2(1, 0);
+		m_textureID[p + 1] = textureID;
+
+		m_vertices[p + 2].x = sign_p1.x / 10;
+		m_vertices[p + 2].z = sign_p1.y / 10;
+		m_vertices[p + 2].y = sign_p1.z / 10;
+		m_uvs[p + 2] = glm::vec2(1, 1);
+		m_textureID[p + 2] = textureID;
+
+		// second triangle
+		m_vertices[p + 3].x = sign_p.x / 10;
+		m_vertices[p + 3].z = sign_p.y / 10;
+		m_vertices[p + 3].y = sign_p.z / 10;
+		m_uvs[p + 3] = glm::vec2(0, 0);
+		m_textureID[p + 3] = textureID;
+
+		m_vertices[p + 4].x = sign_p1.x / 10;
+		m_vertices[p + 4].z = sign_p1.y / 10;
+		m_vertices[p + 4].y = sign_p1.z / 10;
+		m_uvs[p + 4] = glm::vec2(1, 1);
+		m_textureID[p + 4] = textureID;
+
+		m_vertices[p + 5].x = sign_p.x / 10;
+		m_vertices[p + 5].z = sign_p.y / 10;
+		m_vertices[p + 5].y = sign_p1.z / 10;
+		m_uvs[p + 5] = glm::vec2(0, 1);
+		m_textureID[p + 5] = textureID;
+	}
+
+	// deal with the wall texture
 	int textureID = (int)wall->m_tex[texture].x;
 
 	dfTexture* dfTexture = textures[textureID];
@@ -189,7 +270,7 @@ void dfSuperSector::addRectangle(dfSector* sector, dfWall* wall, float z, float 
 	m_uvs.resize(p + 6);
 	m_textureID.resize(p + 6);
 
-	// TODO move ceonversion from level space to gl space in a dedicated function
+	// TODO move conversion from level space to gl space in a dedicated function
 	// first triangle
 	m_vertices[p].x = x / 10;
 	m_vertices[p].z = y / 10;

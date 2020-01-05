@@ -109,11 +109,13 @@ dfSector::dfSector(std::ifstream& infile)
 			glm::vec3 mid(std::stof(tokens[6]), std::stof(tokens[7]), std::stof(tokens[8]));
 			glm::vec3 top(std::stof(tokens[11]), std::stof(tokens[12]), std::stof(tokens[13]));
 			glm::vec3 bottom(std::stof(tokens[16]), std::stof(tokens[17]), std::stof(tokens[18]));
+			glm::vec3 sign(std::stof(tokens[21]), std::stof(tokens[22]), std::stof(tokens[23]));
 
 			dfWall* wall = new dfWall(left, right, adjoint, mirror);
 			wall->m_tex[DFWALL_TEXTURE_BOTTOM] = bottom;
 			wall->m_tex[DFWALL_TEXTURE_MID] = mid;
 			wall->m_tex[DFWALL_TEXTURE_TOP] = top;
+			wall->m_tex[DFWALL_TEXTURE_SIGN] = sign;
 
 			m_walls[currentWall++] = wall;
 		}
