@@ -1,4 +1,5 @@
 #include <glm/glm.hpp>
+#include <string>
 
 #define DFWALL_TEXTURE_TOP 0
 #define DFWALL_TEXTURE_MID 1

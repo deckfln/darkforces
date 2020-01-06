@@ -319,6 +319,8 @@ void dfSuperSector::buildWalls(std::vector<dfTexture*>& textures, std::vector<df
 	int p = 0;
 
 	for (auto sector : m_sectors) {
+		sector->m_positionInSuperSector = m_vertices.size();
+
 		for (auto wall : sector->m_walls) {
 			if (wall->m_adjoint < 0) {
 				// full wall

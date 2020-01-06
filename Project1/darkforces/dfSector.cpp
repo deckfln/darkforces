@@ -86,7 +86,7 @@ dfSector::dfSector(std::ifstream& infile)
 			m_vertices.resize(nbVertices);
 		}
 		else if (tokens[0] == "X:") {
-			float x  = -std::stof(tokens[1]);
+			float x = -std::stof(tokens[1]);
 			float z = std::stof(tokens[3]);
 
 			m_vertices[currentVertice++] = glm::vec2(x, z);
@@ -122,6 +122,38 @@ dfSector::dfSector(std::ifstream& infile)
 	}
 
 	m_boundingBox = fwAABBox(min_x, max_x, min_y, max_y, m_floorAltitude, m_ceilingAltitude);
+}
+
+/**
+ * Add a trigger to the sector. Create a boundingbox to detect the trigger
+ */
+void dfSector::addTrigger(dfLogicTrigger* trigger)
+{
+	unsigned int wallID = trigger->wall();
+
+	if (wallID < m_walls.size()) {
+		// create a bounding box for the trigger. Based off the wall
+		dfWall* wall = m_walls[wallID];
+
+		trigger->boundingBox(
+			m_vertices[wall->m_left], m_vertices[wall->m_right],
+			m_floorAltitude, m_ceilingAltitude
+			);
+
+		m_triggers.push_back(trigger);
+	}
+}
+
+/**
+ * Check all triggers to find if one collide with the source box
+ */
+void dfSector::testTriggers(fwAABBox& box)
+{
+	for (auto trigger : m_triggers) {
+		if (trigger->collide(box)) {
+			trigger->activate();
+		}
+	}
 }
 
 /**

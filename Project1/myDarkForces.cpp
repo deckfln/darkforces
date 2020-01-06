@@ -63,7 +63,7 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 	fwMaterialBasic* basic = new fwMaterialBasic(white);
 	fwMesh* fLight = new fwMesh(geometry, basic);
 
-	m_level = new dfLevel("data/secbase.lev");
+	m_level = new dfLevel("data/secbase");
 	dfCollision* m_collision = new dfCollision();
 	m_collision->bind(m_level);
 	m_control->bind(m_collision);

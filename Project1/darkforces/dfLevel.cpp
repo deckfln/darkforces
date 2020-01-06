@@ -11,7 +11,7 @@
 
 dfLevel::dfLevel(std::string file)
 {
-	std::ifstream infile(ROOT_FOLDER + "/" + file);
+	std::ifstream infile(ROOT_FOLDER + "/" + file + ".lev");
 	std::string line, dump;
 
 	while (std::getline(infile, line))
@@ -22,15 +22,7 @@ dfLevel::dfLevel(std::string file)
 		}
 
 		// per token
-		std::vector <std::string> tokens;
-
-		std::stringstream check1(line);
-		while (std::getline(check1, dump, ' '))
-		{
-			if (dump.length() > 0) {
-				tokens.push_back(dump);
-			}
-		}
+		std::vector <std::string> tokens = dfParseTokens(line);
 
 		if (tokens[0] == "LEV") {
 			m_level = tokens[1];
@@ -59,6 +51,7 @@ dfLevel::dfLevel(std::string file)
 
 			// record the sector in the global list
 			m_sectors[nSector] = sector;
+			m_hashSectors[sector->m_name] = sector;
 		}
 	}
 	infile.close();
@@ -66,6 +59,30 @@ dfLevel::dfLevel(std::string file)
 	buildAtlasMap();	// load textures in a megatexture
 	spacePartitioning();// partion of space for quick collision
 	buildGeometry();	// build the geometry of each super sectors
+
+	// load and ditribute the INF file
+	m_inf = new dfParseINF(file);
+
+	// bind the sectors to the elevator logic
+	std::map <std::string, dfLogicElevator*> hashElevators;
+
+	for (auto elevator: m_inf->m_elevators) {
+		dfSector* sector = m_hashSectors[elevator->sector()];
+		if (sector) {
+			elevator->sector(sector);
+			hashElevators[elevator->sector()] = elevator;
+		}
+	}
+
+	// bind the sector walls to the elevator logic
+	for (auto trigger: m_inf->m_triggers) {
+		dfSector* sector = m_hashSectors[trigger->sector()];
+		dfLogicElevator* client = hashElevators[trigger->client()];
+		if (sector) {
+			trigger->evelator(client);
+			sector->addTrigger(trigger);
+		}
+	}
 }
 
 /***
@@ -395,6 +412,9 @@ dfLevel::~dfLevel()
 	for (auto texture : m_textures) {
 		delete texture;
 	}
-	//delete m_megatexture;
+	delete m_megatexture;
 	delete m_fwtextures;
+	delete m_inf;
+	delete m_shader_idx;
+	delete m_material;
 }

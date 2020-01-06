@@ -7,8 +7,12 @@
 #include "../framework/fwAABBox.h"
 #include "../framework/math/fwSphere.h"
 
+#include "dfLogicTrigger.h"
+
 class dfSector
 {
+	std::list <dfLogicTrigger*> m_triggers;
+
 public:
 	fwAABBox m_boundingBox;
 
@@ -21,11 +25,18 @@ public:
 	glm::vec3 m_floorTexture;
 	glm::vec3 m_ceilingTexture;
 
+	// local data in space world
 	std::vector <dfWall*> m_walls;
 	std::vector <glm::vec2> m_vertices;
 	
+	// same data but in the supersector (opengl space)
+	int m_positionInSuperSector = 0;	// index of the sector vertices in the supersector data
+
 	dfSector(std::ifstream& infile);
+	void addTrigger(dfLogicTrigger* trigger);
+	void testTriggers(fwAABBox& box);
 	bool inAABBox(glm::vec3& position) { return m_boundingBox.inside(position); };
+
 	bool isPointInside(glm::vec3& position);
 	float boundingBoxSurface(void);
 	~dfSector();

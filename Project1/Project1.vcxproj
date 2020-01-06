@@ -127,6 +127,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="darkforces\dfCollision.cpp" />
+    <ClCompile Include="darkforces\dfLogicTrigger.cpp" />
+    <ClCompile Include="darkforces\dfParseINF.cpp" />
     <ClCompile Include="darkforces\dfLevel.cpp" />
     <ClCompile Include="darkforces\dfSector.cpp" />
     <ClCompile Include="darkforces\dfSuperSector.cpp" />
@@ -214,6 +216,8 @@
   <ItemGroup>
     <ClInclude Include="config.h" />
     <ClInclude Include="darkforces\dfCollision.h" />
+    <ClInclude Include="darkforces\dfLogicTrigger.h" />
+    <ClInclude Include="darkforces\dfParseINF.h" />
     <ClInclude Include="darkforces\dfLevel.h" />
     <ClInclude Include="darkforces\dfSector.h" />
     <ClInclude Include="darkforces\dfSuperSector.h" />

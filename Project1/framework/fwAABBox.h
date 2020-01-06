@@ -11,6 +11,7 @@ public:
 	fwAABBox();
 	fwAABBox(float, float, float, float, float, float);
 	bool inside(glm::vec3& position);
+	bool intersect(fwAABBox& box);
 	void extend(fwAABBox& box);
 	float surface(void);
 	float volume(void);

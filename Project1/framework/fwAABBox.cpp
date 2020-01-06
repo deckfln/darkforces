@@ -25,6 +25,17 @@ bool fwAABBox::inside(glm::vec3& position)
 		position.z >= m_z && position.z <= m_z1);
 }
 
+/**
+ * test if the 2 boxes intesect
+ */
+bool fwAABBox::intersect(fwAABBox& box)
+{
+	// using 6 splitting planes to rule out intersections.
+	return (box.m_x1 < m_x || box.m_x > m_x1 ||
+		box.m_y1 < m_y || box.m_y > m_y1 ||
+		box.m_z1 < m_z || box.m_z > m_z1) ? false : true;
+}
+
 void fwAABBox::extend(fwAABBox& box)
 {
 	if (m_x > box.m_x) m_x = box.m_x;

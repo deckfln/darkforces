@@ -2,6 +2,7 @@
 #include <string>
 #include <vector>
 #include <list>
+#include <map>
 
 #include "../framework/fwAABBox.h"
 #include "../framework/fwCamera.h"
@@ -11,6 +12,7 @@
 #include "dfSector.h"
 #include "dfSuperSector.h"
 #include "dfTexture.h"
+#include "dfParseINF.h"
 
 /**
  *
@@ -23,10 +25,12 @@ class dfLevel
 	std::vector<dfTexture *> m_textures;		// all textures of the level
 	std::list<dfSuperSector *> m_supersectors;	// space partioning of sectors
 
+	std::map<std::string, dfSector*> m_hashSectors;		// dictionnaries of sectors
+
 	int m_currentTexture = 0;
 
 	unsigned char* m_megatexture = nullptr;		// raw data 64x64, 64x128, 64x256, 64x512
-	fwTexture* m_fwtextures;					//fwTexture for the megatextures
+	fwTexture* m_fwtextures;					// fwTexture for the megatextures
 	std::vector<glm::vec4> m_megatexture_idx;	// rg = texture start  ba = texture size
 	fwUniform* m_shader_idx = nullptr;
 	
@@ -34,6 +38,8 @@ class dfLevel
 
 	dfSector* m_lastSector = nullptr;			// cached sector from the last findSector
 	dfSuperSector* m_lastSuperSector = nullptr;	// cached super sector from the last findSector
+
+	dfParseINF* m_inf = nullptr;				// level logic retrieved from the INF file
 
 	void loadBitmaps(std::string file);
 	void buildAtlasMap(void);
