@@ -22,9 +22,16 @@ public:
 	int m_id = -1;
 	int m_layer = -1;
 	float m_ambient = 0;
+
+	// current values
 	float m_floorAltitude = 0;
 	float m_ceilingAltitude = 0;
+
+	// original values
+	float m_originalFloor;
+	float m_originalceiling;
 	float m_height = 0;				// height of the sector
+
 	glm::vec3 m_floorTexture;
 	glm::vec3 m_ceilingTexture;
 
@@ -43,7 +50,9 @@ public:
 	float ceiling(void) { return m_ceilingAltitude; };
 	bool isPointInside(glm::vec3& position);
 	float boundingBoxSurface(void);
-	void setCeilingAltitude(float altitude);
+	void setAltitude(bool floor, float altitude);
+	float originalFloor(void) { return m_originalFloor; };
+	float originalCeiling(void) { return m_originalceiling; };
 	void parent(dfSuperSector* parent) { m_super = parent; };
 	~dfSector();
 };

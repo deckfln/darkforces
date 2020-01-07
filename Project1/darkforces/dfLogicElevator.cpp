@@ -13,12 +13,7 @@ dfLogicElevator::dfLogicElevator(std::string& kind, std::string& sector):
  */
 void dfLogicElevator::addStop(dfLogicStop* stop)
 {
-	if (stop->isTimeBased()) {
-		m_timeStops.push_back(stop);
-	}
-	else {
-		m_tokenSstops[stop->action()] = stop;
-	}
+	m_stops.push_back(stop);
 }
 
 /**
@@ -26,18 +21,29 @@ void dfLogicElevator::addStop(dfLogicStop* stop)
  */
 void dfLogicElevator::init(void)
 {
-	dfLogicStop* stop = m_tokenSstops["hold"];
+	dfLogicStop* stop = m_stops[0];
 	if (stop) {
-		m_pSector->setCeilingAltitude(stop->z_position());
+		float altitude = 0;
+		
+		if (m_pSector) {
+			m_pSector->originalFloor();	// for relative stop
+		}
+
+		if (m_class == "inv") {
+			m_pSector->setAltitude(false, stop->z_position(altitude));
+		}
+		else if(m_class == "basic") {
+			m_pSector->setAltitude(true, stop->z_position(altitude));
+		}
+		else {
+			std::cerr << "dfLogicElevator unknown class " << m_class << std::endl;
+		}
 	}
 }
 
 dfLogicElevator::~dfLogicElevator(void)
 {
-	for (auto stop : m_timeStops) {
+	for (auto stop : m_stops) {
 		delete stop;
-	}
-	for (auto stop : m_tokenSstops) {
-		delete stop.second;
 	}
 }

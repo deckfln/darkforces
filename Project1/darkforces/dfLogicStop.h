@@ -35,5 +35,5 @@ public:
 	void action(std::string& action) { m_flag |= 16; m_action = action; };
 	std::string action(void) { return m_action; };
 	bool isTimeBased(void) { return (m_flag | 8) == 8; };
-	float z_position(void);
+	float z_position(float);
 };

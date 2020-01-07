@@ -2,7 +2,10 @@
 
 #include "dfSector.h"
 
-float dfLogicStop::z_position(void)
+/**
+ * return a new position based on the source position and the refernce
+ */
+float dfLogicStop::z_position(float altitude)
 {
 	switch (m_flag) {
 		case 9:
@@ -10,7 +13,7 @@ float dfLogicStop::z_position(void)
 			return m_absolute;
 		case 10:
 		case 18:
-			return m_relatiave;
+			return altitude + m_relatiave;
 		case 12:
 		case 20:
 			return m_pSector->ceiling();

@@ -27,7 +27,7 @@ bool dfLogicTrigger::collide(fwAABBox& box)
 
 void dfLogicTrigger::activate(void)
 {
-	if (m_pClient) {
-		m_pClient->trigger(m_class);
+	for (auto pClient: m_pClients) {
+		pClient->trigger(m_class);
 	}
 }

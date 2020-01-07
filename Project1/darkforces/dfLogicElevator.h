@@ -1,7 +1,7 @@
 #pragma once
 
 #include <string>
-#include <map>
+#include <vector>
 
 #include "dfLogicStop.h"
 
@@ -9,8 +9,7 @@ class dfLogicElevator {
 	std::string m_class;
 	int m_speed = 0;
 	int m_eventMask = 0;
-	std::map<std::string, dfLogicStop*> m_tokenSstops;	// token based positions
-	std::list<dfLogicStop*> m_timeStops;				// time based positions
+	std::vector<dfLogicStop*> m_stops;	// token based positions
 
 	std::string m_sector;	// sector that is an evelator
 	dfSector* m_pSector = nullptr;

@@ -60,7 +60,7 @@ dfSector::dfSector(std::ifstream& infile)
 				);
 			}
 			else if (tokens[1] == "ALTITUDE") {
-				m_floorAltitude = -std::stof(tokens[2]);
+				m_originalFloor = m_floorAltitude = -std::stof(tokens[2]);
 			}
 		}
 		else if (tokens[0] == "CEILING") {
@@ -72,7 +72,7 @@ dfSector::dfSector(std::ifstream& infile)
 				);
 			}
 			else if (tokens[1] == "ALTITUDE") {
-				m_ceilingAltitude = -std::stof(tokens[2]);
+				m_originalceiling = m_ceilingAltitude = -std::stof(tokens[2]);
 			}
 		}
 		else if (tokens[0] == "SECOND") {
@@ -199,10 +199,16 @@ float dfSector::boundingBoxSurface(void)
 /**
  * Change the sector floor & ceiling altitudes IN the super-sector openGL vertices
  */
-void dfSector::setCeilingAltitude(float altitude)
+void dfSector::setAltitude(bool floor, float altitude)
 {
-	m_ceilingAltitude = altitude;
-	m_floorAltitude = altitude - m_height;
+	if (floor) {
+		m_ceilingAltitude = altitude + m_height;
+		m_floorAltitude = altitude;
+	}
+	else {
+		m_ceilingAltitude = altitude;
+		m_floorAltitude = altitude - m_height;
+	}
 
 	if (m_super) {
 		m_super->updateSectorVertices(m_id);	// update the sector
