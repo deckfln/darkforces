@@ -102,9 +102,6 @@ void fwApp::processInput(GLFWwindow *window)
 {
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, true);
-
-	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
-		this->keypress();
 }
 
 void fwApp::resizeEvent(int _width, int _height)

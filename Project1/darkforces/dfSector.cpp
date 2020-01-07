@@ -5,6 +5,8 @@
 #include <iostream>
 #include <glm/glm.hpp>
 
+#include "dfSuperSector.h"
+
 dfSector::dfSector(std::ifstream& infile)
 {
 	int nbVertices;
@@ -118,9 +120,14 @@ dfSector::dfSector(std::ifstream& infile)
 			wall->m_tex[DFWALL_TEXTURE_SIGN] = sign;
 
 			m_walls[currentWall++] = wall;
+
+			if (adjoint >= 0) {
+				m_portals.push_back(adjoint);
+			}
 		}
 	}
 
+	m_height = m_ceilingAltitude - m_floorAltitude;
 	m_boundingBox = fwAABBox(min_x, max_x, min_y, max_y, m_floorAltitude, m_ceilingAltitude);
 }
 
@@ -187,6 +194,24 @@ bool dfSector::isPointInside(glm::vec3 &p)
 float dfSector::boundingBoxSurface(void)
 {
 	return m_boundingBox.surface();
+}
+
+/**
+ * Change the sector floor & ceiling altitudes IN the super-sector openGL vertices
+ */
+void dfSector::setCeilingAltitude(float altitude)
+{
+	m_ceilingAltitude = altitude;
+	m_floorAltitude = altitude - m_height;
+
+	if (m_super) {
+		m_super->updateSectorVertices(m_id);	// update the sector
+
+		// update the connected portals
+		for (auto portal : m_portals) {
+			m_super->updateSectorVertices(portal);
+		}
+	}
 }
 
 dfSector::~dfSector()

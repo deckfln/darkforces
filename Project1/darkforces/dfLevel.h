@@ -46,10 +46,14 @@ class dfLevel
 	void spacePartitioning(void);
 	void buildGeometry(void);
 	dfSuperSector* findSuperSector(glm::vec3& position);
+	void initElevators(void);
 
 public:
 	dfLevel(std::string name);
 	dfSector* findSector(glm::vec3& position);
+	void testSwitch(fwAABBox& player);
 	void draw(fwCamera* camera, fwScene* scene);
+	std::vector<dfSector*>& sectors(void) { return m_sectors; };
+	std::vector<dfTexture*>& textures(void) { return m_textures; };
 	~dfLevel();
 };

@@ -3,7 +3,7 @@
 #include <string>
 #include <glm/vec2.hpp>
 #include "../framework/fwAABBox.h"
-#include "dfLogicStop.h"
+#include "dfLogicElevator.h"
 
 class dfSector;
 

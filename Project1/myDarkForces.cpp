@@ -5,17 +5,13 @@
 #include <math.h>
 
 #include "config.h"
-#include "include/stb_image.h"
-#include "framework/lights/fwDirectionLight.h"
-#include "framework/fwMaterialDiffuse.h"
 #include "framework/fwMaterialBasic.h"
 #include "framework/fwMesh.h"
-#include "framework/fwInstancedMesh.h"
 #include "framework/geometries/fwBoxGeometry.h"
-#include "framework/geometries/fwPlaneGeometry.h"
-#include "framework/fwParticles.h"
-
-#include "framework/Loader.h"
+#include "framework/lights/fwPointLight.h"
+#include "framework/controls/fwControlThirdPerson.h"
+#include "framework/fwSkybox.h"
+#include "framework/fwAABBox.h"
 
 #include "darkforces/dfLevel.h"
 #include "darkforces/dfCollision.h"
@@ -51,9 +47,9 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 		glm::vec3(0.8, 0.8, 0.8),	// Color
 		glm::vec3(0.9, 0.9, 0.9),	// Diffuse
 		glm::vec3(1.0, 1.0, 1.0),	// Specular
-		1.0,						// constant
-		0.09,						// linear
-		0.032						// quadratic
+		1.0f,						// constant
+		0.09f,						// linear
+		0.032f						// quadratic
 	);
 	m_light->set_name("light");
 	m_light->castShadow(true);
@@ -146,6 +142,14 @@ glTexture* myDarkForces::draw(time_t delta, fwRenderer* renderer)
 	lightPos.y = 2;
 	lightPos.z = cos(glfwGetTime() / 2) * radius;
 	m_light->translate(lightPos);
+
+	// create a player AA BoundingBox
+	glm::vec3 position = m_camera->get_position();
+	fwAABBox player(
+		position.x - 1, position.x + 1,
+		position.y - 1, position.y + 1,
+		position.z - 1, position.z + 1
+		);
 
 	// update visible level sectors
 	m_level->draw(m_camera, m_scene);

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -127,6 +127,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="darkforces\dfCollision.cpp" />
+    <ClCompile Include="darkforces\dfLogicElevator.cpp" />
+    <ClCompile Include="darkforces\dfLogicStop.cpp" />
     <ClCompile Include="darkforces\dfLogicTrigger.cpp" />
     <ClCompile Include="darkforces\dfParseINF.cpp" />
     <ClCompile Include="darkforces\dfLevel.cpp" />
@@ -216,6 +218,8 @@
   <ItemGroup>
     <ClInclude Include="config.h" />
     <ClInclude Include="darkforces\dfCollision.h" />
+    <ClInclude Include="darkforces\dfLogicElevator.h" />
+    <ClInclude Include="darkforces\dfLogicStop.h" />
     <ClInclude Include="darkforces\dfLogicTrigger.h" />
     <ClInclude Include="darkforces\dfParseINF.h" />
     <ClInclude Include="darkforces\dfLevel.h" />

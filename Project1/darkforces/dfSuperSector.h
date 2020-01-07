@@ -40,8 +40,12 @@ public:
  */
 static int nbSuperSectors = 0;
 
+class dfLevel;
+
 class dfSuperSector {
     int m_id = -1;
+    dfLevel* m_parent = nullptr;
+
     fwAABBox m_boundingBox;
     std::list <dfPortal> m_portals;
     std::list <dfSector*> m_sectors;
@@ -49,6 +53,7 @@ class dfSuperSector {
     std::vector <glm::vec3> m_vertices;		// level vertices
     std::vector <glm::vec2> m_uvs;			// UVs inside the source texture
     std::vector <float> m_textureID;			// TextureID inside the megatexture
+    std::map <int, glm::ivec3> m_sectorIndex;   // start of the sector vertices in the vertices buffer : x = start of walls, y = start of floors, z = #vertices on the floor. Ceiling vertices = y + z
 
     fwGeometry* m_geometry = nullptr;
     fwMesh* m_mesh = nullptr;
@@ -56,9 +61,13 @@ class dfSuperSector {
     bool m_visible = false;                 // supersector is visible on screen
     bool m_debugPortals = false;            // display the portal bounding sphere on screen
 
-    void buildWalls(std::vector<dfTexture*>& textures, std::vector<dfSector*>& sectors);
-    void buildFloor(std::vector<dfTexture*>& textures);
-    void addRectangle(dfSector* sector, dfWall* wall, float z, float z1, int texture, std::vector<dfTexture*>& textures);
+    void buildWalls(bool update, dfSector* sector, std::vector<dfTexture *>& textures, std::vector<dfSector*>& sectors);
+    void buildFloor(bool update, dfSector* sector, std::vector<dfTexture*>& textures);
+    void buildSigns(dfSector* sector, std::vector<dfTexture*>& textures, std::vector<dfSector*>& sectors);
+
+    void updateRectangle(int p, float x, float y, float z, float x1, float y1, float z1, float xoffset, float yoffset, float width, float height, float textureID);
+    int addRectangle(int start, dfSector* sector, dfWall* wall, float z, float z1, int texture, std::vector<dfTexture*>& textures);
+    void addSign(dfSector* sector, dfWall* wall, float z, float z1, int texture, std::vector<dfTexture*>& textures);
 
 public:
     dfSuperSector(dfSector* sector);
@@ -75,6 +84,8 @@ public:
     void checkPortals(fwCamera* camera, int zOrder);
     void visible(bool v) { m_visible = v; };
     bool visible(void) { return m_visible; };
+    void parent(dfLevel* parent);
     void add2scene(fwScene* scene);
+    void updateSectorVertices(int sectorID);
     ~dfSuperSector();
 };

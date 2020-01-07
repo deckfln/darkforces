@@ -8,6 +8,7 @@
 #include "../config.h"
 #include "../framework/geometries/fwPlaneGeometry.h"
 #include "../include/stb_image.h"
+#include "dfLogicElevator.h"
 
 dfLevel::dfLevel(std::string file)
 {
@@ -56,17 +57,13 @@ dfLevel::dfLevel(std::string file)
 	}
 	infile.close();
 
-	buildAtlasMap();	// load textures in a megatexture
-	spacePartitioning();// partion of space for quick collision
-	buildGeometry();	// build the geometry of each super sectors
-
 	// load and ditribute the INF file
 	m_inf = new dfParseINF(file);
 
 	// bind the sectors to the elevator logic
 	std::map <std::string, dfLogicElevator*> hashElevators;
 
-	for (auto elevator: m_inf->m_elevators) {
+	for (auto elevator : m_inf->m_elevators) {
 		dfSector* sector = m_hashSectors[elevator->sector()];
 		if (sector) {
 			elevator->sector(sector);
@@ -75,7 +72,7 @@ dfLevel::dfLevel(std::string file)
 	}
 
 	// bind the sector walls to the elevator logic
-	for (auto trigger: m_inf->m_triggers) {
+	for (auto trigger : m_inf->m_triggers) {
 		dfSector* sector = m_hashSectors[trigger->sector()];
 		dfLogicElevator* client = hashElevators[trigger->client()];
 		if (sector) {
@@ -83,6 +80,12 @@ dfLevel::dfLevel(std::string file)
 			sector->addTrigger(trigger);
 		}
 	}
+
+	buildAtlasMap();	// load textures in a megatexture
+	initElevators();	// move all elevators to position HOLD
+	spacePartitioning();// partion of space for quick collision
+	buildGeometry();	// build the geometry of each super sectors
+
 }
 
 /***
@@ -306,6 +309,11 @@ void dfLevel::spacePartitioning(void)
 		//delete smallest;
 		m_supersectors.pop_back();
 	}
+
+	// create a full hierarchy
+	for (auto ssector : m_supersectors) {
+		ssector->parent(this);
+	}
 }
 
 /**
@@ -326,6 +334,16 @@ dfSuperSector* dfLevel::findSuperSector(glm::vec3& position)
 	}
 
 	return nullptr;	// not here
+}
+
+/**
+ * init all elevators of the level to their HOLD position
+ */
+void dfLevel::initElevators(void)
+{
+	for (auto elevator : m_inf->m_elevators) {
+		elevator->init();
+	}
 }
 
 /**
@@ -370,6 +388,16 @@ dfSector* dfLevel::findSector(glm::vec3& position)
 	}
 
 	return nullptr;	// not here
+}
+
+/**
+ * Deal with the switch logic
+ */
+void dfLevel::testSwitch(fwAABBox& player)
+{
+	if (m_lastSector) {
+		m_lastSector->testTriggers(player);
+	}
 }
 
 /**

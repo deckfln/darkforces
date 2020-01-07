@@ -7,6 +7,7 @@
 #include "../config.h"
 #include "dfParseINF.h"
 #include "dfLogicStop.h"
+#include "dfLogicElevator.h"
 
 std::vector<std::string>& dfParseTokens(std::string& line)
 {
@@ -129,18 +130,19 @@ void dfParseINF::parseSector(std::ifstream& infile, std::string& sector)
 			// | hold elevator will remain at stop indefinitely 
 			// | terminate elevator will stay at the stop permanently 
 			// | complete mission will be complete when elev arrives at stop
-			long converted = strtol(tokens[1].c_str(), &p, 10);
+			const char* string = tokens[1].c_str();
+			float converted = strtof(string, &p);
 
 			if (tokens[1][0] == '@') {
-				stop->relative(std::stoi(tokens[1].substr(1)));
+				stop->relative(std::stof(tokens[1].substr(1)));
 			}
-			else if (*p) {
+			else if (p == string) {
 				// conversion failed because the input wasn't a number
 				stop->sector(tokens[1]);
 			}
 			else {
 				// use converted
-				stop->absolute(std::stoi(tokens[1]));
+				stop->absolute(converted);
 			}
 
 			// value 2
@@ -148,15 +150,16 @@ void dfParseINF::parseSector(std::ifstream& infile, std::string& sector)
 			// | hold elevator will remain at stop indefinitely 
 			// | terminate elevator will stay at the stop permanently 
 			// | complete mission will be complete when elev arrives at stop
-			converted = strtol(tokens[2].c_str(), &p, 10);
+			string = tokens[2].c_str();
+			converted = strtof(tokens[2].c_str(), &p);
 
-			if (*p) {
+			if (p == string) {
 				// conversion failed because the input wasn't a number
 				stop->action(tokens[2]);
 			}
 			else {
 				// use converted
-				stop->time(std::stoi(tokens[2]));
+				stop->time(converted);
 			}
 
 			if (elevator) {

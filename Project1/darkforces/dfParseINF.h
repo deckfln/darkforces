@@ -3,7 +3,7 @@
 #include <string>
 #include <list>
 
-#include "dfLogicStop.h"
+#include "dfLogicElevator.h"
 #include "dfLogicTrigger.h"
 
 std::vector<std::string>& dfParseTokens(std::string& line);
