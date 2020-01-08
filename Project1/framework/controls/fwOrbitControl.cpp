@@ -7,7 +7,7 @@ fwOrbitControl::fwOrbitControl(fwCamera *_camera, float _radius, glm::vec3 lookA
 	m_radius(_radius),
 	m_lookAt(lookAt)
 {
-	update();
+	update(0);
 }
 
 void fwOrbitControl::_mouseButton(int action)
@@ -43,7 +43,7 @@ void fwOrbitControl::_mouseMove(float xdir, float ydir)
 		// and project screen to space
 		glm::vec4 c((m_currentX - m_startx) * 50, (m_currentY - m_starty) * 50, -1.0, 1.0);
 		c = m_inverseCamera * c;
-		c.w = 1.0 / c.w;
+		c.w = 1.0f / c.w;
 		c.x *= c.w;
 		c.y *= c.w;
 		c.z *= c.w;

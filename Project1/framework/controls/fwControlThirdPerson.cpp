@@ -47,31 +47,30 @@ void fwControlThirdPerson::_mouseMove(float xdir, float ydir)
 /**
  * deal with movement keys
  */
-void fwControlThirdPerson::checkKeys(void)
+void fwControlThirdPerson::checkKeys(time_t delta)
 {
 	if (m_currentKeys[GLFW_KEY_UP]) {
-		m_position += m_direction;
+		m_position += m_direction * (m_speed * delta);
 		updateCamera();
 	}
 	if (m_currentKeys[GLFW_KEY_DOWN]) {
-		m_position -= m_direction;
+		m_position -= m_direction * (m_speed * delta);
 		updateCamera();
 	}
 	if (m_currentKeys[GLFW_KEY_LEFT]) {
-		m_phi -= 0.1;
+		m_phi -= 0.003 * delta;
 		updateDirection();
 	}
 	if (m_currentKeys[GLFW_KEY_RIGHT]) {
-		m_phi += 0.1;
+		m_phi += 0.003 * delta;
 		updateDirection();
 	}
 }
 
 void fwControlThirdPerson::updateDirection(void)
 {
-	//TODO the direction is normalized, speed should be handled somewhere else
-	m_direction.x = cos(m_phi) / 3;
-	m_direction.z = sin(m_phi) / 3;
+	m_direction.x = (float)cos(m_phi);
+	m_direction.z = (float)sin(m_phi);
 	updateCamera();
 }
 
@@ -83,7 +82,7 @@ void fwControlThirdPerson::updateCamera(void)
 	// ask the collision engine what is the altitude of the target position
 	if (m_collision) {
 		float z = m_collision->ground(m_position);
-		m_position.y = z + 0.5;	// TODO : use the actor height
+		m_position.y = z + 0.5f;	// TODO : use the actor height
 	}
 
 	glm::vec3 lookAt(
@@ -101,10 +100,10 @@ void fwControlThirdPerson::updateCamera(void)
 /**
  * auto update the controler if autoupdated
  */
-void fwControlThirdPerson::update(void)
+void fwControlThirdPerson::update(time_t delta)
 {
 	if (m_autoupdate) {
-		checkKeys();
+		checkKeys(delta);
 	}
 }
 

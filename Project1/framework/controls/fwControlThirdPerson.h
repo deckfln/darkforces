@@ -18,16 +18,17 @@ class fwControlThirdPerson : public fwControl
 	double m_phi = 0;
 	double m_theta_start = 0;
 	double m_phi_start = 0;
+	float m_speed = 0.005;
 
 	void _mouseMove(float xdir, float ydir);
 	void _mouseButton(int action);
 	void updateDirection(void);
-	void checkKeys(void);
+	void checkKeys(time_t delta);
 	void updateCamera(void);
 
 public:
 	fwControlThirdPerson(fwCamera *, glm::vec3 position, glm::vec3 direction);
-	void update(void);
+	void update(time_t delta);
 	void keyEvent(int key, int scancode, int action);
 	~fwControlThirdPerson();
 };

@@ -138,9 +138,9 @@ glTexture* myDarkForces::draw(time_t delta, fwRenderer* renderer)
 	glm::vec3 lightPos;
 
 	float radius = 4;
-	lightPos.x = sin(glfwGetTime() / 2) * radius;
+	lightPos.x = sin(glfwGetTime() / 2.0f) * radius;
 	lightPos.y = 2;
-	lightPos.z = cos(glfwGetTime() / 2) * radius;
+	lightPos.z = cos(glfwGetTime() / 2.0f) * radius;
 	m_light->translate(lightPos);
 
 	// create a player AA BoundingBox

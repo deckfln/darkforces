@@ -110,8 +110,8 @@ void fwApp::resizeEvent(int _width, int _height)
 	height = _height;
 
 	glm::vec2 cm = renderer->size();
-	m_pixelsize.x = 1.0 / cm.x;
-	m_pixelsize.y = 1.0 / cm.y;
+	m_pixelsize.x = 1.0f / cm.x;
+	m_pixelsize.y = 1.0f / cm.y;
 
 	SCR_WIDTH = width;
 	SCR_HEIGHT = height;
@@ -187,7 +187,7 @@ void fwApp::run(void)
 		// -----
 		processInput(window);
 		if (m_control)
-			m_control->update();	// let the controler update itself if needed
+			m_control->update(last_frame_time);	// let the controler update itself if needed
 
 		glEnable(GL_CULL_FACE);
 		//glCullFace(GL_FRONT);

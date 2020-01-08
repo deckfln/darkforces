@@ -5,7 +5,7 @@
 fwControl::fwControl(fwCamera* _camera) :
 	camera(_camera)
 {
-	update();
+	update(0);
 }
 
 void fwControl::mouseButton(int button, int action)

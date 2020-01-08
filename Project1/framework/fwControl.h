@@ -41,7 +41,7 @@ public:
 	void mouseScroll(double xoffset, double yoffset);
 	void keyEvent(int key, int scancode, int action);
 	void bind(fwCollision* collision) { m_collision = collision; };
-	virtual void update(void) {};
+	virtual void update(time_t) {};
 	bool isKeyPressed(int key);
 	~fwControl();
 };

@@ -50,9 +50,9 @@ myApp::myApp(std::string name, int width, int height) :
 		glm::vec3(0.8, 0.8, 0.8),	// Color
 		glm::vec3(0.9, 0.9, 0.9),	// Diffuse
 		glm::vec3(1.0, 1.0, 1.0),	// Specular
-		1.0,						// constant
-		0.09,						// linear
-		0.032						// quadratic
+		1.0f,						// constant
+		0.09f,						// linear
+		0.032f						// quadratic
 	);
 	m_light->set_name("light");
 	m_light->castShadow(true);
@@ -219,9 +219,9 @@ glTexture* myApp::draw(time_t delta, fwRenderer* renderer)
 	glm::vec3 lightPos;
 
 	float radius = 4;
-	lightPos.x = sin(glfwGetTime() / 2) * radius;
+	lightPos.x = sin(glfwGetTime() / 2.0f) * radius;
 	lightPos.y = 2;
-	lightPos.z = cos(glfwGetTime() / 2) * radius;
+	lightPos.z = cos(glfwGetTime() / 2.0f) * radius;
 	m_light->translate(lightPos);
 
 	/*
@@ -236,9 +236,9 @@ glTexture* myApp::draw(time_t delta, fwRenderer* renderer)
 	m_stormtrooper->update(delta);
 
 	radius = 6;
-	lightPos.x = sin(glfwGetTime() / 2) * radius;
+	lightPos.x = sin(glfwGetTime() / 2.0f) * radius;
 	lightPos.y = 5;
-	lightPos.z = cos(glfwGetTime() / 2) * radius;
+	lightPos.z = cos(glfwGetTime() / 2.0f) * radius;
 	m_particles->translate(lightPos);
 
 	m_particles->update(delta);
