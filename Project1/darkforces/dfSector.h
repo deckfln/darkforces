@@ -50,9 +50,11 @@ public:
 	float ceiling(void) { return m_ceilingAltitude; };
 	bool isPointInside(glm::vec3& position);
 	float boundingBoxSurface(void);
-	void setAltitude(bool floor, float altitude);
+	void setFloor(float floor);
+	float moveFloor(float delta);
 	float originalFloor(void) { return m_originalFloor; };
 	float originalCeiling(void) { return m_originalceiling; };
 	void parent(dfSuperSector* parent) { m_super = parent; };
+	float height(void) { return m_height; };
 	~dfSector();
 };

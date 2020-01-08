@@ -156,8 +156,11 @@ void dfSector::addTrigger(dfLogicTrigger* trigger)
  */
 void dfSector::testTriggers(fwAABBox& box)
 {
+	// convert from opengl space to level space
+	fwAABBox mybox( box.m_x * 10, box.m_x1 * 10, box.m_z * 10, box.m_z1 * 10, box.m_y * 10, box.m_y1 * 10);
+
 	for (auto trigger : m_triggers) {
-		if (trigger->collide(box)) {
+		if (trigger->collide(mybox)) {
 			trigger->activate();
 		}
 	}
@@ -199,16 +202,10 @@ float dfSector::boundingBoxSurface(void)
 /**
  * Change the sector floor & ceiling altitudes IN the super-sector openGL vertices
  */
-void dfSector::setAltitude(bool floor, float altitude)
+void dfSector::setFloor(float floor)
 {
-	if (floor) {
-		m_ceilingAltitude = altitude + m_height;
-		m_floorAltitude = altitude;
-	}
-	else {
-		m_ceilingAltitude = altitude;
-		m_floorAltitude = altitude - m_height;
-	}
+	m_ceilingAltitude = floor + m_height;
+	m_floorAltitude = floor;
 
 	if (m_super) {
 		m_super->updateSectorVertices(m_id);	// update the sector
@@ -218,6 +215,28 @@ void dfSector::setAltitude(bool floor, float altitude)
 			m_super->updateSectorVertices(portal);
 		}
 	}
+}
+
+/**
+ * Move the sector up or down. return the new floor altitude
+ */
+float dfSector::moveFloor(float delta)
+{
+	m_floorAltitude += delta;
+	m_ceilingAltitude += delta;
+
+	std::cout << m_floorAltitude << " " << m_ceilingAltitude << std::endl;
+
+	if (m_super) {
+		m_super->updateSectorVertices(m_id);	// update the sector
+
+		// update the connected portals
+		for (auto portal : m_portals) {
+			m_super->updateSectorVertices(portal);
+		}
+	}
+
+	return m_floorAltitude;
 }
 
 dfSector::~dfSector()

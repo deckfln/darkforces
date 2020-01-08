@@ -19,7 +19,7 @@ class dfLogicStop {
 	std::string m_sector;	// based on sector XXX
 	dfSector *m_pSector;	// based on sector XXX
 
-	float m_time = 0;			// time to stop the elevator a position (absolute or relative or sector)
+	float m_time = 0;			// time (millisecond) to stop the elevator a position (absolute or relative or sector)
 
 	// [hold elevator] will remain at stop indefinitely 
 	// [terminate] elevator will stay at the stop permanently 
@@ -31,9 +31,10 @@ public:
 	void sector(std::string& sector) { m_flag |= 4; m_sector = sector; };
 	std::string& sector(void) { return m_sector; };
 	void sector(dfSector* pSector) { m_pSector = pSector; };
-	void time(float time) { m_flag |= 8; m_time = time; };
+	void time(float time) { m_flag |= 8; m_time = time * 1000; };
+	float time(void) { return m_time; };
 	void action(std::string& action) { m_flag |= 16; m_action = action; };
-	std::string action(void) { return m_action; };
-	bool isTimeBased(void) { return (m_flag | 8) == 8; };
+	std::string& action(void) { return m_action; };
+	bool isTimeBased(void);
 	float z_position(float);
 };

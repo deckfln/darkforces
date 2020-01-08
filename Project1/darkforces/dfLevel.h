@@ -13,6 +13,7 @@
 #include "dfSuperSector.h"
 #include "dfTexture.h"
 #include "dfParseINF.h"
+#include "dfLogicElevator.h"
 
 /**
  *
@@ -40,6 +41,7 @@ class dfLevel
 	dfSuperSector* m_lastSuperSector = nullptr;	// cached super sector from the last findSector
 
 	dfParseINF* m_inf = nullptr;				// level logic retrieved from the INF file
+	std::list<dfLogicElevator*> m_activeElevators;// elevators currently moving on the level
 
 	void loadBitmaps(std::string file);
 	void buildAtlasMap(void);
@@ -55,5 +57,8 @@ public:
 	void draw(fwCamera* camera, fwScene* scene);
 	std::vector<dfSector*>& sectors(void) { return m_sectors; };
 	std::vector<dfTexture*>& textures(void) { return m_textures; };
+	void activateElevator(dfLogicElevator* elevator) { m_activeElevators.push_back(elevator); };
+	void deactivateElevator(dfLogicElevator* elevator) { m_activeElevators.remove(elevator); };
+	void animate(time_t delta);
 	~dfLevel();
 };

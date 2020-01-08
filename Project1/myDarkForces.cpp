@@ -151,6 +151,13 @@ glTexture* myDarkForces::draw(time_t delta, fwRenderer* renderer)
 		position.z - 1, position.z + 1
 		);
 
+	if (m_control->isKeyPressed(GLFW_KEY_SPACE)) {
+		m_level->testSwitch(player);
+	}
+
+	// animate the level
+	m_level->animate(delta);
+
 	// update visible level sectors
 	m_level->draw(m_camera, m_scene);
 

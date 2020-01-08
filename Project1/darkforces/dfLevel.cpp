@@ -61,9 +61,12 @@ dfLevel::dfLevel(std::string file)
 	m_inf = new dfParseINF(file);
 
 	// bind the sectors to the elevator logic
+	// bind the evelator logic to the level
 	std::map <std::string, dfLogicElevator*> hashElevators;
 
 	for (auto elevator : m_inf->m_elevators) {
+		elevator->parent(this);
+
 		dfSector* sector = m_hashSectors[elevator->sector()];
 		if (sector) {
 			elevator->sector(sector);
@@ -90,8 +93,8 @@ dfLevel::dfLevel(std::string file)
 	}
 
 	buildAtlasMap();	// load textures in a megatexture
-	initElevators();	// move all elevators to position HOLD
 	spacePartitioning();// partion of space for quick collision
+	initElevators();	// move all elevators to position HOLD
 	buildGeometry();	// build the geometry of each super sectors
 
 }
@@ -350,7 +353,7 @@ dfSuperSector* dfLevel::findSuperSector(glm::vec3& position)
 void dfLevel::initElevators(void)
 {
 	for (auto elevator : m_inf->m_elevators) {
-		elevator->init();
+		elevator->init(0);
 	}
 }
 
@@ -438,6 +441,21 @@ void dfLevel::draw(fwCamera* camera, fwScene* scene)
 	for (auto ssector : m_supersectors) {
 		ssector->add2scene(scene);
 	}
+}
+
+/**
+ * animate all activate elevators
+ */
+void dfLevel::animate(time_t delta)
+{
+	m_activeElevators.remove_if([delta](auto elevator) {return elevator->animate(delta);  });
+	/*
+	for (auto elevator : m_activeElevators) {
+		if (!elevator->animate(delta)) {
+			m_activeElevators.remove(elevator);
+		}
+	}
+	*/
 }
 
 dfLevel::~dfLevel()

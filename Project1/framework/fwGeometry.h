@@ -32,6 +32,7 @@ public:
 
 	void updateVertices(int offset = 0, int size = -1);
 	void updateAttribute(const std::string &name, int offset=0, int size = -1);
+	void update(void);
 
 	void enable_attributes(glProgram *program);
 

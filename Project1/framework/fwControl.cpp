@@ -101,6 +101,11 @@ void fwControl::keyEvent(int key, int scancode, int action)
 	}
 }
 
+bool fwControl::isKeyPressed(int key)
+{
+	return m_currentKeys[key];
+}
+
 fwControl::~fwControl()
 {
 

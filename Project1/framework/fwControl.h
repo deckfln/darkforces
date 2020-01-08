@@ -42,5 +42,6 @@ public:
 	void keyEvent(int key, int scancode, int action);
 	void bind(fwCollision* collision) { m_collision = collision; };
 	virtual void update(void) {};
+	bool isKeyPressed(int key);
 	~fwControl();
 };

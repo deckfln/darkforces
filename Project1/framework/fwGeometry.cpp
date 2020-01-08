@@ -88,6 +88,18 @@ void fwGeometry::updateAttribute(const std::string& name, int offset, int size)
 	}
 }
 
+/**
+ * Update all attributes
+ */
+void fwGeometry::update(void)
+{
+	vertices->update();
+
+	for (auto attribute : attributes) {
+		attribute.second->update();
+	}
+}
+
 int fwGeometry::get_count(void)
 {
 	return count;

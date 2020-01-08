@@ -409,14 +409,15 @@ void dfSuperSector::buildFloor(bool update, dfSector* sector, std::vector<dfText
 		// ONLY update the vertices
 
 		glm::ivec3 indexes = m_sectorIndex[sector->m_id];
+		int nbvertices = indexes.z / 2;
 
 		int start = indexes.y;
-		for (auto i = 0; i < indexes.z; i++) {
+		for (auto i = 0; i < nbvertices; i++) {
 			m_vertices[start + i].y = sector->m_floorAltitude / 10.0f;
 		}
 
-		start = indexes.y + indexes.z;
-		for (auto i = 0; i < indexes.z; i++) {
+		start = indexes.y + nbvertices;
+		for (auto i = 0; i < nbvertices; i++) {
 			m_vertices[start + i].y = sector->m_ceilingAltitude/ 10.0f;
 		}
 
@@ -529,9 +530,8 @@ void dfSuperSector::buildGeometry(std::vector<dfSector*>& sectors, std::vector<d
 		buildWalls(false, sector, textures, sectors);
 
 		m_sectorIndex[sector->m_id].y = m_vertices.size();	// start of floor
-		m_sectorIndex[sector->m_id].y = m_vertices.size();	// start of floor
 		buildFloor(false, sector, textures);
-		m_sectorIndex[sector->m_id].z = (m_vertices.size() - m_sectorIndex[sector->m_id].z);	// number of vertices of floor
+		m_sectorIndex[sector->m_id].z = (m_vertices.size() - m_sectorIndex[sector->m_id].y);	// number of vertices of floor
 
 		buildSigns(sector, textures, sectors);
 	}
@@ -572,6 +572,8 @@ void dfSuperSector::updateSectorVertices(int sectorID)
 
 	buildWalls(true, sector, textures, sectors);
 	buildFloor(true, sector, textures);
+
+	m_geometry->update();
 }
 
 /**

@@ -5,6 +5,12 @@
 /**
  * return a new position based on the source position and the refernce
  */
+bool dfLogicStop::isTimeBased(void)
+{
+	int a = m_flag & 8;  
+	return a == 8;
+}
+
 float dfLogicStop::z_position(float altitude)
 {
 	switch (m_flag) {
