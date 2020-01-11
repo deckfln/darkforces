@@ -282,13 +282,15 @@ void dfSuperSector::addSign(dfSector* sector, dfWall* wall, float z, float z1, i
 		glm::vec3 sign_p = glm::vec3(
 			start.x,
 			start.y,
-			z - (wall->m_tex[DFWALL_TEXTURE_SIGN].b + wall->m_tex[DFWALL_TEXTURE_MID].b)
-		);
+			//z - (wall->m_tex[DFWALL_TEXTURE_SIGN].b + wall->m_tex[DFWALL_TEXTURE_MID].b)
+			z - (wall->m_tex[DFWALL_TEXTURE_SIGN].b)
+			);
 		glm::vec3 sign_p1 = glm::vec3(
 			end.x,
 			end.y,
-			z - (wall->m_tex[DFWALL_TEXTURE_SIGN].b + +wall->m_tex[DFWALL_TEXTURE_MID].b) + ypixel / 8.0f
-		);
+			// z - (wall->m_tex[DFWALL_TEXTURE_SIGN].b + wall->m_tex[DFWALL_TEXTURE_MID].b) + ypixel / 8.0f
+			z - (wall->m_tex[DFWALL_TEXTURE_SIGN].b) + ypixel / 8.0f
+			);
 
 		// move the the wall along the normal
 		sign_p += normal / 10.0f;
@@ -318,6 +320,11 @@ void dfSuperSector::buildWalls(bool update, dfSector* sector, std::vector<dfText
 
 	// create the walls at the begining of the buffer
 	for (auto wall : sector->m_walls) {
+
+		// link the walls
+		sector->m_wallsLink[wall->m_left].m_right = wall->m_right;
+		sector->m_wallsLink[wall->m_right].m_left = wall->m_left;
+
 		if (wall->m_adjoint < 0) {
 			// full wall
 			p += addRectangle(p, sector, wall,
@@ -424,25 +431,28 @@ void dfSuperSector::buildFloor(bool update, dfSector* sector, std::vector<dfText
 		return;
 	}
 
-	// The number type to use for tessellation
-	using Coord = float;
-
 	// The index type. Defaults to uint32_t, but you can also pass uint16_t if you know that your
 	// data won't have more than 65536 vertices.
 	using N = uint32_t;
 
 	// Create array
-	using Point = std::array<Coord, 2>;
-	std::vector<std::vector<Point>> polygon;
 
 	// Fill polygon structure with actual data. Any winding order works.
 	// The first polyline defines the main polygon.
 	// Following polylines define holes.
-	polygon.resize(2);
-	polygon[0].resize(sector->m_vertices.size());
+	if (sector->m_id == 3 || sector->m_id == 176 || sector->m_id == 197) {
+		//TODO do not forget that 'thing'
+		printf("dfSuperSector::buildFloor sector %d\n", sector->m_id);
+	}
+	std::vector<std::vector<Point>> polygon = sector->linkWalls();
 
-	for (unsigned int i = 0; i < sector->m_vertices.size(); i++) {
-		polygon[0][i] = { sector->m_vertices[i].x, sector->m_vertices[i].y };
+	// index the indexes IN the polyines of polygon 
+	std::vector<Point> vertices;
+
+	for (auto poly: polygon) {
+		for (auto p : poly) {
+			vertices.push_back(p);
+		}
 	}
 
 	// Run tessellation
@@ -453,10 +463,10 @@ void dfSuperSector::buildFloor(bool update, dfSector* sector, std::vector<dfText
 
 	// resize the opengl buffers
 	int p = m_vertices.size();
-	int vertices = indices.size() * 2;	// count the floor AND the ceiling
-	m_vertices.resize(p + vertices);
-	m_uvs.resize(p + vertices);
-	m_textureID.resize(p + vertices);
+	int cvertices = indices.size() * 2;	// count the floor AND the ceiling
+	m_vertices.resize(p + cvertices);
+	m_uvs.resize(p + cvertices);
+	m_textureID.resize(p + cvertices);
 
 	// use axis aligned texture UV, on a 8x8 grid
 	// ratio of texture pixel vs world position = 180 pixels for 24 clicks = 7.5x1
@@ -475,14 +485,15 @@ void dfSuperSector::buildFloor(bool update, dfSector* sector, std::vector<dfText
 		case 2: j = -1; break;
 		default: j = 0; break;
 		}
-		m_vertices[p + j].x = sector->m_vertices[index].x / 10.0f;
+
+		m_vertices[p + j].x = vertices[index][0] / 10.0f;
 		m_vertices[p + j].y = sector->m_floorAltitude / 10.0f;
-		m_vertices[p + j].z = sector->m_vertices[index].y / 10.0f;
+		m_vertices[p + j].z = vertices[index][1] / 10.0f;
 
 		// get local texture offset on the floor
 		// TODO: current supposion : offset x 1 => 1 pixel from the begining on XXX width pixel texture
-		float xoffset = ((sector->m_vertices[index].x + sector->m_floorTexture.g) * 8.0f) / xpixel;
-		float yoffset = ((sector->m_vertices[index].y + sector->m_floorTexture.b) * 8.0f) / ypixel;
+		float xoffset = ((vertices[index][0] + sector->m_floorTexture.g) * 8.0f) / xpixel;
+		float yoffset = ((vertices[index][1] + sector->m_floorTexture.b) * 8.0f) / ypixel;
 
 		m_uvs[p + j] = glm::vec2(xoffset, yoffset);
 
@@ -502,14 +513,14 @@ void dfSuperSector::buildFloor(bool update, dfSector* sector, std::vector<dfText
 	for (unsigned int i = 0; i < indices.size(); i++) {
 		int index = indices[i];
 
-		m_vertices[p].x = sector->m_vertices[index].x / 10.0f;
+		m_vertices[p].x = vertices[index][0] / 10.0f;
 		m_vertices[p].y = sector->m_ceilingAltitude / 10.0f;
-		m_vertices[p].z = sector->m_vertices[index].y / 10.0f;
+		m_vertices[p].z = vertices[index][1] / 10.0f;
 
 		// use axis aligned texture UV, on a 8x8 grid
 		// ratio of texture pixel vs world position = 64 pixels for 8 clicks
-		float xoffset = ((sector->m_vertices[index].x + sector->m_ceilingTexture.g) * 8.0f) / xpixel;
-		float yoffset = ((sector->m_vertices[index].y + sector->m_ceilingTexture.g) * 8.0f) / ypixel;
+		float xoffset = ((vertices[index][0] + sector->m_ceilingTexture.g) * 8.0f) / xpixel;
+		float yoffset = ((vertices[index][1] + sector->m_ceilingTexture.g) * 8.0f) / ypixel;
 
 		m_uvs[p] = glm::vec2(xoffset, yoffset);
 

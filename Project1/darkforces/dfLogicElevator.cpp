@@ -65,8 +65,6 @@ bool dfLogicElevator::animate(time_t delta)
 {
 	m_tick += delta;
 
-	float current_floor;
-
 	switch (m_status) {
 	case DF_ELEVATOR_HOLD:
 		m_status = DF_ELEVATOR_MOVE;
@@ -81,10 +79,10 @@ bool dfLogicElevator::animate(time_t delta)
 
 			// force the altitude to get ride of math round
 			float floor = getFloorPosition(m_stops[m_currentStop]);
-			m_pSector->setFloor(floor);
+			 m_pSector->setFloor(floor);
 
 			if (m_stops[m_currentStop]->isTimeBased()) {
-				// continue to the next stop
+				// put the elevator on wait
 				m_status = DF_ELEVATOR_WAIT;
 			}
 			else {

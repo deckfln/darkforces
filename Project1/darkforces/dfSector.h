@@ -11,6 +11,15 @@
 
 class dfSuperSector;
 
+struct dfWallsLink {
+	int m_left = -1;	// index of the vertice on the left
+	int m_right = -1;
+	bool parsed = false;
+};
+
+using Coord = float;
+using Point = std::array<Coord, 2>;
+
 class dfSector
 {
 	std::list <dfLogicTrigger*> m_triggers;
@@ -38,6 +47,8 @@ public:
 	// local data in space world
 	std::vector <dfWall*> m_walls;
 	std::vector <glm::vec2> m_vertices;
+	std::vector <struct dfWallsLink> m_wallsLink;
+
 	std::list <int> m_portals;	// sectorID of the portals
 
 	// same data but in the supersector (opengl space)
@@ -56,5 +67,6 @@ public:
 	float originalCeiling(void) { return m_originalceiling; };
 	void parent(dfSuperSector* parent) { m_super = parent; };
 	float height(void) { return m_height; };
+	std::vector<std::vector<Point>> linkWalls(void);
 	~dfSector();
 };

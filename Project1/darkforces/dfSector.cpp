@@ -3,6 +3,8 @@
 #include <fstream>
 #include <vector>
 #include <iostream>
+#include <array>
+#include <algorithm>
 #include <glm/glm.hpp>
 
 #include "dfSuperSector.h"
@@ -86,6 +88,7 @@ dfSector::dfSector(std::ifstream& infile)
 		else if (tokens[0] == "VERTICES") {
 			nbVertices = std::stoi(tokens[1]);
 			m_vertices.resize(nbVertices);
+			m_wallsLink.resize(nbVertices);
 		}
 		else if (tokens[0] == "X:") {
 			float x = -std::stof(tokens[1]);
@@ -118,6 +121,7 @@ dfSector::dfSector(std::ifstream& infile)
 			wall->m_tex[DFWALL_TEXTURE_MID] = mid;
 			wall->m_tex[DFWALL_TEXTURE_TOP] = top;
 			wall->m_tex[DFWALL_TEXTURE_SIGN] = sign;
+			wall->m_id = currentWall;
 
 			m_walls[currentWall++] = wall;
 
@@ -237,6 +241,72 @@ float dfSector::moveFloor(float delta)
 	}
 
 	return m_floorAltitude;
+}
+
+/**
+ * parse all vertices of the sector to link the walls together
+ */
+std::vector<std::vector<Point>> dfSector::linkWalls(void)
+{
+	std::vector<std::vector<Point>> polygons;
+
+	int links = 0;
+	for (unsigned int start = 0; start < m_wallsLink.size(); start++) {
+		if (!m_wallsLink[start].parsed) {
+			std::vector<Point> polygon;
+
+			// vertice was not yet checked, so start a link
+			unsigned int i;
+
+			for (i = start; 
+					m_wallsLink[i].m_right != start &&		// detect loop
+					m_wallsLink[i].m_right != -1 &&			// detect open lines
+					!m_wallsLink[i].parsed;					// detect point used multiple times
+				i = m_wallsLink[i].m_right					// move to next vertice
+				) 
+			{
+				m_wallsLink[i].parsed = true;
+				Point p = { m_vertices[i].x, m_vertices[i].y };
+				polygon.push_back(p);
+			}
+			Point p = { m_vertices[i].x, m_vertices[i].y };
+			polygon.push_back(p);
+			m_wallsLink[i].parsed = true;
+
+			// only create polygons for closed line and at least 3 vertices
+			if (polygon.size() >= 3 && m_wallsLink[i].m_right != -1) {
+				polygons.push_back(polygon);
+			}
+		}
+	}
+
+	// find what is the perimeter and what is the hole
+	// TODO deal with more than 1 hole
+	if (polygons.size() > 1) {
+
+		std::vector<Point>& polygon = polygons[1];
+		Point p = polygons[0][1];
+
+		// https://stackoverflow.com/questions/217578/how-can-i-determine-whether-a-2d-point-is-within-a-polygon
+		// http://www.ecse.rpi.edu/Homepages/wrf/Research/Short_Notes/pnpoly.html
+		bool inside = false;
+		for (unsigned int i = 0, j = polygon.size() - 1; i < polygon.size(); j = i++)
+		{
+			if ((polygon[i][1] > p[1]) != (polygon[j][1] > p[1]) &&
+				p[0] < (polygon[j][0] - polygon[i][0]) * (p[1] - polygon[i][1]) / (polygon[j][1] - polygon[i][1]) + polygon[i][0])
+			{
+				inside = !inside;
+			}
+		}
+
+		if (inside) {
+			std::vector<Point> swap = polygons[0];
+			polygons[0] = polygons[1];
+			polygons[1] = swap;
+		}
+	}
+
+	return polygons;
 }
 
 dfSector::~dfSector()

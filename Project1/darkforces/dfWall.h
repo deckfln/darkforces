@@ -9,6 +9,8 @@
 class dfWall
 {
 public:
+	int m_id = 0;
+
 	int m_left = -1;
 	int m_right = -1;
 	int m_adjoint = -1;
