@@ -51,6 +51,9 @@ public:
 
 	std::list <int> m_portals;	// sectorID of the portals
 
+	// polylines enclosing the sector : manage holes
+	std::vector<std::vector<Point>> m_polygons;
+
 	// same data but in the supersector (opengl space)
 	dfSuperSector* m_super = nullptr;
 
@@ -67,6 +70,6 @@ public:
 	float originalCeiling(void) { return m_originalceiling; };
 	void parent(dfSuperSector* parent) { m_super = parent; };
 	float height(void) { return m_height; };
-	std::vector<std::vector<Point>> linkWalls(void);
+	std::vector<std::vector<Point>>& linkWalls(void);
 	~dfSector();
 };

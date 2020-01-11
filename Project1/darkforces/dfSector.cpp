@@ -171,7 +171,8 @@ void dfSector::testTriggers(fwAABBox& box)
 }
 
 /**
- * check if point is inside the boundingbox and inside the 2D surface
+ * check if point is inside the boundingbox and inside the 2D surface : external polylines
+ * TODO : how to deal with holes ?
  */
 bool dfSector::isPointInside(glm::vec3 &p)
 {
@@ -183,6 +184,10 @@ bool dfSector::isPointInside(glm::vec3 &p)
 	// https://stackoverflow.com/questions/217578/how-can-i-determine-whether-a-2d-point-is-within-a-polygon
 	// http://www.ecse.rpi.edu/Homepages/wrf/Research/Short_Notes/pnpoly.html
 	bool inside = false;
+	std::vector<Point>& outline = m_polygons[0];
+
+	/*
+	TODO: these solution is supposed to deal with holes, but actually it doesn't work for secbase, when entering sector 58
 	for (unsigned int i = 0, j = m_vertices.size() - 1; i < m_vertices.size(); j = i++)
 	{
 		if ((m_vertices[i].y > p.y) != (m_vertices[j].y > p.y) &&
@@ -191,7 +196,19 @@ bool dfSector::isPointInside(glm::vec3 &p)
 			inside = !inside;
 		}
 	}
+	*/
 
+	// only test the external line
+	inside = false;
+	for (unsigned int i = 0, j = outline.size() - 1; i < outline.size(); j = i++)
+	{
+		if ((outline[i][1] > p.y) != (outline[j][1] > p.y) &&
+			p.x < (outline[j][0] - outline[i][0]) * (p.y - outline[i][1]) / (outline[j][1] - outline[i][1]) + outline[i][0])
+		{
+			inside = !inside;
+		}
+	}
+	
 	return inside;
 }
 
@@ -246,10 +263,8 @@ float dfSector::moveFloor(float delta)
 /**
  * parse all vertices of the sector to link the walls together
  */
-std::vector<std::vector<Point>> dfSector::linkWalls(void)
+std::vector<std::vector<Point>>& dfSector::linkWalls(void)
 {
-	std::vector<std::vector<Point>> polygons;
-
 	int links = 0;
 	for (unsigned int start = 0; start < m_wallsLink.size(); start++) {
 		if (!m_wallsLink[start].parsed) {
@@ -275,17 +290,17 @@ std::vector<std::vector<Point>> dfSector::linkWalls(void)
 
 			// only create polygons for closed line and at least 3 vertices
 			if (polygon.size() >= 3 && m_wallsLink[i].m_right != -1) {
-				polygons.push_back(polygon);
+				m_polygons.push_back(polygon);
 			}
 		}
 	}
 
 	// find what is the perimeter and what is the hole
 	// TODO deal with more than 1 hole
-	if (polygons.size() > 1) {
+	if (m_polygons.size() > 1) {
 
-		std::vector<Point>& polygon = polygons[1];
-		Point p = polygons[0][1];
+		std::vector<Point>& polygon = m_polygons[1];
+		Point p = m_polygons[0][1];
 
 		// https://stackoverflow.com/questions/217578/how-can-i-determine-whether-a-2d-point-is-within-a-polygon
 		// http://www.ecse.rpi.edu/Homepages/wrf/Research/Short_Notes/pnpoly.html
@@ -300,13 +315,13 @@ std::vector<std::vector<Point>> dfSector::linkWalls(void)
 		}
 
 		if (inside) {
-			std::vector<Point> swap = polygons[0];
-			polygons[0] = polygons[1];
-			polygons[1] = swap;
+			std::vector<Point> swap = m_polygons[0];
+			m_polygons[0] = m_polygons[1];
+			m_polygons[1] = swap;
 		}
 	}
 
-	return polygons;
+	return m_polygons;
 }
 
 dfSector::~dfSector()
