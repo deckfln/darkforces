@@ -56,7 +56,8 @@ class dfSuperSector {
     std::map <int, glm::ivec3> m_sectorIndex;   // start of the sector vertices in the vertices buffer : x = start of walls, y = start of floors, z = #vertices on the floor. Ceiling vertices = y + z
 
     fwGeometry* m_geometry = nullptr;
-    fwMesh* m_mesh = nullptr;
+    fwMesh* m_mesh = nullptr;               // static mesh of the super sector
+                                            // moving meshes are children of the super sector (like elevators)
 
     bool m_visible = false;                 // supersector is visible on screen
     bool m_debugPortals = false;            // display the portal bounding sphere on screen
@@ -71,6 +72,7 @@ class dfSuperSector {
 
 public:
     dfSuperSector(dfSector* sector);
+
     void extend(dfSuperSector*);
     dfSuperSector* smallestAdjoint(void);
     void buildPortals(std::vector<dfSector*>& sectors, std::vector<dfSuperSector*> &vssectors);
@@ -78,14 +80,21 @@ public:
     bool inAABBox(glm::vec3& position) { return m_boundingBox.inside(position); };
     dfSector* findSector(glm::vec3& position);
     bool contains(int sectorID);
-    int id(void) { return m_id; };
     void buildGeometry(std::vector<dfSector*>& sectors, std::vector<dfTexture*>& m_textures, fwMaterialBasic* material);
-    fwGeometry* geometry(void) { return m_geometry; };
-    void checkPortals(fwCamera* camera, int zOrder);
+
+    int id(void) { return m_id; };
     void visible(bool v) { m_visible = v; };
     bool visible(void) { return m_visible; };
+    fwGeometry* geometry(void) { return m_geometry; };
+    std::vector<dfTexture*>& textures(void);
+
+    void checkPortals(fwCamera* camera, int zOrder);
     void parent(dfLevel* parent);
     void add2scene(fwScene* scene);
     void updateSectorVertices(int sectorID);
+    fwMesh* buildElevator(dfSector* sector, float height, fwMaterial* material);
+    void addRectangle(dfSector *sector, dfWall* wall, float z, float z1, glm::vec3& texture);
+
+    void addObject(fwMesh* object);
     ~dfSuperSector();
 };

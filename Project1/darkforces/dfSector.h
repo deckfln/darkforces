@@ -2,7 +2,9 @@
 #include <string>
 #include <vector>
 #include <list>
+
 #include "dfWall.h"
+
 #include "../framework/fwMesh.h"
 #include "../framework/fwAABBox.h"
 #include "../framework/math/fwSphere.h"
@@ -61,15 +63,20 @@ public:
 	void addTrigger(dfLogicTrigger* trigger);
 	void testTriggers(fwAABBox& box);
 	bool inAABBox(glm::vec3& position) { return m_boundingBox.inside(position); };
+
 	float ceiling(void) { return m_ceilingAltitude; };
-	bool isPointInside(glm::vec3& position);
-	float boundingBoxSurface(void);
-	void setFloor(float floor);
-	float moveFloor(float delta);
 	float originalFloor(void) { return m_originalFloor; };
 	float originalCeiling(void) { return m_originalceiling; };
 	void parent(dfSuperSector* parent) { m_super = parent; };
 	float height(void) { return m_height; };
+
+	void addObject(fwMesh* object);
+	bool isPointInside(glm::vec3& position);
+	float boundingBoxSurface(void);
+	void setFloor(float floor);
+	void updateVertices(void);
 	std::vector<std::vector<Point>>& linkWalls(void);
+	void buildElevator(dfMesh *mesh, float bottom, float top);
+	void bindWall2Sector(std::vector <dfSector*> sectors);
 	~dfSector();
 };

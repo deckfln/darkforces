@@ -4,6 +4,9 @@
 #include <vector>
 
 #include "dfLogicStop.h"
+#include "../framework/fwMaterial.h"
+#include "../framework/fwMesh.h"
+#include "dfMesh.h"
 
 class dfLevel;
 
@@ -26,12 +29,17 @@ class dfLogicElevator {
 	time_t m_tick = 0;					// current timer
 	unsigned int m_currentStop = 0;		// current stop for the running animation
 	unsigned int m_nextStop = 0;		// target altitude
+
+	float m_current = 0;				// current altitude of the part to move (floor or ceiling)
 	float m_direction = 0;				// direction and speed of the move
 	float m_target = 0;					// target altitude
 
 	dfLevel* m_parent = nullptr;		// level the elevator is on
 
-	float getFloorPosition(dfLogicStop *stop);	// extract the floor position from the stop and the 
+	dfMesh* m_mesh = nullptr;			// mesh of the elevator
+
+	void changeSector(dfLogicStop* stop);	// extract the floor position from the stop and the 
+	void changeSector(float z);	// extract the floor position from the stop and the 
 	void move2nextFloor(void);
 
 public:
@@ -42,6 +50,7 @@ public:
 	void sector(dfSector* pSector) { m_pSector = pSector; };
 	void parent(dfLevel* parent) { m_parent = parent; };
 	void addStop(dfLogicStop* stop);
+	fwMesh *buildGeometry(fwMaterial* material);
 	void init(int stopID);
 	void trigger(std::string& sclass);
 	bool animate(time_t delta);

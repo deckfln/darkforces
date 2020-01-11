@@ -18,19 +18,47 @@ void dfLogicElevator::addStop(dfLogicStop* stop)
 }
 
 /**
+ * Create an Mesh for the elevator
+ */
+fwMesh *dfLogicElevator::buildGeometry(fwMaterial* material)
+{
+	if (!m_pSector) {
+		return nullptr;
+	}
+
+	// get the maximum extend of the elevator -> will become the height of the object
+	float amin = 99999, amax = -99999, c;
+	for (auto stop : m_stops) {
+		c = stop->z_position();
+		if (c < amin) amin = c;
+		if (c > amax) amax = c;
+	}
+
+	m_mesh = new dfMesh(material);
+	m_pSector->buildElevator(m_mesh, amin, amax);
+
+	if (m_mesh->buildMesh()) {
+		// there is a mesh
+		m_pSector->addObject(m_mesh->mesh());
+	}
+
+	return m_mesh->mesh();
+}
+
+/**
  * move the connected elevator to its HOLD position
  */
 void dfLogicElevator::init(int stopID)
 {
 	dfLogicStop* stop = m_stops[stopID];
-	float floor = getFloorPosition(stop);
 
-	if (m_pSector) {
-		m_pSector->m_floorAltitude = floor;
-		m_pSector->m_ceilingAltitude = floor + m_pSector->height();
+	if (this->m_sector == "elev3-5") {
+		std::cerr << "dfLogicElevator::init ignored elevator elev3-5" << std::endl;
+		return;
 	}
-	else {
-		std::cerr << "dfLogicElevator::init " << m_sector << " not linked" << std::endl;
+	changeSector(stop);
+	if (m_pSector) {
+		m_pSector->updateVertices();
 	}
 }
 
@@ -72,14 +100,17 @@ bool dfLogicElevator::animate(time_t delta)
 		break;
 
 	case DF_ELEVATOR_MOVE: {
-		float current = m_pSector->moveFloor(m_direction);
-		if (abs(current - m_target) < 0.1) {
+		m_current += m_direction;
+		changeSector(m_current);
+		m_pSector->updateVertices();
+
+		if (abs(m_current - m_target) < 0.1) {
 			m_tick = 0;
 			m_currentStop = m_nextStop;
 
 			// force the altitude to get ride of math round
-			float floor = getFloorPosition(m_stops[m_currentStop]);
-			 m_pSector->setFloor(floor);
+			changeSector(m_stops[m_currentStop]);
+			m_pSector->updateVertices();
 
 			if (m_stops[m_currentStop]->isTimeBased()) {
 				// put the elevator on wait
@@ -116,46 +147,65 @@ bool dfLogicElevator::animate(time_t delta)
 /**
  * Compute a floor altitude based on elevator kind and stop
  */
-float dfLogicElevator::getFloorPosition(dfLogicStop* stop)
+void dfLogicElevator::changeSector(dfLogicStop *stop)
 {
-	float altitude = 0;
-
-	if (m_pSector) {
-		altitude = m_pSector->originalFloor();	// for relative stop based on original floor
+	if (!m_pSector) {
+		std::cerr << "dfLogicElevator::changeSector " << m_sector << " not linked" << std::endl;
+		return;
 	}
 
-	float floor = 0;
+	float z = stop->z_position();
 
 	if (m_class == "inv") {
-		floor = stop->z_position(altitude) - m_pSector->height();
+		m_pSector->m_ceilingAltitude = z;
 	}
 	else if (m_class == "basic") {
-		floor = stop->z_position(altitude);
+		m_pSector->m_floorAltitude = z;
 	}
 	else {
 		std::cerr << "dfLogicElevator unknown class " << m_class << std::endl;
 	}
-
-	return floor;
 }
 
 /**
- * compute the move to the next floor
+ * Compute a floor altitude based on elevator kind and stop
+ */
+void dfLogicElevator::changeSector(float z)
+{
+	if (!m_pSector) {
+		std::cerr << "dfLogicElevator::changeSector " << m_sector << " not linked" << std::endl;
+		return;
+	}
+
+	if (m_class == "inv") {
+		m_pSector->m_ceilingAltitude = z;
+	}
+	else if (m_class == "basic") {
+		m_pSector->m_floorAltitude = z;
+	}
+	else {
+		std::cerr << "dfLogicElevator unknown class " << m_class << std::endl;
+	}
+}
+
+/**
+ * compute the move to the next Stop
  */
 void dfLogicElevator::move2nextFloor(void)
 {
-	float current_floor = getFloorPosition(m_stops[m_currentStop]);
+	m_current = m_stops[m_currentStop]->z_position();
+
 	if (m_currentStop >= m_stops.size() - 1) {
 		// move backward
 		m_nextStop = 0;
-		m_target = getFloorPosition(m_stops[0]);
+		m_target = m_stops[0]->z_position();
 	}
 	else {
 		// move upward
 		m_nextStop = m_currentStop + 1;
-		m_target = getFloorPosition(m_stops[m_nextStop]);
+		m_target = m_stops[m_nextStop]->z_position();
 	}
-	m_direction = (m_target - current_floor) / 100;
+	m_direction = (m_target - m_current) / 100;
 }
 
 dfLogicElevator::~dfLogicElevator(void)

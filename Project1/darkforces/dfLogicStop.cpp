@@ -11,7 +11,7 @@ bool dfLogicStop::isTimeBased(void)
 	return a == 8;
 }
 
-float dfLogicStop::z_position(float altitude)
+float dfLogicStop::z_position(void)
 {
 	switch (m_flag) {
 		case 9:
@@ -19,7 +19,11 @@ float dfLogicStop::z_position(float altitude)
 			return m_absolute;
 		case 10:
 		case 18:
-			return altitude + m_relatiave;
+			if (!m_pSector) {
+				std::cerr << "dfLogicStop::z_position no linked sector" << std::endl;
+				return 0;
+			}
+			return m_pSector->originalFloor() + m_relatiave;
 		case 12:
 		case 20:
 			return m_pSector->ceiling();

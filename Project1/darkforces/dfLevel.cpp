@@ -57,6 +57,11 @@ dfLevel::dfLevel(std::string file)
 	}
 	infile.close();
 
+	// bind the sectors to adjoint sectors and to mirror walls
+	for (auto sector : m_sectors) {
+		sector->bindWall2Sector(m_sectors);
+	}
+
 	// load and ditribute the INF file
 	m_inf = new dfParseINF(file);
 
@@ -94,9 +99,8 @@ dfLevel::dfLevel(std::string file)
 
 	buildAtlasMap();	// load textures in a megatexture
 	spacePartitioning();// partion of space for quick collision
-	initElevators();	// move all elevators to position HOLD
 	buildGeometry();	// build the geometry of each super sectors
-
+	initElevators();	// move all elevators to position 0
 }
 
 /***
@@ -353,7 +357,9 @@ dfSuperSector* dfLevel::findSuperSector(glm::vec3& position)
 void dfLevel::initElevators(void)
 {
 	for (auto elevator : m_inf->m_elevators) {
-		elevator->init(0);
+		// build a mesh and store the mesh in the super-sector holding the sector
+		elevator->buildGeometry(m_material);
+		// elevator->init(0);
 	}
 }
 

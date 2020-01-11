@@ -250,6 +250,45 @@ int dfSuperSector::addRectangle(int start, dfSector* sector, dfWall* wall, float
 	return 0;	// we added a new rectangle, keep the index at -1
 }
 
+
+/**
+ * create a simple opengl Rectangle
+ */
+void dfSuperSector::addRectangle(dfSector *sector, dfWall* wall, float z, float z1, glm::vec3& texture)
+{
+	// add a new rectangle
+	int p = m_vertices.size();
+	m_vertices.resize(p + 6);
+	m_uvs.resize(p + 6);
+	m_textureID.resize(p + 6);
+
+	float x = sector->m_vertices[wall->m_left].x,
+		y = sector->m_vertices[wall->m_left].y,
+		x1 = sector->m_vertices[wall->m_right].x,
+		y1 = sector->m_vertices[wall->m_right].y;
+
+	// deal with the wall texture
+	float textureID = texture.x;
+
+	dfTexture* dfTexture = m_parent->textures()[(int)textureID];
+
+	float length = sqrt(pow(x - x1, 2) + pow(y - y1, 2));
+	float xpixel = (float)dfTexture->width;
+	float ypixel = (float)dfTexture->height;
+
+	// convert height and length into local texture coordinates using pixel ratio
+	// ratio of texture pixel vs world position = 64 pixels for 8 clicks => 8x1
+	float height = abs(z1 - z) * 8.0f / ypixel;
+	float width = length * 8.0f / xpixel;
+
+	// get local texture offset on the wall
+	// TODO: current supposion : offset x 1 => 1 pixel from the begining on XXX width pixel texture
+	float xoffset = (texture.y * 8.0f) / xpixel;
+	float yoffset = (texture.z * 8.0f) / ypixel;
+
+	updateRectangle(p, x, y, z, x1, y1, z1, xoffset, yoffset, width, height, textureID);
+}
+
 /***
  * create vertices for a sign
  */
@@ -316,6 +355,10 @@ void dfSuperSector::buildWalls(bool update, dfSector* sector, std::vector<dfText
 	if (update) {
 		glm::ivec3 indexes = m_sectorIndex[sector->m_id];
 		p = indexes.x;
+	}
+
+	if (sector->m_id == 1) {
+		printf("dfSuperSector::buildWalls\n");
 	}
 
 	// create the walls at the begining of the buffer
@@ -588,6 +631,20 @@ void dfSuperSector::updateSectorVertices(int sectorID)
 }
 
 /**
+ * Convert a sector into a moveable mesh
+ */
+fwMesh* dfSuperSector::buildElevator(dfSector* sector, float height, fwMaterial* material)
+{
+
+	return nullptr;
+}
+
+std::vector<dfTexture*>& dfSuperSector::textures(void)
+{
+	return m_parent->textures();
+}
+
+/**
  * test all portals of the supersector agsint the camera frustrum.
  * for any visible portal, add the attached supersector to the list of visible supersectors
  * and test the portals again. Avoid coming back to already visited supersectors
@@ -637,6 +694,14 @@ void dfSuperSector::add2scene(fwScene* scene)
 	else {
 		m_mesh->set_visible(m_visible);
 	}
+}
+
+/**
+ * Add a children mesh
+ */
+void dfSuperSector::addObject(fwMesh* object)
+{
+	m_mesh->addChild(object);
 }
 
 dfSuperSector::~dfSuperSector()

@@ -171,6 +171,14 @@ void dfSector::testTriggers(fwAABBox& box)
 }
 
 /**
+ * Add a mesh to the super sector holding the sector
+ */
+void dfSector::addObject(fwMesh* object)
+{
+	m_super->addObject(object);
+}
+
+/**
  * check if point is inside the boundingbox and inside the 2D surface : external polylines
  * TODO : how to deal with holes ?
  */
@@ -241,13 +249,9 @@ void dfSector::setFloor(float floor)
 /**
  * Move the sector up or down. return the new floor altitude
  */
-float dfSector::moveFloor(float delta)
+void dfSector::updateVertices(void)
 {
-	m_floorAltitude += delta;
-	m_ceilingAltitude += delta;
-
-	std::cout << m_floorAltitude << " " << m_ceilingAltitude << std::endl;
-
+	// std::cout << m_floorAltitude << " " << m_ceilingAltitude << std::endl;
 	if (m_super) {
 		m_super->updateSectorVertices(m_id);	// update the sector
 
@@ -256,8 +260,6 @@ float dfSector::moveFloor(float delta)
 			m_super->updateSectorVertices(portal);
 		}
 	}
-
-	return m_floorAltitude;
 }
 
 /**
@@ -322,6 +324,46 @@ std::vector<std::vector<Point>>& dfSector::linkWalls(void)
 	}
 
 	return m_polygons;
+}
+
+/**
+ * analyze the sector to find the moveable part and convert to an object
+ */
+void dfSector::buildElevator(dfMesh *mesh, float bottom, float top)
+{
+	// create the walls at the begining of the buffer
+	for (auto wall : m_walls) {
+		if (wall->m_adjoint < 0) {
+			// ignore full wall : they are not visible
+			// PASS
+		}
+		else {
+			// portal
+			dfWall* mirror = wall->m_pMmirror;
+
+			// add a wall above the portal
+			mesh->addRectangle(this, wall,
+				bottom,
+				top,
+				mirror->m_tex[DFWALL_TEXTURE_TOP],
+				m_super->textures(),
+				false
+			);
+		}
+	}
+}
+
+/**
+ * bind each wall with an adjoint to the other sector
+ */
+void dfSector::bindWall2Sector(std::vector<dfSector*> sectors)
+{
+	for (auto wall : m_walls) {
+		if (wall->m_adjoint >= 0) {
+			wall->m_pAdjoint = sectors[wall->m_adjoint];
+			wall->m_pMmirror = wall->m_pAdjoint->m_walls[wall->m_mirror];
+		}
+	}
 }
 
 dfSector::~dfSector()

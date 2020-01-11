@@ -130,6 +130,7 @@
     <ClCompile Include="darkforces\dfLogicElevator.cpp" />
     <ClCompile Include="darkforces\dfLogicStop.cpp" />
     <ClCompile Include="darkforces\dfLogicTrigger.cpp" />
+    <ClCompile Include="darkforces\dfMesh.cpp" />
     <ClCompile Include="darkforces\dfParseINF.cpp" />
     <ClCompile Include="darkforces\dfLevel.cpp" />
     <ClCompile Include="darkforces\dfSector.cpp" />
@@ -221,6 +222,7 @@
     <ClInclude Include="darkforces\dfLogicElevator.h" />
     <ClInclude Include="darkforces\dfLogicStop.h" />
     <ClInclude Include="darkforces\dfLogicTrigger.h" />
+    <ClInclude Include="darkforces\dfMesh.h" />
     <ClInclude Include="darkforces\dfParseINF.h" />
     <ClInclude Include="darkforces\dfLevel.h" />
     <ClInclude Include="darkforces\dfSector.h" />
