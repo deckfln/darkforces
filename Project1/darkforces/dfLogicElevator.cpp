@@ -9,12 +9,30 @@ dfLogicElevator::dfLogicElevator(std::string& kind, dfSector* sector, dfLevel* p
 	m_pSector(sector),
 	m_parent(parent)
 {
+	if (kind == "inv") {
+		m_type = DF_ELEVATOR_INV;
+	}
+	else if (kind == "basic") {
+		m_type = DF_ELEVATOR_BASIC;
+	}
+	else {
+		std::cerr << "dfLogicElevator::dfLogicElevator " << kind << " not implemented" << std::endl;
+	}
 }
 
 dfLogicElevator::dfLogicElevator(std::string& kind, std::string& sector):
 	m_class(kind),
 	m_sector(sector)
 {
+	if (kind == "inv") {
+		m_type = DF_ELEVATOR_INV;
+	}
+	else if (kind == "basic") {
+		m_type = DF_ELEVATOR_BASIC;
+	}
+	else {
+		std::cerr << "dfLogicElevator::dfLogicElevator " << kind << " not implemented" << std::endl;
+	}
 }
 
 /**
@@ -46,20 +64,28 @@ fwMesh *dfLogicElevator::buildGeometry(fwMaterial* material)
 		return nullptr;
 	}
 
-	// get the maximum extend of the elevator -> will become the height of the object
-	float amin = 99999, amax = -99999, c;
-	for (auto stop : m_stops) {
-		c = stop->z_position();
-		if (c < amin) amin = c;
-		if (c > amax) amax = c;
+	switch (m_type) {
+	case DF_ELEVATOR_INV:
+	case DF_ELEVATOR_BASIC: {
+		// get the maximum extend of the elevator -> will become the height of the object
+		float amin = 99999, amax = -99999, c;
+		for (auto stop : m_stops) {
+			c = stop->z_position();
+			if (c < amin) amin = c;
+			if (c > amax) amax = c;
+		}
+
+		m_mesh = new dfMesh(material);
+		m_pSector->buildElevator(m_mesh, 0, amax - amin);
+
+		if (m_mesh->buildMesh()) {
+			// there is a mesh
+			m_pSector->addObject(m_mesh->mesh());
+		}
+		break;
 	}
-
-	m_mesh = new dfMesh(material);
-	m_pSector->buildElevator(m_mesh, 0, amax - amin);
-
-	if (m_mesh->buildMesh()) {
-		// there is a mesh
-		m_pSector->addObject(m_mesh->mesh());
+	default:
+		return nullptr;
 	}
 
 	return m_mesh->mesh();
@@ -174,14 +200,12 @@ void dfLogicElevator::moveTo(dfLogicStop *stop)
 {
 	float z = stop->z_position();
 
-	if (m_class == "inv") {
+	switch (m_type) {
+	case DF_ELEVATOR_INV:
 		m_mesh->moveCeilingTo(z);
-	}
-	else if (m_class == "basic") {
+		break;
+	case DF_ELEVATOR_BASIC:
 		m_mesh->moveFloorTo(z);
-	}
-	else {
-		std::cerr << "dfLogicElevator unknown class " << m_class << std::endl;
 	}
 }
 
@@ -190,14 +214,13 @@ void dfLogicElevator::moveTo(dfLogicStop *stop)
  */
 void dfLogicElevator::moveTo(float z)
 {
-	if (m_class == "inv") {
+	switch (m_type) {
+	case DF_ELEVATOR_INV:
 		m_mesh->moveCeilingTo(z);
-	}
-	else if (m_class == "basic") {
+		break;
+	case DF_ELEVATOR_BASIC:
 		m_mesh->moveFloorTo(z);
-	}
-	else {
-		std::cerr << "dfLogicElevator unknown class " << m_class << std::endl;
+		break;
 	}
 }
 

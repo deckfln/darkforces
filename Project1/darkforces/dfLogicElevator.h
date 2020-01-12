@@ -16,8 +16,15 @@ enum {
 	DF_ELEVATOR_WAIT		// is waiting at a stop
 };
 
+enum {
+	DF_ELEVATOR_INV,		// moving up
+	DF_ELEVATOR_BASIC,		// moving down
+	DF_ELEVATOR_MOVE_FLOOR	//
+};
+
 class dfLogicElevator {
 	std::string m_class;
+	int m_type = -1;					// class of elevator
 	int m_speed = 0;					// time in millisecond between 2 stops
 	int m_eventMask = 0;
 	std::vector<dfLogicStop*> m_stops;	// all stops of the evelator
