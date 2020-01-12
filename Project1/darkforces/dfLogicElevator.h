@@ -39,7 +39,7 @@ class dfLogicElevator {
 	dfMesh* m_mesh = nullptr;			// mesh of the elevator
 
 	void moveTo(dfLogicStop* stop);	// extract the floor position from the stop and the 
-	void moveTo(float z);	// extract the floor position from the stop and the 
+	void moveTo(float z);			// extract the floor position from the stop and the 
 	void move2nextFloor(void);
 
 public:
@@ -47,7 +47,7 @@ public:
 	void speed(int speed) { m_speed = speed * 1000; };
 	void eventMask(int eventMask) { m_eventMask = eventMask; };
 	std::string& sector(void) { return m_sector; };
-	void sector(dfSector* pSector) { m_pSector = pSector; };
+	void sector(dfSector* pSector);
 	void parent(dfLevel* parent) { m_parent = parent; };
 	void addStop(dfLogicStop* stop);
 	fwMesh *buildGeometry(fwMaterial* material);

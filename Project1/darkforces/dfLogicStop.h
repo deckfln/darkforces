@@ -14,10 +14,11 @@ class dfLogicStop {
 		// 8 : time to spend at a stop
 		// 16 : action at the stop
 
-	float m_absolute = 0;		// absolute stop of the elevator
-	float m_relatiave = 0;	// OR relative stop from the last position
+	float m_absolute = 0;	// absolute stop of the elevator
+	float m_relatiave = 0;	// relative stop from the floor
+
 	std::string m_sector;	// based on sector XXX
-	dfSector *m_pSector;	// based on sector XXX
+	dfSector *m_pSector;
 
 	float m_time = 0;			// time (millisecond) to stop the elevator a position (absolute or relative or sector)
 
@@ -30,7 +31,7 @@ public:
 	void relative(float relative) { m_flag |= 2; m_relatiave = relative; };
 	void sector(std::string& sector) { m_flag |= 4; m_sector = sector; };
 	std::string& sector(void) { return m_sector; };
-	void sector(dfSector* pSector) { m_pSector = pSector; };
+	void sector(dfSector* pSector);
 	void time(float time) { m_flag |= 8; m_time = time * 1000; };
 	float time(void) { return m_time; };
 	void action(std::string& action) { m_flag |= 16; m_action = action; };

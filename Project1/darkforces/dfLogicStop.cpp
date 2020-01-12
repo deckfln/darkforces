@@ -3,6 +3,16 @@
 #include "dfSector.h"
 
 /**
+ * coonect the Stop to a sector (for relative altitude, or another sector altitude)
+ */
+void dfLogicStop::sector(dfSector* pSector)
+{
+	if (m_flag & 2) {
+		m_pSector = pSector;
+	}
+}
+
+/**
  * return a new position based on the source position and the refernce
  */
 bool dfLogicStop::isTimeBased(void)
@@ -19,14 +29,10 @@ float dfLogicStop::z_position(void)
 			return m_absolute;
 		case 10:
 		case 18:
-			if (!m_pSector) {
-				std::cerr << "dfLogicStop::z_position no linked sector" << std::endl;
-				return 0;
-			}
-			return m_pSector->originalFloor() + m_relatiave;
+			return m_pSector->m_floorAltitude + m_relatiave;	// relative to the floor of the source sector
 		case 12:
 		case 20:
-			return m_pSector->ceiling();
+			return m_pSector->m_floorAltitude;	// coy the floor of another sector
 	}
 	return 0;
 }

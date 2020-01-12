@@ -11,6 +11,18 @@ dfLogicElevator::dfLogicElevator(std::string& kind, std::string& sector):
 }
 
 /**
+ * bind the evelator to its sector
+ * for any relative stop, record the floor
+ */
+void dfLogicElevator::sector(dfSector* pSector)
+{
+	m_pSector = pSector;
+	for (auto stop : m_stops) {
+		stop->sector(pSector);
+	}
+}
+
+/**
  * register the STOP in the correct list
  */
 void dfLogicElevator::addStop(dfLogicStop* stop)
