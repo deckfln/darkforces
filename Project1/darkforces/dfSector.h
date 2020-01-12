@@ -48,8 +48,6 @@ enum {
 
 class dfSector
 {
-	std::list <dfLogicTrigger*> m_triggers;
-
 public:
 	fwAABBox m_boundingBox;
 
@@ -88,8 +86,7 @@ public:
 	dfSuperSector* m_super = nullptr;
 
 	dfSector(std::ifstream& infile);
-	void addTrigger(dfLogicTrigger* trigger);
-	void testTriggers(fwAABBox& box);
+	void configTrigger(dfLogicTrigger* trigger);
 	bool inAABBox(glm::vec3& position) { return m_boundingBox.inside(position); };
 
 	float ceiling(void) { return m_ceilingAltitude; };

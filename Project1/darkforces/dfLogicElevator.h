@@ -43,7 +43,7 @@ class dfLogicElevator {
 	void move2nextFloor(void);
 
 public:
-	dfLogicElevator(std::string& kind, dfSector* sector);
+	dfLogicElevator(std::string& kind, dfSector* sector, dfLevel *parent);
 	dfLogicElevator(std::string& kind, std::string& name);
 	void speed(int speed) { m_speed = speed * 1000; };
 	void eventMask(int eventMask) { m_eventMask = eventMask; };

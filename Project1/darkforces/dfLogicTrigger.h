@@ -23,6 +23,8 @@ class dfLogicTrigger {
 
 public:
 	dfLogicTrigger(std::string& kind, std::string& sector, int wallIndex);
+	dfLogicTrigger(std::string& kind, dfSector* sector, int wallIndex, dfLogicElevator *client);
+
 	void eventMask(int eventMask) { m_eventMask = eventMask; };
 
 	void client(std::string& client) { m_clients.push_back(client); }

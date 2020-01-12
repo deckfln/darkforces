@@ -42,6 +42,7 @@ class dfLevel
 
 	dfParseINF* m_inf = nullptr;				// level logic retrieved from the INF file
 	std::list<dfLogicElevator*> m_activeElevators;// elevators currently moving on the level
+	std::list <dfLogicTrigger*> m_triggers;		// all triggers of the level
 
 	void loadBitmaps(std::string file);
 	void buildAtlasMap(void);

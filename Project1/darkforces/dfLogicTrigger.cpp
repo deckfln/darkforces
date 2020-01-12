@@ -11,6 +11,15 @@ dfLogicTrigger::dfLogicTrigger(std::string& kind, std::string& sector, int wallI
 
 }
 
+dfLogicTrigger::dfLogicTrigger(std::string& kind, dfSector* sector, int wallIndex,  dfLogicElevator* client) :
+	m_class(kind),
+	m_wallIndex(wallIndex)
+{
+	m_pClients.push_back(client);
+
+	sector->configTrigger(this);
+}
+
 void dfLogicTrigger::boundingBox(glm::vec2& left, glm::vec2& right, float floor, float ceiling)
 {
 	m_boundingBox = fwAABBox(

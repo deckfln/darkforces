@@ -4,9 +4,10 @@
 #include "dfSector.h"
 #include "dfLevel.h"
 
-dfLogicElevator::dfLogicElevator(std::string& kind, dfSector* sector):
+dfLogicElevator::dfLogicElevator(std::string& kind, dfSector* sector, dfLevel* parent):
 	m_class(kind),
-	m_pSector(sector)
+	m_pSector(sector),
+	m_parent(parent)
 {
 }
 
@@ -54,7 +55,7 @@ fwMesh *dfLogicElevator::buildGeometry(fwMaterial* material)
 	}
 
 	m_mesh = new dfMesh(material);
-	m_pSector->buildElevator(m_mesh, amin, amax);
+	m_pSector->buildElevator(m_mesh, 0, amax - amin);
 
 	if (m_mesh->buildMesh()) {
 		// there is a mesh

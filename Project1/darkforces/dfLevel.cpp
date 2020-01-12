@@ -93,7 +93,7 @@ dfLevel::dfLevel(std::string file)
 		}
 
 		if (sector) {
-			sector->addTrigger(trigger);
+			sector->configTrigger(trigger);
 		}
 	}
 
@@ -360,7 +360,7 @@ void dfLevel::initElevators(void)
 	for (auto elevator : m_inf->m_elevators) {
 		// build a mesh and store the mesh in the super-sector holding the sector
 		elevator->buildGeometry(m_material);
-		// elevator->init(0);
+		elevator->init(0);
 	}
 }
 
@@ -371,16 +371,36 @@ void dfLevel::convertDoors2Elevators(void)
 {
 	std::string inv = "inv";
 	std::string hold = "hold";
+	std::string switch1 = "switch1";
+
 	for (auto sector : m_sectors) {
 		if (sector->flag() & DF_SECTOR_DOOR) {
-			dfLogicElevator* elevator = new dfLogicElevator(inv, sector);
+			dfLogicElevator* elevator = new dfLogicElevator(inv, sector, this);
 			dfLogicStop* closed = new dfLogicStop(sector->m_floorAltitude, hold);
-			dfLogicStop* opened = new dfLogicStop(sector->m_ceilingAltitude, 5);
+			dfLogicStop* opened = new dfLogicStop(sector->m_ceilingAltitude, 5000);
 
 			elevator->addStop(closed);
 			elevator->addStop(opened);
 
 			m_inf->m_elevators.push_back(elevator);
+
+			dfLogicTrigger* trigger = new dfLogicTrigger(switch1, sector, 1, elevator);
+			m_inf->m_triggers.push_back(trigger);
+		}
+	}
+}
+
+/**
+ * Check all triggers to find if one collide with the source box
+ */
+void dfLevel::testSwitch(fwAABBox& player)
+{
+	// convert from opengl space to level space
+	fwAABBox mybox(player.m_x * 10, player.m_x1 * 10, player.m_z * 10, player.m_z1 * 10, player.m_y * 10, player.m_y1 * 10);
+
+	for (auto trigger : m_inf->m_triggers) {
+		if (trigger->collide(mybox)) {
+			trigger->activate();
 		}
 	}
 }
@@ -427,16 +447,6 @@ dfSector* dfLevel::findSector(glm::vec3& position)
 	}
 
 	return nullptr;	// not here
-}
-
-/**
- * Deal with the switch logic
- */
-void dfLevel::testSwitch(fwAABBox& player)
-{
-	if (m_lastSector) {
-		m_lastSector->testTriggers(player);
-	}
 }
 
 /**

@@ -141,7 +141,7 @@ dfSector::dfSector(std::ifstream& infile)
 /**
  * Add a trigger to the sector. Create a boundingbox to detect the trigger
  */
-void dfSector::addTrigger(dfLogicTrigger* trigger)
+void dfSector::configTrigger(dfLogicTrigger* trigger)
 {
 	unsigned int wallID = trigger->wall();
 
@@ -153,23 +153,6 @@ void dfSector::addTrigger(dfLogicTrigger* trigger)
 			m_vertices[wall->m_left], m_vertices[wall->m_right],
 			m_floorAltitude, m_ceilingAltitude
 			);
-
-		m_triggers.push_back(trigger);
-	}
-}
-
-/**
- * Check all triggers to find if one collide with the source box
- */
-void dfSector::testTriggers(fwAABBox& box)
-{
-	// convert from opengl space to level space
-	fwAABBox mybox( box.m_x * 10, box.m_x1 * 10, box.m_z * 10, box.m_z1 * 10, box.m_y * 10, box.m_y1 * 10);
-
-	for (auto trigger : m_triggers) {
-		if (trigger->collide(mybox)) {
-			trigger->activate();
-		}
 	}
 }
 
