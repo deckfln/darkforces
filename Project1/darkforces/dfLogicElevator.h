@@ -62,5 +62,6 @@ public:
 	void init(int stopID);
 	void trigger(std::string& sclass);
 	bool animate(time_t delta);
+	void updateSector(void);
 	~dfLogicElevator(void);
 };

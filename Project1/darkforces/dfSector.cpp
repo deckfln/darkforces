@@ -315,7 +315,7 @@ std::vector<std::vector<Point>>& dfSector::linkWalls(void)
 /**
  * analyze the sector to find the moveable part and convert to an object
  */
-void dfSector::buildElevator(dfMesh *mesh, float bottom, float top)
+void dfSector::buildElevator(dfMesh *mesh, float bottom, float top, int what)
 {
 	if (!m_super) {
 		return;
@@ -337,7 +337,7 @@ void dfSector::buildElevator(dfMesh *mesh, float bottom, float top)
 			mesh->addRectangle(this, wall,
 				bottom,
 				top,
-				mirror->m_tex[DFWALL_TEXTURE_TOP],
+				mirror->m_tex[what],
 				textures,
 				false
 			);
@@ -356,6 +356,28 @@ void dfSector::buildElevator(dfMesh *mesh, float bottom, float top)
 
 	mesh->addFloor(vertices, m_polygons, bottom, m_ceilingTexture, textures, true);
 	mesh->addFloor(vertices, m_polygons, top, m_floorTexture, textures, true);
+}
+
+/**
+ * Build only the floor of the sector, upward
+ */
+void dfSector::buildFloor(dfMesh* mesh)
+{
+	if (!m_super) {
+		return;
+	}
+	std::vector<dfTexture*>& textures = m_super->textures();
+	// build top and bottom
+	// index the indexes IN the polyines of polygon 
+	std::vector<Point> vertices;
+
+	for (auto poly : m_polygons) {
+		for (auto p : poly) {
+			vertices.push_back(p);
+		}
+	}
+
+	mesh->addFloor(vertices, m_polygons, 0, m_floorTexture, textures, false);
 }
 
 /**

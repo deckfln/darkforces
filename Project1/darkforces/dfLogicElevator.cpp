@@ -15,6 +15,9 @@ dfLogicElevator::dfLogicElevator(std::string& kind, dfSector* sector, dfLevel* p
 	else if (kind == "basic") {
 		m_type = DF_ELEVATOR_BASIC;
 	}
+	else if (kind == "move_floor") {
+		m_type = DF_ELEVATOR_MOVE_FLOOR;
+	}
 	else {
 		std::cerr << "dfLogicElevator::dfLogicElevator " << kind << " not implemented" << std::endl;
 	}
@@ -29,6 +32,9 @@ dfLogicElevator::dfLogicElevator(std::string& kind, std::string& sector):
 	}
 	else if (kind == "basic") {
 		m_type = DF_ELEVATOR_BASIC;
+	}
+	else if (kind == "move_floor") {
+		m_type = DF_ELEVATOR_MOVE_FLOOR;
 	}
 	else {
 		std::cerr << "dfLogicElevator::dfLogicElevator " << kind << " not implemented" << std::endl;
@@ -64,26 +70,50 @@ fwMesh *dfLogicElevator::buildGeometry(fwMaterial* material)
 		return nullptr;
 	}
 
+	// get the maximum extend of the elevator -> will become the height of the object
+	float amin = 99999, amax = -99999, c;
+	for (auto stop : m_stops) {
+		c = stop->z_position();
+		if (c < amin) amin = c;
+		if (c > amax) amax = c;
+	}
+
 	switch (m_type) {
 	case DF_ELEVATOR_INV:
-	case DF_ELEVATOR_BASIC: {
-		// get the maximum extend of the elevator -> will become the height of the object
-		float amin = 99999, amax = -99999, c;
-		for (auto stop : m_stops) {
-			c = stop->z_position();
-			if (c < amin) amin = c;
-			if (c > amax) amax = c;
-		}
-
+	case DF_ELEVATOR_BASIC:
 		m_mesh = new dfMesh(material);
-		m_pSector->buildElevator(m_mesh, 0, amax - amin);
+
+		// the elevator bottom is actually the ceiling
+		m_pSector->buildElevator(m_mesh, 0, amax - amin, DFWALL_TEXTURE_TOP);
 
 		if (m_mesh->buildMesh()) {
-			// there is a mesh
 			m_pSector->addObject(m_mesh->mesh());
 		}
+		else {
+			// do not keep the trigger
+			delete m_mesh;
+			m_mesh = nullptr;
+			return nullptr;
+		}
 		break;
-	}
+
+	case DF_ELEVATOR_MOVE_FLOOR:
+		m_mesh = new dfMesh(material);
+
+		// the elevator top is actually the floor
+		m_pSector->buildElevator(m_mesh, -(amax - amin), 0, DFWALL_TEXTURE_BOTTOM);
+
+		if (m_mesh->buildMesh()) {
+			m_pSector->addObject(m_mesh->mesh());
+		}
+		else {
+			// do not keep the trigger
+			delete m_mesh;
+			m_mesh = nullptr;
+			return nullptr;
+		}
+		break;
+
 	default:
 		return nullptr;
 	}
@@ -102,7 +132,10 @@ void dfLogicElevator::init(int stopID)
 		std::cerr << "dfLogicElevator::init ignored elevator elev3-5" << std::endl;
 		return;
 	}
-	moveTo(stop);
+
+	if (m_mesh) {
+		moveTo(stop);
+	}
 }
 
 /**
@@ -194,6 +227,35 @@ bool dfLogicElevator::animate(time_t delta)
 }
 
 /**
+ * update the original sector if the elevator is going to replace moving parts
+ */
+void dfLogicElevator::updateSector(void)
+{
+	if (!m_pSector) {
+		return;
+	}
+
+	// get the maximum extend of the elevator -> will become the height of the object
+	float amin = 99999, amax = -99999, c;
+
+	switch (m_type) {
+	case DF_ELEVATOR_INV:
+	case DF_ELEVATOR_BASIC:
+		break;
+
+	case DF_ELEVATOR_MOVE_FLOOR:
+		for (auto stop : m_stops) {
+			c = stop->z_position();
+			if (c < amin) amin = c;
+			if (c > amax) amax = c;
+		}
+
+		m_pSector->m_floorAltitude = amin;
+		break;
+	}
+}
+
+/**
  * Compute a floor altitude based on elevator kind and stop
  */
 void dfLogicElevator::moveTo(dfLogicStop *stop)
@@ -206,6 +268,10 @@ void dfLogicElevator::moveTo(dfLogicStop *stop)
 		break;
 	case DF_ELEVATOR_BASIC:
 		m_mesh->moveFloorTo(z);
+		break;
+	case DF_ELEVATOR_MOVE_FLOOR:
+		m_mesh->moveFloorTo(z);
+		break;
 	}
 }
 
@@ -219,6 +285,9 @@ void dfLogicElevator::moveTo(float z)
 		m_mesh->moveCeilingTo(z);
 		break;
 	case DF_ELEVATOR_BASIC:
+		m_mesh->moveFloorTo(z);
+		break;
+	case DF_ELEVATOR_MOVE_FLOOR:
 		m_mesh->moveFloorTo(z);
 		break;
 	}

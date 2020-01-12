@@ -98,7 +98,18 @@ dfLevel::dfLevel(std::string file)
 	}
 
 	convertDoors2Elevators();	// for every sector 'DOOR', create an evelator
+
+	// test the evelators for move_floor and update the vectors
+	for (auto elevator : m_inf->m_elevators) {
+		elevator->updateSector();
+	}
+
 	buildAtlasMap();	// load textures in a megatexture
+
+	m_material = new fwMaterialBasic("data/shaders/vertex.glsl", "", "data/shaders/fragment.glsl");
+	m_material->addDiffuseMap(m_fwtextures);
+	m_material->addUniform(m_shader_idx);
+
 	spacePartitioning();// partion of space for quick collision
 	buildGeometry();	// build the geometry of each super sectors
 	initElevators();	// move all elevators to position 0
@@ -276,10 +287,6 @@ void dfLevel::buildAtlasMap(void)
  */
 void dfLevel::buildGeometry(void)
 {
-	m_material = new fwMaterialBasic("data/shaders/vertex.glsl", "", "data/shaders/fragment.glsl");
-	m_material->addDiffuseMap(m_fwtextures);
-	m_material->addUniform(m_shader_idx);
-
 	for (auto ssector : m_supersectors) {
 		ssector->buildGeometry(m_sectors, m_textures, m_material);
 	}

@@ -103,7 +103,8 @@ public:
 	void updateVertices(void);
 	std::vector<std::vector<Point>>& linkWalls(void);
 
-	void buildElevator(dfMesh *mesh, float bottom, float top);
+	void buildElevator(dfMesh *mesh, float bottom, float top, int what);
+	void buildFloor(dfMesh* mesh);
 
 	void bindWall2Sector(std::vector <dfSector*> sectors);
 	~dfSector();
