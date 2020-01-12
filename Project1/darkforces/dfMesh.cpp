@@ -3,6 +3,8 @@
 #include "dfSector.h"
 #include "dfTexture.h"
 
+#include "../include/earcut.hpp"
+
 dfMesh::dfMesh(fwMaterial* material)
 {
 	m_material = material;
@@ -196,6 +198,81 @@ void dfMesh::addRectangle(dfSector* sector, dfWall* wall, float z, float z1, glm
 	else {
 		updateRectangleAntiClockwise(p, x, y, z, x1, y1, z1, xoffset, yoffset, width, height, textureID);
 	}
+}
+
+/**
+ * create a floor tesselation
+ */
+void dfMesh::addFloor(std::vector<Point>& vertices, std::vector<std::vector<Point>>& polygons, float z, glm::vec3& texture, std::vector<dfTexture*>& textures, bool clockwise)
+{
+	// Run tessellation
+	// Returns array of indices that refer to the vertices of the input polygon.
+	// e.g: the index 6 would refer to {25, 75} in this example.
+	// Three subsequent indices form a triangle. Output triangles are clockwise.
+	std::vector<N> indices = mapbox::earcut<N>(polygons);
+
+	// resize the opengl buffers
+	int p = m_vertices.size();
+	int cvertices = indices.size();	
+	m_vertices.resize(p + cvertices);
+	m_uvs.resize(p + cvertices);
+	m_textureID.resize(p + cvertices);
+
+	// use axis aligned texture UV, on a 8x8 grid
+	// ratio of texture pixel vs world position = 180 pixels for 24 clicks = 7.5x1
+	dfTexture* dfTexture = textures[(int)texture.r];
+	float xpixel = (float)dfTexture->width;
+	float ypixel = (float)dfTexture->height;
+
+	// warning, triangles are looking downward
+	int currentVertice = 0, j;
+	for (unsigned int i = 0; i < indices.size(); i++) {
+		int index = indices[i];
+
+		// get local texture offset on the floor
+		// TODO: current supposion : offset x 1 => 1 pixel from the begining on XXX width pixel texture
+		float xoffset = ((vertices[index][0] + texture.g) * 8.0f) / xpixel;
+		float yoffset = ((vertices[index][1] + texture.b) * 8.0f) / ypixel;
+
+
+		if (!clockwise) {
+			// reverse vertices 2 and 3 to look upward
+			switch (currentVertice) {
+			case 1: j = 1; break;
+			case 2: j = -1; break;
+			default: j = 0; break;
+			}
+			m_vertices[p + j].x = vertices[index][0] / 10.0f;
+			m_vertices[p + j].y = z / 10.0f;
+			m_vertices[p + j].z = vertices[index][1] / 10.0f;
+			m_uvs[p + j] = glm::vec2(xoffset, yoffset);
+			m_textureID[p + j] = texture.r;
+		}
+		else {
+			m_vertices[p].x = vertices[index][0] / 10.0f;
+			m_vertices[p].y = z / 10.0f;
+			m_vertices[p].z = vertices[index][1] / 10.0f;
+			m_uvs[p] = glm::vec2(xoffset, yoffset);
+			m_textureID[p] = texture.r;
+		}
+
+		p++;
+		currentVertice = (currentVertice + 1) % 3;
+	}
+}
+
+void dfMesh::moveFloorTo(float z)
+{
+	glm::vec3 p = m_mesh->get_position();
+	p.y = z / 10.0f;
+	m_mesh->position(p);
+}
+
+void dfMesh::moveCeilingTo(float z)
+{
+	glm::vec3 p = m_mesh->get_position();
+	p.y = z / 10.0f;
+	m_mesh->position(p);
 }
 
 /**

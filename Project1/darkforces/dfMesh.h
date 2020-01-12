@@ -2,8 +2,15 @@
 
 #include <glm/vec3.hpp>
 #include <vector>
+#include <array>
 
 #include "../framework/fwMesh.h"
+
+// The index type. Defaults to uint32_t, but you can also pass uint16_t if you know that your
+// data won't have more than 65536 vertices.
+using N = uint32_t;
+using Coord = float;
+using Point = std::array<Coord, 2>;
 
 class dfSector;
 class dfWall;
@@ -29,6 +36,9 @@ public:
 	void buildGeometry(dfSector* source, float bottom, float top);
 	int addRectangle(int start, dfSector* sector, dfWall* wall, float z, float z1, int texture, std::vector<dfTexture*>& textures);
 	void addRectangle(dfSector* sector, dfWall* wall, float z, float z1, glm::vec3& texture, std::vector<dfTexture*>& textures, bool clockwise);
+	void addFloor(std::vector<Point>& vertices, std::vector<std::vector<Point>>& polygons, float z, glm::vec3& texture, std::vector<dfTexture*>& textures, bool clockwise);
+	void moveFloorTo(float z);
+	void moveCeilingTo(float z);
 	fwMesh* buildMesh(void);
 	~dfMesh();
 };

@@ -1,5 +1,6 @@
 #include "dfLogicElevator.h"
 
+#include "dfMesh.h"
 #include "dfSector.h"
 #include "dfLevel.h"
 
@@ -56,10 +57,7 @@ void dfLogicElevator::init(int stopID)
 		std::cerr << "dfLogicElevator::init ignored elevator elev3-5" << std::endl;
 		return;
 	}
-	changeSector(stop);
-	if (m_pSector) {
-		m_pSector->updateVertices();
-	}
+	moveTo(stop);
 }
 
 /**
@@ -101,16 +99,22 @@ bool dfLogicElevator::animate(time_t delta)
 
 	case DF_ELEVATOR_MOVE: {
 		m_current += m_direction;
-		changeSector(m_current);
-		m_pSector->updateVertices();
+		moveTo(m_current);
 
-		if (abs(m_current - m_target) < 0.1) {
+		bool reached = false;
+		if (m_direction < 0) {
+			reached = m_target >= m_current;
+		}
+		else {
+			reached = m_current >= m_target;
+		}
+
+		if (reached) {
 			m_tick = 0;
 			m_currentStop = m_nextStop;
 
 			// force the altitude to get ride of math round
-			changeSector(m_stops[m_currentStop]);
-			m_pSector->updateVertices();
+			moveTo(m_stops[m_currentStop]);
 
 			if (m_stops[m_currentStop]->isTimeBased()) {
 				// put the elevator on wait
@@ -147,20 +151,15 @@ bool dfLogicElevator::animate(time_t delta)
 /**
  * Compute a floor altitude based on elevator kind and stop
  */
-void dfLogicElevator::changeSector(dfLogicStop *stop)
+void dfLogicElevator::moveTo(dfLogicStop *stop)
 {
-	if (!m_pSector) {
-		std::cerr << "dfLogicElevator::changeSector " << m_sector << " not linked" << std::endl;
-		return;
-	}
-
 	float z = stop->z_position();
 
 	if (m_class == "inv") {
-		m_pSector->m_ceilingAltitude = z;
+		m_mesh->moveCeilingTo(z);
 	}
 	else if (m_class == "basic") {
-		m_pSector->m_floorAltitude = z;
+		m_mesh->moveFloorTo(z);
 	}
 	else {
 		std::cerr << "dfLogicElevator unknown class " << m_class << std::endl;
@@ -170,18 +169,13 @@ void dfLogicElevator::changeSector(dfLogicStop *stop)
 /**
  * Compute a floor altitude based on elevator kind and stop
  */
-void dfLogicElevator::changeSector(float z)
+void dfLogicElevator::moveTo(float z)
 {
-	if (!m_pSector) {
-		std::cerr << "dfLogicElevator::changeSector " << m_sector << " not linked" << std::endl;
-		return;
-	}
-
 	if (m_class == "inv") {
-		m_pSector->m_ceilingAltitude = z;
+		m_mesh->moveCeilingTo(z);
 	}
 	else if (m_class == "basic") {
-		m_pSector->m_floorAltitude = z;
+		m_mesh->moveFloorTo(z);
 	}
 	else {
 		std::cerr << "dfLogicElevator unknown class " << m_class << std::endl;

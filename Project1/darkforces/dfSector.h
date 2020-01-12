@@ -5,12 +5,15 @@
 
 #include "dfWall.h"
 
-#include "../framework/fwMesh.h"
+using Coord = float;
+using Point = std::array<Coord, 2>;
+
 #include "../framework/fwAABBox.h"
 #include "../framework/math/fwSphere.h"
 
 #include "dfLogicTrigger.h"
 
+class dfMesh;
 class dfSuperSector;
 
 struct dfWallsLink {
@@ -18,9 +21,6 @@ struct dfWallsLink {
 	int m_right = -1;
 	bool parsed = false;
 };
-
-using Coord = float;
-using Point = std::array<Coord, 2>;
 
 class dfSector
 {
@@ -76,7 +76,9 @@ public:
 	void setFloor(float floor);
 	void updateVertices(void);
 	std::vector<std::vector<Point>>& linkWalls(void);
+
 	void buildElevator(dfMesh *mesh, float bottom, float top);
+
 	void bindWall2Sector(std::vector <dfSector*> sectors);
 	~dfSector();
 };

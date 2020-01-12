@@ -8,6 +8,7 @@
 #include <glm/glm.hpp>
 
 #include "dfSuperSector.h"
+#include "dfMesh.h"
 
 dfSector::dfSector(std::ifstream& infile)
 {
@@ -331,7 +332,13 @@ std::vector<std::vector<Point>>& dfSector::linkWalls(void)
  */
 void dfSector::buildElevator(dfMesh *mesh, float bottom, float top)
 {
-	// create the walls at the begining of the buffer
+	if (!m_super) {
+		return;
+	}
+
+	std::vector<dfTexture*>& textures = m_super->textures();
+
+	// create the walls
 	for (auto wall : m_walls) {
 		if (wall->m_adjoint < 0) {
 			// ignore full wall : they are not visible
@@ -346,11 +353,24 @@ void dfSector::buildElevator(dfMesh *mesh, float bottom, float top)
 				bottom,
 				top,
 				mirror->m_tex[DFWALL_TEXTURE_TOP],
-				m_super->textures(),
+				textures,
 				false
 			);
 		}
 	}
+
+	// build top and bottom
+	// index the indexes IN the polyines of polygon 
+	std::vector<Point> vertices;
+
+	for (auto poly : m_polygons) {
+		for (auto p : poly) {
+			vertices.push_back(p);
+		}
+	}
+
+	mesh->addFloor(vertices, m_polygons, bottom, m_ceilingTexture, textures, true);
+	mesh->addFloor(vertices, m_polygons, top, m_floorTexture, textures, true);
 }
 
 /**

@@ -6,9 +6,9 @@
 #include "dfLogicStop.h"
 #include "../framework/fwMaterial.h"
 #include "../framework/fwMesh.h"
-#include "dfMesh.h"
 
 class dfLevel;
+class dfMesh;
 
 enum {
 	DF_ELEVATOR_HOLD,		// elevator is not animated
@@ -38,8 +38,8 @@ class dfLogicElevator {
 
 	dfMesh* m_mesh = nullptr;			// mesh of the elevator
 
-	void changeSector(dfLogicStop* stop);	// extract the floor position from the stop and the 
-	void changeSector(float z);	// extract the floor position from the stop and the 
+	void moveTo(dfLogicStop* stop);	// extract the floor position from the stop and the 
+	void moveTo(float z);	// extract the floor position from the stop and the 
 	void move2nextFloor(void);
 
 public:
