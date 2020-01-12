@@ -82,9 +82,11 @@ dfSector::dfSector(std::ifstream& infile)
 			if (tokens[1] == "ALTITUDE") {
 				//PASS
 			}
-			else if (tokens[1] == "ALTITUDE") {
-				//PASS
-			}
+		}
+		else if (tokens[0] == "FLAGS") {
+			m_flag1 = std::stoi(tokens[1]);
+			m_flag2 = std::stoi(tokens[2]);
+			m_flag3 = std::stoi(tokens[3]);
 		}
 		else if (tokens[0] == "VERTICES") {
 			nbVertices = std::stoi(tokens[1]);

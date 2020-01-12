@@ -22,6 +22,30 @@ struct dfWallsLink {
 	bool parsed = false;
 };
 
+// Flag1 values
+enum {
+	DF_SECTOR_EXTERIOR_NO_CEIL = 1,				// (SKY) Note: actual ceiling limit will be the ceiling altitude + 100 
+	DF_SECTOR_DOOR = 2,							// instant door 
+	DF_SECTOR_SHOT_REFLECTION = 4,				// MAG.SEAL walls, floorand ceiling reflect weapon shots 
+	DF_SECTOR_EXTERIOR_ADJOIN = 8,				// will adjoin adjacent skies 
+	DF_SECTOR_ICE_FLOOR = 16,					// (SKATING)
+	DF_SECTOR_SNOW_FLOOR = 32,					// no apparent effects 
+	DF_SECTOR_EXPLODING_WALL_DOOR  = 64,		// instant exploding door 
+	DF_SECTOR_EXTERIOR_NO_FLOOR = 128,			// (PIT) Note : actual floor limit will be the floor altitude - 100 
+	DF_SECTOR_EXTERIOR_FLOOR_ADJOIN = 256,		// will adjoin adjacent pits 
+	DF_SECTOR_CRUSHING_SECTOR = 512,			// vertically moving elevators will crush the player 
+	DF_SECTOR_NO_WALL_DRAW = 1024,				//  "HORIZON" removes walls of a sector(sector must be sky and pit to work properly) 
+	DF_SECTOR_LOW_DAMAGE = 2048,
+	DF_SECTOR_HIGH_DAMAGE = 4096,				//	both can be combined for GAS 
+	DF_SECTOR_NO_SMART_OBJECT_REACTION = 8192,	//
+	DF_SECTOR_SMART_OBJECT_REACTION = 16384,
+	DF_SECTOR__SUBSECTOR = 32768,				// no apparent effects 
+	DF_SECTOR__SAFE_SECTOR = 65536,
+	DF_SECTOR__RENDERED = 131072,
+	DF_SECTOR__PLAYER = 262144,
+	DF_SECTOR__SECRET_SECTOR = 524288			// increments the % secret when entered
+};
+
 class dfSector
 {
 	std::list <dfLogicTrigger*> m_triggers;
@@ -45,6 +69,10 @@ public:
 
 	glm::vec3 m_floorTexture;
 	glm::vec3 m_ceilingTexture;
+
+	unsigned int m_flag1 = 0;
+	unsigned int m_flag2 = 0;
+	unsigned int m_flag3 = 0;
 
 	// local data in space world
 	std::vector <dfWall*> m_walls;
