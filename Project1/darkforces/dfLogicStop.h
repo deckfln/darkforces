@@ -18,7 +18,7 @@ class dfLogicStop {
 	float m_relatiave = 0;	// relative stop from the floor
 
 	std::string m_sector;	// based on sector XXX
-	dfSector *m_pSector;
+	dfSector *m_pSector = nullptr;
 
 	float m_time = 0;			// time (millisecond) to stop the elevator a position (absolute or relative or sector)
 
@@ -27,6 +27,12 @@ class dfLogicStop {
 	// [complete] mission will be complete when elev arrives at stop
 	std::string m_action;
 public:
+	dfLogicStop();
+	dfLogicStop(float altitude, dfSector* sector, std::string& action);
+	dfLogicStop(float altitude, dfSector* sector, float time);
+	dfLogicStop(float altitude, std::string& action);
+	dfLogicStop(float altitude, float time);
+
 	void absolute(float absolute) { m_flag |= 1; m_absolute = absolute; };
 	void relative(float relative) { m_flag |= 2; m_relatiave = relative; };
 	void sector(std::string& sector) { m_flag |= 4; m_sector = sector; };

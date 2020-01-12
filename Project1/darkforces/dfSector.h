@@ -97,6 +97,7 @@ public:
 	float originalCeiling(void) { return m_originalceiling; };
 	void parent(dfSuperSector* parent) { m_super = parent; };
 	float height(void) { return m_height; };
+	unsigned flag(void) { return m_flag1; };
 
 	void addObject(fwMesh* object);
 	bool isPointInside(glm::vec3& position);

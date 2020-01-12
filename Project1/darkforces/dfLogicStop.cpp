@@ -2,6 +2,40 @@
 
 #include "dfSector.h"
 
+dfLogicStop::dfLogicStop()
+{
+}
+
+dfLogicStop::dfLogicStop(float altitude, dfSector* sector, std::string& action)
+{
+	m_flag = 2 | 16;
+	m_relatiave = altitude;
+	m_pSector = sector;
+	m_action = action;
+}
+
+dfLogicStop::dfLogicStop(float altitude, dfSector* sector, float time)
+{
+	m_flag = 2 | 8;
+	m_relatiave = altitude;
+	m_pSector = sector;
+	m_time = time;
+}
+
+dfLogicStop::dfLogicStop(float altitude, std::string& action)
+{
+	m_flag = 1 | 16;
+	m_absolute = altitude;
+	m_action = action;
+}
+
+dfLogicStop::dfLogicStop(float altitude, float time)
+{
+	m_flag = 1 | 8;
+	m_absolute = altitude;
+	m_time = time;
+}
+
 /**
  * coonect the Stop to a sector (for relative altitude, or another sector altitude)
  */

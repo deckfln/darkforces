@@ -97,6 +97,7 @@ dfLevel::dfLevel(std::string file)
 		}
 	}
 
+	convertDoors2Elevators();	// for every sector 'DOOR', create an evelator
 	buildAtlasMap();	// load textures in a megatexture
 	spacePartitioning();// partion of space for quick collision
 	buildGeometry();	// build the geometry of each super sectors
@@ -360,6 +361,27 @@ void dfLevel::initElevators(void)
 		// build a mesh and store the mesh in the super-sector holding the sector
 		elevator->buildGeometry(m_material);
 		// elevator->init(0);
+	}
+}
+
+/**
+ * for every sector 'DOOR', create an evelator and it stops
+ */
+void dfLevel::convertDoors2Elevators(void)
+{
+	std::string inv = "inv";
+	std::string hold = "hold";
+	for (auto sector : m_sectors) {
+		if (sector->flag() & DF_SECTOR_DOOR) {
+			dfLogicElevator* elevator = new dfLogicElevator(inv, sector);
+			dfLogicStop* closed = new dfLogicStop(sector->m_floorAltitude, hold);
+			dfLogicStop* opened = new dfLogicStop(sector->m_ceilingAltitude, 5);
+
+			elevator->addStop(closed);
+			elevator->addStop(opened);
+
+			m_inf->m_elevators.push_back(elevator);
+		}
 	}
 }
 

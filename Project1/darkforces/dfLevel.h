@@ -49,6 +49,7 @@ class dfLevel
 	void buildGeometry(void);
 	dfSuperSector* findSuperSector(glm::vec3& position);
 	void initElevators(void);
+	void convertDoors2Elevators(void);
 
 public:
 	dfLevel(std::string name);

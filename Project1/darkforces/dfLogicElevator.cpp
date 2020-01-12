@@ -4,6 +4,12 @@
 #include "dfSector.h"
 #include "dfLevel.h"
 
+dfLogicElevator::dfLogicElevator(std::string& kind, dfSector* sector):
+	m_class(kind),
+	m_pSector(sector)
+{
+}
+
 dfLogicElevator::dfLogicElevator(std::string& kind, std::string& sector):
 	m_class(kind),
 	m_sector(sector)
