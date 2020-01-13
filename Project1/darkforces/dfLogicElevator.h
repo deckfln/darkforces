@@ -9,6 +9,7 @@
 
 class dfLevel;
 class dfMesh;
+class dfLogicTrigger;
 
 enum {
 	DF_ELEVATOR_HOLD,		// elevator is not animated
@@ -62,6 +63,8 @@ public:
 	void init(int stopID);
 	void trigger(std::string& sclass);
 	bool animate(time_t delta);
-	void updateSector(void);
+	void updateSectorForMoveFloors(void);
+	bool is(int type) { return m_type == type; };
+	dfLogicTrigger* createFloorTrigger();
 	~dfLogicElevator(void);
 };

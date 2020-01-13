@@ -48,6 +48,8 @@ enum {
 
 class dfSector
 {
+	std::list <dfLogicTrigger*> m_triggers;		// list of all triggers on the sector.
+
 public:
 	fwAABBox m_boundingBox;
 
@@ -86,9 +88,11 @@ public:
 	dfSuperSector* m_super = nullptr;
 
 	dfSector(std::ifstream& infile);
-	void configTrigger(dfLogicTrigger* trigger);
+	void setTriggerFromWall(dfLogicTrigger* trigger);
+	void setTriggerFromFloor(dfLogicTrigger* trigger);
 	bool inAABBox(glm::vec3& position) { return m_boundingBox.inside(position); };
 
+	void floor(float z);
 	float ceiling(void) { return m_ceilingAltitude; };
 	float originalFloor(void) { return m_originalFloor; };
 	float originalCeiling(void) { return m_originalceiling; };
@@ -103,7 +107,7 @@ public:
 	void updateVertices(void);
 	std::vector<std::vector<Point>>& linkWalls(void);
 
-	void buildElevator(dfMesh *mesh, float bottom, float top, int what);
+	void buildElevator(dfMesh *mesh, float bottom, float top, int what, bool clockwise);
 	void buildFloor(dfMesh* mesh);
 
 	void bindWall2Sector(std::vector <dfSector*> sectors);

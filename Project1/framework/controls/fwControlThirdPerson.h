@@ -24,11 +24,11 @@ class fwControlThirdPerson : public fwControl
 	void _mouseButton(int action);
 	void updateDirection(void);
 	void checkKeys(time_t delta);
-	void updateCamera(void);
 
 public:
 	fwControlThirdPerson(fwCamera *, glm::vec3 position, glm::vec3 direction);
 	void update(time_t delta);
 	void keyEvent(int key, int scancode, int action);
+	void updateCamera(void);
 	~fwControlThirdPerson();
 };

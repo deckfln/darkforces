@@ -84,7 +84,7 @@ fwMesh *dfLogicElevator::buildGeometry(fwMaterial* material)
 		m_mesh = new dfMesh(material);
 
 		// the elevator bottom is actually the ceiling
-		m_pSector->buildElevator(m_mesh, 0, amax - amin, DFWALL_TEXTURE_TOP);
+		m_pSector->buildElevator(m_mesh, 0, amax - amin, DFWALL_TEXTURE_TOP, true);
 
 		if (m_mesh->buildMesh()) {
 			m_pSector->addObject(m_mesh->mesh());
@@ -101,7 +101,7 @@ fwMesh *dfLogicElevator::buildGeometry(fwMaterial* material)
 		m_mesh = new dfMesh(material);
 
 		// the elevator top is actually the floor
-		m_pSector->buildElevator(m_mesh, -(amax - amin), 0, DFWALL_TEXTURE_BOTTOM);
+		m_pSector->buildElevator(m_mesh, -(amax - amin), 0, DFWALL_TEXTURE_BOTTOM, false);
 
 		if (m_mesh->buildMesh()) {
 			m_pSector->addObject(m_mesh->mesh());
@@ -229,7 +229,7 @@ bool dfLogicElevator::animate(time_t delta)
 /**
  * update the original sector if the elevator is going to replace moving parts
  */
-void dfLogicElevator::updateSector(void)
+void dfLogicElevator::updateSectorForMoveFloors(void)
 {
 	if (!m_pSector) {
 		return;
@@ -238,21 +238,13 @@ void dfLogicElevator::updateSector(void)
 	// get the maximum extend of the elevator -> will become the height of the object
 	float amin = 99999, amax = -99999, c;
 
-	switch (m_type) {
-	case DF_ELEVATOR_INV:
-	case DF_ELEVATOR_BASIC:
-		break;
-
-	case DF_ELEVATOR_MOVE_FLOOR:
-		for (auto stop : m_stops) {
-			c = stop->z_position();
-			if (c < amin) amin = c;
-			if (c > amax) amax = c;
-		}
-
-		m_pSector->m_floorAltitude = amin;
-		break;
+	for (auto stop : m_stops) {
+		c = stop->z_position();
+		if (c < amin) amin = c;
+		if (c > amax) amax = c;
 	}
+
+	m_pSector->m_floorAltitude = amin;
 }
 
 /**
@@ -271,6 +263,7 @@ void dfLogicElevator::moveTo(dfLogicStop *stop)
 		break;
 	case DF_ELEVATOR_MOVE_FLOOR:
 		m_mesh->moveFloorTo(z);
+		m_pSector->floor(z);
 		break;
 	}
 }
@@ -289,6 +282,7 @@ void dfLogicElevator::moveTo(float z)
 		break;
 	case DF_ELEVATOR_MOVE_FLOOR:
 		m_mesh->moveFloorTo(z);
+		m_pSector->floor(z);
 		break;
 	}
 }
@@ -311,6 +305,22 @@ void dfLogicElevator::move2nextFloor(void)
 		m_target = m_stops[m_nextStop]->z_position();
 	}
 	m_direction = (m_target - m_current) / 100;
+}
+
+/**
+ * Create a trigger based on the floor of the elevator (for move_floor)
+ */
+dfLogicTrigger* dfLogicElevator::createFloorTrigger()
+{
+	static std::string switch1 = "switch1";
+
+	if (!m_pSector) {
+		return nullptr;
+	}
+
+	dfLogicTrigger* trigger = new dfLogicTrigger(switch1, m_pSector, this);
+
+	return trigger;
 }
 
 dfLogicElevator::~dfLogicElevator(void)

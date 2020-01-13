@@ -5,6 +5,8 @@
 #include <list>
 
 #include <glm/vec2.hpp>
+#include <glm/vec3.hpp>
+
 #include "../framework/fwAABBox.h"
 #include "dfLogicElevator.h"
 
@@ -20,10 +22,13 @@ class dfLogicTrigger {
 	int m_wallIndex = -1;			// index of the wall being a trigger
 
 	fwAABBox m_boundingBox;			// bouding box of the trigger
+	glm::vec3 m_boundingBoxCenter;	// original position of the bounding box
+	glm::vec3 m_boundingBoxSize;	// original size of the bounding box
 
 public:
 	dfLogicTrigger(std::string& kind, std::string& sector, int wallIndex);
 	dfLogicTrigger(std::string& kind, dfSector* sector, int wallIndex, dfLogicElevator *client);
+	dfLogicTrigger(std::string& kind, dfSector* sector, dfLogicElevator* client);
 
 	void eventMask(int eventMask) { m_eventMask = eventMask; };
 
@@ -34,5 +39,6 @@ public:
 	int wall(void) { return m_wallIndex; };
 	void boundingBox(glm::vec2& left, glm::vec2& right, float floor, float ceiling);
 	bool collide(fwAABBox& box);
+	void moveZ(float z);
 	void activate(void);
 };

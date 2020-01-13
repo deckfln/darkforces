@@ -139,9 +139,9 @@ dfSector::dfSector(std::ifstream& infile)
 }
 
 /**
- * Add a trigger to the sector. Create a boundingbox to detect the trigger
+ * configure the trigger based on the wall of the sector
  */
-void dfSector::configTrigger(dfLogicTrigger* trigger)
+void dfSector::setTriggerFromWall(dfLogicTrigger* trigger)
 {
 	unsigned int wallID = trigger->wall();
 
@@ -153,6 +153,36 @@ void dfSector::configTrigger(dfLogicTrigger* trigger)
 			m_vertices[wall->m_left], m_vertices[wall->m_right],
 			m_floorAltitude, m_ceilingAltitude
 			);
+	}
+	m_triggers.push_back(trigger);
+}
+
+/**
+ * configure the trigger based on the floor of the sector
+ */
+void dfSector::setTriggerFromFloor(dfLogicTrigger* trigger)
+{
+	glm::vec2 left(m_boundingBox.m_x, m_boundingBox.m_y);
+	glm::vec2 right(m_boundingBox.m_x1, m_boundingBox.m_y1);
+
+	trigger->boundingBox(
+		left, right,
+		m_floorAltitude, m_floorAltitude
+	);
+
+	m_triggers.push_back(trigger);
+}
+
+/**
+ * Move the floor of the sector
+ * Also move all triggers on the sector
+ */
+void dfSector::floor(float z)
+{
+	m_floorAltitude = z;;
+
+	for (auto trigger : m_triggers) {
+		trigger->moveZ(z);
 	}
 }
 
@@ -315,7 +345,7 @@ std::vector<std::vector<Point>>& dfSector::linkWalls(void)
 /**
  * analyze the sector to find the moveable part and convert to an object
  */
-void dfSector::buildElevator(dfMesh *mesh, float bottom, float top, int what)
+void dfSector::buildElevator(dfMesh *mesh, float bottom, float top, int what, bool clockwise)
 {
 	if (!m_super) {
 		return;
@@ -354,8 +384,8 @@ void dfSector::buildElevator(dfMesh *mesh, float bottom, float top, int what)
 		}
 	}
 
-	mesh->addFloor(vertices, m_polygons, bottom, m_ceilingTexture, textures, true);
-	mesh->addFloor(vertices, m_polygons, top, m_floorTexture, textures, true);
+	mesh->addFloor(vertices, m_polygons, bottom, m_ceilingTexture, textures, clockwise);
+	mesh->addFloor(vertices, m_polygons, top, m_floorTexture, textures, clockwise);
 }
 
 /**

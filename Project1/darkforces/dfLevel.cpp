@@ -93,17 +93,12 @@ dfLevel::dfLevel(std::string file)
 		}
 
 		if (sector) {
-			sector->configTrigger(trigger);
+			sector->setTriggerFromWall(trigger);
 		}
 	}
 
-	convertDoors2Elevators();	// for every sector 'DOOR', create an evelator
-
-	// test the evelators for move_floor and update the vectors
-	for (auto elevator : m_inf->m_elevators) {
-		elevator->updateSector();
-	}
-
+	convertDoors2Elevators();	// for every sector 'DOOR', create an evelator and a trigger
+	createMoveFloors();			// for every sector 'move_floor' create an elevator and a trigger
 	buildAtlasMap();	// load textures in a megatexture
 
 	m_material = new fwMaterialBasic("data/shaders/vertex.glsl", "", "data/shaders/fragment.glsl");
@@ -372,7 +367,7 @@ void dfLevel::initElevators(void)
 }
 
 /**
- * for every sector 'DOOR', create an evelator and it stops
+ * for every sector 'DOOR', create an evelator and it stops PLUS trigger
  */
 void dfLevel::convertDoors2Elevators(void)
 {
@@ -393,6 +388,23 @@ void dfLevel::convertDoors2Elevators(void)
 
 			dfLogicTrigger* trigger = new dfLogicTrigger(switch1, sector, 1, elevator);
 			m_inf->m_triggers.push_back(trigger);
+		}
+	}
+}
+
+/**
+ * Parse all evelators move_floor and create a trigger at the floor level
+ */
+void dfLevel::createMoveFloors(void)
+{
+	for (auto elevator : m_inf->m_elevators) {
+		if (elevator->is(DF_ELEVATOR_MOVE_FLOOR)) {
+			elevator->updateSectorForMoveFloors();
+
+			dfLogicTrigger* trigger = elevator->createFloorTrigger();
+			if (trigger) {
+				m_inf->m_triggers.push_back(trigger);
+			}
 		}
 	}
 }
