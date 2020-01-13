@@ -49,6 +49,8 @@ enum {
 class dfSector
 {
 	std::list <dfLogicTrigger*> m_triggers;		// list of all triggers on the sector.
+	dfLogicTrigger* m_enterSector = nullptr;
+	dfLogicTrigger* m_leaveSector = nullptr;
 
 public:
 	fwAABBox m_boundingBox;
@@ -111,5 +113,9 @@ public:
 	void buildFloor(dfMesh* mesh);
 
 	void bindWall2Sector(std::vector <dfSector*> sectors);
+
+	void event(int event_mask);
+	void addTrigger(int event, dfLogicTrigger* trigger);
+
 	~dfSector();
 };

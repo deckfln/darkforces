@@ -47,9 +47,21 @@ dfLogicElevator::dfLogicElevator(std::string& kind, std::string& sector):
  */
 void dfLogicElevator::sector(dfSector* pSector)
 {
+	static std::string switch1 = "enter_leave";
+
 	m_pSector = pSector;
 	for (auto stop : m_stops) {
 		stop->sector(pSector);
+	}
+
+	// if the elevator has mask_event for enter/leave, create triggers
+	if (m_eventMask & DF_ELEVATOR_ENTER_SECTOR) {
+		dfLogicTrigger* enter = new dfLogicTrigger(switch1, m_pSector, this);
+		m_pSector->addTrigger(DF_ELEVATOR_ENTER_SECTOR, enter);
+	}
+	if (m_eventMask & DF_ELEVATOR_LEAVE_SECTOR) {
+		dfLogicTrigger* leave = new dfLogicTrigger(switch1, m_pSector, this);
+		m_pSector->addTrigger(DF_ELEVATOR_LEAVE_SECTOR, leave);
 	}
 }
 
@@ -143,7 +155,7 @@ void dfLogicElevator::init(int stopID)
  */
 void dfLogicElevator::trigger(std::string& sclass)
 {
-	if (sclass != "switch1") {
+	if (sclass != "switch1" && sclass != "enter_leave") {
 		std::cerr << "dfLogicElevator::trigger unknown class " << sclass << std::endl;
 		return;
 	}

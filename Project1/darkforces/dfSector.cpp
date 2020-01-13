@@ -423,6 +423,40 @@ void dfSector::bindWall2Sector(std::vector<dfSector*> sectors)
 	}
 }
 
+/**
+ * Manage events sent to the sector
+ */
+void dfSector::event(int event_mask)
+{
+	switch (event_mask) {
+	case DF_ELEVATOR_ENTER_SECTOR:
+		if (m_enterSector) {
+			m_enterSector->activate();
+		}
+		break;
+	case DF_ELEVATOR_LEAVE_SECTOR:
+		if (m_leaveSector) {
+			m_leaveSector->activate();
+		}
+		break;
+	}
+}
+
+/**
+ * Record triggers on events
+ */
+void dfSector::addTrigger(int event, dfLogicTrigger* trigger)
+{
+	switch (event) {
+	case DF_ELEVATOR_LEAVE_SECTOR:
+		m_leaveSector = trigger;
+		break;
+	case DF_ELEVATOR_ENTER_SECTOR:
+		m_enterSector = trigger;
+		break;
+	}
+}
+
 dfSector::~dfSector()
 {
 	for (auto wall: m_walls) {

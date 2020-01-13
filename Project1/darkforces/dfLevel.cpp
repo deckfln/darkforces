@@ -98,7 +98,6 @@ dfLevel::dfLevel(std::string file)
 	}
 
 	convertDoors2Elevators();	// for every sector 'DOOR', create an evelator and a trigger
-	createMoveFloors();			// for every sector 'move_floor' create an elevator and a trigger
 	buildAtlasMap();	// load textures in a megatexture
 
 	m_material = new fwMaterialBasic("data/shaders/vertex.glsl", "", "data/shaders/fragment.glsl");
@@ -449,7 +448,11 @@ dfSector* dfLevel::findSector(glm::vec3& position)
 		// nope, so quick check on the last super sector
 		sector = m_lastSuperSector->findSector(level_space);
 		if (sector) {
+			m_lastSector->event(DF_ELEVATOR_LEAVE_SECTOR);
+
 			m_lastSector = sector;
+
+			sector->event(DF_ELEVATOR_ENTER_SECTOR);
 			return sector;
 		}
 	}
@@ -459,8 +462,14 @@ dfSector* dfLevel::findSector(glm::vec3& position)
 		sector = ssector->findSector(level_space);
 
 		if (sector) {
+			if (m_lastSector) {
+				m_lastSector->event(DF_ELEVATOR_LEAVE_SECTOR);
+			}
+
 			m_lastSector = sector;
 			m_lastSuperSector = ssector;
+
+			sector->event(DF_ELEVATOR_ENTER_SECTOR);
 			return sector;
 		}
 	}
