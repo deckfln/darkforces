@@ -163,6 +163,35 @@ void dfLogicElevator::trigger(std::string& sclass)
 }
 
 /**
+ * compute the move to the next Stop
+ */
+void dfLogicElevator::move2nextFloor(void)
+{
+	m_current = m_stops[m_currentStop]->z_position();
+	float t1 = m_stops[m_currentStop]->time();
+	float t2;
+
+	if (m_currentStop >= m_stops.size() - 1) {
+		// move backward
+		m_nextStop = 0;
+	}
+	else {
+		// move upward
+		m_nextStop = m_currentStop + 1;
+	}
+
+	m_target = m_stops[m_nextStop]->z_position();
+	t2 = m_stops[m_nextStop]->time();
+
+	float delta = (t2 - t1) * 1000;	// time in milisecond
+
+	m_direction = m_target - m_current;
+
+	// TODO adapt the speed
+	m_delay = abs(m_direction) * 2000 / m_speed;
+}
+
+/**
  * Move the evelator to it's next stop at the defined speed
  */
 bool dfLogicElevator::animate(time_t delta)
@@ -172,11 +201,12 @@ bool dfLogicElevator::animate(time_t delta)
 	switch (m_status) {
 	case DF_ELEVATOR_HOLD:
 		m_status = DF_ELEVATOR_MOVE;
+		m_tick = 0;
 		move2nextFloor();
 		break;
 
 	case DF_ELEVATOR_MOVE: {
-		m_current += m_direction;
+		m_current = m_target - m_direction * (1.0f - m_tick / m_delay);
 		moveTo(m_current);
 
 		bool reached = false;
@@ -188,7 +218,6 @@ bool dfLogicElevator::animate(time_t delta)
 		}
 
 		if (reached) {
-			m_tick = 0;
 			m_currentStop = m_nextStop;
 
 			// force the altitude to get ride of math round
@@ -216,6 +245,7 @@ bool dfLogicElevator::animate(time_t delta)
 		if (m_tick >= m_stops[m_currentStop]->time()) {
 			move2nextFloor();
 			m_status = DF_ELEVATOR_MOVE;
+			m_tick = 0;
 		}
 		break;
 
@@ -285,26 +315,6 @@ void dfLogicElevator::moveTo(float z)
 		m_pSector->floor(z);
 		break;
 	}
-}
-
-/**
- * compute the move to the next Stop
- */
-void dfLogicElevator::move2nextFloor(void)
-{
-	m_current = m_stops[m_currentStop]->z_position();
-
-	if (m_currentStop >= m_stops.size() - 1) {
-		// move backward
-		m_nextStop = 0;
-		m_target = m_stops[0]->z_position();
-	}
-	else {
-		// move upward
-		m_nextStop = m_currentStop + 1;
-		m_target = m_stops[m_nextStop]->z_position();
-	}
-	m_direction = (m_target - m_current) / 100;
 }
 
 /**

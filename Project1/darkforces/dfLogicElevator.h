@@ -20,13 +20,26 @@ enum {
 enum {
 	DF_ELEVATOR_INV,		// moving up
 	DF_ELEVATOR_BASIC,		// moving down
-	DF_ELEVATOR_MOVE_FLOOR	//
+	DF_ELEVATOR_MOVE_FLOOR	// move the floor
 };
+
+enum {
+	DF_ELEVATOR_CROSSLINE_FRONT = 1,	// Cross line from front side 
+	DF_ELEVATOR_CROSSLINE_BACK = 2,		// Cross line from back side 
+	DF_ELEVATOR_ENTER_SECTOR = 4,		// Enter sector
+	DF_ELEVATOR_LEAVE_SECTOR = 8,		// Leave sector 
+	DF_ELEVATOR_NUDGE_FRONT_INSIDE = 16,// Nudge line from front side / Nudge sector from inside 
+	DF_ELEVATOR_NUDGE_BACK_OUTSIE = 32,	// Nudge line from back side / Nudge sector from outside 
+	DF_ELEVATOR_EXPLOSION = 64,			// Explosion 
+	DF_ELEVATOR_SHOOT = 128,			//Shoot or punch line(see entity_mask) 
+	DF_ELEVATOR_LAND = 512				// Land on floor of sector
+} ;
 
 class dfLogicElevator {
 	std::string m_class;
 	int m_type = -1;					// class of elevator
-	int m_speed = 0;					// time in millisecond between 2 stops
+	//TODO adapt the default speed
+	float m_speed = 20;					// time in millisecond between 2 stops
 	int m_eventMask = 0;
 	std::vector<dfLogicStop*> m_stops;	// all stops of the evelator
 
@@ -34,7 +47,8 @@ class dfLogicElevator {
 	dfSector* m_pSector = nullptr;
 
 	int m_status = DF_ELEVATOR_HOLD;	// status of the elevator
-	time_t m_tick = 0;					// current timer
+	float m_tick = 0;					// current timer
+	float m_delay = 0;					// time to run the elevator
 	unsigned int m_currentStop = 0;		// current stop for the running animation
 	unsigned int m_nextStop = 0;		// target altitude
 
@@ -53,7 +67,7 @@ class dfLogicElevator {
 public:
 	dfLogicElevator(std::string& kind, dfSector* sector, dfLevel *parent);
 	dfLogicElevator(std::string& kind, std::string& name);
-	void speed(int speed) { m_speed = speed * 1000; };
+	void speed(float speed) { m_speed = speed; };
 	void eventMask(int eventMask) { m_eventMask = eventMask; };
 	std::string& sector(void) { return m_sector; };
 	void sector(dfSector* pSector);
