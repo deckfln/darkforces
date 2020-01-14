@@ -4,12 +4,14 @@
 #include <vector>
 
 #include "dfLogicStop.h"
+
 #include "../framework/fwMaterial.h"
 #include "../framework/fwMesh.h"
 
 class dfLevel;
 class dfMesh;
 class dfLogicTrigger;
+class dfMessage;
 
 enum {
 	DF_ELEVATOR_HOLD,		// elevator is not animated
@@ -75,7 +77,7 @@ public:
 	void addStop(dfLogicStop* stop);
 	fwMesh *buildGeometry(fwMaterial* material);
 	void init(int stopID);
-	void trigger(std::string& sclass);
+	void trigger(std::string& sclass, std::list<dfMessage>& messages);
 	bool animate(time_t delta);
 	void updateSectorForMoveFloors(void);
 	bool is(int type) { return m_type == type; };

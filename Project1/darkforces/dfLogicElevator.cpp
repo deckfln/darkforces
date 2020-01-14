@@ -47,7 +47,7 @@ dfLogicElevator::dfLogicElevator(std::string& kind, std::string& sector):
  */
 void dfLogicElevator::sector(dfSector* pSector)
 {
-	static std::string switch1 = "enter_leave";
+	static std::string standard = "standard";
 
 	m_pSector = pSector;
 	for (auto stop : m_stops) {
@@ -56,11 +56,11 @@ void dfLogicElevator::sector(dfSector* pSector)
 
 	// if the elevator has mask_event for enter/leave, create triggers
 	if (m_eventMask & DF_ELEVATOR_ENTER_SECTOR) {
-		dfLogicTrigger* enter = new dfLogicTrigger(switch1, m_pSector, this);
+		dfLogicTrigger* enter = new dfLogicTrigger(standard, m_pSector, this);
 		m_pSector->addTrigger(DF_ELEVATOR_ENTER_SECTOR, enter);
 	}
 	if (m_eventMask & DF_ELEVATOR_LEAVE_SECTOR) {
-		dfLogicTrigger* leave = new dfLogicTrigger(switch1, m_pSector, this);
+		dfLogicTrigger* leave = new dfLogicTrigger(standard, m_pSector, this);
 		m_pSector->addTrigger(DF_ELEVATOR_LEAVE_SECTOR, leave);
 	}
 }
@@ -153,11 +153,46 @@ void dfLogicElevator::init(int stopID)
 /**
  * Handle a trigger
  */
-void dfLogicElevator::trigger(std::string& sclass)
+void dfLogicElevator::trigger(std::string& sclass, std::list<dfMessage>& messages)
 {
-	if (sclass != "switch1" && sclass != "enter_leave") {
+	if (sclass != "switch1" && sclass != "standard") {
 		std::cerr << "dfLogicElevator::trigger unknown class " << sclass << std::endl;
 		return;
+	}
+
+	if (sclass == "standard") {
+		// manage messages
+		for (auto message : messages) {
+			switch (message.m_action) {
+			case DF_MESSAGE_GOTO_STOP: {
+				if (m_currentStop == message.m_value) {
+					return;	// nothing to do, we're at the right floor
+				}
+				m_nextStop = message.m_value;
+
+				m_current = m_stops[m_currentStop]->z_position();
+				m_target = m_stops[m_nextStop]->z_position();
+
+				float t1 = m_stops[m_currentStop]->time();
+				float t2 = m_stops[m_nextStop]->time();
+
+				float delta = (t2 - t1) * 1000;	// time in milisecond
+
+				m_direction = m_target - m_current;
+
+				// TODO adapt the speed
+				m_delay = abs(m_direction) * 2000 / m_speed;
+
+				m_status = DF_ELEVATOR_MOVE;
+				m_tick = 0;
+				m_parent->activateElevator(this);
+
+				return;
+				}
+			default:
+				std::cerr << "dfLogicElevator::trigger message " << message.m_action << " not implemented" << std::endl;
+			}
+		}
 	}
 
 	if (m_status != DF_ELEVATOR_HOLD) {

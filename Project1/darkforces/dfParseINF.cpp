@@ -83,9 +83,10 @@ void dfParseINF::parseSector(std::ifstream& infile, std::string& sector)
 {
 	std::string line, dump;
 	bool start = false;
-	dfLogicStop stop;
 
 	dfLogicElevator* elevator = nullptr;
+	dfLogicTrigger* trigger = nullptr;
+	dfLogicStop* stop = nullptr;
 
 	while (std::getline(infile, line))
 	{
@@ -104,11 +105,22 @@ void dfParseINF::parseSector(std::ifstream& infile, std::string& sector)
 			if (elevator) {
 				m_elevators.push_back(elevator);
 			}
+			else if (trigger) {
+				m_triggers.push_back(trigger);
+			}
 			break;
 		}
 		else if (tokens[0] == "class:") {
 			if (tokens[1] == "elevator") {
 				elevator = new dfLogicElevator(tokens[2], sector);
+			}
+			else if (tokens[1] == "trigger") {
+				if (tokens.size() == 2) {
+					std::cerr << "*class: trigger* not implemented" << std::endl;
+				}
+				else {
+					trigger = new dfLogicTrigger(tokens[2], sector, -1);
+				}
 			}
 		}
 		else if (tokens[0] == "speed:") {
@@ -120,9 +132,25 @@ void dfParseINF::parseSector(std::ifstream& infile, std::string& sector)
 			if (elevator) {
 				elevator->eventMask(std::stoi(tokens[1]));
 			}
+			else if (trigger) {
+				trigger->eventMask(std::stoi(tokens[1]));
+			}
+		}
+		else if (tokens[0] == "client:") {
+			if (trigger) {
+				trigger->client(tokens[1]);
+			}
+		}
+		else if (tokens[0] == "message:") {
+			if (stop) {
+				std::cerr << "dfParseINF::parseSector message: not implemented for STOP" << std::endl;
+			}
+			else if (trigger) {
+				trigger->message(tokens);
+			}
 		}
 		else if (tokens[0] == "stop:") {
-			dfLogicStop* stop = new dfLogicStop();
+			stop = new dfLogicStop();
 			char* p;
 
 			// value 1
@@ -211,6 +239,9 @@ void dfParseINF::parseLine(std::ifstream& infile, std::string &sector, int wallI
 			if (trigger) {
 				trigger->eventMask(std::stoi(tokens[1]));
 			}
+		}
+		else if (tokens[0] == "message:") {
+			std::cerr << "dfParseINF::parseLine message: not implemented" << std::endl;
 		}
 	}
 }

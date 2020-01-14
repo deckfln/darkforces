@@ -37,6 +37,29 @@ dfLogicTrigger::dfLogicTrigger(std::string& kind, dfSector* sector, dfLogicEleva
 	sector->setTriggerFromFloor(this);
 }
 
+/**
+ * Bind to the sector object
+ */
+void dfLogicTrigger::bindSector(dfSector* pSector)
+{
+	m_pSector = pSector;
+
+	if (m_eventMask & DF_ELEVATOR_ENTER_SECTOR) {
+		m_pSector->addTrigger(DF_ELEVATOR_ENTER_SECTOR, this);
+	}
+	if (m_eventMask & DF_ELEVATOR_LEAVE_SECTOR) {
+		m_pSector->addTrigger(DF_ELEVATOR_LEAVE_SECTOR, this);
+	}
+}
+
+/**
+ * record the evelator the trigger is bound to
+ */
+void dfLogicTrigger::evelator(dfLogicElevator* pClient)
+{
+	m_pClients.push_back(pClient);
+}
+
 void dfLogicTrigger::boundingBox(glm::vec2& left, glm::vec2& right, float floor, float ceiling)
 {
 	m_boundingBox = fwAABBox(
@@ -54,6 +77,23 @@ void dfLogicTrigger::boundingBox(glm::vec2& left, glm::vec2& right, float floor,
 	m_boundingBoxSize.z = abs(ceiling - floor);
 }
 
+/**
+ * analyze the message to pass
+ */
+void dfLogicTrigger::message(std::vector<std::string>& tokens)
+{
+	if (tokens[1] == "goto_stop") {
+		dfMessage msg(DF_MESSAGE_GOTO_STOP, std::stoi(tokens[2]));
+		m_messages.push_back(msg);
+	}
+	else {
+		std::cerr << "dfLogicTrigger::message " << tokens[1] << " not implemented" << std::endl;
+	}
+}
+
+/**
+ * check the trigger colision box
+ */
 bool dfLogicTrigger::collide(fwAABBox& box)
 {
 	return m_boundingBox.intersect(box);
@@ -71,6 +111,6 @@ void dfLogicTrigger::moveZ(float z)
 void dfLogicTrigger::activate(void)
 {
 	for (auto pClient: m_pClients) {
-		pClient->trigger(m_class);
+		pClient->trigger(m_class, m_messages);
 	}
 }

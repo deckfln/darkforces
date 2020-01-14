@@ -82,6 +82,7 @@ dfLevel::dfLevel(std::string file)
 	// bind the sector walls to the elevator logic
 	for (auto trigger : m_inf->m_triggers) {
 		dfSector* sector = m_hashSectors[trigger->sector()];
+		trigger->bindSector(sector);
 
 		std::list<std::string>& clients = trigger->clients();
 
