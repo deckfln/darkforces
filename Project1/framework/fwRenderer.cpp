@@ -20,8 +20,6 @@ void fwRenderer::getAllChildren(fwObject3D* root, std::vector<std::list <fwMesh*
 	std::list <fwObject3D*> _children = root->get_children();
 
 	for (auto child : _children) {
-		getAllChildren(child, meshes);
-
 		// only display meshes
 		if (!child->is_class(MESH)) {
 			continue;
@@ -30,6 +28,9 @@ void fwRenderer::getAllChildren(fwObject3D* root, std::vector<std::list <fwMesh*
 		mesh = (fwMesh*)child;
 
 		if (mesh->is_visible()) {
+			// if the parent mesh is not visible, ignore the children
+			getAllChildren(child, meshes);
+
 			if (mesh->is_class(SKINNED_MESH)) {
 				meshes[FW_MESH_SKINNED].push_front(mesh);
 			}
@@ -105,8 +106,6 @@ void fwRenderer::parseChildren(fwObject3D* root, std::list <fwMesh *> meshes[], 
 	std::list <fwObject3D*> _children = root->get_children();
 
 	for (auto child : _children) {
-		parseChildren(child, meshes, camera);
-
 		// only display meshes
 		if (!child->is_class(MESH)) {
 			continue;
@@ -115,6 +114,9 @@ void fwRenderer::parseChildren(fwObject3D* root, std::list <fwMesh *> meshes[], 
 		mesh = (fwMesh*)child;
 
 		if (mesh->is_visible() && (mesh->always_draw() || camera->is_inFrustum(mesh))) {
+			// if the parent mesh is not visible, ignore the children
+			parseChildren(child, meshes, camera);
+
 			if (mesh->is_transparent()) {
 				meshes[FW_RENDER_TRANSPARENT].push_front(mesh);
 			}

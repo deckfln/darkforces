@@ -22,7 +22,8 @@ enum {
 enum {
 	DF_ELEVATOR_INV,		// moving up
 	DF_ELEVATOR_BASIC,		// moving down
-	DF_ELEVATOR_MOVE_FLOOR	// move the floor
+	DF_ELEVATOR_MOVE_FLOOR,	// move the floor
+	DF_ELEVATOR_CHANGE_LIGHT // rotate ambient light
 };
 
 enum {
@@ -65,6 +66,7 @@ class dfLogicElevator {
 	void moveTo(dfLogicStop* stop);	// extract the floor position from the stop and the 
 	void moveTo(float z);			// extract the floor position from the stop and the 
 	void move2nextFloor(void);
+	bool animateMoveZ(void);
 
 public:
 	dfLogicElevator(std::string& kind, dfSector* sector, dfLevel *parent);
@@ -72,14 +74,13 @@ public:
 	void speed(float speed) { m_speed = speed; };
 	void eventMask(int eventMask) { m_eventMask = eventMask; };
 	std::string& sector(void) { return m_sector; };
-	void sector(dfSector* pSector);
+	void bindSector(dfSector* pSector);
 	void parent(dfLevel* parent) { m_parent = parent; };
 	void addStop(dfLogicStop* stop);
 	fwMesh *buildGeometry(fwMaterial* material);
 	void init(int stopID);
 	void trigger(std::string& sclass, std::list<dfMessage>& messages);
 	bool animate(time_t delta);
-	void updateSectorForMoveFloors(void);
 	bool is(int type) { return m_type == type; };
 	dfLogicTrigger* createFloorTrigger();
 	~dfLogicElevator(void);

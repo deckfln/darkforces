@@ -179,7 +179,7 @@ void dfSector::setTriggerFromFloor(dfLogicTrigger* trigger)
  */
 void dfSector::floor(float z)
 {
-	m_floorAltitude = z;;
+	m_floorAltitude = z;
 
 	for (auto trigger : m_triggers) {
 		trigger->moveZ(z);

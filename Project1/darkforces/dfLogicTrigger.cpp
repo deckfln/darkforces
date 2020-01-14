@@ -33,8 +33,6 @@ dfLogicTrigger::dfLogicTrigger(std::string& kind, dfSector* sector, dfLogicEleva
 	m_class(kind)
 {
 	m_pClients.push_back(client);
-
-	sector->setTriggerFromFloor(this);
 }
 
 /**

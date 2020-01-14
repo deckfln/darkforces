@@ -4,18 +4,26 @@
 #include "dfSector.h"
 #include "dfLevel.h"
 
+const std::string dfElevatorInv = "inv";
+const std::string dfElevatorBasic = "basic";
+const std::string dfElevatorMoveFloor = "move_floor";
+const std::string dfElevatorChangeLight = "change_light";
+
 dfLogicElevator::dfLogicElevator(std::string& kind, dfSector* sector, dfLevel* parent):
 	m_class(kind),
 	m_pSector(sector),
 	m_parent(parent)
 {
-	if (kind == "inv") {
+	if (kind == dfElevatorInv) {
 		m_type = DF_ELEVATOR_INV;
 	}
-	else if (kind == "basic") {
+	else if (kind == dfElevatorBasic) {
 		m_type = DF_ELEVATOR_BASIC;
 	}
-	else if (kind == "move_floor") {
+	else if (kind == dfElevatorMoveFloor) {
+		m_type = DF_ELEVATOR_MOVE_FLOOR;
+	}
+	else if (kind == dfElevatorChangeLight) {
 		m_type = DF_ELEVATOR_MOVE_FLOOR;
 	}
 	else {
@@ -27,13 +35,13 @@ dfLogicElevator::dfLogicElevator(std::string& kind, std::string& sector):
 	m_class(kind),
 	m_sector(sector)
 {
-	if (kind == "inv") {
+	if (kind == dfElevatorInv) {
 		m_type = DF_ELEVATOR_INV;
 	}
-	else if (kind == "basic") {
+	else if (kind == dfElevatorBasic) {
 		m_type = DF_ELEVATOR_BASIC;
 	}
-	else if (kind == "move_floor") {
+	else if (kind == dfElevatorMoveFloor) {
 		m_type = DF_ELEVATOR_MOVE_FLOOR;
 	}
 	else {
@@ -45,7 +53,7 @@ dfLogicElevator::dfLogicElevator(std::string& kind, std::string& sector):
  * bind the evelator to its sector
  * for any relative stop, record the floor
  */
-void dfLogicElevator::sector(dfSector* pSector)
+void dfLogicElevator::bindSector(dfSector* pSector)
 {
 	static std::string standard = "standard";
 
@@ -62,6 +70,23 @@ void dfLogicElevator::sector(dfSector* pSector)
 	if (m_eventMask & DF_ELEVATOR_LEAVE_SECTOR) {
 		dfLogicTrigger* leave = new dfLogicTrigger(standard, m_pSector, this);
 		m_pSector->addTrigger(DF_ELEVATOR_LEAVE_SECTOR, leave);
+	}
+
+	switch (m_type) {
+	case DF_ELEVATOR_INV:
+	case DF_ELEVATOR_BASIC:
+	case DF_ELEVATOR_MOVE_FLOOR: {
+		// get the maximum extend of the elevator -> will become the floor of the sector
+		float amin = 99999, amax = -99999, c;
+		for (auto stop : m_stops) {
+			c = stop->z_position();
+			if (c < amin) amin = c;
+			if (c > amax) amax = c;
+		}
+
+		m_pSector->m_floorAltitude = amin;
+		break;
+		}
 	}
 }
 
@@ -112,10 +137,14 @@ fwMesh *dfLogicElevator::buildGeometry(fwMaterial* material)
 	case DF_ELEVATOR_MOVE_FLOOR:
 		m_mesh = new dfMesh(material);
 
+		if (m_pSector->m_id == 49) {
+			printf(">>>> dfLogicElevator::buildGeometry\n");
+		}
 		// the elevator top is actually the floor
 		m_pSector->buildElevator(m_mesh, -(amax - amin), 0, DFWALL_TEXTURE_BOTTOM, false);
 
 		if (m_mesh->buildMesh()) {
+			m_mesh->mesh()->set_name(m_pSector->m_name);
 			m_pSector->addObject(m_mesh->mesh());
 		}
 		else {
@@ -239,12 +268,10 @@ void dfLogicElevator::move2nextFloor(void)
 }
 
 /**
- * Move the evelator to it's next stop at the defined speed
+ * Move the object on the 2 axise
  */
-bool dfLogicElevator::animate(time_t delta)
+bool dfLogicElevator::animateMoveZ(void)
 {
-	m_tick += delta;
-
 	switch (m_status) {
 	case DF_ELEVATOR_HOLD:
 		m_status = DF_ELEVATOR_MOVE;
@@ -286,7 +313,7 @@ bool dfLogicElevator::animate(time_t delta)
 			}
 		}
 		break;
-		}
+	}
 
 	case DF_ELEVATOR_WAIT:
 		if (m_tick >= m_stops[m_currentStop]->time()) {
@@ -304,24 +331,20 @@ bool dfLogicElevator::animate(time_t delta)
 }
 
 /**
- * update the original sector if the elevator is going to replace moving parts
+ * move through the animations of the elevator
  */
-void dfLogicElevator::updateSectorForMoveFloors(void)
+bool dfLogicElevator::animate(time_t delta)
 {
-	if (!m_pSector) {
-		return;
+	m_tick += delta;
+
+	switch (m_type) {
+	case DF_ELEVATOR_BASIC:
+	case DF_ELEVATOR_INV:
+	case DF_ELEVATOR_MOVE_FLOOR:
+		return animateMoveZ();
 	}
 
-	// get the maximum extend of the elevator -> will become the height of the object
-	float amin = 99999, amax = -99999, c;
-
-	for (auto stop : m_stops) {
-		c = stop->z_position();
-		if (c < amin) amin = c;
-		if (c > amax) amax = c;
-	}
-
-	m_pSector->m_floorAltitude = amin;
+	return true;	// Animation is not implemented, stop it
 }
 
 /**

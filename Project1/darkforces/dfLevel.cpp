@@ -74,7 +74,7 @@ dfLevel::dfLevel(std::string file)
 
 		dfSector* sector = m_hashSectors[elevator->sector()];
 		if (sector) {
-			elevator->sector(sector);
+			elevator->bindSector(sector);
 			hashElevators[elevator->sector()] = elevator;
 		}
 	}
@@ -388,23 +388,6 @@ void dfLevel::convertDoors2Elevators(void)
 
 			dfLogicTrigger* trigger = new dfLogicTrigger(switch1, sector, 1, elevator);
 			m_inf->m_triggers.push_back(trigger);
-		}
-	}
-}
-
-/**
- * Parse all evelators move_floor and create a trigger at the floor level
- */
-void dfLevel::createMoveFloors(void)
-{
-	for (auto elevator : m_inf->m_elevators) {
-		if (elevator->is(DF_ELEVATOR_MOVE_FLOOR)) {
-			elevator->updateSectorForMoveFloors();
-
-			dfLogicTrigger* trigger = elevator->createFloorTrigger();
-			if (trigger) {
-				m_inf->m_triggers.push_back(trigger);
-			}
 		}
 	}
 }
