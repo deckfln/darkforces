@@ -95,6 +95,8 @@ public:
 	bool inAABBox(glm::vec3& position) { return m_boundingBox.inside(position); };
 
 	void floor(float z);
+	void ceiling(float z);
+
 	float ceiling(void) { return m_ceilingAltitude; };
 	float originalFloor(void) { return m_originalFloor; };
 	float originalCeiling(void) { return m_originalceiling; };

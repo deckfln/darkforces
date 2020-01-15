@@ -4,49 +4,45 @@
 #include "dfSector.h"
 #include "dfLevel.h"
 
-const std::string dfElevatorInv = "inv";
-const std::string dfElevatorBasic = "basic";
-const std::string dfElevatorMoveFloor = "move_floor";
-const std::string dfElevatorChangeLight = "change_light";
+const std::list<std::string> keywords = {
+	"inv",			//DF_ELEVATOR_INV
+	"basic",		//DF_ELEVATOR_BASIC
+	"move_floor",	//DF_ELEVATOR_MOVE_FLOOR
+	"change_light",	//DF_ELEVATOR_CHANGE_LIGHT
+	"move_ceiling"	//DF_ELEVATOR_MOVE_CEILING
+};
 
 dfLogicElevator::dfLogicElevator(std::string& kind, dfSector* sector, dfLevel* parent):
 	m_class(kind),
 	m_pSector(sector),
 	m_parent(parent)
 {
-	if (kind == dfElevatorInv) {
-		m_type = DF_ELEVATOR_INV;
+	unsigned int i = 0;
+	for (auto &keyword : keywords) {
+		if (keyword == kind) {
+			m_type = i;
+			return;
+		}
+		i++;
 	}
-	else if (kind == dfElevatorBasic) {
-		m_type = DF_ELEVATOR_BASIC;
-	}
-	else if (kind == dfElevatorMoveFloor) {
-		m_type = DF_ELEVATOR_MOVE_FLOOR;
-	}
-	else if (kind == dfElevatorChangeLight) {
-		m_type = DF_ELEVATOR_MOVE_FLOOR;
-	}
-	else {
-		std::cerr << "dfLogicElevator::dfLogicElevator " << kind << " not implemented" << std::endl;
-	}
+
+	std::cerr << "dfLogicElevator::dfLogicElevator " << kind << " not implemented" << std::endl;
 }
 
 dfLogicElevator::dfLogicElevator(std::string& kind, std::string& sector):
 	m_class(kind),
 	m_sector(sector)
 {
-	if (kind == dfElevatorInv) {
-		m_type = DF_ELEVATOR_INV;
+	unsigned int i = 0;
+	for (auto& keyword : keywords) {
+		if (keyword == kind) {
+			m_type = i;
+			return;
+		}
+		i++;
 	}
-	else if (kind == dfElevatorBasic) {
-		m_type = DF_ELEVATOR_BASIC;
-	}
-	else if (kind == dfElevatorMoveFloor) {
-		m_type = DF_ELEVATOR_MOVE_FLOOR;
-	}
-	else {
-		std::cerr << "dfLogicElevator::dfLogicElevator " << kind << " not implemented" << std::endl;
-	}
+
+	std::cerr << "dfLogicElevator::dfLogicElevator " << kind << " not implemented" << std::endl;
 }
 
 /**
@@ -72,21 +68,24 @@ void dfLogicElevator::bindSector(dfSector* pSector)
 		m_pSector->addTrigger(DF_ELEVATOR_LEAVE_SECTOR, leave);
 	}
 
+	// get the maximum extend of the elevator 
+	float amin = 99999, amax = -99999, c;
+	for (auto stop : m_stops) {
+		c = stop->z_position();
+		if (c < amin) amin = c;
+		if (c > amax) amax = c;
+	}
+
 	switch (m_type) {
 	case DF_ELEVATOR_INV:
 	case DF_ELEVATOR_BASIC:
-	case DF_ELEVATOR_MOVE_FLOOR: {
-		// get the maximum extend of the elevator -> will become the floor of the sector
-		float amin = 99999, amax = -99999, c;
-		for (auto stop : m_stops) {
-			c = stop->z_position();
-			if (c < amin) amin = c;
-			if (c > amax) amax = c;
-		}
-
+	case DF_ELEVATOR_MOVE_FLOOR:
 		m_pSector->m_floorAltitude = amin;
 		break;
-		}
+	
+	case DF_ELEVATOR_MOVE_CEILING:
+		m_pSector->m_ceilingAltitude = amax;
+		break;
 	}
 }
 
@@ -135,13 +134,20 @@ fwMesh *dfLogicElevator::buildGeometry(fwMaterial* material)
 		break;
 
 	case DF_ELEVATOR_MOVE_FLOOR:
+	case DF_ELEVATOR_MOVE_CEILING:
 		m_mesh = new dfMesh(material);
 
 		if (m_pSector->m_id == 49) {
 			printf(">>>> dfLogicElevator::buildGeometry\n");
 		}
-		// the elevator top is actually the floor
-		m_pSector->buildElevator(m_mesh, -(amax - amin), 0, DFWALL_TEXTURE_BOTTOM, false);
+		if (m_type == DF_ELEVATOR_MOVE_FLOOR) {
+			// the elevator top is actually the floor
+			m_pSector->buildElevator(m_mesh, -(amax - amin), 0, DFWALL_TEXTURE_BOTTOM, false);
+		}
+		else {
+			// move ceiling, only move the top
+			m_pSector->buildElevator(m_mesh, 0, (amax - amin), DFWALL_TEXTURE_TOP, false);
+		}
 
 		if (m_mesh->buildMesh()) {
 			m_mesh->mesh()->set_name(m_pSector->m_name);
@@ -167,7 +173,8 @@ fwMesh *dfLogicElevator::buildGeometry(fwMaterial* material)
  */
 void dfLogicElevator::init(int stopID)
 {
-	dfLogicStop* stop = m_stops[stopID];
+	m_currentStop = stopID;
+	dfLogicStop* stop = m_stops[m_currentStop];
 
 	if (this->m_sector == "elev3-5") {
 		std::cerr << "dfLogicElevator::init ignored elevator elev3-5" << std::endl;
@@ -177,6 +184,9 @@ void dfLogicElevator::init(int stopID)
 	if (m_mesh) {
 		moveTo(stop);
 	}
+
+	// send messages to the clients
+	stop->sendMessages();
 }
 
 /**
@@ -352,6 +362,7 @@ bool dfLogicElevator::animate(time_t delta)
 	case DF_ELEVATOR_BASIC:
 	case DF_ELEVATOR_INV:
 	case DF_ELEVATOR_MOVE_FLOOR:
+	case DF_ELEVATOR_MOVE_CEILING:
 		return animateMoveZ();
 	}
 
@@ -364,19 +375,7 @@ bool dfLogicElevator::animate(time_t delta)
 void dfLogicElevator::moveTo(dfLogicStop *stop)
 {
 	float z = stop->z_position();
-
-	switch (m_type) {
-	case DF_ELEVATOR_INV:
-		m_mesh->moveCeilingTo(z);
-		break;
-	case DF_ELEVATOR_BASIC:
-		m_mesh->moveFloorTo(z);
-		break;
-	case DF_ELEVATOR_MOVE_FLOOR:
-		m_mesh->moveFloorTo(z);
-		m_pSector->floor(z);
-		break;
-	}
+	moveTo(z);
 }
 
 /**
@@ -394,6 +393,10 @@ void dfLogicElevator::moveTo(float z)
 	case DF_ELEVATOR_MOVE_FLOOR:
 		m_mesh->moveFloorTo(z);
 		m_pSector->floor(z);
+		break;
+	case DF_ELEVATOR_MOVE_CEILING:
+		m_mesh->moveCeilingTo(z);
+		m_pSector->ceiling(z);
 		break;
 	}
 }

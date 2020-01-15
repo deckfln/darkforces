@@ -187,6 +187,19 @@ void dfSector::floor(float z)
 }
 
 /**
+ * Move the floor of the sector
+ * Also move all triggers on the sector
+ */
+void dfSector::ceiling(float z)
+{
+	m_ceilingAltitude = z;
+
+	if (m_triggers.size() > 0) {
+		std::cerr << "dfSector::ceiling triggers not implemented" << std::endl;
+	}
+}
+
+/**
  * Add a mesh to the super sector holding the sector
  */
 void dfSector::addObject(fwMesh* object)

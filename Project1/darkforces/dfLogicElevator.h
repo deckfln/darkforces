@@ -22,8 +22,9 @@ enum {
 enum {
 	DF_ELEVATOR_INV,		// moving up
 	DF_ELEVATOR_BASIC,		// moving down
-	DF_ELEVATOR_MOVE_FLOOR,	// move the floor
-	DF_ELEVATOR_CHANGE_LIGHT // rotate ambient light
+	DF_ELEVATOR_MOVE_FLOOR,	
+	DF_ELEVATOR_CHANGE_LIGHT,
+	DF_ELEVATOR_MOVE_CEILING
 };
 
 enum {
