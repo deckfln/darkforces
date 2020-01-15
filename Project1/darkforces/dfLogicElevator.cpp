@@ -182,23 +182,23 @@ void dfLogicElevator::init(int stopID)
 /**
  * Handle a trigger
  */
-void dfLogicElevator::trigger(std::string& sclass, std::list<dfMessage>& messages)
+void dfLogicElevator::trigger(std::string& sclass, dfMessage* message)
 {
 	if (sclass != "switch1" && sclass != "standard") {
 		std::cerr << "dfLogicElevator::trigger unknown class " << sclass << std::endl;
 		return;
 	}
 
-	if (sclass == "standard") {
-		// manage messages
-		for (auto message : messages) {
-			switch (message.m_action) {
-			case DF_MESSAGE_GOTO_STOP: {
-				if (m_currentStop == message.m_value) {
-					return;	// nothing to do, we're at the right floor
-				}
-				m_nextStop = message.m_value;
+	if (sclass == "standard" && message) {
+		switch (message->m_action) {
+		case DF_MESSAGE_GOTO_STOP: {
+			if (m_currentStop == message->m_value) {
+				return;	// nothing to do, we're at the right floor
+			}
+			m_nextStop = message->m_value;
 
+			if (m_speed > 0) {
+				// animated move
 				m_current = m_stops[m_currentStop]->z_position();
 				m_target = m_stops[m_nextStop]->z_position();
 
@@ -215,12 +215,17 @@ void dfLogicElevator::trigger(std::string& sclass, std::list<dfMessage>& message
 				m_status = DF_ELEVATOR_MOVE;
 				m_tick = 0;
 				m_parent->activateElevator(this);
-
-				return;
-				}
-			default:
-				std::cerr << "dfLogicElevator::trigger message " << message.m_action << " not implemented" << std::endl;
 			}
+			else {
+				// instant move
+				m_currentStop = message->m_value;
+				moveTo(m_stops[m_currentStop]);
+			}
+
+			return;
+			}
+		default:
+			std::cerr << "dfLogicElevator::trigger message " << message->m_action << " not implemented" << std::endl;
 		}
 	}
 
@@ -292,17 +297,23 @@ bool dfLogicElevator::animateMoveZ(void)
 		}
 
 		if (reached) {
+			dfLogicStop* stop;
+
 			m_currentStop = m_nextStop;
+			stop = m_stops[m_currentStop];
 
 			// force the altitude to get ride of math round
-			moveTo(m_stops[m_currentStop]);
+			moveTo(stop);
 
-			if (m_stops[m_currentStop]->isTimeBased()) {
+			// send messages to the clients
+			stop->sendMessages();
+
+			if (stop->isTimeBased()) {
 				// put the elevator on wait
 				m_status = DF_ELEVATOR_WAIT;
 			}
 			else {
-				std::string& action = m_stops[m_currentStop]->action();
+				std::string& action = stop->action();
 				if (action == "hold") {
 					m_status = DF_ELEVATOR_HOLD;
 					return true;	// stop the animation
@@ -401,6 +412,16 @@ dfLogicTrigger* dfLogicElevator::createFloorTrigger()
 	dfLogicTrigger* trigger = new dfLogicTrigger(switch1, m_pSector, this);
 
 	return trigger;
+}
+
+/**
+ * For every stop of the elevator, bind the messages to the elevators
+ */
+void dfLogicElevator::bindStopMessage2Elevator(std::map<std::string, dfLogicElevator*>& hashElevators)
+{
+	for (auto stop : m_stops) {
+		stop->bindMessage2Elevator(hashElevators);
+	}
 }
 
 dfLogicElevator::~dfLogicElevator(void)

@@ -2,27 +2,16 @@
 
 #include <string>
 #include <map>
-#include <list>
+#include <vector>
 
 #include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
 
 #include "../framework/fwAABBox.h"
 #include "dfLogicElevator.h"
+#include "dfMessage.h"
 
 class dfSector;
-
-enum {
-	DF_MESSAGE_GOTO_STOP
-};
-
-class dfMessage {
-public:
-	int m_action;
-	int m_value;
-
-	dfMessage(int action, int value) { m_action = action; m_value = value; };
-};
 
 class dfLogicTrigger {
 	std::string m_class;
@@ -38,7 +27,7 @@ class dfLogicTrigger {
 	glm::vec3 m_boundingBoxCenter;	// original position of the bounding box
 	glm::vec3 m_boundingBoxSize;	// original size of the bounding box
 
-	std::list<dfMessage> m_messages;	// messages to pass to the clients
+	std::vector<dfMessage> m_messages;	// messages to pass to the clients
 
 public:
 	dfLogicTrigger(std::string& kind, std::string& sector, int wallIndex);

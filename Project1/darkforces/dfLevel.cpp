@@ -79,6 +79,11 @@ dfLevel::dfLevel(std::string file)
 		}
 	}
 
+	// bind the stops messages to the evelators
+	for (auto elevator : m_inf->m_elevators) {
+		elevator->bindStopMessage2Elevator(hashElevators);
+	}
+
 	// bind the sector walls to the elevator logic
 	for (auto trigger : m_inf->m_triggers) {
 		dfSector* sector = m_hashSectors[trigger->sector()];

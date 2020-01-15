@@ -88,6 +88,8 @@ void dfParseINF::parseSector(std::ifstream& infile, std::string& sector)
 	dfLogicTrigger* trigger = nullptr;
 	dfLogicStop* stop = nullptr;
 
+	int nbStops = -1;
+
 	while (std::getline(infile, line))
 	{
 		// ignore comment
@@ -143,7 +145,13 @@ void dfParseINF::parseSector(std::ifstream& infile, std::string& sector)
 		}
 		else if (tokens[0] == "message:") {
 			if (stop) {
-				std::cerr << "dfParseINF::parseSector message: not implemented for STOP" << std::endl;
+				int i = std::stoi(tokens[1]);
+				if (i == nbStops) {
+					stop->message(tokens);
+				}
+				else {
+					std::cerr << "dfParseINF::parseSector stop/messages not in order for " << sector << " stop #" << nbStops << " message #" << i << std::endl;
+				}
 			}
 			else if (trigger) {
 				trigger->message(tokens);
@@ -151,6 +159,7 @@ void dfParseINF::parseSector(std::ifstream& infile, std::string& sector)
 		}
 		else if (tokens[0] == "stop:") {
 			stop = new dfLogicStop();
+			nbStops++;
 			char* p;
 
 			// value 1

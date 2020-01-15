@@ -223,6 +223,7 @@
     <ClInclude Include="darkforces\dfLogicStop.h" />
     <ClInclude Include="darkforces\dfLogicTrigger.h" />
     <ClInclude Include="darkforces\dfMesh.h" />
+    <ClInclude Include="darkforces\dfMessage.h" />
     <ClInclude Include="darkforces\dfParseINF.h" />
     <ClInclude Include="darkforces\dfLevel.h" />
     <ClInclude Include="darkforces\dfSector.h" />

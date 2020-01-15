@@ -79,9 +79,10 @@ public:
 	void addStop(dfLogicStop* stop);
 	fwMesh *buildGeometry(fwMaterial* material);
 	void init(int stopID);
-	void trigger(std::string& sclass, std::list<dfMessage>& messages);
+	void trigger(std::string& sclass, dfMessage* message);
 	bool animate(time_t delta);
 	bool is(int type) { return m_type == type; };
 	dfLogicTrigger* createFloorTrigger();
+	void bindStopMessage2Elevator(std::map <std::string, dfLogicElevator*>& hashElevators);
 	~dfLogicElevator(void);
 };

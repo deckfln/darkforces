@@ -80,7 +80,7 @@ void dfLogicTrigger::boundingBox(glm::vec2& left, glm::vec2& right, float floor,
  */
 void dfLogicTrigger::message(std::vector<std::string>& tokens)
 {
-	if (tokens[1] == "goto_stop") {
+	if (tokens[1] == gotostop) {
 		dfMessage msg(DF_MESSAGE_GOTO_STOP, std::stoi(tokens[2]));
 		m_messages.push_back(msg);
 	}
@@ -108,7 +108,19 @@ void dfLogicTrigger::moveZ(float z)
 
 void dfLogicTrigger::activate(void)
 {
-	for (auto pClient: m_pClients) {
-		pClient->trigger(m_class, m_messages);
+	if (m_messages.size() > 1) {
+		std::cerr << "dfLogicTrigger::activate 2+ messages not implemented" << std::endl;
+		return;
+	}
+
+	if (m_messages.size() == 1) {
+		for (auto pClient : m_pClients) {
+			pClient->trigger(m_class, &m_messages[0]);
+		}
+	}
+	else {
+		for (auto pClient : m_pClients) {
+			pClient->trigger(m_class, nullptr);
+		}
 	}
 }

@@ -1,6 +1,10 @@
 #pragma once
 #include <string>
 #include <list>
+#include <vector>
+#include <map>
+
+#include "dfMessage.h"
 
 #include "../framework/fwAABBox.h"
 class dfSector;
@@ -26,6 +30,9 @@ class dfLogicStop {
 	// [terminate] elevator will stay at the stop permanently 
 	// [complete] mission will be complete when elev arrives at stop
 	std::string m_action;
+
+	std::vector<dfMessage> m_messages;
+
 public:
 	dfLogicStop();
 	dfLogicStop(float altitude, dfSector* sector, std::string& action);
@@ -43,5 +50,8 @@ public:
 	void action(std::string& action) { m_flag |= 16; m_action = action; };
 	std::string& action(void) { return m_action; };
 	bool isTimeBased(void);
+	void message(std::vector <std::string>& tokens);
+	void bindMessage2Elevator(std::map <std::string, dfLogicElevator*>& hashElevators);
+	void sendMessages();
 	float z_position(void);
 };

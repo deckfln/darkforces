@@ -563,6 +563,9 @@
     <ClInclude Include="darkforces\dfMesh.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
+    <ClInclude Include="darkforces\dfMessage.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\fragment.glsl">
