@@ -369,11 +369,7 @@ void dfSuperSector::buildWalls(bool update, dfSector* sector, std::vector<dfText
 	}
 
 	// create the walls at the begining of the buffer
-	for (auto wall : sector->m_walls) {
-
-		// link the walls
-		sector->m_wallsLink[wall->m_left].m_right = wall->m_right;
-		sector->m_wallsLink[wall->m_right].m_left = wall->m_left;
+	for (auto wall : sector->walls()) {
 
 		if (wall->m_adjoint < 0) {
 			// full wall
@@ -418,7 +414,7 @@ void dfSuperSector::buildSigns(dfSector*sector, std::vector<dfTexture*>& texture
 	int size = 0;
 	int p = 0;
 
-	for (auto wall : sector->m_walls) {
+	for (auto wall : sector->walls()) {
 		if (wall->m_tex[DFWALL_TEXTURE_SIGN].r > 0) {
 			if (wall->m_adjoint < 0) {
 				// full wall
@@ -490,11 +486,11 @@ void dfSuperSector::buildFloor(bool update, dfSector* sector, std::vector<dfText
 	// Fill polygon structure with actual data. Any winding order works.
 	// The first polyline defines the main polygon.
 	// Following polylines define holes.
-	if (sector->m_id == 3 || sector->m_id == 176 || sector->m_id == 197) {
+	if (sector->m_id == 3 || sector->m_id == 176 || sector->m_id == 197 || sector->m_id == 60) {
 		//TODO do not forget that 'thing'
 		printf("dfSuperSector::buildFloor sector %d\n", sector->m_id);
 	}
-	std::vector<std::vector<Point>> polygon = sector->linkWalls();
+	std::vector<std::vector<Point>>& polygon = sector->polygons(-1);	// default polygons
 
 	// index the indexes IN the polyines of polygon 
 	std::vector<Point> vertices;
@@ -635,15 +631,6 @@ void dfSuperSector::updateSectorVertices(int sectorID)
 	buildFloor(true, sector, textures);
 
 	m_geometry->update();
-}
-
-/**
- * Convert a sector into a moveable mesh
- */
-fwMesh* dfSuperSector::buildElevator(dfSector* sector, float height, fwMaterial* material)
-{
-
-	return nullptr;
 }
 
 std::vector<dfTexture*>& dfSuperSector::textures(void)

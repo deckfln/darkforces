@@ -24,7 +24,8 @@ enum {
 	DF_ELEVATOR_BASIC,		// moving down
 	DF_ELEVATOR_MOVE_FLOOR,	
 	DF_ELEVATOR_CHANGE_LIGHT,
-	DF_ELEVATOR_MOVE_CEILING
+	DF_ELEVATOR_MOVE_CEILING,
+	DF_ELEVATOR_MORPH_SPIN1
 };
 
 enum {
@@ -45,6 +46,8 @@ class dfLogicElevator {
 	//TODO adapt the default speed
 	float m_speed = 20;					// time in millisecond between 2 stops
 	int m_eventMask = 0;
+	glm::vec3 m_center;
+
 	std::vector<dfLogicStop*> m_stops;	// all stops of the evelator
 
 	std::string m_sector;				// sector that is an evelator
@@ -64,19 +67,22 @@ class dfLogicElevator {
 
 	dfMesh* m_mesh = nullptr;			// mesh of the elevator
 
-	void moveTo(dfLogicStop* stop);	// extract the floor position from the stop and the 
-	void moveTo(float z);			// extract the floor position from the stop and the 
+	void moveTo(dfLogicStop* stop);
+	void moveTo(float z);
 	void move2nextFloor(void);
 	bool animateMoveZ(void);
 
 public:
 	dfLogicElevator(std::string& kind, dfSector* sector, dfLevel *parent);
 	dfLogicElevator(std::string& kind, std::string& name);
+
 	void speed(float speed) { m_speed = speed; };
 	void eventMask(int eventMask) { m_eventMask = eventMask; };
 	std::string& sector(void) { return m_sector; };
-	void bindSector(dfSector* pSector);
 	void parent(dfLevel* parent) { m_parent = parent; };
+	void center(float x, float y) { m_center.x = x; m_center.y = y; };
+
+	void bindSector(dfSector* pSector);
 	void addStop(dfLogicStop* stop);
 	fwMesh *buildGeometry(fwMaterial* material);
 	void init(int stopID);

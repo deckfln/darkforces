@@ -16,9 +16,16 @@ using Point = std::array<Coord, 2>;
 class dfMesh;
 class dfSuperSector;
 
-struct dfWallsLink {
-	int m_left = -1;	// index of the vertice on the left
-	int m_right = -1;
+/**
+ * Connection of each vertice to the left and the right
+ */
+struct dfVerticeConnexion {
+	int m_leftVertice = -1;	// index of the vertice on the left
+	int m_rightVertice = -1;
+
+	int m_leftWall = -1;	// index of the wall on the left
+	int m_rightWall = -1;
+
 	bool parsed = false;
 };
 
@@ -51,6 +58,10 @@ class dfSector
 	std::list <dfLogicTrigger*> m_triggers;		// list of all triggers on the sector.
 	dfLogicTrigger* m_enterSector = nullptr;
 	dfLogicTrigger* m_leaveSector = nullptr;
+	std::vector <struct dfVerticeConnexion> m_verticeConnexions;	// get the vertice to the right and the left of each vertice
+	std::vector<std::vector<Point>> m_polygons_vertices;			// polylines enclosing the sector : [0] external polygon, [1+] internal holes : by vertices
+	std::vector<std::vector<dfWall*>> m_polygons_walls;				// polylines enclosing the sector : [0] external polygon, [1+] internal holes : by walls
+	int m_displayPolygons = 0;										// defualt number of polygon to draw 0=ALL, 1 = external one, 2 = first hole
 
 public:
 	fwAABBox m_boundingBox;
@@ -77,14 +88,11 @@ public:
 	unsigned int m_flag3 = 0;
 
 	// local data in space world
-	std::vector <dfWall*> m_walls;
+	std::vector <dfWall*> m_walls;		// modified walls
+	std::vector <dfWall*> m_origWalls;	// original walls as read from the LEV file (in cache the m_walls was modified)
 	std::vector <glm::vec2> m_vertices;
-	std::vector <struct dfWallsLink> m_wallsLink;
 
 	std::list <int> m_portals;	// sectorID of the portals
-
-	// polylines enclosing the sector : manage holes
-	std::vector<std::vector<Point>> m_polygons;
 
 	// same data but in the supersector (opengl space)
 	dfSuperSector* m_super = nullptr;
@@ -103,21 +111,24 @@ public:
 	void parent(dfSuperSector* parent) { m_super = parent; };
 	float height(void) { return m_height; };
 	unsigned flag(void) { return m_flag1; };
+	std::vector <dfWall*>& walls(int displayPolygon = -1);
+
+	std::vector<std::vector<Point>>& polygons(int displayPolygon);
 
 	void addObject(fwMesh* object);
 	bool isPointInside(glm::vec3& position);
 	float boundingBoxSurface(void);
 	void setFloor(float floor);
 	void updateVertices(void);
-	std::vector<std::vector<Point>>& linkWalls(void);
-
-	void buildElevator(dfMesh *mesh, float bottom, float top, int what, bool clockwise);
+	void linkWalls(void);
+	void buildElevator(dfMesh *mesh, float bottom, float top, int what, bool clockwise, int displayPolygon);
 	void buildFloor(dfMesh* mesh);
 
 	void bindWall2Sector(std::vector <dfSector*> sectors);
 
 	void event(int event_mask);
 	void addTrigger(int event, dfLogicTrigger* trigger);
+	void removeHollowWalls(void);
 
 	~dfSector();
 };

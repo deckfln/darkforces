@@ -53,6 +53,8 @@ dfLevel::dfLevel(std::string file)
 			// record the sector in the global list
 			m_sectors[nSector] = sector;
 			m_hashSectors[sector->m_name] = sector;
+
+			sector->linkWalls();	// build the polygons from the sector
 		}
 	}
 	infile.close();

@@ -130,6 +130,11 @@ void dfParseINF::parseSector(std::ifstream& infile, std::string& sector)
 				elevator->speed(std::stoi(tokens[1]));
 			}
 		}
+		else if (tokens[0] == "center:") {
+			if (elevator) {
+				elevator->center(std::stoi(tokens[1]), std::stoi(tokens[2]));
+			}
+		}
 		else if (tokens[0] == "event_mask:") {
 			if (elevator) {
 				elevator->eventMask(std::stoi(tokens[1]));

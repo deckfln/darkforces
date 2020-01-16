@@ -91,7 +91,7 @@ dfSector::dfSector(std::ifstream& infile)
 		else if (tokens[0] == "VERTICES") {
 			nbVertices = std::stoi(tokens[1]);
 			m_vertices.resize(nbVertices);
-			m_wallsLink.resize(nbVertices);
+			m_verticeConnexions.resize(nbVertices);
 		}
 		else if (tokens[0] == "X:") {
 			float x = -std::stof(tokens[1]);
@@ -200,6 +200,59 @@ void dfSector::ceiling(float z)
 }
 
 /**
+ * Return a list of walls based on the sector status
+ *	list of ALL walls
+ *	list of the external walls
+ */
+std::vector<dfWall*>& dfSector::walls(int displayPolygon)
+{
+	static std::vector<dfWall*> ml;
+
+	int dp = (displayPolygon == -1) ? m_displayPolygons : displayPolygon;
+
+	assert(dp >= 0 && dp < 3);
+
+	switch (dp) {
+	case 0:
+		return m_walls;	// all walls
+	case 1:
+		return m_polygons_walls[0];	// only the external polygon
+	case 2:
+		return m_polygons_walls[1];	// only the hole polygon
+	}
+
+	return ml;
+}
+
+/**
+ * Return the polygon(s) makeing the sector, based on the number of polygons to display
+ */
+std::vector<std::vector<Point>>& dfSector::polygons(int displayPolygon)
+{
+	static std::vector<std::vector<Point>> ml;
+
+	int dp = (displayPolygon == -1) ? m_displayPolygons : displayPolygon;
+
+	assert(dp >= 0 && dp < 3);
+
+	switch (dp) {
+	case 0:
+		return m_polygons_vertices;	// all walls
+	case 1:
+		ml.clear();
+		ml.push_back(m_polygons_vertices[0]);
+		return ml;	// only the external polygon
+	case 2:
+		ml.clear();
+		ml.push_back(m_polygons_vertices[1]);
+		return ml;	// only the hole polygon
+	}
+
+	ml.clear();
+	return ml;
+}
+
+/**
  * Add a mesh to the super sector holding the sector
  */
 void dfSector::addObject(fwMesh* object)
@@ -221,7 +274,7 @@ bool dfSector::isPointInside(glm::vec3 &p)
 	// https://stackoverflow.com/questions/217578/how-can-i-determine-whether-a-2d-point-is-within-a-polygon
 	// http://www.ecse.rpi.edu/Homepages/wrf/Research/Short_Notes/pnpoly.html
 	bool inside = false;
-	std::vector<Point>& outline = m_polygons[0];
+	std::vector<Point>& outline = m_polygons_vertices[0];
 
 	/*
 	TODO: these solution is supposed to deal with holes, but actually it doesn't work for secbase, when entering sector 58
@@ -294,44 +347,66 @@ void dfSector::updateVertices(void)
 /**
  * parse all vertices of the sector to link the walls together
  */
-std::vector<std::vector<Point>>& dfSector::linkWalls(void)
+void dfSector::linkWalls(void)
 {
+	for (auto wall : m_walls) {
+		m_verticeConnexions[wall->m_left].m_rightVertice = wall->m_right;
+		m_verticeConnexions[wall->m_right].m_leftVertice = wall->m_left;
+
+		m_verticeConnexions[wall->m_left].m_leftWall = wall->m_id;
+		m_verticeConnexions[wall->m_right].m_rightWall = wall->m_id;
+	}
+
 	int links = 0;
-	for (unsigned int start = 0; start < m_wallsLink.size(); start++) {
-		if (!m_wallsLink[start].parsed) {
+	for (unsigned int start = 0; start < m_verticeConnexions.size(); start++) {
+		if (!m_verticeConnexions[start].parsed) {
 			std::vector<Point> polygon;
+			std::vector<dfWall*> polygonWalls;
 
 			// vertice was not yet checked, so start a link
 			unsigned int i;
 
 			for (i = start; 
-					m_wallsLink[i].m_right != start &&		// detect loop
-					m_wallsLink[i].m_right != -1 &&			// detect open lines
-					!m_wallsLink[i].parsed;					// detect point used multiple times
-				i = m_wallsLink[i].m_right					// move to next vertice
+					m_verticeConnexions[i].m_rightVertice != start &&		// detect loop
+					m_verticeConnexions[i].m_rightVertice != -1 &&			// detect open lines
+					!m_verticeConnexions[i].parsed;					// detect point used multiple times
+				i = m_verticeConnexions[i].m_rightVertice					// move to next vertice
 				) 
 			{
-				m_wallsLink[i].parsed = true;
+				m_verticeConnexions[i].parsed = true;
 				Point p = { m_vertices[i].x, m_vertices[i].y };
 				polygon.push_back(p);
+
+				if (m_verticeConnexions[i].m_leftWall >= 0) {
+					polygonWalls.push_back(m_walls[m_verticeConnexions[i].m_leftWall]);
+				}
 			}
 			Point p = { m_vertices[i].x, m_vertices[i].y };
 			polygon.push_back(p);
-			m_wallsLink[i].parsed = true;
+			if (m_verticeConnexions[i].m_leftWall >= 0) {
+				polygonWalls.push_back(m_walls[m_verticeConnexions[i].m_leftWall]);
+			}
+
+			m_verticeConnexions[i].parsed = true;
 
 			// only create polygons for closed line and at least 3 vertices
-			if (polygon.size() >= 3 && m_wallsLink[i].m_right != -1) {
-				m_polygons.push_back(polygon);
+			if (polygon.size() >= 3 && m_verticeConnexions[i].m_rightVertice != -1) {
+				m_polygons_vertices.push_back(polygon);
+				m_polygons_walls.push_back(polygonWalls);
 			}
 		}
 	}
 
 	// find what is the perimeter and what is the hole
 	// TODO deal with more than 1 hole
-	if (m_polygons.size() > 1) {
+	if (m_polygons_vertices.size() > 1) {
 
-		std::vector<Point>& polygon = m_polygons[1];
-		Point p = m_polygons[0][1];
+		if (m_polygons_vertices.size() > 2) {
+			std::cerr << "dfSector::linkWalls sector with more than 1 hole is not implemented" << std::endl;
+		}
+
+		std::vector<Point>& polygon = m_polygons_vertices[1];
+		Point p = m_polygons_vertices[0][1];
 
 		// https://stackoverflow.com/questions/217578/how-can-i-determine-whether-a-2d-point-is-within-a-polygon
 		// http://www.ecse.rpi.edu/Homepages/wrf/Research/Short_Notes/pnpoly.html
@@ -346,19 +421,21 @@ std::vector<std::vector<Point>>& dfSector::linkWalls(void)
 		}
 
 		if (inside) {
-			std::vector<Point> swap = m_polygons[0];
-			m_polygons[0] = m_polygons[1];
-			m_polygons[1] = swap;
+			std::vector<Point> swap = m_polygons_vertices[0];
+			m_polygons_vertices[0] = m_polygons_vertices[1];
+			m_polygons_vertices[1] = swap;
+
+			std::vector<dfWall *> swap1 = m_polygons_walls[0];
+			m_polygons_walls[0] = m_polygons_walls[1];
+			m_polygons_walls[1] = swap1;
 		}
 	}
-
-	return m_polygons;
 }
 
 /**
  * analyze the sector to find the moveable part and convert to an object
  */
-void dfSector::buildElevator(dfMesh *mesh, float bottom, float top, int what, bool clockwise)
+void dfSector::buildElevator(dfMesh *mesh, float bottom, float top, int what, bool clockwise, int displayPolygon)
 {
 	if (!m_super) {
 		return;
@@ -367,9 +444,17 @@ void dfSector::buildElevator(dfMesh *mesh, float bottom, float top, int what, bo
 	std::vector<dfTexture*>& textures = m_super->textures();
 
 	// create the walls
-	for (auto wall : m_walls) {
+	std::vector <dfWall*>& wallss = walls(displayPolygon);
+	for (auto wall : wallss) {
 		if (wall->m_adjoint < 0) {
-			// ignore full wall : they are not visible
+			// full wall (for spin1 elevators)
+			mesh->addRectangle(this, wall,
+				m_floorAltitude,
+				m_ceilingAltitude,
+				wall->m_tex[what],
+				textures,
+				true
+			);
 			// PASS
 		}
 		else {
@@ -387,18 +472,20 @@ void dfSector::buildElevator(dfMesh *mesh, float bottom, float top, int what, bo
 		}
 	}
 
-	// build top and bottom
-	// index the indexes IN the polyines of polygon 
-	std::vector<Point> vertices;
+	if (displayPolygon < 2) {
+		// only build build top and bottom for vertical elevators (sliding ones : spin1 are not needed)
+		// index the indexes IN the polyines of polygon 
+		std::vector<Point> vertices;
 
-	for (auto poly : m_polygons) {
-		for (auto p : poly) {
-			vertices.push_back(p);
+		for (auto poly : polygons(displayPolygon)) {
+			for (auto p : poly) {
+				vertices.push_back(p);
+			}
 		}
-	}
 
-	mesh->addFloor(vertices, m_polygons, bottom, m_ceilingTexture, textures, clockwise);
-	mesh->addFloor(vertices, m_polygons, top, m_floorTexture, textures, clockwise);
+		mesh->addFloor(vertices, polygons(displayPolygon), bottom, m_ceilingTexture, textures, clockwise);
+		mesh->addFloor(vertices, polygons(displayPolygon), top, m_floorTexture, textures, clockwise);
+	}
 }
 
 /**
@@ -414,13 +501,13 @@ void dfSector::buildFloor(dfMesh* mesh)
 	// index the indexes IN the polyines of polygon 
 	std::vector<Point> vertices;
 
-	for (auto poly : m_polygons) {
+	for (auto poly : m_polygons_vertices) {
 		for (auto p : poly) {
 			vertices.push_back(p);
 		}
 	}
 
-	mesh->addFloor(vertices, m_polygons, 0, m_floorTexture, textures, false);
+	mesh->addFloor(vertices, m_polygons_vertices, 0, m_floorTexture, textures, false);
 }
 
 /**
@@ -468,6 +555,17 @@ void dfSector::addTrigger(int event, dfLogicTrigger* trigger)
 		m_enterSector = trigger;
 		break;
 	}
+}
+
+/**
+ * only keep walls that are on the perimeters
+ * hard walls are moved to an elevator mesh
+ */
+void dfSector::removeHollowWalls(void)
+{
+	// the list of walls will be the external ring
+	//m_walls = m_polygons_walls[0];
+	m_displayPolygons = 1;
 }
 
 dfSector::~dfSector()

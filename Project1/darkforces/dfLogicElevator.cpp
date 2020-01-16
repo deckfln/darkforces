@@ -9,7 +9,8 @@ const std::list<std::string> keywords = {
 	"basic",		//DF_ELEVATOR_BASIC
 	"move_floor",	//DF_ELEVATOR_MOVE_FLOOR
 	"change_light",	//DF_ELEVATOR_CHANGE_LIGHT
-	"move_ceiling"	//DF_ELEVATOR_MOVE_CEILING
+	"move_ceiling",	//DF_ELEVATOR_MOVE_CEILING
+	"morph_spin1"	//DF_ELEVATOR_MORPH_SPIN1
 };
 
 dfLogicElevator::dfLogicElevator(std::string& kind, dfSector* sector, dfLevel* parent):
@@ -86,6 +87,11 @@ void dfLogicElevator::bindSector(dfSector* pSector)
 	case DF_ELEVATOR_MOVE_CEILING:
 		m_pSector->m_ceilingAltitude = amax;
 		break;
+
+	case DF_ELEVATOR_MORPH_SPIN1:
+		// remove all non-portal walls. These walls will be stored on the Elevator mesh
+		m_pSector->removeHollowWalls();
+		break;
 	}
 }
 
@@ -120,7 +126,7 @@ fwMesh *dfLogicElevator::buildGeometry(fwMaterial* material)
 		m_mesh = new dfMesh(material);
 
 		// the elevator bottom is actually the ceiling
-		m_pSector->buildElevator(m_mesh, 0, amax - amin, DFWALL_TEXTURE_TOP, true);
+		m_pSector->buildElevator(m_mesh, 0, amax - amin, DFWALL_TEXTURE_TOP, true, -1);
 
 		if (m_mesh->buildMesh()) {
 			m_pSector->addObject(m_mesh->mesh());
@@ -137,17 +143,32 @@ fwMesh *dfLogicElevator::buildGeometry(fwMaterial* material)
 	case DF_ELEVATOR_MOVE_CEILING:
 		m_mesh = new dfMesh(material);
 
-		if (m_pSector->m_id == 49) {
-			printf(">>>> dfLogicElevator::buildGeometry\n");
-		}
 		if (m_type == DF_ELEVATOR_MOVE_FLOOR) {
 			// the elevator top is actually the floor
-			m_pSector->buildElevator(m_mesh, -(amax - amin), 0, DFWALL_TEXTURE_BOTTOM, false);
+			m_pSector->buildElevator(m_mesh, -(amax - amin), 0, DFWALL_TEXTURE_BOTTOM, false, -1);
 		}
 		else {
 			// move ceiling, only move the top
-			m_pSector->buildElevator(m_mesh, 0, (amax - amin), DFWALL_TEXTURE_TOP, false);
+			m_pSector->buildElevator(m_mesh, 0, (amax - amin), DFWALL_TEXTURE_TOP, false, -1);
 		}
+
+		if (m_mesh->buildMesh()) {
+			m_mesh->mesh()->set_name(m_pSector->m_name);
+			m_pSector->addObject(m_mesh->mesh());
+		}
+		else {
+			// do not keep the trigger
+			delete m_mesh;
+			m_mesh = nullptr;
+			return nullptr;
+		}
+		break;
+
+	case DF_ELEVATOR_MORPH_SPIN1:
+		m_mesh = new dfMesh(material);
+
+		// only use the inner polygon (the hole)
+		m_pSector->buildElevator(m_mesh, m_pSector->m_floorAltitude, m_pSector->m_ceilingAltitude, DFWALL_TEXTURE_MID, false, 2);
 
 		if (m_mesh->buildMesh()) {
 			m_mesh->mesh()->set_name(m_pSector->m_name);
