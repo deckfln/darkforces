@@ -14,7 +14,7 @@ class fwCamera: public fwObject3D
 {
 protected:
 	glm::vec3 target = glm::vec3(0);
-	glm::vec3 direction = glm::vec3(0);
+	glm::vec3 m_direction = glm::vec3(0);
 	glm::vec3 up = glm::vec3(0);
 	glm::vec3 right = glm::vec3(0);
 
@@ -45,6 +45,7 @@ public:
 	glm::mat4 GetViewMatrix(void);
 	glm::mat4 GetProjectionMatrix(void);
 	glm::mat4 &GetMatrix(void);
+	const glm::vec3& direction(void) { return m_direction; };
 
 	bool is_inFrustum(fwMesh *mesh);
 	bool is_inFrustum(fwSphere& boundingSphere);

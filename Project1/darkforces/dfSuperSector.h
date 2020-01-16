@@ -24,11 +24,12 @@ class dfPortal {
 public:
     int m_id = -1;
     fwSphere m_boundingSphere;  // bounding sphere in opengl space
+    glm::vec3 m_normal;         // direction of the portal
 
     fwMesh* m_debug_portal = nullptr;
 
     dfSuperSector* m_target = nullptr;
-    dfPortal(fwSphere& bounding, dfSuperSector* target) { m_id = nbPortals++; m_boundingSphere = bounding; m_target = target; };
+    dfPortal(glm::vec3& normal, fwSphere& bounding, dfSuperSector* target) { m_id = nbPortals++; m_normal = normal;  m_boundingSphere = bounding; m_target = target; };
 };
 
 

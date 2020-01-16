@@ -383,6 +383,11 @@ void dfLogicElevator::moveTo(dfLogicStop *stop)
  */
 void dfLogicElevator::moveTo(float z)
 {
+	if (m_mesh == nullptr) {
+		std::cerr << "dfLogicElevator::moveTo mesh not implemented for " << m_sector << std::endl;
+		return;
+	}
+
 	switch (m_type) {
 	case DF_ELEVATOR_INV:
 		m_mesh->moveCeilingTo(z);
@@ -398,6 +403,8 @@ void dfLogicElevator::moveTo(float z)
 		m_mesh->moveCeilingTo(z);
 		m_pSector->ceiling(z);
 		break;
+	default:
+		std::cerr << "dfLogicElevator::moveTo m_type==" << m_type << " not implemented" << std::endl;
 	}
 }
 

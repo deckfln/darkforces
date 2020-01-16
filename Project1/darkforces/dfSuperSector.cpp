@@ -2,7 +2,7 @@
 
 #include <algorithm>
 #include <array>
-
+#include <glm/glm.hpp> 
 #include "../include/earcut.hpp"
 #include "../framework/geometries/fwGeometrySphere.h"
 
@@ -105,6 +105,10 @@ void dfSuperSector::buildPortals(std::vector<dfSector*>& sectors, std::vector<df
 				root->m_vertices[wall->m_left].x,
 				root->m_vertices[wall->m_left].y,
 				floor);
+			glm::vec3 bottomRight(
+				root->m_vertices[wall->m_right].x,
+				root->m_vertices[wall->m_right].y,
+				floor);
 			glm::vec3 topRight(
 				root->m_vertices[wall->m_right].x,
 				root->m_vertices[wall->m_right].y,
@@ -113,6 +117,9 @@ void dfSuperSector::buildPortals(std::vector<dfSector*>& sectors, std::vector<df
 			// and now to opengl
 			topRight = level2gl(topRight);
 			bottomLeft = level2gl(bottomLeft);
+			bottomRight = level2gl(bottomRight);
+
+			glm::vec3 normal = glm::normalize(glm::cross(topRight - bottomRight, bottomLeft - bottomRight));
 
 			glm::vec3 center = topRight + bottomLeft;
 			center /= 2.0;
@@ -123,7 +130,7 @@ void dfSuperSector::buildPortals(std::vector<dfSector*>& sectors, std::vector<df
 			float radius = sqrt(dx + dy + dz) / 2.0f;
 			fwSphere boundingSphere = fwSphere(center, radius);
 
-			m_portals.push_back(dfPortal(boundingSphere, vssectors[wall->m_adjoint]));
+			m_portals.push_back(dfPortal(normal, boundingSphere, vssectors[wall->m_adjoint]));
 		}
 	}
 }
@@ -656,10 +663,15 @@ void dfSuperSector::checkPortals(fwCamera* camera, int zOrder)
 	for (auto& portal : m_portals) {
 		// WARNING : the camera is using opengl space, but the boundSphere are translated to gl space
 		if (camera->is_inFrustum(portal.m_boundingSphere)) {
-			dfSuperSector* target = portal.m_target;
-			if (!target->m_visible) {
-				target->m_visible = true;
-				target->checkPortals(camera, zOrder + 1);
+			// only if the portal is looking outward
+			glm::vec3 look2portal = glm::normalize(camera->get_position() - portal.m_boundingSphere.center());
+			float d = glm::dot(look2portal, portal.m_normal);
+			if (d >= 0) {
+				dfSuperSector* target = portal.m_target;
+				if (!target->m_visible) {
+					target->m_visible = true;
+					target->checkPortals(camera, zOrder + 1);
+				}
 			}
 		}
 	}
