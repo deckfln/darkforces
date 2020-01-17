@@ -99,6 +99,7 @@ myApp::myApp(std::string name, int width, int height) :
 	material = new fwMaterialDiffuse(t1, 32);
 	material->specularMap(t2);
 
+	// instanced boxes
 	m_positions[0] = glm::translate(glm::vec3(0.5, 0.5, 0.5));
 	m_positions[1] = glm::translate(glm::vec3(2, 0, 1));
 
@@ -116,6 +117,9 @@ myApp::myApp(std::string name, int width, int height) :
 
 	m_positions[0] = glm::translate(glm::vec3(-1, 0, 0));
 	m_positions[1] = glm::translate(glm::vec3(1, 0, 0));
+
+	// single box
+	m_mesh = new fwMesh(geometry, material);
 
 	// model
 	Loader* loader = new Loader(ROOT_FOLDER + "models/marie-jane/marie-jane.dae");
@@ -156,7 +160,8 @@ myApp::myApp(std::string name, int width, int height) :
 		addChild(plane).
 		addChild(m_instancedMesh).
 		addChild(window).
-		addChild(m_stormtrooper);
+		addChild(m_stormtrooper).
+		addChild(m_mesh);
 
 	m_scene->background(m_skybox);
 
@@ -223,6 +228,10 @@ glTexture* myApp::draw(time_t delta, fwRenderer* renderer)
 	lightPos.y = 2;
 	lightPos.z = cos(glfwGetTime() / 2.0f) * radius;
 	m_light->translate(lightPos);
+
+	m_rotate += 0.01;
+	glm::vec3 r(0, m_rotate, 0);
+	m_mesh->rotate(r);
 
 	/*
 	if (++current == 5) {

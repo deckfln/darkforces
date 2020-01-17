@@ -1,5 +1,8 @@
 #include "dfLogicElevator.h"
 
+#define _USE_MATH_DEFINES // for C++
+#include <math.h>
+
 #include "dfMesh.h"
 #include "dfSector.h"
 #include "dfLevel.h"
@@ -169,6 +172,10 @@ fwMesh *dfLogicElevator::buildGeometry(fwMaterial* material)
 
 		// only use the inner polygon (the hole)
 		m_pSector->buildElevator(m_mesh, m_pSector->m_floorAltitude, m_pSector->m_ceilingAltitude, DFWALL_TEXTURE_MID, false, 2);
+
+		// move the vertices around the center (in level space)
+		m_center.z = m_pSector->m_floorAltitude;
+		m_mesh->moveVertices(m_center);
 
 		if (m_mesh->buildMesh()) {
 			m_mesh->mesh()->set_name(m_pSector->m_name);
@@ -385,6 +392,8 @@ bool dfLogicElevator::animate(time_t delta)
 	case DF_ELEVATOR_MOVE_FLOOR:
 	case DF_ELEVATOR_MOVE_CEILING:
 		return animateMoveZ();
+	case DF_ELEVATOR_MORPH_SPIN1:
+		return true;
 	}
 
 	return true;	// Animation is not implemented, stop it

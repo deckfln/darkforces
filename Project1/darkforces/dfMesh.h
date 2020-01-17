@@ -17,9 +17,10 @@ class dfWall;
 struct dfTexture;
 
 class dfMesh {
-	std::vector <glm::vec3> m_vertices;		// level vertices
+	std::vector <glm::vec3> m_vertices;		// level vertices (based off m_position)
 	std::vector <glm::vec2> m_uvs;			// UVs inside the source texture
-	std::vector <float> m_textureID;			// TextureID inside the megatexture
+	std::vector <float> m_textureID;		// TextureID inside the megatexture
+	glm::vec3 m_position;					// position of the mesh, by default (0,0,0)
 
 	fwMaterial* m_material = nullptr;
 	fwGeometry* m_geometry = nullptr;
@@ -37,8 +38,11 @@ public:
 	int addRectangle(int start, dfSector* sector, dfWall* wall, float z, float z1, int texture, std::vector<dfTexture*>& textures);
 	void addRectangle(dfSector* sector, dfWall* wall, float z, float z1, glm::vec3& texture, std::vector<dfTexture*>& textures, bool clockwise);
 	void addFloor(std::vector<Point>& vertices, std::vector<std::vector<Point>>& polygons, float z, glm::vec3& texture, std::vector<dfTexture*>& textures, bool clockwise);
+	void moveVertices(glm::vec3& center);
 	void moveFloorTo(float z);
 	void moveCeilingTo(float z);
+	void rotateZ(float angle);
+	void move(glm::vec3 position);
 	fwMesh* buildMesh(void);
 	~dfMesh();
 };

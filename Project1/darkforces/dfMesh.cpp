@@ -261,6 +261,9 @@ void dfMesh::addFloor(std::vector<Point>& vertices, std::vector<std::vector<Poin
 	}
 }
 
+/**
+ * Move the elevator floor
+ */
 void dfMesh::moveFloorTo(float z)
 {
 	glm::vec3 p = m_mesh->get_position();
@@ -268,11 +271,45 @@ void dfMesh::moveFloorTo(float z)
 	m_mesh->position(p);
 }
 
+/**
+ * Move the elevator floor
+ */
 void dfMesh::moveCeilingTo(float z)
 {
 	glm::vec3 p = m_mesh->get_position();
 	p.y = z / 10.0f;
 	m_mesh->position(p);
+}
+
+/**
+ * Rotate along Z axis
+ */
+void dfMesh::rotateZ(float angle)
+{
+	glm::vec3 rotate(0, angle, 0);
+	m_mesh->rotate(rotate);
+}
+
+/**
+ *
+ */
+void dfMesh::move(glm::vec3 position)
+{
+	m_position = glm::vec3(position.x, position.z, position.y) / 10.0f;
+
+	m_mesh->position(m_position);
+}
+
+/**
+ * Move all vertices as offset of the center
+ */
+void dfMesh::moveVertices(glm::vec3& center)
+{
+	m_position = glm::vec3(center.x, center.z, center.y) / 10.0f;
+
+	for (auto &vertice : m_vertices) {
+		vertice -= m_position;
+	}
 }
 
 /**
@@ -292,6 +329,7 @@ fwMesh* dfMesh::buildMesh(void)
 	m_geometry->addAttribute("aTextureID", GL_ARRAY_BUFFER, &m_textureID[0], 1, size * sizeof(float), sizeof(float), false);
 
 	m_mesh = new fwMesh(m_geometry, m_material);
+	m_mesh->position(m_position);
 
 	return m_mesh;
 }

@@ -46,7 +46,8 @@ class dfLogicElevator {
 	//TODO adapt the default speed
 	float m_speed = 20;					// time in millisecond between 2 stops
 	int m_eventMask = 0;
-	glm::vec3 m_center;
+	glm::vec3 m_center = glm::vec3(0);
+	float m_p = 0;
 
 	std::vector<dfLogicStop*> m_stops;	// all stops of the evelator
 

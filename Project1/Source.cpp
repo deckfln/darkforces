@@ -6,6 +6,7 @@
 int main()
 {
 	myDarkForces myapp("LearnOpenGL", 800, 600);
+	//myApp myapp("LearnOpenGL", 800, 600);
 
 	myapp.run();
 	return 0;

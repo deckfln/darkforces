@@ -28,6 +28,8 @@ class myApp : public fwApp
 	fwInstancedMesh *m_instancedMesh = nullptr;
 	fwMeshSkinned* m_stormtrooper = nullptr;
 	fwMesh* m_fwCamera = nullptr;
+	fwMesh* m_mesh = nullptr;
+	float m_rotate = 0;
 	fwParticles* m_particles = nullptr;
 
 public:
