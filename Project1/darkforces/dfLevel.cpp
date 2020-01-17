@@ -106,15 +106,16 @@ dfLevel::dfLevel(std::string file)
 	}
 
 	convertDoors2Elevators();	// for every sector 'DOOR', create an evelator and a trigger
-	buildAtlasMap();	// load textures in a megatexture
+	buildAtlasMap();			// load textures in a megatexture
 
 	m_material = new fwMaterialBasic("data/shaders/vertex.glsl", "", "data/shaders/fragment.glsl");
 	m_material->addDiffuseMap(m_fwtextures);
 	m_material->addUniform(m_shader_idx);
 
-	spacePartitioning();// partion of space for quick collision
-	buildGeometry();	// build the geometry of each super sectors
-	initElevators();	// move all elevators to position 0
+	spacePartitioning();		// partion of space for quick collision
+	buildGeometry();			// build the geometry of each super sectors
+	createTriggerForSpin();		// for elevator_spin1, create triggers
+	initElevators();			// move all elevators to position 0
 }
 
 /***
@@ -378,9 +379,9 @@ void dfLevel::initElevators(void)
  */
 void dfLevel::convertDoors2Elevators(void)
 {
-	std::string inv = "inv";
-	std::string hold = "hold";
-	std::string switch1 = "switch1";
+	static std::string inv = "inv";
+	static std::string hold = "hold";
+	static std::string switch1 = "switch1";
 
 	for (auto sector : m_sectors) {
 		if (sector->flag() & DF_SECTOR_DOOR) {
@@ -394,6 +395,21 @@ void dfLevel::convertDoors2Elevators(void)
 			m_inf->m_elevators.push_back(elevator);
 
 			dfLogicTrigger* trigger = new dfLogicTrigger(switch1, sector, 1, elevator);
+			m_inf->m_triggers.push_back(trigger);
+		}
+	}
+}
+
+/**
+ * for every sector 'DOOR', create an evelator and it stops PLUS trigger
+ */
+void dfLevel::createTriggerForSpin(void)
+{
+	static std::string standard = "standard";
+
+	for (auto elevator: m_inf->m_elevators) {
+		if (elevator->is(DF_ELEVATOR_MORPH_SPIN1)) {
+			dfLogicTrigger* trigger = new dfLogicTrigger(standard, elevator);
 			m_inf->m_triggers.push_back(trigger);
 		}
 	}

@@ -36,6 +36,16 @@ dfLogicTrigger::dfLogicTrigger(std::string& kind, dfSector* sector, dfLogicEleva
 }
 
 /**
+ * Create a trigger based on ono the sector managed by the elevator
+ */
+dfLogicTrigger::dfLogicTrigger(std::string& kind, dfLogicElevator* client) :
+	m_class(kind)
+{
+	client->psector()->setTriggerFromSector(this);
+	m_pClients.push_back(client);
+}
+
+/**
  * Bind to the sector object
  */
 void dfLogicTrigger::bindSector(dfSector* pSector)
@@ -73,6 +83,11 @@ void dfLogicTrigger::boundingBox(glm::vec2& left, glm::vec2& right, float floor,
 	m_boundingBoxSize.x = abs(left.x - right.x);
 	m_boundingBoxSize.y = abs(left.y - right.y);
 	m_boundingBoxSize.z = abs(ceiling - floor);
+}
+
+void dfLogicTrigger::boundingBox(fwAABBox& box)
+{
+	m_boundingBox = box;
 }
 
 /**

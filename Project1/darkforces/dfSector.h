@@ -100,6 +100,8 @@ public:
 	dfSector(std::ifstream& infile);
 	void setTriggerFromWall(dfLogicTrigger* trigger);
 	void setTriggerFromFloor(dfLogicTrigger* trigger);
+	void setTriggerFromSector(dfLogicTrigger* trigger);
+
 	bool inAABBox(glm::vec3& position) { return m_boundingBox.inside(position); };
 
 	void floor(float z);

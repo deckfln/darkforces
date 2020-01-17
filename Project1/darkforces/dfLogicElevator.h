@@ -70,7 +70,7 @@ class dfLogicElevator {
 
 	void moveTo(dfLogicStop* stop);
 	void moveTo(float z);
-	void move2nextFloor(void);
+	void moveToNextStop(void);
 	bool animateMoveZ(void);
 
 public:
@@ -80,6 +80,7 @@ public:
 	void speed(float speed) { m_speed = speed; };
 	void eventMask(int eventMask) { m_eventMask = eventMask; };
 	std::string& sector(void) { return m_sector; };
+	dfSector* psector(void) { return m_pSector; };
 	void parent(dfLevel* parent) { m_parent = parent; };
 	void center(float x, float y) { m_center.x = x; m_center.y = y; };
 

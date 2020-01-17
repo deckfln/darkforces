@@ -33,6 +33,7 @@ public:
 	dfLogicTrigger(std::string& kind, std::string& sector, int wallIndex);
 	dfLogicTrigger(std::string& kind, dfSector* sector, int wallIndex, dfLogicElevator *client);
 	dfLogicTrigger(std::string& kind, dfSector* sector, dfLogicElevator* client);
+	dfLogicTrigger(std::string& kind, dfLogicElevator* client);
 
 	void eventMask(int eventMask) { m_eventMask = eventMask; };
 	void client(std::string& client) { m_clients.push_back(client); }
@@ -43,6 +44,7 @@ public:
 	void bindSector(dfSector* pSector);
 	void evelator(dfLogicElevator* pClient);
 	void boundingBox(glm::vec2& left, glm::vec2& right, float floor, float ceiling);
+	void boundingBox(fwAABBox& box);
 	void message(std::vector <std::string>& tokens);
 
 	bool collide(fwAABBox& box);

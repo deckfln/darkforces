@@ -248,7 +248,7 @@ void dfLogicElevator::trigger(std::string& sclass, dfMessage* message)
 				m_direction = m_target - m_current;
 
 				// TODO adapt the speed
-				m_delay = abs(m_direction) * 2000 / m_speed;
+				m_delay = abs(m_direction) * 838 / m_speed;
 
 				m_status = DF_ELEVATOR_MOVE;
 				m_tick = 0;
@@ -284,7 +284,7 @@ void dfLogicElevator::trigger(std::string& sclass, dfMessage* message)
 /**
  * compute the move to the next Stop
  */
-void dfLogicElevator::move2nextFloor(void)
+void dfLogicElevator::moveToNextStop(void)
 {
 	m_current = m_stops[m_currentStop]->z_position();
 	float t1 = m_stops[m_currentStop]->time();
@@ -307,7 +307,7 @@ void dfLogicElevator::move2nextFloor(void)
 	m_direction = m_target - m_current;
 
 	// TODO adapt the speed
-	m_delay = abs(m_direction) * 2000 / m_speed;
+	m_delay = abs(m_direction) * 838 / m_speed;
 }
 
 /**
@@ -319,7 +319,7 @@ bool dfLogicElevator::animateMoveZ(void)
 	case DF_ELEVATOR_HOLD:
 		m_status = DF_ELEVATOR_MOVE;
 		m_tick = 0;
-		move2nextFloor();
+		moveToNextStop();
 		break;
 
 	case DF_ELEVATOR_MOVE: {
@@ -366,7 +366,7 @@ bool dfLogicElevator::animateMoveZ(void)
 
 	case DF_ELEVATOR_WAIT:
 		if (m_tick >= m_stops[m_currentStop]->time()) {
-			move2nextFloor();
+			moveToNextStop();
 			m_status = DF_ELEVATOR_MOVE;
 			m_tick = 0;
 		}
@@ -391,9 +391,8 @@ bool dfLogicElevator::animate(time_t delta)
 	case DF_ELEVATOR_INV:
 	case DF_ELEVATOR_MOVE_FLOOR:
 	case DF_ELEVATOR_MOVE_CEILING:
-		return animateMoveZ();
 	case DF_ELEVATOR_MORPH_SPIN1:
-		return true;
+		return animateMoveZ();
 	}
 
 	return true;	// Animation is not implemented, stop it
@@ -432,6 +431,9 @@ void dfLogicElevator::moveTo(float z)
 	case DF_ELEVATOR_MOVE_CEILING:
 		m_mesh->moveCeilingTo(z);
 		m_pSector->ceiling(z);
+		break;
+	case DF_ELEVATOR_MORPH_SPIN1:
+		m_mesh->rotateZ(glm::radians((z)));
 		break;
 	default:
 		std::cerr << "dfLogicElevator::moveTo m_type==" << m_type << " not implemented" << std::endl;

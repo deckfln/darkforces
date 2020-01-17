@@ -158,6 +158,15 @@ void dfSector::setTriggerFromWall(dfLogicTrigger* trigger)
 }
 
 /**
+ * configure the trigger based on the wall of the sector
+ */
+void dfSector::setTriggerFromSector(dfLogicTrigger* trigger)
+{
+	trigger->boundingBox(m_boundingBox);
+	m_triggers.push_back(trigger);
+}
+
+/**
  * configure the trigger based on the floor of the sector
  */
 void dfSector::setTriggerFromFloor(dfLogicTrigger* trigger)
