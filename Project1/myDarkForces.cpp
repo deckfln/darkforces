@@ -156,8 +156,8 @@ glTexture* myDarkForces::draw(time_t delta, fwRenderer* renderer)
 	}
 
 	m_level->animate(delta);			// animate the level
-	m_control->updateCamera();			// and move the player if the level changed
 	m_level->draw(m_camera, m_scene); 	// update visible objects
+	m_control->updateCamera();			// and move the player if the level changed
 
 	return renderer->draw(m_camera, m_scene);
 }

@@ -117,6 +117,9 @@ void fwRendererDefered::mergeMTR(fwScene *scene)
 	if (point_lights) {
 		define += "#define POINT_LIGHTS " + std::to_string(point_lights) + "\n";
 	}
+	if (m_bloom != nullptr) {
+		define += "#define BLOOMMAP\n";
+	}
 
 	// Build the shader if it is missing
 	if (light_programs[define] == nullptr) {
@@ -125,8 +128,6 @@ void fwRendererDefered::mergeMTR(fwScene *scene)
 
 		// Bloom ?
 		if (m_bloom != nullptr) {
-			define += "#define BLOOMMAP\n";
-
 			// setup the bloom source
 			if (m_bloom != nullptr) {
 				deferedLights.setBloomTexture(m_bloom->get_bloom_texture());
