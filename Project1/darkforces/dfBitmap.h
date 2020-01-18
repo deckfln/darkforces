@@ -4,6 +4,7 @@
 #include <vector>
 
 #include "dfFileGOB.h"
+#include "dfPalette.h"
 
 struct dfBitmapImage {
 	int m_height = 0;
@@ -18,7 +19,8 @@ struct dfBitmapImage {
 	float m_mega_height = 0;	// end y offset in the megatexture
 
 	long m_size = 0;
-	char *m_data = nullptr;
+	char *m_raw = nullptr;	// palette based raw data, stored by column  first
+	char* m_data = nullptr;	// RGB converted image, stored by row first
 };
 
 class dfBitmap {
@@ -27,10 +29,11 @@ class dfBitmap {
 	int m_nbImages = 1;
 	int m_framerate = 0;
 	std::vector<dfBitmapImage> m_images;
+	char *convert2rgb(dfBitmapImage* raw, dfPalette* palette);
 
 public:
 	std::string m_name;
-	dfBitmap(dfFileGOB* gob, std::string file);
+	dfBitmap(dfFileGOB* gob, std::string file, dfPalette *palette);
 	dfBitmapImage* getImage(int index = 0);
 	~dfBitmap();
 };

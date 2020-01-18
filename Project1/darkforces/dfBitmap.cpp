@@ -51,15 +51,19 @@ static long ctol(char* bytes)
 	return bytes[0] + bytes[1] * 256 + bytes[2] * 65536;
 }
 
-static short ctos(char* bytes)
-{
-	return bytes[0] + bytes[1] * 256;
-}
+static bool _init = false;
+static dfPaletteColors _color;
 
-dfBitmap::dfBitmap(dfFileGOB* gob, std::string file) :
+dfBitmap::dfBitmap(dfFileGOB* gob, std::string file, dfPalette* palette) :
 	m_name(file)
 {
-	if (file == "ZASWIT01.BM") {
+	if (!_init) {
+		for (auto i = 0; i < 256; i++) {
+
+		}
+	}
+
+	if (file == "IWSECB3.BM") { // ZASWIT01.BM") {
 		printf("dfBitmap::dfBitmap\n");
 	}
 	m_data = gob->load(file);
@@ -93,8 +97,9 @@ dfBitmap::dfBitmap(dfFileGOB* gob, std::string file) :
 			image.m_height = subImage->SizeY;
 			image.m_width = subImage->SizeX;
 			image.m_transparent = (subImage->Transparent == '\x3e');
-			image.m_data = (char *)subImage + sizeof(dfBitMapHeaderSub);
+			image.m_raw = (char *)subImage + sizeof(dfBitMapHeaderSub);
 			image.m_nrChannels = 3;
+			image.m_data = convert2rgb(&image, palette);
 
 			m_images.push_back(image);
 		}
@@ -102,15 +107,49 @@ dfBitmap::dfBitmap(dfFileGOB* gob, std::string file) :
 	else {
 		// single image
 		dfBitmapImage image;
-		image.m_size = ((dfBitmapHeader*)m_header)->DataSize;
+		image.m_size = m_header->DataSize;
 		image.m_height = height;
 		image.m_width = width;
-		image.m_transparent = (((dfBitmapHeader*)m_header)->Transparent == '\x3e');
-		image.m_data = (char*)m_header + sizeof(dfBitmapHeader);
+		image.m_transparent = (m_header->Transparent == '\x3e');
+		image.m_raw = (char*)m_header + sizeof(dfBitmapHeader);
 		image.m_nrChannels = 3;
+		image.m_data = convert2rgb(&image, palette);
 
 		m_images.push_back(image);
 	}
+}
+
+/**
+ * Convert palette based to RGB
+ */
+char *dfBitmap::convert2rgb(dfBitmapImage *raw, dfPalette *palette)
+{
+	if (raw->m_transparent) {
+		std::cerr << "dfBitmap::convert2rgb Transparency not implemented" << std::endl;
+	}
+
+	int size = raw->m_width * raw->m_height;
+	char* image = new char[size * 3];
+	int p, p1 = 0;
+	dfPaletteColor *rgb;
+	unsigned char v;
+
+	// RAW images are stored by column
+	// need to conver to  row first
+	for (auto x = 0; x < raw->m_height; x++) {
+		for (auto y = 0; y < raw->m_width; y++) {
+			p = y * raw->m_height + x;
+			v = raw->m_raw[p];
+			rgb = palette->getColor(v);
+
+			image[p1] = rgb->r;
+			image[p1 + 1] = rgb->g;
+			image[p1 + 2] = rgb->b;
+			p1 += 3;
+		}
+	}
+
+	return image;
 }
 
 /**
@@ -127,7 +166,9 @@ dfBitmapImage* dfBitmap::getImage(int index)
 
 dfBitmap::~dfBitmap()
 {
-	if (m_data) {
-		delete m_data;
+	free(m_data);
+
+	for (auto& image : m_images) {
+		delete[] image.m_data;
 	}
 }

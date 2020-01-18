@@ -43,6 +43,8 @@ dfFileGOB::dfFileGOB(std::string file)
  */
 char* dfFileGOB::load(std::string file)
 {
+	for (auto& c : file) c = toupper(c);
+
 	if (m_files.count(file) == 0) {
 		return nullptr;
 	}

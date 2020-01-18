@@ -38,6 +38,9 @@ dfLevel::dfLevel(dfFileGOB* dark, dfFileGOB* gTextures, std::string file)
 		else if (tokens[0] == "LEVELNAME") {
 			m_name = tokens[1];
 		}
+		else if (tokens[0] == "PALETTE") {
+			m_palette = new dfPalette(dark, tokens[1]);
+		}
 		else if (tokens[0] == "TEXTURES") {
 			int nbTextures = std::stoi(tokens[1]);
 			m_textures.resize(nbTextures);
@@ -132,7 +135,7 @@ dfLevel::dfLevel(dfFileGOB* dark, dfFileGOB* gTextures, std::string file)
  */
 void dfLevel::loadBitmaps(dfFileGOB *gob, std::string file)
 {
-	dfBitmap *texture = new dfBitmap(gob, file);
+	dfBitmap *texture = new dfBitmap(gob, file, m_palette);
 	dfBitmapImage* image = texture->getImage();
 	if (image) {
 		m_textures[m_currentTexture++] = image;
@@ -274,10 +277,10 @@ void dfLevel::buildAtlasMap(void)
 	} while (!allplaced);
 
 	// delete old textures data
-	for (auto texture : sorted_textures) {
+//	for (auto texture : sorted_textures) {
 //		free(texture->m_data);
 //		texture->m_data = nullptr;
-	}
+//	}
 
 	// create the fwTexture
 	m_fwtextures = new fwTexture(m_megatexture, size, size, 3);
@@ -548,6 +551,7 @@ dfLevel::~dfLevel()
 	for (auto texture : m_textures) {
 		delete texture;
 	}
+	delete m_palette;
 	delete m_megatexture;
 	delete m_fwtextures;
 	delete m_inf;

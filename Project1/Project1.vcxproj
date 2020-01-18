@@ -133,6 +133,7 @@
     <ClCompile Include="darkforces\dfLogicStop.cpp" />
     <ClCompile Include="darkforces\dfLogicTrigger.cpp" />
     <ClCompile Include="darkforces\dfMesh.cpp" />
+    <ClCompile Include="darkforces\dfPalette.cpp" />
     <ClCompile Include="darkforces\dfParseINF.cpp" />
     <ClCompile Include="darkforces\dfLevel.cpp" />
     <ClCompile Include="darkforces\dfSector.cpp" />
@@ -228,6 +229,7 @@
     <ClInclude Include="darkforces\dfLogicTrigger.h" />
     <ClInclude Include="darkforces\dfMesh.h" />
     <ClInclude Include="darkforces\dfMessage.h" />
+    <ClInclude Include="darkforces\dfPalette.h" />
     <ClInclude Include="darkforces\dfParseINF.h" />
     <ClInclude Include="darkforces\dfLevel.h" />
     <ClInclude Include="darkforces\dfSector.h" />
