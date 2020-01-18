@@ -21,7 +21,8 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 {
 	int Button = 0;
 
-	m_gob = new dfFileGOB(ROOT_FOLDER + "/data/dark.gob");
+	m_dark = new dfFileGOB(ROOT_FOLDER + "/data/dark.gob");
+	m_textures = new dfFileGOB(ROOT_FOLDER + "/data/textures.gob");
 
 	// camera
 	m_camera = new fwCamera(width, height);
@@ -61,7 +62,7 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 	fwMaterialBasic* basic = new fwMaterialBasic(white);
 	fwMesh* fLight = new fwMesh(geometry, basic);
 
-	m_level = new dfLevel(m_gob, "SECBASE");
+	m_level = new dfLevel(m_dark, m_textures, "SECBASE");
 	dfCollision* m_collision = new dfCollision();
 	m_collision->bind(m_level);
 	m_control->bind(m_collision);

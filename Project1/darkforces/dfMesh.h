@@ -5,6 +5,7 @@
 #include <array>
 
 #include "../framework/fwMesh.h"
+#include "dfBitmap.h"
 
 // The index type. Defaults to uint32_t, but you can also pass uint16_t if you know that your
 // data won't have more than 65536 vertices.
@@ -14,7 +15,6 @@ using Point = std::array<Coord, 2>;
 
 class dfSector;
 class dfWall;
-struct dfTexture;
 
 class dfMesh {
 	std::vector <glm::vec3> m_vertices;		// level vertices (based off m_position)
@@ -35,9 +35,9 @@ public:
 	fwMesh* mesh(void) { return m_mesh; };
 
 	void buildGeometry(dfSector* source, float bottom, float top);
-	int addRectangle(int start, dfSector* sector, dfWall* wall, float z, float z1, int texture, std::vector<dfTexture*>& textures);
-	void addRectangle(dfSector* sector, dfWall* wall, float z, float z1, glm::vec3& texture, std::vector<dfTexture*>& textures, bool clockwise);
-	void addFloor(std::vector<Point>& vertices, std::vector<std::vector<Point>>& polygons, float z, glm::vec3& texture, std::vector<dfTexture*>& textures, bool clockwise);
+	int addRectangle(int start, dfSector* sector, dfWall* wall, float z, float z1, int texture, std::vector<dfBitmapImage*>& textures);
+	void addRectangle(dfSector* sector, dfWall* wall, float z, float z1, glm::vec3& texture, std::vector<dfBitmapImage*>& textures, bool clockwise);
+	void addFloor(std::vector<Point>& vertices, std::vector<std::vector<Point>>& polygons, float z, glm::vec3& texture, std::vector<dfBitmapImage*>& textures, bool clockwise);
 	void moveVertices(glm::vec3& center);
 	void moveFloorTo(float z);
 	void moveCeilingTo(float z);

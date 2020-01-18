@@ -1,7 +1,7 @@
 #include "dfMesh.h"
 
 #include "dfSector.h"
-#include "dfTexture.h"
+#include "dfBitmap.h"
 
 #include "../include/earcut.hpp"
 
@@ -111,7 +111,7 @@ void dfMesh::updateRectangleAntiClockwise(int p, float x, float y, float z, floa
 /***
  * create vertices for a rectangle
  */
-int dfMesh::addRectangle(int start, dfSector* sector, dfWall* wall, float z, float z1, int texture, std::vector<dfTexture*>& textures)
+int dfMesh::addRectangle(int start, dfSector* sector, dfWall* wall, float z, float z1, int texture, std::vector<dfBitmapImage*>& textures)
 {
 	int p = start;
 
@@ -131,11 +131,11 @@ int dfMesh::addRectangle(int start, dfSector* sector, dfWall* wall, float z, flo
 	// deal with the wall texture
 	float textureID = wall->m_tex[texture].x;
 
-	dfTexture* dfTexture = textures[(int)textureID];
+	dfBitmapImage* dfBitmap = textures[(int)textureID];
 
 	float length = sqrt(pow(x - x1, 2) + pow(y - y1, 2));
-	float xpixel = (float)dfTexture->width;
-	float ypixel = (float)dfTexture->height;
+	float xpixel = (float)dfBitmap->m_width;
+	float ypixel = (float)dfBitmap->m_height;
 
 	// convert height and length into local texture coordinates using pixel ratio
 	// ratio of texture pixel vs world position = 64 pixels for 8 clicks => 8x1
@@ -160,7 +160,7 @@ int dfMesh::addRectangle(int start, dfSector* sector, dfWall* wall, float z, flo
 /**
  * create a simple opengl Rectangle
  */
-void dfMesh::addRectangle(dfSector* sector, dfWall* wall, float z, float z1, glm::vec3& texture, std::vector<dfTexture*>& textures, bool clockwise)
+void dfMesh::addRectangle(dfSector* sector, dfWall* wall, float z, float z1, glm::vec3& texture, std::vector<dfBitmapImage*>& textures, bool clockwise)
 {
 	// add a new rectangle
 	int p = m_vertices.size();
@@ -176,11 +176,16 @@ void dfMesh::addRectangle(dfSector* sector, dfWall* wall, float z, float z1, glm
 	// deal with the wall texture
 	float textureID = texture.x;
 
-	dfTexture* dfTexture = textures[(int)textureID];
+	dfBitmapImage* dfBitmap = textures[(int)textureID];
+	float xpixel = 0;
+	float ypixel = 0;
+
+	if (dfBitmap != nullptr) {
+		xpixel = (float)dfBitmap->m_width;
+		ypixel = (float)dfBitmap->m_height;
+	}
 
 	float length = sqrt(pow(x - x1, 2) + pow(y - y1, 2));
-	float xpixel = (float)dfTexture->width;
-	float ypixel = (float)dfTexture->height;
 
 	// convert height and length into local texture coordinates using pixel ratio
 	// ratio of texture pixel vs world position = 64 pixels for 8 clicks => 8x1
@@ -203,7 +208,7 @@ void dfMesh::addRectangle(dfSector* sector, dfWall* wall, float z, float z1, glm
 /**
  * create a floor tesselation
  */
-void dfMesh::addFloor(std::vector<Point>& vertices, std::vector<std::vector<Point>>& polygons, float z, glm::vec3& texture, std::vector<dfTexture*>& textures, bool clockwise)
+void dfMesh::addFloor(std::vector<Point>& vertices, std::vector<std::vector<Point>>& polygons, float z, glm::vec3& texture, std::vector<dfBitmapImage*>& textures, bool clockwise)
 {
 	// Run tessellation
 	// Returns array of indices that refer to the vertices of the input polygon.
@@ -220,10 +225,13 @@ void dfMesh::addFloor(std::vector<Point>& vertices, std::vector<std::vector<Poin
 
 	// use axis aligned texture UV, on a 8x8 grid
 	// ratio of texture pixel vs world position = 180 pixels for 24 clicks = 7.5x1
-	dfTexture* dfTexture = textures[(int)texture.r];
-	float xpixel = (float)dfTexture->width;
-	float ypixel = (float)dfTexture->height;
-
+	dfBitmapImage* dfBitmap = textures[(int)texture.r];
+	float xpixel = 0;
+	float ypixel = 0;
+	if (dfBitmap != nullptr) {
+		xpixel = (float)dfBitmap->m_width;
+		ypixel = (float)dfBitmap->m_height;
+	}
 	// warning, triangles are looking downward
 	int currentVertice = 0, j;
 	for (unsigned int i = 0; i < indices.size(); i++) {

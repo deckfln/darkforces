@@ -11,7 +11,7 @@
 
 #include "dfSector.h"
 #include "dfSuperSector.h"
-#include "dfTexture.h"
+#include "dfBitmap.h"
 #include "dfParseINF.h"
 #include "dfLogicElevator.h"
 #include "dfFileGOB.h"
@@ -24,7 +24,7 @@ class dfLevel
 	std::string m_name;
 	std::string m_level;
 	std::vector<dfSector *> m_sectors;			// all sectors of the level
-	std::vector<dfTexture *> m_textures;		// all textures of the level
+	std::vector<dfBitmapImage *> m_textures;		// all textures of the level
 	std::list<dfSuperSector *> m_supersectors;	// space partioning of sectors
 
 	std::map<std::string, dfSector*> m_hashSectors;		// dictionnaries of sectors
@@ -45,7 +45,7 @@ class dfLevel
 	std::list<dfLogicElevator*> m_activeElevators;// elevators currently moving on the level
 	std::list <dfLogicTrigger*> m_triggers;		// all triggers of the level
 
-	void loadBitmaps(std::string file);
+	void loadBitmaps(dfFileGOB* gob, std::string file);
 	void buildAtlasMap(void);
 	void spacePartitioning(void);
 	void buildGeometry(void);
@@ -55,12 +55,12 @@ class dfLevel
 	void createTriggerForSpin(void);
 
 public:
-	dfLevel(dfFileGOB* gob, std::string file);
+	dfLevel(dfFileGOB* dark, dfFileGOB* textures, std::string file);
 	dfSector* findSector(glm::vec3& position);
 	void testSwitch(fwAABBox& player);
 	void draw(fwCamera* camera, fwScene* scene);
 	std::vector<dfSector*>& sectors(void) { return m_sectors; };
-	std::vector<dfTexture*>& textures(void) { return m_textures; };
+	std::vector<dfBitmapImage*>& textures(void) { return m_textures; };
 	void activateElevator(dfLogicElevator* elevator) { m_activeElevators.push_back(elevator); };
 	void deactivateElevator(dfLogicElevator* elevator) { m_activeElevators.remove(elevator); };
 	void animate(time_t delta);

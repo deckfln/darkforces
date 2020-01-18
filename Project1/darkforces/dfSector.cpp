@@ -446,7 +446,7 @@ void dfSector::buildElevator(dfMesh *mesh, float bottom, float top, int what, bo
 		return;
 	}
 
-	std::vector<dfTexture*>& textures = m_super->textures();
+	std::vector<dfBitmapImage *>& textures = m_super->textures();
 
 	// create the walls
 	std::vector <dfWall*>& wallss = walls(displayPolygon);
@@ -501,7 +501,7 @@ void dfSector::buildFloor(dfMesh* mesh)
 	if (!m_super) {
 		return;
 	}
-	std::vector<dfTexture*>& textures = m_super->textures();
+	std::vector<dfBitmapImage*>& textures = m_super->textures();
 	// build top and bottom
 	// index the indexes IN the polyines of polygon 
 	std::vector<Point> vertices;

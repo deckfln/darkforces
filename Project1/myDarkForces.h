@@ -28,7 +28,8 @@ class myDarkForces : public fwApp
 	glm::vec4* white = nullptr;
 	fwMesh* m_fwCamera = nullptr;
 
-	dfFileGOB* m_gob = nullptr;
+	dfFileGOB* m_dark = nullptr;
+	dfFileGOB* m_textures = nullptr;
 	dfLevel* m_level = nullptr;
 
 public:

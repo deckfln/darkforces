@@ -212,7 +212,7 @@ void dfSuperSector::updateRectangle(int p, float x, float y, float z, float x1, 
 /***
  * create vertices for a rectangle
  */
-int dfSuperSector::addRectangle(int start, dfSector* sector, dfWall* wall, float z, float z1, int texture, std::vector<dfTexture*>& textures)
+int dfSuperSector::addRectangle(int start, dfSector* sector, dfWall* wall, float z, float z1, int texture, std::vector<dfBitmapImage*>& textures)
 {
 	int p = start;
 
@@ -232,11 +232,11 @@ int dfSuperSector::addRectangle(int start, dfSector* sector, dfWall* wall, float
 	// deal with the wall texture
 	float textureID = wall->m_tex[texture].x;
 
-	dfTexture* dfTexture = textures[(int)textureID];
+	dfBitmapImage* dfBitmap = textures[(int)textureID];
 
 	float length = sqrt(pow(x - x1, 2) + pow(y - y1, 2));
-	float xpixel = (float)dfTexture->width;
-	float ypixel = (float)dfTexture->height;
+	float xpixel = (float)dfBitmap->m_width;
+	float ypixel = (float)dfBitmap->m_height;
 
 	// convert height and length into local texture coordinates using pixel ratio
 	// ratio of texture pixel vs world position = 64 pixels for 8 clicks => 8x1
@@ -277,11 +277,11 @@ void dfSuperSector::addRectangle(dfSector *sector, dfWall* wall, float z, float 
 	// deal with the wall texture
 	float textureID = texture.x;
 
-	dfTexture* dfTexture = m_parent->textures()[(int)textureID];
+	dfBitmapImage* dfBitmap = m_parent->textures()[(int)textureID];
 
 	float length = sqrt(pow(x - x1, 2) + pow(y - y1, 2));
-	float xpixel = (float)dfTexture->width;
-	float ypixel = (float)dfTexture->height;
+	float xpixel = (float)dfBitmap->m_width;
+	float ypixel = (float)dfBitmap->m_height;
 
 	// convert height and length into local texture coordinates using pixel ratio
 	// ratio of texture pixel vs world position = 64 pixels for 8 clicks => 8x1
@@ -299,7 +299,7 @@ void dfSuperSector::addRectangle(dfSector *sector, dfWall* wall, float z, float 
 /***
  * create vertices for a sign
  */
-void dfSuperSector::addSign(dfSector* sector, dfWall* wall, float z, float z1, int texture, std::vector<dfTexture*>& textures)
+void dfSuperSector::addSign(dfSector* sector, dfWall* wall, float z, float z1, int texture, std::vector<dfBitmapImage*>& textures)
 {
 	float x = sector->m_vertices[wall->m_left].x,
 		y = sector->m_vertices[wall->m_left].y,
@@ -310,11 +310,11 @@ void dfSuperSector::addSign(dfSector* sector, dfWall* wall, float z, float z1, i
 	if (wall->m_tex[DFWALL_TEXTURE_SIGN].r > 0) {
 		float textureID = wall->m_tex[DFWALL_TEXTURE_SIGN].r;
 
-		dfTexture* dfTexture = textures[(int)textureID];
+		dfBitmapImage* dfBitmap = textures[(int)textureID];
 
 		float length = sqrt(pow(x - x1, 2) + pow(y - y1, 2));
-		float xpixel = (float)dfTexture->width;
-		float ypixel = (float)dfTexture->height;
+		float xpixel = (float)dfBitmap->m_width;
+		float ypixel = (float)dfBitmap->m_height;
 
 		glm::vec2 segment = glm::normalize(glm::vec2(x1 - x, y1 - y));
 		glm::vec2 start = sector->m_vertices[wall->m_left] + segment * (wall->m_tex[DFWALL_TEXTURE_SIGN].g - wall->m_tex[DFWALL_TEXTURE_MID].g);
@@ -355,7 +355,7 @@ void dfSuperSector::addSign(dfSector* sector, dfWall* wall, float z, float z1, i
 /**
  * Add walls at the begining of the vertices buffer
  */
-void dfSuperSector::buildWalls(bool update, dfSector* sector, std::vector<dfTexture*>& textures, std::vector<dfSector*>& sectors)
+void dfSuperSector::buildWalls(bool update, dfSector* sector, std::vector<dfBitmapImage*>& textures, std::vector<dfSector*>& sectors)
 {
 	int size = 0;
 	int p = -1;
@@ -409,7 +409,7 @@ void dfSuperSector::buildWalls(bool update, dfSector* sector, std::vector<dfText
 /**
  * Create the signs at the end of the vertics buffer
  */
-void dfSuperSector::buildSigns(dfSector*sector, std::vector<dfTexture*>& textures, std::vector<dfSector*>& sectors)
+void dfSuperSector::buildSigns(dfSector*sector, std::vector<dfBitmapImage*>& textures, std::vector<dfSector*>& sectors)
 {
 	int size = 0;
 	int p = 0;
@@ -456,7 +456,7 @@ void dfSuperSector::buildSigns(dfSector*sector, std::vector<dfTexture*>& texture
  * build the floor geometry by triangulating the shape
  * apply texture by using an axis aligned 8x8 grid
  */
-void dfSuperSector::buildFloor(bool update, dfSector* sector, std::vector<dfTexture*>& textures)
+void dfSuperSector::buildFloor(bool update, dfSector* sector, std::vector<dfBitmapImage*>& textures)
 {
 	if (update) {
 		// ONLY update the vertices
@@ -516,9 +516,13 @@ void dfSuperSector::buildFloor(bool update, dfSector* sector, std::vector<dfText
 
 	// use axis aligned texture UV, on a 8x8 grid
 	// ratio of texture pixel vs world position = 180 pixels for 24 clicks = 7.5x1
-	dfTexture* dfTexture = textures[(int)sector->m_floorTexture.r];
-	float xpixel = (float)dfTexture->width;
-	float ypixel = (float)dfTexture->height;
+	dfBitmapImage* dfBitmap = textures[(int)sector->m_floorTexture.r];
+	float xpixel = 0;
+	float ypixel = 0;
+	if (dfBitmap != nullptr) {
+		xpixel = (float)dfBitmap->m_width;
+		ypixel = (float)dfBitmap->m_height;
+	}
 
 	// warning, triangles are looking downward
 	int currentVertice = 0, j;
@@ -551,9 +555,13 @@ void dfSuperSector::buildFloor(bool update, dfSector* sector, std::vector<dfText
 
 	// use axis aligned texture UV, on a 8x8 grid
 	// ratio of texture pixel vs world position = 180 pixels for 24 clicks = 7.5x1
-	dfTexture = textures[(int)sector->m_ceilingTexture.r];
-	xpixel = (float)dfTexture->width;
-	ypixel = (float)dfTexture->height;
+	dfBitmap = textures[(int)sector->m_ceilingTexture.r];
+	xpixel = 0;
+	ypixel = 0;
+	if (dfBitmap != nullptr) {
+		xpixel = (float)dfBitmap->m_width;
+		ypixel = (float)dfBitmap->m_height;
+	}
 
 	// create the ceiling
 	for (unsigned int i = 0; i < indices.size(); i++) {
@@ -579,7 +587,7 @@ void dfSuperSector::buildFloor(bool update, dfSector* sector, std::vector<dfText
 /**
  * Create the geometry
  */
-void dfSuperSector::buildGeometry(std::vector<dfSector*>& sectors, std::vector<dfTexture*>& textures, fwMaterialBasic* material)
+void dfSuperSector::buildGeometry(std::vector<dfSector*>& sectors, std::vector<dfBitmapImage*>& textures, fwMaterialBasic* material)
 {
 	for (auto sector : m_sectors) {
 		m_sectorIndex[sector->m_id] = glm::ivec3(m_vertices.size(), 0, 0);
@@ -622,7 +630,7 @@ void dfSuperSector::buildGeometry(std::vector<dfSector*>& sectors, std::vector<d
  */
 void dfSuperSector::updateSectorVertices(int sectorID)
 {
-	std::vector<dfTexture*>& textures = m_parent->textures();
+	std::vector<dfBitmapImage*>& textures = m_parent->textures();
 	std::vector<dfSector*>& sectors = m_parent->sectors();
 
 	dfSector* sector = sectors[sectorID];
@@ -633,7 +641,7 @@ void dfSuperSector::updateSectorVertices(int sectorID)
 	m_geometry->update();
 }
 
-std::vector<dfTexture*>& dfSuperSector::textures(void)
+std::vector<dfBitmapImage*>& dfSuperSector::textures(void)
 {
 	return m_parent->textures();
 }

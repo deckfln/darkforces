@@ -8,7 +8,7 @@
 #include "../framework/fwMaterialBasic.h"
 
 #include "dfSector.h"
-#include "dfTexture.h"
+#include "dfBitmap.h"
 
 class dfSuperSector;
 
@@ -63,13 +63,13 @@ class dfSuperSector {
     bool m_visible = false;                 // supersector is visible on screen
     bool m_debugPortals = false;            // display the portal bounding sphere on screen
 
-    void buildWalls(bool update, dfSector* sector, std::vector<dfTexture *>& textures, std::vector<dfSector*>& sectors);
-    void buildFloor(bool update, dfSector* sector, std::vector<dfTexture*>& textures);
-    void buildSigns(dfSector* sector, std::vector<dfTexture*>& textures, std::vector<dfSector*>& sectors);
+    void buildWalls(bool update, dfSector* sector, std::vector<dfBitmapImage*>& textures, std::vector<dfSector*>& sectors);
+    void buildFloor(bool update, dfSector* sector, std::vector<dfBitmapImage*>& textures);
+    void buildSigns(dfSector* sector, std::vector<dfBitmapImage *>& textures, std::vector<dfSector*>& sectors);
 
     void updateRectangle(int p, float x, float y, float z, float x1, float y1, float z1, float xoffset, float yoffset, float width, float height, float textureID);
-    int addRectangle(int start, dfSector* sector, dfWall* wall, float z, float z1, int texture, std::vector<dfTexture*>& textures);
-    void addSign(dfSector* sector, dfWall* wall, float z, float z1, int texture, std::vector<dfTexture*>& textures);
+    int addRectangle(int start, dfSector* sector, dfWall* wall, float z, float z1, int texture, std::vector<dfBitmapImage *>& textures);
+    void addSign(dfSector* sector, dfWall* wall, float z, float z1, int texture, std::vector<dfBitmapImage *>& textures);
 
 public:
     dfSuperSector(dfSector* sector);
@@ -81,13 +81,13 @@ public:
     bool inAABBox(glm::vec3& position) { return m_boundingBox.inside(position); };
     dfSector* findSector(glm::vec3& position);
     bool contains(int sectorID);
-    void buildGeometry(std::vector<dfSector*>& sectors, std::vector<dfTexture*>& m_textures, fwMaterialBasic* material);
+    void buildGeometry(std::vector<dfSector*>& sectors, std::vector<dfBitmapImage*>& m_textures, fwMaterialBasic* material);
 
     int id(void) { return m_id; };
     void visible(bool v) { m_visible = v; };
     bool visible(void) { return m_visible; };
     fwGeometry* geometry(void) { return m_geometry; };
-    std::vector<dfTexture*>& textures(void);
+    std::vector<dfBitmapImage*>& textures(void);
 
     void checkPortals(fwCamera* camera, int zOrder);
     void parent(dfLevel* parent);

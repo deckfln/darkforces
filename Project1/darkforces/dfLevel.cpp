@@ -9,10 +9,11 @@
 #include "../framework/geometries/fwPlaneGeometry.h"
 #include "../include/stb_image.h"
 #include "dfLogicElevator.h"
+#include "dfBitmap.h"
 
-dfLevel::dfLevel(dfFileGOB* gob, std::string file)
+dfLevel::dfLevel(dfFileGOB* dark, dfFileGOB* gTextures, std::string file)
 {
-	char* sec = gob->load(file+".LEV");
+	char* sec = dark->load(file+".LEV");
 	std::istringstream data(sec);
 
 	std::string line, dump;
@@ -43,7 +44,7 @@ dfLevel::dfLevel(dfFileGOB* gob, std::string file)
 		}
 		else if (tokens[0] == "TEXTURE:") {
 			std::string bm = tokens[1];
-			loadBitmaps(bm);
+			loadBitmaps(gTextures, bm);
 		}
 		else if (tokens[0] == "NUMSECTORS") {
 			int nbSectors = std::stoi(tokens[1]);
@@ -70,7 +71,7 @@ dfLevel::dfLevel(dfFileGOB* gob, std::string file)
 	}
 
 	// load and ditribute the INF file
-	m_inf = new dfParseINF(gob, file);
+	m_inf = new dfParseINF(dark, file);
 
 	// bind the sectors to the elevator logic
 	// bind the evelator logic to the level
@@ -129,16 +130,13 @@ dfLevel::dfLevel(dfFileGOB* gob, std::string file)
  * Load a texture and store in the list of texture
  * TODO deal with animated textures : ZASWIT*
  */
-void dfLevel::loadBitmaps(std::string file)
+void dfLevel::loadBitmaps(dfFileGOB *gob, std::string file)
 {
-	int index = file.find(".BM");
-	file.replace(index, 3, ".png");
-	file = DATA_FOLDER+"textures/" + file;
-
-	dfTexture* texture = new dfTexture;
-	texture->data = stbi_load(file.c_str(), &texture->width, &texture->height, &texture->nrChannels, STBI_rgb);
-	texture->m_name = file;
-	m_textures[m_currentTexture++] = texture;
+	dfBitmap *texture = new dfBitmap(gob, file);
+	dfBitmapImage* image = texture->getImage();
+	if (image) {
+		m_textures[m_currentTexture++] = image;
+	}
 }
 
 /***
@@ -147,24 +145,26 @@ void dfLevel::loadBitmaps(std::string file)
  */
 void dfLevel::buildAtlasMap(void)
 {
-	std::list<dfTexture*> sorted_textures;
+	std::list<dfBitmapImage*> sorted_textures;
 
 	// count number of 16x16 blocks
 	int blocks16x16=0;
 	int bx, by;
 
 	for (auto texture : m_textures) {
-		bx = texture->width / 16;
-		by = texture->height / 16;
-		texture->bsize = bx * by;
+		if (texture) {
+			bx = texture->m_width / 16;
+			by = texture->m_height / 16;
+			texture->bsize = bx * by;
 
-		blocks16x16 += texture->bsize;
+			blocks16x16 += texture->bsize;
 
-		sorted_textures.push_back(texture);
+			sorted_textures.push_back(texture);
+		}
 	}
 
 	// sort textures by size : big first
-	sorted_textures.sort([](dfTexture* a, dfTexture* b) { return a->bsize > b->bsize; });
+	sorted_textures.sort([](dfBitmapImage* a, dfBitmapImage* b) { return a->bsize > b->bsize; });
 
 	// evaluate the size of the megatexture (square texture of 16x16 blocks)
 	int bsize = (int)ceil(sqrt(blocks16x16));
@@ -192,8 +192,8 @@ void dfLevel::buildAtlasMap(void)
 		allplaced = true;	// suppose we will be able to fit all textures
 
 		for (auto texture : sorted_textures) {
-			bx = texture->width / 16;
-			by = texture->height / 16;
+			bx = texture->m_width / 16;
+			by = texture->m_height / 16;
 
 			// find a spot of the placement map
 			px = py = 0;
@@ -253,12 +253,12 @@ void dfLevel::buildAtlasMap(void)
 
 			// copy the texture into the map
 			int source_line = 0;
-			int bytes = texture->width * 3;	// number of bytes per line
+			int bytes = texture->m_width * 3;	// number of bytes per line
 			int dest_line = py * 16 * size * 3 + px * 16 * 3;
 
-			for (auto y = 0; y < texture->height; y++) {
+			for (auto y = 0; y < texture->m_height; y++) {
 				// copy one line
-				memcpy(m_megatexture + dest_line, texture->data + source_line, bytes);
+				memcpy(m_megatexture + dest_line, texture->m_data + source_line, bytes);
 				source_line += bytes;
 				dest_line += size * 3;
 			}
@@ -275,8 +275,8 @@ void dfLevel::buildAtlasMap(void)
 
 	// delete old textures data
 	for (auto texture : sorted_textures) {
-		free(texture->data);
-		texture->data = nullptr;
+//		free(texture->m_data);
+//		texture->m_data = nullptr;
 	}
 
 	// create the fwTexture
@@ -287,7 +287,9 @@ void dfLevel::buildAtlasMap(void)
 
 	int i = 0;
 	for (auto texture : m_textures) {
-		m_megatexture_idx[i++] = glm::vec4(texture->m_xoffset, texture->m_yoffset, texture->m_mega_width, texture->m_mega_height);
+		if (texture) {
+			m_megatexture_idx[i++] = glm::vec4(texture->m_xoffset, texture->m_yoffset, texture->m_mega_width, texture->m_mega_height);
+		}
 	}
 	m_shader_idx = new fwUniform("megatexture_idx", &m_megatexture_idx[0], i);
 }
