@@ -127,6 +127,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="darkforces\dfCollision.cpp" />
+    <ClCompile Include="darkforces\dfFileGOB.cpp" />
     <ClCompile Include="darkforces\dfLogicElevator.cpp" />
     <ClCompile Include="darkforces\dfLogicStop.cpp" />
     <ClCompile Include="darkforces\dfLogicTrigger.cpp" />
@@ -219,6 +220,7 @@
   <ItemGroup>
     <ClInclude Include="config.h" />
     <ClInclude Include="darkforces\dfCollision.h" />
+    <ClInclude Include="darkforces\dfFileGOB.h" />
     <ClInclude Include="darkforces\dfLogicElevator.h" />
     <ClInclude Include="darkforces\dfLogicStop.h" />
     <ClInclude Include="darkforces\dfLogicTrigger.h" />

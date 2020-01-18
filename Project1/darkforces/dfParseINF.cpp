@@ -18,7 +18,13 @@ std::vector<std::string>& dfParseTokens(std::string& line)
 	unsigned char c;
 	int start = -1;
 
-	for (unsigned int i = 0; i < line.length(); i++) {
+	int size = line.length();
+	if (line[size-1] == '\r') {
+		// ignore leading \r
+		size--;
+	}
+
+	for (unsigned int i = 0; i < size; i++) {
 		c = line[i];
 		if (c == ' ' || c == '\t') {
 			if (start >= 0) {
@@ -33,7 +39,7 @@ std::vector<std::string>& dfParseTokens(std::string& line)
 		}
 	}
 	if (start >= 0) {
-		tokens.push_back(line.substr(start));
+		tokens.push_back(line.substr(start, size - start));
 	}
 
 	return tokens;
@@ -41,7 +47,7 @@ std::vector<std::string>& dfParseTokens(std::string& line)
 
 dfParseINF::dfParseINF(std::string file)
 {
-	std::ifstream infile(ROOT_FOLDER + "/" + file + ".INF");
+	std::ifstream infile(DATA_FOLDER + "/" + file + ".INF");
 	std::string line, dump;
 
 	while (std::getline(infile, line))

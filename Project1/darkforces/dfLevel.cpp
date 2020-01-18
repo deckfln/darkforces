@@ -10,12 +10,14 @@
 #include "../include/stb_image.h"
 #include "dfLogicElevator.h"
 
-dfLevel::dfLevel(std::string file)
+dfLevel::dfLevel(dfFileGOB* gob, std::string file)
 {
-	std::ifstream infile(ROOT_FOLDER + "/" + file + ".lev");
+	char* sec = gob->load(file+".LEV");
+	std::istringstream data(sec);
+
 	std::string line, dump;
 
-	while (std::getline(infile, line))
+	while (std::getline(data, line))
 	{
 		// ignore comment
 		if (line[0] == '#' || line.length() == 0) {
@@ -24,6 +26,10 @@ dfLevel::dfLevel(std::string file)
 
 		// per token
 		std::vector <std::string> tokens = dfParseTokens(line);
+
+		if (tokens.size() == 0) {
+			continue;
+		}
 
 		if (tokens[0] == "LEV") {
 			m_level = tokens[1];
@@ -46,7 +52,7 @@ dfLevel::dfLevel(std::string file)
 		else if (tokens[0] == "SECTOR") {
 			int nSector = std::stoi(tokens[1]);
 
-			dfSector* sector = new dfSector(infile);
+			dfSector* sector = new dfSector(data);
 			sector->m_id = nSector;
 			int layer = sector->m_layer;
 
@@ -57,7 +63,6 @@ dfLevel::dfLevel(std::string file)
 			sector->linkWalls();	// build the polygons from the sector
 		}
 	}
-	infile.close();
 
 	// bind the sectors to adjoint sectors and to mirror walls
 	for (auto sector : m_sectors) {
@@ -116,6 +121,8 @@ dfLevel::dfLevel(std::string file)
 	buildGeometry();			// build the geometry of each super sectors
 	createTriggerForSpin();		// for elevator_spin1, create triggers
 	initElevators();			// move all elevators to position 0
+
+	free(sec);
 }
 
 /***
@@ -126,7 +133,7 @@ void dfLevel::loadBitmaps(std::string file)
 {
 	int index = file.find(".BM");
 	file.replace(index, 3, ".png");
-	file = "data/textures/" + file;
+	file = DATA_FOLDER+"textures/" + file;
 
 	dfTexture* texture = new dfTexture;
 	texture->data = stbi_load(file.c_str(), &texture->width, &texture->height, &texture->nrChannels, STBI_rgb);

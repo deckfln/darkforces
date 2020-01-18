@@ -4,6 +4,7 @@
 #include <list>
 
 #include "dfWall.h"
+#include "dfFileGOB.h"
 
 using Coord = float;
 using Point = std::array<Coord, 2>;
@@ -97,7 +98,7 @@ public:
 	// same data but in the supersector (opengl space)
 	dfSuperSector* m_super = nullptr;
 
-	dfSector(std::ifstream& infile);
+	dfSector(std::istringstream& infile);
 	void setTriggerFromWall(dfLogicTrigger* trigger);
 	void setTriggerFromFloor(dfLogicTrigger* trigger);
 	void setTriggerFromSector(dfLogicTrigger* trigger);

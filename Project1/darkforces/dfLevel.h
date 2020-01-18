@@ -14,6 +14,7 @@
 #include "dfTexture.h"
 #include "dfParseINF.h"
 #include "dfLogicElevator.h"
+#include "dfFileGOB.h"
 
 /**
  *
@@ -54,7 +55,7 @@ class dfLevel
 	void createTriggerForSpin(void);
 
 public:
-	dfLevel(std::string name);
+	dfLevel(dfFileGOB* gob, std::string file);
 	dfSector* findSector(glm::vec3& position);
 	void testSwitch(fwAABBox& player);
 	void draw(fwCamera* camera, fwScene* scene);

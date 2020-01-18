@@ -9,8 +9,9 @@
 
 #include "dfSuperSector.h"
 #include "dfMesh.h"
+#include "dfParseINF.h"
 
-dfSector::dfSector(std::ifstream& infile)
+dfSector::dfSector(std::istringstream& infile)
 {
 	int nbVertices;
 	int currentVertice = 0;
@@ -35,14 +36,9 @@ dfSector::dfSector(std::ifstream& infile)
 		}
 
 		// per token
-		std::vector <std::string> tokens;
-
-		std::stringstream check1(line);
-		while (std::getline(check1, dump, ' '))
-		{
-			if (dump.length() > 0) {
-				tokens.push_back(dump);
-			}
+		std::vector <std::string> tokens = dfParseTokens(line);
+		if (tokens.size() == 0) {
+			continue;
 		}
 
 		if (tokens[0] == "NAME" && tokens.size() > 1) {

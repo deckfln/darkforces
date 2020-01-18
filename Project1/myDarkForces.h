@@ -16,6 +16,7 @@
 #include "framework/mesh/fwMeshSkinned.h"
 #include "framework/fwParticles.h"
 #include "darkforces/dfLevel.h"
+#include "darkforces/dfFileGOB.h"
 
 class myDarkForces : public fwApp
 {
@@ -26,6 +27,8 @@ class myDarkForces : public fwApp
 	fwControlThirdPerson* m_control = nullptr;
 	glm::vec4* white = nullptr;
 	fwMesh* m_fwCamera = nullptr;
+
+	dfFileGOB* m_gob = nullptr;
 	dfLevel* m_level = nullptr;
 
 public:
