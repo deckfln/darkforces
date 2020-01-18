@@ -70,7 +70,7 @@ dfLevel::dfLevel(dfFileGOB* gob, std::string file)
 	}
 
 	// load and ditribute the INF file
-	m_inf = new dfParseINF(file);
+	m_inf = new dfParseINF(gob, file);
 
 	// bind the sectors to the elevator logic
 	// bind the evelator logic to the level

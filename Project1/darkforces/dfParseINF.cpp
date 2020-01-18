@@ -24,7 +24,7 @@ std::vector<std::string>& dfParseTokens(std::string& line)
 		size--;
 	}
 
-	for (unsigned int i = 0; i < size; i++) {
+	for (int i = 0; i < size; i++) {
 		c = line[i];
 		if (c == ' ' || c == '\t') {
 			if (start >= 0) {
@@ -45,9 +45,10 @@ std::vector<std::string>& dfParseTokens(std::string& line)
 	return tokens;
 }
 
-dfParseINF::dfParseINF(std::string file)
+dfParseINF::dfParseINF(dfFileGOB* gob, std::string file)
 {
-	std::ifstream infile(DATA_FOLDER + "/" + file + ".INF");
+	char* sec = gob->load(file + ".INF");
+	std::istringstream infile(sec);
 	std::string line, dump;
 
 	while (std::getline(infile, line))
@@ -59,6 +60,9 @@ dfParseINF::dfParseINF(std::string file)
 
 		// per token
 		std::vector <std::string> tokens = dfParseTokens(line);
+		if (tokens.size() == 0) {
+			continue;
+		}
 
 		if (tokens[0] == "items") {
 			m_items = std::stoi(tokens[1]);
@@ -72,7 +76,6 @@ dfParseINF::dfParseINF(std::string file)
 			}
 		}
 	}
-	infile.close();
 }
 
 dfParseINF::~dfParseINF(void)
@@ -85,7 +88,7 @@ dfParseINF::~dfParseINF(void)
 	}
 }
 
-void dfParseINF::parseSector(std::ifstream& infile, std::string& sector)
+void dfParseINF::parseSector(std::istringstream& infile, std::string& sector)
 {
 	std::string line, dump;
 	bool start = false;
@@ -133,12 +136,12 @@ void dfParseINF::parseSector(std::ifstream& infile, std::string& sector)
 		}
 		else if (tokens[0] == "speed:") {
 			if (elevator) {
-				elevator->speed(std::stoi(tokens[1]));
+				elevator->speed(std::stof(tokens[1]));
 			}
 		}
 		else if (tokens[0] == "center:") {
 			if (elevator) {
-				elevator->center(-std::stoi(tokens[1]), std::stoi(tokens[2]));	//inverse X
+				elevator->center(-std::stof(tokens[1]), std::stof(tokens[2]));	//inverse X
 			}
 		}
 		else if (tokens[0] == "event_mask:") {
@@ -217,7 +220,7 @@ void dfParseINF::parseSector(std::ifstream& infile, std::string& sector)
 	}
 }
 
-void dfParseINF::parseLine(std::ifstream& infile, std::string &sector, int wallIndex)
+void dfParseINF::parseLine(std::istringstream& infile, std::string &sector, int wallIndex)
 {
 	std::string line, dump;
 	bool start = false;

@@ -77,8 +77,6 @@ public:
 	float m_ceilingAltitude = 0;
 
 	// original values
-	float m_originalFloor;
-	float m_originalceiling;
 	float m_height = 0;				// height of the sector
 
 	glm::vec3 m_floorTexture;
@@ -109,8 +107,6 @@ public:
 	void ceiling(float z);
 
 	float ceiling(void) { return m_ceilingAltitude; };
-	float originalFloor(void) { return m_originalFloor; };
-	float originalCeiling(void) { return m_originalceiling; };
 	void parent(dfSuperSector* parent) { m_super = parent; };
 	float height(void) { return m_height; };
 	unsigned flag(void) { return m_flag1; };

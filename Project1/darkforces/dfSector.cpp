@@ -59,7 +59,7 @@ dfSector::dfSector(std::istringstream& infile)
 				);
 			}
 			else if (tokens[1] == "ALTITUDE") {
-				m_originalFloor = m_floorAltitude = -std::stof(tokens[2]);
+				m_floorAltitude = -std::stof(tokens[2]);
 			}
 		}
 		else if (tokens[0] == "CEILING") {
@@ -71,7 +71,7 @@ dfSector::dfSector(std::istringstream& infile)
 				);
 			}
 			else if (tokens[1] == "ALTITUDE") {
-				m_originalceiling = m_ceilingAltitude = -std::stof(tokens[2]);
+				m_ceilingAltitude = -std::stof(tokens[2]);
 			}
 		}
 		else if (tokens[0] == "SECOND") {

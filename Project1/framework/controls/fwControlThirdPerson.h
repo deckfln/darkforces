@@ -18,7 +18,7 @@ class fwControlThirdPerson : public fwControl
 	double m_phi = 0;
 	double m_theta_start = 0;
 	double m_phi_start = 0;
-	float m_speed = 0.005;
+	float m_speed = 0.005f;
 
 	void _mouseMove(float xdir, float ydir);
 	void _mouseButton(int action);
