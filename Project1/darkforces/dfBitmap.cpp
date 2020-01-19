@@ -54,21 +54,24 @@ static long ctol(char* bytes)
 static bool _init = false;
 static dfPaletteColors _color;
 
+static dfBitmapImage _empty;	// empty image for missing files
+
 dfBitmap::dfBitmap(dfFileGOB* gob, std::string file, dfPalette* palette) :
 	m_name(file)
 {
 	if (!_init) {
-		for (auto i = 0; i < 256; i++) {
-
-		}
+		_init = true;
+		// init an empty image
+		_empty.m_height = 64;
+		_empty.m_width = 64;
+		_empty.m_transparent = false;
+		_empty.m_data = new char[64 * 64]();
 	}
 
-	if (file == "IWSECB3.BM") { // ZASWIT01.BM") {
-		printf("dfBitmap::dfBitmap\n");
-	}
 	m_data = gob->load(file);
 	if (m_data == nullptr) {
 		std::cerr << "dfBitmap::dfBitmap cannot load "<< file << std::endl;
+		m_images.push_back(_empty);
 		return;
 	}
 
@@ -136,7 +139,7 @@ char *dfBitmap::convert2rgb(dfBitmapImage *raw, dfPalette *palette)
 
 	// RAW images are stored by column
 	// need to conver to  row first
-	for (auto x = 0; x < raw->m_height; x++) {
+	for (auto x = raw->m_height - 1; x >=0 ; x--) {
 		for (auto y = 0; y < raw->m_width; y++) {
 			p = y * raw->m_height + x;
 			v = raw->m_raw[p];
@@ -166,7 +169,9 @@ dfBitmapImage* dfBitmap::getImage(int index)
 
 dfBitmap::~dfBitmap()
 {
-	free(m_data);
+	if (m_data) {
+		free(m_data);
+	}
 
 	for (auto& image : m_images) {
 		delete[] image.m_data;

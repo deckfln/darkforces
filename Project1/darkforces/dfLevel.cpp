@@ -137,9 +137,7 @@ void dfLevel::loadBitmaps(dfFileGOB *gob, std::string file)
 {
 	dfBitmap *texture = new dfBitmap(gob, file, m_palette);
 	dfBitmapImage* image = texture->getImage();
-	if (image) {
-		m_textures[m_currentTexture++] = image;
-	}
+	m_textures[m_currentTexture++] = image;
 }
 
 /***
