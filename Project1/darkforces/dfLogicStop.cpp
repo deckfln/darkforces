@@ -102,12 +102,10 @@ void dfLogicStop::bindMessage2Elevator(std::map<std::string, dfLogicElevator*>& 
  */
 void dfLogicStop::sendMessages()
 {
-	static std::string standard = "standard";
-
 	for (unsigned i = 0; i < m_messages.size(); i++) {
 		dfLogicElevator* elevator = m_messages[i].m_pClient;
 		if (elevator) {
-			elevator->trigger(standard, &m_messages[i]);
+			elevator->trigger(DF_TRIGGER_STANDARD, &m_messages[i]);
 		}
 	}
 }

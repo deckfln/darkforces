@@ -6,6 +6,7 @@
 #include "dfMesh.h"
 #include "dfSector.h"
 #include "dfLevel.h"
+#include "dfSign.h"
 
 const std::list<std::string> keywords = {
 	"inv",			//DF_ELEVATOR_INV
@@ -220,14 +221,13 @@ void dfLogicElevator::init(int stopID)
 /**
  * Handle a trigger
  */
-void dfLogicElevator::trigger(std::string& sclass, dfMessage* message)
+void dfLogicElevator::trigger(int iclass, dfMessage* message)
 {
-	if (sclass != "switch1" && sclass != "standard") {
-		std::cerr << "dfLogicElevator::trigger unknown class " << sclass << std::endl;
+	if (iclass != DF_TRIGGER_STANDARD && iclass != DF_TRIGGER_SWITCH1) {
 		return;
 	}
 
-	if (sclass == "standard" && message) {
+	if (iclass == DF_TRIGGER_STANDARD && message) {
 		switch (message->m_action) {
 		case DF_MESSAGE_GOTO_STOP: {
 			if (m_currentStop == message->m_value) {
@@ -320,6 +320,9 @@ bool dfLogicElevator::animateMoveZ(void)
 		m_status = DF_ELEVATOR_MOVE;
 		m_tick = 0;
 		moveToNextStop();
+
+		// when activated from a switch change the status if sign behind the switch
+		setSignsStatus(m_nextStop);	// the elevator is 'opening'
 		break;
 
 	case DF_ELEVATOR_MOVE: {
@@ -349,12 +352,20 @@ bool dfLogicElevator::animateMoveZ(void)
 			if (stop->isTimeBased()) {
 				// put the elevator on wait
 				m_status = DF_ELEVATOR_WAIT;
+
+				// inform the switches bound to the elevator of the new status
+				setSignsStatus(m_currentStop);	// the elevator is open'
 			}
 			else {
 				std::string& action = stop->action();
 				if (action == "hold") {
 					m_status = DF_ELEVATOR_HOLD;
-					return true;	// stop the animation
+
+					// inform the switches bound to the elevator of the new status
+					setSignsStatus(m_currentStop);	// the elevator is 'closed'
+
+					// stop the animation
+					return true;	
 				}
 				else {
 					std::cerr << "dfLogicElevator::animate action " << action << " not implemented" << std::endl;
@@ -377,6 +388,13 @@ bool dfLogicElevator::animateMoveZ(void)
 	}
 
 	return false;
+}
+
+void dfLogicElevator::setSignsStatus(int status)
+{
+	for (auto sign : m_signs) {
+		sign->setStatus(status);	// the elevator is open'
+	}
 }
 
 /**
@@ -464,6 +482,14 @@ void dfLogicElevator::bindStopMessage2Elevator(std::map<std::string, dfLogicElev
 	for (auto stop : m_stops) {
 		stop->bindMessage2Elevator(hashElevators);
 	}
+}
+
+/**
+ * Records signs that trigger the evelvator
+ */
+void dfLogicElevator::addSign(dfSign* sign)
+{
+	m_signs.push_back(sign);
 }
 
 dfLogicElevator::~dfLogicElevator(void)

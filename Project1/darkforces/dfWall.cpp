@@ -11,5 +11,7 @@ dfWall::dfWall(int left, int right, int adjoint, int mirror) :
 
 dfWall::~dfWall()
 {
-
+	if (m_sign) {
+		delete m_sign;
+	}
 }

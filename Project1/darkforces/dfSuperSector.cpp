@@ -7,6 +7,7 @@
 #include "../framework/geometries/fwGeometrySphere.h"
 
 #include "dfLevel.h"
+#include "dfSign.h"
 
 static glm::vec4 white(1.0, 0.0, 1.0, 1.0);
 static fwMaterialBasic* material_portal = new fwMaterialBasic(&white);
@@ -306,50 +307,53 @@ void dfSuperSector::addSign(dfSector* sector, dfWall* wall, float z, float z1, i
 		x1 = sector->m_vertices[wall->m_right].x,
 		y1 = sector->m_vertices[wall->m_right].y;
 
-	// if there is a sign on the wall, add a rectangle IN FRONT of the wall
-	if (wall->m_tex[DFWALL_TEXTURE_SIGN].r > 0) {
-		float textureID = wall->m_tex[DFWALL_TEXTURE_SIGN].r;
+	float textureID = wall->m_tex[DFWALL_TEXTURE_SIGN].r;
 
-		dfBitmapImage* dfBitmap = textures[(int)textureID];
+	dfBitmapImage* dfBitmap = textures[(int)textureID];
 
-		float length = sqrt(pow(x - x1, 2) + pow(y - y1, 2));
-		float xpixel = (float)dfBitmap->m_width;
-		float ypixel = (float)dfBitmap->m_height;
+	float length = sqrt(pow(x - x1, 2) + pow(y - y1, 2));
+	float xpixel = (float)dfBitmap->m_width;
+	float ypixel = (float)dfBitmap->m_height;
 
-		glm::vec2 segment = glm::normalize(glm::vec2(x1 - x, y1 - y));
-		glm::vec2 start = sector->m_vertices[wall->m_left] + segment * (wall->m_tex[DFWALL_TEXTURE_SIGN].g - wall->m_tex[DFWALL_TEXTURE_MID].g);
-		glm::vec2 end = sector->m_vertices[wall->m_left] + segment * (wall->m_tex[DFWALL_TEXTURE_SIGN].g - wall->m_tex[DFWALL_TEXTURE_MID].g + xpixel / 8.0f);
+	glm::vec2 segment = glm::normalize(glm::vec2(x1 - x, y1 - y));
+	glm::vec2 start = sector->m_vertices[wall->m_left] + segment * (wall->m_tex[DFWALL_TEXTURE_SIGN].g - wall->m_tex[DFWALL_TEXTURE_MID].g);
+	glm::vec2 end = sector->m_vertices[wall->m_left] + segment * (wall->m_tex[DFWALL_TEXTURE_SIGN].g - wall->m_tex[DFWALL_TEXTURE_MID].g + xpixel / 8.0f);
 
-		// wall normals
-		glm::vec3 normal = glm::normalize(glm::vec3(-segment.y, segment.x, 0));	//  and (dy, -dx).
+	// wall normals
+	glm::vec3 normal = glm::normalize(glm::vec3(-segment.y, segment.x, 0));	//  and (dy, -dx).
 
-		// create a copy of the wall and shrink to the size and position of the sign
-		// ratio of texture pixel vs world position = 64 pixels for 8 clicks => 8x1
-		glm::vec3 sign_p = glm::vec3(
-			start.x,
-			start.y,
-			//z - (wall->m_tex[DFWALL_TEXTURE_SIGN].b + wall->m_tex[DFWALL_TEXTURE_MID].b)
-			z - (wall->m_tex[DFWALL_TEXTURE_SIGN].b)
-			);
-		glm::vec3 sign_p1 = glm::vec3(
-			end.x,
-			end.y,
-			// z - (wall->m_tex[DFWALL_TEXTURE_SIGN].b + wall->m_tex[DFWALL_TEXTURE_MID].b) + ypixel / 8.0f
-			z - (wall->m_tex[DFWALL_TEXTURE_SIGN].b) + ypixel / 8.0f
-			);
+	// create a copy of the wall and shrink to the size and position of the sign
+	// ratio of texture pixel vs world position = 64 pixels for 8 clicks => 8x1
+	glm::vec3 sign_p = glm::vec3(
+		start.x,
+		start.y,
+		//z - (wall->m_tex[DFWALL_TEXTURE_SIGN].b + wall->m_tex[DFWALL_TEXTURE_MID].b)
+		z - (wall->m_tex[DFWALL_TEXTURE_SIGN].b)
+		);
+	glm::vec3 sign_p1 = glm::vec3(
+		end.x,
+		end.y,
+		// z - (wall->m_tex[DFWALL_TEXTURE_SIGN].b + wall->m_tex[DFWALL_TEXTURE_MID].b) + ypixel / 8.0f
+		z - (wall->m_tex[DFWALL_TEXTURE_SIGN].b) + ypixel / 8.0f
+		);
 
-		// move the the wall along the normal
-		sign_p += normal / 10.0f;
-		sign_p1 += normal / 10.0f;
+	// move the the wall along the normal
+	sign_p += normal / 10.0f;
+	sign_p1 += normal / 10.0f;
 
-		// resize the opengl buffers
-		int p = m_vertices.size();
-		m_vertices.resize(p + 6);
-		m_uvs.resize(p + 6);
-		m_textureID.resize(p + 6);
+	int p = m_vertices.size();
 
-		updateRectangle(p, sign_p.x, sign_p.y, sign_p.z, sign_p1.x, sign_p1.y, sign_p1.z, 0, 0, 1, 1, textureID);
-	}
+	// resize the opengl buffers
+	m_vertices.resize(p + 6);
+	m_uvs.resize(p + 6);
+	m_textureID.resize(p + 6);
+
+	// record the sign on the wall
+	dfSign* sign = new dfSign(wall, &m_vertices[p], &m_uvs[p], &m_textureID[p]);
+	sign->nbVertice(6);
+	wall->sign(sign);
+
+	updateRectangle(p, sign_p.x, sign_p.y, sign_p.z, sign_p1.x, sign_p1.y, sign_p1.z, 0, 0, 1, 1, textureID);
 }
 
 /**
@@ -415,7 +419,7 @@ void dfSuperSector::buildSigns(dfSector*sector, std::vector<dfBitmapImage*>& tex
 	int p = 0;
 
 	for (auto wall : sector->walls()) {
-		if (wall->m_tex[DFWALL_TEXTURE_SIGN].r > 0) {
+		if (wall->m_tex[DFWALL_TEXTURE_SIGN].r >= 0) {
 			if (wall->m_adjoint < 0) {
 				// full wall
 				addSign(sector, wall,

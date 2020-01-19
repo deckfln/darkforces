@@ -1,45 +1,66 @@
 #include "dfLogicTrigger.h"
 
+#include <iostream>
+
 #include "dfLogicTrigger.h"
 #include "dfSector.h"
+#include "dfsign.h"
+
+static const std::string switch1 = "switch1";
+static const std::string standard = "standard";
+
+static int class2int(std::string kind)
+{
+	if (kind == switch1) {
+		return DF_TRIGGER_SWITCH1;
+	}
+	else if (kind == standard) {
+		return DF_TRIGGER_STANDARD;
+	}
+	else {
+		std::cerr << "dfLogicTrigger::dfLogicTrigger class " << kind << " not implemented" << std::endl;
+		return -1;
+	}
+}
 
 /**
  * Create a trigger without bounding box
  */
 dfLogicTrigger::dfLogicTrigger(std::string& kind, std::string& sector, int wallIndex) :
-	m_class(kind),
 	m_sector(sector),
 	m_wallIndex(wallIndex)
 {
-
+	m_class = class2int(kind);
 }
 
 /**
  * Create a trigger based on a wall of a sector, and record the elevator client
  */
 dfLogicTrigger::dfLogicTrigger(std::string& kind, dfSector* sector, int wallIndex,  dfLogicElevator* client) :
-	m_class(kind),
+	m_pSector(sector),
 	m_wallIndex(wallIndex)
 {
 	m_pClients.push_back(client);
 
 	sector->setTriggerFromWall(this);
+
+	m_class = class2int(kind);
 }
 
 /**
  * Create a trigger based on the floor of a sector, and record the elevator client
  */
 dfLogicTrigger::dfLogicTrigger(std::string& kind, dfSector* sector, dfLogicElevator* client) :
-	m_class(kind)
+	m_pSector(sector)
 {
 	m_pClients.push_back(client);
+	m_class = class2int(kind);
 }
 
 /**
  * Create a trigger based on ono the sector managed by the elevator
  */
-dfLogicTrigger::dfLogicTrigger(std::string& kind, dfLogicElevator* client) :
-	m_class(kind)
+dfLogicTrigger::dfLogicTrigger(std::string& kind, dfLogicElevator* client)
 {
 	client->psector()->setTriggerFromSector(this);
 	m_pClients.push_back(client);
@@ -48,7 +69,7 @@ dfLogicTrigger::dfLogicTrigger(std::string& kind, dfLogicElevator* client) :
 /**
  * Bind to the sector object
  */
-void dfLogicTrigger::bindSector(dfSector* pSector)
+void dfLogicTrigger::bindSectorAndWall(dfSector* pSector)
 {
 	m_pSector = pSector;
 
@@ -57,6 +78,27 @@ void dfLogicTrigger::bindSector(dfSector* pSector)
 	}
 	if (m_eventMask & DF_ELEVATOR_LEAVE_SECTOR) {
 		m_pSector->addTrigger(DF_ELEVATOR_LEAVE_SECTOR, this);
+	}
+
+	// record the wall and the sign (if there is a sign)
+	if (m_wallIndex >= 0) {
+		m_pWall = m_pSector->m_walls[m_wallIndex];
+	}
+}
+
+/**
+ * Bind the sign to the elevator it controls
+ */
+void dfLogicTrigger::bindSignToElevator(void)
+{
+	if (m_pWall) {
+		m_pSign = m_pWall->sign();
+		if (m_pSign) {
+			m_pSign->setClass(m_class);
+			for (auto pClient : m_pClients) {
+				pClient->addSign(m_pSign);
+			}
+		}
 	}
 }
 

@@ -12,16 +12,25 @@
 #include "dfMessage.h"
 
 class dfSector;
+class dfWall;
+class dfSign;
+
+enum {
+	DF_TRIGGER_SWITCH1,
+	DF_TRIGGER_STANDARD,
+};
 
 class dfLogicTrigger {
-	std::string m_class;
+	int m_class;
 	int m_eventMask = 0;
 	std::list<std::string> m_clients;		// name of the target sector 
-	std::list<dfLogicElevator*> m_pClients;  // pointer to the target sector 
+	std::list<dfLogicElevator*> m_pClients; // pointer to the target sector 
 
 	std::string m_sector;			// sector that host the trigger
 	dfSector* m_pSector = nullptr;	// sector that host the trigger
 	int m_wallIndex = -1;			// index of the wall being a trigger
+	dfWall *m_pWall = nullptr;	// index of the wall hosting a trigger
+	dfSign* m_pSign = nullptr;		// index of the sign being a trigger
 
 	fwAABBox m_boundingBox;			// bouding box of the triggers
 	glm::vec3 m_boundingBoxCenter;	// original position of the bounding box
@@ -41,7 +50,8 @@ public:
 	std::string& sector(void) { return m_sector; };
 	int wall(void) { return m_wallIndex; };
 
-	void bindSector(dfSector* pSector);
+	void bindSectorAndWall(dfSector* pSector);
+	void bindSignToElevator(void);
 	void evelator(dfLogicElevator* pClient);
 	void boundingBox(glm::vec2& left, glm::vec2& right, float floor, float ceiling);
 	void boundingBox(fwAABBox& box);

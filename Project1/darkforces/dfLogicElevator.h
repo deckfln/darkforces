@@ -12,6 +12,7 @@ class dfLevel;
 class dfMesh;
 class dfLogicTrigger;
 class dfMessage;
+class dfSign;
 
 enum {
 	DF_ELEVATOR_HOLD,		// elevator is not animated
@@ -65,13 +66,14 @@ class dfLogicElevator {
 	float m_target = 0;					// target altitude
 
 	dfLevel* m_parent = nullptr;		// level the elevator is on
-
 	dfMesh* m_mesh = nullptr;			// mesh of the elevator
+	std::list<dfSign*> m_signs;			// list of signs bound to the elevator
 
 	void moveTo(dfLogicStop* stop);
 	void moveTo(float z);
 	void moveToNextStop(void);
 	bool animateMoveZ(void);
+	void setSignsStatus(int status);
 
 public:
 	dfLogicElevator(std::string& kind, dfSector* sector, dfLevel *parent);
@@ -88,10 +90,11 @@ public:
 	void addStop(dfLogicStop* stop);
 	fwMesh *buildGeometry(fwMaterial* material);
 	void init(int stopID);
-	void trigger(std::string& sclass, dfMessage* message);
+	void trigger(int iclass, dfMessage* message);
 	bool animate(time_t delta);
 	bool is(int type) { return m_type == type; };
 	dfLogicTrigger* createFloorTrigger();
 	void bindStopMessage2Elevator(std::map <std::string, dfLogicElevator*>& hashElevators);
+	void addSign(dfSign*);
 	~dfLogicElevator(void);
 };

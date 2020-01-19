@@ -98,7 +98,7 @@ dfLevel::dfLevel(dfFileGOB* dark, dfFileGOB* gTextures, std::string file)
 	// bind the sector walls to the elevator logic
 	for (auto trigger : m_inf->m_triggers) {
 		dfSector* sector = m_hashSectors[trigger->sector()];
-		trigger->bindSector(sector);
+		trigger->bindSectorAndWall(sector);
 
 		std::list<std::string>& clients = trigger->clients();
 
@@ -123,6 +123,7 @@ dfLevel::dfLevel(dfFileGOB* dark, dfFileGOB* gTextures, std::string file)
 
 	spacePartitioning();		// partion of space for quick collision
 	buildGeometry();			// build the geometry of each super sectors
+	bindSignsToTriggers();	
 	createTriggerForSpin();		// for elevator_spin1, create triggers
 	initElevators();			// move all elevators to position 0
 
@@ -422,6 +423,16 @@ void dfLevel::createTriggerForSpin(void)
 			dfLogicTrigger* trigger = new dfLogicTrigger(standard, elevator);
 			m_inf->m_triggers.push_back(trigger);
 		}
+	}
+}
+
+/**
+ * For every sign, bind it to the trigger it triggers
+ */
+void dfLevel::bindSignsToTriggers()
+{
+	for (auto trigger : m_inf->m_triggers) {
+		trigger->bindSignToElevator();
 	}
 }
 
