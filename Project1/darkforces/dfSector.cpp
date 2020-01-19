@@ -279,10 +279,29 @@ bool dfSector::isPointInside(glm::vec3 &p)
 	// https://stackoverflow.com/questions/217578/how-can-i-determine-whether-a-2d-point-is-within-a-polygon
 	// http://www.ecse.rpi.edu/Homepages/wrf/Research/Short_Notes/pnpoly.html
 	bool inside = false;
-	std::vector<Point>& outline = m_polygons_vertices[0];
+
+	// start with hole
+
+	for (unsigned int i = 1; i < m_polygons_vertices.size(); i++) {
+		std::vector<Point>& line = m_polygons_vertices[i];
+
+		for (unsigned int i = 0, j = line.size() - 1; i < line.size(); j = i++)
+		{
+			if ((line[i][1] > p.y) != (line[j][1] > p.y) &&
+				p.x < (line[j][0] - line[i][0]) * (p.y - line[i][1]) / (line[j][1] - line[i][1]) + line[i][0])
+			{
+				inside = !inside;
+			}
+
+			if (inside) {
+				return false;	// if we are in the hole, we are not on the sector
+			}
+		}
+
+	}
 
 	/*
-	TODO: these solution is supposed to deal with holes, but actually it doesn't work for secbase, when entering sector 58
+	// TODO: these solution is supposed to deal with holes, but actually it doesn't work for secbase, when entering sector 58
 	for (unsigned int i = 0, j = m_vertices.size() - 1; i < m_vertices.size(); j = i++)
 	{
 		if ((m_vertices[i].y > p.y) != (m_vertices[j].y > p.y) &&
@@ -293,8 +312,8 @@ bool dfSector::isPointInside(glm::vec3 &p)
 	}
 	*/
 
-	// only test the external line
-	inside = false;
+	// finish with the external line
+	std::vector<Point>& outline = m_polygons_vertices[0];
 	for (unsigned int i = 0, j = outline.size() - 1; i < outline.size(); j = i++)
 	{
 		if ((outline[i][1] > p.y) != (outline[j][1] > p.y) &&
@@ -303,7 +322,7 @@ bool dfSector::isPointInside(glm::vec3 &p)
 			inside = !inside;
 		}
 	}
-	
+
 	return inside;
 }
 
