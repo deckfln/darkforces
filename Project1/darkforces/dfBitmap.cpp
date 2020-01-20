@@ -158,10 +158,10 @@ char *dfBitmap::convert2rgb(dfBitmapImage *raw, dfPalette *palette)
 /**
  * Return one image, by default image 0
  */
-dfBitmapImage* dfBitmap::getImage(int index)
+dfBitmapImage* dfBitmap::getImage(unsigned int index)
 {
-	if (m_images.size() > 0) {
-		return &m_images[0];
+	if (index < m_images.size()) {
+		return &m_images[index];
 	}
 
 	return nullptr;

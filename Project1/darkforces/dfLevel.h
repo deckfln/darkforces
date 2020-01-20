@@ -26,11 +26,13 @@ class dfLevel
 	std::string m_level;
 	dfPalette* m_palette = nullptr;				// color palette
 	std::vector<dfSector *> m_sectors;			// all sectors of the level
-	std::vector<dfBitmapImage *> m_textures;	// all textures of the level
+	std::vector<dfBitmap*> m_bitmaps;			// all textures of the level
+	std::vector<dfBitmapImage *> m_allTextures;	// textures of the level based on the index from LEV structure
 	std::list<dfSuperSector *> m_supersectors;	// space partioning of sectors
 
 	std::map<std::string, dfSector*> m_hashSectors;		// dictionnaries of sectors
 
+	int m_currentBitmap = 0;
 	int m_currentTexture = 0;
 
 	unsigned char* m_megatexture = nullptr;		// raw data 64x64, 64x128, 64x256, 64x512
@@ -63,7 +65,7 @@ public:
 	void testSwitch(fwAABBox& player);
 	void draw(fwCamera* camera, fwScene* scene);
 	std::vector<dfSector*>& sectors(void) { return m_sectors; };
-	std::vector<dfBitmapImage*>& textures(void) { return m_textures; };
+	std::vector<dfBitmap*>& textures(void) { return m_bitmaps; };
 	void activateElevator(dfLogicElevator* elevator) { m_activeElevators.push_back(elevator); };
 	void deactivateElevator(dfLogicElevator* elevator) { m_activeElevators.remove(elevator); };
 	void animate(time_t delta);

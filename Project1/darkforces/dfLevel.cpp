@@ -43,7 +43,7 @@ dfLevel::dfLevel(dfFileGOB* dark, dfFileGOB* gTextures, std::string file)
 		}
 		else if (tokens[0] == "TEXTURES") {
 			int nbTextures = std::stoi(tokens[1]);
-			m_textures.resize(nbTextures);
+			m_bitmaps.resize(nbTextures);
 		}
 		else if (tokens[0] == "TEXTURE:") {
 			std::string bm = tokens[1];
@@ -136,9 +136,16 @@ dfLevel::dfLevel(dfFileGOB* dark, dfFileGOB* gTextures, std::string file)
  */
 void dfLevel::loadBitmaps(dfFileGOB *gob, std::string file)
 {
-	dfBitmap *texture = new dfBitmap(gob, file, m_palette);
-	dfBitmapImage* image = texture->getImage();
-	m_textures[m_currentTexture++] = image;
+	dfBitmap *bitmap = new dfBitmap(gob, file, m_palette);
+	dfBitmapImage* image;
+
+	m_bitmaps[m_currentBitmap++] = bitmap;	// LEV based bitmaps (related to floors and walls)
+
+	// extract all versions of the same bitmap, so many more textures
+	for (int i = bitmap->nbImages() - 1; i >= 0; i--) {
+		image = bitmap->getImage(i);
+		m_allTextures.push_back(image);
+	}
 }
 
 /***
@@ -153,7 +160,7 @@ void dfLevel::buildAtlasMap(void)
 	int blocks16x16=0;
 	int bx, by;
 
-	for (auto texture : m_textures) {
+	for (auto texture : m_allTextures) {
 		if (texture) {
 			bx = texture->m_width / 16;
 			by = texture->m_height / 16;
@@ -285,12 +292,14 @@ void dfLevel::buildAtlasMap(void)
 	m_fwtextures = new fwTexture(m_megatexture, size, size, 3);
 
 	// and the index
-	m_megatexture_idx.resize(m_textures.size());
+	m_megatexture_idx.resize(m_allTextures.size());
 
 	int i = 0;
-	for (auto texture : m_textures) {
+	for (auto texture : m_allTextures) {
 		if (texture) {
-			m_megatexture_idx[i++] = glm::vec4(texture->m_xoffset, texture->m_yoffset, texture->m_mega_width, texture->m_mega_height);
+			m_megatexture_idx[i] = glm::vec4(texture->m_xoffset, texture->m_yoffset, texture->m_mega_width, texture->m_mega_height);
+			texture->m_textureID = i;
+			i++;
 		}
 	}
 	m_shader_idx = new fwUniform("megatexture_idx", &m_megatexture_idx[0], i);
@@ -302,7 +311,7 @@ void dfLevel::buildAtlasMap(void)
 void dfLevel::buildGeometry(void)
 {
 	for (auto ssector : m_supersectors) {
-		ssector->buildGeometry(m_sectors, m_textures, m_material);
+		ssector->buildGeometry(m_sectors, m_material);
 	}
 }
 
@@ -557,8 +566,8 @@ dfLevel::~dfLevel()
 	for (auto sector : m_sectors) {
 		delete sector;
 	}
-	for (auto texture : m_textures) {
-		delete texture;
+	for (auto bitmap : m_bitmaps) {
+		delete bitmap;
 	}
 	delete m_palette;
 	delete m_megatexture;

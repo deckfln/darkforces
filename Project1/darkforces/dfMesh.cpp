@@ -21,7 +21,7 @@ void dfMesh::buildGeometry(dfSector* source, float bottom, float top)
 /**
  * Update the vertices of a rectangle
  */
-void dfMesh::updateRectangle(int p, float x, float y, float z, float x1, float y1, float z1, float xoffset, float yoffset, float width, float height, float textureID)
+void dfMesh::updateRectangle(int p, float x, float y, float z, float x1, float y1, float z1, float xoffset, float yoffset, float width, float height, int textureID)
 {
 	// TODO move conversion from level space to gl space in a dedicated function
 	// first triangle
@@ -29,44 +29,44 @@ void dfMesh::updateRectangle(int p, float x, float y, float z, float x1, float y
 	m_vertices[p].z = y / 10;
 	m_vertices[p].y = z / 10;
 	m_uvs[p] = glm::vec2(xoffset, yoffset);
-	m_textureID[p] = textureID;
+	m_textureID[p] = (float)textureID;
 
 	m_vertices[p + 1].x = x1 / 10;
 	m_vertices[p + 1].z = y1 / 10;
 	m_vertices[p + 1].y = z / 10;
 	m_uvs[p + 1] = glm::vec2(width + xoffset, yoffset);
-	m_textureID[p + 1] = textureID;
+	m_textureID[p + 1] = (float)textureID;
 
 	m_vertices[p + 2].x = x1 / 10;
 	m_vertices[p + 2].z = y1 / 10;
 	m_vertices[p + 2].y = z1 / 10;
 	m_uvs[p + 2] = glm::vec2(width + xoffset, height + yoffset);
-	m_textureID[p + 2] = textureID;
+	m_textureID[p + 2] = (float)textureID;
 
 	// second triangle
 	m_vertices[p + 3].x = x / 10;
 	m_vertices[p + 3].z = y / 10;
 	m_vertices[p + 3].y = z / 10;
 	m_uvs[p + 3] = glm::vec2(xoffset, yoffset);
-	m_textureID[p + 3] = textureID;
+	m_textureID[p + 3] = (float)textureID;
 
 	m_vertices[p + 4].x = x1 / 10;
 	m_vertices[p + 4].z = y1 / 10;
 	m_vertices[p + 4].y = z1 / 10;
 	m_uvs[p + 4] = glm::vec2(width + xoffset, height + yoffset);
-	m_textureID[p + 4] = textureID;
+	m_textureID[p + 4] = (float)textureID;
 
 	m_vertices[p + 5].x = x / 10;
 	m_vertices[p + 5].z = y / 10;
 	m_vertices[p + 5].y = z1 / 10;
 	m_uvs[p + 5] = glm::vec2(xoffset, height + yoffset);
-	m_textureID[p + 5] = textureID;
+	m_textureID[p + 5] = (float)textureID;
 }
 
 /**
  * Update the vertices of a rectangle
  */
-void dfMesh::updateRectangleAntiClockwise(int p, float x, float y, float z, float x1, float y1, float z1, float xoffset, float yoffset, float width, float height, float textureID)
+void dfMesh::updateRectangleAntiClockwise(int p, float x, float y, float z, float x1, float y1, float z1, float xoffset, float yoffset, float width, float height, int textureID)
 {
 	// TODO move conversion from level space to gl space in a dedicated function
 	// first triangle
@@ -74,44 +74,44 @@ void dfMesh::updateRectangleAntiClockwise(int p, float x, float y, float z, floa
 	m_vertices[p].z = y / 10;
 	m_vertices[p].y = z / 10;
 	m_uvs[p] = glm::vec2(xoffset, yoffset);
-	m_textureID[p] = textureID;
+	m_textureID[p] = (float)textureID;
 
 	m_vertices[p + 2].x = x1 / 10;
 	m_vertices[p + 2].z = y1 / 10;
 	m_vertices[p + 2].y = z / 10;
 	m_uvs[p + 2] = glm::vec2(width + xoffset, yoffset);
-	m_textureID[p + 2] = textureID;
+	m_textureID[p + 2] = (float)textureID;
 
 	m_vertices[p + 1].x = x1 / 10;
 	m_vertices[p + 1].z = y1 / 10;
 	m_vertices[p + 1].y = z1 / 10;
 	m_uvs[p + 1] = glm::vec2(width + xoffset, height + yoffset);
-	m_textureID[p + 1] = textureID;
+	m_textureID[p + 1] = (float)textureID;
 
 	// second triangle
 	m_vertices[p + 3].x = x / 10;
 	m_vertices[p + 3].z = y / 10;
 	m_vertices[p + 3].y = z / 10;
 	m_uvs[p + 3] = glm::vec2(xoffset, yoffset);
-	m_textureID[p + 3] = textureID;
+	m_textureID[p + 3] = (float)textureID;
 
 	m_vertices[p + 5].x = x1 / 10;
 	m_vertices[p + 5].z = y1 / 10;
 	m_vertices[p + 5].y = z1 / 10;
 	m_uvs[p + 5] = glm::vec2(width + xoffset, height + yoffset);
-	m_textureID[p + 5] = textureID;
+	m_textureID[p + 5] = (float)textureID;
 
 	m_vertices[p + 4].x = x / 10;
 	m_vertices[p + 4].z = y / 10;
 	m_vertices[p + 4].y = z1 / 10;
 	m_uvs[p + 4] = glm::vec2(xoffset, height + yoffset);
-	m_textureID[p + 4] = textureID;
+	m_textureID[p + 4] = (float)textureID;
 }
 
 /***
  * create vertices for a rectangle
  */
-int dfMesh::addRectangle(int start, dfSector* sector, dfWall* wall, float z, float z1, int texture, std::vector<dfBitmapImage*>& textures)
+int dfMesh::addRectangle(int start, dfSector* sector, dfWall* wall, float z, float z1, int texture, std::vector<dfBitmap*>& bitmaps)
 {
 	int p = start;
 
@@ -129,13 +129,13 @@ int dfMesh::addRectangle(int start, dfSector* sector, dfWall* wall, float z, flo
 		y1 = sector->m_vertices[wall->m_right].y;
 
 	// deal with the wall texture
-	float textureID = wall->m_tex[texture].x;
+	float bitmapID = wall->m_tex[texture].x;
 
-	dfBitmapImage* dfBitmap = textures[(int)textureID];
+	dfBitmapImage* image = bitmaps[(int)bitmapID]->getImage();
 
 	float length = sqrt(pow(x - x1, 2) + pow(y - y1, 2));
-	float xpixel = (float)dfBitmap->m_width;
-	float ypixel = (float)dfBitmap->m_height;
+	float xpixel = (float)image->m_width;
+	float ypixel = (float)image->m_height;
 
 	// convert height and length into local texture coordinates using pixel ratio
 	// ratio of texture pixel vs world position = 64 pixels for 8 clicks => 8x1
@@ -147,7 +147,7 @@ int dfMesh::addRectangle(int start, dfSector* sector, dfWall* wall, float z, flo
 	float xoffset = (wall->m_tex[texture].y * 8.0f) / xpixel;
 	float yoffset = (wall->m_tex[texture].z * 8.0f) / ypixel;
 
-	updateRectangle(p, x, y, z, x1, y1, z1, xoffset, yoffset, width, height, textureID);
+	updateRectangle(p, x, y, z, x1, y1, z1, xoffset, yoffset, width, height, image->m_textureID);
 
 	if (start >= 0) {
 		return 6;	// we updated the rectangle, move to the next rectangle
@@ -160,7 +160,7 @@ int dfMesh::addRectangle(int start, dfSector* sector, dfWall* wall, float z, flo
 /**
  * create a simple opengl Rectangle
  */
-void dfMesh::addRectangle(dfSector* sector, dfWall* wall, float z, float z1, glm::vec3& texture, std::vector<dfBitmapImage*>& textures, bool clockwise)
+void dfMesh::addRectangle(dfSector* sector, dfWall* wall, float z, float z1, glm::vec3& texture, std::vector<dfBitmap*>& bitmaps, bool clockwise)
 {
 	// add a new rectangle
 	int p = m_vertices.size();
@@ -174,15 +174,15 @@ void dfMesh::addRectangle(dfSector* sector, dfWall* wall, float z, float z1, glm
 		y1 = sector->m_vertices[wall->m_right].y;
 
 	// deal with the wall texture
-	float textureID = texture.x;
+	float bitmapID = texture.x;
 
-	dfBitmapImage* dfBitmap = textures[(int)textureID];
+	dfBitmapImage* image = bitmaps[(int)bitmapID]->getImage();
 	float xpixel = 0;
 	float ypixel = 0;
 
-	if (dfBitmap != nullptr) {
-		xpixel = (float)dfBitmap->m_width;
-		ypixel = (float)dfBitmap->m_height;
+	if (image != nullptr) {
+		xpixel = (float)image->m_width;
+		ypixel = (float)image->m_height;
 	}
 
 	float length = sqrt(pow(x - x1, 2) + pow(y - y1, 2));
@@ -198,17 +198,17 @@ void dfMesh::addRectangle(dfSector* sector, dfWall* wall, float z, float z1, glm
 	float yoffset = (texture.z * 8.0f) / ypixel;
 
 	if (clockwise) {
-		updateRectangle(p, x, y, z, x1, y1, z1, xoffset, yoffset, width, height, textureID);
+		updateRectangle(p, x, y, z, x1, y1, z1, xoffset, yoffset, width, height, image->m_textureID);
 	}
 	else {
-		updateRectangleAntiClockwise(p, x, y, z, x1, y1, z1, xoffset, yoffset, width, height, textureID);
+		updateRectangleAntiClockwise(p, x, y, z, x1, y1, z1, xoffset, yoffset, width, height, image->m_textureID);
 	}
 }
 
 /**
  * create a floor tesselation
  */
-void dfMesh::addFloor(std::vector<Point>& vertices, std::vector<std::vector<Point>>& polygons, float z, glm::vec3& texture, std::vector<dfBitmapImage*>& textures, bool clockwise)
+void dfMesh::addFloor(std::vector<Point>& vertices, std::vector<std::vector<Point>>& polygons, float z, glm::vec3& texture, std::vector<dfBitmap*>& bitmaps, bool clockwise)
 {
 	// Run tessellation
 	// Returns array of indices that refer to the vertices of the input polygon.
@@ -225,12 +225,12 @@ void dfMesh::addFloor(std::vector<Point>& vertices, std::vector<std::vector<Poin
 
 	// use axis aligned texture UV, on a 8x8 grid
 	// ratio of texture pixel vs world position = 180 pixels for 24 clicks = 7.5x1
-	dfBitmapImage* dfBitmap = textures[(int)texture.r];
+	dfBitmapImage* image = bitmaps[(int)texture.r]->getImage();
 	float xpixel = 0;
 	float ypixel = 0;
-	if (dfBitmap != nullptr) {
-		xpixel = (float)dfBitmap->m_width;
-		ypixel = (float)dfBitmap->m_height;
+	if (image != nullptr) {
+		xpixel = (float)image->m_width;
+		ypixel = (float)image->m_height;
 	}
 	// warning, triangles are looking downward
 	int currentVertice = 0, j;
@@ -254,14 +254,14 @@ void dfMesh::addFloor(std::vector<Point>& vertices, std::vector<std::vector<Poin
 			m_vertices[p + j].y = z / 10.0f;
 			m_vertices[p + j].z = vertices[index][1] / 10.0f;
 			m_uvs[p + j] = glm::vec2(xoffset, yoffset);
-			m_textureID[p + j] = texture.r;
+			m_textureID[p + j] = (float)image->m_textureID;
 		}
 		else {
 			m_vertices[p].x = vertices[index][0] / 10.0f;
 			m_vertices[p].y = z / 10.0f;
 			m_vertices[p].z = vertices[index][1] / 10.0f;
 			m_uvs[p] = glm::vec2(xoffset, yoffset);
-			m_textureID[p] = texture.r;
+			m_textureID[p] = (float)image->m_textureID;
 		}
 
 		p++;
