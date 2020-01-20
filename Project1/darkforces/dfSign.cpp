@@ -1,12 +1,16 @@
 #include "dfSign.h"
 
-#include "dfWall.h"
+#include "dfBitmap.h"
+#include "dfsuperSector.h"
 
-dfSign::dfSign(dfWall* parent, glm::vec3* vertices, glm::vec2* uvs, float* textureID) :
-	m_parent(parent),
+dfSign::dfSign(dfSuperSector* ssector, glm::vec3* vertices, glm::vec2* uvs, float* textureIDs, dfBitmap *bitmap, int start, int size) :
+	m_supersector(ssector),
 	m_vertices(vertices),
 	m_uvs(uvs),
-	m_textureID(textureID)
+	m_textureIDs(textureIDs),
+	m_start(start),
+	m_size(size),
+	m_bitmap(bitmap)
 {
 }
 
@@ -15,5 +19,15 @@ dfSign::dfSign(dfWall* parent, glm::vec3* vertices, glm::vec2* uvs, float* textu
  */
 void dfSign::setStatus(int status)
 {
-	printf("void dfSign::setStatus %d\n", status);
+	dfBitmapImage* image = m_bitmap->getImage(status);	// extract the target image
+	float textureID = (float)image->m_textureID;				// index of the image in the atlas map
+
+	// update the vertices with the new textureID
+	for (int i = m_start; i < m_start + m_size; i++) {
+		m_textureIDs[i] = textureID;
+	}
+
+	// push the changes
+	m_supersector->updateGeometryTextures(m_start, m_size);
+	// printf("void dfSign::setStatus %d\n", status);
 }

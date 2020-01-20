@@ -315,7 +315,8 @@ void dfSuperSector::addSign(dfSector* sector, dfWall* wall, float z, float z1, i
 
 	float bitmapID = wall->m_tex[DFWALL_TEXTURE_SIGN].r;
 
-	dfBitmapImage* image = bitmaps[(int)bitmapID]->getImage();
+	dfBitmap* bitmap = bitmaps[(int)bitmapID];
+	dfBitmapImage* image = bitmap->getImage();
 
 	float length = sqrt(pow(x - x1, 2) + pow(y - y1, 2));
 	float xpixel = (float)image->m_width;
@@ -355,8 +356,7 @@ void dfSuperSector::addSign(dfSector* sector, dfWall* wall, float z, float z1, i
 	m_textureID.resize(p + 6);
 
 	// record the sign on the wall
-	dfSign* sign = new dfSign(wall, &m_vertices[p], &m_uvs[p], &m_textureID[p]);
-	sign->nbVertice(6);
+	dfSign* sign = new dfSign(this, &m_vertices[0], &m_uvs[0], &m_textureID[0], bitmap, p, 6);
 	wall->sign(sign);
 
 	updateRectangle(p, sign_p.x, sign_p.y, sign_p.z, sign_p1.x, sign_p1.y, sign_p1.z, 0, 0, 1, 1, image->m_textureID);
@@ -625,6 +625,14 @@ void dfSuperSector::buildGeometry(std::vector<dfSector*>& sectors, fwMaterialBas
 			m_mesh->addChild(portal.m_debug_portal);
 		}
 	}
+}
+
+/**
+ * Update the TextureIDs Attribute on the GPU
+ */
+void dfSuperSector::updateGeometryTextures(int start, int nb)
+{
+	m_geometry->updateAttribute("aTextureID", start, nb);
 }
 
 /**
