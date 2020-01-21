@@ -83,12 +83,12 @@ void dfLogicElevator::bindSector(dfSector* pSector)
 
 	switch (m_type) {
 	case DF_ELEVATOR_INV:
-	case DF_ELEVATOR_BASIC:
 	case DF_ELEVATOR_MOVE_FLOOR:
 		m_pSector->m_floorAltitude = amin;
 		break;
 	
 	case DF_ELEVATOR_MOVE_CEILING:
+	case DF_ELEVATOR_BASIC:
 		m_pSector->m_ceilingAltitude = amax;
 		break;
 
@@ -130,7 +130,12 @@ fwMesh *dfLogicElevator::buildGeometry(fwMaterial* material)
 		m_mesh = new dfMesh(material);
 
 		// the elevator bottom is actually the ceiling
-		m_pSector->buildElevator(m_mesh, 0, amax - amin, DFWALL_TEXTURE_TOP, true, -1);
+		if (m_type == DF_ELEVATOR_INV) {
+			m_pSector->buildElevator(m_mesh, 0, amax - amin, DFWALL_TEXTURE_TOP, true, -1);
+		}
+		else {
+			m_pSector->buildElevator(m_mesh, 0, -(amax - amin), DFWALL_TEXTURE_TOP, true, -1);
+		}
 
 		if (m_mesh->buildMesh()) {
 			m_pSector->addObject(m_mesh->mesh());
@@ -459,7 +464,7 @@ void dfLogicElevator::moveTo(float z)
 		m_mesh->moveCeilingTo(z);
 		break;
 	case DF_ELEVATOR_BASIC:
-		m_mesh->moveFloorTo(z);
+		m_mesh->moveCeilingTo(z);
 		break;
 	case DF_ELEVATOR_MOVE_FLOOR:
 		m_mesh->moveFloorTo(z);
