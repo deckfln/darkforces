@@ -68,6 +68,7 @@ class dfLogicElevator {
 	dfLevel* m_parent = nullptr;		// level the elevator is on
 	dfMesh* m_mesh = nullptr;			// mesh of the elevator
 	std::list<dfSign*> m_signs;			// list of signs bound to the elevator
+	dfSign* m_activeSign;				// sign that activated the elevator
 
 	void moveTo(dfLogicStop* stop);
 	void moveTo(float z);
@@ -90,7 +91,7 @@ public:
 	void addStop(dfLogicStop* stop);
 	fwMesh *buildGeometry(fwMaterial* material);
 	void init(int stopID);
-	void trigger(int iclass, dfMessage* message);
+	void trigger(int iclass, dfSign *sign, dfMessage* message);
 	bool animate(time_t delta);
 	bool is(int type) { return m_type == type; };
 	dfLogicTrigger* createFloorTrigger();

@@ -3,7 +3,7 @@
 #include "dfBitmap.h"
 #include "dfsuperSector.h"
 
-dfSign::dfSign(dfSuperSector* ssector, glm::vec3* vertices, glm::vec2* uvs, float* textureIDs, dfBitmap *bitmap, int start, int size) :
+dfSign::dfSign(dfSuperSector* ssector, std::vector<glm::vec3>& vertices, std::vector<glm::vec2>& uvs, std::vector<float>& textureIDs, dfBitmap *bitmap, int start, int size) :
 	m_supersector(ssector),
 	m_vertices(vertices),
 	m_uvs(uvs),

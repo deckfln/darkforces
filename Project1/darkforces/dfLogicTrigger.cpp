@@ -41,9 +41,7 @@ dfLogicTrigger::dfLogicTrigger(std::string& kind, dfSector* sector, int wallInde
 	m_wallIndex(wallIndex)
 {
 	m_pClients.push_back(client);
-
 	sector->setTriggerFromWall(this);
-
 	m_class = class2int(kind);
 }
 
@@ -64,6 +62,7 @@ dfLogicTrigger::dfLogicTrigger(std::string& kind, dfLogicElevator* client)
 {
 	client->psector()->setTriggerFromSector(this);
 	m_pClients.push_back(client);
+	m_class = class2int(kind);
 }
 
 /**
@@ -172,12 +171,12 @@ void dfLogicTrigger::activate(void)
 
 	if (m_messages.size() == 1) {
 		for (auto pClient : m_pClients) {
-			pClient->trigger(m_class, &m_messages[0]);
+			pClient->trigger(m_class, m_pSign, &m_messages[0]);
 		}
 	}
 	else {
 		for (auto pClient : m_pClients) {
-			pClient->trigger(m_class, nullptr);
+			pClient->trigger(m_class, m_pSign, nullptr);
 		}
 	}
 }

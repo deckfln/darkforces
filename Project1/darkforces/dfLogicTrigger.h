@@ -29,7 +29,7 @@ class dfLogicTrigger {
 	std::string m_sector;			// sector that host the trigger
 	dfSector* m_pSector = nullptr;	// sector that host the trigger
 	int m_wallIndex = -1;			// index of the wall being a trigger
-	dfWall *m_pWall = nullptr;	// index of the wall hosting a trigger
+	dfWall *m_pWall = nullptr;		// index of the wall hosting a trigger
 	dfSign* m_pSign = nullptr;		// index of the sign being a trigger
 
 	fwAABBox m_boundingBox;			// bouding box of the triggers

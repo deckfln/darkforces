@@ -221,7 +221,7 @@ void dfLogicElevator::init(int stopID)
 /**
  * Handle a trigger
  */
-void dfLogicElevator::trigger(int iclass, dfMessage* message)
+void dfLogicElevator::trigger(int iclass, dfSign *sign, dfMessage* message)
 {
 	if (iclass != DF_TRIGGER_STANDARD && iclass != DF_TRIGGER_SWITCH1) {
 		return;
@@ -267,18 +267,40 @@ void dfLogicElevator::trigger(int iclass, dfMessage* message)
 		}
 	}
 
+	if (iclass == DF_TRIGGER_SWITCH1) {
+		// manage swicthes controling an elevator
+		if (m_activeSign == sign) {
+			// a switch cannot be activated twice
+			return;
+		}
+
+		if (m_activeSign) {
+			// the previous switch is losing focus
+			m_activeSign->setStatus(0);
+		}
+		m_activeSign = sign;	// record the sign that triggered the elevator
+		if (sign) {
+			// the new switch is taking focus
+			sign->setStatus(1);
+		}
+	}
+
 	if (m_status != DF_ELEVATOR_HOLD) {
-		// let the elevator finish it's animation
-		return;
+		// break the animation and move directly to the next stop
+		moveToNextStop();
+		m_status = DF_ELEVATOR_MOVE;
+		m_tick = 0;
 	}
+	else {
+		// for speed = 0, move instantly to the next stop
+		if (m_speed == 0) {
+			std::cerr << "dfLogicElevator::trigger speed==0 not implemented" << std::endl;
+		}
 
-	// for speed = 0, move instantly to the next stop
-	if (m_speed == 0) {
-		std::cerr << "dfLogicElevator::trigger speed==0 not implemented" << std::endl;
+		// start the animation
+		m_parent->activateElevator(this);
+		animate(0);
 	}
-
-	m_parent->activateElevator(this);
-	animate(0);
 }
 
 /**
@@ -320,9 +342,6 @@ bool dfLogicElevator::animateMoveZ(void)
 		m_status = DF_ELEVATOR_MOVE;
 		m_tick = 0;
 		moveToNextStop();
-
-		// when activated from a switch change the status if sign behind the switch
-		setSignsStatus(m_nextStop);	// the elevator is 'opening'
 		break;
 
 	case DF_ELEVATOR_MOVE: {
@@ -352,9 +371,6 @@ bool dfLogicElevator::animateMoveZ(void)
 			if (stop->isTimeBased()) {
 				// put the elevator on wait
 				m_status = DF_ELEVATOR_WAIT;
-
-				// inform the switches bound to the elevator of the new status
-				setSignsStatus(m_currentStop);	// the elevator is open'
 			}
 			else {
 				std::string& action = stop->action();
@@ -362,7 +378,10 @@ bool dfLogicElevator::animateMoveZ(void)
 					m_status = DF_ELEVATOR_HOLD;
 
 					// inform the switches bound to the elevator of the new status
-					setSignsStatus(m_currentStop);	// the elevator is 'closed'
+					if (m_activeSign) {
+						m_activeSign->setStatus(0);	// the elevator is closed, the switch loses focus
+						m_activeSign = nullptr;
+					}
 
 					// stop the animation
 					return true;	

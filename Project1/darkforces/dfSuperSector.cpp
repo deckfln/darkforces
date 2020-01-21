@@ -356,7 +356,7 @@ void dfSuperSector::addSign(dfSector* sector, dfWall* wall, float z, float z1, i
 	m_textureID.resize(p + 6);
 
 	// record the sign on the wall
-	dfSign* sign = new dfSign(this, &m_vertices[0], &m_uvs[0], &m_textureID[0], bitmap, p, 6);
+	dfSign* sign = new dfSign(this, m_vertices, m_uvs, m_textureID, bitmap, p, 6);
 	wall->sign(sign);
 
 	updateRectangle(p, sign_p.x, sign_p.y, sign_p.z, sign_p1.x, sign_p1.y, sign_p1.z, 0, 0, 1, 1, image->m_textureID);

@@ -401,7 +401,7 @@ void dfLevel::convertDoors2Elevators(void)
 {
 	static std::string inv = "inv";
 	static std::string hold = "hold";
-	static std::string switch1 = "switch1";
+	static std::string switch1 = "standard";
 
 	for (auto sector : m_sectors) {
 		if (sector->flag() & DF_SECTOR_DOOR) {

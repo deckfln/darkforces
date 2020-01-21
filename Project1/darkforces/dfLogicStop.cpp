@@ -105,7 +105,7 @@ void dfLogicStop::sendMessages()
 	for (unsigned i = 0; i < m_messages.size(); i++) {
 		dfLogicElevator* elevator = m_messages[i].m_pClient;
 		if (elevator) {
-			elevator->trigger(DF_TRIGGER_STANDARD, &m_messages[i]);
+			elevator->trigger(DF_TRIGGER_STANDARD, nullptr, &m_messages[i]);
 		}
 	}
 }
