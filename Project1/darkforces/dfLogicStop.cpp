@@ -2,6 +2,7 @@
 
 #include "dfSector.h"
 #include "dfMessage.h"
+#include "dfLogicElevator.h"
 
 dfLogicStop::dfLogicStop()
 {
@@ -88,7 +89,7 @@ void dfLogicStop::sendMessages()
 	}
 }
 
-float dfLogicStop::z_position(void)
+float dfLogicStop::z_position(int elevatorClass)
 {
 	switch (m_flag) {
 		case 9:
@@ -96,10 +97,20 @@ float dfLogicStop::z_position(void)
 			return m_absolute;
 		case 10:
 		case 18:
-			return m_pSector->m_floorAltitude + m_relatiave;	// relative to the floor of the source sector
+			switch (elevatorClass) {
+			case DF_ELEVATOR_MOVE_FLOOR:
+				return m_pSector->m_ceilingAltitude + m_relatiave;	// relative to the ceiling of the source sector
+			default:
+				return m_pSector->m_floorAltitude + m_relatiave;	// relative to the floor of the source sector
+			}
 		case 12:
 		case 20:
-			return m_pSector->m_floorAltitude;	// coy the floor of another sector
+			switch (elevatorClass) {
+			case DF_ELEVATOR_MOVE_FLOOR:
+				return m_pSector->m_ceilingAltitude;	// coy the ceiling of another sector
+			default:
+				return m_pSector->m_floorAltitude;		// coy the floor of another sector
+			}
 	}
 	return 0;
 }

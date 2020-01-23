@@ -70,7 +70,7 @@ void dfLogicElevator::bindSector(dfSector* pSector)
 	// get the maximum extend of the elevator 
 	float amin = 99999, amax = -99999, c;
 	for (auto stop : m_stops) {
-		c = stop->z_position();
+		c = stop->z_position(m_type);
 		if (c < amin) amin = c;
 		if (c > amax) amax = c;
 	}
@@ -113,7 +113,7 @@ fwMesh *dfLogicElevator::buildGeometry(fwMaterial* material)
 	// get the maximum extend of the elevator -> will become the height of the object
 	float amin = 99999, amax = -99999, c;
 	for (auto stop : m_stops) {
-		c = stop->z_position();
+		c = stop->z_position(m_type);
 		if (c < amin) amin = c;
 		if (c > amax) amax = c;
 	}
@@ -222,7 +222,7 @@ void dfLogicElevator::init(int stopID)
  */
 void dfLogicElevator::moveToNextStop(void)
 {
-	m_current = m_stops[m_currentStop]->z_position();
+	m_current = m_stops[m_currentStop]->z_position(m_type);
 	float t1 = m_stops[m_currentStop]->time();
 	float t2;
 
@@ -235,7 +235,7 @@ void dfLogicElevator::moveToNextStop(void)
 		m_nextStop = m_currentStop + 1;
 	}
 
-	m_target = m_stops[m_nextStop]->z_position();
+	m_target = m_stops[m_nextStop]->z_position(m_type);
 	t2 = m_stops[m_nextStop]->time();
 
 	float delta = (t2 - t1) * 1000;	// time in milisecond
@@ -348,7 +348,7 @@ bool dfLogicElevator::animate(time_t delta)
  */
 void dfLogicElevator::moveTo(dfLogicStop *stop)
 {
-	float z = stop->z_position();
+	float z = stop->z_position(m_type);
 	moveTo(z);
 }
 
@@ -436,8 +436,8 @@ void dfLogicElevator::dispatchMessage(dfMessage* message)
 
 		if (m_speed > 0) {
 			// animated move
-			m_current = m_stops[m_currentStop]->z_position();
-			m_target = m_stops[m_nextStop]->z_position();
+			m_current = m_stops[m_currentStop]->z_position(m_type);
+			m_target = m_stops[m_nextStop]->z_position(m_type);
 
 			float t1 = m_stops[m_currentStop]->time();
 			float t2 = m_stops[m_nextStop]->time();

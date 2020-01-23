@@ -475,8 +475,8 @@ void dfSector::buildElevator(dfMesh *mesh, float bottom, float top, int what, bo
 		if (wall->m_adjoint < 0) {
 			// full wall (for spin1 elevators)
 			mesh->addRectangle(this, wall,
-				m_floorAltitude,
-				m_ceilingAltitude,
+				bottom,
+				top,
 				wall->m_tex[what],
 				textures,
 				true
