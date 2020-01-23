@@ -117,6 +117,7 @@ void dfParseINF::parseSector(std::istringstream& infile, std::string& sector)
 				m_elevators.push_back(elevator);
 			}
 			else if (trigger) {
+				trigger->config();
 				m_triggers.push_back(trigger);
 			}
 			break;
@@ -130,7 +131,7 @@ void dfParseINF::parseSector(std::istringstream& infile, std::string& sector)
 					std::cerr << "*class: trigger* not implemented" << std::endl;
 				}
 				else {
-					trigger = new dfLogicTrigger(tokens[2], sector, -1);
+					trigger = new dfLogicTrigger(tokens[2], sector);
 				}
 			}
 		}
@@ -244,6 +245,7 @@ void dfParseINF::parseLine(std::istringstream& infile, std::string &sector, int 
 		}
 		else if (tokens[0] == "seqend") {
 			if (trigger) {
+				trigger->config();
 				m_triggers.push_back(trigger);
 			}
 			break;

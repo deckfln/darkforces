@@ -49,6 +49,7 @@ class dfLogicElevator {
 	int m_eventMask = 0;
 	glm::vec3 m_center = glm::vec3(0);
 	float m_p = 0;
+	bool m_master = true;				// is the elevator operational ?
 
 	std::vector<dfLogicStop*> m_stops;	// all stops of the evelator
 
@@ -91,11 +92,10 @@ public:
 	void addStop(dfLogicStop* stop);
 	fwMesh *buildGeometry(fwMaterial* material);
 	void init(int stopID);
-	void trigger(int iclass, dfSign *sign, dfMessage* message);
 	bool animate(time_t delta);
 	bool is(int type) { return m_type == type; };
-	dfLogicTrigger* createFloorTrigger();
 	void bindStopMessage2Elevator(std::map <std::string, dfLogicElevator*>& hashElevators);
 	void addSign(dfSign*);
+	void dispatchMessage(dfMessage* message);
 	~dfLogicElevator(void);
 };

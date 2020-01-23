@@ -555,12 +555,12 @@ void dfSector::event(int event_mask)
 	switch (event_mask) {
 	case DF_ELEVATOR_ENTER_SECTOR:
 		if (m_enterSector) {
-			m_enterSector->activate();
+			g_MessagesQueue.push(m_enterSector);
 		}
 		break;
 	case DF_ELEVATOR_LEAVE_SECTOR:
 		if (m_leaveSector) {
-			m_leaveSector->activate();
+			g_MessagesQueue.push(m_leaveSector);
 		}
 		break;
 	}
@@ -569,14 +569,14 @@ void dfSector::event(int event_mask)
 /**
  * Record triggers on events
  */
-void dfSector::addTrigger(int event, dfLogicTrigger* trigger)
+void dfSector::addTrigger(int event)
 {
 	switch (event) {
 	case DF_ELEVATOR_LEAVE_SECTOR:
-		m_leaveSector = trigger;
+		m_leaveSector = new dfMessage(DF_MESSAGE_TRIGGER, 0, m_name);
 		break;
 	case DF_ELEVATOR_ENTER_SECTOR:
-		m_enterSector = trigger;
+		m_enterSector= new dfMessage(DF_MESSAGE_TRIGGER, 0, m_name);
 		break;
 	}
 }
@@ -596,5 +596,11 @@ dfSector::~dfSector()
 {
 	for (auto wall: m_walls) {
 		delete wall;
+	}
+	if (m_enterSector) {
+		delete m_enterSector;
+	}
+	if (m_leaveSector) {
+		delete m_leaveSector;
 	}
 }

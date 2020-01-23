@@ -3,6 +3,7 @@
 #include <vector>
 #include <list>
 #include <map>
+#include <queue>
 
 #include "../framework/fwAABBox.h"
 #include "../framework/fwCamera.h"
@@ -30,8 +31,12 @@ class dfLevel
 	std::vector<dfBitmapImage *> m_allTextures;	// textures of the level based on the index from LEV structure
 	std::list<dfSuperSector *> m_supersectors;	// space partioning of sectors
 
-	std::map<std::string, dfSector*> m_hashSectors;		// dictionnaries of sectors
+	// dictionnaries
+	std::map<std::string, dfSector*> m_hashSectors;				// of sectors
+	std::map<std::string, dfLogicTrigger*> m_hTriggers;			// of triggers
+	std::map <std::string, dfLogicElevator*> m_hashElevators;	// of elevators
 
+	// Counters
 	int m_currentBitmap = 0;
 	int m_currentTexture = 0;
 
@@ -69,5 +74,6 @@ public:
 	void activateElevator(dfLogicElevator* elevator) { m_activeElevators.push_back(elevator); };
 	void deactivateElevator(dfLogicElevator* elevator) { m_activeElevators.remove(elevator); };
 	void animate(time_t delta);
+	void dispatchMessages(void);
 	~dfLevel();
 };

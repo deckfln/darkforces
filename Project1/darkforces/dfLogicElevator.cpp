@@ -19,6 +19,7 @@ const std::list<std::string> keywords = {
 
 dfLogicElevator::dfLogicElevator(std::string& kind, dfSector* sector, dfLevel* parent):
 	m_class(kind),
+	m_sector(sector->m_name),
 	m_pSector(sector),
 	m_parent(parent)
 {
@@ -65,12 +66,10 @@ void dfLogicElevator::bindSector(dfSector* pSector)
 
 	// if the elevator has mask_event for enter/leave, create triggers
 	if (m_eventMask & DF_ELEVATOR_ENTER_SECTOR) {
-		dfLogicTrigger* enter = new dfLogicTrigger(standard, m_pSector, this);
-		m_pSector->addTrigger(DF_ELEVATOR_ENTER_SECTOR, enter);
+		m_pSector->addTrigger(DF_ELEVATOR_ENTER_SECTOR);
 	}
 	if (m_eventMask & DF_ELEVATOR_LEAVE_SECTOR) {
-		dfLogicTrigger* leave = new dfLogicTrigger(standard, m_pSector, this);
-		m_pSector->addTrigger(DF_ELEVATOR_LEAVE_SECTOR, leave);
+		m_pSector->addTrigger(DF_ELEVATOR_LEAVE_SECTOR);
 	}
 
 	// get the maximum extend of the elevator 
@@ -224,91 +223,6 @@ void dfLogicElevator::init(int stopID)
 }
 
 /**
- * Handle a trigger
- */
-void dfLogicElevator::trigger(int iclass, dfSign *sign, dfMessage* message)
-{
-	if (iclass != DF_TRIGGER_STANDARD && iclass != DF_TRIGGER_SWITCH1) {
-		return;
-	}
-
-	if (iclass == DF_TRIGGER_STANDARD && message) {
-		switch (message->m_action) {
-		case DF_MESSAGE_GOTO_STOP: {
-			if (m_currentStop == message->m_value) {
-				return;	// nothing to do, we're at the right floor
-			}
-			m_nextStop = message->m_value;
-
-			if (m_speed > 0) {
-				// animated move
-				m_current = m_stops[m_currentStop]->z_position();
-				m_target = m_stops[m_nextStop]->z_position();
-
-				float t1 = m_stops[m_currentStop]->time();
-				float t2 = m_stops[m_nextStop]->time();
-
-				float delta = (t2 - t1) * 1000;	// time in milisecond
-
-				m_direction = m_target - m_current;
-
-				// TODO adapt the speed
-				m_delay = abs(m_direction) * 838 / m_speed;
-
-				m_status = DF_ELEVATOR_MOVE;
-				m_tick = 0;
-				m_parent->activateElevator(this);
-			}
-			else {
-				// instant move
-				m_currentStop = message->m_value;
-				moveTo(m_stops[m_currentStop]);
-			}
-
-			return;
-			}
-		default:
-			std::cerr << "dfLogicElevator::trigger message " << message->m_action << " not implemented" << std::endl;
-		}
-	}
-
-	if (iclass == DF_TRIGGER_SWITCH1) {
-		// manage swicthes controling an elevator
-		if (m_activeSign == sign) {
-			// a switch cannot be activated twice
-			return;
-		}
-
-		if (m_activeSign) {
-			// the previous switch is losing focus
-			m_activeSign->setStatus(0);
-		}
-		m_activeSign = sign;	// record the sign that triggered the elevator
-		if (sign) {
-			// the new switch is taking focus
-			sign->setStatus(1);
-		}
-	}
-
-	if (m_status != DF_ELEVATOR_HOLD) {
-		// break the animation and move directly to the next stop
-		moveToNextStop();
-		m_status = DF_ELEVATOR_MOVE;
-		m_tick = 0;
-	}
-	else {
-		// for speed = 0, move instantly to the next stop
-		if (m_speed == 0) {
-			std::cerr << "dfLogicElevator::trigger speed==0 not implemented" << std::endl;
-		}
-
-		// start the animation
-		m_parent->activateElevator(this);
-		animate(0);
-	}
-}
-
-/**
  * compute the move to the next Stop
  */
 void dfLogicElevator::moveToNextStop(void)
@@ -381,12 +295,6 @@ bool dfLogicElevator::animateMoveZ(void)
 				std::string& action = stop->action();
 				if (action == "hold") {
 					m_status = DF_ELEVATOR_HOLD;
-
-					// inform the switches bound to the elevator of the new status
-					if (m_activeSign) {
-						m_activeSign->setStatus(0);	// the elevator is closed, the switch loses focus
-						m_activeSign = nullptr;
-					}
 
 					// stop the animation
 					return true;	
@@ -483,22 +391,6 @@ void dfLogicElevator::moveTo(float z)
 }
 
 /**
- * Create a trigger based on the floor of the elevator (for move_floor)
- */
-dfLogicTrigger* dfLogicElevator::createFloorTrigger()
-{
-	static std::string switch1 = "switch1";
-
-	if (!m_pSector) {
-		return nullptr;
-	}
-
-	dfLogicTrigger* trigger = new dfLogicTrigger(switch1, m_pSector, this);
-
-	return trigger;
-}
-
-/**
  * For every stop of the elevator, bind the messages to the elevators
  */
 void dfLogicElevator::bindStopMessage2Elevator(std::map<std::string, dfLogicElevator*>& hashElevators)
@@ -514,6 +406,68 @@ void dfLogicElevator::bindStopMessage2Elevator(std::map<std::string, dfLogicElev
 void dfLogicElevator::addSign(dfSign* sign)
 {
 	m_signs.push_back(sign);
+}
+
+/**
+ * Dispatch and handle messages
+ */
+void dfLogicElevator::dispatchMessage(dfMessage* message)
+{
+	switch (message->m_action) {
+	case DF_MESSAGE_TRIGGER:
+		if (m_status != DF_ELEVATOR_HOLD) {
+			// break the animation and move directly to the next stop
+			moveToNextStop();
+			m_status = DF_ELEVATOR_MOVE;
+			m_tick = 0;
+		}
+		else {
+			// for speed = 0, move instantly to the next stop
+			if (m_speed == 0) {
+				std::cerr << "dfLogicElevator::trigger speed==0 not implemented" << std::endl;
+			}
+
+			// start the animation
+			m_parent->activateElevator(this);
+			animate(0);
+		}
+		break;
+
+	case DF_MESSAGE_GOTO_STOP:
+		if (m_currentStop == message->m_value) {
+			return;	// nothing to do, we're at the right floor
+		}
+		m_nextStop = message->m_value;
+
+		if (m_speed > 0) {
+			// animated move
+			m_current = m_stops[m_currentStop]->z_position();
+			m_target = m_stops[m_nextStop]->z_position();
+
+			float t1 = m_stops[m_currentStop]->time();
+			float t2 = m_stops[m_nextStop]->time();
+
+			float delta = (t2 - t1) * 1000;	// time in milisecond
+
+			m_direction = m_target - m_current;
+
+			// TODO adapt the speed
+			m_delay = abs(m_direction) * 838 / m_speed;
+
+			m_status = DF_ELEVATOR_MOVE;
+			m_tick = 0;
+			m_parent->activateElevator(this);
+		}
+		else {
+			// instant move
+			m_currentStop = message->m_value;
+			moveTo(m_stops[m_currentStop]);
+		}
+		break;
+
+	default:
+		std::cerr << "dfLogicElevator::dispatchMessage message " << message->m_action << " not implemented" << std::endl;
+	}
 }
 
 dfLogicElevator::~dfLogicElevator(void)

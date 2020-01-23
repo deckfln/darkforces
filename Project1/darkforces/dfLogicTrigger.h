@@ -22,8 +22,10 @@ enum {
 
 class dfLogicTrigger {
 	int m_class;
+	std::string m_name;				// name of the object the trigger is bound to (sector or sector(wall)
 	int m_eventMask = 0;
-	std::list<std::string> m_clients;		// name of the target sector 
+	bool m_master = true;			// is the trigger operational ?
+	std::vector<std::string> m_clients;		// name of the target sector 
 	std::list<dfLogicElevator*> m_pClients; // pointer to the target sector 
 
 	std::string m_sector;			// sector that host the trigger
@@ -37,8 +39,10 @@ class dfLogicTrigger {
 	glm::vec3 m_boundingBoxSize;	// original size of the bounding box
 
 	std::vector<dfMessage> m_messages;	// messages to pass to the clients
+	dfMessage m_trigger;				// trigger message
 
 public:
+	dfLogicTrigger(std::string& kind, std::string& sector);
 	dfLogicTrigger(std::string& kind, std::string& sector, int wallIndex);
 	dfLogicTrigger(std::string& kind, dfSector* sector, int wallIndex, dfLogicElevator *client);
 	dfLogicTrigger(std::string& kind, dfSector* sector, dfLogicElevator* client);
@@ -46,9 +50,10 @@ public:
 
 	void eventMask(int eventMask) { m_eventMask = eventMask; };
 	void client(std::string& client) { m_clients.push_back(client); }
-	std::list<std::string>& clients(void) { return m_clients; };
+	std::vector<std::string>& clients(void) { return m_clients; };
 	std::string& sector(void) { return m_sector; };
 	int wall(void) { return m_wallIndex; };
+	std::string& name(void) { return m_name; };
 
 	void bindSectorAndWall(dfSector* pSector);
 	void bindSignToElevator(void);
@@ -56,8 +61,10 @@ public:
 	void boundingBox(glm::vec2& left, glm::vec2& right, float floor, float ceiling);
 	void boundingBox(fwAABBox& box);
 	void message(std::vector <std::string>& tokens);
+	void config(void);
 
 	bool collide(fwAABBox& box);
 	void moveZ(float z);
 	void activate(void);
+	void dispatchMessage(dfMessage* message);
 };

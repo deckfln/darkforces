@@ -1,6 +1,7 @@
 #include "dfLogicTrigger.h"
 
 #include <iostream>
+#include <string>
 
 #include "dfLogicTrigger.h"
 #include "dfSector.h"
@@ -24,6 +25,17 @@ static int class2int(std::string kind)
 }
 
 /**
+ *Create a trigger without bounding box
+ */
+dfLogicTrigger::dfLogicTrigger(std::string & kind, std::string & sector) :
+	m_sector(sector)
+{
+	m_class = class2int(kind);
+	m_name = sector;
+	m_messages.push_back(dfMessage(DF_MESSAGE_TRIGGER, 0, m_name));
+}
+
+/**
  * Create a trigger without bounding box
  */
 dfLogicTrigger::dfLogicTrigger(std::string& kind, std::string& sector, int wallIndex) :
@@ -31,6 +43,7 @@ dfLogicTrigger::dfLogicTrigger(std::string& kind, std::string& sector, int wallI
 	m_wallIndex(wallIndex)
 {
 	m_class = class2int(kind);
+	m_name = sector + "(" + std::to_string(wallIndex) + ")";
 }
 
 /**
@@ -40,7 +53,7 @@ dfLogicTrigger::dfLogicTrigger(std::string& kind, dfSector* sector, int wallInde
 	m_pSector(sector),
 	m_wallIndex(wallIndex)
 {
-	m_pClients.push_back(client);
+	m_clients.push_back(sector->m_name);
 	sector->setTriggerFromWall(this);
 	m_class = class2int(kind);
 }
@@ -51,8 +64,11 @@ dfLogicTrigger::dfLogicTrigger(std::string& kind, dfSector* sector, int wallInde
 dfLogicTrigger::dfLogicTrigger(std::string& kind, dfSector* sector, dfLogicElevator* client) :
 	m_pSector(sector)
 {
-	m_pClients.push_back(client);
+	m_clients.push_back(sector->m_name);
 	m_class = class2int(kind);
+	m_name = sector->m_name;
+
+	// no sign => no trigger
 }
 
 /**
@@ -61,8 +77,11 @@ dfLogicTrigger::dfLogicTrigger(std::string& kind, dfSector* sector, dfLogicEleva
 dfLogicTrigger::dfLogicTrigger(std::string& kind, dfLogicElevator* client)
 {
 	client->psector()->setTriggerFromSector(this);
-	m_pClients.push_back(client);
+	m_clients.push_back(client->sector());
 	m_class = class2int(kind);
+	m_name = client->sector();
+
+	// no sign => no trigger
 }
 
 /**
@@ -73,10 +92,10 @@ void dfLogicTrigger::bindSectorAndWall(dfSector* pSector)
 	m_pSector = pSector;
 
 	if (m_eventMask & DF_ELEVATOR_ENTER_SECTOR) {
-		m_pSector->addTrigger(DF_ELEVATOR_ENTER_SECTOR, this);
+		m_pSector->addTrigger(DF_ELEVATOR_ENTER_SECTOR);
 	}
 	if (m_eventMask & DF_ELEVATOR_LEAVE_SECTOR) {
-		m_pSector->addTrigger(DF_ELEVATOR_LEAVE_SECTOR, this);
+		m_pSector->addTrigger(DF_ELEVATOR_LEAVE_SECTOR);
 	}
 
 	// record the wall and the sign (if there is a sign)
@@ -136,12 +155,35 @@ void dfLogicTrigger::boundingBox(fwAABBox& box)
  */
 void dfLogicTrigger::message(std::vector<std::string>& tokens)
 {
-	if (tokens[1] == gotostop) {
-		dfMessage msg(DF_MESSAGE_GOTO_STOP, std::stoi(tokens[2]));
-		m_messages.push_back(msg);
+	dfMessage msg(tokens);
+	m_messages.push_back(msg);
+}
+
+/**
+ * Finalize the configuration of the trigger
+ */
+void dfLogicTrigger::config(void)
+{
+	if (m_messages.size() == 0) {
+		if (m_clients.size() >= 0) {
+			// inform all clients
+			for (auto & client: m_clients) {
+				m_messages.push_back(dfMessage(DF_MESSAGE_TRIGGER, 0, client));
+			}
+		}
 	}
 	else {
-		std::cerr << "dfLogicTrigger::message " << tokens[1] << " not implemented" << std::endl;
+		// for every message, duplicate to every client
+		dfMessage message;
+		for (int i = m_messages.size() - 1; i >= 0; i--) {
+			m_messages[i].m_client = m_clients[0];	// fix the first
+			// add the next ones
+			message = m_messages[i];
+			for (unsigned int j = 1; j < m_clients.size(); j++) {
+				message.m_client = m_clients[j];
+				m_messages.push_back(message);
+			}
+		}
 	}
 }
 
@@ -162,21 +204,34 @@ void dfLogicTrigger::moveZ(float z)
 	m_boundingBox.m_z1 = z + m_boundingBoxSize.z;
 }
 
-void dfLogicTrigger::activate(void)
+/**
+ * Handle a message
+ */
+void dfLogicTrigger::dispatchMessage(dfMessage* message)
 {
-	if (m_messages.size() > 1) {
-		std::cerr << "dfLogicTrigger::activate 2+ messages not implemented" << std::endl;
-		return;
+	switch (message->m_action) {
+	case DF_MESSAGE_TRIGGER:
+		activate();
+		break;
+	case DF_MESSAGE_DONE:
+		if (m_pSign) {
+			m_pSign->setStatus(0);	// turn the switch off
+		}
+		break;
+	default:
+		std::cerr << "dfLogicTrigger::dispatchMessage action " << message->m_action << " not implemented" << std::endl;
 	}
+}
 
-	if (m_messages.size() == 1) {
-		for (auto pClient : m_pClients) {
-			pClient->trigger(m_class, m_pSign, &m_messages[0]);
-		}
+/**
+ * Handle the TRIGGER message
+ */
+void dfLogicTrigger::activate()
+{
+	if (m_pSign) {
+		m_pSign->setStatus(1);	// turn the switch on
 	}
-	else {
-		for (auto pClient : m_pClients) {
-			pClient->trigger(m_class, m_pSign, nullptr);
-		}
+	for (unsigned int i = 0; i < m_messages.size(); i++) {
+		g_MessagesQueue.push(&m_messages[i]);
 	}
 }

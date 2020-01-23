@@ -1,6 +1,7 @@
 #include "dfLogicStop.h"
 
 #include "dfSector.h"
+#include "dfMessage.h"
 
 dfLogicStop::dfLogicStop()
 {
@@ -60,29 +61,9 @@ bool dfLogicStop::isTimeBased(void)
  */
 void dfLogicStop::message(std::vector<std::string>& tokens)
 {
-	if (tokens.size() == 5) {
-		// message from a stop
-		if (tokens[3] == gotostop) {
-			dfMessage msg(DF_MESSAGE_GOTO_STOP, std::stoi(tokens[4]), tokens[2]);
-			m_messages.push_back(msg);
-		}
-		else {
-			std::cerr << "dfLogicStop::message " << tokens[3] << " not implemented for stops" << std::endl;
-		}
-	}
-	else if (tokens.size() == 3) {
-		// message from a trigger
-		if (tokens[1] == gotostop) {
-			dfMessage msg(DF_MESSAGE_GOTO_STOP, std::stoi(tokens[2]));
-			m_messages.push_back(msg);
-		}
-		else {
-			std::cerr << "dfLogicStop::message " << tokens[1] << " not implemented for triggers" << std::endl;
-		}
-	}
-	else {
-		std::cerr << "dfLogicStop::message not implemented" << std::endl;
-	}
+	dfMessage msg(tokens);
+
+	m_messages.push_back(msg);
 }
 
 /**
@@ -91,7 +72,7 @@ void dfLogicStop::message(std::vector<std::string>& tokens)
 void dfLogicStop::bindMessage2Elevator(std::map<std::string, dfLogicElevator*>& hashElevators)
 {
 	for (auto &message : m_messages) {
-		if (message.m_client != "") {
+		if (message.m_client != "" && hashElevators.count(message.m_client) > 0) {
 			message.m_pClient = hashElevators[message.m_client];
 		}
 	}
@@ -103,10 +84,7 @@ void dfLogicStop::bindMessage2Elevator(std::map<std::string, dfLogicElevator*>& 
 void dfLogicStop::sendMessages()
 {
 	for (unsigned i = 0; i < m_messages.size(); i++) {
-		dfLogicElevator* elevator = m_messages[i].m_pClient;
-		if (elevator) {
-			elevator->trigger(DF_TRIGGER_STANDARD, nullptr, &m_messages[i]);
-		}
+		g_MessagesQueue.push(&m_messages[i]);
 	}
 }
 

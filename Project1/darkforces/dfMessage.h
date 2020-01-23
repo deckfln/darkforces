@@ -1,22 +1,33 @@
 #pragma once
 
 #include <string>
+#include <vector>
+#include <queue>
 
 enum {
-	DF_MESSAGE_GOTO_STOP
+	DF_MESSAGE_TRIGGER,
+	DF_MESSAGE_GOTO_STOP,
+	DF_MESSAGE_DONE
 };
 
-const std::string gotostop = "goto_stop";
-
 class dfLogicElevator;
+class dfSign;
 
 class dfMessage {
 public:
-	int m_action;
-	int m_value;
+	int m_action = -1;
+	int m_value = 0;
 	std::string m_client;
-	dfLogicElevator* m_pClient = nullptr;
 
-	dfMessage(int action, int value) { m_action = action; m_value = value; };
-	dfMessage(int action, int value, std::string& client) { m_action = action; m_value = value; m_client = client; };
+	dfLogicElevator* m_pClient = nullptr;	// GOTO on an elevator
+	dfSign* m_pSign = nullptr;				// DONE on a switch
+
+	dfMessage(void);
+	dfMessage(int action);
+	dfMessage(int action, int value);
+	dfMessage(int action, int value, std::string& client);
+	dfMessage(std::vector<std::string>& tokens);
 };
+
+// Message queue
+extern std::queue<dfMessage*> g_MessagesQueue;

@@ -10,6 +10,7 @@
 #include "../include/stb_image.h"
 #include "dfLogicElevator.h"
 #include "dfBitmap.h"
+#include "dfSign.h"
 
 dfLevel::dfLevel(dfFileGOB* dark, dfFileGOB* gTextures, std::string file)
 {
@@ -58,6 +59,9 @@ dfLevel::dfLevel(dfFileGOB* dark, dfFileGOB* gTextures, std::string file)
 
 			dfSector* sector = new dfSector(data);
 			sector->m_id = nSector;
+			if (sector->m_name == "") {
+				sector->m_name = std::to_string(nSector);
+			}
 			int layer = sector->m_layer;
 
 			// record the sector in the global list
@@ -78,21 +82,13 @@ dfLevel::dfLevel(dfFileGOB* dark, dfFileGOB* gTextures, std::string file)
 
 	// bind the sectors to the elevator logic
 	// bind the evelator logic to the level
-	std::map <std::string, dfLogicElevator*> hashElevators;
-
 	for (auto elevator : m_inf->m_elevators) {
 		elevator->parent(this);
 
 		dfSector* sector = m_hashSectors[elevator->sector()];
 		if (sector) {
 			elevator->bindSector(sector);
-			hashElevators[elevator->sector()] = elevator;
 		}
-	}
-
-	// bind the stops messages to the evelators
-	for (auto elevator : m_inf->m_elevators) {
-		elevator->bindStopMessage2Elevator(hashElevators);
 	}
 
 	// bind the sector walls to the elevator logic
@@ -100,10 +96,10 @@ dfLevel::dfLevel(dfFileGOB* dark, dfFileGOB* gTextures, std::string file)
 		dfSector* sector = m_hashSectors[trigger->sector()];
 		trigger->bindSectorAndWall(sector);
 
-		std::list<std::string>& clients = trigger->clients();
+		std::vector<std::string>& clients = trigger->clients();
 
 		for (auto sclient : clients) {
-			dfLogicElevator* client = hashElevators[sclient];
+			dfLogicElevator* client = m_hashElevators[sclient];
 			if (client) {
 				trigger->evelator(client);
 			}
@@ -124,7 +120,22 @@ dfLevel::dfLevel(dfFileGOB* dark, dfFileGOB* gTextures, std::string file)
 	spacePartitioning();		// partion of space for quick collision
 	buildGeometry();			// build the geometry of each super sectors
 	bindSignsToTriggers();	
+
+	// bind the stops messages to the evelators
+	for (auto elevator : m_inf->m_elevators) {
+		elevator->bindStopMessage2Elevator(m_hashElevators);
+	}
+
 	createTriggerForSpin();		// for elevator_spin1, create triggers
+
+	// create a hash of triggers now that all triggers are created
+	for (auto elevator : m_inf->m_elevators) {
+		m_hashElevators[elevator->sector()] = elevator;
+	}
+	for (auto trigger : m_inf->m_triggers) {
+		m_hTriggers[trigger->name()] = trigger;
+	}
+
 	initElevators();			// move all elevators to position 0
 
 	free(sec);
@@ -415,6 +426,7 @@ void dfLevel::convertDoors2Elevators(void)
 			m_inf->m_elevators.push_back(elevator);
 
 			dfLogicTrigger* trigger = new dfLogicTrigger(switch1, sector, 1, elevator);
+			trigger->config();
 			m_inf->m_triggers.push_back(trigger);
 		}
 	}
@@ -430,6 +442,7 @@ void dfLevel::createTriggerForSpin(void)
 	for (auto elevator: m_inf->m_elevators) {
 		if (elevator->is(DF_ELEVATOR_MORPH_SPIN1)) {
 			dfLogicTrigger* trigger = new dfLogicTrigger(standard, elevator);
+			trigger->config();
 			m_inf->m_triggers.push_back(trigger);
 		}
 	}
@@ -559,6 +572,28 @@ void dfLevel::animate(time_t delta)
 		}
 	}
 	*/
+}
+
+/**
+ * Dispatch messages on clients
+ */
+void dfLevel::dispatchMessages(void)
+{
+	dfLogicElevator* elevator;
+	dfLogicTrigger* trigger;
+
+	while (g_MessagesQueue.size() > 0) {
+		dfMessage* message = g_MessagesQueue.front();
+		g_MessagesQueue.pop();
+		if (m_hashElevators.count(message->m_client) > 0) {
+			elevator = m_hashElevators[message->m_client];
+			elevator->dispatchMessage(message);
+		}
+		else if (m_hTriggers.count(message->m_client) > 0) {
+			trigger = m_hTriggers[message->m_client];
+			trigger->dispatchMessage(message);
+		}
+	}
 }
 
 dfLevel::~dfLevel()
