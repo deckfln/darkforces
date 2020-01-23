@@ -1,7 +1,7 @@
 #include "dfLogicStop.h"
 
 #include "dfSector.h"
-#include "dfMessage.h"
+#include "dfMessageBus.h"
 #include "dfLogicElevator.h"
 
 dfLogicStop::dfLogicStop()
@@ -85,7 +85,7 @@ void dfLogicStop::bindMessage2Elevator(std::map<std::string, dfLogicElevator*>& 
 void dfLogicStop::sendMessages()
 {
 	for (unsigned i = 0; i < m_messages.size(); i++) {
-		g_MessagesQueue.push(&m_messages[i]);
+		g_MessageBus.push(&m_messages[i]);
 	}
 }
 

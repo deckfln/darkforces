@@ -9,7 +9,7 @@
 
 #include "../framework/fwAABBox.h"
 #include "dfLogicElevator.h"
-#include "dfMessage.h"
+#include "dfMessageClient.h"
 
 class dfSector;
 class dfWall;
@@ -20,9 +20,8 @@ enum {
 	DF_TRIGGER_STANDARD,
 };
 
-class dfLogicTrigger {
+class dfLogicTrigger: public dfMessageClient {
 	int m_class;
-	std::string m_name;				// name of the object the trigger is bound to (sector or sector(wall)
 	int m_eventMask = 0;
 	bool m_master = true;			// is the trigger operational ?
 	std::vector<std::string> m_clients;		// name of the target sector 
@@ -51,7 +50,6 @@ public:
 	std::vector<std::string>& clients(void) { return m_clients; };
 	std::string& sector(void) { return m_sector; };
 	int wall(void) { return m_wallIndex; };
-	std::string& name(void) { return m_name; };
 	void sign(dfSign* sign) { m_pSign = sign; };
 	void addEvents(dfSector* pSector);
 	void evelator(dfLogicElevator* pClient);

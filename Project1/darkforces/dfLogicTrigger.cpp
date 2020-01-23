@@ -6,6 +6,7 @@
 #include "dfLogicTrigger.h"
 #include "dfSector.h"
 #include "dfsign.h"
+#include "dfMessageBus.h"
 
 static const std::string switch1 = "switch1";
 static const std::string standard = "standard";
@@ -28,6 +29,7 @@ static int class2int(std::string kind)
  *Create a trigger without bounding box
  */
 dfLogicTrigger::dfLogicTrigger(std::string & kind, std::string & sector) :
+	dfMessageClient(sector),
 	m_sector(sector)
 {
 	m_class = class2int(kind);
@@ -39,32 +41,36 @@ dfLogicTrigger::dfLogicTrigger(std::string & kind, std::string & sector) :
  * Create a trigger without bounding box
  */
 dfLogicTrigger::dfLogicTrigger(std::string& kind, std::string& sector, int wallIndex) :
+	dfMessageClient(),
 	m_sector(sector),
 	m_wallIndex(wallIndex)
 {
 	m_class = class2int(kind);
 	m_name = sector + "(" + std::to_string(wallIndex) + ")";
+	addToBus();
 }
 
 /**
  * Create a trigger based on a wall of a sector, and record the elevator client
  */
 dfLogicTrigger::dfLogicTrigger(std::string& kind, dfSector* sector, int wallIndex,  dfLogicElevator* client) :
+	dfMessageClient(),
 	m_wallIndex(wallIndex),
-	m_sector(sector->m_name),
-	m_name(sector->m_name)
+	m_sector(sector->m_name)
 {
 	m_clients.push_back(sector->m_name);
 	sector->setTriggerFromWall(this);
 	m_class = class2int(kind);
+	m_name = sector->m_name + "(" + std::to_string(wallIndex) + ")";
+	addToBus();
 }
 
 /**
  * Create a trigger based on the floor of a sector, and record the elevator client
  */
 dfLogicTrigger::dfLogicTrigger(std::string& kind, dfSector* sector, dfLogicElevator* client) :
-	m_sector(sector->m_name),
-	m_name(sector->m_name)
+	dfMessageClient(sector->m_name),
+	m_sector(sector->m_name)
 {
 	m_clients.push_back(sector->m_name);
 	m_class = class2int(kind);
@@ -75,12 +81,15 @@ dfLogicTrigger::dfLogicTrigger(std::string& kind, dfSector* sector, dfLogicEleva
 /**
  * Create a trigger based on ono the sector managed by the elevator
  */
-dfLogicTrigger::dfLogicTrigger(std::string& kind, dfLogicElevator* client)
+dfLogicTrigger::dfLogicTrigger(std::string& kind, dfLogicElevator* client):
+	dfMessageClient()
 {
 	client->psector()->setTriggerFromSector(this);
 	m_clients.push_back(client->sector());
 	m_class = class2int(kind);
-	m_sector = m_name = client->sector();
+	m_sector = client->sector();
+	m_name = client->sector() + "(0)";
+	addToBus();
 
 	// no sign => no trigger
 }
@@ -205,6 +214,6 @@ void dfLogicTrigger::activate()
 		m_pSign->setStatus(1);	// turn the switch on
 	}
 	for (unsigned int i = 0; i < m_messages.size(); i++) {
-		g_MessagesQueue.push(&m_messages[i]);
+		g_MessageBus.push(&m_messages[i]);
 	}
 }

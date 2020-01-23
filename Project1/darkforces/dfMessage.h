@@ -28,6 +28,3 @@ public:
 	dfMessage(int action, int value, std::string& client);
 	dfMessage(std::vector<std::string>& tokens);
 };
-
-// Message queue
-extern std::queue<dfMessage*> g_MessagesQueue;

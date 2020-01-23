@@ -441,7 +441,7 @@ void dfLevel::convertDoors2Elevators(void)
 
 			m_inf->m_elevators.push_back(elevator);
 
-			dfLogicTrigger* trigger = new dfLogicTrigger(switch1, sector, 1, elevator);
+			dfLogicTrigger* trigger = new dfLogicTrigger(switch1, sector, 0, elevator);
 			trigger->config();
 			m_inf->m_triggers.push_back(trigger);
 		}
@@ -578,28 +578,6 @@ void dfLevel::animate(time_t delta)
 		}
 	}
 	*/
-}
-
-/**
- * Dispatch messages on clients
- */
-void dfLevel::dispatchMessages(void)
-{
-	dfLogicElevator* elevator;
-	dfLogicTrigger* trigger;
-
-	while (g_MessagesQueue.size() > 0) {
-		dfMessage* message = g_MessagesQueue.front();
-		g_MessagesQueue.pop();
-		if (m_hashElevators.count(message->m_client) > 0) {
-			elevator = m_hashElevators[message->m_client];
-			elevator->dispatchMessage(message);
-		}
-		else if (m_hTriggers.count(message->m_client) > 0) {
-			trigger = m_hTriggers[message->m_client];
-			trigger->dispatchMessage(message);
-		}
-	}
 }
 
 dfLevel::~dfLevel()

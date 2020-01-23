@@ -15,6 +15,7 @@
 
 #include "darkforces/dfLevel.h"
 #include "darkforces/dfCollision.h"
+#include "darkforces/dfMessageBus.h"
 
 myDarkForces::myDarkForces(std::string name, int width, int height) :
 	fwApp(name, width, height, "shaders/gamma", "#define GAMMA_CORRECTION 1\n")
@@ -160,7 +161,7 @@ glTexture* myDarkForces::draw(time_t delta, fwRenderer* renderer)
 
 	m_level->animate(delta);			// animate the level
 	m_level->draw(m_camera, m_scene); 	// update visible objects
-	m_level->dispatchMessages();
+	g_MessageBus.process();
 
 	m_control->updateCamera();			// and move the player if the level changed
 

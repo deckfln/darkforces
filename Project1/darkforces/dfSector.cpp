@@ -10,6 +10,7 @@
 #include "dfSuperSector.h"
 #include "dfMesh.h"
 #include "dfParseINF.h"
+#include "dfMessageBus.h"
 
 dfSector::dfSector(std::istringstream& infile)
 {
@@ -555,7 +556,7 @@ void dfSector::bindWall2Sector(std::vector<dfSector*> sectors)
 void dfSector::event(int event_mask)
 {
 	if (m_eventMask & event_mask) {
-		g_MessagesQueue.push(&m_message);
+		g_MessageBus.push(&m_message);
 	}
 }
 

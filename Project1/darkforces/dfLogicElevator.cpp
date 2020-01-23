@@ -18,6 +18,7 @@ const std::list<std::string> keywords = {
 };
 
 dfLogicElevator::dfLogicElevator(std::string& kind, dfSector* sector, dfLevel* parent):
+	dfMessageClient(sector->m_name),
 	m_class(kind),
 	m_sector(sector->m_name),
 	m_pSector(sector),
@@ -36,6 +37,7 @@ dfLogicElevator::dfLogicElevator(std::string& kind, dfSector* sector, dfLevel* p
 }
 
 dfLogicElevator::dfLogicElevator(std::string& kind, std::string& sector):
+	dfMessageClient(sector),
 	m_class(kind),
 	m_sector(sector)
 {

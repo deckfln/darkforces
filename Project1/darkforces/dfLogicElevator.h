@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 
+#include "dfMessageClient.h"
 #include "dfLogicStop.h"
 
 #include "../framework/fwMaterial.h"
@@ -41,7 +42,7 @@ enum {
 	DF_ELEVATOR_LAND = 512				// Land on floor of sector
 } ;
 
-class dfLogicElevator {
+class dfLogicElevator: public dfMessageClient {
 	std::string m_class;
 	int m_type = -1;					// class of elevator
 	//TODO adapt the default speed
@@ -69,7 +70,6 @@ class dfLogicElevator {
 	dfLevel* m_parent = nullptr;		// level the elevator is on
 	dfMesh* m_mesh = nullptr;			// mesh of the elevator
 	std::list<dfSign*> m_signs;			// list of signs bound to the elevator
-	dfSign* m_activeSign;				// sign that activated the elevator
 
 	void moveTo(dfLogicStop* stop);
 	void moveTo(float z);
