@@ -11,8 +11,6 @@ class dfSign;
 
 class dfWall
 {
-	dfSign* m_sign = nullptr;		//  details of the sign loaded on the wall
-
 public:
 	int m_id = 0;
 
@@ -27,7 +25,5 @@ public:
 	glm::vec3 m_tex[4];
 
 	dfWall(int left, int right, int ajdoint, int mirror);
-	void sign(dfSign* sign) { m_sign = sign; };
-	dfSign* sign(void) { return m_sign; };
 	~dfWall();
 };

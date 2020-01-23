@@ -62,7 +62,6 @@ class dfLevel
 	void initElevators(void);
 	void convertDoors2Elevators(void);
 	void createTriggerForSpin(void);
-	void bindSignsToTriggers();
 
 public:
 	dfLevel(dfFileGOB* dark, dfFileGOB* textures, std::string file);

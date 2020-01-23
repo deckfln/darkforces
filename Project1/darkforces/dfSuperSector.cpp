@@ -357,7 +357,7 @@ void dfSuperSector::addSign(dfSector* sector, dfWall* wall, float z, float z1, i
 
 	// record the sign on the wall
 	dfSign* sign = new dfSign(this, m_vertices, m_uvs, m_textureID, bitmap, p, 6, sector, wall);
-	wall->sign(sign);
+	m_hSigns[sign->name()] = sign;
 
 	updateRectangle(p, sign_p.x, sign_p.y, sign_p.z, sign_p1.x, sign_p1.y, sign_p1.z, 0, 0, 1, 1, image->m_textureID);
 }
@@ -724,4 +724,8 @@ dfSuperSector::~dfSuperSector()
 {
 	delete m_geometry;
 	delete m_mesh;
+
+	for (auto sign : m_hSigns) {
+		delete sign.second;
+	}
 }

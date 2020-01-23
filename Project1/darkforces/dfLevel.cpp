@@ -94,7 +94,7 @@ dfLevel::dfLevel(dfFileGOB* dark, dfFileGOB* gTextures, std::string file)
 	// bind the sector walls to the elevator logic
 	for (auto trigger : m_inf->m_triggers) {
 		dfSector* sector = m_hashSectors[trigger->sector()];
-		trigger->bindSectorAndWall(sector);
+		trigger->addEvents(sector);
 
 		std::vector<std::string>& clients = trigger->clients();
 
@@ -119,7 +119,16 @@ dfLevel::dfLevel(dfFileGOB* dark, dfFileGOB* gTextures, std::string file)
 
 	spacePartitioning();		// partion of space for quick collision
 	buildGeometry();			// build the geometry of each super sectors
-	bindSignsToTriggers();	
+
+	// build a ash of all signs
+	std::map<std::string, dfSign*> h_Signs;
+	for (auto ssector : m_supersectors) {
+		std::map<std::string, dfSign*>& hSigns = ssector->hSigns();
+
+		for (auto sign : hSigns) {
+			h_Signs[sign.first] = sign.second;
+		}
+	}
 
 	// bind the stops messages to the evelators
 	for (auto elevator : m_inf->m_elevators) {
@@ -133,6 +142,13 @@ dfLevel::dfLevel(dfFileGOB* dark, dfFileGOB* gTextures, std::string file)
 		m_hashElevators[elevator->sector()] = elevator;
 	}
 	for (auto trigger : m_inf->m_triggers) {
+
+		// connect the opengL Sign to its trigger
+		std::string& name = trigger->name();
+		if (h_Signs.count(name) > 0) {
+			trigger->sign(h_Signs[name]);
+		}
+
 		m_hTriggers[trigger->name()] = trigger;
 	}
 
@@ -445,16 +461,6 @@ void dfLevel::createTriggerForSpin(void)
 			trigger->config();
 			m_inf->m_triggers.push_back(trigger);
 		}
-	}
-}
-
-/**
- * For every sign, bind it to the trigger it triggers
- */
-void dfLevel::bindSignsToTriggers()
-{
-	for (auto trigger : m_inf->m_triggers) {
-		trigger->bindSignToElevator();
 	}
 }
 

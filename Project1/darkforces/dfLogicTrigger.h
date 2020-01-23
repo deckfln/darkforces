@@ -29,9 +29,7 @@ class dfLogicTrigger {
 	std::list<dfLogicElevator*> m_pClients; // pointer to the target sector 
 
 	std::string m_sector;			// sector that host the trigger
-	dfSector* m_pSector = nullptr;	// sector that host the trigger
 	int m_wallIndex = -1;			// index of the wall being a trigger
-	dfWall *m_pWall = nullptr;		// index of the wall hosting a trigger
 	dfSign* m_pSign = nullptr;		// index of the sign being a trigger
 
 	fwAABBox m_boundingBox;			// bouding box of the triggers
@@ -54,9 +52,8 @@ public:
 	std::string& sector(void) { return m_sector; };
 	int wall(void) { return m_wallIndex; };
 	std::string& name(void) { return m_name; };
-
-	void bindSectorAndWall(dfSector* pSector);
-	void bindSignToElevator(void);
+	void sign(dfSign* sign) { m_pSign = sign; };
+	void addEvents(dfSector* pSector);
 	void evelator(dfLogicElevator* pClient);
 	void boundingBox(glm::vec2& left, glm::vec2& right, float floor, float ceiling);
 	void boundingBox(fwAABBox& box);

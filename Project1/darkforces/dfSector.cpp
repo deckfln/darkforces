@@ -132,6 +132,8 @@ dfSector::dfSector(std::istringstream& infile)
 
 	m_height = m_ceilingAltitude - m_floorAltitude;
 	m_boundingBox = fwAABBox(min_x, max_x, min_y, max_y, m_floorAltitude, m_ceilingAltitude);
+
+	m_message = dfMessage(DF_MESSAGE_TRIGGER, 0, m_name);
 }
 
 /**
@@ -552,32 +554,8 @@ void dfSector::bindWall2Sector(std::vector<dfSector*> sectors)
  */
 void dfSector::event(int event_mask)
 {
-	switch (event_mask) {
-	case DF_ELEVATOR_ENTER_SECTOR:
-		if (m_enterSector) {
-			g_MessagesQueue.push(m_enterSector);
-		}
-		break;
-	case DF_ELEVATOR_LEAVE_SECTOR:
-		if (m_leaveSector) {
-			g_MessagesQueue.push(m_leaveSector);
-		}
-		break;
-	}
-}
-
-/**
- * Record triggers on events
- */
-void dfSector::addTrigger(int event)
-{
-	switch (event) {
-	case DF_ELEVATOR_LEAVE_SECTOR:
-		m_leaveSector = new dfMessage(DF_MESSAGE_TRIGGER, 0, m_name);
-		break;
-	case DF_ELEVATOR_ENTER_SECTOR:
-		m_enterSector= new dfMessage(DF_MESSAGE_TRIGGER, 0, m_name);
-		break;
+	if (m_eventMask & event_mask) {
+		g_MessagesQueue.push(&m_message);
 	}
 }
 
@@ -596,11 +574,5 @@ dfSector::~dfSector()
 {
 	for (auto wall: m_walls) {
 		delete wall;
-	}
-	if (m_enterSector) {
-		delete m_enterSector;
-	}
-	if (m_leaveSector) {
-		delete m_leaveSector;
 	}
 }

@@ -57,8 +57,8 @@ enum {
 class dfSector
 {
 	std::list <dfLogicTrigger*> m_triggers;		// list of all triggers on the sector.
-	dfMessage* m_enterSector;
-	dfMessage* m_leaveSector;
+	int m_eventMask = 0;						// events triggering messages
+	dfMessage m_message;						// message to send
 	std::vector <struct dfVerticeConnexion> m_verticeConnexions;	// get the vertice to the right and the left of each vertice
 	std::vector<std::vector<Point>> m_polygons_vertices;			// polylines enclosing the sector : [0] external polygon, [1+] internal holes : by vertices
 	std::vector<std::vector<dfWall*>> m_polygons_walls;				// polylines enclosing the sector : [0] external polygon, [1+] internal holes : by walls
@@ -110,6 +110,7 @@ public:
 	void parent(dfSuperSector* parent) { m_super = parent; };
 	float height(void) { return m_height; };
 	unsigned flag(void) { return m_flag1; };
+	void eventMask(int eventMask) { m_eventMask = eventMask; };
 	std::vector <dfWall*>& walls(int displayPolygon = -1);
 
 	std::vector<std::vector<Point>>& polygons(int displayPolygon);

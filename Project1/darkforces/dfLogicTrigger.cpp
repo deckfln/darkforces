@@ -50,8 +50,9 @@ dfLogicTrigger::dfLogicTrigger(std::string& kind, std::string& sector, int wallI
  * Create a trigger based on a wall of a sector, and record the elevator client
  */
 dfLogicTrigger::dfLogicTrigger(std::string& kind, dfSector* sector, int wallIndex,  dfLogicElevator* client) :
-	m_pSector(sector),
-	m_wallIndex(wallIndex)
+	m_wallIndex(wallIndex),
+	m_sector(sector->m_name),
+	m_name(sector->m_name)
 {
 	m_clients.push_back(sector->m_name);
 	sector->setTriggerFromWall(this);
@@ -62,11 +63,11 @@ dfLogicTrigger::dfLogicTrigger(std::string& kind, dfSector* sector, int wallInde
  * Create a trigger based on the floor of a sector, and record the elevator client
  */
 dfLogicTrigger::dfLogicTrigger(std::string& kind, dfSector* sector, dfLogicElevator* client) :
-	m_pSector(sector)
+	m_sector(sector->m_name),
+	m_name(sector->m_name)
 {
 	m_clients.push_back(sector->m_name);
 	m_class = class2int(kind);
-	m_name = sector->m_name;
 
 	// no sign => no trigger
 }
@@ -79,45 +80,17 @@ dfLogicTrigger::dfLogicTrigger(std::string& kind, dfLogicElevator* client)
 	client->psector()->setTriggerFromSector(this);
 	m_clients.push_back(client->sector());
 	m_class = class2int(kind);
-	m_name = client->sector();
+	m_sector = m_name = client->sector();
 
 	// no sign => no trigger
 }
 
 /**
- * Bind to the sector object
+ * Add events to sectors
  */
-void dfLogicTrigger::bindSectorAndWall(dfSector* pSector)
+void dfLogicTrigger::addEvents(dfSector* pSector)
 {
-	m_pSector = pSector;
-
-	if (m_eventMask & DF_ELEVATOR_ENTER_SECTOR) {
-		m_pSector->addTrigger(DF_ELEVATOR_ENTER_SECTOR);
-	}
-	if (m_eventMask & DF_ELEVATOR_LEAVE_SECTOR) {
-		m_pSector->addTrigger(DF_ELEVATOR_LEAVE_SECTOR);
-	}
-
-	// record the wall and the sign (if there is a sign)
-	if (m_wallIndex >= 0) {
-		m_pWall = m_pSector->m_walls[m_wallIndex];
-	}
-}
-
-/**
- * Bind the sign to the elevator it controls
- */
-void dfLogicTrigger::bindSignToElevator(void)
-{
-	if (m_pWall) {
-		m_pSign = m_pWall->sign();
-		if (m_pSign) {
-			m_pSign->setClass(m_class);
-			for (auto pClient : m_pClients) {
-				pClient->addSign(m_pSign);
-			}
-		}
-	}
+	pSector->eventMask(m_eventMask);
 }
 
 /**

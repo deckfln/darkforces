@@ -1,6 +1,8 @@
 #pragma once
 
 #include <list>
+#include <map>
+
 #include "../framework/fwAABBox.h"
 #include "../framework/fwGeometry.h"
 #include "../framework/fwCamera.h"
@@ -11,6 +13,7 @@
 #include "dfBitmap.h"
 
 class dfSuperSector;
+class dfSign;
 
 /**
  * boundingSphere of a portal to a connected sector
@@ -63,6 +66,8 @@ class dfSuperSector {
     bool m_visible = false;                 // supersector is visible on screen
     bool m_debugPortals = false;            // display the portal bounding sphere on screen
 
+    std::map<std::string, dfSign*> m_hSigns;             // Hash of maps on the super sector
+
     void buildWalls(bool update, dfSector* sector, std::vector<dfSector*>& sectors);
     void buildFloor(bool update, dfSector* sector);
     void buildSigns(dfSector* sector, std::vector<dfSector*>& sectors);
@@ -88,6 +93,7 @@ public:
     bool visible(void) { return m_visible; };
     fwGeometry* geometry(void) { return m_geometry; };
     std::vector<dfBitmap*>& textures(void);
+    std::map<std::string, dfSign*>& hSigns(void) { return m_hSigns; };
 
     void checkPortals(fwCamera* camera, int zOrder);
     void parent(dfLevel* parent);

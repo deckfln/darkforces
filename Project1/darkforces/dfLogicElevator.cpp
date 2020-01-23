@@ -47,7 +47,7 @@ dfLogicElevator::dfLogicElevator(std::string& kind, std::string& sector):
 		}
 		i++;
 	}
-
+	
 	std::cerr << "dfLogicElevator::dfLogicElevator " << kind << " not implemented" << std::endl;
 }
 
@@ -65,12 +65,7 @@ void dfLogicElevator::bindSector(dfSector* pSector)
 	}
 
 	// if the elevator has mask_event for enter/leave, create triggers
-	if (m_eventMask & DF_ELEVATOR_ENTER_SECTOR) {
-		m_pSector->addTrigger(DF_ELEVATOR_ENTER_SECTOR);
-	}
-	if (m_eventMask & DF_ELEVATOR_LEAVE_SECTOR) {
-		m_pSector->addTrigger(DF_ELEVATOR_LEAVE_SECTOR);
-	}
+	m_pSector->eventMask(m_eventMask);
 
 	// get the maximum extend of the elevator 
 	float amin = 99999, amax = -99999, c;
