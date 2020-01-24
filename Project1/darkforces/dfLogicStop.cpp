@@ -68,18 +68,6 @@ void dfLogicStop::message(std::vector<std::string>& tokens)
 }
 
 /**
- *for every message of the stop, bind the elevator
- */
-void dfLogicStop::bindMessage2Elevator(std::map<std::string, dfLogicElevator*>& hashElevators)
-{
-	for (auto &message : m_messages) {
-		if (message.m_client != "" && hashElevators.count(message.m_client) > 0) {
-			message.m_pClient = hashElevators[message.m_client];
-		}
-	}
-}
-
-/**
  * Once the stop is being reached, send messages to recipients
  */
 void dfLogicStop::sendMessages()

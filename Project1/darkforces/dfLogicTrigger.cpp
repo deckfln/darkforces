@@ -102,14 +102,6 @@ void dfLogicTrigger::addEvents(dfSector* pSector)
 	pSector->eventMask(m_eventMask);
 }
 
-/**
- * record the evelator the trigger is bound to
- */
-void dfLogicTrigger::evelator(dfLogicElevator* pClient)
-{
-	m_pClients.push_back(pClient);
-}
-
 void dfLogicTrigger::boundingBox(glm::vec2& left, glm::vec2& right, float floor, float ceiling)
 {
 	m_boundingBox = fwAABBox(

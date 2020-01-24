@@ -94,7 +94,6 @@ public:
 	void init(int stopID);
 	bool animate(time_t delta);
 	bool is(int type) { return m_type == type; };
-	void bindStopMessage2Elevator(std::map <std::string, dfLogicElevator*>& hashElevators);
 	void addSign(dfSign*);
 	void dispatchMessage(dfMessage* message);
 	~dfLogicElevator(void);

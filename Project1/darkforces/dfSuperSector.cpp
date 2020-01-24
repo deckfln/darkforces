@@ -8,6 +8,7 @@
 
 #include "dfLevel.h"
 #include "dfSign.h"
+#include "dfMessageBus.h"
 
 static glm::vec4 white(1.0, 0.0, 1.0, 1.0);
 static fwMaterialBasic* material_portal = new fwMaterialBasic(&white);
@@ -356,8 +357,13 @@ void dfSuperSector::addSign(dfSector* sector, dfWall* wall, float z, float z1, i
 	m_textureID.resize(p + 6);
 
 	// record the sign on the wall
-	dfSign* sign = new dfSign(this, m_vertices, m_uvs, m_textureID, bitmap, p, 6, sector, wall);
-	m_hSigns[sign->name()] = sign;
+	std::string m_name = sector->m_name + "(" + std::to_string(wall->m_id) + ")";
+
+	dfLogicTrigger* trigger = (dfLogicTrigger*)g_MessageBus.getClient(m_name);
+	if (trigger) {
+		dfSign* sign = new dfSign(this, m_vertices, m_uvs, m_textureID, bitmap, p, 6, sector, wall);
+		trigger->sign(sign);
+	}
 
 	updateRectangle(p, sign_p.x, sign_p.y, sign_p.z, sign_p1.x, sign_p1.y, sign_p1.z, 0, 0, 1, 1, image->m_textureID);
 }

@@ -33,8 +33,6 @@ class dfLevel
 
 	// dictionnaries
 	std::map<std::string, dfSector*> m_hashSectors;				// of sectors
-	std::map<std::string, dfLogicTrigger*> m_hTriggers;			// of triggers
-	std::map <std::string, dfLogicElevator*> m_hashElevators;	// of elevators
 
 	// Counters
 	int m_currentBitmap = 0;

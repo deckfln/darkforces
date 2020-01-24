@@ -388,16 +388,6 @@ void dfLogicElevator::moveTo(float z)
 }
 
 /**
- * For every stop of the elevator, bind the messages to the elevators
- */
-void dfLogicElevator::bindStopMessage2Elevator(std::map<std::string, dfLogicElevator*>& hashElevators)
-{
-	for (auto stop : m_stops) {
-		stop->bindMessage2Elevator(hashElevators);
-	}
-}
-
-/**
  * Records signs that trigger the evelvator
  */
 void dfLogicElevator::addSign(dfSign* sign)

@@ -25,7 +25,6 @@ class dfLogicTrigger: public dfMessageClient {
 	int m_eventMask = 0;
 	bool m_master = true;			// is the trigger operational ?
 	std::vector<std::string> m_clients;		// name of the target sector 
-	std::list<dfLogicElevator*> m_pClients; // pointer to the target sector 
 
 	std::string m_sector;			// sector that host the trigger
 	int m_wallIndex = -1;			// index of the wall being a trigger

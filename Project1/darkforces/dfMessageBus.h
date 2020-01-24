@@ -15,6 +15,7 @@ public:
 	dfMessageBus(void);
 	void addClient(dfMessageClient* client);
 	void removeClient(dfMessageClient* client);
+	dfMessageClient* getClient(std::string& name);
 	void push(dfMessage* message);
 	void process(void);
 };
