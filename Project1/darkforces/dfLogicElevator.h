@@ -8,6 +8,7 @@
 
 #include "../framework/fwMaterial.h"
 #include "../framework/fwMesh.h"
+#include "dfMessage.h"
 
 class dfLevel;
 class dfMesh;
@@ -70,6 +71,8 @@ class dfLogicElevator: public dfMessageClient {
 	dfLevel* m_parent = nullptr;		// level the elevator is on
 	dfMesh* m_mesh = nullptr;			// mesh of the elevator
 	std::list<dfSign*> m_signs;			// list of signs bound to the elevator
+
+	dfMessage m_msg_animate = dfMessage(DF_MESSAGE_TIMER);
 
 	void moveTo(dfLogicStop* stop);
 	void moveTo(float z);

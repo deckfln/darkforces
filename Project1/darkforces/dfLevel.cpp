@@ -526,21 +526,6 @@ void dfLevel::draw(fwCamera* camera, fwScene* scene)
 	}
 }
 
-/**
- * animate all activate elevators
- */
-void dfLevel::animate(time_t delta)
-{
-	m_activeElevators.remove_if([delta](auto elevator) {return elevator->animate(delta);  });
-	/*
-	for (auto elevator : m_activeElevators) {
-		if (!elevator->animate(delta)) {
-			m_activeElevators.remove(elevator);
-		}
-	}
-	*/
-}
-
 dfLevel::~dfLevel()
 {
 	for (auto sector : m_sectors) {

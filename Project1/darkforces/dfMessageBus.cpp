@@ -30,7 +30,12 @@ void dfMessageBus::push(dfMessage* message)
 	m_queue.push(message);
 }
 
-void dfMessageBus::process(void)
+void dfMessageBus::pushForNextFrame(dfMessage* message)
+{
+	m_for_next_frame.push(message);
+}
+
+void dfMessageBus::process(time_t delta)
 {
 	dfMessageClient* client;
 
@@ -38,8 +43,12 @@ void dfMessageBus::process(void)
 		dfMessage* message = m_queue.front();
 		m_queue.pop();
 		if (m_clients.count(message->m_client) > 0) {
+			message->m_delta = delta;
 			client = m_clients[message->m_client];
 			client->dispatchMessage(message);
 		}
 	}
+
+	// swap the current queue and the queue for next frame
+	m_queue.swap(m_for_next_frame);
 }

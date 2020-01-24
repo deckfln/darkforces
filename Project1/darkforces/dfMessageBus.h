@@ -9,6 +9,7 @@
 class dfMessageBus
 {
 	std::queue<dfMessage*> m_queue;
+	std::queue<dfMessage*> m_for_next_frame;
 	std::map<std::string, dfMessageClient*> m_clients;
 
 public:
@@ -17,7 +18,8 @@ public:
 	void removeClient(dfMessageClient* client);
 	dfMessageClient* getClient(std::string& name);
 	void push(dfMessage* message);
-	void process(void);
+	void pushForNextFrame(dfMessage* message);
+	void process(time_t delta);
 };
 
 extern dfMessageBus g_MessageBus;

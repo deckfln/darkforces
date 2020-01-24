@@ -7,6 +7,7 @@
 #include "dfSector.h"
 #include "dfLevel.h"
 #include "dfSign.h"
+#include "dfMessageBus.h"
 
 const std::list<std::string> keywords = {
 	"inv",			//DF_ELEVATOR_INV
@@ -24,6 +25,8 @@ dfLogicElevator::dfLogicElevator(std::string& kind, dfSector* sector, dfLevel* p
 	m_pSector(sector),
 	m_parent(parent)
 {
+	m_msg_animate.m_client = m_name;
+
 	unsigned int i = 0;
 	for (auto &keyword : keywords) {
 		if (keyword == kind) {
@@ -41,6 +44,8 @@ dfLogicElevator::dfLogicElevator(std::string& kind, std::string& sector):
 	m_class(kind),
 	m_sector(sector)
 {
+	m_msg_animate.m_client = m_name;
+
 	unsigned int i = 0;
 	for (auto& keyword : keywords) {
 		if (keyword == kind) {
@@ -301,6 +306,10 @@ bool dfLogicElevator::animateMoveZ(void)
 				}
 			}
 		}
+		else {
+			// next animation
+			g_MessageBus.pushForNextFrame(&m_msg_animate);
+		}
 		break;
 	}
 
@@ -310,6 +319,9 @@ bool dfLogicElevator::animateMoveZ(void)
 			m_status = DF_ELEVATOR_MOVE;
 			m_tick = 0;
 		}
+
+		// next animation
+		g_MessageBus.pushForNextFrame(&m_msg_animate);
 		break;
 
 	default:
@@ -415,7 +427,7 @@ void dfLogicElevator::dispatchMessage(dfMessage* message)
 			}
 
 			// start the animation
-			m_parent->activateElevator(this);
+			g_MessageBus.push(&m_msg_animate);
 			animate(0);
 		}
 		break;
@@ -443,13 +455,17 @@ void dfLogicElevator::dispatchMessage(dfMessage* message)
 
 			m_status = DF_ELEVATOR_MOVE;
 			m_tick = 0;
-			m_parent->activateElevator(this);
+			g_MessageBus.push(&m_msg_animate);
 		}
 		else {
 			// instant move
 			m_currentStop = message->m_value;
 			moveTo(m_stops[m_currentStop]);
 		}
+		break;
+
+	case DF_MESSAGE_TIMER:
+		animate(message->m_delta);
 		break;
 
 	default:

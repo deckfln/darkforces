@@ -51,7 +51,6 @@ public:
 	std::string& action(void) { return m_action; };
 	bool isTimeBased(void);
 	void message(std::vector <std::string>& tokens);
-	void bindMessage2Elevator(std::map <std::string, dfLogicElevator*>& hashElevators);
 	void sendMessages();
 	float z_position(int elevatorClass);
 };

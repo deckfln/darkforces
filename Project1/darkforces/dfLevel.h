@@ -49,7 +49,6 @@ class dfLevel
 	dfSuperSector* m_lastSuperSector = nullptr;	// cached super sector from the last findSector
 
 	dfParseINF* m_inf = nullptr;				// level logic retrieved from the INF file
-	std::list<dfLogicElevator*> m_activeElevators;// elevators currently moving on the level
 	std::list <dfLogicTrigger*> m_triggers;		// all triggers of the level
 
 	void loadBitmaps(dfFileGOB* gob, std::string file);
@@ -68,9 +67,5 @@ public:
 	void draw(fwCamera* camera, fwScene* scene);
 	std::vector<dfSector*>& sectors(void) { return m_sectors; };
 	std::vector<dfBitmap*>& textures(void) { return m_bitmaps; };
-	void activateElevator(dfLogicElevator* elevator) { m_activeElevators.push_back(elevator); };
-	void deactivateElevator(dfLogicElevator* elevator) { m_activeElevators.remove(elevator); };
-	void animate(time_t delta);
-	void dispatchMessages(void);
 	~dfLevel();
 };
