@@ -102,5 +102,7 @@ public:
     void addRectangle(dfSector *sector, dfWall* wall, float z, float z1, glm::vec3& texture);
     void updateGeometryTextures(int start, int end);
     void addObject(fwMesh* object);
+    void sortSectors(void);
+
     ~dfSuperSector();
 };

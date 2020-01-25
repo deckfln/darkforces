@@ -157,7 +157,7 @@ dfSector* dfSuperSector::findSector(glm::vec3& position)
 	// position is in level space
 	if (inAABBox(position)) {
 		for (auto sector : m_sectors) {
-			if (sector->isPointInside(position)) {
+			if (sector->isPointInside(position, false)) {
 				return sector;
 			}
 		}
@@ -735,6 +735,15 @@ void dfSuperSector::addObject(fwMesh* object)
 {
 	m_mesh->addChild(object);
 }
+
+/**
+ * Sort sectors by size. This is done for position testing. Sectors inside sectors will be tested first
+ */
+void dfSuperSector::sortSectors(void)
+{
+	m_sectors.sort([](dfSector* a, dfSector* b) { return a->boundingBoxSurface() < b->boundingBoxSurface(); });
+}
+
 
 dfSuperSector::~dfSuperSector()
 {

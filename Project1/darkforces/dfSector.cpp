@@ -272,7 +272,7 @@ void dfSector::addObject(fwMesh* object)
  * check if point is inside the boundingbox and inside the 2D surface : external polylines
  * TODO : how to deal with holes ?
  */
-bool dfSector::isPointInside(glm::vec3 &p)
+bool dfSector::isPointInside(glm::vec3 &p, bool fullTest)
 {
 	// quick check against the 3D bounding box
 	if (!m_boundingBox.inside(p)) {
@@ -283,24 +283,25 @@ bool dfSector::isPointInside(glm::vec3 &p)
 	// http://www.ecse.rpi.edu/Homepages/wrf/Research/Short_Notes/pnpoly.html
 	bool inside = false;
 
-	// start with hole
+	// test holes
+	if (fullTest) {
+		for (unsigned int i = 1; i < m_polygons_vertices.size(); i++) {
+			std::vector<Point>& line = m_polygons_vertices[i];
 
-	for (unsigned int i = 1; i < m_polygons_vertices.size(); i++) {
-		std::vector<Point>& line = m_polygons_vertices[i];
-
-		for (unsigned int i = 0, j = line.size() - 1; i < line.size(); j = i++)
-		{
-			if ((line[i][1] > p.y) != (line[j][1] > p.y) &&
-				p.x < (line[j][0] - line[i][0]) * (p.y - line[i][1]) / (line[j][1] - line[i][1]) + line[i][0])
+			for (unsigned int i = 0, j = line.size() - 1; i < line.size(); j = i++)
 			{
-				inside = !inside;
+				if ((line[i][1] > p.y) != (line[j][1] > p.y) &&
+					p.x < (line[j][0] - line[i][0]) * (p.y - line[i][1]) / (line[j][1] - line[i][1]) + line[i][0])
+				{
+					inside = !inside;
+				}
+
+				if (inside) {
+					return false;	// if we are in the hole, we are not on the sector
+				}
 			}
 
-			if (inside) {
-				return false;	// if we are in the hole, we are not on the sector
-			}
 		}
-
 	}
 
 	/*

@@ -370,10 +370,14 @@ void dfLevel::spacePartitioning(void)
 		m_supersectors.pop_back();
 	}
 
-	// create a full hierarchy
 	for (auto ssector : m_supersectors) {
+		// sort the sectors in each supersector per size
+		ssector->sortSectors();
+
+		// create a full hierarchy
 		ssector->parent(this);
 	}
+
 }
 
 /**
@@ -495,7 +499,8 @@ dfSector* dfLevel::findSector(glm::vec3& position)
 
 	// quick check on the last sector
 	if (m_lastSector) {
-		if (m_lastSector->isPointInside(level_space)) {
+		// do a full test including holes
+		if (m_lastSector->isPointInside(level_space, true)) {
 			return m_lastSector;
 		}
 

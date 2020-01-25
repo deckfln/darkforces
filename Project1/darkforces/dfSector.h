@@ -116,7 +116,7 @@ public:
 	std::vector<std::vector<Point>>& polygons(int displayPolygon);
 
 	void addObject(fwMesh* object);
-	bool isPointInside(glm::vec3& position);
+	bool isPointInside(glm::vec3& position, bool fullTest);
 	float boundingBoxSurface(void);
 	void setFloor(float floor);
 	void updateVertices(void);
@@ -127,7 +127,6 @@ public:
 	void bindWall2Sector(std::vector <dfSector*> sectors);
 
 	void event(int event_mask);
-	void addTrigger(int event);
 	void removeHollowWalls(void);
 
 	~dfSector();
