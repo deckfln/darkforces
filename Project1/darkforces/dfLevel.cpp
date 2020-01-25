@@ -143,6 +143,7 @@ void dfLevel::loadBitmaps(dfFileGOB *gob, std::string file)
 void dfLevel::buildAtlasMap(void)
 {
 	std::list<dfBitmapImage*> sorted_textures;
+	const int blockSize = 4;
 
 	// count number of 16x16 blocks
 	int blocks16x16=0;
@@ -150,8 +151,8 @@ void dfLevel::buildAtlasMap(void)
 
 	for (auto texture : m_allTextures) {
 		if (texture) {
-			bx = texture->m_width / 16;
-			by = texture->m_height / 16;
+			bx = texture->m_width / blockSize;
+			by = texture->m_height / blockSize;
 			texture->bsize = bx * by;
 
 			blocks16x16 += texture->bsize;
@@ -178,7 +179,7 @@ void dfLevel::buildAtlasMap(void)
 		placement_map = new bool[bsize * bsize]();
 
 		// megatexture in pixel (1 block = 16 pixel)
-		size = bsize * 16;
+		size = bsize * blockSize;
 		m_megatexture = new unsigned char[size * size * 3];
 
 		// parse textures and place them on the megatexture
@@ -189,8 +190,8 @@ void dfLevel::buildAtlasMap(void)
 		allplaced = true;	// suppose we will be able to fit all textures
 
 		for (auto texture : sorted_textures) {
-			bx = texture->m_width / 16;
-			by = texture->m_height / 16;
+			bx = texture->m_width / blockSize;
+			by = texture->m_height / blockSize;
 
 			// find a spot of the placement map
 			px = py = 0;
@@ -251,7 +252,7 @@ void dfLevel::buildAtlasMap(void)
 			// copy the texture into the map
 			int source_line = 0;
 			int bytes = texture->m_width * 3;	// number of bytes per line
-			int dest_line = py * 16 * size * 3 + px * 16 * 3;
+			int dest_line = py * blockSize * size * 3 + px * blockSize * 3;
 
 			for (auto y = 0; y < texture->m_height; y++) {
 				// copy one line
@@ -262,11 +263,11 @@ void dfLevel::buildAtlasMap(void)
 
 			// TODO point to the megatexture (use small epsilon to avoid texture bleeding)
 			// https://gamedev.stackexchange.com/questions/46963/how-to-avoid-texture-bleeding-in-a-texture-atlas
-			texture->m_xoffset = (((px + bx) * (float)16.0)) / size;
-			texture->m_yoffset = (((py + by) * (float)16.0)) / size;
+			texture->m_xoffset = (((px + bx) * (float)blockSize)) / size;
+			texture->m_yoffset = (((py + by) * (float)blockSize)) / size;
 
-			texture->m_mega_width = - bx * (float)16.0 / size;
-			texture->m_mega_height = - by * (float)16.0 / size;
+			texture->m_mega_width = - bx * (float)blockSize / size;
+			texture->m_mega_height = - by * (float)blockSize / size;
 		}
 	} while (!allplaced);
 
