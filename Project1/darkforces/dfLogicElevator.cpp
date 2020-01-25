@@ -306,10 +306,6 @@ bool dfLogicElevator::animateMoveZ(void)
 				}
 			}
 		}
-		else {
-			// next animation
-			g_MessageBus.pushForNextFrame(&m_msg_animate);
-		}
 		break;
 	}
 
@@ -319,15 +315,14 @@ bool dfLogicElevator::animateMoveZ(void)
 			m_status = DF_ELEVATOR_MOVE;
 			m_tick = 0;
 		}
-
-		// next animation
-		g_MessageBus.pushForNextFrame(&m_msg_animate);
 		break;
 
 	default:
 		std::cerr << "dfLogicElevator::animate unknown status " << m_status << std::endl;
 	}
 
+	// next animation
+	g_MessageBus.pushForNextFrame(&m_msg_animate);
 	return false;
 }
 
@@ -419,15 +414,14 @@ void dfLogicElevator::dispatchMessage(dfMessage* message)
 			moveToNextStop();
 			m_status = DF_ELEVATOR_MOVE;
 			m_tick = 0;
+			// no need for animation, there is already one on the message queue
+			//g_MessageBus.pushForNextFrame(&m_msg_animate);
 		}
 		else {
 			// for speed = 0, move instantly to the next stop
 			if (m_speed == 0) {
 				std::cerr << "dfLogicElevator::trigger speed==0 not implemented" << std::endl;
 			}
-
-			// start the animation
-			g_MessageBus.push(&m_msg_animate);
 			animate(0);
 		}
 		break;
@@ -455,7 +449,7 @@ void dfLogicElevator::dispatchMessage(dfMessage* message)
 
 			m_status = DF_ELEVATOR_MOVE;
 			m_tick = 0;
-			g_MessageBus.push(&m_msg_animate);
+			animate(0);
 		}
 		else {
 			// instant move
@@ -465,12 +459,25 @@ void dfLogicElevator::dispatchMessage(dfMessage* message)
 		break;
 
 	case DF_MESSAGE_TIMER:
-		animate(message->m_delta);
+		animate(33);
 		break;
 
 	default:
 		std::cerr << "dfLogicElevator::dispatchMessage message " << message->m_action << " not implemented" << std::endl;
 	}
+}
+
+
+
+/**
+ * Return stop number #
+ */
+dfLogicStop* dfLogicElevator::stop(int i)
+{
+	if (i < m_stops.size()) {
+		return m_stops[i];
+	}
+	return nullptr;
 }
 
 dfLogicElevator::~dfLogicElevator(void)

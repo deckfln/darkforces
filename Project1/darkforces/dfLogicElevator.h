@@ -99,5 +99,6 @@ public:
 	bool is(int type) { return m_type == type; };
 	void addSign(dfSign*);
 	void dispatchMessage(dfMessage* message);
+	dfLogicStop* stop(int i);
 	~dfLogicElevator(void);
 };

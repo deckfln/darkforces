@@ -389,7 +389,7 @@ void dfLevel::convertDoors2Elevators(void)
 {
 	static std::string inv = "inv";
 	static std::string hold = "hold";
-	static std::string switch1 = "standard";
+	static std::string switch1 = "switch1";
 
 	for (auto sector : m_sectors) {
 		if (sector->flag() & DF_SECTOR_DOOR) {
@@ -403,6 +403,11 @@ void dfLevel::convertDoors2Elevators(void)
 			m_inf->m_elevators.push_back(elevator);
 
 			dfLogicTrigger* trigger = new dfLogicTrigger(switch1, sector, 0, elevator);
+
+			// once the elevator closes, send a DONE message to the trigger
+			dfMessage msg(DF_MESSAGE_DONE, 0, trigger->name());
+			closed->addMessage(msg);
+
 			trigger->config();
 			m_inf->m_triggers.push_back(trigger);
 		}
@@ -414,12 +419,18 @@ void dfLevel::convertDoors2Elevators(void)
  */
 void dfLevel::createTriggerForSpin(void)
 {
-	static std::string standard = "standard";
+	static std::string standard = "switch1";
 
 	for (auto elevator: m_inf->m_elevators) {
 		if (elevator->is(DF_ELEVATOR_MORPH_SPIN1)) {
 			dfLogicTrigger* trigger = new dfLogicTrigger(standard, elevator);
 			trigger->config();
+
+			// extract the 'CLOSED' stop = (0)
+			// add a message DONE on the stop
+			dfMessage msg(DF_MESSAGE_DONE, 0, trigger->name());
+			elevator->stop(0)->addMessage(msg);
+
 			m_inf->m_triggers.push_back(trigger);
 		}
 	}

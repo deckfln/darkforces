@@ -67,6 +67,11 @@ void dfLogicStop::message(std::vector<std::string>& tokens)
 	m_messages.push_back(msg);
 }
 
+void dfLogicStop::addMessage(dfMessage& message)
+{
+	m_messages.push_back(message);
+}
+
 /**
  * Once the stop is being reached, send messages to recipients
  */

@@ -191,6 +191,7 @@ void dfLogicTrigger::dispatchMessage(dfMessage* message)
 		if (m_pSign) {
 			m_pSign->setStatus(0);	// turn the switch off
 		}
+		m_actived = false;
 		break;
 	default:
 		std::cerr << "dfLogicTrigger::dispatchMessage action " << message->m_action << " not implemented" << std::endl;
@@ -202,10 +203,15 @@ void dfLogicTrigger::dispatchMessage(dfMessage* message)
  */
 void dfLogicTrigger::activate()
 {
+	if (m_actived) {
+		return;
+	}
+
 	if (m_pSign) {
 		m_pSign->setStatus(1);	// turn the switch on
 	}
 	for (unsigned int i = 0; i < m_messages.size(); i++) {
 		g_MessageBus.push(&m_messages[i]);
 	}
+	m_actived = true;
 }
