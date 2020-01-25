@@ -140,7 +140,7 @@ char *dfBitmap::convert2rgb(dfBitmapImage *raw, dfPalette *palette)
 	// RAW images are stored by column
 	// need to conver to  row first
 	for (auto x = raw->m_height - 1; x >=0 ; x--) {
-		for (auto y = 0; y < raw->m_width; y++) {
+		for (auto y = raw->m_width - 1; y >= 0; y--) {
 			p = y * raw->m_height + x;
 			v = raw->m_raw[p];
 			rgb = palette->getColor(v);
