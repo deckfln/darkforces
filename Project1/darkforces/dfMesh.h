@@ -38,6 +38,7 @@ public:
 	int addRectangle(int start, dfSector* sector, dfWall* wall, float z, float z1, int texture, std::vector<dfBitmap*>& textures);
 	void addRectangle(dfSector* sector, dfWall* wall, float z, float z1, glm::vec3& texture, std::vector<dfBitmap*>& textures, bool clockwise);
 	void addFloor(std::vector<Point>& vertices, std::vector<std::vector<Point>>& polygons, float z, glm::vec3& texture, std::vector<dfBitmap*>& textures, bool clockwise);
+	void addPlane(float width, dfBitmapImage* image);
 	void moveVertices(glm::vec3& center);
 	void moveFloorTo(float z);
 	void moveCeilingTo(float z);

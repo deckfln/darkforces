@@ -4,6 +4,7 @@
 #include <fstream>
 #include <iostream>
 #include <string>
+#include <algorithm>
 
 #include "../config.h"
 #include "../framework/geometries/fwPlaneGeometry.h"
@@ -11,6 +12,7 @@
 #include "dfLogicElevator.h"
 #include "dfBitmap.h"
 #include "dfSign.h"
+#include "dfMesh.h"
 
 dfLevel::dfLevel(dfFileGOB* dark, dfFileGOB* gTextures, std::string file)
 {
@@ -69,6 +71,15 @@ dfLevel::dfLevel(dfFileGOB* dark, dfFileGOB* gTextures, std::string file)
 			m_hashSectors[sector->m_name] = sector;
 
 			sector->linkWalls();	// build the polygons from the sector
+
+			// record the sky
+			if (sector->m_flag1 & DF_SECTOR_EXTERIOR_NO_CEIL) {
+				m_skyAltitude = std::max(m_skyAltitude, sector->m_ceilingAltitude + 100);
+				m_skyTexture = sector->m_ceilingTexture;
+			}
+
+			// keep track of the bounding box
+			m_boundingBox.extend(sector->m_boundingBox);
 		}
 	}
 
@@ -301,6 +312,20 @@ void dfLevel::buildGeometry(void)
 {
 	for (auto ssector : m_supersectors) {
 		ssector->buildGeometry(m_sectors, m_material);
+	}
+
+	// finaly create the sky ceiling
+	if (m_skyAltitude > 0) {
+		float width = std::max(m_boundingBox.m_x1 - m_boundingBox.m_x, m_boundingBox.m_y1 - m_boundingBox.m_y);
+
+		dfBitmapImage* image = m_bitmaps[(int)m_skyTexture.r]->getImage();
+		m_sky = new dfMesh(m_material);
+		m_sky->addPlane(width, image);
+		fwMesh *mesh = m_sky->buildMesh();
+		glm::vec3 center = glm::vec3((m_boundingBox.m_x1 + m_boundingBox.m_x) / 20.0f,
+			m_skyAltitude / 10.0f,	
+			(m_boundingBox.m_y1 + m_boundingBox.m_y) / 20.0f);
+		mesh->position(center);
 	}
 }
 
@@ -535,6 +560,12 @@ void dfLevel::draw(fwCamera* camera, fwScene* scene)
 	// parse the scene to update the supersectors visibility
 	for (auto ssector : m_supersectors) {
 		ssector->add2scene(scene);
+	}
+
+	// add the sky
+	if (m_skymesh == nullptr) {
+		m_skymesh = m_sky->mesh();
+		scene->addChild(m_skymesh);
 	}
 }
 

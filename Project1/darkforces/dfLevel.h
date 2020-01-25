@@ -18,6 +18,8 @@
 #include "dfFileGOB.h"
 #include "dfPalette.h"
 
+class dfMesh;
+
 /**
  *
  */
@@ -28,11 +30,15 @@ class dfLevel
 	dfPalette* m_palette = nullptr;				// color palette
 	std::vector<dfSector *> m_sectors;			// all sectors of the level
 	std::vector<dfBitmap*> m_bitmaps;			// all textures of the level
+	glm::vec3 m_skyTexture;						// Identify texture for sectors FLAGS1 = 1
+	float m_skyAltitude=0;						
+
+	fwAABBox m_boundingBox;						// bounding box of the level
+
 	std::vector<dfBitmapImage *> m_allTextures;	// textures of the level based on the index from LEV structure
 	std::list<dfSuperSector *> m_supersectors;	// space partioning of sectors
 
-	// dictionnaries
-	std::map<std::string, dfSector*> m_hashSectors;				// of sectors
+	std::map<std::string, dfSector*> m_hashSectors;				// dictionnaries of sectors
 
 	// Counters
 	int m_currentBitmap = 0;
@@ -44,6 +50,9 @@ class dfLevel
 	fwUniform* m_shader_idx = nullptr;
 	
 	fwMaterialBasic* m_material = nullptr;
+
+	dfMesh* m_sky = nullptr;					// sky mesh
+	fwMesh* m_skymesh = nullptr;
 
 	dfSector* m_lastSector = nullptr;			// cached sector from the last findSector
 	dfSuperSector* m_lastSuperSector = nullptr;	// cached super sector from the last findSector

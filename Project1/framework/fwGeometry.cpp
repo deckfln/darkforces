@@ -147,6 +147,7 @@ fwSphere *fwGeometry::computeBoundingsphere(void)
 
 float fwGeometry::sqDistance2boundingSphere(glm::vec3& position)
 {
+	assert(m_pBoundingsphere != nullptr);
 	float debug = glm::distance2(m_pBoundingsphere->center(), position);
 	return debug;
 }

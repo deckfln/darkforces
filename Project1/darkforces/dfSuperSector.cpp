@@ -515,9 +515,11 @@ void dfSuperSector::buildFloor(bool update, dfSector* sector)
 	// Three subsequent indices form a triangle. Output triangles are clockwise.
 	std::vector<N> indices = mapbox::earcut<N>(polygon);
 
+	// Create the ceiling, unless there is a sky
+
 	// resize the opengl buffers
 	int p = m_vertices.size();
-	int cvertices = indices.size() * 2;	// count the floor AND the ceiling
+	int cvertices = indices.size();	// count the floor 
 	m_vertices.resize(p + cvertices);
 	m_uvs.resize(p + cvertices);
 	m_textureID.resize(p + cvertices);
@@ -561,34 +563,42 @@ void dfSuperSector::buildFloor(bool update, dfSector* sector)
 		currentVertice = (currentVertice + 1) % 3;
 	}
 
-	// use axis aligned texture UV, on a 8x8 grid
-	// ratio of texture pixel vs world position = 180 pixels for 24 clicks = 7.5x1
-	image = bitmaps[(int)sector->m_ceilingTexture.r]->getImage();
-	xpixel = 0;
-	ypixel = 0;
-	if (image != nullptr) {
-		xpixel = (float)image->m_width;
-		ypixel = (float)image->m_height;
-	}
-
-	// create the ceiling
-	for (unsigned int i = 0; i < indices.size(); i++) {
-		int index = indices[i];
-
-		m_vertices[p].x = vertices[index][0] / 10.0f;
-		m_vertices[p].y = sector->m_ceilingAltitude / 10.0f;
-		m_vertices[p].z = vertices[index][1] / 10.0f;
+	// Create the ceiling, unless there is a sky
+	if (!(sector->m_flag1 & DF_SECTOR_EXTERIOR_NO_CEIL)) {
+		p = m_vertices.size();
+		m_vertices.resize(p + cvertices);
+		m_uvs.resize(p + cvertices);
+		m_textureID.resize(p + cvertices);
 
 		// use axis aligned texture UV, on a 8x8 grid
-		// ratio of texture pixel vs world position = 64 pixels for 8 clicks
-		float xoffset = ((vertices[index][0] + sector->m_ceilingTexture.g) * 8.0f) / xpixel;
-		float yoffset = ((vertices[index][1] + sector->m_ceilingTexture.g) * 8.0f) / ypixel;
+		// ratio of texture pixel vs world position = 180 pixels for 24 clicks = 7.5x1
+		image = bitmaps[(int)sector->m_ceilingTexture.r]->getImage();
+		xpixel = 0;
+		ypixel = 0;
+		if (image != nullptr) {
+			xpixel = (float)image->m_width;
+			ypixel = (float)image->m_height;
+		}
 
-		m_uvs[p] = glm::vec2(xoffset, yoffset);
+		// create the ceiling
+		for (unsigned int i = 0; i < indices.size(); i++) {
+			int index = indices[i];
 
-		m_textureID[p] = (float)image->m_textureID;
+			m_vertices[p].x = vertices[index][0] / 10.0f;
+			m_vertices[p].y = sector->m_ceilingAltitude / 10.0f;
+			m_vertices[p].z = vertices[index][1] / 10.0f;
 
-		p++;
+			// use axis aligned texture UV, on a 8x8 grid
+			// ratio of texture pixel vs world position = 64 pixels for 8 clicks
+			float xoffset = ((vertices[index][0] + sector->m_ceilingTexture.g) * 8.0f) / xpixel;
+			float yoffset = ((vertices[index][1] + sector->m_ceilingTexture.g) * 8.0f) / ypixel;
+
+			m_uvs[p] = glm::vec2(xoffset, yoffset);
+
+			m_textureID[p] = (float)image->m_textureID;
+
+			p++;
+		}
 	}
 }
 

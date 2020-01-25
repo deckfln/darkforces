@@ -261,11 +261,56 @@ void dfMesh::addFloor(std::vector<Point>& vertices, std::vector<std::vector<Poin
 			m_vertices[p].y = z / 10.0f;
 			m_vertices[p].z = vertices[index][1] / 10.0f;
 			m_uvs[p] = glm::vec2(xoffset, yoffset);
-			m_textureID[p] = (float)image->m_textureID;
+			m_textureID[p] = (float)(image->m_textureID);
 		}
 
 		p++;
 		currentVertice = (currentVertice + 1) % 3;
+	}
+}
+
+/**
+ * create a ceiling plane
+ */
+void dfMesh::addPlane(float width, dfBitmapImage* image)
+{
+	m_vertices.resize(6);
+	m_uvs.resize(6);
+	m_textureID.resize(6);
+
+	// use axis aligned texture UV, on a 8x8 grid
+	// ratio of texture pixel vs world position = 180 pixels for 24 clicks = 7.5x1
+	float xpixel = 0;
+	float ypixel = 0;
+	if (image != nullptr) {
+		xpixel = (float)image->m_width;
+		ypixel = (float)image->m_height;
+	}
+	// warning, triangles are looking downward
+	int t = 0, t1;
+
+	for (unsigned int i = 0; i < 6; i++) {
+		// get local texture offset on the floor
+		// TODO: current supposion : offset x 1 => 1 pixel from the begining on XXX width pixel texture
+		switch (i) {
+		case 0:	t = -1; t1 = -1; break;
+		case 1:	t = 1; t1 = -1;  break;
+		case 2:	t = -1; t1 = 1; break;
+		case 3:	t = -1; t1 = 1;  break;
+		case 4:	t = 1; t1 = -1;  break;
+		case 5:	t = 1; t1 = 1;  break;
+		}
+
+		m_vertices[i].x = t*width / 10.0f;
+		m_vertices[i].y = 0;
+		m_vertices[i].z = t1*width / 10.0f;
+
+		float xoffset = (m_vertices[i].x * 8.0f) / xpixel;
+		float yoffset = (m_vertices[i].z * 8.0f) / ypixel;
+
+		m_uvs[i] = glm::vec2(xoffset, yoffset);
+
+		m_textureID[i] = (float)(image->m_textureID);
 	}
 }
 

@@ -472,8 +472,6 @@ void dfLogicElevator::dispatchMessage(dfMessage* message)
 	}
 }
 
-
-
 /**
  * Return stop number #
  */
