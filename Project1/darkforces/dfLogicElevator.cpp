@@ -415,7 +415,6 @@ void dfLogicElevator::dispatchMessage(dfMessage* message)
 			m_status = DF_ELEVATOR_MOVE;
 			m_tick = 0;
 			// no need for animation, there is already one on the message queue
-			//g_MessageBus.pushForNextFrame(&m_msg_animate);
 		}
 		else {
 			// for speed = 0, move instantly to the next stop
@@ -427,6 +426,12 @@ void dfLogicElevator::dispatchMessage(dfMessage* message)
 		break;
 
 	case DF_MESSAGE_GOTO_STOP:
+		if (m_type == DF_ELEVATOR_MORPH_SPIN1 && m_status != DF_ELEVATOR_HOLD) {
+			// MORPH_SPIN animation cannot be broken
+			return;
+		}
+
+
 		if (m_currentStop == message->m_value) {
 			return;	// nothing to do, we're at the right floor
 		}
