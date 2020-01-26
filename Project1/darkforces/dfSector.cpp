@@ -702,16 +702,18 @@ bool dfSector::checkCollision(float step, glm::vec3& position, float radius, glm
 		// do the segments intersect
 		if (CircLine(A, B, C, radius, intersection)) {
 			// is the height sufficients
-			float wallHeight;
+			float wallHeight, verticalSpace;
 			if (wall->m_adjoint < 0) {
 				// full wall
 				wallHeight = m_ceilingAltitude - m_floorAltitude;
+				verticalSpace = m_ceilingAltitude - m_floorAltitude;
 			}
 			else {
 				// portal, check with the target
 				wallHeight = wall->m_pAdjoint->m_floorAltitude - m_floorAltitude;
+				verticalSpace = wall->m_pAdjoint->m_ceilingAltitude - m_floorAltitude;
 			}
-			if (wallHeight > 0 && wallHeight > step) {
+			if (wallHeight > step || verticalSpace < 2*step) {
 				// there is a upgoing wall and it is higher than waht the player can step
 				collision.x = intersection.x;
 				collision.y = intersection.y;

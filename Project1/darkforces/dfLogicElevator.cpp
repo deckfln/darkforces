@@ -359,6 +359,20 @@ void dfLogicElevator::moveTo(dfLogicStop *stop)
 {
 	float z = stop->z_position(m_type);
 	moveTo(z);
+
+	switch (m_type) {
+	case DF_ELEVATOR_BASIC:
+		break;
+	case DF_ELEVATOR_INV:
+		m_pSector->m_ceilingAltitude = z;
+		break;
+	case DF_ELEVATOR_MOVE_FLOOR:
+		break;
+	case DF_ELEVATOR_MOVE_CEILING:
+		break;
+	case DF_ELEVATOR_MORPH_SPIN1:
+		break;
+	}
 }
 
 /**
