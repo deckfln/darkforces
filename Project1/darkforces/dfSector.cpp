@@ -572,6 +572,99 @@ void dfSector::removeHollowWalls(void)
 	m_displayPolygons = 1;
 }
 
+/**
+ * compute the intersection of 2 segments AB et CD
+ * https://www.developpez.net/forums/d369370/applications/developpement-2d-3d-jeux/algo-intersection-2-segments/
+ */
+static bool segment2segment(glm::vec2& A, glm::vec2& B, glm::vec2& C, glm::vec2& D, glm::vec2& result)
+{
+	float Ax = A.x;
+	float Ay = A.y;
+	float Bx = B.x;
+	float By = B.y;
+	float Cx = C.x;
+	float Cy = C.y;
+	float Dx = D.x;
+	float Dy = D.y;
+
+	float Sx;
+	float Sy;
+
+	if (Ax == Bx)
+	{
+		if (Cx == Dx) return false;
+		else
+		{
+			float pCD = (Cy - Dy) / (Cx - Dx);
+			Sx = Ax;
+			Sy = pCD * (Ax - Cx) + Cy;
+		}
+	}
+	else
+	{
+		if (Cx == Dx)
+		{
+			float pAB = (Ay - By) / (Ax - Bx);
+			Sx = Cx;
+			Sy = pAB * (Cx - Ax) + Ay;
+		}
+		else
+		{
+			float pCD = (Cy - Dy) / (Cx - Dx);
+			float pAB = (Ay - By) / (Ax - Bx);
+			float oCD = Cy - pCD * Cx;
+			float oAB = Ay - pAB * Ax;
+			Sx = (oAB - oCD) / (pCD - pAB);
+			Sy = pCD * Sx + oCD;
+		}
+	}
+	if ((Sx < Ax && Sx < Bx) | (Sx > Ax&& Sx > Bx) | (Sx < Cx && Sx < Dx) | (Sx > Cx&& Sx > Dx)
+		| (Sy < Ay && Sy < By) | (Sy > Ay&& Sy > By) | (Sy < Cy && Sy < Dy) | (Sy > Cy&& Sy > Dy)) return false;
+
+	result.x = Sx;
+	result.y = Sy;
+	return true; 
+}
+/**
+ * Test walls to detect a collision
+ */
+bool dfSector::checkCollision(float step, glm::vec3& position, glm::vec3& direction, glm::vec3& collision)
+{
+	glm::vec2 C = position;
+	glm::vec2 D = position + direction;
+	glm::vec2 A, B;
+	glm::vec2 intersection;
+
+	for (auto wall : m_walls) {
+		A = m_vertices[wall->m_left];
+		B = m_vertices[wall->m_right];
+
+		// do the segments intersect
+		if (segment2segment(A, B, C, D, intersection)) {
+			// is the height sufficients
+			float wallHeight;
+			if (wall->m_adjoint < 0) {
+				// full wall
+				wallHeight = m_ceilingAltitude - m_floorAltitude;
+			}
+			else {
+				// portal, check with the target
+				wallHeight = wall->m_pAdjoint->m_floorAltitude - m_floorAltitude;
+			}
+			if (wallHeight > 0 && wallHeight > step) {
+				// there is a upgoing wall and it is higher than waht the player can step
+				collision.x = intersection.x;
+				collision.y = intersection.y;
+				collision.z = m_floorAltitude;
+				return true;	// Yep collision
+			}
+		}
+	}
+
+	// no collision
+	return false;
+}
+
 dfSector::~dfSector()
 {
 	for (auto wall: m_walls) {

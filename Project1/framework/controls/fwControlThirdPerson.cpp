@@ -50,11 +50,21 @@ void fwControlThirdPerson::_mouseMove(float xdir, float ydir)
 void fwControlThirdPerson::checkKeys(time_t delta)
 {
 	if (m_currentKeys[GLFW_KEY_UP]) {
-		m_position += m_direction * (m_speed * delta);
+		glm::vec3 direction = m_direction * (m_speed * delta);
+		glm::vec3 intersection;
+
+		if (!m_collision->wall(m_position, direction, intersection)) {
+			m_position += direction;
+		}
 		updateCamera();
 	}
 	if (m_currentKeys[GLFW_KEY_DOWN]) {
-		m_position -= m_direction * (m_speed * delta);
+		glm::vec3 direction = -m_direction * (m_speed * delta);
+		glm::vec3 intersection;
+
+		if (!m_collision->wall(m_position, direction, intersection)) {
+			m_position += direction;
+		}
 		updateCamera();
 	}
 	if (m_currentKeys[GLFW_KEY_LEFT]) {

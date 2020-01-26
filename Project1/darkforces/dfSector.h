@@ -88,7 +88,6 @@ public:
 
 	// local data in space world
 	std::vector <dfWall*> m_walls;		// modified walls
-	std::vector <dfWall*> m_origWalls;	// original walls as read from the LEV file (in cache the m_walls was modified)
 	std::vector <glm::vec2> m_vertices;
 
 	std::list <int> m_portals;	// sectorID of the portals
@@ -128,6 +127,7 @@ public:
 
 	void event(int event_mask);
 	void removeHollowWalls(void);
+	bool checkCollision(float step, glm::vec3& position, glm::vec3& direction, glm::vec3& collision);
 
 	~dfSector();
 };
