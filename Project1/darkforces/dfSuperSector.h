@@ -56,7 +56,8 @@ class dfSuperSector {
        
     std::vector <glm::vec3> m_vertices;		// level vertices
     std::vector <glm::vec2> m_uvs;			// UVs inside the source texture
-    std::vector <float> m_textureID;			// TextureID inside the megatexture
+    std::vector <float> m_textureID;		// TextureID inside the megatexture
+    std::vector <float> m_ambientLight;		// % of ambient light
     std::map <int, glm::ivec3> m_sectorIndex;   // start of the sector vertices in the vertices buffer : x = start of walls, y = start of floors, z = #vertices on the floor. Ceiling vertices = y + z
 
     fwGeometry* m_geometry = nullptr;
@@ -72,7 +73,7 @@ class dfSuperSector {
     void buildFloor(bool update, dfSector* sector);
     void buildSigns(dfSector* sector, std::vector<dfSector*>& sectors);
 
-    void updateRectangle(int p, float x, float y, float z, float x1, float y1, float z1, float xoffset, float yoffset, float width, float height, int textureID);
+    void updateRectangle(int p, float x, float y, float z, float x1, float y1, float z1, float xoffset, float yoffset, float width, float height, int textureID, float ambient);
     int addRectangle(int start, dfSector* sector, dfWall* wall, float z, float z1, int texture);
     void addSign(dfSector* sector, dfWall* wall, float z, float z1, int texture);
 

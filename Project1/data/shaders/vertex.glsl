@@ -6,6 +6,7 @@ layout (location = 1) in vec3 aColor;
 layout (location = 2) in vec2 aTexCoord;
 layout (location = 3) in vec3 aNormal;
 layout (location = 6) in float aTextureID;
+layout (location = 7) in float aAmbient;
 
 #ifdef INSTANCED
 layout (location = 4) in mat4 model;
@@ -18,6 +19,7 @@ out vec2 TexCoord;
 out vec3 normal;
 out vec3 world;
 flat out uint textureID;	// index start in megatexture
+flat out float ambient;
 
 #ifdef NORMALMAP
 	layout (location = 5) in vec3 tangent;
@@ -41,6 +43,7 @@ void main()
     normal = mat3(transpose(inverse(model))) * aNormal;  
     TexCoord = aTexCoord;
 	textureID = uint(aTextureID);
+	ambient = aAmbient;
 
 #ifdef NORMALMAP
 	computeTBN(mat3(transpose(inverse(model))), aNormal, tangent);

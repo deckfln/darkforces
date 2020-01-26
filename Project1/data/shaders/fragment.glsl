@@ -10,6 +10,7 @@ in vec2 TexCoord;
 in vec3 normal;
 in vec3 world;
 flat in uint textureID;	// index start in megatexture
+flat in float ambient;
 
 #define DEFINES
 
@@ -42,7 +43,7 @@ void main()
 	color = material.color;
 #endif
 
-    gFragColor = color.rgb;
+    gFragColor = color.rgb * ambient;
 	gWorld = world;
 	gNormal = vec3(0);
 	gMaterial = vec3(0);

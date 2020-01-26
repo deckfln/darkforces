@@ -169,7 +169,7 @@ dfSector* dfSuperSector::findSector(glm::vec3& position)
 /**
  * Update the vertices of a rectangle
  */
-void dfSuperSector::updateRectangle(int p, float x, float y, float z, float x1, float y1, float z1, float xoffset, float yoffset, float width, float height, int textureID)
+void dfSuperSector::updateRectangle(int p, float x, float y, float z, float x1, float y1, float z1, float xoffset, float yoffset, float width, float height, int textureID, float ambient)
 {
 	// TODO move conversion from level space to gl space in a dedicated function
 	// first triangle
@@ -178,18 +178,21 @@ void dfSuperSector::updateRectangle(int p, float x, float y, float z, float x1, 
 	m_vertices[p].y = z / 10;
 	m_uvs[p] = glm::vec2(xoffset, yoffset);
 	m_textureID[p] = (float)textureID;
+	m_ambientLight[p] = ambient;
 
 	m_vertices[p + 1].x = x1 / 10;
 	m_vertices[p + 1].z = y1 / 10;
 	m_vertices[p + 1].y = z / 10;
 	m_uvs[p + 1] = glm::vec2(width + xoffset, yoffset);
 	m_textureID[p + 1] = (float)textureID;
+	m_ambientLight[p + 1] = ambient;
 
 	m_vertices[p + 2].x = x1 / 10;
 	m_vertices[p + 2].z = y1 / 10;
 	m_vertices[p + 2].y = z1 / 10;
 	m_uvs[p + 2] = glm::vec2(width + xoffset, height + yoffset);
 	m_textureID[p + 2] = (float)textureID;
+	m_ambientLight[p + 2] = ambient;
 
 	// second triangle
 	m_vertices[p + 3].x = x / 10;
@@ -197,18 +200,21 @@ void dfSuperSector::updateRectangle(int p, float x, float y, float z, float x1, 
 	m_vertices[p + 3].y = z / 10;
 	m_uvs[p + 3] = glm::vec2(xoffset, yoffset);
 	m_textureID[p + 3] = (float)textureID;
+	m_ambientLight[p + 3] = ambient;
 
 	m_vertices[p + 4].x = x1 / 10;
 	m_vertices[p + 4].z = y1 / 10;
 	m_vertices[p + 4].y = z1 / 10;
 	m_uvs[p + 4] = glm::vec2(width + xoffset, height + yoffset);
 	m_textureID[p + 4] = (float)textureID;
+	m_ambientLight[p + 4] = ambient;
 
 	m_vertices[p + 5].x = x / 10;
 	m_vertices[p + 5].z = y / 10;
 	m_vertices[p + 5].y = z1 / 10;
 	m_uvs[p + 5] = glm::vec2(xoffset, height + yoffset);
 	m_textureID[p + 5] = (float)textureID;
+	m_ambientLight[p + 5] = ambient;
 }
 
 /***
@@ -226,6 +232,7 @@ int dfSuperSector::addRectangle(int start, dfSector* sector, dfWall* wall, float
 		m_vertices.resize(p + 6);
 		m_uvs.resize(p + 6);
 		m_textureID.resize(p + 6);
+		m_ambientLight.resize(p + 6);
 	}
 
 	float x = sector->m_vertices[wall->m_left].x,
@@ -252,7 +259,9 @@ int dfSuperSector::addRectangle(int start, dfSector* sector, dfWall* wall, float
 	float xoffset = (wall->m_tex[texture].y * 8.0f) / xpixel;
 	float yoffset = (wall->m_tex[texture].z * 8.0f) / ypixel;
 
-	updateRectangle(p, x, y, z, x1, y1, z1, xoffset, yoffset, width, height, image->m_textureID);
+	// light value (0->31 => 0.0=>1.0)
+	float ambient = sector->m_ambient / 32.0f;
+	updateRectangle(p, x, y, z, x1, y1, z1, xoffset, yoffset, width, height, image->m_textureID, ambient);
 
 	if (start >= 0) {
 		return 6;	// we updated the rectangle, move to the next rectangle
@@ -274,6 +283,7 @@ void dfSuperSector::addRectangle(dfSector *sector, dfWall* wall, float z, float 
 	m_vertices.resize(p + 6);
 	m_uvs.resize(p + 6);
 	m_textureID.resize(p + 6);
+	m_ambientLight.resize(p + 6);
 
 	float x = sector->m_vertices[wall->m_left].x,
 		y = sector->m_vertices[wall->m_left].y,
@@ -299,7 +309,9 @@ void dfSuperSector::addRectangle(dfSector *sector, dfWall* wall, float z, float 
 	float xoffset = (texture.y * 8.0f) / xpixel;
 	float yoffset = (texture.z * 8.0f) / ypixel;
 
-	updateRectangle(p, x, y, z, x1, y1, z1, xoffset, yoffset, width, height, image->m_textureID);
+	// light value (0->31 => 0=> 255)
+	float ambient = sector->m_ambient / 32.0f;
+	updateRectangle(p, x, y, z, x1, y1, z1, xoffset, yoffset, width, height, image->m_textureID, ambient);
 }
 
 /***
@@ -355,6 +367,7 @@ void dfSuperSector::addSign(dfSector* sector, dfWall* wall, float z, float z1, i
 	m_vertices.resize(p + 6);
 	m_uvs.resize(p + 6);
 	m_textureID.resize(p + 6);
+	m_ambientLight.resize(p + 6);
 
 	// record the sign on the wall
 	std::string m_name = sector->m_name + "(" + std::to_string(wall->m_id) + ")";
@@ -365,7 +378,10 @@ void dfSuperSector::addSign(dfSector* sector, dfWall* wall, float z, float z1, i
 		trigger->sign(sign);
 	}
 
-	updateRectangle(p, sign_p.x, sign_p.y, sign_p.z, sign_p1.x, sign_p1.y, sign_p1.z, 0, 0, 1, 1, image->m_textureID);
+	// light value (0->31 => 0=> 255)
+	float ambient = sector->m_ambient / 32.0f;
+
+	updateRectangle(p, sign_p.x, sign_p.y, sign_p.z, sign_p1.x, sign_p1.y, sign_p1.z, 0, 0, 1, 1, image->m_textureID, ambient);
 }
 
 /**
@@ -509,6 +525,9 @@ void dfSuperSector::buildFloor(bool update, dfSector* sector)
 		}
 	}
 
+	// light value (0->31 => 0=> 255)
+	float ambient = sector->m_ambient / 32.0f;
+
 	// Run tessellation
 	// Returns array of indices that refer to the vertices of the input polygon.
 	// e.g: the index 6 would refer to {25, 75} in this example.
@@ -523,6 +542,7 @@ void dfSuperSector::buildFloor(bool update, dfSector* sector)
 	m_vertices.resize(p + cvertices);
 	m_uvs.resize(p + cvertices);
 	m_textureID.resize(p + cvertices);
+	m_ambientLight.resize(p + cvertices);
 
 	// use axis aligned texture UV, on a 8x8 grid
 	// ratio of texture pixel vs world position = 180 pixels for 24 clicks = 7.5x1
@@ -558,6 +578,7 @@ void dfSuperSector::buildFloor(bool update, dfSector* sector)
 		m_uvs[p + j] = glm::vec2(xoffset, yoffset);
 
 		m_textureID[p + j] = (float)image->m_textureID;
+		m_ambientLight[p + j] = ambient;
 
 		p++;
 		currentVertice = (currentVertice + 1) % 3;
@@ -569,6 +590,7 @@ void dfSuperSector::buildFloor(bool update, dfSector* sector)
 		m_vertices.resize(p + cvertices);
 		m_uvs.resize(p + cvertices);
 		m_textureID.resize(p + cvertices);
+		m_ambientLight.resize(p + cvertices);
 
 		// use axis aligned texture UV, on a 8x8 grid
 		// ratio of texture pixel vs world position = 180 pixels for 24 clicks = 7.5x1
@@ -596,6 +618,7 @@ void dfSuperSector::buildFloor(bool update, dfSector* sector)
 			m_uvs[p] = glm::vec2(xoffset, yoffset);
 
 			m_textureID[p] = (float)image->m_textureID;
+			m_ambientLight[p] = ambient;
 
 			p++;
 		}
@@ -624,6 +647,7 @@ void dfSuperSector::buildGeometry(std::vector<dfSector*>& sectors, fwMaterialBas
 	m_geometry->addVertices("aPos", &m_vertices[0], 3, size * sizeof(glm::vec3), sizeof(float), false);
 	m_geometry->addAttribute("aTexCoord", GL_ARRAY_BUFFER, &m_uvs[0], 2, size * sizeof(glm::vec2), sizeof(float), false);
 	m_geometry->addAttribute("aTextureID", GL_ARRAY_BUFFER, &m_textureID[0], 1, size * sizeof(float), sizeof(float), false);
+	m_geometry->addAttribute("aAmbient", GL_ARRAY_BUFFER, &m_ambientLight[0], 1, size * sizeof(float), sizeof(float), false);
 
 	m_mesh = new fwMesh(m_geometry, material);
 	// TODO : fix the camera frustrum test to remove that line

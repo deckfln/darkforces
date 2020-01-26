@@ -469,6 +469,8 @@ void dfSector::buildElevator(dfMesh *mesh, float bottom, float top, int what, bo
 		return;
 	}
 
+	float ambient = m_ambient / 32.0f;
+
 	std::vector<dfBitmap *>& textures = m_super->textures();
 
 	// create the walls
@@ -481,6 +483,7 @@ void dfSector::buildElevator(dfMesh *mesh, float bottom, float top, int what, bo
 				top,
 				wall->m_tex[what],
 				textures,
+				ambient,
 				true
 			);
 			// PASS
@@ -495,6 +498,7 @@ void dfSector::buildElevator(dfMesh *mesh, float bottom, float top, int what, bo
 				top,
 				mirror->m_tex[what],
 				textures,
+				ambient,
 				false
 			);
 		}
@@ -511,8 +515,8 @@ void dfSector::buildElevator(dfMesh *mesh, float bottom, float top, int what, bo
 			}
 		}
 
-		mesh->addFloor(vertices, polygons(displayPolygon), bottom, m_ceilingTexture, textures, clockwise);
-		mesh->addFloor(vertices, polygons(displayPolygon), top, m_floorTexture, textures, clockwise);
+		mesh->addFloor(vertices, polygons(displayPolygon), bottom, m_ceilingTexture, textures, ambient, clockwise);
+		mesh->addFloor(vertices, polygons(displayPolygon), top, m_floorTexture, textures, ambient, clockwise);
 	}
 }
 
@@ -535,7 +539,8 @@ void dfSector::buildFloor(dfMesh* mesh)
 		}
 	}
 
-	mesh->addFloor(vertices, m_polygons_vertices, 0, m_floorTexture, textures, false);
+	float ambient = m_ambient / 32.0f;
+	mesh->addFloor(vertices, m_polygons_vertices, 0, m_floorTexture, textures, ambient, false);
 }
 
 /**
