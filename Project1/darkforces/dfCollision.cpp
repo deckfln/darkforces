@@ -1,6 +1,6 @@
 #include "dfCollision.h"
 
-dfCollision::dfCollision(void)
+dfCollision::dfCollision()
 {
 }
 
@@ -25,7 +25,7 @@ float dfCollision::ground(glm::vec3& position)
 /**
  * test if there is a wall in front of the player
  */
-bool dfCollision::wall(glm::vec3& position, glm::vec3& direction, glm::vec3& intersection)
+bool dfCollision::checkEnvironement(glm::vec3& position, glm::vec3& target, float radius, glm::vec3& intersection)
 {
 	dfSector* currentSector = m_level->findSector(position);
 	if (!currentSector) {
@@ -33,11 +33,10 @@ bool dfCollision::wall(glm::vec3& position, glm::vec3& direction, glm::vec3& int
 	}
 
 	// convert GL space to DF space
-	glm::vec3 dfPosition(position.x * 10.0f, position.z * 10.0f, position.y * 10.0f);
-	glm::vec3 dfDirection(direction.x * 40.0f, direction.z * 40.0f, direction.y * 40.0f);
+	glm::vec3 dfPosition(target.x * 10.0f, target.z * 10.0f, target.y * 10.0f);
 	glm::vec3 dfNew;
 
-	if (currentSector->checkCollision(3, dfPosition, dfDirection, dfNew)) {
+	if (currentSector->checkCollision(3, dfPosition, radius * 10.0f, dfNew)) {
 		intersection.x = dfNew.x / 10.0f;
 		intersection.y = dfNew.z / 10.0f;
 		intersection.z = dfNew.y / 10.0f;

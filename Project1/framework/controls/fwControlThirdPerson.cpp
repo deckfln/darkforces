@@ -2,10 +2,11 @@
 
 #include <GLFW/glfw3.h>
 
-fwControlThirdPerson::fwControlThirdPerson(fwCamera* _camera, glm::vec3 position, glm::vec3 direction) :
+fwControlThirdPerson::fwControlThirdPerson(fwCamera* _camera, glm::vec3 position, glm::vec3 direction, float radius) :
 	fwControl(_camera),
 	m_position(position),
-	m_direction(direction)
+	m_direction(direction),
+	m_radius(radius)
 {
 	updateCamera();
 }
@@ -50,22 +51,10 @@ void fwControlThirdPerson::_mouseMove(float xdir, float ydir)
 void fwControlThirdPerson::checkKeys(time_t delta)
 {
 	if (m_currentKeys[GLFW_KEY_UP]) {
-		glm::vec3 direction = m_direction * (m_speed * delta);
-		glm::vec3 intersection;
-
-		if (!m_collision->wall(m_position, direction, intersection)) {
-			m_position += direction;
-		}
-		updateCamera();
+		checkCollision(1, delta);
 	}
 	if (m_currentKeys[GLFW_KEY_DOWN]) {
-		glm::vec3 direction = -m_direction * (m_speed * delta);
-		glm::vec3 intersection;
-
-		if (!m_collision->wall(m_position, direction, intersection)) {
-			m_position += direction;
-		}
-		updateCamera();
+		checkCollision(-1, delta);
 	}
 	if (m_currentKeys[GLFW_KEY_LEFT]) {
 		m_phi -= 0.003 * delta;
@@ -75,6 +64,30 @@ void fwControlThirdPerson::checkKeys(time_t delta)
 		m_phi += 0.003 * delta;
 		updateDirection();
 	}
+}
+
+/**
+ * Move the player in the given sirection if there is no collision
+ */
+void fwControlThirdPerson::checkCollision(float sign, time_t delta)
+{
+	glm::vec3 direction = m_direction * (m_speed * delta) * sign;
+	glm::vec3 target = m_position + direction;
+	glm::vec3 intersection;
+
+	if (!m_collision->checkEnvironement(m_position, target, m_radius, intersection)) {
+		m_position += direction;
+	}
+	else {
+		// collision, check if the collision point is 'behind' the direction vector
+		glm::vec3 AC = intersection - m_position;
+		float d = glm::dot(direction, AC);
+		if (d <= 0) {
+			// the collision point is on the other side of the direction
+			m_position += direction;
+		}
+	}
+	updateCamera();
 }
 
 void fwControlThirdPerson::updateDirection(void)

@@ -19,14 +19,16 @@ class fwControlThirdPerson : public fwControl
 	double m_theta_start = 0;
 	double m_phi_start = 0;
 	float m_speed = 0.005f;
+	float m_radius = 1;			// radius of the player bounding Sphere
 
 	void _mouseMove(float xdir, float ydir);
 	void _mouseButton(int action);
 	void updateDirection(void);
 	void checkKeys(time_t delta);
+	void checkCollision(float sign, time_t delta);
 
 public:
-	fwControlThirdPerson(fwCamera *, glm::vec3 position, glm::vec3 direction);
+	fwControlThirdPerson(fwCamera *, glm::vec3 position, glm::vec3 direction, float radius);
 	void update(time_t delta);
 	void keyEvent(int key, int scancode, int action);
 	void updateCamera(void);
