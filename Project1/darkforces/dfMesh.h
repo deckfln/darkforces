@@ -4,8 +4,11 @@
 #include <vector>
 #include <array>
 
+#include "../framework/fwAABBox.h"
 #include "../framework/fwMesh.h"
 #include "dfBitmap.h"
+
+const float dfOpengl2space = 10.0f;
 
 // The index type. Defaults to uint32_t, but you can also pass uint16_t if you know that your
 // data won't have more than 65536 vertices.
@@ -22,11 +25,14 @@ class dfMesh {
 	std::vector <float> m_textureID;		// TextureID inside the megatexture
 	std::vector <float> m_ambient;			// light intensity of the object
 	glm::vec3 m_position;					// position of the mesh, by default (0,0,0)
+	fwAABBox m_boundingBox;
 
 	fwMaterial* m_material = nullptr;
 	fwGeometry* m_geometry = nullptr;
 	fwMesh* m_mesh = nullptr;
 
+	int resize(int i);
+	void setVertice(int p, float x, float y, float z, float xoffset, float yoffset, int textureID, float ambient);
 	void updateRectangle(int p, float x, float y, float z, float x1, float y1, float z1, float xoffset, float yoffset, float width, float height, int textureID, float ambient);
 	void updateRectangleAntiClockwise(int p, float x, float y, float z, float x1, float y1, float z1, float xoffset, float yoffset, float width, float height, int textureID, float ambient);
 

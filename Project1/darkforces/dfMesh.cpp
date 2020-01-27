@@ -19,54 +19,46 @@ void dfMesh::buildGeometry(dfSector* source, float bottom, float top)
 }
 
 /**
+ * Resize the buffers
+ */
+int dfMesh::resize(int i)
+{
+	int p = m_vertices.size();
+	m_vertices.resize(p + i);
+	m_uvs.resize(p + i);
+	m_textureID.resize(p + i);
+	m_ambient.resize(p + i);
+
+	return p;
+}
+
+/**
+ * Setup a vertice
+ */
+void dfMesh::setVertice(int p, float x, float y, float z, float xoffset, float yoffset, int textureID, float ambient)
+{
+	m_vertices[p].x = x / dfOpengl2space;
+	m_vertices[p].z = y / dfOpengl2space;
+	m_vertices[p].y = z / dfOpengl2space;
+	m_uvs[p] = glm::vec2(xoffset, yoffset);
+	m_textureID[p] = (float)textureID;
+	m_ambient[p] = ambient;
+}
+
+/**
  * Update the vertices of a rectangle
  */
 void dfMesh::updateRectangle(int p, float x, float y, float z, float x1, float y1, float z1, float xoffset, float yoffset, float width, float height, int textureID, float ambient)
 {
-	// TODO move conversion from level space to gl space in a dedicated function
 	// first triangle
-	m_vertices[p].x = x / 10;
-	m_vertices[p].z = y / 10;
-	m_vertices[p].y = z / 10;
-	m_uvs[p] = glm::vec2(xoffset, yoffset);
-	m_textureID[p] = (float)textureID;
-	m_ambient[p] = ambient;
-
-	m_vertices[p + 1].x = x1 / 10;
-	m_vertices[p + 1].z = y1 / 10;
-	m_vertices[p + 1].y = z / 10;
-	m_uvs[p + 1] = glm::vec2(width + xoffset, yoffset);
-	m_textureID[p + 1] = (float)textureID;
-	m_ambient[p + 1] = ambient;
-
-	m_vertices[p + 2].x = x1 / 10;
-	m_vertices[p + 2].z = y1 / 10;
-	m_vertices[p + 2].y = z1 / 10;
-	m_uvs[p + 2] = glm::vec2(width + xoffset, height + yoffset);
-	m_textureID[p + 2] = (float)textureID;
-	m_ambient[p + 2] = ambient;
+	setVertice(p, x, y, z, xoffset, yoffset, textureID, ambient);
+	setVertice(p + 1, x1, y1, z, width + xoffset, yoffset, textureID, ambient);
+	setVertice(p + 2, x1, y1, z1, width + xoffset, height + yoffset, textureID, ambient);
 
 	// second triangle
-	m_vertices[p + 3].x = x / 10;
-	m_vertices[p + 3].z = y / 10;
-	m_vertices[p + 3].y = z / 10;
-	m_uvs[p + 3] = glm::vec2(xoffset, yoffset);
-	m_textureID[p + 3] = (float)textureID;
-	m_ambient[p + 3] = ambient;
-
-	m_vertices[p + 4].x = x1 / 10;
-	m_vertices[p + 4].z = y1 / 10;
-	m_vertices[p + 4].y = z1 / 10;
-	m_uvs[p + 4] = glm::vec2(width + xoffset, height + yoffset);
-	m_textureID[p + 4] = (float)textureID;
-	m_ambient[p + 4] = ambient;
-
-	m_vertices[p + 5].x = x / 10;
-	m_vertices[p + 5].z = y / 10;
-	m_vertices[p + 5].y = z1 / 10;
-	m_uvs[p + 5] = glm::vec2(xoffset, height + yoffset);
-	m_textureID[p + 5] = (float)textureID;
-	m_ambient[p + 5] = ambient;
+	setVertice(p + 3, x, y, z, xoffset, yoffset, textureID, ambient);
+	setVertice(p + 4, x1, y1, z1, width + xoffset, height + yoffset, textureID, ambient);
+	setVertice(p + 5, x, y, z1, xoffset, height + yoffset, textureID, ambient);
 }
 
 /**
@@ -74,50 +66,15 @@ void dfMesh::updateRectangle(int p, float x, float y, float z, float x1, float y
  */
 void dfMesh::updateRectangleAntiClockwise(int p, float x, float y, float z, float x1, float y1, float z1, float xoffset, float yoffset, float width, float height, int textureID, float ambient)
 {
-	// TODO move conversion from level space to gl space in a dedicated function
 	// first triangle
-	m_vertices[p].x = x / 10;
-	m_vertices[p].z = y / 10;
-	m_vertices[p].y = z / 10;
-	m_uvs[p] = glm::vec2(xoffset, yoffset);
-	m_textureID[p] = (float)textureID;
-	m_ambient[p] = ambient;
-
-	m_vertices[p + 2].x = x1 / 10;
-	m_vertices[p + 2].z = y1 / 10;
-	m_vertices[p + 2].y = z / 10;
-	m_uvs[p + 2] = glm::vec2(width + xoffset, yoffset);
-	m_textureID[p + 2] = (float)textureID;
-	m_ambient[p + 2] = ambient;
-
-	m_vertices[p + 1].x = x1 / 10;
-	m_vertices[p + 1].z = y1 / 10;
-	m_vertices[p + 1].y = z1 / 10;
-	m_uvs[p + 1] = glm::vec2(width + xoffset, height + yoffset);
-	m_textureID[p + 1] = (float)textureID;
-	m_ambient[p + 1] = ambient;
+	setVertice(p, x, y, z, xoffset, yoffset, textureID, ambient);
+	setVertice(p + 2, x1, y1, z, width + xoffset, yoffset, textureID, ambient);
+	setVertice(p + 1, x1, y1, z1, width + xoffset, height + yoffset, textureID, ambient);
 
 	// second triangle
-	m_vertices[p + 3].x = x / 10;
-	m_vertices[p + 3].z = y / 10;
-	m_vertices[p + 3].y = z / 10;
-	m_uvs[p + 3] = glm::vec2(xoffset, yoffset);
-	m_textureID[p + 3] = (float)textureID;
-	m_ambient[p + 3] = ambient;
-
-	m_vertices[p + 5].x = x1 / 10;
-	m_vertices[p + 5].z = y1 / 10;
-	m_vertices[p + 5].y = z1 / 10;
-	m_uvs[p + 5] = glm::vec2(width + xoffset, height + yoffset);
-	m_textureID[p + 5] = (float)textureID;
-	m_ambient[p + 5] = ambient;
-
-	m_vertices[p + 4].x = x / 10;
-	m_vertices[p + 4].z = y / 10;
-	m_vertices[p + 4].y = z1 / 10;
-	m_uvs[p + 4] = glm::vec2(xoffset, height + yoffset);
-	m_textureID[p + 4] = (float)textureID;
-	m_ambient[p + 4] = ambient;
+	setVertice(p + 3, x, y, z, xoffset, yoffset, textureID, ambient);
+	setVertice(p + 5, x1, y1, z1, width + xoffset, height + yoffset, textureID, ambient);
+	setVertice(p + 4, x, y, z1, xoffset, height + yoffset, textureID, ambient);
 }
 
 /***
@@ -129,11 +86,7 @@ int dfMesh::addRectangle(int start, dfSector* sector, dfWall* wall, float z, flo
 
 	if (start == -1) {
 		// add a new rectangle
-		p = m_vertices.size();
-		m_vertices.resize(p + 6);
-		m_uvs.resize(p + 6);
-		m_textureID.resize(p + 6);
-		m_ambient.resize(p + 6);
+		p = resize(6);
 	}
 
 	float x = sector->m_vertices[wall->m_left].x,
@@ -176,11 +129,7 @@ int dfMesh::addRectangle(int start, dfSector* sector, dfWall* wall, float z, flo
 void dfMesh::addRectangle(dfSector* sector, dfWall* wall, float z, float z1, glm::vec3& texture, std::vector<dfBitmap*>& bitmaps, float ambient, bool clockwise)
 {
 	// add a new rectangle
-	int p = m_vertices.size();
-	m_vertices.resize(p + 6);
-	m_uvs.resize(p + 6);
-	m_textureID.resize(p + 6);
-	m_ambient.resize(p + 6);
+	int p = resize(6);
 
 	float x = sector->m_vertices[wall->m_left].x,
 		y = sector->m_vertices[wall->m_left].y,
@@ -231,12 +180,8 @@ void dfMesh::addFloor(std::vector<Point>& vertices, std::vector<std::vector<Poin
 	std::vector<N> indices = mapbox::earcut<N>(polygons);
 
 	// resize the opengl buffers
-	int p = m_vertices.size();
 	int cvertices = indices.size();	
-	m_vertices.resize(p + cvertices);
-	m_uvs.resize(p + cvertices);
-	m_textureID.resize(p + cvertices);
-	m_ambient.resize(p + cvertices);
+	int p = resize(cvertices);
 
 	// use axis aligned texture UV, on a 8x8 grid
 	// ratio of texture pixel vs world position = 180 pixels for 24 clicks = 7.5x1
@@ -265,20 +210,23 @@ void dfMesh::addFloor(std::vector<Point>& vertices, std::vector<std::vector<Poin
 			case 2: j = -1; break;
 			default: j = 0; break;
 			}
-			m_vertices[p + j].x = vertices[index][0] / 10.0f;
-			m_vertices[p + j].y = z / 10.0f;
-			m_vertices[p + j].z = vertices[index][1] / 10.0f;
-			m_uvs[p + j] = glm::vec2(xoffset, yoffset);
-			m_textureID[p + j] = (float)image->m_textureID;
-			m_ambient[p + j] = ambient;
+
+			setVertice(p + j, 
+				vertices[index][0], 
+				vertices[index][1],
+				z, 
+				xoffset, yoffset, 
+				image->m_textureID, 
+				ambient);
 		}
 		else {
-			m_vertices[p].x = vertices[index][0] / 10.0f;
-			m_vertices[p].y = z / 10.0f;
-			m_vertices[p].z = vertices[index][1] / 10.0f;
-			m_uvs[p] = glm::vec2(xoffset, yoffset);
-			m_textureID[p] = (float)(image->m_textureID);
-			m_ambient[p] = ambient;
+			setVertice(p,
+				vertices[index][0],
+				vertices[index][1],
+				z,
+				xoffset, yoffset,
+				image->m_textureID,
+				ambient);
 		}
 
 		p++;
@@ -291,9 +239,7 @@ void dfMesh::addFloor(std::vector<Point>& vertices, std::vector<std::vector<Poin
  */
 void dfMesh::addPlane(float width, dfBitmapImage* image)
 {
-	m_vertices.resize(6);
-	m_uvs.resize(6);
-	m_textureID.resize(6);
+	int p = resize(6);
 
 	// use axis aligned texture UV, on a 8x8 grid
 	// ratio of texture pixel vs world position = 180 pixels for 24 clicks = 7.5x1
@@ -318,16 +264,16 @@ void dfMesh::addPlane(float width, dfBitmapImage* image)
 		case 5:	t = 1; t1 = 1;  break;
 		}
 
-		m_vertices[i].x = t*width / 10.0f;
-		m_vertices[i].y = 0;
-		m_vertices[i].z = t1*width / 10.0f;
-
 		float xoffset = (m_vertices[i].x * 8.0f) / xpixel;
 		float yoffset = (m_vertices[i].z * 8.0f) / ypixel;
 
-		m_uvs[i] = glm::vec2(xoffset, yoffset);
-
-		m_textureID[i] = (float)(image->m_textureID);
+		setVertice(i,
+			t * width,
+			t1 * width,
+			0,
+			xoffset, yoffset,
+			image->m_textureID,
+			1.0f);
 	}
 }
 
