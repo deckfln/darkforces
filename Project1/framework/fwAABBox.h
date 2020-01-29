@@ -1,6 +1,7 @@
 #pragma once
 
 #include <glm/vec3.hpp>
+#include "math/fwSphere.h"
 
 class fwAABBox
 {
@@ -11,10 +12,13 @@ public:
 
 	fwAABBox();
 	fwAABBox(float, float, float, float, float, float);
+	fwAABBox(fwSphere& sphere);
 	bool inside(glm::vec3& position);
 	bool intersect(fwAABBox& box);
 	void extend(fwAABBox& box);
+	void extend(glm::vec3& vertice);
 	float surface(void);
 	float volume(void);
+	void reset(void);
 	~fwAABBox();
 };

@@ -90,6 +90,7 @@ public:
 	dfSector* psector(void) { return m_pSector; };
 	void parent(dfLevel* parent) { m_parent = parent; };
 	void center(float x, float y) { m_center.x = x; m_center.y = y; };
+	dfLogicStop* stop(int i);
 
 	void bindSector(dfSector* pSector);
 	void addStop(dfLogicStop* stop);
@@ -99,6 +100,6 @@ public:
 	bool is(int type) { return m_type == type; };
 	void addSign(dfSign*);
 	void dispatchMessage(dfMessage* message);
-	dfLogicStop* stop(int i);
+	bool checkCollision(glm::vec3& position, float radius, glm::vec3& intersection);
 	~dfLogicElevator(void);
 };

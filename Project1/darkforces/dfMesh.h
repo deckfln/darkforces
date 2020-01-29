@@ -6,6 +6,8 @@
 
 #include "../framework/fwAABBox.h"
 #include "../framework/fwMesh.h"
+#include "../framework/math/fwSphere.h"
+
 #include "dfBitmap.h"
 
 const float dfOpengl2space = 10.0f;
@@ -41,16 +43,19 @@ public:
 
 	fwMesh* mesh(void) { return m_mesh; };
 
-	void buildGeometry(dfSector* source, float bottom, float top);
 	int addRectangle(int start, dfSector* sector, dfWall* wall, float z, float z1, int texture, std::vector<dfBitmap*>& textures, float ambient);
 	void addRectangle(dfSector* sector, dfWall* wall, float z, float z1, glm::vec3& texture, std::vector<dfBitmap*>& textures, float ambient, bool clockwise);
 	void addFloor(std::vector<Point>& vertices, std::vector<std::vector<Point>>& polygons, float z, glm::vec3& texture, std::vector<dfBitmap*>& textures, float ambient, bool clockwise);
 	void addPlane(float width, dfBitmapImage* image);
+	void buildGeometry(dfSector* source, float bottom, float top);
+	void rebuildAABB(void);
 	void moveVertices(glm::vec3& center);
 	void moveFloorTo(float z);
 	void moveCeilingTo(float z);
 	void rotateZ(float angle);
 	void move(glm::vec3 position);
+	bool collide(fwSphere& boundingSphere, glm::vec3& intersection);
+
 	fwMesh* buildMesh(void);
 	~dfMesh();
 };

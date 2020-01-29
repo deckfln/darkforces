@@ -19,6 +19,17 @@ void dfMesh::buildGeometry(dfSector* source, float bottom, float top)
 }
 
 /**
+ * if vertices have been touched, rebuild the AABB
+ */
+void dfMesh::rebuildAABB(void)
+{
+	m_boundingBox.reset();
+	for(auto &vertice: m_vertices) {
+		m_boundingBox.extend(vertice);
+	}
+}
+
+/**
  * Resize the buffers
  */
 int dfMesh::resize(int i)
@@ -43,6 +54,9 @@ void dfMesh::setVertice(int p, float x, float y, float z, float xoffset, float y
 	m_uvs[p] = glm::vec2(xoffset, yoffset);
 	m_textureID[p] = (float)textureID;
 	m_ambient[p] = ambient;
+
+	// extend the AABB
+	m_boundingBox.extend(m_vertices[p]);
 }
 
 /**
@@ -317,6 +331,40 @@ void dfMesh::move(glm::vec3 position)
 }
 
 /**
+ * Test collision againsta sphere
+ */
+bool dfMesh::collide(fwSphere& boundingSphere, glm::vec3& intersection)
+{
+	fwSphere bsTranformed;
+	bsTranformed.applyMatrix4From(m_mesh->inverseWorldMatrix(), &boundingSphere);			// apply mesh inverse transformation to the sphere
+	fwAABBox aabb(bsTranformed);	// convert to AABB for fast test
+
+	if (m_boundingBox.intersect(aabb)) {
+		glm::vec3 A, B, C, V;
+		float d, e;
+		glm::vec3 P = bsTranformed.center();
+		float r = bsTranformed.radius();
+
+		// now test with the sphere against each triangle
+		for (int i = 0; i < m_vertices.size(); i += 3) {
+			//http://realtimecollisiondetection.net/blog/?p=103
+			A = m_vertices[i] - P;
+			B = m_vertices[i + 1] - P;
+			C = m_vertices[i + 2] - P;
+			V = glm::cross(B - A, C - A);
+			d = glm::dot(A, V);
+			e = glm::dot(V, V);
+			if (d * d <= r* r* e) {
+				// simplification, pick the center of the triangle as intersection point
+				intersection = (m_vertices[i] + m_vertices[i + 1] + m_vertices[i + 2]) / 3.0f;
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
+/**
  * Move all vertices as offset of the center
  */
 void dfMesh::moveVertices(glm::vec3& center)
@@ -326,6 +374,8 @@ void dfMesh::moveVertices(glm::vec3& center)
 	for (auto &vertice : m_vertices) {
 		vertice -= m_position;
 	}
+
+	rebuildAABB();
 }
 
 /**

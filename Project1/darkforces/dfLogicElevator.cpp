@@ -359,20 +359,6 @@ void dfLogicElevator::moveTo(dfLogicStop *stop)
 {
 	float z = stop->z_position(m_type);
 	moveTo(z);
-
-	switch (m_type) {
-	case DF_ELEVATOR_BASIC:
-		break;
-	case DF_ELEVATOR_INV:
-		m_pSector->m_ceilingAltitude = z;
-		break;
-	case DF_ELEVATOR_MOVE_FLOOR:
-		break;
-	case DF_ELEVATOR_MOVE_CEILING:
-		break;
-	case DF_ELEVATOR_MORPH_SPIN1:
-		break;
-	}
 }
 
 /**
@@ -484,6 +470,22 @@ void dfLogicElevator::dispatchMessage(dfMessage* message)
 	default:
 		std::cerr << "dfLogicElevator::dispatchMessage message " << message->m_action << " not implemented" << std::endl;
 	}
+}
+
+/**
+ * pass the collision detecttion to the mesh
+ */
+bool dfLogicElevator::checkCollision(glm::vec3& position, float radius, glm::vec3& intersection)
+{
+	static fwSphere bs;
+
+	bs.set(position, radius);
+
+	if (m_mesh) {
+		return m_mesh->collide(bs, intersection);
+	}
+
+	return false;
 }
 
 /**

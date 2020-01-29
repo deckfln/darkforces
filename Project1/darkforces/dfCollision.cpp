@@ -27,19 +27,8 @@ float dfCollision::ground(glm::vec3& position)
  */
 bool dfCollision::checkEnvironement(glm::vec3& position, glm::vec3& target, float radius, glm::vec3& intersection)
 {
-	dfSector* currentSector = m_level->findSector(position);
-	if (!currentSector) {
-		return false;
-	}
-
-	// convert GL space to DF space
-	glm::vec3 dfPosition(target.x * 10.0f, target.z * 10.0f, target.y * 10.0f);
-	glm::vec3 dfNew;
-
-	if (currentSector->checkCollision(3, dfPosition, radius * 10.0f, dfNew)) {
-		intersection.x = dfNew.x / 10.0f;
-		intersection.y = dfNew.z / 10.0f;
-		intersection.z = dfNew.y / 10.0f;
+	bool intersect  = m_level->checkCollision(3, position, target, radius, intersection);
+	if (intersect) {
 		return true;
 	}
 

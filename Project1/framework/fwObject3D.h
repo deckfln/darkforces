@@ -17,15 +17,17 @@ protected:
 	std::string m_name;
 	int classID = 0;
 
-	glm::mat4 m_modelMatrix;	// model space matrix
-	glm::mat4 m_worldMatrix = glm::mat4(0);	// world space matrix (including children)
+	glm::mat4 m_modelMatrix;						// model space matrix
+	glm::mat4 m_worldMatrix = glm::mat4(0);			// world space matrix (including children)
+	glm::mat4 m_inverseWorldMatrix = glm::mat4(0);	// world space matrix (including children)
+
 
 	glm::vec3 m_Position = glm::vec3(0);
 	glm::vec3 m_Scale = glm::vec3(0);
 	glm::vec3 m_Rotation = glm::vec3(0);
 	glm::quat m_quaternion;
 
-	bool updated = true;	// if the matrix components have been update (or are new)
+	bool updated = true;							// if the matrix components have been update (or are new)
 
 	std::list <fwObject3D *> m_children;
 
@@ -61,6 +63,8 @@ public:
 	bool receiveShadow(bool s) { m_receiveShadow = s; return s; }
 
 	glm::mat4 &worldMatrix(void) { return m_worldMatrix; }
+	glm::mat4& inverseWorldMatrix(void) { return m_inverseWorldMatrix; }
+
 	fwObject3D &addChild(fwObject3D *);
 
 	float sqDistanceTo(fwObject3D *to);
