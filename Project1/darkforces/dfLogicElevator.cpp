@@ -187,6 +187,9 @@ dfMesh *dfLogicElevator::buildGeometry(fwMaterial* material)
 		if (m_mesh->buildMesh()) {
 			m_mesh->mesh()->set_name(m_pSector->m_name);
 			m_pSector->addObject(m_mesh);
+
+			// remove the SPIN1 walls vertices from the sector. otherwise they stay in the way of the collision engine (collision is managed by the dfMesh)
+			m_pSector->removeHollowWalls();
 		}
 		else {
 			// do not keep the trigger

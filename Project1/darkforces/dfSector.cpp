@@ -700,30 +700,35 @@ bool dfSector::checkCollision(float step, glm::vec3& position, float radius, glm
 	glm::vec2 A, B;
 	glm::vec2 intersection;
 
-	for (auto wall : m_walls) {
-		A = m_vertices[wall->m_left];
-		B = m_vertices[wall->m_right];
+	// Test polylines on the walls based on the setup (may ignore internals polylines (like for elevator SPIN1)
+	int dp = (m_displayPolygons == 0) ? m_polygons_walls.size() : m_displayPolygons;
 
-		// do the segments intersect
-		if (CircLine(A, B, C, radius, intersection)) {
-			// is the height sufficients
-			float wallHeight, verticalSpace;
-			if (wall->m_adjoint < 0) {
-				// full wall
-				wallHeight = m_ceilingAltitude - m_floorAltitude;
-				verticalSpace = m_ceilingAltitude - m_floorAltitude;
-			}
-			else {
-				// portal, check with the target
-				wallHeight = wall->m_pAdjoint->m_floorAltitude - m_floorAltitude;
-				verticalSpace = wall->m_pAdjoint->m_ceilingAltitude - m_floorAltitude;
-			}
-			if (wallHeight > step || verticalSpace < 2*step) {
-				// there is a upgoing wall and it is higher than waht the player can step
-				collision.x = intersection.x;
-				collision.y = intersection.y;
-				collision.z = m_floorAltitude;
-				return true;	// Yep collision
+	for (int i = 0; i < dp; i++) {
+		for (auto wall : m_polygons_walls[i]) {
+			A = m_vertices[wall->m_left];
+			B = m_vertices[wall->m_right];
+
+			// do the segments intersect
+			if (CircLine(A, B, C, radius, intersection)) {
+				// is the height sufficients
+				float wallHeight, verticalSpace;
+				if (wall->m_adjoint < 0) {
+					// full wall
+					wallHeight = m_ceilingAltitude - m_floorAltitude;
+					verticalSpace = m_ceilingAltitude - m_floorAltitude;
+				}
+				else {
+					// portal, check with the target
+					wallHeight = wall->m_pAdjoint->m_floorAltitude - m_floorAltitude;
+					verticalSpace = wall->m_pAdjoint->m_ceilingAltitude - m_floorAltitude;
+				}
+				if (wallHeight > step || verticalSpace < 2 * step) {
+					// there is a upgoing wall and it is higher than waht the player can step
+					collision.x = intersection.x;
+					collision.y = intersection.y;
+					collision.z = m_floorAltitude;
+					return true;	// Yep collision
+				}
 			}
 		}
 	}
