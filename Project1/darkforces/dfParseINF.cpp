@@ -153,6 +153,14 @@ void dfParseINF::parseSector(std::istringstream& infile, std::string& sector)
 				trigger->eventMask(std::stoi(tokens[1]));
 			}
 		}
+		else if (tokens[0] == "key:") {
+			if (elevator) {
+				elevator->keys(tokens[1]);
+			}
+			else if (trigger) {
+				std::cerr << "dfParseINF::parseSector kkey not implmented for  triggers" << std::endl;
+			}
+		}
 		else if (tokens[0] == "client:") {
 			if (trigger) {
 				trigger->client(tokens[1]);

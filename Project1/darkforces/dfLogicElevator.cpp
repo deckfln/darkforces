@@ -111,7 +111,7 @@ void dfLogicElevator::addStop(dfLogicStop* stop)
 /**
  * Create an Mesh for the elevator
  */
-fwMesh *dfLogicElevator::buildGeometry(fwMaterial* material)
+dfMesh *dfLogicElevator::buildGeometry(fwMaterial* material)
 {
 	if (!m_pSector) {
 		return nullptr;
@@ -139,7 +139,7 @@ fwMesh *dfLogicElevator::buildGeometry(fwMaterial* material)
 		}
 
 		if (m_mesh->buildMesh()) {
-			m_pSector->addObject(m_mesh->mesh());
+			m_pSector->addObject(m_mesh);
 		}
 		else {
 			// do not keep the trigger
@@ -164,7 +164,7 @@ fwMesh *dfLogicElevator::buildGeometry(fwMaterial* material)
 
 		if (m_mesh->buildMesh()) {
 			m_mesh->mesh()->set_name(m_pSector->m_name);
-			m_pSector->addObject(m_mesh->mesh());
+			m_pSector->addObject(m_mesh);
 		}
 		else {
 			// do not keep the trigger
@@ -186,7 +186,7 @@ fwMesh *dfLogicElevator::buildGeometry(fwMaterial* material)
 
 		if (m_mesh->buildMesh()) {
 			m_mesh->mesh()->set_name(m_pSector->m_name);
-			m_pSector->addObject(m_mesh->mesh());
+			m_pSector->addObject(m_mesh);
 		}
 		else {
 			// do not keep the trigger
@@ -200,7 +200,7 @@ fwMesh *dfLogicElevator::buildGeometry(fwMaterial* material)
 		return nullptr;
 	}
 
-	return m_mesh->mesh();
+	return m_mesh;
 }
 
 /**
@@ -481,7 +481,8 @@ bool dfLogicElevator::checkCollision(glm::vec3& position, float radius, glm::vec
 
 	bs.set(position, radius);
 
-	if (m_mesh) {
+	// only test the elevator mesh if the supersector it is bind to is visible
+	if (m_mesh && m_mesh->visible()) {
 		return m_mesh->collide(bs, intersection);
 	}
 
@@ -497,6 +498,18 @@ dfLogicStop* dfLogicElevator::stop(int i)
 		return m_stops[i];
 	}
 	return nullptr;
+}
+
+/**
+ * Record all keys needed to activate the elevator
+ */
+const std::string dfKeyRed = "red";
+
+void dfLogicElevator::keys(std::string& key)
+{
+	if (key == dfKeyRed) {
+		m_keys |= DF_KEY_RED;
+	}
 }
 
 dfLogicElevator::~dfLogicElevator(void)

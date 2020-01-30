@@ -123,7 +123,7 @@ dfLevel::dfLevel(dfFileGOB* dark, dfFileGOB* gTextures, std::string file)
 	buildGeometry();			// build the geometry of each super sectors
 
 	createTriggerForSpin();		// for elevator_spin1, create triggers
-
+	createTriggerForKey();		// for evelvtor needing a key, create a trigger
 	initElevators();			// move all elevators to position 0
 
 	free(sec);
@@ -467,6 +467,28 @@ void dfLevel::createTriggerForSpin(void)
 }
 
 /**
+ * for every elevator needing a key, create a trigger
+ */
+void dfLevel::createTriggerForKey(void)
+{
+	static std::string standard = "switch1";
+
+	for (auto elevator : m_inf->m_elevators) {
+		if (elevator->needsKeys()) {
+			dfLogicTrigger* trigger = new dfLogicTrigger(standard, elevator);
+			trigger->config();
+
+			// extract the 'CLOSED' stop = (0)
+			// add a message DONE on the stop
+			dfMessage msg(DF_MESSAGE_DONE, 0, trigger->name());
+			elevator->stop(0)->addMessage(msg);
+
+			m_inf->m_triggers.push_back(trigger);
+		}
+	}
+}
+
+/**
  * Check all triggers to find if one collide with the source box
  */
 void dfLevel::testSwitch(fwAABBox& player)
@@ -476,7 +498,8 @@ void dfLevel::testSwitch(fwAABBox& player)
 
 	for (auto trigger : m_inf->m_triggers) {
 		if (trigger->collide(mybox)) {
-			trigger->activate();
+			//TODO get the keys the player owns
+			trigger->activate(DF_KEY_RED);
 		}
 	}
 }

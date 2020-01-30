@@ -9,6 +9,7 @@
 #include "dfLevel.h"
 #include "dfSign.h"
 #include "dfMessageBus.h"
+#include "dfMesh.h"
 
 static glm::vec4 white(1.0, 0.0, 1.0, 1.0);
 static fwMaterialBasic* material_portal = new fwMaterialBasic(&white);
@@ -755,9 +756,10 @@ void dfSuperSector::add2scene(fwScene* scene)
 /**
  * Add a children mesh
  */
-void dfSuperSector::addObject(fwMesh* object)
+void dfSuperSector::addObject(dfMesh* object)
 {
-	m_mesh->addChild(object);
+	m_mesh->addChild(object->mesh());
+	object->parent(m_mesh);
 }
 
 /**

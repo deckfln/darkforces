@@ -43,6 +43,12 @@ enum {
 	DF_ELEVATOR_LAND = 512				// Land on floor of sector
 } ;
 
+
+enum {
+	DF_KEY_NONE = 0,
+	DF_KEY_RED = 1
+};
+
 class dfLogicElevator: public dfMessageClient {
 	std::string m_class;
 	int m_type = -1;					// class of elevator
@@ -52,6 +58,7 @@ class dfLogicElevator: public dfMessageClient {
 	glm::vec3 m_center = glm::vec3(0);
 	float m_p = 0;
 	bool m_master = true;				// is the elevator operational ?
+	int m_keys = DF_KEY_NONE;			// key activating the elevator
 
 	std::vector<dfLogicStop*> m_stops;	// all stops of the evelator
 
@@ -91,10 +98,12 @@ public:
 	void parent(dfLevel* parent) { m_parent = parent; };
 	void center(float x, float y) { m_center.x = x; m_center.y = y; };
 	dfLogicStop* stop(int i);
-
+	void keys(std::string& key);
+	int keys(void) { return m_keys; };
+	bool needsKeys(void) { return m_keys != 0; };
 	void bindSector(dfSector* pSector);
 	void addStop(dfLogicStop* stop);
-	fwMesh *buildGeometry(fwMaterial* material);
+	dfMesh *buildGeometry(fwMaterial* material);
 	void init(int stopID);
 	bool animate(time_t delta);
 	bool is(int type) { return m_type == type; };

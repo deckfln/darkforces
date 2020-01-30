@@ -32,6 +32,7 @@ class dfMesh {
 	fwMaterial* m_material = nullptr;
 	fwGeometry* m_geometry = nullptr;
 	fwMesh* m_mesh = nullptr;
+	fwMesh* m_parent = nullptr;
 
 	int resize(int i);
 	void setVertice(int p, float x, float y, float z, float xoffset, float yoffset, int textureID, float ambient);
@@ -55,6 +56,8 @@ public:
 	void rotateZ(float angle);
 	void move(glm::vec3 position);
 	bool collide(fwSphere& boundingSphere, glm::vec3& intersection);
+	void parent(fwMesh* parent) { m_parent = parent; };
+	bool visible(void);
 
 	fwMesh* buildMesh(void);
 	~dfMesh();

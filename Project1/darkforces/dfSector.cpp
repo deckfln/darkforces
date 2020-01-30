@@ -263,7 +263,7 @@ std::vector<std::vector<Point>>& dfSector::polygons(int displayPolygon)
 /**
  * Add a mesh to the super sector holding the sector
  */
-void dfSector::addObject(fwMesh* object)
+void dfSector::addObject(dfMesh* object)
 {
 	m_super->addObject(object);
 }

@@ -365,6 +365,14 @@ bool dfMesh::collide(fwSphere& boundingSphere, glm::vec3& intersection)
 }
 
 /**
+ * Test if the mesh and the parent mesh are visible
+ */
+bool dfMesh::visible(void)
+{
+	return m_mesh->is_visible() && m_parent->is_visible();
+}
+
+/**
  * Move all vertices as offset of the center
  */
 void dfMesh::moveVertices(glm::vec3& center)

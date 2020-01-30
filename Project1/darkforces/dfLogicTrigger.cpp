@@ -56,7 +56,8 @@ dfLogicTrigger::dfLogicTrigger(std::string& kind, std::string& sector, int wallI
 dfLogicTrigger::dfLogicTrigger(std::string& kind, dfSector* sector, int wallIndex,  dfLogicElevator* client) :
 	dfMessageClient(),
 	m_wallIndex(wallIndex),
-	m_sector(sector->m_name)
+	m_sector(sector->m_name),
+	m_keys(client->keys())
 {
 	m_clients.push_back(sector->m_name);
 	sector->setTriggerFromWall(this);
@@ -70,7 +71,8 @@ dfLogicTrigger::dfLogicTrigger(std::string& kind, dfSector* sector, int wallInde
  */
 dfLogicTrigger::dfLogicTrigger(std::string& kind, dfSector* sector, dfLogicElevator* client) :
 	dfMessageClient(sector->m_name),
-	m_sector(sector->m_name)
+	m_sector(sector->m_name),
+	m_keys(client->keys())
 {
 	m_clients.push_back(sector->m_name);
 	m_class = class2int(kind);
@@ -82,7 +84,8 @@ dfLogicTrigger::dfLogicTrigger(std::string& kind, dfSector* sector, dfLogicEleva
  * Create a trigger based on ono the sector managed by the elevator
  */
 dfLogicTrigger::dfLogicTrigger(std::string& kind, dfLogicElevator* client):
-	dfMessageClient()
+	dfMessageClient(),
+	m_keys(client->keys())
 {
 	client->psector()->setTriggerFromSector(this);
 	m_clients.push_back(client->sector());
@@ -185,7 +188,8 @@ void dfLogicTrigger::dispatchMessage(dfMessage* message)
 {
 	switch (message->m_action) {
 	case DF_MESSAGE_TRIGGER:
-		activate();
+		// TODO : should use the player's key here
+		activate(DF_KEY_NONE);
 		break;
 	case DF_MESSAGE_DONE:
 		if (m_pSign) {
@@ -201,7 +205,7 @@ void dfLogicTrigger::dispatchMessage(dfMessage* message)
 /**
  * Handle the TRIGGER message
  */
-void dfLogicTrigger::activate()
+void dfLogicTrigger::activate(int keys)
 {
 	if (m_actived) {
 		return;
@@ -210,8 +214,12 @@ void dfLogicTrigger::activate()
 	if (m_pSign) {
 		m_pSign->setStatus(1);	// turn the switch on
 	}
-	for (unsigned int i = 0; i < m_messages.size(); i++) {
-		g_MessageBus.push(&m_messages[i]);
+
+	// check if the player has the correct key
+	if (m_keys == 0 || (m_keys & keys) != 0) {
+		for (unsigned int i = 0; i < m_messages.size(); i++) {
+			g_MessageBus.push(&m_messages[i]);
+		}
+		m_actived = true;
 	}
-	m_actived = true;
 }

@@ -26,6 +26,7 @@ class dfLogicTrigger: public dfMessageClient {
 	bool m_master = true;			// is the trigger operational ?
 	bool m_actived = false;			// trigger was activated and shall not accept any new activation
 	std::vector<std::string> m_clients;		// name of the target sector 
+	int m_keys = DF_KEY_NONE;		// keys needed to activate the triggers
 
 	std::string m_sector;			// sector that host the trigger
 	int m_wallIndex = -1;			// index of the wall being a trigger
@@ -51,6 +52,7 @@ public:
 	std::string& sector(void) { return m_sector; };
 	int wall(void) { return m_wallIndex; };
 	void sign(dfSign* sign) { m_pSign = sign; };
+	void keys(int keys) { m_keys = keys; };
 	void addEvents(dfSector* pSector);
 	void evelator(dfLogicElevator* pClient);
 	void boundingBox(glm::vec2& left, glm::vec2& right, float floor, float ceiling);
@@ -60,6 +62,6 @@ public:
 
 	bool collide(fwAABBox& box);
 	void moveZ(float z);
-	void activate(void);
+	void activate(int keys);
 	void dispatchMessage(dfMessage* message);
 };

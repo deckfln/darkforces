@@ -114,7 +114,7 @@ public:
 
 	std::vector<std::vector<Point>>& polygons(int displayPolygon);
 
-	void addObject(fwMesh* object);
+	void addObject(dfMesh* object);
 	bool isPointInside(glm::vec3& position, bool fullTest);
 	float boundingBoxSurface(void);
 	void setFloor(float floor);
