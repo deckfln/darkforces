@@ -145,6 +145,11 @@ void dfParseINF::parseSector(std::istringstream& infile, std::string& sector)
 				elevator->center(-std::stof(tokens[1]), std::stof(tokens[2]));	//inverse X
 			}
 		}
+		else if (tokens[0] == "angle:") {
+			if (elevator) {
+				elevator->angle(std::stof(tokens[1]));
+			}
+		}
 		else if (tokens[0] == "event_mask:") {
 			if (elevator) {
 				elevator->eventMask(std::stoi(tokens[1]));

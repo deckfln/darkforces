@@ -120,7 +120,7 @@ public:
 	void setFloor(float floor);
 	void updateVertices(void);
 	void linkWalls(void);
-	void buildElevator(dfMesh *mesh, float bottom, float top, int what, bool clockwise, int displayPolygon);
+	void buildElevator(dfMesh *mesh, float bottom, float top, int what, bool clockwise, int flags);
 	void buildFloor(dfMesh* mesh);
 
 	void bindWall2Sector(std::vector <dfSector*> sectors);

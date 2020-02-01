@@ -115,8 +115,10 @@ dfSector::dfSector(std::istringstream& infile)
 			glm::vec3 top(std::stof(tokens[11]), std::stof(tokens[12]), std::stof(tokens[13]));
 			glm::vec3 bottom(std::stof(tokens[16]), std::stof(tokens[17]), std::stof(tokens[18]));
 			glm::vec3 sign(std::stof(tokens[21]), std::stof(tokens[22]), std::stof(tokens[23]));
+			int flag1 = std::stoi(tokens[31]);
+			int flag3 = std::stoi(tokens[33]);
 
-			dfWall* wall = new dfWall(left, right, adjoint, mirror);
+			dfWall* wall = new dfWall(left, right, adjoint, mirror, flag1, flag3);
 			wall->m_tex[DFWALL_TEXTURE_BOTTOM] = bottom;
 			wall->m_tex[DFWALL_TEXTURE_MID] = mid;
 			wall->m_tex[DFWALL_TEXTURE_TOP] = top;
@@ -212,21 +214,34 @@ void dfSector::ceiling(float z)
  *	list of ALL walls
  *	list of the external walls
  */
-std::vector<dfWall*>& dfSector::walls(int displayPolygon)
+std::vector<dfWall*>& dfSector::walls(int flags)
 {
 	static std::vector<dfWall*> ml;
 
-	int dp = (displayPolygon == -1) ? m_displayPolygons : displayPolygon;
+	ml.clear();
 
-	assert(dp >= 0 && dp < 3);
-
-	switch (dp) {
-	case 0:
-		return m_walls;	// all walls
-	case 1:
-		return m_polygons_walls[0];	// only the external polygon
-	case 2:
-		return m_polygons_walls[1];	// only the hole polygon
+	switch (flags) {
+	case DF_WALL_ALL:
+		return m_walls;
+		break;
+	case DF_WALL_MORPHS_WITH_ELEV:
+		// only walls that move when the elevator moves
+		for (auto wall : m_walls) {
+			if (wall->flag1(DF_WALL_MORPHS_WITH_ELEV)) {
+				ml.push_back(wall);
+			}
+		}
+		break;
+	case DF_WALL_NOT_MORPHS_WITH_ELEV:
+		// only walls that DO NOT move when the elevator moves
+		for (auto wall : m_walls) {
+			if (!wall->flag1(DF_WALL_MORPHS_WITH_ELEV)) {
+				ml.push_back(wall);
+			}
+		}
+		break;
+	default:
+		std::cerr << "dfSector::walls flags=" << flags << " not implemented" << std::endl;
 	}
 
 	return ml;
@@ -463,7 +478,7 @@ void dfSector::linkWalls(void)
 /**
  * analyze the sector to find the moveable part and convert to an object
  */
-void dfSector::buildElevator(dfMesh *mesh, float bottom, float top, int what, bool clockwise, int displayPolygon)
+void dfSector::buildElevator(dfMesh *mesh, float bottom, float top, int what, bool clockwise, int flags)
 {
 	if (!m_super) {
 		return;
@@ -474,7 +489,7 @@ void dfSector::buildElevator(dfMesh *mesh, float bottom, float top, int what, bo
 	std::vector<dfBitmap *>& textures = m_super->textures();
 
 	// create the walls
-	std::vector <dfWall*>& wallss = walls(displayPolygon);
+	std::vector <dfWall*>& wallss = walls(flags);
 	for (auto wall : wallss) {
 		if (wall->m_adjoint < 0) {
 			// full wall (for spin1 elevators)
@@ -504,19 +519,19 @@ void dfSector::buildElevator(dfMesh *mesh, float bottom, float top, int what, bo
 		}
 	}
 
-	if (displayPolygon < 2) {
+	if (!(flags & DF_WALL_MORPHS_WITH_ELEV)) {
 		// only build build top and bottom for vertical elevators (sliding ones : spin1 are not needed)
 		// index the indexes IN the polyines of polygon 
 		std::vector<Point> vertices;
 
-		for (auto poly : polygons(displayPolygon)) {
+		for (auto poly : polygons(1)) {
 			for (auto p : poly) {
 				vertices.push_back(p);
 			}
 		}
 
-		mesh->addFloor(vertices, polygons(displayPolygon), bottom, m_ceilingTexture, textures, ambient, clockwise);
-		mesh->addFloor(vertices, polygons(displayPolygon), top, m_floorTexture, textures, ambient, clockwise);
+		mesh->addFloor(vertices, polygons(1), bottom, m_ceilingTexture, textures, ambient, clockwise);
+		mesh->addFloor(vertices, polygons(1), top, m_floorTexture, textures, ambient, clockwise);
 	}
 }
 

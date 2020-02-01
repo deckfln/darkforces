@@ -28,7 +28,8 @@ enum {
 	DF_ELEVATOR_MOVE_FLOOR,	
 	DF_ELEVATOR_CHANGE_LIGHT,
 	DF_ELEVATOR_MOVE_CEILING,
-	DF_ELEVATOR_MORPH_SPIN1
+	DF_ELEVATOR_MORPH_SPIN1,
+	DF_ELEVATOR_MORPH_MOVE1
 };
 
 enum {
@@ -55,7 +56,9 @@ class dfLogicElevator: public dfMessageClient {
 	//TODO adapt the default speed
 	float m_speed = 20;					// time in millisecond between 2 stops
 	int m_eventMask = 0;
-	glm::vec3 m_center = glm::vec3(0);
+	glm::vec3 m_center = glm::vec3(0);	// rotation axis for SPIN1
+	float m_angle;						// move angle for MOVE1
+
 	float m_p = 0;
 	bool m_master = true;				// is the elevator operational ?
 	int m_keys = DF_KEY_NONE;			// key activating the elevator
@@ -97,6 +100,7 @@ public:
 	dfSector* psector(void) { return m_pSector; };
 	void parent(dfLevel* parent) { m_parent = parent; };
 	void center(float x, float y) { m_center.x = x; m_center.y = y; };
+	void angle(float angle) { m_angle = angle; };
 	dfLogicStop* stop(int i);
 	void keys(std::string& key);
 	int keys(void) { return m_keys; };

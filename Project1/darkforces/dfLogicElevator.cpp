@@ -15,7 +15,8 @@ const std::list<std::string> keywords = {
 	"move_floor",	//DF_ELEVATOR_MOVE_FLOOR
 	"change_light",	//DF_ELEVATOR_CHANGE_LIGHT
 	"move_ceiling",	//DF_ELEVATOR_MOVE_CEILING
-	"morph_spin1"	//DF_ELEVATOR_MORPH_SPIN1
+	"morph_spin1",	//DF_ELEVATOR_MORPH_SPIN1
+	"morph_move1"	//DF_ELEVATOR_MORPH_MOVE1
 };
 
 dfLogicElevator::dfLogicElevator(std::string& kind, dfSector* sector, dfLevel* parent):
@@ -94,6 +95,7 @@ void dfLogicElevator::bindSector(dfSector* pSector)
 		break;
 
 	case DF_ELEVATOR_MORPH_SPIN1:
+	case DF_ELEVATOR_MORPH_MOVE1:
 		// remove all non-portal walls. These walls will be stored on the Elevator mesh
 		m_pSector->removeHollowWalls();
 		break;
@@ -132,10 +134,10 @@ dfMesh *dfLogicElevator::buildGeometry(fwMaterial* material)
 
 		// the elevator bottom is actually the ceiling
 		if (m_type == DF_ELEVATOR_INV) {
-			m_pSector->buildElevator(m_mesh, 0, amax - amin, DFWALL_TEXTURE_TOP, true, -1);
+			m_pSector->buildElevator(m_mesh, 0, amax - amin, DFWALL_TEXTURE_TOP, true, DF_WALL_ALL);
 		}
 		else {
-			m_pSector->buildElevator(m_mesh, 0, -(amax - amin), DFWALL_TEXTURE_TOP, true, -1);
+			m_pSector->buildElevator(m_mesh, 0, -(amax - amin), DFWALL_TEXTURE_TOP, true, DF_WALL_ALL);
 		}
 
 		if (m_mesh->buildMesh()) {
@@ -155,11 +157,11 @@ dfMesh *dfLogicElevator::buildGeometry(fwMaterial* material)
 
 		if (m_type == DF_ELEVATOR_MOVE_FLOOR) {
 			// the elevator top is actually the floor
-			m_pSector->buildElevator(m_mesh, -(amax - amin), 0, DFWALL_TEXTURE_BOTTOM, false, -1);
+			m_pSector->buildElevator(m_mesh, -(amax - amin), 0, DFWALL_TEXTURE_BOTTOM, false, DF_WALL_ALL);
 		}
 		else {
 			// move ceiling, only move the top
-			m_pSector->buildElevator(m_mesh, 0, (amax - amin), DFWALL_TEXTURE_TOP, false, -1);
+			m_pSector->buildElevator(m_mesh, 0, (amax - amin), DFWALL_TEXTURE_TOP, false, DF_WALL_ALL);
 		}
 
 		if (m_mesh->buildMesh()) {
@@ -175,14 +177,25 @@ dfMesh *dfLogicElevator::buildGeometry(fwMaterial* material)
 		break;
 
 	case DF_ELEVATOR_MORPH_SPIN1:
+	case DF_ELEVATOR_MORPH_MOVE1:
 		m_mesh = new dfMesh(material);
 
 		// only use the inner polygon (the hole)
-		m_pSector->buildElevator(m_mesh, m_pSector->m_floorAltitude, m_pSector->m_ceilingAltitude, DFWALL_TEXTURE_MID, false, 2);
+		m_pSector->buildElevator(m_mesh, m_pSector->m_floorAltitude, m_pSector->m_ceilingAltitude, DFWALL_TEXTURE_MID, false, DF_WALL_MORPHS_WITH_ELEV);
 
-		// move the vertices around the center (in level space)
-		m_center.z = m_pSector->m_floorAltitude;
-		m_mesh->moveVertices(m_center);
+		switch (m_type) {
+		case DF_ELEVATOR_MORPH_SPIN1:
+			// move the vertices around the center (in level space)
+			m_center.z = m_pSector->m_floorAltitude;
+			m_mesh->moveVertices(m_center);
+			break;
+		case DF_ELEVATOR_MORPH_MOVE1:
+
+			break;
+		default:
+			std::cerr << "dfLogicElevator::buildGeometry m_type=" << m_type << " unsupported" << std::endl;
+			return nullptr;
+		}
 
 		if (m_mesh->buildMesh()) {
 			m_mesh->mesh()->set_name(m_pSector->m_name);

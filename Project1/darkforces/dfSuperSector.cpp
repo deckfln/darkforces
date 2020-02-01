@@ -398,7 +398,8 @@ void dfSuperSector::buildWalls(bool update, dfSector* sector, std::vector<dfSect
 	}
 
 	// create the walls at the begining of the buffer
-	for (auto wall : sector->walls()) {
+	// Only create walls that do not move with the sector, the others are managed by an elevator
+	for (auto wall : sector->walls(DF_WALL_NOT_MORPHS_WITH_ELEV)) {
 
 		if (wall->m_adjoint < 0) {
 			// full wall
@@ -440,7 +441,7 @@ void dfSuperSector::buildSigns(dfSector*sector, std::vector<dfSector*>& sectors)
 	int size = 0;
 	int p = 0;
 
-	for (auto wall : sector->walls()) {
+	for (auto wall : sector->walls(DF_WALL_ALL)) {
 		if (wall->m_tex[DFWALL_TEXTURE_SIGN].r >= 0) {
 			if (wall->m_adjoint < 0) {
 				// full wall
