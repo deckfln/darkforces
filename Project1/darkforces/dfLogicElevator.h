@@ -56,8 +56,8 @@ class dfLogicElevator: public dfMessageClient {
 	//TODO adapt the default speed
 	float m_speed = 20;					// time in millisecond between 2 stops
 	int m_eventMask = 0;
-	glm::vec3 m_center = glm::vec3(0);	// rotation axis for SPIN1
-	float m_angle;						// move angle for MOVE1
+	glm::vec3 m_center = glm::vec3(0);	// rotation axis for SPIN1 elevators
+	glm::vec3 m_move = glm::vec3(0);	// based off 'angle' for MOVE1 elevators
 
 	float m_p = 0;
 	bool m_master = true;				// is the elevator operational ?
@@ -100,7 +100,7 @@ public:
 	dfSector* psector(void) { return m_pSector; };
 	void parent(dfLevel* parent) { m_parent = parent; };
 	void center(float x, float y) { m_center.x = x; m_center.y = y; };
-	void angle(float angle) { m_angle = angle; };
+	void angle(float angle);
 	dfLogicStop* stop(int i);
 	void keys(std::string& key);
 	int keys(void) { return m_keys; };

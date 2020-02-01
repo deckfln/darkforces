@@ -26,7 +26,8 @@ class dfMesh {
 	std::vector <glm::vec2> m_uvs;			// UVs inside the source texture
 	std::vector <float> m_textureID;		// TextureID inside the megatexture
 	std::vector <float> m_ambient;			// light intensity of the object
-	glm::vec3 m_position;					// position of the mesh, by default (0,0,0)
+	glm::vec3 m_position = glm::vec3(0);	// position of the mesh in GL space, by default (0,0,0)
+	glm::vec3 m_defaultPosition = glm::vec3(0);// default position of the mesh in LEVEL space, (for translation off the position)
 	fwAABBox m_boundingBox;
 
 	fwMaterial* m_material = nullptr;
@@ -50,11 +51,13 @@ public:
 	void addPlane(float width, dfBitmapImage* image);
 	void buildGeometry(dfSector* source, float bottom, float top);
 	void rebuildAABB(void);
+	void findCenter(void);
 	void moveVertices(glm::vec3& center);
 	void moveFloorTo(float z);
 	void moveCeilingTo(float z);
 	void rotateZ(float angle);
-	void move(glm::vec3 position);
+	void move(glm::vec3& position);
+	void translate(glm::vec3& direction, float distance);
 	bool collide(fwSphere& boundingSphere, glm::vec3& intersection);
 	void parent(fwMesh* parent) { m_parent = parent; };
 	bool visible(void);

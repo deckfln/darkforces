@@ -190,7 +190,8 @@ dfMesh *dfLogicElevator::buildGeometry(fwMaterial* material)
 			m_mesh->moveVertices(m_center);
 			break;
 		case DF_ELEVATOR_MORPH_MOVE1:
-
+			// elevator moves along the m_move vector
+			m_mesh->findCenter();
 			break;
 		default:
 			std::cerr << "dfLogicElevator::buildGeometry m_type=" << m_type << " unsupported" << std::endl;
@@ -362,7 +363,10 @@ bool dfLogicElevator::animate(time_t delta)
 	case DF_ELEVATOR_MOVE_FLOOR:
 	case DF_ELEVATOR_MOVE_CEILING:
 	case DF_ELEVATOR_MORPH_SPIN1:
+	case DF_ELEVATOR_MORPH_MOVE1:
 		return animateMoveZ();
+	default:
+		std::cerr << "dfLogicElevator::animate m_type=" << m_type << " not implemented" << std::endl;
 	}
 
 	return true;	// Animation is not implemented, stop it
@@ -404,6 +408,9 @@ void dfLogicElevator::moveTo(float z)
 		break;
 	case DF_ELEVATOR_MORPH_SPIN1:
 		m_mesh->rotateZ(glm::radians((z)));
+		break;
+	case DF_ELEVATOR_MORPH_MOVE1:
+		m_mesh->translate(m_move, z);
 		break;
 	default:
 		std::cerr << "dfLogicElevator::moveTo m_type==" << m_type << " not implemented" << std::endl;
@@ -480,7 +487,7 @@ void dfLogicElevator::dispatchMessage(dfMessage* message)
 		break;
 
 	case DF_MESSAGE_TIMER:
-		animate(33);
+		animate(message->m_delta);
 		break;
 
 	default:
@@ -503,6 +510,15 @@ bool dfLogicElevator::checkCollision(glm::vec3& position, float radius, glm::vec
 	}
 
 	return false;
+}
+
+/**
+ * for morph_move1, convert angle translation to a vector translation
+ */
+void dfLogicElevator::angle(float angle)
+{
+	angle = glm::radians(angle);	// conver degrees to radians
+	m_move = glm::vec3(cos(angle), -sin(angle), 0);
 }
 
 /**

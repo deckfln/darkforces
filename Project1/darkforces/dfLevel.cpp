@@ -452,7 +452,7 @@ void dfLevel::createTriggerForSpin(void)
 	static std::string standard = "switch1";
 
 	for (auto elevator: m_inf->m_elevators) {
-		if (elevator->is(DF_ELEVATOR_MORPH_SPIN1)) {
+		if (elevator->is(DF_ELEVATOR_MORPH_SPIN1) || elevator->is(DF_ELEVATOR_MORPH_MOVE1)) {
 			dfLogicTrigger* trigger = new dfLogicTrigger(standard, elevator);
 			trigger->config();
 

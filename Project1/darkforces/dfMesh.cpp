@@ -30,6 +30,13 @@ void dfMesh::rebuildAABB(void)
 }
 
 /**
+ * find the center of the mesh, base point for translations
+ */
+void dfMesh::findCenter(void)
+{
+}
+
+/**
  * Resize the buffers
  */
 int dfMesh::resize(int i)
@@ -321,13 +328,22 @@ void dfMesh::rotateZ(float angle)
 }
 
 /**
- *
+ * force the position
  */
-void dfMesh::move(glm::vec3 position)
+void dfMesh::move(glm::vec3& position)
 {
 	m_position = glm::vec3(position.x, position.z, position.y) / 10.0f;
 
 	m_mesh->position(m_position);
+}
+
+/**
+ * translate the object
+ */
+void dfMesh::translate(glm::vec3& direction, float distance)
+{
+	glm::vec3 p = m_defaultPosition + direction * distance;
+	move(p);
 }
 
 /**
