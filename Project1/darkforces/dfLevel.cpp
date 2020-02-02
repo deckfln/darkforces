@@ -424,8 +424,8 @@ void dfLevel::convertDoors2Elevators(void)
 	for (auto sector : m_sectors) {
 		if (sector->flag() & DF_SECTOR_DOOR) {
 			dfLogicElevator* elevator = new dfLogicElevator(inv, sector, this);
-			dfLogicStop* closed = new dfLogicStop(sector->m_floorAltitude, hold);
-			dfLogicStop* opened = new dfLogicStop(sector->m_ceilingAltitude, 5000);
+			dfLogicStop* closed = new dfLogicStop(elevator, sector->m_floorAltitude, hold);
+			dfLogicStop* opened = new dfLogicStop(elevator, sector->m_ceilingAltitude, 5000);
 
 			elevator->addStop(closed);
 			elevator->addStop(opened);
@@ -530,6 +530,8 @@ dfSector* dfLevel::findSector(glm::vec3& position)
 		// nope, so quick check on the last super sector
 		sector = m_lastSuperSector->findSector(level_space);
 		if (sector) {
+			std::cerr << "dfLevel::findSector leave=" << m_lastSector->m_name << " enter=" << sector->m_name << std::endl;
+
 			m_lastSector->event(DF_ELEVATOR_LEAVE_SECTOR);
 
 			m_lastSector = sector;
@@ -544,9 +546,12 @@ dfSector* dfLevel::findSector(glm::vec3& position)
 		sector = ssector->findSector(level_space);
 
 		if (sector) {
+			std::cerr << "dfLevel::findSector leave=";
 			if (m_lastSector) {
+				std::cerr << m_lastSector->m_name;
 				m_lastSector->event(DF_ELEVATOR_LEAVE_SECTOR);
 			}
+			std::cerr << " enter=" << sector->m_name << std::endl;
 
 			m_lastSector = sector;
 			m_lastSuperSector = ssector;

@@ -432,6 +432,8 @@ void dfLogicElevator::dispatchMessage(dfMessage* message)
 {
 	switch (message->m_action) {
 	case DF_MESSAGE_TRIGGER:
+		std::cerr << "dfLogicElevator::dispatchMessage sector=" << m_name << " action=" << message->m_action << " status=" << m_status << std::endl;;
+
 		if (m_status != DF_ELEVATOR_HOLD) {
 			// break the animation and move directly to the next stop
 			moveToNextStop();
@@ -506,7 +508,11 @@ bool dfLogicElevator::checkCollision(glm::vec3& position, float radius, glm::vec
 
 	// only test the elevator mesh if the supersector it is bind to is visible
 	if (m_mesh && m_mesh->visible()) {
-		return m_mesh->collide(bs, intersection);
+		bool i = m_mesh->collide(bs, intersection);
+		if (i) {
+			std::cerr << "dfLogicElevator::checkCollision with " << m_sector << std::endl;
+			return true;
+		}
 	}
 
 	return false;

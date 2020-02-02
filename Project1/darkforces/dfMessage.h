@@ -19,6 +19,7 @@ class dfMessage {
 public:
 	int m_action = -1;
 	int m_value = 0;
+	std::string m_server;
 	std::string m_client;
 	time_t m_delta = 0;	// time since the last frame
 

@@ -352,7 +352,8 @@ void dfMesh::translate(glm::vec3& direction, float distance)
 bool dfMesh::collide(fwSphere& boundingSphere, glm::vec3& intersection)
 {
 	fwSphere bsTranformed;
-	bsTranformed.applyMatrix4From(m_mesh->inverseWorldMatrix(), &boundingSphere);			// apply mesh inverse transformation to the sphere
+	// convert player position (gl world space) into the elevator space (model space)
+	bsTranformed.applyMatrix4From(m_mesh->inverseWorldMatrix(), &boundingSphere);
 	fwAABBox aabb(bsTranformed);	// convert to AABB for fast test
 
 	if (m_boundingBox.intersect(aabb)) {
@@ -362,7 +363,7 @@ bool dfMesh::collide(fwSphere& boundingSphere, glm::vec3& intersection)
 		float r = bsTranformed.radius();
 
 		// now test with the sphere against each triangle
-		for (int i = 0; i < m_vertices.size(); i += 3) {
+		for (unsigned int i = 0; i < m_vertices.size(); i += 3) {
 			//http://realtimecollisiondetection.net/blog/?p=103
 			A = m_vertices[i] - P;
 			B = m_vertices[i + 1] - P;
@@ -373,6 +374,12 @@ bool dfMesh::collide(fwSphere& boundingSphere, glm::vec3& intersection)
 			if (d * d <= r* r* e) {
 				// simplification, pick the center of the triangle as intersection point
 				intersection = (m_vertices[i] + m_vertices[i + 1] + m_vertices[i + 2]) / 3.0f;
+
+				// convert back the collision point from model space => world space
+				bsTranformed.center(intersection);
+				bsTranformed.applyMatrix4(m_mesh->worldMatrix());
+				intersection = bsTranformed.center();
+
 				return true;
 			}
 		}

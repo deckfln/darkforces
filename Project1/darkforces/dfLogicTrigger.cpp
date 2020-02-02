@@ -218,6 +218,7 @@ void dfLogicTrigger::activate(int keys)
 	// check if the player has the correct key
 	if (m_keys == 0 || (m_keys & keys) != 0) {
 		for (unsigned int i = 0; i < m_messages.size(); i++) {
+			m_messages[i].m_server = m_name;
 			g_MessageBus.push(&m_messages[i]);
 		}
 		m_actived = true;

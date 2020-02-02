@@ -1,6 +1,7 @@
 #include "dfMessagebus.h"
 
 #include <iostream>
+#include <map>
 
 dfMessageBus g_MessageBus;
 
@@ -45,11 +46,24 @@ void dfMessageBus::process(time_t delta)
 		std::cerr << ">>>>>>>>>> dfMessageBus::process" << std::endl;
 	}
 	*/
+
+	std::map<std::string, bool> loopDetector;
+
 	while (m_queue.size() > 0) {
 		dfMessage* message = m_queue.front();
 		m_queue.pop();
 
-		//std::cerr << "dfMessageBus::process " << message->m_action << " " << message->m_client << std::endl;;
+		// manage loops inside one run
+		if (loopDetector.count(message->m_client) > 0) {
+			continue;
+		}
+
+		loopDetector[message->m_client] = true;
+
+		if (message->m_action != DF_MESSAGE_TIMER) {
+			std::cerr << "dfMessageBus::process server=" << message->m_server << " action=" << message->m_action << " client=" << message->m_client << std::endl;;
+		}
+
 		if (m_clients.count(message->m_client) > 0) {
 			message->m_delta = delta;
 			client = m_clients[message->m_client];

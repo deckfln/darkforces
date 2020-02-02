@@ -299,7 +299,8 @@ bool dfSector::isPointInside(glm::vec3 &p, bool fullTest)
 	bool inside = false;
 
 	// test holes
-	if (fullTest) {
+	// if asked for AND if the sector default setup is 'handle all' : evelator SPIN1 & MOVE1 ignore hole
+	if (fullTest & (m_displayPolygons == 0)) {
 		for (unsigned int i = 1; i < m_polygons_vertices.size(); i++) {
 			std::vector<Point>& line = m_polygons_vertices[i];
 
@@ -577,6 +578,8 @@ void dfSector::bindWall2Sector(std::vector<dfSector*> sectors)
 void dfSector::event(int event_mask)
 {
 	if (m_eventMask & event_mask) {
+		std::cerr << "dfSector::event sector=" << m_name << " event=" << event_mask << std::endl;
+		m_message.m_server = m_name;
 		g_MessageBus.push(&m_message);
 	}
 }

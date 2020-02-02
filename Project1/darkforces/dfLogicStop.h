@@ -8,6 +8,7 @@
 
 #include "../framework/fwAABBox.h"
 class dfSector;
+class dfLogicElevator;
 
 class dfLogicStop {
 	int m_flag = 0;			// content of the stop
@@ -26,6 +27,8 @@ class dfLogicStop {
 
 	float m_time = 0;			// time (millisecond) to stop the elevator a position (absolute or relative or sector)
 
+	dfLogicElevator* m_parent = nullptr;
+
 	// [hold elevator] will remain at stop indefinitely 
 	// [terminate] elevator will stay at the stop permanently 
 	// [complete] mission will be complete when elev arrives at stop
@@ -34,11 +37,11 @@ class dfLogicStop {
 	std::vector<dfMessage> m_messages;
 
 public:
-	dfLogicStop();
-	dfLogicStop(float altitude, dfSector* sector, std::string& action);
-	dfLogicStop(float altitude, dfSector* sector, float time);
-	dfLogicStop(float altitude, std::string& action);
-	dfLogicStop(float altitude, float time);
+	dfLogicStop(dfLogicElevator *parent);
+	dfLogicStop(dfLogicElevator* parent, float altitude, dfSector* sector, std::string& action);
+	dfLogicStop(dfLogicElevator* parent, float altitude, dfSector* sector, float time);
+	dfLogicStop(dfLogicElevator* parent, float altitude, std::string& action);
+	dfLogicStop(dfLogicElevator* parent, float altitude, float time);
 
 	void absolute(float absolute) { m_flag |= 1; m_absolute = absolute; };
 	void relative(float relative) { m_flag |= 2; m_relatiave = relative; };

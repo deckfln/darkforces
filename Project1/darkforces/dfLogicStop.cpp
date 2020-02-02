@@ -4,38 +4,43 @@
 #include "dfMessageBus.h"
 #include "dfLogicElevator.h"
 
-dfLogicStop::dfLogicStop()
+dfLogicStop::dfLogicStop(dfLogicElevator* parent):
+	m_parent(parent)
 {
 }
 
-dfLogicStop::dfLogicStop(float altitude, dfSector* sector, std::string& action)
+dfLogicStop::dfLogicStop(dfLogicElevator* parent, float altitude, dfSector* sector, std::string& action):
+	m_parent(parent),
+	m_flag(2 | 16),
+	m_relatiave(altitude),
+	m_pSector(sector),
+	m_action(action)
 {
-	m_flag = 2 | 16;
-	m_relatiave = altitude;
-	m_pSector = sector;
-	m_action = action;
 }
 
-dfLogicStop::dfLogicStop(float altitude, dfSector* sector, float time)
+dfLogicStop::dfLogicStop(dfLogicElevator* parent, float altitude, dfSector* sector, float time):
+	m_parent(parent),
+	m_flag(2 | 8),
+	m_relatiave(altitude),
+	m_pSector(sector),
+	m_time(time)
 {
-	m_flag = 2 | 8;
-	m_relatiave = altitude;
-	m_pSector = sector;
-	m_time = time;
 }
 
-dfLogicStop::dfLogicStop(float altitude, std::string& action)
+dfLogicStop::dfLogicStop(dfLogicElevator* parent, float altitude, std::string& action):
+	m_parent(parent),
+	m_flag(1 | 16),
+	m_absolute(altitude),
+	m_action(action)
 {
-	m_flag = 1 | 16;
-	m_absolute = altitude;
-	m_action = action;
 }
 
-dfLogicStop::dfLogicStop(float altitude, float time)
+dfLogicStop::dfLogicStop(dfLogicElevator* parent, float altitude, float time):
+	m_parent(parent),
+	m_flag(1 | 8),
+	m_absolute(altitude),
+	m_time(time)
 {
-	m_flag = 1 | 8;
-	m_absolute = altitude;
-	m_time = time;
 }
 
 /**
@@ -78,6 +83,7 @@ void dfLogicStop::addMessage(dfMessage& message)
 void dfLogicStop::sendMessages()
 {
 	for (unsigned i = 0; i < m_messages.size(); i++) {
+		m_messages[i].m_server = "STOP:" + m_parent->name();
 		g_MessageBus.push(&m_messages[i]);
 	}
 }

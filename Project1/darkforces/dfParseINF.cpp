@@ -186,7 +186,7 @@ void dfParseINF::parseSector(std::istringstream& infile, std::string& sector)
 			}
 		}
 		else if (tokens[0] == "stop:") {
-			stop = new dfLogicStop();
+			stop = new dfLogicStop(elevator);
 			nbStops++;
 			char* p;
 
@@ -238,7 +238,6 @@ void dfParseINF::parseLine(std::istringstream& infile, std::string &sector, int 
 {
 	std::string line, dump;
 	bool start = false;
-	dfLogicStop stop;
 
 	std::string kind;
 	dfLogicTrigger* trigger = nullptr;
