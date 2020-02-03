@@ -166,6 +166,10 @@ glTexture* myDarkForces::draw(time_t delta, fwRenderer* renderer)
 		m_keySpace = false;
 	}
 
+	// Space key can only be sent ONCE
+	if (m_control->isKeyPressed(GLFW_KEY_S)) {
+		g_MessageBus.suspendTimer();
+	}
 
 	m_level->draw(m_camera, m_scene); 	// update visible objects
 	g_MessageBus.process(delta);

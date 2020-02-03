@@ -27,12 +27,7 @@ float dfCollision::ground(glm::vec3& position)
  */
 bool dfCollision::checkEnvironement(glm::vec3& position, glm::vec3& target, float radius, glm::vec3& intersection)
 {
-	bool intersect  = m_level->checkCollision(3, position, target, radius, intersection);
-	if (intersect) {
-		return true;
-	}
-
-	return false;
+	return m_level->checkCollision(3, position, target, radius, intersection);
 }
 
 dfCollision::~dfCollision(void)

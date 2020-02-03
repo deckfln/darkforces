@@ -64,6 +64,11 @@ void dfMessageBus::process(time_t delta)
 			std::cerr << "dfMessageBus::process server=" << message->m_server << " action=" << message->m_action << " client=" << message->m_client << std::endl;;
 		}
 
+		// animation suspended ?
+		if (!m_timer && message->m_action == DF_MESSAGE_TIMER) {
+			continue;
+		}
+
 		if (m_clients.count(message->m_client) > 0) {
 			message->m_delta = delta;
 			client = m_clients[message->m_client];
@@ -73,4 +78,9 @@ void dfMessageBus::process(time_t delta)
 
 	// swap the current queue and the queue for next frame
 	m_queue.swap(m_for_next_frame);
+}
+
+void dfMessageBus::suspendTimer(void)
+{
+	m_timer = false;
 }
