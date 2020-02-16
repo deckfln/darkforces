@@ -613,11 +613,12 @@ bool dfLevel::checkCollision(float step, glm::vec3& position, glm::vec3& target,
 	}
 
 	// convert glSpace to dfSpace
-	glm::vec3 dfPosition(target.x * 10.0f, target.z * 10.0f, target.y * 10.0f);
+	glm::vec3 dfCurrent(position.x * 10.0f, position.z * 10.0f, position.y * 10.0f);
+	glm::vec3 dfTarget(target.x * 10.0f, target.z * 10.0f, target.y * 10.0f);
 	glm::vec3 dfNew;
 
 	// check against static walls
-	if (currentSector->checkCollision(step, dfPosition, radius*10.f, dfNew)) {
+	if (currentSector->checkCollision(step, dfCurrent, dfTarget, radius*10.f, dfNew)) {
 		// convert back to glSpace
 		collision.x = dfNew.x / 10.0f;
 		collision.y = dfNew.z / 10.0f;

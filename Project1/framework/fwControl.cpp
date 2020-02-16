@@ -80,8 +80,10 @@ void fwControl::mouseScroll(double xoffset, double yoffset)
 /**
  * Deal with key pressed, released to activate autoupdate
  */
-void fwControl::keyEvent(int key, int scancode, int action)
+void fwControl::keyEvent(int key, int scancode, int action, int mods)
 {
+	m_shift = mods & GLFW_MOD_SHIFT;
+
 	switch (action) {
 	case GLFW_PRESS:
 		m_currentKeys[key] = true;

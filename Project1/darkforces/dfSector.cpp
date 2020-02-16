@@ -681,7 +681,7 @@ static bool fat_point_collides_segment(glm::vec2& A, glm::vec2& B, glm::vec2& C,
 }
 
 /**
- * return the collision point
+ * return the collision point of a circle with a segment in 2D
  */
 static bool CircLine(glm::vec2& A, glm::vec2& B, glm::vec2& C, float r, glm::vec2& result)
 {
@@ -712,40 +712,81 @@ static bool CircLine(glm::vec2& A, glm::vec2& B, glm::vec2& C, float r, glm::vec
 /**
  * Test walls to detect a collision
  */
-bool dfSector::checkCollision(float step, glm::vec3& position, float radius, glm::vec3& collision)
+bool dfSector::checkCollision(float step, glm::vec3& current, glm::vec3& target, float radius, glm::vec3& collision)
 {
-	glm::vec2 C = position;
+	glm::vec2 D = target;
+	glm::vec2 C = current;
 	glm::vec2 A, B;
 	glm::vec2 intersection;
+	bool collide = false;
 
 	// Test polylines on the walls based on the setup (may ignore internals polylines (like for elevator SPIN1)
 	int dp = (m_displayPolygons == 0) ? m_polygons_walls.size() : m_displayPolygons;
+	glm::vec2 DC;
+	glm::vec2 AC;
+	float d;
 
 	for (int i = 0; i < dp; i++) {
 		for (auto wall : m_polygons_walls[i]) {
 			A = m_vertices[wall->m_left];
 			B = m_vertices[wall->m_right];
 
+			if (segment2segment(A, B, C, D, intersection)) {
+				// if the segment current->target (CD) intersect a wall (AB), we get a colision BEHIND the wall
+				collide = true;
+			}
+			else if (CircLine(A, B, C, radius, intersection)) {
+				// if the circle target,radius intersect a wall (AB), we get a colision IN FRONT of the wall
+
+				// check now if the collision point is 'behind' the direction vector
+				DC = D - C;
+				AC = intersection - C;
+
+				d = glm::dot(DC, AC);
+				if (d <= 0) {
+					// the collision point is on the other side of the direction
+					collide = false;
+				}
+				else {
+					collide = true;
+				}
+			}
+			else {
+				collide = false;
+			}
+
+
 			// do the segments intersect
-			if (CircLine(A, B, C, radius, intersection)) {
+			if (collide) {
 				// is the height sufficients
-				float wallHeight, verticalSpace;
+				float wall_z,	// ceiling of the wall (may depends on the adjoint floor), 
+					wallHeight, // absolute height of the wall
+					verticalSpace;
+
 				if (wall->m_adjoint < 0) {
 					// full wall
-					wallHeight = m_ceilingAltitude - m_floorAltitude;
-					verticalSpace = m_ceilingAltitude - m_floorAltitude;
+					wall_z = m_ceilingAltitude;
+					wallHeight = wall_z - m_floorAltitude;
+					verticalSpace = wall_z- m_floorAltitude;
 				}
 				else {
 					// portal, check with the target
-					wallHeight = wall->m_pAdjoint->m_floorAltitude - m_floorAltitude;
-					verticalSpace = wall->m_pAdjoint->m_ceilingAltitude - m_floorAltitude;
+					wall_z = wall->m_pAdjoint->m_floorAltitude;
+					wallHeight = wall_z - m_floorAltitude;
+					verticalSpace = wall_z - m_floorAltitude;
 				}
+				// there is a upgoing wall and it is higher than what the player can step
 				if (wallHeight > step || verticalSpace < 2 * step) {
-					// there is a upgoing wall and it is higher than waht the player can step
-					collision.x = intersection.x;
-					collision.y = intersection.y;
-					collision.z = m_floorAltitude;
-					return true;	// Yep collision
+					// if i'm NOT jumping OVER the sector
+					if (target.z < wall_z) {
+						collision.x = intersection.x;
+						collision.y = intersection.y;
+						collision.z = m_floorAltitude;
+
+						std::cerr << "dfSector::checkCollision sector=" << m_name << " wall=" << wall->m_id << " z=" << target.z << std::endl;
+
+						return true;
+					}
 				}
 			}
 		}

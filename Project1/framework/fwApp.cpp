@@ -37,7 +37,7 @@ static void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 
 static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
-	currentApp->keyEvent(key, scancode, action);
+	currentApp->keyEvent(key, scancode, action, mods);
 }
 
 /***
@@ -140,10 +140,10 @@ void fwApp::mouseScroll(double xoffset, double yoffset)
 		m_control->mouseScroll(xoffset, yoffset);
 }
 
-void fwApp::keyEvent(int key, int scancode, int action)
+void fwApp::keyEvent(int key, int scancode, int action, int mods)
 {
 	if (m_control)
-		m_control->keyEvent(key, scancode, action);
+		m_control->keyEvent(key, scancode, action, mods);
 }
 
 /***

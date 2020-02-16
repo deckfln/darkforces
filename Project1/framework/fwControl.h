@@ -18,6 +18,7 @@ class fwControl
 protected:
 	bool managed = false;	// mouse is managed by the controler
 	int m_button = 0;		// current mouse button pressed
+	bool m_shift = false;	// shift key is pressed
 	std::map<int, bool> m_currentKeys;	// current keys pressed
 
 	// mouse tracking
@@ -39,7 +40,7 @@ public:
 	void mouseButton(int button, int action);
 	void mouseMove(double xpos, double ypos);
 	void mouseScroll(double xoffset, double yoffset);
-	void keyEvent(int key, int scancode, int action);
+	void keyEvent(int key, int scancode, int action, int mods);
 	void bind(fwCollision* collision) { m_collision = collision; };
 	virtual void update(time_t) {};
 	bool isKeyPressed(int key);

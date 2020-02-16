@@ -28,7 +28,7 @@ public:
 	void mouseMove(double xpos, double ypos);
 	void mouseScroll(double xpos, double ypos);
 	void resizeEvent(int _width, int _height);
-	void keyEvent(int key, int scancode, int action);
+	void keyEvent(int key, int scancode, int action, int mods);
 
 	void run(void);
 	void bindControl(fwControl *control);
