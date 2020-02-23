@@ -16,7 +16,7 @@ class fwControlThirdPerson : public fwControl
 
 	double m_radSpeed = pi / 2;	// map mouse move 0..1 to 0..pi/2
 	double m_theta = pi/2;
-	double m_phi = 0;
+	double m_phi = -pi/2;
 	double m_theta_start = 0;
 	double m_phi_start = 0;
 	float m_speed = 0.0015f;
@@ -36,7 +36,7 @@ class fwControlThirdPerson : public fwControl
 	bool checkCollision(glm::vec3& target);
 
 public:
-	fwControlThirdPerson(fwCamera *, glm::vec3 position, glm::vec3 direction, float radius);
+	fwControlThirdPerson(fwCamera *, glm::vec3 position, float phi, float radius);
 	void update(time_t delta);
 	void keyEvent(int key, int scancode, int action);
 	void updateCamera(time_t delta);

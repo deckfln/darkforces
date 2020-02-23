@@ -13,6 +13,7 @@ public:
 	fwAABBox();
 	fwAABBox(float, float, float, float, float, float);
 	fwAABBox(fwSphere& sphere);
+	fwAABBox(glm::vec3& p1, glm::vec3& p2);
 	bool inside(glm::vec3& position);
 	bool intersect(fwAABBox& box);
 	void extend(fwAABBox& box);

@@ -2,12 +2,13 @@
 
 #include <GLFW/glfw3.h>
 
-fwControlThirdPerson::fwControlThirdPerson(fwCamera* _camera, glm::vec3 position, glm::vec3 direction, float radius) :
+fwControlThirdPerson::fwControlThirdPerson(fwCamera* _camera, glm::vec3 position, float phi, float radius) :
 	fwControl(_camera),
 	m_position(position),
-	m_direction(direction),
+	m_phi(phi),
 	m_radius(radius)
 {
+	updateDirection();
 	updateCamera(0);
 }
 
@@ -118,11 +119,15 @@ void fwControlThirdPerson::updateCamera(time_t delta)
 			glm::vec3 t(m_time * m_time / 2, m_time, 1);
 			glm::vec3 target = m_physic * t;
 
+			std::cerr << "fwControlThirdPerson::update x=" << m_position.x << " y=" << m_position.y << " z=" << m_position.z << std::endl;
+			std::cerr << "fwControlThirdPerson::update TARGET x=" << target.x << " y=" << target.y << " z=" << target.z << std::endl;
+
 			if (!checkCollision(target)) {
 				m_position = target;
 			}
 			else {
 				// move to fall down
+				std::cerr << "wControlThirdPerson::update hit wall, move to down" << std::endl;
 				m_velocity = glm::vec3(0);
 				m_time = 0;
 				m_physic[0][0] = 0;			m_physic[1][0] = m_velocity.x;		m_physic[2][0] = m_position.x;
@@ -137,11 +142,8 @@ void fwControlThirdPerson::updateCamera(time_t delta)
 				m_velocity.y = 0;
 
 				glm::vec3 jmp = m_position - m_debug;
-				std::cerr << "fwControlThirdPerson::updateCamera z=" << z << " distance=" << glm::length(jmp) << std::endl;
+				std::cerr << "fwControlThirdPerson::update z=" << z << " distance=" << glm::length(jmp) << std::endl;
 			}
-//			else {
-//				std::cerr << "fwControlThirdPerson::update x=" << m_position.x << " y=" << m_position.y << " z=" << m_position.z << std::endl;
-//			}
 		}
 		else {
 			// only test collision & fall if we move

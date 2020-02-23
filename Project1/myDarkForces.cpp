@@ -29,7 +29,7 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 	m_camera = new fwCamera(width, height);
 
 	// controls
-	m_control = new fwControlThirdPerson(m_camera, glm::vec3(-24, 0.5, 28), glm::vec3(1, 0, 0), 0.2f);
+	m_control = new fwControlThirdPerson(m_camera, glm::vec3(-24.4, 0.5, 24), -pi / 2, 0.2f);
 	bindControl((fwControl*)m_control);
 
 	// shared geometry
@@ -172,9 +172,9 @@ glTexture* myDarkForces::draw(time_t delta, fwRenderer* renderer)
 	}
 
 	m_level->draw(m_camera, m_scene); 	// update visible objects
-	g_MessageBus.process(delta);
+	g_MessageBus.process(33);
 
-	m_control->updateCamera(delta);			// and move the player if the level changed
+	m_control->updateCamera(33);			// and move the player if the level changed
 
 	return renderer->draw(m_camera, m_scene);
 }

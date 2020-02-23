@@ -1,6 +1,7 @@
 #include "fwAABBox.h"
 #include "fwAABBox.h"
 
+#include <algorithm>    // std::min
 #include "math/fwSphere.h"
 
 fwAABBox::fwAABBox()
@@ -31,6 +32,16 @@ fwAABBox::fwAABBox(fwSphere& sphere)
 	m_y1 = center.y + radius;
 	m_z = center.z - radius;
 	m_z1 = center.z + radius;
+}
+
+fwAABBox::fwAABBox(glm::vec3& p1, glm::vec3& p2)
+{
+	m_x = std::min(p1.x, p2.x);
+	m_x1 = std::max(p1.x, p2.x);
+	m_y = std::min(p1.y, p2.y);
+	m_y1 = std::max(p1.y, p2.y);
+	m_z = std::min(p1.z, p2.z);
+	m_z1 = std::max(p1.z, p2.z);
 }
 
 bool fwAABBox::inside(glm::vec3& position)

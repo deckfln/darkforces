@@ -500,19 +500,11 @@ void dfLogicElevator::dispatchMessage(dfMessage* message)
 /**
  * pass the collision detecttion to the mesh
  */
-bool dfLogicElevator::checkCollision(glm::vec3& position, float radius, glm::vec3& intersection)
+bool dfLogicElevator::checkCollision(glm::vec3& position, glm::vec3& target, float radius, glm::vec3& intersection)
 {
-	static fwSphere bs;
-
-	bs.set(position, radius);
-
 	// only test the elevator mesh if the supersector it is bind to is visible
 	if (m_mesh && m_mesh->visible()) {
-		bool i = m_mesh->collide(bs, intersection);
-		if (i) {
-			std::cerr << "dfLogicElevator::checkCollision with " << m_sector << std::endl;
-			return true;
-		}
+		return m_mesh->collide(position, target, radius, intersection, m_name);
 	}
 
 	return false;

@@ -662,7 +662,7 @@ void dfSuperSector::buildGeometry(std::vector<dfSector*>& sectors, fwMaterialBas
 			portal.m_debug_portal = new fwMesh(sphere, material_portal);
 			glm::vec3 position = portal.m_boundingSphere.center();
 
-			portal.m_debug_portal->position(position);
+			portal.m_debug_portal->translate(position);
 
 			m_mesh->addChild(portal.m_debug_portal);
 		}

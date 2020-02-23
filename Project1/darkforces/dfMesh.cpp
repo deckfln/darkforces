@@ -1,5 +1,6 @@
 #include "dfMesh.h"
 
+#include <glm/gtx/intersect.hpp>
 #include "dfSector.h"
 #include "dfBitmap.h"
 
@@ -305,7 +306,7 @@ void dfMesh::moveFloorTo(float z)
 {
 	glm::vec3 p = m_mesh->get_position();
 	p.y = z / 10.0f;
-	m_mesh->position(p);
+	m_mesh->translate(p);
 }
 
 /**
@@ -315,7 +316,7 @@ void dfMesh::moveCeilingTo(float z)
 {
 	glm::vec3 p = m_mesh->get_position();
 	p.y = z / 10.0f;
-	m_mesh->position(p);
+	m_mesh->translate(p);
 }
 
 /**
@@ -334,7 +335,7 @@ void dfMesh::move(glm::vec3& position)
 {
 	m_position = glm::vec3(position.x, position.z, position.y) / 10.0f;
 
-	m_mesh->position(m_position);
+	m_mesh->translate(m_position);
 }
 
 /**
@@ -418,12 +419,44 @@ int TestSphereTriangle(fwSphere& s, glm::vec3& a, glm::vec3 b, glm::vec3 c, glm:
 /**
  * Test collision againsta sphere
  */
-bool dfMesh::collide(fwSphere& boundingSphere, glm::vec3& intersection)
+bool dfMesh::collide(glm::vec3& position, glm::vec3& target, float radius, glm::vec3& intersection, std::string& name)
 {
-	fwSphere bsTranformed;
 	// convert player position (gl world space) into the elevator space (model space)
-	bsTranformed.applyMatrix4From(m_mesh->inverseWorldMatrix(), &boundingSphere);
-	fwAABBox aabb(bsTranformed);	// convert to AABB for fast test
+	glm::vec3 glPosition = glm::vec3(m_mesh->inverseWorldMatrix() * glm::vec4(position, 1.0));
+	glm::vec3 glTarget = glm::vec3(m_mesh->inverseWorldMatrix() * glm::vec4(target, 1.0));
+
+	glm::vec3 direction = glm::normalize(glTarget - glPosition);
+	glm::vec2 br;
+	float distance;
+	fwAABBox aabb(glPosition, glTarget);	// convert to AABB for fast test
+
+	if (m_boundingBox.intersect(aabb)) {
+		// test if we move through a triangle	(position->segment intersect with triangle)
+		for (unsigned int i = 0; i < m_vertices.size(); i += 3) {
+			if (glm::intersectRayTriangle(
+				glPosition,
+				direction,
+				m_vertices[i], m_vertices[i + 1], m_vertices[i + 2],
+				br,
+				distance)) {
+
+				if (distance > 0 && distance < radius) {
+					// the intersection point is inside the radius
+					intersection = glPosition + distance * direction;
+
+					std::cerr << "dfMesh::collide ray collide" << std::endl;
+					return true;
+				}
+			}
+		}
+	}
+
+	// convert player position (gl world space) into the elevator space (model space)
+	static fwSphere bs;
+	bs.set(target, radius);
+	fwSphere bsTranformed;
+	bsTranformed.applyMatrix4From(m_mesh->inverseWorldMatrix(), &bs);
+	aabb = fwAABBox(bsTranformed);	// convert to AABB for fast test
 
 	if (m_boundingBox.intersect(aabb)) {
 		// now test with the sphere against each triangle
@@ -434,7 +467,13 @@ bool dfMesh::collide(fwSphere& boundingSphere, glm::vec3& intersection)
 				bsTranformed.applyMatrix4(m_mesh->worldMatrix());
 				intersection = bsTranformed.center();
 
-				return true;
+				glm::vec3 hit = intersection - position;
+				direction = target - position;
+				if (glm::dot(hit, direction) > 0) {
+					// as we checked on a sphere, ensure the intersection is in the direction we want to move, and not on our back
+					std::cerr << "dfMesh::collide sphere collide" << std::endl;
+					return true;
+				}
 			}
 		}
 	}
@@ -483,7 +522,7 @@ fwMesh* dfMesh::buildMesh(void)
 	}
 
 	m_mesh = new fwMesh(m_geometry, m_material);
-	m_mesh->position(m_position);
+	m_mesh->translate(m_position);
 
 	return m_mesh;
 }

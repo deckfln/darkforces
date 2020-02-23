@@ -325,7 +325,7 @@ void dfLevel::buildGeometry(void)
 		glm::vec3 center = glm::vec3((m_boundingBox.m_x1 + m_boundingBox.m_x) / 20.0f,
 			m_skyAltitude / 10.0f,	
 			(m_boundingBox.m_y1 + m_boundingBox.m_y) / 20.0f);
-		mesh->position(center);
+		mesh->translate(center);
 	}
 }
 
@@ -628,7 +628,7 @@ bool dfLevel::checkCollision(float step, glm::vec3& position, glm::vec3& target,
 
 	// check against the elevators
 	for (auto elevator : m_inf->m_elevators) {
-		if (elevator->checkCollision(target, radius, collision)) {
+		if (elevator->checkCollision(position, target, radius, collision)) {
 			// mesh collision is done on glSpace
 			return true;
 		}
