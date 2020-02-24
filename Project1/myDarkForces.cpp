@@ -29,7 +29,7 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 	m_camera = new fwCamera(width, height);
 
 	// controls
-	m_control = new fwControlThirdPerson(m_camera, glm::vec3(-24.4, 0.5, 24), -pi / 2, 0.2f);
+	m_control = new fwControlThirdPerson(m_camera, glm::vec3(-24.4, 0.5, 24), 0.55f, -pi / 2, 0.3f);
 	bindControl((fwControl*)m_control);
 
 	// shared geometry

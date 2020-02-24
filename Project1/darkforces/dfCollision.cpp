@@ -1,5 +1,8 @@
 #include "dfCollision.h"
 
+//maximum step the player can walk over (glSpace)
+#define DF_MAXIMUM_STEP 0.26f
+
 dfCollision::dfCollision()
 {
 }
@@ -25,9 +28,9 @@ float dfCollision::ground(glm::vec3& position)
 /**
  * test if there is a wall in front of the player
  */
-bool dfCollision::checkEnvironement(glm::vec3& position, glm::vec3& target, float radius, glm::vec3& intersection)
+bool dfCollision::checkEnvironement(glm::vec3& position, glm::vec3& target, float height, float radius, glm::vec3& intersection)
 {
-	return m_level->checkCollision(3, position, target, radius, intersection);
+	return m_level->checkCollision(DF_MAXIMUM_STEP, position, target, height, radius, intersection);
 }
 
 dfCollision::~dfCollision(void)

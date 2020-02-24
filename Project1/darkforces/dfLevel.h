@@ -77,6 +77,6 @@ public:
 	void draw(fwCamera* camera, fwScene* scene);
 	std::vector<dfSector*>& sectors(void) { return m_sectors; };
 	std::vector<dfBitmap*>& textures(void) { return m_bitmaps; };
-	bool checkCollision(float step, glm::vec3& position, glm::vec3& target, float radius, glm::vec3& collision);
+	bool checkCollision(float step, glm::vec3& position, glm::vec3& target, float height, float radius, glm::vec3& collision);
 	~dfLevel();
 };

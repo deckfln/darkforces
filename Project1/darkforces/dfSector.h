@@ -127,7 +127,7 @@ public:
 
 	void event(int event_mask);
 	void removeHollowWalls(void);
-	bool checkCollision(float step, glm::vec3& current, glm::vec3& target, float radius, glm::vec3& collision);
+	bool checkCollision(float step, glm::vec3& current, glm::vec3& target, float height, float radius, glm::vec3& collision);
 
 	~dfSector();
 };

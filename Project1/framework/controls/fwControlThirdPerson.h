@@ -20,7 +20,8 @@ class fwControlThirdPerson : public fwControl
 	double m_theta_start = 0;
 	double m_phi_start = 0;
 	float m_speed = 0.0015f;
-	float m_radius = 1;			// radius of the player bounding Sphere
+	float m_height = 1;			// player eye position
+	float m_radius = 1;			// player cyclinder radius 
 
 	glm::mat3 m_physic = glm::mat3(0);	// matrice for physic engine when in 'free fall'
 	glm::vec3 m_velocity = glm::vec3(0);
@@ -36,7 +37,7 @@ class fwControlThirdPerson : public fwControl
 	bool checkCollision(glm::vec3& target);
 
 public:
-	fwControlThirdPerson(fwCamera *, glm::vec3 position, float phi, float radius);
+	fwControlThirdPerson(fwCamera *, glm::vec3 position, float height, float phi, float radius);
 	void update(time_t delta);
 	void keyEvent(int key, int scancode, int action);
 	void updateCamera(time_t delta);

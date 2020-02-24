@@ -712,7 +712,7 @@ static bool CircLine(glm::vec2& A, glm::vec2& B, glm::vec2& C, float r, glm::vec
 /**
  * Test walls to detect a collision
  */
-bool dfSector::checkCollision(float step, glm::vec3& current, glm::vec3& target, float radius, glm::vec3& collision)
+bool dfSector::checkCollision(float step, glm::vec3& current, glm::vec3& target, float height, float radius, glm::vec3& collision)
 {
 	glm::vec2 D = target;
 	glm::vec2 C = current;
@@ -769,6 +769,8 @@ bool dfSector::checkCollision(float step, glm::vec3& current, glm::vec3& target,
 					collision.y = intersection.y;
 					collision.z = m_floorAltitude;
 
+					std::cerr << "dfSector::checkCollision sector=" << m_name << " full wall=" << wall->m_id << " z=" << target.z << std::endl;
+
 					return true;
 				}
 				else {
@@ -779,9 +781,10 @@ bool dfSector::checkCollision(float step, glm::vec3& current, glm::vec3& target,
 						upperWall_z1 = m_ceilingAltitude;
 
 					// position of the head
-					float head_z = target.z + radius;
+					float head_z = target.z + height / 2.0f;
+					float feet_z = target.z - height / 2.0f;
 
-					if (lowerWall_z1 - lowerWall_z > step ||		// cannot step over the lower wall
+					if (lowerWall_z1 - feet_z > step ||		// cannot step over the lower wall
 						head_z > upperWall_z						// the head hit the upperWall 
 						) {
 						std::cerr << "dfSector::checkCollision sector=" << m_name << " wall=" << wall->m_id << " z=" << target.z << std::endl;

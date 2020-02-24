@@ -500,11 +500,11 @@ void dfLogicElevator::dispatchMessage(dfMessage* message)
 /**
  * pass the collision detecttion to the mesh
  */
-bool dfLogicElevator::checkCollision(glm::vec3& position, glm::vec3& target, float radius, glm::vec3& intersection)
+bool dfLogicElevator::checkCollision(float step, glm::vec3& position, glm::vec3& target, float radius, glm::vec3& intersection)
 {
 	// only test the elevator mesh if the supersector it is bind to is visible
 	if (m_mesh && m_mesh->visible()) {
-		return m_mesh->collide(position, target, radius, intersection, m_name);
+		return m_mesh->collide(step, position, target, radius, intersection, m_name);
 	}
 
 	return false;

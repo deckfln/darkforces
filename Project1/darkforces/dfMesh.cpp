@@ -419,7 +419,7 @@ int TestSphereTriangle(fwSphere& s, glm::vec3& a, glm::vec3 b, glm::vec3 c, glm:
 /**
  * Test collision againsta sphere
  */
-bool dfMesh::collide(glm::vec3& position, glm::vec3& target, float radius, glm::vec3& intersection, std::string& name)
+bool dfMesh::collide(float step, glm::vec3& position, glm::vec3& target, float radius, glm::vec3& intersection, std::string& name)
 {
 	// convert player position (gl world space) into the elevator space (model space)
 	glm::vec3 glPosition = glm::vec3(m_mesh->inverseWorldMatrix() * glm::vec4(position, 1.0));
@@ -444,7 +444,7 @@ bool dfMesh::collide(glm::vec3& position, glm::vec3& target, float radius, glm::
 					// the intersection point is inside the radius
 					intersection = glPosition + distance * direction;
 
-					std::cerr << "dfMesh::collide ray collide" << std::endl;
+					std::cerr << "dfMesh::collide ray collide with " << name << std::endl;
 					return true;
 				}
 			}
@@ -457,6 +457,7 @@ bool dfMesh::collide(glm::vec3& position, glm::vec3& target, float radius, glm::
 	fwSphere bsTranformed;
 	bsTranformed.applyMatrix4From(m_mesh->inverseWorldMatrix(), &bs);
 	aabb = fwAABBox(bsTranformed);	// convert to AABB for fast test
+	aabb.m_y += step;				// remove the step the player can walk over, below the step it should not trigger a collision
 
 	if (m_boundingBox.intersect(aabb)) {
 		// now test with the sphere against each triangle
@@ -471,7 +472,7 @@ bool dfMesh::collide(glm::vec3& position, glm::vec3& target, float radius, glm::
 				direction = target - position;
 				if (glm::dot(hit, direction) > 0) {
 					// as we checked on a sphere, ensure the intersection is in the direction we want to move, and not on our back
-					std::cerr << "dfMesh::collide sphere collide" << std::endl;
+					std::cerr << "dfMesh::collide sphere collide with " << name << " x=" << intersection.x << " y=" << intersection.y << " z=" << intersection.z << std::endl;
 					return true;
 				}
 			}
