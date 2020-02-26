@@ -490,6 +490,17 @@ bool dfMesh::visible(void)
 }
 
 /**
+ *
+ */
+void dfMesh::changeAmbient(float ambient)
+{
+	for (unsigned int i = 0; i < m_ambient.size(); i++) {
+		m_ambient[i] = ambient;
+	}
+	m_geometry->updateAttribute("aAmbient", 0);
+}
+
+/**
  * Move all vertices as offset of the center
  */
 void dfMesh::moveVertices(glm::vec3& center)

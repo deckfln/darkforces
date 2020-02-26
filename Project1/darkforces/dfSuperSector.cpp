@@ -397,6 +397,8 @@ void dfSuperSector::buildWalls(bool update, dfSector* sector, std::vector<dfSect
 		p = indexes.x;
 	}
 
+	int start = m_vertices.size();
+
 	// create the walls at the begining of the buffer
 	// Only create walls that do not move with the sector, the others are managed by an elevator
 	for (auto wall : sector->walls(DF_WALL_NOT_MORPHS_WITH_ELEV)) {
@@ -431,6 +433,9 @@ void dfSuperSector::buildWalls(bool update, dfSector* sector, std::vector<dfSect
 			}
 		}
 	}
+
+	// record the vertices for the walls
+	sector->wallVertices(start, m_vertices.size() - start);
 }
 
 /**
@@ -483,6 +488,7 @@ void dfSuperSector::buildSigns(dfSector*sector, std::vector<dfSector*>& sectors)
 void dfSuperSector::buildFloor(bool update, dfSector* sector)
 {
 	std::vector<dfBitmap*>& bitmaps = m_parent->textures();
+	int start = m_vertices.size();
 
 	if (update) {
 		// ONLY update the vertices
@@ -625,6 +631,9 @@ void dfSuperSector::buildFloor(bool update, dfSector* sector)
 			p++;
 		}
 	}
+
+	// record the vertices for the floor and ceiling
+	sector->floorVertices(start, m_vertices.size() - start);
 }
 
 /**
@@ -633,6 +642,9 @@ void dfSuperSector::buildFloor(bool update, dfSector* sector)
 void dfSuperSector::buildGeometry(std::vector<dfSector*>& sectors, fwMaterialBasic* material)
 {
 	for (auto sector : m_sectors) {
+		if (sector->m_name == "projector") {
+			printf("dfSuperSector::buildGeometry\n");
+		}
 		m_sectorIndex[sector->m_id] = glm::ivec3(m_vertices.size(), 0, 0);
 
 		buildWalls(false, sector, sectors);
@@ -771,6 +783,13 @@ void dfSuperSector::sortSectors(void)
 	m_sectors.sort([](dfSector* a, dfSector* b) { return a->boundingBoxSurface() < b->boundingBoxSurface(); });
 }
 
+/**
+ * Update the AmbientLights attributes
+ */
+void dfSuperSector::updateAmbientLight(int start, int len)
+{
+	m_geometry->updateAttribute("aAmbient", start, len);
+}
 
 dfSuperSector::~dfSuperSector()
 {

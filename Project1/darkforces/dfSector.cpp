@@ -804,6 +804,37 @@ bool dfSector::checkCollision(float step, glm::vec3& current, glm::vec3& target,
 	return false;
 }
 
+/**
+ * Change the lightnin of the sector in the super-sector mesh
+ */
+void dfSector::changeAmbient(float ambient)
+{
+	std::vector <float> &m_ambientLight = m_super->ambientLight();
+	ambient /= 32.0f;
+
+	if (m_wallVerticesLen > 0) {
+		for (unsigned int i = m_wallVerticesStart; i < m_wallVerticesStart + m_wallVerticesLen; i++) {
+			m_ambientLight[i] = ambient;
+		}
+		m_super->updateAmbientLight(m_wallVerticesStart, m_wallVerticesLen);
+	}
+
+	if (m_floorVerticesLen > 0) {
+		for (unsigned int i = m_floorVerticesStart; i < m_floorVerticesStart + m_floorVerticesLen; i++) {
+			m_ambientLight[i] = ambient;
+		}
+		m_super->updateAmbientLight(m_floorVerticesStart, m_floorVerticesLen);
+	}
+}
+
+/**
+ * Test if the sector is displayed on screen (the parent super-sector is visible)
+ */
+bool dfSector::visible(void)
+{
+	return m_super->visible();
+}
+
 dfSector::~dfSector()
 {
 	for (auto wall: m_walls) {

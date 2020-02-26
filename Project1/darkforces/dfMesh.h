@@ -61,6 +61,7 @@ public:
 	bool collide(float step, glm::vec3& position, glm::vec3& target, float radius, glm::vec3& intersection, std::string& name);
 	void parent(fwMesh* parent) { m_parent = parent; };
 	bool visible(void);
+	void changeAmbient(float ambient);
 
 	fwMesh* buildMesh(void);
 	~dfMesh();

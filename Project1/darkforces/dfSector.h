@@ -63,6 +63,10 @@ class dfSector
 	std::vector<std::vector<Point>> m_polygons_vertices;			// polylines enclosing the sector : [0] external polygon, [1+] internal holes : by vertices
 	std::vector<std::vector<dfWall*>> m_polygons_walls;				// polylines enclosing the sector : [0] external polygon, [1+] internal holes : by walls
 	int m_displayPolygons = 0;										// defualt number of polygon to draw 0=ALL, 1 = external one, 2 = first hole
+	int m_wallVerticesStart = 0;				// position of the first wall vertice in the super-sector vertices
+	int m_wallVerticesLen = 0;
+	int m_floorVerticesStart = 0;				// position of the first floor vertice in the super-sector vertices
+	int m_floorVerticesLen = 0;
 
 public:
 	fwAABBox m_boundingBox;
@@ -128,6 +132,12 @@ public:
 	void event(int event_mask);
 	void removeHollowWalls(void);
 	bool checkCollision(float step, glm::vec3& current, glm::vec3& target, float height, float radius, glm::vec3& collision);
+
+	void wallVertices(int start, int len) { m_wallVerticesStart = start, m_wallVerticesLen = len; };
+	void floorVertices(int start, int len) { m_floorVerticesStart = start, m_floorVerticesLen = len; };
+	void changeAmbient(float ambient);
+
+	bool visible(void);
 
 	~dfSector();
 };

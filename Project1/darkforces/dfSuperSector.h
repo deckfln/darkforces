@@ -105,5 +105,8 @@ public:
     void addObject(dfMesh* object);
     void sortSectors(void);
 
+    std::vector <float>& ambientLight(void) { return m_ambientLight; };
+    void updateAmbientLight(int start, int len);
+
     ~dfSuperSector();
 };

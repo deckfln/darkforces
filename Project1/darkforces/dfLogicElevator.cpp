@@ -9,7 +9,7 @@
 #include "dfSign.h"
 #include "dfMessageBus.h"
 
-const std::list<std::string> keywords = {
+const static std::list<std::string> keywords = {
 	"inv",			//DF_ELEVATOR_INV
 	"basic",		//DF_ELEVATOR_BASIC
 	"move_floor",	//DF_ELEVATOR_MOVE_FLOOR
@@ -17,6 +17,17 @@ const std::list<std::string> keywords = {
 	"move_ceiling",	//DF_ELEVATOR_MOVE_CEILING
 	"morph_spin1",	//DF_ELEVATOR_MORPH_SPIN1
 	"morph_move1"	//DF_ELEVATOR_MORPH_MOVE1
+};
+
+// default elevators speed
+static std::map<int, float> _speeds = {
+	{DF_ELEVATOR_INV, 20.f},
+	{DF_ELEVATOR_BASIC, 20.0f},	
+	{DF_ELEVATOR_MOVE_FLOOR, 20.0f},
+	{DF_ELEVATOR_CHANGE_LIGHT, 10.0f},
+	{DF_ELEVATOR_MOVE_CEILING, 20.0f},
+	{DF_ELEVATOR_MORPH_SPIN1, 20.0f},
+	{DF_ELEVATOR_MORPH_MOVE1, 20.0f}
 };
 
 dfLogicElevator::dfLogicElevator(std::string& kind, dfSector* sector, dfLevel* parent):
@@ -32,6 +43,7 @@ dfLogicElevator::dfLogicElevator(std::string& kind, dfSector* sector, dfLevel* p
 	for (auto &keyword : keywords) {
 		if (keyword == kind) {
 			m_type = i;
+			m_speed = _speeds[m_type];
 			return;
 		}
 		i++;
@@ -51,6 +63,7 @@ dfLogicElevator::dfLogicElevator(std::string& kind, std::string& sector):
 	for (auto& keyword : keywords) {
 		if (keyword == kind) {
 			m_type = i;
+			m_speed = _speeds[m_type];
 			return;
 		}
 		i++;
@@ -225,6 +238,11 @@ dfMesh *dfLogicElevator::buildGeometry(fwMaterial* material)
  */
 void dfLogicElevator::init(int stopID)
 {
+	if (m_type == DF_ELEVATOR_CHANGE_LIGHT) {
+		// kick start animation
+		printf("");
+	}
+
 	m_currentStop = stopID;
 	dfLogicStop* stop = m_stops[m_currentStop];
 
@@ -235,6 +253,11 @@ void dfLogicElevator::init(int stopID)
 
 	if (m_mesh) {
 		moveTo(stop);
+	}
+
+	if (m_type == DF_ELEVATOR_CHANGE_LIGHT) {
+		// kick start animation
+		g_MessageBus.pushForNextFrame(&m_msg_animate);
 	}
 
 	// send messages to the clients
@@ -358,6 +381,17 @@ bool dfLogicElevator::animate(time_t delta)
 	m_tick += delta;
 
 	switch (m_type) {
+	case DF_ELEVATOR_CHANGE_LIGHT:
+		if (m_pSector) {
+			if (m_pSector->visible()) {
+				return animateMoveZ();
+			}
+			else {
+				// next animation
+				g_MessageBus.pushForNextFrame(&m_msg_animate);
+			}
+		}
+		break;
 	case DF_ELEVATOR_BASIC:
 	case DF_ELEVATOR_INV:
 	case DF_ELEVATOR_MOVE_FLOOR:
@@ -386,11 +420,28 @@ void dfLogicElevator::moveTo(dfLogicStop *stop)
  */
 void dfLogicElevator::moveTo(float z)
 {
-	if (m_mesh == nullptr) {
-		std::cerr << "dfLogicElevator::moveTo mesh not implemented for " << m_sector << std::endl;
-		return;
+	// security check
+	switch (m_type) {
+	case DF_ELEVATOR_INV:
+	case DF_ELEVATOR_BASIC:
+	case DF_ELEVATOR_MOVE_FLOOR:
+	case DF_ELEVATOR_MOVE_CEILING:
+	case DF_ELEVATOR_MORPH_SPIN1:
+	case DF_ELEVATOR_MORPH_MOVE1:
+		if (m_mesh == nullptr) {
+			//std::cerr << "dfLogicElevator::moveTo mesh not implemented for " << m_sector << std::endl;
+			return;
+		}
+		break;
+	case DF_ELEVATOR_CHANGE_LIGHT:
+		if (m_pSector == nullptr) {
+			//std::cerr << "dfLogicElevator::moveTo sector not found " << m_sector << std::endl;
+			return;
+		}
+		break;
 	}
 
+	// run the move
 	switch (m_type) {
 	case DF_ELEVATOR_INV:
 		m_mesh->moveCeilingTo(z);
@@ -411,6 +462,9 @@ void dfLogicElevator::moveTo(float z)
 		break;
 	case DF_ELEVATOR_MORPH_MOVE1:
 		m_mesh->translate(m_move, z);
+		break;
+	case DF_ELEVATOR_CHANGE_LIGHT:
+		m_pSector->changeAmbient(z);
 		break;
 	default:
 		std::cerr << "dfLogicElevator::moveTo m_type==" << m_type << " not implemented" << std::endl;
