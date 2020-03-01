@@ -32,6 +32,8 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 	m_control = new fwControlThirdPerson(m_camera, glm::vec3(-24.4, 0.5, 24), 0.55f, -pi / 2, 0.3f);
 	bindControl((fwControl*)m_control);
 
+	m_renderer->customLight("/data/shaders/lightning.glsl");
+
 	// shared geometry
 	fwBoxGeometry* geometry = new fwBoxGeometry();
 

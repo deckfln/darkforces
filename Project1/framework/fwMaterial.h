@@ -58,6 +58,7 @@ public:
 	const std::string &get_fragmentShader(void);
 	const std::string &get_geometryShader(void);
 	const std::string get_shader(int shader, RenderType render = FORWARD_RENDER);
+	const std::string get_shader(int shader, RenderType render, std::map<std::string, std::string> defines);
 	const int getID(void);
 	const std::string defines(void) { return m_defines; };
 

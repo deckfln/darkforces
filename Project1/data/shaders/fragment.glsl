@@ -43,8 +43,8 @@ void main()
 	color = material.color;
 #endif
 
-    gFragColor = color.rgb * ambient;
+    gFragColor = color.rgb;
 	gWorld = world;
 	gNormal = vec3(0);
-	gMaterial = vec3(0);
+	gMaterial = vec3(0.0, 0.0, ambient);
 }

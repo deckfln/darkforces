@@ -33,11 +33,14 @@ void main()
     // retrieve data from G-buffer
     vec3 color = texture(gColor, TexCoord).rgb;
     vec3 normal = texture(gNormal, TexCoord).rgb;
+	vec3 world = texture(gWorld, TexCoord).rgb;
+	vec3 material = texture(gMaterial, TexCoord).rgb;
 
+#ifdef CUSTOM_LIGHT
+#include "#CUSTOM_LIGHT_SHADER"
+#else
 	if (normal != vec3(0)) {
 		// diffuse material
-		vec3 world = texture(gWorld, TexCoord).rgb;
-		vec3 material = texture(gMaterial, TexCoord).rgb;
 
 		float shininess = material.r * 256;
 		float specular_map = material.g;
@@ -67,9 +70,12 @@ void main()
 #endif
 
 		vec3 spotlight = vec3(0);
+		vec3 customlight = vec3(0);
 
-	    color = clamp(dirlight + pointlight + spotlight, .0, 1.0);
+	    color = clamp(dirlight + pointlight + spotlight + customlight, .0, 1.0);
 	}
+#endif
+
 	FragColor = vec4(color, 1.0);
 
 #ifdef BLOOMMAP

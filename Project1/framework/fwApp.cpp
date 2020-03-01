@@ -13,7 +13,6 @@ unsigned int SCR_WIDTH = 800;
 unsigned int SCR_HEIGHT = 600;
 
 static fwApp *currentApp = nullptr;
-static fwRenderer* renderer = nullptr;
 
 static void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
@@ -76,7 +75,7 @@ fwApp::fwApp(std::string name, int _width, int _height, std::string post_process
 		std::cout << "Failed to initialize GLAD" << std::endl;
 	}
 
-	renderer = new fwRendererDefered(SCR_WIDTH, SCR_HEIGHT);
+	m_renderer = new fwRendererDefered(SCR_WIDTH, SCR_HEIGHT);
 
 	// post processing buffer
 	source = new fwUniform("screenTexture", (glTexture *)nullptr);
@@ -109,7 +108,7 @@ void fwApp::resizeEvent(int _width, int _height)
 	width = _width;
 	height = _height;
 
-	glm::vec2 cm = renderer->size();
+	glm::vec2 cm = m_renderer->size();
 	m_pixelsize.x = 1.0f / cm.x;
 	m_pixelsize.y = 1.0f / cm.y;
 
@@ -194,11 +193,11 @@ void fwApp::run(void)
 		//glFrontFace(GL_CCW);
 
 		// 2nd pass : render to color buffer
-		renderer->start();
+		m_renderer->start();
 
-		glTexture *color = draw(last_frame_time, renderer);
+		glTexture *color = draw(last_frame_time, m_renderer);
 		
-		renderer->stop();
+		m_renderer->stop();
 
 		// 3rd pass : postprocessing
 		//glCullFace(GL_BACK);
@@ -243,7 +242,7 @@ void fwApp::run(void)
  */
 fwApp::~fwApp()
 {
-	delete renderer;
+	delete m_renderer;
 	delete postProcessing;
 	delete source;
 

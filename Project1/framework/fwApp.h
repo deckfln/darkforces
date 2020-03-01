@@ -11,6 +11,7 @@
 
 class fwApp
 {
+protected:
 	int height = 0;
 	int width = 0;
 	glm::vec2 m_pixelsize = glm::vec2(0);
@@ -18,7 +19,8 @@ class fwApp
 	fwPostProcessing *postProcessing = nullptr;
 	fwControl *m_control = nullptr;
 	fwUniform *source = nullptr;
-	
+	fwRenderer* m_renderer = nullptr;
+
 	void processInput(GLFWwindow *window);
 
 public:

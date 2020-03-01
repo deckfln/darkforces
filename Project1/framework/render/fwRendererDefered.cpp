@@ -1,4 +1,6 @@
 #include <map>
+#include <map>
+
 #include "fwRendererDefered.h"
 
 #include "../fwConstants.h"
@@ -108,6 +110,8 @@ void fwRendererDefered::mergeMTR(fwScene *scene)
 	}
 
 	std::string define = "";
+	std::map <std::string, std::string> variables;
+
 	if (shadowmap) {
 		define += "#define SHADOWMAP\n";
 	}
@@ -120,11 +124,15 @@ void fwRendererDefered::mergeMTR(fwScene *scene)
 	if (m_bloom != nullptr) {
 		define += "#define BLOOMMAP\n";
 	}
+	if (m_customLightning != "") {
+		define += "#define CUSTOM_LIGHT\n";
+		variables["CUSTOM_LIGHT_SHADER"] = m_customLightning;
+	}
 
 	// Build the shader if it is missing
 	if (light_programs[define] == nullptr) {
 		std::string vertex = deferedLights.get_shader(VERTEX_SHADER);
-		std::string fragment = deferedLights.get_shader(FRAGMENT_SHADER);
+		std::string fragment = deferedLights.get_shader(FRAGMENT_SHADER, FORWARD_RENDER, variables);
 
 		// Bloom ?
 		if (m_bloom != nullptr) {

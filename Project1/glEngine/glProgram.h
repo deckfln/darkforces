@@ -6,7 +6,7 @@
 #include "glUniform.h"
 #include "glTexture.h"
 
-std::string load_shader_file(const std::string shader_file, std::string defines);
+std::string load_shader_file(const std::string shader_file, std::string defines, std::map<std::string,std::string> *variables=nullptr);
 
 class glProgram
 {

@@ -127,6 +127,20 @@ const std::string fwMaterial::get_shader(int shader, RenderType render)
 	return shaders[render][shader];
 }
 
+const std::string fwMaterial::get_shader(int shader, RenderType render, std::map<std::string, std::string>variables)
+{
+	//TODO: return a reference to the real code instead of a copy of the string 
+	if (shaders[render][shader] == "") {
+		std::string file = files[render][shader];
+		if (file == "") {
+			return "";
+		}
+		shaders[render][shader] = load_shader_file(file, m_defines, &variables);
+	}
+
+	return shaders[render][shader];
+}
+
 std::string fwMaterial::hashCode(void)
 {
 	return m_hash + m_defines;

@@ -16,7 +16,7 @@
 
 List Shaders;
 
-std::string load_shader_file(const std::string shader_file, std::string defines)
+std::string load_shader_file(const std::string shader_file, std::string defines, std::map <std::string, std::string> *variables)
 {
 	// 1. retrieve the vertex/fragment source code from filePath
 	std::string code;
@@ -38,8 +38,20 @@ std::string load_shader_file(const std::string shader_file, std::string defines)
 	}
 	catch (std::ifstream::failure e)
 	{
-		std::cout << "glProgram::load_shader_file " << shader_file << " ::FILE_NOT_SUCCESFULLY_READ" << std::endl;
+		std::cout << "glProgram::load_shader_file " << ROOT_FOLDER + shader_file << " ::FILE_NOT_SUCCESFULLY_READ" << std::endl;
 		exit(-1);
+	}
+
+	// replace variables
+	if (variables != nullptr) {
+		int pos = -1;
+		for (auto m : *variables) {
+			std::string v = "#" + m.first;
+			pos = code.find(v);
+			if (pos >= 0) {
+				code.replace(pos, v.length(), m.second);
+			}
+		}
 	}
 
 	// deal with all includes
@@ -62,7 +74,16 @@ std::string load_shader_file(const std::string shader_file, std::string defines)
 				std::string line = base_match[0].str();
 				std::string file = base_match[1].str();
 
-				std::string include = load_shader_file(path + "/" + file, defines);
+				std::string include;
+				if (file[0] == '/') {
+					// absolute file
+					include = load_shader_file(file.substr(1), defines);
+				}
+				else {
+					// relative file
+					include = load_shader_file(path + "/" + file, defines);
+				}
+
 				code.replace(hasInclude, line.length(), include);
 			}
 		}
