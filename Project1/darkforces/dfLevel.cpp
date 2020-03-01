@@ -514,11 +514,10 @@ dfSector* dfLevel::findSector(glm::vec3& position)
 
 	// position is in opengl space
 	// TODO should move the opengl <-> level space conversion on a central place
-	glm::vec3 level_space = position;
-	level_space *= 10;
-	float z = level_space.z;
-	level_space.z = level_space.y;
-	level_space.y = z;
+	glm::vec3 level_space(
+		position.x * 10.0f,
+		position.z * 10.0f,
+		position.y * 10.0f);
 
 	// quick check on the last sector
 	if (m_lastSector) {

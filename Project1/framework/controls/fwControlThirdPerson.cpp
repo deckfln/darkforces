@@ -74,6 +74,7 @@ void fwControlThirdPerson::checkKeys(time_t delta)
 			updateDirection();
 		}
 		if (m_currentKeys[GLFW_KEY_X]) {
+			// JUMP
 			m_debug = m_position;
 
 			m_velocity.y = 0.004f;

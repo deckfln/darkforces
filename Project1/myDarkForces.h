@@ -32,6 +32,8 @@ class myDarkForces : public fwApp
 	dfFileGOB* m_textures = nullptr;
 	dfLevel* m_level = nullptr;
 	bool m_keySpace = false;	// SPACE is pressed
+	bool m_headlight = false;
+	bool m_f5 = false;
 
 public:
 	myDarkForces(std::string name, int width, int height);

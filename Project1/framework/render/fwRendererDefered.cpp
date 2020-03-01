@@ -112,9 +112,12 @@ void fwRendererDefered::mergeMTR(fwScene *scene)
 	std::string define = "";
 	std::map <std::string, std::string> variables;
 
+	// add define for shadows
 	if (shadowmap) {
 		define += "#define SHADOWMAP\n";
 	}
+
+	// add defines for lightning
 	if (directional_lights > 0) {
 		define += "#define DIRECTION_LIGHTS " + std::to_string(directional_lights) + "\n";
 	}
@@ -127,6 +130,13 @@ void fwRendererDefered::mergeMTR(fwScene *scene)
 	if (m_customLightning != "") {
 		define += "#define CUSTOM_LIGHT\n";
 		variables["CUSTOM_LIGHT_SHADER"] = m_customLightning;
+	}
+
+	// add the custom defines
+	for (auto d : m_customDefines) {
+		if (d.second) {
+			define += "#define " + d.first;
+		}
 	}
 
 	// Build the shader if it is missing

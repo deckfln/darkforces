@@ -12,6 +12,7 @@ class fwRenderer
 protected:
 	glColorMap* m_colorMap = nullptr;
 	std::string m_customLightning = "";
+	std::map<std::string, bool> m_customDefines;
 
 	std::map <std::string, glProgram*> m_programs;
 	std::map <int, fwMaterial*> m_materials;
@@ -53,6 +54,7 @@ public:
 	void stop(void);
 	glm::vec2 size(void);
 	void customLight(std::string shader) { m_customLightning = shader; };
+	void customDefine(const std::string& define, bool defined) { m_customDefines[define] = defined; };
 
 	~fwRenderer();
 };

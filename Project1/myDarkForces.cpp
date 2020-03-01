@@ -29,7 +29,7 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 	m_camera = new fwCamera(width, height);
 
 	// controls
-	m_control = new fwControlThirdPerson(m_camera, glm::vec3(-24.4, 0.5, 24), 0.55f, -pi / 2, 0.3f);
+	m_control = new fwControlThirdPerson(m_camera, glm::vec3(-36.4, 2.3, 37.8), 0.55f, -pi / 2, 0.2f);
 	bindControl((fwControl*)m_control);
 
 	m_renderer->customLight("/data/shaders/lightning.glsl");
@@ -168,10 +168,23 @@ glTexture* myDarkForces::draw(time_t delta, fwRenderer* renderer)
 		m_keySpace = false;
 	}
 
-	// Space key can only be sent ONCE
+	// DEBUG : suspend the timer
 	if (m_control->isKeyPressed(GLFW_KEY_S)) {
 		g_MessageBus.suspendTimer();
 	}
+
+	// get the status of the headlight
+	if (m_control->isKeyPressed(GLFW_KEY_F5)) {
+		if (!m_f5) {
+			m_headlight = !m_headlight;
+			m_f5 = true;
+		}
+	}
+	else {
+		m_f5 = false;
+	}
+
+	m_renderer->customDefine("HEADLIGHT", m_headlight);
 
 	m_level->draw(m_camera, m_scene); 	// update visible objects
 	g_MessageBus.process(33);
