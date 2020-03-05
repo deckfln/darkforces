@@ -10,6 +10,12 @@
 class dfSector;
 class dfLogicElevator;
 
+enum {
+	DF_STOP_HOLD,
+	DF_STOP_COMPLETE,
+	DF_STOP_TERMINATE
+};
+
 class dfLogicStop {
 	int m_flag = 0;			// content of the stop
 		// 1 : absolute
@@ -32,7 +38,7 @@ class dfLogicStop {
 	// [hold elevator] will remain at stop indefinitely 
 	// [terminate] elevator will stay at the stop permanently 
 	// [complete] mission will be complete when elev arrives at stop
-	std::string m_action;
+	int m_action = 0;
 
 	std::vector<dfMessage> m_messages;
 
@@ -50,8 +56,8 @@ public:
 	void sector(dfSector* pSector);
 	void time(float time) { m_flag |= 8; m_time = time * 1000; };
 	float time(void) { return m_time; };
-	void action(std::string& action) { m_flag |= 16; m_action = action; };
-	std::string& action(void) { return m_action; };
+	void action(std::string& action);
+	int action(void) { return m_action; };
 	bool isTimeBased(void);
 	void message(std::vector <std::string>& tokens);
 	void addMessage(dfMessage& message);

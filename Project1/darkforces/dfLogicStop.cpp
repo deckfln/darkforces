@@ -1,8 +1,14 @@
 #include "dfLogicStop.h"
 
+#include <map>
 #include "dfSector.h"
 #include "dfMessageBus.h"
 #include "dfLogicElevator.h"
+
+static std::map<std::string, int> _stops = {
+	{ "hold", DF_STOP_HOLD},
+	{ "terminate", DF_STOP_TERMINATE}
+};
 
 dfLogicStop::dfLogicStop(dfLogicElevator* parent):
 	m_parent(parent)
@@ -13,9 +19,9 @@ dfLogicStop::dfLogicStop(dfLogicElevator* parent, float altitude, dfSector* sect
 	m_parent(parent),
 	m_flag(2 | 16),
 	m_relatiave(altitude),
-	m_pSector(sector),
-	m_action(action)
+	m_pSector(sector)
 {
+	dfLogicStop::action(action);
 }
 
 dfLogicStop::dfLogicStop(dfLogicElevator* parent, float altitude, dfSector* sector, float time):
@@ -30,9 +36,9 @@ dfLogicStop::dfLogicStop(dfLogicElevator* parent, float altitude, dfSector* sect
 dfLogicStop::dfLogicStop(dfLogicElevator* parent, float altitude, std::string& action):
 	m_parent(parent),
 	m_flag(1 | 16),
-	m_absolute(altitude),
-	m_action(action)
+	m_absolute(altitude)
 {
+	dfLogicStop::action(action);
 }
 
 dfLogicStop::dfLogicStop(dfLogicElevator* parent, float altitude, float time):
@@ -50,6 +56,14 @@ void dfLogicStop::sector(dfSector* pSector)
 {
 	if (m_flag & 2) {
 		m_pSector = pSector;
+	}
+}
+
+void dfLogicStop::action(std::string& action)
+{
+	if (_stops.count(action) > 0) {
+		m_flag |= 16;
+		m_action = _stops[action];
 	}
 }
 

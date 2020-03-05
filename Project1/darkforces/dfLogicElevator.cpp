@@ -299,6 +299,10 @@ void dfLogicElevator::moveToNextStop(void)
 bool dfLogicElevator::animateMoveZ(void)
 {
 	switch (m_status) {
+	case DF_ELEVATOR_TERMINATED:
+		// the elevator cannot be moved
+		return true;
+
 	case DF_ELEVATOR_HOLD:
 		m_status = DF_ELEVATOR_MOVE;
 		m_tick = 0;
@@ -334,15 +338,17 @@ bool dfLogicElevator::animateMoveZ(void)
 				m_status = DF_ELEVATOR_WAIT;
 			}
 			else {
-				std::string& action = stop->action();
-				if (action == "hold") {
-					m_status = DF_ELEVATOR_HOLD;
-
+				switch (stop->action()) {
+				case DF_STOP_HOLD:
+						m_status = DF_ELEVATOR_HOLD;
+						// stop the animation
+						return true;
+				case DF_STOP_TERMINATE:
+					m_status = DF_ELEVATOR_TERMINATED;
 					// stop the animation
-					return true;	
-				}
-				else {
-					std::cerr << "dfLogicElevator::animate action " << action << " not implemented" << std::endl;
+					return true;
+				default:
+					std::cerr << "dfLogicElevator::animate action " << stop->action() << " not implemented" << std::endl;
 				}
 			}
 		}

@@ -19,7 +19,8 @@ class dfSign;
 enum {
 	DF_ELEVATOR_HOLD,		// elevator is not animated
 	DF_ELEVATOR_MOVE,		// is moving
-	DF_ELEVATOR_WAIT		// is waiting at a stop
+	DF_ELEVATOR_WAIT,		// is waiting at a stop
+	DF_ELEVATOR_TERMINATED	// the elevator cannot be activated anymore
 };
 
 enum {
