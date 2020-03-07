@@ -182,6 +182,15 @@ void dfLogicTrigger::moveZ(float z)
 }
 
 /**
+ * Move the bounding box ceiling
+ */
+void dfLogicTrigger::moveCeiling(float z)
+{
+	m_boundingBox.m_z = z - m_boundingBoxSize.z;
+	m_boundingBox.m_z1 = z;
+}
+
+/**
  * Handle a message
  */
 void dfLogicTrigger::dispatchMessage(dfMessage* message)
@@ -210,6 +219,8 @@ void dfLogicTrigger::activate(int keys)
 	if (m_actived) {
 		return;
 	}
+
+	std::cerr << "dfLogicTrigger::activate " << m_name << std::endl;
 
 	if (m_pSign) {
 		m_pSign->setStatus(1);	// turn the switch on

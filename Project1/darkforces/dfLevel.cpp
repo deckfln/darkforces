@@ -122,8 +122,7 @@ dfLevel::dfLevel(dfFileGOB* dark, dfFileGOB* gTextures, std::string file)
 	spacePartitioning();		// partion of space for quick collision
 	buildGeometry();			// build the geometry of each super sectors
 
-	createTriggerForSpin();		// for elevator_spin1, create triggers
-	createTriggerForKey();		// for evelvtor needing a key, create a trigger
+	createTriggers();		// for elevator_spin1, create triggers
 	initElevators();			// move all elevators to position 0
 
 	free(sec);
@@ -445,46 +444,57 @@ void dfLevel::convertDoors2Elevators(void)
 }
 
 /**
- * for every sector 'DOOR', create an evelator and it stops PLUS trigger
+ * for every elevator that has NO explicit switch, create a trigger
  */
-void dfLevel::createTriggerForSpin(void)
+void dfLevel::createTriggers(void)
 {
-	static std::string standard = "switch1";
+	std::map <std::string, bool> explicits;
 
-	for (auto elevator: m_inf->m_elevators) {
-		if (elevator->is(DF_ELEVATOR_MORPH_SPIN1) || elevator->is(DF_ELEVATOR_MORPH_MOVE1)) {
-			dfLogicTrigger* trigger = new dfLogicTrigger(standard, elevator);
-			trigger->config();
+	// get of all elevators with an explicit switch
+	for (auto trigger : m_inf->m_triggers) {
+		for (auto& target : trigger->clients()) {
+			explicits[target] = true;
+		}
+	}
 
-			// extract the 'CLOSED' stop = (0)
-			// add a message DONE on the stop
-			dfMessage msg(DF_MESSAGE_DONE, 0, trigger->name());
-			elevator->stop(0)->addMessage(msg);
+	// for all elevators that send messages to other elevator => explicit
+	for (auto elevator : m_inf->m_elevators) {
+		std::list<std::string> sectors;
+		elevator->getMessagesToSectors(sectors);
+		for (auto& target : sectors) {
+			explicits[target] = true;
+		}
+	}
 
-			m_inf->m_triggers.push_back(trigger);
+	// create a trigger for any elevator that is not on the explicit list
+	for (auto elevator : m_inf->m_elevators) {
+		if (explicits.count(elevator->name()) == 0) {
+			createTriggerForElevator(elevator);
 		}
 	}
 }
 
 /**
- * for every elevator needing a key, create a trigger
+ * Create dedicated trigger by elevator class
  */
-void dfLevel::createTriggerForKey(void)
+void dfLevel::createTriggerForElevator(dfLogicElevator *elevator)
 {
 	static std::string standard = "switch1";
 
-	for (auto elevator : m_inf->m_elevators) {
-		if (elevator->needsKeys()) {
-			dfLogicTrigger* trigger = new dfLogicTrigger(standard, elevator);
-			trigger->config();
+	if (elevator->is(DF_ELEVATOR_MORPH_SPIN1) || 
+		elevator->is(DF_ELEVATOR_MORPH_MOVE1) ||
+		elevator->is(DF_ELEVATOR_MOVE_CEILING) ||
+		elevator->needsKeys()
+		) {
+		dfLogicTrigger* trigger = new dfLogicTrigger(standard, elevator);
+		trigger->config();
 
-			// extract the 'CLOSED' stop = (0)
-			// add a message DONE on the stop
-			dfMessage msg(DF_MESSAGE_DONE, 0, trigger->name());
-			elevator->stop(0)->addMessage(msg);
+		// extract the 'CLOSED' stop = (0)
+		// add a message DONE on the stop
+		dfMessage msg(DF_MESSAGE_DONE, 0, trigger->name());
+		elevator->stop(0)->addMessage(msg);
 
-			m_inf->m_triggers.push_back(trigger);
-		}
+		m_inf->m_triggers.push_back(trigger);
 	}
 }
 

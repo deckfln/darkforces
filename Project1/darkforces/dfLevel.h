@@ -67,8 +67,8 @@ class dfLevel
 	dfSuperSector* findSuperSector(glm::vec3& position);
 	void initElevators(void);
 	void convertDoors2Elevators(void);
-	void createTriggerForSpin(void);
-	void createTriggerForKey(void);
+	void createTriggers(void);
+	void createTriggerForElevator(dfLogicElevator *elevator);
 
 public:
 	dfLevel(dfFileGOB* dark, dfFileGOB* textures, std::string file);

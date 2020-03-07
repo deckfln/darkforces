@@ -571,6 +571,17 @@ bool dfLogicElevator::checkCollision(float step, glm::vec3& position, glm::vec3&
 }
 
 /**
+ * Get a list of all Sectors that receive messages from that elevator
+ */
+void dfLogicElevator::getMessagesToSectors(std::list<std::string>& sectors)
+{
+
+	for (auto stop : m_stops) {
+		stop->getMessagesToSectors(sectors);
+	}
+}
+
+/**
  * for morph_move1, convert angle translation to a vector translation
  */
 void dfLogicElevator::angle(float angle)

@@ -115,5 +115,6 @@ public:
 	void addSign(dfSign*);
 	void dispatchMessage(dfMessage* message);
 	bool checkCollision(float step, glm::vec3& position, glm::vec3& target, float radius, glm::vec3& intersection);
+	void getMessagesToSectors(std::list<std::string>& sectors);
 	~dfLogicElevator(void);
 };

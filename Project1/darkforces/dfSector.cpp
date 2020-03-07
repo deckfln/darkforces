@@ -197,15 +197,15 @@ void dfSector::floor(float z)
 }
 
 /**
- * Move the floor of the sector
+ * Move the ceiling of the sector
  * Also move all triggers on the sector
  */
 void dfSector::ceiling(float z)
 {
 	m_ceilingAltitude = z;
 
-	if (m_triggers.size() > 0) {
-		std::cerr << "dfSector::ceiling triggers not implemented" << std::endl;
+	for (auto trigger : m_triggers) {
+		trigger->moveCeiling(z);
 	}
 }
 

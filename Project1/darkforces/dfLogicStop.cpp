@@ -127,3 +127,15 @@ float dfLogicStop::z_position(int elevatorClass)
 	}
 	return 0;
 }
+
+/**
+ * Get a list of all sectors that can receive messages from the stop
+ */
+void dfLogicStop::getMessagesToSectors(std::list<std::string>& sectors)
+{
+	for (auto message : m_messages) {
+		if (message.m_client != "") {
+			sectors.push_back(message.m_client);
+		}
+	}
+}

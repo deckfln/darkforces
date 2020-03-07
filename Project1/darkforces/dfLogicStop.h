@@ -63,4 +63,5 @@ public:
 	void addMessage(dfMessage& message);
 	void sendMessages();
 	float z_position(int elevatorClass);
+	void getMessagesToSectors(std::list<std::string>& sectors);
 };

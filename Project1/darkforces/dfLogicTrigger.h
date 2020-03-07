@@ -62,6 +62,7 @@ public:
 
 	bool collide(fwAABBox& box);
 	void moveZ(float z);
+	void moveCeiling(float z);
 	void activate(int keys);
 	void dispatchMessage(dfMessage* message);
 };
