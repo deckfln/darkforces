@@ -571,6 +571,19 @@ bool dfLogicElevator::checkCollision(float step, glm::vec3& position, glm::vec3&
 }
 
 /**
+ * check collision against a fwAABox
+ */
+bool dfLogicElevator::checkCollision(fwAABBox& box)
+{
+	// only test the elevator mesh if the supersector it is bind to is visible
+	if (m_mesh && m_mesh->visible()) {
+		return m_mesh->collide(box, m_name);
+	}
+
+	return false;
+}
+
+/**
  * Get a list of all Sectors that receive messages from that elevator
  */
 void dfLogicElevator::getMessagesToSectors(std::list<std::string>& sectors)

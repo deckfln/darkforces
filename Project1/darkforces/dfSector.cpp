@@ -172,8 +172,8 @@ void dfSector::setTriggerFromSector(dfLogicTrigger* trigger)
  */
 void dfSector::setTriggerFromFloor(dfLogicTrigger* trigger)
 {
-	glm::vec2 left(m_boundingBox.m_x, m_boundingBox.m_y);
-	glm::vec2 right(m_boundingBox.m_x1, m_boundingBox.m_y1);
+	glm::vec2 left(m_boundingBox.m_p.x, m_boundingBox.m_p.y);
+	glm::vec2 right(m_boundingBox.m_p1.x, m_boundingBox.m_p1.y);
 
 	trigger->boundingBox(
 		left, right,

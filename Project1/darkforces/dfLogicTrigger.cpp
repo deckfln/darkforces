@@ -57,7 +57,8 @@ dfLogicTrigger::dfLogicTrigger(std::string& kind, dfSector* sector, int wallInde
 	dfMessageClient(),
 	m_wallIndex(wallIndex),
 	m_sector(sector->m_name),
-	m_keys(client->keys())
+	m_keys(client->keys()),
+	m_pElevator(client)
 {
 	m_clients.push_back(sector->m_name);
 	sector->setTriggerFromWall(this);
@@ -72,7 +73,8 @@ dfLogicTrigger::dfLogicTrigger(std::string& kind, dfSector* sector, int wallInde
 dfLogicTrigger::dfLogicTrigger(std::string& kind, dfSector* sector, dfLogicElevator* client) :
 	dfMessageClient(sector->m_name),
 	m_sector(sector->m_name),
-	m_keys(client->keys())
+	m_keys(client->keys()),
+	m_pElevator(client)
 {
 	m_clients.push_back(sector->m_name);
 	m_class = class2int(kind);
@@ -85,7 +87,8 @@ dfLogicTrigger::dfLogicTrigger(std::string& kind, dfSector* sector, dfLogicEleva
  */
 dfLogicTrigger::dfLogicTrigger(std::string& kind, dfLogicElevator* client):
 	dfMessageClient(),
-	m_keys(client->keys())
+	m_keys(client->keys()),
+	m_pElevator(client)
 {
 	client->psector()->setTriggerFromSector(this);
 	m_clients.push_back(client->sector());
@@ -169,7 +172,15 @@ void dfLogicTrigger::config(void)
  */
 bool dfLogicTrigger::collide(fwAABBox& box)
 {
-	return m_boundingBox.intersect(box);
+	if (m_pElevator != nullptr) {
+		// keep gl space
+		return m_pElevator->checkCollision(box);
+	}
+	
+	// move to level space
+	fwAABBox level(box.m_p.x, box.m_p1.x, box.m_p.z, box.m_p1.z, box.m_p.y, box.m_p1.y);
+	level.multiplyBy(10.0);
+	return m_boundingBox.intersect(level);
 }
 
 /**
@@ -177,8 +188,8 @@ bool dfLogicTrigger::collide(fwAABBox& box)
  */
 void dfLogicTrigger::moveZ(float z)
 {
-	m_boundingBox.m_z = z;
-	m_boundingBox.m_z1 = z + m_boundingBoxSize.z;
+	m_boundingBox.m_p.z = z;
+	m_boundingBox.m_p1.z = z + m_boundingBoxSize.z;
 }
 
 /**
@@ -186,8 +197,8 @@ void dfLogicTrigger::moveZ(float z)
  */
 void dfLogicTrigger::moveCeiling(float z)
 {
-	m_boundingBox.m_z = z - m_boundingBoxSize.z;
-	m_boundingBox.m_z1 = z;
+	m_boundingBox.m_p.z = z - m_boundingBoxSize.z;
+	m_boundingBox.m_p1.z = z;
 }
 
 /**

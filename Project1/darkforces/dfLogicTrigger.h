@@ -14,6 +14,7 @@
 class dfSector;
 class dfWall;
 class dfSign;
+class dfLogicElevator;
 
 enum {
 	DF_TRIGGER_SWITCH1,
@@ -30,7 +31,8 @@ class dfLogicTrigger: public dfMessageClient {
 
 	std::string m_sector;			// sector that host the trigger
 	int m_wallIndex = -1;			// index of the wall being a trigger
-	dfSign* m_pSign = nullptr;		// index of the sign being a trigger
+	dfSign* m_pSign = nullptr;		// sign being a trigger
+	dfLogicElevator* m_pElevator = nullptr;	// elevator being a trigger
 
 	fwAABBox m_boundingBox;			// bouding box of the triggers
 	glm::vec3 m_boundingBoxCenter;	// original position of the bounding box

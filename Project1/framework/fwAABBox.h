@@ -6,14 +6,16 @@
 class fwAABBox
 {
 public:
-	float m_x, m_x1;
-	float m_y, m_y1;
-	float m_z, m_z1;
+	// create an impossible box, so 'extend' can work
+	glm::vec3 m_p = glm::vec3(999999, 999999, 999999);
+	glm::vec3 m_p1 = glm::vec3(-999999, -999999, -999999);
 
 	fwAABBox();
 	fwAABBox(float, float, float, float, float, float);
 	fwAABBox(fwSphere& sphere);
 	fwAABBox(glm::vec3& p1, glm::vec3& p2);
+	fwAABBox(fwAABBox& source, glm::mat4& matrix);
+	fwAABBox& multiplyBy(float v);
 	bool inside(glm::vec3& position);
 	bool intersect(fwAABBox& box);
 	void extend(fwAABBox& box);

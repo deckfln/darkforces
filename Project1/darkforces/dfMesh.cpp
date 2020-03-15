@@ -457,7 +457,7 @@ bool dfMesh::collide(float step, glm::vec3& position, glm::vec3& target, float r
 	fwSphere bsTranformed;
 	bsTranformed.applyMatrix4From(m_mesh->inverseWorldMatrix(), &bs);
 	aabb = fwAABBox(bsTranformed);	// convert to AABB for fast test
-	aabb.m_y += step;				// remove the step the player can walk over, below the step it should not trigger a collision
+	aabb.m_p.y += step;				// remove the step the player can walk over, below the step it should not trigger a collision
 
 	if (m_boundingBox.intersect(aabb)) {
 		// now test with the sphere against each triangle
@@ -479,6 +479,20 @@ bool dfMesh::collide(float step, glm::vec3& position, glm::vec3& target, float r
 		}
 	}
 	return false;
+}
+
+/**
+ * Test collision against a AABBox
+ */
+bool dfMesh::collide(fwAABBox& box, std::string& name)
+{
+	if (name == "floor3edoor") {
+		printf("dfMesh::collid\n");
+	}
+	// convert mesh boundinbox (model space) into the world space (gl space)
+	fwAABBox aabb(m_boundingBox, m_mesh->worldMatrix());
+
+	return aabb.intersect(box);
 }
 
 /**

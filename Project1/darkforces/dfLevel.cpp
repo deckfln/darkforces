@@ -315,15 +315,15 @@ void dfLevel::buildGeometry(void)
 
 	// finaly create the sky ceiling
 	if (m_skyAltitude > 0) {
-		float width = std::max(m_boundingBox.m_x1 - m_boundingBox.m_x, m_boundingBox.m_y1 - m_boundingBox.m_y);
+		float width = std::max(m_boundingBox.m_p1.x - m_boundingBox.m_p.x, m_boundingBox.m_p1.y - m_boundingBox.m_p.y);
 
 		dfBitmapImage* image = m_bitmaps[(int)m_skyTexture.r]->getImage();
 		m_sky = new dfMesh(m_material);
 		m_sky->addPlane(width, image);
 		fwMesh *mesh = m_sky->buildMesh();
-		glm::vec3 center = glm::vec3((m_boundingBox.m_x1 + m_boundingBox.m_x) / 20.0f,
+		glm::vec3 center = glm::vec3((m_boundingBox.m_p1.x + m_boundingBox.m_p.x) / 20.0f,
 			m_skyAltitude / 10.0f,	
-			(m_boundingBox.m_y1 + m_boundingBox.m_y) / 20.0f);
+			(m_boundingBox.m_p1.y + m_boundingBox.m_p.y) / 20.0f);
 		mesh->translate(center);
 	}
 }
@@ -507,11 +507,8 @@ void dfLevel::createTriggerForElevator(dfLogicElevator *elevator)
  */
 void dfLevel::testSwitch(fwAABBox& player)
 {
-	// convert from opengl space to level space
-	fwAABBox mybox(player.m_x * 10, player.m_x1 * 10, player.m_z * 10, player.m_z1 * 10, player.m_y * 10, player.m_y1 * 10);
-
 	for (auto trigger : m_inf->m_triggers) {
-		if (trigger->collide(mybox)) {
+		if (trigger->collide(player)) {
 			//TODO get the keys the player owns
 			trigger->activate(DF_KEY_RED);
 		}

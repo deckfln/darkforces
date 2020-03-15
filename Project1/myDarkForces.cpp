@@ -152,9 +152,9 @@ glTexture* myDarkForces::draw(time_t delta, fwRenderer* renderer)
 	// create a player AA BoundingBox
 	glm::vec3 position = m_camera->get_position();
 	fwAABBox player(
-		position.x - 1, position.x + 1,
-		position.y - 1, position.y + 1,
-		position.z - 1, position.z + 1
+		position.x - 0.4, position.x + 0.4,
+		position.y - 0.3, position.y + 0.3,
+		position.z - 0.4, position.z + 0.4
 		);
 
 	// Space key can only be sent ONCE

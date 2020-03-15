@@ -59,6 +59,7 @@ public:
 	void move(glm::vec3& position);
 	void translate(glm::vec3& direction, float distance);
 	bool collide(float step, glm::vec3& position, glm::vec3& target, float radius, glm::vec3& intersection, std::string& name);
+	bool collide(fwAABBox& box, std::string& name);
 	void parent(fwMesh* parent) { m_parent = parent; };
 	bool visible(void);
 	void changeAmbient(float ambient);
