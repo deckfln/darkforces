@@ -9,6 +9,20 @@
 dfMesh::dfMesh(fwMaterial* material)
 {
 	m_material = material;
+
+	m_pVertices = &m_vertices;
+	m_pUvs = &m_uvs;
+	m_pTextureIDs = &m_textureID;
+	m_pAmbientLights = &m_ambient;
+}
+
+dfMesh::dfMesh(dfSuperSector* ssector, std::vector<glm::vec3>* vertices, std::vector<glm::vec2>* uvs, std::vector<float>* textureIDs, std::vector <float>* ambientLights):
+	m_supersector(ssector),
+	m_pVertices(vertices),
+	m_pUvs(uvs),
+	m_pTextureIDs(textureIDs),
+	m_pAmbientLights(ambientLights)
+{
 }
 
 /**
@@ -25,7 +39,7 @@ void dfMesh::buildGeometry(dfSector* source, float bottom, float top)
 void dfMesh::rebuildAABB(void)
 {
 	m_boundingBox.reset();
-	for(auto &vertice: m_vertices) {
+	for(auto &vertice: *m_pVertices) {
 		m_boundingBox.extend(vertice);
 	}
 }
@@ -42,11 +56,11 @@ void dfMesh::findCenter(void)
  */
 int dfMesh::resize(int i)
 {
-	int p = m_vertices.size();
-	m_vertices.resize(p + i);
-	m_uvs.resize(p + i);
-	m_textureID.resize(p + i);
-	m_ambient.resize(p + i);
+	int p = m_pVertices->size();
+	m_pVertices->resize(p + i);
+	m_pUvs->resize(p + i);
+	m_pTextureIDs->resize(p + i);
+	m_pAmbientLights->resize(p + i);
 
 	return p;
 }
@@ -56,15 +70,15 @@ int dfMesh::resize(int i)
  */
 void dfMesh::setVertice(int p, float x, float y, float z, float xoffset, float yoffset, int textureID, float ambient)
 {
-	m_vertices[p].x = x / dfOpengl2space;
-	m_vertices[p].z = y / dfOpengl2space;
-	m_vertices[p].y = z / dfOpengl2space;
-	m_uvs[p] = glm::vec2(xoffset, yoffset);
-	m_textureID[p] = (float)textureID;
-	m_ambient[p] = ambient;
+	(*m_pVertices)[p].x = x / dfOpengl2space;
+	(*m_pVertices)[p].z = y / dfOpengl2space;
+	(*m_pVertices)[p].y = z / dfOpengl2space;
+	(*m_pUvs)[p] = glm::vec2(xoffset, yoffset);
+	(*m_pTextureIDs)[p] = (float)textureID;
+	(*m_pAmbientLights)[p] = ambient;
 
 	// extend the AABB
-	m_boundingBox.extend(m_vertices[p]);
+	m_boundingBox.extend((*m_pVertices)[p]);
 }
 
 /**

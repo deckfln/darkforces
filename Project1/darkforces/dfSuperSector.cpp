@@ -320,69 +320,18 @@ void dfSuperSector::addRectangle(dfSector *sector, dfWall* wall, float z, float 
  */
 void dfSuperSector::addSign(dfSector* sector, dfWall* wall, float z, float z1, int texture)
 {
-	std::vector<dfBitmap*>& bitmaps = m_parent->textures();
-
-	float x = sector->m_vertices[wall->m_left].x,
-		y = sector->m_vertices[wall->m_left].y,
-		x1 = sector->m_vertices[wall->m_right].x,
-		y1 = sector->m_vertices[wall->m_right].y;
-
 	float bitmapID = wall->m_tex[DFWALL_TEXTURE_SIGN].r;
-
+	std::vector<dfBitmap*>& bitmaps = m_parent->textures();
 	dfBitmap* bitmap = bitmaps[(int)bitmapID];
-	dfBitmapImage* image = bitmap->getImage();
-
-	float length = sqrt(pow(x - x1, 2) + pow(y - y1, 2));
-	float xpixel = (float)image->m_width;
-	float ypixel = (float)image->m_height;
-
-	glm::vec2 segment = glm::normalize(glm::vec2(x1 - x, y1 - y));
-	glm::vec2 start = sector->m_vertices[wall->m_left] + segment * (wall->m_tex[DFWALL_TEXTURE_SIGN].g - wall->m_tex[DFWALL_TEXTURE_MID].g);
-	glm::vec2 end = sector->m_vertices[wall->m_left] + segment * (wall->m_tex[DFWALL_TEXTURE_SIGN].g - wall->m_tex[DFWALL_TEXTURE_MID].g + xpixel / 8.0f);
-
-	// wall normals
-	glm::vec3 normal = glm::normalize(glm::vec3(-segment.y, segment.x, 0));	//  and (dy, -dx).
-
-	// create a copy of the wall and shrink to the size and position of the sign
-	// ratio of texture pixel vs world position = 64 pixels for 8 clicks => 8x1
-	glm::vec3 sign_p = glm::vec3(
-		start.x,
-		start.y,
-		//z - (wall->m_tex[DFWALL_TEXTURE_SIGN].b + wall->m_tex[DFWALL_TEXTURE_MID].b)
-		z - (wall->m_tex[DFWALL_TEXTURE_SIGN].b)
-		);
-	glm::vec3 sign_p1 = glm::vec3(
-		end.x,
-		end.y,
-		// z - (wall->m_tex[DFWALL_TEXTURE_SIGN].b + wall->m_tex[DFWALL_TEXTURE_MID].b) + ypixel / 8.0f
-		z - (wall->m_tex[DFWALL_TEXTURE_SIGN].b) + ypixel / 8.0f
-		);
-
-	// move the the wall along the normal
-	sign_p += normal / 10.0f;
-	sign_p1 += normal / 10.0f;
-
-	int p = m_vertices.size();
-
-	// resize the opengl buffers
-	m_vertices.resize(p + 6);
-	m_uvs.resize(p + 6);
-	m_textureID.resize(p + 6);
-	m_ambientLight.resize(p + 6);
 
 	// record the sign on the wall
 	std::string m_name = sector->m_name + "(" + std::to_string(wall->m_id) + ")";
 
 	dfLogicTrigger* trigger = (dfLogicTrigger*)g_MessageBus.getClient(m_name);
 	if (trigger) {
-		dfSign* sign = new dfSign(this, m_vertices, m_uvs, m_textureID, bitmap, p, 6, sector, wall);
+		dfSign* sign = new dfSign(this, &m_vertices, &m_uvs, &m_textureID, &m_ambientLight, bitmap, sector, wall, z, z1);
 		trigger->sign(sign);
 	}
-
-	// light value (0->31 => 0=> 255)
-	float ambient = sector->m_ambient / 32.0f;
-
-	updateRectangle(p, sign_p.x, sign_p.y, sign_p.z, sign_p1.x, sign_p1.y, sign_p1.z, 0, 0, 1, 1, image->m_textureID, ambient);
 }
 
 /**

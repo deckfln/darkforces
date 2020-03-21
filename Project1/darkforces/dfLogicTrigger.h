@@ -14,6 +14,7 @@
 class dfSector;
 class dfWall;
 class dfSign;
+class dfMesh;
 class dfLogicElevator;
 
 enum {
@@ -32,7 +33,8 @@ class dfLogicTrigger: public dfMessageClient {
 	std::string m_sector;			// sector that host the trigger
 	int m_wallIndex = -1;			// index of the wall being a trigger
 	dfSign* m_pSign = nullptr;		// sign being a trigger
-	dfLogicElevator* m_pElevator = nullptr;	// elevator being a trigger
+	dfMesh* m_pMesh= nullptr;		// Mesh being a trigger (has a bounding box)
+	dfLogicElevator* m_pElevator= nullptr;		// Mesh being a trigger (has a bounding box)
 
 	fwAABBox m_boundingBox;			// bouding box of the triggers
 	glm::vec3 m_boundingBoxCenter;	// original position of the bounding box

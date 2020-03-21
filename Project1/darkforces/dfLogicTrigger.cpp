@@ -7,6 +7,7 @@
 #include "dfSector.h"
 #include "dfsign.h"
 #include "dfMessageBus.h"
+#include "dfMesh.h"
 
 static const std::string switch1 = "switch1";
 static const std::string standard = "standard";
@@ -173,8 +174,12 @@ void dfLogicTrigger::config(void)
 bool dfLogicTrigger::collide(fwAABBox& box)
 {
 	if (m_pElevator != nullptr) {
+		if (m_pMesh == nullptr) {
+			m_pMesh = m_pElevator->mesh();
+		}
+
 		// keep gl space
-		return m_pElevator->checkCollision(box);
+		return m_pMesh->collide(box, m_name);
 	}
 	
 	// move to level space
