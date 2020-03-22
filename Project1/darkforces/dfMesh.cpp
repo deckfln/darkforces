@@ -503,10 +503,17 @@ bool dfMesh::collide(fwAABBox& box, std::string& name)
 	if (name == "floor3edoor") {
 		printf("dfMesh::collid\n");
 	}
-	// convert mesh boundinbox (model space) into the world space (gl space)
-	fwAABBox aabb(m_boundingBox, m_mesh->worldMatrix());
+	fwAABBox aabb;
 
-	return aabb.intersect(box);
+	if (m_mesh != nullptr) {
+		// if there is a real 3D object
+		// convert mesh boundinbox (model space) into the world space (gl space)
+		fwAABBox aabb(m_boundingBox, m_mesh->worldMatrix());
+		return aabb.intersect(box);
+	}
+
+	// if there is no real 3D object, the boundingbox is already in glspace
+	return m_boundingBox.intersect(box);
 }
 
 /**

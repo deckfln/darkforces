@@ -395,8 +395,13 @@ void dfSuperSector::buildSigns(dfSector*sector, std::vector<dfSector*>& sectors)
 	int size = 0;
 	int p = 0;
 
+	if (sector->m_name == "gigantaur_switch") {
+		printf("dfSuperSector::buildSigns\n");
+	}
+
 	for (auto wall : sector->walls(DF_WALL_ALL)) {
 		if (wall->m_tex[DFWALL_TEXTURE_SIGN].r >= 0) {
+
 			if (wall->m_adjoint < 0) {
 				// full wall
 				addSign(sector, wall,
@@ -408,6 +413,7 @@ void dfSuperSector::buildSigns(dfSector*sector, std::vector<dfSector*>& sectors)
 			else {
 				// portal
 				dfSector* portal = sectors[wall->m_adjoint];
+				int nbSigns = 0;
 
 				if (portal->m_ceilingAltitude < sector->m_ceilingAltitude) {
 					// add a wall above the portal
@@ -416,6 +422,7 @@ void dfSuperSector::buildSigns(dfSector*sector, std::vector<dfSector*>& sectors)
 						sector->m_ceilingAltitude,
 						DFWALL_TEXTURE_TOP
 					);
+					nbSigns++;
 				}
 				if (portal->m_floorAltitude > sector->m_floorAltitude) {
 					// add a wall below the portal
@@ -424,6 +431,16 @@ void dfSuperSector::buildSigns(dfSector*sector, std::vector<dfSector*>& sectors)
 						portal->m_floorAltitude,
 						DFWALL_TEXTURE_BOTTOM
 					);
+					nbSigns++;
+				}
+
+				if (nbSigns == 0) {
+					// force a sign on the wall because the portal is not visible
+					addSign(sector, wall,
+						sector->m_floorAltitude,
+						sector->m_ceilingAltitude,
+						DFWALL_TEXTURE_MID
+						);
 				}
 			}
 		}

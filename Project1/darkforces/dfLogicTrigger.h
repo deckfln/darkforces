@@ -32,7 +32,6 @@ class dfLogicTrigger: public dfMessageClient {
 
 	std::string m_sector;			// sector that host the trigger
 	int m_wallIndex = -1;			// index of the wall being a trigger
-	dfSign* m_pSign = nullptr;		// sign being a trigger
 	dfMesh* m_pMesh= nullptr;		// Mesh being a trigger (has a bounding box)
 	dfLogicElevator* m_pElevator= nullptr;		// Mesh being a trigger (has a bounding box)
 
@@ -55,7 +54,7 @@ public:
 	std::vector<std::string>& clients(void) { return m_clients; };
 	std::string& sector(void) { return m_sector; };
 	int wall(void) { return m_wallIndex; };
-	void sign(dfSign* sign) { m_pSign = sign; };
+	void sign(dfSign* _sign) { m_pMesh = (dfMesh *)_sign; };
 	void keys(int keys) { m_keys = keys; };
 	void addEvents(dfSector* pSector);
 	void evelator(dfLogicElevator* pClient);

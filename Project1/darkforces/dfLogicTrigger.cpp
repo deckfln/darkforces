@@ -173,19 +173,23 @@ void dfLogicTrigger::config(void)
  */
 bool dfLogicTrigger::collide(fwAABBox& box)
 {
-	if (m_pElevator != nullptr) {
-		if (m_pMesh == nullptr) {
-			m_pMesh = m_pElevator->mesh();
-		}
+	if (m_pMesh == nullptr && m_pElevator != nullptr) {
+		m_pMesh = m_pElevator->mesh();
+	}
 
+	if (m_pMesh != nullptr) {
 		// keep gl space
 		return m_pMesh->collide(box, m_name);
 	}
 	
 	// move to level space
+	/*
 	fwAABBox level(box.m_p.x, box.m_p1.x, box.m_p.z, box.m_p1.z, box.m_p.y, box.m_p1.y);
 	level.multiplyBy(10.0);
 	return m_boundingBox.intersect(level);
+	*/
+
+	return false; // this is not a touchable object
 }
 
 /**
@@ -217,8 +221,8 @@ void dfLogicTrigger::dispatchMessage(dfMessage* message)
 		activate(DF_KEY_NONE);
 		break;
 	case DF_MESSAGE_DONE:
-		if (m_pSign) {
-			m_pSign->setStatus(0);	// turn the switch off
+		if (m_pMesh) {
+			m_pMesh->setStatus(0);	// turn the switch off
 		}
 		m_actived = false;
 		break;
@@ -238,8 +242,8 @@ void dfLogicTrigger::activate(int keys)
 
 	std::cerr << "dfLogicTrigger::activate " << m_name << std::endl;
 
-	if (m_pSign) {
-		m_pSign->setStatus(1);	// turn the switch on
+	if (m_pMesh) {
+		m_pMesh->setStatus(1);	// turn the switch on
 	}
 
 	// check if the player has the correct key

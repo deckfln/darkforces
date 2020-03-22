@@ -77,6 +77,7 @@ public:
 	void parent(fwMesh* parent) { m_parent = parent; };
 	bool visible(void);
 	void changeAmbient(float ambient);
+	virtual void setStatus(int status) {};
 
 	fwMesh* buildMesh(void);
 	~dfMesh();
