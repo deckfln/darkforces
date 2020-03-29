@@ -28,7 +28,8 @@ class dfLevel
 	std::string m_name;
 	std::string m_level;
 	dfPalette* m_palette = nullptr;				// color palette
-	std::vector<dfSector *> m_sectors;			// all sectors of the level
+	std::map<std::string, dfSector *> m_sectorsName;	// all sectors of the level by Name
+	std::vector<dfSector*> m_sectorsID;			// all sectors of the level by ID
 	std::vector<dfBitmap*> m_bitmaps;			// all textures of the level
 	glm::vec3 m_skyTexture;						// Identify texture for sectors FLAGS1 = 1
 	float m_skyAltitude=0;						
@@ -37,8 +38,6 @@ class dfLevel
 
 	std::vector<dfBitmapImage *> m_allTextures;	// textures of the level based on the index from LEV structure
 	std::list<dfSuperSector *> m_supersectors;	// space partioning of sectors
-
-	std::map<std::string, dfSector*> m_hashSectors;				// dictionnaries of sectors
 
 	// Counters
 	int m_currentBitmap = 0;
@@ -75,7 +74,7 @@ public:
 	dfSector* findSector(glm::vec3& position);
 	void testSwitch(fwAABBox& player);
 	void draw(fwCamera* camera, fwScene* scene);
-	std::vector<dfSector*>& sectors(void) { return m_sectors; };
+	std::vector<dfSector*>& sectorsID(void) { return m_sectorsID; };
 	std::vector<dfBitmap*>& textures(void) { return m_bitmaps; };
 	bool checkCollision(float step, glm::vec3& position, glm::vec3& target, float height, float radius, glm::vec3& collision);
 	~dfLevel();

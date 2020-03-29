@@ -19,13 +19,13 @@ class dfMessage;
 
 class dfSign : public dfMesh {
     int m_class = 0;
-    dfBitmap *m_bitmap;                   // information on the bitmap overing the sign
+    dfBitmap* m_bitmap = nullptr;
 
     int m_start = 0;                    // index of the first attribute in the buffers
     int m_size = 0;                     // number of attributes
 
 public:
-    dfSign(dfSuperSector *ssector, std::vector<glm::vec3>* vertices, std::vector<glm::vec2>* uvs, std::vector<float>* textureIDs, std::vector <float>* m_ambientLights, dfBitmap *bitmap, dfSector *sector, dfWall *wall, float z, float z1);
+    dfSign(dfMesh* mesh, dfSector* sector, dfWall* wall, float z, float z1);
     void setClass(int clas) { m_class = clas; };
     void setStatus(int status);
     void rebuildAABB(void);

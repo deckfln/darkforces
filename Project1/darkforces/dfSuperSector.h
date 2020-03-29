@@ -45,6 +45,7 @@ public:
 static int nbSuperSectors = 0;
 
 class dfLevel;
+class dfMesh;
 
 class dfSuperSector {
     int m_id = -1;
@@ -61,24 +62,26 @@ class dfSuperSector {
     std::map <int, glm::ivec3> m_sectorIndex;   // start of the sector vertices in the vertices buffer : x = start of walls, y = start of floors, z = #vertices on the floor. Ceiling vertices = y + z
 
     fwGeometry* m_geometry = nullptr;
+    fwMaterialBasic* m_material = nullptr;
     fwMesh* m_mesh = nullptr;               // static mesh of the super sector
                                             // moving meshes are children of the super sector (like elevators)
+    dfMesh* m_dfmesh = nullptr;
 
     bool m_visible = false;                 // supersector is visible on screen
     bool m_debugPortals = false;            // display the portal bounding sphere on screen
 
     std::map<std::string, dfSign*> m_hSigns;             // Hash of maps on the super sector
 
-    void buildWalls(bool update, dfSector* sector, std::vector<dfSector*>& sectors);
+    void buildWalls(bool update, dfSector* sector, std::vector<dfSector*>sectors);
     void buildFloor(bool update, dfSector* sector);
-    void buildSigns(dfSector* sector, std::vector<dfSector*>& sectors);
+    //void buildSigns(dfSector* sector, std::vector<dfSector*>sectors);
 
     void updateRectangle(int p, float x, float y, float z, float x1, float y1, float z1, float xoffset, float yoffset, float width, float height, int textureID, float ambient);
     int addRectangle(int start, dfSector* sector, dfWall* wall, float z, float z1, int texture);
-    void addSign(dfSector* sector, dfWall* wall, float z, float z1, int texture);
+    // void addSign(dfSector* sector, dfWall* wall, float z, float z1, int texture);
 
 public:
-    dfSuperSector(dfSector* sector);
+    dfSuperSector(dfSector* sector, fwMaterialBasic* material, std::vector<dfBitmap*>& m_bitmaps);
 
     void extend(dfSuperSector*);
     dfSuperSector* smallestAdjoint(void);
@@ -87,7 +90,7 @@ public:
     bool inAABBox(glm::vec3& position) { return m_boundingBox.inside(position); };
     dfSector* findSector(glm::vec3& position);
     bool contains(int sectorID);
-    void buildGeometry(std::vector<dfSector*>& sectors, fwMaterialBasic* material);
+    void buildGeometry(std::vector<dfSector*>& sectors);
 
     int id(void) { return m_id; };
     void visible(bool v) { m_visible = v; };

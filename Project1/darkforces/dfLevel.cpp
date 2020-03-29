@@ -54,12 +54,12 @@ dfLevel::dfLevel(dfFileGOB* dark, dfFileGOB* gTextures, std::string file)
 		}
 		else if (tokens[0] == "NUMSECTORS") {
 			int nbSectors = std::stoi(tokens[1]);
-			m_sectors.resize(nbSectors);
+			m_sectorsID.resize(nbSectors);
 		}
 		else if (tokens[0] == "SECTOR") {
 			int nSector = std::stoi(tokens[1]);
 
-			dfSector* sector = new dfSector(data);
+			dfSector* sector = new dfSector(data, m_sectorsID);
 			sector->m_id = nSector;
 			if (sector->m_name == "") {
 				sector->m_name = std::to_string(nSector);
@@ -67,8 +67,8 @@ dfLevel::dfLevel(dfFileGOB* dark, dfFileGOB* gTextures, std::string file)
 			int layer = sector->m_layer;
 
 			// record the sector in the global list
-			m_sectors[nSector] = sector;
-			m_hashSectors[sector->m_name] = sector;
+			m_sectorsName[sector->m_name] = sector;
+			m_sectorsID[nSector] = sector;
 
 			sector->linkWalls();	// build the polygons from the sector
 
@@ -84,8 +84,8 @@ dfLevel::dfLevel(dfFileGOB* dark, dfFileGOB* gTextures, std::string file)
 	}
 
 	// bind the sectors to adjoint sectors and to mirror walls
-	for (auto sector : m_sectors) {
-		sector->bindWall2Sector(m_sectors);
+	for (auto sector : m_sectorsID) {
+		sector->bindWall2Sector();
 	}
 
 	// load and ditribute the INF file
@@ -96,7 +96,7 @@ dfLevel::dfLevel(dfFileGOB* dark, dfFileGOB* gTextures, std::string file)
 	for (auto elevator : m_inf->m_elevators) {
 		elevator->parent(this);
 
-		dfSector* sector = m_hashSectors[elevator->sector()];
+		dfSector* sector = m_sectorsName[elevator->sector()];
 		if (sector) {
 			elevator->bindSector(sector);
 		}
@@ -104,11 +104,19 @@ dfLevel::dfLevel(dfFileGOB* dark, dfFileGOB* gTextures, std::string file)
 
 	// bind the sector walls to the elevator logic
 	for (auto trigger : m_inf->m_triggers) {
-		dfSector* sector = m_hashSectors[trigger->sector()];
+		dfSector* sector = m_sectorsName[trigger->sector()];
 		trigger->addEvents(sector);
 
 		if (sector) {
 			sector->setTriggerFromWall(trigger);
+			sector->addTrigger(trigger);
+		}
+
+		std::vector<dfMessage>& messages = trigger->messages();
+		for (auto& message : messages) {
+			std::string& client = message.client();
+			dfSector* sector = m_sectorsName[client];
+			sector->addTrigger(trigger);
 		}
 	}
 
@@ -310,7 +318,7 @@ void dfLevel::buildAtlasMap(void)
 void dfLevel::buildGeometry(void)
 {
 	for (auto ssector : m_supersectors) {
-		ssector->buildGeometry(m_sectors, m_material);
+		ssector->buildGeometry(m_sectorsID);
 	}
 
 	// finaly create the sky ceiling
@@ -318,7 +326,7 @@ void dfLevel::buildGeometry(void)
 		float width = std::max(m_boundingBox.m_p1.x - m_boundingBox.m_p.x, m_boundingBox.m_p1.y - m_boundingBox.m_p.y);
 
 		dfBitmapImage* image = m_bitmaps[(int)m_skyTexture.r]->getImage();
-		m_sky = new dfMesh(m_material);
+		m_sky = new dfMesh(m_material, m_bitmaps);
 		m_sky->addPlane(width, image);
 		fwMesh *mesh = m_sky->buildMesh();
 		glm::vec3 center = glm::vec3((m_boundingBox.m_p1.x + m_boundingBox.m_p.x) / 20.0f,
@@ -336,17 +344,17 @@ void dfLevel::spacePartitioning(void)
 	// convert sectors into super sectors
 	// build both a list to quickly sort and shrink and a vector to convert sectorID to superSectorID
 	std::vector<dfSuperSector*> vssectors;
-	vssectors.resize(m_sectors.size());
+	vssectors.resize(m_sectorsID.size());
 	int i = 0;
-	for (auto sector : m_sectors) {
-		dfSuperSector *ssector = new dfSuperSector(sector);
+	for (auto sector : m_sectorsID) {
+		dfSuperSector *ssector = new dfSuperSector(sector, m_material, m_bitmaps);
 		m_supersectors.push_back(ssector);
 		vssectors[i++] = ssector;
 	}
 
 	// create the portals
 	for (auto &ssector : m_supersectors) {
-		ssector->buildPortals(m_sectors, vssectors);
+		ssector->buildPortals(m_sectorsID, vssectors);
 	}
 
 	// target 64 supersector
@@ -406,7 +414,7 @@ void dfLevel::initElevators(void)
 {
 	for (auto elevator : m_inf->m_elevators) {
 		// build a mesh and store the mesh in the super-sector holding the sector
-		elevator->buildGeometry(m_material);
+		elevator->buildGeometry(m_material, m_bitmaps);
 		elevator->init(0);
 	}
 }
@@ -420,7 +428,7 @@ void dfLevel::convertDoors2Elevators(void)
 	static std::string hold = "hold";
 	static std::string switch1 = "switch1";
 
-	for (auto sector : m_sectors) {
+	for (auto sector: m_sectorsID) {
 		if (sector->flag() & DF_SECTOR_DOOR) {
 			dfLogicElevator* elevator = new dfLogicElevator(inv, sector, this);
 			dfLogicStop* closed = new dfLogicStop(elevator, sector->m_floorAltitude, hold);
@@ -648,7 +656,7 @@ bool dfLevel::checkCollision(float step, glm::vec3& position, glm::vec3& target,
 
 dfLevel::~dfLevel()
 {
-	for (auto sector : m_sectors) {
+	for (auto sector : m_sectorsID) {
 		delete sector;
 	}
 	for (auto bitmap : m_bitmaps) {

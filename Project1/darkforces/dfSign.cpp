@@ -4,9 +4,8 @@
 #include "dfBitmap.h"
 #include "dfsuperSector.h"
 
-dfSign::dfSign(dfSuperSector* ssector, std::vector<glm::vec3>* vertices, std::vector<glm::vec2>* uvs, std::vector<float>* textureIDs, std::vector <float>* ambientLights, dfBitmap* bitmap, dfSector* sector, dfWall* wall, float z, float z1) :
-	dfMesh(ssector, vertices, uvs, textureIDs, ambientLights),
-	m_bitmap(bitmap)
+dfSign::dfSign(dfMesh *mesh, dfSector* sector, dfWall* wall, float z, float z1) :
+	dfMesh(mesh)
 {
 	m_name = sector->m_name + "(" + std::to_string(wall->m_id) + ")";
 	buildGeometry(sector, wall, z, z1);
@@ -26,7 +25,7 @@ void dfSign::setStatus(int status)
 	}
 
 	// push the changes
-	m_supersector->updateGeometryTextures(m_start, m_size);
+	m_parent->updateGeometryTextures(m_start, m_size);
 	// printf("void dfSign::setStatus %d\n", status);
 }
 
@@ -50,6 +49,9 @@ void dfSign::buildGeometry(dfSector* sector, dfWall* wall, float z, float z1)
 		y = sector->m_vertices[wall->m_left].y,
 		x1 = sector->m_vertices[wall->m_right].x,
 		y1 = sector->m_vertices[wall->m_right].y;
+
+	float bitmapID = wall->m_tex[DFWALL_TEXTURE_SIGN].r;
+	m_bitmap = m_bitmaps[(int)bitmapID];
 
 	dfBitmapImage* image = m_bitmap->getImage();
 
@@ -83,8 +85,5 @@ void dfSign::buildGeometry(dfSector* sector, dfWall* wall, float z, float z1)
 	sign_p += normal / 10.0f;
 	sign_p1 += normal / 10.0f;
 
-	// light value (0->31 => 0=> 255)
-	float ambient = sector->m_ambient / 32.0f;
-
-	updateRectangle(p, sign_p.x, sign_p.y, sign_p.z, sign_p1.x, sign_p1.y, sign_p1.z, 0, 0, 1, 1, image->m_textureID, ambient);
+	updateRectangle(p, sign_p.x, sign_p.y, sign_p.z, sign_p1.x, sign_p1.y, sign_p1.z, 0, 0, 1, 1, image->m_textureID, sector->m_ambient);
 }

@@ -126,7 +126,7 @@ void dfLogicElevator::addStop(dfLogicStop* stop)
 /**
  * Create an Mesh for the elevator
  */
-dfMesh *dfLogicElevator::buildGeometry(fwMaterial* material)
+dfMesh *dfLogicElevator::buildGeometry(fwMaterial* material, std::vector<dfBitmap*>& bitmaps)
 {
 	if (!m_pSector) {
 		return nullptr;
@@ -143,7 +143,7 @@ dfMesh *dfLogicElevator::buildGeometry(fwMaterial* material)
 	switch (m_type) {
 	case DF_ELEVATOR_INV:
 	case DF_ELEVATOR_BASIC:
-		m_mesh = new dfMesh(material);
+		m_mesh = new dfMesh(material, bitmaps);
 
 		// the elevator bottom is actually the ceiling
 		if (m_type == DF_ELEVATOR_INV) {
@@ -166,7 +166,7 @@ dfMesh *dfLogicElevator::buildGeometry(fwMaterial* material)
 
 	case DF_ELEVATOR_MOVE_FLOOR:
 	case DF_ELEVATOR_MOVE_CEILING:
-		m_mesh = new dfMesh(material);
+		m_mesh = new dfMesh(material, bitmaps);
 
 		if (m_type == DF_ELEVATOR_MOVE_FLOOR) {
 			// the elevator top is actually the floor
@@ -191,7 +191,7 @@ dfMesh *dfLogicElevator::buildGeometry(fwMaterial* material)
 
 	case DF_ELEVATOR_MORPH_SPIN1:
 	case DF_ELEVATOR_MORPH_MOVE1:
-		m_mesh = new dfMesh(material);
+		m_mesh = new dfMesh(material, bitmaps);
 
 		// only use the inner polygon (the hole)
 		m_pSector->buildElevator(m_mesh, m_pSector->m_floorAltitude, m_pSector->m_ceilingAltitude, DFWALL_TEXTURE_MID, false, DF_WALL_MORPHS_WITH_ELEV);

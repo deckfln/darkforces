@@ -67,6 +67,15 @@ class dfSector
 	int m_wallVerticesLen = 0;
 	int m_floorVerticesStart = 0;				// position of the first floor vertice in the super-sector vertices
 	int m_floorVerticesLen = 0;
+	std::list <dfLogicTrigger*> m_remoteTriggers;	// list of triggers on other sector with impact on that one
+
+	std::vector<dfSector *> m_dummy;
+	std::vector<dfSector *> &m_sectorsID = m_dummy;		// all neighbour sectors of the level by ID
+
+	void buildWalls(dfMesh* mesh, int displayPolygon);
+	void buildFloorAndCeiling(dfMesh* mesh);
+	void buildSigns(dfMesh* mesh);
+	void addSign(dfMesh *mesh, dfWall* wall, float z, float z1, int texture);
 
 public:
 	fwAABBox m_boundingBox;
@@ -99,7 +108,7 @@ public:
 	// same data but in the supersector (opengl space)
 	dfSuperSector* m_super = nullptr;
 
-	dfSector(std::istringstream& infile);
+	dfSector(std::istringstream& infile, std::vector<dfSector*>& sectorsID);
 	void setTriggerFromWall(dfLogicTrigger* trigger);
 	void setTriggerFromFloor(dfLogicTrigger* trigger);
 	void setTriggerFromSector(dfLogicTrigger* trigger);
@@ -127,7 +136,7 @@ public:
 	void buildElevator(dfMesh *mesh, float bottom, float top, int what, bool clockwise, int flags);
 	void buildFloor(dfMesh* mesh);
 
-	void bindWall2Sector(std::vector <dfSector*> sectors);
+	void bindWall2Sector(void);
 
 	void event(int event_mask);
 	void removeHollowWalls(void);
@@ -136,8 +145,9 @@ public:
 	void wallVertices(int start, int len) { m_wallVerticesStart = start, m_wallVerticesLen = len; };
 	void floorVertices(int start, int len) { m_floorVerticesStart = start, m_floorVerticesLen = len; };
 	void changeAmbient(float ambient);
+	void buildGeometry(dfMesh *mesh, int displayPolygon = -1);
 
 	bool visible(void);
-
+	void addTrigger(dfLogicTrigger*);
 	~dfSector();
 };

@@ -6,23 +6,57 @@
 
 #include "../include/earcut.hpp"
 
-dfMesh::dfMesh(fwMaterial* material)
+dfMesh::dfMesh(fwMaterial* material, std::vector<dfBitmap*>& bitmaps):
+	m_material(material),
+	m_pVertices(&m_vertices),
+	m_pUvs(&m_uvs),
+	m_pTextureIDs(&m_textureID),
+	m_pAmbientLights(&m_ambient),
+	m_bitmaps(bitmaps)
 {
-	m_material = material;
-
-	m_pVertices = &m_vertices;
-	m_pUvs = &m_uvs;
-	m_pTextureIDs = &m_textureID;
-	m_pAmbientLights = &m_ambient;
 }
 
-dfMesh::dfMesh(dfSuperSector* ssector, std::vector<glm::vec3>* vertices, std::vector<glm::vec2>* uvs, std::vector<float>* textureIDs, std::vector <float>* ambientLights):
+dfMesh::dfMesh(dfSuperSector* ssector, std::vector<glm::vec3>* vertices, std::vector<glm::vec2>* uvs, std::vector<float>* textureIDs, std::vector <float>* ambientLights, std::vector<dfBitmap*>& textures):
 	m_supersector(ssector),
 	m_pVertices(vertices),
 	m_pUvs(uvs),
 	m_pTextureIDs(textureIDs),
-	m_pAmbientLights(ambientLights)
+	m_pAmbientLights(ambientLights),
+	m_bitmaps(textures)
 {
+}
+
+/**
+ * Create a dfMesh sharing the same attributes as the parent
+ */
+dfMesh::dfMesh(dfMesh* parent):
+	m_bitmaps(parent->m_bitmaps),
+	m_supersector(parent->m_supersector),
+	m_pVertices(&parent->m_vertices),
+	m_pAmbientLights(&parent->m_ambient),
+	m_pTextureIDs(&parent->m_textureID),
+	m_pUvs(&parent->m_uvs),
+	m_parent(parent)
+{
+	parent->addChild(this);
+}
+
+void dfMesh::display(fwScene* scene, bool visibility)
+{
+	m_visible = visibility;
+
+	if (!scene->hasChild(m_mesh)) {
+		if (visibility) {
+			// add the mesh on the scene
+			scene->addChild(m_mesh);
+			m_mesh->set_visible(true);
+		}
+		// no need to add the msh if the supersector is invisible
+	}
+	else {
+		m_mesh->set_visible(visibility);
+	}
+
 }
 
 /**
@@ -75,7 +109,7 @@ void dfMesh::setVertice(int p, float x, float y, float z, float xoffset, float y
 	(*m_pVertices)[p].y = z / dfOpengl2space;
 	(*m_pUvs)[p] = glm::vec2(xoffset, yoffset);
 	(*m_pTextureIDs)[p] = (float)textureID;
-	(*m_pAmbientLights)[p] = ambient;
+	(*m_pAmbientLights)[p] = ambient / 32.0f;
 
 	// extend the AABB
 	m_boundingBox.extend((*m_pVertices)[p]);
@@ -116,7 +150,7 @@ void dfMesh::updateRectangleAntiClockwise(int p, float x, float y, float z, floa
 /***
  * create vertices for a rectangle
  */
-int dfMesh::addRectangle(int start, dfSector* sector, dfWall* wall, float z, float z1, int texture, std::vector<dfBitmap*>& bitmaps, float ambient)
+int dfMesh::addRectangle(int start, dfSector* sector, dfWall* wall, float z, float z1, int texture, float ambient)
 {
 	int p = start;
 
@@ -133,7 +167,7 @@ int dfMesh::addRectangle(int start, dfSector* sector, dfWall* wall, float z, flo
 	// deal with the wall texture
 	float bitmapID = wall->m_tex[texture].x;
 
-	dfBitmapImage* image = bitmaps[(int)bitmapID]->getImage();
+	dfBitmapImage* image = m_bitmaps[(int)bitmapID]->getImage();
 
 	float length = sqrt(pow(x - x1, 2) + pow(y - y1, 2));
 	float xpixel = (float)image->m_width;
@@ -162,7 +196,7 @@ int dfMesh::addRectangle(int start, dfSector* sector, dfWall* wall, float z, flo
 /**
  * create a simple opengl Rectangle
  */
-void dfMesh::addRectangle(dfSector* sector, dfWall* wall, float z, float z1, glm::vec3& texture, std::vector<dfBitmap*>& bitmaps, float ambient, bool clockwise)
+void dfMesh::addRectangle(dfSector* sector, dfWall* wall, float z, float z1, glm::vec3& texture, float ambient, bool clockwise)
 {
 	// add a new rectangle
 	int p = resize(6);
@@ -175,7 +209,7 @@ void dfMesh::addRectangle(dfSector* sector, dfWall* wall, float z, float z1, glm
 	// deal with the wall texture
 	float bitmapID = texture.x;
 
-	dfBitmapImage* image = bitmaps[(int)bitmapID]->getImage();
+	dfBitmapImage* image = m_bitmaps[(int)bitmapID]->getImage();
 	float xpixel = 0;
 	float ypixel = 0;
 
@@ -207,7 +241,7 @@ void dfMesh::addRectangle(dfSector* sector, dfWall* wall, float z, float z1, glm
 /**
  * create a floor tesselation
  */
-void dfMesh::addFloor(std::vector<Point>& vertices, std::vector<std::vector<Point>>& polygons, float z, glm::vec3& texture, std::vector<dfBitmap*>& bitmaps, float ambient, bool clockwise)
+void dfMesh::addFloor(std::vector<std::vector<Point>>& polygons, float z, glm::vec3& texture, float ambient, bool clockwise)
 {
 	// Run tessellation
 	// Returns array of indices that refer to the vertices of the input polygon.
@@ -215,13 +249,22 @@ void dfMesh::addFloor(std::vector<Point>& vertices, std::vector<std::vector<Poin
 	// Three subsequent indices form a triangle. Output triangles are clockwise.
 	std::vector<N> indices = mapbox::earcut<N>(polygons);
 
+	// index the indexes IN the polyines of polygon 
+	std::vector<Point> vertices;
+
+	for (auto poly : polygons) {
+		for (auto p : poly) {
+			vertices.push_back(p);
+		}
+	}
+
 	// resize the opengl buffers
 	int cvertices = indices.size();	
 	int p = resize(cvertices);
 
 	// use axis aligned texture UV, on a 8x8 grid
 	// ratio of texture pixel vs world position = 180 pixels for 24 clicks = 7.5x1
-	dfBitmapImage* image = bitmaps[(int)texture.r]->getImage();
+	dfBitmapImage* image = m_bitmaps[(int)texture.r]->getImage();
 	float xpixel = 0;
 	float ypixel = 0;
 	if (image != nullptr) {
@@ -521,7 +564,15 @@ bool dfMesh::collide(fwAABBox& box, std::string& name)
  */
 bool dfMesh::visible(void)
 {
-	return m_mesh->is_visible() && m_parent->is_visible();
+	if (m_parent)
+		return m_visible && m_parent->m_visible;
+
+	return m_visible;
+}
+
+void dfMesh::visible(bool status)
+{
+	m_visible = status;
 }
 
 /**
@@ -533,6 +584,38 @@ void dfMesh::changeAmbient(float ambient)
 		m_ambient[i] = ambient;
 	}
 	m_geometry->updateAttribute("aAmbient", 0);
+}
+
+/**
+ * Add a child dfmesh sharing the same attributes
+ */
+void dfMesh::addChild(dfMesh* mesh)
+{
+	m_children.push_back(mesh);
+}
+
+/**
+ * Registera sub fwmesh
+ */
+void dfMesh::addMesh(fwMesh* mesh)
+{
+	m_mesh->addChild(mesh);
+}
+
+/**
+ * Force the Z order of the mesh
+ */
+void dfMesh::zOrder(int z)
+{
+	m_mesh->zOrder(z);
+}
+
+/**
+ * Update the TextureIDs Attribute on the GPU
+ */
+void dfMesh::updateGeometryTextures(int start, int nb)
+{
+	m_geometry->updateAttribute("aTextureID", start, nb);
 }
 
 /**

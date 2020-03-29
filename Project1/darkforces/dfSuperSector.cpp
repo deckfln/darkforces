@@ -14,12 +14,14 @@
 static glm::vec4 white(1.0, 0.0, 1.0, 1.0);
 static fwMaterialBasic* material_portal = new fwMaterialBasic(&white);
 
-dfSuperSector::dfSuperSector(dfSector* sector)
+dfSuperSector::dfSuperSector(dfSector* sector, fwMaterialBasic* material, std::vector<dfBitmap*>& bitmaps) :
+	m_id(nbSuperSectors++),
+	m_boundingBox(sector->m_boundingBox),
+	m_material(material)
 {
-	m_id = nbSuperSectors++;
-
-	m_boundingBox = sector->m_boundingBox;
 	m_sectors.push_back(sector);
+
+	m_dfmesh = new dfMesh(material, bitmaps);
 }
 
 /**
@@ -169,7 +171,7 @@ dfSector* dfSuperSector::findSector(glm::vec3& position)
 
 /**
  * Update the vertices of a rectangle
- */
+ *
 void dfSuperSector::updateRectangle(int p, float x, float y, float z, float x1, float y1, float z1, float xoffset, float yoffset, float width, float height, int textureID, float ambient)
 {
 	// TODO move conversion from level space to gl space in a dedicated function
@@ -217,10 +219,11 @@ void dfSuperSector::updateRectangle(int p, float x, float y, float z, float x1, 
 	m_textureID[p + 5] = (float)textureID;
 	m_ambientLight[p + 5] = ambient;
 }
+*/
 
 /***
  * create vertices for a rectangle
- */
+ *
 int dfSuperSector::addRectangle(int start, dfSector* sector, dfWall* wall, float z, float z1, int texture)
 {
 	std::vector<dfBitmap*>& bitmaps = m_parent->textures();
@@ -270,11 +273,11 @@ int dfSuperSector::addRectangle(int start, dfSector* sector, dfWall* wall, float
 
 	return 0;	// we added a new rectangle, keep the index at -1
 }
-
+*/
 
 /**
  * create a simple opengl Rectangle
- */
+ *
 void dfSuperSector::addRectangle(dfSector *sector, dfWall* wall, float z, float z1, glm::vec3& texture)
 {
 	std::vector<dfBitmap*>& bitmaps = m_parent->textures();
@@ -314,10 +317,11 @@ void dfSuperSector::addRectangle(dfSector *sector, dfWall* wall, float z, float 
 	float ambient = sector->m_ambient / 32.0f;
 	updateRectangle(p, x, y, z, x1, y1, z1, xoffset, yoffset, width, height, image->m_textureID, ambient);
 }
+*/
 
 /***
  * create vertices for a sign
- */
+
 void dfSuperSector::addSign(dfSector* sector, dfWall* wall, float z, float z1, int texture)
 {
 	float bitmapID = wall->m_tex[DFWALL_TEXTURE_SIGN].r;
@@ -329,15 +333,16 @@ void dfSuperSector::addSign(dfSector* sector, dfWall* wall, float z, float z1, i
 
 	dfLogicTrigger* trigger = (dfLogicTrigger*)g_MessageBus.getClient(m_name);
 	if (trigger) {
-		dfSign* sign = new dfSign(this, &m_vertices, &m_uvs, &m_textureID, &m_ambientLight, bitmap, sector, wall, z, z1);
+		dfSign* sign = new dfSign(this, &m_vertices, &m_uvs, &m_textureID, &m_ambientLight, bitmaps, bitmap, sector, wall, z, z1);
 		trigger->sign(sign);
 	}
 }
+*/
 
 /**
  * Add walls at the begining of the vertices buffer
- */
-void dfSuperSector::buildWalls(bool update, dfSector* sector, std::vector<dfSector*>& sectors)
+ *
+void dfSuperSector::buildWalls(bool update, dfSector* sector, std::vector<dfSector *>sectors)
 {
 	int size = 0;
 	int p = -1;
@@ -386,11 +391,12 @@ void dfSuperSector::buildWalls(bool update, dfSector* sector, std::vector<dfSect
 	// record the vertices for the walls
 	sector->wallVertices(start, m_vertices.size() - start);
 }
+*/
 
 /**
  * Create the signs at the end of the vertics buffer
- */
-void dfSuperSector::buildSigns(dfSector*sector, std::vector<dfSector*>& sectors)
+ *
+void dfSuperSector::buildSigns(dfSector*sector, std::vector<dfSector*>sectors)
 {
 	int size = 0;
 	int p = 0;
@@ -446,11 +452,12 @@ void dfSuperSector::buildSigns(dfSector*sector, std::vector<dfSector*>& sectors)
 		}
 	}
 }
+*/
 
 /**
  * build the floor geometry by triangulating the shape
  * apply texture by using an axis aligned 8x8 grid
- */
+ *
 void dfSuperSector::buildFloor(bool update, dfSector* sector)
 {
 	std::vector<dfBitmap*>& bitmaps = m_parent->textures();
@@ -601,35 +608,23 @@ void dfSuperSector::buildFloor(bool update, dfSector* sector)
 	// record the vertices for the floor and ceiling
 	sector->floorVertices(start, m_vertices.size() - start);
 }
+*/
 
 /**
  * Create the geometry
  */
-void dfSuperSector::buildGeometry(std::vector<dfSector*>& sectors, fwMaterialBasic* material)
+void dfSuperSector::buildGeometry(std::vector<dfSector*>& sectors)
 {
 	for (auto sector : m_sectors) {
 		if (sector->m_name == "projector") {
 			printf("dfSuperSector::buildGeometry\n");
 		}
-		m_sectorIndex[sector->m_id] = glm::ivec3(m_vertices.size(), 0, 0);
+		sector->buildGeometry(m_dfmesh, DF_WALL_NOT_MORPHS_WITH_ELEV);
 
-		buildWalls(false, sector, sectors);
-
-		m_sectorIndex[sector->m_id].y = m_vertices.size();	// start of floor
-		buildFloor(false, sector);
-		m_sectorIndex[sector->m_id].z = (m_vertices.size() - m_sectorIndex[sector->m_id].y);	// number of vertices of floor
-
-		buildSigns(sector, sectors);
+		// buildSigns(sector, sectors);
 	}
+	m_dfmesh->buildMesh();
 
-	int size = m_vertices.size();
-	m_geometry = new fwGeometry();
-	m_geometry->addVertices("aPos", &m_vertices[0], 3, size * sizeof(glm::vec3), sizeof(float), false);
-	m_geometry->addAttribute("aTexCoord", GL_ARRAY_BUFFER, &m_uvs[0], 2, size * sizeof(glm::vec2), sizeof(float), false);
-	m_geometry->addAttribute("aTextureID", GL_ARRAY_BUFFER, &m_textureID[0], 1, size * sizeof(float), sizeof(float), false);
-	m_geometry->addAttribute("aAmbient", GL_ARRAY_BUFFER, &m_ambientLight[0], 1, size * sizeof(float), sizeof(float), false);
-
-	m_mesh = new fwMesh(m_geometry, material);
 	// TODO : fix the camera frustrum test to remove that line
 	// m_mesh->always_draw(true);
 
@@ -649,18 +644,19 @@ void dfSuperSector::buildGeometry(std::vector<dfSector*>& sectors, fwMaterialBas
 
 /**
  * Update the TextureIDs Attribute on the GPU
- */
+ *
 void dfSuperSector::updateGeometryTextures(int start, int nb)
 {
 	m_geometry->updateAttribute("aTextureID", start, nb);
 }
+*/
 
 /**
  * refresh all vertices of the sector
- */
+ *
 void dfSuperSector::updateSectorVertices(int sectorID)
 {
-	std::vector<dfSector*>& sectors = m_parent->sectors();
+	std::vector<dfSector*>& sectors = m_parent->sectorsID();
 
 	dfSector* sector = sectors[sectorID];
 
@@ -669,6 +665,7 @@ void dfSuperSector::updateSectorVertices(int sectorID)
 
 	m_geometry->update();
 }
+*/
 
 std::vector<dfBitmap*>& dfSuperSector::textures(void)
 {
@@ -682,7 +679,7 @@ std::vector<dfBitmap*>& dfSuperSector::textures(void)
  */
 void dfSuperSector::checkPortals(fwCamera* camera, int zOrder)
 {
-	m_mesh->zOrder(zOrder);
+	m_dfmesh->zOrder(zOrder);
 
 	for (auto& portal : m_portals) {
 		// WARNING : the camera is using opengl space, but the boundSphere are translated to gl space
@@ -719,17 +716,7 @@ void dfSuperSector::parent(dfLevel* parent)
  */
 void dfSuperSector::add2scene(fwScene* scene)
 {
-	if (!scene->hasChild(m_mesh)) {
-		if (m_visible) {
-			// add the mesh on the scene
-			scene->addChild(m_mesh);
-			m_mesh->set_visible(true);
-		}
-		// no need to add the msh if the supersector is invisible
-	}
-	else {
-		m_mesh->set_visible(m_visible);
-	}
+	m_dfmesh->display(scene, m_visible);
 }
 
 /**
@@ -737,7 +724,7 @@ void dfSuperSector::add2scene(fwScene* scene)
  */
 void dfSuperSector::addObject(dfMesh* object)
 {
-	m_mesh->addChild(object->mesh());
+	m_dfmesh->addMesh(object->mesh());
 	object->parent(m_mesh);
 }
 

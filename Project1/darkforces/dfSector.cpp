@@ -11,8 +11,10 @@
 #include "dfMesh.h"
 #include "dfParseINF.h"
 #include "dfMessageBus.h"
+#include "dfSign.h"
 
-dfSector::dfSector(std::istringstream& infile)
+dfSector::dfSector(std::istringstream& infile, std::vector<dfSector*>& sectorsID):
+	m_sectorsID(sectorsID)
 {
 	int nbVertices;
 	int currentVertice = 0;
@@ -155,7 +157,6 @@ void dfSector::setTriggerFromWall(dfLogicTrigger* trigger)
 			m_floorAltitude, m_ceilingAltitude
 			);
 	}
-	m_triggers.push_back(trigger);
 }
 
 /**
@@ -164,7 +165,6 @@ void dfSector::setTriggerFromWall(dfLogicTrigger* trigger)
 void dfSector::setTriggerFromSector(dfLogicTrigger* trigger)
 {
 	trigger->boundingBox(m_boundingBox);
-	m_triggers.push_back(trigger);
 }
 
 /**
@@ -180,7 +180,6 @@ void dfSector::setTriggerFromFloor(dfLogicTrigger* trigger)
 		m_floorAltitude, m_floorAltitude
 	);
 
-	m_triggers.push_back(trigger);
 }
 
 /**
@@ -356,7 +355,7 @@ float dfSector::boundingBoxSurface(void)
 
 /**
  * Change the sector floor & ceiling altitudes IN the super-sector openGL vertices
- */
+ *
 void dfSector::setFloor(float floor)
 {
 	m_ceilingAltitude = floor + m_height;
@@ -371,10 +370,11 @@ void dfSector::setFloor(float floor)
 		}
 	}
 }
+*/
 
 /**
  * Move the sector up or down. return the new floor altitude
- */
+ *
 void dfSector::updateVertices(void)
 {
 	// std::cout << m_floorAltitude << " " << m_ceilingAltitude << std::endl;
@@ -387,6 +387,7 @@ void dfSector::updateVertices(void)
 		}
 	}
 }
+*/
 
 /**
  * parse all vertices of the sector to link the walls together
@@ -485,8 +486,6 @@ void dfSector::buildElevator(dfMesh *mesh, float bottom, float top, int what, bo
 		return;
 	}
 
-	float ambient = m_ambient / 32.0f;
-
 	std::vector<dfBitmap *>& textures = m_super->textures();
 
 	// create the walls
@@ -498,8 +497,7 @@ void dfSector::buildElevator(dfMesh *mesh, float bottom, float top, int what, bo
 				bottom,
 				top,
 				wall->m_tex[what],
-				textures,
-				ambient,
+				m_ambient,
 				true
 			);
 			// PASS
@@ -513,8 +511,7 @@ void dfSector::buildElevator(dfMesh *mesh, float bottom, float top, int what, bo
 				bottom,
 				top,
 				mirror->m_tex[what],
-				textures,
-				ambient,
+				m_ambient,
 				false
 			);
 		}
@@ -522,23 +519,14 @@ void dfSector::buildElevator(dfMesh *mesh, float bottom, float top, int what, bo
 
 	if (!(flags & DF_WALL_MORPHS_WITH_ELEV)) {
 		// only build build top and bottom for vertical elevators (sliding ones : spin1 are not needed)
-		// index the indexes IN the polyines of polygon 
-		std::vector<Point> vertices;
-
-		for (auto poly : polygons(1)) {
-			for (auto p : poly) {
-				vertices.push_back(p);
-			}
-		}
-
-		mesh->addFloor(vertices, polygons(1), bottom, m_ceilingTexture, textures, ambient, clockwise);
-		mesh->addFloor(vertices, polygons(1), top, m_floorTexture, textures, ambient, clockwise);
+		mesh->addFloor(polygons(1), bottom, m_ceilingTexture, m_ambient, clockwise);
+		mesh->addFloor(polygons(1), top, m_floorTexture, m_ambient, clockwise);
 	}
 }
 
 /**
  * Build only the floor of the sector, upward
- */
+ *
 void dfSector::buildFloor(dfMesh* mesh)
 {
 	if (!m_super) {
@@ -546,27 +534,48 @@ void dfSector::buildFloor(dfMesh* mesh)
 	}
 	std::vector<dfBitmap*>& textures = m_super->textures();
 	// build top and bottom
-	// index the indexes IN the polyines of polygon 
-	std::vector<Point> vertices;
 
-	for (auto poly : m_polygons_vertices) {
-		for (auto p : poly) {
-			vertices.push_back(p);
-		}
+	mesh->addFloor(m_polygons_vertices, 0, m_floorTexture, m_ambient, false);
+}
+*/
+
+/**
+ * build the floor geometry by triangulating the shape
+ * apply texture by using an axis aligned 8x8 grid
+ */
+void dfSector::buildFloorAndCeiling(dfMesh *mesh)
+{
+	// The index type. Defaults to uint32_t, but you can also pass uint16_t if you know that your
+	// data won't have more than 65536 vertices.
+	using N = uint32_t;
+
+	// Create array
+
+	// Fill polygon structure with actual data. Any winding order works.
+	// The first polyline defines the main polygon.
+	// Following polylines define holes.
+	if (m_id == 3 || m_id == 176 || m_id == 197 || m_id == 60) {
+		//TODO do not forget that 'thing'
+		printf("dfSuperSector::buildFloor sector %d\n", m_id);
 	}
+	std::vector<std::vector<Point>>& polygon = polygons(-1);	// default polygons
 
-	float ambient = m_ambient / 32.0f;
-	mesh->addFloor(vertices, m_polygons_vertices, 0, m_floorTexture, textures, ambient, false);
+	mesh->addFloor(polygon, m_floorAltitude, m_floorTexture, m_ambient, false);
+
+	// Create the ceiling, unless there is a sky
+	if (!(m_flag1 & DF_SECTOR_EXTERIOR_NO_CEIL)) {
+		mesh->addFloor(polygon, m_ceilingAltitude, m_ceilingTexture, m_ambient, true);
+	}
 }
 
 /**
  * bind each wall with an adjoint to the other sector
  */
-void dfSector::bindWall2Sector(std::vector<dfSector*> sectors)
+void dfSector::bindWall2Sector(void)
 {
 	for (auto wall : m_walls) {
 		if (wall->m_adjoint >= 0) {
-			wall->m_pAdjoint = sectors[wall->m_adjoint];
+			wall->m_pAdjoint = m_sectorsID[wall->m_adjoint];
 			wall->m_pMmirror = wall->m_pAdjoint->m_walls[wall->m_mirror];
 		}
 	}
@@ -827,12 +836,175 @@ void dfSector::changeAmbient(float ambient)
 	}
 }
 
+/***
+ * create vertices for a sign
+ */
+void dfSector::addSign(dfMesh *mesh, dfWall* wall, float z, float z1, int texture)
+{
+	// record the sign on the wall
+	std::string name = m_name + "(" + std::to_string(wall->m_id) + ")";
+
+	dfLogicTrigger* trigger = (dfLogicTrigger*)g_MessageBus.getClient(name);
+	if (trigger) {
+		dfSign* sign = new dfSign(mesh, this, wall, z, z1);
+		trigger->sign(sign);
+	}
+}
+
+/**
+ * Create the signs at the end of the vertics buffer
+ */
+void dfSector::buildSigns(dfMesh *mesh)
+{
+	int size = 0;
+	int p = 0;
+
+	if (m_name == "gigantaur_switch") {
+		printf("dfSuperSector::buildSigns\n");
+	}
+
+	for (auto wall : m_walls) {
+		if (wall->m_tex[DFWALL_TEXTURE_SIGN].r >= 0) {
+
+			if (wall->m_adjoint < 0) {
+				// full wall
+				addSign(mesh, wall,
+					m_floorAltitude,
+					m_ceilingAltitude,
+					DFWALL_TEXTURE_MID
+					);
+			}
+			else {
+				// portal
+				dfSector* portal = m_sectorsID[wall->m_adjoint];
+				int nbSigns = 0;
+
+				if (portal->m_ceilingAltitude < m_ceilingAltitude) {
+					// add a wall above the portal
+					addSign(mesh, wall,
+						portal->m_ceilingAltitude,
+						m_ceilingAltitude,
+						DFWALL_TEXTURE_TOP
+						);
+					nbSigns++;
+				}
+				if (portal->m_floorAltitude > m_floorAltitude) {
+					// add a wall below the portal
+					addSign(mesh, wall,
+						m_floorAltitude,
+						portal->m_floorAltitude,
+						DFWALL_TEXTURE_BOTTOM
+						);
+					nbSigns++;
+				}
+
+				if (nbSigns == 0) {
+					// force a sign on the wall because the portal is not visible
+					addSign(mesh, wall,
+						m_floorAltitude,
+						m_ceilingAltitude,
+						DFWALL_TEXTURE_MID
+						);
+				}
+			}
+		}
+	}
+}
+
+/**
+ * Add the geometry of the sector in the given dfMesh
+ */
+void dfSector::buildGeometry(dfMesh* mesh, int displayPolygon)
+{
+	buildWalls(mesh, displayPolygon);
+	buildFloorAndCeiling(mesh);
+	buildSigns(mesh);
+}
+
+/**
+ * Add walls of the sector in the given dfMesh
+ */
+void dfSector::buildWalls(dfMesh *mesh, int displayPolygon)
+{
+	std::vector<dfWall*> filtered_walls;
+
+	switch (displayPolygon) {
+	case DF_WALL_ALL:
+		filtered_walls = m_walls;
+		break;
+	case DF_WALL_MORPHS_WITH_ELEV:
+		// only walls that move when the elevator moves
+		for (auto wall : m_walls) {
+			if (wall->flag1(DF_WALL_MORPHS_WITH_ELEV)) {
+				filtered_walls.push_back(wall);
+			}
+		}
+		break;
+	case DF_WALL_NOT_MORPHS_WITH_ELEV:
+		// only walls that DO NOT move when the elevator moves
+		for (auto wall : m_walls) {
+			if (!wall->flag1(DF_WALL_MORPHS_WITH_ELEV)) {
+				filtered_walls.push_back(wall);
+			}
+		}
+		break;
+	default:
+		std::cerr << "dfSector::walls flags=" << displayPolygon << " not implemented" << std::endl;
+	}
+
+	for (auto wall : filtered_walls) {
+		if (wall->m_adjoint < 0) {
+			// full wall
+			mesh->addRectangle(this, wall,
+				m_floorAltitude,
+				m_ceilingAltitude,
+				wall->m_tex[DFWALL_TEXTURE_MID],
+				m_ambient,
+				true
+			);
+		}
+		else {
+			// portal
+			dfSector* portal = m_sectorsID[wall->m_adjoint];
+
+			if (portal->m_ceilingAltitude < m_ceilingAltitude) {
+				// add a wall above the portal
+				mesh->addRectangle(this, wall,
+					portal->m_ceilingAltitude,
+					m_ceilingAltitude,
+					wall->m_tex[DFWALL_TEXTURE_TOP],
+					m_ambient,
+					true
+					);
+			}
+			if (portal->m_floorAltitude > m_floorAltitude) {
+				// add a wall below the portal
+				mesh->addRectangle(this, wall,
+					m_floorAltitude,
+					portal->m_floorAltitude,
+					wall->m_tex[DFWALL_TEXTURE_BOTTOM],
+					m_ambient,
+					true
+					);
+			}
+		}
+	}
+}
+
 /**
  * Test if the sector is displayed on screen (the parent super-sector is visible)
  */
 bool dfSector::visible(void)
 {
 	return m_super->visible();
+}
+
+/**
+ * Register a trigger to the sector for backward parsing
+ */
+void dfSector::addTrigger(dfLogicTrigger* trigger)
+{
+	m_triggers.push_back(trigger);
 }
 
 dfSector::~dfSector()

@@ -15,6 +15,7 @@ class dfMesh;
 class dfLogicTrigger;
 class dfMessage;
 class dfSign;
+class dfBitmap;
 
 enum {
 	DF_ELEVATOR_HOLD,		// elevator is not animated
@@ -110,7 +111,7 @@ public:
 	void keys(std::string& key);
 	void bindSector(dfSector* pSector);
 	void addStop(dfLogicStop* stop);
-	dfMesh *buildGeometry(fwMaterial* material);
+	dfMesh *buildGeometry(fwMaterial* material, std::vector<dfBitmap*>& bitmaps);
 	void init(int stopID);
 	bool animate(time_t delta);
 	void addSign(dfSign*);

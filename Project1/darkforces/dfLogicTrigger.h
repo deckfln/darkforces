@@ -57,7 +57,6 @@ public:
 	void sign(dfSign* _sign) { m_pMesh = (dfMesh *)_sign; };
 	void keys(int keys) { m_keys = keys; };
 	void addEvents(dfSector* pSector);
-	void evelator(dfLogicElevator* pClient);
 	void boundingBox(glm::vec2& left, glm::vec2& right, float floor, float ceiling);
 	void boundingBox(fwAABBox& box);
 	void message(std::vector <std::string>& tokens);
@@ -68,4 +67,6 @@ public:
 	void moveCeiling(float z);
 	void activate(int keys);
 	void dispatchMessage(dfMessage* message);
+
+	std::vector<dfMessage>& messages(void) { return m_messages; };	// return messages
 };
