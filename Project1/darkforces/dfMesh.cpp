@@ -543,9 +543,6 @@ bool dfMesh::collide(float step, glm::vec3& position, glm::vec3& target, float r
  */
 bool dfMesh::collide(fwAABBox& box, std::string& name)
 {
-	if (name == "floor3edoor") {
-		printf("dfMesh::collid\n");
-	}
 	fwAABBox aabb;
 
 	if (m_mesh != nullptr) {

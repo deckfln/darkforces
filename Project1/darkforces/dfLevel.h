@@ -77,5 +77,7 @@ public:
 	std::vector<dfSector*>& sectorsID(void) { return m_sectorsID; };
 	std::vector<dfBitmap*>& textures(void) { return m_bitmaps; };
 	bool checkCollision(float step, glm::vec3& position, glm::vec3& target, float height, float radius, glm::vec3& collision);
+	void level2gl(glm::vec3& source, glm::vec3& target);
+	void gl2level(glm::vec3& gl, glm::vec3& level);
 	~dfLevel();
 };

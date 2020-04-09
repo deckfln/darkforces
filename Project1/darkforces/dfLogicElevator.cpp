@@ -133,11 +133,11 @@ dfMesh *dfLogicElevator::buildGeometry(fwMaterial* material, std::vector<dfBitma
 	}
 
 	// get the maximum extend of the elevator -> will become the height of the object
-	float amin = 99999, amax = -99999, c;
+	float c;
 	for (auto stop : m_stops) {
 		c = stop->z_position(m_type);
-		if (c < amin) amin = c;
-		if (c > amax) amax = c;
+		if (c < m_zmin) m_zmin = c;
+		if (c > m_zmax) m_zmax = c;
 	}
 
 	switch (m_type) {
@@ -147,10 +147,10 @@ dfMesh *dfLogicElevator::buildGeometry(fwMaterial* material, std::vector<dfBitma
 
 		// the elevator bottom is actually the ceiling
 		if (m_type == DF_ELEVATOR_INV) {
-			m_pSector->buildElevator(m_mesh, 0, amax - amin, DFWALL_TEXTURE_TOP, true, DF_WALL_ALL);
+			m_pSector->buildElevator(m_mesh, 0, m_zmax - m_zmin, DFWALL_TEXTURE_TOP, true, DF_WALL_ALL);
 		}
 		else {
-			m_pSector->buildElevator(m_mesh, 0, -(amax - amin), DFWALL_TEXTURE_TOP, true, DF_WALL_ALL);
+			m_pSector->buildElevator(m_mesh, 0, -(m_zmax - m_zmin), DFWALL_TEXTURE_TOP, true, DF_WALL_ALL);
 		}
 
 		if (m_mesh->buildMesh()) {
@@ -170,11 +170,11 @@ dfMesh *dfLogicElevator::buildGeometry(fwMaterial* material, std::vector<dfBitma
 
 		if (m_type == DF_ELEVATOR_MOVE_FLOOR) {
 			// the elevator top is actually the floor
-			m_pSector->buildElevator(m_mesh, -(amax - amin), 0, DFWALL_TEXTURE_BOTTOM, false, DF_WALL_ALL);
+			m_pSector->buildElevator(m_mesh, -(m_zmax - m_zmin), 0, DFWALL_TEXTURE_BOTTOM, false, DF_WALL_ALL);
 		}
 		else {
 			// move ceiling, only move the top
-			m_pSector->buildElevator(m_mesh, 0, (amax - amin), DFWALL_TEXTURE_TOP, false, DF_WALL_ALL);
+			m_pSector->buildElevator(m_mesh, 0, (m_zmax - m_zmin), DFWALL_TEXTURE_TOP, false, DF_WALL_ALL);
 		}
 
 		if (m_mesh->buildMesh()) {
@@ -563,7 +563,11 @@ void dfLogicElevator::dispatchMessage(dfMessage* message)
 bool dfLogicElevator::checkCollision(float step, glm::vec3& position, glm::vec3& target, float radius, glm::vec3& intersection)
 {
 	// only test the elevator mesh if the supersector it is bind to is visible
-	if (m_mesh && m_mesh->visible()) {
+	// and if the play Z (gl space) in inbetwen the vertical elevator extend (level space)
+	glm::vec3 plevel;
+	m_parent->gl2level(target, plevel);
+
+	if (m_mesh && m_mesh->visible() && plevel.z > m_zmin && plevel.z < m_zmax) {
 		return m_mesh->collide(step, position, target, radius, intersection, m_name);
 	}
 
@@ -576,7 +580,10 @@ bool dfLogicElevator::checkCollision(float step, glm::vec3& position, glm::vec3&
 bool dfLogicElevator::checkCollision(fwAABBox& box)
 {
 	// only test the elevator mesh if the supersector it is bind to is visible
-	if (m_mesh && m_mesh->visible()) {
+	// and if the play Z in inbetwen the vertical elevator extend
+	float z = box.m_p.z;
+
+	if (m_mesh && m_mesh->visible() && z > m_zmin && z < m_zmax) {
 		return m_mesh->collide(box, m_name);
 	}
 

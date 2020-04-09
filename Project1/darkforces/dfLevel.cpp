@@ -654,6 +654,26 @@ bool dfLevel::checkCollision(float step, glm::vec3& position, glm::vec3& target,
 	return false;
 }
 
+/**
+ * Convert level space to gl space
+ */
+void dfLevel::level2gl(glm::vec3& level, glm::vec3& gl)
+{
+	gl.x = level.x / 10.0f;
+	gl.y = level.z / 10.0f;
+	gl.z = level.y / 10.0f;
+}
+
+/**
+ * Convert gl space to level space
+ */
+void dfLevel::gl2level(glm::vec3& gl, glm::vec3& level)
+{
+	level.x = gl.x * 10.0f;
+	level.y = gl.z * 10.0f;
+	level.z = gl.y * 10.0f;
+}
+
 dfLevel::~dfLevel()
 {
 	for (auto sector : m_sectorsID) {
