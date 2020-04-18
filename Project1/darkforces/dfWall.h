@@ -40,6 +40,9 @@ class dfSign;
 
 class dfWall
 {
+private:
+	dfSector* m_sector = nullptr;
+
 public:
 	int m_id = 0;
 
@@ -57,5 +60,7 @@ public:
 
 	dfWall(int left, int right, int ajdoint, int mirror, int flag1, int flag3);
 	int flag1(int flag) { return m_flag1 & flag; };
+	void sector(dfSector* parent) { m_sector = parent; };
+	dfSector* sector(void) { return m_sector; };
 	~dfWall();
 };

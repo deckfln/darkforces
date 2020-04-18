@@ -68,7 +68,7 @@ class dfSector
 	int m_floorVerticesStart = 0;				// position of the first floor vertice in the super-sector vertices
 	int m_floorVerticesLen = 0;
 	std::list <dfLogicTrigger*> m_remoteTriggers;	// list of triggers on other sector with impact on that one
-
+	std::list <dfWall*>m_deferedSigns;				// list of signs to add later (likely when the sector is an elevator)
 	std::vector<dfSector *> m_dummy;
 	std::vector<dfSector *> &m_sectorsID = m_dummy;		// all neighbour sectors of the level by ID
 
@@ -76,6 +76,7 @@ class dfSector
 	void buildFloorAndCeiling(dfMesh* mesh);
 	void buildSigns(dfMesh* mesh);
 	void addSign(dfMesh *mesh, dfWall* wall, float z, float z1, int texture);
+	void deferedAddSign(dfWall* wall);
 
 public:
 	fwAABBox m_boundingBox;

@@ -400,6 +400,8 @@ void dfSector::linkWalls(void)
 
 		m_verticeConnexions[wall->m_left].m_leftWall = wall->m_id;
 		m_verticeConnexions[wall->m_right].m_rightWall = wall->m_id;
+
+		wall->sector(this);
 	}
 
 	int links = 0;
@@ -474,53 +476,6 @@ void dfSector::linkWalls(void)
 			m_polygons_walls[0] = m_polygons_walls[1];
 			m_polygons_walls[1] = swap1;
 		}
-	}
-}
-
-/**
- * analyze the sector to find the moveable part and convert to an object
- */
-void dfSector::buildElevator(dfMesh *mesh, float bottom, float top, int what, bool clockwise, int flags)
-{
-	if (!m_super) {
-		return;
-	}
-
-	std::vector<dfBitmap *>& textures = m_super->textures();
-
-	// create the walls
-	std::vector <dfWall*>& wallss = walls(flags);
-	for (auto wall : wallss) {
-		if (wall->m_adjoint < 0) {
-			// full wall (for spin1 elevators)
-			mesh->addRectangle(this, wall,
-				bottom,
-				top,
-				wall->m_tex[what],
-				m_ambient,
-				true
-			);
-			// PASS
-		}
-		else {
-			// portal
-			dfWall* mirror = wall->m_pMmirror;
-
-			// add a wall above the portal
-			mesh->addRectangle(this, wall,
-				bottom,
-				top,
-				mirror->m_tex[what],
-				m_ambient,
-				false
-			);
-		}
-	}
-
-	if (!(flags & DF_WALL_MORPHS_WITH_ELEV)) {
-		// only build build top and bottom for vertical elevators (sliding ones : spin1 are not needed)
-		mesh->addFloor(polygons(1), bottom, m_ceilingTexture, m_ambient, clockwise);
-		mesh->addFloor(polygons(1), top, m_floorTexture, m_ambient, clockwise);
 	}
 }
 
@@ -842,13 +797,22 @@ void dfSector::changeAmbient(float ambient)
 void dfSector::addSign(dfMesh *mesh, dfWall* wall, float z, float z1, int texture)
 {
 	// record the sign on the wall
-	std::string name = m_name + "(" + std::to_string(wall->m_id) + ")";
+	dfSector* s = wall->sector();
+	std::string name = s->m_name + "(" + std::to_string(wall->m_id) + ")";
 
 	dfLogicTrigger* trigger = (dfLogicTrigger*)g_MessageBus.getClient(name);
 	if (trigger) {
-		dfSign* sign = new dfSign(mesh, this, wall, z, z1);
+		dfSign* sign = new dfSign(mesh, wall->sector(), wall, z, z1);
 		trigger->sign(sign);
 	}
+}
+
+/**
+ * list of signs to add later (likely when the sector is an elevator)
+ */
+void dfSector::deferedAddSign(dfWall* wall)
+{
+	m_deferedSigns.push_back(wall);
 }
 
 /**
@@ -900,31 +864,18 @@ void dfSector::buildSigns(dfMesh *mesh)
 
 				if (nbSigns == 0) {
 					// force a sign on the wall because the portal is not visible
-					addSign(mesh, wall,
-						m_floorAltitude,
-						m_ceilingAltitude,
-						DFWALL_TEXTURE_MID
-						);
+					portal->deferedAddSign(wall);
 				}
 			}
 		}
 	}
 }
 
-/**
- * Add the geometry of the sector in the given dfMesh
- */
-void dfSector::buildGeometry(dfMesh* mesh, int displayPolygon)
-{
-	buildWalls(mesh, displayPolygon);
-	buildFloorAndCeiling(mesh);
-	buildSigns(mesh);
-}
 
 /**
  * Add walls of the sector in the given dfMesh
  */
-void dfSector::buildWalls(dfMesh *mesh, int displayPolygon)
+void dfSector::buildWalls(dfMesh* mesh, int displayPolygon)
 {
 	std::vector<dfWall*> filtered_walls;
 
@@ -975,7 +926,7 @@ void dfSector::buildWalls(dfMesh *mesh, int displayPolygon)
 					wall->m_tex[DFWALL_TEXTURE_TOP],
 					m_ambient,
 					true
-					);
+				);
 			}
 			if (portal->m_floorAltitude > m_floorAltitude) {
 				// add a wall below the portal
@@ -985,9 +936,76 @@ void dfSector::buildWalls(dfMesh *mesh, int displayPolygon)
 					wall->m_tex[DFWALL_TEXTURE_BOTTOM],
 					m_ambient,
 					true
-					);
+				);
 			}
 		}
+	}
+}
+
+/**
+ * Add the geometry of the sector in the given dfMesh
+ */
+void dfSector::buildGeometry(dfMesh* mesh, int displayPolygon)
+{
+	buildWalls(mesh, displayPolygon);
+	buildFloorAndCeiling(mesh);
+	buildSigns(mesh);
+}
+
+
+/**
+ * Build an outward mesh based on the sector
+ */
+void dfSector::buildElevator(dfMesh* mesh, float bottom, float top, int what, bool clockwise, int flags)
+{
+	if (!m_super) {
+		return;
+	}
+	
+	std::vector<dfBitmap*>& textures = m_super->textures();
+
+	// create the walls
+	std::vector <dfWall*>& wallss = walls(flags);
+	for (auto wall : wallss) {
+		if (wall->m_adjoint < 0) {
+			// full wall (for spin1 elevators)
+			mesh->addRectangle(this, wall,
+				bottom,
+				top,
+				wall->m_tex[what],
+				m_ambient,
+				true
+			);
+			// PASS
+		}
+		else {
+			// portal
+			dfWall* mirror = wall->m_pMmirror;
+
+			// add a wall above the portal
+			mesh->addRectangle(this, wall,
+				bottom,
+				top,
+				mirror->m_tex[what],
+				m_ambient,
+				false
+			);
+		}
+	}
+
+	// only build build top and bottom for vertical elevators (sliding ones : spin1 are not needed)
+	if (!(flags & DF_WALL_MORPHS_WITH_ELEV)) {
+		mesh->addFloor(polygons(1), bottom, m_ceilingTexture, m_ambient, clockwise);
+		mesh->addFloor(polygons(1), top, m_floorTexture, m_ambient, clockwise);
+	}
+
+	// add defered signs on the elevators
+	// translate the level space into the model space
+	for (auto wall : m_deferedSigns) {
+		dfSector* sector = wall->sector();
+		float translate = m_floorAltitude - sector->m_floorAltitude;
+		float height = sector->m_ceilingAltitude - sector->m_floorAltitude;
+		addSign(mesh, wall, bottom - translate, bottom - translate + height, DFWALL_TEXTURE_BOTTOM);
 	}
 }
 

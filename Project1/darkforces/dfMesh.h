@@ -46,16 +46,21 @@ class dfMesh {
 
 	void setVertice(int p, float x, float y, float z, float xoffset, float yoffset, int textureID, float ambient);
 	void updateRectangleAntiClockwise(int p, float x, float y, float z, float x1, float y1, float z1, float xoffset, float yoffset, float width, float height, int textureID, float ambient);
+	void position(glm::vec3& position);
+	void rotation(glm::vec3& rotation);
+	void translateWorldBoundingBox(glm::vec3 &translation);
+	void rotateWorldBoundingBox(glm::vec3 &translation);
 
 protected:
-	dfMesh* m_parent = nullptr;
-	std::string m_name;                    // sectorname(wallindex)
+	dfMesh* m_parent = nullptr;							// Parent dfMesh
+	std::string m_name;									// sectorname(wallindex)
 	dfSuperSector* m_supersector = nullptr;
-	fwAABBox m_boundingBox;
+	fwAABBox m_boundingBox;								// Model Space AABB
+	fwAABBox m_worldBoundingBox;						// Worl Space AABB
 	std::vector<dfBitmap*>& m_bitmaps = m_dummy;		// image map
 
 	// pointers, so we can reference other buffers
-	std::vector<glm::vec3>* m_pVertices = nullptr;    // data of the sign in the GL buffer attributes
+	std::vector<glm::vec3>* m_pVertices = nullptr;		// data of the sign in the GL buffer attributes
 	std::vector<glm::vec2>* m_pUvs = nullptr;
 	std::vector<float>* m_pTextureIDs = nullptr;
 	std::vector <float>* m_pAmbientLights = nullptr;    // light intensity of the object

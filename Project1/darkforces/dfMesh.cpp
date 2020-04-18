@@ -363,7 +363,7 @@ void dfMesh::moveFloorTo(float z)
 {
 	glm::vec3 p = m_mesh->get_position();
 	p.y = z / 10.0f;
-	m_mesh->translate(p);
+	position(p);
 }
 
 /**
@@ -373,7 +373,7 @@ void dfMesh::moveCeilingTo(float z)
 {
 	glm::vec3 p = m_mesh->get_position();
 	p.y = z / 10.0f;
-	m_mesh->translate(p);
+	position(p);
 }
 
 /**
@@ -382,17 +382,17 @@ void dfMesh::moveCeilingTo(float z)
 void dfMesh::rotateZ(float angle)
 {
 	glm::vec3 rotate(0, angle, 0);
-	m_mesh->rotate(rotate);
+	rotation(rotate);
 }
 
 /**
  * force the position
  */
-void dfMesh::move(glm::vec3& position)
+void dfMesh::move(glm::vec3& p)
 {
-	m_position = glm::vec3(position.x, position.z, position.y) / 10.0f;
+	m_position = glm::vec3(p.x, p.z, p.y) / 10.0f;
 
-	m_mesh->translate(m_position);
+	position(m_position);
 }
 
 /**
@@ -402,6 +402,50 @@ void dfMesh::translate(glm::vec3& direction, float distance)
 {
 	glm::vec3 p = m_defaultPosition + direction * distance;
 	move(p);
+}
+
+/**
+ * Override fwMesh::translate to force the bounding box update
+ */
+void dfMesh::position(glm::vec3& position)
+{
+	glm::vec3 identity(0.0);
+
+	m_mesh->translate(position);
+	translateWorldBoundingBox(position);
+}
+
+/**
+ * Override fwMesh::translate to force the bounding box update
+ */
+void dfMesh::rotation(glm::vec3& rotate)
+{
+	m_mesh->rotate(rotate);
+	rotateWorldBoundingBox(rotate);
+}
+
+/**
+ * Apply the world matrix to the model space bounding box
+ */
+void dfMesh::translateWorldBoundingBox(glm::vec3& translation)
+{
+	m_worldBoundingBox.translateFrom(m_boundingBox, translation);
+
+	for (auto child : m_children) {
+		child->translateWorldBoundingBox(translation);
+	}
+}
+
+/**
+ * Apply the world matrix to the model space bounding box
+ */
+void dfMesh::rotateWorldBoundingBox(glm::vec3& rotation)
+{
+	m_worldBoundingBox.rotateFrom(m_boundingBox, rotation);
+
+	for (auto child : m_children) {
+		child->translateWorldBoundingBox(rotation);
+	}
 }
 
 /**
@@ -539,21 +583,15 @@ bool dfMesh::collide(float step, glm::vec3& position, glm::vec3& target, float r
 }
 
 /**
- * Test collision against a AABBox
+ * Test collision against a world AABBox
+ * dfMesh::worldBoundingBox is updated everytime the dfMesh moves
  */
 bool dfMesh::collide(fwAABBox& box, std::string& name)
 {
-	fwAABBox aabb;
-
-	if (m_mesh != nullptr) {
-		// if there is a real 3D object
-		// convert mesh boundinbox (model space) into the world space (gl space)
-		fwAABBox aabb(m_boundingBox, m_mesh->worldMatrix());
-		return aabb.intersect(box);
+	if (m_worldBoundingBox.not_init()) {
+		m_worldBoundingBox.copy(m_boundingBox);
 	}
-
-	// if there is no real 3D object, the boundingbox is already in glspace
-	return m_boundingBox.intersect(box);
+	return m_worldBoundingBox.intersect(box);
 }
 
 /**

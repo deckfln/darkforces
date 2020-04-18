@@ -35,6 +35,43 @@ fwAABBox::fwAABBox(fwAABBox& source, glm::mat4& matrix)
 	m_p1 = glm::vec3(matrix * glm::vec4(source.m_p1, 1.0));
 }
 
+/**
+ * update based on translation on the source
+ */
+void fwAABBox::translateFrom(fwAABBox& source, glm::vec3& translation)
+{
+	m_p = source.m_p + translation;
+	m_p1 = source.m_p1 + translation;
+}
+
+/**
+ * update based on rotation on the source
+ */
+void fwAABBox::rotateFrom(fwAABBox& source, glm::vec3& rotation)
+{
+	m_p = source.m_p + rotation;
+	m_p1 = source.m_p1 + rotation;
+}
+
+/**
+ * check if the AABB was initialized
+ */
+bool fwAABBox::not_init(void)
+{
+	return m_p.x == 999999;
+}
+
+/**
+ * copy a AABB into the other
+ */
+fwAABBox& fwAABBox::copy(fwAABBox& source)
+{
+	m_p = source.m_p;
+	m_p1 = source.m_p1;
+
+	return *this;
+}
+
 fwAABBox& fwAABBox::multiplyBy(float v)
 {
 	m_p *= v;
