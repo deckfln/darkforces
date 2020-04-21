@@ -19,7 +19,7 @@ float dfCollision::ground(glm::vec3& position)
 	if (currentSector) {
 		//std::cout << currentSector->m_id << " " << currentSector->m_floorAltitude << std::endl;
 		// TODO where should the conversion from level space to opengl space take place
-		return currentSector->m_floorAltitude / 10.f;
+		return currentSector->currentFloorAltitude() / 10.f;
 	}
 
 	return 0;

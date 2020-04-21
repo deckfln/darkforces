@@ -84,6 +84,7 @@ public:
     dfSuperSector(dfSector* sector, fwMaterialBasic* material, std::vector<dfBitmap*>& m_bitmaps);
 
     void extend(dfSuperSector*);
+    void extendAABB(fwAABBox& box);
     dfSuperSector* smallestAdjoint(void);
     void buildPortals(std::vector<dfSector*>& sectors, std::vector<dfSuperSector*> &vssectors);
     float boundingBoxSurface(void);
@@ -100,7 +101,7 @@ public:
     std::map<std::string, dfSign*>& hSigns(void) { return m_hSigns; };
 
     void checkPortals(fwCamera* camera, int zOrder);
-    void parent(dfLevel* parent);
+    void buildHiearchy(dfLevel* parent);
     void add2scene(fwScene* scene);
     void updateSectorVertices(int sectorID);
     void addRectangle(dfSector *sector, dfWall* wall, float z, float z1, glm::vec3& texture);

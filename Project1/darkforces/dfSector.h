@@ -56,19 +56,28 @@ enum {
 
 class dfSector
 {
-	std::list <dfLogicTrigger*> m_triggers;		// list of all triggers on the sector.
-	int m_eventMask = 0;						// events triggering messages
-	dfMessage m_message;						// message to send
+	float m_staticMeshFloorAltitude = 0;				// floor altitude for the superSector static mesh
+	float m_staticMeshCeilingAltitude = 0;				// ceiling altitude for the superSector static mesh
+
+	float m_referenceFloorAltitude = 0;					// reference floor altitude from the INF file
+	float m_referenceCeilingAltitude = 0;				// reference ceiling altitude from the INF file
+
+	float m_floorAltitude = 0;							// current floor altitude from the INF file
+	float m_ceilingAltitude = 0;						// current ceiling altitude from the INF file
+
+	std::list <dfLogicTrigger*> m_triggers;				// list of all triggers on the sector.
+	int m_eventMask = 0;								// events triggering messages
+	dfMessage m_message;								// message to send
 	std::vector <struct dfVerticeConnexion> m_verticeConnexions;	// get the vertice to the right and the left of each vertice
 	std::vector<std::vector<Point>> m_polygons_vertices;			// polylines enclosing the sector : [0] external polygon, [1+] internal holes : by vertices
 	std::vector<std::vector<dfWall*>> m_polygons_walls;				// polylines enclosing the sector : [0] external polygon, [1+] internal holes : by walls
 	int m_displayPolygons = 0;										// defualt number of polygon to draw 0=ALL, 1 = external one, 2 = first hole
-	int m_wallVerticesStart = 0;				// position of the first wall vertice in the super-sector vertices
+	int m_wallVerticesStart = 0;						// position of the first wall vertice in the super-sector vertices
 	int m_wallVerticesLen = 0;
-	int m_floorVerticesStart = 0;				// position of the first floor vertice in the super-sector vertices
+	int m_floorVerticesStart = 0;						// position of the first floor vertice in the super-sector vertices
 	int m_floorVerticesLen = 0;
-	std::list <dfLogicTrigger*> m_remoteTriggers;	// list of triggers on other sector with impact on that one
-	std::list <dfWall*>m_deferedSigns;				// list of signs to add later (likely when the sector is an elevator)
+	std::list <dfLogicTrigger*> m_remoteTriggers;		// list of triggers on other sector with impact on that one
+	std::list <dfWall*>m_deferedSigns;					// list of signs to add later (likely when the sector is an elevator)
 	std::vector<dfSector *> m_dummy;
 	std::vector<dfSector *> &m_sectorsID = m_dummy;		// all neighbour sectors of the level by ID
 
@@ -85,10 +94,6 @@ public:
 	int m_id = -1;
 	int m_layer = -1;
 	float m_ambient = 0;
-
-	// current values
-	float m_floorAltitude = 0;
-	float m_ceilingAltitude = 0;
 
 	// original values
 	float m_height = 0;				// height of the sector
@@ -116,10 +121,22 @@ public:
 
 	bool inAABBox(glm::vec3& position) { return m_boundingBox.inside(position); };
 
-	void floor(float z);
 	void ceiling(float z);
 
-	float ceiling(void) { return m_ceilingAltitude; };
+	float ceiling(void) { return m_referenceCeilingAltitude; };
+
+	void currentFloorAltitude(float z);
+	float currentFloorAltitude(void) { return m_floorAltitude; };
+
+	void staticFloorAltitude(float z) { m_staticMeshFloorAltitude = z; };
+	float staticFloorAltitude(void) { return m_staticMeshFloorAltitude; };
+
+	void staticCeilingAltitude(float z) { m_staticMeshCeilingAltitude = z; };
+	float staticCeilingAltitude(void) { return m_staticMeshCeilingAltitude; };
+
+	float referenceFloor(void) { return m_referenceFloorAltitude; };
+	float referenceCeiling(void) { return m_referenceCeilingAltitude; };
+
 	void parent(dfSuperSector* parent) { m_super = parent; };
 	float height(void) { return m_height; };
 	unsigned flag(void) { return m_flag1; };
@@ -150,5 +167,9 @@ public:
 
 	bool visible(void);
 	void addTrigger(dfLogicTrigger*);
+
+	void setAABBtop(float z);
+	void setAABBbottom(float z);
+
 	~dfSector();
 };

@@ -110,19 +110,25 @@ float dfLogicStop::z_position(int elevatorClass)
 			return m_absolute;
 		case 10:
 		case 18:
+			/*
 			switch (elevatorClass) {
 			case DF_ELEVATOR_MOVE_FLOOR:
-				return m_pSector->m_ceilingAltitude + m_relatiave;	// relative to the ceiling of the source sector
+				return m_pSector->m_floorAltitude + m_relatiave;	// relative to the ceiling of the source sector
+			case DF_ELEVATOR_MOVE_CEILING:
+				return m_pSector->m_floorAltitude + m_relatiave;	// relative to the ceiling of the source sector
+
 			default:
-				return m_pSector->m_floorAltitude + m_relatiave;	// relative to the floor of the source sector
+				return m_pSector->m_floorAltitude + m_relatiave;	// relative to the ceiling of the source sector
 			}
+			*/
+			return m_pSector->referenceFloor() + m_relatiave;	// relative to the ceiling of the source sector
 		case 12:
 		case 20:
 			switch (elevatorClass) {
 			case DF_ELEVATOR_MOVE_FLOOR:
-				return m_pSector->m_ceilingAltitude;	// coy the ceiling of another sector
+				return m_pSector->referenceCeiling();	// coy the ceiling of another sector
 			default:
-				return m_pSector->m_floorAltitude;		// coy the floor of another sector
+				return m_pSector->referenceFloor();		// coy the floor of another sector
 			}
 	}
 	return 0;

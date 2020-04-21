@@ -62,7 +62,7 @@ dfSector::dfSector(std::istringstream& infile, std::vector<dfSector*>& sectorsID
 				);
 			}
 			else if (tokens[1] == "ALTITUDE") {
-				m_floorAltitude = -std::stof(tokens[2]);
+				m_staticMeshFloorAltitude = m_referenceFloorAltitude = m_floorAltitude = -std::stof(tokens[2]);
 			}
 		}
 		else if (tokens[0] == "CEILING") {
@@ -74,7 +74,7 @@ dfSector::dfSector(std::istringstream& infile, std::vector<dfSector*>& sectorsID
 				);
 			}
 			else if (tokens[1] == "ALTITUDE") {
-				m_ceilingAltitude = -std::stof(tokens[2]);
+				m_staticMeshCeilingAltitude = m_referenceCeilingAltitude = m_ceilingAltitude = -std::stof(tokens[2]);
 			}
 		}
 		else if (tokens[0] == "SECOND") {
@@ -135,8 +135,8 @@ dfSector::dfSector(std::istringstream& infile, std::vector<dfSector*>& sectorsID
 		}
 	}
 
-	m_height = m_ceilingAltitude - m_floorAltitude;
-	m_boundingBox = fwAABBox(min_x, max_x, min_y, max_y, m_floorAltitude, m_ceilingAltitude);
+	m_height = m_referenceCeilingAltitude - m_referenceFloorAltitude;
+	m_boundingBox = fwAABBox(min_x, max_x, min_y, max_y, m_referenceFloorAltitude, m_referenceCeilingAltitude);
 
 	m_message = dfMessage(DF_MESSAGE_TRIGGER, 0, m_name);
 }
@@ -154,7 +154,7 @@ void dfSector::setTriggerFromWall(dfLogicTrigger* trigger)
 
 		trigger->boundingBox(
 			m_vertices[wall->m_left], m_vertices[wall->m_right],
-			m_floorAltitude, m_ceilingAltitude
+			m_referenceFloorAltitude, m_referenceCeilingAltitude
 			);
 	}
 }
@@ -177,7 +177,7 @@ void dfSector::setTriggerFromFloor(dfLogicTrigger* trigger)
 
 	trigger->boundingBox(
 		left, right,
-		m_floorAltitude, m_floorAltitude
+		m_referenceFloorAltitude, m_referenceFloorAltitude
 	);
 
 }
@@ -186,7 +186,7 @@ void dfSector::setTriggerFromFloor(dfLogicTrigger* trigger)
  * Move the floor of the sector
  * Also move all triggers on the sector
  */
-void dfSector::floor(float z)
+void dfSector::currentFloorAltitude(float z)
 {
 	m_floorAltitude = z;
 
@@ -201,7 +201,7 @@ void dfSector::floor(float z)
  */
 void dfSector::ceiling(float z)
 {
-	m_ceilingAltitude = z;
+	m_referenceCeilingAltitude = z;
 
 	for (auto trigger : m_triggers) {
 		trigger->moveCeiling(z);
@@ -494,34 +494,6 @@ void dfSector::buildFloor(dfMesh* mesh)
 }
 */
 
-/**
- * build the floor geometry by triangulating the shape
- * apply texture by using an axis aligned 8x8 grid
- */
-void dfSector::buildFloorAndCeiling(dfMesh *mesh)
-{
-	// The index type. Defaults to uint32_t, but you can also pass uint16_t if you know that your
-	// data won't have more than 65536 vertices.
-	using N = uint32_t;
-
-	// Create array
-
-	// Fill polygon structure with actual data. Any winding order works.
-	// The first polyline defines the main polygon.
-	// Following polylines define holes.
-	if (m_id == 3 || m_id == 176 || m_id == 197 || m_id == 60) {
-		//TODO do not forget that 'thing'
-		printf("dfSuperSector::buildFloor sector %d\n", m_id);
-	}
-	std::vector<std::vector<Point>>& polygon = polygons(-1);	// default polygons
-
-	mesh->addFloor(polygon, m_floorAltitude, m_floorTexture, m_ambient, false);
-
-	// Create the ceiling, unless there is a sky
-	if (!(m_flag1 & DF_SECTOR_EXTERIOR_NO_CEIL)) {
-		mesh->addFloor(polygon, m_ceilingAltitude, m_ceilingTexture, m_ambient, true);
-	}
-}
 
 /**
  * bind each wall with an adjoint to the other sector
@@ -731,7 +703,7 @@ bool dfSector::checkCollision(float step, glm::vec3& current, glm::vec3& target,
 					// full wall
 					collision.x = intersection.x;
 					collision.y = intersection.y;
-					collision.z = m_floorAltitude;
+					collision.z = m_referenceFloorAltitude;
 
 					std::cerr << "dfSector::checkCollision sector=" << m_name << " full wall=" << wall->m_id << " z=" << target.z << std::endl;
 
@@ -833,8 +805,8 @@ void dfSector::buildSigns(dfMesh *mesh)
 			if (wall->m_adjoint < 0) {
 				// full wall
 				addSign(mesh, wall,
-					m_floorAltitude,
-					m_ceilingAltitude,
+					m_staticMeshFloorAltitude,
+					m_staticMeshCeilingAltitude,
 					DFWALL_TEXTURE_MID
 					);
 			}
@@ -843,20 +815,20 @@ void dfSector::buildSigns(dfMesh *mesh)
 				dfSector* portal = m_sectorsID[wall->m_adjoint];
 				int nbSigns = 0;
 
-				if (portal->m_ceilingAltitude < m_ceilingAltitude) {
+				if (portal->m_staticMeshCeilingAltitude < m_staticMeshCeilingAltitude) {
 					// add a wall above the portal
 					addSign(mesh, wall,
-						portal->m_ceilingAltitude,
-						m_ceilingAltitude,
+						portal->m_staticMeshCeilingAltitude,
+						m_staticMeshCeilingAltitude,
 						DFWALL_TEXTURE_TOP
 						);
 					nbSigns++;
 				}
-				if (portal->m_floorAltitude > m_floorAltitude) {
+				if (portal->m_staticMeshFloorAltitude > m_staticMeshFloorAltitude) {
 					// add a wall below the portal
 					addSign(mesh, wall,
-						m_floorAltitude,
-						portal->m_floorAltitude,
+						m_staticMeshFloorAltitude,
+						portal->m_staticMeshFloorAltitude,
 						DFWALL_TEXTURE_BOTTOM
 						);
 					nbSigns++;
@@ -907,8 +879,8 @@ void dfSector::buildWalls(dfMesh* mesh, int displayPolygon)
 		if (wall->m_adjoint < 0) {
 			// full wall
 			mesh->addRectangle(this, wall,
-				m_floorAltitude,
-				m_ceilingAltitude,
+				m_staticMeshFloorAltitude,
+				m_staticMeshCeilingAltitude,
 				wall->m_tex[DFWALL_TEXTURE_MID],
 				m_ambient,
 				true
@@ -918,27 +890,56 @@ void dfSector::buildWalls(dfMesh* mesh, int displayPolygon)
 			// portal
 			dfSector* portal = m_sectorsID[wall->m_adjoint];
 
-			if (portal->m_ceilingAltitude < m_ceilingAltitude) {
+			if (portal->m_referenceCeilingAltitude < m_referenceCeilingAltitude) {
 				// add a wall above the portal
 				mesh->addRectangle(this, wall,
-					portal->m_ceilingAltitude,
-					m_ceilingAltitude,
+					portal->m_staticMeshCeilingAltitude,
+					m_staticMeshCeilingAltitude,
 					wall->m_tex[DFWALL_TEXTURE_TOP],
 					m_ambient,
 					true
 				);
 			}
-			if (portal->m_floorAltitude > m_floorAltitude) {
+			if (portal->m_referenceFloorAltitude > m_referenceFloorAltitude) {
 				// add a wall below the portal
 				mesh->addRectangle(this, wall,
-					m_floorAltitude,
-					portal->m_floorAltitude,
+					m_staticMeshFloorAltitude,
+					portal->m_staticMeshFloorAltitude,
 					wall->m_tex[DFWALL_TEXTURE_BOTTOM],
 					m_ambient,
 					true
 				);
 			}
 		}
+	}
+}
+
+/**
+ * build the floor geometry by triangulating the shape
+ * apply texture by using an axis aligned 8x8 grid
+ */
+void dfSector::buildFloorAndCeiling(dfMesh* mesh)
+{
+	// The index type. Defaults to uint32_t, but you can also pass uint16_t if you know that your
+	// data won't have more than 65536 vertices.
+	using N = uint32_t;
+
+	// Create array
+
+	// Fill polygon structure with actual data. Any winding order works.
+	// The first polyline defines the main polygon.
+	// Following polylines define holes.
+	if (m_id == 3 || m_id == 176 || m_id == 197 || m_id == 60) {
+		//TODO do not forget that 'thing'
+		printf("dfSuperSector::buildFloor sector %d\n", m_id);
+	}
+	std::vector<std::vector<Point>>& polygon = polygons(-1);	// default polygons
+
+	mesh->addFloor(polygon, m_staticMeshFloorAltitude, m_floorTexture, m_ambient, false);
+
+	// Create the ceiling, unless there is a sky
+	if (!(m_flag1 & DF_SECTOR_EXTERIOR_NO_CEIL)) {
+		mesh->addFloor(polygon, m_staticMeshCeilingAltitude, m_ceilingTexture, m_ambient, true);
 	}
 }
 
@@ -1003,8 +1004,8 @@ void dfSector::buildElevator(dfMesh* mesh, float bottom, float top, int what, bo
 	// translate the level space into the model space
 	for (auto wall : m_deferedSigns) {
 		dfSector* sector = wall->sector();
-		float translate = m_floorAltitude - sector->m_floorAltitude;
-		float height = sector->m_ceilingAltitude - sector->m_floorAltitude;
+		float translate = m_staticMeshFloorAltitude - sector->m_staticMeshFloorAltitude;
+		float height = sector->m_staticMeshCeilingAltitude - sector->m_staticMeshCeilingAltitude;
 		addSign(mesh, wall, bottom - translate, bottom - translate + height, DFWALL_TEXTURE_BOTTOM);
 	}
 }
@@ -1023,6 +1024,28 @@ bool dfSector::visible(void)
 void dfSector::addTrigger(dfLogicTrigger* trigger)
 {
 	m_triggers.push_back(trigger);
+}
+
+/**
+ * Update the AABB box
+ */
+void dfSector::setAABBtop(float z)
+{
+	m_boundingBox.m_p1.z = z;
+	if (m_super) {
+		m_super->extendAABB(m_boundingBox);
+	}
+}
+
+/**
+ * Update the AABB box
+ */
+void dfSector::setAABBbottom(float z)
+{
+	m_boundingBox.m_p.z = z;
+	if (m_super) {
+		m_super->extendAABB(m_boundingBox);
+	}
 }
 
 dfSector::~dfSector()

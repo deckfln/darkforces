@@ -74,7 +74,7 @@ dfLevel::dfLevel(dfFileGOB* dark, dfFileGOB* gTextures, std::string file)
 
 			// record the sky
 			if (sector->m_flag1 & DF_SECTOR_EXTERIOR_NO_CEIL) {
-				m_skyAltitude = std::max(m_skyAltitude, sector->m_ceilingAltitude + 100);
+				m_skyAltitude = std::max(m_skyAltitude, sector->ceiling() + 100);
 				m_skyTexture = sector->m_ceilingTexture;
 			}
 
@@ -382,7 +382,7 @@ void dfLevel::spacePartitioning(void)
 		ssector->sortSectors();
 
 		// create a full hierarchy
-		ssector->parent(this);
+		ssector->buildHiearchy(this);
 	}
 
 }
@@ -431,8 +431,8 @@ void dfLevel::convertDoors2Elevators(void)
 	for (auto sector: m_sectorsID) {
 		if (sector->flag() & DF_SECTOR_DOOR) {
 			dfLogicElevator* elevator = new dfLogicElevator(inv, sector, this);
-			dfLogicStop* closed = new dfLogicStop(elevator, sector->m_floorAltitude, hold);
-			dfLogicStop* opened = new dfLogicStop(elevator, sector->m_ceilingAltitude, 5000);
+			dfLogicStop* closed = new dfLogicStop(elevator, sector->referenceFloor(), hold);
+			dfLogicStop* opened = new dfLogicStop(elevator, sector->referenceCeiling(), 5000);
 
 			elevator->addStop(closed);
 			elevator->addStop(opened);

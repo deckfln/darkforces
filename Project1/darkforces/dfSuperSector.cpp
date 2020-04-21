@@ -62,6 +62,14 @@ void dfSuperSector::extend(dfSuperSector* ssector)
 }
 
 /**
+ * Extend the AABBox
+ */
+void dfSuperSector::extendAABB(fwAABBox& box)
+{
+	m_boundingBox.extend(box);
+}
+
+/**
  * parse all portals to find the smalled adjent
  */
 dfSuperSector* dfSuperSector::smallestAdjoint(void)
@@ -104,8 +112,8 @@ void dfSuperSector::buildPortals(std::vector<dfSector*>& sectors, std::vector<df
 			dfSector* target = sectors[wall->m_adjoint];
 
 			// portal size in level space
-			float floor = std::max(root->m_floorAltitude, target->m_floorAltitude);
-			float ceiling = std::min(root->m_ceilingAltitude, target->m_ceilingAltitude);
+			float floor = std::max(root->staticFloorAltitude(), target->staticFloorAltitude());
+			float ceiling = std::min(root->staticCeilingAltitude(), target->staticCeilingAltitude());
 			glm::vec3 bottomLeft(
 				root->m_vertices[wall->m_left].x,
 				root->m_vertices[wall->m_left].y,
@@ -701,7 +709,7 @@ void dfSuperSector::checkPortals(fwCamera* camera, int zOrder)
 /**
  * create a full hiearchy
  */
-void dfSuperSector::parent(dfLevel* parent)
+void dfSuperSector::buildHiearchy(dfLevel* parent)
 {
 	m_parent = parent;
 

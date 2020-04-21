@@ -87,7 +87,7 @@ void dfLogicElevator::bindSector(dfSector* pSector)
 
 	// if the elevator has mask_event for enter/leave, create triggers
 	m_pSector->eventMask(m_eventMask);
-
+	
 	// get the maximum extend of the elevator 
 	float amin = 99999, amax = -99999, c;
 	for (auto stop : m_stops) {
@@ -99,12 +99,15 @@ void dfLogicElevator::bindSector(dfSector* pSector)
 	switch (m_type) {
 	case DF_ELEVATOR_INV:
 	case DF_ELEVATOR_MOVE_FLOOR:
-		m_pSector->m_floorAltitude = amin;
+		m_pSector->staticFloorAltitude(amin);
 		break;
 	
-	case DF_ELEVATOR_MOVE_CEILING:
 	case DF_ELEVATOR_BASIC:
-		m_pSector->m_ceilingAltitude = amax;
+		m_pSector->staticCeilingAltitude(amax);
+		break;
+
+	case DF_ELEVATOR_MOVE_CEILING:
+		m_pSector->ceiling( m_pSector->referenceFloor() );
 		break;
 
 	case DF_ELEVATOR_MORPH_SPIN1:
@@ -148,9 +151,11 @@ dfMesh *dfLogicElevator::buildGeometry(fwMaterial* material, std::vector<dfBitma
 		// the elevator bottom is actually the ceiling
 		if (m_type == DF_ELEVATOR_INV) {
 			m_pSector->buildElevator(m_mesh, 0, m_zmax - m_zmin, DFWALL_TEXTURE_TOP, true, DF_WALL_ALL);
+			m_pSector->setAABBtop(m_zmax);
 		}
 		else {
 			m_pSector->buildElevator(m_mesh, 0, -(m_zmax - m_zmin), DFWALL_TEXTURE_TOP, true, DF_WALL_ALL);
+			m_pSector->setAABBtop(m_zmax);
 		}
 
 		if (m_mesh->buildMesh()) {
@@ -171,10 +176,12 @@ dfMesh *dfLogicElevator::buildGeometry(fwMaterial* material, std::vector<dfBitma
 		if (m_type == DF_ELEVATOR_MOVE_FLOOR) {
 			// the elevator top is actually the floor
 			m_pSector->buildElevator(m_mesh, -(m_zmax - m_zmin), 0, DFWALL_TEXTURE_BOTTOM, false, DF_WALL_ALL);
+			m_pSector->setAABBbottom(m_zmin);
 		}
 		else {
 			// move ceiling, only move the top
 			m_pSector->buildElevator(m_mesh, 0, (m_zmax - m_zmin), DFWALL_TEXTURE_TOP, false, DF_WALL_ALL);
+			m_pSector->setAABBtop(m_zmax);
 		}
 
 		if (m_mesh->buildMesh()) {
@@ -194,12 +201,12 @@ dfMesh *dfLogicElevator::buildGeometry(fwMaterial* material, std::vector<dfBitma
 		m_mesh = new dfMesh(material, bitmaps);
 
 		// only use the inner polygon (the hole)
-		m_pSector->buildElevator(m_mesh, m_pSector->m_floorAltitude, m_pSector->m_ceilingAltitude, DFWALL_TEXTURE_MID, false, DF_WALL_MORPHS_WITH_ELEV);
+		m_pSector->buildElevator(m_mesh, m_pSector->referenceFloor(), m_pSector->referenceCeiling(), DFWALL_TEXTURE_MID, false, DF_WALL_MORPHS_WITH_ELEV);
 
 		switch (m_type) {
 		case DF_ELEVATOR_MORPH_SPIN1:
 			// move the vertices around the center (in level space)
-			m_center.z = m_pSector->m_floorAltitude;
+			m_center.z = m_pSector->referenceFloor();
 			m_mesh->moveVertices(m_center);
 			break;
 		case DF_ELEVATOR_MORPH_MOVE1:
@@ -457,7 +464,7 @@ void dfLogicElevator::moveTo(float z)
 		break;
 	case DF_ELEVATOR_MOVE_FLOOR:
 		m_mesh->moveFloorTo(z);
-		m_pSector->floor(z);
+		m_pSector->currentFloorAltitude(z);
 		break;
 	case DF_ELEVATOR_MOVE_CEILING:
 		m_mesh->moveCeilingTo(z);
