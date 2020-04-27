@@ -25,6 +25,7 @@ public:
 	void reset(void);
 	void translateFrom(fwAABBox& source, glm::vec3& translation);
 	void rotateFrom(fwAABBox& source, glm::vec3& rotation);
+	void apply(fwAABBox& source, glm::mat4& matrix);
 	bool not_init(void);
 	fwAABBox& copy(fwAABBox& source);
 	~fwAABBox();

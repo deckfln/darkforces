@@ -201,7 +201,7 @@ void dfSector::currentFloorAltitude(float z)
  */
 void dfSector::ceiling(float z)
 {
-	m_referenceCeilingAltitude = z;
+	m_ceilingAltitude = z;
 
 	for (auto trigger : m_triggers) {
 		trigger->moveCeiling(z);

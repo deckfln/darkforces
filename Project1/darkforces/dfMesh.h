@@ -48,8 +48,7 @@ class dfMesh {
 	void updateRectangleAntiClockwise(int p, float x, float y, float z, float x1, float y1, float z1, float xoffset, float yoffset, float width, float height, int textureID, float ambient);
 	void position(glm::vec3& position);
 	void rotation(glm::vec3& rotation);
-	void translateWorldBoundingBox(glm::vec3 &translation);
-	void rotateWorldBoundingBox(glm::vec3 &translation);
+	void updateWorldBoundingBox(dfMesh *parent);
 
 protected:
 	dfMesh* m_parent = nullptr;							// Parent dfMesh

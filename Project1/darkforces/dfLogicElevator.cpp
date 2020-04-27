@@ -574,7 +574,18 @@ bool dfLogicElevator::checkCollision(float step, glm::vec3& position, glm::vec3&
 	glm::vec3 plevel;
 	m_parent->gl2level(target, plevel);
 
-	if (m_mesh && m_mesh->visible() && plevel.z > m_zmin && plevel.z < m_zmax) {
+	float floor, ceiling;
+
+	if (m_pSector) {
+		floor = m_pSector->currentFloorAltitude();
+		ceiling = m_pSector->ceiling();
+	}
+	else {
+		floor = -1000;
+		ceiling = 1000;
+	}
+
+	if (m_mesh && m_mesh->visible() && plevel.z > m_zmin && plevel.z < m_zmax && plevel.z < ceiling) {
 		return m_mesh->collide(step, position, target, radius, intersection, m_name);
 	}
 

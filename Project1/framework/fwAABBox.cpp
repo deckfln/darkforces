@@ -54,6 +54,15 @@ void fwAABBox::rotateFrom(fwAABBox& source, glm::vec3& rotation)
 }
 
 /**
+ * apply a matrix4 to a source
+ */
+void fwAABBox::apply(fwAABBox& source, glm::mat4& matrix)
+{
+	m_p = glm::vec3(matrix * glm::vec4(source.m_p, 1.0));
+	m_p1 = glm::vec3(matrix * glm::vec4(source.m_p1, 1.0));
+}
+
+/**
  * check if the AABB was initialized
  */
 bool fwAABBox::not_init(void)

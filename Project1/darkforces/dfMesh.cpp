@@ -412,7 +412,7 @@ void dfMesh::position(glm::vec3& position)
 	glm::vec3 identity(0.0);
 
 	m_mesh->translate(position);
-	translateWorldBoundingBox(position);
+	updateWorldBoundingBox(nullptr);
 }
 
 /**
@@ -421,30 +421,27 @@ void dfMesh::position(glm::vec3& position)
 void dfMesh::rotation(glm::vec3& rotate)
 {
 	m_mesh->rotate(rotate);
-	rotateWorldBoundingBox(rotate);
+	updateWorldBoundingBox(nullptr);
 }
 
 /**
  * Apply the world matrix to the model space bounding box
  */
-void dfMesh::translateWorldBoundingBox(glm::vec3& translation)
+void dfMesh::updateWorldBoundingBox(dfMesh *parent)
 {
-	m_worldBoundingBox.translateFrom(m_boundingBox, translation);
+	if (m_mesh) {
+		if (parent) {
+			m_mesh->updateWorldMatrix(parent->m_mesh);
+		}
+		else {
+			m_mesh->updateWorldMatrix(nullptr);
+		}
+		glm::mat4& worldMatrix = m_mesh->worldMatrix();
 
-	for (auto child : m_children) {
-		child->translateWorldBoundingBox(translation);
+		m_worldBoundingBox.apply(m_boundingBox, worldMatrix);
 	}
-}
-
-/**
- * Apply the world matrix to the model space bounding box
- */
-void dfMesh::rotateWorldBoundingBox(glm::vec3& rotation)
-{
-	m_worldBoundingBox.rotateFrom(m_boundingBox, rotation);
-
 	for (auto child : m_children) {
-		child->translateWorldBoundingBox(rotation);
+		child->updateWorldBoundingBox(this);
 	}
 }
 
@@ -573,7 +570,7 @@ bool dfMesh::collide(float step, glm::vec3& position, glm::vec3& target, float r
 				direction = target - position;
 				if (glm::dot(hit, direction) > 0) {
 					// as we checked on a sphere, ensure the intersection is in the direction we want to move, and not on our back
-					std::cerr << "dfMesh::collide sphere collide with " << name << " x=" << intersection.x << " y=" << intersection.y << " z=" << intersection.z << std::endl;
+ 					std::cerr << "dfMesh::collide sphere collide with " << name << " x=" << intersection.x << " y=" << intersection.y << " z=" << intersection.z << std::endl;
 					return true;
 				}
 			}
@@ -687,7 +684,7 @@ fwMesh* dfMesh::buildMesh(void)
 	}
 
 	m_mesh = new fwMesh(m_geometry, m_material);
-	m_mesh->translate(m_position);
+	position(m_position);
 
 	return m_mesh;
 }
