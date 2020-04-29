@@ -624,9 +624,6 @@ void dfSuperSector::buildFloor(bool update, dfSector* sector)
 void dfSuperSector::buildGeometry(std::vector<dfSector*>& sectors)
 {
 	for (auto sector : m_sectors) {
-		if (sector->m_name == "projector") {
-			printf("dfSuperSector::buildGeometry\n");
-		}
 		sector->buildGeometry(m_dfmesh, DF_WALL_NOT_MORPHS_WITH_ELEV);
 
 		// buildSigns(sector, sectors);

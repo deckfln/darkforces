@@ -107,6 +107,7 @@ void dfLogicElevator::bindSector(dfSector* pSector)
 		break;
 
 	case DF_ELEVATOR_MOVE_CEILING:
+		m_pSector->staticCeilingAltitude(amax);
 		m_pSector->ceiling( m_pSector->referenceFloor() );
 		break;
 
@@ -499,7 +500,7 @@ void dfLogicElevator::dispatchMessage(dfMessage* message)
 {
 	switch (message->m_action) {
 	case DF_MESSAGE_TRIGGER:
-		std::cerr << "dfLogicElevator::dispatchMessage sector=" << m_name << " action=" << message->m_action << " status=" << m_status << std::endl;;
+		std::cerr << "dfLogicElevator::dispatchMessage TRIGGER sector=" << m_name << " action=" << message->m_action << " status=" << m_status << std::endl;;
 
 		if (m_status != DF_ELEVATOR_HOLD) {
 			// break the animation and move directly to the next stop
@@ -518,11 +519,11 @@ void dfLogicElevator::dispatchMessage(dfMessage* message)
 		break;
 
 	case DF_MESSAGE_GOTO_STOP:
+		std::cerr << "dfLogicElevator::dispatchMessage GOTO_STOP sector=" << m_name << " action=" << message->m_action << " status=" << m_status << std::endl;;
 		if (m_type == DF_ELEVATOR_MORPH_SPIN1 && m_status != DF_ELEVATOR_HOLD) {
 			// MORPH_SPIN animation cannot be broken
 			return;
 		}
-
 
 		if (m_currentStop == message->m_value) {
 			return;	// nothing to do, we're at the right floor
