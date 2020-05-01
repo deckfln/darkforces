@@ -100,6 +100,14 @@ int dfMesh::resize(int i)
 }
 
 /**
+ * Return current number of vertices on the mesh
+ */
+int dfMesh::nbVertices(void)
+{
+	return m_pVertices->size();
+}
+
+/**
  * Setup a vertice
  */
 void dfMesh::setVertice(int p, float x, float y, float z, float xoffset, float yoffset, int textureID, float ambient)
@@ -614,11 +622,11 @@ void dfMesh::visible(bool status)
 }
 
 /**
- *
+ * Update the Ambient buffer attribute
  */
-void dfMesh::changeAmbient(float ambient)
+void dfMesh::changeAmbient(float ambient, int start, int len)
 {
-	for (unsigned int i = 0; i < m_ambient.size(); i++) {
+	for (unsigned int i = start; i < start + len; i++) {
 		m_ambient[i] = ambient;
 	}
 	m_geometry->updateAttribute("aAmbient", 0);

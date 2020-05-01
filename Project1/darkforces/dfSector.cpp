@@ -745,21 +745,15 @@ bool dfSector::checkCollision(float step, glm::vec3& current, glm::vec3& target,
  */
 void dfSector::changeAmbient(float ambient)
 {
-	std::vector <float> &m_ambientLight = m_super->ambientLight();
 	ambient /= 32.0f;
 
+
 	if (m_wallVerticesLen > 0) {
-		for (unsigned int i = m_wallVerticesStart; i < m_wallVerticesStart + m_wallVerticesLen; i++) {
-			m_ambientLight[i] = ambient;
-		}
-		m_super->updateAmbientLight(m_wallVerticesStart, m_wallVerticesLen);
+		m_super->updateAmbientLight(ambient, m_wallVerticesStart, m_wallVerticesLen);
 	}
 
 	if (m_floorVerticesLen > 0) {
-		for (unsigned int i = m_floorVerticesStart; i < m_floorVerticesStart + m_floorVerticesLen; i++) {
-			m_ambientLight[i] = ambient;
-		}
-		m_super->updateAmbientLight(m_floorVerticesStart, m_floorVerticesLen);
+		m_super->updateAmbientLight(ambient, m_floorVerticesStart, m_floorVerticesLen);
 	}
 }
 
@@ -935,12 +929,17 @@ void dfSector::buildFloorAndCeiling(dfMesh* mesh)
 	}
 	std::vector<std::vector<Point>>& polygon = polygons(-1);	// default polygons
 
+	m_wallVerticesStart = mesh->nbVertices();
 	mesh->addFloor(polygon, m_staticMeshFloorAltitude, m_floorTexture, m_ambient, false);
+
+	m_floorVerticesStart = mesh->nbVertices();
+	m_wallVerticesLen = m_floorVerticesStart - m_wallVerticesStart;
 
 	// Create the ceiling, unless there is a sky
 	if (!(m_flag1 & DF_SECTOR_EXTERIOR_NO_CEIL)) {
 		mesh->addFloor(polygon, m_staticMeshCeilingAltitude, m_ceilingTexture, m_ambient, true);
 	}
+	m_floorVerticesLen = mesh->nbVertices() - m_wallVerticesStart;
 }
 
 /**

@@ -93,11 +93,12 @@ public:
 	void parent(fwMesh* parent) { m_parentMesh = parent; };
 	bool visible(void);
 	void visible(bool status);
-	void changeAmbient(float ambient);
+	void changeAmbient(float ambient, int start, int len);
 	void addChild(dfMesh* mesh);
 	void addMesh(fwMesh* mesh);
 	void zOrder(int z);
 	void updateGeometryTextures(int start, int nb);
+	int nbVertices(void);
 
 	virtual void setStatus(int status) {};
 
