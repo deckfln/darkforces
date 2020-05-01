@@ -440,6 +440,12 @@ void dfMesh::updateWorldBoundingBox(dfMesh *parent)
 
 		m_worldBoundingBox.apply(m_boundingBox, worldMatrix);
 	}
+	else {
+		glm::mat4& worldMatrix = parent->m_mesh->worldMatrix();
+
+		m_worldBoundingBox.apply(m_boundingBox, worldMatrix);
+	}
+
 	for (auto child : m_children) {
 		child->updateWorldBoundingBox(this);
 	}

@@ -1005,7 +1005,7 @@ void dfSector::buildElevator(dfMesh* mesh, float bottom, float top, int what, bo
 	for (auto wall : m_deferedSigns) {
 		dfSector* sector = wall->sector();
 		float translate = m_staticMeshFloorAltitude - sector->m_staticMeshFloorAltitude;
-		float height = sector->m_staticMeshCeilingAltitude - sector->m_staticMeshCeilingAltitude;
+		float height = sector->m_staticMeshCeilingAltitude - sector->m_staticMeshFloorAltitude;
 		addSign(mesh, wall, bottom - translate, bottom - translate + height, DFWALL_TEXTURE_BOTTOM);
 	}
 }

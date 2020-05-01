@@ -246,11 +246,6 @@ dfMesh *dfLogicElevator::buildGeometry(fwMaterial* material, std::vector<dfBitma
  */
 void dfLogicElevator::init(int stopID)
 {
-	if (m_type == DF_ELEVATOR_CHANGE_LIGHT) {
-		// kick start animation
-		printf("");
-	}
-
 	m_currentStop = stopID;
 	dfLogicStop* stop = m_stops[m_currentStop];
 
