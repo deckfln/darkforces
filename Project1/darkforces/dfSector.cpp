@@ -866,7 +866,7 @@ void dfSector::buildWalls(dfMesh* mesh, int displayPolygon)
 		}
 		break;
 	default:
-		std::cerr << "dfSector::walls flags=" << displayPolygon << " not implemented" << std::endl;
+		std::cerr << "dfSector::walls flags=" << displayPolygon << " not implemented for sector=" << m_id << std::endl;
 	}
 
 	for (auto wall : filtered_walls) {
@@ -918,15 +918,16 @@ void dfSector::buildFloorAndCeiling(dfMesh* mesh)
 	// data won't have more than 65536 vertices.
 	using N = uint32_t;
 
-	// Create array
+	// Ignore strange sector whose ceiling is below the floor
+	if (m_staticMeshCeilingAltitude < m_staticMeshFloorAltitude) {
+		//TODO do not forget that 'thing'
+		printf("ignore dfSuperSector::buildFloor sector %d\n", m_id);
+		return;
+	}
 
 	// Fill polygon structure with actual data. Any winding order works.
 	// The first polyline defines the main polygon.
 	// Following polylines define holes.
-	if (m_id == 3 || m_id == 176 || m_id == 197 || m_id == 60) {
-		//TODO do not forget that 'thing'
-		printf("dfSuperSector::buildFloor sector %d\n", m_id);
-	}
 	std::vector<std::vector<Point>>& polygon = polygons(-1);	// default polygons
 
 	m_wallVerticesStart = mesh->nbVertices();
