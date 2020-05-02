@@ -338,6 +338,8 @@ void dfMesh::addPlane(float width, dfBitmapImage* image)
 	}
 	// warning, triangles are looking downward
 	int t = 0, t1;
+	float x, y;
+	float xoffset, yoffset;
 
 	for (unsigned int i = 0; i < 6; i++) {
 		// get local texture offset on the floor
@@ -351,16 +353,19 @@ void dfMesh::addPlane(float width, dfBitmapImage* image)
 		case 5:	t = 1; t1 = 1;  break;
 		}
 
-		float xoffset = (m_vertices[i].x * 8.0f) / xpixel;
-		float yoffset = (m_vertices[i].z * 8.0f) / ypixel;
+		x = t * width;
+		y = t1 * width;
+
+		xoffset = (x * 0.5f) / xpixel;
+		yoffset = (y * 0.5f) / ypixel;
 
 		setVertice(i,
-			t * width,
-			t1 * width,
+			x,
+			y,
 			0,
 			xoffset, yoffset,
 			image->m_textureID,
-			1.0f);
+			32.0f);
 	}
 }
 

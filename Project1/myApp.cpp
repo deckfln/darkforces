@@ -44,7 +44,6 @@ myApp::myApp(std::string name, int width, int height) :
 		 glm::vec3(0.8, 0.8, 0.8),
 		 glm::vec3(1.0, 1.0, 1.0)
 	 );
-	 */
 	m_light = new fwPointLight(
 		glm::vec3(),				// position
 		glm::vec3(0.8, 0.8, 0.8),	// Color
@@ -56,6 +55,7 @@ myApp::myApp(std::string name, int width, int height) :
 	);
 	m_light->set_name("light");
 	m_light->castShadow(true);
+	*/
 
 	glm::vec4* white = new glm::vec4(0.0, 0.0, 1.0, 1.0);
 

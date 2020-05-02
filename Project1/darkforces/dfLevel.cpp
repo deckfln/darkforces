@@ -327,7 +327,7 @@ void dfLevel::buildGeometry(void)
 
 		dfBitmapImage* image = m_bitmaps[(int)m_skyTexture.r]->getImage();
 		m_sky = new dfMesh(m_material, m_bitmaps);
-		m_sky->addPlane(width, image);
+		m_sky->addPlane(width * 3, image);
 		fwMesh *mesh = m_sky->buildMesh();
 		glm::vec3 center = glm::vec3((m_boundingBox.m_p1.x + m_boundingBox.m_p.x) / 20.0f,
 			m_skyAltitude / 10.0f,	

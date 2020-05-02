@@ -30,6 +30,7 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 
 	// controls
 	m_control = new fwControlThirdPerson(m_camera, glm::vec3(-36.4, 2.3, 37.8), 0.55f, -pi / 2, 0.2f);
+	//m_control = new fwControlThirdPerson(m_camera, glm::vec3(-23.2, 4.3, 29.9), 0.55f, -pi / 2, 0.2f);
 	bindControl((fwControl*)m_control);
 
 	m_renderer->customLight("/data/shaders/lightning.glsl");
@@ -47,7 +48,8 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 		 glm::vec3(0.8, 0.8, 0.8),
 		 glm::vec3(1.0, 1.0, 1.0)
 	 );
-	 */
+	
+
 	m_light = new fwPointLight(
 		glm::vec3(),				// position
 		glm::vec3(0.8, 0.8, 0.8),	// Color
@@ -59,6 +61,7 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 	);
 	m_light->set_name("light");
 	m_light->castShadow(true);
+	*/
 
 	glm::vec4* white = new glm::vec4(0.0, 0.0, 1.0, 1.0);
 
@@ -84,8 +87,6 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 	// init the m_scene
 	glm::vec3* yellow = new glm::vec3(255, 255, 0);
 	m_scene = new fwScene();
-	m_scene->addLight(m_light);
-
 	m_scene->background(m_skybox);
 
 	// mandatory to get all data together
@@ -142,12 +143,6 @@ static int current = 0;
 glTexture* myDarkForces::draw(time_t delta, fwRenderer* renderer)
 {
 	glm::vec3 lightPos;
-
-	float radius = 4;
-	lightPos.x = sin(glfwGetTime() / 2.0) * radius;
-	lightPos.y = 2;
-	lightPos.z = cos(glfwGetTime() / 2.0) * radius;
-	m_light->translate(lightPos);
 
 	// create a player AA BoundingBox
 	glm::vec3 position = m_camera->get_position();

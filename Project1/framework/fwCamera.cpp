@@ -12,7 +12,7 @@ fwCamera::fwCamera(int width, int height):
 {
 	view = glm::mat4(1.0f);
 
-	m_projection = glm::perspective(glm::radians(25.0f), (float)width / (float)height, 1.0f, 1000.0f);
+	m_projection = glm::perspective(glm::radians(45.0f), (float)width / (float)height, 0.1f, 400.0f);
 	m_matrix = m_projection * view;
 
 	update();
@@ -20,7 +20,7 @@ fwCamera::fwCamera(int width, int height):
 
 void fwCamera::set_ratio(int width, int height)
 {
-	m_projection = glm::perspective(glm::radians(45.0f), (float)width / (float)height, 0.1f, 100.0f);
+	m_projection = glm::perspective(glm::radians(45.0f), (float)width / (float)height, 0.1f, 400.0f);
 	m_matrix = m_projection * view;
 	m_projScreenMatrix = m_projection * inverse(m_matrix);
 
