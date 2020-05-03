@@ -8,6 +8,7 @@
 #include "dfParseINF.h"
 #include "dfLogicStop.h"
 #include "dfLogicElevator.h"
+#include "dfFileSystem.h"
 
 std::vector<std::string>& dfParseTokens(std::string& line)
 {
@@ -45,9 +46,9 @@ std::vector<std::string>& dfParseTokens(std::string& line)
 	return tokens;
 }
 
-dfParseINF::dfParseINF(dfFileGOB* gob, std::string file)
+dfParseINF::dfParseINF(dfFileSystem* fs, std::string file)
 {
-	char* sec = gob->load(file + ".INF");
+	char* sec = fs->load(DF_DARK_GOB, file + ".INF");
 	std::istringstream infile(sec);
 	std::string line, dump;
 

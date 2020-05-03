@@ -16,7 +16,7 @@
 #include "framework/mesh/fwMeshSkinned.h"
 #include "framework/fwParticles.h"
 #include "darkforces/dfLevel.h"
-#include "darkforces/dfFileGOB.h"
+#include "darkforces/dfFileSystem.h"
 
 class myDarkForces : public fwApp
 {
@@ -28,8 +28,7 @@ class myDarkForces : public fwApp
 	glm::vec4* white = nullptr;
 	fwMesh* m_fwCamera = nullptr;
 
-	dfFileGOB* m_dark = nullptr;
-	dfFileGOB* m_textures = nullptr;
+	dfFileSystem* m_filesystem = nullptr;
 	dfLevel* m_level = nullptr;
 	bool m_keySpace = false;	// SPACE is pressed
 	bool m_headlight = false;

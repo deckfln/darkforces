@@ -17,13 +17,14 @@
 #include "darkforces/dfCollision.h"
 #include "darkforces/dfMessageBus.h"
 
+#include "darkforces/dfFileSystem.h"
+
 myDarkForces::myDarkForces(std::string name, int width, int height) :
 	fwApp(name, width, height, "shaders/gamma", "#define GAMMA_CORRECTION 1\n")
 {
 	int Button = 0;
 
-	m_dark = new dfFileGOB(ROOT_FOLDER + "/data/dark.gob");
-	m_textures = new dfFileGOB(ROOT_FOLDER + "/data/textures.gob");
+	m_filesystem = new dfFileSystem(ROOT_FOLDER);
 
 	// camera
 	m_camera = new fwCamera(width, height);
@@ -68,7 +69,7 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 	fwMaterialBasic* basic = new fwMaterialBasic(white);
 	fwMesh* fLight = new fwMesh(geometry, basic);
 
-	m_level = new dfLevel(m_dark, m_textures, "SECBASE");
+	m_level = new dfLevel(m_filesystem, "SECBASE");
 	dfCollision* m_collision = new dfCollision();
 	m_collision->bind(m_level);
 	m_control->bind(m_collision);

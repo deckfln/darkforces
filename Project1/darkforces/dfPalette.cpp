@@ -2,10 +2,12 @@
 
 #include <iostream>
 
-dfPalette::dfPalette(dfFileGOB* gob, std::string file)
+#include "dfFileSystem.h"
+
+dfPalette::dfPalette(dfFileSystem* fs, std::string file)
 {
 	// load a vga13h rgb palette
-	m_palette = (dfPaletteColors *)gob->load(file);
+	m_palette = (dfPaletteColors *)fs->load(DF_DARK_GOB, file);
 
 	if (m_palette == nullptr) {
 		std::cerr << "dfPalette::dfPalette cannot load " << file << std::endl;
@@ -19,18 +21,33 @@ dfPalette::dfPalette(dfFileGOB* gob, std::string file)
 		vga13h.r = (vga13h.r << 2) | (vga13h.r >> 4);
 		vga13h.g = (vga13h.g << 2) | (vga13h.g >> 4);
 		vga13h.b = (vga13h.b << 2) | (vga13h.b >> 4);
+//		vga13h.a = 255;
 		m_palette->colors[i] = vga13h;
 	}
 }
 
-dfPaletteColor* dfPalette::getColor(int v)
+glm::ivec4* dfPalette::getColor(int v, bool transparent)
 {
+	static glm::ivec4 color;
+
 	if (v < 0 || v > 255) {
 		std::cerr << "dfPalette::getColor invalid index" << std::endl;
 		return nullptr;
 	}
 
-	return &m_palette->colors[v];
+	dfPaletteColor* rgb = &m_palette->colors[v];
+	color.r = rgb->r;
+	color.g = rgb->g;
+	color.b = rgb->b;
+
+	if (transparent) {
+		color.a = (v != 0) * 255;	// if index==0 => alpha = 1.0
+	}
+	else {
+		color.a = 255;
+	}
+
+	return &color;
 }
 
 dfPalette::~dfPalette()

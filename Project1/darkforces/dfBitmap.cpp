@@ -1,6 +1,7 @@
 #include "dfBitmap.h"
 
 #include <iostream>
+#include "dfFileSystem.h"
 
 #pragma pack(push)
 struct dfBitmapHeader {
@@ -56,7 +57,7 @@ static dfPaletteColors _color;
 
 static dfBitmapImage _empty;	// empty image for missing files
 
-dfBitmap::dfBitmap(dfFileGOB* gob, std::string file, dfPalette* palette) :
+dfBitmap::dfBitmap(dfFileSystem* fs, std::string file, dfPalette* palette) :
 	m_name(file)
 {
 	if (!_init) {
@@ -68,7 +69,7 @@ dfBitmap::dfBitmap(dfFileGOB* gob, std::string file, dfPalette* palette) :
 		_empty.m_data = new char[64 * 64]();
 	}
 
-	m_data = gob->load(file);
+	m_data = fs->load(DF_TEXTURES_GOB, file);
 	if (m_data == nullptr) {
 		std::cerr << "dfBitmap::dfBitmap cannot load "<< file << std::endl;
 		m_images.push_back(_empty);
@@ -134,7 +135,7 @@ char *dfBitmap::convert2rgb(dfBitmapImage *raw, dfPalette *palette)
 	int size = raw->m_width * raw->m_height;
 	char* image = new char[size * 3];
 	int p, p1 = 0;
-	dfPaletteColor *rgb;
+	glm::ivec4 *rgb;
 	unsigned char v;
 
 	// RAW images are stored by column
@@ -143,7 +144,7 @@ char *dfBitmap::convert2rgb(dfBitmapImage *raw, dfPalette *palette)
 		for (auto y = raw->m_width - 1; y >= 0; y--) {
 			p = y * raw->m_height + x;
 			v = raw->m_raw[p];
-			rgb = palette->getColor(v);
+			rgb = palette->getColor(v, false);
 
 			image[p1] = rgb->r;
 			image[p1 + 1] = rgb->g;

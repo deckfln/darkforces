@@ -5,7 +5,8 @@
 
 #include "dfLogicElevator.h"
 #include "dfLogicTrigger.h"
-#include "dfFileGOB.h"
+
+class dfFileSystem;
 
 std::vector<std::string>& dfParseTokens(std::string& line);
 
@@ -20,6 +21,6 @@ public:
 	std::list <dfLogicElevator*> m_elevators;
 	std::list <dfLogicTrigger* > m_triggers;
 
-	dfParseINF(dfFileGOB* gob, std::string file);
+	dfParseINF(dfFileSystem* fs, std::string file);
 	~dfParseINF(void);
 };

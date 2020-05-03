@@ -19,6 +19,7 @@
 #include "dfPalette.h"
 
 class dfMesh;
+class dfParserObjects;
 
 /**
  *
@@ -59,7 +60,9 @@ class dfLevel
 	dfParseINF* m_inf = nullptr;				// level logic retrieved from the INF file
 	std::list <dfLogicTrigger*> m_triggers;		// all triggers of the level
 
-	void loadBitmaps(dfFileGOB* gob, std::string file);
+	dfParserObjects* m_objects = nullptr;		// all objects in the level
+
+	void loadBitmaps(dfFileSystem* fs, std::string file);
 	void buildAtlasMap(void);
 	void spacePartitioning(void);
 	void buildGeometry(void);
@@ -70,7 +73,7 @@ class dfLevel
 	void createTriggerForElevator(dfLogicElevator *elevator);
 
 public:
-	dfLevel(dfFileGOB* dark, dfFileGOB* textures, std::string file);
+	dfLevel(dfFileSystem* fs, std::string file);
 	dfSector* findSector(glm::vec3& position);
 	void testSwitch(fwAABBox& player);
 	void draw(fwCamera* camera, fwScene* scene);

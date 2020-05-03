@@ -126,9 +126,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="darkforces\dfAtlasTexture.cpp" />
     <ClCompile Include="darkforces\dfBitmap.cpp" />
     <ClCompile Include="darkforces\dfCollision.cpp" />
     <ClCompile Include="darkforces\dfFileGOB.cpp" />
+    <ClCompile Include="darkforces\dfFileSystem.cpp" />
+    <ClCompile Include="darkforces\dfFME.cpp" />
     <ClCompile Include="darkforces\dfLogicElevator.cpp" />
     <ClCompile Include="darkforces\dfLogicStop.cpp" />
     <ClCompile Include="darkforces\dfLogicTrigger.cpp" />
@@ -136,13 +139,17 @@
     <ClCompile Include="darkforces\dfMessage.cpp" />
     <ClCompile Include="darkforces\dfMessageBus.cpp" />
     <ClCompile Include="darkforces\dfMessageClient.cpp" />
+    <ClCompile Include="darkforces\dfObject.cpp" />
+    <ClCompile Include="darkforces\dfObject\dfSprite.cpp" />
     <ClCompile Include="darkforces\dfPalette.cpp" />
     <ClCompile Include="darkforces\dfParseINF.cpp" />
     <ClCompile Include="darkforces\dfLevel.cpp" />
+    <ClCompile Include="darkforces\dfParserObjects.cpp" />
     <ClCompile Include="darkforces\dfSector.cpp" />
     <ClCompile Include="darkforces\dfSign.cpp" />
     <ClCompile Include="darkforces\dfSuperSector.cpp" />
     <ClCompile Include="darkforces\dfWall.cpp" />
+    <ClCompile Include="darkforces\dfWAX.cpp" />
     <ClCompile Include="framework\camera\fwCameraPanoramic.cpp" />
     <ClCompile Include="framework\camera\fwOrthographicCamera.cpp" />
     <ClCompile Include="framework\controls\fwControlThirdPerson.cpp" />
@@ -225,9 +232,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="config.h" />
+    <ClInclude Include="darkforces\dfAtlasTexture.h" />
     <ClInclude Include="darkforces\dfBitmap.h" />
     <ClInclude Include="darkforces\dfCollision.h" />
     <ClInclude Include="darkforces\dfFileGOB.h" />
+    <ClInclude Include="darkforces\dfFileSystem.h" />
+    <ClInclude Include="darkforces\dfFME.h" />
     <ClInclude Include="darkforces\dfLogicElevator.h" />
     <ClInclude Include="darkforces\dfLogicStop.h" />
     <ClInclude Include="darkforces\dfLogicTrigger.h" />
@@ -235,13 +245,17 @@
     <ClInclude Include="darkforces\dfMessage.h" />
     <ClInclude Include="darkforces\dfMessageBus.h" />
     <ClInclude Include="darkforces\dfMessageClient.h" />
+    <ClInclude Include="darkforces\dfObject.h" />
+    <ClInclude Include="darkforces\dfObject\dfSprite.h" />
     <ClInclude Include="darkforces\dfPalette.h" />
     <ClInclude Include="darkforces\dfParseINF.h" />
     <ClInclude Include="darkforces\dfLevel.h" />
+    <ClInclude Include="darkforces\dfParserObjects.h" />
     <ClInclude Include="darkforces\dfSector.h" />
     <ClInclude Include="darkforces\dfSign.h" />
     <ClInclude Include="darkforces\dfSuperSector.h" />
     <ClInclude Include="darkforces\dfWall.h" />
+    <ClInclude Include="darkforces\dfWAX.h" />
     <ClInclude Include="framework\camera\fwCameraPanoramic.h" />
     <ClInclude Include="framework\camera\fwOrthographicCamera.h" />
     <ClInclude Include="framework\controls\fwControlThirdPerson.h" />

@@ -13,10 +13,12 @@
 #include "dfBitmap.h"
 #include "dfSign.h"
 #include "dfMesh.h"
+#include "dfParserObjects.h"
+#include "dfFileSystem.h"
 
-dfLevel::dfLevel(dfFileGOB* dark, dfFileGOB* gTextures, std::string file)
+dfLevel::dfLevel(dfFileSystem* fs, std::string file)
 {
-	char* sec = dark->load(file+".LEV");
+	char* sec = fs->load(DF_DARK_GOB, file+".LEV");
 	std::istringstream data(sec);
 
 	std::string line, dump;
@@ -42,7 +44,7 @@ dfLevel::dfLevel(dfFileGOB* dark, dfFileGOB* gTextures, std::string file)
 			m_name = tokens[1];
 		}
 		else if (tokens[0] == "PALETTE") {
-			m_palette = new dfPalette(dark, tokens[1]);
+			m_palette = new dfPalette(fs, tokens[1]);
 		}
 		else if (tokens[0] == "TEXTURES") {
 			int nbTextures = std::stoi(tokens[1]);
@@ -50,7 +52,7 @@ dfLevel::dfLevel(dfFileGOB* dark, dfFileGOB* gTextures, std::string file)
 		}
 		else if (tokens[0] == "TEXTURE:") {
 			std::string bm = tokens[1];
-			loadBitmaps(gTextures, bm);
+			loadBitmaps(fs, bm);
 		}
 		else if (tokens[0] == "NUMSECTORS") {
 			int nbSectors = std::stoi(tokens[1]);
@@ -89,7 +91,10 @@ dfLevel::dfLevel(dfFileGOB* dark, dfFileGOB* gTextures, std::string file)
 	}
 
 	// load and ditribute the INF file
-	m_inf = new dfParseINF(dark, file);
+	m_inf = new dfParseINF(fs, file);
+
+	// load the Object file
+	m_objects = new dfParserObjects(fs, m_palette, file);
 
 	// bind the sectors to the elevator logic
 	// bind the evelator logic to the level
@@ -140,9 +145,9 @@ dfLevel::dfLevel(dfFileGOB* dark, dfFileGOB* gTextures, std::string file)
  * Load a texture and store in the list of texture
  * TODO deal with animated textures : ZASWIT*
  */
-void dfLevel::loadBitmaps(dfFileGOB *gob, std::string file)
+void dfLevel::loadBitmaps(dfFileSystem *fs, std::string file)
 {
-	dfBitmap *bitmap = new dfBitmap(gob, file, m_palette);
+	dfBitmap *bitmap = new dfBitmap(fs, file, m_palette);
 	dfBitmapImage* image;
 
 	m_bitmaps[m_currentBitmap++] = bitmap;	// LEV based bitmaps (related to floors and walls)

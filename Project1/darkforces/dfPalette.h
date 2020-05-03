@@ -1,6 +1,9 @@
 #pragma once
 
-#include "dfFileGOB.h"
+#include <string>
+#include <glm/vec4.hpp>
+
+class dfFileSystem;
 
 #pragma pack(push)
 struct dfPaletteColor {
@@ -8,6 +11,7 @@ struct dfPaletteColor {
 	unsigned char g;
 	unsigned char b;
 };
+
 struct dfPaletteColors {
 	dfPaletteColor colors[256];
 };
@@ -17,7 +21,7 @@ class dfPalette
 {
 	dfPaletteColors *m_palette = nullptr;
 public:
-	dfPalette(dfFileGOB* gob, std::string file);
-	dfPaletteColor* getColor(int v);
+	dfPalette(dfFileSystem* fs, std::string file);
+	glm::ivec4* getColor(int v, bool transparent = false);
 	~dfPalette();
 };
