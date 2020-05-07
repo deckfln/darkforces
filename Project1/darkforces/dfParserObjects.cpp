@@ -8,6 +8,7 @@
 #include "dfWAX.h"
 #include "dfObject/dfSprite.h"
 #include "dfPalette.h"
+#include "dfAtlasTexture.h"
 
 dfObject* dfParserObjects::parseSprite(dfWAX* wax, float x, float y, float z, std::istringstream& infile)
 {
@@ -88,6 +89,20 @@ dfParserObjects::dfParserObjects(dfFileSystem* fs, dfPalette* palette, std::stri
 		}
 
 	}
+}
+
+/**
+ * Get all the FME and build an atlas texture
+ */
+dfAtlasTexture* dfParserObjects::buildAtlasTexture(void)
+{
+	std::vector<dfBitmapImage*> frames;
+	for (auto wax : m_waxes) {
+		wax->getFrames(frames);
+	}
+
+	m_textures = new dfAtlasTexture(frames);
+	return m_textures;
 }
 
 dfParserObjects::~dfParserObjects()

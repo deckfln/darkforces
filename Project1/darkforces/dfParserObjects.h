@@ -8,6 +8,7 @@ class dfSprite;
 class dfWAX;
 class dfObject;
 class dfPalette;
+class dfAtlasTexture;
 
 enum {
 	DF_LOGIC_SCENERY = 1,
@@ -22,9 +23,11 @@ class dfParserObjects
 	std::vector<dfObject *> m_objects;
 	int m_currentObject = 0;
 
+	dfAtlasTexture* m_textures;
 	dfObject* parseSprite(dfWAX* wax, float x, float y, float z, std::istringstream& infile);
 
 public:
 	dfParserObjects(dfFileSystem* fs, dfPalette* palette, std::string file);
+	dfAtlasTexture* buildAtlasTexture(void);
 	~dfParserObjects();
 };

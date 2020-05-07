@@ -1,6 +1,8 @@
 #include "fwTexture.h"
 #include "../include/stb_image.h"
 
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+#include "../include/stb_image_write.h"
 
 fwTexture::fwTexture() :
 	myclass(TEXTURE)
@@ -41,6 +43,14 @@ unsigned char *fwTexture::get_info(int *_width, int *_height, int *_nrChannels)
 	*_height = height;
 	*_nrChannels = nrChannels;
 	return m_data;
+}
+
+/**
+ * save the texture as PNG
+ */
+bool fwTexture::save(std::string file)
+{
+	return stbi_write_png(file.c_str(), width, height, nrChannels, m_data, width * nrChannels);
 }
 
 fwTexture::~fwTexture()

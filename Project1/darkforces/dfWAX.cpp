@@ -92,6 +92,9 @@ struct _dfWaxFrame {
 dfWAX::dfWAX(dfFileSystem* fs, dfPalette* palette, std::string& name) :
 	m_name(name)
 {
+	if (m_name == "REDLIT.WAX") {
+		printf("dfWAX::dfWAX\n");
+	}
 	m_data = fs->load(DF_SPRITES_GOB, name);
 	if (m_data == nullptr) {
 		std::cerr << "dfWAX::dfWAX cannot load " << name << std::endl;
@@ -113,35 +116,37 @@ dfWAX::dfWAX(dfFileSystem* fs, dfPalette* palette, std::string& name) :
 			// extract angles
 			for (auto j = 0; j < 32; j++) {
 				if (state->SEQS[j] > 0) {
+					int seq_offset = state->SEQS[j];
+					dfWaxAnimation* animation = nullptr;
 
-					//extract frames
-					_dfWaxSequence* seq = (_dfWaxSequence*)((unsigned char*)m_data + state->SEQS[j]);
+					if (m_animations.count(seq_offset) > 0) {
+						animation = m_animations[seq_offset];
+					}
+					else {
+						m_animations[seq_offset] = animation = new dfWaxAnimation;
+						animation->m_frames.resize(32);
 
-					dfWaxAnimation* animations = new dfWaxAnimation;
-					animations->m_frames.resize(32);
-					angles->m_animations[j] = animations;
+						//extract frames
+						_dfWaxSequence* seq = (_dfWaxSequence*)((unsigned char*)m_data + seq_offset);
 
-					for (auto k = 0; k < 32; k++) {
-						if (seq->FRAMES[k] > 0) {
+						animation = new dfWaxAnimation;
+						animation->m_frames.resize(32);
+						angles->m_animations[j] = animation;
 
-							// check for clones
-							int offset = seq->FRAMES[k];
-							dfFME* frame = nullptr;
-							for (auto l = 0; l < k; l++) {
-								if (seq->FRAMES[l] == offset) {
-									// record a duplicate
-									frame = animations->m_frames[k];
-									frame->references(1);	// increase number of references
-									break;
+						for (auto k = 0; k < 32; k++) {
+							if (seq->FRAMES[k] > 0) {
+								int offset = seq->FRAMES[k];
+								dfFME* frame = nullptr;
+
+								if (m_frames.count(offset) > 0) {
+									frame = m_frames[k];
 								}
-							}
+								else {
+									m_frames[k] = frame = new dfFME(m_data, seq->FRAMES[k], palette, true);
+								}
 
-							if (frame == nullptr) {
-								// extract new frame
-								frame = new dfFME(m_data, seq->FRAMES[k], palette, true);
+								animation->m_frames[k] = frame;
 							}
-
-							animations->m_frames[k] = frame;
 						}
 					}
 				}
@@ -150,30 +155,25 @@ dfWAX::dfWAX(dfFileSystem* fs, dfPalette* palette, std::string& name) :
 	}
 }
 
+/**
+ * Extract all frames in the WAX
+ */
+void dfWAX::getFrames(std::vector<dfBitmapImage*>& frames)
+{
+	for (auto frame : m_frames) {
+		frames.push_back(frame.second);
+	}
+}
+
 dfWAX::~dfWAX()
 {
 	delete m_data;
 
-	for (auto i = 0; i < 32; i++) {
-		dfWaxAngles* angles = m_states[i];
-		if (angles != nullptr) {
+	for (auto frames : m_frames) {
+		delete frames.second;
+	}
 
-			// delete angles
-			for (auto j = 0; j < 32; j++) {
-				dfWaxAnimation* animations = angles->m_animations[j];
-				if (animations != nullptr) {
-
-					// delete frames
-					for (auto k = 0; k < 32; k++) {
-						dfFME* frame = animations->m_frames[k];
-						if (frame != nullptr) {
-							if (frame->references(-1) == 0) {
-								delete frame;
-							}
-						}
-					}
-				}
-			}
-		}
+	for (auto animation : m_animations) {
+		delete animation.second;
 	}
 }

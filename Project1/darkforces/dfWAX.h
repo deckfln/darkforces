@@ -1,10 +1,12 @@
 #pragma once
 #include <string>
 #include <vector>
+#include <map>
 
 class dfFileSystem;
 class dfFME;
 class dfPalette;
+class dfBitmapImage;
 
 enum dfWaxMode {
 	DF_WAX_ENEMY,
@@ -27,8 +29,11 @@ class dfWAX
 
 	int m_nbstates = 0;
 	std::vector<dfWaxAngles *> m_states;
+	std::map<int, dfWaxAnimation*> m_animations;
+	std::map<int, dfFME*> m_frames;
 
 public:
 	dfWAX(dfFileSystem* fs, dfPalette *palette, std::string& name);
+	void getFrames(std::vector<dfBitmapImage*>& m_frames);
 	~dfWAX();
 };

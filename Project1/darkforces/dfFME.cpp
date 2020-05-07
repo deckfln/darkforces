@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include "dfPalette.h"
+#include "../include/stb_image_write.h"
 
 #pragma pack(push)
 struct _FME_Header_from_WAX {
@@ -50,7 +51,9 @@ dfFME::dfFME(void* data, int offset, dfPalette* palette, bool from_wax)
 
 	int size = m_width * m_height;
 	m_data = new char[size * 4];
-	int p, p1 = 0;
+	std::vector<unsigned char> buffer;
+	buffer.resize(size);
+	int p, decomp = 0;
 	glm::ivec4* rgb;
 	unsigned char v;
 
@@ -68,25 +71,38 @@ dfFME::dfFME(void* data, int offset, dfPalette* palette, bool from_wax)
 				if (control < 128) {
 					for (int j = 0; j < control; j++) {
 						v = column[p++];
-						rgb = palette->getColor(v, true);
-
-						m_data[p1] = rgb->r;
-						m_data[p1 + 1] = rgb->g;
-						m_data[p1 + 2] = rgb->b;
-						m_data[p1 + 3] = rgb->a;
-						p1 += 4;
+						buffer[decomp++] = v;
 					}
 					unpacked_bytes += control;
 				}
 				else {
 					for (int j = 0; j < control - 128; j++) {
-						m_data[p1] = 0;
-						m_data[p1 + 1] = 0;
-						m_data[p1 + 2] = 0;
-						m_data[p1 + 3] = 0;
-						p1 += 4;
+						buffer[decomp++] = 0;
 					}
 					unpacked_bytes += (control - 128);
+				}
+			}
+		}
+
+		// images are stored by column
+		// need to conver to  row first
+		int p1 = 0;
+		for (auto x = m_height - 1; x >= 0; x--) {
+			for (auto y = 0; y < m_width; y++) {
+				p = y * m_height + x;
+				v = buffer[p];
+				if (v != 0) {
+					rgb = palette->getColor(v, false);
+					m_data[p1++] = rgb->r;
+					m_data[p1++] = rgb->g;
+					m_data[p1++] = rgb->b;
+					m_data[p1++] = rgb->a;
+				}
+				else {
+					m_data[p1++] = 0;
+					m_data[p1++] = 0;
+					m_data[p1++] = 0;
+					m_data[p1++] = 0;
 				}
 			}
 		}
@@ -100,11 +116,11 @@ dfFME::dfFME(void* data, int offset, dfPalette* palette, bool from_wax)
 				v = image->data[p];
 				rgb = palette->getColor(v, true);
 
-				m_data[p1] = rgb->r;
-				m_data[p1 + 1] = rgb->g;
-				m_data[p1 + 2] = rgb->b;
-				m_data[p1 + 3] = rgb->a;
-				p1 += 4;
+				m_data[p] = rgb->r;
+				m_data[p + 1] = rgb->g;
+				m_data[p + 2] = rgb->b;
+				m_data[p + 3] = rgb->a;
+				p += 4;
 			}
 		}
 	}

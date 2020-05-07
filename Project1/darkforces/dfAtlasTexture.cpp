@@ -4,11 +4,16 @@
 #include "dfBitmap.h"
 #include "../framework/fwTexture.h"
 #include "../framework/fwUniform.h"
+#include "../framework/fwMaterialBasic.h"
 
+/**
+ * basic algorithm : use a square placement map, find an empty spot, store the texture. if no spot can be found, increase the texture size
+ */
 dfAtlasTexture::dfAtlasTexture(std::vector<dfBitmapImage*>& images)
 {
 	std::list<dfBitmapImage*> sorted_textures;
 	const int blockSize = 4;
+	int rgba=3;
 
 	// count number of 16x16 blocks
 	int blocks4x4 = 0;
@@ -16,6 +21,8 @@ dfAtlasTexture::dfAtlasTexture(std::vector<dfBitmapImage*>& images)
 
 	for (auto texture : images) {
 		if (texture) {
+			rgba = texture->m_nrChannels;
+
 			bx = ceil(texture->m_width / blockSize);	// round up to 4x4
 			by = ceil(texture->m_height / blockSize);
 			texture->bsize = bx * by;
@@ -45,7 +52,7 @@ dfAtlasTexture::dfAtlasTexture(std::vector<dfBitmapImage*>& images)
 
 		// megatexture in pixel (1 block = 4 pixels)
 		size = bsize * blockSize;
-		m_megatexture = new unsigned char[size * size * 3];
+		m_megatexture = new unsigned char[size * size * rgba];
 
 		// parse textures and place them on the megatexture
 		// find an available space on the map
@@ -116,7 +123,6 @@ dfAtlasTexture::dfAtlasTexture(std::vector<dfBitmapImage*>& images)
 
 			// copy the texture into the map
 			int source_line = 0;
-			int rgba = texture->m_nrChannels;
 			int bytes = texture->m_width * rgba;				// number of bytes per line
 			int dest_line = py * blockSize * size * rgba + px * blockSize * rgba;
 
@@ -144,7 +150,7 @@ dfAtlasTexture::dfAtlasTexture(std::vector<dfBitmapImage*>& images)
 //	}
 
 	// create the fwTexture
-	m_fwtextures = new fwTexture(m_megatexture, size, size, 3);
+	m_fwtextures = new fwTexture(m_megatexture, size, size, rgba);
 
 	// and the index
 	m_megatexture_idx.resize(images.size());
@@ -158,6 +164,23 @@ dfAtlasTexture::dfAtlasTexture(std::vector<dfBitmapImage*>& images)
 		}
 	}
 	m_shader_idx = new fwUniform("megatexture_idx", &m_megatexture_idx[0], i);
+}
+
+/**
+ * Bind the atlas texture to a material
+ */
+void dfAtlasTexture::bindToMaterial(fwMaterialBasic* material)
+{
+	material->addDiffuseMap(m_fwtextures);
+	material->addUniform(m_shader_idx);
+}
+
+/**
+ * Save the texture as a PNG
+ */
+void dfAtlasTexture::save(std::string file)
+{
+	m_fwtextures->save(file);
 }
 
 dfAtlasTexture::~dfAtlasTexture()

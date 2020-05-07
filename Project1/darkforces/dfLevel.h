@@ -20,6 +20,7 @@
 
 class dfMesh;
 class dfParserObjects;
+class dfAtlasTexture;
 
 /**
  *
@@ -44,11 +45,15 @@ class dfLevel
 	int m_currentBitmap = 0;
 	int m_currentTexture = 0;
 
+	/*
 	unsigned char* m_megatexture = nullptr;		// raw data 64x64, 64x128, 64x256, 64x512
 	fwTexture* m_fwtextures;					// fwTexture for the megatextures
 	std::vector<glm::vec4> m_megatexture_idx;	// rg = texture start  ba = texture size
 	fwUniform* m_shader_idx = nullptr;
-	
+	*/
+
+	dfAtlasTexture* m_atlasTexture = nullptr;	// store all textures.gob used in the level
+	dfAtlasTexture* m_sprites = nullptr;		// store all sprites.gob
 	fwMaterialBasic* m_material = nullptr;
 
 	dfMesh* m_sky = nullptr;					// sky mesh

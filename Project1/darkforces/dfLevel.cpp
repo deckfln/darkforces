@@ -15,6 +15,7 @@
 #include "dfMesh.h"
 #include "dfParserObjects.h"
 #include "dfFileSystem.h"
+#include "dfAtlasTexture.h"
 
 dfLevel::dfLevel(dfFileSystem* fs, std::string file)
 {
@@ -95,6 +96,8 @@ dfLevel::dfLevel(dfFileSystem* fs, std::string file)
 
 	// load the Object file
 	m_objects = new dfParserObjects(fs, m_palette, file);
+	m_sprites = m_objects->buildAtlasTexture();
+	m_sprites->save("D:/dev/Project1/Project1/images/atlas.png");
 
 	// bind the sectors to the elevator logic
 	// bind the evelator logic to the level
@@ -126,11 +129,13 @@ dfLevel::dfLevel(dfFileSystem* fs, std::string file)
 	}
 
 	convertDoors2Elevators();	// for every sector 'DOOR', create an evelator and a trigger
-	buildAtlasMap();			// load textures in a megatexture
 
 	m_material = new fwMaterialBasic("data/shaders/vertex.glsl", "", "data/shaders/fragment.glsl");
-	m_material->addDiffuseMap(m_fwtextures);
-	m_material->addUniform(m_shader_idx);
+
+	// load textures in a megatexture
+	m_atlasTexture = new dfAtlasTexture(m_allTextures);
+	m_atlasTexture->bindToMaterial(m_material);
+
 
 	spacePartitioning();		// partion of space for quick collision
 	buildGeometry();			// build the geometry of each super sectors
@@ -157,164 +162,6 @@ void dfLevel::loadBitmaps(dfFileSystem *fs, std::string file)
 		image = bitmap->getImage(i);
 		m_allTextures.push_back(image);
 	}
-}
-
-/***
- * store all textures in an atlas map
- * basic algorithm : use a square placement map, find an empty spot, store the texture. if no spot can be found, increase the texture size
- */
-void dfLevel::buildAtlasMap(void)
-{
-	std::list<dfBitmapImage*> sorted_textures;
-	const int blockSize = 4;
-
-	// count number of 16x16 blocks
-	int blocks16x16=0;
-	int bx, by;
-
-	for (auto texture : m_allTextures) {
-		if (texture) {
-			bx = texture->m_width / blockSize;
-			by = texture->m_height / blockSize;
-			texture->bsize = bx * by;
-
-			blocks16x16 += texture->bsize;
-
-			sorted_textures.push_back(texture);
-		}
-	}
-
-	// sort textures by size : big first
-	sorted_textures.sort([](dfBitmapImage* a, dfBitmapImage* b) { return a->bsize > b->bsize; });
-
-	// evaluate the size of the megatexture (square texture of 16x16 blocks)
-	int bsize = (int)ceil(sqrt(blocks16x16));
-
-	// try to place all objects on the map.
-	// if fail, increase the size of the map until we place all textures
-
-	bool allplaced = false;
-	bool* placement_map;
-	int size;
-
-	do {
-		// avaibility map of 16x16 blocks : false = available, true = used
-		placement_map = new bool[bsize * bsize]();
-
-		// megatexture in pixel (1 block = 16 pixel)
-		size = bsize * blockSize;
-		m_megatexture = new unsigned char[size * size * 3];
-
-		// parse textures and place them on the megatexture
-		// find an available space on the map
-		int px, py;
-		int c = 0;
-
-		allplaced = true;	// suppose we will be able to fit all textures
-
-		for (auto texture : sorted_textures) {
-			bx = texture->m_width / blockSize;
-			by = texture->m_height / blockSize;
-
-			// find a spot of the placement map
-			px = py = 0;
-			bool ok = false;
-
-			for (auto i = 0; i < bsize * bsize; i++) {
-				// test each position to find one we can start checking
-				if (!placement_map[py * bsize + px]) {
-					ok = true;	// suppose we have a spot
-
-					// check availability on the Y axis
-					for (auto y = py; y < py + by; y++) {
-						// check availability on the X axis
-						for (auto x = px; x < px + bx; x++) {
-							if (placement_map[y * bsize + x]) {
-								ok = false;	// actually, no we don't have a spot
-								break;
-							}
-						}
-					}
-				}
-
-				// found a spot
-				if (ok) {
-					break;
-				}
-
-				// progress along the placement map. 
-				px++;
-				if (px >= bsize - bx) {
-					px = 0;
-					py++;
-					if (py >= bsize - by) {
-						break;
-					}
-				}
-			}
-
-			// was not able to find a spot.
-			if (!ok) {
-				// need to increase the size of the map
-				allplaced = false;
-				bsize++;
-				delete[] placement_map;
-				delete m_megatexture;
-
-				break;
-			}
-			c++;
-
-			// mark the object on the placement map
-			for (auto y = py; y < py + by; y++) {
-				for (auto x = px; x < px + bx; x++) {
-					placement_map[y * bsize + x] = true;
-				}
-			}
-
-			// copy the texture into the map
-			int source_line = 0;
-			int bytes = texture->m_width * 3;	// number of bytes per line
-			int dest_line = py * blockSize * size * 3 + px * blockSize * 3;
-
-			for (auto y = 0; y < texture->m_height; y++) {
-				// copy one line
-				memcpy(m_megatexture + dest_line, texture->m_data + source_line, bytes);
-				source_line += bytes;
-				dest_line += size * 3;
-			}
-
-			// TODO point to the megatexture (use small epsilon to avoid texture bleeding)
-			// https://gamedev.stackexchange.com/questions/46963/how-to-avoid-texture-bleeding-in-a-texture-atlas
-			texture->m_xoffset = (((px + bx) * (float)blockSize)) / size;
-			texture->m_yoffset = (((py + by) * (float)blockSize)) / size;
-
-			texture->m_mega_width = - bx * (float)blockSize / size;
-			texture->m_mega_height = - by * (float)blockSize / size;
-		}
-	} while (!allplaced);
-
-	// delete old textures data
-//	for (auto texture : sorted_textures) {
-//		free(texture->m_data);
-//		texture->m_data = nullptr;
-//	}
-
-	// create the fwTexture
-	m_fwtextures = new fwTexture(m_megatexture, size, size, 3);
-
-	// and the index
-	m_megatexture_idx.resize(m_allTextures.size());
-
-	int i = 0;
-	for (auto texture : m_allTextures) {
-		if (texture) {
-			m_megatexture_idx[i] = glm::vec4(texture->m_xoffset, texture->m_yoffset, texture->m_mega_width, texture->m_mega_height);
-			texture->m_textureID = i;
-			i++;
-		}
-	}
-	m_shader_idx = new fwUniform("megatexture_idx", &m_megatexture_idx[0], i);
 }
 
 /**
@@ -687,10 +534,9 @@ dfLevel::~dfLevel()
 	for (auto bitmap : m_bitmaps) {
 		delete bitmap;
 	}
-	delete m_palette;
-	delete m_megatexture;
-	delete m_fwtextures;
 	delete m_inf;
-	delete m_shader_idx;
+	delete m_objects;
+	delete m_palette;
+	delete m_atlasTexture;
 	delete m_material;
 }

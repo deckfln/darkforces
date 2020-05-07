@@ -21,6 +21,7 @@ public:
 
 	unsigned char *get_info(int *width, int *height, int *nrChannels);
 	bool is(const int mclass) { return myclass & mclass; };
+	bool save(std::string file);
 	~fwTexture();
 };
 
