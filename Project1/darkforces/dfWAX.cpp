@@ -92,7 +92,7 @@ struct _dfWaxFrame {
 dfWAX::dfWAX(dfFileSystem* fs, dfPalette* palette, std::string& name) :
 	m_name(name)
 {
-	if (m_name == "REDLIT.WAX") {
+	if (m_name == "IDPLANS.WAX") {
 		printf("dfWAX::dfWAX\n");
 	}
 	m_data = fs->load(DF_SPRITES_GOB, name);
@@ -110,7 +110,7 @@ dfWAX::dfWAX(dfFileSystem* fs, dfPalette* palette, std::string& name) :
 			_dfWaxState* state = (_dfWaxState*)((unsigned char*)m_data + table->WAXES[i]);
 
 			dfWaxAngles* angles = new dfWaxAngles;
-			angles->m_animations.resize(32);
+			angles->animations.resize(32);
 			m_states[i] = angles;
 
 			// extract angles
@@ -124,14 +124,14 @@ dfWAX::dfWAX(dfFileSystem* fs, dfPalette* palette, std::string& name) :
 					}
 					else {
 						m_animations[seq_offset] = animation = new dfWaxAnimation;
-						animation->m_frames.resize(32);
+						animation->frames.resize(32);
 
 						//extract frames
 						_dfWaxSequence* seq = (_dfWaxSequence*)((unsigned char*)m_data + seq_offset);
 
 						animation = new dfWaxAnimation;
-						animation->m_frames.resize(32);
-						angles->m_animations[j] = animation;
+						animation->frames.resize(32);
+						angles->animations[j] = animation;
 
 						for (auto k = 0; k < 32; k++) {
 							if (seq->FRAMES[k] > 0) {
@@ -142,10 +142,10 @@ dfWAX::dfWAX(dfFileSystem* fs, dfPalette* palette, std::string& name) :
 									frame = m_frames[k];
 								}
 								else {
-									m_frames[k] = frame = new dfFME(m_data, seq->FRAMES[k], palette, true);
+									m_frames[offset] = frame = new dfFME(m_data, seq->FRAMES[k], palette, true);
 								}
 
-								animation->m_frames[k] = frame;
+								animation->frames[k] = frame;
 							}
 						}
 					}

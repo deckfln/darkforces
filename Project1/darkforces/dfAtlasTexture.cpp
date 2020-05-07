@@ -43,24 +43,25 @@ dfAtlasTexture::dfAtlasTexture(std::vector<dfBitmapImage*>& images)
 	// if fail, increase the size of the map until we place all textures
 
 	bool allplaced = false;
-	bool* placement_map;
+	bool *placement_map;
 	int size;
 
+	// register the position of the texture on the atlas texture
+	std::vector<glm::vec2> texture_position;
+	texture_position.resize(sorted_textures.size());
+
+	// place the texture on a 4x4 board
 	do {
 		// avaibility map of 16x16 blocks : false = available, true = used
 		placement_map = new bool[bsize * bsize]();
 
-		// megatexture in pixel (1 block = 4 pixels)
-		size = bsize * blockSize;
-		m_megatexture = new unsigned char[size * size * rgba];
-
-		// parse textures and place them on the megatexture
 		// find an available space on the map
 		int px, py;
 		int c = 0;
 
 		allplaced = true;	// suppose we will be able to fit all textures
 
+		int iTex = 0;
 		for (auto texture : sorted_textures) {
 			bx = ceil(texture->m_width / blockSize);	// round up
 			by = ceil(texture->m_height / blockSize);
@@ -105,11 +106,9 @@ dfAtlasTexture::dfAtlasTexture(std::vector<dfBitmapImage*>& images)
 			// was not able to find a spot.
 			if (!ok) {
 				// need to increase the size of the map
+				delete[] placement_map;
 				allplaced = false;
 				bsize++;
-				delete[] placement_map;
-				delete m_megatexture;
-
 				break;
 			}
 			c++;
@@ -121,33 +120,54 @@ dfAtlasTexture::dfAtlasTexture(std::vector<dfBitmapImage*>& images)
 				}
 			}
 
-			// copy the texture into the map
-			int source_line = 0;
-			int bytes = texture->m_width * rgba;				// number of bytes per line
-			int dest_line = py * blockSize * size * rgba + px * blockSize * rgba;
-
-			for (auto y = 0; y < texture->m_height; y++) {
-				// copy one line
-				memcpy(m_megatexture + dest_line, texture->m_data + source_line, bytes);
-				source_line += bytes;
-				dest_line += size * rgba;
-			}
-
-			// TODO point to the megatexture (use small epsilon to avoid texture bleeding)
-			// https://gamedev.stackexchange.com/questions/46963/how-to-avoid-texture-bleeding-in-a-texture-atlas
-			texture->m_xoffset = (((px + bx) * (float)blockSize)) / size;
-			texture->m_yoffset = (((py + by) * (float)blockSize)) / size;
-
-			texture->m_mega_width = -bx * (float)blockSize / size;
-			texture->m_mega_height = -by * (float)blockSize / size;
+			texture_position[iTex].x = px;
+			texture_position[iTex].y = py;
+			iTex++;
 		}
 	} while (!allplaced);
 
-	// delete old textures data
-//	for (auto texture : sorted_textures) {
-//		free(texture->m_data);
-//		texture->m_data = nullptr;
-//	}
+	delete[] placement_map;
+
+	// store the texture in the atlas
+	// megatexture in pixel (1 block = 4 pixels)
+	size = bsize * blockSize;
+	m_megatexture = new unsigned char[size * size * rgba]();
+
+	int p;
+	dfBitmapImage* texture;
+
+	int iTex = 0;
+	int x, y;
+	for (auto texture: sorted_textures) {
+		// extract the position on the 4x4 board
+		x = texture_position[iTex].x;
+		y = texture_position[iTex].y;
+
+		// copy the texture into the map
+		bx = ceil(texture->m_width / blockSize);	// round up
+		by = ceil(texture->m_height / blockSize);
+
+		int source_line = 0;
+		int bytes = texture->m_width * rgba;				// number of bytes per line
+		int dest_line = y * blockSize * size * rgba + x * blockSize * rgba;
+
+		for (auto y = 0; y < texture->m_height; y++) {
+			// copy one line
+			memcpy(m_megatexture + dest_line, texture->m_data + source_line, bytes);
+			source_line += bytes;
+			dest_line += size * rgba;
+		}
+
+		// TODO point to the megatexture (use small epsilon to avoid texture bleeding)
+		// https://gamedev.stackexchange.com/questions/46963/how-to-avoid-texture-bleeding-in-a-texture-atlas
+		texture->m_xoffset = (((x + bx) * (float)blockSize)) / size;
+		texture->m_yoffset = (((y + by) * (float)blockSize)) / size;
+
+		texture->m_mega_width = -bx * (float)blockSize / size;
+		texture->m_mega_height = -by * (float)blockSize / size;
+
+		iTex++;
+	}
 
 	// create the fwTexture
 	m_fwtextures = new fwTexture(m_megatexture, size, size, rgba);

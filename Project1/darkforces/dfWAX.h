@@ -15,11 +15,11 @@ enum dfWaxMode {
 };
 
 struct dfWaxAnimation {
-	std::vector<dfFME*> m_frames;
+	std::vector<dfFME*> frames;
 };
 
 struct dfWaxAngles {
-	std::vector<dfWaxAnimation *> m_animations;
+	std::vector<dfWaxAnimation *> animations;
 };
 
 class dfWAX

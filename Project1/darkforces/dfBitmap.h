@@ -21,6 +21,8 @@ public:
 	bool m_transparent;
 	int bsize = 0;
 
+	bool copied = false;		// texture is stored
+
 	long m_size = 0;
 	char *m_raw = nullptr;		// palette based raw data, stored by column  first
 	char* m_data = nullptr;		// RGB converted image, stored by row first

@@ -110,17 +110,24 @@ dfFME::dfFME(void* data, int offset, dfPalette* palette, bool from_wax)
 	else {
 		// RAW images are stored by column
 		// need to conver to  row first
-		for (auto x = m_width - 1; x >= 0; x--) {
-			for (auto y = m_height - 1; y >= 0; y--) {
+		int p1 = 0;
+		for (auto x = m_height - 1; x >= 0; x--) {
+			for (auto y = 0; y < m_width; y++) {
 				p = y * m_height + x;
 				v = image->data[p];
-				rgb = palette->getColor(v, true);
-
-				m_data[p] = rgb->r;
-				m_data[p + 1] = rgb->g;
-				m_data[p + 2] = rgb->b;
-				m_data[p + 3] = rgb->a;
-				p += 4;
+				if (v != 0) {
+					rgb = palette->getColor(v, false);
+					m_data[p1++] = rgb->r;
+					m_data[p1++] = rgb->g;
+					m_data[p1++] = rgb->b;
+					m_data[p1++] = rgb->a;
+				}
+				else {
+					m_data[p1++] = 0;
+					m_data[p1++] = 0;
+					m_data[p1++] = 0;
+					m_data[p1++] = 0;
+				}
 			}
 		}
 	}
