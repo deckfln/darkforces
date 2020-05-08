@@ -134,7 +134,6 @@ dfWAX::dfWAX(dfFileSystem* fs, dfPalette* palette, std::string& name) :
 
 						animation = new dfWaxAnimation;
 						animation->frames.resize(32);
-						angles->animations[j] = animation;
 
 						for (auto k = 0; k < 32; k++) {
 							if (seq->FRAMES[k] > 0) {
@@ -152,6 +151,8 @@ dfWAX::dfWAX(dfFileSystem* fs, dfPalette* palette, std::string& name) :
 							}
 						}
 					}
+					angles->animations[j] = animation;
+
 				}
 			}
 		}
