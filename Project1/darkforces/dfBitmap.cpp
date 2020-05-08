@@ -195,3 +195,25 @@ void dfBitmapImage::boardSize(int blockSize)
 
 	m_bsize = m_bsizeWidth * m_bsizeHeight;
 }
+
+void dfBitmapImage::copyTo(unsigned char* target, int x, int y, int stride, int rgba)
+{
+	int source_line = 0;
+	int bytes = m_width * m_nrChannels;				// number of real bytes per line
+	int dest_line = y * stride * rgba + x * rgba;
+
+	for (auto y = 0; y < m_height; y++) {
+		// copy one line
+		memcpy(target + dest_line, m_data + source_line, bytes);
+		source_line += bytes;
+		dest_line += stride * rgba;
+	}
+
+	// TODO point to the megatexture (use small epsilon to avoid texture bleeding)
+	// https://gamedev.stackexchange.com/questions/46963/how-to-avoid-texture-bleeding-in-a-texture-atlas
+	m_xoffset = (float)(x + m_targetWidth) / stride;
+	m_yoffset = (float)(y + m_targetHeight) / stride;
+
+	m_mega_width = -(float)m_targetWidth / stride;
+	m_mega_height = -(float)m_targetHeight / stride;
+}

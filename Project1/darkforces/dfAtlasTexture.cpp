@@ -137,31 +137,10 @@ dfAtlasTexture::dfAtlasTexture(std::vector<dfBitmapImage*>& images)
 	int x, y;
 	for (auto texture: sorted_textures) {
 		// extract the position on the 4x4 board
-		x = texture_position[iTex].x;
-		y = texture_position[iTex].y;
+		x = texture_position[iTex].x * blockSize;
+		y = texture_position[iTex].y * blockSize;
 
-		// copy the texture into the map
-		bx = ceil(texture->m_width / blockSize);	// round up
-		by = ceil(texture->m_height / blockSize);
-
-		int source_line = 0;
-		int bytes = texture->m_width * rgba;				// number of real bytes per line
-		int dest_line = y * blockSize * size * rgba + x * blockSize * rgba;
-
-		for (auto y = 0; y < texture->m_height; y++) {
-			// copy one line
-			memcpy(m_megatexture + dest_line, texture->m_data + source_line, bytes);
-			source_line += bytes;
-			dest_line += size * rgba;
-		}
-
-		// TODO point to the megatexture (use small epsilon to avoid texture bleeding)
-		// https://gamedev.stackexchange.com/questions/46963/how-to-avoid-texture-bleeding-in-a-texture-atlas
-		texture->m_xoffset = (((x + bx) * (float)blockSize)) / size;
-		texture->m_yoffset = (((y + by) * (float)blockSize)) / size;
-
-		texture->m_mega_width = -bx * (float)blockSize / size;
-		texture->m_mega_height = -by * (float)blockSize / size;
+		texture->copyTo(m_megatexture, x, y, size, rgba);
 
 		iTex++;
 	}
