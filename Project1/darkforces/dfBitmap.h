@@ -7,6 +7,10 @@
 
 class dfFileSystem;
 
+enum {
+	DF_BITMAP_IMAGE_BOTTOM_CENTER
+};
+
 class dfBitmapImage {
 public:
 	int m_textureID = 0;		// offset of the texture in the TextureAtlas index
@@ -34,7 +38,7 @@ public:
 
 	void targetSize(int x, int y);
 	void boardSize(int blockSize);
-	void copyTo(unsigned char* target, int x, int y, int stride, int rgba);
+	void copyTo(unsigned char* target, int x, int y, int stride, int rgba, int corner);
 };
 
 class dfBitmap {
