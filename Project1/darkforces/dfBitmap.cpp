@@ -98,8 +98,11 @@ dfBitmap::dfBitmap(dfFileSystem* fs, std::string file, dfPalette* palette) :
 
 			dfBitmapImage image;
 			image.m_size = subImage->DataSize;
-			image.m_height = subImage->SizeY;
-			image.m_width = subImage->SizeX;
+
+			// consider the target size equal the real size
+			// target size may be changed later
+			image.m_targetHeight = image.m_height = subImage->SizeY;
+			image.m_targetWidth  = image.m_width = subImage->SizeX;
 			image.m_transparent = (subImage->Transparent == '\x3e');
 			image.m_raw = (char *)subImage + sizeof(dfBitMapHeaderSub);
 			image.m_nrChannels = 3;
@@ -112,8 +115,8 @@ dfBitmap::dfBitmap(dfFileSystem* fs, std::string file, dfPalette* palette) :
 		// single image
 		dfBitmapImage image;
 		image.m_size = m_header->DataSize;
-		image.m_height = height;
-		image.m_width = width;
+		image.m_targetHeight = image.m_height = height;
+		image.m_targetWidth = image.m_width = width;
 		image.m_transparent = (m_header->Transparent == '\x3e');
 		image.m_raw = (char*)m_header + sizeof(dfBitmapHeader);
 		image.m_nrChannels = 3;
@@ -177,4 +180,18 @@ dfBitmap::~dfBitmap()
 	for (auto& image : m_images) {
 		delete[] image.m_data;
 	}
+}
+
+void dfBitmapImage::targetSize(int x, int y)
+{
+	m_targetHeight = y;
+	m_targetWidth = x;
+}
+
+void dfBitmapImage::boardSize(int blockSize)
+{
+	m_bsizeWidth = (int)ceil(m_targetWidth / blockSize);
+	m_bsizeHeight = (int)ceil(m_targetHeight / blockSize);
+
+	m_bsize = m_bsizeWidth * m_bsizeHeight;
 }

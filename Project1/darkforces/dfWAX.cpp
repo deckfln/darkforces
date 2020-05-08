@@ -1,5 +1,7 @@
 #include "dfWAX.h"
 
+#include <algorithm>
+
 #include "dfFileGOB.h"
 #include "dfFileSystem.h"
 #include "dfFME.h"
@@ -101,6 +103,7 @@ dfWAX::dfWAX(dfFileSystem* fs, dfPalette* palette, std::string& name) :
 		return;
 	}
 
+	// extract all existing states of the object
 	_dfWaxTable* table = (_dfWaxTable*)m_data;
 
 	m_states.resize(32);
@@ -113,7 +116,7 @@ dfWAX::dfWAX(dfFileSystem* fs, dfPalette* palette, std::string& name) :
 			angles->animations.resize(32);
 			m_states[i] = angles;
 
-			// extract angles
+			// extract all angles
 			for (auto j = 0; j < 32; j++) {
 				if (state->SEQS[j] > 0) {
 					int seq_offset = state->SEQS[j];
@@ -126,7 +129,7 @@ dfWAX::dfWAX(dfFileSystem* fs, dfPalette* palette, std::string& name) :
 						m_animations[seq_offset] = animation = new dfWaxAnimation;
 						animation->frames.resize(32);
 
-						//extract frames
+						//extract all valid frames
 						_dfWaxSequence* seq = (_dfWaxSequence*)((unsigned char*)m_data + seq_offset);
 
 						animation = new dfWaxAnimation;
@@ -152,6 +155,20 @@ dfWAX::dfWAX(dfFileSystem* fs, dfPalette* palette, std::string& name) :
 				}
 			}
 		}
+	}
+
+	// get the size of the sprite (max of all frame sizes)
+	for (auto frame : m_frames) {
+		int mx = frame.second->m_width;
+		int my = frame.second->m_height;
+
+		m_width = std::max(mx, m_width);
+		m_height = std::max(my, m_height);
+	}
+
+	// update the fram target size
+	for (auto frame : m_frames) {
+		frame.second->targetSize(m_width, m_height);
 	}
 }
 

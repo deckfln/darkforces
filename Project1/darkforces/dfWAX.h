@@ -27,7 +27,9 @@ class dfWAX
 	std::string m_name;
 	void* m_data = nullptr;
 
-	int m_nbstates = 0;
+	int m_width = 0;		// size of the sprite (max of all frames)
+	int m_height = 0;
+
 	std::vector<dfWaxAngles *> m_states;
 	std::map<int, dfWaxAnimation*> m_animations;
 	std::map<int, dfFME*> m_frames;

@@ -23,18 +23,15 @@ dfAtlasTexture::dfAtlasTexture(std::vector<dfBitmapImage*>& images)
 		if (texture) {
 			rgba = texture->m_nrChannels;
 
-			bx = ceil(texture->m_width / blockSize);	// round up to 4x4
-			by = ceil(texture->m_height / blockSize);
-			texture->bsize = bx * by;
-
-			blocks4x4 += texture->bsize;
+			texture->boardSize(blockSize);
+			blocks4x4 += texture->m_bsize;
 
 			sorted_textures.push_back(texture);
 		}
 	}
 
 	// sort textures by size : big first
-	sorted_textures.sort([](dfBitmapImage* a, dfBitmapImage* b) { return a->bsize > b->bsize; });
+	sorted_textures.sort([](dfBitmapImage* a, dfBitmapImage* b) { return a->m_bsize > b->m_bsize; });
 
 	// evaluate the size of the megatexture (square texture of 4x4 blocks)
 	int bsize = (int)ceil(sqrt(blocks4x4));
@@ -63,8 +60,8 @@ dfAtlasTexture::dfAtlasTexture(std::vector<dfBitmapImage*>& images)
 
 		int iTex = 0;
 		for (auto texture : sorted_textures) {
-			bx = ceil(texture->m_width / blockSize);	// round up
-			by = ceil(texture->m_height / blockSize);
+			bx = texture->m_bsizeWidth;
+			by = texture->m_bsizeHeight;
 
 			// find a spot of the placement map
 			px = py = 0;
@@ -148,7 +145,7 @@ dfAtlasTexture::dfAtlasTexture(std::vector<dfBitmapImage*>& images)
 		by = ceil(texture->m_height / blockSize);
 
 		int source_line = 0;
-		int bytes = texture->m_width * rgba;				// number of bytes per line
+		int bytes = texture->m_width * rgba;				// number of real bytes per line
 		int dest_line = y * blockSize * size * rgba + x * blockSize * rgba;
 
 		for (auto y = 0; y < texture->m_height; y++) {

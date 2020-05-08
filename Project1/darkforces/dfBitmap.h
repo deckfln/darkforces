@@ -15,17 +15,25 @@ public:
 	float m_mega_width = 0;		// end x offset in the megatexture
 	float m_mega_height = 0;	// end y offset in the megatexture
 
-	int m_height = 0;
+	int m_height = 0;			// real size of the bitmap
 	int m_width = 0;
-	int m_nrChannels = 0;
+	int m_nrChannels = 0;		// depth of the bitmap
 	bool m_transparent;
-	int bsize = 0;
+	int m_targetHeight = 0;		// target bitmap size (center the real bitmap inside)
+	int m_targetWidth = 0;
+
+	int m_bsize = 0;				// size in 4x4 blocks (based on the target size)
+	int m_bsizeWidth = 0;		// target size in 4x4 blocks
+	int m_bsizeHeight = 0;
 
 	bool copied = false;		// texture is stored
 
 	long m_size = 0;
 	char *m_raw = nullptr;		// palette based raw data, stored by column  first
 	char* m_data = nullptr;		// RGB converted image, stored by row first
+
+	void targetSize(int x, int y);
+	void boardSize(int blockSize);
 };
 
 class dfBitmap {

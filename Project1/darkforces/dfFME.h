@@ -14,7 +14,6 @@ class dfFME: public dfBitmapImage
 						// Positive values shift the cell down 
 
 	int m_references = 1;
-
 public:
 	dfFME(void *data, int offset, dfPalette* palette, bool from_wax=false);
 	int references(int v) {
