@@ -55,6 +55,8 @@ dfAtlasTexture::dfAtlasTexture(std::vector<dfBitmapImage*>& images)
 		// find an available space on the map
 		int px, py;
 		int c = 0;
+		glm::ivec2 first_available_position = glm::ivec2(0);
+		int first_available_byte = 0;
 
 		allplaced = true;	// suppose we will be able to fit all textures
 
@@ -64,12 +66,17 @@ dfAtlasTexture::dfAtlasTexture(std::vector<dfBitmapImage*>& images)
 			by = texture->m_bsizeHeight;
 
 			// find a spot of the placement map
-			px = py = 0;
+			px = first_available_position.x;
+			py = first_available_position.y;
+
+			first_available_byte = first_available_position.x + first_available_position.y * bsize;
 			bool ok = false;
 
-			for (auto i = 0; i < bsize * bsize; i++) {
+			for (auto i = first_available_byte; i < bsize * bsize; i++) {
 				// test each position to find one we can start checking
 				if (!placement_map[py * bsize + px]) {
+					first_available_position.x = px;
+					first_available_position.y = py;
 					ok = true;	// suppose we have a spot
 
 					// check availability on the Y axis
@@ -86,6 +93,7 @@ dfAtlasTexture::dfAtlasTexture(std::vector<dfBitmapImage*>& images)
 
 				// found a spot
 				if (ok) {
+					first_available_position.x += bx;	// move along the width of the image
 					break;
 				}
 
