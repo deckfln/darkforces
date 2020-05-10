@@ -44,7 +44,7 @@ dfAtlasTexture::dfAtlasTexture(std::vector<dfBitmapImage*>& images)
 	int size;
 
 	// register the position of the texture on the atlas texture
-	std::vector<glm::vec2> texture_position;
+	std::vector<glm::ivec2> texture_position;
 	texture_position.resize(sorted_textures.size());
 
 	// place the texture on a 4x4 board
@@ -72,28 +72,37 @@ dfAtlasTexture::dfAtlasTexture(std::vector<dfBitmapImage*>& images)
 			first_available_byte = first_available_position.x + first_available_position.y * bsize;
 			bool ok = false;
 
-			for (auto i = first_available_byte; i < bsize * bsize; i++) {
+			for (auto i = 0; i < bsize * bsize; i++) {
 				// test each position to find one we can start checking
 				if (!placement_map[py * bsize + px]) {
 					first_available_position.x = px;
 					first_available_position.y = py;
 					ok = true;	// suppose we have a spot
 
-					// check availability on the Y axis
 					for (auto y = py; y < py + by; y++) {
+						if (y >= bsize) {
+							ok = false;
+							break;
+						}
 						// check availability on the X axis
 						for (auto x = px; x < px + bx; x++) {
+							if (x >= bsize) {
+								ok = false;
+								break;
+							}
 							if (placement_map[y * bsize + x]) {
 								ok = false;	// actually, no we don't have a spot
 								break;
 							}
+						}
+						if (!ok) {
+							break;
 						}
 					}
 				}
 
 				// found a spot
 				if (ok) {
-					first_available_position.x += bx;	// move along the width of the image
 					break;
 				}
 
@@ -138,9 +147,6 @@ dfAtlasTexture::dfAtlasTexture(std::vector<dfBitmapImage*>& images)
 	size = bsize * blockSize;
 	m_megatexture = new unsigned char[size * size * rgba]();
 
-	int p;
-	dfBitmapImage* texture;
-
 	int iTex = 0;
 	int x, y;
 	for (auto texture: sorted_textures) {
@@ -173,9 +179,11 @@ dfAtlasTexture::dfAtlasTexture(std::vector<dfBitmapImage*>& images)
 /**
  * Bind the atlas texture to a material
  */
-void dfAtlasTexture::bindToMaterial(fwMaterialBasic* material)
+void dfAtlasTexture::bindToMaterial(fwMaterial* material)
 {
-	material->addDiffuseMap(m_fwtextures);
+	if (material->type(BASIC_MATERIAL)) {
+		((fwMaterialBasic* )material)->addDiffuseMap(m_fwtextures);
+	}
 	material->addUniform(m_shader_idx);
 }
 
@@ -185,6 +193,14 @@ void dfAtlasTexture::bindToMaterial(fwMaterialBasic* material)
 void dfAtlasTexture::save(std::string file)
 {
 	m_fwtextures->save(file);
+}
+
+/**
+ *
+ */
+fwTexture* dfAtlasTexture::texture(void)
+{
+	return m_fwtextures;
 }
 
 dfAtlasTexture::~dfAtlasTexture()

@@ -1,12 +1,9 @@
 #include "dfSprite.h"
 
-#include "../dfWAX.h"
+#include "../dfModel/dfWAX.h"
 
 dfSprite::dfSprite(dfWAX* wax, float x, float y, float z):
-	m_wax(wax),
-	m_x(x),
-	m_y(y),
-	m_z(z)
+	dfObject(wax, x, y, z)
 {
 }
 

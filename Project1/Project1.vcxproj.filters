@@ -315,13 +315,19 @@
     <ClCompile Include="darkforces\dfParserObjects.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="darkforces\dfWAX.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
     <ClCompile Include="darkforces\dfObject\dfSprite.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
     <ClCompile Include="darkforces\dfAtlasTexture.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="darkforces\dfSprites.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="darkforces\dfModel.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="darkforces\dfModel\dfWAX.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
   </ItemGroup>
@@ -638,10 +644,16 @@
     <ClInclude Include="darkforces\dfParserObjects.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="darkforces\dfWAX.h">
+    <ClInclude Include="darkforces\dfAtlasTexture.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="darkforces\dfAtlasTexture.h">
+    <ClInclude Include="darkforces\dfSprites.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="darkforces\dfModel.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="darkforces\dfModel\dfWAX.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
   </ItemGroup>
@@ -674,6 +686,12 @@
       <Filter>Fichiers de ressources</Filter>
     </None>
     <None Include="shaders\cubemap_vertex.glsl">
+      <Filter>Fichiers de ressources</Filter>
+    </None>
+    <None Include="data\shaders\sprites\sprites_fs.glsl">
+      <Filter>Fichiers de ressources</Filter>
+    </None>
+    <None Include="data\shaders\sprites\sprites_vs.glsl">
       <Filter>Fichiers de ressources</Filter>
     </None>
   </ItemGroup>

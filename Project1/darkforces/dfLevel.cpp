@@ -133,6 +133,7 @@ dfLevel::dfLevel(dfFileSystem* fs, std::string file)
 
 	// load textures in a megatexture
 	m_atlasTexture = new dfAtlasTexture(m_allTextures);
+	m_atlasTexture->save("D:/dev/Project1/Project1/images/atlas.png");
 	m_atlasTexture->bindToMaterial(m_material);
 
 	spacePartitioning();		// partion of space for quick collision
@@ -468,6 +469,9 @@ void dfLevel::draw(fwCamera* camera, fwScene* scene)
 		m_skymesh = m_sky->mesh();
 		scene->addChild(m_skymesh);
 	}
+
+	// add the sprites
+	m_objects->add2scene(scene);
 }
 
 /**

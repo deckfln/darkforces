@@ -5,10 +5,12 @@
 
 #include "dfFileSystem.h"
 #include "dfParseINF.h"
-#include "dfWAX.h"
+#include "dfModel/dfWAX.h"
 #include "dfObject/dfSprite.h"
 #include "dfPalette.h"
 #include "dfAtlasTexture.h"
+#include "dfSprites.h"
+#include "../framework/fwScene.h"
 
 dfObject* dfParserObjects::parseSprite(dfWAX* wax, float x, float y, float z, std::istringstream& infile)
 {
@@ -41,7 +43,7 @@ dfObject* dfParserObjects::parseSprite(dfWAX* wax, float x, float y, float z, st
 			}
 		}
 		else if (tokens[0] == "HEIGHT:") {
-			sprite->height(std::stoi(tokens[1]));
+			sprite->height(std::stof(tokens[1]));
 		}
 	}
 
@@ -87,7 +89,6 @@ dfParserObjects::dfParserObjects(dfFileSystem* fs, dfPalette* palette, std::stri
 				m_objects[m_currentObject++] = parseSprite(m_waxes[data], x, y, z, infile);
 			}
 		}
-
 	}
 }
 
@@ -102,7 +103,35 @@ dfAtlasTexture* dfParserObjects::buildAtlasTexture(void)
 	}
 
 	m_textures = new dfAtlasTexture(frames);
+
+	buildSprites();
 	return m_textures;
+}
+
+/**
+ * Create the sprites for the objects
+ */
+void dfParserObjects::buildSprites(void )
+{
+
+	// build the sprites
+	m_sprites = new dfSprites(m_objects.size(), m_textures);
+	dfObject* object;
+	for (auto i = 0; i < m_currentObject; i++) {
+		object = m_objects[i];
+		if (object->named("REDLIT.WAX")) {
+			object->addToSprites(m_sprites);
+		}
+	}
+}
+
+void dfParserObjects::add2scene(fwScene* scene)
+{
+	if (!m_added) {
+		m_added = true;
+		m_sprites->set_name("dfSprites");
+		m_sprites->add2scene(scene);
+	}
 }
 
 dfParserObjects::~dfParserObjects()

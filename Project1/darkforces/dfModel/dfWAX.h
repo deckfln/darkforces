@@ -3,6 +3,8 @@
 #include <vector>
 #include <map>
 
+#include "../dfModel.h"
+
 class dfFileSystem;
 class dfFME;
 class dfPalette;
@@ -19,12 +21,12 @@ struct dfWaxAnimation {
 };
 
 struct dfWaxAngles {
+	int m_FrameRate = 0;
 	std::vector<dfWaxAnimation *> animations;
 };
 
-class dfWAX
+class dfWAX: public dfModel
 {
-	std::string m_name;
 	void* m_data = nullptr;
 
 	int m_width = 0;		// size of the sprite (max of all frames)
@@ -37,5 +39,6 @@ class dfWAX
 public:
 	dfWAX(dfFileSystem* fs, dfPalette *palette, std::string& name);
 	void getFrames(std::vector<dfBitmapImage*>& m_frames);
+	virtual int textureID(void);
 	~dfWAX();
 };

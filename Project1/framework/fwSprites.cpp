@@ -8,10 +8,11 @@ fwSprites::fwSprites(int size) :
 	classID |= SPRITE;
 }
 
-fwSprites::fwSprites(glm::vec3 *position, int nb, fwTexture *texture, float radius) : 
+fwSprites::fwSprites(glm::vec3 *position, int nb, fwTexture *texture, float radius) :
 	m_size(nb)
 {
 	classID |= SPRITE;
+
 	set(position, texture, radius);
 }
 
@@ -25,7 +26,10 @@ void fwSprites::set(glm::vec3* position, fwTexture* texture, float radius)
 		spriteMaterial = new fwMaterial("shaders/sprite/vertex.glsl", "shaders/sprite/fragment.glsl");
 		spriteMaterial->addShader(FRAGMENT_SHADER, "shaders/sprite/fragment_defered.glsl", DEFERED_RENDER);
 	}
-	material = spriteMaterial;
+
+	if (material == nullptr) {
+		material = spriteMaterial;
+	}
 	material->addTexture("texture", texture);
 }
 

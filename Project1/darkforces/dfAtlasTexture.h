@@ -7,7 +7,7 @@
 class dfBitmapImage;
 class fwTexture;
 class fwUniform;
-class fwMaterialBasic;
+class fwMaterial;
 
 class dfAtlasTexture
 {
@@ -20,7 +20,8 @@ class dfAtlasTexture
 
 public:
 	dfAtlasTexture(std::vector<dfBitmapImage*>& images);
-	void bindToMaterial(fwMaterialBasic* material);
+	void bindToMaterial(fwMaterial* material);
 	void save(std::string file);
+	fwTexture* texture(void);
 	~dfAtlasTexture();
 };

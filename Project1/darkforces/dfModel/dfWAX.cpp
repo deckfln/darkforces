@@ -2,9 +2,9 @@
 
 #include <algorithm>
 
-#include "dfFileGOB.h"
-#include "dfFileSystem.h"
-#include "dfFME.h"
+#include "../dfFileGOB.h"
+#include "../dfFileSystem.h"
+#include "../dfFME.h"
 
 enum {
 	DF_WAX_ENEMY_MOVE = 0,
@@ -92,7 +92,7 @@ struct _dfWaxFrame {
 #pragma pack(pop)
 
 dfWAX::dfWAX(dfFileSystem* fs, dfPalette* palette, std::string& name) :
-	m_name(name)
+	dfModel(name)
 {
 	if (m_name == "IDPLANS.WAX") {
 		printf("dfWAX::dfWAX\n");
@@ -114,6 +114,8 @@ dfWAX::dfWAX(dfFileSystem* fs, dfPalette* palette, std::string& name) :
 
 			dfWaxAngles* angles = new dfWaxAngles;
 			angles->animations.resize(32);
+			angles->m_FrameRate = state->FrameRate;
+
 			m_states[i] = angles;
 
 			// extract all angles
@@ -181,6 +183,14 @@ void dfWAX::getFrames(std::vector<dfBitmapImage*>& frames)
 	for (auto frame : m_frames) {
 		frames.push_back(frame.second);
 	}
+}
+
+/**
+ * Return the textureId of the current frame
+ */
+int dfWAX::textureID(void)
+{
+	return m_states[0]->animations[0]->frames[0]->m_textureID;
 }
 
 dfWAX::~dfWAX()
