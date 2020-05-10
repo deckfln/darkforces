@@ -14,7 +14,8 @@ class fwGeometry: public Reference
 	glBufferAttribute *index = nullptr;
 	glBufferAttribute *vertices = nullptr;
 
-	int count = 0;
+	int m_verticesToDisplay = -1;	// number of vertices to display from the buffers
+									// -1 == all vertices
 	bool indexedGeometry = false;
 
 	int max_attributes = 10;
@@ -36,13 +37,15 @@ public:
 
 	void enable_attributes(glProgram *program);
 
-	int get_count(void);
+	int verticesToDisplay(void);
+	void verticesToDisplay(int nb);
 
 	fwSphere *boundingsphere(void) { return m_pBoundingsphere; };
 	fwSphere *computeBoundingsphere(void);
 	float sqDistance2boundingSphere(glm::vec3& position);
 	fwSphere* setBoundingsphere(float radius);
 	void computeTangent(void);
+
 
 	void draw(GLenum mode, glVertexArray *);
 	~fwGeometry();

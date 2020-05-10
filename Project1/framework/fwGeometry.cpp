@@ -100,18 +100,47 @@ void fwGeometry::update(void)
 	}
 }
 
-int fwGeometry::get_count(void)
+/**
+ * get number of vertices to display (lower than the vertices in the buffer)
+ */
+int fwGeometry::verticesToDisplay(void)
 {
-	return count;
+	return m_verticesToDisplay;
+}
+
+/**
+ * Force number of vertices to display (must be lower than the vertices in the buffer)
+ */
+void fwGeometry::verticesToDisplay(int nb)
+{
+	int nbVertices;
+	if (index != nullptr) {
+		nbVertices = index->get_count();
+	}
+	else {
+		nbVertices = vertices->get_count();
+	}
+
+	if (nb < nbVertices) {
+		m_verticesToDisplay = nb;
+	}
+	else {
+		std::cerr << "fwGeometry::count try to display more vertices than the buffer contains" << std::endl;
+	}
 }
 
 void fwGeometry::draw(GLenum mode, glVertexArray *va)
 {
-	if (index != nullptr) {
-		va->draw(mode, true, index->get_count());
+	if (m_verticesToDisplay > 0) {
+		va->draw(mode, true, m_verticesToDisplay);
 	}
 	else {
-		va->draw(mode, false, vertices->get_count());
+		if (index != nullptr) {
+			va->draw(mode, true, index->get_count());
+		}
+		else {
+			va->draw(mode, false, vertices->get_count());
+		}
 	}
 }
 
