@@ -2,6 +2,7 @@
 #include <iostream>
 #include <list>
 #include <map>
+
 #include "../Reference.h"
 #include "../glEngine/glProgram.h"
 #include "fwUniform.h"
@@ -9,7 +10,7 @@
 #include "fwTextures.h"
 
 enum RenderType {FORWARD_RENDER, DEFERED_RENDER};
-enum ShaderType {VERTEX_SHADER, GEOMETRY_SHADER, FRAGMENT_SHADER};
+enum ShaderType {VERTEX_SHADER, GEOMETRY_SHADER, FRAGMENT_SHADER, FRAGMENT_SHADER_DEFERED};
 
 const int MAX_SHADERS = 10;
 
@@ -44,6 +45,7 @@ public:
 	fwMaterial();
 	int type(int flag) { return m_type & flag; };
 	fwMaterial(std::string vertexShader, std::string fragmentShader, std::string geometryShader = "");
+	fwMaterial(std::map<ShaderType, std::string>& shaders);
 	fwMaterial &addTexture(std::string uniform, fwTexture *texture);
 	fwMaterial &addTexture(std::string uniform, glTexture *texture);
 	fwMaterial& addTextures(std::string uniform, fwTextures* textures);

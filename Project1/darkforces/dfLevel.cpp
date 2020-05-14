@@ -97,6 +97,7 @@ dfLevel::dfLevel(dfFileSystem* fs, std::string file)
 	// load the Object file
 	m_objects = new dfParserObjects(fs, m_palette, file);
 	m_sprites = m_objects->buildAtlasTexture();
+	m_sprites->save("D:/dev/Project1/Project1/images/sprites.png");
 
 	// bind the sectors to the elevator logic
 	// bind the evelator logic to the level
@@ -133,7 +134,7 @@ dfLevel::dfLevel(dfFileSystem* fs, std::string file)
 
 	// load textures in a megatexture
 	m_atlasTexture = new dfAtlasTexture(m_allTextures);
-	m_atlasTexture->save("D:/dev/Project1/Project1/images/atlas.png");
+	m_atlasTexture->save("D:/dev/Project1/Project1/images/textures.png");
 	m_atlasTexture->bindToMaterial(m_material);
 
 	spacePartitioning();		// partion of space for quick collision

@@ -2,6 +2,8 @@
 
 #include "glProgram.h"
 
+constexpr auto GL_UBO = 999999;
+
 class glUniformBuffer
 {
 	unsigned int id;

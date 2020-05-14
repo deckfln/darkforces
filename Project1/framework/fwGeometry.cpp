@@ -132,7 +132,12 @@ void fwGeometry::verticesToDisplay(int nb)
 void fwGeometry::draw(GLenum mode, glVertexArray *va)
 {
 	if (m_verticesToDisplay > 0) {
-		va->draw(mode, true, m_verticesToDisplay);
+		if (index != nullptr) {
+			va->draw(mode, true, m_verticesToDisplay);
+		}
+		else {
+			va->draw(mode, false, m_verticesToDisplay);
+		}
 	}
 	else {
 		if (index != nullptr) {

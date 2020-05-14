@@ -6,6 +6,8 @@
 #include "../glEngine/glTextureArray.h"
 #include "../glEngine/glCubeTexture.h"
 
+class glUniformBuffer;
+
 class fwUniform
 {
 	std::string name;
@@ -24,6 +26,7 @@ public:
 	fwUniform(std::string _name, glCubeTexture *y);
 	fwUniform(std::string _name, glm::mat4* t, int size);
 	fwUniform(std::string _name, glm::vec4* t, int size);
+	fwUniform(std::string _name, glUniformBuffer *ubo);
 	void set_uniform(glProgram *);
 	void *get_value(void);
 	void set(void *_data);

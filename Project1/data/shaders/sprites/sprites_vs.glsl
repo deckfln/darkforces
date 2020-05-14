@@ -2,30 +2,39 @@
 #define DEFINES
 
 layout (location = 0) in vec3 aPos;
-layout (location = 6) in float aTextureID;
-layout (location = 7) in float aAmbient;
+layout (location = 1) in vec3 aData;
 
 uniform mat4 model;
 
+struct SpriteModel {
+    vec2 size; 
+    vec2 insert;
+    vec2 world;
+    vec2 textureID;
+};
+
+layout (std140) uniform Models
+{
+    uniform SpriteModel modelTable[64];
+};
+
 out vec3 ourColor;
 out vec3 world;
-flat out uint textureID;	// index start in megatexture
-flat out float ambient;
+out struct SpriteModel sm;
 
+flat out uint vTextureID;	// index start in megatexture
+flat out float ambient;
 
 #include "../../../shaders/include/camera.glsl"
 
 void main()
 {
-    // Calculate point scale based on distance from the viewer
-    // to compensate for the fact that gl_PointSize is the point
-    // size in rasterized points / pixels.
-    float cameraDist = distance(aPos, viewPos);
-    gl_PointSize = 200.0 / cameraDist;
-
-    gl_Position = projection * view * vec4(world, 1.0);
 
 	world = vec3(model * vec4(aPos, 1.0));
-	textureID = uint(aTextureID);
-	ambient = aAmbient;
+    gl_Position = projection * view * vec4(world, 1.0);
+
+	vTextureID = uint(aData.r);  // aTextureID)
+	ambient = aData.g;          // aAmbient;
+    uint modelID = uint(aData.g);
+    sm = modelTable[modelID];
 }

@@ -94,7 +94,7 @@ struct _dfWaxFrame {
 dfWAX::dfWAX(dfFileSystem* fs, dfPalette* palette, std::string& name) :
 	dfModel(name)
 {
-	if (m_name == "IDPLANS.WAX") {
+	if (m_name == "REDLIT.WAX") {
 		printf("dfWAX::dfWAX\n");
 	}
 	m_data = fs->load(DF_SPRITES_GOB, name);
@@ -114,6 +114,8 @@ dfWAX::dfWAX(dfFileSystem* fs, dfPalette* palette, std::string& name) :
 
 			dfWaxAngles* angles = new dfWaxAngles;
 			angles->animations.resize(32);
+			angles->m_Wwidth = state->Wwidth;
+			angles->m_Wheight = state->Wheight;
 			angles->m_FrameRate = state->FrameRate;
 
 			m_states[i] = angles;

@@ -344,6 +344,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="data\shaders\sprites\sprites_fs.glsl" />
+    <None Include="data\shaders\sprites\sprites_gs.glsl" />
     <None Include="data\shaders\sprites\sprites_vs.glsl" />
     <None Include="shaders\cubemap_fragment.glsl" />
     <None Include="shaders\cubemap_vertex.glsl" />

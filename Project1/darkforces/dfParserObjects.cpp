@@ -81,9 +81,9 @@ dfParserObjects::dfParserObjects(dfFileSystem* fs, dfPalette* palette, std::stri
 		else if (tokens[0] == "CLASS:") {
 			int data = std::stoi(tokens[3]);
 
-			float x = std::stof(tokens[5]),
-				y = std::stof(tokens[7]),
-				z = std::stof(tokens[9]);
+			float x = -std::stof(tokens[5]),
+				y = std::stof(tokens[9]),
+				z = -std::stof(tokens[7]);
 
 			if (tokens[1] == "SPRITE") {
 				m_objects[m_currentObject++] = parseSprite(m_waxes[data], x, y, z, infile);
@@ -123,6 +123,7 @@ void dfParserObjects::buildSprites(void )
 			object->addToSprites(m_sprites);
 		}
 	}
+	m_sprites->update();
 }
 
 void dfParserObjects::add2scene(fwScene* scene)

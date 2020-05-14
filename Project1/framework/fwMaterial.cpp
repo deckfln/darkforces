@@ -26,6 +26,22 @@ fwMaterial::fwMaterial(std::string _vertexShader, std::string _fragmentShader, s
 	addShader(FRAGMENT_SHADER, _fragmentShader);
 }
 
+/**
+ * Create a Material with 1 argument
+ */
+fwMaterial::fwMaterial(std::map<ShaderType, std::string>& shaders):
+	id(_materialID++)
+{
+	for (auto shader : shaders) {
+		if (shader.first == FRAGMENT_SHADER_DEFERED) {
+			addShader(FRAGMENT_SHADER, shader.second, DEFERED_RENDER);
+		}
+		else {
+			addShader(shader.first, shader.second);
+		}
+	}
+}
+
 fwMaterial& fwMaterial::addTexture(std::string uniform, fwTexture *texture)
 {
 	glTexture *glTex = new glTexture(texture);

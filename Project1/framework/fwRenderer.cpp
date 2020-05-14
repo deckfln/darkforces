@@ -120,7 +120,7 @@ void fwRenderer::parseChildren(fwObject3D* root, std::list <fwMesh *> meshes[], 
 			if (mesh->is_transparent()) {
 				meshes[FW_RENDER_TRANSPARENT].push_front(mesh);
 			}
-			else if (mesh->is_class(PARTICLES)) {
+			else if (mesh->is_class(PARTICLES|SPRITE)) {
 				meshes[FW_RENDER_OPAQ_PARTICLES].push_front(mesh);
 			}
 			else {

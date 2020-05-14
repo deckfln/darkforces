@@ -13,11 +13,9 @@ flat in uint textureID;	// index start in megatexture
 flat in float ambient;
 
 #define DEFINES
-
-uniform sampler2D texture;
-
 #include "../../../shaders/include/camera.glsl"
 
+uniform sampler2D texture;
 uniform vec4 megatexture_idx[128];
 
 void main()
@@ -30,9 +28,8 @@ void main()
 	vec4 textureData = megatexture_idx[textureID];
 
 	vec2 mega_uv = textureData.rg + textureData.ba * uv;
-	color = texture2D(texture, mega_uv);
 
-    gFragColor = color.rgba;
+    gFragColor = texture2D(texture, mega_uv); // color.rgba;
 	gWorld = world;
 	gNormal = vec3(0);
 

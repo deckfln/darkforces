@@ -1,6 +1,7 @@
 #include "fwUniform.h"
 #include "../glad/glad.h"
 
+#include "../glEngine/glUniformBuffer.h"
 
 fwUniform::fwUniform()
 {
@@ -71,6 +72,16 @@ fwUniform::fwUniform(std::string _name, glm::vec4* t, int size) :
 {
 }
 
+/**
+ * Create a unifrom for a UBO
+ */
+fwUniform::fwUniform(std::string _name, glUniformBuffer* ubo) :
+	name(_name),
+	data(ubo),
+	type(GL_UBO)
+{
+}
+
 void *fwUniform::get_value(void)
 {
 	return data;
@@ -110,6 +121,9 @@ void fwUniform::set_uniform(glProgram *program)
 		break;
 	case GL_FLOAT_MAT4:
 		program->set_uniform(name, (glm::mat4 *)data, m_size);
+		break;
+	case GL_UBO:
+		((glUniformBuffer *)data)->bind(program, name);
 		break;
 	}
 }

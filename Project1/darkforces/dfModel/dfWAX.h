@@ -21,6 +21,8 @@ struct dfWaxAnimation {
 };
 
 struct dfWaxAngles {
+	int m_Wwidth = 0;	// World Width
+	int m_Wheight = 0;
 	int m_FrameRate = 0;
 	std::vector<dfWaxAnimation *> animations;
 };

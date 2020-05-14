@@ -31,6 +31,16 @@ fwMaterialBasic::fwMaterialBasic(std::string vertex_shader, std::string forward_
 	m_type |= BASIC_MATERIAL;
 }
 
+/**
+ * Create a Basic Material 
+ */
+fwMaterialBasic::fwMaterialBasic(std::map<ShaderType, std::string>& shaders):
+	fwMaterial(shaders)
+{
+	m_defines = "#define BASIC_MATERIAL\n";
+	m_type |= BASIC_MATERIAL;
+}
+
 void fwMaterialBasic::addDiffuseMap(fwTexture *_diffuse)
 {
 	m_defines += "#define DIFFUSE_MAP\n";

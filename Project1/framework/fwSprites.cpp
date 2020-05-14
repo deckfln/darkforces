@@ -1,5 +1,7 @@
 #include "fwSprites.h"
 
+#include "../glEngine/glUniformBuffer.h"
+
 static fwMaterial* spriteMaterial = nullptr;
 
 fwSprites::fwSprites(int size) :
@@ -30,6 +32,7 @@ void fwSprites::set(glm::vec3* position, fwTexture* texture, float radius)
 	if (material == nullptr) {
 		material = spriteMaterial;
 	}
+
 	material->addTexture("texture", texture);
 }
 
