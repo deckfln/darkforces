@@ -16,7 +16,7 @@ flat in float ambient;
 #include "../../../shaders/include/camera.glsl"
 
 uniform sampler2D texture;
-uniform vec4 megatexture_idx[128];
+uniform vec4 megatexture_idx[512];
 
 void main()
 {
@@ -29,7 +29,13 @@ void main()
 
 	vec2 mega_uv = textureData.rg + textureData.ba * uv;
 
-    gFragColor = texture2D(texture, mega_uv); // color.rgba;
+    color = texture2D(texture, mega_uv); // color.rgba;
+
+	if (color.a == 0) {
+		discard;
+	}
+
+	gFragColor = color;
 	gWorld = world;
 	gNormal = vec3(0);
 

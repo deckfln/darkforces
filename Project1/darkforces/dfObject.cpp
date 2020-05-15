@@ -29,7 +29,7 @@ void dfObject::addToSprites(dfSprites* sprites)
 	glm::vec3 gl;
 	dfLevel::level2gl(level, gl);
 
-	sprites->add(gl, 0, 0);
+	sprites->add(gl, m_source->name(), m_source->textureID());
 }
 
 dfObject::~dfObject()

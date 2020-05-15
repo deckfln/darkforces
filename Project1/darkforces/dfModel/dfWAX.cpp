@@ -149,6 +149,8 @@ dfWAX::dfWAX(dfFileSystem* fs, dfPalette* palette, std::string& name) :
 								}
 								else {
 									m_frames[offset] = frame = new dfFME(m_data, seq->FRAMES[k], palette, true);
+									this->m_insertX = frame->m_InsertX;
+									this->m_insertY = frame->m_InsertY;
 								}
 
 								animation->frames[k] = frame;
@@ -193,6 +195,17 @@ void dfWAX::getFrames(std::vector<dfBitmapImage*>& frames)
 int dfWAX::textureID(void)
 {
 	return m_states[0]->animations[0]->frames[0]->m_textureID;
+}
+
+/**
+ * update the spriteModel based on the model
+ */
+void dfWAX::spriteModel(SpriteModel *sm)
+{
+	sm->size = glm::vec2(m_width / 32.0f, m_height / 64.0f);
+	sm->insert = glm::vec2(m_insertX / 32.0f, m_insertY / 64.0f);
+	sm->world = glm::vec2(0.5, 1);
+	sm->textureID.r = m_states[0]->animations[0]->frames[0]->m_textureID;
 }
 
 dfWAX::~dfWAX()

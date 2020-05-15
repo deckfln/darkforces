@@ -25,7 +25,7 @@ void main()
     p1.x += sm[0].insert.x;      // Point has only one vertex => [0]
     p1.y += sm[0].insert.y;
     gl_Position = p1;
-	TexCoord = vec2(1.0, 0.0);
+	TexCoord = vec2(0.0, 1.0);
     EmitVertex();
 
     p1.y -= sm[0].size.y;
@@ -41,7 +41,7 @@ void main()
 
     p1.y -= sm[0].size.y;
     gl_Position = p1;
-	TexCoord = vec2(0.0, 1.0);
+	TexCoord = vec2(1.0, 0.0);
     EmitVertex();
 
     EndPrimitive();

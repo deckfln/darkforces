@@ -113,9 +113,13 @@ dfAtlasTexture* dfParserObjects::buildAtlasTexture(void)
  */
 void dfParserObjects::buildSprites(void )
 {
-
 	// build the sprites
 	m_sprites = new dfSprites(m_objects.size(), m_textures);
+
+	for (auto wax : m_waxes) {
+		m_sprites->addModel(wax);
+	}
+
 	dfObject* object;
 	for (auto i = 0; i < m_currentObject; i++) {
 		object = m_objects[i];

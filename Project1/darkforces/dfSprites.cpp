@@ -3,17 +3,8 @@
 #include "../framework/fwMaterialBasic.h"
 #include "../framework/fwScene.h"
 
-// data for sprite model
-struct SpriteModel {
-	glm::vec2 size;		// sprite size in pixel
-	glm::vec2 insert;	// offset of center point
-	glm::vec2 world;
-	glm::vec2 textureID;
-};
-
 static fwMaterialBasic* spriteMaterial = nullptr;
 static glUniformBuffer* models = nullptr;
-static SpriteModel* modelsTable = nullptr;
 static fwUniform* modelsUniform = nullptr;
 
 dfSprites::dfSprites(int nbSprites, dfAtlasTexture* atlas):
@@ -35,11 +26,7 @@ dfSprites::dfSprites(int nbSprites, dfAtlasTexture* atlas):
 		modelsUniform = new fwUniform("Models", models);
 		material->addUniform(modelsUniform);
 
-		modelsTable = new SpriteModel[32];
-		modelsTable[0].size = glm::vec2(18.0f / 32.0f, 46.0f / 64.0f);
-		modelsTable[0].insert = glm::vec2(-8.0f / 32.0f, 0 / 64.0f);
-		modelsTable[0].world = glm::vec2(0.5, 1);
-		modelsTable[0].textureID.r = 0;
+		m_models.resize(32);
 	}
 
 	set(&m_positions[0], atlas->texture(), 1000);
@@ -49,13 +36,26 @@ dfSprites::dfSprites(int nbSprites, dfAtlasTexture* atlas):
 }
 
 /**
+ * Add a model (wax, fme)
+ */
+void dfSprites::addModel(dfModel* model)
+{
+	std::string& modelName = model->name();
+	m_modelsIndex[modelName] = m_nbModels;
+
+	SpriteModel* sm = &m_models[m_nbModels];
+	model->spriteModel(sm);
+	m_nbModels++;
+}
+
+/**
  * Add a static sprite
  */
-void dfSprites::add(glm::vec3 position, int modelID, int textureID)
+void dfSprites::add(glm::vec3 position, std::string& modelName, int textureID)
 {
 	m_positions[m_toDisplay] = position;
 	m_textureIndex[m_toDisplay].r = textureID;
-	m_textureIndex[m_toDisplay].g = textureID;
+	m_textureIndex[m_toDisplay].g = m_modelsIndex[modelName];
 
 	m_toDisplay++;
 	updated = true;
@@ -71,7 +71,7 @@ void dfSprites::update(void)
 		geometry->updateAttribute("aData", 0, m_toDisplay);
 		//geometry->verticesToDisplay(m_toDisplay);
 		models->bind();
-		models->map(modelsTable, 0, sizeof(modelsTable) * 32);
+		models->map(&m_models[0], 0, m_models.size() * 32);
 		models->unbind();
 		updated = false;
 	}

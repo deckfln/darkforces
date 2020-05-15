@@ -33,6 +33,8 @@ class dfWAX: public dfModel
 
 	int m_width = 0;		// size of the sprite (max of all frames)
 	int m_height = 0;
+	long m_insertX = 0;		// Insertion point, X coordinate
+	long m_insertY = 0;		// Insertion point, Y coordinate
 
 	std::vector<dfWaxAngles *> m_states;
 	std::map<int, dfWaxAnimation*> m_animations;
@@ -42,5 +44,6 @@ public:
 	dfWAX(dfFileSystem* fs, dfPalette *palette, std::string& name);
 	void getFrames(std::vector<dfBitmapImage*>& m_frames);
 	virtual int textureID(void);
+	virtual void spriteModel(SpriteModel *sm);
 	~dfWAX();
 };
