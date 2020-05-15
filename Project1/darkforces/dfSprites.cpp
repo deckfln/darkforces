@@ -3,6 +3,8 @@
 #include "../framework/fwMaterialBasic.h"
 #include "../framework/fwScene.h"
 
+#include "dfObject.h"
+
 static fwMaterialBasic* spriteMaterial = nullptr;
 static glUniformBuffer* models = nullptr;
 static fwUniform* modelsUniform = nullptr;
@@ -51,11 +53,17 @@ void dfSprites::addModel(dfModel* model)
 /**
  * Add a static sprite
  */
-void dfSprites::add(glm::vec3 position, std::string& modelName, int textureID)
+void dfSprites::add(dfObject *object)
 {
-	m_positions[m_toDisplay] = position;
-	m_textureIndex[m_toDisplay].r = textureID;
-	m_textureIndex[m_toDisplay].g = m_modelsIndex[modelName];
+	m_objects.resize(m_objects.size() + 1);
+	m_objects[m_nbObjects++] = object;
+
+	m_textureIndex[m_toDisplay].g = (float)m_modelsIndex[object->model()];
+
+	object->updateSprite(
+		&m_positions[m_toDisplay],
+		&m_textureIndex[m_toDisplay]
+	);
 
 	m_toDisplay++;
 	updated = true;
@@ -64,8 +72,24 @@ void dfSprites::add(glm::vec3 position, std::string& modelName, int textureID)
 /**
  * Push updated attributes to the GPU
  */
-void dfSprites::update(void)
+void dfSprites::update(time_t t)
 {
+	int i = 0;
+	for (auto object : m_objects) {
+		// get the object to update the animation
+		if (object->update(t)) {
+
+			// if the animation got updated, update the sprite buffers
+			object->updateSprite(
+				&m_positions[i],
+				&m_textureIndex[i]
+			);
+
+			updated = true;
+		}
+		i++;
+	}
+
 	if (updated) {
 		geometry->updateVertices(0, m_toDisplay);
 		geometry->updateAttribute("aData", 0, m_toDisplay);

@@ -19,6 +19,8 @@ public:
 	dfModel(std::string& name);
 	bool named(std::string& name);
 	std::string& name(void) { return m_name; };
-	virtual int textureID(void) { return 0; };
+	virtual int textureID(int state, int frame) { return 0; };
 	virtual void spriteModel(SpriteModel *sm) {};
+	virtual int framerate(int state) { return 0; }
+	virtual int nextFrame(int state, unsigned int frame) { return 0; };
 };

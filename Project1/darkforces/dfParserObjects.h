@@ -35,5 +35,6 @@ public:
 	dfAtlasTexture* buildAtlasTexture(void);
 	void buildSprites(void);
 	void add2scene(fwScene*);
+	void update(time_t t);
 	~dfParserObjects();
 };

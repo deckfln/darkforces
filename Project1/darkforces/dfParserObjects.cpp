@@ -111,7 +111,7 @@ dfAtlasTexture* dfParserObjects::buildAtlasTexture(void)
 /**
  * Create the sprites for the objects
  */
-void dfParserObjects::buildSprites(void )
+void dfParserObjects::buildSprites(void)
 {
 	// build the sprites
 	m_sprites = new dfSprites(m_objects.size(), m_textures);
@@ -124,10 +124,12 @@ void dfParserObjects::buildSprites(void )
 	for (auto i = 0; i < m_currentObject; i++) {
 		object = m_objects[i];
 		if (object->named("REDLIT.WAX")) {
-			object->addToSprites(m_sprites);
+			m_sprites->add(object);
 		}
 	}
-	m_sprites->update();
+
+	time_t timer = GetTickCount64();
+	m_sprites->update(timer);
 }
 
 void dfParserObjects::add2scene(fwScene* scene)
@@ -137,6 +139,17 @@ void dfParserObjects::add2scene(fwScene* scene)
 		m_sprites->set_name("dfSprites");
 		m_sprites->add2scene(scene);
 	}
+
+	time_t timer = GetTickCount64();
+	update(timer);
+}
+
+/**
+ * Update all object on the level
+ */
+void dfParserObjects::update(time_t t)
+{
+	m_sprites->update(t);
 }
 
 dfParserObjects::~dfParserObjects()

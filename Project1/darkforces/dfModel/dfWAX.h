@@ -17,6 +17,7 @@ enum dfWaxMode {
 };
 
 struct dfWaxAnimation {
+	int m_nbframes = 0;
 	std::vector<dfFME*> frames;
 };
 
@@ -43,7 +44,9 @@ class dfWAX: public dfModel
 public:
 	dfWAX(dfFileSystem* fs, dfPalette *palette, std::string& name);
 	void getFrames(std::vector<dfBitmapImage*>& m_frames);
-	virtual int textureID(void);
+	virtual int textureID(int state, int frame);
 	virtual void spriteModel(SpriteModel *sm);
+	virtual int framerate(int state);
+	virtual int nextFrame(int state, unsigned int frame);
 	~dfWAX();
 };

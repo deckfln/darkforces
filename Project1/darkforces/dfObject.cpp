@@ -21,15 +21,51 @@ bool dfObject::named(std::string name)
 }
 
 /**
- * Add the object to a sprites list
+ * get the name of the model the object is based on
  */
-void dfObject::addToSprites(dfSprites* sprites)
+std::string& dfObject::model(void)
+{
+	return m_source->name();
+}
+
+/**
+ * Update the sprite buffers if the object is different
+ */
+bool dfObject::updateSprite(glm::vec3* position, glm::vec3* texture)
 {
 	glm::vec3 level(m_x, m_y, m_z);
 	glm::vec3 gl;
 	dfLevel::level2gl(level, gl);
 
-	sprites->add(gl, m_source->name(), m_source->textureID());
+	position->x = gl.x;
+	position->y = gl.y;
+	position->z = gl.z;
+
+	texture->r = (float)m_source->textureID(m_state, m_frame);
+	return true;
+}
+
+/**
+ * Animate the object frame
+ */
+bool dfObject::update(time_t t)
+{
+	int frameRate = m_source->framerate(m_state);
+	if (frameRate == 0) {
+		// static objects like FME are not updated
+		return false;
+	}
+
+	time_t frameTime = 1000 / frameRate; // time of one frame in milliseconds
+
+	time_t delta = t - m_lastFrame;
+	if (delta >= frameTime) {
+		m_frame = m_source->nextFrame(m_state, m_frame);
+		m_lastFrame = t;
+		return true;
+	}
+
+	return false;
 }
 
 dfObject::~dfObject()

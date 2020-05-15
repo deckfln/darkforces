@@ -11,12 +11,16 @@
 #include "dfModel.h"
 
 class fwScene;
+class dfObject;
 
 class dfSprites: public fwSprites
 {
 	std::vector<glm::vec3> m_positions;		// position of each sprite
 	std::vector<glm::vec3> m_directions;	// direction of the virtual object
 	std::vector<glm::vec3> m_textureIndex;
+
+	int m_nbObjects= 0;
+	std::vector<dfObject *> m_objects;
 
 	int m_nbModels = 0;
 	std::vector<SpriteModel> m_models;
@@ -29,8 +33,8 @@ class dfSprites: public fwSprites
 public:
 	dfSprites(int nbSprites, dfAtlasTexture *atlas);
 	void addModel(dfModel *model);
-	void add(glm::vec3 position, std::string& modelName, int textureID);
-	void update(void);						// push changes to the GPU
+	void add(dfObject *object);
+	void update(time_t t);						// push changes to the GPU
 	void add2scene(fwScene* scene);
 	~dfSprites();
 };
