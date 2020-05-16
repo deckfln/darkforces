@@ -28,11 +28,12 @@ fwTexture::fwTexture(int _width, int _height, int format) :
 {
 }
 
-fwTexture::fwTexture(unsigned char *data, int _width, int _height, int format) :
+fwTexture::fwTexture(unsigned char* data, int _width, int _height, int format, int filter) :
 	myclass(TEXTURE),
 	width(_width),
 	height(_height),
 	nrChannels(format),
+	m_filter(filter),
 	m_data(data)
 {
 }
