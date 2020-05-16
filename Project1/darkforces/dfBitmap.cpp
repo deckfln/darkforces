@@ -190,8 +190,8 @@ void dfBitmapImage::targetSize(int x, int y)
 
 void dfBitmapImage::boardSize(int blockSize)
 {
-	m_bsizeWidth = (int)ceil(m_targetWidth / blockSize);
-	m_bsizeHeight = (int)ceil(m_targetHeight / blockSize);
+	m_bsizeWidth = (int)ceil((float)m_targetWidth / (float)blockSize);
+	m_bsizeHeight = (int)ceil((float)m_targetHeight / (float)blockSize);
 
 	m_bsize = m_bsizeWidth * m_bsizeHeight;
 }
