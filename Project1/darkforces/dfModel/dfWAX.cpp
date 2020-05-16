@@ -110,6 +110,8 @@ dfWAX::dfWAX(dfFileSystem* fs, dfPalette* palette, std::string& name) :
 
 	for (auto i = 0; i < 32; i++) {
 		if (table->WAXES[i] > 0) {
+			m_nbStates++;
+
 			_dfWaxState* state = (_dfWaxState*)((unsigned char*)m_data + table->WAXES[i]);
 
 			dfWaxAngles* angles = new dfWaxAngles;
@@ -165,6 +167,15 @@ dfWAX::dfWAX(dfFileSystem* fs, dfPalette* palette, std::string& name) :
 		}
 	}
 
+	// get the default world factor
+	for (auto i = 0; i < m_nbStates; i++) {
+		long mx = m_states[i]->m_Wwidth;
+		long my = m_states[i]->m_Wheight;
+
+		m_Wwidth = std::max(mx, m_Wwidth);
+		m_Wheight = std::max(my, m_Wheight);
+	}
+
 	// get the size of the sprite (max of all frame sizes)
 	for (auto frame : m_frames) {
 		int mx = frame.second->m_width;
@@ -203,8 +214,13 @@ int dfWAX::textureID(int state, int frame)
  */
 void dfWAX::spriteModel(SpriteModel *sm)
 {
-	sm->size = glm::vec2(m_width / 32.0f, m_height / 64.0f);
-	sm->insert = glm::vec2(m_insertX / 32.0f, m_insertY / 64.0f);
+	// level side of the sprite depend on texture size (pixel) / 32 * (Wwidth / 65536)
+	float widthFactor = 64.0f / (m_Wwidth / 65536.0f);
+	float heightFactor = 64.0f / (m_Wheight / 65536.0f);
+
+	sm->size = glm::vec2(m_width / widthFactor, m_height / heightFactor);
+	sm->insert = glm::vec2(m_insertX / widthFactor, -m_insertY / heightFactor);
+
 	sm->world = glm::vec2(0.5, 1);
 	sm->textureID.r = (float)m_states[0]->animations[0]->frames[0]->m_textureID;
 }

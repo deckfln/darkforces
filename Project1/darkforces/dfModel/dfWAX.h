@@ -36,8 +36,12 @@ class dfWAX: public dfModel
 	int m_height = 0;
 	long m_insertX = 0;		// Insertion point, X coordinate
 	long m_insertY = 0;		// Insertion point, Y coordinate
+	long m_Wwidth = 0;		// world width factor
+	long m_Wheight = 0;		// world height factor
 
+	int m_nbStates = 0;
 	std::vector<dfWaxAngles *> m_states;
+
 	std::map<int, dfWaxAnimation*> m_animations;
 	std::map<int, dfFME*> m_frames;
 

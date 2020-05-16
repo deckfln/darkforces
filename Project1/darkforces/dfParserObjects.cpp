@@ -123,7 +123,7 @@ void dfParserObjects::buildSprites(void)
 	dfObject* object;
 	for (auto i = 0; i < m_currentObject; i++) {
 		object = m_objects[i];
-		if (object->named("REDLIT.WAX")) {
+		if (object->named("REDLIT.WAX") || object->named("ROCK.WAX")) {
 			m_sprites->add(object);
 		}
 	}
