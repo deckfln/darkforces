@@ -133,7 +133,20 @@ dfFME::dfFME(void* data, int offset, dfPalette* palette, bool from_wax)
 	}
 
 	if (header->Flip) {
-		std::cerr << "dfFME::dfFME Flip not implemented" << std::endl;
+		// Flip horizontaly
+		int p1 = 0;
+		for (auto y = 0; y < m_height; y++) {
+			p1 = y * m_width * 4;
+			p = p1 + (m_width - 1) * 4;
+
+			for (auto x = 0; x < m_width/2; x++) {
+				v = m_data[p];  m_data[p] = m_data[p1]; m_data[p1] = v;	p++; p1++;
+				v = m_data[p];  m_data[p] = m_data[p1]; m_data[p1] = v;	p++; p1++;
+				v = m_data[p];  m_data[p] = m_data[p1]; m_data[p1] = v;	p++; p1++;
+				v = m_data[p];  m_data[p] = m_data[p1]; m_data[p1] = v;	p++; p1++;
+				p -= 8;
+			}
+		}
 	}
 }
 

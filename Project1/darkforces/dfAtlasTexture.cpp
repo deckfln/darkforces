@@ -160,7 +160,7 @@ dfAtlasTexture::dfAtlasTexture(std::vector<dfBitmapImage*>& images)
 	}
 
 	// create the fwTexture
-	m_fwtextures = new fwTexture(m_megatexture, size, size, rgba);
+	m_fwtextures = new fwTexture(m_megatexture, size, size, rgba, GL_NEAREST);
 
 	// and the index
 	m_megatexture_idx.resize(images.size());
