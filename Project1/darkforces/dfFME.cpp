@@ -51,7 +51,7 @@ dfFME::dfFME(void* data, int offset, dfPalette* palette, bool from_wax)
 	// Cheat for negative insertY 
 	// EG: rock height=12, but inserY=-10, so rocks are in the ground
 	if (m_InsertY < 0) {
-		m_InsertY = -m_height;
+		m_InsertY = -m_height-1;
 	}
 
 	int size = m_width * m_height;

@@ -215,8 +215,8 @@ int dfWAX::textureID(int state, int frame)
 void dfWAX::spriteModel(SpriteModel *sm)
 {
 	// level side of the sprite depend on texture size (pixel) / 32 * (Wwidth / 65536)
-	float widthFactor = 64.0f / (m_Wwidth / 65536.0f);
-	float heightFactor = 64.0f / (m_Wheight / 65536.0f);
+	float widthFactor = 58.0f / (m_Wwidth / 65536.0f);
+	float heightFactor = 40.0f / (m_Wheight / 65536.0f);
 
 	sm->size = glm::vec2(m_width / widthFactor, m_height / heightFactor);
 	sm->insert = glm::vec2(m_insertX / widthFactor, -m_insertY / heightFactor);
