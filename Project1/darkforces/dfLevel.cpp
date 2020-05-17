@@ -23,6 +23,7 @@ dfLevel::dfLevel(dfFileSystem* fs, std::string file)
 	std::istringstream data(sec);
 
 	std::string line, dump;
+	std::map<std::string, std::string> tokenMap;
 
 	while (std::getline(data, line))
 	{
@@ -32,7 +33,7 @@ dfLevel::dfLevel(dfFileSystem* fs, std::string file)
 		}
 
 		// per token
-		std::vector <std::string> tokens = dfParseTokens(line);
+		std::vector <std::string> tokens = dfParseTokens(line, tokenMap);
 
 		if (tokens.size() == 0) {
 			continue;

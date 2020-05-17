@@ -8,7 +8,7 @@
 
 class dfFileSystem;
 
-std::vector<std::string>& dfParseTokens(std::string& line);
+std::vector<std::string>& dfParseTokens(std::string& line, std::map<std::string, std::string>& tokenMap);
 
 class dfParseINF
 {

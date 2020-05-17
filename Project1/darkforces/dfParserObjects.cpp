@@ -17,6 +17,7 @@ dfObject* dfParserObjects::parseSprite(dfWAX* wax, float x, float y, float z, st
 	std::string line, dump;
 
 	dfSprite* sprite = new dfSprite(wax, x, y, z);
+	std::map<std::string, std::string> tokenMap;
 
 	while (std::getline(infile, line))
 	{
@@ -26,7 +27,7 @@ dfObject* dfParserObjects::parseSprite(dfWAX* wax, float x, float y, float z, st
 		}
 
 		// per token
-		std::vector <std::string> tokens = dfParseTokens(line);
+		std::vector <std::string> tokens = dfParseTokens(line, tokenMap);
 
 		if (tokens[0] == "SEQ") {
 			// pass
@@ -35,10 +36,10 @@ dfObject* dfParserObjects::parseSprite(dfWAX* wax, float x, float y, float z, st
 			break;
 		}
 		else if (tokens[0] == "LOGIC:") {
-			if (tokens[1] == "SCENERY") {
+			if (tokenMap["LOGIC:"] == "SCENERY") {
 				sprite->logic(DF_LOGIC_SCENERY);
 			}
-			else if (tokens[1] == "ANIM") {
+			else if (tokenMap["LOGIC:"] == "ANIM") {
 				sprite->logic(DF_LOGIC_ANIM);
 			}
 		}
@@ -55,6 +56,7 @@ dfParserObjects::dfParserObjects(dfFileSystem* fs, dfPalette* palette, std::stri
 	char* sec = fs->load(DF_DARK_GOB, file + ".O");
 	std::istringstream infile(sec);
 	std::string line, dump;
+	std::map<std::string, std::string> tokenMap;
 
 	while (std::getline(infile, line))
 	{
@@ -64,7 +66,7 @@ dfParserObjects::dfParserObjects(dfFileSystem* fs, dfPalette* palette, std::stri
 		}
 
 		// per token
-		std::vector <std::string> tokens = dfParseTokens(line);
+		std::vector <std::string> tokens = dfParseTokens(line, tokenMap);
 		if (tokens.size() == 0) {
 			continue;
 		}
@@ -79,14 +81,25 @@ dfParserObjects::dfParserObjects(dfFileSystem* fs, dfPalette* palette, std::stri
 			m_objects.resize(std::stoi(tokens[1]));
 		}
 		else if (tokens[0] == "CLASS:") {
-			int data = std::stoi(tokens[3]);
+			int data = std::stoi(tokenMap["DATA:"]);
 
-			float x = -std::stof(tokens[5]),
-				y = std::stof(tokens[9]),
-				z = -std::stof(tokens[7]);
+			float x = -std::stof(tokenMap["X:"]),
+				y = std::stof(tokenMap["Z:"]),
+				z = -std::stof(tokenMap["Y:"]);
 
-			if (tokens[1] == "SPRITE") {
-				m_objects[m_currentObject++] = parseSprite(m_waxes[data], x, y, z, infile);
+			float pch = std::stof(tokenMap["PCH:"]),
+				yaw = std::stof(tokenMap["YAW:"]),
+				rol = std::stof(tokenMap["ROL:"]);
+
+			int difficulty = std::stoi(tokenMap["DIFF:"]);
+
+			if (tokenMap["CLASS:"] == "SPRITE") {
+				m_objects[m_currentObject] = parseSprite(m_waxes[data], x, y, z, infile);
+				m_objects[m_currentObject]->set(
+					pch, yaw, rol, difficulty
+				);
+
+				m_currentObject++;
 			}
 		}
 	}

@@ -10,11 +10,12 @@
 #include "dfLogicElevator.h"
 #include "dfFileSystem.h"
 
-std::vector<std::string>& dfParseTokens(std::string& line)
+std::vector<std::string>& dfParseTokens(std::string& line, std::map<std::string, std::string>& tokenMap)
 {
 	static std::vector<std::string> tokens;
 
 	tokens.clear();
+	tokenMap.clear();
 
 	unsigned char c;
 	int start = -1;
@@ -43,6 +44,11 @@ std::vector<std::string>& dfParseTokens(std::string& line)
 		tokens.push_back(line.substr(start, size - start));
 	}
 
+	for (auto i = 0; i < tokens.size(); i++) {
+		if (tokens[i].find(':') != std::string::npos) {
+			tokenMap[tokens[i]] = tokens[i + 1];
+		}
+	}
 	return tokens;
 }
 
@@ -51,6 +57,7 @@ dfParseINF::dfParseINF(dfFileSystem* fs, std::string file)
 	char* sec = fs->load(DF_DARK_GOB, file + ".INF");
 	std::istringstream infile(sec);
 	std::string line, dump;
+	std::map<std::string, std::string> tokenMap;
 
 	while (std::getline(infile, line))
 	{
@@ -60,7 +67,7 @@ dfParseINF::dfParseINF(dfFileSystem* fs, std::string file)
 		}
 
 		// per token
-		std::vector <std::string> tokens = dfParseTokens(line);
+		std::vector <std::string> tokens = dfParseTokens(line, tokenMap);
 		if (tokens.size() == 0) {
 			continue;
 		}
@@ -97,6 +104,7 @@ void dfParseINF::parseSector(std::istringstream& infile, std::string& sector)
 	dfLogicElevator* elevator = nullptr;
 	dfLogicTrigger* trigger = nullptr;
 	dfLogicStop* stop = nullptr;
+	std::map<std::string, std::string> tokenMap;
 
 	int nbStops = -1;
 
@@ -108,7 +116,7 @@ void dfParseINF::parseSector(std::istringstream& infile, std::string& sector)
 		}
 
 		// per token
-		std::vector <std::string> tokens = dfParseTokens(line);
+		std::vector <std::string> tokens = dfParseTokens(line, tokenMap);
 
 		if (tokens[0] == "seq") {
 			// pass
@@ -242,6 +250,7 @@ void dfParseINF::parseLine(std::istringstream& infile, std::string &sector, int 
 
 	std::string kind;
 	dfLogicTrigger* trigger = nullptr;
+	std::map<std::string, std::string> tokenMap;
 
 	while (std::getline(infile, line))
 	{
@@ -251,7 +260,7 @@ void dfParseINF::parseLine(std::istringstream& infile, std::string &sector, int 
 		}
 
 		// per token
-		std::vector <std::string> tokens = dfParseTokens(line);
+		std::vector <std::string> tokens = dfParseTokens(line, tokenMap);
 
 		if (tokens[0] == "seq") {
 			// pass

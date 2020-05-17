@@ -13,6 +13,17 @@ dfObject::dfObject(dfModel *source, float x, float y, float z):
 }
 
 /**
+ * set object attributes
+ */
+void dfObject::set(float pch, float yaw, float rol, int difficulty)
+{
+	m_pch = pch;
+	m_yaw = yaw;
+	m_rol = rol;
+	m_difficulty = difficulty;
+}
+
+/**
  * Check the name of th associated WAX
  */
 bool dfObject::named(std::string name)

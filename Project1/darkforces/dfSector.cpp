@@ -23,6 +23,8 @@ dfSector::dfSector(std::istringstream& infile, std::vector<dfSector*>& sectorsID
 	int currentWall = 0;
 
 	std::string line, dump;
+	std::map<std::string, std::string> tokenMap;
+
 	float min_x=99999, max_x=-99999, min_y=99999, max_y=-99999;	// build AABBox while parsing the vertices
 
 	// per line
@@ -39,7 +41,7 @@ dfSector::dfSector(std::istringstream& infile, std::vector<dfSector*>& sectorsID
 		}
 
 		// per token
-		std::vector <std::string> tokens = dfParseTokens(line);
+		std::vector <std::string> tokens = dfParseTokens(line, tokenMap);
 		if (tokens.size() == 0) {
 			continue;
 		}
