@@ -11,6 +11,7 @@
 #include "dfAtlasTexture.h"
 #include "dfSprites.h"
 #include "../framework/fwScene.h"
+#include "dfGame.h"
 
 dfObject* dfParserObjects::parseSprite(dfWAX* wax, float x, float y, float z, std::istringstream& infile)
 {
@@ -136,7 +137,32 @@ void dfParserObjects::buildSprites(void)
 	dfObject* object;
 	for (auto i = 0; i < m_currentObject; i++) {
 		object = m_objects[i];
-		m_sprites->add(object);
+
+		/*
+		DIFF	EASY	MED	HARD
+		-3		X		X	X
+		-2		X		X
+		-1		X
+		0		X		X	X
+		1		X		X	X
+		2				X	X
+		3					X
+		*/
+		static bool difficultyTable[][3] = {
+			{1, 1, 1},
+			{1, 1, 0},
+			{1, 0, 0},
+			{1, 1, 1},
+			{1, 1, 1},
+			{0, 1, 1},
+			{0, 0, 1}
+		};
+
+		int x = object->difficulty(), y = Game.difficulty();
+		bool visible = difficultyTable[x][y];
+		if (visible) {
+			m_sprites->add(object);
+		}
 	}
 
 	time_t timer = GetTickCount64();

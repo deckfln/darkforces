@@ -17,9 +17,13 @@ dfObject::dfObject(dfModel *source, float x, float y, float z):
  */
 void dfObject::set(float pch, float yaw, float rol, int difficulty)
 {
-	m_pch = pch;
-	m_yaw = yaw;
-	m_rol = rol;
+	// YAW = value in degrees where 0 is at the "top of the screen when you look at the map". The value increases clockwise
+
+	yaw = glm::radians(yaw);
+	m_direction.x = cos(yaw);	// in level space
+	m_direction.y = sin(yaw);
+	m_direction.z = 0;
+
 	m_difficulty = difficulty;
 }
 
@@ -29,6 +33,11 @@ void dfObject::set(float pch, float yaw, float rol, int difficulty)
 bool dfObject::named(std::string name)
 {
 	return m_source->named(name);
+}
+
+int dfObject::difficulty(void)
+{
+	return m_difficulty + 3;
 }
 
 /**

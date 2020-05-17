@@ -132,6 +132,7 @@
     <ClCompile Include="darkforces\dfFileGOB.cpp" />
     <ClCompile Include="darkforces\dfFileSystem.cpp" />
     <ClCompile Include="darkforces\dfFME.cpp" />
+    <ClCompile Include="darkforces\dfGame.cpp" />
     <ClCompile Include="darkforces\dfLogicElevator.cpp" />
     <ClCompile Include="darkforces\dfLogicStop.cpp" />
     <ClCompile Include="darkforces\dfLogicTrigger.cpp" />
@@ -240,6 +241,7 @@
     <ClInclude Include="darkforces\dfFileGOB.h" />
     <ClInclude Include="darkforces\dfFileSystem.h" />
     <ClInclude Include="darkforces\dfFME.h" />
+    <ClInclude Include="darkforces\dfGame.h" />
     <ClInclude Include="darkforces\dfLogicElevator.h" />
     <ClInclude Include="darkforces\dfLogicStop.h" />
     <ClInclude Include="darkforces\dfLogicTrigger.h" />

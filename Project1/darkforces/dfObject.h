@@ -7,9 +7,9 @@ class dfModel;
 class dfObject
 {
 protected:
-	float m_x=0, m_y=0, m_z=0;				// position in level space
-	float m_pch = 0, m_yaw = 0, m_rol = 0;	// orientation
-											// YAW = value in degrees where 0 is at the "top of the screen when you look at the map". The value increases clockwise
+	float m_x=0, m_y=0, m_z=0;	// position in level space
+	glm::vec3 m_direction;		// direction the object is looking to
+
 	int m_difficulty = 0;
 
 	int m_state = 0;			// state of the object for WAX, unused for others
@@ -21,6 +21,7 @@ public:
 	dfObject(dfModel *source, float x, float y, float z);
 	void set(float pch, float yaw, float rol, int difficulty);
 	bool named(std::string name);
+	int difficulty(void);
 	std::string& model(void);
 	bool updateSprite(glm::vec3* position, glm::vec3* texture);
 	bool update(time_t t);		// update based on timer
