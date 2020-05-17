@@ -40,14 +40,19 @@ struct _FME_Image {
 dfFME::dfFME(void* data, int offset, dfPalette* palette, bool from_wax)
 {
 	_FME_Header_from_WAX* header = (_FME_Header_from_WAX*)((char *)data + offset);
-	m_InsertX = header->InsertX;
-	m_InsertY = header->InsertY;
-
 	_FME_Image* image = (_FME_Image*)((char *)data + header->Cell);
 
 	m_width = image->SizeX;
 	m_height = image->SizeY;
 	m_nrChannels = 4;
+	m_InsertX = header->InsertX;
+	m_InsertY = header->InsertY;
+
+	// Cheat for negative insertY 
+	// EG: rock height=12, but inserY=-10, so rocks are in the ground
+	if (m_InsertY < 0) {
+		m_InsertY = -m_height;
+	}
 
 	int size = m_width * m_height;
 	m_data = new char[size * 4];
