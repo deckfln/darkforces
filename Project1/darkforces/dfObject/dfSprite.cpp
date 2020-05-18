@@ -7,14 +7,6 @@ dfSprite::dfSprite(dfWAX* wax, float x, float y, float z):
 {
 }
 
-/**
- * Stack up logics
- */
-void dfSprite::logic(int logic)
-{
-	m_logics |= logic;
-}
-
 void dfSprite::height(float h)
 {
 	m_height = h;

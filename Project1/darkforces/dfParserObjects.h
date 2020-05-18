@@ -12,11 +12,6 @@ class dfAtlasTexture;
 class dfSprites;
 class fwScene;
 
-enum {
-	DF_LOGIC_SCENERY = 1,
-	DF_LOGIC_ANIM = 2
-};
-
 class dfParserObjects
 {
 	std::vector<dfWAX *> m_waxes;

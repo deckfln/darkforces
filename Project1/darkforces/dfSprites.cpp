@@ -66,7 +66,7 @@ void dfSprites::add(dfObject *object)
 	);
 
 	m_toDisplay++;
-	updated = true;
+	m_updated = true;
 }
 
 /**
@@ -85,19 +85,19 @@ void dfSprites::update(time_t t)
 				&m_textureIndex[i]
 			);
 
-			updated = true;
+			m_updated = true;
 		}
 		i++;
 	}
 
-	if (updated) {
+	if (m_updated) {
 		geometry->updateVertices(0, m_toDisplay);
 		geometry->updateAttribute("aData", 0, m_toDisplay);
 		//geometry->verticesToDisplay(m_toDisplay);
 		models->bind();
 		models->map(&m_models[0], 0, m_models.size() * 32);
 		models->unbind();
-		updated = false;
+		m_updated = false;
 	}
 }
 

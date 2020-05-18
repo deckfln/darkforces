@@ -44,6 +44,14 @@ dfObject* dfParserObjects::parseSprite(dfWAX* wax, float x, float y, float z, st
 				sprite->logic(DF_LOGIC_ANIM);
 			}
 		}
+		else if (tokens[0] == "TYPE:") {
+			if (tokenMap["TYPE:"] == "I_OFFICER") {
+				sprite->logic(DF_LOGIC_I_OFFICER | DF_LOGIC_ANIM);
+			}
+			else if (tokenMap["TYPE:"] == "COMMANDO") {
+				sprite->logic(DF_LOGIC_COMMANDO | DF_LOGIC_ANIM);
+			}
+		}
 		else if (tokens[0] == "HEIGHT:") {
 			sprite->height(std::stof(tokens[1]));
 		}

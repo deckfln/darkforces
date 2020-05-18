@@ -70,22 +70,39 @@ bool dfObject::updateSprite(glm::vec3* position, glm::vec3* texture)
  */
 bool dfObject::update(time_t t)
 {
-	int frameRate = m_source->framerate(m_state);
-	if (frameRate == 0) {
-		// static objects like FME are not updated
-		return false;
-	}
+	if (m_logics & DF_LOGIC_ANIM){
+		int frameRate = m_source->framerate(m_state);
+		if (frameRate == 0) {
+			// static objects like FME are not updated
+			return false;
+		}
 
-	time_t frameTime = 1000 / frameRate; // time of one frame in milliseconds
+		time_t frameTime = 1000 / frameRate; // time of one frame in milliseconds
 
-	time_t delta = t - m_lastFrame;
-	if (delta >= frameTime) {
-		m_frame = m_source->nextFrame(m_state, m_frame);
-		m_lastFrame = t;
-		return true;
+		time_t delta = t - m_lastFrame;
+		if (delta >= frameTime) {
+			m_frame = m_source->nextFrame(m_state, m_frame);
+			m_lastFrame = t;
+			return true;
+		}
 	}
 
 	return false;
+}
+
+/**
+ * Stack up logics
+ */
+void dfObject::logic(int logic)
+{
+	m_logics |= logic;
+
+	if (logic & DF_LOGIC_SCENERY) {
+		m_state = DF_STATE_SCENERY_NORMAL;
+	}
+	else if (logic & DF_ENEMIES) {
+		m_state = DF_STATE_ENEMY_STAY_STILL;
+	}
 }
 
 dfObject::~dfObject()

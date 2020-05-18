@@ -27,7 +27,7 @@ class dfSprites: public fwSprites
 	std::map<std::string, int> m_modelsIndex;	// name of the model to index in the m_models table
 
 	int m_toDisplay = 0;					// number of sprites to display
-	bool updated = true;					// the attributes have been updated and need to be pushed to the GPU
+	bool m_updated = true;					// the attributes have been updated and need to be pushed to the GPU
 	bool m_added = false;
 
 public:
