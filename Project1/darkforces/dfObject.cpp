@@ -61,7 +61,9 @@ bool dfObject::updateSprite(glm::vec3* position, glm::vec3* texture)
 	position->y = gl.y;
 	position->z = gl.z;
 
-	texture->r = (float)m_source->textureID(m_state, m_frame);
+	texture->r = (float)m_source->id();
+	texture->g = (float)m_state;
+	texture->b = (float)m_frame;
 	return true;
 }
 

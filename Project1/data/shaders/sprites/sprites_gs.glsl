@@ -4,10 +4,10 @@ layout (points) in;
 layout (triangle_strip, max_vertices = 4) out;
 
 struct SpriteModel {
-    vec2 size; 
-    vec2 insert;
-    vec2 world;
-    vec2 textureID;
+	vec2 size;		// sprite size in pixel
+	vec2 insert;	// offset of center point
+	vec2 world;
+	uvec2 statesIndex;	// pointer to the state table
 };
 
 in struct SpriteModel sm[];

@@ -106,7 +106,6 @@ dfWAX::dfWAX(dfFileSystem* fs, dfPalette* palette, std::string& name) :
 						//extract all valid frames
 						_dfWaxSequence* seq = (_dfWaxSequence*)((unsigned char*)m_data + seq_offset);
 
-						animation = new dfWaxAnimation;
 						animation->frames.resize(32);
 
 						for (auto k = 0; k < 32; k++) {
@@ -180,17 +179,52 @@ int dfWAX::textureID(int state, int frame)
 /**
  * update the spriteModel based on the model
  */
-void dfWAX::spriteModel(SpriteModel *sm)
+void dfWAX::spriteModel(GLmodel &model, int id)
 {
 	// level side of the sprite depend on texture size (pixel) / 32 * (Wwidth / 65536)
 	float widthFactor = 58.0f / (m_Wwidth / 65536.0f);
 	float heightFactor = 40.0f / (m_Wheight / 65536.0f);
 
+	SpriteModel* sm = &model.models[id];
 	sm->size = glm::vec2(m_width / widthFactor, m_height / heightFactor);
 	sm->insert = glm::vec2(m_insertX / widthFactor, -m_insertY / heightFactor);
 
 	sm->world = glm::vec2(0.5, 1);
-	sm->textureID.r = (float)m_states[0]->animations[0]->frames[0]->m_textureID;
+	sm->states = glm::i16vec2(0, 0);
+
+	// Compress the WAX tables into flat tables
+	sm->states.x = model.stIndex;
+
+	std::map<dfWaxAnimation*, int> anglesIndexes;
+
+	for (auto state = 0; state < 32; state++) {
+		if (m_states[state]) {
+			model.stateTable[model.stIndex++] = model.atIndex;
+
+			for (auto angle = 0; angle < 32; angle++) {
+				dfWaxAnimation* wa = m_states[state]->animations[angle];
+				if (wa) {
+					if (anglesIndexes.count(wa) == 0) {
+						anglesIndexes[wa] = model.ftIndex;
+
+						model.angleTable[model.atIndex++] = model.ftIndex;
+
+						for (auto frame = 0; frame < 32; frame++) {
+							dfFME* fme = wa->frames[frame];
+							if (fme) {
+								model.frameTable[model.ftIndex++] = fme->m_textureID;
+							}
+						}
+					}
+					else {
+						model.angleTable[model.atIndex++] = anglesIndexes[wa];
+					}
+				}
+			}
+		}
+	}
+
+	m_id = id;
 }
 
 /**

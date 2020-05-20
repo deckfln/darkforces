@@ -23,7 +23,9 @@ class dfSprites: public fwSprites
 	std::vector<dfObject *> m_objects;
 
 	int m_nbModels = 0;
-	std::vector<SpriteModel> m_models;
+	bool m_dirtyModels = true;
+	GLmodel m_models;
+
 	std::map<std::string, int> m_modelsIndex;	// name of the model to index in the m_models table
 
 	int m_toDisplay = 0;					// number of sprites to display

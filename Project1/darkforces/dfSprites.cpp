@@ -24,11 +24,9 @@ dfSprites::dfSprites(int nbSprites, dfAtlasTexture* atlas):
 		};
 		material = spriteMaterial = new fwMaterialBasic(shaders);
 
-		models = new glUniformBuffer(sizeof(struct SpriteModel) * 32);
+		models = new glUniformBuffer(sizeof(struct GLmodel));
 		modelsUniform = new fwUniform("Models", models);
 		material->addUniform(modelsUniform);
-
-		m_models.resize(32);
 	}
 
 	set(&m_positions[0], atlas->texture(), 1000);
@@ -45,9 +43,10 @@ void dfSprites::addModel(dfModel* model)
 	std::string& modelName = model->name();
 	m_modelsIndex[modelName] = m_nbModels;
 
-	SpriteModel* sm = &m_models[m_nbModels];
-	model->spriteModel(sm);
+	model->spriteModel(m_models, m_nbModels);
 	m_nbModels++;
+
+	m_dirtyModels = true;
 }
 
 /**
@@ -93,11 +92,15 @@ void dfSprites::update(time_t t)
 	if (m_updated) {
 		geometry->updateVertices(0, m_toDisplay);
 		geometry->updateAttribute("aData", 0, m_toDisplay);
-		//geometry->verticesToDisplay(m_toDisplay);
-		models->bind();
-		models->map(&m_models[0], 0, m_models.size() * 32);
-		models->unbind();
+		geometry->verticesToDisplay(m_toDisplay);
 		m_updated = false;
+	}
+
+	if (m_dirtyModels) {
+		models->bind();
+		models->map(&m_models.models, 0, sizeof(struct GLmodel));
+		models->unbind();
+		m_dirtyModels = false;
 	}
 }
 
