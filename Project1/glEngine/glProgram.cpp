@@ -14,6 +14,8 @@
 #include "../List.h"
 #include "../glad/glad.h"
 
+#include "glUniformBlock.h"
+
 List Shaders;
 
 std::string load_shader_file(const std::string shader_file, std::string defines, std::map <std::string, std::string> *variables)
@@ -158,6 +160,17 @@ glProgram::glProgram(const std::string vertexShader, const std::string fragmentS
 		glUniform *uniform = new glUniform(name, length, size, type, location);
 		uniforms[name] = uniform;
 	}
+
+	// extract active uniform blocks
+	glGetProgramInterfaceiv(id, GL_UNIFORM_BLOCK, GL_ACTIVE_RESOURCES, &m_nbUniformBlocks);
+
+	for (auto i = 0; i < m_nbUniformBlocks; i++) {
+		glGetProgramResourceName(id, GL_UNIFORM_BLOCK, i, sizeof(name), &length, name);
+		if (m_uniformBlocks.count(name) == 0) {
+			m_uniformBlocks[name] = new glUniformBlock(name, id, i);
+		}
+	}
+
 	delete vertex;
 	delete fragment;
 	if (geometry) {
@@ -296,4 +309,16 @@ void glProgram::set_uniform(const std::string name, glTexture *texture)
 glProgram::~glProgram()
 {
 	glDeleteProgram(id);
+
+	for (auto attribute : attributes) {
+		delete attribute.second;
+
+	}
+	for (auto uniform : uniforms) {
+		delete uniform.second;
+	}
+
+	for (auto block : m_uniformBlocks) {
+		delete block.second;
+	}
 }

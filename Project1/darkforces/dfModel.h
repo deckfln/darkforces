@@ -2,6 +2,7 @@
 
 #include <string>
 #include <glm/vec2.hpp>
+#include <glm/vec4.hpp>
 #include <vector>
 #include "../glad/glad.h"
 
@@ -24,10 +25,10 @@ struct SpriteModel {
 
 struct GLmodel {
 	SpriteModel models[32];
-
-	GLuint stateTable[128];
-	GLuint angleTable[2048];
-	GLuint frameTable[512];
+	glm::ivec4 indexes[2048]; // x = stateIndex
+							// y = angleIndex
+							// z = frameIndex
+							// w = unused
 
 	int stIndex = 0, atIndex = 0, ftIndex = 0;
 };

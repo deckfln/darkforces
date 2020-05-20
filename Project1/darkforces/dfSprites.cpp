@@ -98,7 +98,7 @@ void dfSprites::update(time_t t)
 
 	if (m_dirtyModels) {
 		models->bind();
-		models->map(&m_models.models, 0, sizeof(struct GLmodel));
+		models->map(&m_models.models, 0, sizeof(struct SpriteModel)*32);
 		models->unbind();
 		m_dirtyModels = false;
 	}

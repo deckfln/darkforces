@@ -8,6 +8,8 @@ class glUniformBuffer
 {
 	unsigned int id;
 	unsigned int bindingPoint;
+	GLint m_offset;
+
 
 public:
 	glUniformBuffer(int size);

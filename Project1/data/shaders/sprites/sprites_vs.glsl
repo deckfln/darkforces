@@ -16,10 +16,10 @@ struct SpriteModel {
 layout (std140) uniform Models
 {
     SpriteModel modelTable[32];
-	uint stateTable[128];
-	uint angleTable[2048];
-	uint frameTable[512];
-
+	uvec4 indexes[2048];	// x = stateIndex
+							// y = angleIndex
+							// z = frameIndex
+							// w = unused
 	int x, y, z;
 };
 
@@ -44,7 +44,7 @@ void main()
 
     sm = modelTable[modelID];
 
-	uint angles = stateTable[uint(stateID) + uint(sm.statesIndex.r)];
-	uint frames = angleTable[angles + uint(0)];
-	vTextureID = frameTable[frames + frameID];
+	uint angles = indexes[uint(stateID) + uint(sm.statesIndex.r)].x;
+	uint frames = indexes[angles + uint(0)].y;
+	vTextureID = indexes[frames + frameID].z;
 }

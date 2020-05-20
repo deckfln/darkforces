@@ -8,12 +8,17 @@
 
 std::string load_shader_file(const std::string shader_file, std::string defines, std::map<std::string,std::string> *variables=nullptr);
 
+class glUniformBlock;
+
 class glProgram
 {
 	// active attributes
 	std::map<std::string, glVertexAttribute *> attributes;
 	std::map<std::string, glUniform *> uniforms;
 	std::map<std::string, int> uniformBufferBindingPoints;
+
+	int m_nbUniformBlocks = 0;
+	std::map<std::string, glUniformBlock*> m_uniformBlocks;
 
 	GLuint id;
 

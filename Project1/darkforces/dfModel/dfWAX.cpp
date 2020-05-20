@@ -199,7 +199,7 @@ void dfWAX::spriteModel(GLmodel &model, int id)
 
 	for (auto state = 0; state < 32; state++) {
 		if (m_states[state]) {
-			model.stateTable[model.stIndex++] = model.atIndex;
+			model.indexes[model.stIndex++].x = model.atIndex;
 
 			for (auto angle = 0; angle < 32; angle++) {
 				dfWaxAnimation* wa = m_states[state]->animations[angle];
@@ -207,17 +207,17 @@ void dfWAX::spriteModel(GLmodel &model, int id)
 					if (anglesIndexes.count(wa) == 0) {
 						anglesIndexes[wa] = model.ftIndex;
 
-						model.angleTable[model.atIndex++] = model.ftIndex;
+						model.indexes[model.atIndex++].y = model.ftIndex;
 
 						for (auto frame = 0; frame < 32; frame++) {
 							dfFME* fme = wa->frames[frame];
 							if (fme) {
-								model.frameTable[model.ftIndex++] = fme->m_textureID;
+								model.indexes[model.ftIndex++].z = fme->m_textureID;
 							}
 						}
 					}
 					else {
-						model.angleTable[model.atIndex++] = anglesIndexes[wa];
+						model.indexes[model.atIndex++].y = anglesIndexes[wa];
 					}
 				}
 			}
