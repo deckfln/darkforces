@@ -21,7 +21,7 @@ void dfObject::set(float pch, float yaw, float rol, int difficulty)
 
 	yaw = glm::radians(yaw);
 	m_direction.x = sin(yaw);	// in level space
-	m_direction.y = cos(yaw);
+	m_direction.y = -cos(yaw);
 	m_direction.z = 0;
 
 	m_difficulty = difficulty;
