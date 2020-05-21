@@ -93,10 +93,8 @@ void dfSprites::update(time_t t)
 	}
 
 	if (m_updated) {
-		geometry->updateVertices(0, m_toDisplay);
-		geometry->updateAttribute("aData", 0, m_toDisplay);
-		geometry->updateAttribute("aDirection", 0, m_toDisplay);
 		geometry->verticesToDisplay(m_toDisplay);
+		geometry->dirty();
 		m_updated = false;
 	}
 

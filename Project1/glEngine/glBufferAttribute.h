@@ -21,6 +21,8 @@ protected:
 
 	glBufferObject *vbo;
 
+	bool m_dirty = false;		// the attribute need to be uploaded to the GPU
+
 public:
 	glBufferAttribute();
 	glBufferAttribute(const std::string _name, GLuint _type, void *_data, GLsizei itemSize, GLsizei len, GLuint _sizeof_element, bool delete_on_exit = true);
@@ -33,6 +35,8 @@ public:
 	void update(int offset = 0, int size = -1);
 	void bind();
 	const std::string get_name(void);
+	void dirty(void) { m_dirty = true; };		// mark the attribute to be uploaded to the GPU
+	void updateIfDirty(void);					// upload the whole buffer to the GPU if needed
 	virtual int get_divisor(void) { return 0; };
 
 	~glBufferAttribute();

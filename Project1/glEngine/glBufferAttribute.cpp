@@ -39,6 +39,16 @@ const std::string glBufferAttribute::get_name(void)
 	return name;
 }
 
+/**
+ * Upload the whole bufer to the GPU
+ */
+void glBufferAttribute::updateIfDirty(void)
+{
+	if (m_dirty) {
+		update();
+	}
+}
+
 const GLuint glBufferAttribute::get_count(void)
 {
 	return count;
@@ -49,6 +59,9 @@ void glBufferAttribute::bind()
 	vbo->bind();
 }
 
+/**
+ * upload the buffer in thr GPU
+ */
 void glBufferAttribute::update(int offset, int size)
 {
 	int le = sizeof_element * itemSize;
@@ -58,6 +71,8 @@ void glBufferAttribute::update(int offset, int size)
 		size = count;
 	}
 	vbo->update(offset * le, size * le, (char *)data + offset * le);
+
+	m_dirty = false;
 }
 
 void *glBufferAttribute::get_index(const int index)

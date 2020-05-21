@@ -89,15 +89,27 @@ void fwGeometry::updateAttribute(const std::string& name, int offset, int size)
 }
 
 /**
- * Update all attributes
+ * Upload all attributes to the GPU based on the toDisplay
  */
 void fwGeometry::update(void)
 {
-	vertices->update();
+	if (m_verticesToDisplay > 0) {
+		// limited number of vertices
+		vertices->update(0, m_verticesToDisplay);
 
-	for (auto attribute : attributes) {
-		attribute.second->update();
+		for (auto attribute : attributes) {
+			attribute.second->update(0, m_verticesToDisplay);
+		}
 	}
+	else {
+		// all of them
+		vertices->update();
+
+		for (auto attribute : attributes) {
+			attribute.second->update();
+		}
+	}
+	m_dirty = false;
 }
 
 /**
@@ -126,6 +138,24 @@ void fwGeometry::verticesToDisplay(int nb)
 	}
 	else {
 		std::cerr << "fwGeometry::count try to display more vertices than the buffer contains" << std::endl;
+	}
+}
+
+/**
+ * update all attributes on the GPU if the geometry is dirty
+ */
+void fwGeometry::updateIfDirty(void)
+{
+	// the whole geometry need to be uploaded ?
+	if (m_dirty) {
+		update();
+	}
+	else {
+		// and test each of the attibute individualy
+		vertices->updateIfDirty();
+		for (auto attribute : attributes) {
+			attribute.second->updateIfDirty();
+		}
 	}
 }
 

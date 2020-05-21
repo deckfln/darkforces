@@ -22,6 +22,8 @@ class fwGeometry: public Reference
 	int current_attribute = 0;
 	std::map <const std::string, glBufferAttribute *> attributes;
 
+	bool m_dirty = false;	// ALL attributes need to be re uploaded to the GPU
+
 	fwSphere *m_pBoundingsphere = nullptr;
 
 public:
@@ -39,6 +41,9 @@ public:
 
 	int verticesToDisplay(void);
 	void verticesToDisplay(int nb);
+
+	void dirty(void) { m_dirty = true; };	// request all attributes to the uploaded to the GPU
+	void updateIfDirty(void);				// check if something need to be uploaded to the GPU
 
 	fwSphere *boundingsphere(void) { return m_pBoundingsphere; };
 	fwSphere *computeBoundingsphere(void);

@@ -98,6 +98,7 @@ void fwRenderer::parseShaders(std::list <fwMesh *> &meshes,
 /***
  * Create lists of frustum visible meshes per type of objects
   *  list of opaque, transparent opaque particles object
+  *  Update fwGeometry if they are dirty
   */
 void fwRenderer::parseChildren(fwObject3D* root, std::list <fwMesh *> meshes[], fwCamera* camera)
 {
@@ -126,6 +127,8 @@ void fwRenderer::parseChildren(fwObject3D* root, std::list <fwMesh *> meshes[], 
 			else {
 				meshes[FW_RENDER_OPAQ].push_front(mesh);
 			}
+
+			mesh->get_geometry()->updateIfDirty();
 		}
 	}
 }
