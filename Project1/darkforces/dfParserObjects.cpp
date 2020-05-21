@@ -43,13 +43,57 @@ dfObject* dfParserObjects::parseSprite(dfWAX* wax, float x, float y, float z, st
 			else if (tokenMap["LOGIC:"] == "ANIM") {
 				sprite->logic(DF_LOGIC_ANIM);
 			}
+			else if (tokenMap["LOGIC:"] == "STORM1") {
+				sprite->logic(DF_LOGIC_TROOP | DF_LOGIC_ANIM);
+			}
+			else if (tokenMap["LOGIC:"] == "INT_DROID") {
+				sprite->logic(DF_LOGIC_INTDROID | DF_LOGIC_ANIM);
+			}
+			else if (tokenMap["LOGIC:"] == "COMMANDO") {
+				sprite->logic(DF_LOGIC_COMMANDO | DF_LOGIC_ANIM);
+			}
+			else if (tokenMap["LOGIC:"] == "I_OFFICER") {
+				sprite->logic(DF_LOGIC_I_OFFICER | DF_LOGIC_ANIM);
+			}
+			else if (tokenMap["LOGIC:"] == "ITEM") {
+				if (tokens[2] == "SHIELD") {
+					sprite->logic(DF_LOGIC_ITEM_SHIELD);
+				}
+				else if (tokens[2] == "ENERGY") {
+					sprite->logic(DF_LOGIC_ITEM_ENERGY);
+				}
+				else {
+					std::cerr << "dfParserObjects::parseSprite logic: item " << tokens[2] << " not implemented" << std::endl;
+				}
+			}
+			else if (tokenMap["LOGIC:"] == "SHIELD") {
+				sprite->logic(DF_LOGIC_ITEM_SHIELD);
+			}
+			else if (tokenMap["LOGIC:"] == "LIFE") {
+				sprite->logic(DF_LOGIC_LIFE);
+			}
+			else if (tokenMap["LOGIC:"] == "REVIVE") {
+				sprite->logic(DF_LOGIC_REVIVE);
+			}
+			else {
+				std::cerr << "dfParserObjects::parseSprite logic: " << tokenMap["LOGIC:"] << " not implemented" << std::endl;
+			}
 		}
 		else if (tokens[0] == "TYPE:") {
 			if (tokenMap["TYPE:"] == "I_OFFICER") {
 				sprite->logic(DF_LOGIC_I_OFFICER | DF_LOGIC_ANIM);
 			}
+			else if (tokenMap["TYPE:"] == "I_OFFICERR") {
+				sprite->logic(DF_LOGIC_I_OFFICER | DF_LOGIC_RED_KEY | DF_LOGIC_ANIM);
+			}
 			else if (tokenMap["TYPE:"] == "COMMANDO") {
 				sprite->logic(DF_LOGIC_COMMANDO | DF_LOGIC_ANIM);
+			}
+			else if (tokenMap["TYPE:"] == "TROOP") {
+				sprite->logic(DF_LOGIC_TROOP | DF_LOGIC_ANIM);
+			}
+			else {
+				std::cerr << "dfParserObjects::parseSprite type: " << tokenMap["TYPE:"] << " not implemented" << std::endl;
 			}
 		}
 		else if (tokens[0] == "HEIGHT:") {
@@ -109,6 +153,9 @@ dfParserObjects::dfParserObjects(dfFileSystem* fs, dfPalette* palette, std::stri
 				);
 
 				m_currentObject++;
+			}
+			else {
+				std::cerr << "dfParserObjects::parseSprite class: " << tokenMap["CLASS:"] << " not implemented" << std::endl;
 			}
 		}
 	}

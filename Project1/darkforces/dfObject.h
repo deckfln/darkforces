@@ -5,10 +5,18 @@
 class dfModel;
 
 enum {
+	DF_LOGIC_NONE,
 	DF_LOGIC_SCENERY = 1,
 	DF_LOGIC_ANIM = 2,
 	DF_LOGIC_I_OFFICER = 4,
-	DF_LOGIC_COMMANDO = 8
+	DF_LOGIC_COMMANDO = 8,
+	DF_LOGIC_TROOP = 16,
+	DF_LOGIC_RED_KEY = 32,
+	DF_LOGIC_INTDROID = 64,
+	DF_LOGIC_ITEM_SHIELD = 128,
+	DF_LOGIC_ITEM_ENERGY = 256,
+	DF_LOGIC_LIFE = 512,
+	DF_LOGIC_REVIVE = 1024
 };
 
 enum {
@@ -42,7 +50,7 @@ enum {
 };
 
 // list of all enemies
-const unsigned long DF_ENEMIES = DF_LOGIC_I_OFFICER | DF_LOGIC_COMMANDO;
+const unsigned long DF_ENEMIES = DF_LOGIC_I_OFFICER | DF_LOGIC_COMMANDO | DF_LOGIC_TROOP;
 
 class dfObject
 {
@@ -51,7 +59,7 @@ protected:
 	glm::vec3 m_direction;		// direction the object is looking to
 
 	int m_logics = 0;			// logic of the object
-	int m_difficulty = 0;
+	int m_difficulty = 0;		// difficulty to be displayed
 
 	int m_state = 0;			// state of the object for WAX, unused for others
 	int m_frame = 0;			// current frame to display based on frameSpeed
