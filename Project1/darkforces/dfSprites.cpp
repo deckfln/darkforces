@@ -31,6 +31,7 @@ dfSprites::dfSprites(int nbSprites, dfAtlasTexture* atlas):
 
 	set(&m_positions[0], atlas->texture(), 1000);
 	geometry->addAttribute("aData", GL_ARRAY_BUFFER, &m_textureIndex[0], 3, sizeof(glm::vec3) * m_size, sizeof(float), false);
+	geometry->addAttribute("aDirection", GL_ARRAY_BUFFER, &m_directions[0], 3, sizeof(glm::vec3) * m_size, sizeof(float), false);
 
 	atlas->bindToMaterial(material);
 }
@@ -61,7 +62,8 @@ void dfSprites::add(dfObject *object)
 
 	object->updateSprite(
 		&m_positions[m_toDisplay],
-		&m_textureIndex[m_toDisplay]
+		&m_textureIndex[m_toDisplay],
+		&m_directions[m_toDisplay]
 	);
 
 	m_toDisplay++;
@@ -81,7 +83,8 @@ void dfSprites::update(time_t t)
 			// if the animation got updated, update the sprite buffers
 			object->updateSprite(
 				&m_positions[i],
-				&m_textureIndex[i]
+				&m_textureIndex[i],
+				&m_directions[i]
 			);
 
 			m_updated = true;
@@ -92,13 +95,14 @@ void dfSprites::update(time_t t)
 	if (m_updated) {
 		geometry->updateVertices(0, m_toDisplay);
 		geometry->updateAttribute("aData", 0, m_toDisplay);
+		geometry->updateAttribute("aDirection", 0, m_toDisplay);
 		geometry->verticesToDisplay(m_toDisplay);
 		m_updated = false;
 	}
 
 	if (m_dirtyModels) {
 		models->bind();
-		models->map(&m_models.models, 0, sizeof(struct SpriteModel)*32);
+		models->map(&m_models.models, 0, sizeof(struct GLmodel));
 		models->unbind();
 		m_dirtyModels = false;
 	}

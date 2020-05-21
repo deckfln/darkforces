@@ -1,8 +1,9 @@
 #version 330 core
 #define DEFINES
 
-layout (location = 0) in vec3 aPos;
-layout (location = 1) in vec3 aData;
+layout (location = 0) in vec3 aPos;			// position of the object
+layout (location = 1) in vec3 aData;		// state, frame ...
+layout (location = 2) in vec3 aDirection;	// direction the object is looking to
 
 uniform mat4 model;
 
@@ -32,6 +33,9 @@ flat out float ambient;
 
 #include "../../../shaders/include/camera.glsl"
 
+// how to pick the correct sprite based on the angle
+uint spriteangle[32] = uint[]( 15, 14, 13, 12, 11, 10, 9 ,8 ,7, 6, 5, 4, 3, 2, 1, 0, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31);
+
 void main()
 {
 
@@ -44,7 +48,14 @@ void main()
 
     sm = modelTable[modelID];
 
+	vec3 viewer2object = normalize(aPos - viewPos);
+	float viewAngle = (dot(aDirection, viewer2object) + 1) * 8.0;
+	//https://stackoverflow.com/questions/1560492/how-to-tell-whether-a-point-is-to-the-right-or-left-side-of-a-line
+	//Use the sign of the determinant of vectors (AB,AM), where M(X,Y) is the query point:
+	float det = sign(aDirection.x * viewer2object.z - aDirection.z * viewer2object.x);
+	det = clamp(det, 0, 1);
+
 	uint angles = indexes[uint(stateID) + uint(sm.statesIndex.r)].x;
-	uint frames = indexes[angles + uint(0)].y;
+	uint frames = indexes[angles + spriteangle[uint(viewAngle + det * 16)] ].y;
 	vTextureID = indexes[frames + frameID].z;
 }

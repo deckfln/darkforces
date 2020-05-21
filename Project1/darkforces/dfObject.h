@@ -64,7 +64,7 @@ public:
 	bool named(std::string name);
 	int difficulty(void);
 	std::string& model(void);
-	bool updateSprite(glm::vec3* position, glm::vec3* texture);
+	bool updateSprite(glm::vec3* position, glm::vec3* texture, glm::vec3* direction);
 	bool update(time_t t);		// update based on timer
 	void logic(int logic);
 	~dfObject();

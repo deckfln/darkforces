@@ -20,8 +20,8 @@ void dfObject::set(float pch, float yaw, float rol, int difficulty)
 	// YAW = value in degrees where 0 is at the "top of the screen when you look at the map". The value increases clockwise
 
 	yaw = glm::radians(yaw);
-	m_direction.x = cos(yaw);	// in level space
-	m_direction.y = sin(yaw);
+	m_direction.x = sin(yaw);	// in level space
+	m_direction.y = cos(yaw);
 	m_direction.z = 0;
 
 	m_difficulty = difficulty;
@@ -51,7 +51,7 @@ std::string& dfObject::model(void)
 /**
  * Update the sprite buffers if the object is different
  */
-bool dfObject::updateSprite(glm::vec3* position, glm::vec3* texture)
+bool dfObject::updateSprite(glm::vec3* position, glm::vec3* texture, glm::vec3* direction)
 {
 	glm::vec3 level(m_x, m_y, m_z);
 	glm::vec3 gl;
@@ -60,6 +60,10 @@ bool dfObject::updateSprite(glm::vec3* position, glm::vec3* texture)
 	position->x = gl.x;
 	position->y = gl.y;
 	position->z = gl.z;
+
+	direction->x = m_direction.x;
+	direction->y = m_direction.z;	// level space to gl space
+	direction->z = m_direction.y;
 
 	texture->r = (float)m_source->id();
 	texture->g = (float)m_state;
