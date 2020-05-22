@@ -6,6 +6,7 @@
 #include "dfFileSystem.h"
 #include "dfParseINF.h"
 #include "dfModel/dfWAX.h"
+#include "dfModel/dfFME.h"
 #include "dfObject/dfSprite.h"
 #include "dfPalette.h"
 #include "dfAtlasTexture.h"
@@ -13,11 +14,10 @@
 #include "../framework/fwScene.h"
 #include "dfGame.h"
 
-dfObject* dfParserObjects::parseSprite(dfWAX* wax, float x, float y, float z, std::istringstream& infile)
+dfObject* dfParserObjects::parseObject(dfObject* sprite, std::istringstream& infile)
 {
 	std::string line, dump;
 
-	dfSprite* sprite = new dfSprite(wax, x, y, z);
 	std::map<std::string, std::string> tokenMap;
 
 	while (std::getline(infile, line))
@@ -63,7 +63,7 @@ dfObject* dfParserObjects::parseSprite(dfWAX* wax, float x, float y, float z, st
 					sprite->logic(DF_LOGIC_ITEM_ENERGY);
 				}
 				else {
-					std::cerr << "dfParserObjects::parseSprite logic: item " << tokens[2] << " not implemented" << std::endl;
+					std::cerr << "dfParserObjects::parseObject logic: item " << tokens[2] << " not implemented" << std::endl;
 				}
 			}
 			else if (tokenMap["LOGIC:"] == "SHIELD") {
@@ -76,7 +76,7 @@ dfObject* dfParserObjects::parseSprite(dfWAX* wax, float x, float y, float z, st
 				sprite->logic(DF_LOGIC_REVIVE);
 			}
 			else {
-				std::cerr << "dfParserObjects::parseSprite logic: " << tokenMap["LOGIC:"] << " not implemented" << std::endl;
+				std::cerr << "dfParserObjects::parseObject logic: " << tokenMap["LOGIC:"] << " not implemented" << std::endl;
 			}
 		}
 		else if (tokens[0] == "TYPE:") {
@@ -93,11 +93,17 @@ dfObject* dfParserObjects::parseSprite(dfWAX* wax, float x, float y, float z, st
 				sprite->logic(DF_LOGIC_TROOP | DF_LOGIC_ANIM);
 			}
 			else {
-				std::cerr << "dfParserObjects::parseSprite type: " << tokenMap["TYPE:"] << " not implemented" << std::endl;
+				std::cerr << "dfParserObjects::parseObject type: " << tokenMap["TYPE:"] << " not implemented" << std::endl;
 			}
 		}
 		else if (tokens[0] == "HEIGHT:") {
-			sprite->height(std::stof(tokens[1]));
+			sprite->height(std::stof(tokenMap["HEIGHT:"]));
+		}
+		else if (tokens[0] == "RADIUS:") {
+			sprite->radius(std::stof(tokenMap["RADIUS:"]));
+		}
+		else {
+			std::cerr << "dfParserObjects::parseObject command: " << tokens[0] << " not implemented" << std::endl;
 		}
 	}
 
@@ -127,6 +133,12 @@ dfParserObjects::dfParserObjects(dfFileSystem* fs, dfPalette* palette, std::stri
 		if (tokens[0] == "SPRS") {
 			m_waxes.resize(std::stoi(tokens[1]));
 		}
+		else if (tokens[0] == "FMES") {
+			m_fmes.resize(std::stoi(tokens[1]));
+		}
+		else if (tokens[0] == "FME:") {
+			m_fmes[m_currentFME++] = new dfFME(fs, palette, tokens[1]);
+		}
 		else if (tokens[0] == "SPR:") {
 			m_waxes[m_currentWax++] = new dfWAX(fs, palette, tokens[1]);
 		}
@@ -147,11 +159,20 @@ dfParserObjects::dfParserObjects(dfFileSystem* fs, dfPalette* palette, std::stri
 			int difficulty = std::stoi(tokenMap["DIFF:"]);
 
 			if (tokenMap["CLASS:"] == "SPRITE") {
-				m_objects[m_currentObject] = parseSprite(m_waxes[data], x, y, z, infile);
+				dfSprite* sprite = new dfSprite(m_waxes[data], x, y, z);
+				m_objects[m_currentObject] = parseObject(sprite, infile);
 				m_objects[m_currentObject]->set(
 					pch, yaw, rol, difficulty
 				);
 
+				m_currentObject++;
+			}
+			else if (tokenMap["CLASS:"] == "FRAME") {
+				dfObject* frame = new dfObject(m_fmes[data], x, y, z);
+				m_objects[m_currentObject] = parseObject(frame, infile);
+				m_objects[m_currentObject]->set(
+					pch, yaw, rol, difficulty
+				);
 				m_currentObject++;
 			}
 			else {
@@ -170,6 +191,9 @@ dfAtlasTexture* dfParserObjects::buildAtlasTexture(void)
 	for (auto wax : m_waxes) {
 		wax->getFrames(frames);
 	}
+	for (auto fme : m_fmes) {
+		frames.push_back((dfBitmapImage *)fme->frame());
+	}
 
 	m_textures = new dfAtlasTexture(frames);
 
@@ -187,6 +211,10 @@ void dfParserObjects::buildSprites(void)
 
 	for (auto wax : m_waxes) {
 		m_sprites->addModel(wax);
+	}
+
+	for (auto fme : m_fmes) {
+		m_sprites->addModel(fme);
 	}
 
 	dfObject* object;

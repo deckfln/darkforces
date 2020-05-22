@@ -131,7 +131,7 @@
     <ClCompile Include="darkforces\dfCollision.cpp" />
     <ClCompile Include="darkforces\dfFileGOB.cpp" />
     <ClCompile Include="darkforces\dfFileSystem.cpp" />
-    <ClCompile Include="darkforces\dfFME.cpp" />
+    <ClCompile Include="darkforces\dfFrame.cpp" />
     <ClCompile Include="darkforces\dfGame.cpp" />
     <ClCompile Include="darkforces\dfLogicElevator.cpp" />
     <ClCompile Include="darkforces\dfLogicStop.cpp" />
@@ -141,6 +141,7 @@
     <ClCompile Include="darkforces\dfMessageBus.cpp" />
     <ClCompile Include="darkforces\dfMessageClient.cpp" />
     <ClCompile Include="darkforces\dfModel.cpp" />
+    <ClCompile Include="darkforces\dfModel\dfFME.cpp" />
     <ClCompile Include="darkforces\dfModel\dfWAX.cpp" />
     <ClCompile Include="darkforces\dfObject.cpp" />
     <ClCompile Include="darkforces\dfObject\dfSprite.cpp" />
@@ -241,7 +242,7 @@
     <ClInclude Include="darkforces\dfCollision.h" />
     <ClInclude Include="darkforces\dfFileGOB.h" />
     <ClInclude Include="darkforces\dfFileSystem.h" />
-    <ClInclude Include="darkforces\dfFME.h" />
+    <ClInclude Include="darkforces\dfFrame.h" />
     <ClInclude Include="darkforces\dfGame.h" />
     <ClInclude Include="darkforces\dfLogicElevator.h" />
     <ClInclude Include="darkforces\dfLogicStop.h" />
@@ -251,6 +252,7 @@
     <ClInclude Include="darkforces\dfMessageBus.h" />
     <ClInclude Include="darkforces\dfMessageClient.h" />
     <ClInclude Include="darkforces\dfModel.h" />
+    <ClInclude Include="darkforces\dfModel\dfFME.h" />
     <ClInclude Include="darkforces\dfModel\dfWAX.h" />
     <ClInclude Include="darkforces\dfObject.h" />
     <ClInclude Include="darkforces\dfObject\dfSprite.h" />

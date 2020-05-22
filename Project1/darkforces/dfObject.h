@@ -61,6 +61,13 @@ protected:
 	int m_logics = 0;			// logic of the object
 	int m_difficulty = 0;		// difficulty to be displayed
 
+	float m_radius = 0;			// This defines the size of an invisible circle around the object where the PLAYER cannot enter or shoot through.
+								// *Frames and sprites have radiuses by default*, but 3D objects don't, so you have to set one unless you want the
+								// PLAYER to walk right through. You can use this with a Spirit to create an invisible obstacle
+
+	float m_height = 0;			// Similar to radius, height defines an area above (positive value) or below (negative value) an object where you can'twalk or fire through. 
+								// Therefore, using radius and height together, you can effectively create an impenetrable cylinder-shaped area around an object
+
 	int m_state = 0;			// state of the object for WAX, unused for others
 	int m_frame = 0;			// current frame to display based on frameSpeed
 	time_t m_lastFrame = 0;
@@ -69,6 +76,10 @@ protected:
 public:
 	dfObject(dfModel *source, float x, float y, float z);
 	void set(float pch, float yaw, float rol, int difficulty);
+	void height(float h) { m_height = h; };
+	float height(void) { return m_height; };
+	void radius(float r) { m_radius = r; };
+	float radius(void) { return m_radius; };
 	bool named(std::string name);
 	int difficulty(void);
 	std::string& model(void);

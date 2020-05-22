@@ -6,7 +6,7 @@
 #include "../dfModel.h"
 
 class dfFileSystem;
-class dfFME;
+class dfFrame;
 class dfPalette;
 class dfBitmapImage;
 
@@ -18,7 +18,7 @@ enum dfWaxMode {
 
 struct dfWaxAnimation {
 	int m_nbframes = 0;
-	std::vector<dfFME*> frames;
+	std::vector<dfFrame *> frames;
 };
 
 struct dfWaxAngles {
@@ -43,7 +43,7 @@ class dfWAX: public dfModel
 	std::vector<dfWaxAngles *> m_states;
 
 	std::map<int, dfWaxAnimation*> m_animations;
-	std::map<int, dfFME*> m_frames;
+	std::map<int, dfFrame *> m_frames;
 
 public:
 	dfWAX(dfFileSystem* fs, dfPalette *palette, std::string& name);

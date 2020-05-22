@@ -4,7 +4,7 @@
 
 #include "../dfFileGOB.h"
 #include "../dfFileSystem.h"
-#include "../dfFME.h"
+#include "../dfFrame.h"
 
 #pragma pack(push)
 struct _dfWaxTable {
@@ -62,9 +62,6 @@ struct _dfWaxFrame {
 dfWAX::dfWAX(dfFileSystem* fs, dfPalette* palette, std::string& name) :
 	dfModel(name)
 {
-	if (m_name == "REDLIT.WAX") {
-		printf("dfWAX::dfWAX\n");
-	}
 	m_data = fs->load(DF_SPRITES_GOB, name);
 	if (m_data == nullptr) {
 		std::cerr << "dfWAX::dfWAX cannot load " << name << std::endl;
@@ -112,13 +109,13 @@ dfWAX::dfWAX(dfFileSystem* fs, dfPalette* palette, std::string& name) :
 							if (seq->FRAMES[k] > 0) {
 								animation->m_nbframes++;
 								int offset = seq->FRAMES[k];
-								dfFME* frame = nullptr;
+								dfFrame* frame = nullptr;
 
 								if (m_frames.count(offset) > 0) {
 									frame = m_frames[k];
 								}
 								else {
-									m_frames[offset] = frame = new dfFME(m_data, seq->FRAMES[k], palette, true);
+									m_frames[offset] = frame = new dfFrame(m_data, seq->FRAMES[k], palette);
 									this->m_insertX = frame->m_InsertX;
 									this->m_insertY = frame->m_InsertY;
 								}
@@ -210,7 +207,7 @@ void dfWAX::spriteModel(GLmodel &model, int id)
 						model.indexes[model.atIndex++].y = model.ftIndex;
 
 						for (auto frame = 0; frame < 32; frame++) {
-							dfFME* fme = wa->frames[frame];
+							dfFrame* fme = wa->frames[frame];
 							if (fme) {
 								model.indexes[model.ftIndex++].z = fme->m_textureID;
 							}
@@ -253,6 +250,10 @@ int dfWAX::nextFrame(int state, unsigned int frame)
 dfWAX::~dfWAX()
 {
 	delete m_data;
+
+	for (auto state : m_states) {
+		delete state;
+	}
 
 	for (auto frames : m_frames) {
 		delete frames.second;

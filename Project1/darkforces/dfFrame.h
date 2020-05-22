@@ -4,7 +4,7 @@
 
 class dfPalette;
 
-class dfFME: public dfBitmapImage
+class dfFrame: public dfBitmapImage
 {
 	int m_references = 1;
 public:
@@ -15,10 +15,10 @@ public:
 						// Negative values shift the cell up
 						// Positive values shift the cell down 
 
-	dfFME(void *data, int offset, dfPalette* palette, bool from_wax=false);
+	dfFrame(void* data, int offset, dfPalette* palette);
 	int references(int v) {
-		m_references+=v;
+		m_references += v;
 		return m_references;
 	};
-	~dfFME();
+	~dfFrame();
 };

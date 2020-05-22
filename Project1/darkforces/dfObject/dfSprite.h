@@ -6,7 +6,6 @@ class dfWAX;
 
 class dfSprite: public dfObject
 {
-	float m_height = 0;
 	int m_state = 0;	// current state of the sprite
 	int m_frame = 0;	// frame position in the animation
 

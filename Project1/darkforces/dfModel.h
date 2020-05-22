@@ -21,6 +21,9 @@ struct SpriteModel {
 	glm::vec2 insert;	// offset of center point
 	glm::vec2 world;
 	glm::ivec2 states;	// index of the start of the states
+						// if x < 65535 : offset in the indexes table for state
+						// if x === 6535
+						//    y = textureID
 };
 
 struct GLmodel {

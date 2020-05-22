@@ -1,4 +1,4 @@
-#include "dfFME.h"
+#include "dfFrame.h"
 
 #include <iostream>
 #include "dfPalette.h"
@@ -19,31 +19,34 @@ struct _FME_Header_from_WAX {
 	long UnitWidth;	// Unused 
 	long UnitHeight;// Unused 
 	long pad3;		// Unused 
-	long pad4;		// Unuse
+	long pad4;		// Unused
 };
 
 struct _FME_Image {
-    long SizeX;     // Size of the FME, X value 
-    long SizeY;     // Size of the FME, Y value 
-    long Compressed;// 0 = not compressed
-                    // 1 = compressed 
-    long DataSize;  // Datasize for compressed FMEs,
-                    // equals length of the FME file - 32
-                    // If not compressed, DataSize = 0 
-    long ColOffs;   // Always 0, because columns table 
-                    // follows just after 
-    long pad1;      // Unused
+	long SizeX;     // Size of the FME, X value 
+	long SizeY;     // Size of the FME, Y value 
+	long Compressed;// 0 = not compressed
+					// 1 = compressed 
+	long DataSize;  // Datasize for compressed FMEs,
+					// equals length of the FME file - 32
+					// If not compressed, DataSize = 0 
+	long ColOffs;   // Always 0, because columns table 
+					// follows just after 
+	long pad1;      // Unused
 	unsigned char data[1];	// start of the data
 };
 #pragma pack(pop)
 
-dfFME::dfFME(void* data, int offset, dfPalette* palette, bool from_wax)
+/**
+ * initalize the FME
+ */
+dfFrame::dfFrame(void* data, int offset, dfPalette* palette)
 {
-	_FME_Header_from_WAX* header = (_FME_Header_from_WAX*)((char *)data + offset);
-	_FME_Image* image = (_FME_Image*)((char *)data + header->Cell);
+	_FME_Header_from_WAX* header = (_FME_Header_from_WAX*)((char*)data + offset);
+	_FME_Image* image = (_FME_Image*)((char*)data + header->Cell);
 
-	m_width = image->SizeX;
-	m_height = image->SizeY;
+	m_targetWidth = m_width = image->SizeX;
+	m_targetHeight = m_height = image->SizeY;
 	m_nrChannels = 4;
 	m_InsertX = header->InsertX;
 	m_InsertY = header->InsertY;
@@ -51,7 +54,7 @@ dfFME::dfFME(void* data, int offset, dfPalette* palette, bool from_wax)
 	// Cheat for negative insertY 
 	// EG: rock height=12, but inserY=-10, so rocks are in the ground
 	if (m_InsertY < 0) {
-		m_InsertY = -m_height-1;
+		m_InsertY = -m_height - 1;
 	}
 
 	int size = m_width * m_height;
@@ -144,7 +147,7 @@ dfFME::dfFME(void* data, int offset, dfPalette* palette, bool from_wax)
 			p1 = y * m_width * 4;
 			p = p1 + (m_width - 1) * 4;
 
-			for (auto x = 0; x < m_width/2; x++) {
+			for (auto x = 0; x < m_width / 2; x++) {
 				v = m_data[p];  m_data[p] = m_data[p1]; m_data[p1] = v;	p++; p1++;
 				v = m_data[p];  m_data[p] = m_data[p1]; m_data[p1] = v;	p++; p1++;
 				v = m_data[p];  m_data[p] = m_data[p1]; m_data[p1] = v;	p++; p1++;
@@ -155,6 +158,7 @@ dfFME::dfFME(void* data, int offset, dfPalette* palette, bool from_wax)
 	}
 }
 
-dfFME::~dfFME()
+dfFrame::~dfFrame()
 {
+	delete[] m_data;
 }
