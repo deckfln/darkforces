@@ -4,27 +4,11 @@
 #include "dfSprites.h"
 #include "dfLevel.h"
 
-dfObject::dfObject(dfModel *source, float x, float y, float z):
+dfObject::dfObject(dfModel *source, glm::vec3& position, float ambient):
 	m_source(source),
-	m_x(x),
-	m_y(y),
-	m_z(z)
+	m_position(position),
+	m_ambient(ambient)
 {
-}
-
-/**
- * set object attributes
- */
-void dfObject::set(float pch, float yaw, float rol, int difficulty)
-{
-	// YAW = value in degrees where 0 is at the "top of the screen when you look at the map". The value increases clockwise
-
-	yaw = glm::radians(yaw);
-	m_direction.x = sin(yaw);	// in level space
-	m_direction.y = -cos(yaw);
-	m_direction.z = 0;
-
-	m_difficulty = difficulty;
 }
 
 /**
@@ -51,23 +35,15 @@ std::string& dfObject::model(void)
 /**
  * Update the sprite buffers if the object is different
  */
-bool dfObject::updateSprite(glm::vec3* position, glm::vec3* texture, glm::vec3* direction)
+bool dfObject::updateSprite(glm::vec3* position, glm::vec4* texture, glm::vec3* direction)
 {
-	glm::vec3 level(m_x, m_y, m_z);
 	glm::vec3 gl;
-	dfLevel::level2gl(level, gl);
+	dfLevel::level2gl(m_position, gl);
 
-	position->x = gl.x;
-	position->y = gl.y;
-	position->z = gl.z;
-
-	direction->x = m_direction.x;
-	direction->y = m_direction.z;	// level space to gl space
-	direction->z = m_direction.y;
+	*position = gl;
 
 	texture->r = (float)m_source->id();
-	texture->g = (float)m_state;
-	texture->b = (float)m_frame;
+	texture->a = m_ambient;
 	return true;
 }
 
@@ -76,23 +52,6 @@ bool dfObject::updateSprite(glm::vec3* position, glm::vec3* texture, glm::vec3* 
  */
 bool dfObject::update(time_t t)
 {
-	if (m_logics & DF_LOGIC_ANIM){
-		int frameRate = m_source->framerate(m_state);
-		if (frameRate == 0) {
-			// static objects like FME are not updated
-			return false;
-		}
-
-		time_t frameTime = 1000 / frameRate; // time of one frame in milliseconds
-
-		time_t delta = t - m_lastFrame;
-		if (delta >= frameTime) {
-			m_frame = m_source->nextFrame(m_state, m_frame);
-			m_lastFrame = t;
-			return true;
-		}
-	}
-
 	return false;
 }
 
@@ -102,13 +61,6 @@ bool dfObject::update(time_t t)
 void dfObject::logic(int logic)
 {
 	m_logics |= logic;
-
-	if (logic & DF_LOGIC_SCENERY) {
-		m_state = DF_STATE_SCENERY_NORMAL;
-	}
-	else if (logic & DF_ENEMIES) {
-		m_state = DF_STATE_ENEMY_STAY_STILL;
-	}
 }
 
 dfObject::~dfObject()

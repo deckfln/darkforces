@@ -17,7 +17,7 @@ class dfSprites: public fwSprites
 {
 	std::vector<glm::vec3> m_positions;		// position of each sprite
 	std::vector<glm::vec3> m_directions;	// direction of the virtual object
-	std::vector<glm::vec3> m_textureIndex;	// stae, frame for the GPU to display the correct texture
+	std::vector<glm::vec4> m_textureIndex;	// stae, frame for the GPU to display the correct texture
 
 	int m_nbObjects= 0;
 	std::vector<dfObject *> m_objects;

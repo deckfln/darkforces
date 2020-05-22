@@ -2,7 +2,7 @@
 #define DEFINES
 
 layout (location = 0) in vec3 aPos;			// position of the object
-layout (location = 1) in vec3 aData;		// state, frame ...
+layout (location = 1) in vec4 aData;		// state, frame ...
 layout (location = 2) in vec3 aDirection;	// direction the object is looking to
 
 uniform mat4 model;
@@ -29,7 +29,7 @@ out vec3 world;
 out struct SpriteModel sm;
 
 flat out uint vTextureID;	// index start in megatexture
-flat out float ambient;
+flat out float vAmbient;
 
 #include "../../../shaders/include/camera.glsl"
 
@@ -45,6 +45,7 @@ void main()
     uint modelID = uint(aData.r);
     uint stateID = uint(aData.g);
     uint frameID = uint(aData.b);
+	vAmbient = aData.a;
 
     sm = modelTable[modelID];
 

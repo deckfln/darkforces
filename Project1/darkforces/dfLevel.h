@@ -68,7 +68,6 @@ class dfLevel
 	dfParserObjects* m_objects = nullptr;		// all objects in the level
 
 	void loadBitmaps(dfFileSystem* fs, std::string file);
-	void buildAtlasMap(void);
 	void spacePartitioning(void);
 	void buildGeometry(void);
 	dfSuperSector* findSuperSector(glm::vec3& position);
@@ -80,6 +79,7 @@ class dfLevel
 public:
 	dfLevel(dfFileSystem* fs, std::string file);
 	dfSector* findSector(glm::vec3& position);
+	dfSector* findSectorLVL(glm::vec3& level_position);
 	void testSwitch(fwAABBox& player);
 	void draw(fwCamera* camera, fwScene* scene);
 	std::vector<dfSector*>& sectorsID(void) { return m_sectorsID; };

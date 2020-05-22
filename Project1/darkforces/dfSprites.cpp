@@ -30,7 +30,7 @@ dfSprites::dfSprites(int nbSprites, dfAtlasTexture* atlas):
 	}
 
 	set(&m_positions[0], atlas->texture(), 1000);
-	geometry->addAttribute("aData", GL_ARRAY_BUFFER, &m_textureIndex[0], 3, sizeof(glm::vec3) * m_size, sizeof(float), false);
+	geometry->addAttribute("aData", GL_ARRAY_BUFFER, &m_textureIndex[0], 4, sizeof(glm::vec4) * m_size, sizeof(float), false);
 	geometry->addAttribute("aDirection", GL_ARRAY_BUFFER, &m_directions[0], 3, sizeof(glm::vec3) * m_size, sizeof(float), false);
 
 	atlas->bindToMaterial(material);

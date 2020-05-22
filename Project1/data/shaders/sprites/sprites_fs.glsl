@@ -35,7 +35,7 @@ void main()
 		discard;
 	}
 
-	gFragColor = color;
+	gFragColor = color * ambient;
 	gWorld = world;
 	gNormal = vec3(0);
 

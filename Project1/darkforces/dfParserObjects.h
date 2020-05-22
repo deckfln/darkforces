@@ -12,6 +12,7 @@ class dfPalette;
 class dfAtlasTexture;
 class dfSprites;
 class fwScene;
+class dfLevel;
 
 class dfParserObjects
 {
@@ -29,7 +30,7 @@ class dfParserObjects
 	dfObject* parseObject(dfObject* sprite, std::istringstream& infile);
 
 public:
-	dfParserObjects(dfFileSystem* fs, dfPalette* palette, std::string file);
+	dfParserObjects(dfFileSystem* fs, dfPalette* palette, std::string file, dfLevel* level);
 	dfAtlasTexture* buildAtlasTexture(void);
 	void buildSprites(void);
 	void add2scene(fwScene*);

@@ -14,11 +14,15 @@ in struct SpriteModel sm[];
 flat in uint vTextureID[];	// index start in megatexture
 flat out uint textureID;	// index start in megatexture
 
+flat in float vAmbient[];	// index start in megatexture
+flat out float ambient;	// index start in megatexture
+
 out vec2 TexCoord;
 
 void main()
 {
     textureID = vTextureID[0]; // Point has only one vertex
+    ambient = vAmbient[0]; // Point has only one vertex
 
 	vec4 p1 = gl_in[0].gl_Position;
 

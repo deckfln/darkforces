@@ -13,6 +13,7 @@
 #include "dfSprites.h"
 #include "../framework/fwScene.h"
 #include "dfGame.h"
+#include "dfLevel.h"
 
 dfObject* dfParserObjects::parseObject(dfObject* sprite, std::istringstream& infile)
 {
@@ -39,21 +40,26 @@ dfObject* dfParserObjects::parseObject(dfObject* sprite, std::istringstream& inf
 		else if (tokens[0] == "LOGIC:") {
 			if (tokenMap["LOGIC:"] == "SCENERY") {
 				sprite->logic(DF_LOGIC_SCENERY);
+				((dfSprite *)sprite)->state(DF_STATE_SCENERY_NORMAL);
 			}
 			else if (tokenMap["LOGIC:"] == "ANIM") {
 				sprite->logic(DF_LOGIC_ANIM);
 			}
 			else if (tokenMap["LOGIC:"] == "STORM1") {
 				sprite->logic(DF_LOGIC_TROOP | DF_LOGIC_ANIM);
+				((dfSprite*)sprite)->state(DF_STATE_ENEMY_STAY_STILL);
 			}
 			else if (tokenMap["LOGIC:"] == "INT_DROID") {
 				sprite->logic(DF_LOGIC_INTDROID | DF_LOGIC_ANIM);
+				((dfSprite*)sprite)->state(DF_STATE_ENEMY_STAY_STILL);
 			}
 			else if (tokenMap["LOGIC:"] == "COMMANDO") {
 				sprite->logic(DF_LOGIC_COMMANDO | DF_LOGIC_ANIM);
+				((dfSprite*)sprite)->state(DF_STATE_ENEMY_STAY_STILL);
 			}
 			else if (tokenMap["LOGIC:"] == "I_OFFICER") {
 				sprite->logic(DF_LOGIC_I_OFFICER | DF_LOGIC_ANIM);
+				((dfSprite*)sprite)->state(DF_STATE_ENEMY_STAY_STILL);
 			}
 			else if (tokenMap["LOGIC:"] == "ITEM") {
 				if (tokens[2] == "SHIELD") {
@@ -82,15 +88,19 @@ dfObject* dfParserObjects::parseObject(dfObject* sprite, std::istringstream& inf
 		else if (tokens[0] == "TYPE:") {
 			if (tokenMap["TYPE:"] == "I_OFFICER") {
 				sprite->logic(DF_LOGIC_I_OFFICER | DF_LOGIC_ANIM);
+				((dfSprite*)sprite)->state(DF_STATE_ENEMY_STAY_STILL);
 			}
 			else if (tokenMap["TYPE:"] == "I_OFFICERR") {
 				sprite->logic(DF_LOGIC_I_OFFICER | DF_LOGIC_RED_KEY | DF_LOGIC_ANIM);
+				((dfSprite*)sprite)->state(DF_STATE_ENEMY_STAY_STILL);
 			}
 			else if (tokenMap["TYPE:"] == "COMMANDO") {
 				sprite->logic(DF_LOGIC_COMMANDO | DF_LOGIC_ANIM);
+				((dfSprite*)sprite)->state(DF_STATE_ENEMY_STAY_STILL);
 			}
 			else if (tokenMap["TYPE:"] == "TROOP") {
 				sprite->logic(DF_LOGIC_TROOP | DF_LOGIC_ANIM);
+				((dfSprite*)sprite)->state(DF_STATE_ENEMY_STAY_STILL);
 			}
 			else {
 				std::cerr << "dfParserObjects::parseObject type: " << tokenMap["TYPE:"] << " not implemented" << std::endl;
@@ -110,7 +120,7 @@ dfObject* dfParserObjects::parseObject(dfObject* sprite, std::istringstream& inf
 	return sprite;
 }
 
-dfParserObjects::dfParserObjects(dfFileSystem* fs, dfPalette* palette, std::string file)
+dfParserObjects::dfParserObjects(dfFileSystem* fs, dfPalette* palette, std::string file, dfLevel *level)
 {
 	char* sec = fs->load(DF_DARK_GOB, file + ".O");
 	std::istringstream infile(sec);
@@ -148,31 +158,41 @@ dfParserObjects::dfParserObjects(dfFileSystem* fs, dfPalette* palette, std::stri
 		else if (tokens[0] == "CLASS:") {
 			int data = std::stoi(tokenMap["DATA:"]);
 
-			float x = -std::stof(tokenMap["X:"]),
-				y = std::stof(tokenMap["Z:"]),
-				z = -std::stof(tokenMap["Y:"]);
+			glm::vec3 position(
+				-std::stof(tokenMap["X:"]),
+				std::stof(tokenMap["Z:"]),
+				-std::stof(tokenMap["Y:"])
+			);
 
-			float pch = std::stof(tokenMap["PCH:"]),
-				yaw = std::stof(tokenMap["YAW:"]),
-				rol = std::stof(tokenMap["ROL:"]);
+			// convert level space to gl space and search the sectors
+			float ambient = 0;
+			dfSector* sector = level->findSectorLVL(position);
+			if (sector) {
+				ambient = sector->m_ambient / 32.0f;
+			}
+			else {
+				std::cerr << "dfParserObjects::dfParserObjects cannot find sector for " << position.x << ":" << position.y << ":" << position.z << std::endl;
+			}
+
+			glm::vec3 rotation(std::stof(tokenMap["PCH:"]),
+				std::stof(tokenMap["YAW:"]),
+				std::stof(tokenMap["ROL:"])
+			);
 
 			int difficulty = std::stoi(tokenMap["DIFF:"]);
 
 			if (tokenMap["CLASS:"] == "SPRITE") {
-				dfSprite* sprite = new dfSprite(m_waxes[data], x, y, z);
+				dfSprite* sprite = new dfSprite(m_waxes[data], position, ambient);
+				sprite->difficulty(difficulty);
+				sprite->rotation(rotation);
 				m_objects[m_currentObject] = parseObject(sprite, infile);
-				m_objects[m_currentObject]->set(
-					pch, yaw, rol, difficulty
-				);
 
 				m_currentObject++;
 			}
 			else if (tokenMap["CLASS:"] == "FRAME") {
-				dfObject* frame = new dfObject(m_fmes[data], x, y, z);
+				dfObject* frame = new dfObject(m_fmes[data], position, ambient);
+				frame->difficulty(difficulty);
 				m_objects[m_currentObject] = parseObject(frame, infile);
-				m_objects[m_currentObject]->set(
-					pch, yaw, rol, difficulty
-				);
 				m_currentObject++;
 			}
 			else {

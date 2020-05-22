@@ -96,7 +96,7 @@ dfLevel::dfLevel(dfFileSystem* fs, std::string file)
 	m_inf = new dfParseINF(fs, file);
 
 	// load the Object file
-	m_objects = new dfParserObjects(fs, m_palette, file);
+	m_objects = new dfParserObjects(fs, m_palette, file, this);
 	m_sprites = m_objects->buildAtlasTexture();
 	m_sprites->save("D:/dev/Project1/Project1/images/sprites.png");
 
@@ -377,7 +377,7 @@ void dfLevel::testSwitch(fwAABBox& player)
 }
 
 /**
- * return the sector fitting the position
+ * return the sector fitting the GL position
  */
 dfSector* dfLevel::findSector(glm::vec3& position)
 {
@@ -433,6 +433,20 @@ dfSector* dfLevel::findSector(glm::vec3& position)
 	}
 
 	return nullptr;	// not here
+}
+
+/**
+ * Parse all sectors to find the one with the position
+ * provided by level space
+ */
+dfSector* dfLevel::findSectorLVL(glm::vec3& level_position)
+{
+	for (auto sector : m_sectorsID) {
+		if (sector->inAABBox(level_position)) {
+			return sector;
+		}
+	}
+	return nullptr;
 }
 
 /**
