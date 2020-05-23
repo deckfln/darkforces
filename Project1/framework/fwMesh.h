@@ -13,6 +13,12 @@
 
 constexpr auto MESH = 1;
 
+enum class fwMeshRendering {
+	FW_MESH_TRIANGLES,
+	FW_MESH_POINT,
+	FW_MESH_LINE
+};
+
 class fwMesh: public fwObject3D
 {
 	bool visible = true;		// object is displayed in the scene
@@ -24,6 +30,8 @@ class fwMesh: public fwObject3D
 								// 1... => the app is sorting the meshes. 1 is drawn first, then 2 ....
 	void *m_pExtra = nullptr;
 	std::list <fwUniform*> m_uniforms;	// meshes can have dedicated uniforms (not included in the material)
+	fwMeshRendering m_rendering = fwMeshRendering::FW_MESH_TRIANGLES;	// Rendering mode of the mesh
+	float m_pointSize = 1.0;			// for FW_MESH_POINT rendering
 
 protected:
 	fwGeometry *geometry = nullptr;
@@ -72,6 +80,9 @@ public:
 	void updateAttribute(const std::string &attribute, int offset = 0, int size = -1);
 
 	float sqDistance2boundingSphere(glm::vec3 position);
+
+	void rendering(fwMeshRendering render);
+	void pointSize(float p) { m_pointSize = p; };
 
 	virtual void draw(glProgram *);
 	~fwMesh();

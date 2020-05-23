@@ -30,7 +30,10 @@ fwMesh::fwMesh(fwGeometry *_geometry, fwMaterial *_material):
  */
 fwMesh* fwMesh::clone(void)
 {
-	return new fwMesh(geometry, material);
+	fwMesh *clone=new fwMesh(geometry, material);
+	clone->m_rendering = m_rendering;
+	clone->m_pointSize = m_pointSize;
+	return clone;
 }
 
 fwMesh &fwMesh::set_visible(bool _visible)
@@ -105,8 +108,27 @@ GLuint fwMesh::buildVAO(glProgram* program)
 
 void fwMesh::draw(glProgram *program)
 {
+	static GLint renders[] = {
+		GL_TRIANGLES,
+		GL_POINT,
+		GL_LINES
+	};
+
 	GLuint id = buildVAO(program);
-	geometry->draw(wireFrame ? GL_LINES : GL_TRIANGLES, vao[id]);
+
+	switch (m_rendering) {
+	case fwMeshRendering::FW_MESH_POINT:
+		glPointSize(m_pointSize);
+		geometry->draw(GL_POINTS, vao[id]);
+		glPointSize(1.0f);
+		break;
+	case fwMeshRendering::FW_MESH_LINE:
+		geometry->draw(GL_LINE, vao[id]);
+		break;
+	default:
+		geometry->draw(GL_TRIANGLES, vao[id]);
+		break;
+	}
 }
 
 fwMaterial *fwMesh::get_material(void)
@@ -143,6 +165,14 @@ void fwMesh::updateAttribute(const std::string &attribute, int offset, int size)
 float fwMesh::sqDistance2boundingSphere(glm::vec3 position)
 {
 	return geometry->sqDistance2boundingSphere(position);
+}
+
+/**
+ * Rendering mode of the mesh
+ */
+void fwMesh::rendering(fwMeshRendering render)
+{
+	m_rendering = render;
 }
 
 fwMesh::~fwMesh()

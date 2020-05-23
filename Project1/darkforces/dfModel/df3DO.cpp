@@ -84,6 +84,10 @@ df3DO::df3DO(dfFileSystem* fs, dfPalette* palette, std::string file) :
 	m_geometry->addAttribute("aColor", GL_ARRAY_BUFFER, &m_colors[0], 3, m_vertices.size() * sizeof(glm::vec2), sizeof(float), false);
 
 	m_mesh = new fwMesh(m_geometry, materialFlat);
+	m_mesh->rendering(m_shading);
+	if (m_shading == fwMeshRendering::FW_MESH_POINT) {
+		m_mesh->pointSize(16.0f);
+	}
 }
 
 /**
@@ -252,10 +256,7 @@ void df3DO::parseTriangles(std::istringstream& infile, dfPalette* palette, int n
 			addVertice(tokens[2], color);
 
 			if (tokens[5] == "vertex") {
-				m_shading = DF_3DO_SHADING_VERTEX;
-			}
-			else {
-				m_shading = DF_3DO_SHADING_GOURAUD;
+				m_shading = fwMeshRendering::FW_MESH_POINT;
 			}
 		}
 

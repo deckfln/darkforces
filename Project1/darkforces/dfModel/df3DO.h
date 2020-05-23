@@ -6,6 +6,7 @@
 #include <vector>
 
 #include "../dfModel.h"
+#include "../../framework/fwMesh.h"
 
 class dfFileSystem;
 class dfPalette;
@@ -29,7 +30,7 @@ class df3DO : public dfModel
 	fwGeometry* m_geometry = nullptr;
 	fwMesh* m_mesh = nullptr;
 
-	int m_shading = 0;
+	fwMeshRendering m_shading = fwMeshRendering::FW_MESH_TRIANGLES;
 
 	void parseVertices(std::istringstream& infile, int nbVertices);
 	void parseQuads(std::istringstream& infile, dfPalette *palette, int nbQuads);
