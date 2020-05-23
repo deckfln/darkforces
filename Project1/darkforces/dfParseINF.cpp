@@ -17,17 +17,44 @@ std::vector<std::string>& dfParseTokens(std::string& line, std::map<std::string,
 	tokens.clear();
 	tokenMap.clear();
 
+	// ignore comment
+	if (line[0] == '#') {
+		return tokens;
+	}
+
 	unsigned char c;
 	int start = -1;
 
 	int size = line.length();
-	if (line[size-1] == '\r') {
+	if (line[size - 1] == '\r') {
 		// ignore leading \r
 		size--;
 	}
 
 	for (int i = 0; i < size; i++) {
 		c = line[i];
+
+		// ignore comment #
+		if (c == '#') {
+			break;
+		}
+
+		// ignore comment /* */
+		if (c == '/' && line[i + 1] == '*') {
+			for (i = i + 1; i < size - 1; i++) {
+				if (line[i] == '*' && line[i + 1] == '/') {
+					i += 2;
+					break;
+				}
+			}
+			// reached the end of the line
+			if (i >= size) {
+				break;
+			}
+
+			c = line[i];
+		}
+
 		if (c == ' ' || c == '\t') {
 			if (start >= 0) {
 				tokens.push_back(line.substr(start, i - start));
@@ -117,6 +144,10 @@ void dfParseINF::parseSector(std::istringstream& infile, std::string& sector)
 
 		// per token
 		std::vector <std::string> tokens = dfParseTokens(line, tokenMap);
+
+		if (tokens.size() == 0) {
+			continue;
+		}
 
 		if (tokens[0] == "seq") {
 			// pass

@@ -339,6 +339,9 @@
     <ClCompile Include="darkforces\dfFrame.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
+    <ClCompile Include="darkforces\dfModel\df3DO.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="glad\glad.h">
@@ -674,6 +677,9 @@
     <ClInclude Include="darkforces\dfFrame.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
+    <ClInclude Include="darkforces\dfModel\df3DO.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\fragment.glsl">
@@ -713,6 +719,12 @@
       <Filter>Fichiers de ressources</Filter>
     </None>
     <None Include="data\shaders\sprites\sprites_gs.glsl">
+      <Filter>Fichiers de ressources</Filter>
+    </None>
+    <None Include="data\shaders\3do\3do_flat_fs.glsl">
+      <Filter>Fichiers de ressources</Filter>
+    </None>
+    <None Include="data\shaders\3do\3do_flat_vs.glsl">
       <Filter>Fichiers de ressources</Filter>
     </None>
   </ItemGroup>

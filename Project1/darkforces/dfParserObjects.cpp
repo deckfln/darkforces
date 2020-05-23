@@ -7,6 +7,7 @@
 #include "dfParseINF.h"
 #include "dfModel/dfWAX.h"
 #include "dfModel/dfFME.h"
+#include "dfModel/df3DO.h"
 #include "dfObject/dfSprite.h"
 #include "dfPalette.h"
 #include "dfAtlasTexture.h"
@@ -30,6 +31,9 @@ dfObject* dfParserObjects::parseObject(dfObject* sprite, std::istringstream& inf
 
 		// per token
 		std::vector <std::string> tokens = dfParseTokens(line, tokenMap);
+		if (tokens.size() == 0) {
+			continue;
+		}
 
 		if (tokens[0] == "SEQ") {
 			// pass
@@ -102,6 +106,9 @@ dfObject* dfParserObjects::parseObject(dfObject* sprite, std::istringstream& inf
 				sprite->logic(DF_LOGIC_TROOP | DF_LOGIC_ANIM);
 				((dfSprite*)sprite)->state(DF_STATE_ENEMY_STAY_STILL);
 			}
+			else if (tokenMap["TYPE:"] == "MOUSEBOT") {
+				sprite->logic(DF_LOGIC_MOUSEBOT | DF_LOGIC_ANIM);
+			}
 			else {
 				std::cerr << "dfParserObjects::parseObject type: " << tokenMap["TYPE:"] << " not implemented" << std::endl;
 			}
@@ -146,11 +153,22 @@ dfParserObjects::dfParserObjects(dfFileSystem* fs, dfPalette* palette, std::stri
 		else if (tokens[0] == "FMES") {
 			m_fmes.resize(std::stoi(tokens[1]));
 		}
+		else if (tokens[0] == "PODS") {
+			m_3DOs.resize(std::stoi(tokens[1]));
+		}
 		else if (tokens[0] == "FME:") {
 			m_fmes[m_currentFME++] = new dfFME(fs, palette, tokens[1]);
 		}
 		else if (tokens[0] == "SPR:") {
 			m_waxes[m_currentWax++] = new dfWAX(fs, palette, tokens[1]);
+		}
+		else if (tokens[0] == "POD:") {
+			if (tokens[1] == "MOUSEBOT.3DO") {
+				m_3DOs[m_current3DO++] = new df3DO(fs, palette, tokens[1]);
+			}
+			else {
+				m_3DOs[m_current3DO++] = nullptr;
+			}
 		}
 		else if (tokens[0] == "OBJECTS") {
 			m_objects.resize(std::stoi(tokens[1]));
@@ -190,9 +208,15 @@ dfParserObjects::dfParserObjects(dfFileSystem* fs, dfPalette* palette, std::stri
 				m_currentObject++;
 			}
 			else if (tokenMap["CLASS:"] == "FRAME") {
-				dfObject* frame = new dfObject(m_fmes[data], position, ambient);
+				dfObject* frame = new dfObject(m_fmes[data], position, ambient, OBJECT_FME);
 				frame->difficulty(difficulty);
 				m_objects[m_currentObject] = parseObject(frame, infile);
+				m_currentObject++;
+			}
+			else if (tokenMap["CLASS:"] == "3D") {
+				dfObject* threedo = new dfObject(m_3DOs[data], position, ambient, OBJECT_3DO);
+				threedo->difficulty(difficulty);
+				m_objects[m_currentObject] = parseObject(threedo, infile);
 				m_currentObject++;
 			}
 			else {
@@ -241,6 +265,10 @@ void dfParserObjects::buildSprites(void)
 	for (auto i = 0; i < m_currentObject; i++) {
 		object = m_objects[i];
 
+		if (object->is(OBJECT_3DO)) {
+			continue;
+		}
+
 		/*
 		DIFF	EASY	MED	HARD
 		-3		X		X	X
@@ -278,6 +306,13 @@ void dfParserObjects::add2scene(fwScene* scene)
 		m_added = true;
 		m_sprites->set_name("dfSprites");
 		m_sprites->add2scene(scene);
+
+		for (auto object: m_objects) {
+			if (object && object->is(OBJECT_3DO)) {
+				object->add2scene(scene);
+			}
+
+		}
 	}
 
 	time_t timer = GetTickCount64();

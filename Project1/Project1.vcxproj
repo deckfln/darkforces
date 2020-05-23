@@ -141,6 +141,7 @@
     <ClCompile Include="darkforces\dfMessageBus.cpp" />
     <ClCompile Include="darkforces\dfMessageClient.cpp" />
     <ClCompile Include="darkforces\dfModel.cpp" />
+    <ClCompile Include="darkforces\dfModel\df3DO.cpp" />
     <ClCompile Include="darkforces\dfModel\dfFME.cpp" />
     <ClCompile Include="darkforces\dfModel\dfWAX.cpp" />
     <ClCompile Include="darkforces\dfObject.cpp" />
@@ -252,6 +253,7 @@
     <ClInclude Include="darkforces\dfMessageBus.h" />
     <ClInclude Include="darkforces\dfMessageClient.h" />
     <ClInclude Include="darkforces\dfModel.h" />
+    <ClInclude Include="darkforces\dfModel\df3DO.h" />
     <ClInclude Include="darkforces\dfModel\dfFME.h" />
     <ClInclude Include="darkforces\dfModel\dfWAX.h" />
     <ClInclude Include="darkforces\dfObject.h" />
@@ -349,6 +351,8 @@
     <ClInclude Include="Reference.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="data\shaders\3do\3do_flat_fs.glsl" />
+    <None Include="data\shaders\3do\3do_flat_vs.glsl" />
     <None Include="data\shaders\sprites\sprites_fs.glsl" />
     <None Include="data\shaders\sprites\sprites_gs.glsl" />
     <None Include="data\shaders\sprites\sprites_vs.glsl" />

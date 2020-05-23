@@ -4,7 +4,11 @@
 #include <glm/vec4.hpp>
 
 class dfModel;
+class fwScene;
 
+/**
+ * Logic for objects
+ */
 enum {
 	DF_LOGIC_NONE,
 	DF_LOGIC_SCENERY = 1,
@@ -17,9 +21,13 @@ enum {
 	DF_LOGIC_ITEM_SHIELD = 128,
 	DF_LOGIC_ITEM_ENERGY = 256,
 	DF_LOGIC_LIFE = 512,
-	DF_LOGIC_REVIVE = 1024
+	DF_LOGIC_REVIVE = 1024,
+	DF_LOGIC_MOUSEBOT = 2048
 };
 
+/**
+ * State of every object
+ */
 enum {
 	// state of i_officer, commando ...
 	DF_STATE_ENEMY_MOVE = 0,
@@ -50,11 +58,23 @@ enum {
 	DF_STATE_BARREL_EXPLODE = 1
 };
 
+/**
+ * Type of the object
+ */
+enum {
+	OBJECT_OBJ,
+	OBJECT_WAX,
+	OBJECT_FME,
+	OBJECT_3DO
+};
+
 // list of all enemies
 const unsigned long DF_ENEMIES = DF_LOGIC_I_OFFICER | DF_LOGIC_COMMANDO | DF_LOGIC_TROOP;
 
 class dfObject
 {
+	int m_is = OBJECT_OBJ;
+
 protected:
 	glm::vec3 m_position = glm::vec3(0);		// position in level space
 
@@ -72,7 +92,7 @@ protected:
 
 	dfModel* m_source = nullptr;
 public:
-	dfObject(dfModel *source, glm::vec3& position, float ambient);
+	dfObject(dfModel *source, glm::vec3& position, float ambient, int type);
 	void height(float h) { m_height = h; };
 	float height(void) { return m_height; };
 	void radius(float r) { m_radius = r; };
@@ -80,9 +100,11 @@ public:
 	int difficulty(void);
 	void difficulty(int difficulty) { m_difficulty = difficulty; };
 	bool named(std::string name);
+	bool is(int type);
 	std::string& model(void);
 	virtual bool updateSprite(glm::vec3* position, glm::vec4* texture, glm::vec3* direction);
 	virtual bool update(time_t t);		// update based on timer
 	void logic(int logic);
+	void add2scene(fwScene* scene);
 	~dfObject();
 };

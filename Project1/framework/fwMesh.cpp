@@ -25,6 +25,14 @@ fwMesh::fwMesh(fwGeometry *_geometry, fwMaterial *_material):
 	}
 }
 
+/**
+ * Return a shallow clone of the object
+ */
+fwMesh* fwMesh::clone(void)
+{
+	return new fwMesh(geometry, material);
+}
+
 fwMesh &fwMesh::set_visible(bool _visible)
 {
 	visible = _visible;

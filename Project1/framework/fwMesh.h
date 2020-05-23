@@ -36,6 +36,8 @@ public:
 	fwMesh();
 	fwMesh(fwGeometry *_geometry, fwMaterial *_material);
 
+	fwMesh* clone(void);
+
 	fwMesh& addUniform(fwUniform* uniform);
 	void set_uniforms(glProgram* program);
 

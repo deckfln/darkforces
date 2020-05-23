@@ -125,7 +125,10 @@ const std::string& fwMaterial::get_fragmentShader(void)
 fwMaterial &fwMaterial::addShader(int shader, std::string file, RenderType render)
 {
 	files[render][shader] = file; 
+	shaders[render][shader] = "";
+
 	m_hash += file;
+
 	return *this;
 }
 

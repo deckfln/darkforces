@@ -3,11 +3,14 @@
 #include "dfModel.h"
 #include "dfSprites.h"
 #include "dfLevel.h"
+#include "dfModel/df3DO.h"
+#include "../framework/fwScene.h"
 
-dfObject::dfObject(dfModel *source, glm::vec3& position, float ambient):
+dfObject::dfObject(dfModel *source, glm::vec3& position, float ambient, int type):
 	m_source(source),
 	m_position(position),
-	m_ambient(ambient)
+	m_ambient(ambient),
+	m_is(type)
 {
 }
 
@@ -17,6 +20,14 @@ dfObject::dfObject(dfModel *source, glm::vec3& position, float ambient):
 bool dfObject::named(std::string name)
 {
 	return m_source->named(name);
+}
+
+/**
+ * test the nature of the object
+ */
+bool dfObject::is(int type)
+{
+	return m_is == type;
 }
 
 int dfObject::difficulty(void)
@@ -61,6 +72,17 @@ bool dfObject::update(time_t t)
 void dfObject::logic(int logic)
 {
 	m_logics |= logic;
+}
+
+void dfObject::add2scene(fwScene* scene)
+{
+	df3DO* model = (df3DO *)m_source;
+	if (model) {
+		glm::vec3 gl;
+		dfLevel::level2gl(m_position, gl);
+
+		model->add2scene(scene, gl);
+	}
 }
 
 dfObject::~dfObject()

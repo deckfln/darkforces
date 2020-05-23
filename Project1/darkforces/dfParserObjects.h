@@ -13,6 +13,7 @@ class dfAtlasTexture;
 class dfSprites;
 class fwScene;
 class dfLevel;
+class df3DO;
 
 class dfParserObjects
 {
@@ -20,6 +21,8 @@ class dfParserObjects
 	std::vector<dfWAX *> m_waxes;
 	int m_currentFME = 0;
 	std::vector<dfFME *> m_fmes;
+	int m_current3DO = 0;
+	std::vector<df3DO*> m_3DOs;
 
 	std::vector<dfObject *> m_objects;
 	int m_currentObject = 0;

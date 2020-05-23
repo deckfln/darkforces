@@ -5,7 +5,7 @@
 #include "../dfModel/dfWAX.h"
 
 dfSprite::dfSprite(dfWAX* wax, glm::vec3& position, float ambient):
-	dfObject(wax, position, ambient)
+	dfObject(wax, position, ambient, OBJECT_WAX)
 {
 }
 
