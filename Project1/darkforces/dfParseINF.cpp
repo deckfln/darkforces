@@ -71,11 +71,14 @@ std::vector<std::string>& dfParseTokens(std::string& line, std::map<std::string,
 		tokens.push_back(line.substr(start, size - start));
 	}
 
-	for (auto i = 0; i < tokens.size(); i++) {
-		if (tokens[i].find(':') != std::string::npos) {
-			tokenMap[tokens[i]] = tokens[i + 1];
+	if (tokens.size() > 0) {
+		for (auto i = 0; i < tokens.size() - 1; i++) {
+			if (tokens[i].find(':') != std::string::npos) {
+				tokenMap[tokens[i]] = tokens[i + 1];
+			}
 		}
 	}
+
 	return tokens;
 }
 

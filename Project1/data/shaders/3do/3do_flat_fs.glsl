@@ -7,7 +7,7 @@ layout (location = 3) out vec3 gMaterial;
 // uniform vec4 ourColor;
 in vec3 ourColor;
 in vec3 world;
-flat in float ambient;
+uniform float ambient;
 
 #define DEFINES
 
@@ -19,5 +19,5 @@ void main()
 
 	// record approx depth for the headlight. the headlight cannot light over 5 units
 	float z = gl_FragCoord.z / gl_FragCoord.w;
-	gMaterial = vec3(0.0, z / 2.5f, 1.0);
+	gMaterial = vec3(0.0, z / 2.5f, ambient);
 }

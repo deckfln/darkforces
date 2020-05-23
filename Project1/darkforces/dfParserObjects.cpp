@@ -163,7 +163,7 @@ dfParserObjects::dfParserObjects(dfFileSystem* fs, dfPalette* palette, std::stri
 			m_waxes[m_currentWax++] = new dfWAX(fs, palette, tokens[1]);
 		}
 		else if (tokens[0] == "POD:") {
-			if (tokens[1] == "MOUSEBOT.3DO") {
+			if (tokens[1] == "MOUSEBOT.3DO" || tokens[1] == "DEATH.3DO") {
 				m_3DOs[m_current3DO++] = new df3DO(fs, palette, tokens[1]);
 			}
 			else {

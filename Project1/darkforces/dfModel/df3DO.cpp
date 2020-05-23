@@ -60,16 +60,22 @@ df3DO::df3DO(dfFileSystem* fs, dfPalette* palette, std::string file) :
 		else if (tokens[0] == "VERTICES") {
 			if (tokens[1][0] == '0') {
 				// VERTICES 00016 => total vertices
-				m_verticesIndex.resize(std::stoi(tokens[1]));
+				// m_verticesIndex.resize(std::stoi(tokens[1]));
 			}
 			else {
 				// read the number of vertices listed
 				// VERTICES 16 => womm be followed by 16 vertices
+				m_verticesIndex.resize(std::stoi(tokens[1]));
 				parseVertices(infile, std::stoi(tokens[1]));
 			}
 		}
+		else if (tokens[0] == "OBJECT") {
+		}
 		else if (tokens[0] == "QUADS") {
 			parseQuads(infile, palette, std::stoi(tokens[1]));
+		}
+		else if (tokens[0] == "TRIANGLES") {
+			parseTriangles(infile, palette, std::stoi(tokens[1]));
 		}
 	}
 
@@ -193,6 +199,67 @@ void df3DO::parseQuads(std::istringstream& infile, dfPalette *palette, int nbQua
 		}
 
 		if ((int)converted == nbQuads - 1) {
+			// just read the last vertice
+			break;
+		}
+	}
+}
+
+/**
+ * Parse a triangle section
+ */
+void df3DO::parseTriangles(std::istringstream& infile, dfPalette* palette, int nbTriangles)
+{
+	std::string line, dump;
+	std::map<std::string, std::string> tokenMap;
+	char numQuad[255];
+	int nbIndex = 0;
+	glm::ivec4* rgba;
+	glm::vec3 color;
+
+	while (std::getline(infile, line))
+	{
+		// ignore comment
+		if (line.length() == 0) {
+			continue;
+		}
+
+		// per token
+		std::vector <std::string> tokens = dfParseTokens(line, tokenMap);
+		if (tokens.size() == 0) {
+			continue;
+		}
+
+		// try to convert token 0 to a digit
+		char* p;
+		const char* numToken = tokens[0].c_str();
+		strncpy_s(numQuad, numToken, sizeof(numQuad));
+		numQuad[strlen(numQuad) - 1] = 0;	// remove the leading :
+		float converted = strtof(numQuad, &p);
+
+		if (p == numQuad) {
+			// conversion failed because the input wasn't a number
+			break;
+		}
+		else {
+			rgba = palette->getColor(std::stoi(tokens[4]), false);
+			color.r = rgba->r / 255.0f;
+			color.g = rgba->g / 255.0f;
+			color.b = rgba->b / 255.0f;
+
+			addVertice(tokens[1], color);
+			addVertice(tokens[3], color);
+			addVertice(tokens[2], color);
+
+			if (tokens[5] == "vertex") {
+				m_shading = DF_3DO_SHADING_VERTEX;
+			}
+			else {
+				m_shading = DF_3DO_SHADING_GOURAUD;
+			}
+		}
+
+		if ((int)converted == nbTriangles - 1) {
 			// just read the last vertice
 			break;
 		}
