@@ -200,24 +200,11 @@ void dfBitmapImage::boardSize(int blockSize)
  * Copy the bitmap into an atlasmap.
  * if the target size is bigger than the real size, place the bitmap at the defined corner
  */
-void dfBitmapImage::copyTo(unsigned char* target, int x, int y, int stride, int rgba, int corner)
+void dfBitmapImage::copyTo(unsigned char* target, int x, int y, int stride, int rgba, int Xcorner, int Ycorner)
 {
-	// check if target size is biiger
-	int start_x = 0, start_y = 0;
-	if (m_targetHeight != m_width && m_targetHeight != m_height) {
-		switch (corner) {
-		case DF_BITMAP_IMAGE_BOTTOM_CENTER:
-			start_x = (m_targetWidth - m_width) / 2;
-			start_y = (m_targetHeight - m_height);
-			break;
-		default:
-			std::cerr << "dfBitmapImage::copyTo unknown corner position " << corner << std::endl;
-		}
-	}
-
 	int source_line = 0;
 	int bytes = m_width * m_nrChannels;				// number of real bytes per line
-	int dest_line = (y + start_y) * stride * rgba + (x + start_x) * rgba;
+	int dest_line = (y + Ycorner) * stride * rgba + (x + Xcorner) * rgba;
 
 	for (auto y = 0; y < m_height; y++) {
 		// copy one line

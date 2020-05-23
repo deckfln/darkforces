@@ -154,7 +154,7 @@ dfAtlasTexture::dfAtlasTexture(std::vector<dfBitmapImage*>& images)
 		x = texture_position[iTex].x * blockSize;
 		y = texture_position[iTex].y * blockSize;
 
-		texture->copyTo(m_megatexture, x, y, size, rgba, DF_BITMAP_IMAGE_BOTTOM_CENTER);
+		texture->copyTo(m_megatexture, x, y, size, rgba);
 
 		iTex++;
 	}

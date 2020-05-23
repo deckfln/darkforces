@@ -38,7 +38,7 @@ public:
 
 	void targetSize(int x, int y);
 	void boardSize(int blockSize);
-	void copyTo(unsigned char* target, int x, int y, int stride, int rgba, int corner);
+	virtual void copyTo(unsigned char* target, int x, int y, int stride, int rgba, int Xcorner = 0, int Ycorner=0);
 };
 
 class dfBitmap {

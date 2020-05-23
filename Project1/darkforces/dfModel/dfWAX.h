@@ -34,8 +34,8 @@ class dfWAX: public dfModel
 
 	int m_width = 0;		// size of the sprite (max of all frames)
 	int m_height = 0;
-	long m_insertX = 0;		// Insertion point, X coordinate
-	long m_insertY = 0;		// Insertion point, Y coordinate
+	int m_insertX = 0;		// Insertion point, X coordinate
+	int m_insertY = 0;		// Insertion point, Y coordinate
 	long m_Wwidth = 0;		// world width factor
 	long m_Wheight = 0;		// world height factor
 
@@ -52,5 +52,7 @@ public:
 	virtual void spriteModel(GLmodel& model, int id);
 	virtual int framerate(int state);
 	virtual int nextFrame(int state, unsigned int frame);
+	int insertX(void) { return m_insertX; };
+	int insertY(void) { return m_insertY; };
 	~dfWAX();
 };

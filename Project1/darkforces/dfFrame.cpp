@@ -1,7 +1,10 @@
 #include "dfFrame.h"
 
 #include <iostream>
+#include <algorithm>
+
 #include "dfPalette.h"
+#include "dfModel/dfWAX.h"
 #include "../include/stb_image_write.h"
 
 #pragma pack(push)
@@ -40,7 +43,8 @@ struct _FME_Image {
 /**
  * initalize the FME
  */
-dfFrame::dfFrame(void* data, int offset, dfPalette* palette)
+dfFrame::dfFrame(void* data, int offset, dfPalette* palette, dfWAX *parent):
+	m_parent(parent)
 {
 	_FME_Header_from_WAX* header = (_FME_Header_from_WAX*)((char*)data + offset);
 	_FME_Image* image = (_FME_Image*)((char*)data + header->Cell);
@@ -155,6 +159,25 @@ dfFrame::dfFrame(void* data, int offset, dfPalette* palette)
 				p -= 8;
 			}
 		}
+	}
+}
+
+/**
+ * copy the frame into a bigger texture using the insertX, insertY
+ * corner will be forgotten
+ */
+void dfFrame::copyTo(unsigned char* target, int x, int y, int stride, int rgba, int Xcorner, int Ycorner)
+{
+	if (m_parent) {
+		// Frames part of a WAX needs to be re-alligned based on the size and the insertX/Y of the WAX
+		int startX = m_InsertX - m_parent->insertX();			if (startX < 0) { startX = 0; };
+		int startY = m_InsertY - m_parent->insertY();			if (startY < 0) { startY = 0; };
+
+		dfBitmapImage::copyTo(target, x, y, stride, rgba, startX, startY);
+	}
+	else {
+		// Real FME are stored full size
+		dfBitmapImage::copyTo(target, x, y, stride, rgba);
 	}
 }
 

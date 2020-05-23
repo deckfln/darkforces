@@ -115,9 +115,17 @@ dfWAX::dfWAX(dfFileSystem* fs, dfPalette* palette, std::string& name) :
 									frame = m_frames[k];
 								}
 								else {
-									m_frames[offset] = frame = new dfFrame(m_data, seq->FRAMES[k], palette);
-									this->m_insertX = frame->m_InsertX;
-									this->m_insertY = frame->m_InsertY;
+									m_frames[offset] = frame = new dfFrame(m_data, seq->FRAMES[k], palette, this);
+
+									// get the size and position of the sprite (max of all frame sizes)
+									if (m_width < frame->m_width) {
+										m_width = frame->m_width;
+										m_insertX = frame->m_InsertX;
+									}
+									if (m_height < frame->m_height) {
+										m_height = frame->m_height;
+										m_insertY = frame->m_InsertY;
+									}
 								}
 
 								animation->frames[k] = frame;
@@ -140,16 +148,7 @@ dfWAX::dfWAX(dfFileSystem* fs, dfPalette* palette, std::string& name) :
 		m_Wheight = std::max(my, m_Wheight);
 	}
 
-	// get the size of the sprite (max of all frame sizes)
-	for (auto frame : m_frames) {
-		int mx = frame.second->m_width;
-		int my = frame.second->m_height;
-
-		m_width = std::max(mx, m_width);
-		m_height = std::max(my, m_height);
-	}
-
-	// update the fram target size
+	// update the frame for the new target size
 	for (auto frame : m_frames) {
 		frame.second->targetSize(m_width, m_height);
 	}
