@@ -13,6 +13,7 @@
 #include "dfObject.h"
 #include "dfObject/dfSprite.h"
 #include "dfObject/dfSpriteAnimated.h"
+#include "dfObject/dfObject3D.h"
 #include "dfPalette.h"
 #include "dfAtlasTexture.h"
 #include "dfSprites.h"
@@ -126,16 +127,16 @@ dfObject* dfParserObjects::parseObject(dfObject* sprite, std::istringstream& inf
 			sprite->radius(std::stof(tokenMap["RADIUS:"]));
 		}
 		else if (tokens[0] == "FLAGS:") {
-			sprite->animRotationAxe(std::stoi(tokenMap["FLAGS:"]));
+			((dfObject3D*)sprite)->animRotationAxe(std::stoi(tokenMap["FLAGS:"]));
 		}
 		else if (tokens[0] == "D_YAW:") {
-			sprite->animRotationSpeed(std::stof(tokenMap["D_YAW:"]));
+			((dfObject3D*)sprite)->animRotationSpeed(std::stof(tokenMap["D_YAW:"]));
 		}
 		else if (tokens[0] == "D_PITCH:") {
-			sprite->animRotationSpeed(std::stof(tokenMap["D_PITCH:"]));
+			((dfObject3D*)sprite)->animRotationSpeed(std::stof(tokenMap["D_PITCH:"]));
 		}
 		else if (tokens[0] == "D_ROLL:") {
-			sprite->animRotationSpeed(std::stof(tokenMap["D_ROLL:"]));
+			((dfObject3D*)sprite)->animRotationSpeed(std::stof(tokenMap["D_ROLL:"]));
 		}
 		else {
 			std::cerr << "dfParserObjects::parseObject command: " << tokens[0] << " not implemented" << std::endl;
@@ -232,7 +233,7 @@ dfParserObjects::dfParserObjects(dfFileSystem* fs, dfPalette* palette, std::stri
 				m_currentObject++;
 			}
 			else if (tokenMap["CLASS:"] == "3D") {
-				dfObject* threedo = new dfObject(m_3DOs[data], position, ambient, OBJECT_3DO);
+				dfObject3D* threedo = new dfObject3D(m_3DOs[data], position, ambient);
 				threedo->difficulty(difficulty);
 				m_objects[m_currentObject] = parseObject(threedo, infile);
 				m_currentObject++;
@@ -327,9 +328,8 @@ void dfParserObjects::add2scene(fwScene* scene)
 
 		for (auto object: m_objects) {
 			if (object && object->is(OBJECT_3DO)) {
-				object->add2scene(scene);
+				((dfObject3D*)object)->add2scene(scene);
 			}
-
 		}
 	}
 

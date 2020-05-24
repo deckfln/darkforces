@@ -93,9 +93,6 @@ protected:
 
 	dfModel* m_source = nullptr;
 
-	glm::vec3 m_animRotationAxe = glm::vec3(0);
-	float m_aniRotationSpeed = 0;	//rotates from -999 (max anti-clockwise) to 999 (max clockwise)
-
 public:
 	dfObject(dfModel *source, glm::vec3& position, float ambient, int type);
 	void height(float h) { m_height = h; };
@@ -111,7 +108,5 @@ public:
 	virtual bool update(time_t t);		// update based on timer
 	void logic(int logic);
 	void add2scene(fwScene* scene);
-	void animRotationAxe(int axe);
-	void animRotationSpeed(float s);
 	~dfObject();
 };

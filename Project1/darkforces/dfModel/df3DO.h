@@ -38,6 +38,6 @@ class df3DO : public dfModel
 	void addVertice(std::string& vertice, glm::vec3& color);
 public:
 	df3DO(dfFileSystem* fs, dfPalette* palette, std::string file);
-	void add2scene(fwScene* scene, glm::vec3& position);
+	fwMesh* clone();
 	~df3DO();
 };

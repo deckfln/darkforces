@@ -93,13 +93,9 @@ df3DO::df3DO(dfFileSystem* fs, dfPalette* palette, std::string file) :
 /**
  * Add the model directly into a scene
  */
-void df3DO::add2scene(fwScene* scene, glm::vec3& position)
+fwMesh* df3DO::clone(void)
 {
-	fwMesh* mesh = m_mesh->clone();
-	mesh->translate(position);
-	mesh->set_scale(0.10);
-	mesh->set_name(m_name);
-	scene->addChild(mesh);
+	return m_mesh->clone();
 }
 
 /**

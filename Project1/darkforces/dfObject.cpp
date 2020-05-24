@@ -2,9 +2,6 @@
 
 #include "dfModel.h"
 #include "dfSprites.h"
-#include "dfModel/df3DO.h"
-#include "../framework/fwScene.h"
-#include "dfLevel.h"
 
 dfObject::dfObject(dfModel *source, glm::vec3& position, float ambient, int type):
 	m_source(source),
@@ -65,45 +62,6 @@ bool dfObject::update(time_t t)
 void dfObject::logic(int logic)
 {
 	m_logics |= logic;
-}
-
-void dfObject::add2scene(fwScene* scene)
-{
-	df3DO* model = (df3DO *)m_source;
-	if (model) {
-		glm::vec3 gl;
-		dfLevel::level2gl(m_position, gl);
-
-		model->add2scene(scene, gl);
-	}
-}
-
-/**
- * Record the rotation axe
- */
-void dfObject::animRotationAxe(int axe)
-{
-	switch (axe) {
-	case 8: 
-		m_animRotationAxe = glm::vec3(1, 0, 0);
-		break;
-	case 16:
-		m_animRotationAxe = glm::vec3(0, 0, 1);
-		break;
-	case 32:
-		m_animRotationAxe = glm::vec3(0, 1, 0);
-		break;
-	default:
-		std::cerr << "dfObject::animRotationAxe unknown rotation flag " << axe << std::endl;
-	}
-}
-
-/**
- * Record rotation speed
- */
-void dfObject::animRotationSpeed(float s)
-{
-	m_aniRotationSpeed = s;
 }
 
 dfObject::~dfObject()
