@@ -13,6 +13,7 @@ class dfPalette;
 class fwGeometry;
 class fwMesh;
 class fwScene;
+struct df3DOQuadIndex;
 
 enum {
 	DF_3DO_SHADING_NONE,
@@ -24,8 +25,9 @@ class df3DO : public dfModel
 {
 	std::vector<glm::vec3> m_vertices;
 	std::vector<glm::vec3> m_colors;
+	std::vector<glm::vec2> m_textures;
 
-	std::vector<glm::vec3> m_verticesIndex;
+	std::vector<std::string> m_textureNames;
 
 	fwGeometry* m_geometry = nullptr;
 	fwMesh* m_mesh = nullptr;
@@ -36,7 +38,11 @@ class df3DO : public dfModel
 	void parseVertices(std::istringstream& infile, int nbVertices);
 	void parseQuads(std::istringstream& infile, dfPalette *palette, int nbQuads);
 	void parseTriangles(std::istringstream& infile, dfPalette* palette, int nbTriangles);
-	void addVertice(std::string& vertice, glm::vec3& color);
+	void parseTextures(std::istringstream& infile, int nbVertives);
+	void parseTexturesQuad(std::istringstream& infile, int nbQuads);
+	void addVertice(df3DOQuadIndex* quad, int vertexIDX);
+	void buildObject(void);
+
 public:
 	df3DO(dfFileSystem* fs, dfPalette* palette, std::string file);
 	fwMesh* clone();

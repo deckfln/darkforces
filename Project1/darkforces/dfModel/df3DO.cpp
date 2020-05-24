@@ -28,8 +28,30 @@ static std::map<std::string, int> myTokens{
 	{ "PALETTE", x3DO_PALETTE }
 };
 
+/**
+ *
+ */
 static fwMaterial *materialFlat = nullptr;
 
+/**
+ *
+ */
+struct df3DOVertexIndex {
+	glm::vec3 vertex;
+	glm::vec2 texture;
+};
+struct df3DOQuadIndex {
+	int vertexIndex[4];
+	int textureIndex[4];
+	glm::vec3 color;
+};
+static std::vector<struct df3DOVertexIndex> verticesIndex;		// Vertices 0:, 1:
+static std::vector<struct df3DOQuadIndex> quadIndex;		// Vertices 0:, 1:
+static std::vector<struct df3DOQuadIndex> triangleIndex;		// Vertices 0:, 1:
+
+/**
+ *
+ */
 df3DO::df3DO(dfFileSystem* fs, dfPalette* palette, std::string file) :
 	dfModel(file)
 {
@@ -41,6 +63,12 @@ df3DO::df3DO(dfFileSystem* fs, dfPalette* palette, std::string file) :
 	std::istringstream infile(sec);
 	std::string line, dump;
 	std::map<std::string, std::string> tokenMap;
+	int currentTexture = -1;
+	int nbTexture = 0;
+
+	verticesIndex.resize(0);	// reset the local caches
+	quadIndex.resize(0);
+	triangleIndex.resize(0);
 
 	while (std::getline(infile, line)) {
 		// ignore comment
@@ -65,19 +93,50 @@ df3DO::df3DO(dfFileSystem* fs, dfPalette* palette, std::string file) :
 			else {
 				// read the number of vertices listed
 				// VERTICES 16 => womm be followed by 16 vertices
-				m_verticesIndex.resize(std::stoi(tokens[1]));
+				verticesIndex.resize(std::stoi(tokens[1]));
 				parseVertices(infile, std::stoi(tokens[1]));
 			}
 		}
 		else if (tokens[0] == "OBJECT") {
+			if (verticesIndex.size() > 0) {
+				buildObject();
+			}
+			verticesIndex.resize(0);	// reset the local caches
+			quadIndex.resize(0);
+			triangleIndex.resize(0);
+		}
+		else if (tokens[0] == "TEXTURE") {
+			if (tokens[1] == "VERTICES") {
+				parseTextures(infile, std::stoi(tokens[1]));
+			}
+			else if (tokens[1] == "QUADS") {
+				parseTexturesQuad(infile, std::stoi(tokens[1]));
+			}
+			else if (tokens[1] == "TRIANGLES") {
+				parseTexturesQuad(infile, std::stoi(tokens[1]));
+			}
+			else {
+				currentTexture = std::stoi(tokens[1]);
+			}
+		}
+		else if (tokens[0] == "TEXTURES") {
+			m_textureNames.resize(std::stoi(tokens[1]));
+		}
+		else if (tokens[0] == "TEXTURE:") {
+			m_textureNames[nbTexture++] = tokens[1];
 		}
 		else if (tokens[0] == "QUADS") {
+			quadIndex.resize(std::stoi(tokens[1]));
 			parseQuads(infile, palette, std::stoi(tokens[1]));
 		}
 		else if (tokens[0] == "TRIANGLES") {
+			triangleIndex.resize(std::stoi(tokens[1]));
 			parseTriangles(infile, palette, std::stoi(tokens[1]));
 		}
 	}
+
+	// build the remaining object
+	buildObject();
 
 	m_geometry = new fwGeometry();
 	m_geometry->addVertices("aPos", &m_vertices[0], 3, m_vertices.size() * sizeof(glm::vec3), sizeof(float), false);
@@ -133,7 +192,7 @@ void df3DO::parseVertices(std::istringstream & infile, int nbVertices)
 			break;
 		}
 		else {
-			m_verticesIndex[(int)converted] = glm::vec3(
+			verticesIndex[(int)converted].vertex = glm::vec3(
 				std::stof(tokens[1]),
 				-std::stof(tokens[2]),
 				std::stof(tokens[3])
@@ -189,13 +248,11 @@ void df3DO::parseQuads(std::istringstream& infile, dfPalette *palette, int nbQua
 			color.g = rgba->g / 255.0f;
 			color.b = rgba->b / 255.0f;
 
-			addVertice(tokens[1], color);
-			addVertice(tokens[2], color);
-			addVertice(tokens[3], color);
-
-			addVertice(tokens[3], color);
-			addVertice(tokens[4], color);
-			addVertice(tokens[1], color);
+			quadIndex[(int)converted].vertexIndex[0] = std::stoi(tokens[1]);
+			quadIndex[(int)converted].vertexIndex[1] = std::stoi(tokens[2]);
+			quadIndex[(int)converted].vertexIndex[2] = std::stoi(tokens[3]);
+			quadIndex[(int)converted].vertexIndex[3] = std::stoi(tokens[4]);
+			quadIndex[(int)converted].color = color;
 		}
 
 		if ((int)converted == nbQuads - 1) {
@@ -263,9 +320,10 @@ void df3DO::parseTriangles(std::istringstream& infile, dfPalette* palette, int n
 				color.b = rgba->b / 255.0f;
 			}
 
-			addVertice(tokens[1], color);
-			addVertice(tokens[3], color);
-			addVertice(tokens[2], color);
+			triangleIndex[(int)converted].vertexIndex[0] = std::stoi(tokens[1]);
+			triangleIndex[(int)converted].vertexIndex[1] = std::stoi(tokens[2]);
+			triangleIndex[(int)converted].vertexIndex[2] = std::stoi(tokens[3]);
+			triangleIndex[(int)converted].color = color;
 
 			if (tokens[5] == "vertex") {
 				m_shading = fwMeshRendering::FW_MESH_POINT;
@@ -280,13 +338,123 @@ void df3DO::parseTriangles(std::istringstream& infile, dfPalette* palette, int n
 }
 
 /**
+ * Parse the texture mapping
+ */
+void df3DO::parseTextures(std::istringstream& infile, int nbVertives)
+{
+	std::string line, dump;
+	std::map<std::string, std::string> tokenMap;
+	char numQuad[255];
+	int nbIndex = 0;
+
+	while (std::getline(infile, line))
+	{
+		// ignore comment
+		if (line.length() == 0) {
+			continue;
+		}
+
+		// per token
+		std::vector <std::string> tokens = dfParseTokens(line, tokenMap);
+		if (tokens.size() == 0) {
+			continue;
+		}
+
+		// try to convert token 0 to a digit
+		char* p;
+		const char* numToken = tokens[0].c_str();
+		strncpy_s(numQuad, numToken, sizeof(numQuad));
+		numQuad[strlen(numQuad) - 1] = 0;	// remove the leading :
+		float converted = strtof(numQuad, &p);
+
+		if (p == numQuad) {
+			// conversion failed because the input wasn't a number
+			break;
+		}
+		else {
+			verticesIndex[(int)converted].texture = glm::vec2(
+				std::stof(tokens[1]),
+				std::stof(tokens[2]));
+		}
+
+		if ((int)converted == nbVertives - 1) {
+			// just read the last vertice
+			break;
+		}
+	}
+}
+
+void df3DO::parseTexturesQuad(std::istringstream& infile, int nbQuads)
+{
+	std::string line, dump;
+	std::map<std::string, std::string> tokenMap;
+	char numQuad[255];
+	int nbIndex = 0;
+
+	while (std::getline(infile, line))
+	{
+		// ignore comment
+		if (line.length() == 0) {
+			continue;
+		}
+
+		// per token
+		std::vector <std::string> tokens = dfParseTokens(line, tokenMap);
+		if (tokens.size() == 0) {
+			continue;
+		}
+
+		// try to convert token 0 to a digit
+		char* p;
+		const char* numToken = tokens[0].c_str();
+		strncpy_s(numQuad, numToken, sizeof(numQuad));
+		numQuad[strlen(numQuad) - 1] = 0;	// remove the leading :
+		float converted = strtof(numQuad, &p);
+
+		if (p == numQuad) {
+			// conversion failed because the input wasn't a number
+			break;
+		}
+	
+		if ((int)converted == nbQuads - 1) {
+			// just read the last vertice
+			break;
+		}
+	}
+}
+
+/**
  * Create a new vertice with attribute
  */
-void df3DO::addVertice(std::string& vertice, glm::vec3& color)
+void df3DO::addVertice(df3DOQuadIndex *quad, int vertexIDX)
 {
-	int i = std::stoi(vertice);
-	m_vertices.push_back( m_verticesIndex[i] );
-	m_colors.push_back(color);
+	m_vertices.push_back( verticesIndex[ quad->vertexIndex[vertexIDX] ].vertex );
+	m_colors.push_back(quad->color);
+	m_textures.push_back(verticesIndex[quad->vertexIndex[vertexIDX]].texture );
+}
+
+/**
+ * Build openGL object using the caches
+ */
+void df3DO::buildObject(void)
+{
+	// build the quads
+	for (auto& quad : quadIndex) {
+		addVertice(&quad, 0);
+		addVertice(&quad, 1);
+		addVertice(&quad, 2);
+
+		addVertice(&quad, 2);
+		addVertice(&quad, 3);
+		addVertice(&quad, 0);
+	}
+
+	// build the triangles
+	for (auto& quad : triangleIndex) {
+		addVertice(&quad, 0);
+		addVertice(&quad, 2);
+		addVertice(&quad, 1);
+	}
 }
 
 df3DO::~df3DO()
