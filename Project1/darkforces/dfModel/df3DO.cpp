@@ -81,12 +81,12 @@ df3DO::df3DO(dfFileSystem* fs, dfPalette* palette, std::string file) :
 
 	m_geometry = new fwGeometry();
 	m_geometry->addVertices("aPos", &m_vertices[0], 3, m_vertices.size() * sizeof(glm::vec3), sizeof(float), false);
-	m_geometry->addAttribute("aColor", GL_ARRAY_BUFFER, &m_colors[0], 3, m_vertices.size() * sizeof(glm::vec2), sizeof(float), false);
+	m_geometry->addAttribute("aColor", GL_ARRAY_BUFFER, &m_colors[0], 3, m_vertices.size() * sizeof(glm::vec3), sizeof(float), false);
 
 	m_mesh = new fwMesh(m_geometry, materialFlat);
 	m_mesh->rendering(m_shading);
 	if (m_shading == fwMeshRendering::FW_MESH_POINT) {
-		m_mesh->pointSize(16.0f);
+		m_mesh->pointSize(12.0f);
 	}
 }
 
@@ -242,10 +242,26 @@ void df3DO::parseTriangles(std::istringstream& infile, dfPalette* palette, int n
 			break;
 		}
 		else {
-			rgba = palette->getColor(std::stoi(tokens[4]), false);
-			color.r = rgba->r / 255.0f;
-			color.g = rgba->g / 255.0f;
-			color.b = rgba->b / 255.0f;
+			if (tokens[5] == "vertex") {
+				// From DEATH.3DO it seems the first triagnle color is then applied to all vertices
+				if (m_vertices.size() == 0) {
+					rgba = palette->getColor(std::stoi(tokens[4]), false);
+					color.r = rgba->r / 255.0f;
+					color.g = rgba->g / 255.0f;
+					color.b = rgba->b / 255.0f;
+
+					m_perVertexColor = color;
+				}
+				else {
+					color = m_perVertexColor;
+				}
+			}
+			else {
+				rgba = palette->getColor(std::stoi(tokens[4]), false);
+				color.r = rgba->r / 255.0f;
+				color.g = rgba->g / 255.0f;
+				color.b = rgba->b / 255.0f;
+			}
 
 			addVertice(tokens[1], color);
 			addVertice(tokens[3], color);

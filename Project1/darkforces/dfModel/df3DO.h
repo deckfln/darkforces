@@ -31,6 +31,7 @@ class df3DO : public dfModel
 	fwMesh* m_mesh = nullptr;
 
 	fwMeshRendering m_shading = fwMeshRendering::FW_MESH_TRIANGLES;
+	glm::vec3 m_perVertexColor = glm::vec3(0);	// From DEATH.3DO it seems the first triagnle color is then applied to all vertices when rendering = 'vertex'
 
 	void parseVertices(std::istringstream& infile, int nbVertices);
 	void parseQuads(std::istringstream& infile, dfPalette *palette, int nbQuads);
