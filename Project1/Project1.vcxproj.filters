@@ -312,9 +312,6 @@
     <ClCompile Include="darkforces\dfParserObjects.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="darkforces\dfObject\dfSprite.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
     <ClCompile Include="darkforces\dfAtlasTexture.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
@@ -340,6 +337,12 @@
       <Filter>Fichiers sources</Filter>
     </ClCompile>
     <ClCompile Include="darkforces\dfModel\df3DO.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="darkforces\dfObject\dfSpriteAnimated.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="darkforces\dfObject\dfSprite.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
   </ItemGroup>
@@ -647,9 +650,6 @@
     <ClInclude Include="darkforces\dfObject.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="darkforces\dfObject\dfSprite.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
     <ClInclude Include="darkforces\dfParserObjects.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
@@ -678,6 +678,12 @@
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
     <ClInclude Include="darkforces\dfModel\df3DO.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="darkforces\dfObject\dfSpriteAnimated.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="darkforces\dfObject\dfSprite.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
   </ItemGroup>

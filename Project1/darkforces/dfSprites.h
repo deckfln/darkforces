@@ -11,7 +11,7 @@
 #include "dfModel.h"
 
 class fwScene;
-class dfObject;
+class dfSprite;
 
 class dfSprites: public fwSprites
 {
@@ -20,7 +20,7 @@ class dfSprites: public fwSprites
 	std::vector<glm::vec4> m_textureIndex;	// stae, frame for the GPU to display the correct texture
 
 	int m_nbObjects= 0;
-	std::vector<dfObject *> m_objects;
+	std::vector<dfSprite *> m_objects;
 
 	int m_nbModels = 0;
 	bool m_dirtyModels = true;
@@ -35,8 +35,8 @@ class dfSprites: public fwSprites
 public:
 	dfSprites(int nbSprites, dfAtlasTexture *atlas);
 	void addModel(dfModel *model);
-	void add(dfObject *object);
-	void update(time_t t);						// push changes to the GPU
+	void add(dfSprite *object);
+	void update(void);						// push changes to the GPU
 	void add2scene(fwScene* scene);
 	~dfSprites();
 };

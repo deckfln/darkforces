@@ -4,7 +4,7 @@
 #include <vector>
 
 class dfFileSystem;
-class dfSprite;
+class dfSpriteAnimated;
 class dfWAX;
 class dfFME;
 class dfObject;

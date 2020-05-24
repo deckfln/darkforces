@@ -2,9 +2,9 @@
 
 #include "dfModel.h"
 #include "dfSprites.h"
-#include "dfLevel.h"
 #include "dfModel/df3DO.h"
 #include "../framework/fwScene.h"
+#include "dfLevel.h"
 
 dfObject::dfObject(dfModel *source, glm::vec3& position, float ambient, int type):
 	m_source(source),
@@ -30,6 +30,14 @@ bool dfObject::is(int type)
 	return m_is == type;
 }
 
+/**
+ * test the logic
+ */
+bool dfObject::isLogic(int logic)
+{
+	return (m_logics & logic) != 0;
+}
+
 int dfObject::difficulty(void)
 {
 	return m_difficulty + 3;
@@ -41,21 +49,6 @@ int dfObject::difficulty(void)
 std::string& dfObject::model(void)
 {
 	return m_source->name();
-}
-
-/**
- * Update the sprite buffers if the object is different
- */
-bool dfObject::updateSprite(glm::vec3* position, glm::vec4* texture, glm::vec3* direction)
-{
-	glm::vec3 gl;
-	dfLevel::level2gl(m_position, gl);
-
-	*position = gl;
-
-	texture->r = (float)m_source->id();
-	texture->a = m_ambient;
-	return true;
 }
 
 /**
@@ -83,6 +76,34 @@ void dfObject::add2scene(fwScene* scene)
 
 		model->add2scene(scene, gl);
 	}
+}
+
+/**
+ * Record the rotation axe
+ */
+void dfObject::animRotationAxe(int axe)
+{
+	switch (axe) {
+	case 8: 
+		m_animRotationAxe = glm::vec3(1, 0, 0);
+		break;
+	case 16:
+		m_animRotationAxe = glm::vec3(0, 0, 1);
+		break;
+	case 32:
+		m_animRotationAxe = glm::vec3(0, 1, 0);
+		break;
+	default:
+		std::cerr << "dfObject::animRotationAxe unknown rotation flag " << axe << std::endl;
+	}
+}
+
+/**
+ * Record rotation speed
+ */
+void dfObject::animRotationSpeed(float s)
+{
+	m_aniRotationSpeed = s;
 }
 
 dfObject::~dfObject()

@@ -3,7 +3,7 @@
 #include "../framework/fwMaterialBasic.h"
 #include "../framework/fwScene.h"
 
-#include "dfObject.h"
+#include "dfObject/dfSpriteAnimated.h"
 
 static fwMaterialBasic* spriteMaterial = nullptr;
 static glUniformBuffer* models = nullptr;
@@ -53,7 +53,7 @@ void dfSprites::addModel(dfModel* model)
 /**
  * Add a static sprite
  */
-void dfSprites::add(dfObject *object)
+void dfSprites::add(dfSprite *object)
 {
 	m_objects.resize(m_objects.size() + 1);
 	m_objects[m_nbObjects++] = object;
@@ -73,20 +73,16 @@ void dfSprites::add(dfObject *object)
 /**
  * Push updated attributes to the GPU
  */
-void dfSprites::update(time_t t)
+void dfSprites::update(void)
 {
 	int i = 0;
 	for (auto object : m_objects) {
-		// get the object to update the animation
-		if (object->update(t)) {
-
-			// if the animation got updated, update the sprite buffers
-			object->updateSprite(
-				&m_positions[i],
-				&m_textureIndex[i],
-				&m_directions[i]
-			);
-
+		// if the animation got updated, update the sprite buffers
+		if (object->updateSprite(
+			&m_positions[i],
+			&m_textureIndex[i],
+			&m_directions[i]
+		)) {
 			m_updated = true;
 		}
 		i++;
