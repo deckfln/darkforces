@@ -739,6 +739,12 @@
     <None Include="data\shaders\3do\3do_flat_vs.glsl">
       <Filter>Fichiers de ressources</Filter>
     </None>
+    <None Include="data\shaders\3do\3do_texture_fs.glsl">
+      <Filter>Fichiers de ressources</Filter>
+    </None>
+    <None Include="data\shaders\3do\3do_texture_vs.glsl">
+      <Filter>Fichiers de ressources</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Text Include="todo.txt">

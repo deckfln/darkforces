@@ -182,12 +182,7 @@ dfParserObjects::dfParserObjects(dfFileSystem* fs, dfPalette* palette, std::stri
 			m_waxes[m_currentWax++] = new dfWAX(fs, palette, tokens[1]);
 		}
 		else if (tokens[0] == "POD:") {
-			if (tokens[1] == "MOUSEBOT.3DO" || tokens[1] == "DEATH.3DO") {
-				m_3DOs[m_current3DO++] = new df3DO(fs, palette, tokens[1]);
-			}
-			else {
-				m_3DOs[m_current3DO++] = nullptr;
-			}
+			m_3DOs[m_current3DO++] = new df3DO(fs, palette, tokens[1]);
 		}
 		else if (tokens[0] == "OBJECTS") {
 			m_objects.resize(std::stoi(tokens[1]));
@@ -233,6 +228,11 @@ dfParserObjects::dfParserObjects(dfFileSystem* fs, dfPalette* palette, std::stri
 				m_currentObject++;
 			}
 			else if (tokenMap["CLASS:"] == "3D") {
+				if (data == 2) {
+					position.x = -222;
+					position.y = 306;
+					position.z = 52;
+				}
 				dfObject3D* threedo = new dfObject3D(m_3DOs[data], position, ambient);
 				threedo->difficulty(difficulty);
 				m_objects[m_currentObject] = parseObject(threedo, infile);

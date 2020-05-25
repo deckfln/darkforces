@@ -13,6 +13,9 @@ class dfPalette;
 class fwGeometry;
 class fwMesh;
 class fwScene;
+class dfBitmap;
+class dfAtlasTexture;
+
 struct df3DOQuadIndex;
 
 enum {
@@ -25,9 +28,10 @@ class df3DO : public dfModel
 {
 	std::vector<glm::vec3> m_vertices;
 	std::vector<glm::vec3> m_colors;
-	std::vector<glm::vec2> m_textures;
+	std::vector<glm::vec3> m_textures;
 
-	std::vector<std::string> m_textureNames;
+	std::vector<dfBitmap*> m_textureNames;
+	class dfAtlasTexture* m_atlasTexture = nullptr;
 
 	fwGeometry* m_geometry = nullptr;
 	fwMesh* m_mesh = nullptr;

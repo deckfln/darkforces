@@ -6,13 +6,16 @@
 #include <vector>
 #include <map>
 
-#include "../dfFileSystem.h"
-#include "../dfParseINF.h"
-#include "../dfPalette.h"
 #include "../../framework/fwGeometry.h"
 #include "../../framework/fwMesh.h"
 #include "../../framework/fwMaterial.h"
 #include "../../framework/fwScene.h"
+
+#include "../dfFileSystem.h"
+#include "../dfParseINF.h"
+#include "../dfPalette.h"
+#include "../dfBitmap.h"
+#include "../dfAtlasTexture.h"
 
 enum {
 	x3DO_OBJECTS,
@@ -28,26 +31,36 @@ static std::map<std::string, int> myTokens{
 	{ "PALETTE", x3DO_PALETTE }
 };
 
+static std::map<std::string, int> myFill{
+	{ "GOURAUD", 0 },
+	{ "FLAT", 1 },
+	{ "TEXTURE", 2 }
+};
+
 /**
- *
+ * Material to display 3DO
  */
 static fwMaterial *materialFlat = nullptr;
+static fwMaterial* materialTextured = nullptr;
+static fwUniform* g_texture = nullptr;
 
 /**
  *
  */
 struct df3DOVertexIndex {
 	glm::vec3 vertex;
-	glm::vec2 texture;
+	glm::vec3 texture;
 };
 struct df3DOQuadIndex {
 	int vertexIndex[4];
 	int textureIndex[4];
 	glm::vec3 color;
+	int fill;
 };
 static std::vector<struct df3DOVertexIndex> verticesIndex;		// Vertices 0:, 1:
 static std::vector<struct df3DOQuadIndex> quadIndex;		// Vertices 0:, 1:
 static std::vector<struct df3DOQuadIndex> triangleIndex;		// Vertices 0:, 1:
+static int currentTexture;
 
 /**
  *
@@ -55,20 +68,26 @@ static std::vector<struct df3DOQuadIndex> triangleIndex;		// Vertices 0:, 1:
 df3DO::df3DO(dfFileSystem* fs, dfPalette* palette, std::string file) :
 	dfModel(file)
 {
-	if (!materialFlat) {
-		materialFlat = new fwMaterial("data/shaders/3do/3do_flat_vs.glsl", "data/shaders/3do/3do_flat_fs.glsl");
-		materialFlat->addShader(FRAGMENT_SHADER, "data/shaders/3do/3do_flat_fs.glsl", DEFERED_RENDER);
-	}
 	char* sec = fs->load(DF_DARK_GOB, file);
 	std::istringstream infile(sec);
 	std::string line, dump;
 	std::map<std::string, std::string> tokenMap;
-	int currentTexture = -1;
 	int nbTexture = 0;
+	bool withTexture = false;
+
+	if (!materialFlat) {
+		// material for flat objects
+		materialFlat = new fwMaterial("data/shaders/3do/3do_flat_vs.glsl", "data/shaders/3do/3do_flat_fs.glsl");
+		materialFlat->addShader(FRAGMENT_SHADER, "data/shaders/3do/3do_flat_fs.glsl", DEFERED_RENDER);
+
+		materialTextured = new fwMaterial("data/shaders/3do/3do_texture_vs.glsl", "data/shaders/3do/3do_texture_fs.glsl");
+		materialTextured->addShader(FRAGMENT_SHADER, "data/shaders/3do/3do_texture_fs.glsl", DEFERED_RENDER);
+	}
 
 	verticesIndex.resize(0);	// reset the local caches
 	quadIndex.resize(0);
 	triangleIndex.resize(0);
+	currentTexture = -1;
 
 	while (std::getline(infile, line)) {
 		// ignore comment
@@ -104,16 +123,18 @@ df3DO::df3DO(dfFileSystem* fs, dfPalette* palette, std::string file) :
 			verticesIndex.resize(0);	// reset the local caches
 			quadIndex.resize(0);
 			triangleIndex.resize(0);
+			currentTexture = -1;
 		}
 		else if (tokens[0] == "TEXTURE") {
 			if (tokens[1] == "VERTICES") {
-				parseTextures(infile, std::stoi(tokens[1]));
+				parseTextures(infile, std::stoi(tokens[2]));
+				withTexture = true;
 			}
 			else if (tokens[1] == "QUADS") {
-				parseTexturesQuad(infile, std::stoi(tokens[1]));
+				parseTexturesQuad(infile, std::stoi(tokens[2]));
 			}
 			else if (tokens[1] == "TRIANGLES") {
-				parseTexturesQuad(infile, std::stoi(tokens[1]));
+				parseTexturesQuad(infile, std::stoi(tokens[2]));
 			}
 			else {
 				currentTexture = std::stoi(tokens[1]);
@@ -123,7 +144,7 @@ df3DO::df3DO(dfFileSystem* fs, dfPalette* palette, std::string file) :
 			m_textureNames.resize(std::stoi(tokens[1]));
 		}
 		else if (tokens[0] == "TEXTURE:") {
-			m_textureNames[nbTexture++] = tokens[1];
+			m_textureNames[nbTexture++] = new dfBitmap(fs, tokens[1], palette);
 		}
 		else if (tokens[0] == "QUADS") {
 			quadIndex.resize(std::stoi(tokens[1]));
@@ -138,11 +159,31 @@ df3DO::df3DO(dfFileSystem* fs, dfPalette* palette, std::string file) :
 	// build the remaining object
 	buildObject();
 
+	// build the atlas texture
+	if (m_textureNames.size() > 0) {
+		std::vector<dfBitmapImage*> images;
+		for (auto tex : m_textureNames) {
+			images.push_back(tex->getImage());
+		}
+		m_atlasTexture = new dfAtlasTexture(images);
+		m_atlasTexture->save("D:/dev/Project1/Project1/images/"+file+".png");
+		m_atlasTexture->bindToMaterial(materialTextured, "texture");
+	}
+
 	m_geometry = new fwGeometry();
 	m_geometry->addVertices("aPos", &m_vertices[0], 3, m_vertices.size() * sizeof(glm::vec3), sizeof(float), false);
 	m_geometry->addAttribute("aColor", GL_ARRAY_BUFFER, &m_colors[0], 3, m_vertices.size() * sizeof(glm::vec3), sizeof(float), false);
+	if (withTexture) {
+		m_geometry->addAttribute("aTex", GL_ARRAY_BUFFER, &m_textures[0], 3, m_textures.size() * sizeof(glm::vec3), sizeof(float), false);
+	}
 
-	m_mesh = new fwMesh(m_geometry, materialFlat);
+
+	if (m_textureNames.size() > 0) {
+		m_mesh = new fwMesh(m_geometry, materialTextured);
+	}
+	else {
+		m_mesh = new fwMesh(m_geometry, materialFlat);
+	}
 	m_mesh->rendering(m_shading);
 	if (m_shading == fwMeshRendering::FW_MESH_POINT) {
 		m_mesh->pointSize(12.0f);
@@ -253,6 +294,7 @@ void df3DO::parseQuads(std::istringstream& infile, dfPalette *palette, int nbQua
 			quadIndex[(int)converted].vertexIndex[2] = std::stoi(tokens[3]);
 			quadIndex[(int)converted].vertexIndex[3] = std::stoi(tokens[4]);
 			quadIndex[(int)converted].color = color;
+			quadIndex[(int)converted].fill = myFill[tokens[6]];
 		}
 
 		if ((int)converted == nbQuads - 1) {
@@ -324,6 +366,7 @@ void df3DO::parseTriangles(std::istringstream& infile, dfPalette* palette, int n
 			triangleIndex[(int)converted].vertexIndex[1] = std::stoi(tokens[2]);
 			triangleIndex[(int)converted].vertexIndex[2] = std::stoi(tokens[3]);
 			triangleIndex[(int)converted].color = color;
+			triangleIndex[(int)converted].fill = myFill[tokens[5]];
 
 			if (tokens[5] == "vertex") {
 				m_shading = fwMeshRendering::FW_MESH_POINT;
@@ -372,9 +415,10 @@ void df3DO::parseTextures(std::istringstream& infile, int nbVertives)
 			break;
 		}
 		else {
-			verticesIndex[(int)converted].texture = glm::vec2(
+			verticesIndex[(int)converted].texture = glm::vec3(
 				std::stof(tokens[1]),
-				std::stof(tokens[2]));
+				std::stof(tokens[2]),
+				float(currentTexture));
 		}
 
 		if ((int)converted == nbVertives - 1) {
@@ -428,9 +472,17 @@ void df3DO::parseTexturesQuad(std::istringstream& infile, int nbQuads)
  */
 void df3DO::addVertice(df3DOQuadIndex *quad, int vertexIDX)
 {
+	static glm::vec3 flat = glm::vec3(0, 0, -1);
+
 	m_vertices.push_back( verticesIndex[ quad->vertexIndex[vertexIDX] ].vertex );
 	m_colors.push_back(quad->color);
-	m_textures.push_back(verticesIndex[quad->vertexIndex[vertexIDX]].texture );
+
+	if (quad->fill == 2) {
+		m_textures.push_back(verticesIndex[quad->vertexIndex[vertexIDX]].texture);
+	}
+	else {
+		m_textures.push_back(flat);
+	}
 }
 
 /**
@@ -461,4 +513,12 @@ df3DO::~df3DO()
 {
 	delete m_geometry;
 	delete m_mesh;
+
+	for (auto tex : m_textureNames) {
+		delete tex;
+	}
+
+	if (m_atlasTexture) {
+		delete m_atlasTexture;
+	}
 }

@@ -179,10 +179,13 @@ dfAtlasTexture::dfAtlasTexture(std::vector<dfBitmapImage*>& images)
 /**
  * Bind the atlas texture to a material
  */
-void dfAtlasTexture::bindToMaterial(fwMaterial* material)
+void dfAtlasTexture::bindToMaterial(fwMaterial* material, std::string uniform)
 {
 	if (material->type(BASIC_MATERIAL)) {
 		((fwMaterialBasic* )material)->addDiffuseMap(m_fwtextures);
+	}
+	else {
+		material->addTexture(uniform, m_fwtextures);
 	}
 	material->addUniform(m_shader_idx);
 }
