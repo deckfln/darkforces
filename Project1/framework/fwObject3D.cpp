@@ -63,8 +63,17 @@ fwObject3D &fwObject3D::set_scale(float _scale)
 {
 	updated = true;
 	m_Scale *= _scale;
-	updated = true;
 	return *this;
+}
+
+/**
+ * Force a worldMatrix
+ */
+void fwObject3D::worldMatrix(glm::mat4& worldMatrix)
+{
+	m_worldMatrix = worldMatrix;
+	m_inverseWorldMatrix = glm::inverse(m_worldMatrix);
+	updated = false;
 }
 
 fwObject3D &fwObject3D::addChild(fwObject3D *mesh)
@@ -98,6 +107,7 @@ void fwObject3D::updateWorldMatrix(fwObject3D *parent, bool force)
 		}
 
 		force = true;
+		updated = false;
 	}
 
 	for (auto child : m_children) {

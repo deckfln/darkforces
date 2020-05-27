@@ -20,7 +20,7 @@
 #include "dfGame.h"
 #include "dfLevel.h"
 
-dfObject* dfParserObjects::parseObject(dfObject* sprite, std::istringstream& infile)
+dfObject* dfParserObjects::parseObject(dfFileSystem* fs, dfObject* sprite, std::istringstream& infile)
 {
 	std::string line, dump;
 
@@ -92,6 +92,11 @@ dfObject* dfParserObjects::parseObject(dfObject* sprite, std::istringstream& inf
 			else if (tokenMap["LOGIC:"] == "UPDATE") {
 				sprite->logic(DF_LOGIC_ANIM);
 			}
+			else if (tokenMap["LOGIC:"] == "KEY") {
+				sprite->logic(DF_LOGIC_KEY_TRIGGER);
+				//TODO : remove the hack
+				sprite->logic(DF_LOGIC_ANIM);
+			}
 			else {
 				std::cerr << "dfParserObjects::parseObject logic: " << tokenMap["LOGIC:"] << " not implemented" << std::endl;
 			}
@@ -137,6 +142,12 @@ dfObject* dfParserObjects::parseObject(dfObject* sprite, std::istringstream& inf
 		}
 		else if (tokens[0] == "D_ROLL:") {
 			((dfObject3D*)sprite)->animRotationSpeed(std::stof(tokenMap["D_ROLL:"]));
+		}
+		else if (tokens[0] == "PAUSE:") {
+			((dfObject3D*)sprite)->pause(tokenMap["PAUSE:"] == "TRUE");
+		}
+		else if (tokens[0] == "VUE:") {
+		((dfObject3D*)sprite)->vue(fs, tokens[1], tokens[2]);
 		}
 		else {
 			std::cerr << "dfParserObjects::parseObject command: " << tokens[0] << " not implemented" << std::endl;
@@ -217,25 +228,20 @@ dfParserObjects::dfParserObjects(dfFileSystem* fs, dfPalette* palette, std::stri
 				dfSpriteAnimated* sprite = new dfSpriteAnimated(m_waxes[data], position, ambient);
 				sprite->difficulty(difficulty);
 				sprite->rotation(rotation);
-				m_objects[m_currentObject] = parseObject(sprite, infile);
+				m_objects[m_currentObject] = parseObject(fs, sprite, infile);
 
 				m_currentObject++;
 			}
 			else if (tokenMap["CLASS:"] == "FRAME") {
 				dfObject* frame = new dfSprite(m_fmes[data], position, ambient);
 				frame->difficulty(difficulty);
-				m_objects[m_currentObject] = parseObject(frame, infile);
+				m_objects[m_currentObject] = parseObject(fs, frame, infile);
 				m_currentObject++;
 			}
 			else if (tokenMap["CLASS:"] == "3D") {
-				if (data == 2) {
-					position.x = -222;
-					position.y = 306;
-					position.z = 52;
-				}
 				dfObject3D* threedo = new dfObject3D(m_3DOs[data], position, ambient);
 				threedo->difficulty(difficulty);
-				m_objects[m_currentObject] = parseObject(threedo, infile);
+				m_objects[m_currentObject] = parseObject(fs, threedo, infile);
 				m_currentObject++;
 			}
 			else {
@@ -243,6 +249,8 @@ dfParserObjects::dfParserObjects(dfFileSystem* fs, dfPalette* palette, std::stri
 			}
 		}
 	}
+
+	delete sec;
 }
 
 /**

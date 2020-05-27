@@ -33,6 +33,7 @@ fwMesh* fwMesh::clone(void)
 	fwMesh *clone=new fwMesh(geometry, material);
 	clone->m_rendering = m_rendering;
 	clone->m_pointSize = m_pointSize;
+	clone->m_name = m_name;
 	return clone;
 }
 

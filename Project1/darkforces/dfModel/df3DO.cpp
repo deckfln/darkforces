@@ -185,6 +185,7 @@ df3DO::df3DO(dfFileSystem* fs, dfPalette* palette, std::string file) :
 		m_mesh = new fwMesh(m_geometry, materialFlat);
 	}
 	m_mesh->rendering(m_shading);
+	m_mesh->set_name(file);
 	if (m_shading == fwMeshRendering::FW_MESH_POINT) {
 		m_mesh->pointSize(12.0f);
 	}

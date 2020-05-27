@@ -1,7 +1,9 @@
 #include "dfObject3D.h"
 
+#include "../dfFileSystem.h"
 #include "../dfModel/df3DO.h"
 #include "../dfLevel.h"
+#include "../dfVue.h"
 #include "../../framework/fwMesh.h"
 #include "../../framework/fwScene.h"
 
@@ -42,6 +44,9 @@ void dfObject3D::animRotationSpeed(float s)
 	m_aniRotationSpeed = s / 180.0f * 0.0031415f;
 }
 
+/**
+ * Add the mesh object
+ */
 void dfObject3D::add2scene(fwScene* scene)
 {
 	df3DO* model = (df3DO*)m_source;
@@ -57,6 +62,13 @@ void dfObject3D::add2scene(fwScene* scene)
 	}
 }
 
+/**
+ * Bind the proper animation VUE to the object
+ */
+void dfObject3D::vue(dfFileSystem *fs, std::string& vue, std::string& component)
+{
+	m_vue = new dfVue(fs, vue, component);
+}
 
 /**
  * animated the object
@@ -64,11 +76,24 @@ void dfObject3D::add2scene(fwScene* scene)
 bool dfObject3D::update(time_t t)
 {
 	if (m_logics & DF_LOGIC_ANIM) {
-		float delta = (float)t - m_lastFrame;
-		m_animRotation += m_animRotationAxe * m_aniRotationSpeed * delta;
-		m_mesh->rotate(m_animRotation);
 
-		m_lastFrame = t;
+		if (m_vue != nullptr) {
+			// follow a path
+			glm::mat4* mat4x4 = m_vue->nextFrame(t);
+			if (mat4x4 == nullptr) {
+				mat4x4 = m_vue->firstFrame(m_lastFrame);
+				m_lastFrame = t;
+			}
+			m_mesh->worldMatrix(*mat4x4);
+		}
+		else {
+			// rotate the object
+			float delta = (float)t - m_lastFrame;
+			m_animRotation += m_animRotationAxe * m_aniRotationSpeed * delta;
+			m_mesh->rotate(m_animRotation);
+			m_lastFrame = t;
+		}
+
 	}
 	return false;
 }

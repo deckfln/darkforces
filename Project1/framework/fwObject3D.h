@@ -63,6 +63,8 @@ public:
 	bool receiveShadow(bool s) { m_receiveShadow = s; return s; }
 
 	glm::mat4 &worldMatrix(void) { return m_worldMatrix; }
+	void worldMatrix(glm::mat4& worldMatrix);
+
 	glm::mat4& inverseWorldMatrix(void) { return m_inverseWorldMatrix; }
 
 	fwObject3D &addChild(fwObject3D *);

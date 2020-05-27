@@ -30,7 +30,7 @@ class dfParserObjects
 	bool m_added = false;
 
 	dfAtlasTexture* m_textures;
-	dfObject* parseObject(dfObject* sprite, std::istringstream& infile);
+	dfObject* parseObject(dfFileSystem* fs, dfObject* sprite, std::istringstream& infile);
 
 public:
 	dfParserObjects(dfFileSystem* fs, dfPalette* palette, std::string file, dfLevel* level);
