@@ -2,6 +2,7 @@
 #include "fwAABBox.h"
 
 #include <algorithm>    // std::min
+
 #include "math/fwSphere.h"
 
 fwAABBox::fwAABBox()
@@ -58,8 +59,17 @@ void fwAABBox::rotateFrom(fwAABBox& source, glm::vec3& rotation)
  */
 void fwAABBox::apply(fwAABBox& source, glm::mat4& matrix)
 {
-	m_p = glm::vec3(matrix * glm::vec4(source.m_p, 1.0));
-	m_p1 = glm::vec3(matrix * glm::vec4(source.m_p1, 1.0));
+	glm::vec3 p = glm::vec3(matrix * glm::vec4(source.m_p, 1.0));
+	glm::vec3 p1 = glm::vec3(matrix * glm::vec4(source.m_p1, 1.0));
+
+	// ensure p is always min and p1 is always max
+	m_p.x = std::min(p.x, p1.x);
+	m_p.y = std::min(p.y, p1.y);
+	m_p.z = std::min(p.z, p1.z);
+
+	m_p1.x = std::max(p.x, p1.x);
+	m_p1.y = std::max(p.y, p1.y);
+	m_p1.z = std::max(p.z, p1.z);
 }
 
 /**

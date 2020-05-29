@@ -16,7 +16,8 @@ const static std::list<std::string> keywords = {
 	"change_light",	//DF_ELEVATOR_CHANGE_LIGHT
 	"move_ceiling",	//DF_ELEVATOR_MOVE_CEILING
 	"morph_spin1",	//DF_ELEVATOR_MORPH_SPIN1
-	"morph_move1"	//DF_ELEVATOR_MORPH_MOVE1
+	"morph_move1",	//DF_ELEVATOR_MORPH_MOVE1
+	"morph_spin2"	//DF_ELEVATOR_MORPH_SPIN2
 };
 
 // default elevators speed
@@ -113,6 +114,7 @@ void dfLogicElevator::bindSector(dfSector* pSector)
 
 	case DF_ELEVATOR_MORPH_SPIN1:
 	case DF_ELEVATOR_MORPH_MOVE1:
+	case DF_ELEVATOR_MORPH_SPIN2:
 		// remove all non-portal walls. These walls will be stored on the Elevator mesh
 		m_pSector->removeHollowWalls();
 		break;
@@ -137,12 +139,25 @@ dfMesh *dfLogicElevator::buildGeometry(fwMaterial* material, std::vector<dfBitma
 	}
 
 	// get the maximum extend of the elevator -> will become the height of the object
-	float c;
-	for (auto stop : m_stops) {
-		c = stop->z_position(m_type);
-		if (c < m_zmin) m_zmin = c;
-		if (c > m_zmax) m_zmax = c;
+	switch (m_type) {
+	case DF_ELEVATOR_INV:
+	case DF_ELEVATOR_BASIC:
+	case DF_ELEVATOR_MOVE_FLOOR:
+	case DF_ELEVATOR_MOVE_CEILING:
+		// only vertical moving elevator needs to be tested against the stop
+		float c;
+		for (auto stop : m_stops) {
+			c = stop->z_position(m_type);
+			if (c < m_zmin) m_zmin = c;
+			if (c > m_zmax) m_zmax = c;
+		}
+		break;
+	default:
+		// sliding or spining elevators
+		m_zmin = m_pSector->staticFloorAltitude();
+		m_zmax = m_pSector->staticCeilingAltitude();
 	}
+
 
 	switch (m_type) {
 	case DF_ELEVATOR_INV:
@@ -199,6 +214,7 @@ dfMesh *dfLogicElevator::buildGeometry(fwMaterial* material, std::vector<dfBitma
 
 	case DF_ELEVATOR_MORPH_SPIN1:
 	case DF_ELEVATOR_MORPH_MOVE1:
+	case DF_ELEVATOR_MORPH_SPIN2:
 		m_mesh = new dfMesh(material, bitmaps);
 
 		// only use the inner polygon (the hole)
@@ -206,6 +222,7 @@ dfMesh *dfLogicElevator::buildGeometry(fwMaterial* material, std::vector<dfBitma
 
 		switch (m_type) {
 		case DF_ELEVATOR_MORPH_SPIN1:
+		case DF_ELEVATOR_MORPH_SPIN2:
 			// move the vertices around the center (in level space)
 			m_center.z = m_pSector->referenceFloor();
 			m_mesh->moveVertices(m_center);
@@ -407,6 +424,7 @@ bool dfLogicElevator::animate(time_t delta)
 	case DF_ELEVATOR_MOVE_CEILING:
 	case DF_ELEVATOR_MORPH_SPIN1:
 	case DF_ELEVATOR_MORPH_MOVE1:
+	case DF_ELEVATOR_MORPH_SPIN2:
 		return animateMoveZ();
 	default:
 		std::cerr << "dfLogicElevator::animate m_type=" << m_type << " not implemented" << std::endl;
@@ -437,6 +455,7 @@ void dfLogicElevator::moveTo(float z)
 	case DF_ELEVATOR_MOVE_CEILING:
 	case DF_ELEVATOR_MORPH_SPIN1:
 	case DF_ELEVATOR_MORPH_MOVE1:
+	case DF_ELEVATOR_MORPH_SPIN2:
 		if (m_mesh == nullptr) {
 			//std::cerr << "dfLogicElevator::moveTo mesh not implemented for " << m_sector << std::endl;
 			return;
@@ -467,6 +486,7 @@ void dfLogicElevator::moveTo(float z)
 		m_pSector->ceiling(z);
 		break;
 	case DF_ELEVATOR_MORPH_SPIN1:
+	case DF_ELEVATOR_MORPH_SPIN2:
 		m_mesh->rotateZ(glm::radians((z)));
 		break;
 	case DF_ELEVATOR_MORPH_MOVE1:

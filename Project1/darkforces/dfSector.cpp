@@ -930,6 +930,9 @@ void dfSector::buildFloorAndCeiling(dfMesh* mesh)
 	// Fill polygon structure with actual data. Any winding order works.
 	// The first polyline defines the main polygon.
 	// Following polylines define holes.
+	if (m_name == "spinner") {
+		printf("dfSector::buildFloorAndCeiling\n");
+	}
 	std::vector<std::vector<Point>>& polygon = polygons(-1);	// default polygons
 
 	m_wallVerticesStart = mesh->nbVertices();

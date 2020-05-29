@@ -71,7 +71,13 @@ dfLevel::dfLevel(dfFileSystem* fs, std::string file)
 			int layer = sector->m_layer;
 
 			// record the sector in the global list
-			m_sectorsName[sector->m_name] = sector;
+			// beware of sectors with the same same !
+			if (m_sectorsName.count(sector->m_name) == 0) {
+				m_sectorsName[sector->m_name] = sector;
+			}
+			else {
+				m_sectorsName[sector->m_name + "(1)"] = sector;
+			}
 			m_sectorsID[nSector] = sector;
 
 			sector->linkWalls();	// build the polygons from the sector
@@ -103,6 +109,7 @@ dfLevel::dfLevel(dfFileSystem* fs, std::string file)
 	// bind the sectors to the elevator logic
 	// bind the evelator logic to the level
 	for (auto elevator : m_inf->m_elevators) {
+		m_elevators[elevator->name()] = elevator;
 		elevator->parent(this);
 
 		dfSector* sector = m_sectorsName[elevator->sector()];
@@ -111,16 +118,52 @@ dfLevel::dfLevel(dfFileSystem* fs, std::string file)
 		}
 	}
 
-	// bind the sector walls to the elevator logic
+	// bind the trigger to the elevator
 	for (auto trigger : m_inf->m_triggers) {
 		dfSector* sector = m_sectorsName[trigger->sector()];
+		dfLogicElevator* elevator = m_elevators[sector->m_name];
+
+		trigger->elevator(elevator);
+	}
+
+	// bind the sector walls to the triggers
+	// build the bounding box of the trigger from the wall of the sector
+	std::string sectorname;
+	bool sectorIsElevator;
+	for (auto trigger : m_inf->m_triggers) {
+		sectorname = trigger->sector();
+		dfSector* sector = m_sectorsName[sectorname];
 		trigger->addEvents(sector);
 
 		if (sector) {
-			sector->setTriggerFromWall(trigger);
+			sectorIsElevator = false;
+
+			// if one of the client of trigger is the very sector the trigger is attached to
+			std::vector<dfMessage>& messages = trigger->messages();
+			for (auto& message : messages) {
+				std::string& client = message.client();
+				if (client == sectorname) {
+					sectorIsElevator = true;
+					break;
+				}
+			}
+
+			// then the sector is actually an elevator, and the bounding box of the trigger has to be connected to the bounding box of the elevator
+			if (sectorIsElevator) {
+				trigger->boundingBox(m_elevators[sectorname]);
+			}
+			else {
+				// the trigger is attached to a static wall
+				sector->setTriggerFromWall(trigger);
+			}
+
+
 			sector->addTrigger(trigger);
 		}
+	}
 
+	// bind the trigger to it's client
+	for (auto trigger : m_inf->m_triggers) {
 		std::vector<dfMessage>& messages = trigger->messages();
 		for (auto& message : messages) {
 			std::string& client = message.client();

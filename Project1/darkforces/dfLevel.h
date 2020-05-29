@@ -21,6 +21,7 @@
 class dfMesh;
 class dfParserObjects;
 class dfAtlasTexture;
+class dfLogicElevator;
 
 /**
  *
@@ -33,6 +34,9 @@ class dfLevel
 	std::map<std::string, dfSector *> m_sectorsName;	// all sectors of the level by Name
 	std::vector<dfSector*> m_sectorsID;			// all sectors of the level by ID
 	std::vector<dfBitmap*> m_bitmaps;			// all textures of the level
+
+	std::map<std::string, dfLogicElevator*> m_elevators;	// all elevators of the sector
+
 	glm::vec3 m_skyTexture;						// Identify texture for sectors FLAGS1 = 1
 	float m_skyAltitude=0;						
 

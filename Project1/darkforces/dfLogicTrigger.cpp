@@ -109,6 +109,9 @@ void dfLogicTrigger::addEvents(dfSector* pSector)
 	pSector->eventMask(m_eventMask);
 }
 
+/**
+ * create a static bounding box rom direct values
+ */
 void dfLogicTrigger::boundingBox(glm::vec2& left, glm::vec2& right, float floor, float ceiling)
 {
 	m_boundingBox = fwAABBox(
@@ -126,9 +129,20 @@ void dfLogicTrigger::boundingBox(glm::vec2& left, glm::vec2& right, float floor,
 	m_boundingBoxSize.z = abs(ceiling - floor);
 }
 
+/**
+ * create a static bounding box from another box
+ */
 void dfLogicTrigger::boundingBox(fwAABBox& box)
 {
 	m_boundingBox = box;
+}
+
+/**
+ * bind the bounding box to an elevator (the elevator might move)
+ */
+void dfLogicTrigger::boundingBox(dfLogicElevator* elevator)
+{
+	m_pElevator = elevator;
 }
 
 /**
@@ -232,6 +246,19 @@ void dfLogicTrigger::dispatchMessage(dfMessage* message)
 }
 
 /**
+ * bind the trigger to it's elevator
+ */
+void dfLogicTrigger::elevator(dfLogicElevator* elevator)
+{
+	if (m_pElevator == nullptr) {
+		m_pElevator = elevator;
+	}
+	else if (m_pElevator != elevator) {
+		std::cerr << "dfLogicTrigger::elevator elevators are different" << std::endl;
+	}
+}
+
+/**
  * Handle the TRIGGER message
  */
 void dfLogicTrigger::activate(int keys)
@@ -252,6 +279,10 @@ void dfLogicTrigger::activate(int keys)
 			m_messages[i].m_server = m_name;
 			g_MessageBus.push(&m_messages[i]);
 		}
-		m_actived = true;
+
+		// only switches needs activation/deactivation
+		if (m_class == DF_TRIGGER_SWITCH1) {
+			m_actived = true;
+		}
 	}
 }
