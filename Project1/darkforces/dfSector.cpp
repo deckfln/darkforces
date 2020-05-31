@@ -198,6 +198,49 @@ void dfSector::currentFloorAltitude(float z)
 }
 
 /**
+ * If the target Z is below the original floor, lower the floor
+ */
+void dfSector::staticFloorAltitude(float z)
+{
+	if (z < m_staticMeshFloorAltitude) {
+		m_staticMeshFloorAltitude = z;
+	}
+}
+
+/**
+* Return the static floor from that sector, or the parent sector that one is included in
+*/
+float dfSector::staticFloorAltitude(dfSectorSource s)
+{
+	if (s == dfSectorSource::PARENT && m_includedIn != nullptr) {
+		return m_includedIn->m_staticMeshFloorAltitude;
+	}
+	return m_staticMeshFloorAltitude;
+}
+
+/**
+ * If the target Z is above the original ceiling
+ */
+void dfSector::staticCeilingAltitude(float z)
+{
+	if (z > m_staticMeshCeilingAltitude) {
+		m_staticMeshCeilingAltitude = z;
+	}
+}
+
+/**
+ * Return the static ceiling from that sector, or the parent sector that one is included in
+ */
+float dfSector::staticCeilingAltitude(dfSectorSource s)
+{
+	if (s == dfSectorSource::PARENT && m_includedIn != nullptr) {
+		return m_includedIn->m_staticMeshCeilingAltitude; 
+	}
+
+	return m_staticMeshCeilingAltitude;
+}
+
+/**
  * Move the ceiling of the sector
  * Also move all triggers on the sector
  */
@@ -538,16 +581,6 @@ bool dfSector::includedIn(dfSector* sector)
 		// register the sectors
 		m_includedIn = sector;
 		sector->m_includes.push_back(this);
-
-		// overide the sector altitudes
-		m_floorAltitude = sector->m_floorAltitude;
-		m_ceilingAltitude = sector->m_ceilingAltitude;
-
-		m_staticMeshFloorAltitude = sector->m_staticMeshFloorAltitude;
-		m_staticMeshCeilingAltitude = sector->m_staticMeshCeilingAltitude;
-
-		m_referenceFloorAltitude= sector->m_referenceFloorAltitude;
-		m_referenceCeilingAltitude= sector->m_referenceCeilingAltitude;
 	}
 
 	return verticesIn;
@@ -1006,11 +1039,7 @@ void dfSector::buildFloorAndCeiling(dfMesh* mesh)
  */
 void dfSector::buildGeometry(dfMesh* mesh, int displayPolygon)
 {
-
-	if (m_name == "big_mid") {
-		printf("dfSector::buildGeometry\n");
-	}
-	if (m_includedIn != nullptr && m_elevator != nullptr) {
+	if (m_includedIn != nullptr && m_elevator != nullptr && !m_elevator->is(DF_ELEVATOR_CHANGE_LIGHT)) {
 		// for sectors that are included in other sector as elevator
 		// do not add them on the supermesh, they have their own mesh in the elevator
 		return;

@@ -56,6 +56,7 @@ enum {
 class dfLogicElevator: public dfMessageClient {
 	std::string m_class;
 	int m_type = -1;					// class of elevator
+
 	//TODO adapt the default speed
 	float m_speed = 20;					// time in millisecond between 2 stops
 	int m_eventMask = 0;

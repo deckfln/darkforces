@@ -14,6 +14,11 @@ using Point = std::array<Coord, 2>;
 
 #include "dfLogicTrigger.h"
 
+enum class dfSectorSource {
+	NORMAL,		// take floor & ceiling from the sector
+	PARENT		// take floor & ceiling from the parent sector that one is included in
+};
+
 class dfMesh;
 class dfSuperSector;
 class dfLogicElevator;
@@ -134,11 +139,11 @@ public:
 	void currentFloorAltitude(float z);
 	float currentFloorAltitude(void) { return m_floorAltitude; };
 
-	void staticFloorAltitude(float z) { m_staticMeshFloorAltitude = z; };
-	float staticFloorAltitude(void) { return m_staticMeshFloorAltitude; };
+	void staticFloorAltitude(float z);
+	float staticFloorAltitude(dfSectorSource s = dfSectorSource::NORMAL);
 
-	void staticCeilingAltitude(float z) { m_staticMeshCeilingAltitude = z; };
-	float staticCeilingAltitude(void) { return m_staticMeshCeilingAltitude; };
+	void staticCeilingAltitude(float z);
+	float staticCeilingAltitude(dfSectorSource s = dfSectorSource::NORMAL);
 
 	float referenceFloor(void) { return m_referenceFloorAltitude; };
 	float referenceCeiling(void) { return m_referenceCeilingAltitude; };
@@ -155,11 +160,8 @@ public:
 	void addObject(dfMesh* object);
 	bool isPointInside(glm::vec3& position, bool fullTest);
 	float boundingBoxSurface(void);
-	void setFloor(float floor);
-	void updateVertices(void);
 	void linkWalls(void);
 	void buildElevator(dfMesh *mesh, float bottom, float top, int what, bool clockwise, int flags);
-	void buildFloor(dfMesh* mesh);
 
 	bool includedIn(dfSector* sector);
 	dfSector* isIncludedIn(void) { return m_includedIn; };
