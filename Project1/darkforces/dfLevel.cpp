@@ -98,6 +98,21 @@ dfLevel::dfLevel(dfFileSystem* fs, std::string file)
 		sector->bindWall2Sector();
 	}
 
+	// For every subSector, find the sector it is included in
+	for (auto i = 0; i < m_sectorsID.size(); i++) {
+		if (m_sectorsID[i]->flag(DF_SECTOR__SUBSECTOR)) {
+			for (auto j = 0; j < m_sectorsID.size(); j++) {
+				// ignore self
+				if (i == j) {
+					continue;
+				}
+
+				// test and link if needed
+				m_sectorsID[i]->includedIn(m_sectorsID[j]);
+			}
+		}
+	}
+
 	// load and ditribute the INF file
 	m_inf = new dfParseINF(fs, file);
 

@@ -17,6 +17,7 @@ public:
 	fwAABBox(fwAABBox& source, glm::mat4& matrix);
 	fwAABBox& multiplyBy(float v);
 	bool inside(glm::vec3& position);
+	bool inside(fwAABBox& box);
 	bool intersect(fwAABBox& box);
 	void extend(fwAABBox& box);
 	void extend(glm::vec3& vertice);

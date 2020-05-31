@@ -30,6 +30,14 @@ void glVertexArray::unbind(void)
 	glBindVertexArray(0);
 }
 
+/**
+ * Add a label for debugging
+ */
+void glVertexArray::label(const char* s)
+{
+	glObjectLabel(GL_VERTEX_ARRAY, id, -1, s);
+}
+
 void glVertexArray::draw(GLenum mode, bool indexed, int count)
 {
 	bind(); 

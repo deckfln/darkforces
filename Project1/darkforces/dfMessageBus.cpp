@@ -11,7 +11,14 @@ dfMessageBus::dfMessageBus()
 
 void dfMessageBus::addClient(dfMessageClient* client)
 {
-	m_clients[client->name()] = client;
+	if (m_clients.count(client->name()) == 0) {
+		// first client with that name
+		m_clients[client->name()] = client;
+	}
+	else {
+		// chain multilpe clients with the same name
+		m_clients[client->name()]->chain(client);
+	}
 }
 
 void dfMessageBus::removeClient(dfMessageClient* client)

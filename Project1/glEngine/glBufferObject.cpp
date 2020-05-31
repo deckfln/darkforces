@@ -30,6 +30,14 @@ void glBufferObject::unbind(void)
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
+/**
+ * Add a label for debugging
+ */
+void glBufferObject::label(const char* s)
+{
+	glObjectLabel(GL_BUFFER, buffer, -1, s);
+}
+
 glBufferObject::~glBufferObject()
 {
 	glDeleteBuffers(1, &buffer);

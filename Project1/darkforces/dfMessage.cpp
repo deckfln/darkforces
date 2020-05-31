@@ -49,6 +49,11 @@ dfMessage::dfMessage(std::vector<std::string>& tokens)
 			m_value = std::stoi(tokens[1]);
 			m_client = tokens[2];
 		}
+		else if (tokens[3] == "m_trigger") {
+			m_action = DF_MESSAGE_TRIGGER;
+			m_value = std::stoi(tokens[1]);
+			m_client = tokens[2];
+		}
 		break;
 	case 3:
 		// message: goto_stop 1

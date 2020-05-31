@@ -97,6 +97,7 @@ GLuint fwMesh::buildVAO(glProgram* program)
 	if (vao.count(id) == 0) {
 		vao[id] = new glVertexArray();
 		geometry->enable_attributes(program);
+		vao[id]->label(m_name.c_str());
 		vao[id]->unbind();
 	}
 

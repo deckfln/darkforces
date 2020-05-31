@@ -88,7 +88,10 @@ void dfLogicElevator::bindSector(dfSector* pSector)
 
 	// if the elevator has mask_event for enter/leave, create triggers
 	m_pSector->eventMask(m_eventMask);
-	
+
+	// inform the sector it is driven by an elevator
+	m_pSector->elevator(this);
+
 	// get the maximum extend of the elevator 
 	float amin = 99999, amax = -99999, c;
 	for (auto stop : m_stops) {
@@ -117,6 +120,13 @@ void dfLogicElevator::bindSector(dfSector* pSector)
 	case DF_ELEVATOR_MORPH_SPIN2:
 		// remove all non-portal walls. These walls will be stored on the Elevator mesh
 		m_pSector->removeHollowWalls();
+
+		// if the sector is included in another one (eg slider_sw on secbase)
+		// remove the hollows from the parent sector
+		dfSector* parent = m_pSector->isIncludedIn();
+		if (parent != nullptr) {
+			parent->removeHollowWalls();
+		}
 		break;
 	}
 }
@@ -330,7 +340,12 @@ bool dfLogicElevator::animateMoveZ(void)
 		break;
 
 	case DF_ELEVATOR_MOVE: {
-		m_current = m_target - m_direction * (1.0f - m_tick / m_delay);
+		if (m_direction != 0) {
+			m_current = m_target - m_direction * (1.0f - m_tick / m_delay);
+		}
+		else {
+			m_current = m_target;
+		}
 		moveTo(m_current);
 
 		bool reached = false;
@@ -558,7 +573,7 @@ void dfLogicElevator::dispatchMessage(dfMessage* message)
 			m_direction = m_target - m_current;
 
 			// TODO adapt the speed
-			m_delay = abs(m_direction) * 838 / m_speed;
+			m_delay = abs(m_direction) * 1600 / m_speed;
 
 			m_status = DF_ELEVATOR_MOVE;
 			m_tick = 0;
@@ -578,6 +593,9 @@ void dfLogicElevator::dispatchMessage(dfMessage* message)
 	default:
 		std::cerr << "dfLogicElevator::dispatchMessage message " << message->m_action << " not implemented" << std::endl;
 	}
+
+	// let the parent class deal with the message
+	dfMessageClient::dispatchMessage(message);
 }
 
 /**
@@ -641,7 +659,7 @@ void dfLogicElevator::getMessagesToSectors(std::list<std::string>& sectors)
 void dfLogicElevator::angle(float angle)
 {
 	angle = glm::radians(angle);	// conver degrees to radians
-	m_move = glm::vec3(cos(angle), -sin(angle), 0);
+	m_move = glm::vec3(-cos(angle), sin(angle), 0);
 }
 
 /**

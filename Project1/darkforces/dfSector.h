@@ -16,6 +16,7 @@ using Point = std::array<Coord, 2>;
 
 class dfMesh;
 class dfSuperSector;
+class dfLogicElevator;
 
 /**
  * Connection of each vertice to the left and the right
@@ -81,6 +82,11 @@ class dfSector
 	std::vector<dfSector *> m_dummy;
 	std::vector<dfSector *> &m_sectorsID = m_dummy;		// all neighbour sectors of the level by ID
 
+	std::vector<dfSector*> m_includes;					// list of sectors included in the current one
+	dfSector* m_includedIn = nullptr;					// if the sector is included in another one
+
+	dfLogicElevator* m_elevator = nullptr;				// if the sector is managed by an elevator
+
 	void buildWalls(dfMesh* mesh, int displayPolygon);
 	void buildFloorAndCeiling(dfMesh* mesh);
 	void buildSigns(dfMesh* mesh);
@@ -140,6 +146,7 @@ public:
 	void parent(dfSuperSector* parent) { m_super = parent; };
 	float height(void) { return m_height; };
 	unsigned flag(void) { return m_flag1; };
+	bool flag(int v) { return (m_flag1 & v) != 0; };
 	void eventMask(int eventMask) { m_eventMask = eventMask; };
 	std::vector <dfWall*>& walls(int displayPolygon = -1);
 
@@ -153,6 +160,9 @@ public:
 	void linkWalls(void);
 	void buildElevator(dfMesh *mesh, float bottom, float top, int what, bool clockwise, int flags);
 	void buildFloor(dfMesh* mesh);
+
+	bool includedIn(dfSector* sector);
+	dfSector* isIncludedIn(void) { return m_includedIn; };
 
 	void bindWall2Sector(void);
 
@@ -170,6 +180,8 @@ public:
 
 	void setAABBtop(float z);
 	void setAABBbottom(float z);
+
+	void elevator(dfLogicElevator* elevator) { m_elevator = elevator; };
 
 	~dfSector();
 };

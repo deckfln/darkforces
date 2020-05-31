@@ -271,7 +271,10 @@ glTexture *fwRendererDefered::draw(fwCamera* camera, fwScene* scene)
 	/*
 	 * 1st pass Draw shadows
 	*/
+	static const char* s1 = "drawshadow";
+	glPushDebugGroup(GL_DEBUG_SOURCE_APPLICATION, 0, GLsizei(strlen(s1)), s1);
 	bool hasShadowLights = drawShadows(camera, scene);
+	glPopDebugGroup();
 
 	// create a map of materials shaders vs meshes
 	//    [shaderCode][materialID] = [mesh1, mesh2]
@@ -299,6 +302,8 @@ glTexture *fwRendererDefered::draw(fwCamera* camera, fwScene* scene)
 	/*
 	 * 2nd pass : draw opaque objects
 	 */
+	static const char* s2 = "draw_opaque_objects";
+	glPushDebugGroup(GL_DEBUG_SOURCE_APPLICATION, 0, GLsizei(strlen(s2)), s2);
 
 	// record the stencil for the background draw
 	glEnable(GL_STENCIL_TEST);
@@ -318,16 +323,23 @@ glTexture *fwRendererDefered::draw(fwCamera* camera, fwScene* scene)
 
 	glStencilFunc(GL_ALWAYS, 0, 0xFF);
 	glDisable(GL_STENCIL_TEST);
+	glPopDebugGroup();
 
 	/*
 	 * 4th pass : lighting + generate bloom buffer
 	 * DO NOT overwrite the depth buffer with merging to the quad
 	 */
+	static const char* s3 = "merge_mtr";
+	glPushDebugGroup(GL_DEBUG_SOURCE_APPLICATION, 0, GLsizei(strlen(s3)), s3);
 	mergeMTR(scene);
+	glPopDebugGroup();
 
 	/*
 	 * 5th pass : draw skybox
 	 */
+	static const char* s4 = "draw_skybox";
+	glPushDebugGroup(GL_DEBUG_SOURCE_APPLICATION, 0, GLsizei(strlen(s4)), s4);
+
 	m_lightRendering->bind();
 
 	fwSkybox* background = scene->background();
@@ -340,12 +352,17 @@ glTexture *fwRendererDefered::draw(fwCamera* camera, fwScene* scene)
 
 		m_lightRendering->bindDepth(previous);
 	}
+	glPopDebugGroup();
 
 	/*
 	 * 6th pass: bloom pass
 	 */
 	if (m_bloom) {
+		static const char* s5 = "draw_bloom";
+		glPushDebugGroup(GL_DEBUG_SOURCE_APPLICATION, 0, GLsizei(strlen(s5)), s5);
+
 		m_bloom->draw(m_lightRendering);
+		glPopDebugGroup();
 	}
 
 
@@ -356,6 +373,9 @@ glTexture *fwRendererDefered::draw(fwCamera* camera, fwScene* scene)
 	std::string defines;
 	std::string codeLights = "";
 
+	static const char* s6 = "draw_transparent_objects";
+	glPushDebugGroup(GL_DEBUG_SOURCE_APPLICATION, 0, GLsizei(strlen(s6)), s6);
+
 	preProcessLights(scene, lightsByType, defines, codeLights);
 	drawTransparentMeshes(
 		camera,
@@ -364,6 +384,8 @@ glTexture *fwRendererDefered::draw(fwCamera* camera, fwScene* scene)
 		codeLights,
 		lightsByType,
 		hasShadowLights);
+
+	glPopDebugGroup();
 
 	return m_lightRendering->getColorTexture(0);
 }

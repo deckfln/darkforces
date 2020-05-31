@@ -99,11 +99,25 @@ fwAABBox& fwAABBox::multiplyBy(float v)
 	return *this;
 }
 
+/**
+ * If point is inside the AABB
+ */
 bool fwAABBox::inside(glm::vec3& position)
 {
 	return (position.x >= m_p.x && position.x <= m_p1.x &&
 		position.y >= m_p.y && position.y <= m_p1.y &&
 		position.z >= m_p.z && position.z <= m_p1.z);
+}
+
+/**
+ * If the current AABB is completely inside the given AABB
+ */
+bool fwAABBox::inside(fwAABBox& box)
+{
+	// using 6 splitting planes to rule out intersections.
+	return (m_p.x >= box.m_p.x && m_p1.x < box.m_p1.x &&
+		m_p.y >= box.m_p.y && m_p1.y <= box.m_p1.y &&
+		m_p.z >= box.m_p.z && m_p1.z <= box.m_p1.z);
 }
 
 /**
@@ -117,6 +131,9 @@ bool fwAABBox::intersect(fwAABBox& box)
 		box.m_p1.z < m_p.z || box.m_p.z > m_p1.z) ? false : true;
 }
 
+/**
+ * Extend the current AABBB y including the give one
+ */
 void fwAABBox::extend(fwAABBox& box)
 {
 	if (m_p.x > box.m_p.x) m_p.x = box.m_p.x;
@@ -127,6 +144,9 @@ void fwAABBox::extend(fwAABBox& box)
 	if (m_p1.z < box.m_p1.z) m_p1.z = box.m_p1.z;
 }
 
+/**
+ * Extend the current AABBB y including the give point
+ */
 void fwAABBox::extend(glm::vec3& vertice)
 {
 	if (m_p.x > vertice.x) m_p.x = vertice.x;

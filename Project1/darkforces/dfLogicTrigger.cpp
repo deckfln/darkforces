@@ -243,6 +243,9 @@ void dfLogicTrigger::dispatchMessage(dfMessage* message)
 	default:
 		std::cerr << "dfLogicTrigger::dispatchMessage action " << message->m_action << " not implemented" << std::endl;
 	}
+
+	// let the parent class deal with the message
+	dfMessageClient::dispatchMessage(message);
 }
 
 /**

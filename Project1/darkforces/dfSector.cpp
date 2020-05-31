@@ -454,29 +454,37 @@ void dfSector::linkWalls(void)
 			std::cerr << "dfSector::linkWalls sector with more than 1 hole is not implemented" << std::endl;
 		}
 
-		std::vector<Point>& polygon = m_polygons_vertices[1];
-		Point p = m_polygons_vertices[0][1];
+		// sort the polygons to move the outside polygon at position 0
+		for (auto poly_start = 0; poly_start < m_polygons_vertices.size() - 1; poly_start++) {
+			Point p = m_polygons_vertices[poly_start][1];
 
-		// https://stackoverflow.com/questions/217578/how-can-i-determine-whether-a-2d-point-is-within-a-polygon
-		// http://www.ecse.rpi.edu/Homepages/wrf/Research/Short_Notes/pnpoly.html
-		bool inside = false;
-		for (unsigned int i = 0, j = polygon.size() - 1; i < polygon.size(); j = i++)
-		{
-			if ((polygon[i][1] > p[1]) != (polygon[j][1] > p[1]) &&
-				p[0] < (polygon[j][0] - polygon[i][0]) * (p[1] - polygon[i][1]) / (polygon[j][1] - polygon[i][1]) + polygon[i][0])
-			{
-				inside = !inside;
+			for (auto poly = poly_start + 1; poly < m_polygons_vertices.size(); poly++) {
+				std::vector<Point>& polygon = m_polygons_vertices[poly];
+
+				// https://stackoverflow.com/questions/217578/how-can-i-determine-whether-a-2d-point-is-within-a-polygon
+				// http://www.ecse.rpi.edu/Homepages/wrf/Research/Short_Notes/pnpoly.html
+				bool inside = false;
+				for (unsigned int i = 0, j = polygon.size() - 1; i < polygon.size(); j = i++)
+				{
+					if ((polygon[i][1] > p[1]) != (polygon[j][1] > p[1]) &&
+						p[0] < (polygon[j][0] - polygon[i][0]) * (p[1] - polygon[i][1]) / (polygon[j][1] - polygon[i][1]) + polygon[i][0])
+					{
+						inside = !inside;
+					}
+				}
+
+				if (inside) {
+					// if polygon N inside polygon N+1
+					// move the outside polygon at position N
+					std::vector<Point> swap = m_polygons_vertices[poly_start];
+					m_polygons_vertices[poly_start] = m_polygons_vertices[poly];
+					m_polygons_vertices[poly] = swap;
+
+					std::vector<dfWall*> swap1 = m_polygons_walls[poly_start];
+					m_polygons_walls[poly_start] = m_polygons_walls[poly];
+					m_polygons_walls[poly] = swap1;
+				}
 			}
-		}
-
-		if (inside) {
-			std::vector<Point> swap = m_polygons_vertices[0];
-			m_polygons_vertices[0] = m_polygons_vertices[1];
-			m_polygons_vertices[1] = swap;
-
-			std::vector<dfWall *> swap1 = m_polygons_walls[0];
-			m_polygons_walls[0] = m_polygons_walls[1];
-			m_polygons_walls[1] = swap1;
 		}
 	}
 }
@@ -496,6 +504,54 @@ void dfSector::buildFloor(dfMesh* mesh)
 }
 */
 
+/**
+ * If all vertices of the current sectors are also in the target sector
+ *   the current sector is included in the target.
+ *   register the data and overide the sector altitudes
+ *   EG: slider_sw is included in 113 on SECBASE.LEV
+ */
+bool dfSector::includedIn(dfSector* sector)
+{
+	if (!m_boundingBox.inside(sector->m_boundingBox)) {
+		return false;
+	}
+
+	bool verticesIn = true;
+
+	for (auto& source : m_vertices) {
+		bool verticeIn = false;
+
+		for (auto& target : sector->m_vertices) {
+			if (source == target) {
+				verticeIn = true;
+				break;
+			}
+		}
+
+		if (!verticeIn) {
+			verticesIn = false;
+			break;
+		}
+	}
+
+	if (verticesIn) {
+		// register the sectors
+		m_includedIn = sector;
+		sector->m_includes.push_back(this);
+
+		// overide the sector altitudes
+		m_floorAltitude = sector->m_floorAltitude;
+		m_ceilingAltitude = sector->m_ceilingAltitude;
+
+		m_staticMeshFloorAltitude = sector->m_staticMeshFloorAltitude;
+		m_staticMeshCeilingAltitude = sector->m_staticMeshCeilingAltitude;
+
+		m_referenceFloorAltitude= sector->m_referenceFloorAltitude;
+		m_referenceCeilingAltitude= sector->m_referenceCeilingAltitude;
+	}
+
+	return verticesIn;
+}
 
 /**
  * bind each wall with an adjoint to the other sector
@@ -923,16 +979,13 @@ void dfSector::buildFloorAndCeiling(dfMesh* mesh)
 	// Ignore strange sector whose ceiling is below the floor
 	if (m_staticMeshCeilingAltitude < m_staticMeshFloorAltitude) {
 		//TODO do not forget that 'thing'
-		printf("ignore dfSuperSector::buildFloor sector %d\n", m_id);
+		std::cerr << "dfSector::buildFloorAndCeiling ignore dfSuperSector::buildFloor sector " << m_id << std::endl;
 		return;
 	}
 
 	// Fill polygon structure with actual data. Any winding order works.
 	// The first polyline defines the main polygon.
 	// Following polylines define holes.
-	if (m_name == "spinner") {
-		printf("dfSector::buildFloorAndCeiling\n");
-	}
 	std::vector<std::vector<Point>>& polygon = polygons(-1);	// default polygons
 
 	m_wallVerticesStart = mesh->nbVertices();
@@ -953,6 +1006,16 @@ void dfSector::buildFloorAndCeiling(dfMesh* mesh)
  */
 void dfSector::buildGeometry(dfMesh* mesh, int displayPolygon)
 {
+
+	if (m_name == "big_mid") {
+		printf("dfSector::buildGeometry\n");
+	}
+	if (m_includedIn != nullptr && m_elevator != nullptr) {
+		// for sectors that are included in other sector as elevator
+		// do not add them on the supermesh, they have their own mesh in the elevator
+		return;
+	}
+
 	buildWalls(mesh, displayPolygon);
 	buildFloorAndCeiling(mesh);
 	buildSigns(mesh);

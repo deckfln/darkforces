@@ -3,6 +3,7 @@
 #include <glm/gtx/intersect.hpp>
 #include "dfSector.h"
 #include "dfBitmap.h"
+#include "dfLevel.h"
 
 #include "../include/earcut.hpp"
 
@@ -399,17 +400,18 @@ void dfMesh::rotateZ(float angle)
 }
 
 /**
- * force the position
+ * force the position in level space
  */
 void dfMesh::move(glm::vec3& p)
 {
-	m_position = glm::vec3(p.x, p.z, p.y) / 10.0f;
+	// convert to gl space
+	dfLevel::level2gl(p, m_position);
 
 	position(m_position);
 }
 
 /**
- * translate the object
+ * translate the object in level space
  */
 void dfMesh::translate(glm::vec3& direction, float distance)
 {
@@ -419,6 +421,7 @@ void dfMesh::translate(glm::vec3& direction, float distance)
 
 /**
  * Override fwMesh::translate to force the bounding box update
+ * position is in GL space
  */
 void dfMesh::position(glm::vec3& position)
 {
