@@ -10,16 +10,16 @@ class glBufferAttribute
 {
 protected:
 	const std::string m_name;
-	GLuint m_type;
-	void *m_data;
-	GLsizei m_len;					// size of the buffer in bytes
-	GLuint m_itemSize;				// number of component in an item
-	GLuint m_count;					// number of items
-	GLuint m_sizeof_element;		// size of a single element in bytes
+	GLuint m_type=0;
+	void *m_data=nullptr;
+	GLsizei m_len=0;				// size of the buffer in bytes
+	GLuint m_itemSize=0;			// number of component in an item
+	GLuint m_count=0;				// number of items
+	GLuint m_sizeof_element=0;		// size of a single element in bytes
 
 	bool m_delete_on_exit = true;	// delete data on exit
 
-	glBufferObject *m_vbo;
+	glBufferObject *m_vbo=nullptr;
 
 	bool m_dirty = false;		// the attribute need to be uploaded to the GPU
 
