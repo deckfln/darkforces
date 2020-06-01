@@ -671,7 +671,7 @@ void dfLogicElevator::getMessagesToSectors(std::list<std::string>& sectors)
 void dfLogicElevator::angle(float angle)
 {
 	angle = glm::radians(angle);	// conver degrees to radians
-	m_move = glm::vec3(-cos(angle), sin(angle), 0);
+	m_move = glm::vec3(-sin(angle), cos(angle), 0);
 }
 
 /**
