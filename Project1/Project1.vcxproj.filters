@@ -13,6 +13,24 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Fichiers d%27en-tête\DarkForces">
+      <UniqueIdentifier>{2e0d4703-e62a-48e6-a9d5-47b14d02dcf9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers sources\Dark Forces">
+      <UniqueIdentifier>{4572e5b4-3bee-454a-9ced-11c429ee4cf2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers d%27en-tête\Framework">
+      <UniqueIdentifier>{f62a26a9-c360-4191-a2fb-eefa2d473c66}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers sources\Framework">
+      <UniqueIdentifier>{4b2e6873-3644-4083-a6fb-a48b89dc48aa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers sources\opengl">
+      <UniqueIdentifier>{af468bf6-d957-4d7f-af98-5e975607c30f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers d%27en-tête\opengl">
+      <UniqueIdentifier>{3811b373-7d83-4fe8-b43d-bf5973b6106b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source.cpp">
@@ -27,329 +45,329 @@
     <ClCompile Include="Element.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="glEngine\glProgram.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
     <ClCompile Include="stb.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="glEngine\glShader.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="glEngine\glTexture.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="glEngine\glBufferAttribute.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="glEngine\glBufferObject.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="glEngine\glUniform.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="glEngine\glVertexArray.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="glEngine\glVertexAttribute.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
     <ClCompile Include="Reference.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="glEngine\glFrameBuffer.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="glEngine\glRenderBuffer.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="framework\fwPostProcessing.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="glEngine\glCubeTexture.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="framework\fwSkybox.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="framework\controls\fwOrbitControl.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="framework\fwApp.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
     <ClCompile Include="myApp.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="glEngine\glUniformBuffer.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="framework\fwObject3D.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="framework\fwScene.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="framework\fwMesh.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="framework\fwInstancedMesh.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="glEngine\glInstancedBufferAttribute.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="glEngine\glInstancedVertexArray.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="framework\fwGeometry.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="framework\fwMaterial.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="framework\fwMaterialBasic.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="framework\geometries\fwPlaneGeometry.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="framework\materials\fwOutlineMaterial.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="framework\materials\fwNormalHelperMaterial.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="framework\lights\fwDirectionLight.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="framework\lights\fwSpotLight.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="framework\lights\fwPointLight.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="framework\geometries\fwBoxGeometry.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="framework\fwLight.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="framework\fwCamera.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="glEngine\glColorMap.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="glEngine\glDepthMap.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="framework\camera\fwOrthographicCamera.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="glEngine\textures\glDepthTexture.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="framework\fwTexture.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="framework\fwUniform.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="framework\fwFrustum.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="framework\math\fwPlane.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="framework\math\fwSphere.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="framework\math\fwBox3.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="glEngine\glDynamicBufferAttribute.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="framework\materials\fwBloomMaterial.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="framework\fwMaterialDiffuse.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="framework\render\fwRendererDefered.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="glEngine\glGBuffer.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="framework\fwRenderer.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="framework\render\fwRendererForward.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="framework\postprocessing\fwPostProcessingBloom.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="framework\mesh\fwMeshSkinned.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="framework\fwBoneInfo.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="framework\fwAnimationKeyframe.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="framework\fwAnimation.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
     <ClCompile Include="framework\Loader.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="framework\fwTextures.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="glEngine\glTextureArray.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="framework\fwBoneInfoAnimation.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="framework\fwSprites.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="framework\fwParticles.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="framework\camera\fwCameraPanoramic.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="glEngine\framebuffer\glDepthCubeMap.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="glEngine\textures\glCubeTextureDepth.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="framework\materials\fwMaterialDeferedLights.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="darkforces\dfLevel.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="darkforces\dfSector.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="darkforces\dfWall.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="framework\controls\fwControlThirdPerson.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="framework\fwControl.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="framework\fwCollision.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="darkforces\dfCollision.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="framework\fwAABBox.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="darkforces\dfSuperSector.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
     <ClCompile Include="myDarkForces.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="framework\geometries\fwGeometrySphere.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="darkforces\dfParseINF.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="darkforces\dfLogicTrigger.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="darkforces\dfLogicElevator.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="darkforces\dfLogicStop.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="darkforces\dfMesh.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="darkforces\dfFileGOB.cpp">
-      <Filter>Fichiers sources</Filter>
+    <ClCompile Include="darkforces\dfAtlasTexture.cpp">
+      <Filter>Fichiers sources\Dark Forces</Filter>
     </ClCompile>
     <ClCompile Include="darkforces\dfBitmap.cpp">
-      <Filter>Fichiers sources</Filter>
+      <Filter>Fichiers sources\Dark Forces</Filter>
     </ClCompile>
-    <ClCompile Include="darkforces\dfPalette.cpp">
-      <Filter>Fichiers sources</Filter>
+    <ClCompile Include="darkforces\dfCollision.cpp">
+      <Filter>Fichiers sources\Dark Forces</Filter>
     </ClCompile>
-    <ClCompile Include="darkforces\dfSign.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="darkforces\dfMessage.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="darkforces\dfMessageBus.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="darkforces\dfMessageClient.cpp">
-      <Filter>Fichiers sources</Filter>
+    <ClCompile Include="darkforces\dfFileGOB.cpp">
+      <Filter>Fichiers sources\Dark Forces</Filter>
     </ClCompile>
     <ClCompile Include="darkforces\dfFileSystem.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="darkforces\dfObject.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="darkforces\dfParserObjects.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="darkforces\dfAtlasTexture.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="darkforces\dfSprites.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="darkforces\dfModel.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="darkforces\dfModel\dfWAX.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="darkforces\dfGame.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="glEngine\glUniformBlock.cpp">
-      <Filter>Fichiers sources</Filter>
+      <Filter>Fichiers sources\Dark Forces</Filter>
     </ClCompile>
     <ClCompile Include="darkforces\dfModel\dfFME.cpp">
-      <Filter>Fichiers sources</Filter>
+      <Filter>Fichiers sources\Dark Forces</Filter>
     </ClCompile>
     <ClCompile Include="darkforces\dfFrame.cpp">
-      <Filter>Fichiers sources</Filter>
+      <Filter>Fichiers sources\Dark Forces</Filter>
     </ClCompile>
-    <ClCompile Include="darkforces\dfModel\df3DO.cpp">
-      <Filter>Fichiers sources</Filter>
+    <ClCompile Include="darkforces\dfGame.cpp">
+      <Filter>Fichiers sources\Dark Forces</Filter>
     </ClCompile>
-    <ClCompile Include="darkforces\dfObject\dfSpriteAnimated.cpp">
-      <Filter>Fichiers sources</Filter>
+    <ClCompile Include="darkforces\dfLevel.cpp">
+      <Filter>Fichiers sources\Dark Forces</Filter>
     </ClCompile>
-    <ClCompile Include="darkforces\dfObject\dfSprite.cpp">
-      <Filter>Fichiers sources</Filter>
+    <ClCompile Include="darkforces\dfLogicElevator.cpp">
+      <Filter>Fichiers sources\Dark Forces</Filter>
+    </ClCompile>
+    <ClCompile Include="darkforces\dfLogicStop.cpp">
+      <Filter>Fichiers sources\Dark Forces</Filter>
+    </ClCompile>
+    <ClCompile Include="darkforces\dfLogicTrigger.cpp">
+      <Filter>Fichiers sources\Dark Forces</Filter>
+    </ClCompile>
+    <ClCompile Include="darkforces\dfMesh.cpp">
+      <Filter>Fichiers sources\Dark Forces</Filter>
+    </ClCompile>
+    <ClCompile Include="darkforces\dfMessage.cpp">
+      <Filter>Fichiers sources\Dark Forces</Filter>
+    </ClCompile>
+    <ClCompile Include="darkforces\dfMessageBus.cpp">
+      <Filter>Fichiers sources\Dark Forces</Filter>
+    </ClCompile>
+    <ClCompile Include="darkforces\dfMessageClient.cpp">
+      <Filter>Fichiers sources\Dark Forces</Filter>
+    </ClCompile>
+    <ClCompile Include="darkforces\dfModel.cpp">
+      <Filter>Fichiers sources\Dark Forces</Filter>
+    </ClCompile>
+    <ClCompile Include="darkforces\dfObject.cpp">
+      <Filter>Fichiers sources\Dark Forces</Filter>
     </ClCompile>
     <ClCompile Include="darkforces\dfObject\dfObject3D.cpp">
-      <Filter>Fichiers sources</Filter>
+      <Filter>Fichiers sources\Dark Forces</Filter>
+    </ClCompile>
+    <ClCompile Include="darkforces\dfPalette.cpp">
+      <Filter>Fichiers sources\Dark Forces</Filter>
+    </ClCompile>
+    <ClCompile Include="darkforces\dfParseINF.cpp">
+      <Filter>Fichiers sources\Dark Forces</Filter>
+    </ClCompile>
+    <ClCompile Include="darkforces\dfParserObjects.cpp">
+      <Filter>Fichiers sources\Dark Forces</Filter>
+    </ClCompile>
+    <ClCompile Include="darkforces\dfSector.cpp">
+      <Filter>Fichiers sources\Dark Forces</Filter>
+    </ClCompile>
+    <ClCompile Include="darkforces\dfSign.cpp">
+      <Filter>Fichiers sources\Dark Forces</Filter>
+    </ClCompile>
+    <ClCompile Include="darkforces\dfObject\dfSprite.cpp">
+      <Filter>Fichiers sources\Dark Forces</Filter>
+    </ClCompile>
+    <ClCompile Include="darkforces\dfObject\dfSpriteAnimated.cpp">
+      <Filter>Fichiers sources\Dark Forces</Filter>
+    </ClCompile>
+    <ClCompile Include="darkforces\dfSprites.cpp">
+      <Filter>Fichiers sources\Dark Forces</Filter>
+    </ClCompile>
+    <ClCompile Include="darkforces\dfSuperSector.cpp">
+      <Filter>Fichiers sources\Dark Forces</Filter>
     </ClCompile>
     <ClCompile Include="darkforces\dfVue.cpp">
-      <Filter>Fichiers sources</Filter>
+      <Filter>Fichiers sources\Dark Forces</Filter>
+    </ClCompile>
+    <ClCompile Include="darkforces\dfWall.cpp">
+      <Filter>Fichiers sources\Dark Forces</Filter>
+    </ClCompile>
+    <ClCompile Include="darkforces\dfModel\dfWAX.cpp">
+      <Filter>Fichiers sources\Dark Forces</Filter>
+    </ClCompile>
+    <ClCompile Include="darkforces\dfModel\df3DO.cpp">
+      <Filter>Fichiers sources\Dark Forces</Filter>
+    </ClCompile>
+    <ClCompile Include="framework\fwAABBox.cpp">
+      <Filter>Fichiers sources\Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="framework\fwAnimation.cpp">
+      <Filter>Fichiers sources\Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="framework\fwAnimationKeyframe.cpp">
+      <Filter>Fichiers sources\Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="framework\fwApp.cpp">
+      <Filter>Fichiers sources\Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="framework\materials\fwBloomMaterial.cpp">
+      <Filter>Fichiers sources\Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="framework\fwBoneInfo.cpp">
+      <Filter>Fichiers sources\Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="framework\fwBoneInfoAnimation.cpp">
+      <Filter>Fichiers sources\Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="framework\math\fwBox3.cpp">
+      <Filter>Fichiers sources\Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="framework\geometries\fwBoxGeometry.cpp">
+      <Filter>Fichiers sources\Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="framework\fwCamera.cpp">
+      <Filter>Fichiers sources\Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="framework\camera\fwCameraPanoramic.cpp">
+      <Filter>Fichiers sources\Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="framework\fwCollision.cpp">
+      <Filter>Fichiers sources\Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="framework\fwControl.cpp">
+      <Filter>Fichiers sources\Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="framework\controls\fwControlThirdPerson.cpp">
+      <Filter>Fichiers sources\Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="framework\lights\fwDirectionLight.cpp">
+      <Filter>Fichiers sources\Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="framework\fwFrustum.cpp">
+      <Filter>Fichiers sources\Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="framework\fwGeometry.cpp">
+      <Filter>Fichiers sources\Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="framework\geometries\fwGeometrySphere.cpp">
+      <Filter>Fichiers sources\Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="framework\fwInstancedMesh.cpp">
+      <Filter>Fichiers sources\Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="framework\fwLight.cpp">
+      <Filter>Fichiers sources\Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="framework\fwMaterial.cpp">
+      <Filter>Fichiers sources\Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="framework\fwMaterialBasic.cpp">
+      <Filter>Fichiers sources\Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="framework\materials\fwMaterialDeferedLights.cpp">
+      <Filter>Fichiers sources\Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="framework\fwMaterialDiffuse.cpp">
+      <Filter>Fichiers sources\Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="framework\fwMesh.cpp">
+      <Filter>Fichiers sources\Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="framework\mesh\fwMeshSkinned.cpp">
+      <Filter>Fichiers sources\Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="framework\materials\fwNormalHelperMaterial.cpp">
+      <Filter>Fichiers sources\Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="framework\fwObject3D.cpp">
+      <Filter>Fichiers sources\Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="framework\controls\fwOrbitControl.cpp">
+      <Filter>Fichiers sources\Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="framework\camera\fwOrthographicCamera.cpp">
+      <Filter>Fichiers sources\Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="framework\materials\fwOutlineMaterial.cpp">
+      <Filter>Fichiers sources\Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="framework\fwParticles.cpp">
+      <Filter>Fichiers sources\Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="framework\math\fwPlane.cpp">
+      <Filter>Fichiers sources\Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="framework\geometries\fwPlaneGeometry.cpp">
+      <Filter>Fichiers sources\Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="framework\lights\fwPointLight.cpp">
+      <Filter>Fichiers sources\Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="framework\fwPostProcessing.cpp">
+      <Filter>Fichiers sources\Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="framework\postprocessing\fwPostProcessingBloom.cpp">
+      <Filter>Fichiers sources\Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="framework\fwRenderer.cpp">
+      <Filter>Fichiers sources\Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="framework\render\fwRendererDefered.cpp">
+      <Filter>Fichiers sources\Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="framework\render\fwRendererForward.cpp">
+      <Filter>Fichiers sources\Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="framework\fwScene.cpp">
+      <Filter>Fichiers sources\Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="framework\fwSkybox.cpp">
+      <Filter>Fichiers sources\Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="framework\math\fwSphere.cpp">
+      <Filter>Fichiers sources\Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="framework\lights\fwSpotLight.cpp">
+      <Filter>Fichiers sources\Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="framework\fwSprites.cpp">
+      <Filter>Fichiers sources\Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="framework\fwTexture.cpp">
+      <Filter>Fichiers sources\Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="framework\fwTextures.cpp">
+      <Filter>Fichiers sources\Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="framework\fwUniform.cpp">
+      <Filter>Fichiers sources\Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="glEngine\glBufferAttribute.cpp">
+      <Filter>Fichiers sources\opengl</Filter>
+    </ClCompile>
+    <ClCompile Include="glEngine\glBufferObject.cpp">
+      <Filter>Fichiers sources\opengl</Filter>
+    </ClCompile>
+    <ClCompile Include="glEngine\glColorMap.cpp">
+      <Filter>Fichiers sources\opengl</Filter>
+    </ClCompile>
+    <ClCompile Include="glEngine\glCubeTexture.cpp">
+      <Filter>Fichiers sources\opengl</Filter>
+    </ClCompile>
+    <ClCompile Include="glEngine\textures\glCubeTextureDepth.cpp">
+      <Filter>Fichiers sources\opengl</Filter>
+    </ClCompile>
+    <ClCompile Include="glEngine\framebuffer\glDepthCubeMap.cpp">
+      <Filter>Fichiers sources\opengl</Filter>
+    </ClCompile>
+    <ClCompile Include="glEngine\glDepthMap.cpp">
+      <Filter>Fichiers sources\opengl</Filter>
+    </ClCompile>
+    <ClCompile Include="glEngine\textures\glDepthTexture.cpp">
+      <Filter>Fichiers sources\opengl</Filter>
+    </ClCompile>
+    <ClCompile Include="glEngine\glDynamicBufferAttribute.cpp">
+      <Filter>Fichiers sources\opengl</Filter>
+    </ClCompile>
+    <ClCompile Include="glEngine\glFrameBuffer.cpp">
+      <Filter>Fichiers sources\opengl</Filter>
+    </ClCompile>
+    <ClCompile Include="glEngine\glGBuffer.cpp">
+      <Filter>Fichiers sources\opengl</Filter>
+    </ClCompile>
+    <ClCompile Include="glEngine\glInstancedBufferAttribute.cpp">
+      <Filter>Fichiers sources\opengl</Filter>
+    </ClCompile>
+    <ClCompile Include="glEngine\glInstancedVertexArray.cpp">
+      <Filter>Fichiers sources\opengl</Filter>
+    </ClCompile>
+    <ClCompile Include="glEngine\glProgram.cpp">
+      <Filter>Fichiers sources\opengl</Filter>
+    </ClCompile>
+    <ClCompile Include="glEngine\glRenderBuffer.cpp">
+      <Filter>Fichiers sources\opengl</Filter>
+    </ClCompile>
+    <ClCompile Include="glEngine\glShader.cpp">
+      <Filter>Fichiers sources\opengl</Filter>
+    </ClCompile>
+    <ClCompile Include="glEngine\glTexture.cpp">
+      <Filter>Fichiers sources\opengl</Filter>
+    </ClCompile>
+    <ClCompile Include="glEngine\glTextureArray.cpp">
+      <Filter>Fichiers sources\opengl</Filter>
+    </ClCompile>
+    <ClCompile Include="glEngine\glUniform.cpp">
+      <Filter>Fichiers sources\opengl</Filter>
+    </ClCompile>
+    <ClCompile Include="glEngine\glUniformBlock.cpp">
+      <Filter>Fichiers sources\opengl</Filter>
+    </ClCompile>
+    <ClCompile Include="glEngine\glUniformBuffer.cpp">
+      <Filter>Fichiers sources\opengl</Filter>
+    </ClCompile>
+    <ClCompile Include="glEngine\glVertexArray.cpp">
+      <Filter>Fichiers sources\opengl</Filter>
+    </ClCompile>
+    <ClCompile Include="glEngine\glVertexAttribute.cpp">
+      <Filter>Fichiers sources\opengl</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -365,181 +383,13 @@
     <ClInclude Include="Element.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="glEngine\glProgram.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
     <ClInclude Include="include\stb_image.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="glEngine\glShader.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="glEngine\glBufferAttribute.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="glEngine\glBufferObject.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="glEngine\glUniform.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="glEngine\glVertexArray.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="glEngine\glVertexAttribute.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
     <ClInclude Include="Reference.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="glEngine\glFrameBuffer.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="glEngine\glRenderBuffer.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="glEngine\glTexture.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="framework\fwPostProcessing.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="glEngine\glCubeTexture.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="framework\fwSkybox.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="framework\controls\fwOrbitControl.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
     <ClInclude Include="myApp.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="framework\fwApp.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="glEngine\glUniformBuffer.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="framework\fwObject3D.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="framework\fwScene.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="framework\fwMesh.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="framework\fwInstancedMesh.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="glEngine\glInstancedBufferAttribute.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="glEngine\glInstancedVertexArray.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="framework\fwGeometry.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="framework\fwMaterial.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="framework\fwMaterialBasic.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="framework\geometries\fwPlaneGeometry.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="framework\materials\fwOutlineMaterial.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="framework\materials\fwNormalHelperMaterial.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="framework\lights\fwDirectionLight.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="framework\lights\fwSpotLight.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="framework\lights\fwPointLight.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="framework\geometries\fwBoxGeometry.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="framework\fwLight.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="framework\fwCamera.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="glEngine\glColorMap.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="glEngine\glDepthMap.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="framework\camera\fwOrthographicCamera.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="glEngine\textures\glDepthTexture.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="framework\fwTexture.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="framework\fwUniform.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="framework\fwFrustum.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="framework\math\fwPlane.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="framework\math\fwSphere.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="framework\math\fwBox3.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="glEngine\glDynamicBufferAttribute.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="framework\materials\fwBloomMaterial.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="framework\fwMaterialDiffuse.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="framework\render\fwRendererDefered.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="glEngine\glGBuffer.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="framework\fwRenderer.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="framework\render\fwRendererForward.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="framework\postprocessing\fwPostProcessingBloom.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="framework\fwBoneInfo.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="framework\mesh\fwMeshSkinned.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="framework\fwAnimationKeyframe.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="framework\fwAnimation.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
     <ClInclude Include="config.h">
@@ -548,155 +398,323 @@
     <ClInclude Include="framework\Loader.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="framework\fwTextures.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="glEngine\glTextureArray.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="framework\fwBoneInfoAnimation.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="framework\fwSprites.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="framework\fwParticles.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="framework\camera\fwCameraPanoramic.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="glEngine\framebuffer\glDepthCubeMap.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="glEngine\textures\glCubeTextureDepth.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="framework\fwConstants.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="framework\materials\fwMaterialDeferedLights.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="darkforces\dfLevel.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="darkforces\dfSector.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="darkforces\dfWall.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="framework\controls\fwControlThirdPerson.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="framework\fwControl.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="framework\fwCollision.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="darkforces\dfCollision.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="framework\fwAABBox.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
     <ClInclude Include="include\earcut.hpp">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="darkforces\dfSuperSector.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
     <ClInclude Include="myDarkForces.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="framework\geometries\fwGeometrySphere.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="darkforces\dfParseINF.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="darkforces\dfLogicTrigger.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="darkforces\dfLogicElevator.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="darkforces\dfLogicStop.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="darkforces\dfMesh.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="darkforces\dfMessage.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="darkforces\dfFileGOB.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="darkforces\dfBitmap.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="darkforces\dfPalette.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="darkforces\dfSign.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="darkforces\dfMessageBus.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="darkforces\dfMessageClient.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="darkforces\dfFileSystem.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="darkforces\dfObject.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="darkforces\dfParserObjects.h">
-      <Filter>Fichiers d%27en-tête</Filter>
+    <ClInclude Include="darkforces\dfModel\df3DO.h">
+      <Filter>Fichiers d%27en-tête\DarkForces</Filter>
     </ClInclude>
     <ClInclude Include="darkforces\dfAtlasTexture.h">
-      <Filter>Fichiers d%27en-tête</Filter>
+      <Filter>Fichiers d%27en-tête\DarkForces</Filter>
     </ClInclude>
-    <ClInclude Include="darkforces\dfSprites.h">
-      <Filter>Fichiers d%27en-tête</Filter>
+    <ClInclude Include="darkforces\dfBitmap.h">
+      <Filter>Fichiers d%27en-tête\DarkForces</Filter>
     </ClInclude>
-    <ClInclude Include="darkforces\dfModel.h">
-      <Filter>Fichiers d%27en-tête</Filter>
+    <ClInclude Include="darkforces\dfCollision.h">
+      <Filter>Fichiers d%27en-tête\DarkForces</Filter>
     </ClInclude>
-    <ClInclude Include="darkforces\dfModel\dfWAX.h">
-      <Filter>Fichiers d%27en-tête</Filter>
+    <ClInclude Include="darkforces\dfFileGOB.h">
+      <Filter>Fichiers d%27en-tête\DarkForces</Filter>
     </ClInclude>
-    <ClInclude Include="darkforces\dfGame.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="glEngine\glUniformBlock.h">
-      <Filter>Fichiers d%27en-tête</Filter>
+    <ClInclude Include="darkforces\dfFileSystem.h">
+      <Filter>Fichiers d%27en-tête\DarkForces</Filter>
     </ClInclude>
     <ClInclude Include="darkforces\dfModel\dfFME.h">
-      <Filter>Fichiers d%27en-tête</Filter>
+      <Filter>Fichiers d%27en-tête\DarkForces</Filter>
     </ClInclude>
     <ClInclude Include="darkforces\dfFrame.h">
-      <Filter>Fichiers d%27en-tête</Filter>
+      <Filter>Fichiers d%27en-tête\DarkForces</Filter>
     </ClInclude>
-    <ClInclude Include="darkforces\dfModel\df3DO.h">
-      <Filter>Fichiers d%27en-tête</Filter>
+    <ClInclude Include="darkforces\dfGame.h">
+      <Filter>Fichiers d%27en-tête\DarkForces</Filter>
     </ClInclude>
-    <ClInclude Include="darkforces\dfObject\dfSpriteAnimated.h">
-      <Filter>Fichiers d%27en-tête</Filter>
+    <ClInclude Include="darkforces\dfLevel.h">
+      <Filter>Fichiers d%27en-tête\DarkForces</Filter>
     </ClInclude>
-    <ClInclude Include="darkforces\dfObject\dfSprite.h">
-      <Filter>Fichiers d%27en-tête</Filter>
+    <ClInclude Include="darkforces\dfLogicElevator.h">
+      <Filter>Fichiers d%27en-tête\DarkForces</Filter>
+    </ClInclude>
+    <ClInclude Include="darkforces\dfLogicStop.h">
+      <Filter>Fichiers d%27en-tête\DarkForces</Filter>
+    </ClInclude>
+    <ClInclude Include="darkforces\dfLogicTrigger.h">
+      <Filter>Fichiers d%27en-tête\DarkForces</Filter>
+    </ClInclude>
+    <ClInclude Include="darkforces\dfMesh.h">
+      <Filter>Fichiers d%27en-tête\DarkForces</Filter>
+    </ClInclude>
+    <ClInclude Include="darkforces\dfMessage.h">
+      <Filter>Fichiers d%27en-tête\DarkForces</Filter>
+    </ClInclude>
+    <ClInclude Include="darkforces\dfMessageBus.h">
+      <Filter>Fichiers d%27en-tête\DarkForces</Filter>
+    </ClInclude>
+    <ClInclude Include="darkforces\dfMessageClient.h">
+      <Filter>Fichiers d%27en-tête\DarkForces</Filter>
+    </ClInclude>
+    <ClInclude Include="darkforces\dfModel.h">
+      <Filter>Fichiers d%27en-tête\DarkForces</Filter>
+    </ClInclude>
+    <ClInclude Include="darkforces\dfObject.h">
+      <Filter>Fichiers d%27en-tête\DarkForces</Filter>
     </ClInclude>
     <ClInclude Include="darkforces\dfObject\dfObject3D.h">
-      <Filter>Fichiers d%27en-tête</Filter>
+      <Filter>Fichiers d%27en-tête\DarkForces</Filter>
+    </ClInclude>
+    <ClInclude Include="darkforces\dfPalette.h">
+      <Filter>Fichiers d%27en-tête\DarkForces</Filter>
+    </ClInclude>
+    <ClInclude Include="darkforces\dfParseINF.h">
+      <Filter>Fichiers d%27en-tête\DarkForces</Filter>
+    </ClInclude>
+    <ClInclude Include="darkforces\dfParserObjects.h">
+      <Filter>Fichiers d%27en-tête\DarkForces</Filter>
+    </ClInclude>
+    <ClInclude Include="darkforces\dfSector.h">
+      <Filter>Fichiers d%27en-tête\DarkForces</Filter>
+    </ClInclude>
+    <ClInclude Include="darkforces\dfSign.h">
+      <Filter>Fichiers d%27en-tête\DarkForces</Filter>
+    </ClInclude>
+    <ClInclude Include="darkforces\dfObject\dfSprite.h">
+      <Filter>Fichiers d%27en-tête\DarkForces</Filter>
+    </ClInclude>
+    <ClInclude Include="darkforces\dfObject\dfSpriteAnimated.h">
+      <Filter>Fichiers d%27en-tête\DarkForces</Filter>
+    </ClInclude>
+    <ClInclude Include="darkforces\dfSprites.h">
+      <Filter>Fichiers d%27en-tête\DarkForces</Filter>
+    </ClInclude>
+    <ClInclude Include="darkforces\dfSuperSector.h">
+      <Filter>Fichiers d%27en-tête\DarkForces</Filter>
     </ClInclude>
     <ClInclude Include="darkforces\dfVue.h">
-      <Filter>Fichiers d%27en-tête</Filter>
+      <Filter>Fichiers d%27en-tête\DarkForces</Filter>
+    </ClInclude>
+    <ClInclude Include="darkforces\dfWall.h">
+      <Filter>Fichiers d%27en-tête\DarkForces</Filter>
+    </ClInclude>
+    <ClInclude Include="darkforces\dfModel\dfWAX.h">
+      <Filter>Fichiers d%27en-tête\DarkForces</Filter>
+    </ClInclude>
+    <ClInclude Include="framework\fwAABBox.h">
+      <Filter>Fichiers d%27en-tête\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="framework\fwAnimation.h">
+      <Filter>Fichiers d%27en-tête\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="framework\fwAnimationKeyframe.h">
+      <Filter>Fichiers d%27en-tête\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="framework\fwApp.h">
+      <Filter>Fichiers d%27en-tête\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="framework\materials\fwBloomMaterial.h">
+      <Filter>Fichiers d%27en-tête\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="framework\fwBoneInfo.h">
+      <Filter>Fichiers d%27en-tête\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="framework\fwBoneInfoAnimation.h">
+      <Filter>Fichiers d%27en-tête\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="framework\math\fwBox3.h">
+      <Filter>Fichiers d%27en-tête\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="framework\geometries\fwBoxGeometry.h">
+      <Filter>Fichiers d%27en-tête\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="framework\fwCamera.h">
+      <Filter>Fichiers d%27en-tête\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="framework\camera\fwCameraPanoramic.h">
+      <Filter>Fichiers d%27en-tête\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="framework\fwCollision.h">
+      <Filter>Fichiers d%27en-tête\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="framework\fwConstants.h">
+      <Filter>Fichiers d%27en-tête\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="framework\fwControl.h">
+      <Filter>Fichiers d%27en-tête\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="framework\controls\fwControlThirdPerson.h">
+      <Filter>Fichiers d%27en-tête\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="framework\lights\fwDirectionLight.h">
+      <Filter>Fichiers d%27en-tête\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="framework\fwFrustum.h">
+      <Filter>Fichiers d%27en-tête\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="framework\fwGeometry.h">
+      <Filter>Fichiers d%27en-tête\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="framework\geometries\fwGeometrySphere.h">
+      <Filter>Fichiers d%27en-tête\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="framework\fwInstancedMesh.h">
+      <Filter>Fichiers d%27en-tête\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="framework\fwLight.h">
+      <Filter>Fichiers d%27en-tête\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="framework\fwMaterial.h">
+      <Filter>Fichiers d%27en-tête\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="framework\fwMaterialBasic.h">
+      <Filter>Fichiers d%27en-tête\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="framework\materials\fwMaterialDeferedLights.h">
+      <Filter>Fichiers d%27en-tête\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="framework\fwMaterialDiffuse.h">
+      <Filter>Fichiers d%27en-tête\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="framework\fwMesh.h">
+      <Filter>Fichiers d%27en-tête\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="framework\mesh\fwMeshSkinned.h">
+      <Filter>Fichiers d%27en-tête\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="framework\materials\fwNormalHelperMaterial.h">
+      <Filter>Fichiers d%27en-tête\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="framework\fwObject3D.h">
+      <Filter>Fichiers d%27en-tête\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="framework\controls\fwOrbitControl.h">
+      <Filter>Fichiers d%27en-tête\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="framework\camera\fwOrthographicCamera.h">
+      <Filter>Fichiers d%27en-tête\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="framework\materials\fwOutlineMaterial.h">
+      <Filter>Fichiers d%27en-tête\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="framework\fwParticles.h">
+      <Filter>Fichiers d%27en-tête\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="framework\math\fwPlane.h">
+      <Filter>Fichiers d%27en-tête\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="framework\geometries\fwPlaneGeometry.h">
+      <Filter>Fichiers d%27en-tête\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="framework\lights\fwPointLight.h">
+      <Filter>Fichiers d%27en-tête\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="framework\fwPostProcessing.h">
+      <Filter>Fichiers d%27en-tête\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="framework\postprocessing\fwPostProcessingBloom.h">
+      <Filter>Fichiers d%27en-tête\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="framework\fwRenderer.h">
+      <Filter>Fichiers d%27en-tête\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="framework\render\fwRendererDefered.h">
+      <Filter>Fichiers d%27en-tête\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="framework\render\fwRendererForward.h">
+      <Filter>Fichiers d%27en-tête\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="framework\fwScene.h">
+      <Filter>Fichiers d%27en-tête\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="framework\fwSkybox.h">
+      <Filter>Fichiers d%27en-tête\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="framework\math\fwSphere.h">
+      <Filter>Fichiers d%27en-tête\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="framework\lights\fwSpotLight.h">
+      <Filter>Fichiers d%27en-tête\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="framework\fwSprites.h">
+      <Filter>Fichiers d%27en-tête\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="framework\fwTexture.h">
+      <Filter>Fichiers d%27en-tête\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="framework\fwTextures.h">
+      <Filter>Fichiers d%27en-tête\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="framework\fwUniform.h">
+      <Filter>Fichiers d%27en-tête\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="glEngine\glBufferAttribute.h">
+      <Filter>Fichiers d%27en-tête\opengl</Filter>
+    </ClInclude>
+    <ClInclude Include="glEngine\glBufferObject.h">
+      <Filter>Fichiers d%27en-tête\opengl</Filter>
+    </ClInclude>
+    <ClInclude Include="glEngine\glColorMap.h">
+      <Filter>Fichiers d%27en-tête\opengl</Filter>
+    </ClInclude>
+    <ClInclude Include="glEngine\glCubeTexture.h">
+      <Filter>Fichiers d%27en-tête\opengl</Filter>
+    </ClInclude>
+    <ClInclude Include="glEngine\textures\glCubeTextureDepth.h">
+      <Filter>Fichiers d%27en-tête\opengl</Filter>
+    </ClInclude>
+    <ClInclude Include="glEngine\framebuffer\glDepthCubeMap.h">
+      <Filter>Fichiers d%27en-tête\opengl</Filter>
+    </ClInclude>
+    <ClInclude Include="glEngine\glDepthMap.h">
+      <Filter>Fichiers d%27en-tête\opengl</Filter>
+    </ClInclude>
+    <ClInclude Include="glEngine\textures\glDepthTexture.h">
+      <Filter>Fichiers d%27en-tête\opengl</Filter>
+    </ClInclude>
+    <ClInclude Include="glEngine\glDynamicBufferAttribute.h">
+      <Filter>Fichiers d%27en-tête\opengl</Filter>
+    </ClInclude>
+    <ClInclude Include="glEngine\glFrameBuffer.h">
+      <Filter>Fichiers d%27en-tête\opengl</Filter>
+    </ClInclude>
+    <ClInclude Include="glEngine\glGBuffer.h">
+      <Filter>Fichiers d%27en-tête\opengl</Filter>
+    </ClInclude>
+    <ClInclude Include="glEngine\glInstancedBufferAttribute.h">
+      <Filter>Fichiers d%27en-tête\opengl</Filter>
+    </ClInclude>
+    <ClInclude Include="glEngine\glInstancedVertexArray.h">
+      <Filter>Fichiers d%27en-tête\opengl</Filter>
+    </ClInclude>
+    <ClInclude Include="glEngine\glProgram.h">
+      <Filter>Fichiers d%27en-tête\opengl</Filter>
+    </ClInclude>
+    <ClInclude Include="glEngine\glRenderBuffer.h">
+      <Filter>Fichiers d%27en-tête\opengl</Filter>
+    </ClInclude>
+    <ClInclude Include="glEngine\glShader.h">
+      <Filter>Fichiers d%27en-tête\opengl</Filter>
+    </ClInclude>
+    <ClInclude Include="glEngine\glTexture.h">
+      <Filter>Fichiers d%27en-tête\opengl</Filter>
+    </ClInclude>
+    <ClInclude Include="glEngine\glTextureArray.h">
+      <Filter>Fichiers d%27en-tête\opengl</Filter>
+    </ClInclude>
+    <ClInclude Include="glEngine\glUniform.h">
+      <Filter>Fichiers d%27en-tête\opengl</Filter>
+    </ClInclude>
+    <ClInclude Include="glEngine\glUniformBlock.h">
+      <Filter>Fichiers d%27en-tête\opengl</Filter>
+    </ClInclude>
+    <ClInclude Include="glEngine\glUniformBuffer.h">
+      <Filter>Fichiers d%27en-tête\opengl</Filter>
+    </ClInclude>
+    <ClInclude Include="glEngine\glVertexArray.h">
+      <Filter>Fichiers d%27en-tête\opengl</Filter>
+    </ClInclude>
+    <ClInclude Include="glEngine\glVertexAttribute.h">
+      <Filter>Fichiers d%27en-tête\opengl</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
