@@ -6,37 +6,37 @@ glBufferAttribute::glBufferAttribute()
 }
 
 glBufferAttribute::glBufferAttribute(const std::string _name, GLuint _type, void *_data, GLsizei _itemSize, GLsizei _len, GLuint _sizeof_element, bool _delete_on_exit):
-	name(_name),
-	type(_type),
-	data(_data),
-	len(_len),
-	itemSize(_itemSize),
-	sizeof_element(_sizeof_element),
-	delete_on_exit(_delete_on_exit)
+	m_name(_name),
+	m_type(_type),
+	m_data(_data),
+	m_len(_len),
+	m_itemSize(_itemSize),
+	m_sizeof_element(_sizeof_element),
+	m_delete_on_exit(_delete_on_exit)
 {
-	count = len / (_sizeof_element * itemSize);
+	m_count = m_len / (_sizeof_element * m_itemSize);
 
-	vbo = new glBufferObject(type, len, data);
+	m_vbo = new glBufferObject(m_type, m_len, m_data);
 }
 
 GLuint glBufferAttribute::get_size(void)
 {
-	return len;
+	return m_len;
 }
 
-GLvoid *glBufferAttribute::get_data(void)
+GLvoid *glBufferAttribute::data(void)
 {
-	return data;
+	return m_data;
 }
 
-GLuint glBufferAttribute::get_type(void)
+GLuint glBufferAttribute::type(void)
 {
-	return type;
+	return m_type;
 }
 
-const std::string glBufferAttribute::get_name(void)
+const std::string& glBufferAttribute::name(void)
 {
-	return name;
+	return m_name;
 }
 
 /**
@@ -49,14 +49,14 @@ void glBufferAttribute::updateIfDirty(void)
 	}
 }
 
-const GLuint glBufferAttribute::get_count(void)
+const GLuint glBufferAttribute::count(void)
 {
-	return count;
+	return m_count;
 }
 
 void glBufferAttribute::bind()
 {
-	vbo->bind();
+	m_vbo->bind();
 }
 
 /**
@@ -64,28 +64,28 @@ void glBufferAttribute::bind()
  */
 void glBufferAttribute::update(int offset, int size)
 {
-	int le = sizeof_element * itemSize;
+	int le = m_sizeof_element * m_itemSize;
 
 	if (size == -1) {
 		// update the whole buffer
-		size = count;
+		size = m_count;
 	}
-	vbo->update(offset * le, size * le, (char *)data + offset * le);
+	m_vbo->update(offset * le, size * le, (char *)m_data + offset * le);
 
 	m_dirty = false;
 }
 
 void *glBufferAttribute::get_index(const int index)
 {
-	int le = sizeof_element * itemSize;
+	int le = m_sizeof_element * m_itemSize;
 
-	return (char *)data + index * le;
+	return (char *)m_data + index * le;
 }
 
 glBufferAttribute::~glBufferAttribute()
 {
-	if (delete_on_exit)
-		delete data;
+	if (m_delete_on_exit)
+		delete m_data;
 
-	delete vbo;
+	delete m_vbo;
 }

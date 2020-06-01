@@ -17,7 +17,7 @@ fwBox3 &fwBox3::setFromBufferAttribute(glBufferAttribute *attribute)
 	float maxY = -INFINITY;
 	float maxZ = -INFINITY;
 
-	for (unsigned int i = 0; i < attribute->get_count(); ++i) {
+	for (unsigned int i = 0; i < attribute->count(); ++i) {
 		glm::vec3 *v = (glm::vec3 *)attribute->get_index(i);
 
 		if (v->x < minX) minX = v->x;

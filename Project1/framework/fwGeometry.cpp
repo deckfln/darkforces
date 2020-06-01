@@ -56,7 +56,7 @@ void fwGeometry::enable_attributes(glProgram *program)
 	if (index != nullptr) {
 		index->bind();
 	}
-	glVertexAttribute *va = program->get_attribute(vertices->get_name());
+	glVertexAttribute *va = program->get_attribute(vertices->name());
 	if (va) {
 		va->EnableVertex(vertices);
 	}
@@ -65,7 +65,7 @@ void fwGeometry::enable_attributes(glProgram *program)
 	for (auto attribute: attributes) {
 		const std::string _name = attribute.first;
 		glBufferAttribute *_attribute = attribute.second;
-		glVertexAttribute *va = program->get_attribute(_attribute->get_name());
+		glVertexAttribute *va = program->get_attribute(_attribute->name());
 		if (va) {
 			va->EnableVertex(_attribute);
 		}
@@ -127,10 +127,10 @@ void fwGeometry::verticesToDisplay(int nb)
 {
 	int nbVertices;
 	if (index != nullptr) {
-		nbVertices = index->get_count();
+		nbVertices = index->count();
 	}
 	else {
-		nbVertices = vertices->get_count();
+		nbVertices = vertices->count();
 	}
 
 	if (nb < nbVertices) {
@@ -171,10 +171,10 @@ void fwGeometry::draw(GLenum mode, glVertexArray *va)
 	}
 	else {
 		if (index != nullptr) {
-			va->draw(mode, true, index->get_count());
+			va->draw(mode, true, index->count());
 		}
 		else {
-			va->draw(mode, false, vertices->get_count());
+			va->draw(mode, false, vertices->count());
 		}
 	}
 }
@@ -198,7 +198,7 @@ fwSphere *fwGeometry::computeBoundingsphere(void)
 		// boundingSphere of the boundingBox: sqrt(3) smaller in the best case
 
 		float maxRadiusSq = 0;
-		for (unsigned int i = 0; i < vertices->get_count(); ++i) {
+		for (unsigned int i = 0; i < vertices->count(); ++i) {
 			glm::vec3 *v = (glm::vec3 *)vertices->get_index(i);
 			maxRadiusSq = fmax(maxRadiusSq, glm::distance2(center, *v));
 		}
@@ -255,10 +255,10 @@ void fwGeometry::computeTangent(void)
 
 	glBufferAttribute *uvs = attributes["aTexCoord"];
 
-	int nb_vertices = vertices->get_count();
+	int nb_vertices = vertices->count();
 	glm::vec3 *tangents = new glm::vec3 [nb_vertices];
-	glm::vec3 *_vertices = (glm::vec3 *)vertices->get_data();
-	glm::vec2 *_uv = (glm::vec2 *)uvs->get_data();
+	glm::vec3 *_vertices = (glm::vec3 *)vertices->data();
+	glm::vec2 *_uv = (glm::vec2 *)uvs->data();
 
 	if (index == nullptr) {
 		for (int i = 0; i < nb_vertices; i += 3) {
@@ -289,9 +289,9 @@ void fwGeometry::computeTangent(void)
 		}
 	}
 	else {
-		GLint *_index = (GLint *)index->get_data();
+		GLint *_index = (GLint *)index->data();
 		int k0, k1, k2;
-		for (int i = 0; i < index->get_count(); i += 3) {
+		for (int i = 0; i < index->count(); i += 3) {
 			k0 = _index[i];
 			k1 = _index[i + 1];
 			k2 = _index[i + 2];
