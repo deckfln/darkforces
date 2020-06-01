@@ -1079,15 +1079,51 @@ void dfSector::buildElevator(dfMesh* mesh, float bottom, float top, int what, bo
 		else {
 			// portal
 			dfWall* mirror = wall->m_pMmirror;
+			dfSector* portal = m_sectorsID[wall->m_adjoint];
 
-			// add a wall above the portal
-			mesh->addRectangle(this, wall,
-				bottom,
-				top,
-				mirror->m_tex[what],
-				m_ambient,
-				false
-			);
+			if (what == DFWALL_TEXTURE_MID) {
+				// for elevators spin1, spin2 and move1 use the same algorithm than normal walls
+				if (portal->m_referenceCeilingAltitude > m_referenceCeilingAltitude) {
+					// add a wall above the portal
+					mesh->addRectangle(this, wall,
+						portal->m_staticMeshCeilingAltitude,
+						m_staticMeshCeilingAltitude,
+						mirror->m_tex[DFWALL_TEXTURE_TOP],
+						m_ambient,
+						true
+					);
+				}
+				else if (portal->m_referenceFloorAltitude < m_referenceFloorAltitude) {
+					// add a wall below the portal
+					mesh->addRectangle(this, wall,
+						m_staticMeshFloorAltitude,
+						portal->m_staticMeshFloorAltitude,
+						mirror->m_tex[DFWALL_TEXTURE_BOTTOM],
+						m_ambient,
+						true
+					);
+				}
+				else {
+					// add a wall above the portal
+					mesh->addRectangle(this, wall,
+						m_staticMeshFloorAltitude,
+						m_staticMeshCeilingAltitude,
+						mirror->m_tex[DFWALL_TEXTURE_MID],
+						m_ambient,
+						false
+					);
+				}
+			}
+			else {
+				// for any other elevators (basic, inv, floor) force he data provided
+				mesh->addRectangle(this, wall,
+					bottom,
+					top,
+					mirror->m_tex[what],
+					m_ambient,
+					false
+				);
+			}
 		}
 	}
 

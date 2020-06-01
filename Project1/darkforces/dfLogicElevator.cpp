@@ -240,7 +240,9 @@ dfMesh *dfLogicElevator::buildGeometry(fwMaterial* material, std::vector<dfBitma
 		m_mesh = new dfMesh(material, bitmaps);
 
 		// only use the inner polygon (the hole)
-		m_pSector->buildElevator(m_mesh, m_pSector->referenceFloor(), m_pSector->referenceCeiling(), DFWALL_TEXTURE_MID, false, DF_WALL_MORPHS_WITH_ELEV);
+		// these elevators are always portal, 
+		// textures to use and the height are based on the difference between the connected sectors floor & ceiling and the current floor & ceiling
+		m_pSector->buildElevator(m_mesh, m_zmin, m_zmax, DFWALL_TEXTURE_MID, false, DF_WALL_MORPHS_WITH_ELEV);
 
 		switch (m_type) {
 		case DF_ELEVATOR_MORPH_SPIN1:
