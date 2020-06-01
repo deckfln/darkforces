@@ -17,17 +17,17 @@ class dfMessage;
 class dfSign;
 class dfBitmap;
 
-enum {
-	DF_ELEVATOR_HOLD,		// elevator is not animated
-	DF_ELEVATOR_MOVE,		// is moving
-	DF_ELEVATOR_WAIT,		// is waiting at a stop
-	DF_ELEVATOR_TERMINATED	// the elevator cannot be activated anymore
+enum class dfElevatorStatus {
+	HOLD,		// elevator is not animated
+	MOVE,		// is moving
+	WAIT,		// is waiting at a stop
+	TERMINATED	// the elevator cannot be activated anymore
 };
 
 enum {
 	DF_ELEVATOR_INV,		// moving up
 	DF_ELEVATOR_BASIC,		// moving down
-	DF_ELEVATOR_MOVE_FLOOR,	
+	DF_ELEVATOR_MOVE_FLOOR,
 	DF_ELEVATOR_CHANGE_LIGHT,
 	DF_ELEVATOR_MOVE_CEILING,
 	DF_ELEVATOR_MORPH_SPIN1,
@@ -74,7 +74,7 @@ class dfLogicElevator: public dfMessageClient {
 	std::string m_sector;				// sector that is an evelator
 	dfSector* m_pSector = nullptr;
 
-	int m_status = DF_ELEVATOR_HOLD;	// status of the elevator
+	dfElevatorStatus m_status = dfElevatorStatus::HOLD;	// status of the elevator
 	float m_tick = 0;					// current timer
 	float m_delay = 0;					// time to run the elevator
 	unsigned int m_currentStop = 0;		// current stop for the running animation

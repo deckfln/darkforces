@@ -112,9 +112,9 @@ float dfLogicStop::z_position(int elevatorClass)
 		case 18:
 			/*
 			switch (elevatorClass) {
-			case DF_ELEVATOR_MOVE_FLOOR:
+			case dfElevatorStatus::MOVE_FLOOR:
 				return m_pSector->m_floorAltitude + m_relatiave;	// relative to the ceiling of the source sector
-			case DF_ELEVATOR_MOVE_CEILING:
+			case dfElevatorStatus::MOVE_CEILING:
 				return m_pSector->m_floorAltitude + m_relatiave;	// relative to the ceiling of the source sector
 
 			default:

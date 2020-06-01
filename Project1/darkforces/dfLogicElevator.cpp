@@ -12,9 +12,9 @@
 const static std::list<std::string> keywords = {
 	"inv",			//DF_ELEVATOR_INV
 	"basic",		//DF_ELEVATOR_BASIC
-	"move_floor",	//DF_ELEVATOR_MOVE_FLOOR
+	"move_floor",	//dfElevatorStatus::MOVE_FLOOR
 	"change_light",	//DF_ELEVATOR_CHANGE_LIGHT
-	"move_ceiling",	//DF_ELEVATOR_MOVE_CEILING
+	"move_ceiling",	//dfElevatorStatus::MOVE_CEILING
 	"morph_spin1",	//DF_ELEVATOR_MORPH_SPIN1
 	"morph_move1",	//DF_ELEVATOR_MORPH_MOVE1
 	"morph_spin2"	//DF_ELEVATOR_MORPH_SPIN2
@@ -343,17 +343,17 @@ void dfLogicElevator::moveToNextStop(void)
 bool dfLogicElevator::animateMoveZ(void)
 {
 	switch (m_status) {
-	case DF_ELEVATOR_TERMINATED:
+	case dfElevatorStatus::TERMINATED:
 		// the elevator cannot be moved
 		return true;
 
-	case DF_ELEVATOR_HOLD:
-		m_status = DF_ELEVATOR_MOVE;
+	case dfElevatorStatus::HOLD:
+		m_status = dfElevatorStatus::MOVE;
 		m_tick = 0;
 		moveToNextStop();
 		break;
 
-	case DF_ELEVATOR_MOVE: {
+	case dfElevatorStatus::MOVE: {
 		if (m_direction != 0) {
 			m_current = m_target - m_direction * (1.0f - m_tick / m_delay);
 		}
@@ -384,16 +384,16 @@ bool dfLogicElevator::animateMoveZ(void)
 
 			if (stop->isTimeBased()) {
 				// put the elevator on wait
-				m_status = DF_ELEVATOR_WAIT;
+				m_status = dfElevatorStatus::WAIT;
 			}
 			else {
 				switch (stop->action()) {
 				case DF_STOP_HOLD:
-						m_status = DF_ELEVATOR_HOLD;
+						m_status = dfElevatorStatus::HOLD;
 						// stop the animation
 						return true;
 				case DF_STOP_TERMINATE:
-					m_status = DF_ELEVATOR_TERMINATED;
+					m_status = dfElevatorStatus::TERMINATED;
 					// stop the animation
 					return true;
 				default:
@@ -404,16 +404,16 @@ bool dfLogicElevator::animateMoveZ(void)
 		break;
 	}
 
-	case DF_ELEVATOR_WAIT:
+	case dfElevatorStatus::WAIT:
 		if (m_tick >= m_stops[m_currentStop]->time()) {
 			moveToNextStop();
-			m_status = DF_ELEVATOR_MOVE;
+			m_status = dfElevatorStatus::MOVE;
 			m_tick = 0;
 		}
 		break;
 
 	default:
-		std::cerr << "dfLogicElevator::animate unknown status " << m_status << std::endl;
+		std::cerr << "dfLogicElevator::animate unknown status " << int(m_status) << std::endl;
 	}
 
 	// next animation
@@ -544,12 +544,12 @@ void dfLogicElevator::dispatchMessage(dfMessage* message)
 {
 	switch (message->m_action) {
 	case DF_MESSAGE_TRIGGER:
-		std::cerr << "dfLogicElevator::dispatchMessage TRIGGER sector=" << m_name << " action=" << message->m_action << " status=" << m_status << std::endl;;
+		std::cerr << "dfLogicElevator::dispatchMessage TRIGGER sector=" << m_name << " action=" << message->m_action << " status=" << int(m_status) << std::endl;;
 
-		if (m_status != DF_ELEVATOR_HOLD) {
+		if (m_status != dfElevatorStatus::HOLD) {
 			// break the animation and move directly to the next stop
 			moveToNextStop();
-			m_status = DF_ELEVATOR_MOVE;
+			m_status = dfElevatorStatus::MOVE;
 			m_tick = 0;
 			// no need for animation, there is already one on the message queue
 		}
@@ -563,8 +563,8 @@ void dfLogicElevator::dispatchMessage(dfMessage* message)
 		break;
 
 	case DF_MESSAGE_GOTO_STOP:
-		std::cerr << "dfLogicElevator::dispatchMessage GOTO_STOP sector=" << m_name << " action=" << message->m_action << " status=" << m_status << std::endl;;
-		if (m_type == DF_ELEVATOR_MORPH_SPIN1 && m_status != DF_ELEVATOR_HOLD) {
+		std::cerr << "dfLogicElevator::dispatchMessage GOTO_STOP sector=" << m_name << " action=" << message->m_action << " status=" << int(m_status) << std::endl;;
+		if (m_type == DF_ELEVATOR_MORPH_SPIN1 && m_status != dfElevatorStatus::HOLD) {
 			// MORPH_SPIN animation cannot be broken
 			return;
 		}
@@ -589,7 +589,7 @@ void dfLogicElevator::dispatchMessage(dfMessage* message)
 			// TODO adapt the speed
 			m_delay = abs(m_direction) * 1600 / m_speed;
 
-			m_status = DF_ELEVATOR_MOVE;
+			m_status = dfElevatorStatus::MOVE;
 			m_tick = 0;
 			animate(0);
 		}
