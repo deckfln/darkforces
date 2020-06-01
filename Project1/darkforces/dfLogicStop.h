@@ -7,6 +7,8 @@
 #include "dfMessage.h"
 
 #include "../framework/fwAABBox.h"
+#include "dfLogicElevatorConst.h"
+
 class dfSector;
 class dfLogicElevator;
 
@@ -62,6 +64,6 @@ public:
 	void message(std::vector <std::string>& tokens);
 	void addMessage(dfMessage& message);
 	void sendMessages();
-	float z_position(int elevatorClass);
+	float z_position(dfElevatorType elevatorClass);
 	void getMessagesToSectors(std::list<std::string>& sectors);
 };

@@ -716,6 +716,9 @@
     <ClInclude Include="glEngine\glVertexAttribute.h">
       <Filter>Fichiers d%27en-tête\opengl</Filter>
     </ClInclude>
+    <ClInclude Include="darkforces\dfLogicElevatorConst.h">
+      <Filter>Fichiers d%27en-tête\DarkForces</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\fragment.glsl">

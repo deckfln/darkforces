@@ -102,7 +102,7 @@ void dfLogicStop::sendMessages()
 	}
 }
 
-float dfLogicStop::z_position(int elevatorClass)
+float dfLogicStop::z_position(dfElevatorType elevatorClass)
 {
 	switch (m_flag) {
 		case 9:
@@ -125,7 +125,7 @@ float dfLogicStop::z_position(int elevatorClass)
 		case 12:
 		case 20:
 			switch (elevatorClass) {
-			case DF_ELEVATOR_MOVE_FLOOR:
+			case dfElevatorType::MOVE_FLOOR:
 				return m_pSector->referenceCeiling();	// coy the ceiling of another sector
 			default:
 				return m_pSector->referenceFloor();		// coy the floor of another sector

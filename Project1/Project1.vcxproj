@@ -249,6 +249,7 @@
     <ClInclude Include="darkforces\dfFrame.h" />
     <ClInclude Include="darkforces\dfGame.h" />
     <ClInclude Include="darkforces\dfLogicElevator.h" />
+    <ClInclude Include="darkforces\dfLogicElevatorConst.h" />
     <ClInclude Include="darkforces\dfLogicStop.h" />
     <ClInclude Include="darkforces\dfLogicTrigger.h" />
     <ClInclude Include="darkforces\dfMesh.h" />

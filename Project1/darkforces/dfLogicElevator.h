@@ -9,6 +9,7 @@
 #include "../framework/fwMaterial.h"
 #include "../framework/fwMesh.h"
 #include "dfMessage.h"
+#include "dfLogicElevatorConst.h"
 
 class dfLevel;
 class dfMesh;
@@ -17,23 +18,6 @@ class dfMessage;
 class dfSign;
 class dfBitmap;
 
-enum class dfElevatorStatus {
-	HOLD,		// elevator is not animated
-	MOVE,		// is moving
-	WAIT,		// is waiting at a stop
-	TERMINATED	// the elevator cannot be activated anymore
-};
-
-enum {
-	DF_ELEVATOR_INV,		// moving up
-	DF_ELEVATOR_BASIC,		// moving down
-	DF_ELEVATOR_MOVE_FLOOR,
-	DF_ELEVATOR_CHANGE_LIGHT,
-	DF_ELEVATOR_MOVE_CEILING,
-	DF_ELEVATOR_MORPH_SPIN1,
-	DF_ELEVATOR_MORPH_MOVE1,
-	DF_ELEVATOR_MORPH_SPIN2
-};
 
 enum {
 	DF_ELEVATOR_CROSSLINE_FRONT = 1,	// Cross line from front side 
@@ -55,7 +39,7 @@ enum {
 
 class dfLogicElevator: public dfMessageClient {
 	std::string m_class;
-	int m_type = -1;					// class of elevator
+	dfElevatorType m_type = dfElevatorType::INV;	// class of elevator
 
 	//TODO adapt the default speed
 	float m_speed = 20;					// time in millisecond between 2 stops
@@ -108,7 +92,7 @@ public:
 	void center(float x, float y) { m_center.x = x; m_center.y = y; };
 	int keys(void) { return m_keys; };
 	bool needsKeys(void) { return m_keys != 0; };
-	bool is(int type) { return m_type == type; };
+	bool is(dfElevatorType type) { return m_type == type; };
 	dfMesh* mesh(void) { return m_mesh; };
 	void angle(float angle);
 	dfLogicStop* stop(int i);

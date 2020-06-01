@@ -390,8 +390,8 @@ void dfLevel::createTriggers(void)
 		if (explicits.count(elevator->name()) == 0) {
 			createTriggerForElevator(elevator);
 		}
-		else if (elevator->is(DF_ELEVATOR_MORPH_SPIN1) ||
-				elevator->is(DF_ELEVATOR_MORPH_MOVE1)) {
+		else if (elevator->is(dfElevatorType::MORPH_SPIN1) ||
+				elevator->is(dfElevatorType::MORPH_MOVE1)) {
 			createTriggerForElevator(elevator);
 		}
 	}
@@ -404,9 +404,9 @@ void dfLevel::createTriggerForElevator(dfLogicElevator *elevator)
 {
 	static std::string standard = "switch1";
 
-	if (elevator->is(DF_ELEVATOR_MORPH_SPIN1) || 
-		elevator->is(DF_ELEVATOR_MORPH_MOVE1) ||
-		elevator->is(DF_ELEVATOR_MOVE_CEILING) ||
+	if (elevator->is(dfElevatorType::MORPH_SPIN1) || 
+		elevator->is(dfElevatorType::MORPH_MOVE1) ||
+		elevator->is(dfElevatorType::MOVE_CEILING) ||
 		elevator->needsKeys()
 		) {
 		dfLogicTrigger* trigger = new dfLogicTrigger(standard, elevator);
