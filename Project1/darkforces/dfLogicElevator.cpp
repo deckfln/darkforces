@@ -158,18 +158,8 @@ dfMesh *dfLogicElevator::buildGeometry(fwMaterial* material, std::vector<dfBitma
 		}
 		break;
 	default:
-		// for sliding or spining elevators : 
-
-		if (m_pSector->isIncludedIn()) {
-			m_zmin = m_pSector->staticFloorAltitude(dfSectorSource::PARENT);
-			m_zmax = m_pSector->staticCeilingAltitude(dfSectorSource::PARENT);
-		}
-		else {
-			// take the Z and z1 from the bound sector for normal sectors
-
-			m_zmin = m_pSector->staticFloorAltitude();
-			m_zmax = m_pSector->staticCeilingAltitude();
-		}
+		m_zmin = m_pSector->staticFloorAltitude();
+		m_zmax = m_pSector->staticCeilingAltitude();
 	}
 
 

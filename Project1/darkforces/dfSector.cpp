@@ -210,11 +210,8 @@ void dfSector::staticFloorAltitude(float z)
 /**
 * Return the static floor from that sector, or the parent sector that one is included in
 */
-float dfSector::staticFloorAltitude(dfSectorSource s)
+float dfSector::staticFloorAltitude(void)
 {
-	if (s == dfSectorSource::PARENT && m_includedIn != nullptr) {
-		return m_includedIn->m_staticMeshFloorAltitude;
-	}
 	return m_staticMeshFloorAltitude;
 }
 
@@ -231,12 +228,8 @@ void dfSector::staticCeilingAltitude(float z)
 /**
  * Return the static ceiling from that sector, or the parent sector that one is included in
  */
-float dfSector::staticCeilingAltitude(dfSectorSource s)
+float dfSector::staticCeilingAltitude(void)
 {
-	if (s == dfSectorSource::PARENT && m_includedIn != nullptr) {
-		return m_includedIn->m_staticMeshCeilingAltitude; 
-	}
-
 	return m_staticMeshCeilingAltitude;
 }
 

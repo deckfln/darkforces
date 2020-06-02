@@ -14,11 +14,6 @@ using Point = std::array<Coord, 2>;
 
 #include "dfLogicTrigger.h"
 
-enum class dfSectorSource {
-	NORMAL,		// take floor & ceiling from the sector
-	PARENT		// take floor & ceiling from the parent sector that one is included in
-};
-
 class dfMesh;
 class dfSuperSector;
 class dfLogicElevator;
@@ -140,10 +135,10 @@ public:
 	float currentFloorAltitude(void) { return m_floorAltitude; };
 
 	void staticFloorAltitude(float z);
-	float staticFloorAltitude(dfSectorSource s = dfSectorSource::NORMAL);
+	float staticFloorAltitude(void);
 
 	void staticCeilingAltitude(float z);
-	float staticCeilingAltitude(dfSectorSource s = dfSectorSource::NORMAL);
+	float staticCeilingAltitude(void);
 
 	float referenceFloor(void) { return m_referenceFloorAltitude; };
 	float referenceCeiling(void) { return m_referenceCeilingAltitude; };
