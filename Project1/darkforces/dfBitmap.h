@@ -6,6 +6,7 @@
 #include "dfPalette.h"
 
 class dfFileSystem;
+class fwSkybox;
 
 enum {
 	DF_BITMAP_IMAGE_BOTTOM_CENTER
@@ -38,6 +39,7 @@ public:
 
 	void targetSize(int x, int y);
 	void boardSize(int blockSize);
+	fwSkybox* convert2texture(void);
 	virtual void copyTo(unsigned char* target, int x, int y, int stride, int rgba, int Xcorner = 0, int Ycorner=0);
 };
 

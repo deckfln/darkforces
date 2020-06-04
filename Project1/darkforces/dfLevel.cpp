@@ -232,18 +232,10 @@ void dfLevel::buildGeometry(void)
 		ssector->buildGeometry(m_sectorsID);
 	}
 
-	// finaly create the sky ceiling
+	// finaly create the sky as a skybox
 	if (m_skyAltitude > 0) {
-		float width = std::max(m_boundingBox.m_p1.x - m_boundingBox.m_p.x, m_boundingBox.m_p1.y - m_boundingBox.m_p.y);
-
 		dfBitmapImage* image = m_bitmaps[(int)m_skyTexture.r]->getImage();
-		m_sky = new dfMesh(m_material, m_bitmaps);
-		m_sky->addPlane(width * 3, image);
-		fwMesh *mesh = m_sky->buildMesh();
-		glm::vec3 center = glm::vec3((m_boundingBox.m_p1.x + m_boundingBox.m_p.x) / 20.0f,
-			m_skyAltitude / 10.0f,	
-			(m_boundingBox.m_p1.y + m_boundingBox.m_p.y) / 20.0f);
-		mesh->translate(center);
+		m_skybox = image->convert2texture();
 	}
 }
 
@@ -539,9 +531,9 @@ void dfLevel::draw(fwCamera* camera, fwScene* scene)
 	}
 
 	// add the sky
-	if (m_skymesh == nullptr) {
-		m_skymesh = m_sky->mesh();
-		scene->addChild(m_skymesh);
+	if (m_skybox != nullptr && !m_skyboxAdded) {
+		scene->background(m_skybox);
+		m_skyboxAdded = true;
 	}
 
 	// add the sprites

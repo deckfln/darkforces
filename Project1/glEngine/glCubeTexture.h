@@ -13,8 +13,13 @@ protected:
 	int m_height=0;
 	int m_nrChannels=0;
 
+	bool m_delete_on_exit = false;
+	void rotate(char *src, int i, int angle);
+
 public:
 	glCubeTexture(std::string *files);
+	glCubeTexture(void* files[], int width, int height, int format);
+	glCubeTexture(void* image, int width, int height, int format);
 	glCubeTexture(int width, int height, GLenum  glformat, GLenum gltype, GLenum glfilter);
 	void *get_info(int *width, int *height, int *nrChannels);
 	~glCubeTexture();

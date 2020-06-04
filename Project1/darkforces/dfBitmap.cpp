@@ -2,6 +2,8 @@
 
 #include <iostream>
 #include "dfFileSystem.h"
+#include "../framework/fwTexture.h"
+#include "../framework/fwSkybox.h"
 
 #pragma pack(push)
 struct dfBitmapHeader {
@@ -194,6 +196,14 @@ void dfBitmapImage::boardSize(int blockSize)
 	m_bsizeHeight = (int)ceil((float)m_targetHeight / (float)blockSize);
 
 	m_bsize = m_bsizeWidth * m_bsizeHeight;
+}
+
+/**
+ * Build a fwSkybox 
+ */
+fwSkybox* dfBitmapImage::convert2texture(void)
+{
+	return new fwSkybox(m_data, m_width, m_height, GL_RGB);
 }
 
 /**

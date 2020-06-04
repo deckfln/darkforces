@@ -30,12 +30,12 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 	m_camera = new fwCamera(width, height);
 
 	// controls
-	// secret area	m_control = new fwControlThirdPerson(m_camera, glm::vec3(-36.4, 2.3, 37.8), 0.55f, -pi / 2, 0.2f);
+	// secret area	
+	m_control = new fwControlThirdPerson(m_camera, glm::vec3(-36.4, 2.3, 37.8), 0.55f, -pi / 2, 0.2f);
 	// start m_control = new fwControlThirdPerson(m_camera, glm::vec3(-23.2, 4.3, 29.9), 0.55f, -pi / 2, 0.2f);
 	// main room 	m_control = new fwControlThirdPerson(m_camera, glm::vec3(-21.26f, 0.95f, 29.064f), 0.55f, -pi / 4.0f, 0.2f);
 	// marr 	m_control = new fwControlThirdPerson(m_camera, glm::vec3(-24, 4.2, 36.3), 0.55f, -pi / 2, 0.2f);
-	// super secret	
-	m_control = new fwControlThirdPerson(m_camera, glm::vec3(-46, 0.9, 26.8), 0.55f, -pi / 2, 0.2f);
+	// super secret		m_control = new fwControlThirdPerson(m_camera, glm::vec3(-46, 0.9, 26.8), 0.55f, -pi / 2, 0.2f);
 
 	bindControl((fwControl*)m_control);
 
@@ -88,12 +88,12 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 		"images/skybox/front.jpg",
 		"images/skybox/back.jpg" };
 
-	m_skybox = new fwSkybox(skyboxes);
+	//m_skybox = new fwSkybox(skyboxes);
 
 	// init the m_scene
 	glm::vec3* yellow = new glm::vec3(255, 255, 0);
 	m_scene = new fwScene();
-	m_scene->background(m_skybox);
+	//m_scene->background(m_skybox);
 
 	// mandatory to get all data together
 	resizeEvent(width, height);

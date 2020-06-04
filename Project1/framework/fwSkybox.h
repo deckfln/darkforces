@@ -19,8 +19,12 @@ class fwSkybox
 	fwUniform *uniform = nullptr;
 	std::string get_shader(const std::string shader_file);
 
+	void init(void);
+
 public:
 	fwSkybox(std::string *textures);
+	fwSkybox(void* files[], int width, int height, int format);
+	fwSkybox(void* data, int width, int height, int format);
 	void draw(fwCamera *camera, int renderMode);
 	~fwSkybox();
 };

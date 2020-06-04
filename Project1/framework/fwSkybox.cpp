@@ -59,10 +59,11 @@ float skyboxVertices[] = {
 	 1.0f, -1.0f,  1.0f
 };
 
-fwSkybox::fwSkybox(std::string* textures)
+/**
+ *
+ */
+void fwSkybox::init(void)
 {
-	texture = new glCubeTexture(textures);
-
 	std::string vertex = load_shader_file("shaders/cubemap_vertex.glsl", "");
 	std::string fragment = load_shader_file("shaders/cubemap_fragment.glsl", "");
 
@@ -79,6 +80,33 @@ fwSkybox::fwSkybox(std::string* textures)
 	cube = new glVertexArray();
 	geometry->enable_attributes(program);
 	cube->unbind();
+}
+
+/**
+ * Create a skypebox from a list of images
+ */
+fwSkybox::fwSkybox(std::string* textures)
+{
+	texture = new glCubeTexture(textures);
+	init();
+}
+
+/**
+ * Create a skypebox from a list of texture
+ */
+fwSkybox::fwSkybox(void* files[], int width, int height, int format)
+{
+	texture = new glCubeTexture(files, width, height, format);
+	init();
+}
+
+/**
+ * Create a skypebox from a single texture
+ */
+fwSkybox::fwSkybox(void* data, int width, int height, int format)
+{
+	texture = new glCubeTexture(data, width, height, format);
+	init();
 }
 
 void fwSkybox::draw(fwCamera *camera, int renderMode)

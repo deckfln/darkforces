@@ -60,8 +60,8 @@ class dfLevel
 	dfAtlasTexture* m_sprites = nullptr;		// store all sprites.gob
 	fwMaterialBasic* m_material = nullptr;
 
-	dfMesh* m_sky = nullptr;					// sky mesh
-	fwMesh* m_skymesh = nullptr;
+	fwSkybox* m_skybox = nullptr;				// sky texture
+	bool m_skyboxAdded = false;
 
 	dfSector* m_lastSector = nullptr;			// cached sector from the last findSector
 	dfSuperSector* m_lastSuperSector = nullptr;	// cached super sector from the last findSector
