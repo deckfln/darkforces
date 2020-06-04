@@ -3,7 +3,7 @@
 #include <iostream>
 #include "dfFileSystem.h"
 #include "../framework/fwTexture.h"
-#include "../framework/fwSkybox.h"
+#include "../framework/background/fwSkybox.h"
 
 #pragma pack(push)
 struct dfBitmapHeader {

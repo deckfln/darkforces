@@ -11,6 +11,7 @@
 #include "../fwSprites.h"
 #include "../postprocessing/fwPostProcessingBloom.h"
 #include "../materials/fwMaterialDeferedLights.h"
+#include "../fwBackground.h"
 
 static fwNormalHelperMaterial normalHelper;
 fwOutlineMaterial* outline_material = nullptr;
@@ -167,7 +168,7 @@ glTexture *fwRendererForward::draw(fwCamera* camera, fwScene *scene)
 	/*
 	 * 4th pass : draw skybox
 	 */
-	fwSkybox* background = scene->background();
+	fwBackground* background = scene->background();
 	if (background != nullptr) {
 		background->draw(camera, GL_DEPTH_TEST);
 	}

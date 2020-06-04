@@ -10,7 +10,6 @@
 #include "framework/geometries/fwBoxGeometry.h"
 #include "framework/lights/fwPointLight.h"
 #include "framework/controls/fwControlThirdPerson.h"
-#include "framework/fwSkybox.h"
 #include "framework/fwAABBox.h"
 
 #include "darkforces/dfLevel.h"

@@ -532,7 +532,7 @@ void dfLevel::draw(fwCamera* camera, fwScene* scene)
 
 	// add the sky
 	if (m_skybox != nullptr && !m_skyboxAdded) {
-		scene->background(m_skybox);
+		scene->background((fwBackground*)m_skybox);
 		m_skyboxAdded = true;
 	}
 

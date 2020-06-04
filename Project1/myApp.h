@@ -8,7 +8,7 @@
 #include "framework/lights/fwPointLight.h"
 #include "framework/lights/fwSpotLight.h"
 #include "framework/fwScene.h"
-#include "framework/fwSkybox.h"
+#include "framework/background/fwSkybox.h"
 #include "framework/controls/fwOrbitControl.h"
 #include "framework/controls/fwControlThirdPerson.h"
 #include "framework/fwInstancedMesh.h"

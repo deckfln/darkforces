@@ -5,6 +5,7 @@
 #include "fwInstancedMesh.h"
 #include "mesh/fwMeshSkinned.h"
 #include "fwParticles.h"
+#include "fwLight.h"
 
 fwRenderer::fwRenderer()
 {

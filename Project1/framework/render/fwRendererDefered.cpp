@@ -13,6 +13,7 @@
 #include "../materials/fwBloomMaterial.h"
 #include "../materials/fwMaterialDeferedLights.h"
 #include "../postprocessing/fwPostProcessingBloom.h"
+#include "../fwBackground.h"
 
 static glProgram* depth_program[3] = { nullptr, nullptr, nullptr };
 static std::map<std::string, glProgram*> light_programs;
@@ -342,7 +343,7 @@ glTexture *fwRendererDefered::draw(fwCamera* camera, fwScene* scene)
 
 	m_lightRendering->bind();
 
-	fwSkybox* background = scene->background();
+	fwBackground* background = scene->background();
 	if (background != nullptr) {
 		// ignore the depth buffer test
 		glRenderBuffer* previous = m_lightRendering->get_stencil();
