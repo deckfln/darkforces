@@ -212,7 +212,33 @@ fwSkybox* dfBitmapImage::convert2skybox(void)
  */
 fwSkyline* dfBitmapImage::convert2skyline(void)
 {
-	return new fwSkyline((unsigned char *)m_data, m_width, m_height, 3, 2, 8);
+	// sky texture are Y aligned bottom-top-bottom
+	// need to flip by mid Y to top-bottom-top
+	unsigned char c;
+	int p, p1, p2, p3;
+	for (auto y = 0; y < m_height / 4; y++) {
+		p = y * m_width * 3;
+		p1 = (m_height / 2 - y - 1) * m_width * 3;
+
+		p2 = p + (m_height / 2 * m_width * 3);
+		p3 = p1 + (m_height / 2 * m_width * 3);
+
+		for (auto x = 0; x < m_width; x++) {
+			c = m_data[p1]; m_data[p1] = m_data[p]; m_data[p] = c;
+			c = m_data[p1+1]; m_data[p1+1] = m_data[p+1]; m_data[p+1] = c;
+			c = m_data[p1+2]; m_data[p1+2] = m_data[p+2]; m_data[p+2] = c;
+
+			c = m_data[p3]; m_data[p3] = m_data[p2]; m_data[p2] = c;
+			c = m_data[p3 + 1]; m_data[p3 + 1] = m_data[p2 + 1]; m_data[p2 + 1] = c;
+			c = m_data[p3 + 2]; m_data[p3 + 2] = m_data[p2 + 2]; m_data[p2 + 2] = c;
+
+			p += 3;
+			p1 += 3;
+			p2 += 3;
+			p3 += 3;
+		}
+	}
+	return new fwSkyline((unsigned char *)m_data, m_width, m_height, 3, 4, 1);
 }
 
 /**

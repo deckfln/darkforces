@@ -23,10 +23,10 @@ fwSkyline::fwSkyline(unsigned char* data, int width, int height, int channels, i
 	if (gVertices.size() == 0) {
 		for (float a = 0; a < 2 * M_PI; a += M_PI/8.0) {
 			gVertices.push_back(glm::vec3(cos(a), 0.0, sin(a)));
-			gVertices.push_back(glm::vec3(cos(a), 2.0, sin(a)));
+			gVertices.push_back(glm::vec3(cos(a), 1.0, sin(a)));
 
-			gTexture.push_back(glm::vec2(0, a / (2 * M_PI)));
-			gTexture.push_back(glm::vec2(1, a / (2 * M_PI)));
+			gTexture.push_back(glm::vec2(a / (2 * M_PI), 0));
+			gTexture.push_back(glm::vec2(a / (2 * M_PI), 1));
 		}
 
 		for (auto v = 0; v < gVertices.size() - 2; v +=2 ) {
@@ -39,9 +39,9 @@ fwSkyline::fwSkyline(unsigned char* data, int width, int height, int channels, i
 			gIndex.push_back(v + 3);
 		}
 		gVertices.push_back(glm::vec3(cos(2*M_PI), 0.0, sin(2 * M_PI)));
-		gVertices.push_back(glm::vec3(cos(2 * M_PI), 2.0, sin(2 * M_PI)));
+		gVertices.push_back(glm::vec3(cos(2 * M_PI), 1.0, sin(2 * M_PI)));
 
-		gTexture.push_back(glm::vec2(0, 1));
+		gTexture.push_back(glm::vec2(1, 0));
 		gTexture.push_back(glm::vec2(1, 1));
 
 		int v = gVertices.size() - 4;
