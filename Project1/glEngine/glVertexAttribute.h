@@ -1,25 +1,25 @@
 #pragma once
 #include "../glad/glad.h"
 #include <iostream>
-#include "glBufferAttribute.h"
+class glBufferAttribute;
 
 class glVertexAttribute
 {
-	std::string name;
-	GLsizei length;
-	GLsizei size;
-	GLenum type;
-	GLint location;
+	std::string m_name;
+	GLsizei m_length;
+	GLsizei m_size;
+	GLenum m_type;
+	GLint m_location;
 
-	GLenum single_type;
-	GLuint single_size;
-	GLuint single_nb;
+	GLenum m_single_type;
+	GLuint m_single_size;
+	GLuint m_single_nb;
 
 public:
 	glVertexAttribute(void);
 	glVertexAttribute(GLchar *name, GLsizei length, GLsizei size, GLenum type, GLint location);
-	GLint get_location(void);
-	const std::string get_name(void);
+	GLint location(void);
+	const std::string& name(void);
 	void EnableVertex(glBufferAttribute *vba);
 	~glVertexAttribute();
 };
