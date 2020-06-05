@@ -83,7 +83,7 @@ dfLevel::dfLevel(dfFileSystem* fs, std::string file)
 			sector->linkWalls();	// build the polygons from the sector
 
 			// record the sky
-			if (sector->m_flag1 & DF_SECTOR_EXTERIOR_NO_CEIL) {
+			if (sector->m_flag1 & dfSectorFlag::EXTERIOR_NO_CEIL) {
 				m_skyAltitude = std::max(m_skyAltitude, sector->ceiling() + 100);
 				m_skyTexture = sector->m_ceilingTexture;
 			}
@@ -100,7 +100,7 @@ dfLevel::dfLevel(dfFileSystem* fs, std::string file)
 
 	// For every subSector, find the sector it is included in
 	for (auto i = 0; i < m_sectorsID.size(); i++) {
-		if (m_sectorsID[i]->flag(DF_SECTOR__SUBSECTOR)) {
+		if (m_sectorsID[i]->flag(dfSectorFlag::SUBSECTOR)) {
 			for (auto j = 0; j < m_sectorsID.size(); j++) {
 				// ignore self
 				if (i == j) {
@@ -332,7 +332,7 @@ void dfLevel::convertDoors2Elevators(void)
 	static std::string switch1 = "switch1";
 
 	for (auto sector: m_sectorsID) {
-		if (sector->flag() & DF_SECTOR_DOOR) {
+		if (sector->flag() & dfSectorFlag::DOOR) {
 			dfLogicElevator* elevator = new dfLogicElevator(inv, sector, this);
 			dfLogicStop* closed = new dfLogicStop(elevator, sector->referenceFloor(), hold);
 			dfLogicStop* opened = new dfLogicStop(elevator, sector->referenceCeiling(), 5000);
