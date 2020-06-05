@@ -28,7 +28,7 @@ private:
 	void mergeMTR(fwScene *scene);
 
 public:
-	fwRendererDefered(int width, int height);
+	fwRendererDefered(int width, int height, bool withBloom=false);
 	glTexture* draw(fwCamera* camera, fwScene* scene);
 	glm::vec2 size(void);
 	glTexture* getColorTexture(void);

@@ -94,6 +94,11 @@ void fwUniform::set(void *_data)
 
 void fwUniform::set_uniform(glProgram *program)
 {
+	// ignore non initalizerd uniforms
+	if (data == nullptr) {
+		return;
+	}
+
 	switch (type) {
 	case GL_FLOAT:
 		program->set_uniform(name, *(GLfloat *)data);

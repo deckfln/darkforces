@@ -54,12 +54,6 @@ enum dfSectorFlag {
 	RENDERED = 131072,
 	PLAYER = 262144,
 	SECRET_SECTOR = 524288,			// increments the % secret when entered
-
-	// Flag 3
-	CAN_ALWAYS_WALKP = 1,						// layer will climb any height
-	PLAYER_ENEMIES_CANNOT_WALKTHROUGH_WALL = 2,
-	ENEMIES_ONLY_CANNOT_WALKTHROUGH_WALL = 4,
-	CANNOT_FIRE_THROUGH_WALL = 8,
 };
 
 class dfSector

@@ -23,16 +23,22 @@ static float quadUvs[] = { 	0.0f, 1.0f,	0.0f, 0.0f,	1.0f, 0.0f,	0.0f, 1.0f,	1.0f
 
 static fwMaterialDeferedLight deferedLights;
 
-fwRendererDefered::fwRendererDefered(int width, int height)
+fwRendererDefered::fwRendererDefered(int width, int height, bool withBloom)
 {
 	// FRAME BUFFER
 	m_colorMap = new glGBuffer(width * 2, height * 2);
 
 	// bloom texture
-	m_bloom = new fwPostProcessingBloom(width * 2, height * 2);
+	if (withBloom) {
+		m_bloom = new fwPostProcessingBloom(width * 2, height * 2);
 
-	// final target for lightning
-	m_lightRendering = new glColorMap(width * 2, height * 2, 1, 3, m_bloom->get_bloom_texture());	// 1 outgoing color buffer, no depthmap & no stencil map
+		// final target for lightning
+		m_lightRendering = new glColorMap(width * 2, height * 2, 1, 3, m_bloom->get_bloom_texture());	// 1 outgoing color buffer, no depthmap & no stencil map
+	}
+	else {
+		m_lightRendering = new glColorMap(width * 2, height * 2, 1, 3, nullptr);	// 1 outgoing color buffer, no depthmap & no stencil map
+	}
+
 	m_renderGeometry = new fwGeometry();
 
 	m_quad = new glVertexArray();
@@ -151,14 +157,14 @@ void fwRendererDefered::mergeMTR(fwScene *scene)
 			if (m_bloom != nullptr) {
 				deferedLights.setBloomTexture(m_bloom->get_bloom_texture());
 			}
-
-			// setup the GBuffer source
-			deferedLights.setSourceTexture(m_colorMap->getColorTexture(0),
-				m_colorMap->getColorTexture(1),
-				m_colorMap->getColorTexture(2),
-				m_colorMap->getColorTexture(3)
-			);
 		}
+
+		// setup the GBuffer source
+		deferedLights.setSourceTexture(m_colorMap->getColorTexture(0),
+			m_colorMap->getColorTexture(1),
+			m_colorMap->getColorTexture(2),
+			m_colorMap->getColorTexture(3)
+		);
 
 		// shaders without shadow
 		light_programs[define] = new glProgram(vertex, fragment, "", define);
