@@ -258,21 +258,21 @@ std::vector<dfWall*>& dfSector::walls(int flags)
 	ml.clear();
 
 	switch (flags) {
-	case DF_WALL_ALL:
+	case dfWallFlag::ALL:
 		return m_walls;
 		break;
-	case DF_WALL_MORPHS_WITH_ELEV:
+	case dfWallFlag::MORPHS_WITH_ELEV:
 		// only walls that move when the elevator moves
 		for (auto wall : m_walls) {
-			if (wall->flag1(DF_WALL_MORPHS_WITH_ELEV)) {
+			if (wall->flag1(dfWallFlag::MORPHS_WITH_ELEV)) {
 				ml.push_back(wall);
 			}
 		}
 		break;
-	case DF_WALL_NOT_MORPHS_WITH_ELEV:
+	case dfWallFlag::NOT_MORPHS_WITH_ELEV:
 		// only walls that DO NOT move when the elevator moves
 		for (auto wall : m_walls) {
-			if (!wall->flag1(DF_WALL_MORPHS_WITH_ELEV)) {
+			if (!wall->flag1(dfWallFlag::MORPHS_WITH_ELEV)) {
 				ml.push_back(wall);
 			}
 		}
@@ -929,21 +929,21 @@ void dfSector::buildWalls(dfMesh* mesh, int displayPolygon)
 	std::vector<dfWall*> filtered_walls;
 
 	switch (displayPolygon) {
-	case DF_WALL_ALL:
+	case dfWallFlag::ALL:
 		filtered_walls = m_walls;
 		break;
-	case DF_WALL_MORPHS_WITH_ELEV:
+	case dfWallFlag::MORPHS_WITH_ELEV:
 		// only walls that move when the elevator moves
 		for (auto wall : m_walls) {
-			if (wall->flag1(DF_WALL_MORPHS_WITH_ELEV)) {
+			if (wall->flag1(dfWallFlag::MORPHS_WITH_ELEV)) {
 				filtered_walls.push_back(wall);
 			}
 		}
 		break;
-	case DF_WALL_NOT_MORPHS_WITH_ELEV:
+	case dfWallFlag::NOT_MORPHS_WITH_ELEV:
 		// only walls that DO NOT move when the elevator moves
 		for (auto wall : m_walls) {
-			if (!wall->flag1(DF_WALL_MORPHS_WITH_ELEV)) {
+			if (!wall->flag1(dfWallFlag::MORPHS_WITH_ELEV)) {
 				filtered_walls.push_back(wall);
 			}
 		}
@@ -1122,7 +1122,7 @@ void dfSector::buildElevator(dfMesh* mesh, float bottom, float top, int what, bo
 	}
 
 	// only build build top and bottom for vertical elevators (sliding ones : spin1 are not needed)
-	if (!(flags & DF_WALL_MORPHS_WITH_ELEV)) {
+	if (!(flags & dfWallFlag::MORPHS_WITH_ELEV)) {
 		mesh->addFloor(polygons(1), bottom, m_ceilingTexture, m_ambient, clockwise);
 		mesh->addFloor(polygons(1), top, m_floorTexture, m_ambient, clockwise);
 	}

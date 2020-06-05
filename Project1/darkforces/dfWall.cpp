@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-const int flag1Implemented = DF_WALL_MORPHS_WITH_ELEV;
+const int flag1Implemented = dfWallFlag::MORPHS_WITH_ELEV;
 const int flag3Implemented = 65536;
 
 dfWall::dfWall(int left, int right, int adjoint, int mirror, int flag1, int flag3) :

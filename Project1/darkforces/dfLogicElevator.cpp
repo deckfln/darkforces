@@ -170,11 +170,11 @@ dfMesh *dfLogicElevator::buildGeometry(fwMaterial* material, std::vector<dfBitma
 
 		// the elevator bottom is actually the ceiling
 		if (m_type == dfElevatorType::INV) {
-			m_pSector->buildElevator(m_mesh, 0, m_zmax - m_zmin, DFWALL_TEXTURE_TOP, true, DF_WALL_ALL);
+			m_pSector->buildElevator(m_mesh, 0, m_zmax - m_zmin, DFWALL_TEXTURE_TOP, true, dfWallFlag::ALL);
 			m_pSector->setAABBtop(m_zmax);
 		}
 		else {
-			m_pSector->buildElevator(m_mesh, 0, -(m_zmax - m_zmin), DFWALL_TEXTURE_TOP, true, DF_WALL_ALL);
+			m_pSector->buildElevator(m_mesh, 0, -(m_zmax - m_zmin), DFWALL_TEXTURE_TOP, true, dfWallFlag::ALL);
 			m_pSector->setAABBtop(m_zmax);
 		}
 
@@ -195,12 +195,12 @@ dfMesh *dfLogicElevator::buildGeometry(fwMaterial* material, std::vector<dfBitma
 
 		if (m_type == dfElevatorType::MOVE_FLOOR) {
 			// the elevator top is actually the floor
-			m_pSector->buildElevator(m_mesh, -(m_zmax - m_zmin), 0, DFWALL_TEXTURE_BOTTOM, false, DF_WALL_ALL);
+			m_pSector->buildElevator(m_mesh, -(m_zmax - m_zmin), 0, DFWALL_TEXTURE_BOTTOM, false, dfWallFlag::ALL);
 			m_pSector->setAABBbottom(m_zmin);
 		}
 		else {
 			// move ceiling, only move the top
-			m_pSector->buildElevator(m_mesh, 0, (m_zmax - m_zmin), DFWALL_TEXTURE_TOP, false, DF_WALL_ALL);
+			m_pSector->buildElevator(m_mesh, 0, (m_zmax - m_zmin), DFWALL_TEXTURE_TOP, false, dfWallFlag::ALL);
 			m_pSector->setAABBtop(m_zmax);
 		}
 
@@ -224,7 +224,7 @@ dfMesh *dfLogicElevator::buildGeometry(fwMaterial* material, std::vector<dfBitma
 		// only use the inner polygon (the hole)
 		// these elevators are always portal, 
 		// textures to use and the height are based on the difference between the connected sectors floor & ceiling and the current floor & ceiling
-		m_pSector->buildElevator(m_mesh, m_zmin, m_zmax, DFWALL_TEXTURE_MID, false, DF_WALL_MORPHS_WITH_ELEV);
+		m_pSector->buildElevator(m_mesh, m_zmin, m_zmax, DFWALL_TEXTURE_MID, false, dfWallFlag::MORPHS_WITH_ELEV);
 
 		switch (m_type) {
 		case dfElevatorType::MORPH_SPIN1:
