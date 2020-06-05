@@ -67,14 +67,12 @@ float skyboxVertices[] = {
  */
 void fwSkybox::init(void)
 {
-	uniform = new fwUniform("skybox", texture);
-	//TODO : the skybox textureID == 1 here
-	uniform->set_uniform(program);
+	m_uniforms.push_back(new fwUniform("skybox", texture));
 
-	geometry->addVertices("aPos", skyboxVertices, 3, sizeof(skyboxVertices), sizeof(float), false);
+	m_geometry->addVertices("aPos", skyboxVertices, 3, sizeof(skyboxVertices), sizeof(float), false);
 
-	geometry->enable_attributes(program);
-	cube->unbind();
+	m_geometry->enable_attributes(m_program);
+	m_cube->unbind();
 }
 
 /**
@@ -105,14 +103,6 @@ fwSkybox::fwSkybox(void* data, int width, int height, int format) :
 {
 	texture = new glCubeTexture(data, width, height, format);
 	init();
-}
-
-/**
- * Activate the uniforms for that background type
- */
-void fwSkybox::setUniforms(glProgram*)
-{
-	program->set_uniform("skybox", texture);
 }
 
 fwSkybox::~fwSkybox()

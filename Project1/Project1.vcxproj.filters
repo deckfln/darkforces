@@ -372,6 +372,9 @@
     <ClCompile Include="framework\background\fwSkybox.cpp">
       <Filter>Fichiers sources\Framework</Filter>
     </ClCompile>
+    <ClCompile Include="framework\background\fwSkyline.cpp">
+      <Filter>Fichiers sources\Framework</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="glad\glad.h">
@@ -724,6 +727,9 @@
     </ClInclude>
     <ClInclude Include="framework\background\fwSkybox.h">
       <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="framework\background\fwSkyline.h">
+      <Filter>Fichiers d%27en-tête\Framework</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

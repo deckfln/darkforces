@@ -202,7 +202,6 @@ myDarkForces::~myDarkForces()
 {
 	delete m_camera;
 	delete m_light;
-	delete m_skybox;
 	delete m_control;
 	delete m_scene;
 	delete white;

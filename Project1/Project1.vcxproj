@@ -159,6 +159,7 @@
     <ClCompile Include="darkforces\dfVue.cpp" />
     <ClCompile Include="darkforces\dfWall.cpp" />
     <ClCompile Include="framework\background\fwSkybox.cpp" />
+    <ClCompile Include="framework\background\fwSkyline.cpp" />
     <ClCompile Include="framework\camera\fwCameraPanoramic.cpp" />
     <ClCompile Include="framework\camera\fwOrthographicCamera.cpp" />
     <ClCompile Include="framework\controls\fwControlThirdPerson.cpp" />
@@ -276,6 +277,7 @@
     <ClInclude Include="darkforces\dfVue.h" />
     <ClInclude Include="darkforces\dfWall.h" />
     <ClInclude Include="framework\background\fwSkybox.h" />
+    <ClInclude Include="framework\background\fwSkyline.h" />
     <ClInclude Include="framework\camera\fwCameraPanoramic.h" />
     <ClInclude Include="framework\camera\fwOrthographicCamera.h" />
     <ClInclude Include="framework\controls\fwControlThirdPerson.h" />
@@ -367,6 +369,8 @@
     <None Include="data\shaders\sprites\sprites_fs.glsl" />
     <None Include="data\shaders\sprites\sprites_gs.glsl" />
     <None Include="data\shaders\sprites\sprites_vs.glsl" />
+    <None Include="framework\shaders\background\skyline_fs.glsl" />
+    <None Include="framework\shaders\background\skyline_vs.glsl" />
     <None Include="shaders\cubemap_fragment.glsl" />
     <None Include="shaders\cubemap_vertex.glsl" />
     <None Include="shaders\fragment.glsl" />

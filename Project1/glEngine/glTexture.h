@@ -4,6 +4,14 @@
 
 class glTexture
 {
+	int m_width=0;
+	int m_height = 0;
+	int m_nrChannels = 0;
+	int m_filter = 0;
+	unsigned char* m_data = nullptr;
+
+	void init(void);
+
 protected:
 	static int c_currentTextureUnit;
 	static int c_max_TextureUnits;
@@ -27,6 +35,7 @@ protected:
 public:
 	glTexture();
 	glTexture(int width, int height, int format, int channels = -1, int filter=GL_LINEAR);
+	glTexture(unsigned char *data, int width, int height, int channels = -1, int filter = GL_LINEAR);
 	glTexture(fwTexture *texture);
 	GLuint getID(void);
 	GLint bind(void);

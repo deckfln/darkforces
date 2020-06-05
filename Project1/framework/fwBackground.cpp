@@ -16,11 +16,11 @@ fwBackground::fwBackground(std::string vertexs, std::string fragments)
 	std::string vertex = load_shader_file(vertexs, "");
 	std::string fragment = load_shader_file(fragments, "");
 
-	program = new glProgram(vertex, fragment, "", "");
-	program->run();
+	m_program = new glProgram(vertex, fragment, "", "");
+	m_program->run();
 
-	geometry = new fwGeometry();
-	cube = new glVertexArray();
+	m_geometry = new fwGeometry();
+	m_cube = new glVertexArray();
 }
 
 /**
@@ -39,12 +39,18 @@ void fwBackground::draw(fwCamera* camera, int renderMode)
 		glDepthFunc(GL_LEQUAL);  // change depth function so depth test passes when values are equal to depth buffer's content
 	}
 
-	program->run();
-	camera->bind_uniformBuffer(program);
+	m_program->run();
+	camera->bind_uniformBuffer(m_program);
 
-	setUniforms(program);
+	// upload the uniforms
+	if (!m_uploaded) {
+		for (auto uniform : m_uniforms) {
+			uniform->set_uniform(m_program);
+		}
+		m_uploaded = true;
+	}
 
-	geometry->draw(GL_TRIANGLES, cube);
+	m_geometry->draw(GL_TRIANGLES, m_cube);
 
 	if (renderMode == GL_STENCIL_TEST) {
 		glEnable(GL_DEPTH_TEST);
@@ -86,9 +92,7 @@ std::string fwBackground::get_shader(const std::string shader_file)
 
 fwBackground::~fwBackground()
 {
-	delete program;
-	delete cube;
-	delete geometry;
-	delete uniform;
+	delete m_program;
+	delete m_cube;
+	delete m_geometry;
 }
-

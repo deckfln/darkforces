@@ -235,7 +235,7 @@ void dfLevel::buildGeometry(void)
 	// finaly create the sky as a skybox
 	if (m_skyAltitude > 0) {
 		dfBitmapImage* image = m_bitmaps[(int)m_skyTexture.r]->getImage();
-		m_skybox = image->convert2texture();
+		m_skybox = image->convert2skyline();
 	}
 }
 

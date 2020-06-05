@@ -15,6 +15,9 @@ glTexture::glTexture()
 
 }
 
+/**
+ * Create an empty texture
+ */
 glTexture::glTexture(int width, int height, int format, int channels, int filter)
 {
 	glGenTextures(1, &id);
@@ -64,7 +67,10 @@ glTexture::glTexture(int width, int height, int format, int channels, int filter
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
-glTexture::glTexture(fwTexture* texture)
+/**
+ * Create the GL texture
+ */
+void glTexture::init(void) 
 {
 	glGenTextures(1, &id);
 	if (c_max_TextureUnits < 0) {
@@ -76,23 +82,45 @@ glTexture::glTexture(fwTexture* texture)
 	// set the texture wrapping/filtering options (on the currently bound texture object)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, texture->filter());
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, texture->filter());
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, m_filter);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, m_filter);
 
-	// load and generate the texture
-	int width, height, nrChannels;
-	unsigned char* data = texture->get_info(&width, &height, &nrChannels);
 	GLuint pixels = GL_RGB;
 
-	switch (nrChannels) {
+	switch (m_nrChannels) {
 	case 1: pixels = GL_RED; break;
 	case 2: pixels = GL_RG; break;
 	case 3: pixels = GL_RGB; break;
 	case 4: pixels = GL_RGBA; break;
 	}
-	glTexImage2D(GL_TEXTURE_2D, 0, pixels, width, height, 0, pixels, GL_UNSIGNED_BYTE, data);
+	glTexImage2D(GL_TEXTURE_2D, 0, pixels, m_width, m_height, 0, pixels, GL_UNSIGNED_BYTE, m_data);
 	glGenerateMipmap(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, 0);
+}
+
+/**
+ * Create a texture from raw data
+ */
+glTexture::glTexture(unsigned char *data, int width, int height, int channels, int filter):
+	m_data(data),
+	m_width(width),
+	m_height(height),
+	m_nrChannels(channels),
+	m_filter(filter)
+{
+	init();
+}
+
+/**
+ * Create from a framework texture
+ */
+glTexture::glTexture(fwTexture* texture)
+{
+	m_filter = texture->filter();
+	// load and generate the texture
+	m_data = texture->get_info(&m_width, &m_height, &m_nrChannels);
+
+	init();
 }
 
 GLuint glTexture::getID(void)

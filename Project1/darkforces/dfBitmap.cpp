@@ -4,6 +4,7 @@
 #include "dfFileSystem.h"
 #include "../framework/fwTexture.h"
 #include "../framework/background/fwSkybox.h"
+#include "../framework/background/fwSkyline.h"
 
 #pragma pack(push)
 struct dfBitmapHeader {
@@ -201,9 +202,17 @@ void dfBitmapImage::boardSize(int blockSize)
 /**
  * Build a fwSkybox 
  */
-fwSkybox* dfBitmapImage::convert2texture(void)
+fwSkybox* dfBitmapImage::convert2skybox(void)
 {
 	return new fwSkybox(m_data, m_width, m_height, GL_RGB);
+}
+
+/**
+ * Build a fwSkyline
+ */
+fwSkyline* dfBitmapImage::convert2skyline(void)
+{
+	return new fwSkyline((unsigned char *)m_data, m_width, m_height, 3, 2, 8);
 }
 
 /**
