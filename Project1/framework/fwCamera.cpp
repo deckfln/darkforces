@@ -75,6 +75,7 @@ void fwCamera::update(void)
 
 	m_matrix = m_projection * view;
 
+	updated = true;
 	updateWorldMatrix(nullptr, false);
 	m_projScreenMatrix = m_projection * glm::inverse(m_worldMatrix);
 
