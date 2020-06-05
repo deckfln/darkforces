@@ -51,8 +51,8 @@ class dfMesh {
 	void updateWorldBoundingBox(dfMesh *parent);
 
 protected:
+	std::string m_name;
 	dfMesh* m_parent = nullptr;							// Parent dfMesh
-	std::string m_name;									// sectorname(wallindex)
 	dfSuperSector* m_supersector = nullptr;
 	fwAABBox m_boundingBox;								// Model Space AABB
 	fwAABBox m_worldBoundingBox;						// Worl Space AABB
@@ -99,6 +99,7 @@ public:
 	void zOrder(int z);
 	void updateGeometryTextures(int start, int nb);
 	int nbVertices(void);
+	void name(std::string& name) { m_name = name; };
 
 	virtual void setStatus(int status) {};
 

@@ -187,6 +187,7 @@ void dfSuperSector::buildGeometry(std::vector<dfSector*>& sectors)
 
 		// buildSigns(sector, sectors);
 	}
+	m_dfmesh->name(m_name);
 	m_dfmesh->buildMesh();
 
 	// TODO : fix the camera frustrum test to remove that line
@@ -273,6 +274,11 @@ void dfSuperSector::addObject(dfMesh* object)
 void dfSuperSector::sortSectors(void)
 {
 	m_sectors.sort([](dfSector* a, dfSector* b) { return a->boundingBoxSurface() < b->boundingBoxSurface(); });
+
+	// take the opportunity to create a name for the super sector
+	for (auto sector : m_sectors) {
+		m_name += sector->m_name + ";";
+	}
 }
 
 /**

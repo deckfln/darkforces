@@ -706,6 +706,7 @@ fwMesh* dfMesh::buildMesh(void)
 	}
 
 	m_mesh = new fwMesh(m_geometry, m_material);
+	m_mesh->set_name(m_name);
 	position(m_position);
 
 	return m_mesh;
