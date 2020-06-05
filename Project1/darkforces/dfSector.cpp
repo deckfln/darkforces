@@ -831,7 +831,6 @@ void dfSector::changeAmbient(float ambient)
 {
 	ambient /= 32.0f;
 
-
 	if (m_wallVerticesLen > 0) {
 		m_super->updateAmbientLight(ambient, m_wallVerticesStart, m_wallVerticesLen);
 	}
@@ -953,6 +952,8 @@ void dfSector::buildWalls(dfMesh* mesh, int displayPolygon)
 		std::cerr << "dfSector::walls flags=" << displayPolygon << " not implemented for sector=" << m_id << std::endl;
 	}
 
+	m_wallVerticesStart = mesh->nbVertices();
+
 	for (auto wall : filtered_walls) {
 		if (wall->m_adjoint < 0) {
 			// full wall
@@ -990,6 +991,9 @@ void dfSector::buildWalls(dfMesh* mesh, int displayPolygon)
 			}
 		}
 	}
+
+	m_wallVerticesLen = mesh->nbVertices() - m_wallVerticesStart;
+
 }
 
 /**
@@ -1014,17 +1018,14 @@ void dfSector::buildFloorAndCeiling(dfMesh* mesh)
 	// Following polylines define holes.
 	std::vector<std::vector<Point>>& polygon = polygons(-1);	// default polygons
 
-	m_wallVerticesStart = mesh->nbVertices();
-	mesh->addFloor(polygon, m_staticMeshFloorAltitude, m_floorTexture, m_ambient, false);
-
 	m_floorVerticesStart = mesh->nbVertices();
-	m_wallVerticesLen = m_floorVerticesStart - m_wallVerticesStart;
+	mesh->addFloor(polygon, m_staticMeshFloorAltitude, m_floorTexture, m_ambient, false);
 
 	// Create the ceiling, unless there is a sky
 	if (!(m_flag1 & DF_SECTOR_EXTERIOR_NO_CEIL)) {
 		mesh->addFloor(polygon, m_staticMeshCeilingAltitude, m_ceilingTexture, m_ambient, true);
 	}
-	m_floorVerticesLen = mesh->nbVertices() - m_wallVerticesStart;
+	m_floorVerticesLen = mesh->nbVertices() - m_floorVerticesStart;
 }
 
 /**
