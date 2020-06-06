@@ -46,11 +46,11 @@ class dfMesh {
 
 	void setVertice(int p, float x, float y, float z, float xoffset, float yoffset, int textureID, float ambient);
 	void updateRectangleAntiClockwise(int p, 
-		float x, float y, float z, 
-		float x1, float y1, float z1, 
-		float xoffset, float yoffset, 
-		float width, float height, 
-		int textureID, 
+		glm::vec3& pStart,
+		glm::vec3& pEnd,
+		glm::vec2& offset,
+		glm::vec2& size,
+		int textureID,
 		float ambient);
 	void position(glm::vec3& position);
 	void rotation(glm::vec3& rotation);
@@ -71,11 +71,11 @@ protected:
 	std::vector <float>* m_pAmbientLights = nullptr;    // light intensity of the object
 
 	void updateRectangle(int p, 
-		float x, float y, float z, 
-		float x1, float y1, float z1, 
-		float xoffset, float yoffset, 
-		float width, float height,		// rectangle size
-		int textureID, 
+		glm::vec3& pStart,
+		glm::vec3& pEnd,
+		glm::vec2& offset,
+		glm::vec2& size,
+		int textureID,
 		float ambient
 	);
 	int resize(int i);

@@ -88,11 +88,14 @@ void dfSign::buildGeometry(dfSector* sector, dfWall* wall, float z, float z1)
 	// Handle request to flip the texture
 	bool flipTexture = wall->flag1(dfWallFlag::FLIP_TEXTURE_HORIZONTALLY);
 
+	glm::vec2 offset(0, 0);
+	glm::vec2 size(1, 1);
+
 	updateRectangle(p, 
-		sign_p.x, sign_p.y, sign_p.z, 
-		sign_p1.x, sign_p1.y, sign_p1.z, 
-		0, 0, 
-		1, 1, 
+		sign_p, 
+		sign_p1, 
+		offset, 
+		size, 
 		image->m_textureID, 
 		sector->m_ambient);
 }

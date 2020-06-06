@@ -129,50 +129,48 @@ void dfMesh::setVertice(int p, float x, float y, float z, float xoffset, float y
  * Update the vertices of a rectangle
  */
 void dfMesh::updateRectangle(int p, 
-	float x, float y, float z, 
-	float x1, float y1, float z1, 
-	float xoffset, float yoffset,
-	float width, float height, 
-	int textureID, 
+	glm::vec3& pStart,
+	glm::vec3& pEnd,
+	glm::vec2& offset,
+	glm::vec2& size,
+	int textureID,
 	float ambient)
 {
-	glm::vec2 texStart = glm::vec2(xoffset, yoffset);
-	glm::vec2 texEnd = glm::vec2(xoffset + width, yoffset + height);
+	glm::vec2 texEnd = offset + size;
 
 	// first triangle
-	setVertice(p, x, y, z, texStart.x, texStart.y, textureID, ambient);
-	setVertice(p + 1, x1, y1, z, texEnd.x, texStart.y, textureID, ambient);
-	setVertice(p + 2, x1, y1, z1, texEnd.x, texEnd.y, textureID, ambient);
+	setVertice(p, pStart.x, pStart.y, pStart.z, offset.x, offset.y, textureID, ambient);
+	setVertice(p + 1, pEnd.x, pEnd.y, pStart.z, texEnd.x, offset.y, textureID, ambient);
+	setVertice(p + 2, pEnd.x, pEnd.y, pEnd.z, texEnd.x, texEnd.y, textureID, ambient);
 
 	// second triangle
-	setVertice(p + 3, x, y, z, texStart.x, texStart.y, textureID, ambient);
-	setVertice(p + 4, x1, y1, z1, texEnd.x, texEnd.y, textureID, ambient);
-	setVertice(p + 5, x, y, z1, texStart.x, texEnd.y, textureID, ambient);
+	setVertice(p + 3, pStart.x, pStart.y, pStart.z, offset.x, offset.y, textureID, ambient);
+	setVertice(p + 4, pEnd.x, pEnd.y, pEnd.z, texEnd.x, texEnd.y, textureID, ambient);
+	setVertice(p + 5, pStart.x, pStart.y, pEnd.z, offset.x, texEnd.y, textureID, ambient);
 }
 
 /**
  * Update the vertices of a rectangle
  */
 void dfMesh::updateRectangleAntiClockwise(int p, 
-	float x, float y, float z, 
-	float x1, float y1, float z1, 
-	float xoffset, float yoffset,
-	float width, float height, 
+	glm::vec3& pStart, 
+	glm::vec3& pEnd, 
+	glm::vec2& offset,
+	glm::vec2& size, 
 	int textureID, 
 	float ambient)
 {
-	glm::vec2 texStart = glm::vec2(xoffset, yoffset);
-	glm::vec2 texEnd = glm::vec2(xoffset + width, yoffset + height);
+	glm::vec2 texEnd = offset + size;
 
 	// first triangle
-	setVertice(p, x, y, z, texStart.x, texStart.y, textureID, ambient);
-	setVertice(p + 2, x1, y1, z, texEnd.x, texStart.y, textureID, ambient);
-	setVertice(p + 1, x1, y1, z1, texEnd.x, texEnd.y, textureID, ambient);
+	setVertice(p, pStart.x, pStart.y, pStart.z, offset.x, offset.y, textureID, ambient);
+	setVertice(p + 2, pEnd.x, pEnd.y, pStart.z, texEnd.x, offset.y, textureID, ambient);
+	setVertice(p + 1, pEnd.x, pEnd.y, pEnd.z, texEnd.x, texEnd.y, textureID, ambient);
 
 	// second triangle
-	setVertice(p + 3, x, y, z, texStart.x, texStart.y, textureID, ambient);
-	setVertice(p + 5, x1, y1, z1, texEnd.x, texEnd.y, textureID, ambient);
-	setVertice(p + 4, x, y, z1, texStart.x, texEnd.y, textureID, ambient);
+	setVertice(p + 3, pStart.x, pStart.y, pStart.z, offset.x, offset.y, textureID, ambient);
+	setVertice(p + 5, pEnd.x, pEnd.y, pEnd.z, texEnd.x, texEnd.y, textureID, ambient);
+	setVertice(p + 4, pStart.x, pStart.y, pEnd.z, offset.x, texEnd.y, textureID, ambient);
 }
 
 /***
@@ -187,12 +185,13 @@ int dfMesh::addRectangle(int start, dfSector* sector, dfWall* wall, float z, flo
 		p = resize(6);
 	}
 
-	glm::vec3 pstart = glm::vec3(sector->m_vertices[wall->m_left].x, sector->m_vertices[wall->m_left].y, z);
-	glm::vec3 pend = glm::vec3(sector->m_vertices[wall->m_right].x, sector->m_vertices[wall->m_right].y, z1);
-	float x = sector->m_vertices[wall->m_left].x,
-		y = sector->m_vertices[wall->m_left].y,
-		x1 = sector->m_vertices[wall->m_right].x,
-		y1 = sector->m_vertices[wall->m_right].y;
+	glm::vec3 pstart(
+		sector->m_vertices[wall->m_left].x, 
+		sector->m_vertices[wall->m_left].y, z);
+
+	glm::vec3 pend(
+		sector->m_vertices[wall->m_right].x, 
+		sector->m_vertices[wall->m_right].y, z1);
 
 	// deal with the wall texture
 	float bitmapID = wall->m_tex[texture].x;
@@ -205,22 +204,24 @@ int dfMesh::addRectangle(int start, dfSector* sector, dfWall* wall, float z, flo
 
 	// convert height and length into local texture coordinates using pixel ratio
 	// ratio of texture pixel vs world position = 64 pixels for 8 clicks => 8x1
-	float height = abs(z1 - z) * 8.0f / ypixel;
-	float width = length * 8.0f / xpixel;
+	glm::vec2 size(
+		length * 8.0f / xpixel,
+		abs(z1 - z) * 8.0f / ypixel);
 
 	// get local texture offset on the wall
 	// TODO: current supposion : offset x 1 => 1 pixel from the begining on XXX width pixel texture
-	float xoffset = (wall->m_tex[texture].y * 8.0f) / xpixel;
-	float yoffset = (wall->m_tex[texture].z * 8.0f) / ypixel;
+	glm::vec2 offset(
+		(wall->m_tex[texture].y * 8.0f) / xpixel,
+		(wall->m_tex[texture].z * 8.0f) / ypixel);
 
 	// Handle request to flip the texture
 	bool flipTexture = wall->flag1(dfWallFlag::FLIP_TEXTURE_HORIZONTALLY);
 	if (flipTexture) {
-		xoffset = 1.0f - xoffset;
-		width = -width;
+		offset.x = 1.0f - offset.x;
+		size.x = -size.x;
 	}
 
-	updateRectangle(p, x, y, z, x1, y1, z1, xoffset, yoffset, width, height, image->m_textureID, ambient);
+	updateRectangle(p, pstart, pend, offset, size, image->m_textureID, ambient);
 
 	if (start >= 0) {
 		return 6;	// we updated the rectangle, move to the next rectangle
@@ -238,10 +239,13 @@ void dfMesh::addRectangle(dfSector* sector, dfWall* wall, float z, float z1, glm
 	// add a new rectangle
 	int p = resize(6);
 
-	float x = sector->m_vertices[wall->m_left].x,
-		y = sector->m_vertices[wall->m_left].y,
-		x1 = sector->m_vertices[wall->m_right].x,
-		y1 = sector->m_vertices[wall->m_right].y;
+	glm::vec3 pstart(
+		sector->m_vertices[wall->m_left].x, 
+		sector->m_vertices[wall->m_left].y, z);
+
+	glm::vec3 pend(
+		sector->m_vertices[wall->m_right].x, 
+		sector->m_vertices[wall->m_right].y, z1);
 
 	// deal with the wall texture
 	float bitmapID = texture.x;
@@ -255,30 +259,32 @@ void dfMesh::addRectangle(dfSector* sector, dfWall* wall, float z, float z1, glm
 		ypixel = (float)image->m_height;
 	}
 
-	float length = sqrt(pow(x - x1, 2) + pow(y - y1, 2));
+	float length = sqrt(pow(pstart.x - pend.x, 2) + pow(pstart.y - pend.y, 2));
 
 	// convert height and length into local texture coordinates using pixel ratio
 	// ratio of texture pixel vs world position = 64 pixels for 8 clicks => 8x1
-	float height = abs(z1 - z) * 8.0f / ypixel;
-	float width = length * 8.0f / xpixel;
+	glm::vec2 size(
+		length * 8.0f / xpixel, 
+		abs(z1 - z) * 8.0f / ypixel);
 
 	// get local texture offset on the wall
 	// TODO: current supposion : offset x 1 => 1 pixel from the begining on XXX width pixel texture
-	float xoffset = (texture.y * 8.0f) / xpixel;
-	float yoffset = (texture.z * 8.0f) / ypixel;
+	glm::vec2 offset(
+		(texture.y * 8.0f) / xpixel, 
+		(texture.z * 8.0f) / ypixel);
 
 	// Handle request to flip the texture
 	bool flipTexture = wall->flag1(dfWallFlag::FLIP_TEXTURE_HORIZONTALLY);
 	if (flipTexture) {
-		xoffset = 1.0f - xoffset;
-		width = -width;
+		offset.x = 1.0f - offset.x;
+		size.x = -size.x;
 	}
 
 	if (clockwise) {
-		updateRectangle(p, x, y, z, x1, y1, z1, xoffset, yoffset, width, height, image->m_textureID, ambient);
+		updateRectangle(p, pstart, pend, offset, size, image->m_textureID, ambient);
 	}
 	else {
-		updateRectangleAntiClockwise(p, x, y, z, x1, y1, z1, xoffset, yoffset, width, height, image->m_textureID, ambient);
+		updateRectangleAntiClockwise(p, pstart, pend, offset, size, image->m_textureID, ambient);
 	}
 }
 
