@@ -85,5 +85,14 @@ void dfSign::buildGeometry(dfSector* sector, dfWall* wall, float z, float z1)
 	sign_p += normal / 10.0f;
 	sign_p1 += normal / 10.0f;
 
-	updateRectangle(p, sign_p.x, sign_p.y, sign_p.z, sign_p1.x, sign_p1.y, sign_p1.z, 0, 0, 1, 1, image->m_textureID, sector->m_ambient);
+	// Handle request to flip the texture
+	bool flipTexture = wall->flag1(dfWallFlag::FLIP_TEXTURE_HORIZONTALLY);
+
+	updateRectangle(p, 
+		sign_p.x, sign_p.y, sign_p.z, 
+		sign_p1.x, sign_p1.y, sign_p1.z, 
+		0, 0, 
+		1, 1, 
+		image->m_textureID, 
+		sector->m_ambient);
 }

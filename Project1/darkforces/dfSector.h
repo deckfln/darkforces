@@ -90,7 +90,7 @@ class dfSector
 
 	float m_currentAmbient;							// current value for an elevator light
 
-	void buildWalls(dfMesh* mesh, int displayPolygon);
+	void buildWalls(dfMesh* mesh, dfWallFlag displayPolygon);
 	void buildFloorAndCeiling(dfMesh* mesh);
 	void buildSigns(dfMesh* mesh);
 	void addSign(dfMesh *mesh, dfWall* wall, float z, float z1, int texture);
@@ -152,7 +152,7 @@ public:
 	unsigned flag(void) { return m_flag1; };
 	bool flag(int v) { return (m_flag1 & v) != 0; };
 	void eventMask(int eventMask) { m_eventMask = eventMask; };
-	std::vector <dfWall*>& walls(int displayPolygon = -1);
+	std::vector <dfWall*>& walls(dfWallFlag);
 
 	std::vector<std::vector<Point>>& polygons(int displayPolygon);
 
@@ -160,7 +160,7 @@ public:
 	bool isPointInside(glm::vec3& position, bool fullTest);
 	float boundingBoxSurface(void);
 	void linkWalls(void);
-	void buildElevator(dfMesh *mesh, float bottom, float top, int what, bool clockwise, int flags);
+	void buildElevator(dfMesh *mesh, float bottom, float top, int what, bool clockwise, dfWallFlag flags);
 
 	bool includedIn(dfSector* sector);
 	dfSector* isIncludedIn(void) { return m_includedIn; };
@@ -174,7 +174,7 @@ public:
 	void wallVertices(int start, int len) { m_wallVerticesStart = start, m_wallVerticesLen = len; };
 	void floorVertices(int start, int len) { m_floorVerticesStart = start, m_floorVerticesLen = len; };
 	void changeAmbient(float ambient);
-	void buildGeometry(dfMesh *mesh, int displayPolygon = -1);
+	void buildGeometry(dfMesh *mesh, dfWallFlag);
 
 	bool visible(void);
 	void addTrigger(dfLogicTrigger*);

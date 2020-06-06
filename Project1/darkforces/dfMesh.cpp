@@ -1,5 +1,6 @@
 #include "dfMesh.h"
 
+#include <math.h>
 #include <glm/gtx/intersect.hpp>
 #include "dfSector.h"
 #include "dfBitmap.h"
@@ -127,33 +128,51 @@ void dfMesh::setVertice(int p, float x, float y, float z, float xoffset, float y
 /**
  * Update the vertices of a rectangle
  */
-void dfMesh::updateRectangle(int p, float x, float y, float z, float x1, float y1, float z1, float xoffset, float yoffset, float width, float height, int textureID, float ambient)
+void dfMesh::updateRectangle(int p, 
+	float x, float y, float z, 
+	float x1, float y1, float z1, 
+	float xoffset, float yoffset,
+	float width, float height, 
+	int textureID, 
+	float ambient)
 {
+	glm::vec2 texStart = glm::vec2(xoffset, yoffset);
+	glm::vec2 texEnd = glm::vec2(xoffset + width, yoffset + height);
+
 	// first triangle
-	setVertice(p, x, y, z, xoffset, yoffset, textureID, ambient);
-	setVertice(p + 1, x1, y1, z, width + xoffset, yoffset, textureID, ambient);
-	setVertice(p + 2, x1, y1, z1, width + xoffset, height + yoffset, textureID, ambient);
+	setVertice(p, x, y, z, texStart.x, texStart.y, textureID, ambient);
+	setVertice(p + 1, x1, y1, z, texEnd.x, texStart.y, textureID, ambient);
+	setVertice(p + 2, x1, y1, z1, texEnd.x, texEnd.y, textureID, ambient);
 
 	// second triangle
-	setVertice(p + 3, x, y, z, xoffset, yoffset, textureID, ambient);
-	setVertice(p + 4, x1, y1, z1, width + xoffset, height + yoffset, textureID, ambient);
-	setVertice(p + 5, x, y, z1, xoffset, height + yoffset, textureID, ambient);
+	setVertice(p + 3, x, y, z, texStart.x, texStart.y, textureID, ambient);
+	setVertice(p + 4, x1, y1, z1, texEnd.x, texEnd.y, textureID, ambient);
+	setVertice(p + 5, x, y, z1, texStart.x, texEnd.y, textureID, ambient);
 }
 
 /**
  * Update the vertices of a rectangle
  */
-void dfMesh::updateRectangleAntiClockwise(int p, float x, float y, float z, float x1, float y1, float z1, float xoffset, float yoffset, float width, float height, int textureID, float ambient)
+void dfMesh::updateRectangleAntiClockwise(int p, 
+	float x, float y, float z, 
+	float x1, float y1, float z1, 
+	float xoffset, float yoffset,
+	float width, float height, 
+	int textureID, 
+	float ambient)
 {
+	glm::vec2 texStart = glm::vec2(xoffset, yoffset);
+	glm::vec2 texEnd = glm::vec2(xoffset + width, yoffset + height);
+
 	// first triangle
-	setVertice(p, x, y, z, xoffset, yoffset, textureID, ambient);
-	setVertice(p + 2, x1, y1, z, width + xoffset, yoffset, textureID, ambient);
-	setVertice(p + 1, x1, y1, z1, width + xoffset, height + yoffset, textureID, ambient);
+	setVertice(p, x, y, z, texStart.x, texStart.y, textureID, ambient);
+	setVertice(p + 2, x1, y1, z, texEnd.x, texStart.y, textureID, ambient);
+	setVertice(p + 1, x1, y1, z1, texEnd.x, texEnd.y, textureID, ambient);
 
 	// second triangle
-	setVertice(p + 3, x, y, z, xoffset, yoffset, textureID, ambient);
-	setVertice(p + 5, x1, y1, z1, width + xoffset, height + yoffset, textureID, ambient);
-	setVertice(p + 4, x, y, z1, xoffset, height + yoffset, textureID, ambient);
+	setVertice(p + 3, x, y, z, texStart.x, texStart.y, textureID, ambient);
+	setVertice(p + 5, x1, y1, z1, texEnd.x, texEnd.y, textureID, ambient);
+	setVertice(p + 4, x, y, z1, texStart.x, texEnd.y, textureID, ambient);
 }
 
 /***
@@ -168,6 +187,8 @@ int dfMesh::addRectangle(int start, dfSector* sector, dfWall* wall, float z, flo
 		p = resize(6);
 	}
 
+	glm::vec3 pstart = glm::vec3(sector->m_vertices[wall->m_left].x, sector->m_vertices[wall->m_left].y, z);
+	glm::vec3 pend = glm::vec3(sector->m_vertices[wall->m_right].x, sector->m_vertices[wall->m_right].y, z1);
 	float x = sector->m_vertices[wall->m_left].x,
 		y = sector->m_vertices[wall->m_left].y,
 		x1 = sector->m_vertices[wall->m_right].x,
@@ -178,7 +199,7 @@ int dfMesh::addRectangle(int start, dfSector* sector, dfWall* wall, float z, flo
 
 	dfBitmapImage* image = m_bitmaps[(int)bitmapID]->getImage();
 
-	float length = sqrt(pow(x - x1, 2) + pow(y - y1, 2));
+	float length = sqrt(pow(pstart.x - pend.x, 2) + pow(pstart.y - pend.y, 2));
 	float xpixel = (float)image->m_width;
 	float ypixel = (float)image->m_height;
 
@@ -191,6 +212,13 @@ int dfMesh::addRectangle(int start, dfSector* sector, dfWall* wall, float z, flo
 	// TODO: current supposion : offset x 1 => 1 pixel from the begining on XXX width pixel texture
 	float xoffset = (wall->m_tex[texture].y * 8.0f) / xpixel;
 	float yoffset = (wall->m_tex[texture].z * 8.0f) / ypixel;
+
+	// Handle request to flip the texture
+	bool flipTexture = wall->flag1(dfWallFlag::FLIP_TEXTURE_HORIZONTALLY);
+	if (flipTexture) {
+		xoffset = 1.0f - xoffset;
+		width = -width;
+	}
 
 	updateRectangle(p, x, y, z, x1, y1, z1, xoffset, yoffset, width, height, image->m_textureID, ambient);
 
@@ -238,6 +266,13 @@ void dfMesh::addRectangle(dfSector* sector, dfWall* wall, float z, float z1, glm
 	// TODO: current supposion : offset x 1 => 1 pixel from the begining on XXX width pixel texture
 	float xoffset = (texture.y * 8.0f) / xpixel;
 	float yoffset = (texture.z * 8.0f) / ypixel;
+
+	// Handle request to flip the texture
+	bool flipTexture = wall->flag1(dfWallFlag::FLIP_TEXTURE_HORIZONTALLY);
+	if (flipTexture) {
+		xoffset = 1.0f - xoffset;
+		width = -width;
+	}
 
 	if (clockwise) {
 		updateRectangle(p, x, y, z, x1, y1, z1, xoffset, yoffset, width, height, image->m_textureID, ambient);

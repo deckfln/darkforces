@@ -6,7 +6,8 @@
 #define DFWALL_TEXTURE_BOTTOM 2
 #define DFWALL_TEXTURE_SIGN 3
 
-enum dfWallFlag {
+enum class dfWallFlag {
+	// flag1
 	ALL = 0,
 	ADJOINING_MID_TX=1,		// the MID TX is NOT removed 
 	ILLUMINATED_SIGN=2,
@@ -27,6 +28,7 @@ enum dfWallFlag {
 
 	NOT_MORPHS_WITH_ELEV = 65536,
 
+	//flag 3
 	CAN_ALWAYS_WALK=1,					// Player will climb any height 
 	PLAYER_ENEMIES_CANNOT_WALK_THROUGH_WALL=2,
 	ENEMIES_ONLY_CANNOT_WALK_THROUGH_WALL=4,
@@ -48,16 +50,16 @@ public:
 	int m_right = -1;
 	int m_adjoint = -1;				//	index of the adjoint sector (in the level sectors)
 	int m_mirror = -1;				//	index of the wall on the other side of the adjoint (in the adjoint walls)
-	int m_flag1 = 0;
-	int m_flag3 = 0;
+	dfWallFlag m_flag1 = dfWallFlag::ALL;
+	dfWallFlag m_flag3 = dfWallFlag::ALL;
 
 	dfSector *m_pAdjoint = nullptr;	//	index of the adjoint sector (in the level sectors)
 	dfWall *m_pMmirror = nullptr;	//	index of the wall on the other side of the adjoint (in the adjoint walls)
 
 	glm::vec3 m_tex[4];
 
-	dfWall(int left, int right, int ajdoint, int mirror, int flag1, int flag3);
-	int flag1(int flag) { return m_flag1 & flag; };
+	dfWall(int left, int right, int ajdoint, int mirror, dfWallFlag flag1, dfWallFlag flag3);
+	bool flag1(dfWallFlag flag) { return (int)m_flag1 & (int)flag; };
 	void sector(dfSector* parent) { m_sector = parent; };
 	dfSector* sector(void) { return m_sector; };
 	~dfWall();

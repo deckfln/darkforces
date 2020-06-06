@@ -119,8 +119,8 @@ dfSector::dfSector(std::istringstream& infile, std::vector<dfSector*>& sectorsID
 			glm::vec3 top(std::stof(tokens[11]), std::stof(tokens[12]), std::stof(tokens[13]));
 			glm::vec3 bottom(std::stof(tokens[16]), std::stof(tokens[17]), std::stof(tokens[18]));
 			glm::vec3 sign(std::stof(tokens[21]), std::stof(tokens[22]), std::stof(tokens[23]));
-			int flag1 = std::stoi(tokens[31]);
-			int flag3 = std::stoi(tokens[33]);
+			dfWallFlag flag1 = (dfWallFlag)std::stoi(tokens[31]);
+			dfWallFlag flag3 = (dfWallFlag)std::stoi(tokens[33]);
 
 			dfWall* wall = new dfWall(left, right, adjoint, mirror, flag1, flag3);
 			wall->m_tex[DFWALL_TEXTURE_BOTTOM] = bottom;
@@ -251,7 +251,7 @@ void dfSector::ceiling(float z)
  *	list of ALL walls
  *	list of the external walls
  */
-std::vector<dfWall*>& dfSector::walls(int flags)
+std::vector<dfWall*>& dfSector::walls(dfWallFlag flags)
 {
 	static std::vector<dfWall*> ml;
 
@@ -278,7 +278,7 @@ std::vector<dfWall*>& dfSector::walls(int flags)
 		}
 		break;
 	default:
-		std::cerr << "dfSector::walls flags=" << flags << " not implemented" << std::endl;
+		std::cerr << "dfSector::walls flags=" << (int)flags << " not implemented" << std::endl;
 	}
 
 	return ml;
@@ -924,7 +924,7 @@ void dfSector::buildSigns(dfMesh *mesh)
 /**
  * Add walls of the sector in the given dfMesh
  */
-void dfSector::buildWalls(dfMesh* mesh, int displayPolygon)
+void dfSector::buildWalls(dfMesh* mesh, dfWallFlag displayPolygon)
 {
 	std::vector<dfWall*> filtered_walls;
 
@@ -949,7 +949,7 @@ void dfSector::buildWalls(dfMesh* mesh, int displayPolygon)
 		}
 		break;
 	default:
-		std::cerr << "dfSector::walls flags=" << displayPolygon << " not implemented for sector=" << m_id << std::endl;
+		std::cerr << "dfSector::walls flags=" << (int)displayPolygon << " not implemented for sector=" << m_id << std::endl;
 	}
 
 	m_wallVerticesStart = mesh->nbVertices();
@@ -1031,7 +1031,7 @@ void dfSector::buildFloorAndCeiling(dfMesh* mesh)
 /**
  * Add the geometry of the sector in the given dfMesh
  */
-void dfSector::buildGeometry(dfMesh* mesh, int displayPolygon)
+void dfSector::buildGeometry(dfMesh* mesh, dfWallFlag displayPolygon)
 {
 	if (m_includedIn != nullptr && m_elevator != nullptr && !m_elevator->is(dfElevatorType::CHANGE_LIGHT)) {
 		// for sectors that are included in other sector as elevator
@@ -1048,7 +1048,7 @@ void dfSector::buildGeometry(dfMesh* mesh, int displayPolygon)
 /**
  * Build an outward mesh based on the sector
  */
-void dfSector::buildElevator(dfMesh* mesh, float bottom, float top, int what, bool clockwise, int flags)
+void dfSector::buildElevator(dfMesh* mesh, float bottom, float top, int what, bool clockwise, dfWallFlag flags)
 {
 	if (!m_super) {
 		return;
@@ -1122,7 +1122,7 @@ void dfSector::buildElevator(dfMesh* mesh, float bottom, float top, int what, bo
 	}
 
 	// only build build top and bottom for vertical elevators (sliding ones : spin1 are not needed)
-	if (!(flags & dfWallFlag::MORPHS_WITH_ELEV)) {
+	if (!((int)flags & (int)dfWallFlag::MORPHS_WITH_ELEV)) {
 		mesh->addFloor(polygons(1), bottom, m_ceilingTexture, m_ambient, clockwise);
 		mesh->addFloor(polygons(1), top, m_floorTexture, m_ambient, clockwise);
 	}
