@@ -344,13 +344,15 @@ void df3DO::parseTriangles(std::istringstream& infile, dfPalette* palette, int n
 		else {
 			if (tokens[5] == "vertex") {
 				// From DEATH.3DO it seems the first triagnle color is then applied to all vertices
-				if (m_vertices.size() == 0) {
+				if (m_firstVertex) {
 					rgba = palette->getColor(std::stoi(tokens[4]), false);
 					color.r = rgba->r / 255.0f;
 					color.g = rgba->g / 255.0f;
 					color.b = rgba->b / 255.0f;
 
 					m_perVertexColor = color;
+
+					m_firstVertex = false;
 				}
 				else {
 					color = m_perVertexColor;
@@ -491,22 +493,34 @@ void df3DO::addVertice(df3DOQuadIndex *quad, int vertexIDX)
  */
 void df3DO::buildObject(void)
 {
-	// build the quads
-	for (auto& quad : quadIndex) {
-		addVertice(&quad, 0);
-		addVertice(&quad, 1);
-		addVertice(&quad, 2);
+	static glm::vec3 flat = glm::vec3(0, 0, -1);
 
-		addVertice(&quad, 2);
-		addVertice(&quad, 3);
-		addVertice(&quad, 0);
+	if (m_shading == fwMeshRendering::FW_MESH_TRIANGLES) {
+		// build the quads
+		for (auto& quad : quadIndex) {
+			addVertice(&quad, 0);
+			addVertice(&quad, 1);
+			addVertice(&quad, 2);
+
+			addVertice(&quad, 2);
+			addVertice(&quad, 3);
+			addVertice(&quad, 0);
+		}
+
+		// build the triangles
+		for (auto& quad : triangleIndex) {
+			addVertice(&quad, 0);
+			addVertice(&quad, 2);
+			addVertice(&quad, 1);
+		}
 	}
-
-	// build the triangles
-	for (auto& quad : triangleIndex) {
-		addVertice(&quad, 0);
-		addVertice(&quad, 2);
-		addVertice(&quad, 1);
+	else {
+		// deduplicate the vertices
+		for (auto vertex : verticesIndex) {
+			m_vertices.push_back(vertex.vertex);
+			m_colors.push_back(m_perVertexColor);
+			m_textures.push_back(flat);
+		}
 	}
 }
 
