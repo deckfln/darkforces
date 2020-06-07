@@ -30,7 +30,8 @@ struct dfBitMapHeaderSub {
 	char pad1[3];
 	char u1e[3];	 // these are always filled, but they seem // to be unused 
 	char pad2[5];
-	char Transparent; // 0x36 for normal // 0x3E for transparent pad3 byte[3] 
+	char Transparent; // 0x36 for normal // 0x3E for transparent // 008 for weapons
+	char pad3[3];
 };
 
 struct dfBitmapHeaderMultiple {
@@ -106,10 +107,10 @@ dfBitmap::dfBitmap(dfFileSystem* fs, std::string file, dfPalette* palette) :
 			// target size may be changed later
 			image.m_targetHeight = image.m_height = subImage->SizeY;
 			image.m_targetWidth  = image.m_width = subImage->SizeX;
-			image.m_transparent = (subImage->Transparent == '\x3e');
+			image.m_transparent = (subImage->Transparent == '\x3e' || subImage->Transparent == '\x08');
 			image.m_raw = (char *)subImage + sizeof(dfBitMapHeaderSub);
-			image.m_nrChannels = 3;
-			image.m_data = convert2rgb(&image, palette);
+			image.m_nrChannels = 4;
+			image.m_data = convert2rgba(&image, palette);
 
 			m_images.push_back(image);
 		}
@@ -120,10 +121,15 @@ dfBitmap::dfBitmap(dfFileSystem* fs, std::string file, dfPalette* palette) :
 		image.m_size = m_header->DataSize;
 		image.m_targetHeight = image.m_height = height;
 		image.m_targetWidth = image.m_width = width;
-		image.m_transparent = (m_header->Transparent == '\x3e');
+		image.m_transparent = (m_header->Transparent == '\x3e' || m_header->Transparent == '\x08');
+
+		if (m_header->Compressed != 0) {
+			std::cerr << "dfBitmap::dfBitmap compress not implemented" << std::endl;
+		}
+
 		image.m_raw = (char*)m_header + sizeof(dfBitmapHeader);
-		image.m_nrChannels = 3;
-		image.m_data = convert2rgb(&image, palette);
+		image.m_nrChannels = 4;
+		image.m_data = convert2rgba(&image, palette);
 
 		m_images.push_back(image);
 	}
@@ -132,16 +138,12 @@ dfBitmap::dfBitmap(dfFileSystem* fs, std::string file, dfPalette* palette) :
 /**
  * Convert palette based to RGB
  */
-char *dfBitmap::convert2rgb(dfBitmapImage *raw, dfPalette *palette)
+char *dfBitmap::convert2rgba(dfBitmapImage *raw, dfPalette *palette)
 {
-	if (raw->m_transparent) {
-		std::cerr << "dfBitmap::convert2rgb Transparency not implemented" << std::endl;
-	}
-
 	int size = raw->m_width * raw->m_height;
-	char* image = new char[size * 3];
+	char* image = new char[size * 4];
 	int p, p1 = 0;
-	glm::ivec4 *rgb;
+	glm::ivec4 *rgba;
 	unsigned char v;
 
 	// RAW images are stored by column
@@ -150,12 +152,13 @@ char *dfBitmap::convert2rgb(dfBitmapImage *raw, dfPalette *palette)
 		for (auto y = raw->m_width - 1; y >= 0; y--) {
 			p = y * raw->m_height + x;
 			v = raw->m_raw[p];
-			rgb = palette->getColor(v, false);
+			rgba = palette->getColor(v, raw->m_transparent);
 
-			image[p1] = rgb->r;
-			image[p1 + 1] = rgb->g;
-			image[p1 + 2] = rgb->b;
-			p1 += 3;
+			image[p1] = rgba->r;
+			image[p1 + 1] = rgba->g;
+			image[p1 + 2] = rgba->b;
+			image[p1 + 3] = rgba->a;
+			p1 += 4;
 		}
 	}
 
@@ -217,28 +220,30 @@ fwSkyline* dfBitmapImage::convert2skyline(void)
 	unsigned char c;
 	int p, p1, p2, p3;
 	for (auto y = 0; y < m_height / 4; y++) {
-		p = y * m_width * 3;
-		p1 = (m_height / 2 - y - 1) * m_width * 3;
+		p = y * m_width * 4;
+		p1 = (m_height / 2 - y - 1) * m_width * 4;
 
-		p2 = p + (m_height / 2 * m_width * 3);
-		p3 = p1 + (m_height / 2 * m_width * 3);
+		p2 = p + (m_height / 2 * m_width * 4);
+		p3 = p1 + (m_height / 2 * m_width * 4);
 
 		for (auto x = 0; x < m_width; x++) {
 			c = m_data[p1]; m_data[p1] = m_data[p]; m_data[p] = c;
 			c = m_data[p1+1]; m_data[p1+1] = m_data[p+1]; m_data[p+1] = c;
 			c = m_data[p1+2]; m_data[p1+2] = m_data[p+2]; m_data[p+2] = c;
+			c = m_data[p1 + 3]; m_data[p1 + 3] = m_data[p + 3]; m_data[p + 3] = c;
 
 			c = m_data[p3]; m_data[p3] = m_data[p2]; m_data[p2] = c;
 			c = m_data[p3 + 1]; m_data[p3 + 1] = m_data[p2 + 1]; m_data[p2 + 1] = c;
 			c = m_data[p3 + 2]; m_data[p3 + 2] = m_data[p2 + 2]; m_data[p2 + 2] = c;
+			c = m_data[p3 + 3]; m_data[p3 + 3] = m_data[p2 + 3]; m_data[p2 + 3] = c;
 
-			p += 3;
-			p1 += 3;
-			p2 += 3;
-			p3 += 3;
+			p += 4;
+			p1 += 4;
+			p2 += 4;
+			p3 += 4;
 		}
 	}
-	return new fwSkyline((unsigned char *)m_data, m_width, m_height, 3, 4, 1);
+	return new fwSkyline((unsigned char *)m_data, m_width, m_height, 4, 4, 1);
 }
 
 /**

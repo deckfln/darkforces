@@ -43,6 +43,11 @@ void main()
 	color = material.color;
 #endif
 
+	// discard transparent pixels
+	if (color.a == 0.0) {
+		discard;
+	}
+
     gFragColor = color.rgb;
 	gWorld = world;
 	gNormal = vec3(0);

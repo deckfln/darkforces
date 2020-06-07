@@ -51,7 +51,7 @@ class dfBitmap {
 	int m_nbImages = 1;
 	int m_framerate = 0;
 	std::vector<dfBitmapImage> m_images;
-	char *convert2rgb(dfBitmapImage* raw, dfPalette* palette);
+	char *convert2rgba(dfBitmapImage* raw, dfPalette* palette);
 
 public:
 	std::string m_name;
