@@ -41,7 +41,13 @@ void fwControlThirdPerson::_mouseMove(float xdir, float ydir)
 	switch (m_button) {
 	case GLFW_MOUSE_BUTTON_LEFT:
 		m_phi = m_phi_start + xdir * m_radSpeed;
-		m_theta = m_theta_start + ydir * m_radSpeed;
+
+		// lock the camera up and down
+		float t = m_theta_start + ydir * m_radSpeed;
+		if (t <= m_theta_lock_down || t >= m_theta_lock_up) {
+			return;
+		}
+		m_theta = t;
 		break;
 	}
 }

@@ -37,6 +37,9 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 	// super secret		m_control = new fwControlThirdPerson(m_camera, glm::vec3(-46, 0.9, 26.8), 0.55f, -pi / 2, 0.2f);
 	// armory	m_control = new fwControlThirdPerson(m_camera, glm::vec3(-37, -2, 36), 0.55f, -pi / 2, 0.2f);
 
+	// lock the view -45° to +45°
+	m_control->lockView(M_PI / 4, M_PI / 4 + M_PI / 2);
+
 	bindControl((fwControl*)m_control);
 
 	m_renderer->customLight("/data/shaders/lightning.glsl");
