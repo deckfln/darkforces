@@ -6,6 +6,8 @@
 #include "../dfFrame.h"
 #include "../../include/stb_image_write.h"
 
+const float FME_WORLDSIZE_X = 95.0f;
+const float FME_WORLDSIZE_Y = 95.0f;
 /**
  * Create a FME from a file
  */
@@ -30,12 +32,10 @@ dfFME::dfFME(dfFileSystem* fs, dfPalette* palette, std::string& name):
 void dfFME::spriteModel(GLmodel& model, int id)
 {
 	// level side of the sprite depend on texture size (pixel) / 32 * (Wwidth / 65536)
-	float widthFactor = 58.0f;
-	float heightFactor = 40.0f;
 
 	SpriteModel* sm = &model.models[id];
-	sm->size = glm::vec2(m_image->m_width / widthFactor, m_image->m_height / heightFactor);
-	sm->insert = glm::vec2(m_image->m_InsertX / widthFactor, -m_image->m_InsertY / heightFactor);
+	sm->size = glm::vec2(m_image->m_width / FME_WORLDSIZE_X, m_image->m_height / FME_WORLDSIZE_Y);
+	sm->insert = glm::vec2(m_image->m_InsertX / FME_WORLDSIZE_X, -m_image->m_InsertY / FME_WORLDSIZE_Y);
 
 	sm->world = glm::vec2(0.5, 1);
 	sm->states = glm::i16vec2(0, 0);

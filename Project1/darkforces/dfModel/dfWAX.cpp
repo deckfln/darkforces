@@ -6,6 +6,9 @@
 #include "../dfFileSystem.h"
 #include "../dfFrame.h"
 
+const float WAX_WORLDSIZE_X = 95.0f;
+const float WAX_WORLDSIZE_Y = 95.0f;
+
 #pragma pack(push)
 struct _dfWaxTable {
 	long Version;	// constant = 0x00100100 
@@ -178,8 +181,8 @@ int dfWAX::textureID(int state, int frame)
 void dfWAX::spriteModel(GLmodel &model, int id)
 {
 	// level side of the sprite depend on texture size (pixel) / 32 * (Wwidth / 65536)
-	float widthFactor = 58.0f / (m_Wwidth / 65536.0f);
-	float heightFactor = 40.0f / (m_Wheight / 65536.0f);
+	float widthFactor = WAX_WORLDSIZE_X / (m_Wwidth / 65536.0f);
+	float heightFactor = WAX_WORLDSIZE_Y / (m_Wheight / 65536.0f);
 
 	SpriteModel* sm = &model.models[id];
 	sm->size = glm::vec2(m_width / widthFactor, m_height / heightFactor);
