@@ -65,7 +65,7 @@ void fwRenderer::parseShaders(std::list <fwMesh *> &meshes,
 
 		material = mesh->get_material();
 		code = material->hashCode() + codeLights;
-		materialID = material->getID();
+		materialID = material->id();
 
 		if (mesh->is_class(INSTANCED_MESH)) {
 			local_defines += "#define INSTANCED\n";

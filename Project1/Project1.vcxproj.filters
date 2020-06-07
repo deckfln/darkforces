@@ -31,6 +31,9 @@
     <Filter Include="Fichiers d%27en-tête\opengl">
       <UniqueIdentifier>{3811b373-7d83-4fe8-b43d-bf5973b6106b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Fichiers de ressources\framework">
+      <UniqueIdentifier>{8bacdfc5-bb3d-4882-badf-2c289d15a717}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source.cpp">
@@ -373,6 +376,12 @@
       <Filter>Fichiers sources\Framework</Filter>
     </ClCompile>
     <ClCompile Include="framework\background\fwSkyline.cpp">
+      <Filter>Fichiers sources\Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="framework\fwHUDelement.cpp">
+      <Filter>Fichiers sources\Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="framework\fwHUD.cpp">
       <Filter>Fichiers sources\Framework</Filter>
     </ClCompile>
   </ItemGroup>
@@ -731,6 +740,12 @@
     <ClInclude Include="framework\background\fwSkyline.h">
       <Filter>Fichiers d%27en-tête\Framework</Filter>
     </ClInclude>
+    <ClInclude Include="framework\fwHUDelement.h">
+      <Filter>Fichiers d%27en-tête\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="framework\fwHUD.h">
+      <Filter>Fichiers d%27en-tête\Framework</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\fragment.glsl">
@@ -783,6 +798,14 @@
     </None>
     <None Include="data\shaders\3do\3do_texture_vs.glsl">
       <Filter>Fichiers de ressources</Filter>
+    </None>
+    <None Include="framework\shaders\background\skyline_fs.glsl" />
+    <None Include="framework\shaders\background\skyline_vs.glsl" />
+    <None Include="framework\shaders\hud\hud_fs.glsl">
+      <Filter>Fichiers de ressources\framework</Filter>
+    </None>
+    <None Include="framework\shaders\hud\hud_vs.glsl">
+      <Filter>Fichiers de ressources\framework</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

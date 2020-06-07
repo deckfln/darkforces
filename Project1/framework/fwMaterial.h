@@ -14,28 +14,27 @@ enum ShaderType {VERTEX_SHADER, GEOMETRY_SHADER, FRAGMENT_SHADER, FRAGMENT_SHADE
 
 const int MAX_SHADERS = 10;
 
+class glProgram;
+class fwGeometry;
+class glVertexArray;
+
 class fwMaterial: public Reference
 {
-	int id;
-	/*
-	std::string vertexShader = "";
-	std::string fragmentShader = "";
-	std::string geometryShader = "";
-	*/
-	std::string vertexShaderCode = "";
-	std::string fragmentShaderCode = "";
-	std::string geometryShaderCode = "";
+	int m_id = 0;
 
-	std::map <int, std::map <int, std::string>> files;
-	std::map <int, std::map <int, std::string>> shaders;
+	std::map <int, std::map <int, std::string>> m_files;
+	std::map <int, std::map <int, std::string>> m_shaders;
 
-	int current_texture = 0;
+	int m_currentTexture = 0;
 
-	std::list <fwUniform *> uniforms;
-	std::list <glTexture *> textures;
+	std::map <std::string, fwUniform *> m_uniforms;
+	std::map <int, glTexture *> m_textures;
 	std::list <glTextureArray *> m_textureArrays;
 
 	std::string m_hash = "";
+
+	glProgram* m_program = nullptr;	// For self executed material
+	std::map<int, glVertexArray*> m_vertexArays;
 
 protected:
 	int m_type = 0;
@@ -59,12 +58,17 @@ public:
 	const std::string &get_vertexShader(void);
 	const std::string &get_fragmentShader(void);
 	const std::string &get_geometryShader(void);
-	const std::string get_shader(int shader, RenderType render = FORWARD_RENDER);
-	const std::string get_shader(int shader, RenderType render, std::map<std::string, std::string> defines);
-	const int getID(void);
+	const std::string &get_shader(int shader, RenderType render = FORWARD_RENDER);
+	const std::string &get_shader(int shader, RenderType render, std::map<std::string, std::string> defines);
+	const int id(void) { return m_id; };
 	const std::string defines(void) { return m_defines; };
 
 	void bindTextures(void);
 	void set_uniforms(glProgram *program);
+	void set(const std::string& name, fwTexture* texture);
+	void set(const std::string& name, glm::vec4* v4);
+
+	void draw(fwGeometry *geometry);	// self-executer material
+
 	~fwMaterial();
 };

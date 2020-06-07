@@ -11,6 +11,8 @@
 
 class fwGeometry: public Reference
 {
+	int m_id = 0;
+
 	glBufferAttribute *index = nullptr;
 	glBufferAttribute *vertices = nullptr;
 
@@ -51,6 +53,7 @@ public:
 	fwSphere* setBoundingsphere(float radius);
 	void computeTangent(void);
 
+	int id(void) { return m_id; };
 
 	void draw(GLenum mode, glVertexArray *);
 	~fwGeometry();

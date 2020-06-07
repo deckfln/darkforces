@@ -14,6 +14,7 @@
 #include "../materials/fwMaterialDeferedLights.h"
 #include "../postprocessing/fwPostProcessingBloom.h"
 #include "../fwBackground.h"
+#include "../fwHUD.h"
 
 static glProgram* depth_program[3] = { nullptr, nullptr, nullptr };
 static std::map<std::string, glProgram*> light_programs;
@@ -67,7 +68,7 @@ void fwRendererDefered::buildDeferedShader(std::list <fwMesh*>& meshes,
 
 		material = mesh->get_material();
 		code = material->hashCode();
-		materialID = material->getID();
+		materialID = material->id();
 
 		if (mesh->is_class(INSTANCED_MESH)) {
 			local_defines += "#define INSTANCED\n";
@@ -81,9 +82,9 @@ void fwRendererDefered::buildDeferedShader(std::list <fwMesh*>& meshes,
 
 		// Create the shader program if it is not already there
 		if (m_programs.count(code) == 0) {
-			const std::string vertex = material->get_shader(VERTEX_SHADER);
-			const std::string geometry = material->get_shader(GEOMETRY_SHADER);
-			const std::string fragment = material->get_shader(FRAGMENT_SHADER, DEFERED_RENDER);
+			const std::string& vertex = material->get_shader(VERTEX_SHADER);
+			const std::string& geometry = material->get_shader(GEOMETRY_SHADER);
+			const std::string& fragment = material->get_shader(FRAGMENT_SHADER, DEFERED_RENDER);
 			m_programs[code] = new glProgram(vertex, fragment, geometry, local_defines);
 		}
 
@@ -394,6 +395,15 @@ glTexture *fwRendererDefered::draw(fwCamera* camera, fwScene* scene)
 
 	glPopDebugGroup();
 
+	/*
+	 * 8th pass: draw the HUD
+	 */
+	if (scene->hud() != nullptr) {
+		static const char* s7 = "draw_hud";
+		glPushDebugGroup(GL_DEBUG_SOURCE_APPLICATION, 0, GLsizei(strlen(s7)), s7);
+		scene->hud()->draw();
+		glPopDebugGroup();
+	}
 	return m_lightRendering->getColorTexture(0);
 }
 

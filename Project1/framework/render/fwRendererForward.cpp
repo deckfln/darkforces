@@ -12,6 +12,7 @@
 #include "../postprocessing/fwPostProcessingBloom.h"
 #include "../materials/fwMaterialDeferedLights.h"
 #include "../fwBackground.h"
+#include "../fwHUD.h"
 
 static fwNormalHelperMaterial normalHelper;
 fwOutlineMaterial* outline_material = nullptr;
@@ -194,6 +195,16 @@ glTexture *fwRendererForward::draw(fwCamera* camera, fwScene *scene)
 	);
 
 	m_colorMap->bindColors(2);		// activate all buffers
+
+	/*
+	 * 6th pass: draw the HUD
+	 */
+	if (scene->hud() != nullptr) {
+		static const char* s7 = "draw_hud";
+		glPushDebugGroup(GL_DEBUG_SOURCE_APPLICATION, 0, GLsizei(strlen(s7)), s7);
+		scene->hud()->draw();
+		glPopDebugGroup();
+	}
 
 	return m_colorMap->getColorTexture(0);
 }

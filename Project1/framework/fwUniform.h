@@ -1,16 +1,16 @@
 #pragma once
 #include <iostream>
 #include <glm/glm.hpp>
-#include "../glEngine/glProgram.h"
 #include "../glEngine/glTexture.h"
 #include "../glEngine/glTextureArray.h"
 #include "../glEngine/glCubeTexture.h"
 
 class glUniformBuffer;
+class glProgram;
 
 class fwUniform
 {
-	std::string name;
+	std::string m_name;
 	void *data = nullptr;
 	int type = -1;
 	int m_size = 0;	// if this is an array of value
@@ -30,5 +30,6 @@ public:
 	void set_uniform(glProgram *);
 	void *get_value(void);
 	void set(void *_data);
+	const std::string& name(void) { return m_name; };
 	~fwUniform();
 };

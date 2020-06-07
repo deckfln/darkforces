@@ -10,11 +10,13 @@
 #include "../glEngine/glBufferAttribute.h"
 #include "../glad/glad.h"
 
+static int g_nbGeometries = 0;
 
 fwGeometry::fwGeometry()
 {
 	vertices = nullptr;
 	index = nullptr;
+	m_id = g_nbGeometries++;
 }
 
 fwGeometry& fwGeometry::addVertices(const std::string _name, void *_data, GLsizei itemSize, GLsizei len, GLuint _sizeof_element, bool delete_on_exit)

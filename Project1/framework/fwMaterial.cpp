@@ -8,16 +8,20 @@
 
 #include "../glEngine/glTexture.h"
 #include "../glEngine/glTextureArray.h"
+#include "../glEngine/glProgram.h"
+#include "../glEngine/glVertexArray.h"
 
-int _materialID = 0;
+#include "fwGeometry.h"
+
+static int g_materialID = 0;
 
 fwMaterial::fwMaterial():
-	id(_materialID++)
+	m_id(g_materialID++)
 {
 }
 
 fwMaterial::fwMaterial(std::string _vertexShader, std::string _fragmentShader, std::string _geometryShader):
-	id(_materialID++)
+	m_id(g_materialID++)
 {
 	addShader(VERTEX_SHADER, _vertexShader);
 	if (_geometryShader != "") {
@@ -30,7 +34,7 @@ fwMaterial::fwMaterial(std::string _vertexShader, std::string _fragmentShader, s
  * Create a Material with 1 argument
  */
 fwMaterial::fwMaterial(std::map<ShaderType, std::string>& shaders):
-	id(_materialID++)
+	m_id(g_materialID++)
 {
 	for (auto shader : shaders) {
 		if (shader.first == FRAGMENT_SHADER_DEFERED) {
@@ -42,25 +46,34 @@ fwMaterial::fwMaterial(std::map<ShaderType, std::string>& shaders):
 	}
 }
 
+/**
+ * Add a single hiegh level texture
+ */
 fwMaterial& fwMaterial::addTexture(std::string uniform, fwTexture *texture)
 {
 	glTexture *glTex = new glTexture(texture);
-	textures.push_front(glTex);
+	m_textures[texture->id()] = glTex;
 
 	addUniform(new fwUniform(uniform, glTex));
 
 	return *this;
 }
 
+/**
+ * Add a single low level texture
+ */
 fwMaterial& fwMaterial::addTexture(std::string uniform, glTexture *texture)
 {
-	textures.push_front(texture);
+	// m_textures[texture->getID()] = texture;
 
 	addUniform(new fwUniform(uniform, texture));
 
 	return *this;
 }
 
+/**
+ * Add a high level multi-texture
+ */
 fwMaterial& fwMaterial::addTextures(std::string uniform, fwTextures* textures)
 {
 	glTextureArray* glTex = new glTextureArray(textures);
@@ -71,39 +84,77 @@ fwMaterial& fwMaterial::addTextures(std::string uniform, fwTextures* textures)
 	return *this;
 }
 
-/*
-fwMaterial &fwMaterial::addShaders(std::string _vertexShader, std::string _fragmentShader, const std::string _defines)
-{
-	addShader(VERTEX_SHADER, _vertexShader);
-	addShader(FRAGMENT_SHADER, _fragmentShader);
-
-	m_defines = _defines;
-
-	return *this;
-}
-*/
+/**
+ * Add a generic uniform
+ */
 fwMaterial &fwMaterial::addUniform(fwUniform *uniform)
 {
-	uniforms.push_front(uniform);
+	m_uniforms[uniform->name()] = uniform;
 	return *this;
 }
 
-const int fwMaterial::getID(void)
-{
-	return id;
-}
-
+/**
+ * Activate uniforms on the given program
+ */
 void fwMaterial::set_uniforms(glProgram *program)
 {
-	for (auto uniform: uniforms) {
-		uniform->set_uniform(program);
+	for (auto uniform: m_uniforms) {
+		uniform.second->set_uniform(program);
 	}
 }
 
+/**
+ * set a uniform texture
+ */
+void fwMaterial::set(const std::string& name, fwTexture* texture)
+{
+	glTexture* glTex=nullptr;
+
+	if (m_textures.count(texture->id()) == 0) {
+		m_textures[texture->id()] = new glTexture(texture);
+	}
+
+	m_uniforms[name]->set(m_textures[texture->id()]);
+}
+
+/**
+ * set a uniform texture
+ */
+void fwMaterial::set(const std::string& name, glm::vec4* v)
+{
+	m_uniforms[name]->set(v);
+}
+
+/**
+ * Run a self-executed material (not part of the rendering process)
+ */
+void fwMaterial::draw(fwGeometry* geometry)
+{
+	if (m_program == nullptr) {
+		std::string vs = load_shader_file(m_files[FORWARD_RENDER][VERTEX_SHADER], "");
+		std::string fs = load_shader_file(m_files[FORWARD_RENDER][FRAGMENT_SHADER], "");
+		std::string gs = load_shader_file(m_files[FORWARD_RENDER][GEOMETRY_SHADER], "");
+		m_program = new glProgram(vs, fs, gs, "");
+	}
+	m_program->run();
+
+	if (m_vertexArays.count(geometry->id()) == 0) {
+		m_vertexArays[geometry->id()] = new glVertexArray();
+		geometry->enable_attributes(m_program);
+		m_vertexArays[geometry->id()]->unbind();
+	}
+
+	set_uniforms(m_program);
+	geometry->draw(GL_TRIANGLES, m_vertexArays[geometry->id()]);
+}
+
+/**
+ * Bind all textures
+ */
 void fwMaterial::bindTextures(void)
 {
-	for (auto texture: textures) {
-		texture->bind();
+	for (auto texture: m_textures) {
+		texture.second->bind();
 	}
 }
 
@@ -124,40 +175,40 @@ const std::string& fwMaterial::get_fragmentShader(void)
 
 fwMaterial &fwMaterial::addShader(int shader, std::string file, RenderType render)
 {
-	files[render][shader] = file; 
-	shaders[render][shader] = "";
+	m_files[render][shader] = file; 
+	m_shaders[render][shader] = "";
 
 	m_hash += file;
 
 	return *this;
 }
 
-const std::string fwMaterial::get_shader(int shader, RenderType render)
+const std::string& fwMaterial::get_shader(int shader, RenderType render)
 {
 	//TODO: return a reference to the real code instead of a copy of the string 
-	if (shaders[render][shader] == "") {
-		std::string file = files[render][shader];
+	if (m_shaders[render][shader] == "") {
+		std::string& file = m_files[render][shader];
 		if (file == "") {
-			return "";
+			return m_files[render][shader];
 		}
-		shaders[render][shader] = load_shader_file(file, m_defines);
+		m_shaders[render][shader] = load_shader_file(file, m_defines);
 	}
 
-	return shaders[render][shader];
+	return m_shaders[render][shader];
 }
 
-const std::string fwMaterial::get_shader(int shader, RenderType render, std::map<std::string, std::string>variables)
+const std::string& fwMaterial::get_shader(int shader, RenderType render, std::map<std::string, std::string>variables)
 {
 	//TODO: return a reference to the real code instead of a copy of the string 
-	if (shaders[render][shader] == "") {
-		std::string file = files[render][shader];
+	if (m_shaders[render][shader] == "") {
+		std::string& file = m_files[render][shader];
 		if (file == "") {
-			return "";
+			return m_files[render][shader];
 		}
-		shaders[render][shader] = load_shader_file(file, m_defines, &variables);
+		m_shaders[render][shader] = load_shader_file(file, m_defines, &variables);
 	}
 
-	return shaders[render][shader];
+	return m_shaders[render][shader];
 }
 
 std::string fwMaterial::hashCode(void)
@@ -167,15 +218,15 @@ std::string fwMaterial::hashCode(void)
 
 fwMaterial::~fwMaterial()
 {
-	for (auto texture: textures) {
-		delete texture;
+	for (auto texture: m_textures) {
+		delete texture.second;
 	}
 
 	for (auto texture : m_textureArrays) {
 		delete texture;
 	}
 
-	for (auto uniform : uniforms) {
-		delete uniform;
+	for (auto uniform : m_uniforms) {
+		delete uniform.second;
 	}
 }

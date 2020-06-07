@@ -17,6 +17,7 @@
 #include "darkforces/dfMessageBus.h"
 
 #include "darkforces/dfFileSystem.h"
+#include "framework/fwHUDelement.h"
 
 myDarkForces::myDarkForces(std::string name, int width, int height) :
 	fwApp(name, width, height, "shaders/gamma", "#define GAMMA_CORRECTION 1\n")
@@ -44,59 +45,32 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 
 	m_renderer->customLight("/data/shaders/lightning.glsl");
 
-	// shared geometry
-	fwBoxGeometry* geometry = new fwBoxGeometry();
-
-	/*
-	 * Lights
-	 */
-	 /*
-	 m_light = new fwDirectionLight(
-		 glm::vec3(),
-		 glm::vec3(0.3, 0.3, 0.3),
-		 glm::vec3(0.8, 0.8, 0.8),
-		 glm::vec3(1.0, 1.0, 1.0)
-	 );
-	
-
-	m_light = new fwPointLight(
-		glm::vec3(),				// position
-		glm::vec3(0.8, 0.8, 0.8),	// Color
-		glm::vec3(0.9, 0.9, 0.9),	// Diffuse
-		glm::vec3(1.0, 1.0, 1.0),	// Specular
-		1.0f,						// constant
-		0.09f,						// linear
-		0.032f						// quadratic
-	);
-	m_light->set_name("light");
-	m_light->castShadow(true);
-	*/
-
-	glm::vec4* white = new glm::vec4(0.0, 0.0, 1.0, 1.0);
-
-	fwMaterialBasic* basic = new fwMaterialBasic(white);
-	fwMesh* fLight = new fwMesh(geometry, basic);
-
 	m_level = new dfLevel(m_filesystem, "SECBASE");
 	dfCollision* m_collision = new dfCollision();
 	m_collision->bind(m_level);
 	m_control->bind(m_collision);
 
-	// Skybox
-	std::string skyboxes[] = {
-		"images/skybox/right.jpg",
-		"images/skybox/left.jpg",
-		"images/skybox/top.jpg",
-		"images/skybox/bottom.jpg",
-		"images/skybox/front.jpg",
-		"images/skybox/back.jpg" };
+	// hud display
+	dfBitmap* bmStatuslt = new dfBitmap(m_filesystem, "STATUSLF.BM", m_level->palette());
+	fwTexture* texStatuslt = bmStatuslt->fwtexture();
+	fwHUDelement* statuslt = new fwHUDelement("statuslt", fwHUDElementPosition::BOTTOM_LEFT, fwHUDelementSizeLock::UNLOCKED, 0.1f, 0.1f, texStatuslt);
 
-	//m_skybox = new fwSkybox(skyboxes);
+	dfBitmap* bmStatusrt = new dfBitmap(m_filesystem, "STATUSRT.BM", m_level->palette());
+	fwTexture* texStatusrt = bmStatusrt->fwtexture();
+	fwHUDelement* statusrt = new fwHUDelement("statusrt", fwHUDElementPosition::BOTTOM_RIGHT, fwHUDelementSizeLock::UNLOCKED, 0.1f, 0.1f, texStatusrt);
+
+	dfBitmap* bmRifle = new dfBitmap(m_filesystem, "RIFLE1.BM", m_level->palette());
+	fwTexture* texRifle = bmRifle->fwtexture();
+	fwHUDelement* rifle = new fwHUDelement("rifle", fwHUDElementPosition::BOTTOM_CENTER, fwHUDelementSizeLock::UNLOCKED, 0.2f, 0.2f, texRifle);
 
 	// init the m_scene
 	glm::vec3* yellow = new glm::vec3(255, 255, 0);
 	m_scene = new fwScene();
-	//m_scene->background(m_skybox);
+
+	// add the HUD
+	m_scene->hud(statuslt);
+	m_scene->hud(statusrt);
+	m_scene->hud(rifle);
 
 	// mandatory to get all data together
 	resizeEvent(width, height);

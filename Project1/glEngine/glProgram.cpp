@@ -20,6 +20,12 @@ List Shaders;
 
 std::string load_shader_file(const std::string shader_file, std::string defines, std::map <std::string, std::string> *variables)
 {
+	static std::string empty="";
+
+	if (shader_file == "") {
+		return empty;
+	}
+
 	// 1. retrieve the vertex/fragment source code from filePath
 	std::string code;
 	std::ifstream file;

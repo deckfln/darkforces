@@ -12,12 +12,16 @@
 
 class fwLight;
 class fwBackground;
+class fwHUD;
+class fwHUDelement;
 
 class fwScene : public fwObject3D
 {
 	std::list <fwLight*> lights;
 
 	fwBackground *m_pBackground = nullptr;
+	fwHUD* m_hud = nullptr;
+
 	glm::vec3 *outlinecolor = nullptr;
 
 public:
@@ -28,6 +32,9 @@ public:
 
 	fwScene &background(fwBackground *_background) { m_pBackground = _background; return *this; };
 	fwBackground *background(void) { return m_pBackground; };
+
+	fwScene& hud(fwHUDelement* element);
+	fwHUD* hud(void) { return m_hud; };
 
 	~fwScene();
 };

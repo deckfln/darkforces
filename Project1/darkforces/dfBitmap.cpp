@@ -177,6 +177,15 @@ dfBitmapImage* dfBitmap::getImage(unsigned int index)
 	return nullptr;
 }
 
+/**
+ * Convert the bitmap to fwTexture
+ */
+fwTexture* dfBitmap::fwtexture(void)
+{
+	dfBitmapImage& first = m_images[0];
+	return new fwTexture((unsigned char*)first.m_data, first.m_width, first.m_height, first.m_nrChannels, GL_NEAREST);
+}
+
 dfBitmap::~dfBitmap()
 {
 	if (m_data) {

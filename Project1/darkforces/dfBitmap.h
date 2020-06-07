@@ -8,6 +8,7 @@
 class dfFileSystem;
 class fwSkybox;
 class fwSkyline;
+class fwTexture;
 
 enum {
 	DF_BITMAP_IMAGE_BOTTOM_CENTER
@@ -58,5 +59,6 @@ public:
 	dfBitmap(dfFileSystem* fs, std::string file, dfPalette *palette);
 	int nbImages(void) { return m_images.size(); };
 	dfBitmapImage* getImage(unsigned int index = 0);
+	fwTexture* fwtexture(void);
 	~dfBitmap();
 };
