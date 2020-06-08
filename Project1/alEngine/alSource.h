@@ -12,6 +12,7 @@ class alSource
 
 public:
 	alSource(void);
+	alSource(glm::vec3& position);
 	void position(glm::vec3& position);
 	void play(alSound* buffer);
 	bool play(void);

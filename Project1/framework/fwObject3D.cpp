@@ -170,7 +170,7 @@ void fwObject3D::play(alSound* sound)
 {
 	if (m_source == nullptr) {
 		// create a sound source the first time
-		m_source = new alSource();
+		m_source = new alSource(m_Position);
 	}
 
 	m_source->play(sound);

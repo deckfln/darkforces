@@ -5,6 +5,7 @@
 #include "dfSector.h"
 #include "dfBitmap.h"
 #include "dfLevel.h"
+#include "dfVOC.h"
 
 #include "../include/earcut.hpp"
 
@@ -758,6 +759,10 @@ fwMesh* dfMesh::buildMesh(void)
  */
 bool dfMesh::play(void)
 {
+	if (m_mesh) {
+		return m_mesh->play();
+	}
+
 	return true;
 }
 
@@ -766,6 +771,9 @@ bool dfMesh::play(void)
  */
 void dfMesh::play(dfVOC* voc)
 {
+	if (m_mesh) {
+		m_mesh->play(voc->sound());
+	}
 }
 
 dfMesh::~dfMesh()

@@ -1,6 +1,7 @@
 #include "dfVOC.h"
 
 #include "dfFileSystem.h"
+#include "../alEngine/alSound.h"
 
 #pragma pack(push)
 #pragma pack(1)
@@ -208,21 +209,21 @@ dfVOC::dfVOC(dfFileSystem* fs, const std::string& file)
 			m_sampleRate = 1000000 / (256 - (int)sound->sample_rate);
 
 			int soundLen = blockLen - 2;	// remove the samplerate/codec
-			m_sound.resize(start + soundLen);
-			memcpy(&m_sound[start], &sound->data[0], soundLen);
+			m_pcm8.resize(start + soundLen);
+			memcpy(&m_pcm8[start], &sound->data[0], soundLen);
 			start += soundLen;
 			break;
 		}
 
 		case vocType::SOUND_CONT:
-			m_sound.resize(start + blockLen);
-			memcpy(&m_sound[start], &current->info[0], blockLen);
+			m_pcm8.resize(start + blockLen);
+			memcpy(&m_pcm8[start], &current->info[0], blockLen);
 			start += blockLen;
 			break;
 
 		case vocType::SILENCE:
-			m_sound.resize(start + blockLen);
-			memset(&m_sound[start], 128, blockLen);
+			m_pcm8.resize(start + blockLen);
+			memset(&m_pcm8[start], 128, blockLen);
 			start += blockLen;
 			break;
 
@@ -250,6 +251,23 @@ dfVOC::dfVOC(dfFileSystem* fs, const std::string& file)
 	delete data;
 }
 
+/**
+ * build and return an openAL buffer
+ */
+alSound* dfVOC::sound(void)
+{
+	if (m_sound) {
+		return m_sound;
+	}
+
+	m_sound = new alSound(AL_FORMAT_MONO8, (ALvoid *)&m_pcm8[0], m_pcm8.size(), m_sampleRate, m_repeat == 0Xffff);
+
+	return m_sound;
+}
+
 dfVOC::~dfVOC()
 {
+	if (m_sound) {
+		delete m_sound;
+	}
 }

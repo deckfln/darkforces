@@ -1,10 +1,19 @@
 #include "alSource.h"
 
+#include <AL/alc.h>
+#include <iostream>
+
 #include "alSound.h"
 
 alSource::alSource(void)
 {
 	alGenSources((ALuint)1, &m_source);
+}
+
+alSource::alSource(glm::vec3& position)
+{
+	alGenSources((ALuint)1, &m_source);
+	alSource3f(m_source, AL_POSITION, position.x, position.y, position.z);
 }
 
 void alSource::position(glm::vec3& position)
@@ -17,8 +26,21 @@ void alSource::position(glm::vec3& position)
  */
 void alSource::play(alSound* buffer)
 {
+	ALCenum error = alGetError();
+
 	alSourcei(m_source, AL_BUFFER, buffer->id());
+	if (buffer->repeat()) {
+		alSourcei(m_source, AL_LOOPING, AL_TRUE);
+	}
+	else {
+		alSourcei(m_source, AL_LOOPING, AL_FALSE);
+	}
+
 	alSourcePlay(m_source);
+	error = alGetError();
+	if (error != AL_NO_ERROR) {
+		std::cerr << "alSource::play error" << std::endl;
+	}
 }
 
 /**

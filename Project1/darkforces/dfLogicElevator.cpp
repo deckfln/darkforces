@@ -334,14 +334,14 @@ bool dfLogicElevator::animateMoveZ(void)
 		m_tick = 0;
 
 		// play the starting sound if it exists
-		if (m_sounds[dfElevatorSound::START] != nullptr) {
+		if (m_mesh && m_sounds[dfElevatorSound::START] != nullptr) {
 			m_mesh->play(m_sounds[dfElevatorSound::START]);
 		}
 		moveToNextStop();
 		break;
 
 	case dfElevatorStatus::MOVE: {
-		if (!m_mesh->play()) {
+		if (m_mesh && !m_mesh->play()) {
 			// play the moving sound if it exists
 			// but only after the starting sound has ended
 			if (m_sounds[dfElevatorSound::MOVE] != nullptr) {
@@ -367,7 +367,7 @@ bool dfLogicElevator::animateMoveZ(void)
 
 		if (reached) {
 			// play the end sound if it exists
-			if (m_sounds[dfElevatorSound::END] != nullptr) {
+			if (m_mesh && m_sounds[dfElevatorSound::END] != nullptr) {
 				m_mesh->play(m_sounds[dfElevatorSound::END]);
 			}
 
