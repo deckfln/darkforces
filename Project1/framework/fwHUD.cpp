@@ -43,9 +43,14 @@ void fwHUD::add(fwHUDelement* element)
  */
 void fwHUD::draw(void)
 {
+	// always draw on top of screen
+	glDisable(GL_DEPTH_TEST);								// disable depth test so screen-space quad isn't discarded due to depth test.
+
 	for (auto element : m_elements) {
 		element->draw(g_hudPanel);
 	}
+
+	glEnable(GL_DEPTH_TEST);
 }
 
 fwHUD::~fwHUD()
