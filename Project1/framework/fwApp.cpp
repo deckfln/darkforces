@@ -188,7 +188,8 @@ void fwApp::run(void)
 		if (m_control)
 			m_control->update(last_frame_time);	// let the controler update itself if needed
 
-		glEnable(GL_CULL_FACE);
+		// todo this trigger an error in nsigh
+		//glEnable(GL_CULL_FACE);
 		//glCullFace(GL_FRONT);
 		//glFrontFace(GL_CCW);
 

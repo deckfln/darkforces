@@ -43,11 +43,13 @@ void fwSprites::draw(glProgram *program)
 
 	//glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
 	glEnable(GL_PROGRAM_POINT_SIZE);
-	glEnable(GL_POINT_SMOOTH);
+
+	// todo: this trigger an alert in nsigh :GL_INVALID_ENUM
+	//glEnable(GL_POINT_SMOOTH);
 
 	geometry->draw(GL_POINTS, vao[id]);
 
-	glDisable(GL_POINT_SMOOTH);
+	//glDisable(GL_POINT_SMOOTH);
 	glDisable(GL_PROGRAM_POINT_SIZE);
 }
 
