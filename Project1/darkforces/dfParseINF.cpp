@@ -3,6 +3,7 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <map>
 
 #include "../config.h"
 #include "dfParseINF.h"
@@ -12,6 +13,7 @@
 #include "dfVOC.h"
 
 static dfFileSystem* dfFiles = nullptr;
+static std::map<std::string, dfVOC*> g_cachedVOC;
 
 std::vector<std::string>& dfParseTokens(std::string& line, std::map<std::string, std::string>& tokenMap)
 {
@@ -282,11 +284,18 @@ void dfParseINF::parseSector(std::istringstream& infile, std::string& sector)
 			}
 		}
 		else if (tokens[0] == "sound:") {
-			int effect = std::stoi(tokens[1]);
-			dfVOC* voc = new dfVOC(dfFiles, tokens[2]);
-
 			if (elevator) {
-				elevator->sound(effect - 1, voc);
+				int effect = std::stoi(tokens[1]);
+				if (tokens[2] != "0") {
+					if (g_cachedVOC.count(tokens[2]) == 0) {
+						g_cachedVOC[tokens[2]] = new dfVOC(dfFiles, tokens[2]);
+					}
+
+					elevator->sound(effect - 1, g_cachedVOC[tokens[2]]);
+				}
+				else {
+					elevator->sound(effect - 1, nullptr);	// silent the default sound
+				}
 			}
 		}
 	}

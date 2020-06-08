@@ -11,6 +11,7 @@
 #include "dfVOC.h"
 #include "dfFileSystem.h"
 
+// elevator categories
 static std::map<std::string, dfElevatorType>  keywords = {
 	{"inv",			dfElevatorType::INV},
 	{"basic",		dfElevatorType::BASIC},
