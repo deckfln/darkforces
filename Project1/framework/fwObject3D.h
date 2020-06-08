@@ -9,9 +9,13 @@
 
 #include "../Reference.h"
 
+class alSource;
+class alSound;
+
 class fwObject3D : public Reference
 {
 	float debug = 0;
+	alSource* m_source = nullptr;		// sound source, creation defered to the first time a sound is played
 
 protected:
 	std::string m_name;
@@ -70,6 +74,11 @@ public:
 	fwObject3D &addChild(fwObject3D *);
 
 	float sqDistanceTo(fwObject3D *to);
+
+	// audio API
+	void play(alSound* sound);
+	bool play(void);
+	void stop(void);
 
 	~fwObject3D();
 };

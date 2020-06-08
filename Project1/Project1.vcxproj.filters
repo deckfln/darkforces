@@ -34,6 +34,12 @@
     <Filter Include="Fichiers de ressources\framework">
       <UniqueIdentifier>{8bacdfc5-bb3d-4882-badf-2c289d15a717}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Fichiers d%27en-tête\alEngine">
+      <UniqueIdentifier>{b7904c14-165a-4f21-b0d5-e58dffb64594}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers sources\alEngine">
+      <UniqueIdentifier>{e7a02abd-4fd9-4f36-ba6c-78df3897e420}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source.cpp">
@@ -389,6 +395,15 @@
     </ClCompile>
     <ClCompile Include="darkforces\dfVOC.cpp">
       <Filter>Fichiers sources\Dark Forces</Filter>
+    </ClCompile>
+    <ClCompile Include="alEngine\alSource.cpp">
+      <Filter>Fichiers sources\alEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="alEngine\alSound.cpp">
+      <Filter>Fichiers sources\alEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="alEngine\alListener.cpp">
+      <Filter>Fichiers sources\alEngine</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -757,6 +772,15 @@
     </ClInclude>
     <ClInclude Include="darkforces\dfVOC.h">
       <Filter>Fichiers d%27en-tête\DarkForces</Filter>
+    </ClInclude>
+    <ClInclude Include="alEngine\alSource.h">
+      <Filter>Fichiers d%27en-tête\alEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="alEngine\alSound.h">
+      <Filter>Fichiers d%27en-tête\alEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="alEngine\alListener.h">
+      <Filter>Fichiers d%27en-tête\alEngine</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -3,6 +3,9 @@
 
 #include "fwMaterialDiffuse.h"
 
+/**
+ *
+ */
 fwMesh::fwMesh()
 {
 	classID |= MESH;

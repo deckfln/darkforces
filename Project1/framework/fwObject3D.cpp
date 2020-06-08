@@ -3,6 +3,9 @@
 #include <glm/gtx/transform.hpp>
 #include <glm/gtx/norm.hpp>
 
+#include "../alEngine/alSource.h"
+#include "../alEngine/alSound.h"
+
 fwObject3D::fwObject3D():
 	m_Position(0),
 	m_Scale(1),
@@ -147,7 +150,8 @@ bool fwObject3D::hasChild(fwObject3D* search)
 	return false;	// sorry, not here
 }
 
-/*
+/**
+ * square root distance between 2 objects
  */
 float fwObject3D::sqDistanceTo(fwObject3D *to)
 {
@@ -156,6 +160,44 @@ float fwObject3D::sqDistanceTo(fwObject3D *to)
 	return debug;
 }
 
+/**
+ * Play a sound and initialize a source if needed
+ */
+void fwObject3D::play(alSound* sound)
+{
+	if (m_source == nullptr) {
+		// create a sound source the first time
+		m_source = new alSource();
+	}
+
+	m_source->play(sound);
+}
+
+/**
+ * Test if the source is still playing a sound
+ */
+bool fwObject3D::play(void)
+{
+	if (m_source) {
+		return m_source->play();
+	}
+
+	return false;
+}
+
+/**
+ * Stop playing a sound (if any)
+ */
+void fwObject3D::stop(void)
+{
+	if (m_source) {
+		m_source->stop();
+	}
+}
+
 fwObject3D::~fwObject3D()
 {
+	if (m_source) {
+		delete m_source;
+	}
 }

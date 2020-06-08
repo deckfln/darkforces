@@ -1,6 +1,7 @@
 #include "fwCamera.h"
 
 #include <glm/gtx/matrix_decompose.hpp>
+#include "../alEngine/alListener.h"
 
 fwCamera::fwCamera()
 {
@@ -57,10 +58,20 @@ void fwCamera::lookAt(float x, float y, float z)
 
 void fwCamera::update(void)
 {
-	m_direction = glm::normalize(m_Position - target);
 	glm::vec3 _up = glm::vec3(0.0f, 1.0f, 0.0f);
-	right = glm::normalize(glm::cross(_up, m_direction));
-	up = glm::cross(m_direction, right);
+
+	m_direction = m_Position - target;
+	if (m_direction != glm::vec3(0)) {
+		m_direction = glm::normalize(m_direction);
+		right = glm::normalize(glm::cross(_up, m_direction));
+		up = glm::cross(m_direction, right);
+	}
+	else {
+		up = _up;
+	}
+
+	g_Listener.position(m_Position);
+	g_Listener.orientation(m_direction, up);
 
 	// from learn-opengl
 	view = glm::lookAt(m_Position, target, up);
