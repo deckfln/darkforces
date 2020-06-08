@@ -16,7 +16,8 @@
 
 dfVue::dfVue(dfFileSystem* fs, std::string& file, std::string& component)
 {
-	char* sec = fs->load(DF_DARK_GOB, file);
+	int size;
+	char* sec = fs->load(DF_DARK_GOB, file, size);
 	std::istringstream infile(sec);
 	std::string line, dump;
 	std::map<std::string, std::string> tokenMap;

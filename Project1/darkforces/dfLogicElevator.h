@@ -17,7 +17,7 @@ class dfLogicTrigger;
 class dfMessage;
 class dfSign;
 class dfBitmap;
-
+class dfVOC;
 
 enum {
 	DF_ELEVATOR_CROSSLINE_FRONT = 1,	// Cross line from front side 
@@ -35,6 +35,14 @@ enum {
 enum {
 	DF_KEY_NONE = 0,
 	DF_KEY_RED = 1
+};
+
+/* Sounds to play when elevator move
+ */
+enum dfElevatorSound {
+	START = 1,	// leaving a stop
+	MOVE = 2,	// moving between stops
+	END = 3		// arriving at stop
 };
 
 class dfLogicElevator: public dfMessageClient {
@@ -72,6 +80,8 @@ class dfLogicElevator: public dfMessageClient {
 	dfMesh* m_mesh = nullptr;			// mesh of the elevator
 	std::list<dfSign*> m_signs;			// list of signs bound to the elevator
 
+	dfVOC* m_sounds[3] = { nullptr, nullptr, nullptr };
+
 	dfMessage m_msg_animate = dfMessage(DF_MESSAGE_TIMER);
 
 	void moveTo(dfLogicStop* stop);
@@ -107,5 +117,6 @@ public:
 	bool checkCollision(float step, glm::vec3& position, glm::vec3& target, float radius, glm::vec3& intersection);
 	bool checkCollision(fwAABBox& box);
 	void getMessagesToSectors(std::list<std::string>& sectors);
+	void sound(int effect, dfVOC* sound);
 	~dfLogicElevator(void);
 };

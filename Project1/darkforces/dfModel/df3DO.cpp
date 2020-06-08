@@ -68,7 +68,8 @@ static int currentTexture;
 df3DO::df3DO(dfFileSystem* fs, dfPalette* palette, std::string file) :
 	dfModel(file)
 {
-	char* sec = fs->load(DF_DARK_GOB, file);
+	int size;
+	char* sec = fs->load(DF_DARK_GOB, file, size);
 	std::istringstream infile(sec);
 	std::string line, dump;
 	std::map<std::string, std::string> tokenMap;

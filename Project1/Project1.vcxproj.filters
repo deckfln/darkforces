@@ -387,6 +387,9 @@
     <ClCompile Include="framework\fwFlatPanel.cpp">
       <Filter>Fichiers sources\Framework</Filter>
     </ClCompile>
+    <ClCompile Include="darkforces\dfVOC.cpp">
+      <Filter>Fichiers sources\Dark Forces</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="glad\glad.h">
@@ -751,6 +754,9 @@
     </ClInclude>
     <ClInclude Include="framework\fwFlatPanel.h">
       <Filter>Fichiers d%27en-tête\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="darkforces\dfVOC.h">
+      <Filter>Fichiers d%27en-tête\DarkForces</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

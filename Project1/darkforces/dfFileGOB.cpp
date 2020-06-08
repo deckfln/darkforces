@@ -41,7 +41,7 @@ dfFileGOB::dfFileGOB(std::string file)
 /**
  * Load a file from the GOb and return as array of char
  */
-char* dfFileGOB::load(std::string file)
+char* dfFileGOB::load(std::string file, int& size)
 {
 	for (auto& c : file) c = toupper(c);
 
@@ -55,6 +55,7 @@ char* dfFileGOB::load(std::string file)
 	char* data = (char *)calloc(1, entry.len);
 	fd.read(data, entry.len);
 
+	size = entry.len;
 	return data;
 }
 

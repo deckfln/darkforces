@@ -20,7 +20,8 @@
 
 dfLevel::dfLevel(dfFileSystem* fs, std::string file)
 {
-	char* sec = fs->load(DF_DARK_GOB, file+".LEV");
+	int size;
+	char* sec = fs->load(DF_DARK_GOB, file+".LEV", size);
 	std::istringstream data(sec);
 
 	std::string line, dump;

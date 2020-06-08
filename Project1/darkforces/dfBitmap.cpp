@@ -73,7 +73,8 @@ dfBitmap::dfBitmap(dfFileSystem* fs, std::string file, dfPalette* palette) :
 		_empty.m_data = new char[64 * 64]();
 	}
 
-	m_data = fs->load(DF_TEXTURES_GOB, file);
+	int size;
+	m_data = fs->load(DF_TEXTURES_GOB, file, size);
 	if (m_data == nullptr) {
 		std::cerr << "dfBitmap::dfBitmap cannot load "<< file << std::endl;
 		m_images.push_back(_empty);

@@ -14,7 +14,8 @@ const float FME_WORLDSIZE_Y = 95.0f;
 dfFME::dfFME(dfFileSystem* fs, dfPalette* palette, std::string& name):
 	dfModel(name)
 {
-	m_fromGOB = fs->load(DF_SPRITES_GOB, name);
+	int size;
+	m_fromGOB = fs->load(DF_SPRITES_GOB, name, size);
 	if (m_fromGOB == nullptr) {
 		std::cerr << "dfFME::dfFME cannot load " << name << std::endl;
 		return;

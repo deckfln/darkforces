@@ -9,6 +9,9 @@
 #include "dfLogicStop.h"
 #include "dfLogicElevator.h"
 #include "dfFileSystem.h"
+#include "dfVOC.h"
+
+static dfFileSystem* dfFiles = nullptr;
 
 std::vector<std::string>& dfParseTokens(std::string& line, std::map<std::string, std::string>& tokenMap)
 {
@@ -84,7 +87,11 @@ std::vector<std::string>& dfParseTokens(std::string& line, std::map<std::string,
 
 dfParseINF::dfParseINF(dfFileSystem* fs, std::string file)
 {
-	char* sec = fs->load(DF_DARK_GOB, file + ".INF");
+	int size;
+
+	dfFiles = fs;
+
+	char* sec = fs->load(DF_DARK_GOB, file + ".INF", size);
 	std::istringstream infile(sec);
 	std::string line, dump;
 	std::map<std::string, std::string> tokenMap;
@@ -274,6 +281,14 @@ void dfParseINF::parseSector(std::istringstream& infile, std::string& sector)
 				elevator->addStop(stop);
 			}
 		}
+		else if (tokens[0] == "sound:") {
+			int effect = std::stoi(tokens[1]);
+			dfVOC* voc = new dfVOC(dfFiles, tokens[2]);
+
+			if (elevator) {
+				elevator->sound(effect, voc);
+			}
+		}
 	}
 }
 
@@ -323,6 +338,9 @@ void dfParseINF::parseLine(std::istringstream& infile, std::string &sector, int 
 		}
 		else if (tokens[0] == "message:") {
 			std::cerr << "dfParseINF::parseLine message: not implemented" << std::endl;
+		}
+		else if (tokens[0] == "sound:") {
+			std::cerr << "dfParseINF::parseLine sound: not implemented" << std::endl;
 		}
 	}
 }

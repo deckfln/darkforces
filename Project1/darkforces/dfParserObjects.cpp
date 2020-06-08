@@ -159,7 +159,8 @@ dfObject* dfParserObjects::parseObject(dfFileSystem* fs, dfObject* sprite, std::
 
 dfParserObjects::dfParserObjects(dfFileSystem* fs, dfPalette* palette, std::string file, dfLevel *level)
 {
-	char* sec = fs->load(DF_DARK_GOB, file + ".O");
+	int size;
+	char* sec = fs->load(DF_DARK_GOB, file + ".O", size);
 	std::istringstream infile(sec);
 	std::string line, dump;
 	std::map<std::string, std::string> tokenMap;

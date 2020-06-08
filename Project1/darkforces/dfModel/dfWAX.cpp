@@ -65,7 +65,8 @@ struct _dfWaxFrame {
 dfWAX::dfWAX(dfFileSystem* fs, dfPalette* palette, std::string& name) :
 	dfModel(name)
 {
-	m_data = fs->load(DF_SPRITES_GOB, name);
+	int size;
+	m_data = fs->load(DF_SPRITES_GOB, name, size);
 	if (m_data == nullptr) {
 		std::cerr << "dfWAX::dfWAX cannot load " << name << std::endl;
 		return;

@@ -753,6 +753,21 @@ fwMesh* dfMesh::buildMesh(void)
 	return m_mesh;
 }
 
+/**
+ * check if the mesh is playng a sound
+ */
+bool dfMesh::play(void)
+{
+	return true;
+}
+
+/**
+ * Start playing a sound
+ */
+void dfMesh::play(dfVOC* voc)
+{
+}
+
 dfMesh::~dfMesh()
 {
 	delete m_geometry;

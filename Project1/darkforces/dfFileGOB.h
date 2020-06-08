@@ -24,6 +24,6 @@ class dfFileGOB
 
 public:
 	dfFileGOB(std::string file);
-	char* load(std::string file);
+	char* load(std::string file, int& size);
 	~dfFileGOB();
 };

@@ -22,6 +22,7 @@ using Point = std::array<Coord, 2>;
 class dfSector;
 class dfWall;
 class dfSuperSector;
+class dfVOC;
 
 class dfMesh {
 	std::vector<dfMesh*> m_children;
@@ -117,5 +118,7 @@ public:
 	virtual void setStatus(int status) {};
 
 	fwMesh* buildMesh(void);
+	bool play(void);
+	void play(dfVOC* voc);
 	~dfMesh();
 };

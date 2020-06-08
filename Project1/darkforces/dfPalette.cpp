@@ -6,8 +6,10 @@
 
 dfPalette::dfPalette(dfFileSystem* fs, std::string file)
 {
+	int size;
+
 	// load a vga13h rgb palette
-	m_palette = (dfPaletteColors *)fs->load(DF_DARK_GOB, file);
+	m_palette = (dfPaletteColors *)fs->load(DF_DARK_GOB, file, size);
 
 	if (m_palette == nullptr) {
 		std::cerr << "dfPalette::dfPalette cannot load " << file << std::endl;

@@ -332,10 +332,23 @@ bool dfLogicElevator::animateMoveZ(void)
 	case dfElevatorStatus::HOLD:
 		m_status = dfElevatorStatus::MOVE;
 		m_tick = 0;
+
+		// play the starting sound if it exists
+		if (m_sounds[dfElevatorSound::START] != nullptr) {
+			m_mesh->play(m_sounds[dfElevatorSound::START]);
+		}
 		moveToNextStop();
 		break;
 
 	case dfElevatorStatus::MOVE: {
+		if (!m_mesh->play()) {
+			// play the moving sound if it exists
+			// but only after the starting sound has ended
+			if (m_sounds[dfElevatorSound::MOVE] != nullptr) {
+				m_mesh->play(m_sounds[dfElevatorSound::MOVE]);
+			}
+		}
+
 		if (m_direction != 0) {
 			m_current = m_target - m_direction * (1.0f - m_tick / m_delay);
 		}
@@ -353,6 +366,11 @@ bool dfLogicElevator::animateMoveZ(void)
 		}
 
 		if (reached) {
+			// play the end sound if it exists
+			if (m_sounds[dfElevatorSound::END] != nullptr) {
+				m_mesh->play(m_sounds[dfElevatorSound::END]);
+			}
+
 			dfLogicStop* stop;
 
 			m_currentStop = m_nextStop;
@@ -647,6 +665,19 @@ void dfLogicElevator::getMessagesToSectors(std::list<std::string>& sectors)
 	for (auto stop : m_stops) {
 		stop->getMessagesToSectors(sectors);
 	}
+}
+
+/**
+ * Register the sound of the elevator
+ */
+void dfLogicElevator::sound(int effect, dfVOC* sound)
+{
+	if (effect < 0 || effect > 3) {
+		std::cerr << "dfLogicElevator::sound incorrect sound number" << std::endl;
+		return;
+	}
+
+	m_sounds[effect] = sound;
 }
 
 /**
