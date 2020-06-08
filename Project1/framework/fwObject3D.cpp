@@ -38,6 +38,9 @@ fwObject3D &fwObject3D::translate(glm::vec3 &vector)
 {
 	m_Position = vector;
 	updated = true;
+	if (m_source) {
+		m_source->position(m_Position);
+	}
 	return *this;
 }
 
