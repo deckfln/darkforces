@@ -1,6 +1,11 @@
 #pragma once
 
+#include <glm/vec2.hpp>
+
 #include "../fwMaterial.h"
+
+class fwUniform;
+class glTexture;
 
 enum BloomShaders { BLOOM_COPY = 3, BLOOM_EXPAND = 4};
 

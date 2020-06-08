@@ -4,6 +4,7 @@
 #include "../glEngine/glProgram.h"
 #include "fwMaterial.h"
 #include "fwGeometry.h"
+#include "fwFlatPanel.h"
 
 /**
  * if LOCKED_Y, width is extended based on height
@@ -35,11 +36,11 @@ fwHUDelement::fwHUDelement(const std::string& name, fwHUDElementPosition positio
 	}
 }
 
-void fwHUDelement::draw(fwMaterial*material, fwGeometry* geometry)
+void fwHUDelement::draw(fwFlatPanel *panel)
 {
-	material->set("image", m_texture);
-	material->set("onscreen", &m_onscreen);
-	material->draw(geometry);
+	panel->set("image", m_texture);
+	panel->set("onscreen", &m_onscreen);
+	panel->draw();
 }
 
 fwHUDelement::~fwHUDelement()

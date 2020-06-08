@@ -1,5 +1,7 @@
 #include "fwMeshSkinned.h"
 
+#include "../fwUniform.h"
+
 fwMeshSkinned::fwMeshSkinned(fwGeometry* _geometry, fwMaterial* _material, fwBoneInfo *root, glm::mat4& globalInverseTransform):
 	fwMesh(_geometry, _material),
 	m_skeleton(root),

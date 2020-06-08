@@ -12,6 +12,9 @@
 #include "../glEngine/glVertexArray.h"
 
 #include "fwGeometry.h"
+#include "fwUniform.h"
+#include "fwTexture.h"
+#include "fwTextures.h"
 
 static int g_materialID = 0;
 
@@ -126,29 +129,6 @@ void fwMaterial::set(const std::string& name, glm::vec4* v)
 }
 
 /**
- * Run a self-executed material (not part of the rendering process)
- */
-void fwMaterial::draw(fwGeometry* geometry)
-{
-	if (m_program == nullptr) {
-		std::string vs = load_shader_file(m_files[FORWARD_RENDER][VERTEX_SHADER], "");
-		std::string fs = load_shader_file(m_files[FORWARD_RENDER][FRAGMENT_SHADER], "");
-		std::string gs = load_shader_file(m_files[FORWARD_RENDER][GEOMETRY_SHADER], "");
-		m_program = new glProgram(vs, fs, gs, "");
-	}
-	m_program->run();
-
-	if (m_vertexArays.count(geometry->id()) == 0) {
-		m_vertexArays[geometry->id()] = new glVertexArray();
-		geometry->enable_attributes(m_program);
-		m_vertexArays[geometry->id()]->unbind();
-	}
-
-	set_uniforms(m_program);
-	geometry->draw(GL_TRIANGLES, m_vertexArays[geometry->id()]);
-}
-
-/**
  * Bind all textures
  */
 void fwMaterial::bindTextures(void)
@@ -156,6 +136,14 @@ void fwMaterial::bindTextures(void)
 	for (auto texture: m_textures) {
 		texture.second->bind();
 	}
+}
+
+/**
+ * Load the shader file
+ */
+std::string fwMaterial::load_shader(int renderer, int shader, const std::string& define)
+{
+	return load_shader_file(m_files[renderer][shader], "");
 }
 
 const std::string &fwMaterial::get_vertexShader(void)

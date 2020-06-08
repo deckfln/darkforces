@@ -384,6 +384,9 @@
     <ClCompile Include="framework\fwHUD.cpp">
       <Filter>Fichiers sources\Framework</Filter>
     </ClCompile>
+    <ClCompile Include="framework\fwFlatPanel.cpp">
+      <Filter>Fichiers sources\Framework</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="glad\glad.h">
@@ -744,6 +747,9 @@
       <Filter>Fichiers d%27en-tête\Framework</Filter>
     </ClInclude>
     <ClInclude Include="framework\fwHUD.h">
+      <Filter>Fichiers d%27en-tête\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="framework\fwFlatPanel.h">
       <Filter>Fichiers d%27en-tête\Framework</Filter>
     </ClInclude>
   </ItemGroup>

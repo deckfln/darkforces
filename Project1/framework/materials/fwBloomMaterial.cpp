@@ -1,5 +1,7 @@
 #include "fwBloomMaterial.h"
 
+#include "../fwUniform.h"
+
 fwBloomMaterial::fwBloomMaterial() :
 	fwMaterial("shaders/bloom/vertex.glsl", "shaders/bloom/fragment.glsl", "")
 

@@ -1,6 +1,10 @@
 #pragma once
 
+#include <glm/vec2.hpp>
 #include "../fwMaterial.h"
+
+class fwUniform;
+class glTexture;
 
 class fwMaterialDeferedLight : public fwMaterial
 {

@@ -2,40 +2,17 @@
 
 #include <map>
 
-#include "../glEngine/glProgram.h"
 #include "../glEngine/glUniformBuffer.h"
 
 #include "fwHUDelement.h"
 #include "fwGeometry.h"
 #include "fwUniform.h"
 #include "fwMaterial.h"
+#include "fwFlatPanel.h"
 
-static float quadVertices[] = { // vertex attributes for a quad that fills the entire screen in Normalized Device Coordinates.
-	// m_positions   // texCoords
-	-1.0f,  1.0f,
-	-1.0f, -1.0f,
-	 1.0f, -1.0f,
-
-	-1.0f,  1.0f,
-	 1.0f, -1.0f,
-	 1.0f,  1.0f
-};
-
-static float quadUvs[] = { // vertex attributes for a quad that fills the entire screen in Normalized Device Coordinates.
-	// m_positions   // texCoords
-	1.0f, 0.0f,
-	1.0f, 1.0f,
-	0.0f, 1.0f,
-
-	1.0f, 0.0f,
-	0.0f, 1.0f,
-	0.0f, 0.0f
-};
-
-static glProgram* g_program=nullptr;
+static fwFlatPanel* g_hudPanel=nullptr;
 static fwMaterial* g_material = nullptr;
 static fwUniform* g_uniformTexture = nullptr;
-static fwGeometry* g_geometry = nullptr;
 static glm::vec4 g_screen;
 
 fwHUD::fwHUD()
@@ -49,9 +26,7 @@ fwHUD::fwHUD()
 		g_material->addTexture("image", (glTexture*)nullptr);
 		g_material->addUniform(new fwUniform("onscreen", &g_screen));
 
-		g_geometry = new fwGeometry();
-		g_geometry->addVertices("aPos", quadVertices, 2, sizeof(quadVertices), sizeof(float), false);
-		g_geometry->addAttribute("aTex", GL_ARRAY_BUFFER, quadUvs, 2, sizeof(quadUvs), sizeof(float), false);
+		g_hudPanel = new fwFlatPanel(g_material);
 	}
 }
 
@@ -69,7 +44,7 @@ void fwHUD::add(fwHUDelement* element)
 void fwHUD::draw(void)
 {
 	for (auto element : m_elements) {
-		element->draw(g_material, g_geometry);
+		element->draw(g_hudPanel);
 	}
 }
 

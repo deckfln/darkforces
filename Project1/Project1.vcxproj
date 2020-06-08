@@ -173,6 +173,7 @@
     <ClCompile Include="framework\fwBoneInfoAnimation.cpp" />
     <ClCompile Include="framework\fwCollision.cpp" />
     <ClCompile Include="framework\fwControl.cpp" />
+    <ClCompile Include="framework\fwFlatPanel.cpp" />
     <ClCompile Include="framework\fwFrustum.cpp" />
     <ClCompile Include="framework\fwHUD.cpp" />
     <ClCompile Include="framework\fwHUDelement.cpp" />
@@ -294,6 +295,7 @@
     <ClInclude Include="framework\fwCollision.h" />
     <ClInclude Include="framework\fwConstants.h" />
     <ClInclude Include="framework\fwControl.h" />
+    <ClInclude Include="framework\fwFlatPanel.h" />
     <ClInclude Include="framework\fwFrustum.h" />
     <ClInclude Include="framework\fwHUD.h" />
     <ClInclude Include="framework\fwHUDelement.h" />

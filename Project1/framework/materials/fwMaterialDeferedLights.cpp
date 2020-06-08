@@ -1,5 +1,7 @@
 #include "fwMaterialDeferedLights.h"
 
+#include "../fwUniform.h"
+
 fwMaterialDeferedLight::fwMaterialDeferedLight() :
 	fwMaterial("shaders/quad_vertex.glsl", "shaders/GBuffer/lightning.glsl", "")
 

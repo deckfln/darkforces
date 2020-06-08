@@ -2,21 +2,21 @@
 #include <iostream>
 #include <list>
 #include <map>
+#include <glm/vec4.hpp>
 
 #include "../Reference.h"
-#include "../glEngine/glProgram.h"
-#include "fwUniform.h"
-#include "fwTexture.h"
-#include "fwTextures.h"
 
 enum RenderType {FORWARD_RENDER, DEFERED_RENDER};
 enum ShaderType {VERTEX_SHADER, GEOMETRY_SHADER, FRAGMENT_SHADER, FRAGMENT_SHADER_DEFERED};
 
 const int MAX_SHADERS = 10;
 
+class fwUniform;
+class glTexture;
+class glTextureArray;
 class glProgram;
-class fwGeometry;
-class glVertexArray;
+class fwTexture;
+class fwTextures;
 
 class fwMaterial: public Reference
 {
@@ -32,9 +32,6 @@ class fwMaterial: public Reference
 	std::list <glTextureArray *> m_textureArrays;
 
 	std::string m_hash = "";
-
-	glProgram* m_program = nullptr;	// For self executed material
-	std::map<int, glVertexArray*> m_vertexArays;
 
 protected:
 	int m_type = 0;
@@ -55,6 +52,7 @@ public:
 
 	std::string hashCode(void);
 
+	std::string load_shader(int renderer, int shader, const std::string& define);
 	const std::string &get_vertexShader(void);
 	const std::string &get_fragmentShader(void);
 	const std::string &get_geometryShader(void);
@@ -67,8 +65,6 @@ public:
 	void set_uniforms(glProgram *program);
 	void set(const std::string& name, fwTexture* texture);
 	void set(const std::string& name, glm::vec4* v4);
-
-	void draw(fwGeometry *geometry);	// self-executer material
 
 	~fwMaterial();
 };

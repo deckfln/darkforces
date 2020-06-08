@@ -4,8 +4,7 @@
 #include <glm/vec4.hpp>
 
 class fwTexture;
-class fwMaterial;
-class fwGeometry;
+class fwFlatPanel;
 
 enum class fwHUDElementPosition {
 	BOTTOM_LEFT,
@@ -35,6 +34,6 @@ class fwHUDelement
 
 public:
 	fwHUDelement(const std::string& name, fwHUDElementPosition position, fwHUDelementSizeLock lock, float width, float height, fwTexture *texture);
-	void draw(fwMaterial *, fwGeometry*);
+	void draw(fwFlatPanel* panel);
 	~fwHUDelement();
 };
