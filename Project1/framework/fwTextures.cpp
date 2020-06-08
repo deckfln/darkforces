@@ -13,7 +13,7 @@ fwTextures::fwTextures()
 fwTextures::fwTextures(const int nbImages, const std::string* files) :
 	m_nbImages(nbImages)
 {
-	myclass |= TEXTURES;
+	m_class |= TEXTURES;
 	m_images = new unsigned char*[nbImages]();
 
 	int w, h, n;
@@ -24,17 +24,17 @@ fwTextures::fwTextures(const int nbImages, const std::string* files) :
 
 		// check each image has the same size
 		if (i == 0) {
-			width = w;
-			height = h;
-			nrChannels = n;
+			m_width = w;
+			m_height = h;
+			m_nrChannels = n;
 		}
-		else if (w != width || h != height || n != nrChannels) {
+		else if (w != m_width || h != m_height || n != m_nrChannels) {
 			std::cout << "fwTextures::fwTextures inconsistent size " << files[i] << std::endl;
 			exit(-1);
 		}
 	}
 
-	int size = width * height * nrChannels;
+	int size = m_width * m_height * m_nrChannels;
 	m_data = new unsigned char[size * nbImages];
 
 	for (auto i = 0; i < nbImages; i++) {
@@ -56,11 +56,11 @@ fwTextures::fwTextures(const int nbImages, const std::string* files) :
  */
 fwTextures::fwTextures(const std::list<fwTexture*> textures)
 {
-	myclass |= TEXTURES;
+	m_class |= TEXTURES;
 	m_nbImages = textures.size();
 
-	textures.front()->get_info(&width, &height, &nrChannels);
-	int size = width * height * nrChannels;
+	textures.front()->get_info(&m_width, &m_height, &m_nrChannels);
+	int size = m_width * m_height * m_nrChannels;
 	m_data = new unsigned char[size * m_nbImages];
 
 	auto i = 0;
@@ -68,7 +68,7 @@ fwTextures::fwTextures(const std::list<fwTexture*> textures)
 		int w, h, n;
 		unsigned char* data = texture->get_info(&w, &h, &n);
 
-		if (w != width || h != height || n != nrChannels) {
+		if (w != m_width || h != m_height || n != m_nrChannels) {
 			std::cout << "fwTextures::fwTextures inconsistent size " << std::endl;
 			exit(-1);
 		}
@@ -86,8 +86,8 @@ fwTextures::fwTextures(const int _nbImages, const int _width, const int _height,
 	fwTexture(_width, _height, _format),
 	m_nbImages(_nbImages)
 {
-	myclass |= TEXTURES;
-	int size = width * height * nrChannels;
+	m_class |= TEXTURES;
+	int size = m_width * m_height * m_nrChannels;
 	m_data = new unsigned char[size * m_nbImages];
 }
 
@@ -98,7 +98,7 @@ fwTextures::fwTextures(const int _nbImages, const int _width, const int _height,
 	fwTexture(_width, _height, _format),
 	m_nbImages(_nbImages)
 {
-	myclass |= TEXTURES;
+	m_class |= TEXTURES;
 	m_data = raw_data;
 }
 
@@ -116,10 +116,10 @@ void fwTextures::set_image(int image, fwTexture *texture)
 		exit(-1);
 	}
 
-	int size = width * height * nrChannels;
+	int size = m_width * m_height * m_nrChannels;
 	unsigned char* data = texture->get_info(&w, &h, &n);
 
-	if (w != width || h != height || n != nrChannels) {
+	if (w != m_width || h != m_height || n != m_nrChannels) {
 		std::cout << "fwTextures::fwTextures inconsistent size " << std::endl;
 		exit(-1);
 	}
@@ -132,9 +132,9 @@ void fwTextures::set_image(int image, fwTexture *texture)
  */
 unsigned char *fwTextures::get_info(int &_width, int &_height, int &_nrChannels, int &nrLayers)
 {
-	_width = width;
-	_height = height;
-	_nrChannels = nrChannels;
+	_width = m_width;
+	_height = m_height;
+	_nrChannels = m_nrChannels;
 	nrLayers = m_nbImages;
 
 	return m_data;

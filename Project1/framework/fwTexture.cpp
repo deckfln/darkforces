@@ -7,38 +7,38 @@
 static int g_nbTextures = 0;
 
 fwTexture::fwTexture() :
-	myclass(TEXTURE),
+	m_class(TEXTURE),
 	m_id(g_nbTextures++)
 {
 }
 
-fwTexture::fwTexture(const std::string file, int nb_channels_to_read):
-	myclass(TEXTURE),
+fwTexture::fwTexture(const std::string& file, int nb_channels_to_read):
+	m_class(TEXTURE),
 	m_id(g_nbTextures++),
-	name(file)
+	m_name(file)
 {
 	// load and generate the texture
-	m_data = stbi_load(name.c_str(), &width, &height, &nrChannels, nb_channels_to_read);
+	m_data = stbi_load(m_name.c_str(), &m_width, &m_height, &m_nrChannels, nb_channels_to_read);
 	if (nb_channels_to_read > 0) {
-		nrChannels = nb_channels_to_read;
+		m_nrChannels = nb_channels_to_read;
 	}
 }
 
 fwTexture::fwTexture(int _width, int _height, int format) :
-	myclass(TEXTURE),
+	m_class(TEXTURE),
 	m_id(g_nbTextures++),
-	width(_width),
-	height(_height),
-	nrChannels(format)
+	m_width(_width),
+	m_height(_height),
+	m_nrChannels(format)
 {
 }
 
 fwTexture::fwTexture(unsigned char* data, int _width, int _height, int format, int filter) :
-	myclass(TEXTURE),
+	m_class(TEXTURE),
 	m_id(g_nbTextures++),
-	width(_width),
-	height(_height),
-	nrChannels(format),
+	m_width(_width),
+	m_height(_height),
+	m_nrChannels(format),
 	m_filter(filter),
 	m_data(data)
 {
@@ -46,18 +46,18 @@ fwTexture::fwTexture(unsigned char* data, int _width, int _height, int format, i
 
 unsigned char *fwTexture::get_info(int *_width, int *_height, int *_nrChannels)
 {
-	*_width = width;
-	*_height = height;
-	*_nrChannels = nrChannels;
+	*_width = m_width;
+	*_height = m_height;
+	*_nrChannels = m_nrChannels;
 	return m_data;
 }
 
 /**
  * save the texture as PNG
  */
-bool fwTexture::save(std::string file)
+bool fwTexture::save(const std::string& file)
 {
-	return stbi_write_png(file.c_str(), width, height, nrChannels, m_data, width * nrChannels);
+	return stbi_write_png(file.c_str(), m_width, m_height,m_nrChannels, m_data, m_width * m_nrChannels);
 }
 
 fwTexture::~fwTexture()
