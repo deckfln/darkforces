@@ -4,132 +4,136 @@
 #include "../glEngine/glUniformBuffer.h"
 #include "../glEngine/glProgram.h"
 
+#include "../glEngine/glTexture.h"
+#include "../glEngine/glTextureArray.h"
+#include "../glEngine/glCubeTexture.h"
+
 fwUniform::fwUniform()
 {
 }
 
-fwUniform::fwUniform(std::string _name, glm::vec4 *v4):
+fwUniform::fwUniform(const std::string& _name, glm::vec4 *v4):
 	m_name(_name)
 {
-	data = v4;
-	type = GL_FLOAT_VEC4;
+	m_data = v4;
+	m_type = GL_FLOAT_VEC4;
 }
 
-fwUniform::fwUniform(std::string _name, glm::vec2 *v2) :
+fwUniform::fwUniform(const std::string& _name, glm::vec2 *v2) :
 	m_name(_name)
 {
-	data = v2;
-	type = GL_FLOAT_VEC2;
+	m_data = v2;
+	m_type = GL_FLOAT_VEC2;
 }
 
-fwUniform::fwUniform(std::string _name, GLint *id):
+fwUniform::fwUniform(const std::string& _name, GLint *id):
 	m_name(_name)
 {
-	data = id;
-	type = GL_SAMPLER_2D;
+	m_data = id;
+	m_type = GL_SAMPLER_2D;
 }
 
-fwUniform::fwUniform(std::string _name, GLfloat *f) :
+fwUniform::fwUniform(const std::string& _name, GLfloat *f) :
 	m_name(_name)
 {
-	data = f;
-	type = GL_FLOAT;
+	m_data = f;
+	m_type = GL_FLOAT;
 }
 
-fwUniform::fwUniform(std::string _name, glTexture *t) :
+fwUniform::fwUniform(const std::string& _name, glTexture *t) :
 	m_name(_name)
 {
-	data = t;
-	type = GL_SAMPLER_2D;
+	m_data = t;
+	m_type = GL_SAMPLER_2D;
 }
 
-fwUniform::fwUniform(std::string _name, glTextureArray* t) :
+fwUniform::fwUniform(const std::string& _name, glTextureArray* t) :
 	m_name(_name)
 {
-	data = t;
-	type = GL_TEXTURE_2D_ARRAY;
+	m_data = t;
+	m_type = GL_TEXTURE_2D_ARRAY;
 }
 
-fwUniform::fwUniform(std::string _name, glCubeTexture *t) :
+fwUniform::fwUniform(const std::string& _name, glCubeTexture *t) :
 	m_name(_name)
 {
-	data = t;
-	type = GL_TEXTURE_CUBE_MAP;
+	m_data = t;
+	m_type = GL_TEXTURE_CUBE_MAP;
 }
 
-fwUniform::fwUniform(std::string _name, glm::mat4* t, int size) :
+fwUniform::fwUniform(const std::string& _name, glm::mat4* t, int size) :
 	m_name(_name),
-	data(t),
+	m_data(t),
 	m_size(size),
-	type(GL_FLOAT_MAT4)
+	m_type(GL_FLOAT_MAT4)
 {
 }
 
-fwUniform::fwUniform(std::string _name, glm::vec4* t, int size) :
+fwUniform::fwUniform(const std::string& _name, glm::vec4* t, int size) :
 	m_name(_name+"[0]"),
-	data(t),
+	m_data(t),
 	m_size(size),
-	type(GL_FLOAT_VEC4)
+	m_type(GL_FLOAT_VEC4)
 {
 }
 
 /**
  * Create a unifrom for a UBO
  */
-fwUniform::fwUniform(std::string _name, glUniformBuffer* ubo) :
+fwUniform::fwUniform(const std::string& _name, glUniformBuffer* ubo) :
 	m_name(_name),
-	data(ubo),
-	type(GL_UBO)
+	m_data(ubo),
+	m_type(GL_UBO)
 {
 }
 
-void *fwUniform::get_value(void)
+void *fwUniform::get(void)
 {
-	return data;
+	return m_data;
 }
 
 void fwUniform::set(void *_data)
 {
-	data = _data;
+	m_data = _data;
 }
 
 void fwUniform::set_uniform(glProgram *program)
 {
 	// ignore non initalizerd uniforms
-	if (data == nullptr) {
+	if (m_data == nullptr) {
 		return;
 	}
 
-	switch (type) {
+	switch (m_type) {
 	case GL_FLOAT:
-		program->set_uniform(m_name, *(GLfloat *)data);
+		program->set_uniform(m_name, *(GLfloat *)m_data);
 		break;
 	case GL_FLOAT_VEC4:
 		// TODO : for single vec4 it should be size 1
 		if (m_size == 0) {
-			program->set_uniform(m_name, *(glm::vec4*)data);
+			program->set_uniform(m_name, *(glm::vec4*)m_data);
 		}
 		else {
-			program->set_uniform(m_name, (glm::vec4*)data, m_size);
+			program->set_uniform(m_name, (glm::vec4*)m_data, m_size);
 		}
 		break;
 	case GL_FLOAT_VEC2:
-		program->set_uniform(m_name, *(glm::vec2 *)data);
+		program->set_uniform(m_name, *(glm::vec2 *)m_data);
 		break;
 	case GL_SAMPLER_2D:
-		program->set_uniform(m_name, (glTexture *)data);
+		program->set_uniform(m_name, (glTexture *)m_data);
 		break;
 	case GL_TEXTURE_2D_ARRAY:
-		program->set_uniform(m_name, (glTexture *)data);
+		program->set_uniform(m_name, (glTexture *)m_data);
 		break;
 	case GL_TEXTURE_CUBE_MAP:
-		program->set_uniform(m_name, (glTexture *)data);
+		program->set_uniform(m_name, (glTexture *)m_data);
 		break;
 	case GL_FLOAT_MAT4:
-		program->set_uniform(m_name, (glm::mat4 *)data, m_size);
+		program->set_uniform(m_name, (glm::mat4 *)m_data, m_size);
 		break;
 	case GL_UBO:
-		((glUniformBuffer *)data)->bind(program, m_name);
+		((glUniformBuffer *)m_data)->bind(program, m_name);
 		break;
 	}
 }

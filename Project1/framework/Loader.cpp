@@ -17,6 +17,7 @@
 #include "mesh/fwMeshSkinned.h"
 #include "fwAnimation.h"
 #include "fwBoneInfoAnimation.h"
+#include "fwTextures.h"
 
 static glm::mat4 aiMatrix4x4ToGlm(const aiMatrix4x4& from)
 {

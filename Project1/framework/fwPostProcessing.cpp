@@ -75,7 +75,7 @@ void fwPostProcessing::draw(glTexture *color)
 	}
 
 	/*
-	glTexture *tex = (glTexture *)source->get_value();
+	glTexture *tex = (glTexture *)source->get();
 	tex->resetTextureUnit();
 	tex->bind();
 	*/
