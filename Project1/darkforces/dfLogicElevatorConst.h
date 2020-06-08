@@ -15,5 +15,6 @@ enum class dfElevatorType {
 	MOVE_CEILING,
 	MORPH_SPIN1,
 	MORPH_MOVE1,
-	MORPH_SPIN2
+	MORPH_SPIN2,
+	DOOR
 };

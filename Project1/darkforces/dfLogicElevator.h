@@ -89,6 +89,7 @@ class dfLogicElevator: public dfMessageClient {
 	void moveToNextStop(void);
 	bool animateMoveZ(void);
 	void setSignsStatus(int status);
+	void init(const std::string& kind);
 
 public:
 	dfLogicElevator(std::string& kind, dfSector* sector, dfLevel *parent);

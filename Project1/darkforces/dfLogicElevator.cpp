@@ -8,6 +8,8 @@
 #include "dfLevel.h"
 #include "dfSign.h"
 #include "dfMessageBus.h"
+#include "dfVOC.h"
+#include "dfFileSystem.h"
 
 static std::map<std::string, dfElevatorType>  keywords = {
 	{"inv",			dfElevatorType::INV},
@@ -17,7 +19,8 @@ static std::map<std::string, dfElevatorType>  keywords = {
 	{"move_ceiling",dfElevatorType::MOVE_CEILING},
 	{"morph_spin1",	dfElevatorType::MORPH_SPIN1},
 	{"morph_move1",	dfElevatorType::MORPH_MOVE1},
-	{"morph_spin2",	dfElevatorType::MORPH_SPIN2}
+	{"morph_spin2",	dfElevatorType::MORPH_SPIN2},
+	{"door",		dfElevatorType::DOOR }
 };
 
 // default elevators speed
@@ -28,9 +31,63 @@ static std::map<dfElevatorType, float> _speeds = {
 	{dfElevatorType::CHANGE_LIGHT, 10.0f},
 	{dfElevatorType::MOVE_CEILING, 20.0f},
 	{dfElevatorType::MORPH_SPIN1, 20.0f},
-	{dfElevatorType::MORPH_MOVE1, 20.0f}
+	{dfElevatorType::MORPH_MOVE1, 20.0f},
+	{dfElevatorType::DOOR, 20.0f}
 };
 
+// default elevators sounds
+static std::vector<std::vector<std::string>> g_Default_sounds = {
+	{ { "elev2-1.voc", "elev2-2.voc", "elev2-3.voc"} },
+	{ { "door2-1.voc", "door2-2.voc", "door2-3.voc"} },
+	{ { "door.voc", "", ""} }
+};
+
+static std::map<dfElevatorType, int> g_sound_evelators = {
+	{dfElevatorType::INV, 1},
+	{dfElevatorType::BASIC, 0},
+	{dfElevatorType::MOVE_FLOOR, 0},
+	{dfElevatorType::MOVE_CEILING, 1},
+	{dfElevatorType::MORPH_SPIN1, 1},
+	{dfElevatorType::MORPH_MOVE1, 1},
+	{dfElevatorType::MORPH_SPIN2, 1},
+	{dfElevatorType::DOOR, 2}
+};
+
+static std::map<std::string, dfVOC*> m_cachedVOC;
+
+/**
+ * Initialize the elevator
+ */
+void dfLogicElevator::init(const std::string& kind) 
+{
+	// convert the elevator category from text to bind
+	if (keywords.count(kind) > 0) {
+		m_type = keywords[kind];
+		m_speed = _speeds[m_type];
+
+		// init the default sound
+		if (g_sound_evelators.count(m_type) > 0) {
+			int sounds = g_sound_evelators[m_type];
+
+			for (int i = 0; i < 3; i++) {
+				const std::string& file = g_Default_sounds[sounds][i];
+				if (file != "") {
+					if (m_cachedVOC.count(file) == 0) {
+						m_cachedVOC[file] = new dfVOC(g_dfFiles, file);
+					}
+					m_sounds[i] = m_cachedVOC[file];
+				}
+			}
+		}
+	}
+	else {
+		std::cerr << "dfLogicElevator::dfLogicElevator " << kind << " not implemented" << std::endl;
+	}
+}
+
+/**
+ *
+ */
 dfLogicElevator::dfLogicElevator(std::string& kind, dfSector* sector, dfLevel* parent):
 	dfMessageClient(sector->m_name),
 	m_class(kind),
@@ -39,14 +96,7 @@ dfLogicElevator::dfLogicElevator(std::string& kind, dfSector* sector, dfLevel* p
 	m_parent(parent)
 {
 	m_msg_animate.m_client = m_name;
-
-	if (keywords.count(kind) > 0) {
-		m_type = keywords[kind];
-		m_speed = _speeds[m_type];
-	}
-	else {
-		std::cerr << "dfLogicElevator::dfLogicElevator " << kind << " not implemented" << std::endl;
-	}
+	init(kind);
 }
 
 dfLogicElevator::dfLogicElevator(std::string& kind, std::string& sector):
@@ -55,14 +105,7 @@ dfLogicElevator::dfLogicElevator(std::string& kind, std::string& sector):
 	m_sector(sector)
 {
 	m_msg_animate.m_client = m_name;
-
-	if (keywords.count(kind) > 0) {
-		m_type = keywords[kind];
-		m_speed = _speeds[m_type];
-	}
-	else {
-		std::cerr << "dfLogicElevator::dfLogicElevator " << kind << " not implemented" << std::endl;
-	}
+	init(kind);
 }
 
 /**
@@ -94,6 +137,7 @@ void dfLogicElevator::bindSector(dfSector* pSector)
 
 	switch (m_type) {
 	case dfElevatorType::INV:
+	case dfElevatorType::DOOR:
 		m_pSector->staticCeilingAltitude(amax);
 		break;
 
@@ -146,6 +190,7 @@ dfMesh *dfLogicElevator::buildGeometry(fwMaterial* material, std::vector<dfBitma
 	// get the maximum extend of the elevator -> will become the height of the object
 	switch (m_type) {
 	case dfElevatorType::INV:
+	case dfElevatorType::DOOR:
 	case dfElevatorType::BASIC:
 	case dfElevatorType::MOVE_FLOOR:
 	case dfElevatorType::MOVE_CEILING:
@@ -164,11 +209,12 @@ dfMesh *dfLogicElevator::buildGeometry(fwMaterial* material, std::vector<dfBitma
 
 	switch (m_type) {
 	case dfElevatorType::INV:
+	case dfElevatorType::DOOR:
 	case dfElevatorType::BASIC:
 		m_mesh = new dfMesh(material, bitmaps);
 
 		// the elevator bottom is actually the ceiling
-		if (m_type == dfElevatorType::INV) {
+		if (m_type == dfElevatorType::INV || m_type == dfElevatorType::DOOR) {
 			m_pSector->buildElevator(m_mesh, 0, m_zmax - m_zmin, DFWALL_TEXTURE_TOP, true, dfWallFlag::ALL);
 			m_pSector->setAABBtop(m_zmax);
 		}
@@ -318,12 +364,14 @@ void dfLogicElevator::moveToNextStop(void)
 	m_delay = abs(m_direction) * 838 / m_speed;
 
 	// play the starting sound if it exists
-	if (m_mesh && m_sounds[dfElevatorSound::START] != nullptr) {
-		m_mesh->play(m_sounds[dfElevatorSound::START]);
-	}
-	// play the moving sound if it exists
-	if (m_sounds[dfElevatorSound::MOVE] != nullptr) {
-		m_mesh->play(m_sounds[dfElevatorSound::MOVE]);
+	if (m_mesh) {
+		if (m_sounds[dfElevatorSound::START] != nullptr) {
+			m_mesh->play(m_sounds[dfElevatorSound::START]);
+		}
+		// play the moving sound if it exists
+		if (m_sounds[dfElevatorSound::MOVE] != nullptr) {
+			m_mesh->play(m_sounds[dfElevatorSound::MOVE]);
+		}
 	}
 }
 
@@ -461,6 +509,7 @@ bool dfLogicElevator::animate(time_t delta)
 		break;
 	case dfElevatorType::BASIC:
 	case dfElevatorType::INV:
+	case dfElevatorType::DOOR:
 	case dfElevatorType::MOVE_FLOOR:
 	case dfElevatorType::MOVE_CEILING:
 	case dfElevatorType::MORPH_SPIN1:
@@ -491,6 +540,7 @@ void dfLogicElevator::moveTo(float z)
 	// security check
 	switch (m_type) {
 	case dfElevatorType::INV:
+	case dfElevatorType::DOOR:
 	case dfElevatorType::BASIC:
 	case dfElevatorType::MOVE_FLOOR:
 	case dfElevatorType::MOVE_CEILING:
@@ -513,6 +563,7 @@ void dfLogicElevator::moveTo(float z)
 	// run the move
 	switch (m_type) {
 	case dfElevatorType::INV:
+	case dfElevatorType::DOOR:
 		m_mesh->moveCeilingTo(z);
 		break;
 	case dfElevatorType::BASIC:

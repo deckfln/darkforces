@@ -329,13 +329,13 @@ void dfLevel::initElevators(void)
  */
 void dfLevel::convertDoors2Elevators(void)
 {
-	static std::string inv = "inv";
+	static std::string door = "door";
 	static std::string hold = "hold";
 	static std::string switch1 = "switch1";
 
 	for (auto sector: m_sectorsID) {
 		if (sector->flag() & dfSectorFlag::DOOR) {
-			dfLogicElevator* elevator = new dfLogicElevator(inv, sector, this);
+			dfLogicElevator* elevator = new dfLogicElevator(door, sector, this);
 			dfLogicStop* closed = new dfLogicStop(elevator, sector->referenceFloor(), hold);
 			dfLogicStop* opened = new dfLogicStop(elevator, sector->referenceCeiling(), 5000);
 

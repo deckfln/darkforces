@@ -2,7 +2,7 @@
 
 #include "config.h"
 
-dfFileSystem* dfFiles = nullptr;
+dfFileSystem* g_dfFiles = nullptr;
 
 dfFileSystem::dfFileSystem(std::string root)
 {
@@ -10,6 +10,10 @@ dfFileSystem::dfFileSystem(std::string root)
 	m_textures = new dfFileGOB(root + "/data/textures.gob");
 	m_sprites = new dfFileGOB(root + "/data/sprites.gob");
 	m_sounds = new dfFileGOB(root + "/data/sounds.gob");
+
+	if (g_dfFiles == nullptr) {
+		g_dfFiles = this;
+	}
 }
 
 char* dfFileSystem::load(int mode, std::string file, int& size)

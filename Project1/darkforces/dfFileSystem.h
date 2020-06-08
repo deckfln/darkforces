@@ -22,4 +22,4 @@ public:
 	~dfFileSystem();
 };
 
-extern dfFileSystem* dfFiles;
+extern dfFileSystem* g_dfFiles;
