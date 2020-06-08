@@ -164,37 +164,26 @@ float fwObject3D::sqDistanceTo(fwObject3D *to)
 }
 
 /**
- * Play a sound and initialize a source if needed
+ * Play a sound and initialize a source or  Test if the source is still playing that sound
+
  */
-void fwObject3D::play(alSound* sound)
+bool fwObject3D::play(alSound* sound)
 {
 	if (m_source == nullptr) {
 		// create a sound source the first time
 		m_source = new alSource(m_Position);
 	}
 
-	m_source->play(sound);
-}
-
-/**
- * Test if the source is still playing a sound
- */
-bool fwObject3D::play(void)
-{
-	if (m_source) {
-		return m_source->play();
-	}
-
-	return false;
+	return m_source->play(sound);
 }
 
 /**
  * Stop playing a sound (if any)
  */
-void fwObject3D::stop(void)
+void fwObject3D::stop(alSound *sound)
 {
 	if (m_source) {
-		m_source->stop();
+		m_source->stop(sound);
 	}
 }
 

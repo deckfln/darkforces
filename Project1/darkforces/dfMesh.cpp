@@ -755,24 +755,30 @@ fwMesh* dfMesh::buildMesh(void)
 }
 
 /**
- * check if the mesh is playng a sound
+ * Start playing a sound or check if it plays
  */
-bool dfMesh::play(void)
+bool dfMesh::play(dfVOC* voc)
 {
 	if (m_mesh) {
-		return m_mesh->play();
+		if (voc) {
+			std::cerr << "dfMesh::play " << voc->name() << std::endl;
+		}
+		return m_mesh->play(voc->sound());
 	}
 
-	return true;
+	return false;
 }
 
 /**
- * Start playing a sound
+ *
  */
-void dfMesh::play(dfVOC* voc)
+void dfMesh::stop(dfVOC* voc)
 {
 	if (m_mesh) {
-		m_mesh->play(voc->sound());
+		if (voc) {
+			std::cerr << "dfMesh::stop " << voc->name() << std::endl;
+		}
+		m_mesh->stop(voc->sound());
 	}
 }
 

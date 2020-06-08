@@ -162,7 +162,6 @@ dfMesh *dfLogicElevator::buildGeometry(fwMaterial* material, std::vector<dfBitma
 		m_zmax = m_pSector->staticCeilingAltitude();
 	}
 
-
 	switch (m_type) {
 	case dfElevatorType::INV:
 	case dfElevatorType::BASIC:
@@ -317,6 +316,15 @@ void dfLogicElevator::moveToNextStop(void)
 
 	// TODO adapt the speed
 	m_delay = abs(m_direction) * 838 / m_speed;
+
+	// play the starting sound if it exists
+	if (m_mesh && m_sounds[dfElevatorSound::START] != nullptr) {
+		m_mesh->play(m_sounds[dfElevatorSound::START]);
+	}
+	// play the moving sound if it exists
+	if (m_sounds[dfElevatorSound::MOVE] != nullptr) {
+		m_mesh->play(m_sounds[dfElevatorSound::MOVE]);
+	}
 }
 
 /**
@@ -333,22 +341,10 @@ bool dfLogicElevator::animateMoveZ(void)
 		m_status = dfElevatorStatus::MOVE;
 		m_tick = 0;
 
-		// play the starting sound if it exists
-		if (m_mesh && m_sounds[dfElevatorSound::START] != nullptr) {
-			m_mesh->play(m_sounds[dfElevatorSound::START]);
-		}
 		moveToNextStop();
 		break;
 
 	case dfElevatorStatus::MOVE: {
-		if (m_mesh && !m_mesh->play()) {
-			// play the moving sound if it exists
-			// but only after the starting sound has ended
-			if (m_sounds[dfElevatorSound::MOVE] != nullptr) {
-				m_mesh->play(m_sounds[dfElevatorSound::MOVE]);
-			}
-		}
-
 		if (m_direction != 0) {
 			m_current = m_target - m_direction * (1.0f - m_tick / m_delay);
 		}
@@ -366,11 +362,6 @@ bool dfLogicElevator::animateMoveZ(void)
 		}
 
 		if (reached) {
-			// play the end sound if it exists
-			if (m_mesh && m_sounds[dfElevatorSound::END] != nullptr) {
-				m_mesh->play(m_sounds[dfElevatorSound::END]);
-			}
-
 			dfLogicStop* stop;
 
 			m_currentStop = m_nextStop;
@@ -385,8 +376,29 @@ bool dfLogicElevator::animateMoveZ(void)
 			if (stop->isTimeBased()) {
 				// put the elevator on wait
 				m_status = dfElevatorStatus::WAIT;
+
+				// stop the move sound and play the end sound if it exists AND the stop is NOT zero
+				if (stop->time() != 0 && m_mesh) {
+					if (m_sounds[dfElevatorSound::MOVE] != nullptr) {
+						m_mesh->stop(m_sounds[dfElevatorSound::MOVE]);
+					}
+					if (m_sounds[dfElevatorSound::END] != nullptr) {
+						m_mesh->play(m_sounds[dfElevatorSound::END]);
+					}
+				}
 			}
 			else {
+				// play the end sound if it exists
+				if (m_mesh) {
+					if (m_sounds[dfElevatorSound::MOVE] != nullptr) {
+						m_mesh->stop(m_sounds[dfElevatorSound::MOVE]);
+					}
+
+					if (m_sounds[dfElevatorSound::END] != nullptr) {
+						m_mesh->play(m_sounds[dfElevatorSound::END]);
+					}
+				}
+
 				switch (stop->action()) {
 				case DF_STOP_HOLD:
 						m_status = dfElevatorStatus::HOLD;

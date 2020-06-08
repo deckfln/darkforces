@@ -118,7 +118,7 @@ public:
 	virtual void setStatus(int status) {};
 
 	fwMesh* buildMesh(void);
-	bool play(void);
-	void play(dfVOC* voc);
+	bool play(dfVOC* voc=nullptr);
+	void stop(dfVOC* voc=nullptr);
 	~dfMesh();
 };

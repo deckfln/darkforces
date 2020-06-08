@@ -76,9 +76,8 @@ public:
 	float sqDistanceTo(fwObject3D *to);
 
 	// audio API
-	void play(alSound* sound);
-	bool play(void);
-	void stop(void);
+	bool play(alSound* sound);
+	void stop(alSound* sound);
 
 	~fwObject3D();
 };

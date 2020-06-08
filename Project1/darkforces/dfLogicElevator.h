@@ -40,9 +40,9 @@ enum {
 /* Sounds to play when elevator move
  */
 enum dfElevatorSound {
-	START = 1,	// leaving a stop
-	MOVE = 2,	// moving between stops
-	END = 3		// arriving at stop
+	START = 0,	// leaving a stop
+	MOVE = 1,	// moving between stops
+	END = 2		// arriving at stop
 };
 
 class dfLogicElevator: public dfMessageClient {

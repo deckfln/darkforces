@@ -286,7 +286,7 @@ void dfParseINF::parseSector(std::istringstream& infile, std::string& sector)
 			dfVOC* voc = new dfVOC(dfFiles, tokens[2]);
 
 			if (elevator) {
-				elevator->sound(effect, voc);
+				elevator->sound(effect - 1, voc);
 			}
 		}
 	}

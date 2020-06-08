@@ -8,6 +8,7 @@ class alSound;
 
 class dfVOC
 {
+	std::string m_name;
 	std::vector<unsigned char> m_pcm8;
 	unsigned short m_repeat = 0;
 	unsigned short m_markerID = 0;
@@ -16,6 +17,7 @@ class dfVOC
 
 public:
 	dfVOC(dfFileSystem* fs, const std::string& file);
+	const std::string& name(void) { return m_name; };
 	alSound* sound(void);
 	~dfVOC();
 };

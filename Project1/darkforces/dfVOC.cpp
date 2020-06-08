@@ -172,6 +172,8 @@ static void debug(unsigned char* buffer, int len)
 
 dfVOC::dfVOC(dfFileSystem* fs, const std::string& file)
 {
+	m_name = file;
+
 	int size;
 	char *data = fs->load(DF_SOUNDS_GOB, file, size);
 	if (data == nullptr) {
