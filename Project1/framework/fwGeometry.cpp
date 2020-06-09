@@ -161,6 +161,9 @@ void fwGeometry::updateIfDirty(void)
 	}
 }
 
+/**
+ * draw call to display the geometry
+ */
 void fwGeometry::draw(GLenum mode, glVertexArray *va)
 {
 	if (m_verticesToDisplay > 0) {
@@ -182,6 +185,40 @@ void fwGeometry::draw(GLenum mode, glVertexArray *va)
 }
 
 /**
+ * Return the center of the vertices
+ *   actualy the center of the bounding sphere
+ */
+const glm::vec3& fwGeometry::center(void)
+{
+	if (m_pBoundingsphere == nullptr) {
+		computeBoundingsphere();
+	}
+
+	return m_pBoundingsphere->center();
+}
+
+/**
+ * Translate all vertices to use center as (0,0,0)
+ */
+const glm::vec3& fwGeometry::centerVertices(void)
+{
+	glm::vec3* _vertices = (glm::vec3*)vertices->data();
+
+	// compute the bounding sphere (to find the center)
+	if (m_pBoundingsphere == nullptr) {
+		computeBoundingsphere();
+	}
+
+	const glm::vec3& center = m_pBoundingsphere->center();
+
+	for (auto i = 0; i < vertices->count(); i++) {
+		*(_vertices++) -= center;
+	}
+
+	return center;
+}
+
+/**
  * parse all vertices to compute a bounding sphere
  */
 fwSphere *fwGeometry::computeBoundingsphere(void)
@@ -192,10 +229,10 @@ fwSphere *fwGeometry::computeBoundingsphere(void)
 	}
 
 	if (vertices) {
-		glm::vec3 &center = m_pBoundingsphere->center();
 		box.setFromBufferAttribute(vertices);
-		box.get_center(center);
-		
+		const glm::vec3& center = box.center();
+		m_pBoundingsphere->center(center);
+
 		// hoping to find a boundingSphere with a radius smaller than the
 		// boundingSphere of the boundingBox: sqrt(3) smaller in the best case
 
@@ -339,6 +376,10 @@ void fwGeometry::computeTangent(void)
  */
 fwGeometry::~fwGeometry()
 {
+	if (m_pBoundingsphere != nullptr) {
+		delete m_pBoundingsphere;
+	}
+
 	if (index != nullptr) {
 		delete index;
 	}

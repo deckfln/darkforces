@@ -13,8 +13,8 @@ public:
 	fwSphere(glm::vec3 &center, float radius);
 	int cache(int _cache) { m_cache = _cache;  return _cache; }
 	int cache(void) { return m_cache; }
-	glm::vec3 &center(void) { return m_center; }
-	void center(glm::vec3& center) { m_center = center; }
+	const glm::vec3 &center(void) { return m_center; }
+	void center(const glm::vec3& center) { m_center = center; }
 	float radius(void) { return m_radius; }
 	float radius(float _radius) { m_radius = _radius; return m_radius; }
 	void set(glm::vec3& center, float radius) { m_center = center; m_radius = radius; };

@@ -95,13 +95,10 @@ public:
 	void addPlane(float width, dfBitmapImage* image);
 	virtual void buildGeometry(dfSector* source, float bottom, float top);
 	virtual void rebuildAABB(void);
-	void findCenter(void);
-	void moveVertices(glm::vec3& center);
 	void moveFloorTo(float z);
 	void moveCeilingTo(float z);
 	void rotateZ(float angle);
 	void move(glm::vec3& position);
-	void translate(glm::vec3& direction, float distance);
 	bool collide(float step, glm::vec3& position, glm::vec3& target, float radius, glm::vec3& intersection, std::string& name);
 	bool collide(fwAABBox& box, std::string& name);
 	void parent(fwMesh* parent) { m_parentMesh = parent; };
@@ -113,11 +110,17 @@ public:
 	void zOrder(int z);
 	void updateGeometryTextures(int start, int nb);
 	int nbVertices(void);
-	void name(std::string& name) { m_name = name; };
+	void name(std::string& name);
+
+	void moveVertices(glm::vec3& center);
+	void centerOnGeometryXZ(glm::vec3& target);
+	void centerOnGeometryXYZ(glm::vec3& target);
 
 	virtual void setStatus(int status) {};
 
 	fwMesh* buildMesh(void);
+
+	// audio API
 	bool play(dfVOC* voc=nullptr);
 	void stop(dfVOC* voc=nullptr);
 	~dfMesh();

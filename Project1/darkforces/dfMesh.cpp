@@ -82,13 +82,6 @@ void dfMesh::rebuildAABB(void)
 }
 
 /**
- * find the center of the mesh, base point for translations
- */
-void dfMesh::findCenter(void)
-{
-}
-
-/**
  * Resize the buffers
  */
 int dfMesh::resize(int i)
@@ -108,6 +101,17 @@ int dfMesh::resize(int i)
 int dfMesh::nbVertices(void)
 {
 	return m_pVertices->size();
+}
+
+/**
+ * set the name of the dfMesh and the associated fwMesh
+ */
+void dfMesh::name(std::string& name)
+{
+	m_name = name;
+	if (m_mesh) {
+		m_mesh->set_name(name);
+	}
 }
 
 /**
@@ -453,16 +457,7 @@ void dfMesh::move(glm::vec3& p)
 }
 
 /**
- * translate the object in level space
- */
-void dfMesh::translate(glm::vec3& direction, float distance)
-{
-	glm::vec3 p = m_defaultPosition + direction * distance;
-	move(p);
-}
-
-/**
- * Override fwMesh::translate to force the bounding box update
+ * Override fwMesh::centerVertices to force the bounding box update
  * position is in GL space
  */
 void dfMesh::position(glm::vec3& position)
@@ -474,7 +469,7 @@ void dfMesh::position(glm::vec3& position)
 }
 
 /**
- * Override fwMesh::translate to force the bounding box update
+ * Override fwMesh::centerVertices to force the bounding box update
  */
 void dfMesh::rotation(glm::vec3& rotate)
 {
@@ -570,7 +565,8 @@ glm::vec3 ClosestPtPointTriangle(glm::vec3& p, glm::vec3& a, glm::vec3& b, glm::
 int TestSphereTriangle(fwSphere& s, glm::vec3& a, glm::vec3 b, glm::vec3 c, glm::vec3& p)
 { 
 	// Find point P on triangle ABC closest to sphere center 
-	p = ClosestPtPointTriangle(s.center(), a, b, c);
+	glm::vec3 center = s.center();
+	p = ClosestPtPointTriangle(center, a, b, c);
 
 	// Sphere and triangle intersect if the (squared) distance from sphere 
 	// center to point p is less than the (squared) sphere radius 
@@ -719,13 +715,72 @@ void dfMesh::updateGeometryTextures(int start, int nb)
  */
 void dfMesh::moveVertices(glm::vec3& center)
 {
-	m_position = glm::vec3(center.x, center.z, center.y) / 10.0f;
+	// convert to gl space
+	dfLevel::level2gl(center, m_position);
 
 	for (auto &vertice : m_vertices) {
 		vertice -= m_position;
 	}
 
+	m_mesh->translate(m_position);
+	m_mesh->updateVertices();	// reupload vertices to GPU
 	rebuildAABB();
+}
+
+/**
+ * Move all vertices to orbit around the center XZ of the geometry
+ */
+void dfMesh::centerOnGeometryXZ(glm::vec3& target)
+{
+	glm::vec3 center(0,0,0);
+	for (auto& vertice : m_vertices) {
+		center += vertice;
+	}
+	center /= m_vertices.size();
+
+	center.y = 0;
+
+	for (auto& vertice : m_vertices) {
+		vertice -= center;
+	}
+
+	m_position.x += center.x;	//take count of the existing position (for SPIN1)
+	m_position.z += center.z;
+
+	m_mesh->translate(m_position);
+	m_mesh->updateVertices();	// reupload vertices to GPU
+
+	rebuildAABB();
+
+	// convert to gl space
+	dfLevel::gl2level(center, target);
+}
+
+/**
+ * Move all vertices to orbit around the center XZ of the geometry
+ */
+void dfMesh::centerOnGeometryXYZ(glm::vec3& target)
+{
+	glm::vec3 center(0, 0, 0);
+	for (auto& vertice : m_vertices) {
+		center += vertice;
+	}
+	center /= m_vertices.size();
+
+	for (auto& vertice : m_vertices) {
+		vertice -= center;
+	}
+
+	m_position.x += center.x;	//take count of the existing position (for SPIN1)
+	m_position.z += center.z;
+
+	m_mesh->translate(m_position);
+	m_mesh->updateVertices();	// reupload vertices to GPU
+
+	rebuildAABB();
+
+	// convert to gl space
+	dfLevel::gl2level(center, target);
 }
 
 /**
@@ -770,7 +825,7 @@ bool dfMesh::play(dfVOC* voc)
 }
 
 /**
- *
+ * Stop playing a sound (or all sound if nullptr)
  */
 void dfMesh::stop(dfVOC* voc)
 {

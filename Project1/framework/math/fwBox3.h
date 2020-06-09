@@ -7,10 +7,11 @@ class fwBox3
 {
 	glm::vec3 m_min;
 	glm::vec3 m_max;
+	glm::vec3 m_center;
 
 public:
 	fwBox3();
 	fwBox3 &setFromBufferAttribute(glBufferAttribute *attribute);
-	void get_center(glm::vec3 &center);
+	const glm::vec3& center(void);
 	~fwBox3();
 };

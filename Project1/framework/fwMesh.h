@@ -84,6 +84,8 @@ public:
 	void rendering(fwMeshRendering render);
 	void pointSize(float p) { m_pointSize = p; };
 
+	void centerOnGeometry(void);
+
 	virtual void draw(glProgram *);
 	~fwMesh();
 };

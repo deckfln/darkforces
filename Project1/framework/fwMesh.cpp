@@ -111,6 +111,16 @@ GLuint fwMesh::buildVAO(glProgram* program)
 	return id;
 }
 
+/**
+ * Center the mesh on the center of the geometry
+ */
+void fwMesh::centerOnGeometry(void)
+{
+	const glm::vec3& center = geometry->centerVertices();
+
+	m_Position += center;
+}
+
 void fwMesh::draw(glProgram *program)
 {
 	static GLint renders[] = {

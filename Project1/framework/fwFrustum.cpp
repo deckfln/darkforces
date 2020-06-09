@@ -37,7 +37,7 @@ bool fwFrustum::intersectsObject(fwMesh *object)
 
 bool fwFrustum::intersectsSphere(fwSphere &sphere, fwSphere *source)
 {
-	glm::vec3 &center = sphere.center();
+	glm::vec3 center = sphere.center();
 	float negRadius = -sphere.radius();
 	float distance = -1;
 

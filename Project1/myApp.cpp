@@ -25,7 +25,7 @@ myApp::myApp(std::string name, int width, int height) :
 
 	// camera
 	m_camera = new fwCamera(width, height);
-	//m_camera->translate(-6.859210, 20.333462, 22.371893);
+	//m_camera->centerVertices(-6.859210, 20.333462, 22.371893);
 
 	// controls
 	m_control = (fwControl *)new fwOrbitControl(m_camera, 20, glm::vec3(0));

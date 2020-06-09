@@ -56,5 +56,9 @@ public:
 	int id(void) { return m_id; };
 
 	void draw(GLenum mode, glVertexArray *);
+
+	const glm::vec3& center(void);			// get the center of the boundingsphere around the geometry
+	const glm::vec3& centerVertices(void);				// move all vertices along the translation
+
 	~fwGeometry();
 };

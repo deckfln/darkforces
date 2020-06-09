@@ -188,7 +188,9 @@ dfMesh *dfLogicElevator::buildGeometry(fwMaterial* material, std::vector<dfBitma
 		return nullptr;
 	}
 
+	//
 	// get the maximum extend of the elevator -> will become the height of the object
+	//
 	switch (m_type) {
 	case dfElevatorType::INV:
 	case dfElevatorType::DOOR:
@@ -208,6 +210,9 @@ dfMesh *dfLogicElevator::buildGeometry(fwMaterial* material, std::vector<dfBitma
 		m_zmax = m_pSector->staticCeilingAltitude();
 	}
 
+	//
+	// Build a mesh depending of the type
+	//
 	switch (m_type) {
 	case dfElevatorType::INV:
 	case dfElevatorType::DOOR:
@@ -272,24 +277,7 @@ dfMesh *dfLogicElevator::buildGeometry(fwMaterial* material, std::vector<dfBitma
 		// textures to use and the height are based on the difference between the connected sectors floor & ceiling and the current floor & ceiling
 		m_pSector->buildElevator(m_mesh, m_zmin, m_zmax, DFWALL_TEXTURE_MID, false, dfWallFlag::MORPHS_WITH_ELEV);
 
-		switch (m_type) {
-		case dfElevatorType::MORPH_SPIN1:
-		case dfElevatorType::MORPH_SPIN2:
-			// move the vertices around the center (in level space)
-			m_center.z = m_pSector->referenceFloor();
-			m_mesh->moveVertices(m_center);
-			break;
-		case dfElevatorType::MORPH_MOVE1:
-			// elevator moves along the m_move vector
-			m_mesh->findCenter();
-			break;
-		default:
-			std::cerr << "dfLogicElevator::buildGeometry m_type=" << int(m_type) << " unsupported" << std::endl;
-			return nullptr;
-		}
-
 		if (m_mesh->buildMesh()) {
-			m_mesh->mesh()->set_name(m_pSector->m_name);
 			m_pSector->addObject(m_mesh);
 
 			// remove the SPIN1 walls vertices from the sector. otherwise they stay in the way of the collision engine (collision is managed by the dfMesh)
@@ -306,6 +294,32 @@ dfMesh *dfLogicElevator::buildGeometry(fwMaterial* material, std::vector<dfBitma
 	default:
 		return nullptr;
 	}
+
+	//
+	// translate the vertices to the center of the elevator
+	//
+	switch (m_type) {
+	case dfElevatorType::INV:
+	case dfElevatorType::DOOR:
+	case dfElevatorType::BASIC:
+	case dfElevatorType::MOVE_FLOOR:
+	case dfElevatorType::MOVE_CEILING:
+		// for these elevator, Z is defined by the elevator, so center on XY (in level space)
+		m_mesh->centerOnGeometryXZ(m_center);
+		break;
+	case dfElevatorType::MORPH_MOVE1:
+		// for this elevator, movealong an axe from a center, so center on XYZ (in level space)
+		m_mesh->centerOnGeometryXYZ(m_center);
+		break;
+	case dfElevatorType::MORPH_SPIN1:
+	case dfElevatorType::MORPH_SPIN2:
+		// move the vertices around the center (in level space)
+		m_center.z = m_pSector->referenceFloor();
+		m_mesh->moveVertices(m_center);
+		break;
+	}
+
+	m_mesh->name(m_sector);
 
 	return m_mesh;
 }
@@ -583,7 +597,8 @@ void dfLogicElevator::moveTo(float z)
 		m_mesh->rotateZ(glm::radians((z)));
 		break;
 	case dfElevatorType::MORPH_MOVE1:
-		m_mesh->translate(m_move, z);
+		glm::vec3 p = m_center + m_move * z;
+		m_mesh->move(p);
 		break;
 	case dfElevatorType::CHANGE_LIGHT:
 		m_pSector->changeAmbient(z);

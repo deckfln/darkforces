@@ -1128,7 +1128,7 @@ void dfSector::buildElevator(dfMesh* mesh, float bottom, float top, int what, bo
 	}
 
 	// add defered signs on the elevators
-	// translate the level space into the model space
+	// centerVertices the level space into the model space
 	for (auto wall : m_deferedSigns) {
 		dfSector* sector = wall->sector();
 		float translate = m_staticMeshFloorAltitude - sector->m_staticMeshFloorAltitude;

@@ -40,9 +40,11 @@ fwBox3 &fwBox3::setFromBufferAttribute(glBufferAttribute *attribute)
 	return *this;
 }
 
-void fwBox3::get_center(glm::vec3 &center)
+const glm::vec3& fwBox3::center(void)
 {
-	center = (m_min + m_max) / 2.0f;
+	m_center = (m_min + m_max) / 2.0f;
+
+	return m_center;
 }
 
 fwBox3::~fwBox3()
