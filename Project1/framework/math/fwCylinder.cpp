@@ -18,11 +18,11 @@ fwCylinder::fwCylinder(const fwCylinder& source, const glm::vec3 translation):
 {
 }
 
-fwCylinder& fwCylinder::copy(const fwCylinder& source)
+fwCylinder& fwCylinder::copy(const fwCylinder& source, float ratio)
 {
 	m_position = source.m_position;
-	m_height = m_height;
-	m_radius = m_radius;
+	m_height = source.m_height * ratio;
+	m_radius = source.m_radius * ratio;
 
 	return *this;
 }

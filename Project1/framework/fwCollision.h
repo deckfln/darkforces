@@ -8,7 +8,7 @@
 
 #include <glm/vec3.hpp>
 
-enum class fwCollisionPoint {
+enum fwCollisionPoint {
 	NONE = 0,
 	TOP = 1,
 	BOTTOM = 2,

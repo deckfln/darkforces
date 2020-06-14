@@ -200,7 +200,7 @@ dfLevel::dfLevel(dfFileSystem* fs, std::string file)
 	m_atlasTexture->save("D:/dev/Project1/Project1/images/textures.png");
 	m_atlasTexture->bindToMaterial(m_material);
 
-	spacePartitioning();		// partion of space for quick collision
+	spacePartitioning();		// partion of space for quick move
 	buildGeometry();			// build the geometry of each super sectors
 
 	createTriggers();		// for elevator_spin1, create triggers
@@ -543,7 +543,7 @@ void dfLevel::draw(fwCamera* camera, fwScene* scene)
 }
 
 /**
- * Check collision against any of the level component, static Wall and dynamic
+ * Check move against any of the level component, static Wall and dynamic
  */
 bool dfLevel::checkCollision(float step, glm::vec3& position, glm::vec3& target, float height, float radius, glm::vec3& collision)
 {
@@ -568,7 +568,7 @@ bool dfLevel::checkCollision(float step, glm::vec3& position, glm::vec3& target,
 
 	// check against the elevators
 	for (auto elevator : m_inf->m_elevators) {
-		// mesh collision is done on glSpace
+		// mesh move is done on glSpace
 		if (elevator->checkCollision(step, position, target, radius, collision)) {
 			return true;
 		}
@@ -577,9 +577,9 @@ bool dfLevel::checkCollision(float step, glm::vec3& position, glm::vec3& target,
 }
 
 /**
- * Check collision against any of the level component, static (wall, floor, ceiling) and dynamic
+ * Check move against any of the level component, static (wall, floor, ceiling) and dynamic
  */
-bool dfLevel::checkEnvironement(fwCylinder& bounding, glm::vec3& direction, glm::vec3& intersection, fwCollisionPoint& side)
+bool dfLevel::checkEnvironement(fwCylinder& bounding, glm::vec3& direction, glm::vec3& intersection, int& side)
 {
 	dfSector* currentSector = findSector(bounding.position());
 	if (!currentSector) {
@@ -589,11 +589,13 @@ bool dfLevel::checkEnvironement(fwCylinder& bounding, glm::vec3& direction, glm:
 	// convert glSpace to dfSpace
 	fwCylinder dfCurrent;
 	glm::vec3 dfIntersection;
-
 	gl2level(bounding, dfCurrent);
 
+	glm::vec3 dfDirection;
+	gl2level(direction, dfDirection);
+
 	// check against static walls, floor and ceiling
-	if (currentSector->checkCollision(dfCurrent, direction, dfIntersection, side)) {
+	if (currentSector->checkCollision(dfCurrent, dfDirection, dfIntersection, side)) {
 		// convert back to glSpace
 		level2gl(dfIntersection, intersection);
 		return true;
@@ -601,8 +603,8 @@ bool dfLevel::checkEnvironement(fwCylinder& bounding, glm::vec3& direction, glm:
 
 	// check against the elevators
 	for (auto elevator : m_inf->m_elevators) {
-		// mesh collision is done on glSpace
-		if (elevator->checkCollision(dfCurrent, direction, intersection, side)) {
+		// mesh move is done on glSpace
+		if (elevator->checkCollision(bounding, direction, intersection, side)) {
 			return true;
 		}
 	}
@@ -645,9 +647,9 @@ void dfLevel::level2gl(fwCylinder& level, fwCylinder& gl)
  */
 void dfLevel::gl2level(fwCylinder& gl, fwCylinder& level)
 {
-	level.copy(gl);
+	level.copy(gl, 10.0f);
 	glm::vec3 p;
-	level2gl(gl.position(), p);
+	gl2level(gl.position(), p);
 	level.position(p);
 }
 

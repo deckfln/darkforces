@@ -282,7 +282,7 @@ dfMesh *dfLogicElevator::buildGeometry(fwMaterial* material, std::vector<dfBitma
 		if (m_mesh->buildMesh()) {
 			m_pSector->addObject(m_mesh);
 
-			// remove the SPIN1 walls vertices from the sector. otherwise they stay in the way of the collision engine (collision is managed by the dfMesh)
+			// remove the SPIN1 walls vertices from the sector. otherwise they stay in the way of the move engine (move is managed by the dfMesh)
 			m_pSector->removeHollowWalls();
 		}
 		else {
@@ -694,7 +694,7 @@ void dfLogicElevator::dispatchMessage(dfMessage* message)
 }
 
 /**
- * pass the collision detecttion to the mesh
+ * pass the move detecttion to the mesh
  */
 bool dfLogicElevator::checkCollision(float step, glm::vec3& position, glm::vec3& target, float radius, glm::vec3& intersection)
 {
@@ -722,7 +722,7 @@ bool dfLogicElevator::checkCollision(float step, glm::vec3& position, glm::vec3&
 }
 
 /**
- * check collision against a fwAABox
+ * check move against a fwAABox
  */
 bool dfLogicElevator::checkCollision(fwAABBox& box)
 {
@@ -738,9 +738,9 @@ bool dfLogicElevator::checkCollision(fwAABBox& box)
 }
 
 /**
- * Check collision using a cylinder
+ * Check move using a cylinder
  */
-bool dfLogicElevator::checkCollision(fwCylinder& bounding, glm::vec3& direction, glm::vec3& intersection, fwCollisionPoint& side)
+bool dfLogicElevator::checkCollision(fwCylinder& bounding, glm::vec3& direction, glm::vec3& intersection, int& side)
 {
 	// only test the elevator mesh if the supersector it is bind to is visible
 	// and if the play Z (gl space) in inbetwen the vertical elevator extend (level space)

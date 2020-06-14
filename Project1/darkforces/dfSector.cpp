@@ -675,7 +675,7 @@ static bool segment2segment(glm::vec2& A, glm::vec2& B, glm::vec2& C, glm::vec2&
 
 /**
  * compute the intersection of 1 segment AB and a circle C,r
- * https://stackoverflow.com/questions/1073336/circle-line-segment-collision-detection-algorithm
+ * https://stackoverflow.com/questions/1073336/circle-line-segment-move-detection-algorithm
  */
 
 static bool fat_point_collides_segment(glm::vec2& A, glm::vec2& B, glm::vec2& C, float r, glm::vec2& result)
@@ -704,7 +704,7 @@ static bool fat_point_collides_segment(glm::vec2& A, glm::vec2& B, glm::vec2& C,
 }
 
 /**
- * return the collision point of a circle with a segment in 2D
+ * return the move point of a circle with a segment in 2D
  */
 static bool CircLine(glm::vec2& A, glm::vec2& B, glm::vec2& C, float r, glm::vec2& result)
 {
@@ -733,7 +733,7 @@ static bool CircLine(glm::vec2& A, glm::vec2& B, glm::vec2& C, float r, glm::vec
 }
 
 /**
- * Test walls to detect a collision
+ * Test walls to detect a move
  */
 bool dfSector::checkCollision(float step, glm::vec3& current, glm::vec3& target, float height, float radius, glm::vec3& collision)
 {
@@ -761,13 +761,13 @@ bool dfSector::checkCollision(float step, glm::vec3& current, glm::vec3& target,
 			else if (CircLine(A, B, C, radius, intersection)) {
 				// if the circle target,radius intersect a wall (AB), we get a colision IN FRONT of the wall
 
-				// check now if the collision point is 'behind' the direction vector
+				// check now if the move point is 'behind' the direction vector
 				DC = D - C;
 				AC = intersection - C;
 
 				d = glm::dot(DC, AC);
 				if (d <= 0) {
-					// the collision point is on the other side of the direction
+					// the move point is on the other side of the direction
 					collide = false;
 				}
 				else {
@@ -823,14 +823,14 @@ bool dfSector::checkCollision(float step, glm::vec3& current, glm::vec3& target,
 		}
 	}
 
-	// no collision
+	// no move
 	return false;
 }
 
 /**
- * Test walls to detect a collision
+ * Test walls to detect a move
  */
-bool dfSector::checkCollision(fwCylinder& current, glm::vec3& direction, glm::vec3& collision, fwCollisionPoint& side)
+bool dfSector::checkCollision(fwCylinder& current, glm::vec3& direction, glm::vec3& collision, int& side)
 {
 	glm::vec3 target = current.position() + direction;
 	glm::vec2 D = target;
@@ -846,16 +846,14 @@ bool dfSector::checkCollision(fwCylinder& current, glm::vec3& direction, glm::ve
 	if (feet_z < m_floorAltitude) {
 		collision = current.position();
 		collision.z = m_floorAltitude;
-		side = fwCollisionPoint::BOTTOM;
-		return true;
+		side |= fwCollisionPoint::BOTTOM;
 	}
 
 	// test ceiling
 	if (head_z > m_ceilingAltitude) {
 		collision = current.position();
 		collision.z = m_ceilingAltitude;
-		side = fwCollisionPoint::TOP;
-		return true;
+		side |= fwCollisionPoint::TOP;
 	}
 
 	// Test polylines on the walls based on the setup (may ignore internals polylines (like for elevator SPIN1)
@@ -872,24 +870,23 @@ bool dfSector::checkCollision(fwCylinder& current, glm::vec3& direction, glm::ve
 			if (segment2segment(A, B, C, D, intersection)) {
 				// if the segment current->target (CD) intersect a wall (AB), we get a colision BEHIND the wall
 				collide = true;
-				side = fwCollisionPoint::FRONT;
+				side |= fwCollisionPoint::FRONT;
 			}
 			else if (CircLine(A, B, C, current.radius(), intersection)) {
 				// if the circle target,radius intersect a wall (AB), we get a colision IN FRONT of the wall
 
-				// check now if the collision point is 'behind' the direction vector
+				// check now if the move point is 'behind' the direction vector
 				DC = D - C;
 				AC = intersection - C;
 
 				d = glm::dot(DC, AC);
 				if (d <= 0) {
-					// the collision point is on the other side of the direction
+					// the move point is on the other side of the direction
 					collide = false;
-					side = fwCollisionPoint::BACK;
 				}
 				else {
 					collide = true;
-					side = fwCollisionPoint::LEFT;
+					side |= fwCollisionPoint::LEFT;
 				}
 			}
 			else {
@@ -911,8 +908,6 @@ bool dfSector::checkCollision(fwCylinder& current, glm::vec3& direction, glm::ve
 					collision.z = m_referenceFloorAltitude;
 
 					std::cerr << "dfSector::checkCollision sector=" << m_name << " full wall=" << wall->m_id << " z=" << target.z << std::endl;
-
-					return true;
 				}
 				else {
 					// portal, check with the adjoint sector
@@ -927,8 +922,6 @@ bool dfSector::checkCollision(fwCylinder& current, glm::vec3& direction, glm::ve
 						collision.x = intersection.x;
 						collision.y = intersection.y;
 						collision.z = m_floorAltitude;
-
-						return true;
 					}
 					else if (head_z > upperWall_z) {	// the head hit the upperWall
 						std::cerr << "dfSector::checkCollision sector=" << m_name << " wall=" << wall->m_id << " head z=" << head_z << std::endl;
@@ -936,18 +929,19 @@ bool dfSector::checkCollision(fwCylinder& current, glm::vec3& direction, glm::ve
 						collision.x = intersection.x;
 						collision.y = intersection.y;
 						collision.z = m_ceilingAltitude;
-
-						return true;
 					}
-					// actually it fits in the opening
+					else {
+						// actually it fits in the opening
+						// remove the collision
+						side &= ~( fwCollisionPoint::FRONT | fwCollisionPoint::LEFT);
+					}
 				}
 			}
 		}
 	}
 
 	// no collision
-	side = fwCollisionPoint::NONE;
-	return false;
+	return side != fwCollisionPoint::NONE;
 }
 
 /**

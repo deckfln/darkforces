@@ -11,13 +11,22 @@
 #include "framework/lights/fwPointLight.h"
 #include "framework/controls/fwControlThirdPerson.h"
 #include "framework/fwAABBox.h"
+#include "framework/fwHUDelement.h"
+
+#include "gaEngine/gaActor.h"
+#include "gaEngine/gaPlayer.h"
 
 #include "darkforces/dfLevel.h"
 #include "darkforces/dfCollision.h"
 #include "darkforces/dfMessageBus.h"
 
 #include "darkforces/dfFileSystem.h"
-#include "framework/fwHUDelement.h"
+
+const float c_height = 0.70f;
+const float c_radius = 0.2f;
+const float c_eyes = 0.55f;
+const float c_ankle = 0.26f;
+const float c_direction = -pi / 4.0f;
 
 myDarkForces::myDarkForces(std::string name, int width, int height) :
 	fwApp(name, width, height, "shaders/gamma", "#define GAMMA_CORRECTION 1\n")
@@ -29,11 +38,18 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 	// camera
 	m_camera = new fwCamera(width, height);
 
+	// player
+	glm::vec3 start = glm::vec3(-21.26f, 0.95f, 29.064f);	// main hall
+	fwCylinder bounding(start, c_height, c_radius);
+
+	m_player = new gaActor(bounding, c_eyes, c_ankle);
+
 	// controls
+	m_control = new gaPlayer(m_camera, m_player, c_direction);
+
 	// secret area	m_control = new fwControlThirdPerson(m_camera, glm::vec3(-36.4, 2.3, 37.8), 0.55f, -pi / 2, 0.2f);
 	// start m_control = new fwControlThirdPerson(m_camera, glm::vec3(-23.2, 4.3, 29.9), 0.55f, -pi / 2, 0.2f);
-	// main room 	
-	m_control = new fwControlThirdPerson(m_camera, glm::vec3(-21.26f, 0.95f, 29.064f), 0.55f, -pi / 4.0f, 0.2f);
+	// main room 	m_control = new fwControlThirdPerson(m_camera, glm::vec3(-21.26f, 0.95f, 29.064f), 0.55f, -pi / 4.0f, 0.2f);
 	// marr 	m_control = new fwControlThirdPerson(m_camera, glm::vec3(-24, 4.2, 36.3), 0.55f, -pi / 2, 0.2f);
 	// super secret		m_control = new fwControlThirdPerson(m_camera, glm::vec3(-46, 0.9, 26.8), 0.55f, -pi / 2, 0.2f);
 	// armory	m_control = new fwControlThirdPerson(m_camera, glm::vec3(-37, -2, 36), 0.55f, -pi / 2, 0.2f);
@@ -46,9 +62,7 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 	m_renderer->customLight("/data/shaders/lightning.glsl");
 
 	m_level = new dfLevel(m_filesystem, "SECBASE");
-	dfCollision* m_collision = new dfCollision();
-	m_collision->bind(m_level);
-	m_control->bind(m_collision);
+	m_player->bind(m_level);
 
 	// hud display
 	dfBitmap* bmStatuslt = new dfBitmap(m_filesystem, "STATUSLF.BM", m_level->palette());

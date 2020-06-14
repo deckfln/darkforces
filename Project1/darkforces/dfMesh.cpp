@@ -579,7 +579,7 @@ int TestSphereTriangle(fwSphere& s, glm::vec3& a, glm::vec3 b, glm::vec3 c, glm:
 }
 
 /**
- * Test collision againsta sphere
+ * Test move againsta sphere
  */
 bool dfMesh::collide(float step, glm::vec3& position, glm::vec3& target, float radius, glm::vec3& intersection, std::string& name)
 {
@@ -619,13 +619,13 @@ bool dfMesh::collide(float step, glm::vec3& position, glm::vec3& target, float r
 	fwSphere bsTranformed;
 	bsTranformed.applyMatrix4From(m_mesh->inverseWorldMatrix(), &bs);
 	aabb = fwAABBox(bsTranformed);	// convert to AABB for fast test
-	aabb.m_p.y += step;				// remove the step the player can walk over, below the step it should not trigger a collision
+	aabb.m_p.y += step;				// remove the step the player can walk over, below the step it should not trigger a move
 
 	if (m_boundingBox.intersect(aabb)) {
 		// now test with the sphere against each triangle
 		for (unsigned int i = 0; i < m_vertices.size(); i += 3) {
 			if (TestSphereTriangle(bsTranformed, m_vertices[i], m_vertices[i + 1], m_vertices[i + 2], intersection)) {
-				// convert back the collision point from model space => world space
+				// convert back the move point from model space => world space
 				bsTranformed.center(intersection);
 				bsTranformed.applyMatrix4(m_mesh->worldMatrix());
 				intersection = bsTranformed.center();
@@ -644,7 +644,7 @@ bool dfMesh::collide(float step, glm::vec3& position, glm::vec3& target, float r
 }
 
 /**
- * Test collision against a world AABBox
+ * Test move against a world AABBox
  * dfMesh::worldBoundingBox is updated everytime the dfMesh moves
  */
 bool dfMesh::collide(fwAABBox& box, std::string& name)
@@ -656,9 +656,9 @@ bool dfMesh::collide(fwAABBox& box, std::string& name)
 }
 
 /**
- * Test collision againsta sphere
+ * Test move againsta sphere
  */
-bool dfMesh::collide(fwCylinder& bounding, glm::vec3& target, glm::vec3& intersection, std::string& name, fwCollisionPoint& side)
+bool dfMesh::collide(fwCylinder& bounding, glm::vec3& target, glm::vec3& intersection, std::string& name, int& side)
 {
 	// convert player position (gl world space) into the elevator space (model space)
 	glm::vec3 glPosition = glm::vec3(m_mesh->inverseWorldMatrix() * glm::vec4(bounding.position(), 1.0));
@@ -710,7 +710,7 @@ bool dfMesh::collide(fwCylinder& bounding, glm::vec3& target, glm::vec3& interse
 		// now test with the sphere against each triangle
 		for (unsigned int i = 0; i < m_vertices.size(); i += 3) {
 			if (TestSphereTriangle(bsTranformed, m_vertices[i], m_vertices[i + 1], m_vertices[i + 2], intersection)) {
-				// convert back the collision point from model space => world space
+				// convert back the move point from model space => world space
 				bsTranformed.center(intersection);
 				bsTranformed.applyMatrix4(m_mesh->worldMatrix());
 				intersection = bsTranformed.center();

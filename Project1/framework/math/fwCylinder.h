@@ -10,7 +10,7 @@ public:
 	fwCylinder();
 	fwCylinder(const glm::vec3& position, float radius, float height);
 	fwCylinder(const fwCylinder& source, const glm::vec3 translation);
-	fwCylinder& copy(const fwCylinder& source);
+	fwCylinder& copy(const fwCylinder& source, float ratio=1.0f);
 
 	glm::vec3& position(void) { return m_position; };
 	void position(glm::vec3& p) { m_position = p; };

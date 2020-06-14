@@ -30,7 +30,7 @@ protected:
 	bool m_autoupdate = false;	// controler update itself without user action (like when the key is kept pressed)
 
 	fwCamera *camera = nullptr;
-	fwCollision* m_collision = nullptr;	// collision engine
+	fwCollision* m_collision = nullptr;	// move engine
 
 	virtual void updateCamera(void) {};
 

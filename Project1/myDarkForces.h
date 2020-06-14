@@ -3,19 +3,17 @@
 #include <glm/glm.hpp>
 
 #include "framework/fwApp.h"
-#include "framework/fwCamera.h"
-#include "framework/lights/fwDirectionLight.h"
-#include "framework/lights/fwPointLight.h"
-#include "framework/lights/fwSpotLight.h"
-#include "framework/fwScene.h"
-#include "framework/controls/fwOrbitControl.h"
-#include "framework/controls/fwControlThirdPerson.h"
-#include "framework/fwInstancedMesh.h"
-#include "framework/fwRenderer.h"
-#include "framework/mesh/fwMeshSkinned.h"
-#include "framework/fwParticles.h"
-#include "darkforces/dfLevel.h"
-#include "darkforces/dfFileSystem.h"
+
+class fwCamera;
+class fwScene;
+class fwSkybox;
+class fwLight;
+
+class dfFileSystem;
+class dfLevel;
+
+class gaActor;
+class gaPlayer;
 
 class myDarkForces : public fwApp
 {
@@ -23,9 +21,11 @@ class myDarkForces : public fwApp
 	fwLight* m_light = nullptr;
 	fwSkybox* m_skybox = nullptr;
 	fwScene* m_scene = nullptr;;
-	fwControlThirdPerson* m_control = nullptr;
 	glm::vec4* white = nullptr;
 	fwMesh* m_fwCamera = nullptr;
+
+	gaActor* m_player = nullptr;
+	gaPlayer* m_control = nullptr;
 
 	dfFileSystem* m_filesystem = nullptr;
 	dfLevel* m_level = nullptr;
