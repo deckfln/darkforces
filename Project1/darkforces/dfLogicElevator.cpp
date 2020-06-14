@@ -3,6 +3,8 @@
 #define _USE_MATH_DEFINES // for C++
 #include <math.h>
 
+#include "../framework/math/fwCylinder.h"
+
 #include "dfMesh.h"
 #include "dfSector.h"
 #include "dfLevel.h"
@@ -730,6 +732,35 @@ bool dfLogicElevator::checkCollision(fwAABBox& box)
 
 	if (m_mesh && m_mesh->visible() && z > m_zmin && z < m_zmax) {
 		return m_mesh->collide(box, m_name);
+	}
+
+	return false;
+}
+
+/**
+ * Check collision using a cylinder
+ */
+bool dfLogicElevator::checkCollision(fwCylinder& bounding, glm::vec3& direction, glm::vec3& intersection, fwCollisionPoint& side)
+{
+	// only test the elevator mesh if the supersector it is bind to is visible
+	// and if the play Z (gl space) in inbetwen the vertical elevator extend (level space)
+	glm::vec3 plevel;
+	glm::vec3 target = bounding.position() + direction;
+	m_parent->gl2level(target, plevel);
+
+	float floor, ceiling;
+
+	if (m_pSector) {
+		floor = m_pSector->currentFloorAltitude();
+		ceiling = m_pSector->ceiling();
+	}
+	else {
+		floor = -1000;
+		ceiling = 1000;
+	}
+
+	if (m_mesh && m_mesh->visible() && plevel.z > m_zmin && plevel.z < m_zmax && plevel.z < ceiling) {
+		return m_mesh->collide(bounding, target, intersection, m_name, side);
 	}
 
 	return false;

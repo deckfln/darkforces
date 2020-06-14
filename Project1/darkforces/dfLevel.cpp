@@ -8,7 +8,9 @@
 
 #include "../config.h"
 #include "../framework/geometries/fwPlaneGeometry.h"
+#include "../framework/math/fwCylinder.h"
 #include "../include/stb_image.h"
+
 #include "dfLogicElevator.h"
 #include "dfBitmap.h"
 #include "dfSign.h"
@@ -438,10 +440,8 @@ dfSector* dfLevel::findSector(glm::vec3& position)
 
 	// position is in opengl space
 	// TODO should move the opengl <-> level space conversion on a central place
-	glm::vec3 level_space(
-		position.x * 10.0f,
-		position.z * 10.0f,
-		position.y * 10.0f);
+	glm::vec3 level_space;
+	gl2level(position, level_space);
 
 	// quick check on the last sector
 	if (m_lastSector) {
@@ -543,7 +543,7 @@ void dfLevel::draw(fwCamera* camera, fwScene* scene)
 }
 
 /**
- * Check collision against any of the level component, static and dynamic
+ * Check collision against any of the level component, static Wall and dynamic
  */
 bool dfLevel::checkCollision(float step, glm::vec3& position, glm::vec3& target, float height, float radius, glm::vec3& collision)
 {
@@ -577,6 +577,39 @@ bool dfLevel::checkCollision(float step, glm::vec3& position, glm::vec3& target,
 }
 
 /**
+ * Check collision against any of the level component, static (wall, floor, ceiling) and dynamic
+ */
+bool dfLevel::checkEnvironement(fwCylinder& bounding, glm::vec3& direction, glm::vec3& intersection, fwCollisionPoint& side)
+{
+	dfSector* currentSector = findSector(bounding.position());
+	if (!currentSector) {
+		return false;
+	}
+
+	// convert glSpace to dfSpace
+	fwCylinder dfCurrent;
+	glm::vec3 dfIntersection;
+
+	gl2level(bounding, dfCurrent);
+
+	// check against static walls, floor and ceiling
+	if (currentSector->checkCollision(dfCurrent, direction, dfIntersection, side)) {
+		// convert back to glSpace
+		level2gl(dfIntersection, intersection);
+		return true;
+	}
+
+	// check against the elevators
+	for (auto elevator : m_inf->m_elevators) {
+		// mesh collision is done on glSpace
+		if (elevator->checkCollision(dfCurrent, direction, intersection, side)) {
+			return true;
+		}
+	}
+	return false;
+}
+
+/**
  * Convert level space to gl space
  */
 void dfLevel::level2gl(glm::vec3& level, glm::vec3& gl)
@@ -594,6 +627,28 @@ void dfLevel::gl2level(glm::vec3& gl, glm::vec3& level)
 	level.x = gl.x * 10.0f;
 	level.y = gl.z * 10.0f;
 	level.z = gl.y * 10.0f;
+}
+
+/**
+ * Convert level space to gl space
+ */
+void dfLevel::level2gl(fwCylinder& level, fwCylinder& gl)
+{
+	gl.copy(level);
+	glm::vec3 p;
+	gl2level(level.position(), p);
+	gl.position(p);
+}
+
+/**
+ * Convert gl space to level space
+ */
+void dfLevel::gl2level(fwCylinder& gl, fwCylinder& level)
+{
+	level.copy(gl);
+	glm::vec3 p;
+	level2gl(gl.position(), p);
+	level.position(p);
 }
 
 dfLevel::~dfLevel()

@@ -1,5 +1,4 @@
 #include "fwAABBox.h"
-#include "fwAABBox.h"
 
 #include <algorithm>    // std::min
 
@@ -174,6 +173,16 @@ void fwAABBox::reset(void)
 {
 	m_p.x = m_p.y = m_p.z = 999999;
 	m_p1.x = m_p1.y = m_p1.z = -99999;
+}
+
+/**
+ * Translate AABB by the vector
+ */
+fwAABBox fwAABBox::operator+(const glm::vec3& v)
+{
+	glm::vec3 p = m_p + v;
+	glm::vec3 p1 = m_p1 + v;
+	return fwAABBox(p, p1);
 }
 
 fwAABBox::~fwAABBox()

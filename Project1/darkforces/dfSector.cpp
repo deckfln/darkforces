@@ -7,6 +7,9 @@
 #include <algorithm>
 #include <glm/glm.hpp>
 
+#include "../framework/math/fwCylinder.h"
+#include "../framework/fwCollision.h"
+
 #include "dfSuperSector.h"
 #include "dfMesh.h"
 #include "dfParseINF.h"
@@ -821,6 +824,129 @@ bool dfSector::checkCollision(float step, glm::vec3& current, glm::vec3& target,
 	}
 
 	// no collision
+	return false;
+}
+
+/**
+ * Test walls to detect a collision
+ */
+bool dfSector::checkCollision(fwCylinder& current, glm::vec3& direction, glm::vec3& collision, fwCollisionPoint& side)
+{
+	glm::vec3 target = current.position() + direction;
+	glm::vec2 D = target;
+	glm::vec2 C = current.position();
+	glm::vec2 A, B;
+	glm::vec2 intersection;
+	bool collide = false;
+	float head_z = target.z + current.height();
+	float feet_z = target.z;
+
+
+	// test floor
+	if (feet_z < m_floorAltitude) {
+		collision = current.position();
+		collision.z = m_floorAltitude;
+		side = fwCollisionPoint::BOTTOM;
+		return true;
+	}
+
+	// test ceiling
+	if (head_z > m_ceilingAltitude) {
+		collision = current.position();
+		collision.z = m_ceilingAltitude;
+		side = fwCollisionPoint::TOP;
+		return true;
+	}
+
+	// Test polylines on the walls based on the setup (may ignore internals polylines (like for elevator SPIN1)
+	int dp = (m_displayPolygons == 0) ? m_polygons_walls.size() : m_displayPolygons;
+	glm::vec2 DC;
+	glm::vec2 AC;
+	float d;
+
+	for (int i = 0; i < dp; i++) {
+		for (auto wall : m_polygons_walls[i]) {
+			A = m_vertices[wall->m_left];
+			B = m_vertices[wall->m_right];
+
+			if (segment2segment(A, B, C, D, intersection)) {
+				// if the segment current->target (CD) intersect a wall (AB), we get a colision BEHIND the wall
+				collide = true;
+				side = fwCollisionPoint::FRONT;
+			}
+			else if (CircLine(A, B, C, current.radius(), intersection)) {
+				// if the circle target,radius intersect a wall (AB), we get a colision IN FRONT of the wall
+
+				// check now if the collision point is 'behind' the direction vector
+				DC = D - C;
+				AC = intersection - C;
+
+				d = glm::dot(DC, AC);
+				if (d <= 0) {
+					// the collision point is on the other side of the direction
+					collide = false;
+					side = fwCollisionPoint::BACK;
+				}
+				else {
+					collide = true;
+					side = fwCollisionPoint::LEFT;
+				}
+			}
+			else {
+				collide = false;
+			}
+
+
+			// do the segments intersect
+			if (collide) {
+				// is the height sufficients
+				float wall_z,	// ceiling of the wall (may depends on the adjoint floor), 
+					wallHeight, // absolute height of the wall
+					verticalSpace;
+
+				if (wall->m_adjoint < 0) {
+					// full wall
+					collision.x = intersection.x;
+					collision.y = intersection.y;
+					collision.z = m_referenceFloorAltitude;
+
+					std::cerr << "dfSector::checkCollision sector=" << m_name << " full wall=" << wall->m_id << " z=" << target.z << std::endl;
+
+					return true;
+				}
+				else {
+					// portal, check with the adjoint sector
+					float lowerWall_z = m_floorAltitude,
+						lowerWall_z1 = wall->m_pAdjoint->m_floorAltitude,
+						upperWall_z = wall->m_pAdjoint->m_ceilingAltitude,
+						upperWall_z1 = m_ceilingAltitude;
+
+					if (lowerWall_z1 < feet_z) {		// the feet hit the lowerwall
+						std::cerr << "dfSector::checkCollision sector=" << m_name << " wall=" << wall->m_id << " feet z=" << target.z << std::endl;
+
+						collision.x = intersection.x;
+						collision.y = intersection.y;
+						collision.z = m_floorAltitude;
+
+						return true;
+					}
+					else if (head_z > upperWall_z) {	// the head hit the upperWall
+						std::cerr << "dfSector::checkCollision sector=" << m_name << " wall=" << wall->m_id << " head z=" << head_z << std::endl;
+
+						collision.x = intersection.x;
+						collision.y = intersection.y;
+						collision.z = m_ceilingAltitude;
+
+						return true;
+					}
+					// actually it fits in the opening
+				}
+			}
+		}
+	}
+
+	// no collision
+	side = fwCollisionPoint::NONE;
 	return false;
 }
 

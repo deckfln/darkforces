@@ -14,9 +14,11 @@ using Point = std::array<Coord, 2>;
 
 #include "dfLogicTrigger.h"
 
+class fwCylinder;
 class dfMesh;
 class dfSuperSector;
 class dfLogicElevator;
+enum class fwCollisionPoint;
 
 /**
  * Connection of each vertice to the left and the right
@@ -170,6 +172,7 @@ public:
 	void event(int event_mask);
 	void removeHollowWalls(void);
 	bool checkCollision(float step, glm::vec3& current, glm::vec3& target, float height, float radius, glm::vec3& collision);
+	bool checkCollision(fwCylinder& current, glm::vec3& direction, glm::vec3& collision, fwCollisionPoint& side);
 
 	void wallVertices(int start, int len) { m_wallVerticesStart = start, m_wallVerticesLen = len; };
 	void floorVertices(int start, int len) { m_floorVerticesStart = start, m_floorVerticesLen = len; };

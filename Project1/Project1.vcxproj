@@ -208,6 +208,7 @@
     <ClCompile Include="framework\fwObject3D.cpp" />
     <ClCompile Include="framework\fwScene.cpp" />
     <ClCompile Include="framework\math\fwBox3.cpp" />
+    <ClCompile Include="framework\math\fwCylinder.cpp" />
     <ClCompile Include="framework\math\fwPlane.cpp" />
     <ClCompile Include="framework\math\fwSphere.cpp" />
     <ClCompile Include="framework\mesh\fwMeshSkinned.cpp" />
@@ -216,6 +217,7 @@
     <ClCompile Include="framework\render\fwRendererForward.cpp" />
     <ClCompile Include="framework\fwTexture.cpp" />
     <ClCompile Include="framework\fwUniform.cpp" />
+    <ClCompile Include="gaEngine\gaActor.cpp" />
     <ClCompile Include="glEngine\framebuffer\glDepthCubeMap.cpp" />
     <ClCompile Include="glEngine\glBufferAttribute.cpp" />
     <ClCompile Include="glEngine\glBufferObject.cpp" />
@@ -334,6 +336,7 @@
     <ClInclude Include="framework\fwObject3D.h" />
     <ClInclude Include="framework\fwScene.h" />
     <ClInclude Include="framework\math\fwBox3.h" />
+    <ClInclude Include="framework\math\fwCylinder.h" />
     <ClInclude Include="framework\math\fwPlane.h" />
     <ClInclude Include="framework\math\fwSphere.h" />
     <ClInclude Include="framework\mesh\fwMeshSkinned.h" />
@@ -342,6 +345,7 @@
     <ClInclude Include="framework\render\fwRendererForward.h" />
     <ClInclude Include="framework\fwTexture.h" />
     <ClInclude Include="framework\fwUniform.h" />
+    <ClInclude Include="gaEngine\gaActor.h" />
     <ClInclude Include="glEngine\framebuffer\glDepthCubeMap.h" />
     <ClInclude Include="glEngine\glBufferAttribute.h" />
     <ClInclude Include="glEngine\glBufferObject.h" />

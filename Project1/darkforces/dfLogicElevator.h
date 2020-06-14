@@ -11,6 +11,8 @@
 #include "dfMessage.h"
 #include "dfLogicElevatorConst.h"
 
+class fwCylinder;
+enum class fwCollisionPoint;
 class dfLevel;
 class dfMesh;
 class dfLogicTrigger;
@@ -117,6 +119,7 @@ public:
 	void dispatchMessage(dfMessage* message);
 	bool checkCollision(float step, glm::vec3& position, glm::vec3& target, float radius, glm::vec3& intersection);
 	bool checkCollision(fwAABBox& box);
+	bool checkCollision(fwCylinder& bounding, glm::vec3& direction, glm::vec3 &intersection, fwCollisionPoint& side);
 	void getMessagesToSectors(std::list<std::string>& sectors);
 	void sound(int effect, dfVOC* sound);
 	~dfLogicElevator(void);

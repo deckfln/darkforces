@@ -8,6 +8,16 @@
 
 #include <glm/vec3.hpp>
 
+enum class fwCollisionPoint {
+	NONE = 0,
+	TOP = 1,
+	BOTTOM = 2,
+	RIGHT = 4,
+	LEFT = 8,
+	FRONT = 16,
+	BACK = 32
+};
+
 class fwCollision
 {
 public:

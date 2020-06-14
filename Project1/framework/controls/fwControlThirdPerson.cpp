@@ -116,6 +116,7 @@ void fwControlThirdPerson::updateDirection(void)
  */
 void fwControlThirdPerson::updateCamera(time_t delta)
 {
+	delta = 33;
 	// ask the collision engine what is the altitude of the target position
 	if (m_collision) {
 		float ground = m_collision->ground(m_position);
@@ -127,8 +128,10 @@ void fwControlThirdPerson::updateCamera(time_t delta)
 			glm::vec3 t(m_time * m_time / 2, m_time, 1);
 			glm::vec3 target = m_physic * t;
 
-			std::cerr << "fwControlThirdPerson::update x=" << m_position.x << " y=" << m_position.y << " z=" << m_position.z << std::endl;
-			std::cerr << "fwControlThirdPerson::update TARGET x=" << target.x << " y=" << target.y << " z=" << target.z << std::endl;
+			// std::cerr << "fwControlThirdPerson::update x=" << m_position.x << " y=" << m_position.y << " z=" << m_position.z << std::endl;
+			// std::cerr << "fwControlThirdPerson::update TARGET x=" << target.x << " y=" << target.y << " z=" << target.z << std::endl;
+
+			std::cerr << "fwControlThirdPerson::update delta=" << m_position.y - target.y << std::endl;
 
 			if (!checkCollision(target)) {
 				m_position = target;
@@ -139,7 +142,7 @@ void fwControlThirdPerson::updateCamera(time_t delta)
 				m_velocity = glm::vec3(0);
 				m_time = 0;
 				m_physic[0][0] = 0;			m_physic[1][0] = m_velocity.x;		m_physic[2][0] = m_position.x;
-				m_physic[0][1] = -0.000981f; m_physic[1][1] = m_velocity.y;		m_physic[2][1] = m_position.y;
+				m_physic[0][1] = -0.00000981f; m_physic[1][1] = m_velocity.y;		m_physic[2][1] = m_position.y;
 				m_physic[0][2] = 0;			m_physic[1][2] = m_velocity.z;		m_physic[2][2] = m_position.z;
 			}
 
@@ -160,7 +163,7 @@ void fwControlThirdPerson::updateCamera(time_t delta)
 			if (feet - ground > m_radius) {
 				// detect if we move to freefall and need to engage the physic engine
 				m_physic[0][0] = 0;			m_physic[1][0] = m_velocity.x;		m_physic[2][0] = m_position.x;
-				m_physic[0][1] = -0.000981f; m_physic[1][1] = m_velocity.y;		m_physic[2][1] = m_position.y;
+				m_physic[0][1] = -0.00000981f; m_physic[1][1] = m_velocity.y;		m_physic[2][1] = m_position.y;
 				m_physic[0][2] = 0;			m_physic[1][2] = m_velocity.z;		m_physic[2][2] = m_position.z;
 
 				m_freefall = true;

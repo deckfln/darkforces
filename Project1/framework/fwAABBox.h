@@ -1,10 +1,24 @@
 #pragma once
 
 #include <glm/vec3.hpp>
-#include "math/fwSphere.h"
+#include <glm/mat4x4.hpp>
+
+class fwSphere;
+
+enum class fwAABBcollision {
+	NONE = 0,
+	TOP = 1,
+	BOTTOM = 2,
+	RIGHT = 4,
+	LEFT = 8,
+	FRONT = 16,
+	BACK = 32
+};
 
 class fwAABBox
 {
+	fwAABBcollision m_collisionSide = fwAABBcollision::NONE;
+
 public:
 	// create an impossible box, so 'extend' can work
 	glm::vec3 m_p = glm::vec3(999999, 999999, 999999);
@@ -29,5 +43,10 @@ public:
 	void apply(fwAABBox& source, glm::mat4& matrix);
 	bool not_init(void);
 	fwAABBox& copy(fwAABBox& source);
+	fwAABBox operator+(const glm::vec3& v);
+	fwAABBcollision collisionSide(void) { return m_collisionSide; };
+	bool collision(fwAABBcollision side) { return (int)m_collisionSide & (int)side; };
+	void collisionSide(fwAABBcollision side) { m_collisionSide = side; };
+
 	~fwAABBox();
 };

@@ -17,11 +17,14 @@
 #include "dfLogicElevator.h"
 #include "dfFileGOB.h"
 
+class fwCylinder;
+
 class dfMesh;
 class dfParserObjects;
 class dfAtlasTexture;
 class dfLogicElevator;
 class dfPalette;
+enum class fwCollisionPoint;
 
 /**
  *
@@ -90,7 +93,10 @@ public:
 	std::vector<dfBitmap*>& textures(void) { return m_bitmaps; };
 	dfPalette* palette(void) { return m_palette; };
 	bool checkCollision(float step, glm::vec3& position, glm::vec3& target, float height, float radius, glm::vec3& collision);
+	bool checkEnvironement(fwCylinder& bounding, glm::vec3& direction, glm::vec3& intersection, fwCollisionPoint& side);
 	static void level2gl(glm::vec3& source, glm::vec3& target);
 	static void gl2level(glm::vec3& gl, glm::vec3& level);
+	static void level2gl(fwCylinder& source, fwCylinder& target);
+	static void gl2level(fwCylinder& gl, fwCylinder& level);
 	~dfLevel();
 };
