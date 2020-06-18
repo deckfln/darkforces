@@ -4,6 +4,7 @@
 #include <glm/mat4x4.hpp>
 
 class fwSphere;
+class fwCylinder;
 
 enum class fwAABBcollision {
 	NONE = 0,
@@ -29,6 +30,8 @@ public:
 	fwAABBox(fwSphere& sphere);
 	fwAABBox(glm::vec3& p1, glm::vec3& p2);
 	fwAABBox(fwAABBox& source, glm::mat4& matrix);
+	fwAABBox(fwCylinder& cylinder);
+
 	fwAABBox& multiplyBy(float v);
 	bool inside(glm::vec3& position);
 	bool inside(fwAABBox& box);

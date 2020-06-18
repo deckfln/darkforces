@@ -23,7 +23,7 @@
 #include "darkforces/dfFileSystem.h"
 
 const float c_height = 0.70f;
-const float c_radius = 0.2f;
+const float c_radius = 0.3f;
 const float c_eyes = 0.55f;
 const float c_ankle = 0.26f;
 const float c_direction = -pi / 4.0f;
@@ -40,7 +40,7 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 
 	// player
 	glm::vec3 start = glm::vec3(-21.26f, 0.95f, 29.064f);	// main hall
-	fwCylinder bounding(start, c_height, c_radius);
+	fwCylinder bounding(start, c_radius, c_height);
 
 	m_player = new gaActor(bounding, c_eyes, c_ankle);
 

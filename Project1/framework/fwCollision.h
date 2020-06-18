@@ -8,14 +8,31 @@
 
 #include <glm/vec3.hpp>
 
-enum fwCollisionPoint {
-	NONE = 0,
-	TOP = 1,
-	BOTTOM = 2,
-	RIGHT = 4,
-	LEFT = 8,
-	FRONT = 16,
-	BACK = 32
+enum class fwCollisionLocation {
+    NONE,
+    TOP,
+    BOTTOM,
+    RIGHT,
+    RIGHT_BOTTOM,
+    RIGHT_TOP,
+    LEFT,
+    LEFT_BOTTOM,
+    LEFT_TOP,
+    FRONT,
+    FRONT_BOTTOM,
+    FRONT_TOP,
+};
+
+class fwCollisionPoint 
+{
+public:
+    fwCollisionLocation m_location = fwCollisionLocation::NONE;
+	glm::vec3 m_position = glm::vec3(0);
+
+    fwCollisionPoint(fwCollisionLocation location, glm::vec3& position) {
+        m_location = location;
+        m_position = position;
+    }
 };
 
 class fwCollision

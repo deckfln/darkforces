@@ -1,5 +1,8 @@
 #include "fwSphere.h"
 
+#include <algorithm>
+#include "fwCylinder.h"
+
 fwSphere::fwSphere()
 {
 
@@ -14,6 +17,28 @@ fwSphere::fwSphere(glm::vec3 &center, float radius)
 {
 	m_center = center;
 	m_radius = radius;
+}
+
+/**
+ * Create the sphere encompassing the cylinder
+ *   inside = true => the sphere is INSIDE the cylinder
+ *   inside = false => the sphere is OUTSIDEthe cylinder
+ */
+fwSphere::fwSphere(fwCylinder& cyl, bool inside)
+{
+	float height = cyl.height();
+	float radius = cyl.radius();
+
+	if (inside) {
+		m_radius = radius;
+	}
+	else {
+		m_radius = height / 2.0;
+	}
+
+	const glm::vec3& base = cyl.position();
+	m_center = glm::vec3(base.x, base.y + height / 2.0, base.z);
+
 }
 
 void fwSphere::applyMatrix4From(glm::mat4 &matrix, fwSphere *source)

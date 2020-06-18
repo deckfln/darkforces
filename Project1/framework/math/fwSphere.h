@@ -1,6 +1,8 @@
 #pragma once
 #include <glm/glm.hpp>
 
+class fwCylinder;
+
 class fwSphere
 {
 	glm::vec3 m_center = glm::vec3(0);
@@ -11,6 +13,7 @@ public:
 	fwSphere();
 	fwSphere(float radius);
 	fwSphere(glm::vec3 &center, float radius);
+	fwSphere(fwCylinder& cyl, bool inside);
 	int cache(int _cache) { m_cache = _cache;  return _cache; }
 	int cache(void) { return m_cache; }
 	const glm::vec3 &center(void) { return m_center; }

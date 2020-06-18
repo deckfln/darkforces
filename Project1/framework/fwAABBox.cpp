@@ -3,6 +3,7 @@
 #include <algorithm>    // std::min
 
 #include "math/fwSphere.h"
+#include "math/fwCylinder.h"
 
 fwAABBox::fwAABBox()
 {
@@ -33,6 +34,18 @@ fwAABBox::fwAABBox(fwAABBox& source, glm::mat4& matrix)
 {
 	m_p = glm::vec3(matrix * glm::vec4(source.m_p, 1.0));
 	m_p1 = glm::vec3(matrix * glm::vec4(source.m_p1, 1.0));
+}
+
+/**
+ * Create from a cylinder
+ */
+fwAABBox::fwAABBox(fwCylinder& cylinder)
+{
+	float radius = cylinder.radius();
+	float height = cylinder.height();
+	const glm::vec3& center = cylinder.position();
+	m_p = glm::vec3(center.x - radius, center.y, center.z - radius);
+	m_p1 = glm::vec3(center.x + radius, center.y + height, center.z + radius);
 }
 
 /**

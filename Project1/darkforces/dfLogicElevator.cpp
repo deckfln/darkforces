@@ -740,7 +740,7 @@ bool dfLogicElevator::checkCollision(fwAABBox& box)
 /**
  * Check move using a cylinder
  */
-bool dfLogicElevator::checkCollision(fwCylinder& bounding, glm::vec3& direction, glm::vec3& intersection, int& side)
+bool dfLogicElevator::checkCollision(fwCylinder& bounding, glm::vec3& direction, glm::vec3& intersection, std::list<fwCollisionPoint>& collisions)
 {
 	// only test the elevator mesh if the supersector it is bind to is visible
 	// and if the play Z (gl space) in inbetwen the vertical elevator extend (level space)
@@ -759,8 +759,10 @@ bool dfLogicElevator::checkCollision(fwCylinder& bounding, glm::vec3& direction,
 		ceiling = 1000;
 	}
 
-	if (m_mesh && m_mesh->visible() && plevel.z > m_zmin && plevel.z < m_zmax && plevel.z < ceiling) {
-		return m_mesh->collide(bounding, target, intersection, m_name, side);
+	// Hack to deal with sector elev3-1. The plateform is physically impossible, there is not enough space
+	// from the top to the bottom where there is sector 149
+	if (m_mesh && m_mesh->visible() && plevel.z > (m_zmin - 1.0) && plevel.z < m_zmax && plevel.z < ceiling) {
+		return m_mesh->collide(bounding, direction, intersection, m_name, collisions);
 	}
 
 	return false;

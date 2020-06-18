@@ -658,18 +658,18 @@ bool dfMesh::collide(fwAABBox& box, std::string& name)
 /**
  * Test move againsta sphere
  */
-bool dfMesh::collide(fwCylinder& bounding, glm::vec3& target, glm::vec3& intersection, std::string& name, int& side)
+bool dfMesh::collide(fwCylinder& bounding, glm::vec3& direction, glm::vec3& intersection, std::string& name, std::list<fwCollisionPoint>& collisions)
 {
-	// convert player position (gl world space) into the elevator space (model space)
-	glm::vec3 glPosition = glm::vec3(m_mesh->inverseWorldMatrix() * glm::vec4(bounding.position(), 1.0));
-	glm::vec3 glTarget = glm::vec3(m_mesh->inverseWorldMatrix() * glm::vec4(target, 1.0));
+	fwCylinder cyl(bounding, direction);
 
-	glm::vec3 direction = glm::normalize(glTarget - glPosition);
 	glm::vec2 br;
 	float distance;
-	fwAABBox aabb(glPosition, glTarget);	// convert to AABB for fast test
+	fwAABBox aabb(cyl);	// convert to AABB for fast test
 
-	if (m_boundingBox.intersect(aabb)) {
+	if (m_worldBoundingBox.intersect(aabb)) {
+		// convert player position (gl world space) into the elevator space (model space)
+		glm::vec3 glPosition = glm::vec3(m_mesh->inverseWorldMatrix() * glm::vec4(cyl.position(), 1.0));
+
 		// test if we move through a triangle	(position->segment intersect with triangle)
 		for (unsigned int i = 0; i < m_vertices.size(); i += 3) {
 			if (glm::intersectRayTriangle(
@@ -683,50 +683,56 @@ bool dfMesh::collide(fwCylinder& bounding, glm::vec3& target, glm::vec3& interse
 					// the intersection point is inside the radius
 					intersection = glPosition + distance * direction;
 
+					// convert from (model space) intersection to (level space) intersection
+					intersection = glm::vec3(m_mesh->worldMatrix() * glm::vec4(intersection, 1.0));
+
 					std::cerr << "dfMesh::collide ray collide with " << name << std::endl;
-					if (intersection.y < target.y) {
-						side = fwCollisionPoint::BOTTOM;
+					if (intersection.y < cyl.position().y) {
+						collisions.push_back(fwCollisionPoint(fwCollisionLocation::BOTTOM, intersection));
 					}
-					else if (intersection.y > target.y) {
-						side = fwCollisionPoint::TOP;
+					else if (intersection.y > cyl.position().y + cyl.height()) {
+						collisions.push_back(fwCollisionPoint(fwCollisionLocation::TOP, intersection));
 					}
 					else {
-						side = fwCollisionPoint::FRONT;
+						collisions.push_back(fwCollisionPoint(fwCollisionLocation::FRONT, intersection));
 					}
+						 
 					return true;
 				}
 			}
 		}
 	}
 
-	// convert player position (gl world space) into the elevator space (model space)
-	static fwSphere bs;
-	bs.set(target, bounding.radius());
+	// find the sphere included in the cylinder
+	fwSphere bs(bounding, true);
 	fwSphere bsTranformed;
 	bsTranformed.applyMatrix4From(m_mesh->inverseWorldMatrix(), &bs);
 	aabb = fwAABBox(bsTranformed);	// convert to AABB for fast test
 
 	if (m_boundingBox.intersect(aabb)) {
+		glm::vec3 localIntersect;
+
 		// now test with the sphere against each triangle
 		for (unsigned int i = 0; i < m_vertices.size(); i += 3) {
-			if (TestSphereTriangle(bsTranformed, m_vertices[i], m_vertices[i + 1], m_vertices[i + 2], intersection)) {
+			if (TestSphereTriangle(bsTranformed, m_vertices[i], m_vertices[i + 1], m_vertices[i + 2], localIntersect)) {
 				// convert back the move point from model space => world space
-				bsTranformed.center(intersection);
+				bsTranformed.center(localIntersect);
 				bsTranformed.applyMatrix4(m_mesh->worldMatrix());
-				intersection = bsTranformed.center();
 
-				glm::vec3 hit = intersection - bounding.position();
-				direction = target - bounding.position();
+				glm::vec3 hit = bsTranformed.center() - bounding.position();
 				if (glm::dot(hit, direction) > 0) {
+					intersection = bsTranformed.center();
+					float y = cyl.position().y + cyl.height() / 2.0f;
+
 					// as we checked on a sphere, ensure the intersection is in the direction we want to move, and not on our back
-					if (intersection.y < target.y) {
-						side = fwCollisionPoint::BOTTOM;
+					if (intersection.y < y) {
+						collisions.push_back(fwCollisionPoint(fwCollisionLocation::FRONT_BOTTOM, intersection));
 					}
-					else if (intersection.y > target.y) {
-						side = fwCollisionPoint::TOP;
+					else if (intersection.y > y) {
+						collisions.push_back(fwCollisionPoint(fwCollisionLocation::FRONT_TOP, intersection));
 					}
 					else {
-						side = fwCollisionPoint::FRONT;
+						collisions.push_back(fwCollisionPoint(fwCollisionLocation::FRONT, intersection));
 					}
 					std::cerr << "dfMesh::collide sphere collide with " << name << " x=" << intersection.x << " y=" << intersection.y << " z=" << intersection.z << std::endl;
 					return true;

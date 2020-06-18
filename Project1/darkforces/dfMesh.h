@@ -19,7 +19,7 @@ using N = uint32_t;
 using Coord = float;
 using Point = std::array<Coord, 2>;
 
-enum fwCollisionPoint;
+class fwCollisionPoint;
 class fwCylinder;
 
 class dfSector;
@@ -103,7 +103,7 @@ public:
 	void rotateZ(float angle);
 	void move(glm::vec3& position);
 	bool collide(float step, glm::vec3& position, glm::vec3& target, float radius, glm::vec3& intersection, std::string& name);
-	bool collide(fwCylinder& bounding, glm::vec3& target, glm::vec3& intersection, std::string& name, int& side);
+	bool collide(fwCylinder& bounding, glm::vec3& target, glm::vec3& intersection, std::string& name, std::list<fwCollisionPoint>& collisions);
 	bool collide(fwAABBox& box, std::string& name);
 	void parent(fwMesh* parent) { m_parentMesh = parent; };
 	bool visible(void);

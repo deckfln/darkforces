@@ -23,7 +23,7 @@ class fwControlThirdPerson : public fwControl
 	double m_theta_lock_down = 0;	// minimum and maximum value to lock down and up
 	double m_theta_lock_up = M_PI;
 
-	float m_speed = 0.15f;
+	float m_speed = 0.015f;
 	float m_height = 1;			// player eye position
 	float m_radius = 1;			// player cyclinder radius 
 
