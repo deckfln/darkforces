@@ -30,8 +30,7 @@ bool gaPlayer::checkKeys(time_t delta)
 
 void gaPlayer::updatePlayer(time_t delta)
 {
-	m_actor->rotate(m_velocity);
-	if (m_actor->moveTo(delta, m_shift ? 2.0f : 1.0f)) {
+	if (m_actor->moveTo(delta, m_velocity)) {
 		// freefalling
 		m_locked = true;
 	}

@@ -15,8 +15,7 @@ class gaActor
 	glm::vec3 m_direction = glm::vec3(0, c_gravity, 0);	// normalized front facing vector
 	glm::vec3 m_velocity = glm::vec3(0);
 
-	float m_speed = 0.0015f;					// normal speed
-	float m_run = 0.0030f;						// speed up when running
+	float m_speed = 0.0480f;					// normal speed
 
 	float m_ankle = 0;							// maximum step the actor can walk up
 	float m_eyes = 0;							// position of the eyes (from the feet)
@@ -28,7 +27,7 @@ class gaActor
 
 public:
 	gaActor(fwCylinder& bounding, float eyes, float ankle);
-	bool moveTo(time_t delta, bool run);
+	bool moveTo(time_t delta, glm::vec3& velocity);
 	void rotate(const glm::vec3& direction);
 	const glm::vec3& position(void) { return m_bounding.position(); };
 	float height(void);

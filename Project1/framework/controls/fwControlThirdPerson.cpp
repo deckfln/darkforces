@@ -62,10 +62,10 @@ bool fwControlThirdPerson::checkKeys(time_t delta)
 
 	if (!m_locked) {
 		if (m_currentKeys[GLFW_KEY_UP]) {
-			m_velocity = m_direction * m_speed * running;
+			m_velocity = m_direction * running;
 		}
 		if (m_currentKeys[GLFW_KEY_DOWN]) {
-			m_velocity = -m_direction * m_speed * running;
+			m_velocity = -m_direction * running;
 		}
 
 		if (!m_currentKeys[GLFW_KEY_DOWN] && !m_currentKeys[GLFW_KEY_UP]) {

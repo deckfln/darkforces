@@ -38,10 +38,10 @@ float gaActor::height(void)
 /**
  * Walk folowing the front vector
  */
-bool gaActor::moveTo(time_t delta, bool run)
+bool gaActor::moveTo(time_t delta, glm::vec3& velocity)
 {
-	glm::vec3 direction = m_direction;
-	direction.y = m_direction.y;
+	glm::vec3 direction = velocity * m_speed;
+	direction.y = c_gravity;
 
 	delta = 33;	// TODO: remove the fixed time step
 
