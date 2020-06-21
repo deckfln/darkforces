@@ -598,7 +598,7 @@ static bool intersectSphereTriangle(const glm::vec3& center_es, const glm::vec3&
 	plane = glm::vec4(normal.x, normal.y, normal.z, -(normal.x * a.x + normal.y * a.y + normal.z * a.z));
 	signedDistance = glm::dot(center_es, normal) + plane.w;
 
-	if (signedDistance <= 1.0f) {
+	if (signedDistance >= -1.0f && signedDistance <= 1.0f) {
 		// if the plane is passing trough the sphere (the ellipsoid deformed to look like a sphre)
 		// get the collision point of the sphere on the plane
 
@@ -754,24 +754,44 @@ bool dfMesh::collide(fwCylinder& bounding, glm::vec3& direction, glm::vec3& inte
 				// convert from (model space) intersection to (level space) intersection
 				intersection = glm::vec3(m_mesh->worldMatrix() * glm::vec4(intersection, 1.0));
 					
-				std::cerr << "dfMesh::collide ellipoid collides with " << name << std::endl;
+				// position of the intersection compared to the direction
+				glm::vec3 AC = glm::normalize(intersection - center_ws);
+				float d = glm::dot(glm::normalize(direction), AC);
 
-				if (origin.y - center_es.y > 0.9) {
+				float delta = center_es.y - origin.y;
+				fwCollisionLocation c;
+				if ( delta > 0.9) {
 					collisions.push_back(fwCollisionPoint(fwCollisionLocation::BOTTOM, intersection));
+					c=fwCollisionLocation::BOTTOM;
 				}
-				else if (origin.y - center_es.y < -0.9) {
+				else if (delta < -0.9) {
 					collisions.push_back(fwCollisionPoint(fwCollisionLocation::TOP, intersection));
+					c = fwCollisionLocation::TOP;
 				}
-				else if (origin.y - center_es.y > 0.5) {
+				else if (delta  > 0.5 && d > 0) {
 					collisions.push_back(fwCollisionPoint(fwCollisionLocation::FRONT_BOTTOM, intersection));
+					c = fwCollisionLocation::FRONT_BOTTOM;
 				}
-				else if (origin.y - center_es.y < -0.5) {
+				else if (delta < -0.5 && d > 0) {
 					collisions.push_back(fwCollisionPoint(fwCollisionLocation::FRONT_TOP, intersection));
+					c = fwCollisionLocation::FRONT_TOP;
+				}
+				else if (d <= 0) {
+					collisions.push_back(fwCollisionPoint(fwCollisionLocation::BACK, intersection));
+					c = fwCollisionLocation::BACK;
+				}
+				else if (d <= 0.4) {
+					collisions.push_back(fwCollisionPoint(fwCollisionLocation::LEFT, intersection));
+					c = fwCollisionLocation::LEFT;
 				}
 				else {
+					float l = glm::length(intersection - center_ws);
+					float l1 = glm::length(origin - center_es);
 					collisions.push_back(fwCollisionPoint(fwCollisionLocation::FRONT, intersection));
+					c = fwCollisionLocation::FRONT;
 				}
-						 
+				std::cerr << "dfMesh::collide ellipoid collides with " << name << " on " << (int)c <<std::endl;
+
 				return true;
 			}
 		}

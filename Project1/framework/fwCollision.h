@@ -21,6 +21,9 @@ enum class fwCollisionLocation {
     FRONT,
     FRONT_BOTTOM,
     FRONT_TOP,
+    BACK,
+    BACK_BOTTOM,
+    BACK_TOP,
 };
 
 class fwCollisionPoint 

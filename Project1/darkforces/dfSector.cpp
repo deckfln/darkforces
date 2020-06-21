@@ -494,10 +494,10 @@ void dfSector::linkWalls(void)
 		}
 
 		// sort the polygons to move the outside polygon at position 0
-		for (auto poly_start = 0; poly_start < m_polygons_vertices.size() - 1; poly_start++) {
+		for (unsigned int poly_start = 0; poly_start < m_polygons_vertices.size() - 1; poly_start++) {
 			Point p = m_polygons_vertices[poly_start][1];
 
-			for (auto poly = poly_start + 1; poly < m_polygons_vertices.size(); poly++) {
+			for (unsigned int poly = poly_start + 1; poly < m_polygons_vertices.size(); poly++) {
 				std::vector<Point>& polygon = m_polygons_vertices[poly];
 
 				// https://stackoverflow.com/questions/217578/how-can-i-determine-whether-a-2d-point-is-within-a-polygon
@@ -832,13 +832,13 @@ bool dfSector::checkCollision(float step, glm::vec3& current, glm::vec3& target,
  */
 bool dfSector::checkCollision(fwCylinder& current, glm::vec3& direction, glm::vec3& collision, std::list<fwCollisionPoint>& collisions)
 {
-	glm::vec3 target = current.position() + direction;
-	glm::vec2 D = target;
-	glm::vec2 C = current.position();
+	glm::vec3 target3D = current.position() + direction;
+	glm::vec2 target2D = target3D;
+	glm::vec2 direction2D = direction;
 	glm::vec2 A, B;
 	glm::vec2 intersection;
-	float head_z = target.z + current.height();
-	float feet_z = target.z;
+	float head_z = target3D.z + current.height();
+	float feet_z = target3D.z;
 
 	enum {
 		NONE,
@@ -863,7 +863,6 @@ bool dfSector::checkCollision(fwCylinder& current, glm::vec3& direction, glm::ve
 
 	// Test polylines on the walls based on the setup (may ignore internals polylines (like for elevator SPIN1)
 	int dp = (m_displayPolygons == 0) ? m_polygons_walls.size() : m_displayPolygons;
-	glm::vec2 DC;
 	glm::vec2 AC;
 	float d;
 
@@ -872,18 +871,13 @@ bool dfSector::checkCollision(fwCylinder& current, glm::vec3& direction, glm::ve
 			A = m_vertices[wall->m_left];
 			B = m_vertices[wall->m_right];
 
-			if (segment2segment(A, B, C, D, intersection)) {
-				// if the segment current->target (CD) intersect a wall (AB), we get a colision BEHIND the wall
-				collide = CROSSING;
-			}
-			else if (CircLine(A, B, C, current.radius(), intersection)) {
+			if (CircLine(A, B, target2D, current.radius(), intersection)) {
 				// if the circle target,radius intersect a wall (AB), we get a colision IN FRONT of the wall
 
 				// check now if the move point is 'behind' the direction vector
-				DC = D - C;
-				AC = intersection - C;
+				AC = intersection - target2D;
 
-				d = glm::dot(DC, AC);
+				d = glm::dot(direction2D, AC);
 				if (d <= 0) {
 					// the move point is on the other side of the direction
 					collide = NONE;
@@ -912,7 +906,7 @@ bool dfSector::checkCollision(fwCylinder& current, glm::vec3& direction, glm::ve
 
 					collisions.push_back(fwCollisionPoint(fwCollisionLocation::FRONT, collision));
 
-					std::cerr << "dfSector::checkCollision sector=" << m_name << " full wall=" << wall->m_id << " z=" << target.z << std::endl;
+					std::cerr << "dfSector::checkCollision sector=" << m_name << " full wall=" << wall->m_id << " z=" << target3D.z << std::endl;
 					i = dp;
 					break;
 				}
@@ -924,23 +918,16 @@ bool dfSector::checkCollision(fwCylinder& current, glm::vec3& direction, glm::ve
 						ceiling_current = m_ceilingAltitude;
 
 					if (floor_adjoint > feet_z) {		// the feet hit the lowerwall
-						std::cerr << "dfSector::checkCollision sector=" << m_name << " wall=" << wall->m_id << " feet z=" << target.z << std::endl;
+						std::cerr << "dfSector::checkCollision sector=" << m_name << " wall=" << wall->m_id << " feet z=" << target3D.z << std::endl;
 
 						collision.x = intersection.x;
 						collision.y = intersection.y;
 						collision.z = floor_adjoint;
 
-						if (collide == CROSSING) {
-							// if we crossed the segment, it is a bottom collision
-							collisions.push_back(fwCollisionPoint(fwCollisionLocation::BOTTOM, collision));
-						}
-						else {
-							// otherwise it is a front collision
-							collisions.push_back(fwCollisionPoint(fwCollisionLocation::FRONT_BOTTOM, collision));
-						}
+						// otherwise it is a front collision
+						collisions.push_back(fwCollisionPoint(fwCollisionLocation::FRONT_BOTTOM, collision));
 
 						i = dp;
-						break;
 					}
 					else if (ceiling_adjoint < head_z ) {	// the head hit the upperWall
 						std::cerr << "dfSector::checkCollision sector=" << m_name << " wall=" << wall->m_id << " head z=" << head_z << std::endl;
@@ -949,15 +936,9 @@ bool dfSector::checkCollision(fwCylinder& current, glm::vec3& direction, glm::ve
 						collision.y = intersection.y;
 						collision.z = ceiling_adjoint;
 
-						if (collide == CROSSING) {
-							collisions.push_back(fwCollisionPoint(fwCollisionLocation::TOP, collision));
-						}
-						else {
-							collisions.push_back(fwCollisionPoint(fwCollisionLocation::FRONT_TOP, collision));
-						}
+						collisions.push_back(fwCollisionPoint(fwCollisionLocation::FRONT_TOP, collision));
 
 						i = dp;
-						break;
 					}
 					else {
 						// actually it fits in the opening

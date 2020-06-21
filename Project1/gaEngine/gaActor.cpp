@@ -104,6 +104,7 @@ bool gaActor::moveTo(time_t delta, glm::vec3& velocity)
 				case fwCollisionLocation::FRONT:
 				case fwCollisionLocation::TOP:
 				case fwCollisionLocation::FRONT_TOP:
+				case fwCollisionLocation::LEFT:
 					// hit a full wall
 					// hit the ceiling or a adjoint ceiling
 					// don't move
