@@ -114,18 +114,39 @@ void dfLogicTrigger::addEvents(dfSector* pSector)
  */
 void dfLogicTrigger::boundingBox(glm::vec2& left, glm::vec2& right, float floor, float ceiling)
 {
+	// extend flat panels to the 3d dimension (will help with collision detection)
+	float lx, rx;
+	if (left.x == right.x) {
+		lx = left.x - 0.1f;
+		rx = left.x + 0.1f;
+	}
+	else {
+		lx = left.x;
+		rx = right.x;
+	}
+
+	float ly, ry;
+	if (left.y == right.y) {
+		ly = left.y - 0.1f;
+		ry = left.y + 0.1f;
+	}
+	else {
+		ly = left.y;
+		ry = right.y;
+	}
+
 	m_boundingBox = fwAABBox(
-		left.x, right.x,
-		left.y, right.y,
+		lx, rx,
+		ly, ry,
 		floor, ceiling
 	);
 
-	m_boundingBoxCenter.x = (left.x + right.x) / 2.0f;
-	m_boundingBoxCenter.y = (left.y + right.y) / 2.0f;
+	m_boundingBoxCenter.x = (lx + rx) / 2.0f;
+	m_boundingBoxCenter.y = (ly + ry) / 2.0f;
 	m_boundingBoxCenter.z = (floor + ceiling) / 2.0f;
 
-	m_boundingBoxSize.x = abs(left.x - right.x);
-	m_boundingBoxSize.y = abs(left.y - right.y);
+	m_boundingBoxSize.x = abs(lx - rx);
+	m_boundingBoxSize.y = abs(ly - ry);
 	m_boundingBoxSize.z = abs(ceiling - floor);
 }
 
