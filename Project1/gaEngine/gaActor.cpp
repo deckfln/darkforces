@@ -100,10 +100,15 @@ bool gaActor::moveTo(time_t delta, glm::vec3& velocity)
 			for (auto& collision : collisions) {
 				switch (collision.m_location) {
 				case fwCollisionLocation::FRONT:
-				case fwCollisionLocation::TOP:
-				case fwCollisionLocation::FRONT_TOP:
 				case fwCollisionLocation::LEFT:
 					// hit a full wall
+					// break 2D movement but keep vertical moveent
+					target.x = m_bounding.position().x;
+					target.z = m_bounding.position().z;
+					break;
+
+				case fwCollisionLocation::FRONT_TOP:
+				case fwCollisionLocation::TOP:
 					// hit the ceiling or a adjoint ceiling
 					// don't move
 					return false;
@@ -111,7 +116,9 @@ bool gaActor::moveTo(time_t delta, glm::vec3& velocity)
 				case fwCollisionLocation::FRONT_BOTTOM:
 					// if we can step over
 					if (collision.m_position.y - target.y > m_ankle) {
-						return false;	// cannot move over the step
+						// break 2D movement but keep vertical moveent
+						target.x = m_bounding.position().x;
+						target.z = m_bounding.position().z;
 					}
 					break;
 
