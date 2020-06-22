@@ -759,9 +759,14 @@ bool dfLogicElevator::checkCollision(fwCylinder& bounding, glm::vec3& direction,
 		ceiling = 1000;
 	}
 
+	/*
+	if (m_name == "red_door") {
+		printf("dfLogicElevator::checkCollision\n");
+	}
+	*/
 	// Hack to deal with sector elev3-1. The plateform is physically impossible, there is not enough space
 	// from the top to the bottom where there is sector 149
-	if (m_mesh && m_mesh->visible()  && plevel.z > (m_zmin - 2.0) && plevel.z < m_zmax && plevel.z < ceiling) {
+	if (m_mesh && m_mesh->visible() && plevel.z > (m_zmin - 4.0) && plevel.z < m_zmax && plevel.z < ceiling) {
 		return m_mesh->collide(bounding, direction, intersection, m_name, collisions);
 	}
 

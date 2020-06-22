@@ -723,7 +723,7 @@ bool dfMesh::collide(fwCylinder& bounding, glm::vec3& direction, glm::vec3& inte
 
 		// extract the ellipsoid from the cylinder
 		glm::vec3 ellipsoid(cyl.height() / 2.0f, cyl.radius(), cyl.radius());
-		glm::vec3 center_ws = cyl.position() + direction;
+		glm::vec3 center_ws = cyl.position();
 		center_ws.y += cyl.height() / 2.0f;
 
 		// deform the model_space to make the ellipsoid  sphere

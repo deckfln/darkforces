@@ -41,7 +41,6 @@ float gaActor::height(void)
 bool gaActor::moveTo(time_t delta, glm::vec3& velocity)
 {
 	glm::vec3 direction = velocity * m_speed;
-	direction.y = c_gravity;
 
 	delta = 33;	// TODO: remove the fixed time step
 
@@ -92,10 +91,9 @@ bool gaActor::moveTo(time_t delta, glm::vec3& velocity)
 		}
 	}
 	else {
-		// move forward
+		// move forward (include a test to see if we can step down)
+		direction.y = c_gravity;
 		target = m_bounding.position() + direction;
-
-		// check front move from the ankles (to test if we can step up)
 
 		if (m_level->checkEnvironement(m_bounding, direction, intersection, collisions)) {
 
@@ -118,7 +116,7 @@ bool gaActor::moveTo(time_t delta, glm::vec3& velocity)
 					break;
 
 				case fwCollisionLocation::BOTTOM:
-					// if we can step over
+					// if we can step over (anlke counted twice, because the target is 1 ankle below
 					if (collision.m_position.y - target.y > m_ankle) {
 						return false;	// cannot move over the step
 					}
