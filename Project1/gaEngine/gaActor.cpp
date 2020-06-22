@@ -73,13 +73,13 @@ bool gaActor::moveTo(time_t delta, glm::vec3& velocity)
 
 				case fwCollisionLocation::TOP:
 					// lock down from the head
-					m_bounding.position().y = collision.m_position.y - m_eyes;
+					m_bounding.position().y = collision.m_position.y - m_bounding.height();
 					// fall trough to start a drop down
 
 				case fwCollisionLocation::FRONT:
 					// so, hit a wall but not a ground, stop moving and drop dow
 					std::cerr << "wControlThirdPerson::update hit wall, fall down" << std::endl;
-					m_time = 0;
+					m_time = 33;
 					m_physic[0][0] = 0;			m_physic[1][0] = 0;		m_physic[2][0] = m_bounding.position().x;
 					m_physic[0][1] = c_gravity;	m_physic[1][1] = 0;		m_physic[2][1] = m_bounding.position().y;
 					m_physic[0][2] = 0;			m_physic[1][2] = 0;		m_physic[2][2] = m_bounding.position().z;
