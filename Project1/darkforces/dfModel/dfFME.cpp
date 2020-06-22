@@ -36,7 +36,7 @@ void dfFME::spriteModel(GLmodel& model, int id)
 
 	SpriteModel* sm = &model.models[id];
 	sm->size = glm::vec2(m_image->m_width / FME_WORLDSIZE_X, m_image->m_height / FME_WORLDSIZE_Y);
-	sm->insert = glm::vec2(m_image->m_InsertX / FME_WORLDSIZE_X, -m_image->m_InsertY / FME_WORLDSIZE_Y);
+	sm->insert = glm::vec2(m_image->m_InsertX / FME_WORLDSIZE_X, (-m_image->m_InsertY - m_image->m_height) / FME_WORLDSIZE_Y);
 
 	sm->world = glm::vec2(0.5, 1);
 	sm->states = glm::i16vec2(0, 0);
