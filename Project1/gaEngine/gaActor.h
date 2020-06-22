@@ -6,6 +6,7 @@
 #include "../framework/math/fwCylinder.h"
 
 const float c_gravity = -0.00000981f;
+const float c_jump = -c_gravity * 300.0f;
 
 class dfLevel;
 
@@ -33,7 +34,7 @@ public:
 	float height(void);
 	float radius(void);
 	float eyes(void) { return m_eyes; };
-	void jump(void);
+	void jump(const glm::vec3& velocity);
 	void bind(dfLevel* level) { m_level = level; };
 	~gaActor();
 };

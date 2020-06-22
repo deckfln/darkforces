@@ -133,9 +133,9 @@ bool gaActor::moveTo(time_t delta, glm::vec3& velocity)
 		else {
 			// no collision at all => nothing under the feet of the actor => freefall
 			// engage the physic engine
-			m_physic[0][0] = 0;			m_physic[1][0] = m_velocity.x;		m_physic[2][0] = target.x;
-			m_physic[0][1] = c_gravity; m_physic[1][1] = m_velocity.y;		m_physic[2][1] = target.y;
-			m_physic[0][2] = 0;			m_physic[1][2] = m_velocity.z;		m_physic[2][2] = target.z;
+			m_physic[0][0] = 0;			m_physic[1][0] = direction.x/20.0f;		m_physic[2][0] = target.x;
+			m_physic[0][1] = c_gravity; m_physic[1][1] = direction.y;		m_physic[2][1] = target.y;
+			m_physic[0][2] = 0;			m_physic[1][2] = direction.z/20.0f;		m_physic[2][2] = target.z;
 
 			m_time = delta;
 			std::cerr << "fwControlThirdPerson::updateCamera engage freefall x=" << m_bounding.position().x << " y=" << m_bounding.position().y << " z=" << m_bounding.position().y << std::endl;
@@ -150,13 +150,14 @@ bool gaActor::moveTo(time_t delta, glm::vec3& velocity)
 /**
  * trigger a jump
  */
-void gaActor::jump(void)
+void gaActor::jump(const glm::vec3& velocity)
 {
-	m_velocity.y = 0.004f;
+	glm::vec3 direction = velocity * m_speed;
+	direction.y = c_jump;
 
-	m_physic[0][0] = 0;			m_physic[1][0] = m_velocity.x;		m_physic[2][0] = m_bounding.position().x;
-	m_physic[0][1] = -0.00000981f; m_physic[1][1] = m_velocity.y;		m_physic[2][1] = m_bounding.position().y;
-	m_physic[0][2] = 0;			m_physic[1][2] = m_velocity.z;		m_physic[2][2] = m_bounding.position().z;
+	m_physic[0][0] = 0;			m_physic[1][0] = direction.x/20.0f;		m_physic[2][0] = m_bounding.position().x;
+	m_physic[0][1] = c_gravity; m_physic[1][1] = direction.y;		m_physic[2][1] = m_bounding.position().y;
+	m_physic[0][2] = 0;			m_physic[1][2] = direction.z/20.0f;		m_physic[2][2] = m_bounding.position().z;
 
 	m_time = 33;
 }

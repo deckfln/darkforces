@@ -21,7 +21,8 @@ bool gaPlayer::checkKeys(time_t delta)
 	if (!m_locked) {
 		if (m_currentKeys[GLFW_KEY_X]) {
 			// JUMP
-			m_actor->jump();
+			m_velocity.y = 0.004f;
+			m_actor->jump(m_velocity);
 		}
 	}
 
