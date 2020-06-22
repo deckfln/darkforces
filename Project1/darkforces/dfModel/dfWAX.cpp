@@ -186,8 +186,10 @@ void dfWAX::spriteModel(GLmodel &model, int id)
 	float heightFactor = WAX_WORLDSIZE_Y / (m_Wheight / 65536.0f);
 
 	SpriteModel* sm = &model.models[id];
+
+	// fix the position of the quad based on the insert_Y
 	sm->size = glm::vec2(m_width / widthFactor, m_height / heightFactor);
-	sm->insert = glm::vec2(m_insertX / widthFactor, -m_insertY / heightFactor);
+	sm->insert = glm::vec2(m_insertX / widthFactor, (-m_insertY - m_height) / heightFactor);
 
 	sm->world = glm::vec2(0.5, 1);
 	sm->states = glm::i16vec2(0, 0);

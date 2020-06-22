@@ -25,10 +25,11 @@ out vec2 TexCoord;
 
 void main()
 {
-    textureID = vTextureID[0]; // Point has only one vertex
-    ambient = vAmbient[0]; // Point has only one vertex
+    textureID = vTextureID[0];  // Point has only one vertex
+    ambient = vAmbient[0];      // Point has only one vertex
 
-    vec3 p1 = world[0];  // gl_in[0].gl_Position;
+    vec3 p1 = world[0];         // gl_in[0].gl_Position;
+    p1.y += sm[0].insert.y;     // apply y delta
 
     // force the sprite to face the camera
     // trick is : extend the original point along the camera right vector
