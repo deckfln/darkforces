@@ -248,10 +248,12 @@ fwMesh *fwAABBox::draw(void)
 		m_p1.x, m_p.y, m_p1.z, // bottom-left
 		m_p.x, m_p.y, m_p1.z, // bottom-right
 		// top face
+		m_p1.x,m_p1.y, m_p1.z, // bottom-right
+		m_p.x, m_p1.y, m_p1.z, // bottom-left
 		m_p.x, m_p1.y, m_p.z, // top-left
 		m_p1.x,m_p1.y, m_p.z, // top-right     
 		m_p1.x,m_p1.y, m_p1.z, // bottom-right
-		m_p.x, m_p1.y, m_p1.z // bottom-left        
+		m_p1.x,m_p1.y, m_p.z // top-right     
 	};
 
 	fwGeometry* geometry = new fwGeometry();

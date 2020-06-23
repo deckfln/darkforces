@@ -8,9 +8,13 @@ float lumis = dot(color, W1);
 
 // TODO bright pixels are not affected by the ambient dim, likely because they are supposed to be light source
 //if (lumis < 0.7) {
+
+// detect case of non darkforces managed shader
+if (material != vec3(0)) {
 #ifdef HEADLIGHT
 	color = color * (ambient + (1.0 - z));
 #else
 	color = color * ambient;
 #endif
+}
 //}
