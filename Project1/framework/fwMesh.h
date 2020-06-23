@@ -31,14 +31,14 @@ class fwMesh: public fwObject3D
 								// 1... => the app is sorting the meshes. 1 is drawn first, then 2 ....
 	void *m_pExtra = nullptr;
 	std::list <fwUniform*> m_uniforms;	// meshes can have dedicated uniforms (not included in the material)
+
+protected:
 	fwMeshRendering m_rendering = fwMeshRendering::FW_MESH_TRIANGLES;	// Rendering mode of the mesh
 	float m_pointSize = 1.0;			// for FW_MESH_POINT rendering
 
-protected:
 	fwGeometry *geometry = nullptr;
 	fwMaterial *material = nullptr;
 	std::map<GLuint, glVertexArray *>vao;
-	bool wireFrame = false;
 	GLuint buildVAO(glProgram* program);
 
 public:
@@ -71,8 +71,6 @@ public:
 
 	fwMesh &show_normalHelper(bool _helper);
 	bool is_normalHelper(void);
-
-	fwMesh &draw_wireframe(bool _wireframe);
 
 	int zOrder(void) { return m_zorder; };
 	void zOrder(int z) { m_zorder = z; };

@@ -45,7 +45,26 @@ void fwInstancedMesh::draw(glProgram *program)
 			dirty_instances = false;
 		}
 	}
-	geometry->draw(wireFrame ? GL_LINES : GL_TRIANGLES, vao[id]);
+
+	switch (m_rendering) {
+	case fwMeshRendering::FW_MESH_POINT:
+		glPointSize(m_pointSize);
+		geometry->draw(GL_POINTS, vao[id]);
+		glPointSize(1.0f);
+		break;
+	case fwMeshRendering::FW_MESH_LINES:
+		geometry->draw(GL_LINES, vao[id]);
+		break;
+	case fwMeshRendering::FW_MESH_LINE:
+		glEnable(GL_LINE_WIDTH);
+		glLineWidth(16.0f);
+		geometry->draw(GL_LINE, vao[id]);
+		glDisable(GL_LINE_WIDTH);
+		break;
+	default:
+		geometry->draw(GL_TRIANGLES, vao[id]);
+		break;
+	}
 }
 
 fwInstancedMesh::~fwInstancedMesh()

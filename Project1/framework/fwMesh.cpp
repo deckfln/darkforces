@@ -74,12 +74,6 @@ bool fwMesh::is_normalHelper(void)
 	return normalHelper;
 }
 
-fwMesh &fwMesh::draw_wireframe(bool _wireframe)
-{
-	wireFrame = _wireframe;
-	return *this;
-}
-
 fwMesh& fwMesh::addUniform(fwUniform* uniform)
 {
 	m_uniforms.push_front(uniform);
