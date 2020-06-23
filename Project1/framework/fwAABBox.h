@@ -5,6 +5,7 @@
 
 class fwSphere;
 class fwCylinder;
+class fwMesh;
 
 enum class fwAABBcollision {
 	NONE = 0,
@@ -20,6 +21,9 @@ class fwAABBox
 {
 	fwAABBcollision m_collisionSide = fwAABBcollision::NONE;
 
+	// draw the coollision box
+	fwMesh* m_mesh=nullptr;	
+
 public:
 	// create an impossible box, so 'extend' can work
 	glm::vec3 m_p = glm::vec3(999999, 999999, 999999);
@@ -32,6 +36,8 @@ public:
 	fwAABBox(fwAABBox& source, glm::mat4& matrix);
 	fwAABBox(fwCylinder& cylinder);
 
+	void set(float, float, float, float, float, float);
+
 	fwAABBox& multiplyBy(float v);
 	bool inside(glm::vec3& position);
 	bool inside(fwAABBox& box);
@@ -41,7 +47,7 @@ public:
 	float surface(void);
 	float volume(void);
 	void reset(void);
-	void translateFrom(fwAABBox& source, glm::vec3& translation);
+	void translateFrom(const fwAABBox& source, glm::vec3& translation);
 	void rotateFrom(fwAABBox& source, glm::vec3& rotation);
 	void apply(fwAABBox& source, glm::mat4& matrix);
 	bool not_init(void);
@@ -50,6 +56,6 @@ public:
 	fwAABBcollision collisionSide(void) { return m_collisionSide; };
 	bool collision(fwAABBcollision side) { return (int)m_collisionSide & (int)side; };
 	void collisionSide(fwAABBcollision side) { m_collisionSide = side; };
-
+	fwMesh *draw(void);
 	~fwAABBox();
 };

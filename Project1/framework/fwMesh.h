@@ -16,7 +16,8 @@ constexpr auto MESH = 1;
 enum class fwMeshRendering {
 	FW_MESH_TRIANGLES,
 	FW_MESH_POINT,
-	FW_MESH_LINE
+	FW_MESH_LINE,
+	FW_MESH_LINES
 };
 
 class fwMesh: public fwObject3D

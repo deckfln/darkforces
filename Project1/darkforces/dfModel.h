@@ -36,19 +36,23 @@ struct GLmodel {
 	int stIndex = 0, atIndex = 0, ftIndex = 0;
 };
 
+#include "../framework/fwAABBox.h"
+
 class dfModel
 {
 protected:
 	std::string m_name;
 	int m_id = 0;
+	fwAABBox m_bounding_gl;	// bounding box in gl space
 
 public:
 	dfModel(std::string& name);
 	bool named(std::string& name);
 	std::string& name(void) { return m_name; };
 	int id(void) { return m_id; };
+	const fwAABBox& bounding(void) { return m_bounding_gl; };
 	virtual int textureID(int state, int frame) { return 0; };
-	virtual void spriteModel(GLmodel& model, int id) {};
+	virtual void spriteModel(GLmodel& model, int id);
 	virtual int framerate(int state) { return 0; }
 	virtual int nextFrame(int state, unsigned int frame) { return 0; };
 };

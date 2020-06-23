@@ -226,7 +226,7 @@ void dfWAX::spriteModel(GLmodel &model, int id)
 		}
 	}
 
-	m_id = id;
+	dfModel::spriteModel(model, id);
 }
 
 /**

@@ -55,7 +55,7 @@ bool gaActor::moveTo(time_t delta, glm::vec3& velocity)
 		target = m_physic * t3x3;
 		direction = target - m_bounding.position();
 
-		// std::cerr << "fwControlThirdPerson::update x=" << m_position.x << " y=" << m_position.y << " z=" << m_position.z << std::endl;
+		// std::cerr << "fwControlThirdPerson::update x=" << m_position_lvl.x << " y=" << m_position_lvl.y << " z=" << m_position_lvl.z << std::endl;
 		// std::cerr << "fwControlThirdPerson::update TARGET x=" << target.x << " y=" << target.y << " z=" << target.z << std::endl;
 
 		std::cerr << "fwControlThirdPerson::update delta=" << m_bounding.position().y - target.y << std::endl;

@@ -1,6 +1,8 @@
 #include "dfFME.h"
 
 #include <iostream>
+#include <algorithm>
+
 #include "../dfPalette.h"
 #include "../dfFileSystem.h"
 #include "../dfFrame.h"
@@ -45,7 +47,7 @@ void dfFME::spriteModel(GLmodel& model, int id)
 	sm->states.x = 65535;
 	sm->states.y = m_image->m_textureID;
 
-	m_id = id;
+	dfModel::spriteModel(model, id);
 }
 
 dfFME::~dfFME()

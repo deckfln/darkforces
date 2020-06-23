@@ -31,7 +31,7 @@ class dfMesh {
 	std::vector<dfMesh*> m_children;
 
 	// real buffers
-	std::vector <glm::vec3> m_vertices;		// level vertices (based off m_position)
+	std::vector <glm::vec3> m_vertices;		// level vertices (based off m_position_lvl)
 	std::vector <glm::vec2> m_uvs;			// UVs inside the source texture
 	std::vector <float> m_textureID;		// TextureID inside the megatexture
 	std::vector <float> m_ambient;			// light intensity of the object

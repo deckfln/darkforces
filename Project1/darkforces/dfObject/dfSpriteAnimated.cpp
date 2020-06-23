@@ -12,16 +12,18 @@ dfSpriteAnimated::dfSpriteAnimated(dfWAX* wax, glm::vec3& position, float ambien
 
 bool dfSpriteAnimated::updateSprite(glm::vec3* position, glm::vec4* texture, glm::vec3* direction)
 {
-	dfSprite::updateSprite(position, texture, direction);
+	if (m_dirtyPosition) {
+		direction->x = m_direction.x;
+		direction->y = m_direction.z;	// level space to gl space
+		direction->z = m_direction.y;
+	}
 
-	direction->x = m_direction.x;
-	direction->y = m_direction.z;	// level space to gl space
-	direction->z = m_direction.y;
+	if (m_dirtyAnimation) {
+		texture->g = (float)m_state;
+		texture->b = (float)m_frame;
+	}
 
-	texture->g = (float)m_state;
-	texture->b = (float)m_frame;
-
-	return false;
+	return dfSprite::updateSprite(position, texture, direction);
 }
 
 /**
@@ -54,7 +56,7 @@ bool dfSpriteAnimated::update(time_t t)
 		if (delta >= frameTime) {
 			m_frame = m_source->nextFrame(m_state, m_frame);
 			m_lastFrame = t;
-			m_dirty = true;
+			m_dirtyAnimation = true;
 
 			return true;
 		}

@@ -1,9 +1,18 @@
 #include "fwAABBox.h"
 
 #include <algorithm>    // std::min
+#include <glm/gtx/transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+#include <glm/vec4.hpp>
+
+#include "../glad/glad.h"
 
 #include "math/fwSphere.h"
 #include "math/fwCylinder.h"
+
+#include "fwGeometry.h"
+#include "fwMaterialBasic.h"
+#include "fwMesh.h"
 
 fwAABBox::fwAABBox()
 {
@@ -49,9 +58,18 @@ fwAABBox::fwAABBox(fwCylinder& cylinder)
 }
 
 /**
+ * change the content
+ */
+void fwAABBox::set(float xmin, float ymin, float zmin, float xmax, float ymax, float zmax)
+{
+	m_p.x = xmin;	m_p.y = ymin;	m_p.z = zmin;
+	m_p1.x = xmax;	m_p1.y = ymax;	m_p1.z = zmax;
+}
+
+/**
  * update based on translation on the source
  */
-void fwAABBox::translateFrom(fwAABBox& source, glm::vec3& translation)
+void fwAABBox::translateFrom(const fwAABBox& source, glm::vec3& translation)
 {
 	m_p = source.m_p + translation;
 	m_p1 = source.m_p1 + translation;
@@ -196,6 +214,60 @@ fwAABBox fwAABBox::operator+(const glm::vec3& v)
 	glm::vec3 p = m_p + v;
 	glm::vec3 p1 = m_p1 + v;
 	return fwAABBox(p, p1);
+}
+
+/**
+ * https://en.wikibooks.org/wiki/OpenGL_Programming/Bounding_box
+ */
+fwMesh *fwAABBox::draw(void)
+{
+	float _vertices[] = {
+		// back face
+		m_p.x, m_p.y, m_p.z, // bottom-left
+		m_p.x, m_p1.y, m_p.z, // top-left
+		m_p1.x, m_p1.y, m_p.z, // top-right
+		m_p1.x, m_p.y, m_p.z, // bottom-right         
+		// front face
+		m_p.x, m_p.y, m_p1.z, // bottom-left
+		m_p.x, m_p1.y,  m_p1.z, // top-left
+		m_p1.x, m_p1.y, m_p1.z, // top-right
+		m_p1.x, m_p.y,m_p1.z, // bottom-right
+		// left face
+		m_p.x, m_p1.y, m_p1.z, // top-right
+		m_p.x, m_p1.y, m_p.z, // top-left
+		m_p.x, m_p.y, m_p.z, // bottom-left
+		m_p.x, m_p.y, m_p1.z, // bottom-right
+		// right face
+		m_p1.x, m_p1.y, m_p1.z, // top-left
+		m_p.x, m_p1.y, m_p1.z, // top-right         
+		m_p1.x, m_p.y, m_p1.z, // bottom-left     
+		m_p1.x, m_p.y, m_p.z, // bottom-right
+		// bottom face
+		m_p.x, m_p.y, m_p.z, // top-right
+		m_p1.x, m_p.y, m_p.z, // top-left
+		m_p1.x, m_p.y, m_p1.z, // bottom-left
+		m_p.x, m_p.y, m_p1.z, // bottom-right
+		// top face
+		m_p.x, m_p1.y, m_p.z, // top-left
+		m_p1.x,m_p1.y, m_p.z, // top-right     
+		m_p1.x,m_p1.y, m_p1.z, // bottom-right
+		m_p.x, m_p1.y, m_p1.z // bottom-left        
+	};
+
+	fwGeometry* geometry = new fwGeometry();
+	float* vertices = (float*)malloc(sizeof(_vertices));
+
+	memcpy(vertices, _vertices, sizeof(_vertices));
+
+	geometry->addVertices("aPos", vertices, 3, sizeof(_vertices), ARRAY_SIZE_OF_ELEMENT(_vertices));
+
+	// shared geometry
+	static glm::vec4 w(1.0, 1.0, 1.0, 1.0);
+	static fwMaterialBasic white(&w);
+	m_mesh = new fwMesh(geometry, &white);
+	m_mesh->rendering(fwMeshRendering::FW_MESH_LINES);
+
+	return m_mesh;
 }
 
 fwAABBox::~fwAABBox()

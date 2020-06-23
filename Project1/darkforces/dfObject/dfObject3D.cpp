@@ -52,7 +52,7 @@ void dfObject3D::add2scene(fwScene* scene)
 	df3DO* model = (df3DO*)m_source;
 	if (model) {
 		glm::vec3 gl;
-		dfLevel::level2gl(m_position, gl);
+		dfLevel::level2gl(m_position_lvl, gl);
 
 		m_mesh = model->clone();
 		m_mesh->translate(gl);

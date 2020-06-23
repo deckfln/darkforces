@@ -5,7 +5,7 @@
 
 dfObject::dfObject(dfModel *source, glm::vec3& position, float ambient, int type):
 	m_source(source),
-	m_position(position),
+	m_position_lvl(position),
 	m_ambient(ambient),
 	m_is(type)
 {

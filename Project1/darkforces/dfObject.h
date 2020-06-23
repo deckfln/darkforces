@@ -77,8 +77,10 @@ class dfObject
 	int m_is = OBJECT_OBJ;
 
 protected:
-	int m_dirty = true;			// object was updated
-	glm::vec3 m_position = glm::vec3(0);		// position in level space
+	int m_dirtyAnimation = true;	// animation of the object was updated
+	int m_dirtyPosition = true;		// position of the object was updated
+
+	glm::vec3 m_position_lvl = glm::vec3(0);		// position in level space
 
 	int m_logics = 0;			// logic of the object
 	int m_difficulty = 0;		// difficulty to be displayed
