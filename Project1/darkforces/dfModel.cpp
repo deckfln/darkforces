@@ -11,6 +11,17 @@ bool dfModel::named(std::string& name)
 }
 
 /**
+ * Create a mesh to represent the boundingbox (gl model space)
+ */
+fwMesh* dfModel::drawBoundingBox(void)
+{
+	if (m_meshAABB == nullptr) {
+		m_meshAABB = m_bounding_gl.draw();
+	}
+	return m_meshAABB;
+}
+
+/**
  * update the spriteModel based on the model
  */
 void dfModel::spriteModel(GLmodel& model, int id)

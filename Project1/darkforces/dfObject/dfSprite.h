@@ -11,6 +11,7 @@ class dfSprite : public dfObject
 {
 	glm::vec3 m_position_gl = glm::vec3(0);	// position in gl space
 	fwAABBox m_worldBounding;				// bounding box in world gl space
+	fwMesh* m_meshAABB = nullptr;			// if we are asked to draw the AABB
 
 public:
 	dfSprite(dfFME* fme, glm::vec3& position, float ambient);

@@ -19,7 +19,10 @@ dfSprite::dfSprite(dfModel* model, glm::vec3& position, float ambient, int type)
  */
 fwMesh* dfSprite::drawBoundingBox(void)
 {
-	return m_worldBounding.draw();
+	m_meshAABB = m_source->drawBoundingBox()->clone();
+	m_meshAABB->translate(m_position_gl);
+
+	return m_meshAABB;
 }
 
 /**
@@ -41,6 +44,11 @@ bool dfSprite::updateSprite(glm::vec3* position, glm::vec4* texture, glm::vec3* 
 
 		// take the opportunity to update the world bounding box
 		m_worldBounding.translateFrom(m_source->bounding(), m_position_gl);
+
+		if (m_meshAABB) {
+			// and update the gl boundingbox
+			m_meshAABB->translate(m_position_gl);
+		}
 
 		*position = m_position_gl;
 		m_dirtyPosition = false;

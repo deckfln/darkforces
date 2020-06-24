@@ -38,12 +38,15 @@ struct GLmodel {
 
 #include "../framework/fwAABBox.h"
 
+class fwMesh;
+
 class dfModel
 {
 protected:
 	std::string m_name;
 	int m_id = 0;
-	fwAABBox m_bounding_gl;	// bounding box in gl space
+	fwAABBox m_bounding_gl;			// bounding box in model gl space
+	fwMesh* m_meshAABB = nullptr;	// mesh showing the bounding box (GL model space)
 
 public:
 	dfModel(std::string& name);
@@ -51,6 +54,7 @@ public:
 	std::string& name(void) { return m_name; };
 	int id(void) { return m_id; };
 	const fwAABBox& bounding(void) { return m_bounding_gl; };
+	fwMesh* drawBoundingBox(void);
 	virtual int textureID(int state, int frame) { return 0; };
 	virtual void spriteModel(GLmodel& model, int id);
 	virtual int framerate(int state) { return 0; }
