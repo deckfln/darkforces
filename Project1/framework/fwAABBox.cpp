@@ -5,6 +5,7 @@
 #include <glm/gtx/transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/vec4.hpp>
+#include <glm/gtx/quaternion.hpp>
 
 #include "../glad/glad.h"
 
@@ -89,16 +90,51 @@ void fwAABBox::translateFrom(const fwAABBox& source, glm::vec3& translation)
 /**
  * update based on rotation on the source
  */
-void fwAABBox::rotateFrom(fwAABBox& source, glm::vec3& rotation)
+void fwAABBox::rotateFrom(const fwAABBox& source, const glm::vec3& rotation)
 {
-	m_p = source.m_p + rotation;
-	m_p1 = source.m_p1 + rotation;
+	glm::quat quaternion = glm::quat(glm::vec3(rotation.x, rotation.y, rotation.z));
+	glm::mat4 rotationMatrix = glm::toMat4(quaternion);
+
+	glm::vec3 p = rotationMatrix * glm::vec4(m_p, 1.0);
+	glm::vec3 p1 = rotationMatrix * glm::vec4(m_p1, 1.0);
+
+	// ensure p is always min and p1 is always max
+	m_p.x = std::min(p.x, p1.x);
+	m_p.y = std::min(p.y, p1.y);
+	m_p.z = std::min(p.z, p1.z);
+
+	m_p1.x = std::max(p.x, p1.x);
+	m_p1.y = std::max(p.y, p1.y);
+	m_p1.z = std::max(p.z, p1.z);
+}
+
+/**
+ * update based on translation & rotation on the source
+ */
+void fwAABBox::transform(const fwAABBox& source, glm::vec3& translation, const glm::vec3& rotation)
+{
+	glm::quat quaternion = glm::quat(glm::vec3(rotation.x, rotation.y, rotation.z));
+	glm::mat4 rotationMatrix = glm::toMat4(quaternion);
+
+	glm::mat4 translateMatrix = glm::translate(translation);
+
+	glm::vec3 p = translateMatrix * rotationMatrix * glm::vec4(m_p, 1.0);
+	glm::vec3 p1 = translateMatrix * rotationMatrix * glm::vec4(m_p1, 1.0);
+
+	// ensure p is always min and p1 is always max
+	m_p.x = std::min(p.x, p1.x);
+	m_p.y = std::min(p.y, p1.y);
+	m_p.z = std::min(p.z, p1.z);
+
+	m_p1.x = std::max(p.x, p1.x);
+	m_p1.y = std::max(p.y, p1.y);
+	m_p1.z = std::max(p.z, p1.z);
 }
 
 /**
  * apply a matrix4 to a source
  */
-void fwAABBox::apply(fwAABBox& source, glm::mat4& matrix)
+void fwAABBox::apply(const fwAABBox& source, const glm::mat4& matrix)
 {
 	glm::vec3 p = glm::vec3(matrix * glm::vec4(source.m_p, 1.0));
 	glm::vec3 p1 = glm::vec3(matrix * glm::vec4(source.m_p1, 1.0));

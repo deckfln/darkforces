@@ -87,12 +87,14 @@ bool dfObject3D::update(time_t t)
 				m_lastFrame = t;
 			}
 			m_mesh->worldMatrix(*mat4x4);
+			m_worldBounding.apply(m_source->bounding(), *mat4x4);
 		}
 		else {
 			// rotate the object
 			float delta = (float)t - m_lastFrame;
 			m_animRotation += m_animRotationAxe * m_aniRotationSpeed * delta;
 			m_mesh->rotate(m_animRotation);
+			m_worldBounding.transform(m_source->bounding(), m_position_gl, m_animRotation);
 			m_lastFrame = t;
 		}
 

@@ -113,9 +113,6 @@ void fwRenderer::parseChildren(fwObject3D* root, std::list <fwMesh *> meshes[], 
 		}
 
 		mesh = (fwMesh*)child;
-		if (mesh->name() == "MOUSEBOT.3DO(232)") {
-			printf("fwRenderer::getAllChildren\n");
-		}
 
 		if (mesh->is_visible() && (mesh->always_draw() || camera->is_inFrustum(mesh))) {
 			// if the parent mesh is not visible, ignore the children

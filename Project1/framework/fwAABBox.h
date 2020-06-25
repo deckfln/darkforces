@@ -50,8 +50,9 @@ public:
 	float volume(void);
 	void reset(void);
 	void translateFrom(const fwAABBox& source, glm::vec3& translation);
-	void rotateFrom(fwAABBox& source, glm::vec3& rotation);
-	void apply(fwAABBox& source, glm::mat4& matrix);
+	void rotateFrom(const fwAABBox& source, const glm::vec3& rotation);
+	void transform(const fwAABBox& source, glm::vec3& translation, const glm::vec3& rotation);
+	void apply(const fwAABBox& source, const glm::mat4& matrix);
 	bool not_init(void);
 	fwAABBox& copy(fwAABBox& source);
 	fwAABBox operator+(const glm::vec3& v);
