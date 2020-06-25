@@ -45,8 +45,13 @@ class dfModel
 protected:
 	std::string m_name;
 	int m_id = 0;
-	fwAABBox m_bounding_gl;			// bounding box in model gl space
-	fwMesh* m_meshAABB = nullptr;	// mesh showing the bounding box (GL model space)
+	glm::vec2 m_size_gl = glm::vec2(0);		// size in gl space (for sprites)
+	glm::vec2 m_insert_gl = glm::vec2(0);	// offset in gl space from position (for sprites)
+
+	fwAABBox m_bounding_gl;					// bounding box in model gl space
+	fwMesh* m_meshAABB = nullptr;			// mesh showing the bounding box (GL model space)
+
+	void updateBoundingBox(void);			// refresh the boundingbox based on m_size_gl & m_insert_gl
 
 public:
 	dfModel(std::string& name);

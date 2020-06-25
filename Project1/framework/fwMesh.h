@@ -22,6 +22,8 @@ enum class fwMeshRendering {
 
 class fwMesh: public fwObject3D
 {
+	int m_id = 0;
+
 	bool visible = true;		// object is displayed in the scene
 	bool m_always_draw = false;	// ignore frustrum visibility and always draw
 	bool outlined = false;
@@ -60,6 +62,7 @@ public:
 	fwMesh &outline(bool _outlined);
 	bool is_outlined(void);
 
+	int id(void) { return m_id; };
 	fwMesh& always_draw(bool al) { m_always_draw = al; return *this; };
 	bool always_draw(void) { return m_always_draw; };
 

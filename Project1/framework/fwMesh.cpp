@@ -2,11 +2,15 @@
 #include "../glad/glad.h"
 
 #include "fwMaterialDiffuse.h"
+#include <string>
+
+static int g_ids = 0;
 
 /**
  *
  */
-fwMesh::fwMesh()
+fwMesh::fwMesh():
+	m_id(g_ids++)
 {
 	classID |= MESH;
 }
@@ -15,7 +19,8 @@ fwMesh::fwMesh(fwGeometry *_geometry, fwMaterial *_material):
 	geometry(_geometry),
 	material(_material),
 	visible(true),
-	outlined(false)
+	outlined(false),
+	m_id(g_ids++)
 {
 	classID |= MESH;
 
@@ -36,7 +41,7 @@ fwMesh* fwMesh::clone(void)
 	fwMesh *clone=new fwMesh(geometry, material);
 	clone->m_rendering = m_rendering;
 	clone->m_pointSize = m_pointSize;
-	clone->m_name = m_name;
+	clone->m_name = m_name + "(" + std::to_string(clone->id()) + ")";
 	return clone;
 }
 

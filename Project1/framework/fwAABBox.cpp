@@ -1,5 +1,6 @@
 #include "fwAABBox.h"
 
+#include <vector>
 #include <algorithm>    // std::min
 #include <glm/gtx/transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -64,6 +65,16 @@ void fwAABBox::set(float xmin, float ymin, float zmin, float xmax, float ymax, f
 {
 	m_p.x = xmin;	m_p.y = ymin;	m_p.z = zmin;
 	m_p1.x = xmax;	m_p1.y = ymax;	m_p1.z = zmax;
+}
+
+/**
+ * Set from vertices
+ */
+void fwAABBox::set(std::vector<glm::vec3>& vertices)
+{
+	for (glm::vec3& vertice : vertices) {
+		extend(vertice);
+	}
 }
 
 /**

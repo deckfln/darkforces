@@ -51,14 +51,16 @@ void dfObject3D::add2scene(fwScene* scene)
 {
 	df3DO* model = (df3DO*)m_source;
 	if (model) {
-		glm::vec3 gl;
-		dfLevel::level2gl(m_position_lvl, gl);
+		dfLevel::level2gl(m_position_lvl, m_position_gl);
 
 		m_mesh = model->clone();
-		m_mesh->translate(gl);
+		m_mesh->translate(m_position_gl);
 		m_mesh->set_scale(0.10f);
 		scene->addChild(m_mesh);
 
+		fwMesh* aabb = model->drawBoundingBox()->clone();
+		aabb->set_name(m_mesh->name() + "_aabb");
+		m_mesh->addChild(aabb);
 	}
 }
 

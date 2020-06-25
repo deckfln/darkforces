@@ -156,6 +156,17 @@ dfWAX::dfWAX(dfFileSystem* fs, dfPalette* palette, std::string& name) :
 	for (auto frame : m_frames) {
 		frame.second->targetSize(m_width, m_height);
 	}
+
+	// Update the object size
+	// level side of the sprite depend on texture size (pixel) / 32 * (Wwidth / 65536)
+	float widthFactor = WAX_WORLDSIZE_X / (m_Wwidth / 65536.0f);
+	float heightFactor = WAX_WORLDSIZE_Y / (m_Wheight / 65536.0f);
+
+	// fix the position of the quad based on the insert_Y
+	m_size_gl = glm::vec2(m_width / widthFactor, m_height / heightFactor);
+	m_insert_gl = glm::vec2(m_insertX / widthFactor, (-m_insertY - m_height) / heightFactor);
+
+	updateBoundingBox();
 }
 
 /**
@@ -188,8 +199,8 @@ void dfWAX::spriteModel(GLmodel &model, int id)
 	SpriteModel* sm = &model.models[id];
 
 	// fix the position of the quad based on the insert_Y
-	sm->size = glm::vec2(m_width / widthFactor, m_height / heightFactor);
-	sm->insert = glm::vec2(m_insertX / widthFactor, (-m_insertY - m_height) / heightFactor);
+	sm->size = m_size_gl;
+	sm->insert = m_insert_gl;
 
 	sm->world = glm::vec2(0.5, 1);
 	sm->states = glm::i16vec2(0, 0);

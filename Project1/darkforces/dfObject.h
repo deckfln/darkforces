@@ -3,8 +3,12 @@
 #include <glm/vec3.hpp>
 #include <glm/vec4.hpp>
 
-class dfModel;
+#include "../framework/fwAABBox.h"
+
 class fwScene;
+class fwMesh;
+
+class dfModel;
 
 /**
  * Logic for objects
@@ -81,6 +85,7 @@ protected:
 	int m_dirtyPosition = true;		// position of the object was updated
 
 	glm::vec3 m_position_lvl = glm::vec3(0);		// position in level space
+	glm::vec3 m_position_gl = glm::vec3(0);			// position in gl space
 
 	int m_logics = 0;			// logic of the object
 	int m_difficulty = 0;		// difficulty to be displayed
@@ -95,6 +100,8 @@ protected:
 
 
 	dfModel* m_source = nullptr;
+	fwAABBox m_worldBounding;				// bounding box in world gl space
+	fwMesh* m_meshAABB = nullptr;			// if we are asked to draw the AABB
 
 public:
 	dfObject(dfModel *source, glm::vec3& position, float ambient, int type);
@@ -108,8 +115,10 @@ public:
 	bool is(int type);
 	bool isLogic(int logic);
 	std::string& model(void);
-	virtual bool update(time_t t);		// update based on timer
+	void update(const glm::vec3& position);	// update the object position
+	virtual bool update(time_t t);			// update based on timer
 	void logic(int logic);
 	void add2scene(fwScene* scene);
+	fwMesh* drawBoundingBox(void);			// create a boundingbox mesh
 	~dfObject();
 };

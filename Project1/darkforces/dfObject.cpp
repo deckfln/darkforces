@@ -2,6 +2,7 @@
 
 #include "dfModel.h"
 #include "dfSprites.h"
+#include "dfLevel.h"
 
 dfObject::dfObject(dfModel *source, glm::vec3& position, float ambient, int type):
 	m_source(source),
@@ -9,6 +10,7 @@ dfObject::dfObject(dfModel *source, glm::vec3& position, float ambient, int type
 	m_ambient(ambient),
 	m_is(type)
 {
+	update(position);
 }
 
 /**
@@ -49,6 +51,25 @@ std::string& dfObject::model(void)
 }
 
 /**
+ * Update the object position (given in level space) and update the worldboundingBox(in gl space)
+ */
+void dfObject::update(const glm::vec3& position)
+{
+	m_position_lvl = position;
+	dfLevel::level2gl(m_position_lvl, m_position_gl);
+
+	// take the opportunity to update the world bounding box
+	m_worldBounding.translateFrom(m_source->bounding(), m_position_gl);
+
+	if (m_meshAABB) {
+		// and update the gl boundingbox
+		m_meshAABB->translate(m_position_gl);
+	}
+
+	m_dirtyPosition = true;
+}
+
+/**
  * Animate the object frame
  */
 bool dfObject::update(time_t t)
@@ -62,6 +83,17 @@ bool dfObject::update(time_t t)
 void dfObject::logic(int logic)
 {
 	m_logics |= logic;
+}
+
+/**
+ * create a boundingbox mesh
+ */
+fwMesh* dfObject::drawBoundingBox(void)
+{
+	m_meshAABB = m_source->drawBoundingBox()->clone();
+	m_meshAABB->translate(m_position_gl);
+
+	return m_meshAABB;
 }
 
 dfObject::~dfObject()

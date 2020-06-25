@@ -1,5 +1,6 @@
 #pragma once
 
+#include <vector>
 #include <glm/vec3.hpp>
 #include <glm/mat4x4.hpp>
 
@@ -36,7 +37,8 @@ public:
 	fwAABBox(fwAABBox& source, glm::mat4& matrix);
 	fwAABBox(fwCylinder& cylinder);
 
-	void set(float, float, float, float, float, float);
+	void set(float, float, float, float, float, float);	// build from points
+	void set(std::vector<glm::vec3>& vertices);	// build from vertices
 
 	fwAABBox& multiplyBy(float v);
 	bool inside(glm::vec3& position);

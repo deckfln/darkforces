@@ -25,6 +25,12 @@ dfFME::dfFME(dfFileSystem* fs, dfPalette* palette, std::string& name):
 
 	m_image = new dfFrame(m_fromGOB, 0, palette);
 
+	// update the size of the opbject in level space;
+	m_size_gl = glm::vec2(m_image->m_width / FME_WORLDSIZE_X, m_image->m_height / FME_WORLDSIZE_Y);
+	m_insert_gl = glm::vec2(m_image->m_InsertX / FME_WORLDSIZE_X, (-m_image->m_InsertY - m_image->m_height) / FME_WORLDSIZE_Y);
+
+	updateBoundingBox();
+
 	delete m_fromGOB;
 	m_fromGOB = nullptr;
 }
@@ -37,8 +43,8 @@ void dfFME::spriteModel(GLmodel& model, int id)
 	// level side of the sprite depend on texture size (pixel) / 32 * (Wwidth / 65536)
 
 	SpriteModel* sm = &model.models[id];
-	sm->size = glm::vec2(m_image->m_width / FME_WORLDSIZE_X, m_image->m_height / FME_WORLDSIZE_Y);
-	sm->insert = glm::vec2(m_image->m_InsertX / FME_WORLDSIZE_X, (-m_image->m_InsertY - m_image->m_height) / FME_WORLDSIZE_Y);
+	sm->size = m_size_gl;
+	sm->insert = m_insert_gl;
 
 	sm->world = glm::vec2(0.5, 1);
 	sm->states = glm::i16vec2(0, 0);

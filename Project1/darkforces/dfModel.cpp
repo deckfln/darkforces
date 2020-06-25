@@ -11,6 +11,17 @@ bool dfModel::named(std::string& name)
 }
 
 /**
+ * refresh the boundingbox based on m_size_gl & m_insert_gl
+ */
+void dfModel::updateBoundingBox(void)
+{
+	m_bounding_gl.set(
+		-m_size_gl.x / 2, m_insert_gl.y, -m_size_gl.x / 2,
+		m_size_gl.x / 2, m_size_gl.y + m_insert_gl.y, m_size_gl.x / 2
+	);
+}
+
+/**
  * Create a mesh to represent the boundingbox (gl model space)
  */
 fwMesh* dfModel::drawBoundingBox(void)
@@ -26,14 +37,5 @@ fwMesh* dfModel::drawBoundingBox(void)
  */
 void dfModel::spriteModel(GLmodel& model, int id)
 {
-	// take the opportunity to update the model gl space bounding box
-	SpriteModel* sm = &model.models[id];
-
-	m_bounding_gl.set(
-		-sm->size.x / 2, sm->insert.y, -sm->size.x / 2,
-		sm->size.x / 2, sm->size.y + sm->insert.y, sm->size.x / 2
-	);
-
 	m_id = id;
 }
-

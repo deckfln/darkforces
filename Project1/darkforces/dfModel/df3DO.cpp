@@ -171,6 +171,7 @@ df3DO::df3DO(dfFileSystem* fs, dfPalette* palette, std::string file) :
 		m_atlasTexture->bindToMaterial(materialTextured, "texture");
 	}
 
+	// build the geometry
 	m_geometry = new fwGeometry();
 	m_geometry->addVertices("aPos", &m_vertices[0], 3, m_vertices.size() * sizeof(glm::vec3), sizeof(float), false);
 	m_geometry->addAttribute("aColor", GL_ARRAY_BUFFER, &m_colors[0], 3, m_vertices.size() * sizeof(glm::vec3), sizeof(float), false);
@@ -178,7 +179,10 @@ df3DO::df3DO(dfFileSystem* fs, dfPalette* palette, std::string file) :
 		m_geometry->addAttribute("aTex", GL_ARRAY_BUFFER, &m_textures[0], 3, m_textures.size() * sizeof(glm::vec3), sizeof(float), false);
 	}
 
+	// build the model space aabb
+	m_bounding_gl.set(m_vertices);
 
+	// and the mesh
 	if (m_textureNames.size() > 0) {
 		m_mesh = new fwMesh(m_geometry, materialTextured);
 	}
