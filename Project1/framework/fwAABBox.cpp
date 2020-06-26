@@ -74,6 +74,9 @@ void fwAABBox::set(float xmin, float ymin, float zmin, float xmax, float ymax, f
  */
 void fwAABBox::set(std::vector<glm::vec3>& vertices)
 {
+	m_p = glm::vec3(99999, 99999, 99999);
+	m_p1 = glm::vec3(-99999, -99999, -99999);
+
 	for (glm::vec3& vertice : vertices) {
 		extend(vertice);
 	}
@@ -98,17 +101,23 @@ void fwAABBox::rotateFrom(const fwAABBox& source, const glm::vec3& rotation)
 	glm::quat quaternion = glm::quat(glm::vec3(rotation.x, rotation.y, rotation.z));
 	glm::mat4 rotationMatrix = glm::toMat4(quaternion);
 
-	glm::vec3 p = rotationMatrix * glm::vec4(m_p, 1.0);
-	glm::vec3 p1 = rotationMatrix * glm::vec4(m_p1, 1.0);
+	// rebuild the 8 vertices
+	glm::vec3 delta = source.m_p1 - source.m_p;
 
-	// ensure p is always min and p1 is always max
-	m_p.x = std::min(p.x, p1.x);
-	m_p.y = std::min(p.y, p1.y);
-	m_p.z = std::min(p.z, p1.z);
+	std::vector<glm::vec3> points = {
+		rotationMatrix * glm::vec4(source.m_p, 1.0),
+		rotationMatrix * glm::vec4(source.m_p + glm::vec3(delta.x, 0, 0), 1.0),
+		rotationMatrix * glm::vec4(source.m_p + glm::vec3(delta.x, delta.y, 0), 1.0),
+		rotationMatrix * glm::vec4(source.m_p + glm::vec3(0, delta.y, 0), 1.0),
+		rotationMatrix * glm::vec4(source.m_p + glm::vec3(0, 0, delta.z), 1.0),
+		rotationMatrix * glm::vec4(source.m_p + glm::vec3(delta.x, 0, delta.z), 1.0),
+		rotationMatrix * glm::vec4(source.m_p + glm::vec3(delta.x, delta.y, delta.z), 1.0),
+		rotationMatrix * glm::vec4(source.m_p + glm::vec3(0, delta.y, delta.z), 1.0)
+	};
 
-	m_p1.x = std::max(p.x, p1.x);
-	m_p1.y = std::max(p.y, p1.y);
-	m_p1.z = std::max(p.z, p1.z);
+	// and extract the min and max
+	set(points);
+
 	m_dirty = true;
 }
 
@@ -123,17 +132,23 @@ void fwAABBox::transform(const fwAABBox& source, glm::vec3& translation, const g
 	glm::mat4 translateMatrix = glm::translate(translation);
 	glm::mat4 scaleMatrix = glm::scale(scale);
 
-	glm::vec3 p = translateMatrix * scaleMatrix * rotationMatrix * glm::vec4(source.m_p, 1.0);
-	glm::vec3 p1 = translateMatrix * scaleMatrix * rotationMatrix * glm::vec4(source.m_p1, 1.0);
+	// rebuild the 8 vertices
+	glm::vec3 delta = source.m_p1 - source.m_p;
 
-	// ensure p is always min and p1 is always max
-	m_p.x = std::min(p.x, p1.x);
-	m_p.y = std::min(p.y, p1.y);
-	m_p.z = std::min(p.z, p1.z);
+	std::vector<glm::vec3> points = {
+		translateMatrix * scaleMatrix * rotationMatrix * glm::vec4(source.m_p, 1.0),
+		translateMatrix * scaleMatrix * rotationMatrix * glm::vec4(source.m_p + glm::vec3(delta.x, 0, 0), 1.0),
+		translateMatrix * scaleMatrix * rotationMatrix * glm::vec4(source.m_p + glm::vec3(delta.x, delta.y, 0), 1.0),
+		translateMatrix * scaleMatrix * rotationMatrix * glm::vec4(source.m_p + glm::vec3(0, delta.y, 0), 1.0),
+		translateMatrix * scaleMatrix * rotationMatrix * glm::vec4(source.m_p + glm::vec3(0, 0, delta.z), 1.0),
+		translateMatrix * scaleMatrix * rotationMatrix * glm::vec4(source.m_p + glm::vec3(delta.x, 0, delta.z), 1.0),
+		translateMatrix * scaleMatrix * rotationMatrix * glm::vec4(source.m_p + glm::vec3(delta.x, delta.y, delta.z), 1.0),
+		translateMatrix * scaleMatrix * rotationMatrix * glm::vec4(source.m_p + glm::vec3(0, delta.y, delta.z), 1.0)
+	};
 
-	m_p1.x = std::max(p.x, p1.x);
-	m_p1.y = std::max(p.y, p1.y);
-	m_p1.z = std::max(p.z, p1.z);
+	// and extract the min and max
+	set(points);
+
 	m_dirty = true;
 }
 
