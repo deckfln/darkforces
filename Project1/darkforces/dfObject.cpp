@@ -6,12 +6,16 @@
 #include "dfSprites.h"
 #include "dfLevel.h"
 
+static int g_ids = 0;
+
 dfObject::dfObject(dfModel *source, glm::vec3& position, float ambient, int type):
 	m_source(source),
 	m_position_lvl(position),
 	m_ambient(ambient),
-	m_is(type)
+	m_is(type),
+	m_id(g_ids++)
 {
+	m_name = source->name() + "(" + std::to_string(m_id) + ")";
 	update(position);
 }
 

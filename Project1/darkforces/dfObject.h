@@ -79,6 +79,8 @@ const unsigned long DF_ENEMIES = DF_LOGIC_I_OFFICER | DF_LOGIC_COMMANDO | DF_LOG
 class dfObject
 {
 	int m_is = OBJECT_OBJ;
+	int m_id = 0;
+	std::string m_name;
 
 protected:
 	int m_dirtyAnimation = true;	// animation of the object was updated
