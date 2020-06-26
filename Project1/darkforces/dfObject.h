@@ -119,6 +119,6 @@ public:
 	virtual bool update(time_t t);			// update based on timer
 	void logic(int logic);
 	void add2scene(fwScene* scene);
-	fwMesh* drawBoundingBox(void);			// create a boundingbox mesh
+	void drawBoundingBox(void);			// create a boundingbox mesh
 	~dfObject();
 };

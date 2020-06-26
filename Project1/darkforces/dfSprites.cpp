@@ -3,6 +3,8 @@
 #include "../framework/fwMaterialBasic.h"
 #include "../framework/fwScene.h"
 
+#include "../gaEngine/gaBoundingBoxes.h"
+
 #include "dfObject/dfSpriteAnimated.h"
 
 static fwMaterialBasic* spriteMaterial = nullptr;
@@ -109,8 +111,7 @@ void dfSprites::add2scene(fwScene* scene)
 		scene->addChild(this);
 
 		for (auto object : m_objects) {
-			fwMesh* aabb = object->drawBoundingBox();
-			scene->addChild(aabb);
+			object->drawBoundingBox();
 		}
 	}
 }

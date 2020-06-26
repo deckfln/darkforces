@@ -1,11 +1,14 @@
 #include "dfObject3D.h"
 
+#include "../../framework/fwMesh.h"
+#include "../../framework/fwScene.h"
+
+#include "../../gaEngine/gaBoundingBoxes.h"
+
 #include "../dfFileSystem.h"
 #include "../dfModel/df3DO.h"
 #include "../dfLevel.h"
 #include "../dfVue.h"
-#include "../../framework/fwMesh.h"
-#include "../../framework/fwScene.h"
 
 dfObject3D::dfObject3D(df3DO* threedo, glm::vec3& position, float ambient):
 	dfObject(threedo, position, ambient, OBJECT_3DO)
@@ -58,9 +61,7 @@ void dfObject3D::add2scene(fwScene* scene)
 		m_mesh->set_scale(0.10f);
 		scene->addChild(m_mesh);
 
-		fwMesh* aabb = model->drawBoundingBox()->clone();
-		aabb->set_name(m_mesh->name() + "_aabb");
-		m_mesh->addChild(aabb);
+		drawBoundingBox();
 	}
 }
 
@@ -94,7 +95,7 @@ bool dfObject3D::update(time_t t)
 			float delta = (float)t - m_lastFrame;
 			m_animRotation += m_animRotationAxe * m_aniRotationSpeed * delta;
 			m_mesh->rotate(m_animRotation);
-			m_worldBounding.transform(m_source->bounding(), m_position_gl, m_animRotation);
+			m_worldBounding.transform(m_source->bounding(), m_position_gl, m_animRotation, glm::vec3(0.10f, 0.10f, 0.10f));
 			m_lastFrame = t;
 		}
 

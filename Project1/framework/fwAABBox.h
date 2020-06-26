@@ -21,6 +21,7 @@ enum class fwAABBcollision {
 class fwAABBox
 {
 	fwAABBcollision m_collisionSide = fwAABBcollision::NONE;
+	bool m_dirty = true;	// was updated => triggers a vertices update
 
 	// draw the coollision box
 	fwMesh* m_mesh=nullptr;	
@@ -51,7 +52,7 @@ public:
 	void reset(void);
 	void translateFrom(const fwAABBox& source, glm::vec3& translation);
 	void rotateFrom(const fwAABBox& source, const glm::vec3& rotation);
-	void transform(const fwAABBox& source, glm::vec3& translation, const glm::vec3& rotation);
+	void transform(const fwAABBox& source, glm::vec3& translation, const glm::vec3& rotation, const glm::vec3& scale);
 	void apply(const fwAABBox& source, const glm::mat4& matrix);
 	bool not_init(void);
 	fwAABBox& copy(fwAABBox& source);
@@ -59,6 +60,9 @@ public:
 	fwAABBcollision collisionSide(void) { return m_collisionSide; };
 	bool collision(fwAABBcollision side) { return (int)m_collisionSide & (int)side; };
 	void collisionSide(fwAABBcollision side) { m_collisionSide = side; };
+
 	fwMesh *draw(void);
+	bool updateMeshVertices(glm::vec3* vertices);
+
 	~fwAABBox();
 };

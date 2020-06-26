@@ -1,5 +1,7 @@
 #include "dfObject.h"
 
+#include "../gaEngine/gaBoundingBoxes.h"
+
 #include "dfModel.h"
 #include "dfSprites.h"
 #include "dfLevel.h"
@@ -88,12 +90,9 @@ void dfObject::logic(int logic)
 /**
  * create a boundingbox mesh
  */
-fwMesh* dfObject::drawBoundingBox(void)
+void dfObject::drawBoundingBox(void)
 {
-	m_meshAABB = m_source->drawBoundingBox()->clone();
-	m_meshAABB->translate(m_position_gl);
-
-	return m_meshAABB;
+	g_gaBoundingBoxes.add(&m_worldBounding);
 }
 
 dfObject::~dfObject()

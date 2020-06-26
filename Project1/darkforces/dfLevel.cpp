@@ -7,9 +7,13 @@
 #include <algorithm>
 
 #include "../config.h"
+#include "../include/stb_image.h"
+
 #include "../framework/geometries/fwPlaneGeometry.h"
 #include "../framework/math/fwCylinder.h"
-#include "../include/stb_image.h"
+#include "../framework/fwCollision.h"
+
+#include "../gaEngine/gaBoundingBoxes.h"
 
 #include "dfLogicElevator.h"
 #include "dfBitmap.h"
@@ -19,7 +23,6 @@
 #include "dfFileSystem.h"
 #include "dfAtlasTexture.h"
 #include "dfPalette.h"
-#include "../framework/fwCollision.h"
 
 dfLevel::dfLevel(dfFileSystem* fs, std::string file)
 {
@@ -541,6 +544,9 @@ void dfLevel::draw(fwCamera* camera, fwScene* scene)
 
 	// add the sprites
 	m_objects->add2scene(scene);
+
+	// draw the boundingboxes
+	g_gaBoundingBoxes.draw(scene);
 }
 
 /**

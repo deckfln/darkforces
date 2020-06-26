@@ -66,6 +66,7 @@ void fwAABBox::set(float xmin, float ymin, float zmin, float xmax, float ymax, f
 {
 	m_p.x = xmin;	m_p.y = ymin;	m_p.z = zmin;
 	m_p1.x = xmax;	m_p1.y = ymax;	m_p1.z = zmax;
+	m_dirty = true;
 }
 
 /**
@@ -76,6 +77,7 @@ void fwAABBox::set(std::vector<glm::vec3>& vertices)
 	for (glm::vec3& vertice : vertices) {
 		extend(vertice);
 	}
+	m_dirty = true;
 }
 
 /**
@@ -85,6 +87,7 @@ void fwAABBox::translateFrom(const fwAABBox& source, glm::vec3& translation)
 {
 	m_p = source.m_p + translation;
 	m_p1 = source.m_p1 + translation;
+	m_dirty = true;
 }
 
 /**
@@ -106,20 +109,22 @@ void fwAABBox::rotateFrom(const fwAABBox& source, const glm::vec3& rotation)
 	m_p1.x = std::max(p.x, p1.x);
 	m_p1.y = std::max(p.y, p1.y);
 	m_p1.z = std::max(p.z, p1.z);
+	m_dirty = true;
 }
 
 /**
  * update based on translation & rotation on the source
  */
-void fwAABBox::transform(const fwAABBox& source, glm::vec3& translation, const glm::vec3& rotation)
+void fwAABBox::transform(const fwAABBox& source, glm::vec3& translation, const glm::vec3& rotation, const glm::vec3& scale)
 {
 	glm::quat quaternion = glm::quat(glm::vec3(rotation.x, rotation.y, rotation.z));
 	glm::mat4 rotationMatrix = glm::toMat4(quaternion);
 
 	glm::mat4 translateMatrix = glm::translate(translation);
+	glm::mat4 scaleMatrix = glm::scale(scale);
 
-	glm::vec3 p = translateMatrix * rotationMatrix * glm::vec4(m_p, 1.0);
-	glm::vec3 p1 = translateMatrix * rotationMatrix * glm::vec4(m_p1, 1.0);
+	glm::vec3 p = translateMatrix * scaleMatrix * rotationMatrix * glm::vec4(source.m_p, 1.0);
+	glm::vec3 p1 = translateMatrix * scaleMatrix * rotationMatrix * glm::vec4(source.m_p1, 1.0);
 
 	// ensure p is always min and p1 is always max
 	m_p.x = std::min(p.x, p1.x);
@@ -129,6 +134,7 @@ void fwAABBox::transform(const fwAABBox& source, glm::vec3& translation, const g
 	m_p1.x = std::max(p.x, p1.x);
 	m_p1.y = std::max(p.y, p1.y);
 	m_p1.z = std::max(p.z, p1.z);
+	m_dirty = true;
 }
 
 /**
@@ -147,6 +153,7 @@ void fwAABBox::apply(const fwAABBox& source, const glm::mat4& matrix)
 	m_p1.x = std::max(p.x, p1.x);
 	m_p1.y = std::max(p.y, p1.y);
 	m_p1.z = std::max(p.z, p1.z);
+	m_dirty = true;
 }
 
 /**
@@ -164,6 +171,7 @@ fwAABBox& fwAABBox::copy(fwAABBox& source)
 {
 	m_p = source.m_p;
 	m_p1 = source.m_p1;
+	m_dirty = true;
 
 	return *this;
 }
@@ -172,6 +180,7 @@ fwAABBox& fwAABBox::multiplyBy(float v)
 {
 	m_p *= v;
 	m_p1 *= v;
+	m_dirty = true;
 
 	return *this;
 }
@@ -219,6 +228,7 @@ void fwAABBox::extend(fwAABBox& box)
 	if (m_p1.y < box.m_p1.y) m_p1.y = box.m_p1.y;
 	if (m_p.z > box.m_p.z) m_p.z = box.m_p.z;
 	if (m_p1.z < box.m_p1.z) m_p1.z = box.m_p1.z;
+	m_dirty = true;
 }
 
 /**
@@ -232,6 +242,7 @@ void fwAABBox::extend(glm::vec3& vertice)
 	if (m_p1.y < vertice.y) m_p1.y = vertice.y;
 	if (m_p.z > vertice.z) m_p.z = vertice.z;
 	if (m_p1.z < vertice.z) m_p1.z = vertice.z;
+	m_dirty = true;
 }
 
 float fwAABBox::surface(void)
@@ -260,6 +271,7 @@ fwAABBox fwAABBox::operator+(const glm::vec3& v)
 {
 	glm::vec3 p = m_p + v;
 	glm::vec3 p1 = m_p1 + v;
+	m_dirty = true;
 	return fwAABBox(p, p1);
 }
 
@@ -317,6 +329,53 @@ fwMesh *fwAABBox::draw(void)
 	m_mesh->rendering(fwMeshRendering::FW_MESH_LINES);
 
 	return m_mesh;
+}
+
+/**
+ * upate the vertices of the boundingbox mesh
+ */
+bool fwAABBox::updateMeshVertices(glm::vec3* vertices)
+{
+	if (m_dirty) {
+		// back face
+		vertices[0] = { m_p.x, m_p.y, m_p.z };
+		vertices[1] = { m_p.x, m_p1.y, m_p.z }; // top-left
+		vertices[2] = { m_p1.x, m_p1.y, m_p.z }; // top-right
+		vertices[3] = { m_p1.x, m_p.y, m_p.z }; // bottom-right         
+			// front face
+		vertices[4] = { m_p.x, m_p.y, m_p1.z }; // bottom-left
+		vertices[5] = { m_p.x, m_p1.y, m_p1.z }; // top-left
+		vertices[6] = { m_p1.x, m_p1.y, m_p1.z }; // top-right
+		vertices[7] = { m_p1.x, m_p.y, m_p1.z }; // bottom-right
+			// left face
+		vertices[8] = { m_p.x, m_p1.y, m_p1.z }; // top-right
+		vertices[9] = { m_p.x, m_p1.y, m_p.z }; // top-left
+		vertices[10] = { m_p.x, m_p.y, m_p.z }; // bottom-left
+		vertices[11] = { m_p.x, m_p.y, m_p1.z }; // bottom-right
+			// right face
+		vertices[12] = { m_p1.x, m_p1.y, m_p1.z }; // top-left
+		vertices[13] = { m_p.x, m_p1.y, m_p1.z }; // top-right         
+		vertices[14] = { m_p1.x, m_p.y, m_p1.z }; // bottom-left     
+		vertices[15] = { m_p1.x, m_p.y, m_p.z }; // bottom-right
+			// bottom face
+		vertices[16] = { m_p.x, m_p.y, m_p.z }; // top-right
+		vertices[17] = { m_p1.x, m_p.y, m_p.z }; // top-left
+		vertices[18] = { m_p1.x, m_p.y, m_p1.z }; // bottom-left
+		vertices[19] = { m_p.x, m_p.y, m_p1.z }; // bottom-right
+			// top face
+		vertices[20] = { m_p1.x, m_p1.y, m_p1.z }; // bottom-right
+		vertices[21] = { m_p.x, m_p1.y, m_p1.z }; // bottom-left
+		vertices[22] = { m_p.x, m_p1.y, m_p.z }; // top-left
+		vertices[23] = { m_p1.x, m_p1.y, m_p.z }; // top-right     
+		vertices[24] = { m_p1.x, m_p1.y, m_p1.z }; // bottom-right
+		vertices[25] = { m_p1.x,m_p1.y, m_p.z }; // top-right     
+
+		m_dirty = false;
+
+		return true;
+	}
+
+	return false;
 }
 
 fwAABBox::~fwAABBox()
