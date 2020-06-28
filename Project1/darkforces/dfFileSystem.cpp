@@ -1,6 +1,6 @@
 #include "dfFileSystem.h"
 
-#include "config.h"
+#include "../config.h"
 
 dfFileSystem* g_dfFiles = nullptr;
 

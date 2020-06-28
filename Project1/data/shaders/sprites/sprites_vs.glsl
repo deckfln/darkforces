@@ -24,9 +24,8 @@ layout (std140) uniform Models
 	int x, y, z;
 };
 
-out vec3 ourColor;
-out vec3 world;
-out struct SpriteModel sm;
+out vec3 vWorld;
+out SpriteModel sm;
 
 flat out uint vTextureID;	// index start in megatexture
 flat out float vAmbient;
@@ -38,17 +37,17 @@ uint spriteangle[32] = uint[]( 15, 14, 13, 12, 11, 10, 9 ,8 ,7, 6, 5, 4, 3, 2, 1
 
 void main()
 {
-
-	world = vec3(model * vec4(aPos, 1.0));
-    gl_Position = projection * view * vec4(world, 1.0);
+    // gl_Position = projection * view * vec4(aPos, 1.0);
 
     uint modelID = uint(aData.r);
     uint stateID = uint(aData.g);
     uint frameID = uint(aData.b);
 	vAmbient = aData.a;
 
-    sm = modelTable[modelID];
-
+    sm.size = modelTable[modelID].size;
+    sm.insert = modelTable[modelID].insert;
+	sm.statesIndex = modelTable[modelID].statesIndex;
+	
 	if (sm.statesIndex.r < 65535) {
 		// animated sprite
 		vec3 viewer2object = normalize(aPos - viewPos);
@@ -65,4 +64,7 @@ void main()
 	else {
 		vTextureID = uint(sm.statesIndex.g);
 	}
+
+	vWorld = vec3(model * vec4(aPos, 1.0));
+
 }

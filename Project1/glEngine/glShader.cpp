@@ -1,4 +1,5 @@
 #include "glShader.h"
+#include <string>
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -20,14 +21,21 @@ glShader::glShader(const std::string code, const std::string defines, GLuint _ty
 
 	// check for shader compile errors
 	int success;
-	char infoLog[512];
+	char infoLog[4096];
 	glGetShaderiv(id, GL_COMPILE_STATUS, &success);
 	if (!success)
 	{
-		glGetShaderInfoLog(id, 512, NULL, infoLog);
+		glGetShaderInfoLog(id, 4096, NULL, infoLog);
 		std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
-		//TODO: display line numbers
-		std::cout << cc << std::endl;
+
+		std::istringstream in(cc);
+		std::string to;
+		int line = 1;
+		while (std::getline(in, to, '\n')) {
+			std::cout << std::to_string(line) << ":" << to << std::endl;
+			line++;
+		}
+
 		exit(-1);
 	}
 }
