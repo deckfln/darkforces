@@ -102,7 +102,7 @@ bool gaActor::moveTo(time_t delta, glm::vec3& velocity)
 				case fwCollisionLocation::FRONT:
 				case fwCollisionLocation::LEFT:
 					// hit a full wall
-					// break 2D movement but keep vertical moveent
+					// break 2D movement but keep vertical movement
 					target.x = m_bounding.position().x;
 					target.z = m_bounding.position().z;
 					break;
@@ -114,16 +114,16 @@ bool gaActor::moveTo(time_t delta, glm::vec3& velocity)
 					return false;
 
 				case fwCollisionLocation::FRONT_BOTTOM:
-					// if we can step over
+					// if we cannot step over
 					if (collision.m_position.y - target.y > m_ankle) {
-						// break 2D movement but keep vertical moveent
+						// break 2D movement but keep vertical movement
 						target.x = m_bounding.position().x;
 						target.z = m_bounding.position().z;
 					}
 					break;
 
 				case fwCollisionLocation::BOTTOM:
-					// if we can step over (anlke counted twice, because the target is 1 ankle below
+					// if we cannot step over
 					if (collision.m_position.y - target.y > m_ankle) {
 						return false;	// cannot move over the step
 					}

@@ -27,7 +27,7 @@ dfFME::dfFME(dfFileSystem* fs, dfPalette* palette, std::string& name):
 
 	// update the size of the opbject in level space;
 	m_size_gl = glm::vec2(m_image->m_width / FME_WORLDSIZE_X, m_image->m_height / FME_WORLDSIZE_Y);
-	m_insert_gl = glm::vec2(m_image->m_InsertX / FME_WORLDSIZE_X, (-m_image->m_InsertY - m_image->m_height) / FME_WORLDSIZE_Y);
+	m_insert_gl = glm::vec2(m_image->m_InsertX / FME_WORLDSIZE_X, (-m_image->m_InsertY - m_image->m_height - 1) / FME_WORLDSIZE_Y);
 
 	updateBoundingBox();
 

@@ -164,7 +164,7 @@ dfWAX::dfWAX(dfFileSystem* fs, dfPalette* palette, std::string& name) :
 
 	// fix the position of the quad based on the insert_Y
 	m_size_gl = glm::vec2(m_width / widthFactor, m_height / heightFactor);
-	m_insert_gl = glm::vec2(m_insertX / widthFactor, (-m_insertY - m_height) / heightFactor);
+	m_insert_gl = glm::vec2(m_insertX / widthFactor, (-m_insertY - m_height - 1) / heightFactor);
 
 	updateBoundingBox();
 }

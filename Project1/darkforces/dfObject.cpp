@@ -20,6 +20,7 @@ dfObject::dfObject(dfModel *source, glm::vec3& position, float ambient, int type
 	m_id(g_ids++)
 {
 	m_name = source->name() + "(" + std::to_string(m_id) + ")";
+
 	update(position);
 }
 
@@ -122,23 +123,20 @@ bool dfObject::checkCollision(fwCylinder& bounding, glm::vec3& direction, glm::v
 
 	if (m_worldBounding.intersect(aabb)) {
 		std::string message;
+		int local_collision = 0;
 
 		// test bottom and top
-		if (aabb.m_p.y > m_worldBounding.m_p.y && aabb.m_p.y < m_worldBounding.m_p1.y) {
+		if (aabb.m_p.y < m_worldBounding.m_p.y) {
 			intersection = cyl.position();
 			intersection.y = m_worldBounding.m_p1.y;
 			collisions.push_back(fwCollisionPoint(fwCollisionLocation::BOTTOM, intersection));
-			std::string message = " BOTTOM z=" + std::to_string(intersection.y);
-			gaDebugLog(4, "dfObject::checkCollision", message);
-			return true;
+			local_collision = 1;
 		}
-		if (aabb.m_p.y < m_worldBounding.m_p.y && aabb.m_p1.y < m_worldBounding.m_p1.y && aabb.m_p1.y > m_worldBounding.m_p.y) {
+		if (aabb.m_p.y > m_worldBounding.m_p.y) {
 			intersection = cyl.position();
 			intersection.y = m_worldBounding.m_p.y;
 			collisions.push_back(fwCollisionPoint(fwCollisionLocation::TOP, intersection));
-			std::string message = " TOP z=" + std::to_string(intersection.y);
-			gaDebugLog(4, "dfObject::checkCollision", message);
-			return true;
+			local_collision += 2;
 		}
 
 		// test front,back and left
@@ -147,10 +145,31 @@ bool dfObject::checkCollision(fwCylinder& bounding, glm::vec3& direction, glm::v
 		glm::vec3 d = glm::normalize(direction);
 
 		float delta = glm::dot(d, player2object);
+		fwCollisionLocation c;
+		std::string p;
 		if (delta > 0.5) {
-			collisions.push_back(fwCollisionPoint(fwCollisionLocation::FRONT, intersection));
+			switch (local_collision) {
+			case 0:	// only front collision
+			case 3: // both top & bottom => full front
+				c = fwCollisionLocation::FRONT;
+				p = "FRONT";
+				break;
+			case 1:
+				c = fwCollisionLocation::FRONT_BOTTOM;
+				intersection = cyl.position();
+				intersection.y = m_worldBounding.m_p1.y;
+				p = "FRONT_BOTTOM";
+				break;
+			case 2:
+				c = fwCollisionLocation::FRONT_TOP;
+				intersection = cyl.position();
+				intersection.y = m_worldBounding.m_p.y;
+				p = "FRONT_TOP";
+				break;
+			}
 
-			std::string message = " FRONT z=" + std::to_string(intersection.y);
+			collisions.push_back(fwCollisionPoint(c, intersection));
+			std::string message = " " + p + " z=" + std::to_string(intersection.y);
 			gaDebugLog(4, "dfObject::checkCollision", message);
 		}
 		else if (delta >= -0.5) {
