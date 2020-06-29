@@ -20,6 +20,26 @@
 #include "dfGame.h"
 #include "dfLevel.h"
 
+/*
+DIFF	EASY	MED	HARD
+-3		X		X	X
+-2		X		X
+-1		X
+0		X		X	X
+1		X		X	X
+2				X	X
+3					X
+*/
+static bool g_difficultyTable[][3] = {
+	{1, 1, 1},
+	{1, 1, 0},
+	{1, 0, 0},
+	{1, 1, 1},
+	{1, 1, 1},
+	{0, 1, 1},
+	{0, 0, 1}
+};
+
 dfObject* dfParserObjects::parseObject(dfFileSystem* fs, dfObject* sprite, std::istringstream& infile)
 {
 	std::string line, dump;
@@ -225,6 +245,13 @@ dfParserObjects::dfParserObjects(dfFileSystem* fs, dfPalette* palette, std::stri
 
 			int difficulty = std::stoi(tokenMap["DIFF:"]);
 
+			// ignore objects of higher difficulty
+			int y = Game.difficulty();
+			bool visible = g_difficultyTable[difficulty + 3][y];
+			if (!visible) {
+				continue;
+			}
+
 			if (tokenMap["CLASS:"] == "SPRITE") {
 				dfSpriteAnimated* sprite = new dfSpriteAnimated(m_waxes[data], position, ambient);
 				sprite->difficulty(difficulty);
@@ -297,31 +324,7 @@ void dfParserObjects::buildSprites(void)
 			continue;
 		}
 
-		/*
-		DIFF	EASY	MED	HARD
-		-3		X		X	X
-		-2		X		X
-		-1		X
-		0		X		X	X
-		1		X		X	X
-		2				X	X
-		3					X
-		*/
-		static bool difficultyTable[][3] = {
-			{1, 1, 1},
-			{1, 1, 0},
-			{1, 0, 0},
-			{1, 1, 1},
-			{1, 1, 1},
-			{0, 1, 1},
-			{0, 0, 1}
-		};
-
-		int x = object->difficulty(), y = Game.difficulty();
-		bool visible = difficultyTable[x][y];
-		if (visible) {
-			m_sprites->add((dfSprite *)object);
-		}
+		m_sprites->add((dfSprite *)object);
 	}
 
 	time_t timer = GetTickCount64();
