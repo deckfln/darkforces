@@ -423,6 +423,9 @@
     <ClCompile Include="gaEngine\gaBoundingBoxes.cpp">
       <Filter>Fichiers sources\gaEngine</Filter>
     </ClCompile>
+    <ClCompile Include="gaEngine\gaDebug.cpp">
+      <Filter>Fichiers sources\gaEngine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="glad\glad.h">
@@ -810,6 +813,9 @@
       <Filter>Fichiers d%27en-tête\gaEngine</Filter>
     </ClInclude>
     <ClInclude Include="gaEngine\gaBoundingBoxes.h">
+      <Filter>Fichiers d%27en-tête\gaEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="gaEngine\gaDebug.h">
       <Filter>Fichiers d%27en-tête\gaEngine</Filter>
     </ClInclude>
   </ItemGroup>

@@ -3,6 +3,7 @@
 #include "../framework/math/fwCylinder.h"
 
 #include "../gaEngine/gaBoundingBoxes.h"
+#include "../gaEngine/gaDebug.h"
 
 #include "dfModel.h"
 #include "dfSprites.h"
@@ -128,6 +129,8 @@ bool dfObject::checkCollision(fwCylinder& bounding, glm::vec3& direction, glm::v
 			intersection.y = m_worldBounding.m_p1.y;
 			collisions.push_back(fwCollisionPoint(fwCollisionLocation::BOTTOM, intersection));
 			c = fwCollisionLocation::BOTTOM;
+			std::string message = " BOTTOM z=" + std::to_string(intersection.y);
+			gaDebugLog(4, "dfObject::checkCollision", message);
 			return true;
 		}
 		if (aabb.m_p.y < m_worldBounding.m_p.y && aabb.m_p1.y > m_worldBounding.m_p.y) {
