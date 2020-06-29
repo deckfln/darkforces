@@ -26,3 +26,11 @@ fwCylinder& fwCylinder::copy(const fwCylinder& source, float ratio)
 
 	return *this;
 }
+
+/**
+ * Distance between 2 cylinders
+ */
+glm::vec3 fwCylinder::to(const fwCylinder& to)
+{
+	return m_position - to.m_position;
+}

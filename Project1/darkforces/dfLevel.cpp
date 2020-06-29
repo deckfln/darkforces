@@ -625,6 +625,10 @@ bool dfLevel::checkEnvironement(fwCylinder& bounding, glm::vec3& direction, glm:
 			break;
 		}
 	}
+
+	// check against the objects of the level
+	m_objects->checkCollision(bounding, direction, intersection, collisions);
+
 	return collisions.size() != 0;
 }
 

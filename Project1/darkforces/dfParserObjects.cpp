@@ -361,6 +361,20 @@ void dfParserObjects::update(time_t t)
 	m_sprites->update();
 }
 
+/**
+ * test the objects for a collision
+ */
+bool dfParserObjects::checkCollision(fwCylinder& bounding, glm::vec3& direction, glm::vec3& intersection, std::list<fwCollisionPoint>& collisions)
+{
+	bool intersect = false;
+	for (auto object : m_objects) {
+		if (object != nullptr and object->checkCollision(bounding, direction, intersection, collisions)) {
+			intersect = true;
+		}
+	}
+	return intersect;
+}
+
 dfParserObjects::~dfParserObjects()
 {
 	for (auto wax : m_waxes) {

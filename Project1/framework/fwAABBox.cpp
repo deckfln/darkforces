@@ -291,6 +291,17 @@ fwAABBox fwAABBox::operator+(const glm::vec3& v)
 }
 
 /**
+ * vector from current AABB to the other one
+ */
+glm::vec3 fwAABBox::to(const fwAABBox& to)
+{
+	glm::vec3 center = (m_p1 + m_p) / 2.0f;
+	glm::vec3 center1 = (to.m_p1 + to.m_p) / 2.0f;
+
+	return center1 - center;
+}
+
+/**
  * https://en.wikibooks.org/wiki/OpenGL_Programming/Bounding_box
  */
 fwMesh *fwAABBox::draw(void)

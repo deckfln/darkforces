@@ -14,7 +14,7 @@ const float FME_WORLDSIZE_Y = 95.0f;
  * Create a FME from a file
  */
 dfFME::dfFME(dfFileSystem* fs, dfPalette* palette, std::string& name):
-	dfModel(name)
+	dfModel(name, false)
 {
 	int size;
 	m_fromGOB = fs->load(DF_SPRITES_GOB, name, size);

@@ -1,10 +1,13 @@
 #include "dfObject.h"
 
+#include "../framework/math/fwCylinder.h"
+
 #include "../gaEngine/gaBoundingBoxes.h"
 
 #include "dfModel.h"
 #include "dfSprites.h"
 #include "dfLevel.h"
+#include "dfCollision.h"
 
 static int g_ids = 0;
 
@@ -25,6 +28,14 @@ dfObject::dfObject(dfModel *source, glm::vec3& position, float ambient, int type
 bool dfObject::named(std::string name)
 {
 	return m_source->named(name);
+}
+
+/**
+ * Do we check collision ?
+ */
+bool dfObject::collision(void)
+{
+	return m_source->collision();
 }
 
 /**
@@ -97,6 +108,58 @@ void dfObject::logic(int logic)
 void dfObject::drawBoundingBox(void)
 {
 	g_gaBoundingBoxes.add(&m_worldBounding);
+}
+
+/**
+ * check if the object collide
+ */
+bool dfObject::checkCollision(fwCylinder& bounding, glm::vec3& direction, glm::vec3& intersection, std::list<fwCollisionPoint>& collisions)
+{
+	fwCylinder cyl(bounding, direction);
+
+	fwAABBox aabb(cyl);	// convert to AABB for fast test
+
+	if (m_worldBounding.intersect(aabb)) {
+		fwCollisionLocation c;
+
+		// test bottom and top
+		if (aabb.m_p.y > m_worldBounding.m_p.y && aabb.m_p.y < m_worldBounding.m_p1.y) {
+			intersection = cyl.position();
+			intersection.y = m_worldBounding.m_p1.y;
+			collisions.push_back(fwCollisionPoint(fwCollisionLocation::BOTTOM, intersection));
+			c = fwCollisionLocation::BOTTOM;
+			return true;
+		}
+		if (aabb.m_p.y < m_worldBounding.m_p.y && aabb.m_p1.y > m_worldBounding.m_p.y) {
+			intersection = cyl.position();
+			intersection.y = m_worldBounding.m_p.y;
+			collisions.push_back(fwCollisionPoint(fwCollisionLocation::TOP, intersection));
+			c = fwCollisionLocation::TOP;
+			return true;
+		}
+
+		// test front,back and left
+		glm::vec3 player2object = aabb.to(m_worldBounding);
+		player2object = glm::normalize(player2object);
+
+		float delta = glm::dot(direction, player2object);
+		if (delta > 0.5) {
+			collisions.push_back(fwCollisionPoint(fwCollisionLocation::FRONT, intersection));
+			c = fwCollisionLocation::FRONT;
+		}
+		else if (delta >= -0.5) {
+			collisions.push_back(fwCollisionPoint(fwCollisionLocation::LEFT, intersection));
+			c = fwCollisionLocation::LEFT;
+		}
+		else {
+			collisions.push_back(fwCollisionPoint(fwCollisionLocation::BACK, intersection));
+			c = fwCollisionLocation::BACK;
+		}
+
+		return true;
+	}
+
+	return false;
 }
 
 dfObject::~dfObject()

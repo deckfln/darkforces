@@ -60,7 +60,7 @@ public:
 	fwAABBcollision collisionSide(void) { return m_collisionSide; };
 	bool collision(fwAABBcollision side) { return (int)m_collisionSide & (int)side; };
 	void collisionSide(fwAABBcollision side) { m_collisionSide = side; };
-
+	glm::vec3 to(const fwAABBox& to);
 	fwMesh *draw(void);
 	bool updateMeshVertices(glm::vec3* vertices);
 

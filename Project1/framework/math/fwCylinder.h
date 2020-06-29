@@ -18,4 +18,6 @@ public:
 	void radius(float r) { m_radius = r; };
 	float height(void) { return m_height; };
 	void height(float h) { m_height = h; };
+
+	glm::vec3 to(const fwCylinder& to);
 };

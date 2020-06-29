@@ -1,7 +1,9 @@
 #pragma once
 
+#include <glm/vec3.hpp>
 #include <string>
 #include <vector>
+#include <list>
 
 class dfFileSystem;
 class dfSpriteAnimated;
@@ -14,6 +16,8 @@ class dfSprites;
 class fwScene;
 class dfLevel;
 class df3DO;
+class fwCylinder;
+class fwCollisionPoint;
 
 class dfParserObjects
 {
@@ -38,5 +42,7 @@ public:
 	void buildSprites(void);
 	void add2scene(fwScene*);
 	void update(time_t t);
+	bool checkCollision(fwCylinder& bounding, glm::vec3& direction, glm::vec3& intersection, std::list<fwCollisionPoint>& collisions);
+
 	~dfParserObjects();
 };

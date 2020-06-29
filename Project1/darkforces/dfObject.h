@@ -1,12 +1,17 @@
 #pragma once
 #include <string>
+#include <list>
+
 #include <glm/vec3.hpp>
 #include <glm/vec4.hpp>
 
 #include "../framework/fwAABBox.h"
 
+#include "dfCollision.h"
+
 class fwScene;
 class fwMesh;
+class fwCylinder;
 
 class dfModel;
 
@@ -89,9 +94,9 @@ protected:
 	glm::vec3 m_position_lvl = glm::vec3(0);		// position in level space
 	glm::vec3 m_position_gl = glm::vec3(0);			// position in gl space
 
-	int m_logics = 0;			// logic of the object
-	int m_difficulty = 0;		// difficulty to be displayed
-	float m_ambient = 32.0f;	// ambient light inherited from the sector
+	int m_logics = 0;				// logic of the object
+	int m_difficulty = 0;			// difficulty to be displayed
+	float m_ambient = 32.0f;		// ambient light inherited from the sector
 
 	float m_radius = 0;			// This defines the size of an invisible circle around the object where the PLAYER cannot enter or shoot through.
 								// *Frames and sprites have radiuses by default*, but 3D objects don't, so you have to set one unless you want the
@@ -102,8 +107,8 @@ protected:
 
 
 	dfModel* m_source = nullptr;
-	fwAABBox m_worldBounding;				// bounding box in world gl space
-	fwMesh* m_meshAABB = nullptr;			// if we are asked to draw the AABB
+	fwAABBox m_worldBounding;		// bounding box in world gl space
+	fwMesh* m_meshAABB = nullptr;	// if we are asked to draw the AABB
 
 public:
 	dfObject(dfModel *source, glm::vec3& position, float ambient, int type);
@@ -113,14 +118,18 @@ public:
 	float radius(void) { return m_radius; };
 	int difficulty(void);
 	void difficulty(int difficulty) { m_difficulty = difficulty; };
+	bool collision(void);
 	bool named(std::string name);
 	bool is(int type);
 	bool isLogic(int logic);
 	std::string& model(void);
-	void update(const glm::vec3& position);	// update the object position
-	virtual bool update(time_t t);			// update based on timer
 	void logic(int logic);
 	void add2scene(fwScene* scene);
 	void drawBoundingBox(void);			// create a boundingbox mesh
+	bool checkCollision(fwCylinder& bounding, glm::vec3& direction, glm::vec3& intersection, std::list<fwCollisionPoint>& collisions);
+
+	virtual void update(const glm::vec3& position);	// update the object position
+	virtual bool update(time_t t);			// update based on timer
+
 	~dfObject();
 };

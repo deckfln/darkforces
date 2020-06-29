@@ -1,7 +1,8 @@
 #include "dfModel.h"
 
-dfModel::dfModel(std::string& name):
-	m_name(name)
+dfModel::dfModel(std::string& name, bool collision):
+	m_name(name),
+	m_testColision(collision)
 {
 }
 

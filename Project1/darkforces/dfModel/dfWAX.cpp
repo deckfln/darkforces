@@ -63,7 +63,7 @@ struct _dfWaxFrame {
 #pragma pack(pop)
 
 dfWAX::dfWAX(dfFileSystem* fs, dfPalette* palette, std::string& name) :
-	dfModel(name)
+	dfModel(name, true)
 {
 	int size;
 	m_data = fs->load(DF_SPRITES_GOB, name, size);

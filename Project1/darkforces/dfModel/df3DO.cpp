@@ -66,7 +66,7 @@ static int currentTexture;
  *
  */
 df3DO::df3DO(dfFileSystem* fs, dfPalette* palette, std::string file) :
-	dfModel(file)
+	dfModel(file,true)
 {
 	int size;
 	char* sec = fs->load(DF_DARK_GOB, file, size);

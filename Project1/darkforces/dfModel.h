@@ -47,6 +47,7 @@ protected:
 	int m_id = 0;
 	glm::vec2 m_size_gl = glm::vec2(0);		// size in gl space (for sprites)
 	glm::vec2 m_insert_gl = glm::vec2(0);	// offset in gl space from position (for sprites)
+	bool m_testColision = false;			// can this object colide ?
 
 	fwAABBox m_bounding_gl;					// bounding box in model gl space
 	fwMesh* m_meshAABB = nullptr;			// mesh showing the bounding box (GL model space)
@@ -54,11 +55,12 @@ protected:
 	void updateBoundingBox(void);			// refresh the boundingbox based on m_size_gl & m_insert_gl
 
 public:
-	dfModel(std::string& name);
+	dfModel(std::string& name, bool collision=false);
 	bool named(std::string& name);
 	std::string& name(void) { return m_name; };
 	int id(void) { return m_id; };
 	const fwAABBox& bounding(void) { return m_bounding_gl; };
+	bool collision(void) { return m_testColision; };
 	fwMesh* drawBoundingBox(void);
 	virtual int textureID(int state, int frame) { return 0; };
 	virtual void spriteModel(GLmodel& model, int id);

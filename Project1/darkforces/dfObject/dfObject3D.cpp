@@ -13,6 +13,7 @@
 dfObject3D::dfObject3D(df3DO* threedo, glm::vec3& position, float ambient):
 	dfObject(threedo, position, ambient, OBJECT_3DO)
 {
+	update(m_position_lvl);
 }
 
 /**
@@ -95,12 +96,30 @@ bool dfObject3D::update(time_t t)
 			float delta = (float)t - m_lastFrame;
 			m_animRotation += m_animRotationAxe * m_aniRotationSpeed * delta;
 			m_mesh->rotate(m_animRotation);
-			m_worldBounding.transform(m_source->bounding(), m_position_gl, m_animRotation, glm::vec3(0.10f, 0.10f, 0.10f));
 			m_lastFrame = t;
+			update(m_position_lvl);	// update the bounding box
 		}
-
 	}
 	return false;
+}
+
+/**
+ * Update a 3D object
+ */
+void dfObject3D::update(const glm::vec3& position)
+{
+	m_position_lvl = position;
+	dfLevel::level2gl(m_position_lvl, m_position_gl);
+
+	// take the opportunity to update the world bounding box
+	m_worldBounding.transform(m_source->bounding(), m_position_gl, m_animRotation, glm::vec3(0.10f, 0.10f, 0.10f));
+
+	if (m_meshAABB) {
+		// and update the gl boundingbox
+		m_meshAABB->translate(m_position_gl);
+	}
+
+	m_dirtyPosition = true;
 }
 
 dfObject3D::~dfObject3D()
