@@ -278,6 +278,13 @@ void fwAABBox::reset(void)
 	m_p.x = m_p.y = m_p.z = 999999;
 	m_p1.x = m_p1.y = m_p1.z = -99999;
 }
+/**
+ * return the center of the box
+ */
+glm::vec3 fwAABBox::center(void)
+{
+	return (m_p + m_p1) / 2.0f;
+}
 
 /**
  * Translate AABB by the vector
@@ -402,6 +409,15 @@ bool fwAABBox::updateMeshVertices(glm::vec3* vertices)
 	}
 
 	return false;
+}
+
+/**
+ * If the point align verticaly with the AABB (is inside OR on top OR just below)
+ * using opengl coordinate
+ */
+bool fwAABBox::verticalAlign(const glm::vec3& point)
+{
+	return point.x >= m_p.x && point.x <= m_p1.x && point.z >= m_p.z && point.z <= m_p1.z;
 }
 
 fwAABBox::~fwAABBox()

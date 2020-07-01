@@ -50,6 +50,7 @@ public:
 	float surface(void);
 	float volume(void);
 	void reset(void);
+	glm::vec3 center(void);
 	void translateFrom(const fwAABBox& source, glm::vec3& translation);
 	void rotateFrom(const fwAABBox& source, const glm::vec3& rotation);
 	void transform(const fwAABBox& source, glm::vec3& translation, const glm::vec3& rotation, const glm::vec3& scale);
@@ -63,6 +64,6 @@ public:
 	glm::vec3 to(const fwAABBox& to);
 	fwMesh *draw(void);
 	bool updateMeshVertices(glm::vec3* vertices);
-
+	bool verticalAlign(const glm::vec3& point);
 	~fwAABBox();
 };

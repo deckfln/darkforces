@@ -1,5 +1,6 @@
 #include "dfObject.h"
 
+#include "../config.h"
 #include "../framework/math/fwCylinder.h"
 
 #include "../gaEngine/gaBoundingBoxes.h"
@@ -120,71 +121,90 @@ bool dfObject::checkCollision(fwCylinder& bounding, glm::vec3& direction, glm::v
 	fwCylinder cyl(bounding, direction);
 
 	fwAABBox aabb(cyl);	// convert to AABB for fast test
+	glm::vec3 playerCenter = aabb.center();
 
 	if (m_worldBounding.intersect(aabb)) {
 		std::string message;
 		int local_collision = 0;
 
-		// test bottom and top
-		if (aabb.m_p.y < m_worldBounding.m_p.y) {
-			intersection = cyl.position();
-			intersection.y = m_worldBounding.m_p1.y;
-			collisions.push_back(fwCollisionPoint(fwCollisionLocation::BOTTOM, intersection));
-			local_collision = 1;
-		}
-		if (aabb.m_p.y > m_worldBounding.m_p.y) {
-			intersection = cyl.position();
-			intersection.y = m_worldBounding.m_p.y;
-			collisions.push_back(fwCollisionPoint(fwCollisionLocation::TOP, intersection));
-			local_collision += 2;
-		}
-
-		// test front,back and left
-		glm::vec3 player2object = aabb.to(m_worldBounding);
-		player2object = glm::normalize(player2object);
-		glm::vec3 d = glm::normalize(direction);
-
-		float delta = glm::dot(d, player2object);
-		fwCollisionLocation c;
-		std::string p;
-		if (delta > 0.5) {
-			switch (local_collision) {
-			case 0:	// only front collision
-			case 3: // both top & bottom => full front
-				c = fwCollisionLocation::FRONT;
-				p = "FRONT";
-				break;
-			case 1:
-				c = fwCollisionLocation::FRONT_BOTTOM;
+		// test bottom and top IF the player is on top
+		if (aabb.verticalAlign(playerCenter)) {
+			if (aabb.m_p.y < m_worldBounding.m_p1.y && aabb.m_p1.y > m_worldBounding.m_p1.y) {
 				intersection = cyl.position();
 				intersection.y = m_worldBounding.m_p1.y;
-				p = "FRONT_BOTTOM";
-				break;
-			case 2:
-				c = fwCollisionLocation::FRONT_TOP;
+				collisions.push_back(fwCollisionPoint(fwCollisionLocation::BOTTOM, intersection));
+
+#ifdef DEBUG
+				std::string message = " BOTTOM z=" + std::to_string(intersection.y);
+				gaDebugLog(FULL_DEBUG, "dfObject::checkCollision", message);
+#endif
+			}
+			if (aabb.m_p1.y > m_worldBounding.m_p.y && aabb.m_p1.y < m_worldBounding.m_p1.y) {
 				intersection = cyl.position();
 				intersection.y = m_worldBounding.m_p.y;
-				p = "FRONT_TOP";
-				break;
+				collisions.push_back(fwCollisionPoint(fwCollisionLocation::TOP, intersection));
+#ifdef DEBUG
+				std::string message = " TOP z=" + std::to_string(intersection.y);
+				gaDebugLog(LOW_DEBUG, "dfObject::checkCollision", message);
+#endif
+			}
+		}
+
+		// test front,back and left (only if moving around)
+		if (direction.x != 0 && direction.z != 0) {
+			glm::vec3 player2object = aabb.to(m_worldBounding);
+			player2object = glm::normalize(player2object);
+			glm::vec3 d = glm::normalize(direction);
+
+			// test if bottom or top part
+			glm::vec3 center = aabb.center();
+			if (m_worldBounding.m_p1.y < center.y) {
+				local_collision = 1;
+			}
+			if (m_worldBounding.m_p.y > center.y) {
+				local_collision += 2;
+			}
+
+			float delta = glm::dot(d, player2object);
+			fwCollisionLocation c;
+			std::string p;
+			if (delta > 0.01) {
+				switch (local_collision) {
+				case 0:	// only front collision
+				case 3: // both top & bottom => full front
+					c = fwCollisionLocation::FRONT;
+					p = "FRONT";
+					break;
+				case 1:
+					c = fwCollisionLocation::FRONT_BOTTOM;
+					intersection = cyl.position();
+					intersection.y = m_worldBounding.m_p1.y;
+					p = "FRONT_BOTTOM";
+					break;
+				case 2:
+					c = fwCollisionLocation::FRONT_TOP;
+					intersection = cyl.position();
+					intersection.y = m_worldBounding.m_p.y;
+					p = "FRONT_TOP";
+					break;
+				}
+			}
+			else if (delta >= -0.01) {
+				c = fwCollisionLocation::LEFT;
+				p = "LEFT";
+			}
+			else {
+				c = fwCollisionLocation::BACK;
+				p = "BACK";
 			}
 
 			collisions.push_back(fwCollisionPoint(c, intersection));
+
+#ifdef DEBUG
 			std::string message = " " + p + " z=" + std::to_string(intersection.y);
-			gaDebugLog(4, "dfObject::checkCollision", message);
+			gaDebugLog(LOW_DEBUG, "dfObject::checkCollision", message);
+#endif
 		}
-		else if (delta >= -0.5) {
-			collisions.push_back(fwCollisionPoint(fwCollisionLocation::LEFT, intersection));
-
-			std::string message = " LEFT z=" + std::to_string(intersection.y);
-			gaDebugLog(4, "dfObject::checkCollision", message);
-		}
-		else {
-			collisions.push_back(fwCollisionPoint(fwCollisionLocation::BACK, intersection));
-
-			std::string message = " BACK z=" + std::to_string(intersection.y);
-			gaDebugLog(4, "dfObject::checkCollision", message);
-		}
-
 		return true;
 	}
 
