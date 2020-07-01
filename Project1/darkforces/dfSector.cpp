@@ -7,6 +7,8 @@
 #include <algorithm>
 #include <glm/glm.hpp>
 
+#include "../config.h"
+
 #include "../framework/math/fwCylinder.h"
 #include "../framework/fwCollision.h"
 
@@ -281,7 +283,9 @@ std::vector<dfWall*>& dfSector::walls(dfWallFlag flags)
 		}
 		break;
 	default:
-		std::cerr << "dfSector::walls flags=" << (int)flags << " not implemented" << std::endl;
+#ifdef DEBUG
+		gaDebugLog(LOW_DEBUG, "dfSector::walls", " flags=" + std::to_string((int)flags) + " not implemented");
+#endif
 	}
 
 	return ml;
@@ -490,7 +494,9 @@ void dfSector::linkWalls(void)
 	if (m_polygons_vertices.size() > 1) {
 
 		if (m_polygons_vertices.size() > 2) {
-			std::cerr << "dfSector::linkWalls sector with more than 1 hole is not implemented" << std::endl;
+#ifdef DEBUG
+			gaDebugLog(LOW_DEBUG, "dfSector::linkWalls", "sector with more than 1 hole is not implemented");
+#endif
 		}
 
 		// sort the polygons to move the outside polygon at position 0
@@ -601,7 +607,9 @@ void dfSector::bindWall2Sector(void)
 void dfSector::event(int event_mask)
 {
 	if (m_eventMask & event_mask) {
-		std::cerr << "dfSector::event sector=" << m_name << " event=" << event_mask << std::endl;
+#ifdef DEBUG
+		gaDebugLog(LOW_DEBUG, "dfSector::event", "sector=" + m_name + " event=" + std::to_string(event_mask));
+#endif
 		m_message.m_server = m_name;
 		g_MessageBus.push(&m_message);
 	}
@@ -792,8 +800,9 @@ bool dfSector::checkCollision(float step, glm::vec3& current, glm::vec3& target,
 					collision.y = intersection.y;
 					collision.z = m_referenceFloorAltitude;
 
-					std::cerr << "dfSector::checkCollision sector=" << m_name << " full wall=" << wall->m_id << " z=" << target.z << std::endl;
-
+#ifdef DEBUG
+					gaDebugLog(LOW_DEBUG, "dfSector::checkCollision", "sector=" + m_name + " full wall=" + std::to_string(wall->m_id) + " z=" + std::to_string(target.z));
+#endif
 					return true;
 				}
 				else {
@@ -810,8 +819,9 @@ bool dfSector::checkCollision(float step, glm::vec3& current, glm::vec3& target,
 					if (lowerWall_z1 - feet_z > step ||		// cannot step over the lower wall
 						head_z > upperWall_z						// the head hit the upperWall 
 						) {
-						std::cerr << "dfSector::checkCollision sector=" << m_name << " wall=" << wall->m_id << " z=" << target.z << std::endl;
-
+#ifdef DEBUG
+						gaDebugLog(LOW_DEBUG, "dfSector::checkCollision", "sector=" + m_name + " wall=" + std::to_string(wall->m_id) + " z=" + std::to_string(target.z));
+#endif
 						collision.x = intersection.x;
 						collision.y = intersection.y;
 						collision.z = m_floorAltitude;
@@ -906,7 +916,9 @@ bool dfSector::checkCollision(fwCylinder& current, glm::vec3& direction, glm::ve
 
 					collisions.push_back(fwCollisionPoint(fwCollisionLocation::FRONT, collision));
 
-					std::cerr << "dfSector::checkCollision sector=" << m_name << " full wall=" << wall->m_id << " z=" << target3D.z << std::endl;
+#ifdef DEBUG
+					gaDebugLog(LOW_DEBUG, "dfSector::checkCollision", "sector=" + m_name + " full wall=" + std::to_string(wall->m_id) + " z=" + std::to_string(target3D.z));
+#endif
 					i = dp;
 					break;
 				}
@@ -918,8 +930,9 @@ bool dfSector::checkCollision(fwCylinder& current, glm::vec3& direction, glm::ve
 						ceiling_current = m_ceilingAltitude;
 
 					if (floor_adjoint > feet_z) {		// the feet hit the lowerwall
-						std::cerr << "dfSector::checkCollision sector=" << m_name << " wall=" << wall->m_id << " feet z=" << target3D.z << std::endl;
-
+#ifdef DEBUG
+						gaDebugLog(LOW_DEBUG, "dfSector::checkCollision", "sector " + m_name + " wall = " + std::to_string(wall->m_id) + " feet z = " + std::to_string(target3D.z));
+#endif
 						collision.x = intersection.x;
 						collision.y = intersection.y;
 						collision.z = floor_adjoint;
@@ -930,8 +943,9 @@ bool dfSector::checkCollision(fwCylinder& current, glm::vec3& direction, glm::ve
 						i = dp;
 					}
 					else if (ceiling_adjoint < head_z ) {	// the head hit the upperWall
-						std::cerr << "dfSector::checkCollision sector=" << m_name << " wall=" << wall->m_id << " head z=" << head_z << std::endl;
-
+#ifdef DEBUG
+						gaDebugLog(LOW_DEBUG, "dfSector::checkCollision", "sector " + m_name + " wall = " + std::to_string(wall->m_id) + " head z = " + std::to_string(head_z));
+#endif
 						collision.x = intersection.x;
 						collision.y = intersection.y;
 						collision.z = ceiling_adjoint;
@@ -1000,10 +1014,6 @@ void dfSector::buildSigns(dfMesh *mesh)
 {
 	int size = 0;
 	int p = 0;
-
-	if (m_name == "gigantaur_switch") {
-		printf("dfSuperSector::buildSigns\n");
-	}
 
 	for (auto wall : m_walls) {
 		if (wall->m_tex[DFWALL_TEXTURE_SIGN].r >= 0) {
@@ -1078,7 +1088,9 @@ void dfSector::buildWalls(dfMesh* mesh, dfWallFlag displayPolygon)
 		}
 		break;
 	default:
-		std::cerr << "dfSector::walls flags=" << (int)displayPolygon << " not implemented for sector=" << m_id << std::endl;
+#ifdef DEBUG
+		gaDebugLog(LOW_DEBUG, "dfSector::walls", "flags=" + std::to_string((int)displayPolygon) +" not implemented for sector=" + std::to_string(m_id));
+#endif
 	}
 
 	m_wallVerticesStart = mesh->nbVertices();
@@ -1138,7 +1150,9 @@ void dfSector::buildFloorAndCeiling(dfMesh* mesh)
 	// Ignore strange sector whose ceiling is below the floor
 	if (m_staticMeshCeilingAltitude < m_staticMeshFloorAltitude) {
 		//TODO do not forget that 'thing'
-		std::cerr << "dfSector::buildFloorAndCeiling ignore dfSuperSector::buildFloor sector " << m_id << std::endl;
+#ifdef DEBUG
+		gaDebugLog(LOW_DEBUG, "dfSector::buildFloorAndCeiling", "ignore dfSuperSector::buildFloor sector " + std::to_string(m_id));
+#endif
 		return;
 	}
 

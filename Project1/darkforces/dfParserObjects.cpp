@@ -3,6 +3,7 @@
 #include <fstream>
 #include <iostream>
 
+#include "../config.h"
 #include "../framework/fwScene.h"
 
 #include "dfFileSystem.h"
@@ -97,7 +98,9 @@ dfObject* dfParserObjects::parseObject(dfFileSystem* fs, dfObject* sprite, std::
 					sprite->logic(DF_LOGIC_ITEM_ENERGY);
 				}
 				else {
-					std::cerr << "dfParserObjects::parseObject logic: item " << tokens[2] << " not implemented" << std::endl;
+#ifdef DEBUG
+					gaDebugLog(LOW_DEBUG, "dfParserObjects::parseObject", " logic: item " + tokens[2] + " not implemented");
+#endif
 				}
 			}
 			else if (tokenMap["LOGIC:"] == "SHIELD") {
@@ -118,7 +121,9 @@ dfObject* dfParserObjects::parseObject(dfFileSystem* fs, dfObject* sprite, std::
 				sprite->logic(DF_LOGIC_ANIM);
 			}
 			else {
-				std::cerr << "dfParserObjects::parseObject logic: " << tokenMap["LOGIC:"] << " not implemented" << std::endl;
+#ifdef DEBUG
+				gaDebugLog(LOW_DEBUG, "dfParserObjects::parseObject", " logic: " + tokenMap["LOGIC:"] + " not implemented");
+#endif // DEBUG
 			}
 		}
 		else if (tokens[0] == "TYPE:") {
@@ -142,7 +147,9 @@ dfObject* dfParserObjects::parseObject(dfFileSystem* fs, dfObject* sprite, std::
 				sprite->logic(DF_LOGIC_MOUSEBOT | DF_LOGIC_ANIM);
 			}
 			else {
-				std::cerr << "dfParserObjects::parseObject type: " << tokenMap["TYPE:"] << " not implemented" << std::endl;
+#ifdef DEBUG
+				gaDebugLog(LOW_DEBUG, "dfParserObjects::parseObject", " type: " + tokenMap["TYPE:"] + " not implemented");
+#endif
 			}
 		}
 		else if (tokens[0] == "HEIGHT:") {
@@ -170,7 +177,9 @@ dfObject* dfParserObjects::parseObject(dfFileSystem* fs, dfObject* sprite, std::
 		((dfObject3D*)sprite)->vue(fs, tokens[1], tokens[2]);
 		}
 		else {
-			std::cerr << "dfParserObjects::parseObject command: " << tokens[0] << " not implemented" << std::endl;
+#ifdef DEBUG
+		gaDebugLog(LOW_DEBUG, "dfParserObjects::parseObject", " command: " + tokens[0] + " not implemented");
+#endif
 		}
 	}
 
@@ -235,7 +244,9 @@ dfParserObjects::dfParserObjects(dfFileSystem* fs, dfPalette* palette, std::stri
 				ambient = sector->m_ambient / 32.0f;
 			}
 			else {
-				std::cerr << "dfParserObjects::dfParserObjects cannot find sector for " << position.x << ":" << position.y << ":" << position.z << std::endl;
+#ifdef DEBUG
+				gaDebugLog(LOW_DEBUG, "dfParserObjects::dfParserObjects", "cannot find sector for "+ std::to_string(position.x) + ":" + std::to_string(position.y) + " : " + std::to_string(position.z));
+#endif
 			}
 
 			glm::vec3 rotation(std::stof(tokenMap["PCH:"]),
@@ -273,7 +284,9 @@ dfParserObjects::dfParserObjects(dfFileSystem* fs, dfPalette* palette, std::stri
 				m_currentObject++;
 			}
 			else {
-				std::cerr << "dfParserObjects::parseSprite class: " << tokenMap["CLASS:"] << " not implemented" << std::endl;
+#ifdef DEBUG
+				gaDebugLog(LOW_DEBUG, "dfParserObjects::parseSprite", "class : " + tokenMap["CLASS : "] + " not implemented");
+#endif
 			}
 		}
 	}

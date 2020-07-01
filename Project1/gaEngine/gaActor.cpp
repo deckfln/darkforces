@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <iostream>
 
+#include "../config.h"
 #include "../framework/fwCollision.h"
 #include "../darkforces/dfLevel.h"
 
@@ -58,7 +59,9 @@ bool gaActor::moveTo(time_t delta, glm::vec3& velocity)
 		// std::cerr << "fwControlThirdPerson::update x=" << m_position_lvl.x << " y=" << m_position_lvl.y << " z=" << m_position_lvl.z << std::endl;
 		// std::cerr << "fwControlThirdPerson::update TARGET x=" << target.x << " y=" << target.y << " z=" << target.z << std::endl;
 
-		std::cerr << "fwControlThirdPerson::update delta=" << m_bounding.position().y - target.y << std::endl;
+#ifdef DEBUG
+		gaDebugLog(LOW_DEBUG, "fwControlThirdPerson::update", "delta="+std::to_string(m_bounding.position().y - target.y));
+#endif
 
 		if (m_level->checkEnvironement(m_bounding, direction, intersection, collisions)) {
 			// hit somewhere => stop physic engine
@@ -77,7 +80,9 @@ bool gaActor::moveTo(time_t delta, glm::vec3& velocity)
 
 				case fwCollisionLocation::FRONT:
 					// so, hit a wall but not a ground, stop moving and drop dow
-					std::cerr << "wControlThirdPerson::update hit wall, fall down" << std::endl;
+#ifdef DEBUG
+					gaDebugLog(LOW_DEBUG, "fwControlThirdPerson::update", "hit wall, fall down");
+#endif
 					m_time = 33;
 					m_physic[0][0] = 0;			m_physic[1][0] = 0;		m_physic[2][0] = m_bounding.position().x;
 					m_physic[0][1] = c_gravity;	m_physic[1][1] = 0;		m_physic[2][1] = m_bounding.position().y;
@@ -143,7 +148,11 @@ bool gaActor::moveTo(time_t delta, glm::vec3& velocity)
 			m_physic[0][2] = 0;			m_physic[1][2] = direction.z/20.0f;		m_physic[2][2] = target.z;
 
 			m_time = delta;
-			std::cerr << "fwControlThirdPerson::updateCamera engage freefall x=" << m_bounding.position().x << " y=" << m_bounding.position().y << " z=" << m_bounding.position().y << std::endl;
+
+#ifdef DEBUG
+			std::string message = "freefall x = " + std::to_string(m_bounding.position().x) + " y = " + std::to_string(m_bounding.position().y) + " z = " + std::to_string(m_bounding.position().y);
+			gaDebugLog(LOW_DEBUG, "fwControlThirdPerson::updateCamera", message);
+#endif
 		}
 
 		m_bounding.position(target);

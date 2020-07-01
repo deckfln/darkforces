@@ -1,10 +1,12 @@
 #include "gaDebug.h"
 
+#include "../config.h"
+
 #include <stdio.h>
 #include <iostream>
 #include <ctime>  
 
-int g_debugLevel = 99;
+int g_debugLevel = HIGH_DEBUG;
 
 void gaDebugLog(int level, const std::string& function, const std::string message)
 {
