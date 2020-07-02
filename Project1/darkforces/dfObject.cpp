@@ -136,6 +136,9 @@ void dfObject::collideWith(gaEntity* entity)
 			// if the collider is a DF_ACTOR
 			// send shield to the actor
 			((dfActor*)entity)->addShield(DF_SHIELD_ENERGY);
+
+			// and remove the object from the scene
+			update(glm::vec3(0));
 		}
 	}
 	else if (m_logics & DF_LOGIC_ITEM_ENERGY) {
@@ -144,6 +147,10 @@ void dfObject::collideWith(gaEntity* entity)
 			// if the collider is a DF_ACTOR
 			// send shield to the actor
 			((dfActor*)entity)->addEnergy(DF_ENERGY_ENERGY);
+
+			// and remove the object from the scene
+			m_position = glm::vec3(0);
+			update(glm::vec3(0));
 		}
 	}
 }
@@ -197,8 +204,13 @@ bool dfObject::checkCollision(fwCylinder& bounding, glm::vec3& direction, glm::v
 			return false;
 		}
 
-		// ALWAYS send a message: YES we collide
+		// send a message: YES we collide
 		collisions.push_back(gaCollisionPoint(fwCollisionLocation::COLLIDE, intersection, this));
+
+		// ALL these objects can be traversed
+		if (isLogic(DF_LOGIC_ITEM_SHIELD | DF_LOGIC_ITEM_ENERGY | DF_LOGIC_LIFE | DF_LOGIC_REVIVE)) {
+			return false;
+		}
 
 		std::string message;
 		int local_collision = 0;
