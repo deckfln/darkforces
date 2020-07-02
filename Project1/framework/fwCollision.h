@@ -33,7 +33,7 @@ public:
     fwCollisionLocation m_location = fwCollisionLocation::NONE;
 	glm::vec3 m_position = glm::vec3(0);
 
-    fwCollisionPoint(fwCollisionLocation location, glm::vec3& position) {
+    fwCollisionPoint(fwCollisionLocation location, const glm::vec3& position) {
         m_location = location;
         m_position = position;
     }

@@ -6,15 +6,19 @@
 #include "../config.h"
 #include "../framework/fwCollision.h"
 #include "../gaEngine/gaBoundingBoxes.h"
+#include "../gaEngine/gaCollisionPoint.h"
+#include "../gaEngine/gaEntity.h"
+
 #include "../darkforces/dfLevel.h"
 
-gaActor::gaActor(fwCylinder& bounding,float eyes, float ankle) :
+gaActor::gaActor(const std::string& name, fwCylinder& bounding,float eyes, float ankle) :
+	gaEntity(name),
 	m_bounding(bounding),
 	m_ankle(ankle),
 	m_eyes(eyes)
 {
-	m_AABB = fwAABBox(m_bounding);
-	g_gaBoundingBoxes.add(&m_AABB);
+	m_worldBounding= fwAABBox(m_bounding);
+	g_gaBoundingBoxes.add(&m_worldBounding);
 }
 
 /**
@@ -50,7 +54,7 @@ bool gaActor::moveTo(time_t delta, glm::vec3& velocity)
 
 	glm::vec3 intersection;
 	glm::vec3 target;
-	std::list<fwCollisionPoint> collisions;
+	std::list<gaCollisionPoint> collisions;
 
 	if (m_time != 0) {
 		// manage physic driven trajectory
@@ -104,9 +108,17 @@ bool gaActor::moveTo(time_t delta, glm::vec3& velocity)
 		target = m_bounding.position() + direction;
 
 		if (m_level->checkEnvironement(m_bounding, direction, intersection, collisions)) {
-
 			for (auto& collision : collisions) {
+				gaEntity* entity = collision.entity();
+
 				switch (collision.m_location) {
+				case fwCollisionLocation::COLLIDE:
+					// 'who' do we collide with
+					if (entity != nullptr) {
+						entity->collideWith(this);
+					}
+					break;
+
 				case fwCollisionLocation::FRONT:
 				case fwCollisionLocation::LEFT:
 					// hit a full wall
@@ -159,7 +171,7 @@ bool gaActor::moveTo(time_t delta, glm::vec3& velocity)
 		}
 
 		m_bounding.position(target);
-		m_AABB = fwAABBox(m_bounding);
+		m_worldBounding = fwAABBox(m_bounding);
 	}
 
 	return m_time != 0;	// if the physic engine is engaged

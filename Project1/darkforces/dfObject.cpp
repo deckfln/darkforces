@@ -3,6 +3,7 @@
 #include "../config.h"
 #include "../framework/math/fwCylinder.h"
 
+#include "../gaEngine/gaCollisionPoint.h"
 #include "../gaEngine/gaBoundingBoxes.h"
 #include "../gaEngine/gaDebug.h"
 
@@ -14,14 +15,13 @@
 static int g_ids = 0;
 
 dfObject::dfObject(dfModel *source, glm::vec3& position, float ambient, int type):
+	gaEntity(source->name() + "(" + std::to_string(m_objectID) + ")"),
 	m_source(source),
 	m_position_lvl(position),
 	m_ambient(ambient),
 	m_is(type),
-	m_id(g_ids++)
+	m_objectID(g_ids++)
 {
-	m_name = source->name() + "(" + std::to_string(m_id) + ")";
-
 	update(position);
 }
 
@@ -76,14 +76,14 @@ std::string& dfObject::model(void)
 void dfObject::update(const glm::vec3& position)
 {
 	m_position_lvl = position;
-	dfLevel::level2gl(m_position_lvl, m_position_gl);
+	dfLevel::level2gl(m_position_lvl, m_position);
 
 	// take the opportunity to update the world bounding box
 	updateWorldAABB();
 
 	if (m_meshAABB) {
 		// and update the gl boundingbox
-		m_meshAABB->translate(m_position_gl);
+		m_meshAABB->translate(m_position);
 	}
 
 	m_dirtyPosition = true;
@@ -107,7 +107,7 @@ void dfObject::updateWorldAABB(void)
 
 void dfObject::updateWorldAABB(const fwAABBox& box)
 {
-	m_worldBounding.translateFrom(box, m_position_gl);
+	m_worldBounding.translateFrom(box, m_position);
 
 	// extract the radius from the AABB
 	m_radius = std::max(abs(m_worldBounding.m_p1.x - m_worldBounding.m_p.x), abs(m_worldBounding.m_p1.z - m_worldBounding.m_p.z))/2.0f;
@@ -132,33 +132,34 @@ void dfObject::drawBoundingBox(void)
 /**
  * check if the object collide
  */
-bool dfObject::checkCollision(fwCylinder& bounding, glm::vec3& direction, glm::vec3& intersection, std::list<fwCollisionPoint>& collisions)
+bool dfObject::checkCollision(fwCylinder& bounding, glm::vec3& direction, glm::vec3& intersection, std::list<gaCollisionPoint>& collisions)
 {
+	// for object with radius 0, ignore any collision
+	if (m_radius == 0) {
+		return false;
+	}
+
+	// build the target cylinder
+	// and convert to AABB for fast test
 	fwCylinder cyl(bounding, direction);
 
-	fwAABBox aabb(cyl);	// convert to AABB for fast test
+	fwAABBox aabb(cyl);	
 	glm::vec3 playerCenter = aabb.center();
 
 	if (m_worldBounding.intersect(aabb)) {
-		// for object with radius 0, just send the message, we don't want to trigger a physical collision
-		if (m_radius == 0) {
-			collisions.push_back(fwCollisionPoint(fwCollisionLocation::COLLIDE, intersection));
-			return true;
-		}
-
 		// inside the AABB, now check if the 2 cylinders collide
 		intersection = cyl.position();
 		glm::vec3 c = m_worldBounding.center();
 		float x1 = c.x - intersection.x;
 		float y1 = c.z - intersection.z;
-		float sqDistance = sqrt(x1*x1 + y1*y1);
-		float mxsqDistance = m_radius + bounding.radius();
-		if (sqDistance > mxsqDistance) {
+		float distance = sqrt(x1*x1 + y1*y1);
+		float mxDistance = m_radius + bounding.radius();
+		if (distance > mxDistance) {
 			return false;
 		}
 
 		// ALWAYS send a message: YES we collide
-		collisions.push_back(fwCollisionPoint(fwCollisionLocation::COLLIDE, intersection));
+		collisions.push_back(gaCollisionPoint(fwCollisionLocation::COLLIDE, intersection, this));
 
 		std::string message;
 		int local_collision = 0;
@@ -167,7 +168,7 @@ bool dfObject::checkCollision(fwCylinder& bounding, glm::vec3& direction, glm::v
 		if (aabb.verticalAlign(playerCenter)) {
 			if (aabb.m_p.y < m_worldBounding.m_p1.y && aabb.m_p1.y > m_worldBounding.m_p1.y) {
 				intersection.y = m_worldBounding.m_p1.y;
-				collisions.push_back(fwCollisionPoint(fwCollisionLocation::BOTTOM, intersection));
+				collisions.push_back(gaCollisionPoint(fwCollisionLocation::BOTTOM, intersection, this));
 
 #ifdef DEBUG
 				std::string message = " BOTTOM z=" + std::to_string(intersection.y);
@@ -176,7 +177,7 @@ bool dfObject::checkCollision(fwCylinder& bounding, glm::vec3& direction, glm::v
 			}
 			if (aabb.m_p1.y > m_worldBounding.m_p.y && aabb.m_p1.y < m_worldBounding.m_p1.y) {
 				intersection.y = m_worldBounding.m_p.y;
-				collisions.push_back(fwCollisionPoint(fwCollisionLocation::TOP, intersection));
+				collisions.push_back(gaCollisionPoint(fwCollisionLocation::TOP, intersection, this));
 #ifdef DEBUG
 				std::string message = " TOP z=" + std::to_string(intersection.y);
 				gaDebugLog(LOW_DEBUG, "dfObject::checkCollision", message);
@@ -230,7 +231,7 @@ bool dfObject::checkCollision(fwCylinder& bounding, glm::vec3& direction, glm::v
 				p = "BACK";
 			}
 
-			collisions.push_back(fwCollisionPoint(c, intersection));
+			collisions.push_back(gaCollisionPoint(c, intersection, this));
 
 #ifdef DEBUG
 			std::string message = " " + p + " z=" + std::to_string(intersection.y);

@@ -6,6 +6,8 @@
 #include <glm/vec4.hpp>
 
 #include "../framework/fwAABBox.h"
+#include "../gaEngine/gaEntity.h"
+#include "../gaEngine/gaCollisionPoint.h"
 
 #include "dfCollision.h"
 
@@ -81,18 +83,16 @@ enum {
 // list of all enemies
 const unsigned long DF_ENEMIES = DF_LOGIC_I_OFFICER | DF_LOGIC_COMMANDO | DF_LOGIC_TROOP;
 
-class dfObject
+class dfObject: public gaEntity
 {
 	int m_is = OBJECT_OBJ;
-	int m_id = 0;
-	std::string m_name;
+	int m_objectID = 0;
 
 protected:
 	int m_dirtyAnimation = true;	// animation of the object was updated
 	int m_dirtyPosition = true;		// position of the object was updated
 
 	glm::vec3 m_position_lvl = glm::vec3(0);		// position in level space
-	glm::vec3 m_position_gl = glm::vec3(0);			// position in gl space
 
 	int m_logics = 0;				// logic of the object
 	int m_difficulty = 0;			// difficulty to be displayed
@@ -107,7 +107,6 @@ protected:
 
 
 	dfModel* m_source = nullptr;
-	fwAABBox m_worldBounding;		// bounding box in world gl space
 	fwMesh* m_meshAABB = nullptr;	// if we are asked to draw the AABB
 
 public:
@@ -126,7 +125,7 @@ public:
 	void logic(int logic);
 	void add2scene(fwScene* scene);
 	void drawBoundingBox(void);			// create a boundingbox mesh
-	bool checkCollision(fwCylinder& bounding, glm::vec3& direction, glm::vec3& intersection, std::list<fwCollisionPoint>& collisions);
+	bool checkCollision(fwCylinder& bounding, glm::vec3& direction, glm::vec3& intersection, std::list<gaCollisionPoint>& collisions);
 
 	virtual void update(const glm::vec3& position);	// update the object position
 	virtual bool update(time_t t);					// update based on timer

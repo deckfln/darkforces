@@ -740,7 +740,7 @@ bool dfLogicElevator::checkCollision(fwAABBox& box)
 /**
  * Check move using a cylinder
  */
-bool dfLogicElevator::checkCollision(fwCylinder& bounding, glm::vec3& direction, glm::vec3& intersection, std::list<fwCollisionPoint>& collisions)
+bool dfLogicElevator::checkCollision(fwCylinder& bounding, glm::vec3& direction, glm::vec3& intersection, std::list<gaCollisionPoint>& collisions)
 {
 	// only test the elevator mesh if the supersector it is bind to is visible
 	// and if the play Z (gl space) in inbetwen the vertical elevator extend (level space)

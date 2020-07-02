@@ -12,6 +12,8 @@
 #include "../framework/math/fwCylinder.h"
 #include "../framework/fwCollision.h"
 
+#include "../gaEngine/gaCollisionPoint.h"
+
 #include "dfSuperSector.h"
 #include "dfMesh.h"
 #include "dfParseINF.h"
@@ -840,7 +842,7 @@ bool dfSector::checkCollision(float step, glm::vec3& current, glm::vec3& target,
 /**
  * Test walls to detect a move
  */
-bool dfSector::checkCollision(fwCylinder& current, glm::vec3& direction, glm::vec3& collision, std::list<fwCollisionPoint>& collisions)
+bool dfSector::checkCollision(fwCylinder& current, glm::vec3& direction, glm::vec3& collision, std::list<gaCollisionPoint>& collisions)
 {
 	glm::vec3 target3D = current.position() + direction;
 	glm::vec2 target2D = target3D;
@@ -861,14 +863,14 @@ bool dfSector::checkCollision(fwCylinder& current, glm::vec3& direction, glm::ve
 	if (feet_z < m_floorAltitude) {
 		collision = current.position();
 		collision.z = m_floorAltitude;
-		collisions.push_back(fwCollisionPoint(fwCollisionLocation::BOTTOM, collision));
+		collisions.push_back(gaCollisionPoint(fwCollisionLocation::BOTTOM, collision, nullptr));
 	}
 
 	// test ceiling
 	if (head_z > m_ceilingAltitude) {
 		collision = current.position();
 		collision.z = m_ceilingAltitude;
-		collisions.push_back(fwCollisionPoint(fwCollisionLocation::TOP, collision));
+		collisions.push_back(gaCollisionPoint(fwCollisionLocation::TOP, collision, nullptr));
 	}
 
 	// Test polylines on the walls based on the setup (may ignore internals polylines (like for elevator SPIN1)
@@ -914,7 +916,7 @@ bool dfSector::checkCollision(fwCylinder& current, glm::vec3& direction, glm::ve
 					collision.y = intersection.y;
 					collision.z = (m_ceilingAltitude + m_floorAltitude) / 2.0f;
 
-					collisions.push_back(fwCollisionPoint(fwCollisionLocation::FRONT, collision));
+					collisions.push_back(gaCollisionPoint(fwCollisionLocation::FRONT, collision, nullptr));
 
 #ifdef DEBUG
 					gaDebugLog(LOW_DEBUG, "dfSector::checkCollision", "sector=" + m_name + " full wall=" + std::to_string(wall->m_id) + " z=" + std::to_string(target3D.z));
@@ -938,7 +940,7 @@ bool dfSector::checkCollision(fwCylinder& current, glm::vec3& direction, glm::ve
 						collision.z = floor_adjoint;
 
 						// otherwise it is a front collision
-						collisions.push_back(fwCollisionPoint(fwCollisionLocation::FRONT_BOTTOM, collision));
+						collisions.push_back(gaCollisionPoint(fwCollisionLocation::FRONT_BOTTOM, collision, nullptr));
 
 						i = dp;
 					}
@@ -950,7 +952,7 @@ bool dfSector::checkCollision(fwCylinder& current, glm::vec3& direction, glm::ve
 						collision.y = intersection.y;
 						collision.z = ceiling_adjoint;
 
-						collisions.push_back(fwCollisionPoint(fwCollisionLocation::FRONT_TOP, collision));
+						collisions.push_back(gaCollisionPoint(fwCollisionLocation::FRONT_TOP, collision, nullptr));
 
 						i = dp;
 					}

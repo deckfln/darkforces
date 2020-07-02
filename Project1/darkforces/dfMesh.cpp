@@ -3,8 +3,9 @@
 #include <math.h>
 #include <glm/gtx/intersect.hpp>
 
-#include "../framework/fwCollision.h"
 #include "../framework/math/fwCylinder.h"
+
+#include "../gaEngine/gaCollisionPoint.h"
 
 #include "dfSector.h"
 #include "dfBitmap.h"
@@ -713,7 +714,7 @@ bool dfMesh::collide(fwAABBox& box, std::string& name)
 /**
  * Test collsuion based on http://www.peroxide.dk/papers/collision/collision.pdf
   */
-bool dfMesh::collide(fwCylinder& bounding, glm::vec3& direction, glm::vec3& intersection, std::string& name, std::list<fwCollisionPoint>& collisions)
+bool dfMesh::collide(fwCylinder& bounding, glm::vec3& direction, glm::vec3& intersection, std::string& name, std::list<gaCollisionPoint>& collisions)
 {
 	fwCylinder cyl(bounding, direction);
 
@@ -761,33 +762,33 @@ bool dfMesh::collide(fwCylinder& bounding, glm::vec3& direction, glm::vec3& inte
 				float delta = center_es.y - origin.y;
 				fwCollisionLocation c;
 				if ( delta > 0.9) {
-					collisions.push_back(fwCollisionPoint(fwCollisionLocation::BOTTOM, intersection));
+					collisions.push_back(gaCollisionPoint(fwCollisionLocation::BOTTOM, intersection, nullptr));
 					c=fwCollisionLocation::BOTTOM;
 				}
 				else if (delta < -0.9) {
-					collisions.push_back(fwCollisionPoint(fwCollisionLocation::TOP, intersection));
+					collisions.push_back(gaCollisionPoint(fwCollisionLocation::TOP, intersection, nullptr));
 					c = fwCollisionLocation::TOP;
 				}
 				else if (delta  > 0.5 && d > 0) {
-					collisions.push_back(fwCollisionPoint(fwCollisionLocation::FRONT_BOTTOM, intersection));
+					collisions.push_back(gaCollisionPoint(fwCollisionLocation::FRONT_BOTTOM, intersection, nullptr));
 					c = fwCollisionLocation::FRONT_BOTTOM;
 				}
 				else if (delta < -0.5 && d > 0) {
-					collisions.push_back(fwCollisionPoint(fwCollisionLocation::FRONT_TOP, intersection));
+					collisions.push_back(gaCollisionPoint(fwCollisionLocation::FRONT_TOP, intersection, nullptr));
 					c = fwCollisionLocation::FRONT_TOP;
 				}
 				else if (d <= 0) {
-					collisions.push_back(fwCollisionPoint(fwCollisionLocation::BACK, intersection));
+					collisions.push_back(gaCollisionPoint(fwCollisionLocation::BACK, intersection, nullptr));
 					c = fwCollisionLocation::BACK;
 				}
 				else if (d <= 0.4) {
-					collisions.push_back(fwCollisionPoint(fwCollisionLocation::LEFT, intersection));
+					collisions.push_back(gaCollisionPoint(fwCollisionLocation::LEFT, intersection, nullptr));
 					c = fwCollisionLocation::LEFT;
 				}
 				else {
 					float l = glm::length(intersection - center_ws);
 					float l1 = glm::length(origin - center_es);
-					collisions.push_back(fwCollisionPoint(fwCollisionLocation::FRONT, intersection));
+					collisions.push_back(gaCollisionPoint(fwCollisionLocation::FRONT, intersection, nullptr));
 					c = fwCollisionLocation::FRONT;
 				}
 				std::cerr << "dfMesh::collide ellipoid collides with " << name << " on " << (int)c <<std::endl;

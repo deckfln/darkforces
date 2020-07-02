@@ -11,9 +11,9 @@
 
 #include "../framework/geometries/fwPlaneGeometry.h"
 #include "../framework/math/fwCylinder.h"
-#include "../framework/fwCollision.h"
 
 #include "../gaEngine/gaBoundingBoxes.h"
+#include "../gaEngine/gaCollisionPoint.h"
 
 #include "dfLogicElevator.h"
 #include "dfBitmap.h"
@@ -596,7 +596,7 @@ bool dfLevel::checkCollision(float step, glm::vec3& position, glm::vec3& target,
 /**
  * Check move against any of the level component, static (wall, floor, ceiling) and dynamic
  */
-bool dfLevel::checkEnvironement(fwCylinder& bounding, glm::vec3& direction, glm::vec3& intersection, std::list<fwCollisionPoint>& collisions)
+bool dfLevel::checkEnvironement(fwCylinder& bounding, glm::vec3& direction, glm::vec3& intersection, std::list<gaCollisionPoint>& collisions)
 {
 	// us the center of the cylinder to search for the sector
 	glm::vec3 p = bounding.position();	

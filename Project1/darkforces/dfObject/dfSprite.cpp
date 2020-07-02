@@ -29,7 +29,7 @@ bool dfSprite::updateSprite(glm::vec3* position, glm::vec4* texture, glm::vec3* 
 	}
 
 	if (m_dirtyPosition) {
-		*position = m_position_gl;
+		*position = m_position;
 		m_dirtyPosition = false;
 		updates++;
 	}

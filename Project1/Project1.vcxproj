@@ -219,7 +219,9 @@
     <ClCompile Include="framework\fwUniform.cpp" />
     <ClCompile Include="gaEngine\gaActor.cpp" />
     <ClCompile Include="gaEngine\gaBoundingBoxes.cpp" />
+    <ClCompile Include="gaEngine\gaCollisionPoint.cpp" />
     <ClCompile Include="gaEngine\gaDebug.cpp" />
+    <ClCompile Include="gaEngine\gaEntity.cpp" />
     <ClCompile Include="gaEngine\gaPlayer.cpp" />
     <ClCompile Include="glEngine\framebuffer\glDepthCubeMap.cpp" />
     <ClCompile Include="glEngine\glBufferAttribute.cpp" />
@@ -350,7 +352,9 @@
     <ClInclude Include="framework\fwUniform.h" />
     <ClInclude Include="gaEngine\gaActor.h" />
     <ClInclude Include="gaEngine\gaBoundingBoxes.h" />
+    <ClInclude Include="gaEngine\gaCollisionPoint.h" />
     <ClInclude Include="gaEngine\gaDebug.h" />
+    <ClInclude Include="gaEngine\gaEntity.h" />
     <ClInclude Include="gaEngine\gaPlayer.h" />
     <ClInclude Include="glEngine\framebuffer\glDepthCubeMap.h" />
     <ClInclude Include="glEngine\glBufferAttribute.h" />

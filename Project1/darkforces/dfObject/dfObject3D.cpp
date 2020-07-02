@@ -55,10 +55,10 @@ void dfObject3D::add2scene(fwScene* scene)
 {
 	df3DO* model = (df3DO*)m_source;
 	if (model) {
-		dfLevel::level2gl(m_position_lvl, m_position_gl);
+		dfLevel::level2gl(m_position_lvl, m_position);
 
 		m_mesh = model->clone();
-		m_mesh->translate(m_position_gl);
+		m_mesh->translate(m_position);
 		m_mesh->set_scale(0.10f);
 		scene->addChild(m_mesh);
 
@@ -109,14 +109,14 @@ bool dfObject3D::update(time_t t)
 void dfObject3D::update(const glm::vec3& position)
 {
 	m_position_lvl = position;
-	dfLevel::level2gl(m_position_lvl, m_position_gl);
+	dfLevel::level2gl(m_position_lvl, m_position);
 
 	// take the opportunity to update the world bounding box
-	m_worldBounding.transform(m_source->bounding(), m_position_gl, m_animRotation, glm::vec3(0.10f, 0.10f, 0.10f));
+	m_worldBounding.transform(m_source->bounding(), m_position, m_animRotation, glm::vec3(0.10f, 0.10f, 0.10f));
 
 	if (m_meshAABB) {
 		// and update the gl boundingbox
-		m_meshAABB->translate(m_position_gl);
+		m_meshAABB->translate(m_position);
 	}
 
 	m_dirtyPosition = true;

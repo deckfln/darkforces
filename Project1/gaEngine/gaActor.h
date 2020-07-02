@@ -6,16 +6,16 @@
 #include "../framework/fwAABBox.h"
 #include "../framework/math/fwCylinder.h"
 
+#include "gaEntity.h"
+
 const float c_gravity = -0.00000981f;
 const float c_jump = -c_gravity * 300.0f;
 
 class dfLevel;
 
-class gaActor
+class gaActor: public gaEntity
 {
 	fwCylinder m_bounding;						// player bounding cylinder
-	fwAABBox m_AABB;							// player AABB
-	fwAABBox m_AABB_1;							// player AABB
 	glm::vec3 m_direction = glm::vec3(0, c_gravity, 0);	// normalized front facing vector
 	glm::vec3 m_velocity = glm::vec3(0);
 
@@ -30,7 +30,7 @@ class gaActor
 	dfLevel* m_level = nullptr;
 
 public:
-	gaActor(fwCylinder& bounding, float eyes, float ankle);
+	gaActor(const std::string& name, fwCylinder& bounding, float eyes, float ankle);
 	bool moveTo(time_t delta, glm::vec3& velocity);
 	void rotate(const glm::vec3& direction);
 	const glm::vec3& position(void) { return m_bounding.position(); };
