@@ -79,7 +79,7 @@ void dfObject::update(const glm::vec3& position)
 	dfLevel::level2gl(m_position_lvl, m_position_gl);
 
 	// take the opportunity to update the world bounding box
-	m_worldBounding.translateFrom(m_source->bounding(), m_position_gl);
+	updateWorldAABB();
 
 	if (m_meshAABB) {
 		// and update the gl boundingbox
@@ -95,6 +95,14 @@ void dfObject::update(const glm::vec3& position)
 bool dfObject::update(time_t t)
 {
 	return false;
+}
+
+/**
+ * Update the world AABB from a simple source
+ */
+void dfObject::updateWorldAABB(void)
+{
+	m_worldBounding.translateFrom(m_source->bounding(), m_position_gl);
 }
 
 /**

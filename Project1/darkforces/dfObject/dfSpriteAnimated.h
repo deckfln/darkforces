@@ -15,9 +15,12 @@ class dfSpriteAnimated: public dfSprite
 
 public:
 	dfSpriteAnimated(dfWAX* wax, glm::vec3& position, float ambient);
-	void state(int state) { m_state = state; };
+	void state(int state);
 	void rotation(glm::vec3& rotation);
+
 	virtual bool updateSprite(glm::vec3* position, glm::vec4* texture, glm::vec3* direction);
 	virtual bool update(time_t t);		// update based on timer
+	virtual void updateWorldAABB(void);	// update the AABB of the object (using the current state AABB)
+
 	~dfSpriteAnimated();
 };

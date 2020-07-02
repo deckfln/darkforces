@@ -129,7 +129,8 @@ public:
 	bool checkCollision(fwCylinder& bounding, glm::vec3& direction, glm::vec3& intersection, std::list<fwCollisionPoint>& collisions);
 
 	virtual void update(const glm::vec3& position);	// update the object position
-	virtual bool update(time_t t);			// update based on timer
+	virtual bool update(time_t t);					// update based on timer
+	virtual void updateWorldAABB(void);				// update the AABB of the object (animated objects have a special function)
 
 	~dfObject();
 };

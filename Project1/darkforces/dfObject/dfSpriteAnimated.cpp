@@ -8,6 +8,16 @@
 dfSpriteAnimated::dfSpriteAnimated(dfWAX* wax, glm::vec3& position, float ambient):
 	dfSprite(wax, position, ambient, OBJECT_WAX)
 {
+	updateWorldAABB();
+}
+
+/**
+ * Change the state of an object
+ */
+void dfSpriteAnimated::state(int state)
+{
+	m_state = state;
+	updateWorldAABB();
 }
 
 bool dfSpriteAnimated::updateSprite(glm::vec3* position, glm::vec4* texture, glm::vec3* direction)
@@ -63,6 +73,14 @@ bool dfSpriteAnimated::update(time_t t)
 	}
 
 	return false;
+}
+
+/**
+ * use the current state of update the world AABB
+ */
+void dfSpriteAnimated::updateWorldAABB(void)
+{
+	m_worldBounding.translateFrom(((dfWAX *)m_source)->bounding(m_state), m_position_gl);
 }
 
 dfSpriteAnimated::~dfSpriteAnimated()

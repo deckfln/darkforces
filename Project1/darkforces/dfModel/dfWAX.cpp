@@ -6,8 +6,8 @@
 #include "../dfFileSystem.h"
 #include "../dfFrame.h"
 
-const float WAX_WORLDSIZE_X = 95.0f;
-const float WAX_WORLDSIZE_Y = 95.0f;
+const float WAX_WORLDSIZE_X = 110.0f;
+const float WAX_WORLDSIZE_Y = 110.0f;
 
 #pragma pack(push)
 struct _dfWaxTable {
@@ -81,20 +81,20 @@ dfWAX::dfWAX(dfFileSystem* fs, dfPalette* palette, std::string& name) :
 		if (table->WAXES[i] > 0) {
 			m_nbStates++;
 
-			_dfWaxState* state = (_dfWaxState*)((unsigned char*)m_data + table->WAXES[i]);
+			_dfWaxState* _state = (_dfWaxState*)((unsigned char*)m_data + table->WAXES[i]);
 
-			dfWaxAngles* angles = new dfWaxAngles;
-			angles->animations.resize(32);
-			angles->m_Wwidth = state->Wwidth;
-			angles->m_Wheight = state->Wheight;
-			angles->m_FrameRate = state->FrameRate;
+			dfWaxState* state = new dfWaxState;
+			state->animations.resize(32);
+			state->m_Wwidth = _state->Wwidth;
+			state->m_Wheight = _state->Wheight;
+			state->m_FrameRate = _state->FrameRate;
 
-			m_states[i] = angles;
+			m_states[i] = state;
 
 			// extract all angles
 			for (auto j = 0; j < 32; j++) {
-				if (state->SEQS[j] > 0) {
-					int seq_offset = state->SEQS[j];
+				if (_state->SEQS[j] > 0) {
+					int seq_offset = _state->SEQS[j];
 					dfWaxAnimation* animation = nullptr;
 
 					if (m_animations.count(seq_offset) > 0) {
@@ -130,14 +130,33 @@ dfWAX::dfWAX(dfFileSystem* fs, dfPalette* palette, std::string& name) :
 										m_height = frame->m_height;
 										m_insertY = frame->m_InsertY;
 									}
+
+									// maximum size (in pixel) of the current animation
+									if (animation->m_size.x < frame->m_width) {
+										animation->m_size.x = frame->m_width;
+										animation->m_insert.x = (int)frame->m_InsertX;
+									}
+									if (animation->m_size.y < frame->m_height) {
+										animation->m_size.y = frame->m_height;
+										animation->m_insert.y = (int)frame->m_InsertY;
+									}
 								}
 
 								animation->frames[k] = frame;
 							}
 						}
 					}
-					angles->animations[j] = animation;
+					state->animations[j] = animation;
 
+					// maximum size (in pixel) of the current state
+					if (state->m_size.x < animation->m_size.x) {
+						state->m_size.x = animation->m_size.x;
+						state->m_insert.x = animation->m_insert.x;
+					}
+					if (state->m_size.y < animation->m_size.y) {
+						state->m_size.y = animation->m_size.y;
+						state->m_insert.y = animation->m_insert.y;
+					}
 				}
 			}
 		}
@@ -152,16 +171,28 @@ dfWAX::dfWAX(dfFileSystem* fs, dfPalette* palette, std::string& name) :
 		m_Wheight = std::max(my, m_Wheight);
 	}
 
-	// update the frame for the new target size
+	// resize the frames for the new target size
 	for (auto frame : m_frames) {
 		frame.second->targetSize(m_width, m_height);
 	}
 
-	// Update the object size
 	// level side of the sprite depend on texture size (pixel) / 32 * (Wwidth / 65536)
 	float widthFactor = WAX_WORLDSIZE_X / (m_Wwidth / 65536.0f);
 	float heightFactor = WAX_WORLDSIZE_Y / (m_Wheight / 65536.0f);
 
+	// create a model space AABB boundingbox for each state
+	for (auto i = 0; i < m_nbStates; i++) {
+		dfWaxState* state = m_states[i];
+
+		glm::vec2 size_gl = glm::vec2(state->m_size.x / widthFactor, state->m_size.y / heightFactor);
+		glm::vec2 insert_gl = glm::vec2(state->m_insert.x / widthFactor, (-state->m_insert.y - state->m_size.y - 1) / heightFactor);
+
+		state->m_bounding.set(
+			-size_gl.x / 2, insert_gl.y, -size_gl.x / 2,
+			size_gl.x / 2, size_gl.y + insert_gl.y, size_gl.x / 2);
+	}
+
+	// Update the object size
 	// fix the position of the quad based on the insert_Y
 	m_size_gl = glm::vec2(m_width / widthFactor, m_height / heightFactor);
 	m_insert_gl = glm::vec2(m_insertX / widthFactor, (-m_insertY - m_height - 1) / heightFactor);
@@ -192,10 +223,6 @@ int dfWAX::textureID(int state, int frame)
  */
 void dfWAX::spriteModel(GLmodel &model, int id)
 {
-	// level side of the sprite depend on texture size (pixel) / 32 * (Wwidth / 65536)
-	float widthFactor = WAX_WORLDSIZE_X / (m_Wwidth / 65536.0f);
-	float heightFactor = WAX_WORLDSIZE_Y / (m_Wheight / 65536.0f);
-
 	SpriteModel* sm = &model.models[id];
 
 	// fix the position of the quad based on the insert_Y
@@ -253,7 +280,7 @@ int dfWAX::framerate(int state)
  */
 int dfWAX::nextFrame(int state, unsigned int frame)
 {
-	dfWaxAngles* angles = m_states[state];
+	dfWaxState* angles = m_states[state];
 	dfWaxAnimation* animation = angles->animations[0];	// animation of state XX viewed under angle 0
 
 	if ((frame + 1 ) < animation->m_nbframes) {
@@ -261,6 +288,14 @@ int dfWAX::nextFrame(int state, unsigned int frame)
 	}
 
 	return 0;	// cycle back to frame 0
+}
+
+/**
+ * get the specific AABB from a state
+ */
+const fwAABBox& dfWAX::bounding(int state)
+{
+	return m_states[state]->m_bounding;
 }
 
 dfWAX::~dfWAX()
