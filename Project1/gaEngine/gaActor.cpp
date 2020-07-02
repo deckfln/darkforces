@@ -5,6 +5,7 @@
 
 #include "../config.h"
 #include "../framework/fwCollision.h"
+#include "../gaEngine/gaBoundingBoxes.h"
 #include "../darkforces/dfLevel.h"
 
 gaActor::gaActor(fwCylinder& bounding,float eyes, float ankle) :
@@ -12,6 +13,8 @@ gaActor::gaActor(fwCylinder& bounding,float eyes, float ankle) :
 	m_ankle(ankle),
 	m_eyes(eyes)
 {
+	m_AABB = fwAABBox(m_bounding);
+	g_gaBoundingBoxes.add(&m_AABB);
 }
 
 /**
@@ -156,6 +159,7 @@ bool gaActor::moveTo(time_t delta, glm::vec3& velocity)
 		}
 
 		m_bounding.position(target);
+		m_AABB = fwAABBox(m_bounding);
 	}
 
 	return m_time != 0;	// if the physic engine is engaged

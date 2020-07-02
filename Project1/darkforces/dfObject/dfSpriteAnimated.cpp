@@ -80,7 +80,7 @@ bool dfSpriteAnimated::update(time_t t)
  */
 void dfSpriteAnimated::updateWorldAABB(void)
 {
-	m_worldBounding.translateFrom(((dfWAX *)m_source)->bounding(m_state), m_position_gl);
+	dfSprite::updateWorldAABB(((dfWAX *)m_source)->bounding(m_state));
 }
 
 dfSpriteAnimated::~dfSpriteAnimated()

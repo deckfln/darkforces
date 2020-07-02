@@ -102,7 +102,15 @@ bool dfObject::update(time_t t)
  */
 void dfObject::updateWorldAABB(void)
 {
-	m_worldBounding.translateFrom(m_source->bounding(), m_position_gl);
+	updateWorldAABB(m_source->bounding());
+}
+
+void dfObject::updateWorldAABB(const fwAABBox& box)
+{
+	m_worldBounding.translateFrom(box, m_position_gl);
+
+	// extract the radius from the AABB
+	m_radius = std::max(abs(m_worldBounding.m_p1.x - m_worldBounding.m_p.x), abs(m_worldBounding.m_p1.z - m_worldBounding.m_p.z))/2.0f;
 }
 
 /**
@@ -132,13 +140,32 @@ bool dfObject::checkCollision(fwCylinder& bounding, glm::vec3& direction, glm::v
 	glm::vec3 playerCenter = aabb.center();
 
 	if (m_worldBounding.intersect(aabb)) {
+		// for object with radius 0, just send the message, we don't want to trigger a physical collision
+		if (m_radius == 0) {
+			collisions.push_back(fwCollisionPoint(fwCollisionLocation::COLLIDE, intersection));
+			return true;
+		}
+
+		// inside the AABB, now check if the 2 cylinders collide
+		intersection = cyl.position();
+		glm::vec3 c = m_worldBounding.center();
+		float x1 = c.x - intersection.x;
+		float y1 = c.z - intersection.z;
+		float sqDistance = sqrt(x1*x1 + y1*y1);
+		float mxsqDistance = m_radius + bounding.radius();
+		if (sqDistance > mxsqDistance) {
+			return false;
+		}
+
+		// ALWAYS send a message: YES we collide
+		collisions.push_back(fwCollisionPoint(fwCollisionLocation::COLLIDE, intersection));
+
 		std::string message;
 		int local_collision = 0;
 
 		// test bottom and top IF the player is on top
 		if (aabb.verticalAlign(playerCenter)) {
 			if (aabb.m_p.y < m_worldBounding.m_p1.y && aabb.m_p1.y > m_worldBounding.m_p1.y) {
-				intersection = cyl.position();
 				intersection.y = m_worldBounding.m_p1.y;
 				collisions.push_back(fwCollisionPoint(fwCollisionLocation::BOTTOM, intersection));
 
@@ -148,7 +175,6 @@ bool dfObject::checkCollision(fwCylinder& bounding, glm::vec3& direction, glm::v
 #endif
 			}
 			if (aabb.m_p1.y > m_worldBounding.m_p.y && aabb.m_p1.y < m_worldBounding.m_p1.y) {
-				intersection = cyl.position();
 				intersection.y = m_worldBounding.m_p.y;
 				collisions.push_back(fwCollisionPoint(fwCollisionLocation::TOP, intersection));
 #ifdef DEBUG
@@ -185,13 +211,11 @@ bool dfObject::checkCollision(fwCylinder& bounding, glm::vec3& direction, glm::v
 					break;
 				case 1:
 					c = fwCollisionLocation::FRONT_BOTTOM;
-					intersection = cyl.position();
 					intersection.y = m_worldBounding.m_p1.y;
 					p = "FRONT_BOTTOM";
 					break;
 				case 2:
 					c = fwCollisionLocation::FRONT_TOP;
-					intersection = cyl.position();
 					intersection.y = m_worldBounding.m_p.y;
 					p = "FRONT_TOP";
 					break;

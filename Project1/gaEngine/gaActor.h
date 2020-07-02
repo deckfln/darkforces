@@ -3,6 +3,7 @@
 #include <glm/vec3.hpp>
 #include <glm/mat3x3.hpp>
 
+#include "../framework/fwAABBox.h"
 #include "../framework/math/fwCylinder.h"
 
 const float c_gravity = -0.00000981f;
@@ -12,7 +13,9 @@ class dfLevel;
 
 class gaActor
 {
-	fwCylinder m_bounding = fwCylinder();		// player bounding cylinder
+	fwCylinder m_bounding;						// player bounding cylinder
+	fwAABBox m_AABB;							// player AABB
+	fwAABBox m_AABB_1;							// player AABB
 	glm::vec3 m_direction = glm::vec3(0, c_gravity, 0);	// normalized front facing vector
 	glm::vec3 m_velocity = glm::vec3(0);
 

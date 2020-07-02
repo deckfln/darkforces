@@ -131,6 +131,7 @@ public:
 	virtual void update(const glm::vec3& position);	// update the object position
 	virtual bool update(time_t t);					// update based on timer
 	virtual void updateWorldAABB(void);				// update the AABB of the object (animated objects have a special function)
+	void updateWorldAABB(const fwAABBox& box);		// update the AABB of the object
 
 	~dfObject();
 };

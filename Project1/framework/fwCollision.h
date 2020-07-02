@@ -9,6 +9,7 @@
 #include <glm/vec3.hpp>
 
 enum class fwCollisionLocation {
+    COLLIDE,
     NONE,
     TOP,
     BOTTOM,

@@ -121,7 +121,6 @@ void fwControlThirdPerson::updateCamera(time_t delta)
 	);
 
 	//std::cout << m_phi << " " << tmp.x << " " << tmp.y << std::endl;
-
 	camera->translate(eye);
 	camera->lookAt(lookAt);
 }
