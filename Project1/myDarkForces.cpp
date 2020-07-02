@@ -19,6 +19,7 @@
 #include "darkforces/dfLevel.h"
 #include "darkforces/dfCollision.h"
 #include "darkforces/dfMessageBus.h"
+#include "darkforces/dfActor.h"
 
 #include "darkforces/dfFileSystem.h"
 
@@ -42,7 +43,7 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 	glm::vec3 start = glm::vec3(-21.26f, 0.95f, 29.064f);	// main hall
 	fwCylinder bounding(start, c_radius, c_height);
 
-	m_player = new gaActor("player", bounding, c_eyes, c_ankle);
+	m_player = new dfActor("player", bounding, c_eyes, c_ankle);
 
 	// controls
 	m_control = new gaPlayer(m_camera, m_player, c_direction);

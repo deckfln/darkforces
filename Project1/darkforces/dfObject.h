@@ -71,6 +71,14 @@ enum {
 };
 
 /**
+ * Categoty of entities
+ */
+enum {
+	DF_ENTITY_ACTOR,	// 
+	DF_ENTITY_OBJECT
+};
+
+/**
  * Type of the object
  */
 enum {
@@ -126,11 +134,12 @@ public:
 	void add2scene(fwScene* scene);
 	void drawBoundingBox(void);			// create a boundingbox mesh
 	bool checkCollision(fwCylinder& bounding, glm::vec3& direction, glm::vec3& intersection, std::list<gaCollisionPoint>& collisions);
+	void updateWorldAABB(const fwAABBox& box);		// update the AABB of the object
 
 	virtual void update(const glm::vec3& position);	// update the object position
 	virtual bool update(time_t t);					// update based on timer
 	virtual void updateWorldAABB(void);				// update the AABB of the object (animated objects have a special function)
-	void updateWorldAABB(const fwAABBox& box);		// update the AABB of the object
+	virtual void collideWith(gaEntity*);			// reaction on a collision with another entity
 
 	~dfObject();
 };

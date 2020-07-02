@@ -11,11 +11,18 @@
 #include "dfSprites.h"
 #include "dfLevel.h"
 #include "dfCollision.h"
+#include "dfActor.h"
 
 static int g_ids = 0;
 
+const int DF_SHIELD_ENERGY = 100;
+const int DF_ENERGY_ENERGY = 100;
+
+/**
+ *
+ */
 dfObject::dfObject(dfModel *source, glm::vec3& position, float ambient, int type):
-	gaEntity(source->name() + "(" + std::to_string(m_objectID) + ")"),
+	gaEntity(DF_ENTITY_OBJECT, source->name() + "(" + std::to_string(m_objectID) + ")"),
 	m_source(source),
 	m_position_lvl(position),
 	m_ambient(ambient),
@@ -31,6 +38,14 @@ dfObject::dfObject(dfModel *source, glm::vec3& position, float ambient, int type
 bool dfObject::named(std::string name)
 {
 	return m_source->named(name);
+}
+
+/**
+ * Stack up logics
+ */
+void dfObject::logic(int logic)
+{
+	m_logics |= logic;
 }
 
 /**
@@ -105,6 +120,37 @@ void dfObject::updateWorldAABB(void)
 	updateWorldAABB(m_source->bounding());
 }
 
+/**
+ *  reaction on a collision with another entity
+ */
+void dfObject::collideWith(gaEntity* entity)
+{
+	// extra security
+	if (entity == nullptr) {
+		return;
+	}
+
+	if (m_logics & DF_LOGIC_ITEM_SHIELD) {
+		// ADD ARMOR
+		if (entity->is(DF_ENTITY_ACTOR)) {
+			// if the collider is a DF_ACTOR
+			// send shield to the actor
+			((dfActor*)entity)->addShield(DF_SHIELD_ENERGY);
+		}
+	}
+	else if (m_logics & DF_LOGIC_ITEM_ENERGY) {
+		// ADD ENERGY
+		if (entity->is(DF_ENTITY_ACTOR)) {
+			// if the collider is a DF_ACTOR
+			// send shield to the actor
+			((dfActor*)entity)->addEnergy(DF_ENERGY_ENERGY);
+		}
+	}
+}
+
+/**
+ * Basic update of the AABB and the radius
+ */
 void dfObject::updateWorldAABB(const fwAABBox& box)
 {
 	m_worldBounding.translateFrom(box, m_position);
@@ -113,13 +159,6 @@ void dfObject::updateWorldAABB(const fwAABBox& box)
 	m_radius = std::max(abs(m_worldBounding.m_p1.x - m_worldBounding.m_p.x), abs(m_worldBounding.m_p1.z - m_worldBounding.m_p.z))/2.0f;
 }
 
-/**
- * Stack up logics
- */
-void dfObject::logic(int logic)
-{
-	m_logics |= logic;
-}
 
 /**
  * create a boundingbox mesh

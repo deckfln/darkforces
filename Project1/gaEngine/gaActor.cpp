@@ -11,8 +11,8 @@
 
 #include "../darkforces/dfLevel.h"
 
-gaActor::gaActor(const std::string& name, fwCylinder& bounding,float eyes, float ankle) :
-	gaEntity(name),
+gaActor::gaActor(int mclass, const std::string& name, fwCylinder& bounding,float eyes, float ankle) :
+	gaEntity(mclass, name),
 	m_bounding(bounding),
 	m_ankle(ankle),
 	m_eyes(eyes)

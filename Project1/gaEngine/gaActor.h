@@ -30,7 +30,7 @@ class gaActor: public gaEntity
 	dfLevel* m_level = nullptr;
 
 public:
-	gaActor(const std::string& name, fwCylinder& bounding, float eyes, float ankle);
+	gaActor(int mclass, const std::string& name, fwCylinder& bounding, float eyes, float ankle);
 	bool moveTo(time_t delta, glm::vec3& velocity);
 	void rotate(const glm::vec3& direction);
 	const glm::vec3& position(void) { return m_bounding.position(); };

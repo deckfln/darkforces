@@ -432,6 +432,9 @@
     <ClCompile Include="gaEngine\gaEntity.cpp">
       <Filter>Fichiers sources\gaEngine</Filter>
     </ClCompile>
+    <ClCompile Include="darkforces\dfActor.cpp">
+      <Filter>Fichiers sources\Dark Forces</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="glad\glad.h">
@@ -782,9 +785,6 @@
     <ClInclude Include="framework\fwBackground.h">
       <Filter>Fichiers d%27en-tête\Framework</Filter>
     </ClInclude>
-    <ClInclude Include="framework\background\fwSkybox.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
     <ClInclude Include="framework\background\fwSkyline.h">
       <Filter>Fichiers d%27en-tête\Framework</Filter>
     </ClInclude>
@@ -829,6 +829,12 @@
     </ClInclude>
     <ClInclude Include="gaEngine\gaEntity.h">
       <Filter>Fichiers d%27en-tête\gaEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="darkforces\dfActor.h">
+      <Filter>Fichiers d%27en-tête\DarkForces</Filter>
+    </ClInclude>
+    <ClInclude Include="framework\background\fwSkybox.h">
+      <Filter>Fichiers d%27en-tête\Framework</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

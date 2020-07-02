@@ -129,6 +129,7 @@
     <ClCompile Include="alEngine\alListener.cpp" />
     <ClCompile Include="alEngine\alSound.cpp" />
     <ClCompile Include="alEngine\alSource.cpp" />
+    <ClCompile Include="darkforces\dfActor.cpp" />
     <ClCompile Include="darkforces\dfAtlasTexture.cpp" />
     <ClCompile Include="darkforces\dfBitmap.cpp" />
     <ClCompile Include="darkforces\dfCollision.cpp" />
@@ -260,6 +261,7 @@
     <ClInclude Include="alEngine\alSound.h" />
     <ClInclude Include="alEngine\alSource.h" />
     <ClInclude Include="config.h" />
+    <ClInclude Include="darkforces\dfActor.h" />
     <ClInclude Include="darkforces\dfAtlasTexture.h" />
     <ClInclude Include="darkforces\dfBitmap.h" />
     <ClInclude Include="darkforces\dfCollision.h" />
