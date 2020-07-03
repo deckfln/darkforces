@@ -28,7 +28,9 @@ public:
 	void add2scene(fwScene* scene);
 	void pause(bool p) { m_pause = p; };
 	void vue(dfFileSystem *fs, std::string& vue, std::string& component);
+
 	virtual bool update(time_t t);					// update based on timer
-	virtual void update(const glm::vec3& position);	// update position
+	virtual void updateWorldAABB(void);
+
 	~dfObject3D();
 };

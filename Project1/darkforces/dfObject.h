@@ -115,7 +115,6 @@ protected:
 
 
 	dfModel* m_source = nullptr;
-	fwMesh* m_meshAABB = nullptr;	// if we are asked to draw the AABB
 
 public:
 	dfObject(dfModel *source, glm::vec3& position, float ambient, int type);
@@ -132,13 +131,11 @@ public:
 	std::string& model(void);
 	void logic(int logic);
 	void add2scene(fwScene* scene);
-	void drawBoundingBox(void);			// create a boundingbox mesh
 	bool checkCollision(fwCylinder& bounding, glm::vec3& direction, glm::vec3& intersection, std::list<gaCollisionPoint>& collisions);
-	void updateWorldAABB(const fwAABBox& box);		// update the AABB of the object
 
-	virtual void update(const glm::vec3& position);	// update the object position
+	virtual void moveTo(const glm::vec3& position);	// update the object position
+	virtual void updateWorldAABB(void);					// update the world AABB based on position
 	virtual bool update(time_t t);					// update based on timer
-	virtual void updateWorldAABB(void);				// update the AABB of the object (animated objects have a special function)
 	virtual void collideWith(gaEntity*);			// reaction on a collision with another entity
 
 	~dfObject();

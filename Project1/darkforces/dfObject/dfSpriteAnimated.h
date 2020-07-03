@@ -20,7 +20,6 @@ public:
 
 	virtual bool updateSprite(glm::vec3* position, glm::vec4* texture, glm::vec3* direction);
 	virtual bool update(time_t t);		// update based on timer
-	virtual void updateWorldAABB(void);	// update the AABB of the object (using the current state AABB)
 
 	~dfSpriteAnimated();
 };

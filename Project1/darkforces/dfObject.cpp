@@ -4,7 +4,6 @@
 #include "../framework/math/fwCylinder.h"
 
 #include "../gaEngine/gaCollisionPoint.h"
-#include "../gaEngine/gaBoundingBoxes.h"
 #include "../gaEngine/gaDebug.h"
 
 #include "dfModel.h"
@@ -29,7 +28,8 @@ dfObject::dfObject(dfModel *source, glm::vec3& position, float ambient, int type
 	m_is(type),
 	m_objectID(g_ids++)
 {
-	update(position);
+	modelAABB(m_source->bounding());
+	moveTo(position);
 }
 
 /**
@@ -88,20 +88,14 @@ std::string& dfObject::model(void)
 /**
  * Update the object position (given in level space) and update the worldboundingBox(in gl space)
  */
-void dfObject::update(const glm::vec3& position)
+void dfObject::moveTo(const glm::vec3& position)
 {
 	m_position_lvl = position;
 	dfLevel::level2gl(m_position_lvl, m_position);
 
-	// take the opportunity to update the world bounding box
-	updateWorldAABB();
-
-	if (m_meshAABB) {
-		// and update the gl boundingbox
-		m_meshAABB->translate(m_position);
-	}
-
 	m_dirtyPosition = true;
+
+	gaEntity::moveTo(m_position);
 }
 
 /**
@@ -110,14 +104,6 @@ void dfObject::update(const glm::vec3& position)
 bool dfObject::update(time_t t)
 {
 	return false;
-}
-
-/**
- * Update the world AABB from a simple source
- */
-void dfObject::updateWorldAABB(void)
-{
-	updateWorldAABB(m_source->bounding());
 }
 
 /**
@@ -138,7 +124,7 @@ void dfObject::collideWith(gaEntity* entity)
 			((dfActor*)entity)->addShield(DF_SHIELD_ENERGY);
 
 			// and remove the object from the scene
-			update(glm::vec3(0));
+			moveTo(glm::vec3(0));
 		}
 	}
 	else if (m_logics & DF_LOGIC_ITEM_ENERGY) {
@@ -150,29 +136,20 @@ void dfObject::collideWith(gaEntity* entity)
 
 			// and remove the object from the scene
 			m_position = glm::vec3(0);
-			update(glm::vec3(0));
+			moveTo(glm::vec3(0));
 		}
 	}
 }
 
 /**
- * Basic update of the AABB and the radius
+ * update the world AABB based on position
  */
-void dfObject::updateWorldAABB(const fwAABBox& box)
+void dfObject::updateWorldAABB(void)
 {
-	m_worldBounding.translateFrom(box, m_position);
-
 	// extract the radius from the AABB
-	m_radius = std::max(abs(m_worldBounding.m_p1.x - m_worldBounding.m_p.x), abs(m_worldBounding.m_p1.z - m_worldBounding.m_p.z))/2.0f;
-}
+	m_radius = std::max(abs(m_worldBounding.m_p1.x - m_worldBounding.m_p.x), abs(m_worldBounding.m_p1.z - m_worldBounding.m_p.z)) / 2.0f;
 
-
-/**
- * create a boundingbox mesh
- */
-void dfObject::drawBoundingBox(void)
-{
-	g_gaBoundingBoxes.add(&m_worldBounding);
+	gaEntity::updateWorldAABB();
 }
 
 /**
