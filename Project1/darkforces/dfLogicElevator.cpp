@@ -587,10 +587,12 @@ void dfLogicElevator::moveTo(float z)
 		m_mesh->moveCeilingTo(z);
 		break;
 	case dfElevatorType::MOVE_FLOOR:
+		// move the sector the elevator is based on (for collision detection)
 		m_mesh->moveFloorTo(z);
 		m_pSector->currentFloorAltitude(z);
 		break;
 	case dfElevatorType::MOVE_CEILING:
+		// move the sector the elevator is based on (for collision detection)
 		m_mesh->moveCeilingTo(z);
 		m_pSector->ceiling(z);
 		break;

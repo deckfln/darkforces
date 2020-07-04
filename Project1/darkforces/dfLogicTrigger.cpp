@@ -112,8 +112,8 @@ void dfLogicTrigger::boundingBox(glm::vec2& left, glm::vec2& right, float floor,
 	// extend flat panels to the 3d dimension (will help with collision detection)
 	float lx, rx;
 	if (left.x == right.x) {
-		lx = left.x - 0.1f;
-		rx = left.x + 0.1f;
+		lx = left.x - 0.2f;
+		rx = left.x + 0.2f;
 	}
 	else {
 		lx = left.x;
@@ -122,8 +122,8 @@ void dfLogicTrigger::boundingBox(glm::vec2& left, glm::vec2& right, float floor,
 
 	float ly, ry;
 	if (left.y == right.y) {
-		ly = left.y - 0.1f;
-		ry = left.y + 0.1f;
+		ly = left.y - 0.2f;
+		ry = left.y + 0.3f;
 	}
 	else {
 		ly = left.y;
@@ -232,21 +232,21 @@ bool dfLogicTrigger::collide(fwAABBox& box)
 }
 
 /**
- * move the boundingBox of the trigger
+ * move the boundingBox of the trigger when the floor of the sector moves
  */
 void dfLogicTrigger::moveZ(float z)
 {
-	glm::vec3 v(0, z, 0);
-	moveTo(v);
+	m_position.y = z;
+	moveTo(m_position);
 }
 
 /**
- * Move the bounding box ceiling
+ * Move the bounding box of the trigger when the ceiling of the sector moves
  */
 void dfLogicTrigger::moveCeiling(float z)
 {
-	glm::vec3 v(0, z - m_modelAABB.height(), 0);
-	moveTo(v);
+	m_position.y = z - m_modelAABB.height();
+	moveTo(m_position);
 }
 
 /**
@@ -306,7 +306,7 @@ void dfLogicTrigger::activate(const std::string& activator)
 
 	// verify the activator is an actor
 	dfActor* actor = (dfActor*)g_MessageBus.getEntity(activator);
-	if (!actor->is(DF_ENTITY_ACTOR)) {
+	if (actor==nullptr || !actor->is(DF_ENTITY_ACTOR)) {
 		return;
 	}
 
