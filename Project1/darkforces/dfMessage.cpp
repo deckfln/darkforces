@@ -19,7 +19,7 @@ dfMessage::dfMessage(int action, int value)
     m_value = value; 
 };
 
-dfMessage::dfMessage(int action, int value, std::string& client)
+dfMessage::dfMessage(int action, int value, const std::string& client)
 { 
     m_action = action; 
     m_value = value; 

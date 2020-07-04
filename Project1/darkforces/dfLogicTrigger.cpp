@@ -3,11 +3,17 @@
 #include <iostream>
 #include <string>
 
+#include "../config.h"
+
+#include "../gaEngine/gaDebug.h"
+
+#include "dfActor.h"
 #include "dfLogicTrigger.h"
 #include "dfSector.h"
 #include "dfsign.h"
 #include "dfMessageBus.h"
 #include "dfMesh.h"
+#include "dfLevel.h"
 
 static const std::string switch1 = "switch1";
 static const std::string standard = "standard";
@@ -30,11 +36,10 @@ static int class2int(std::string kind)
  *Create a trigger without bounding box
  */
 dfLogicTrigger::dfLogicTrigger(std::string & kind, std::string & sector) :
-	dfMessageClient(sector),
+	gaEntity(DF_ENTITY_TRIGGER, sector),
 	m_sector(sector)
 {
 	m_class = class2int(kind);
-	m_name = sector;
 	m_messages.push_back(dfMessage(DF_MESSAGE_TRIGGER, 0, m_name));
 }
 
@@ -42,20 +47,18 @@ dfLogicTrigger::dfLogicTrigger(std::string & kind, std::string & sector) :
  * Create a trigger without bounding box
  */
 dfLogicTrigger::dfLogicTrigger(std::string& kind, std::string& sector, int wallIndex) :
-	dfMessageClient(),
+	gaEntity(DF_ENTITY_TRIGGER, sector + "(" + std::to_string(wallIndex) + ")"),
 	m_sector(sector),
 	m_wallIndex(wallIndex)
 {
 	m_class = class2int(kind);
-	m_name = sector + "(" + std::to_string(wallIndex) + ")";
-	addToBus();
 }
 
 /**
  * Create a trigger based on a wall of a sector, and record the elevator client
  */
 dfLogicTrigger::dfLogicTrigger(std::string& kind, dfSector* sector, int wallIndex,  dfLogicElevator* client) :
-	dfMessageClient(),
+	gaEntity(DF_ENTITY_TRIGGER, sector->m_name + "(" + std::to_string(wallIndex) + ")"),
 	m_wallIndex(wallIndex),
 	m_sector(sector->m_name),
 	m_keys(client->keys()),
@@ -64,30 +67,26 @@ dfLogicTrigger::dfLogicTrigger(std::string& kind, dfSector* sector, int wallInde
 	m_clients.push_back(sector->m_name);
 	sector->setTriggerFromWall(this);
 	m_class = class2int(kind);
-	m_name = sector->m_name + "(" + std::to_string(wallIndex) + ")";
-	addToBus();
 }
 
 /**
  * Create a trigger based on the floor of a sector, and record the elevator client
  */
 dfLogicTrigger::dfLogicTrigger(std::string& kind, dfSector* sector, dfLogicElevator* client) :
-	dfMessageClient(sector->m_name),
+	gaEntity(DF_ENTITY_TRIGGER, sector->m_name),
 	m_sector(sector->m_name),
 	m_keys(client->keys()),
 	m_pElevator(client)
 {
 	m_clients.push_back(sector->m_name);
 	m_class = class2int(kind);
-
-	// no sign => no trigger
 }
 
 /**
  * Create a trigger based on ono the sector managed by the elevator
  */
 dfLogicTrigger::dfLogicTrigger(std::string& kind, dfLogicElevator* client):
-	dfMessageClient(),
+	gaEntity(DF_ENTITY_TRIGGER, client->sector() + "(0)"),
 	m_keys(client->keys()),
 	m_pElevator(client)
 {
@@ -95,10 +94,6 @@ dfLogicTrigger::dfLogicTrigger(std::string& kind, dfLogicElevator* client):
 	m_clients.push_back(client->sector());
 	m_class = class2int(kind);
 	m_sector = client->sector();
-	m_name = client->sector() + "(0)";
-	addToBus();
-
-	// no sign => no trigger
 }
 
 /**
@@ -110,7 +105,7 @@ void dfLogicTrigger::addEvents(dfSector* pSector)
 }
 
 /**
- * create a static bounding box rom direct values
+ * create a static bounding box (in gl space) from direct values (in Level space)
  */
 void dfLogicTrigger::boundingBox(glm::vec2& left, glm::vec2& right, float floor, float ceiling)
 {
@@ -135,27 +130,36 @@ void dfLogicTrigger::boundingBox(glm::vec2& left, glm::vec2& right, float floor,
 		ry = right.y;
 	}
 
-	m_boundingBox = fwAABBox(
-		lx, rx,
-		ly, ry,
-		floor, ceiling
-	);
+	// set the lower corner as the position
+	glm::vec3 level(lx, ly, floor);
+	dfLevel::level2gl(level, m_position);
 
-	m_boundingBoxCenter.x = (lx + rx) / 2.0f;
-	m_boundingBoxCenter.y = (ly + ry) / 2.0f;
-	m_boundingBoxCenter.z = (floor + ceiling) / 2.0f;
+	// and extend the size
+	glm::vec3 p1_gl(0, 0, 0);
+	glm::vec3 p2_level(rx - lx, ry - ly, ceiling - floor);
+	glm::vec3 p2_gl;
+	dfLevel::level2gl(p2_level, p2_gl);
 
-	m_boundingBoxSize.x = abs(lx - rx);
-	m_boundingBoxSize.y = abs(ly - ry);
-	m_boundingBoxSize.z = abs(ceiling - floor);
+	m_modelAABB = fwAABBox(p1_gl, p2_gl);
+	updateWorldAABB();
 }
 
 /**
- * create a static bounding box from another box
+ * create a static bounding box (in gl space) from another box (in Level space)
  */
 void dfLogicTrigger::boundingBox(fwAABBox& box)
 {
-	m_boundingBox = box;
+	// set the lower corner as the position
+	dfLevel::level2gl(box.m_p, m_position);
+
+	// and extend the size
+	glm::vec3 p_gl(0);
+	glm::vec3 p1_gl;
+	dfLevel::level2gl(box.m_p1, p1_gl);
+	p1_gl = p1_gl - m_position;
+	m_modelAABB = fwAABBox(p_gl, p1_gl);
+
+	updateWorldAABB();
 }
 
 /**
@@ -232,8 +236,8 @@ bool dfLogicTrigger::collide(fwAABBox& box)
  */
 void dfLogicTrigger::moveZ(float z)
 {
-	m_boundingBox.m_p.z = z;
-	m_boundingBox.m_p1.z = z + m_boundingBoxSize.z;
+	glm::vec3 v(0, z, 0);
+	moveTo(v);
 }
 
 /**
@@ -241,8 +245,8 @@ void dfLogicTrigger::moveZ(float z)
  */
 void dfLogicTrigger::moveCeiling(float z)
 {
-	m_boundingBox.m_p.z = z - m_boundingBoxSize.z;
-	m_boundingBox.m_p1.z = z;
+	glm::vec3 v(0, z - m_modelAABB.height(), 0);
+	moveTo(v);
 }
 
 /**
@@ -252,8 +256,7 @@ void dfLogicTrigger::dispatchMessage(dfMessage* message)
 {
 	switch (message->m_action) {
 	case DF_MESSAGE_TRIGGER:
-		// TODO : should use the player's key here
-		activate(DF_KEY_NONE);
+		activate(message->m_server);
 		break;
 	case DF_MESSAGE_DONE:
 		if (m_pMesh) {
@@ -262,11 +265,10 @@ void dfLogicTrigger::dispatchMessage(dfMessage* message)
 		m_actived = false;
 		break;
 	default:
-		std::cerr << "dfLogicTrigger::dispatchMessage action " << message->m_action << " not implemented" << std::endl;
+#ifdef DEBUG
+		gaDebugLog(REDUCED_DEBUG, "dfLogicTrigger::dispatchMessage",  "action " + std::to_string(message->m_action) + " not implemented");
+#endif
 	}
-
-	// let the parent class deal with the message
-	dfMessageClient::dispatchMessage(message);
 }
 
 /**
@@ -277,28 +279,39 @@ void dfLogicTrigger::elevator(dfLogicElevator* elevator)
 	if (m_pElevator == nullptr) {
 		m_pElevator = elevator;
 	}
+#ifdef DEBUG
 	else if (m_pElevator != elevator) {
-		std::cerr << "dfLogicTrigger::elevator elevators are different" << std::endl;
+		gaDebugLog(LOW_DEBUG, "dfLogicTrigger::elevator", "elevators are different");
 	}
+#endif
 }
 
 /**
  * Handle the TRIGGER message
  */
-void dfLogicTrigger::activate(int keys)
+void dfLogicTrigger::activate(const std::string& activator)
 {
+	// the trigger was already activated
 	if (m_actived) {
 		return;
 	}
 
-	std::cerr << "dfLogicTrigger::activate " << m_name << std::endl;
+#ifdef DEBUG
+	gaDebugLog(REDUCED_DEBUG, "dfLogicTrigger::activate", m_name);
+#endif
 
 	if (m_pMesh) {
 		m_pMesh->setStatus(1);	// turn the switch on
 	}
 
-	// check if the player has the correct key
-	if (m_keys == 0 || (m_keys & keys) != 0) {
+	// verify the activator is an actor
+	dfActor* actor = (dfActor*)g_MessageBus.getEntity(activator);
+	if (!actor->is(DF_ENTITY_ACTOR)) {
+		return;
+	}
+
+	// check if there is no key needed or if the actor has the mandatory keys for the trigger
+	if (m_keys == 0 || (m_keys & actor->keys()) != 0) {
 		for (unsigned int i = 0; i < m_messages.size(); i++) {
 			m_messages[i].m_server = m_name;
 			g_MessageBus.push(&m_messages[i]);

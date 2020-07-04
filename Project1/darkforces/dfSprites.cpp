@@ -109,10 +109,6 @@ void dfSprites::add2scene(fwScene* scene)
 	if (!m_added) {
 		m_added = true;
 		scene->addChild(this);
-
-		for (auto object : m_objects) {
-			object->drawBoundingBox();
-		}
 	}
 }
 

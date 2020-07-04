@@ -1,5 +1,7 @@
 #include "dfActor.h"
 
+#include "../config.h"
+
 #include "dfObject.h"
 
 dfActor::dfActor(const std::string& name, fwCylinder& bounding, float eyes, float ankle):

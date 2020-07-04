@@ -18,7 +18,6 @@ gaActor::gaActor(int mclass, const std::string& name, fwCylinder& bounding,float
 	m_eyes(eyes)
 {
 	m_worldBounding= fwAABBox(m_bounding);
-	g_gaBoundingBoxes.add(&m_worldBounding);
 }
 
 /**

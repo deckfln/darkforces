@@ -71,14 +71,6 @@ enum {
 };
 
 /**
- * Categoty of entities
- */
-enum {
-	DF_ENTITY_ACTOR,	// 
-	DF_ENTITY_OBJECT
-};
-
-/**
  * Type of the object
  */
 enum {

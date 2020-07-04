@@ -994,7 +994,7 @@ void dfSector::addSign(dfMesh *mesh, dfWall* wall, float z, float z1, int textur
 	dfSector* s = wall->sector();
 	std::string name = s->m_name + "(" + std::to_string(wall->m_id) + ")";
 
-	dfLogicTrigger* trigger = (dfLogicTrigger*)g_MessageBus.getClient(name);
+	dfLogicTrigger* trigger = (dfLogicTrigger*)g_MessageBus.getEntity(name);
 	if (trigger) {
 		dfSign* sign = new dfSign(mesh, wall->sector(), wall, z, z1);
 		trigger->sign(sign);

@@ -8,8 +8,11 @@
 #include <glm/vec3.hpp>
 
 #include "../framework/fwAABBox.h"
+#include "../gaEngine/gaEntity.h"
+#include "dfMessageBus.h"
+
+#include "dfActor.h"
 #include "dfLogicElevator.h"
-#include "dfMessageClient.h"
 
 class dfSector;
 class dfWall;
@@ -22,7 +25,7 @@ enum {
 	DF_TRIGGER_STANDARD,
 };
 
-class dfLogicTrigger: public dfMessageClient {
+class dfLogicTrigger: public gaEntity {
 	int m_class;
 	int m_eventMask = 0;
 	bool m_master = true;			// is the trigger operational ?
@@ -36,9 +39,9 @@ class dfLogicTrigger: public dfMessageClient {
 	dfMesh* m_pMesh= nullptr;		// Mesh being a trigger (has a bounding box)
 	dfLogicElevator* m_pElevator= nullptr;		// Mesh being a trigger (has a bounding box)
 
-	fwAABBox m_boundingBox;			// bouding box of the triggers
-	glm::vec3 m_boundingBoxCenter;	// original position of the bounding box
-	glm::vec3 m_boundingBoxSize;	// original size of the bounding box
+	//fwAABBox m_boundingBox;			// bouding box of the triggers
+	//glm::vec3 m_boundingBoxCenter;	// original position of the bounding box
+	//glm::vec3 m_boundingBoxSize;	// original size of the bounding box
 
 	std::vector<dfMessage> m_messages;	// messages to pass to the clients
 	dfMessage m_trigger;				// trigger message
@@ -69,7 +72,7 @@ public:
 	bool collide(fwAABBox& box);
 	void moveZ(float z);
 	void moveCeiling(float z);
-	void activate(int keys);
+	void activate(const std::string& activor);
 	void dispatchMessage(dfMessage* message);
 
 	void elevator(dfLogicElevator* elevator);

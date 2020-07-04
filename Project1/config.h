@@ -15,3 +15,13 @@ enum {
 	HIGH_DEBUG,
 	FULL_DEBUG
 };
+
+/**
+ * Categoty of entities
+ */
+enum {
+	DF_ENTITY_ACTOR,	// intelligent objects (player, enemy)
+	DF_ENTITY_OBJECT,	// static objects (armor, energy, rock)
+	DF_ENTITY_TRIGGER	// all sort of triggers
+};
+

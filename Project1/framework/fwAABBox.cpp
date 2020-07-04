@@ -287,6 +287,14 @@ glm::vec3 fwAABBox::center(void)
 }
 
 /**
+ * return the height og the AABB
+ */
+float fwAABBox::height(void)
+{
+	return m_p1.y - m_p.y;
+}
+
+/**
  * Translate AABB by the vector
  */
 fwAABBox fwAABBox::operator+(const glm::vec3& v)

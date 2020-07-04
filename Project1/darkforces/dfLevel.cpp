@@ -350,7 +350,8 @@ void dfLevel::convertDoors2Elevators(void)
 
 			m_inf->m_elevators.push_back(elevator);
 
-			dfLogicTrigger* trigger = new dfLogicTrigger(switch1, sector, 0, elevator);
+			// create a trigger based on the full sector (already registered in the elevator)
+			dfLogicTrigger* trigger = new dfLogicTrigger(switch1, elevator);
 
 			// once the elevator closes, send a DONE message to the trigger
 			dfMessage msg(DF_MESSAGE_DONE, 0, trigger->name());
@@ -426,10 +427,33 @@ void dfLevel::createTriggerForElevator(dfLogicElevator *elevator)
  */
 void dfLevel::testSwitch(fwAABBox& player)
 {
-	for (auto trigger : m_inf->m_triggers) {
-		if (trigger->collide(player)) {
+	static dfMessage messages[32];
+	static int first = 0;
+
+	std::list<gaEntity*> collisions;
+
+	g_MessageBus.findAABBCollision(player, collisions);
+
+	if (collisions.size() > 0) {
+		dfMessage* message;
+
+		for (auto entity : collisions) {
+			message = messages + first;
+
 			//TODO get the keys the player owns
-			trigger->activate(DF_KEY_RED);
+			message->m_server = "player";
+			message->m_client = entity->name();
+			message->m_action = DF_MESSAGE_TRIGGER;
+
+			// ignore the player
+			if (message->m_client != "player") {
+				g_MessageBus.push(message);
+
+				first++;
+				if (first == 32) {
+					first = 0;
+				}
+			}
 		}
 	}
 }

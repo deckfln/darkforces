@@ -26,7 +26,7 @@ public:
 	dfMessage(void);
 	dfMessage(int action);
 	dfMessage(int action, int value);
-	dfMessage(int action, int value, std::string& client);
+	dfMessage(int action, int value, const std::string& client);
 	dfMessage(std::vector<std::string>& tokens);
 	std::string& client(void) { return m_client; };
 };

@@ -9,6 +9,7 @@
 #include "../framework/fwMaterial.h"
 #include "../framework/fwMesh.h"
 
+#include "dfActor.h"
 #include "dfMessage.h"
 #include "dfLogicElevatorConst.h"
 
@@ -33,12 +34,6 @@ enum {
 	DF_ELEVATOR_SHOOT = 128,			//Shoot or punch line(see entity_mask) 
 	DF_ELEVATOR_LAND = 512				// Land on floor of sector
 } ;
-
-
-enum {
-	DF_KEY_NONE = 0,
-	DF_KEY_RED = 1
-};
 
 /* Sounds to play when elevator move
  */

@@ -61,8 +61,6 @@ void dfObject3D::add2scene(fwScene* scene)
 		m_mesh->translate(m_position);
 		m_mesh->set_scale(0.10f);
 		scene->addChild(m_mesh);
-
-		drawBoundingBox();
 	}
 }
 
