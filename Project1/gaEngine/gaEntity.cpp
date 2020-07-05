@@ -1,6 +1,6 @@
 #include "gaEntity.h"
 
-#include "../darkforces/dfMessageBus.h"
+#include "gaWorld.h"
 #include "../gaEngine/gaBoundingBoxes.h"
 
 static int g_ids = 0;
@@ -11,7 +11,7 @@ gaEntity::gaEntity(int mclass, const std::string& name) :
 	m_class(mclass)
 {
 	g_gaBoundingBoxes.add(&m_worldBounding);
-	g_MessageBus.addClient(this);
+	g_gaWorld.addClient(this);
 
 }
 
@@ -22,7 +22,7 @@ gaEntity::gaEntity(int mclass, const std::string& name, const glm::vec3& positio
 	m_position(position)
 {
 	g_gaBoundingBoxes.add(&m_worldBounding);
-	g_MessageBus.addClient(this);
+	g_gaWorld.addClient(this);
 }
 
 /**

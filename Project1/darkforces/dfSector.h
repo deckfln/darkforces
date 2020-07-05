@@ -71,7 +71,7 @@ class dfSector
 
 	std::list <dfLogicTrigger*> m_triggers;				// list of all triggers on the sector.
 	int m_eventMask = 0;								// events triggering messages
-	dfMessage m_message;								// message to send
+	gaMessage m_message;								// message to send
 	std::vector <struct dfVerticeConnexion> m_verticeConnexions;	// get the vertice to the right and the left of each vertice
 	std::vector<std::vector<Point>> m_polygons_vertices;			// polylines enclosing the sector : [0] external polygon, [1+] internal holes : by vertices
 	std::vector<std::vector<dfWall*>> m_polygons_walls;				// polylines enclosing the sector : [0] external polygon, [1+] internal holes : by walls

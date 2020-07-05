@@ -11,10 +11,10 @@ enum {
 	DF_MESSAGE_TIMER
 };
 
-class dfMessageClient;
+class gaEntity;
 
-class dfMessage {
-	dfMessageClient* m_pClient = nullptr;	// cached value
+class gaMessage {
+	gaEntity* m_pClient = nullptr;	// cached value
 
 public:
 	int m_action = -1;
@@ -23,10 +23,10 @@ public:
 	std::string m_client;
 	time_t m_delta = 0;	// time since the last frame
 
-	dfMessage(void);
-	dfMessage(int action);
-	dfMessage(int action, int value);
-	dfMessage(int action, int value, const std::string& client);
-	dfMessage(std::vector<std::string>& tokens);
+	gaMessage(void);
+	gaMessage(int action);
+	gaMessage(int action, int value);
+	gaMessage(int action, int value, const std::string& client);
+	gaMessage(std::vector<std::string>& tokens);
 	std::string& client(void) { return m_client; };
 };

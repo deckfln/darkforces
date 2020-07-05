@@ -15,10 +15,10 @@
 
 #include "gaEngine/gaActor.h"
 #include "gaEngine/gaPlayer.h"
+#include "gaEngine/gaWorld.h"
 
 #include "darkforces/dfLevel.h"
 #include "darkforces/dfCollision.h"
-#include "darkforces/dfMessageBus.h"
 #include "darkforces/dfActor.h"
 
 #include "darkforces/dfFileSystem.h"
@@ -163,7 +163,7 @@ glTexture* myDarkForces::draw(time_t delta, fwRenderer* renderer)
 
 	// DEBUG : suspend the timer
 	if (m_control->isKeyPressed(GLFW_KEY_S)) {
-		g_MessageBus.suspendTimer();
+		g_gaWorld.suspendTimer();
 	}
 
 	// get the status of the headlight
@@ -180,7 +180,7 @@ glTexture* myDarkForces::draw(time_t delta, fwRenderer* renderer)
 	m_renderer->customDefine("HEADLIGHT", m_headlight);
 
 	m_level->draw(m_camera, m_scene); 	// update visible objects
-	g_MessageBus.process(33);
+	g_gaWorld.process(33);
 
 	m_control->updateCamera(33);			// and move the player if the level changed
 

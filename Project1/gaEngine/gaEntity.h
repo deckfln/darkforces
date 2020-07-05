@@ -5,7 +5,7 @@
 #include <glm/vec3.hpp>
 
 #include "../framework/fwAABBox.h"
-#include "../darkforces/dfMessage.h"
+#include "gaMessage.h"
 
 class gaEntity
 {
@@ -36,7 +36,7 @@ public:
 	virtual void updateWorldAABB(void);					// update the world AABB based on position
 	virtual void moveTo(const glm::vec3& position);		// move the the object and update the AABB
 	virtual bool update(time_t t) {	return false;};		// update based on timer
-	virtual void dispatchMessage(dfMessage* message) {};// let an entity deal with a situation
+	virtual void dispatchMessage(gaMessage* message) {};// let an entity deal with a situation
 
 	~gaEntity();
 };

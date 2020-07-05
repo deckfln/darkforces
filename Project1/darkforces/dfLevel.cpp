@@ -162,7 +162,7 @@ dfLevel::dfLevel(dfFileSystem* fs, std::string file)
 			sectorIsElevator = false;
 
 			// if one of the client of trigger is the very sector the trigger is attached to
-			std::vector<dfMessage>& messages = trigger->messages();
+			std::vector<gaMessage>& messages = trigger->messages();
 			for (auto& message : messages) {
 				std::string& client = message.client();
 				if (client == sectorname) {
@@ -187,7 +187,7 @@ dfLevel::dfLevel(dfFileSystem* fs, std::string file)
 
 	// bind the trigger to it's client
 	for (auto trigger : m_inf->m_triggers) {
-		std::vector<dfMessage>& messages = trigger->messages();
+		std::vector<gaMessage>& messages = trigger->messages();
 		for (auto& message : messages) {
 			std::string& client = message.client();
 			dfSector* sector = m_sectorsName[client];
@@ -354,7 +354,7 @@ void dfLevel::convertDoors2Elevators(void)
 			dfLogicTrigger* trigger = new dfLogicTrigger(switch1, elevator);
 
 			// once the elevator closes, send a DONE message to the trigger
-			dfMessage msg(DF_MESSAGE_DONE, 0, trigger->name());
+			gaMessage msg(DF_MESSAGE_DONE, 0, trigger->name());
 			closed->addMessage(msg);
 
 			trigger->config();
@@ -415,7 +415,7 @@ void dfLevel::createTriggerForElevator(dfLogicElevator *elevator)
 
 		// extract the 'CLOSED' stop = (0)
 		// add a message DONE on the stop
-		dfMessage msg(DF_MESSAGE_DONE, 0, trigger->name());
+		gaMessage msg(DF_MESSAGE_DONE, 0, trigger->name());
 		elevator->stop(0)->addMessage(msg);
 
 		m_inf->m_triggers.push_back(trigger);
@@ -427,15 +427,15 @@ void dfLevel::createTriggerForElevator(dfLogicElevator *elevator)
  */
 void dfLevel::testSwitch(fwAABBox& player)
 {
-	static dfMessage messages[32];
+	static gaMessage messages[32];
 	static int first = 0;
 
 	std::list<gaEntity*> collisions;
 
-	g_MessageBus.findAABBCollision(player, collisions);
+	g_gaWorld.findAABBCollision(player, collisions);
 
 	if (collisions.size() > 0) {
-		dfMessage* message;
+		gaMessage* message;
 
 		for (auto entity : collisions) {
 			message = messages + first;
@@ -447,7 +447,7 @@ void dfLevel::testSwitch(fwAABBox& player)
 
 			// ignore the player
 			if (message->m_client != "player") {
-				g_MessageBus.push(message);
+				g_gaWorld.push(message);
 
 				first++;
 				if (first == 32) {

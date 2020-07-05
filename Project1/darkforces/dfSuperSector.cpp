@@ -4,11 +4,13 @@
 #include <array>
 #include <glm/glm.hpp> 
 #include "../include/earcut.hpp"
+
 #include "../framework/geometries/fwGeometrySphere.h"
+
+#include "../gaEngine/gaWorld.h"
 
 #include "dfLevel.h"
 #include "dfSign.h"
-#include "dfMessageBus.h"
 #include "dfMesh.h"
 
 static glm::vec4 white(1.0, 0.0, 1.0, 1.0);

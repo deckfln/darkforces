@@ -1,8 +1,10 @@
 #include "dfLogicStop.h"
 
 #include <map>
+
+#include "../gaEngine/gaWorld.h"
+
 #include "dfSector.h"
-#include "dfMessageBus.h"
 #include "dfLogicElevator.h"
 
 static std::map<std::string, int> _stops = {
@@ -81,12 +83,12 @@ bool dfLogicStop::isTimeBased(void)
  */
 void dfLogicStop::message(std::vector<std::string>& tokens)
 {
-	dfMessage msg(tokens);
+	gaMessage msg(tokens);
 
 	m_messages.push_back(msg);
 }
 
-void dfLogicStop::addMessage(dfMessage& message)
+void dfLogicStop::addMessage(gaMessage& message)
 {
 	m_messages.push_back(message);
 }
@@ -98,7 +100,7 @@ void dfLogicStop::sendMessages()
 {
 	for (unsigned i = 0; i < m_messages.size(); i++) {
 		m_messages[i].m_server = "STOP:" + m_parent->name();
-		g_MessageBus.push(&m_messages[i]);
+		g_gaWorld.push(&m_messages[i]);
 	}
 }
 

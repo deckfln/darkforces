@@ -114,12 +114,6 @@
     <ClCompile Include="darkforces\dfMesh.cpp">
       <Filter>Fichiers sources\Dark Forces</Filter>
     </ClCompile>
-    <ClCompile Include="darkforces\dfMessage.cpp">
-      <Filter>Fichiers sources\Dark Forces</Filter>
-    </ClCompile>
-    <ClCompile Include="darkforces\dfMessageBus.cpp">
-      <Filter>Fichiers sources\Dark Forces</Filter>
-    </ClCompile>
     <ClCompile Include="darkforces\dfModel.cpp">
       <Filter>Fichiers sources\Dark Forces</Filter>
     </ClCompile>
@@ -432,6 +426,12 @@
     <ClCompile Include="darkforces\dfActor.cpp">
       <Filter>Fichiers sources\Dark Forces</Filter>
     </ClCompile>
+    <ClCompile Include="gaEngine\gaWorld.cpp">
+      <Filter>Fichiers sources\gaEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="gaEngine\gaMessage.cpp">
+      <Filter>Fichiers sources\gaEngine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="glad\glad.h">
@@ -507,12 +507,6 @@
       <Filter>Fichiers d%27en-tête\DarkForces</Filter>
     </ClInclude>
     <ClInclude Include="darkforces\dfMesh.h">
-      <Filter>Fichiers d%27en-tête\DarkForces</Filter>
-    </ClInclude>
-    <ClInclude Include="darkforces\dfMessage.h">
-      <Filter>Fichiers d%27en-tête\DarkForces</Filter>
-    </ClInclude>
-    <ClInclude Include="darkforces\dfMessageBus.h">
       <Filter>Fichiers d%27en-tête\DarkForces</Filter>
     </ClInclude>
     <ClInclude Include="darkforces\dfModel.h">
@@ -829,6 +823,12 @@
     </ClInclude>
     <ClInclude Include="framework\background\fwSkybox.h">
       <Filter>Fichiers d%27en-tête\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="gaEngine\gaWorld.h">
+      <Filter>Fichiers d%27en-tête\gaEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="gaEngine\gaMessage.h">
+      <Filter>Fichiers d%27en-tête\gaEngine</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

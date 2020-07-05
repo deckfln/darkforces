@@ -1,32 +1,32 @@
-#include "dfMessage.h"
+#include "gaMessage.h"
 
 #include <iostream>
 
-std::queue<dfMessage*> g_MessagesQueue;
+std::queue<gaMessage*> g_MessagesQueue;
 
-dfMessage::dfMessage(void)
+gaMessage::gaMessage(void)
 {
 };
 
-dfMessage::dfMessage(int action) 
+gaMessage::gaMessage(int action) 
 {
     m_action = action; 
 };
 
-dfMessage::dfMessage(int action, int value)
+gaMessage::gaMessage(int action, int value)
 {
     m_action = action; 
     m_value = value; 
 };
 
-dfMessage::dfMessage(int action, int value, const std::string& client)
+gaMessage::gaMessage(int action, int value, const std::string& client)
 { 
     m_action = action; 
     m_value = value; 
     m_client = client; 
 };
 
-dfMessage::dfMessage(std::vector<std::string>& tokens)
+gaMessage::gaMessage(std::vector<std::string>& tokens)
 {
 	int s = tokens.size();
 	const std::string done = "done";
@@ -69,6 +69,6 @@ dfMessage::dfMessage(std::vector<std::string>& tokens)
 		for (auto s : tokens) {
 			m += " " + s;
 		}
-		std::cerr << "dfMessage::parse " << m << " not implemented" << std::endl;
+		std::cerr << "gaMessage::parse " << m << " not implemented" << std::endl;
 	}
 }

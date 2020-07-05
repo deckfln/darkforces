@@ -6,12 +6,12 @@
 #include "../config.h"
 
 #include "../gaEngine/gaDebug.h"
+#include "../gaEngine/gaWorld.h"
 
 #include "dfActor.h"
 #include "dfLogicTrigger.h"
 #include "dfSector.h"
 #include "dfsign.h"
-#include "dfMessageBus.h"
 #include "dfMesh.h"
 #include "dfLevel.h"
 
@@ -40,7 +40,7 @@ dfLogicTrigger::dfLogicTrigger(std::string & kind, std::string & sector) :
 	m_sector(sector)
 {
 	m_class = class2int(kind);
-	m_messages.push_back(dfMessage(DF_MESSAGE_TRIGGER, 0, m_name));
+	m_messages.push_back(gaMessage(DF_MESSAGE_TRIGGER, 0, m_name));
 }
 
 /**
@@ -175,7 +175,7 @@ void dfLogicTrigger::boundingBox(dfLogicElevator* elevator)
  */
 void dfLogicTrigger::message(std::vector<std::string>& tokens)
 {
-	dfMessage msg(tokens);
+	gaMessage msg(tokens);
 	m_messages.push_back(msg);
 }
 
@@ -188,13 +188,13 @@ void dfLogicTrigger::config(void)
 		if (m_clients.size() >= 0) {
 			// inform all clients
 			for (auto & client: m_clients) {
-				m_messages.push_back(dfMessage(DF_MESSAGE_TRIGGER, 0, client));
+				m_messages.push_back(gaMessage(DF_MESSAGE_TRIGGER, 0, client));
 			}
 		}
 	}
 	else {
 		// for every message, duplicate to every client
-		dfMessage message;
+		gaMessage message;
 		for (int i = m_messages.size() - 1; i >= 0; i--) {
 			m_messages[i].m_client = m_clients[0];	// fix the first
 			// add the next ones
@@ -245,7 +245,7 @@ void dfLogicTrigger::moveCeiling(float z)
 /**
  * Handle a message
  */
-void dfLogicTrigger::dispatchMessage(dfMessage* message)
+void dfLogicTrigger::dispatchMessage(gaMessage* message)
 {
 	switch (message->m_action) {
 	case DF_MESSAGE_TRIGGER:
@@ -298,7 +298,7 @@ void dfLogicTrigger::activate(const std::string& activator)
 	}
 
 	// verify the activator is an actor
-	dfActor* actor = (dfActor*)g_MessageBus.getEntity(activator);
+	dfActor* actor = (dfActor*)g_gaWorld.getEntity(activator);
 	if (actor==nullptr || !actor->is(DF_ENTITY_ACTOR)) {
 		return;
 	}
@@ -307,7 +307,7 @@ void dfLogicTrigger::activate(const std::string& activator)
 	if (m_keys == 0 || (m_keys & actor->keys()) != 0) {
 		for (unsigned int i = 0; i < m_messages.size(); i++) {
 			m_messages[i].m_server = m_name;
-			g_MessageBus.push(&m_messages[i]);
+			g_gaWorld.push(&m_messages[i]);
 		}
 
 		// only switches needs activation/deactivation

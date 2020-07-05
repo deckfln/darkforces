@@ -13,11 +13,11 @@
 #include "../framework/fwCollision.h"
 
 #include "../gaEngine/gaCollisionPoint.h"
+#include "../gaEngine/gaWorld.h"
 
 #include "dfSuperSector.h"
 #include "dfMesh.h"
 #include "dfParseINF.h"
-#include "dfMessageBus.h"
 #include "dfSign.h"
 
 dfSector::dfSector(std::istringstream& infile, std::vector<dfSector*>& sectorsID):
@@ -147,7 +147,7 @@ dfSector::dfSector(std::istringstream& infile, std::vector<dfSector*>& sectorsID
 	m_height = m_referenceCeilingAltitude - m_referenceFloorAltitude;
 	m_boundingBox = fwAABBox(min_x, max_x, min_y, max_y, m_referenceFloorAltitude, m_referenceCeilingAltitude);
 
-	m_message = dfMessage(DF_MESSAGE_TRIGGER, 0, m_name);
+	m_message = gaMessage(DF_MESSAGE_TRIGGER, 0, m_name);
 }
 
 /**
@@ -617,7 +617,7 @@ void dfSector::event(int event_mask)
 		gaDebugLog(LOW_DEBUG, "dfSector::event", "sector=" + m_name + " event=" + std::to_string(event_mask));
 #endif
 		m_message.m_server = m_name;
-		g_MessageBus.push(&m_message);
+		g_gaWorld.push(&m_message);
 	}
 }
 
@@ -998,7 +998,7 @@ dfLogicTrigger* dfSector::addSign(dfMesh *mesh, dfWall* wall, float z, float z1,
 	dfSector* s = wall->sector();
 	std::string name = s->m_name + "(" + std::to_string(wall->m_id) + ")";
 
-	dfLogicTrigger* trigger = (dfLogicTrigger*)g_MessageBus.getEntity(name);
+	dfLogicTrigger* trigger = (dfLogicTrigger*)g_gaWorld.getEntity(name);
 	if (trigger) {
 		dfSign* sign = new dfSign(mesh, wall->sector(), wall, z, z1);
 		trigger->sign(sign);

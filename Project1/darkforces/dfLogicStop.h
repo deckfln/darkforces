@@ -4,9 +4,9 @@
 #include <vector>
 #include <map>
 
-#include "dfMessage.h"
-
 #include "../framework/fwAABBox.h"
+#include "../gaEngine/gaMessage.h"
+
 #include "dfLogicElevatorConst.h"
 
 class dfSector;
@@ -42,7 +42,7 @@ class dfLogicStop {
 	// [complete] mission will be complete when elev arrives at stop
 	int m_action = 0;
 
-	std::vector<dfMessage> m_messages;
+	std::vector<gaMessage> m_messages;
 
 public:
 	dfLogicStop(dfLogicElevator *parent);
@@ -62,7 +62,7 @@ public:
 	int action(void) { return m_action; };
 	bool isTimeBased(void);
 	void message(std::vector <std::string>& tokens);
-	void addMessage(dfMessage& message);
+	void addMessage(gaMessage& message);
 	void sendMessages();
 	float z_position(dfElevatorType elevatorClass);
 	void getMessagesToSectors(std::list<std::string>& sectors);

@@ -9,7 +9,7 @@
 
 #include "../framework/fwAABBox.h"
 #include "../gaEngine/gaEntity.h"
-#include "dfMessageBus.h"
+#include "../gaEngine/gaWorld.h"
 
 #include "dfActor.h"
 #include "dfLogicElevator.h"
@@ -43,8 +43,8 @@ class dfLogicTrigger: public gaEntity {
 	//glm::vec3 m_boundingBoxCenter;	// original position of the bounding box
 	//glm::vec3 m_boundingBoxSize;	// original size of the bounding box
 
-	std::vector<dfMessage> m_messages;	// messages to pass to the clients
-	dfMessage m_trigger;				// trigger message
+	std::vector<gaMessage> m_messages;	// messages to pass to the clients
+	gaMessage m_trigger;				// trigger message
 
 public:
 	dfLogicTrigger(std::string& kind, std::string& sector);
@@ -73,9 +73,9 @@ public:
 	void moveZ(float z);
 	void moveCeiling(float z);
 	void activate(const std::string& activor);
-	void dispatchMessage(dfMessage* message);
+	void dispatchMessage(gaMessage* message);
 
 	void elevator(dfLogicElevator* elevator);
 
-	std::vector<dfMessage>& messages(void) { return m_messages; };	// return messages
+	std::vector<gaMessage>& messages(void) { return m_messages; };	// return messages
 };

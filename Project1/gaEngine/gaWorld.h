@@ -4,20 +4,19 @@
 #include <map>
 #include <list>
 
-#include "../gaEngine/gaEntity.h"
-#include "dfMessage.h"
+#include "gaEntity.h"
+#include "gaMessage.h"
 
-class dfMessageBus
+class gaWorld
 {
-	std::queue<dfMessage*> m_queue;
-	std::queue<dfMessage*> m_for_next_frame;
+	std::queue<gaMessage*> m_queue;
+	std::queue<gaMessage*> m_for_next_frame;
 	std::map<std::string, std::list<gaEntity*>> m_entities;
 
 	bool m_timer = true;		// pass DF_MESSAGE_TIMER event
 
 public:
-	dfMessageBus(void);
-	void addClient(dfMessageClient* client);
+	gaWorld(void);
 	void addClient(gaEntity* client);
 	void removeClient(gaEntity* client);
 
@@ -25,10 +24,11 @@ public:
 
 	void findAABBCollision(fwAABBox& box, std::list<gaEntity*>& collisions);	// find colliding entities AABB
 
-	void push(dfMessage* message);
-	void pushForNextFrame(dfMessage* message);
+	void push(gaMessage* message);
+	void pushForNextFrame(gaMessage* message);
 	void process(time_t delta);
 	void suspendTimer(void);
+	~gaWorld();
 };
 
-extern dfMessageBus g_MessageBus;
+extern gaWorld g_gaWorld;

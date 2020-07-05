@@ -7,11 +7,12 @@
 
 #include "../framework/math/fwCylinder.h"
 
+#include "../gaEngine/gaWorld.h"
+
 #include "dfMesh.h"
 #include "dfSector.h"
 #include "dfLevel.h"
 #include "dfSign.h"
-#include "dfMessageBus.h"
 #include "dfVOC.h"
 #include "dfFileSystem.h"
 
@@ -350,7 +351,7 @@ void dfLogicElevator::init(int stopID)
 
 	if (m_type == dfElevatorType::CHANGE_LIGHT) {
 		// kick start animation
-		g_MessageBus.pushForNextFrame(&m_msg_animate);
+		g_gaWorld.pushForNextFrame(&m_msg_animate);
 	}
 
 	// send messages to the clients
@@ -499,7 +500,7 @@ bool dfLogicElevator::animateMoveZ(void)
 	}
 
 	// next animation
-	g_MessageBus.pushForNextFrame(&m_msg_animate);
+	g_gaWorld.pushForNextFrame(&m_msg_animate);
 	return false;
 }
 
@@ -525,7 +526,7 @@ bool dfLogicElevator::animate(time_t delta)
 			}
 			else {
 				// next animation
-				g_MessageBus.pushForNextFrame(&m_msg_animate);
+				g_gaWorld.pushForNextFrame(&m_msg_animate);
 			}
 		}
 		break;
@@ -638,7 +639,7 @@ void dfLogicElevator::addSign(dfSign* sign)
 /**
  * Dispatch and handle messages
  */
-void dfLogicElevator::dispatchMessage(dfMessage* message)
+void dfLogicElevator::dispatchMessage(gaMessage* message)
 {
 	switch (message->m_action) {
 	case DF_MESSAGE_TRIGGER:

@@ -1,18 +1,18 @@
-#include "dfMessagebus.h"
+#include "gaWorld.h"
 
 #include <iostream>
 #include <map>
 
-dfMessageBus g_MessageBus;
+gaWorld g_gaWorld;
 
-dfMessageBus::dfMessageBus()
+gaWorld::gaWorld()
 {
 }
 
 /**
  * Add a new gaEntity
  */
-void dfMessageBus::addClient(gaEntity* client)
+void gaWorld::addClient(gaEntity* client)
 {
 	m_entities[client->name()].push_back(client);
 }
@@ -20,7 +20,7 @@ void dfMessageBus::addClient(gaEntity* client)
 /**
  * remove a gaEntity
  */
-void dfMessageBus::removeClient(gaEntity* client)
+void gaWorld::removeClient(gaEntity* client)
 {
 	if (m_entities.count(client->name()) == 0) {
 		// no such client on the map
@@ -33,7 +33,7 @@ void dfMessageBus::removeClient(gaEntity* client)
 /**
  * Search the entities map
  */
-gaEntity* dfMessageBus::getEntity(const std::string& name)
+gaEntity* gaWorld::getEntity(const std::string& name)
 {
 	// search new entities
 	if (m_entities.count(name) > 0) {
@@ -46,7 +46,7 @@ gaEntity* dfMessageBus::getEntity(const std::string& name)
 /**
  * parse entities to check for collision with the given one
  */
-void dfMessageBus::findAABBCollision(fwAABBox& box, std::list<gaEntity*>& collisions)
+void gaWorld::findAABBCollision(fwAABBox& box, std::list<gaEntity*>& collisions)
 {
 	for (auto entry : m_entities) {
 		// test all entity with the same name
@@ -58,28 +58,28 @@ void dfMessageBus::findAABBCollision(fwAABBox& box, std::list<gaEntity*>& collis
 	}
 }
 
-void dfMessageBus::push(dfMessage* message)
+void gaWorld::push(gaMessage* message)
 {
 	m_queue.push(message);
 }
 
-void dfMessageBus::pushForNextFrame(dfMessage* message)
+void gaWorld::pushForNextFrame(gaMessage* message)
 {
 	m_for_next_frame.push(message);
 }
 
-void dfMessageBus::process(time_t delta)
+void gaWorld::process(time_t delta)
 {
 	/*
 	if (m_queue.size() > 0) {
-		std::cerr << ">>>>>>>>>> dfMessageBus::process" << std::endl;
+		std::cerr << ">>>>>>>>>> gaWorld::process" << std::endl;
 	}
 	*/
 
 	std::map<std::string, bool> loopDetector;
 
 	while (m_queue.size() > 0) {
-		dfMessage* message = m_queue.front();
+		gaMessage* message = m_queue.front();
 		m_queue.pop();
 
 		// manage loops inside one run
@@ -111,7 +111,11 @@ void dfMessageBus::process(time_t delta)
 	m_queue.swap(m_for_next_frame);
 }
 
-void dfMessageBus::suspendTimer(void)
+void gaWorld::suspendTimer(void)
 {
 	m_timer = false;
+}
+
+gaWorld::~gaWorld()
+{
 }

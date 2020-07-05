@@ -9,9 +9,9 @@
 #include "../framework/fwMesh.h"
 
 #include "../gaEngine/gaEntity.h"
+#include "../gaEngine/gaMessage.h"
 
 #include "dfActor.h"
-#include "dfMessage.h"
 #include "dfLogicElevatorConst.h"
 
 class fwCylinder;
@@ -19,7 +19,7 @@ class gaCollisionPoint;
 class dfLevel;
 class dfMesh;
 class dfLogicTrigger;
-class dfMessage;
+class gaMessage;
 class dfSign;
 class dfBitmap;
 class dfVOC;
@@ -80,7 +80,7 @@ class dfLogicElevator: public gaEntity {
 
 	dfVOC* m_sounds[3] = { nullptr, nullptr, nullptr };
 
-	dfMessage m_msg_animate = dfMessage(DF_MESSAGE_TIMER);
+	gaMessage m_msg_animate = gaMessage(DF_MESSAGE_TIMER);
 
 	void moveTo(dfLogicStop* stop);
 	void moveTo(float z);
@@ -112,7 +112,7 @@ public:
 	void init(int stopID);
 	bool animate(time_t delta);
 	void addSign(dfSign*);
-	void dispatchMessage(dfMessage* message);
+	void dispatchMessage(gaMessage* message);
 	bool checkCollision(float step, glm::vec3& position, glm::vec3& target, float radius, glm::vec3& intersection);
 	bool checkCollision(fwAABBox& box);
 	bool checkCollision(fwCylinder& bounding, glm::vec3& direction, glm::vec3 &intersection, std::list<gaCollisionPoint>& collisions);

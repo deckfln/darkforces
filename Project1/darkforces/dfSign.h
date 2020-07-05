@@ -15,7 +15,7 @@ class dfLogicTrigger;
 class dfBitmap;
 class dfSector;
 class dfWall;
-class dfMessage;
+class gaMessage;
 
 class dfSign : public dfMesh {
     int m_class = 0;

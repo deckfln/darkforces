@@ -141,8 +141,6 @@
     <ClCompile Include="darkforces\dfLogicStop.cpp" />
     <ClCompile Include="darkforces\dfLogicTrigger.cpp" />
     <ClCompile Include="darkforces\dfMesh.cpp" />
-    <ClCompile Include="darkforces\dfMessage.cpp" />
-    <ClCompile Include="darkforces\dfMessageBus.cpp" />
     <ClCompile Include="darkforces\dfModel.cpp" />
     <ClCompile Include="darkforces\dfModel\df3DO.cpp" />
     <ClCompile Include="darkforces\dfModel\dfFME.cpp" />
@@ -222,7 +220,9 @@
     <ClCompile Include="gaEngine\gaCollisionPoint.cpp" />
     <ClCompile Include="gaEngine\gaDebug.cpp" />
     <ClCompile Include="gaEngine\gaEntity.cpp" />
+    <ClCompile Include="gaEngine\gaMessage.cpp" />
     <ClCompile Include="gaEngine\gaPlayer.cpp" />
+    <ClCompile Include="gaEngine\gaWorld.cpp" />
     <ClCompile Include="glEngine\framebuffer\glDepthCubeMap.cpp" />
     <ClCompile Include="glEngine\glBufferAttribute.cpp" />
     <ClCompile Include="glEngine\glBufferObject.cpp" />
@@ -273,8 +273,6 @@
     <ClInclude Include="darkforces\dfLogicStop.h" />
     <ClInclude Include="darkforces\dfLogicTrigger.h" />
     <ClInclude Include="darkforces\dfMesh.h" />
-    <ClInclude Include="darkforces\dfMessage.h" />
-    <ClInclude Include="darkforces\dfMessageBus.h" />
     <ClInclude Include="darkforces\dfModel.h" />
     <ClInclude Include="darkforces\dfModel\df3DO.h" />
     <ClInclude Include="darkforces\dfModel\dfFME.h" />
@@ -355,7 +353,9 @@
     <ClInclude Include="gaEngine\gaCollisionPoint.h" />
     <ClInclude Include="gaEngine\gaDebug.h" />
     <ClInclude Include="gaEngine\gaEntity.h" />
+    <ClInclude Include="gaEngine\gaMessage.h" />
     <ClInclude Include="gaEngine\gaPlayer.h" />
+    <ClInclude Include="gaEngine\gaWorld.h" />
     <ClInclude Include="glEngine\framebuffer\glDepthCubeMap.h" />
     <ClInclude Include="glEngine\glBufferAttribute.h" />
     <ClInclude Include="glEngine\glBufferObject.h" />
