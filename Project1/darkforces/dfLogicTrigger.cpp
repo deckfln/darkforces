@@ -221,13 +221,6 @@ bool dfLogicTrigger::collide(fwAABBox& box)
 		return m_pMesh->collide(box, m_name);
 	}
 	
-	// move to level space
-	/*
-	fwAABBox level(box.m_p.x, box.m_p1.x, box.m_p.z, box.m_p1.z, box.m_p.y, box.m_p1.y);
-	level.multiplyBy(10.0);
-	return m_boundingBox.intersect(level);
-	*/
-
 	return false; // this is not a touchable object
 }
 

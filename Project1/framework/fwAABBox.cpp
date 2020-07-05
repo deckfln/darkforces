@@ -304,6 +304,18 @@ fwAABBox fwAABBox::operator+(const glm::vec3& v)
 	m_dirty = true;
 	return fwAABBox(p, p1);
 }
+/**
+ * Translate AABB by the vector
+ */
+fwAABBox& fwAABBox::operator+=(const glm::vec3& v)
+{
+	m_p += v;
+	m_p1 += v;
+
+	m_dirty = true;
+
+	return *this;
+}
 
 /**
  * vector from current AABB to the other one

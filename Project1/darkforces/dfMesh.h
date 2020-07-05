@@ -91,6 +91,9 @@ public:
 	dfMesh(dfMesh *parent);
 
 	fwMesh* mesh(void) { return m_mesh; };
+	const fwAABBox& modelAABB(void) { return m_boundingBox; };
+	const glm::vec3& position(void) { return m_position; };
+
 	void display(fwScene*, bool visibility);
 
 	int addRectangle(int start, dfSector* sector, dfWall* wall, float z, float z1, int texture, float ambient);
@@ -99,8 +102,7 @@ public:
 	void addPlane(float width, dfBitmapImage* image);
 	virtual void buildGeometry(dfSector* source, float bottom, float top);
 	virtual void rebuildAABB(void);
-	void moveFloorTo(float z);
-	void moveCeilingTo(float z);
+	void moveTo(float z);			// move the dfMesh to altitude
 	void rotateZ(float angle);
 	void move(glm::vec3& position);
 	bool collide(float step, glm::vec3& position, glm::vec3& target, float radius, glm::vec3& intersection, std::string& name);

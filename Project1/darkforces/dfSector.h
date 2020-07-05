@@ -95,7 +95,7 @@ class dfSector
 	void buildWalls(dfMesh* mesh, dfWallFlag displayPolygon);
 	void buildFloorAndCeiling(dfMesh* mesh);
 	void buildSigns(dfMesh* mesh);
-	void addSign(dfMesh *mesh, dfWall* wall, float z, float z1, int texture);
+	dfLogicTrigger* addSign(dfMesh *mesh, dfWall* wall, float z, float z1, int texture);
 	void deferedAddSign(dfWall* wall);
 
 
@@ -162,7 +162,7 @@ public:
 	bool isPointInside(glm::vec3& position, bool fullTest);
 	float boundingBoxSurface(void);
 	void linkWalls(void);
-	void buildElevator(dfMesh *mesh, float bottom, float top, int what, bool clockwise, dfWallFlag flags);
+	void buildElevator(gaEntity*parent, dfMesh *mesh, float bottom, float top, int what, bool clockwise, dfWallFlag flags);
 
 	bool includedIn(dfSector* sector);
 	dfSector* isIncludedIn(void) { return m_includedIn; };

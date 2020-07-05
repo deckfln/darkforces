@@ -3,6 +3,8 @@
 #define _USE_MATH_DEFINES // for C++
 #include <math.h>
 
+#include "../config.h"
+
 #include "../framework/math/fwCylinder.h"
 
 #include "dfMesh.h"
@@ -92,8 +94,7 @@ void dfLogicElevator::init(const std::string& kind)
  *
  */
 dfLogicElevator::dfLogicElevator(std::string& kind, dfSector* sector, dfLevel* parent):
-	dfMessageClient(sector->m_name),
-	m_class(kind),
+	gaEntity(DF_ENTITY_ELEVATOR, sector->m_name),
 	m_sector(sector->m_name),
 	m_pSector(sector),
 	m_parent(parent)
@@ -103,8 +104,7 @@ dfLogicElevator::dfLogicElevator(std::string& kind, dfSector* sector, dfLevel* p
 }
 
 dfLogicElevator::dfLogicElevator(std::string& kind, std::string& sector):
-	dfMessageClient(sector),
-	m_class(kind),
+	gaEntity(DF_ENTITY_ELEVATOR, sector),
 	m_sector(sector)
 {
 	m_msg_animate.m_client = m_name;
@@ -212,7 +212,7 @@ dfMesh *dfLogicElevator::buildGeometry(fwMaterial* material, std::vector<dfBitma
 		m_zmax = m_pSector->staticCeilingAltitude();
 	}
 
-	//
+	//!
 	// Build a mesh depending of the type
 	//
 	switch (m_type) {
@@ -223,11 +223,11 @@ dfMesh *dfLogicElevator::buildGeometry(fwMaterial* material, std::vector<dfBitma
 
 		// the elevator bottom is actually the ceiling
 		if (m_type == dfElevatorType::INV || m_type == dfElevatorType::DOOR) {
-			m_pSector->buildElevator(m_mesh, 0, m_zmax - m_zmin, DFWALL_TEXTURE_TOP, true, dfWallFlag::ALL);
+			m_pSector->buildElevator(this, m_mesh, 0, m_zmax - m_zmin, DFWALL_TEXTURE_TOP, true, dfWallFlag::ALL);
 			m_pSector->setAABBtop(m_zmax);
 		}
 		else {
-			m_pSector->buildElevator(m_mesh, 0, -(m_zmax - m_zmin), DFWALL_TEXTURE_TOP, true, dfWallFlag::ALL);
+			m_pSector->buildElevator(this, m_mesh, 0, -(m_zmax - m_zmin), DFWALL_TEXTURE_TOP, true, dfWallFlag::ALL);
 			m_pSector->setAABBtop(m_zmax);
 		}
 
@@ -248,12 +248,12 @@ dfMesh *dfLogicElevator::buildGeometry(fwMaterial* material, std::vector<dfBitma
 
 		if (m_type == dfElevatorType::MOVE_FLOOR) {
 			// the elevator top is actually the floor
-			m_pSector->buildElevator(m_mesh, -(m_zmax - m_zmin), 0, DFWALL_TEXTURE_BOTTOM, false, dfWallFlag::ALL);
+			m_pSector->buildElevator(this, m_mesh, -(m_zmax - m_zmin), 0, DFWALL_TEXTURE_BOTTOM, false, dfWallFlag::ALL);
 			m_pSector->setAABBbottom(m_zmin);
 		}
 		else {
 			// move ceiling, only move the top
-			m_pSector->buildElevator(m_mesh, 0, (m_zmax - m_zmin), DFWALL_TEXTURE_TOP, false, dfWallFlag::ALL);
+			m_pSector->buildElevator(this, m_mesh, 0, (m_zmax - m_zmin), DFWALL_TEXTURE_TOP, false, dfWallFlag::ALL);
 			m_pSector->setAABBtop(m_zmax);
 		}
 
@@ -277,7 +277,7 @@ dfMesh *dfLogicElevator::buildGeometry(fwMaterial* material, std::vector<dfBitma
 		// only use the inner polygon (the hole)
 		// these elevators are always portal, 
 		// textures to use and the height are based on the difference between the connected sectors floor & ceiling and the current floor & ceiling
-		m_pSector->buildElevator(m_mesh, m_zmin, m_zmax, DFWALL_TEXTURE_MID, false, dfWallFlag::MORPHS_WITH_ELEV);
+		m_pSector->buildElevator(this, m_mesh, m_zmin, m_zmax, DFWALL_TEXTURE_MID, false, dfWallFlag::MORPHS_WITH_ELEV);
 
 		if (m_mesh->buildMesh()) {
 			m_pSector->addObject(m_mesh);
@@ -322,6 +322,11 @@ dfMesh *dfLogicElevator::buildGeometry(fwMaterial* material, std::vector<dfBitma
 	}
 
 	m_mesh->name(m_sector);
+
+	// build the model AABB
+	m_modelAABB = m_mesh->modelAABB();
+	m_position = m_mesh->position();
+	updateWorldAABB();
 
 	return m_mesh;
 }
@@ -581,28 +586,38 @@ void dfLogicElevator::moveTo(float z)
 	switch (m_type) {
 	case dfElevatorType::INV:
 	case dfElevatorType::DOOR:
-		m_mesh->moveCeilingTo(z);
+		m_mesh->moveTo(z);
+		m_position.y = z / 10.0f;
+		gaEntity::moveTo(m_position);
 		break;
 	case dfElevatorType::BASIC:
-		m_mesh->moveCeilingTo(z);
+		m_mesh->moveTo(z);
+		m_position.y = z / 10.0f;
+		gaEntity::moveTo(m_position);
 		break;
 	case dfElevatorType::MOVE_FLOOR:
 		// move the sector the elevator is based on (for collision detection)
-		m_mesh->moveFloorTo(z);
+		m_mesh->moveTo(z);
+		m_position.y = z / 10.0f;
+		gaEntity::moveTo(m_position);
 		m_pSector->currentFloorAltitude(z);
 		break;
 	case dfElevatorType::MOVE_CEILING:
 		// move the sector the elevator is based on (for collision detection)
-		m_mesh->moveCeilingTo(z);
+		m_mesh->moveTo(z);
+		m_position.y = z / 10.0f;
+		gaEntity::moveTo(m_position);
 		m_pSector->ceiling(z);
 		break;
 	case dfElevatorType::MORPH_SPIN1:
 	case dfElevatorType::MORPH_SPIN2:
 		m_mesh->rotateZ(glm::radians((z)));
+		gaEntity::rotate(glm::vec3(0, glm::radians(z), 0));
 		break;
 	case dfElevatorType::MORPH_MOVE1:
 		glm::vec3 p = m_center + m_move * z;
 		m_mesh->move(p);
+		gaEntity::moveTo(p);
 		break;
 	case dfElevatorType::CHANGE_LIGHT:
 		m_pSector->changeAmbient(z);
@@ -690,9 +705,6 @@ void dfLogicElevator::dispatchMessage(dfMessage* message)
 	default:
 		std::cerr << "dfLogicElevator::dispatchMessage message " << message->m_action << " not implemented" << std::endl;
 	}
-
-	// let the parent class deal with the message
-	dfMessageClient::dispatchMessage(message);
 }
 
 /**

@@ -22,6 +22,7 @@ enum {
 enum {
 	DF_ENTITY_ACTOR,	// intelligent objects (player, enemy)
 	DF_ENTITY_OBJECT,	// static objects (armor, energy, rock)
-	DF_ENTITY_TRIGGER	// all sort of triggers
+	DF_ENTITY_TRIGGER,	// all sort of triggers
+	DF_ENTITY_ELEVATOR	// moving doors and platforms
 };
 

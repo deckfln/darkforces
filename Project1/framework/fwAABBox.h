@@ -41,6 +41,9 @@ public:
 	void set(float, float, float, float, float, float);	// build from points
 	void set(std::vector<glm::vec3>& vertices);	// build from vertices
 
+	fwAABBox operator+(const glm::vec3& v);
+	fwAABBox& operator+=(const glm::vec3& v);
+
 	fwAABBox& multiplyBy(float v);
 	bool inside(glm::vec3& position);
 	bool inside(fwAABBox& box);
@@ -58,7 +61,6 @@ public:
 	void apply(const fwAABBox& source, const glm::mat4& matrix);
 	bool not_init(void);
 	fwAABBox& copy(fwAABBox& source);
-	fwAABBox operator+(const glm::vec3& v);
 	fwAABBcollision collisionSide(void) { return m_collisionSide; };
 	bool collision(fwAABBcollision side) { return (int)m_collisionSide & (int)side; };
 	void collisionSide(fwAABBcollision side) { m_collisionSide = side; };

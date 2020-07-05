@@ -26,6 +26,16 @@ gaEntity::gaEntity(int mclass, const std::string& name, const glm::vec3& positio
 }
 
 /**
+ * add an entity inside that one (and increase the AABB if needed)
+ */
+void gaEntity::addChild(gaEntity* entity)
+{
+	m_children.push_back(entity);
+	m_modelAABB.extend(entity->m_modelAABB);
+	updateWorldAABB();
+}
+
+/**
  * quick AABB check for entities collision
  */
 bool gaEntity::collideAABB(fwAABBox& box)
@@ -40,15 +50,22 @@ void gaEntity::modelAABB(const fwAABBox& box)
 {
 	m_modelAABB = box;
 }
+/**
+ * rotate the object and update the AABB
+ */
+void gaEntity::rotate(const glm::vec3& rotation)
+{
+	m_rotation = rotation;
+
+	// take the opportunity to update the world bounding box
+	updateWorldAABB();
+}
 
 /**
  * Update the object position (given in gl space) and update the worldboundingBox(in gl space)
  */
 void gaEntity::moveTo(const glm::vec3& position)
 {
-	if (m_name == "elev3-1_panel1(2)") {
-		printf("gaEntity::moveTo");
-	}
 	m_position = position;
 
 	// take the opportunity to update the world bounding box
@@ -60,7 +77,8 @@ void gaEntity::moveTo(const glm::vec3& position)
  */
 void gaEntity::updateWorldAABB(void)
 {
-	m_worldBounding.translateFrom(m_modelAABB, m_position);
+	m_worldBounding.rotateFrom(m_modelAABB, m_rotation);
+	m_worldBounding += m_position;
 }
 
 gaEntity::~gaEntity()

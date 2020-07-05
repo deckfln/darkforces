@@ -990,9 +990,9 @@ void dfSector::changeAmbient(float ambient)
 }
 
 /***
- * create vertices for a sign
+ * create a trigger and a geometry for a sign
  */
-void dfSector::addSign(dfMesh *mesh, dfWall* wall, float z, float z1, int texture)
+dfLogicTrigger* dfSector::addSign(dfMesh *mesh, dfWall* wall, float z, float z1, int texture)
 {
 	// record the sign on the wall
 	dfSector* s = wall->sector();
@@ -1003,6 +1003,8 @@ void dfSector::addSign(dfMesh *mesh, dfWall* wall, float z, float z1, int textur
 		dfSign* sign = new dfSign(mesh, wall->sector(), wall, z, z1);
 		trigger->sign(sign);
 	}
+
+	return trigger;
 }
 
 /**
@@ -1197,7 +1199,7 @@ void dfSector::buildGeometry(dfMesh* mesh, dfWallFlag displayPolygon)
 /**
  * Build an outward mesh based on the sector
  */
-void dfSector::buildElevator(dfMesh* mesh, float bottom, float top, int what, bool clockwise, dfWallFlag flags)
+void dfSector::buildElevator(gaEntity* parent, dfMesh* mesh, float bottom, float top, int what, bool clockwise, dfWallFlag flags)
 {
 	if (!m_super) {
 		return;
@@ -1276,13 +1278,16 @@ void dfSector::buildElevator(dfMesh* mesh, float bottom, float top, int what, bo
 		mesh->addFloor(polygons(1), top, m_floorTexture, m_ambient, clockwise);
 	}
 
-	// add defered signs on the elevators
+	// add defered signs on the elevators (the sign is physically on an evelator)
 	// centerVertices the level space into the model space
 	for (auto wall : m_deferedSigns) {
 		dfSector* sector = wall->sector();
 		float translate = m_staticMeshFloorAltitude - sector->m_staticMeshFloorAltitude;
 		float height = sector->m_staticMeshCeilingAltitude - sector->m_staticMeshFloorAltitude;
-		addSign(mesh, wall, bottom - translate, bottom - translate + height, DFWALL_TEXTURE_BOTTOM);
+		dfLogicTrigger* trigger = addSign(mesh, wall, bottom - translate, bottom - translate + height, DFWALL_TEXTURE_BOTTOM);
+		if (parent != nullptr) {
+			parent->addChild(trigger);
+		}
 	}
 }
 

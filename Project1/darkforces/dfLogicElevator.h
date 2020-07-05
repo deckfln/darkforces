@@ -3,11 +3,12 @@
 #include <string>
 #include <vector>
 
-#include "dfMessageClient.h"
 #include "dfLogicStop.h"
 
 #include "../framework/fwMaterial.h"
 #include "../framework/fwMesh.h"
+
+#include "../gaEngine/gaEntity.h"
 
 #include "dfActor.h"
 #include "dfMessage.h"
@@ -43,8 +44,7 @@ enum dfElevatorSound {
 	END = 2		// arriving at stop
 };
 
-class dfLogicElevator: public dfMessageClient {
-	std::string m_class;
+class dfLogicElevator: public gaEntity {
 	dfElevatorType m_type = dfElevatorType::INV;	// class of elevator
 
 	//TODO adapt the default speed

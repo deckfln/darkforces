@@ -10,31 +10,11 @@ dfMessageBus::dfMessageBus()
 }
 
 /**
- * add an old dfClient
- */
-void dfMessageBus::addClient(dfMessageClient* client)
-{
-	if (m_clients.count(client->name()) == 0) {
-		// first client with that name
-		m_clients[client->name()] = client;
-	}
-	else {
-		// chain multilpe clients with the same name
-		m_clients[client->name()]->chain(client);
-	}
-}
-
-/**
  * Add a new gaEntity
  */
 void dfMessageBus::addClient(gaEntity* client)
 {
 	m_entities[client->name()].push_back(client);
-}
-
-void dfMessageBus::removeClient(dfMessageClient* client)
-{
-	m_clients.erase(client->name());
 }
 
 /**
@@ -48,19 +28,6 @@ void dfMessageBus::removeClient(gaEntity* client)
 	}
 
 	m_entities[client->name()].remove(client);
-}
-
-/**
- * search the old MessageClient map
- */
-dfMessageClient* dfMessageBus::getClient(std::string& name)
-{
-	// search old clients
-	if (m_clients.count(name) > 0) {
-		return m_clients[name];
-	}
-
-	return nullptr;
 }
 
 /**
@@ -103,7 +70,6 @@ void dfMessageBus::pushForNextFrame(dfMessage* message)
 
 void dfMessageBus::process(time_t delta)
 {
-	dfMessageClient* client;
 	/*
 	if (m_queue.size() > 0) {
 		std::cerr << ">>>>>>>>>> dfMessageBus::process" << std::endl;
@@ -130,13 +96,6 @@ void dfMessageBus::process(time_t delta)
 		// animation suspended ?
 		if (!m_timer && message->m_action == DF_MESSAGE_TIMER) {
 			continue;
-		}
-
-		// old clients
-		if (m_clients.count(message->m_client) > 0) {
-			message->m_delta = delta;
-			client = m_clients[message->m_client];
-			client->dispatchMessage(message);
 		}
 
 		// new clients

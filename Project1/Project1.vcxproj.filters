@@ -120,9 +120,6 @@
     <ClCompile Include="darkforces\dfMessageBus.cpp">
       <Filter>Fichiers sources\Dark Forces</Filter>
     </ClCompile>
-    <ClCompile Include="darkforces\dfMessageClient.cpp">
-      <Filter>Fichiers sources\Dark Forces</Filter>
-    </ClCompile>
     <ClCompile Include="darkforces\dfModel.cpp">
       <Filter>Fichiers sources\Dark Forces</Filter>
     </ClCompile>
@@ -516,9 +513,6 @@
       <Filter>Fichiers d%27en-tête\DarkForces</Filter>
     </ClInclude>
     <ClInclude Include="darkforces\dfMessageBus.h">
-      <Filter>Fichiers d%27en-tête\DarkForces</Filter>
-    </ClInclude>
-    <ClInclude Include="darkforces\dfMessageClient.h">
       <Filter>Fichiers d%27en-tête\DarkForces</Filter>
     </ClInclude>
     <ClInclude Include="darkforces\dfModel.h">

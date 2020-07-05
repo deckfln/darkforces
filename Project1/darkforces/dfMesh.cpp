@@ -424,17 +424,7 @@ void dfMesh::addPlane(float width, dfBitmapImage* image)
 /**
  * Move the elevator floor
  */
-void dfMesh::moveFloorTo(float z)
-{
-	glm::vec3 p = m_mesh->get_position();
-	p.y = z / 10.0f;
-	position(p);
-}
-
-/**
- * Move the elevator floor
- */
-void dfMesh::moveCeilingTo(float z)
+void dfMesh::moveTo(float z)
 {
 	glm::vec3 p = m_mesh->get_position();
 	p.y = z / 10.0f;
@@ -712,7 +702,7 @@ bool dfMesh::collide(fwAABBox& box, std::string& name)
 }
 
 /**
- * Test collsuion based on http://www.peroxide.dk/papers/collision/collision.pdf
+ * Test collision based on http://www.peroxide.dk/papers/collision/collision.pdf
   */
 bool dfMesh::collide(fwCylinder& bounding, glm::vec3& direction, glm::vec3& intersection, std::string& name, std::list<gaCollisionPoint>& collisions)
 {
