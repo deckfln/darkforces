@@ -120,8 +120,13 @@ void dfObject::collideWith(gaEntity* entity)
 		// ADD ARMOR
 		if (entity->is(DF_ENTITY_ACTOR)) {
 			// if the collider is a DF_ACTOR
-			// send shield to the actor
-			((dfActor*)entity)->addShield(DF_SHIELD_ENERGY);
+			// send shield from me to the actor
+			gaMessage* msg = g_gaWorld.sendMessage(
+				m_name,
+				entity->name(),
+				DF_MESSAGE_ADD_SHIELD,
+				DF_SHIELD_ENERGY,
+				nullptr);
 
 			// and remove the object from the scene
 			moveTo(glm::vec3(0));
@@ -131,8 +136,13 @@ void dfObject::collideWith(gaEntity* entity)
 		// ADD ENERGY
 		if (entity->is(DF_ENTITY_ACTOR)) {
 			// if the collider is a DF_ACTOR
-			// send shield to the actor
-			((dfActor*)entity)->addEnergy(DF_ENERGY_ENERGY);
+			// send energy from me to the actor
+			gaMessage* msg = g_gaWorld.sendMessage(
+				m_name,
+				entity->name(),
+				DF_MESSAGE_ADD_ENERGY,
+				DF_ENERGY_ENERGY,
+				nullptr);
 
 			// and remove the object from the scene
 			m_position = glm::vec3(0);

@@ -699,7 +699,7 @@ void dfLogicElevator::dispatchMessage(gaMessage* message)
 		}
 		break;
 
-	case DF_MESSAGE_TIMER:
+	case GA_MSG_TIMER:
 		animate(message->m_delta);
 		break;
 

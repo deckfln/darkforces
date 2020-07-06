@@ -81,16 +81,11 @@ bool dfLogicStop::isTimeBased(void)
 /**
  * Record messages
  */
-void dfLogicStop::message(std::vector<std::string>& tokens)
+void dfLogicStop::message(gaMessage* message)
 {
-	gaMessage msg(tokens);
-
-	m_messages.push_back(msg);
-}
-
-void dfLogicStop::addMessage(gaMessage& message)
-{
-	m_messages.push_back(message);
+	if (message) {
+		m_messages.push_back(message);
+	}
 }
 
 /**
@@ -99,8 +94,8 @@ void dfLogicStop::addMessage(gaMessage& message)
 void dfLogicStop::sendMessages()
 {
 	for (unsigned i = 0; i < m_messages.size(); i++) {
-		m_messages[i].m_server = "STOP:" + m_parent->name();
-		g_gaWorld.push(&m_messages[i]);
+		m_messages[i]->m_server = "STOP:" + m_parent->name();
+		g_gaWorld.push(m_messages[i]);
 	}
 }
 
@@ -142,8 +137,18 @@ float dfLogicStop::z_position(dfElevatorType elevatorClass)
 void dfLogicStop::getMessagesToSectors(std::list<std::string>& sectors)
 {
 	for (auto message : m_messages) {
-		if (message.m_client != "") {
-			sectors.push_back(message.m_client);
+		if (message->m_client != "") {
+			sectors.push_back(message->m_client);
 		}
+	}
+}
+
+/**
+ * clean up
+ */
+dfLogicStop::~dfLogicStop()
+{
+	for (auto message : m_messages) {
+		delete message;
 	}
 }

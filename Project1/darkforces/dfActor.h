@@ -25,5 +25,8 @@ public:
 	void addShield(int value);
 	void addEnergy(int value);
 	int keys(void) { return m_keys; };
+
+	virtual void dispatchMessage(gaMessage* message);	// let an entity deal with a situation
+
 	~dfActor();
 };

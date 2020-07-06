@@ -162,9 +162,9 @@ dfLevel::dfLevel(dfFileSystem* fs, std::string file)
 			sectorIsElevator = false;
 
 			// if one of the client of trigger is the very sector the trigger is attached to
-			std::vector<gaMessage>& messages = trigger->messages();
+			std::vector<gaMessage*>& messages = trigger->messages();
 			for (auto& message : messages) {
-				std::string& client = message.client();
+				std::string& client = message->client();
 				if (client == sectorname) {
 					sectorIsElevator = true;
 					break;
@@ -187,9 +187,9 @@ dfLevel::dfLevel(dfFileSystem* fs, std::string file)
 
 	// bind the trigger to it's client
 	for (auto trigger : m_inf->m_triggers) {
-		std::vector<gaMessage>& messages = trigger->messages();
+		std::vector<gaMessage *>& messages = trigger->messages();
 		for (auto& message : messages) {
-			std::string& client = message.client();
+			std::string& client = message->client();
 			dfSector* sector = m_sectorsName[client];
 			sector->addTrigger(trigger);
 		}
@@ -354,8 +354,7 @@ void dfLevel::convertDoors2Elevators(void)
 			dfLogicTrigger* trigger = new dfLogicTrigger(switch1, elevator);
 
 			// once the elevator closes, send a DONE message to the trigger
-			gaMessage msg(DF_MESSAGE_DONE, 0, trigger->name());
-			closed->addMessage(msg);
+			closed->message(new gaMessage(DF_MESSAGE_DONE, 0, trigger->name()));
 
 			trigger->config();
 			m_inf->m_triggers.push_back(trigger);
@@ -415,8 +414,7 @@ void dfLevel::createTriggerForElevator(dfLogicElevator *elevator)
 
 		// extract the 'CLOSED' stop = (0)
 		// add a message DONE on the stop
-		gaMessage msg(DF_MESSAGE_DONE, 0, trigger->name());
-		elevator->stop(0)->addMessage(msg);
+		elevator->stop(0)->message(new gaMessage(DF_MESSAGE_DONE, 0, trigger->name()));
 
 		m_inf->m_triggers.push_back(trigger);
 	}

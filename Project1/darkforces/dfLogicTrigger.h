@@ -43,7 +43,7 @@ class dfLogicTrigger: public gaEntity {
 	//glm::vec3 m_boundingBoxCenter;	// original position of the bounding box
 	//glm::vec3 m_boundingBoxSize;	// original size of the bounding box
 
-	std::vector<gaMessage> m_messages;	// messages to pass to the clients
+	std::vector<gaMessage *> m_messages;	// messages to pass to the clients
 	gaMessage m_trigger;				// trigger message
 
 public:
@@ -66,7 +66,7 @@ public:
 	void boundingBox(fwAABBox& box);
 	void boundingBox(dfLogicElevator* elevator);
 
-	void message(std::vector <std::string>& tokens);
+	void message(gaMessage *message);
 	void config(void);
 
 	bool collide(fwAABBox& box);
@@ -77,5 +77,7 @@ public:
 
 	void elevator(dfLogicElevator* elevator);
 
-	std::vector<gaMessage>& messages(void) { return m_messages; };	// return messages
+	std::vector<gaMessage *>& messages(void) { return m_messages; };	// return messages
+
+	~dfLogicTrigger();
 };

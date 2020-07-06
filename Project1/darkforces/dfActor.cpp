@@ -37,6 +37,21 @@ void dfActor::addEnergy(int value)
 	}
 }
 
+/**
+ * Deal with messages
+ */
+void dfActor::dispatchMessage(gaMessage* message)
+{
+	switch (message->m_action) {
+	case DF_MESSAGE_ADD_SHIELD:
+		addShield(message->m_value);
+		break;
+	case DF_MESSAGE_ADD_ENERGY:
+		addEnergy(message->m_value);
+		break;
+	}
+}
+
 dfActor::~dfActor()
 {
 }

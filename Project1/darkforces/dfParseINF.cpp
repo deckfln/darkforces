@@ -125,6 +125,63 @@ dfParseINF::dfParseINF(dfFileSystem* fs, std::string file)
 	}
 }
 
+/**
+ * Parse the message tokens
+ */
+static gaMessage* parseMessage(std::vector<std::string>& tokens)
+{
+	int s = tokens.size();
+	const std::string done = "done";
+	const std::string gotostop = "goto_stop";
+
+	int action = -1;
+	int value;
+	std::string client;
+
+	switch (s) {
+	case 5:
+		// message: 1 elev3-5 goto_stop 0
+		if (tokens[3] == gotostop) {
+			action = DF_MESSAGE_GOTO_STOP;
+			value = std::stoi(tokens[4]);
+			client = tokens[2];
+		}
+		break;
+	case 4:
+		// message: 0 ext(6) done
+		if (tokens[3] == done) {
+			// split sector / wall on tokens[2];
+			action = DF_MESSAGE_DONE;
+			value = std::stoi(tokens[1]);
+			client = tokens[2];
+		}
+		else if (tokens[3] == "m_trigger") {
+			action = DF_MESSAGE_TRIGGER;
+			value = std::stoi(tokens[1]);
+			client = tokens[2];
+		}
+		break;
+	case 3:
+		// message: goto_stop 1
+		if (tokens[1] == gotostop) {
+			action = DF_MESSAGE_GOTO_STOP;
+			value = std::stoi(tokens[2]);
+		}
+	}
+
+	// detect failed parsing
+	if (action == -1) {
+		std::string m = "";
+		for (auto s : tokens) {
+			m += " " + s;
+		}
+		std::cerr << "gaMessage::parse " << m << " not implemented" << std::endl;
+		return nullptr;
+	}
+
+	return new gaMessage(action, value, client);
+}
+
 dfParseINF::~dfParseINF(void)
 {
 	for (auto elevator : m_elevators) {
@@ -227,14 +284,14 @@ void dfParseINF::parseSector(std::istringstream& infile, std::string& sector)
 			if (stop) {
 				int i = std::stoi(tokens[1]);
 				if (i == nbStops) {
-					stop->message(tokens);
+					stop->message( parseMessage(tokens) );
 				}
 				else {
 					std::cerr << "dfParseINF::parseSector stop/messages not in order for " << sector << " stop #" << nbStops << " message #" << i << std::endl;
 				}
 			}
 			else if (trigger) {
-				trigger->message(tokens);
+				trigger->message( parseMessage(tokens) );
 			}
 		}
 		else if (tokens[0] == "stop:") {

@@ -5,22 +5,26 @@
 #include <queue>
 
 enum {
-	DF_MESSAGE_TRIGGER,
-	DF_MESSAGE_GOTO_STOP,
-	DF_MESSAGE_DONE,
-	DF_MESSAGE_TIMER
+	GA_MSG_COLLIDE = 0,	// two entities collide
+	GA_MSG_TIMER
 };
 
 class gaEntity;
 
 class gaMessage {
-	gaEntity* m_pClient = nullptr;	// cached value
 
 public:
+	bool m_used = false;
+
+	gaEntity* m_pServer = nullptr;	// cached value
+
+	std::string m_server;	// from
+	std::string m_client;	// to
+
 	int m_action = -1;
 	int m_value = 0;
-	std::string m_server;
-	std::string m_client;
+	void* m_extra = nullptr;
+
 	time_t m_delta = 0;	// time since the last frame
 
 	gaMessage(void);

@@ -42,7 +42,7 @@ class dfLogicStop {
 	// [complete] mission will be complete when elev arrives at stop
 	int m_action = 0;
 
-	std::vector<gaMessage> m_messages;
+	std::vector<gaMessage* > m_messages;
 
 public:
 	dfLogicStop(dfLogicElevator *parent);
@@ -61,9 +61,10 @@ public:
 	void action(std::string& action);
 	int action(void) { return m_action; };
 	bool isTimeBased(void);
-	void message(std::vector <std::string>& tokens);
-	void addMessage(gaMessage& message);
+	void message(gaMessage* message);
 	void sendMessages();
 	float z_position(dfElevatorType elevatorClass);
 	void getMessagesToSectors(std::list<std::string>& sectors);
+
+	~dfLogicStop();
 };

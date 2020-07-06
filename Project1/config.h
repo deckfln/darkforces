@@ -26,3 +26,13 @@ enum {
 	DF_ENTITY_ELEVATOR	// moving doors and platforms
 };
 
+/**
+ * List of messages
+ */
+enum {
+	DF_MESSAGE_TRIGGER=1024,
+	DF_MESSAGE_GOTO_STOP,
+	DF_MESSAGE_DONE,
+	DF_MESSAGE_ADD_SHIELD,
+	DF_MESSAGE_ADD_ENERGY
+};

@@ -20,6 +20,7 @@ public:
 	void addClient(gaEntity* client);
 	void removeClient(gaEntity* client);
 
+	gaMessage* sendMessage(const std::string& from, const std::string& to, int action, int value, void *extra);	
 	gaEntity* getEntity(const std::string& name);
 
 	void findAABBCollision(fwAABBox& box, std::list<gaEntity*>& collisions);	// find colliding entities AABB

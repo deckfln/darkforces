@@ -5,6 +5,9 @@
 
 gaWorld g_gaWorld;
 
+/** 
+ * Create and init the world
+ */
 gaWorld::gaWorld()
 {
 }
@@ -28,6 +31,41 @@ void gaWorld::removeClient(gaEntity* client)
 	}
 
 	m_entities[client->name()].remove(client);
+}
+
+/**
+ * Allocate a new message
+ */
+gaMessage* gaWorld::sendMessage(const std::string& from, const std::string& to, int action, int value, void* extra)
+{
+	static int lastMessage = 0;
+	static gaMessage messages[64];
+
+	// search for an available message
+	int count = 64;
+
+	gaMessage* ptr = nullptr;
+	do {
+		if (--count < 0) {
+			assert("not enough messages in gaWorld::getMessage");
+		}
+		ptr = &messages[lastMessage++];
+		if (lastMessage == 64) {
+			lastMessage = 0;
+		}
+	} while (ptr->m_used);
+
+	ptr->m_used = true;
+
+	ptr->m_server = from;
+	ptr->m_client = to;
+	ptr->m_action = action;
+	ptr->m_value = value;
+	ptr->m_extra = extra;
+
+	m_queue.push(ptr);
+
+	return ptr;
 }
 
 /**
@@ -89,22 +127,24 @@ void gaWorld::process(time_t delta)
 
 		loopDetector[message->m_client] = true;
 
-		if (message->m_action != DF_MESSAGE_TIMER) {
-			std::cerr << "dfMessageBus::process server=" << message->m_server << " action=" << message->m_action << " client=" << message->m_client << std::endl;;
+		if (message->m_action != GA_MSG_TIMER) {
+			std::cerr << "gaWorld::process server=" << message->m_server << " action=" << message->m_action << " client=" << message->m_client << std::endl;;
 		}
 
 		// animation suspended ?
-		if (!m_timer && message->m_action == DF_MESSAGE_TIMER) {
+		if (!m_timer && message->m_action == GA_MSG_TIMER) {
 			continue;
 		}
 
 		// new clients
 		if (m_entities.count(message->m_client) > 0) {
 			message->m_delta = delta;
+			message->m_pServer = m_entities[message->m_server].front();
 			for (auto entity : m_entities[message->m_client]) {
 				entity->dispatchMessage(message);
 			}
 		}
+		message->m_used = false;
 	}
 
 	// swap the current queue and the queue for next frame

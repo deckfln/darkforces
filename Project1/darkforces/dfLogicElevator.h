@@ -5,6 +5,8 @@
 
 #include "dfLogicStop.h"
 
+#include "../config.h"
+
 #include "../framework/fwMaterial.h"
 #include "../framework/fwMesh.h"
 
@@ -80,7 +82,7 @@ class dfLogicElevator: public gaEntity {
 
 	dfVOC* m_sounds[3] = { nullptr, nullptr, nullptr };
 
-	gaMessage m_msg_animate = gaMessage(DF_MESSAGE_TIMER);
+	gaMessage m_msg_animate = gaMessage(GA_MSG_TIMER);
 
 	void moveTo(dfLogicStop* stop);
 	void moveTo(float z);

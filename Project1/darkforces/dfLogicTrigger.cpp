@@ -40,7 +40,7 @@ dfLogicTrigger::dfLogicTrigger(std::string & kind, std::string & sector) :
 	m_sector(sector)
 {
 	m_class = class2int(kind);
-	m_messages.push_back(gaMessage(DF_MESSAGE_TRIGGER, 0, m_name));
+	m_messages.push_back(new gaMessage(DF_MESSAGE_TRIGGER, 0, m_name));
 }
 
 /**
@@ -173,10 +173,11 @@ void dfLogicTrigger::boundingBox(dfLogicElevator* elevator)
 /**
  * analyze the message to pass
  */
-void dfLogicTrigger::message(std::vector<std::string>& tokens)
+void dfLogicTrigger::message(gaMessage *msg)
 {
-	gaMessage msg(tokens);
-	m_messages.push_back(msg);
+	if (msg) {
+		m_messages.push_back(msg);
+	}
 }
 
 /**
@@ -188,19 +189,19 @@ void dfLogicTrigger::config(void)
 		if (m_clients.size() >= 0) {
 			// inform all clients
 			for (auto & client: m_clients) {
-				m_messages.push_back(gaMessage(DF_MESSAGE_TRIGGER, 0, client));
+				m_messages.push_back(new gaMessage(DF_MESSAGE_TRIGGER, 0, client));
 			}
 		}
 	}
 	else {
 		// for every message, duplicate to every client
-		gaMessage message;
+		gaMessage* message;
 		for (int i = m_messages.size() - 1; i >= 0; i--) {
-			m_messages[i].m_client = m_clients[0];	// fix the first
+			m_messages[i]->m_client = m_clients[0];	// fix the first
 			// add the next ones
 			message = m_messages[i];
 			for (unsigned int j = 1; j < m_clients.size(); j++) {
-				message.m_client = m_clients[j];
+				message->m_client = m_clients[j];
 				m_messages.push_back(message);
 			}
 		}
@@ -306,13 +307,23 @@ void dfLogicTrigger::activate(const std::string& activator)
 	// check if there is no key needed or if the actor has the mandatory keys for the trigger
 	if (m_keys == 0 || (m_keys & actor->keys()) != 0) {
 		for (unsigned int i = 0; i < m_messages.size(); i++) {
-			m_messages[i].m_server = m_name;
-			g_gaWorld.push(&m_messages[i]);
+			m_messages[i]->m_server = m_name;
+			g_gaWorld.push(m_messages[i]);
 		}
 
 		// only switches needs activation/deactivation
 		if (m_class == DF_TRIGGER_SWITCH1) {
 			m_actived = true;
 		}
+	}
+}
+
+/**
+ * Clean up
+ */
+dfLogicTrigger::~dfLogicTrigger()
+{
+	for (auto message : m_messages) {
+		delete message;
 	}
 }
