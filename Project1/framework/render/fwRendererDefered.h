@@ -5,11 +5,15 @@
 #include <string>
 #include <glm/glm.hpp>
 
-#include "../../glEngine/glGBuffer.h"
-#include "../fwCamera.h"
-#include "../fwScene.h"
 #include "../fwRenderer.h"
-#include "../postprocessing/fwPostProcessingBloom.h"
+
+class glVertexArray;
+class glColorMap;
+class glTexture;
+class fwGeometry;
+class fwPostProcessingBloom;
+class fwCamera;
+class fwScene;
 
 class fwRendererDefered: public fwRenderer
 {
@@ -22,9 +26,13 @@ class fwRendererDefered: public fwRenderer
 	glVertexArray* m_quad = nullptr;
 
 private:
-	void buildDeferedShader(std::list <fwMesh*>& meshes, fwCamera* camera, std::map<std::string, std::map<int, std::list <fwMesh*>>>& meshPerMaterial);
-	void drawMesh(fwCamera* camera, fwMesh* mesh, glProgram* program, std::string &defines);
-	void drawMeshes(std::list <fwMesh*>& meshesPerMaterial, fwCamera* camera);
+	void buildDeferedShader(
+		const std::list <fwMesh*>& meshes, 
+		fwCamera* camera, 
+		std::map<std::string, std::map<int, std::list <fwMesh*>>>& meshPerMaterial
+	);
+	void drawMesh(fwCamera* camera, fwMesh* mesh, glProgram* program, const std::string &defines);
+	void drawMeshes(const std::list <fwMesh*>& meshesPerMaterial, fwCamera* camera);
 	void mergeMTR(fwScene *scene);
 
 public:

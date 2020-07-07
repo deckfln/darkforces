@@ -4,6 +4,11 @@
 #include <list>
 #include <string>
 
+#include "../glEngine/glColorMap.h"
+
+#include "fwCamera.h"
+#include "materials/fwOutlineMaterial.h"
+
 #include "fwLight.h"
 #include "fwHUD.h"
 #include "fwHUDelement.h"
@@ -22,7 +27,7 @@ fwScene &fwScene::addLight(fwLight *light)
 {
 	addChild(light);
 
-	lights.push_back(light);
+	m_lights.push_back(light);
 	return *this;
 }
 

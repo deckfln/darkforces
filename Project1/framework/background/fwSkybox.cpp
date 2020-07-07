@@ -67,7 +67,7 @@ float skyboxVertices[] = {
  */
 void fwSkybox::init(void)
 {
-	m_uniforms.push_back(new fwUniform("skybox", texture));
+	m_uniforms.push_back(new fwUniform("skybox", m_texture));
 
 	m_geometry->addVertices("aPos", skyboxVertices, 3, sizeof(skyboxVertices), sizeof(float), false);
 
@@ -81,7 +81,7 @@ void fwSkybox::init(void)
 fwSkybox::fwSkybox(std::string* textures):
 	fwBackground(cube_vs, cube_fs)
 {
-	texture = new glCubeTexture(textures);
+	m_texture = new glCubeTexture(textures);
 	init();
 }
 
@@ -91,7 +91,7 @@ fwSkybox::fwSkybox(std::string* textures):
 fwSkybox::fwSkybox(void* files[], int width, int height, int format) :
 	fwBackground(cube_vs, cube_fs)
 {
-	texture = new glCubeTexture(files, width, height, format);
+	m_texture = new glCubeTexture(files, width, height, format);
 	init();
 }
 
@@ -101,11 +101,11 @@ fwSkybox::fwSkybox(void* files[], int width, int height, int format) :
 fwSkybox::fwSkybox(void* data, int width, int height, int format) :
 	fwBackground(cube_vs, cube_fs)
 {
-	texture = new glCubeTexture(data, width, height, format);
+	m_texture = new glCubeTexture(data, width, height, format);
 	init();
 }
 
 fwSkybox::~fwSkybox()
 {
-	delete texture;
+	delete m_texture;
 }

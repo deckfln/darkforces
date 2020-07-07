@@ -7,7 +7,7 @@ class glCubeTexture;
 
 class fwSkybox: public fwBackground
 {
-	glCubeTexture *texture = nullptr;
+	glCubeTexture *m_texture = nullptr;
 
 	void init(void);
 

@@ -2,6 +2,13 @@
 
 #include "fwConstants.h"
 
+#include "../glEngine/glColorMap.h"
+#include "../glEngine/glProgram.h"
+
+#include "fwObject3D.h"
+#include "fwMesh.h"
+#include "fwScene.h"
+#include "fwMaterial.h"
 #include "fwInstancedMesh.h"
 #include "mesh/fwMeshSkinned.h"
 #include "fwParticles.h"
@@ -47,9 +54,9 @@ void fwRenderer::getAllChildren(fwObject3D* root, std::vector<std::list <fwMesh*
 /***
  * Prepare the shaders for the list of meshes
  */
-void fwRenderer::parseShaders(std::list <fwMesh *> &meshes, 
-	std::string &defines, 
-	std::string codeLights, 
+void fwRenderer::parseShaders(const std::list <fwMesh *>&meshes, 
+	const std::string& defines, 
+	const std::string& codeLights, 
 	bool withShadow, 
 	std::map<std::string, std::map<int, std::list <fwMesh*>>>& meshPerMaterial
 	)
@@ -142,7 +149,7 @@ bool fwRenderer::drawShadows(fwCamera* camera, fwScene* scene)
 	 * 1st pass Draw shadows
 	*/
 	bool hasShadowLights = false;
-	std::list <fwLight*> lights = scene->get_lights();
+	const std::list <fwLight*>& lights = scene->lights();
 	for (auto light : lights) {
 		if (((fwObject3D*)light)->castShadow()) {
 			hasShadowLights = true;
@@ -179,12 +186,12 @@ bool fwRenderer::drawShadows(fwCamera* camera, fwScene* scene)
 }
 
 /*
- * create a list of all lights o inject in the foreward rendering shader
+ * create a list of all m_lights o inject in the foreward rendering shader
  */
 void fwRenderer::preProcessLights(fwScene *scene, std::map <std::string, std::list <fwLight*>> &lightsByType, std::string &defines, std::string &codeLights)
 {
-	// count number of lights
-	std::list <fwLight*> lights = scene->get_lights();
+	// count number of m_lights
+	const std::list <fwLight*>& lights = scene->lights();
 
 	for (auto light : lights) {
 		lightsByType[light->getDefine()].push_front(light);
@@ -202,10 +209,10 @@ void fwRenderer::preProcessLights(fwScene *scene, std::map <std::string, std::li
  */
 void fwRenderer::drawMeshes(
 	fwCamera *camera,
-	std::list <fwMesh *>& meshes,
-	std::string& defines,
-	std::string &codeLights,
-	std::map <std::string, std::list <fwLight*>>& lightsByType,
+	const std::list <fwMesh *>& meshes,
+	const std::string& defines,
+	const std::string &codeLights,
+	const std::map <std::string, std::list <fwLight*>>& lightsByType,
 	bool hasShadowLights
 )
 {
@@ -239,7 +246,7 @@ void fwRenderer::drawMeshes(
 		program->run();
 		camera->bind_uniformBuffer(program);
 
-		// setup lights
+		// setup m_lights
 		int i;
 		for (auto type : lightsByType) {
 			i = 0;
@@ -278,10 +285,10 @@ void fwRenderer::drawMeshes(
  */
 void fwRenderer::drawTransparentMeshes(
 	fwCamera* camera,
-	std::list <fwMesh*>& meshes,
-	std::string& defines,
-	std::string& codeLights,
-	std::map <std::string, std::list <fwLight*>>& lightsByType,
+	const std::list <fwMesh*>& meshes,
+	const std::string& defines,
+	const std::string& codeLights,
+	const std::map <std::string, std::list <fwLight*>>& lightsByType,
 	bool withShadow
 )
 {
@@ -303,7 +310,7 @@ void fwRenderer::drawTransparentMeshes(
 /**
  * Sort meshed by z-order && distance
  */
-void fwRenderer::sortMeshes(std::list<fwMesh *>& meshes, glm::vec3 cameraPosition) 
+void fwRenderer::sortMeshes(std::list<fwMesh *>& meshes, const glm::vec3& cameraPosition) 
 {
 	// draw neareast first. use both z-order and distance to camera
 	meshes.sort([cameraPosition](fwMesh* a, fwMesh* b) {

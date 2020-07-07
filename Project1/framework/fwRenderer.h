@@ -2,10 +2,20 @@
 
 #include <list>
 #include <vector>
+#include <map>
+#include <string>
+#include <glm/vec3.hpp>
+#include <glm/vec2.hpp>
 
-#include "../glEngine/glProgram.h"
-#include "fwCamera.h"
-#include "fwScene.h"
+class glColorMap;
+class glProgram;
+class glTexture;
+class fwMaterial;
+class fwObject3D;
+class fwMesh;
+class fwScene;
+class fwLight;
+class fwCamera;
 
 class fwRenderer
 {
@@ -19,32 +29,36 @@ protected:
 	void getAllChildren(fwObject3D* root, std::vector<std::list <fwMesh*>>& meshes);
 	void parseChildren(fwObject3D* root, std::list <fwMesh*> meshes[], fwCamera* camera);
 	bool drawShadows(fwCamera* camera, fwScene* scene);
-	virtual void drawMesh(fwCamera* camera, fwMesh* mesh, glProgram* program, std::string &defines) {};
+	virtual void drawMesh(fwCamera* camera, fwMesh* mesh, glProgram* program, const std::string &defines) {};
 
-	void preProcessLights(fwScene* scene, std::map <std::string, std::list <fwLight*>>& lightsByType, std::string& defines, std::string& codeLights);
-	void parseShaders(std::list <fwMesh*>& meshes,
-		std::string& defines,
-		std::string codeLights,
+	void preProcessLights(fwScene* scene, 
+		std::map <std::string, std::list <fwLight*>>& lightsByType, 
+		std::string& defines, 
+		std::string& codeLights
+	);
+	void parseShaders(const std::list <fwMesh*>& meshes,
+		const std::string& defines,
+		const std::string& codeLights,
 		bool withShadow,
 		std::map<std::string, std::map<int, std::list <fwMesh*>>>& meshPerMaterial
 	);
 	void drawMeshes(
 		fwCamera *camera,
-		std::list <fwMesh*>& meshes,
-		std::string& defines,
-		std::string& codeLights,
-		std::map <std::string, std::list <fwLight*>>& lightsByType,
+		const std::list <fwMesh*>& meshes,
+		const std::string& defines,
+		const std::string& codeLights,
+		const std::map <std::string, std::list <fwLight*>>& lightsByType,
 		bool withShadow
 	);
 	void drawTransparentMeshes(
 		fwCamera* camera,
-		std::list <fwMesh*>& meshes,
-		std::string& defines,
-		std::string& codeLights,
-		std::map <std::string, std::list <fwLight*>>& lightsByType,
+		const std::list <fwMesh*>& meshes,
+		const std::string& defines,
+		const std::string& codeLights,
+		const std::map <std::string, std::list <fwLight*>>& lightsByType,
 		bool withShadow
 	);
-	static void sortMeshes(std::list<fwMesh*>& meshes, glm::vec3 CameraPosition);
+	static void sortMeshes(std::list<fwMesh*>& meshes, const glm::vec3& CameraPosition);
 
 public:
 	fwRenderer();
@@ -53,7 +67,7 @@ public:
 	void start(void);
 	void stop(void);
 	glm::vec2 size(void);
-	void customLight(std::string shader) { m_customLightning = shader; };
+	void customLight(const std::string& shader) { m_customLightning = shader; };
 	void customDefine(const std::string& define, bool defined) { m_customDefines[define] = defined; };
 
 	~fwRenderer();

@@ -4,6 +4,10 @@
 
 #include "../../glad/glad.h"
 
+#include "../../glEngine/glColorMap.h"
+
+#include "../fwCamera.h"
+#include "../fwScene.h"
 #include "../materials/fwNormalHelperMaterial.h"
 #include "../materials/fwBloomMaterial.h"
 #include "../fwInstancedMesh.h"
@@ -11,6 +15,7 @@
 #include "../fwSprites.h"
 #include "../postprocessing/fwPostProcessingBloom.h"
 #include "../materials/fwMaterialDeferedLights.h"
+#include "../materials/fwOutlineMaterial.h"
 #include "../fwBackground.h"
 #include "../fwHUD.h"
 
@@ -32,7 +37,7 @@ void fwRendererForward::setOutline(glm::vec4* _color)
 /**
  * Draw a single mesh by program, apply outlone and normalHelpder if needed
  */
-void fwRendererForward::drawMesh(fwCamera* camera, fwMesh* mesh, glProgram* program, std::string &defines)
+void fwRendererForward::drawMesh(fwCamera* camera, fwMesh* mesh, glProgram* program, const std::string &defines)
 {
 	if (mesh->is_outlined()) {
 		// write in the stencil buffer for outlined objects

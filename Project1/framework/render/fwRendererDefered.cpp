@@ -5,6 +5,10 @@
 
 #include "../fwConstants.h"
 
+#include "../../glEngine/glGBuffer.h"
+#include "../fwCamera.h"
+#include "../fwScene.h"
+#include "../postprocessing/fwPostProcessingBloom.h"
 #include "../fwInstancedMesh.h"
 #include "../mesh/fwMeshSkinned.h"
 #include "../fwParticles.h"
@@ -53,7 +57,7 @@ fwRendererDefered::fwRendererDefered(int width, int height, bool withBloom)
  *  list of opaque object, aranged by code > material > list of mshes
  *  list of transparent objects
  */
-void fwRendererDefered::buildDeferedShader(std::list <fwMesh*>& meshes,	
+void fwRendererDefered::buildDeferedShader(const std::list <fwMesh*>& meshes,	
 	fwCamera* camera,
 	std::map<std::string, std::map<int, std::list <fwMesh*>>>& meshPerMaterial
 	)
@@ -98,8 +102,8 @@ void fwRendererDefered::buildDeferedShader(std::list <fwMesh*>& meshes,
  */
 void fwRendererDefered::mergeMTR(fwScene *scene)
 {
-	// parse the lights in the scene to compute the code of the needed shader
-	std::list <fwLight*> lights = scene->get_lights();
+	// parse the m_lights in the scene to compute the code of the needed shader
+	const std::list <fwLight*>& lights = scene->lights();
 
 	int shadowmap = 0;
 	int directional_lights = 0;
@@ -180,7 +184,7 @@ void fwRendererDefered::mergeMTR(fwScene *scene)
 
 	light_programs[define]->run();
 
-	// setup lights
+	// setup m_lights
 	int i = 0;
 	for (auto light : lights) {
 		light->set_uniform(light_programs[define], i);
@@ -213,7 +217,7 @@ void fwRendererDefered::mergeMTR(fwScene *scene)
 /**
  * Draw a single mesh by program, apply outlone and normalHelpder if needed
  */
-void fwRendererDefered::drawMesh(fwCamera* camera, fwMesh* mesh, glProgram* program, std::string &defines)
+void fwRendererDefered::drawMesh(fwCamera* camera, fwMesh* mesh, glProgram* program, const std::string &defines)
 {
 	/*
 		* main draw call
@@ -224,7 +228,7 @@ void fwRendererDefered::drawMesh(fwCamera* camera, fwMesh* mesh, glProgram* prog
 /*
  *
  */
-void fwRendererDefered::drawMeshes(std::list <fwMesh*> &meshes, fwCamera* camera)
+void fwRendererDefered::drawMeshes(const std::list <fwMesh*> &meshes, fwCamera* camera)
 {
 	std::string code;
 	int materialID;
