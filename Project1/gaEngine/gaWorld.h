@@ -4,8 +4,13 @@
 #include <map>
 #include <list>
 
-#include "gaEntity.h"
+#include "../framework/fwAABBox.h"
+#include "../framework/math/fwCylinder.h"
+
+#include "gaCollisionPoint.h"
 #include "gaMessage.h"
+
+class gaEntity;
 
 class gaWorld
 {
@@ -24,6 +29,11 @@ public:
 	gaEntity* getEntity(const std::string& name);
 
 	void findAABBCollision(fwAABBox& box, std::list<gaEntity*>& collisions);	// find colliding entities AABB
+	virtual bool checkCollision(
+		gaEntity* source,
+		fwCylinder& bounding,
+		glm::vec3& direction,
+		std::list<gaCollisionPoint>& collisions);								// extended collision test after a sucessfull AABB collision
 
 	void push(gaMessage* message);
 	void pushForNextFrame(gaMessage* message);

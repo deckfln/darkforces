@@ -211,7 +211,7 @@ void dfLogicTrigger::config(void)
 /**
  * check the trigger colision box
  */
-bool dfLogicTrigger::collide(fwAABBox& box)
+bool dfLogicTrigger::checkCollision(fwAABBox& box)
 {
 	if (m_pMesh == nullptr && m_pElevator != nullptr) {
 		m_pMesh = m_pElevator->mesh();
@@ -219,7 +219,7 @@ bool dfLogicTrigger::collide(fwAABBox& box)
 
 	if (m_pMesh != nullptr) {
 		// keep gl space
-		return m_pMesh->collide(box, m_name);
+		return m_pMesh->checkCollision(box, m_name);
 	}
 	
 	return false; // this is not a touchable object

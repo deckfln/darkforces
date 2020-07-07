@@ -117,8 +117,14 @@ public:
 	void dispatchMessage(gaMessage* message);
 	bool checkCollision(float step, glm::vec3& position, glm::vec3& target, float radius, glm::vec3& intersection);
 	bool checkCollision(fwAABBox& box);
-	bool checkCollision(fwCylinder& bounding, glm::vec3& direction, glm::vec3 &intersection, std::list<gaCollisionPoint>& collisions);
+
 	void getMessagesToSectors(std::list<std::string>& sectors);
 	void sound(int effect, dfVOC* sound);
+
+	virtual bool checkCollision(fwCylinder& bounding,
+		glm::vec3& direction,
+		glm::vec3& intersection,
+		std::list<gaCollisionPoint>& collisions);		 // extended collision test after a sucessfull AABB collision
+
 	~dfLogicElevator(void);
 };

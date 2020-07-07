@@ -106,13 +106,20 @@ bool gaActor::moveTo(time_t delta, glm::vec3& velocity)
 		direction.y = c_gravity;
 		target = m_bounding.position() + direction;
 
-		if (m_level->checkEnvironement(m_bounding, direction, intersection, collisions)) {
+		// check collision with entities
+		g_gaWorld.checkCollision(this, m_bounding, direction, collisions);
+
+		// check collision with the level
+		m_level->checkEnvironement(m_bounding, direction, intersection, collisions);
+
+		// and take action
+		if (collisions.size() != 0) {
 			for (auto& collision : collisions) {
 				gaEntity* entity = collision.entity();
 
 				switch (collision.m_location) {
 				case fwCollisionLocation::COLLIDE:
-					// 'who' do we collide with
+					// 'who' do we checkCollision with
 					if (entity != nullptr) {
 						entity->collideWith(this);
 					}

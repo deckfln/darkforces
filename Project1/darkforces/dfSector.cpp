@@ -755,7 +755,7 @@ bool dfSector::checkCollision(float step, glm::vec3& current, glm::vec3& target,
 	glm::vec2 C = current;
 	glm::vec2 A, B;
 	glm::vec2 intersection;
-	bool collide = false;
+	bool checkCollision = false;
 
 	// Test polylines on the walls based on the setup (may ignore internals polylines (like for elevator SPIN1)
 	int dp = (m_displayPolygons == 0) ? m_polygons_walls.size() : m_displayPolygons;
@@ -770,7 +770,7 @@ bool dfSector::checkCollision(float step, glm::vec3& current, glm::vec3& target,
 
 			if (segment2segment(A, B, C, D, intersection)) {
 				// if the segment current->target (CD) intersect a wall (AB), we get a colision BEHIND the wall
-				collide = true;
+				checkCollision = true;
 			}
 			else if (CircLine(A, B, C, radius, intersection)) {
 				// if the circle target,radius intersect a wall (AB), we get a colision IN FRONT of the wall
@@ -782,19 +782,19 @@ bool dfSector::checkCollision(float step, glm::vec3& current, glm::vec3& target,
 				d = glm::dot(DC, AC);
 				if (d <= 0) {
 					// the move point is on the other side of the direction
-					collide = false;
+					checkCollision = false;
 				}
 				else {
-					collide = true;
+					checkCollision = true;
 				}
 			}
 			else {
-				collide = false;
+				checkCollision = false;
 			}
 
 
 			// do the segments intersect
-			if (collide) {
+			if (checkCollision) {
 				// is the height sufficients
 				float wall_z,	// ceiling of the wall (may depends on the adjoint floor), 
 					wallHeight, // absolute height of the wall
@@ -861,7 +861,7 @@ bool dfSector::checkCollision(fwCylinder& current, glm::vec3& direction, glm::ve
 		CROSSING,
 		PROXIMITY
 	};
-	int collide = NONE;
+	int checkCollision = NONE;
 
 	// test floor
 	if (feet_z < m_floorAltitude) {
@@ -896,19 +896,19 @@ bool dfSector::checkCollision(fwCylinder& current, glm::vec3& direction, glm::ve
 				d = glm::dot(direction2D, AC);
 				if (d <= 0) {
 					// the move point is on the other side of the direction
-					collide = NONE;
+					checkCollision = NONE;
 				}
 				else {
-					collide = PROXIMITY;
+					checkCollision = PROXIMITY;
 				}
 			}
 			else {
-				collide = NONE;
+				checkCollision = NONE;
 			}
 
 
 			// do the segments intersect
-			if (collide != NONE) {
+			if (checkCollision != NONE) {
 				// is the height sufficients
 				float wall_z,	// ceiling of the wall (may depends on the adjoint floor), 
 					wallHeight, // absolute height of the wall

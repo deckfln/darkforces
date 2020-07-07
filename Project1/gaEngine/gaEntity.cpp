@@ -81,6 +81,15 @@ void gaEntity::updateWorldAABB(void)
 	m_worldBounding += m_position;
 }
 
+/**
+ * extended collision test after a succefull AABB collision
+ */
+bool gaEntity::checkCollision(fwCylinder& bounding, glm::vec3& direction, glm::vec3& intersection, std::list<gaCollisionPoint>& collisions)
+{
+	// default entities are included in the AABB, so the test is always positive
+	return true;
+}
+
 gaEntity::~gaEntity()
 {
 }

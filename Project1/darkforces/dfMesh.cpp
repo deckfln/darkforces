@@ -593,7 +593,7 @@ static bool intersectSphereTriangle(const glm::vec3& center_es, const glm::vec3&
 		// if the plane is passing trough the sphere (the ellipsoid deformed to look like a sphre)
 		// get the collision point of the sphere on the plane
 
-		p = center_es + normal * glm::abs(signedDistance);
+		p = center_es - normal * glm::abs(signedDistance);
 
 		// test if the collision origin in INSIDE the triangle
 
@@ -627,7 +627,7 @@ static bool intersectSphereTriangle(const glm::vec3& center_es, const glm::vec3&
 /**
  * Test move againsta sphere
  */
-bool dfMesh::collide(float step, glm::vec3& position, glm::vec3& target, float radius, glm::vec3& intersection, std::string& name)
+bool dfMesh::checkCollision(float step, glm::vec3& position, glm::vec3& target, float radius, glm::vec3& intersection, std::string& name)
 {
 	// convert player position (gl world space) into the elevator space (model space)
 	glm::vec3 glPosition = glm::vec3(m_mesh->inverseWorldMatrix() * glm::vec4(position, 1.0));
@@ -652,7 +652,7 @@ bool dfMesh::collide(float step, glm::vec3& position, glm::vec3& target, float r
 					// the intersection point is inside the radius
 					intersection = glPosition + distance * direction;
 
-					std::cerr << "dfMesh::collide ray collide with " << name << std::endl;
+					std::cerr << "dfMesh::checkCollision ray checkCollision with " << name << std::endl;
 					return true;
 				}
 			}
@@ -680,7 +680,7 @@ bool dfMesh::collide(float step, glm::vec3& position, glm::vec3& target, float r
 				direction = target - position;
 				if (glm::dot(hit, direction) > 0) {
 					// as we checked on a sphere, ensure the intersection is in the direction we want to move, and not on our back
- 					std::cerr << "dfMesh::collide sphere collide with " << name << " x=" << intersection.x << " y=" << intersection.y << " z=" << intersection.z << std::endl;
+ 					std::cerr << "dfMesh::checkCollision sphere checkCollision with " << name << " x=" << intersection.x << " y=" << intersection.y << " z=" << intersection.z << std::endl;
 					return true;
 				}
 			}
@@ -693,7 +693,7 @@ bool dfMesh::collide(float step, glm::vec3& position, glm::vec3& target, float r
  * Test move against a world AABBox
  * dfMesh::worldBoundingBox is updated everytime the dfMesh moves
  */
-bool dfMesh::collide(fwAABBox& box, std::string& name)
+bool dfMesh::checkCollision(fwAABBox& box, std::string& name)
 {
 	if (m_worldBoundingBox.not_init()) {
 		m_worldBoundingBox.copy(m_boundingBox);
@@ -703,88 +703,85 @@ bool dfMesh::collide(fwAABBox& box, std::string& name)
 
 /**
  * Test collision based on http://www.peroxide.dk/papers/collision/collision.pdf
-  */
-bool dfMesh::collide(fwCylinder& bounding, glm::vec3& direction, glm::vec3& intersection, std::string& name, std::list<gaCollisionPoint>& collisions)
+ */
+bool dfMesh::checkCollision(fwCylinder& bounding, glm::vec3& direction, glm::vec3& intersection, std::string& name, std::list<gaCollisionPoint>& collisions)
 {
 	fwCylinder cyl(bounding, direction);
 
 	fwAABBox aabb(cyl);	// convert to AABB for fast test
 
-	if (m_worldBoundingBox.intersect(aabb)) {
+	// extract the ellipsoid from the cylinder
+	glm::vec3 ellipsoid(cyl.height() / 2.0f, cyl.radius(), cyl.radius());
+	glm::vec3 center_ws = cyl.position();
+	center_ws.y += cyl.height() / 2.0f;
 
-		// extract the ellipsoid from the cylinder
-		glm::vec3 ellipsoid(cyl.height() / 2.0f, cyl.radius(), cyl.radius());
-		glm::vec3 center_ws = cyl.position();
-		center_ws.y += cyl.height() / 2.0f;
+	// deform the model_space to make the ellipsoid  sphere
+	glm::vec3 ellipsoid_space(1.0 / ellipsoid.x, 1.0 / ellipsoid.y, 1.0 / ellipsoid.z);
 
-		// deform the model_space to make the ellipsoid  sphere
-		glm::vec3 ellipsoid_space(1.0 / ellipsoid.x, 1.0 / ellipsoid.y, 1.0 / ellipsoid.z);
+	// convert player position (gl world space) into the elevator space (model space)
+	glm::vec3 center_ms = glm::vec3(m_mesh->inverseWorldMatrix() * glm::vec4(center_ws, 1.0));
+	// and convert to ellipsod space
+	glm::vec3 center_es = center_ms * ellipsoid_space;
 
-		// convert player position (gl world space) into the elevator space (model space)
-		glm::vec3 center_ms = glm::vec3(m_mesh->inverseWorldMatrix() * glm::vec4(center_ws, 1.0));
-		// and convert to ellipsod space
-		glm::vec3 center_es = center_ms * ellipsoid_space;
+	// test each triangle vs the ellipsoid
+	glm::vec3 v1_es, v2_es, v3_es;
+	glm::vec3 origin;
 
-		// test each triangle vs the ellipsoid
-		glm::vec3 v1_es, v2_es, v3_es;
-		glm::vec3 origin;
+	for (unsigned int i = 0; i < m_vertices.size(); i += 3) {
 
-		for (unsigned int i = 0; i < m_vertices.size(); i += 3) {
+		// convert each vertex to the ellipsoid space
+		v1_es = m_vertices[i] * ellipsoid_space;
+		v2_es = m_vertices[i + 1] * ellipsoid_space;
+		v3_es = m_vertices[i + 2] * ellipsoid_space;
 
-			// convert each vertex to the ellipsoid space
-			v1_es = m_vertices[i] * ellipsoid_space;
-			v2_es = m_vertices[i + 1] * ellipsoid_space;
-			v3_es = m_vertices[i + 2] * ellipsoid_space;
+		if (intersectSphereTriangle(center_es, v1_es, v2_es, v3_es, origin)) {
+			// the intersection point is inside the triangle
 
-			if (intersectSphereTriangle(center_es, v1_es, v2_es, v3_es, origin)) {
-				// the intersection point is inside the triangle
+			// convert the intersection point back to model space
+			intersection = origin / ellipsoid_space;
 
-				// convert the intersection point back to model space
-				intersection = origin / ellipsoid_space;
-
-				// convert from (model space) intersection to (level space) intersection
-				intersection = glm::vec3(m_mesh->worldMatrix() * glm::vec4(intersection, 1.0));
+			// convert from (model space) intersection to (level space) intersection
+			intersection = glm::vec3(m_mesh->worldMatrix() * glm::vec4(intersection, 1.0));
 					
-				// position of the intersection compared to the direction
-				glm::vec3 AC = glm::normalize(intersection - center_ws);
-				float d = glm::dot(glm::normalize(direction), AC);
+			// position of the intersection compared to the direction
+			glm::vec3 AC = glm::normalize(intersection - center_ws);
+			float d = glm::dot(glm::normalize(direction), AC);
 
-				float delta = center_es.y - origin.y;
-				fwCollisionLocation c;
-				if ( delta > 0.9) {
-					collisions.push_back(gaCollisionPoint(fwCollisionLocation::BOTTOM, intersection, nullptr));
-					c=fwCollisionLocation::BOTTOM;
-				}
-				else if (delta < -0.9) {
-					collisions.push_back(gaCollisionPoint(fwCollisionLocation::TOP, intersection, nullptr));
-					c = fwCollisionLocation::TOP;
-				}
-				else if (delta  > 0.5 && d > 0) {
-					collisions.push_back(gaCollisionPoint(fwCollisionLocation::FRONT_BOTTOM, intersection, nullptr));
-					c = fwCollisionLocation::FRONT_BOTTOM;
-				}
-				else if (delta < -0.5 && d > 0) {
-					collisions.push_back(gaCollisionPoint(fwCollisionLocation::FRONT_TOP, intersection, nullptr));
-					c = fwCollisionLocation::FRONT_TOP;
-				}
-				else if (d <= 0) {
-					collisions.push_back(gaCollisionPoint(fwCollisionLocation::BACK, intersection, nullptr));
-					c = fwCollisionLocation::BACK;
-				}
-				else if (d <= 0.4) {
-					collisions.push_back(gaCollisionPoint(fwCollisionLocation::LEFT, intersection, nullptr));
-					c = fwCollisionLocation::LEFT;
-				}
-				else {
-					float l = glm::length(intersection - center_ws);
-					float l1 = glm::length(origin - center_es);
-					collisions.push_back(gaCollisionPoint(fwCollisionLocation::FRONT, intersection, nullptr));
-					c = fwCollisionLocation::FRONT;
-				}
-				std::cerr << "dfMesh::collide ellipoid collides with " << name << " on " << (int)c <<std::endl;
-
-				return true;
+			float delta = center_es.y - origin.y;
+			fwCollisionLocation c;
+			if ( delta > 0.9) {
+				collisions.push_back(gaCollisionPoint(fwCollisionLocation::BOTTOM, intersection, nullptr));
+				c=fwCollisionLocation::BOTTOM;
 			}
+			else if (delta < -0.9) {
+				collisions.push_back(gaCollisionPoint(fwCollisionLocation::TOP, intersection, nullptr));
+				c = fwCollisionLocation::TOP;
+			}
+			else if (delta  > 0.5 && d > 0) {
+				collisions.push_back(gaCollisionPoint(fwCollisionLocation::FRONT_BOTTOM, intersection, nullptr));
+				c = fwCollisionLocation::FRONT_BOTTOM;
+			}
+			else if (delta < -0.5 && d > 0) {
+				collisions.push_back(gaCollisionPoint(fwCollisionLocation::FRONT_TOP, intersection, nullptr));
+				c = fwCollisionLocation::FRONT_TOP;
+			}
+			else if (d <= 0) {
+				collisions.push_back(gaCollisionPoint(fwCollisionLocation::BACK, intersection, nullptr));
+				c = fwCollisionLocation::BACK;
+			}
+			else if (d <= 0.4) {
+				collisions.push_back(gaCollisionPoint(fwCollisionLocation::LEFT, intersection, nullptr));
+				c = fwCollisionLocation::LEFT;
+			}
+			else {
+				float l = glm::length(intersection - center_ws);
+				float l1 = glm::length(origin - center_es);
+				collisions.push_back(gaCollisionPoint(fwCollisionLocation::FRONT, intersection, nullptr));
+				c = fwCollisionLocation::FRONT;
+			}
+			std::cerr << "dfMesh::checkCollision ellipoid collides with " << name << " on " << (int)c <<std::endl;
+
+			return true;
 		}
 	}
 

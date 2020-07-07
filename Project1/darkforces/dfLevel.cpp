@@ -421,7 +421,7 @@ void dfLevel::createTriggerForElevator(dfLogicElevator *elevator)
 }
 
 /**
- * Check all triggers to find if one collide with the source box
+ * Check all triggers to find if one checkCollision with the source box
  */
 void dfLevel::testSwitch(fwAABBox& player)
 {
@@ -649,17 +649,6 @@ bool dfLevel::checkEnvironement(fwCylinder& bounding, glm::vec3& direction, glm:
 			}
 		}
 	}
-
-	// check against the elevators
-	for (auto elevator : m_inf->m_elevators) {
-		// mesh move is done on glSpace
-		if (elevator->checkCollision(bounding, direction, intersection, collisions)) {
-			break;
-		}
-	}
-
-	// check against the objects of the level
-	m_objects->checkCollision(bounding, direction, intersection, collisions);
 
 	return collisions.size() != 0;
 }

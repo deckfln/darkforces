@@ -69,7 +69,7 @@ public:
 	void message(gaMessage *message);
 	void config(void);
 
-	bool collide(fwAABBox& box);
+	bool checkCollision(fwAABBox& box);
 	void moveZ(float z);
 	void moveCeiling(float z);
 	void activate(const std::string& activor);

@@ -89,6 +89,8 @@ void dfLogicElevator::init(const std::string& kind)
 	else {
 		std::cerr << "dfLogicElevator::dfLogicElevator " << kind << " not implemented" << std::endl;
 	}
+
+	physical(true);	// elevators cannot be traversed
 }
 
 /**
@@ -730,7 +732,7 @@ bool dfLogicElevator::checkCollision(float step, glm::vec3& position, glm::vec3&
 	}
 
 	if (m_mesh && m_mesh->visible() && plevel.z > m_zmin && plevel.z < m_zmax && plevel.z < ceiling) {
-		return m_mesh->collide(step, position, target, radius, intersection, m_name);
+		return m_mesh->checkCollision(step, position, target, radius, intersection, m_name);
 	}
 
 	return false;
@@ -746,14 +748,15 @@ bool dfLogicElevator::checkCollision(fwAABBox& box)
 	float z = box.m_p.z;
 
 	if (m_mesh && m_mesh->visible() && z > m_zmin && z < m_zmax) {
-		return m_mesh->collide(box, m_name);
+		return m_mesh->checkCollision(box, m_name);
 	}
 
 	return false;
 }
 
 /**
- * Check move using a cylinder
+ * extended collision test after a sucessfull AABB collision
+ * test against all vertices of the dfMesh it is based on
  */
 bool dfLogicElevator::checkCollision(fwCylinder& bounding, glm::vec3& direction, glm::vec3& intersection, std::list<gaCollisionPoint>& collisions)
 {
@@ -782,7 +785,7 @@ bool dfLogicElevator::checkCollision(fwCylinder& bounding, glm::vec3& direction,
 	// Hack to deal with sector elev3-1. The plateform is physically impossible, there is not enough space
 	// from the top to the bottom where there is sector 149
 	if (m_mesh && m_mesh->visible() && plevel.z > (m_zmin - 4.0) && plevel.z < m_zmax && plevel.z < ceiling) {
-		return m_mesh->collide(bounding, direction, intersection, m_name, collisions);
+		return m_mesh->checkCollision(bounding, direction, intersection, m_name, collisions);
 	}
 
 	return false;

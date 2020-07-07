@@ -105,9 +105,15 @@ public:
 	void moveTo(float z);			// move the dfMesh to altitude
 	void rotateZ(float angle);
 	void move(glm::vec3& position);
-	bool collide(float step, glm::vec3& position, glm::vec3& target, float radius, glm::vec3& intersection, std::string& name);
-	bool collide(fwCylinder& bounding, glm::vec3& target, glm::vec3& intersection, std::string& name, std::list<gaCollisionPoint>& collisions);
-	bool collide(fwAABBox& box, std::string& name);
+	bool checkCollision(float step, glm::vec3& position, glm::vec3& target, float radius, glm::vec3& intersection, std::string& name);
+
+	bool checkCollision(fwCylinder& bounding, 
+		glm::vec3& target, 
+		glm::vec3& intersection, 
+		std::string& name, 
+		std::list<gaCollisionPoint>& collisions);			// extended collision test after a sucessfull AABB collision
+
+	bool checkCollision(fwAABBox& box, std::string& name);
 	void parent(fwMesh* parent) { m_parentMesh = parent; };
 	bool visible(void);
 	void visible(bool status);

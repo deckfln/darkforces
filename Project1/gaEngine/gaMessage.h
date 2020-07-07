@@ -5,7 +5,7 @@
 #include <queue>
 
 enum {
-	GA_MSG_COLLIDE = 0,	// two entities collide
+	GA_MSG_COLLIDE = 0,	// two entities checkCollision
 	GA_MSG_TIMER
 };
 

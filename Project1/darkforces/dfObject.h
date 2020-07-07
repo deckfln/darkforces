@@ -123,10 +123,13 @@ public:
 	std::string& model(void);
 	void logic(int logic);
 	void add2scene(fwScene* scene);
-	bool checkCollision(fwCylinder& bounding, glm::vec3& direction, glm::vec3& intersection, std::list<gaCollisionPoint>& collisions);
 
+	virtual bool checkCollision(fwCylinder& bounding,
+		glm::vec3& direction,
+		glm::vec3& intersection,
+		std::list<gaCollisionPoint>& collisions);	// extended collision test after a sucessfull AABB collision
 	virtual void moveTo(const glm::vec3& position);	// update the object position
-	virtual void updateWorldAABB(void);					// update the world AABB based on position
+	virtual void updateWorldAABB(void);				// update the world AABB based on position
 	virtual bool update(time_t t);					// update based on timer
 	virtual void collideWith(gaEntity*);			// reaction on a collision with another entity
 

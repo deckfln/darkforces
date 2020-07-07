@@ -6,6 +6,9 @@
 
 #include "../framework/fwAABBox.h"
 #include "gaMessage.h"
+#include "gaCollisionPoint.h"
+
+class fwCylinder;
 
 class gaEntity
 {
@@ -17,6 +20,7 @@ protected:
 	glm::vec3 m_rotation = glm::vec3(0);	
 	fwAABBox m_modelAABB;					// model space AABB
 	fwAABBox m_worldBounding;				// AABB bounding box in world gl space
+	bool m_physical = false;				// if this entity has a body to checkCollision with
 	std::list<gaEntity*> m_children;		// included entities
 
 public:
@@ -25,6 +29,8 @@ public:
 
 	const std::string& name(void) { return m_name; };
 	bool is(int mclass) { return m_class == m_class; };
+	void physical(bool p) { m_physical = p; };
+	bool physical(void) { return m_physical; };
 
 	void addChild(gaEntity* entity);					// add an entity inside that one (and increase the AABB if needed)
 	bool collideAABB(fwAABBox& box);					// quick test to find AABB collision
@@ -37,6 +43,10 @@ public:
 	virtual void moveTo(const glm::vec3& position);		// move the the object and update the AABB
 	virtual bool update(time_t t) {	return false;};		// update based on timer
 	virtual void dispatchMessage(gaMessage* message) {};// let an entity deal with a situation
+	virtual bool checkCollision(fwCylinder& bounding, 
+		glm::vec3& direction, 
+		glm::vec3& intersection, 
+		std::list<gaCollisionPoint>& collisions);		// extended collision test after a sucessfull AABB collision
 
 	~gaEntity();
 };

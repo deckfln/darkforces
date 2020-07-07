@@ -3,6 +3,8 @@
 #include <iostream>
 #include <map>
 
+#include "gaEntity.h"
+
 gaWorld g_gaWorld;
 
 /** 
@@ -96,6 +98,31 @@ void gaWorld::findAABBCollision(fwAABBox& box, std::list<gaEntity*>& collisions)
 	}
 }
 
+/**
+ * extended collision test after a sucessfull AABB collision
+ */
+bool gaWorld::checkCollision(gaEntity* source, fwCylinder& bounding, glm::vec3& direction, std::list<gaCollisionPoint>& collisions)
+{
+	glm::vec3 intersection;
+
+	// get all the entities which AABB checkCollision with the player
+	fwAABBox aabb(bounding);
+	aabb += direction;
+	std::list<gaEntity*> entities;
+	g_gaWorld.findAABBCollision(aabb, entities);
+
+	for (auto entity : entities) {
+		// only test entities that can physically checkCollision, but still inform the target of the collision
+		if (!entity->physical()) {
+			entity->collideWith(source);
+			continue;
+		}
+		entity->checkCollision(bounding, direction, intersection, collisions);
+	}
+
+	return collisions.size() != 0;
+}
+
 void gaWorld::push(gaMessage* message)
 {
 	m_queue.push(message);
@@ -139,7 +166,9 @@ void gaWorld::process(time_t delta)
 		// new clients
 		if (m_entities.count(message->m_client) > 0) {
 			message->m_delta = delta;
-			message->m_pServer = m_entities[message->m_server].front();
+			if (m_entities.count(message->m_server) > 0) {
+				message->m_pServer = m_entities[message->m_server].front();
+			}
 			for (auto entity : m_entities[message->m_client]) {
 				entity->dispatchMessage(message);
 			}
