@@ -98,7 +98,9 @@ bool gaActor::moveTo(time_t delta, glm::vec3& velocity)
 		}
 		else {
 			// no move, continue with the physic engine
+			m_position = target;
 			m_bounding.position(target);
+			m_worldBounding = fwAABBox(m_bounding);
 		}
 	}
 	else {
@@ -176,6 +178,7 @@ bool gaActor::moveTo(time_t delta, glm::vec3& velocity)
 #endif
 		}
 
+		m_position = target;
 		m_bounding.position(target);
 		m_worldBounding = fwAABBox(m_bounding);
 	}

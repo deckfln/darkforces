@@ -27,6 +27,7 @@ public:
 	int keys(void) { return m_keys; };
 
 	virtual void dispatchMessage(gaMessage* message);	// let an entity deal with a situation
+	virtual void fire(const glm::vec3& direction);		// handle the fire option
 
 	~dfActor();
 };

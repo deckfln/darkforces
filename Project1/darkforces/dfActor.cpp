@@ -2,7 +2,10 @@
 
 #include "../config.h"
 
+#include "../gaEngine/gaWorld.h"
+
 #include "dfObject.h"
+#include "dfBullet.h"
 
 dfActor::dfActor(const std::string& name, fwCylinder& bounding, float eyes, float ankle):
 	gaActor(DF_ENTITY_ACTOR, name, bounding, eyes, ankle)
@@ -50,6 +53,19 @@ void dfActor::dispatchMessage(gaMessage* message)
 		addEnergy(message->m_value);
 		break;
 	}
+}
+
+/**
+ * fire the current weapon
+ */
+void dfActor::fire(const glm::vec3& direction)
+{
+	// create a bullet
+	dfBullet* bullet = new dfBullet(m_position + glm::vec3(0, 0.3, 0), direction);
+
+	// and add to the world to live its life
+	g_gaWorld.addClient(bullet);
+	g_gaWorld.add2scene(bullet->mesh());
 }
 
 dfActor::~dfActor()

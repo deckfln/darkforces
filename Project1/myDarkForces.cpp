@@ -81,6 +81,7 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 	// init the m_scene
 	glm::vec3* yellow = new glm::vec3(255, 255, 0);
 	m_scene = new fwScene();
+	g_gaWorld.scene(m_scene);
 
 	// add the HUD
 	m_scene->hud(statuslt);

@@ -43,6 +43,8 @@ protected:
 	glm::vec3 m_direction = glm::vec3(0);
 	glm::vec3 m_position = glm::vec3(0);
 	glm::vec3 m_velocity = glm::vec3(0);
+	glm::vec3 m_lookDirection = glm::vec3(0);
+
 	virtual bool checkKeys(time_t delta);
 	virtual void updatePlayer(time_t delta);
 

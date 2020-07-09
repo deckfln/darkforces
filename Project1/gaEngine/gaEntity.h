@@ -21,6 +21,7 @@ protected:
 	fwAABBox m_modelAABB;					// model space AABB
 	fwAABBox m_worldBounding;				// AABB bounding box in world gl space
 	bool m_physical = false;				// if this entity has a body to checkCollision with
+	time_t m_time=0;						// elapsed time when running animation
 	std::list<gaEntity*> m_children;		// included entities
 
 public:

@@ -34,6 +34,13 @@ fwObject3D &fwObject3D::rotate(glm::vec3 &_rotation)
 	return *this;
 }
 
+fwObject3D& fwObject3D::rotate(const glm::quat& quaternion)
+{
+	m_quaternion = quaternion;
+	updated = true;
+	return *this;
+}
+
 fwObject3D &fwObject3D::translate(glm::vec3 &vector)
 {
 	m_Position = vector;

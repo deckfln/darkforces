@@ -31,6 +31,5 @@ public:
 	gaMessage(int action);
 	gaMessage(int action, int value);
 	gaMessage(int action, int value, const std::string& client);
-	gaMessage(std::vector<std::string>& tokens);
 	std::string& client(void) { return m_client; };
 };

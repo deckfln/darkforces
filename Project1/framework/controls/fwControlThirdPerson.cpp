@@ -114,15 +114,17 @@ void fwControlThirdPerson::updateCamera(time_t delta)
 	glm::vec3 eye = m_position;
 	eye.y += m_height;
 
-	glm::vec3 lookAt(
-		2 * cos(m_phi)*sin(m_theta) + eye.x,
-		cos(m_theta) + eye.y,
-		2 * sin(m_phi) * sin(m_theta) + eye.z
+	m_lookDirection = glm::vec3(
+		2 * cos(m_phi) * sin(m_theta),
+		cos(m_theta),
+		2 * sin(m_phi) * sin(m_theta)
 	);
 
+	glm::vec3 lookAt = m_lookDirection + eye;
+
 	//std::cout << m_phi << " " << tmp.x << " " << tmp.y << std::endl;
-	camera->translate(eye);
 	camera->lookAt(lookAt);
+	camera->translate(eye);
 }
 
 /**

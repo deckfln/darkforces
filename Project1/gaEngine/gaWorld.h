@@ -11,6 +11,8 @@
 #include "gaMessage.h"
 
 class gaEntity;
+class fwScene;
+class fwMesh;
 
 class gaWorld
 {
@@ -19,11 +21,16 @@ class gaWorld
 	std::map<std::string, std::list<gaEntity*>> m_entities;
 
 	bool m_timer = true;		// pass DF_MESSAGE_TIMER event
+	fwScene* m_scene;			// current scene on screen;
 
 public:
 	gaWorld(void);
-	void addClient(gaEntity* client);
-	void removeClient(gaEntity* client);
+
+	void scene(fwScene* scene) { m_scene = scene; };
+
+	void addClient(gaEntity* client);		// add a spirit entity
+	void removeClient(gaEntity* client);	// remove a spirit entity
+	void add2scene(fwMesh* client);			// add a mesh to the current scene
 
 	gaMessage* sendMessage(const std::string& from, const std::string& to, int action, int value, void *extra);	
 	gaEntity* getEntity(const std::string& name);

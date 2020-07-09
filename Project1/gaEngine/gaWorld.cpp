@@ -3,6 +3,9 @@
 #include <iostream>
 #include <map>
 
+#include "../framework/fwScene.h"
+#include "../framework/fwMesh.h"
+
 #include "gaEntity.h"
 
 gaWorld g_gaWorld;
@@ -33,6 +36,14 @@ void gaWorld::removeClient(gaEntity* client)
 	}
 
 	m_entities[client->name()].remove(client);
+}
+
+/**
+ * add a mesh to the current scene
+ */
+void gaWorld::add2scene(fwMesh* client)
+{
+	m_scene->addChild(client);
 }
 
 /**

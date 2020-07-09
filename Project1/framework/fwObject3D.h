@@ -46,6 +46,7 @@ public:
 	std::string& name(void) { return m_name;	};
 
 	fwObject3D &rotate(glm::vec3 &rotation);
+	fwObject3D& rotate(const glm::quat& quaternion);
 	fwObject3D &translate(glm::vec3 &vector);
 	fwObject3D &translate(float x, float y, float z);
 

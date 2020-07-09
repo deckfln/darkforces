@@ -33,11 +33,14 @@ public:
 	gaActor(int mclass, const std::string& name, fwCylinder& bounding, float eyes, float ankle);
 	bool moveTo(time_t delta, glm::vec3& velocity);
 	void rotate(const glm::vec3& direction);
-	const glm::vec3& position(void) { return m_bounding.position(); };
+	const glm::vec3& position(void) { return m_position; };
 	float height(void);
 	float radius(void);
 	float eyes(void) { return m_eyes; };
 	void jump(const glm::vec3& velocity);
 	void bind(dfLevel* level) { m_level = level; };
+
+	virtual void fire(const glm::vec3& direction) {};	// handle the fire option
+
 	~gaActor();
 };

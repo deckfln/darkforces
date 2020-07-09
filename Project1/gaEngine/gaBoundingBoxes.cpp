@@ -26,7 +26,9 @@ void gaBoundingBoxes::add(const fwAABBox* box)
 void gaBoundingBoxes::draw(fwScene* scene)
 {
 	// extend the storage if needed
-	if (m_vertices.size() == 0) {
+	int sz = m_boxes.size() * 26;
+
+	if (m_vertices.size() != sz) {
 		m_vertices.resize(m_boxes.size() * 26);
 	}
 
