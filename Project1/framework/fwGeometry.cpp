@@ -97,6 +97,7 @@ void fwGeometry::resizeAttribute(const std::string& name, void* data, int itemCo
 	// ensure the attribute exists
 	if (m_attributes.count(name) > 0) {
 		m_attributes[name]->resize(data, itemCount);
+		m_resizedAttribute = true;
 	}
 }
 
@@ -115,8 +116,6 @@ void fwGeometry::update(void)
 	}
 	else {
 		// all of them
-		vertices->update();
-
 		for (auto attribute : m_attributes) {
 			attribute.second->update();
 		}
@@ -169,6 +168,18 @@ void fwGeometry::updateIfDirty(void)
 			attribute.second->updateIfDirty();
 		}
 	}
+}
+
+/**
+ * check if at least 1 attribute was resized, reset the flag on exit
+ */
+bool fwGeometry::resizedAttribute(void)
+{
+	if (m_resizedAttribute) {
+		m_resizedAttribute = false;
+		return true;
+	}
+	return false;
 }
 
 /**

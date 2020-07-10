@@ -35,7 +35,7 @@ fwAABBox::fwAABBox(fwSphere& sphere)
 	m_p1 = glm::vec3(center.x + radius, center.y + radius, center.z + radius);
 }
 
-fwAABBox::fwAABBox(glm::vec3& p1, glm::vec3& p2)
+fwAABBox::fwAABBox(const glm::vec3& p1, const glm::vec3& p2)
 {
 	m_p = glm::min(p1, p2);
 	m_p1 = glm::max(p1, p2);

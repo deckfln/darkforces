@@ -134,6 +134,11 @@ void fwControlThirdPerson::update(time_t delta)
 {
 	checkKeys(delta);
 
+	// record the status of the key for next thext frame
+	for (auto k : m_currentKeys) {
+		m_prevKeys[k.first] = k.second;
+	}
+
 	updatePlayer(delta);
 	updateCamera(delta);
 }

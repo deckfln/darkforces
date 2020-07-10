@@ -26,6 +26,11 @@ dfBullet::dfBullet(const glm::vec3& position, const glm::vec3& direction):
 	gaEntity(DF_ENTITY_BULLET, "bullet("+std::to_string(g_bulletID++)+")", position),
 	m_direction(direction)
 {
+	// the AABOX is just the direction vector
+	glm::vec3 d = direction * 0.1f;
+	m_modelAABB = fwAABBox(glm::vec3(0), d);
+	updateWorldAABB();
+
 	// create a mesh for the blaster
 	if (g_blaster == nullptr) {
 		g_blaster = new fwGeometryCylinder(0.01f, 0.1f);
@@ -57,8 +62,6 @@ dfBullet::dfBullet(const glm::vec3& position, const glm::vec3& direction):
 	// next animation
 	m_animate_msg = new gaMessage(GA_MSG_TIMER);
 	m_animate_msg->m_client = m_name;
-
-	g_gaWorld.add2scene(m_mesh);
 
 	// trigger the naimation
 	g_gaWorld.pushForNextFrame(m_animate_msg);

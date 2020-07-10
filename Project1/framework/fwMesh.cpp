@@ -94,8 +94,15 @@ void fwMesh::set_uniforms(glProgram* program)
 
 GLuint fwMesh::buildVAO(glProgram* program)
 {
-	// create one VAO by shader class
 	GLuint id = program->getID();
+
+	// if one of the attribute was resized, need to rebuild a vao with the new attribute
+	if (vao.count(id) > 0 && geometry->resizedAttribute()) {
+		delete vao[id];
+		vao.erase(id);
+	}
+
+	// create one VAO by shader class
 	if (vao.count(id) == 0) {
 		vao[id] = new glVertexArray();
 		geometry->enable_attributes(program);

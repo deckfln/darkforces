@@ -20,6 +20,7 @@ protected:
 	int m_button = 0;		// current mouse button pressed
 	bool m_shift = false;	// shift key is pressed
 	std::map<int, bool> m_currentKeys;	// current keys pressed
+	std::map<int, bool> m_prevKeys;		// previous keys status
 
 	// mouse tracking
 	double m_currentX = 0;

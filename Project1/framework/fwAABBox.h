@@ -34,7 +34,7 @@ public:
 	fwAABBox();
 	fwAABBox(float, float, float, float, float, float);
 	fwAABBox(fwSphere& sphere);
-	fwAABBox(glm::vec3& p1, glm::vec3& p2);
+	fwAABBox(const glm::vec3& p1, const glm::vec3& p2);
 	fwAABBox(fwAABBox& source, glm::mat4& matrix);
 	fwAABBox(fwCylinder& cylinder);
 

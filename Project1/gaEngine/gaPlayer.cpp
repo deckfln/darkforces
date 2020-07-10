@@ -24,7 +24,7 @@ bool gaPlayer::checkKeys(time_t delta)
 			m_velocity.y = 0.004f;
 			m_actor->jump(m_velocity);
 		}
-		if (m_currentKeys[GLFW_KEY_LEFT_CONTROL]) {
+		if (m_currentKeys[GLFW_KEY_LEFT_CONTROL] && !m_prevKeys[GLFW_KEY_LEFT_CONTROL]) {
 			// FIRE
 			m_actor->fire(m_lookDirection);
 		}
