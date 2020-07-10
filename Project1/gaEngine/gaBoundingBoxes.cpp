@@ -30,6 +30,10 @@ void gaBoundingBoxes::draw(fwScene* scene)
 
 	if (m_vertices.size() != sz) {
 		m_vertices.resize(m_boxes.size() * 26);
+
+		if (m_geometry != nullptr) {
+			m_geometry->resizeAttribute("aPos", &m_vertices[0], m_vertices.size());
+		}
 	}
 
 	// store the vertices

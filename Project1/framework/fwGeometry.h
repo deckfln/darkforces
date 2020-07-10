@@ -22,7 +22,7 @@ class fwGeometry: public Reference
 
 	int max_attributes = 10;
 	int current_attribute = 0;
-	std::map <const std::string, glBufferAttribute *> attributes;
+	std::map <const std::string, glBufferAttribute *> m_attributes;
 
 	bool m_dirty = false;	// ALL attributes need to be re uploaded to the GPU
 
@@ -36,7 +36,10 @@ public:
 	fwGeometry& addAttribute(const std::string _name, GLuint _type, void *_data, GLsizei itemSize, GLsizei len, GLuint _sizeof_element, bool delete_on_exit = true);
 
 	void updateVertices(int offset = 0, int size = -1);
-	void updateAttribute(const std::string &name, int offset=0, int size = -1);
+	void updateAttribute(const std::string& name, int offset=0, int size = -1);
+	void resizeAttribute(const std::string& name, 
+		void* data, 
+		int itemCount);						// the attribute buffer was resized and moved by the owner
 	void update(void);
 
 	void enable_attributes(glProgram *program);
@@ -57,7 +60,7 @@ public:
 
 	void draw(GLenum mode, glVertexArray *);
 
-	const glm::vec3& center(void);			// get the center of the boundingsphere around the geometry
+	const glm::vec3& center(void);						// get the center of the boundingsphere around the geometry
 	const glm::vec3& centerVertices(void);				// move all vertices along the translation
 
 	~fwGeometry();

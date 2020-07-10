@@ -8,6 +8,7 @@
 
 #include "../glEngine/glVertexAttribute.h"
 #include "../glEngine/glBufferAttribute.h"
+#include "../glEngine/glDynamicBufferAttribute.h"
 #include "../glad/glad.h"
 
 static int g_nbGeometries = 0;
@@ -23,14 +24,16 @@ fwGeometry& fwGeometry::addVertices(const std::string _name, void *_data, GLsize
 {
 	vertices = new glBufferAttribute(_name, GL_ARRAY_BUFFER, _data, itemSize, len, _sizeof_element, delete_on_exit);
 	indexedGeometry = false;
+	m_attributes[_name] = vertices;
 
 	return *this;
 }
 
 fwGeometry& fwGeometry::addDynamicVertices(const std::string _name, void *_data, GLsizei itemSize, GLsizei len, GLuint _sizeof_element, bool delete_on_exit)
 {
-	vertices = new glBufferAttribute(_name, GL_ARRAY_BUFFER, _data, itemSize, len, _sizeof_element, delete_on_exit);
+	vertices = new glDynamicBufferAttribute(_name, GL_ARRAY_BUFFER, _data, itemSize, len, _sizeof_element, delete_on_exit);
 	indexedGeometry = false;
+	m_attributes[_name] = vertices;
 
 	return *this;
 }
@@ -47,24 +50,20 @@ fwGeometry& fwGeometry::addAttribute(const std::string name, GLuint type, void *
 {
 	glBufferAttribute *ba = new	glBufferAttribute(name, type, data, itemSize, len, sizeof_element, delete_on_exit);
 	std::pair<const std::string, glBufferAttribute *> in(name, ba);
-	attributes.insert(in);
+	m_attributes.insert(in);
 
 	return *this;
 }
 
 void fwGeometry::enable_attributes(glProgram *program)
 {
-	// vertex attribute
+	// vertex index attribute
 	if (index != nullptr) {
 		index->bind();
 	}
-	glVertexAttribute *va = program->get_attribute(vertices->name());
-	if (va) {
-		va->EnableVertex(vertices);
-	}
 
 	// other attributes
-	for (auto attribute: attributes) {
+	for (auto attribute: m_attributes) {
 		const std::string _name = attribute.first;
 		glBufferAttribute *_attribute = attribute.second;
 		glVertexAttribute *va = program->get_attribute(_attribute->name());
@@ -84,9 +83,20 @@ void fwGeometry::updateVertices(int offset, int size)
 
 void fwGeometry::updateAttribute(const std::string& name, int offset, int size)
 {
-	glBufferAttribute* attribute = attributes[name];
+	glBufferAttribute* attribute = m_attributes[name];
 	if (attribute) {
 		attribute->update(offset, size);
+	}
+}
+
+/**
+ * the attribute buffer was resized and moved by the owner
+ */
+void fwGeometry::resizeAttribute(const std::string& name, void* data, int itemCount)
+{
+	// ensure the attribute exists
+	if (m_attributes.count(name) > 0) {
+		m_attributes[name]->resize(data, itemCount);
 	}
 }
 
@@ -99,7 +109,7 @@ void fwGeometry::update(void)
 		// limited number of vertices
 		vertices->update(0, m_verticesToDisplay);
 
-		for (auto attribute : attributes) {
+		for (auto attribute : m_attributes) {
 			attribute.second->update(0, m_verticesToDisplay);
 		}
 	}
@@ -107,7 +117,7 @@ void fwGeometry::update(void)
 		// all of them
 		vertices->update();
 
-		for (auto attribute : attributes) {
+		for (auto attribute : m_attributes) {
 			attribute.second->update();
 		}
 	}
@@ -155,7 +165,7 @@ void fwGeometry::updateIfDirty(void)
 	else {
 		// and test each of the attibute individualy
 		vertices->updateIfDirty();
-		for (auto attribute : attributes) {
+		for (auto attribute : m_attributes) {
 			attribute.second->updateIfDirty();
 		}
 	}
@@ -292,7 +302,7 @@ void fwGeometry::computeTangent(void)
 
 	glm::vec3 Tangent;
 
-	glBufferAttribute *uvs = attributes["aTexCoord"];
+	glBufferAttribute *uvs = m_attributes["aTexCoord"];
 
 	int nb_vertices = vertices->count();
 	glm::vec3 *tangents = new glm::vec3 [nb_vertices];
@@ -384,9 +394,7 @@ fwGeometry::~fwGeometry()
 		delete index;
 	}
 
-	delete vertices;
-
-	for (auto attribute: attributes) {
+	for (auto attribute: m_attributes) {
 		delete attribute.second;
 	}
 }

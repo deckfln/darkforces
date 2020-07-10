@@ -75,6 +75,20 @@ void glBufferAttribute::update(int offset, int size)
 	m_dirty = false;
 }
 
+/**
+ * the owner changed the size and storage buffer
+ */
+void glBufferAttribute::resize(void* data, int itemCount)
+{
+	m_count = itemCount;
+	m_len = m_count * (m_sizeof_element * m_itemSize);
+	m_data = data;
+
+	// allocate a new VBO
+	delete m_vbo;
+	m_vbo = new glBufferObject(m_type, m_len, m_data);
+}
+
 void *glBufferAttribute::get_index(const int index)
 {
 	int le = m_sizeof_element * m_itemSize;

@@ -34,7 +34,8 @@ public:
 	const std::string& name(void);
 	void dirty(void) { m_dirty = true; };		// mark the attribute to be uploaded to the GPU
 	void *get_index(const int index);
-	void update(int offset = 0, int size = -1);
+	void update(int offset = 0, int size = -1);	// push changed to the GPU
+	void resize(void* data, int itemCount);		// the owner changed the size and storage buffer
 	void bind();
 	void updateIfDirty(void);					// upload the whole buffer to the GPU if needed
 	virtual int get_divisor(void) { return 0; };
