@@ -26,6 +26,7 @@ class gaBoundingBoxes
 public:
 	gaBoundingBoxes();
 	void add(const fwAABBox* box);
+	void remove(const fwAABBox* box);
 	void draw(fwScene* scene);
 	~gaBoundingBoxes();
 };

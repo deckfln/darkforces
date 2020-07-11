@@ -72,7 +72,8 @@ public:
 
 	glm::mat4& inverseWorldMatrix(void) { return m_inverseWorldMatrix; }
 
-	fwObject3D &addChild(fwObject3D *);
+	fwObject3D &addChild(fwObject3D * obj);			// add an object to the scene
+	void removeChild(fwObject3D* obj);				// remove an object from the scene
 
 	float sqDistanceTo(fwObject3D *to);
 

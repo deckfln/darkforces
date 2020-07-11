@@ -5,8 +5,9 @@
 #include <queue>
 
 enum {
-	GA_MSG_COLLIDE = 0,	// two entities checkCollision
-	GA_MSG_TIMER
+	GA_MSG_COLLIDE = 0,		// two entities checkCollision
+	GA_MSG_TIMER,			// animation message
+	GA_MSG_DELETE_ENTITY	// delete the given entity
 };
 
 class gaEntity;

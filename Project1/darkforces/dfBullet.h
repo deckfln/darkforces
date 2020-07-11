@@ -10,13 +10,13 @@ class gaMessage;
 
 class dfBullet : public gaEntity
 {
-	fwMesh* m_mesh = nullptr;
 	glm::vec3 m_direction;
 	gaMessage* m_animate_msg = nullptr;
 
 public:
 	dfBullet(const glm::vec3& position, const glm::vec3& direction);
 	fwMesh* mesh(void) { return m_mesh; };
+
 
 	virtual void dispatchMessage(gaMessage* message);
 	~dfBullet();

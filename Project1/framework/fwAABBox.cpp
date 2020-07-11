@@ -9,6 +9,8 @@
 
 #include "../glad/glad.h"
 
+#include "../glEngine/glBufferAttribute.h"
+
 #include "math/fwSphere.h"
 #include "math/fwCylinder.h"
 
@@ -84,6 +86,34 @@ void fwAABBox::set(std::vector<glm::vec3>& vertices)
 }
 
 /**
+ * build from an GL attribute
+ */
+void fwAABBox::set(glBufferAttribute* attribute)
+{
+	float minX = INFINITY;
+	float minY = INFINITY;
+	float minZ = INFINITY;
+
+	float maxX = -INFINITY;
+	float maxY = -INFINITY;
+	float maxZ = -INFINITY;
+
+	for (unsigned int i = 0; i < attribute->count(); ++i) {
+		glm::vec3* v = (glm::vec3*)attribute->get_index(i);
+
+		if (v->x < minX) minX = v->x;
+		if (v->y < minY) minY = v->y;
+		if (v->z < minZ) minZ = v->z;
+
+		if (v->x > maxX) maxX = v->x;
+		if (v->y > maxY) maxY = v->y;
+		if (v->z > maxZ) maxZ = v->z;
+	}
+	m_p = glm::vec3(minX, minY, minZ);
+	m_p1= glm::vec3(maxX, maxY, maxZ);
+}
+
+/**
  * update based on translation on the source
  */
 void fwAABBox::translateFrom(const fwAABBox& source, glm::vec3& translation)
@@ -99,6 +129,14 @@ void fwAABBox::translateFrom(const fwAABBox& source, glm::vec3& translation)
 void fwAABBox::rotateFrom(const fwAABBox& source, const glm::vec3& rotation)
 {
 	glm::quat quaternion = glm::quat(glm::vec3(rotation.x, rotation.y, rotation.z));
+	rotateFrom(source, quaternion);
+}
+
+/**
+ * update based on rotation on the source
+ */
+void fwAABBox::rotateFrom(const fwAABBox& source, const glm::quat& quaternion)
+{
 	glm::mat4 rotationMatrix = glm::toMat4(quaternion);
 
 	// rebuild the 8 vertices

@@ -14,6 +14,9 @@ void Reference::reference(void)
 
 bool Reference::dereference(void)
 {
+	if (m_isStatic) {
+		return false;	// never derefernce
+	}
 	return (--references) == 0;
 }
 

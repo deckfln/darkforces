@@ -7,6 +7,8 @@
 #include "../glEngine/glBufferAttribute.h"
 #include "../glEngine/glVertexArray.h"
 #include "../glEngine/glProgram.h"
+
+#include "fwAABBox.h"
 #include "math/fwSphere.h"
 
 class fwGeometry: public Reference
@@ -27,6 +29,7 @@ class fwGeometry: public Reference
 	bool m_dirty = false;				// ALL attributes need to be re uploaded to the GPU
 	bool m_resizedAttribute = false;	// at least one of the attribute was resized
 
+	fwAABBox m_modelAABB;				// bounding box in model space
 	fwSphere *m_pBoundingsphere = nullptr;
 
 public:
@@ -54,6 +57,7 @@ public:
 
 	fwSphere *boundingsphere(void) { return m_pBoundingsphere; };
 	fwSphere *computeBoundingsphere(void);
+	const fwAABBox& aabbox(void);			// return or initialize the model space AABB
 	float sqDistance2boundingSphere(glm::vec3& position);
 	fwSphere* setBoundingsphere(float radius);
 	void computeTangent(void);

@@ -1,5 +1,8 @@
 #include "gaEntity.h"
 
+#include "../framework/fwScene.h"
+#include "../framework/fwMesh.h"
+
 #include "gaWorld.h"
 #include "../gaEngine/gaBoundingBoxes.h"
 
@@ -12,7 +15,6 @@ gaEntity::gaEntity(int mclass, const std::string& name) :
 {
 	g_gaBoundingBoxes.add(&m_worldBounding);
 	g_gaWorld.addClient(this);
-
 }
 
 gaEntity::gaEntity(int mclass, const std::string& name, const glm::vec3& position):
@@ -56,9 +58,29 @@ void gaEntity::modelAABB(const fwAABBox& box)
 void gaEntity::rotate(const glm::vec3& rotation)
 {
 	m_rotation = rotation;
+	m_quaternion = glm::quat(glm::vec3(rotation.x, rotation.y, rotation.z));
 
 	// take the opportunity to update the world bounding box
 	updateWorldAABB();
+}
+
+/**
+ * distance between the 2 entities
+ */
+float gaEntity::distanceTo(gaEntity* other)
+{
+	return glm::distance(m_position, other->m_position);
+}
+
+/**
+ * if the entity has a mesh, add to the scene
+ */
+void gaEntity::add2scene(fwScene* scene)
+{
+	if (m_mesh) {
+		m_scene = scene;
+		m_scene->addChild(m_mesh);
+	}
 }
 
 /**
@@ -77,7 +99,7 @@ void gaEntity::moveTo(const glm::vec3& position)
  */
 void gaEntity::updateWorldAABB(void)
 {
-	m_worldBounding.rotateFrom(m_modelAABB, m_rotation);
+	m_worldBounding.rotateFrom(m_modelAABB, m_quaternion);
 	m_worldBounding += m_position;
 }
 
@@ -92,4 +114,13 @@ bool gaEntity::checkCollision(fwCylinder& bounding, glm::vec3& direction, glm::v
 
 gaEntity::~gaEntity()
 {
+	g_gaWorld.removeClient(this);
+	g_gaBoundingBoxes.remove(&m_worldBounding);
+
+	if (m_mesh) {
+		if (m_scene) {
+			m_scene->removeChild(m_mesh);
+		}
+		delete m_mesh;
+	}
 }

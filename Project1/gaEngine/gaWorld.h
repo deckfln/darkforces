@@ -30,7 +30,7 @@ public:
 
 	void addClient(gaEntity* client);		// add a spirit entity
 	void removeClient(gaEntity* client);	// remove a spirit entity
-	void add2scene(fwMesh* client);			// add a mesh to the current scene
+	void add2scene(gaEntity* client);		// add an entiuty mesh (if it has one) to the current scene
 
 	gaMessage* sendMessage(const std::string& from, const std::string& to, int action, int value, void *extra);	
 	gaEntity* getEntity(const std::string& name);

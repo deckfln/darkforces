@@ -10,7 +10,7 @@
 
 gaWorld g_gaWorld;
 
-/** 
+/**
  * Create and init the world
  */
 gaWorld::gaWorld()
@@ -35,15 +35,21 @@ void gaWorld::removeClient(gaEntity* client)
 		return;
 	}
 
+	// remove from the list
 	m_entities[client->name()].remove(client);
+
+	// if the list is empty remove the name
+	if (m_entities[client->name()].size() == 0) {
+		m_entities.erase(client->name());
+	}
 }
 
 /**
  * add a mesh to the current scene
  */
-void gaWorld::add2scene(fwMesh* client)
+void gaWorld::add2scene(gaEntity* client)
 {
-	m_scene->addChild(client);
+	client->add2scene(m_scene);
 }
 
 /**
@@ -174,8 +180,24 @@ void gaWorld::process(time_t delta)
 			continue;
 		}
 
-		// new clients
-		if (m_entities.count(message->m_client) > 0) {
+		if (message->m_client == "_world") {
+			// catch messages for the world
+			switch (message->m_action) {
+			case GA_MSG_DELETE_ENTITY:
+				// delete all instances of the given entity
+				if (m_entities.count(message->m_server) > 0) {
+					gaEntity* entity;
+					for (auto entity : m_entities[message->m_server]) {
+						delete entity;
+						m_entities.erase(message->m_server);
+						break;
+					}
+				}
+			}
+		}
+		else if (m_entities.count(message->m_client) > 0) {
+			// dispatch messages to client
+
 			message->m_delta = delta;
 			if (m_entities.count(message->m_server) > 0) {
 				message->m_pServer = m_entities[message->m_server].front();

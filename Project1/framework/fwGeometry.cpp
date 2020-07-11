@@ -244,14 +244,15 @@ const glm::vec3& fwGeometry::centerVertices(void)
  */
 fwSphere *fwGeometry::computeBoundingsphere(void)
 {
-	fwBox3 box;
 	if (m_pBoundingsphere == nullptr) {
 		m_pBoundingsphere = new fwSphere();
 	}
 
 	if (vertices) {
-		box.setFromBufferAttribute(vertices);
-		const glm::vec3& center = box.center();
+		if (m_modelAABB.not_init()) {
+			m_modelAABB.set(vertices);
+		}
+		const glm::vec3& center = m_modelAABB.center();
 		m_pBoundingsphere->center(center);
 
 		// hoping to find a boundingSphere with a radius smaller than the
@@ -267,6 +268,18 @@ fwSphere *fwGeometry::computeBoundingsphere(void)
 	}
 
 	return m_pBoundingsphere;
+}
+
+/**
+ * return or initialize the model space AABB
+ */
+const fwAABBox& fwGeometry::aabbox(void)
+{
+	if (m_modelAABB.not_init()) {
+		m_modelAABB.set(vertices);
+	}
+
+	return m_modelAABB;
 }
 
 float fwGeometry::sqDistance2boundingSphere(glm::vec3& position)

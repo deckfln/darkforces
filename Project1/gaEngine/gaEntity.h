@@ -3,12 +3,15 @@
 #include <string>
 #include <list>
 #include <glm/vec3.hpp>
+#include <glm/gtc/quaternion.hpp>
 
 #include "../framework/fwAABBox.h"
 #include "gaMessage.h"
 #include "gaCollisionPoint.h"
 
 class fwCylinder;
+class fwScene;
+class fwMesh;
 
 class gaEntity
 {
@@ -17,12 +20,16 @@ protected:
 	int m_entityID = 0;
 	int m_class = 0;
 	glm::vec3 m_position = glm::vec3(0);	// position in gl space
-	glm::vec3 m_rotation = glm::vec3(0);	
+	glm::vec3 m_rotation = glm::vec3(0);
+	glm::quat m_quaternion;
 	fwAABBox m_modelAABB;					// model space AABB
 	fwAABBox m_worldBounding;				// AABB bounding box in world gl space
 	bool m_physical = false;				// if this entity has a body to checkCollision with
 	time_t m_time=0;						// elapsed time when running animation
 	std::list<gaEntity*> m_children;		// included entities
+
+	fwScene* m_scene = nullptr;				// if the entity has a mesh added to a scene
+	fwMesh* m_mesh = nullptr;
 
 public:
 	gaEntity(int mclass, const std::string& name);
@@ -38,7 +45,8 @@ public:
 	void modelAABB(const fwAABBox& box);				// set the model space AABB
 	void drawBoundingBox(void);							// create a world boundingbox mesh
 	void rotate(const glm::vec3& rotation);				// rotate the object and update the AABB
-
+	float distanceTo(gaEntity* other);					// distance between the 2 entities
+	void add2scene(fwScene* scene);						// if the entity has a mesh, add to the scene
 	virtual void collideWith(gaEntity*) {};				// inform another entity of a collision
 	virtual void updateWorldAABB(void);					// update the world AABB based on position
 	virtual void moveTo(const glm::vec3& position);		// move the the object and update the AABB

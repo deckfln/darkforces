@@ -3,7 +3,9 @@
 #include <vector>
 #include <glm/vec3.hpp>
 #include <glm/mat4x4.hpp>
+#include <glm/gtc/quaternion.hpp>
 
+class glBufferAttribute;
 class fwSphere;
 class fwCylinder;
 class fwMesh;
@@ -39,7 +41,8 @@ public:
 	fwAABBox(fwCylinder& cylinder);
 
 	void set(float, float, float, float, float, float);	// build from points
-	void set(std::vector<glm::vec3>& vertices);	// build from vertices
+	void set(std::vector<glm::vec3>& vertices);			// build from vertices
+	void set(glBufferAttribute* attribute);				// build from an GL attribute
 
 	fwAABBox operator+(const glm::vec3& v);
 	fwAABBox& operator+=(const glm::vec3& v);
@@ -57,6 +60,7 @@ public:
 	float height(void);
 	void translateFrom(const fwAABBox& source, glm::vec3& translation);
 	void rotateFrom(const fwAABBox& source, const glm::vec3& rotation);
+	void rotateFrom(const fwAABBox& source, const glm::quat& quaternion);
 	void transform(const fwAABBox& source, glm::vec3& translation, const glm::vec3& rotation, const glm::vec3& scale);
 	void apply(const fwAABBox& source, const glm::mat4& matrix);
 	bool not_init(void);

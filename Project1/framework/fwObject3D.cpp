@@ -95,6 +95,14 @@ fwObject3D &fwObject3D::addChild(fwObject3D *mesh)
 	return *this;
 }
 
+/**
+ * remove an object from the scene
+ */
+void fwObject3D::removeChild(fwObject3D* obj)
+{
+	m_children.remove(obj);
+}
+
 void fwObject3D::updateWorldMatrix(fwObject3D *parent, bool force)
 {
 	//FIXME : checking the updated flag is bad => will not detect the shadowCamera projection

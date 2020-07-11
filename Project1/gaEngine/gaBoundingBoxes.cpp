@@ -21,6 +21,25 @@ void gaBoundingBoxes::add(const fwAABBox* box)
 }
 
 /**
+ * Remove the mesh from the current scene
+ */
+void gaBoundingBoxes::remove(const fwAABBox* box)
+{
+	for (unsigned i = 0; i < m_boxes.size(); i++) {
+		if (m_boxes[i] == box) {
+			m_boxes[i] = nullptr;
+
+			// clear the vertices
+			int k = i * 26;
+			for (int j = 0; j < 26; j++) {
+				m_vertices[k + j] = glm::vec3(0);
+			}
+			break;
+		}
+	}
+}
+
+/**
  * Update the vertices for all AABB
  */
 void gaBoundingBoxes::draw(fwScene* scene)
@@ -39,10 +58,12 @@ void gaBoundingBoxes::draw(fwScene* scene)
 	// store the vertices
 	int v = 0;
 	bool dirty = false;
+	fwAABBox* box;
 
 	for (unsigned i = 0; i < m_boxes.size(); i++) {
+		box = (fwAABBox *)m_boxes[i];
 
-		if (((fwAABBox*)m_boxes[i])->updateMeshVertices(&m_vertices[v])) {
+		if (box && box->updateMeshVertices(&m_vertices[v])) {
 			dirty = true;
 		}
 		v += 26;

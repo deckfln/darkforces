@@ -16,6 +16,12 @@
 
 #include "../gaEngine/gaWorld.h"
 #include "../gaEngine/gaMessage.h"
+#include "../gaEngine/gaCollisionPoint.h"
+
+const float bullet_length = 0.5f;
+const float bullet_radius = 0.01f;
+const float bullet_speed = 250.0f;
+const int bullet_life = 2000;
 
 static int g_bulletID = 0;
 static glm::vec4 g_red(1.0, 0.0, 0.0, 1.0);
@@ -26,19 +32,19 @@ dfBullet::dfBullet(const glm::vec3& position, const glm::vec3& direction):
 	gaEntity(DF_ENTITY_BULLET, "bullet("+std::to_string(g_bulletID++)+")", position),
 	m_direction(direction)
 {
-	// the AABOX is just the direction vector
-	glm::vec3 d = direction * 0.1f;
-	m_modelAABB = fwAABBox(glm::vec3(0), d);
-	updateWorldAABB();
-
 	// create a mesh for the blaster
 	if (g_blaster == nullptr) {
-		g_blaster = new fwGeometryCylinder(0.01f, 0.1f);
+		g_basic.makeStatic();
+		g_blaster = new fwGeometryCylinder(bullet_radius, bullet_length);
+		g_blaster->makeStatic();
 	}
+	// the AABOX is just the direction vector
+	m_modelAABB = g_blaster->aabbox();
+
 	m_mesh = new fwMesh(g_blaster, &g_basic);
 	m_mesh->set_name(m_name);
 
-	glm::vec3 p = m_position + m_direction / 1000.0f;
+	glm::vec3 p = m_position + m_direction / bullet_speed;
 	m_mesh->translate(p);
 
 	// convert the direction vector to a quaternion
@@ -58,6 +64,9 @@ dfBullet::dfBullet(const glm::vec3& position, const glm::vec3& direction):
 	glm::quat quaternion = glm::quatLookAt(m_direction, up);
 
 	m_mesh->rotate(quaternion);
+	m_quaternion = quaternion;
+
+	updateWorldAABB();
 
 	// next animation
 	m_animate_msg = new gaMessage(GA_MSG_TIMER);
@@ -76,11 +85,49 @@ void dfBullet::dispatchMessage(gaMessage* message)
 	switch (message->m_action) {
 	case GA_MSG_TIMER:
 		m_time += message->m_delta;
-		m_position += (m_direction * (float)message->m_delta / 1000.0f);
-		m_mesh->translate(m_position);
 
-		// next animation
-		g_gaWorld.pushForNextFrame(m_animate_msg);
+		if (m_time < bullet_life) {
+			m_position += (m_direction * (float)message->m_delta / bullet_speed);
+			moveTo(m_position);
+			m_mesh->translate(m_position);
+
+			// check collision with entities
+
+			// get all the entities which AABB checkCollision with the bullet
+			std::list<gaEntity*> entities;
+			g_gaWorld.findAABBCollision(m_worldBounding, entities);
+
+			gaEntity* nearest_entity=nullptr;
+			float distance = 99999999.0f;
+
+			for (auto entity : entities) {
+				if (entity == this || entity->name() == "player") {
+					continue;
+				}
+				// only test entities that can physically checkCollision, but still inform the target of the collision
+				if (entity->physical()) {
+					float d = this->distanceTo(entity);
+					if (d < distance) {
+						nearest_entity = entity;
+						distance = d;
+					}
+				}
+			}
+			// and take action
+			if (nearest_entity == nullptr) {
+				// next animation
+				g_gaWorld.pushForNextFrame(m_animate_msg);
+			}
+			else {
+				// on collision, drop the bullet
+				g_gaWorld.sendMessage(m_name, nearest_entity->name(), GA_MSG_COLLIDE, 0, nullptr);
+				g_gaWorld.sendMessage(m_name, "_world", GA_MSG_DELETE_ENTITY, 0, nullptr);
+			}
+		}
+		else {
+			// get the bullet deleted after 5s
+			g_gaWorld.sendMessage(m_name, "_world", GA_MSG_DELETE_ENTITY, 0, nullptr);
+		}
 		break;
 	}
 }

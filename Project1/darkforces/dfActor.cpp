@@ -64,7 +64,7 @@ void dfActor::fire(const glm::vec3& direction)
 	dfBullet* bullet = new dfBullet(m_position + glm::vec3(0, 0.3, 0), direction);
 
 	// and add to the world to live its life
-	g_gaWorld.add2scene(bullet->mesh());
+	g_gaWorld.add2scene(bullet);
 
 	gaDebugLog(1, "dfActor::fire", "bullet");
 }
