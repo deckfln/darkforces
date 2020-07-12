@@ -18,8 +18,10 @@ public:
 	void state(int state);
 	void rotation(glm::vec3& rotation);
 
-	virtual bool updateSprite(glm::vec3* position, glm::vec4* texture, glm::vec3* direction);
-	virtual bool update(time_t t);		// update based on timer
+	virtual bool updateSprite(glm::vec3* position, 
+		glm::vec4* texture, 
+		glm::vec3* direction);
+	virtual bool update(time_t t);						// update based on timer
 
 	~dfSpriteAnimated();
 };

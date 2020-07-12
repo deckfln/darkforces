@@ -2,12 +2,14 @@
 
 #include <string>
 #include <list>
+#include <vector>
 #include <glm/vec3.hpp>
 #include <glm/gtc/quaternion.hpp>
 
 #include "../framework/fwAABBox.h"
 #include "gaMessage.h"
 #include "gaCollisionPoint.h"
+#include "gaComponent.h"
 
 class fwCylinder;
 class fwScene;
@@ -21,7 +23,7 @@ protected:
 	int m_class = 0;
 	glm::vec3 m_position = glm::vec3(0);	// position in gl space
 	glm::vec3 m_rotation = glm::vec3(0);
-	glm::quat m_quaternion;
+	glm::quat m_quaternion = glm::quat(0,0,0,0);
 	fwAABBox m_modelAABB;					// model space AABB
 	fwAABBox m_worldBounding;				// AABB bounding box in world gl space
 	bool m_physical = false;				// if this entity has a body to checkCollision with
@@ -31,15 +33,22 @@ protected:
 	fwScene* m_scene = nullptr;				// if the entity has a mesh added to a scene
 	fwMesh* m_mesh = nullptr;
 
+	std::vector<gaComponent*> m_components;	// all components of the entity
+
 public:
 	gaEntity(int mclass, const std::string& name);
 	gaEntity(int mclass, const std::string& name, const glm::vec3& position);
 
+	int entityID(void) { return m_entityID; };
+	void addComponent(gaComponent* component);			// extend teh components of the entity
+
 	const std::string& name(void) { return m_name; };
+	const glm::vec3& position(void) { return m_position; };
 	bool is(int mclass) { return m_class == m_class; };
 	void physical(bool p) { m_physical = p; };
 	bool physical(void) { return m_physical; };
 
+	gaComponent *findComponent(int type);				// check all components to find one with the proper type
 	void addChild(gaEntity* entity);					// add an entity inside that one (and increase the AABB if needed)
 	bool collideAABB(fwAABBox& box);					// quick test to find AABB collision
 	void modelAABB(const fwAABBox& box);				// set the model space AABB
@@ -51,7 +60,7 @@ public:
 	virtual void updateWorldAABB(void);					// update the world AABB based on position
 	virtual void moveTo(const glm::vec3& position);		// move the the object and update the AABB
 	virtual bool update(time_t t) {	return false;};		// update based on timer
-	virtual void dispatchMessage(gaMessage* message) {};// let an entity deal with a situation
+	virtual void dispatchMessage(gaMessage* message);	// let an entity deal with a situation
 	virtual bool checkCollision(fwCylinder& bounding, 
 		glm::vec3& direction, 
 		glm::vec3& intersection, 

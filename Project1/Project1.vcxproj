@@ -129,11 +129,11 @@
     <ClCompile Include="alEngine\alListener.cpp" />
     <ClCompile Include="alEngine\alSound.cpp" />
     <ClCompile Include="alEngine\alSource.cpp" />
-    <ClCompile Include="darkforces\dfActor.cpp" />
     <ClCompile Include="darkforces\dfAtlasTexture.cpp" />
     <ClCompile Include="darkforces\dfBitmap.cpp" />
     <ClCompile Include="darkforces\dfBullet.cpp" />
     <ClCompile Include="darkforces\dfCollision.cpp" />
+    <ClCompile Include="darkforces\dfComponent\dfComponentActor.cpp" />
     <ClCompile Include="darkforces\dfFileGOB.cpp" />
     <ClCompile Include="darkforces\dfFileSystem.cpp" />
     <ClCompile Include="darkforces\dfFrame.cpp" />
@@ -220,6 +220,8 @@
     <ClCompile Include="gaEngine\gaActor.cpp" />
     <ClCompile Include="gaEngine\gaBoundingBoxes.cpp" />
     <ClCompile Include="gaEngine\gaCollisionPoint.cpp" />
+    <ClCompile Include="gaEngine\gaComponent.cpp" />
+    <ClCompile Include="gaEngine\gaComponent\gaComponentMesh.cpp" />
     <ClCompile Include="gaEngine\gaDebug.cpp" />
     <ClCompile Include="gaEngine\gaEntity.cpp" />
     <ClCompile Include="gaEngine\gaMessage.cpp" />
@@ -262,11 +264,11 @@
     <ClInclude Include="alEngine\alSound.h" />
     <ClInclude Include="alEngine\alSource.h" />
     <ClInclude Include="config.h" />
-    <ClInclude Include="darkforces\dfActor.h" />
     <ClInclude Include="darkforces\dfAtlasTexture.h" />
     <ClInclude Include="darkforces\dfBitmap.h" />
     <ClInclude Include="darkforces\dfBullet.h" />
     <ClInclude Include="darkforces\dfCollision.h" />
+    <ClInclude Include="darkforces\dfComponent\dfComponentActor.h" />
     <ClInclude Include="darkforces\dfFileGOB.h" />
     <ClInclude Include="darkforces\dfFileSystem.h" />
     <ClInclude Include="darkforces\dfFrame.h" />
@@ -355,6 +357,8 @@
     <ClInclude Include="gaEngine\gaActor.h" />
     <ClInclude Include="gaEngine\gaBoundingBoxes.h" />
     <ClInclude Include="gaEngine\gaCollisionPoint.h" />
+    <ClInclude Include="gaEngine\gaComponent.h" />
+    <ClInclude Include="gaEngine\gaComponent\gaComponentMesh.h" />
     <ClInclude Include="gaEngine\gaDebug.h" />
     <ClInclude Include="gaEngine\gaEntity.h" />
     <ClInclude Include="gaEngine\gaMessage.h" />

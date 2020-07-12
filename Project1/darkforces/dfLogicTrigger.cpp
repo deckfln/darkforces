@@ -7,8 +7,9 @@
 
 #include "../gaEngine/gaDebug.h"
 #include "../gaEngine/gaWorld.h"
+#include "../gaEngine/gaActor.h"
 
-#include "dfActor.h"
+#include "dfComponent/dfComponentActor.h"
 #include "dfLogicTrigger.h"
 #include "dfSector.h"
 #include "dfsign.h"
@@ -263,6 +264,8 @@ void dfLogicTrigger::dispatchMessage(gaMessage* message)
 		gaDebugLog(REDUCED_DEBUG, "dfLogicTrigger::dispatchMessage",  "action " + std::to_string(message->m_action) + " not implemented");
 #endif
 	}
+
+	gaEntity::dispatchMessage(message);
 }
 
 /**
@@ -299,8 +302,12 @@ void dfLogicTrigger::activate(const std::string& activator)
 	}
 
 	// verify the activator is an actor
-	dfActor* actor = (dfActor*)g_gaWorld.getEntity(activator);
-	if (actor==nullptr || !actor->is(DF_ENTITY_ACTOR)) {
+	gaActor* entity = (gaActor*)g_gaWorld.getEntity(activator);
+	if (entity==nullptr) {
+		return;
+	}
+	dfComponentActor* actor = (dfComponentActor*)entity->findComponent(DF_COMPONENT_ACTOR);
+	if (actor == nullptr) {
 		return;
 	}
 

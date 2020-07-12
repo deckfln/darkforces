@@ -10,7 +10,7 @@
 #include "dfSprites.h"
 #include "dfLevel.h"
 #include "dfCollision.h"
-#include "dfActor.h"
+#include "dfComponent/dfComponentActor.h"
 
 static int g_ids = 0;
 
@@ -123,7 +123,7 @@ void dfObject::collideWith(gaEntity* entity)
 
 	if (m_logics & DF_LOGIC_ITEM_SHIELD) {
 		// ADD ARMOR
-		if (entity->is(DF_ENTITY_ACTOR)) {
+		if (entity->findComponent(DF_COMPONENT_ACTOR)) {
 			// if the collider is a DF_ACTOR
 			// send shield from me to the actor
 			gaMessage* msg = g_gaWorld.sendMessage(
@@ -139,7 +139,7 @@ void dfObject::collideWith(gaEntity* entity)
 	}
 	else if (m_logics & DF_LOGIC_ITEM_ENERGY) {
 		// ADD ENERGY
-		if (entity->is(DF_ENTITY_ACTOR)) {
+		if (entity->findComponent(DF_COMPONENT_ACTOR)) {
 			// if the collider is a DF_ACTOR
 			// send energy from me to the actor
 			gaMessage* msg = g_gaWorld.sendMessage(

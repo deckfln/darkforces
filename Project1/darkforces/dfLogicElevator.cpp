@@ -708,6 +708,8 @@ void dfLogicElevator::dispatchMessage(gaMessage* message)
 	default:
 		std::cerr << "dfLogicElevator::dispatchMessage message " << message->m_action << " not implemented" << std::endl;
 	}
+
+	gaEntity::dispatchMessage(message);
 }
 
 /**

@@ -40,7 +40,5 @@ public:
 	void jump(const glm::vec3& velocity);
 	void bind(dfLevel* level) { m_level = level; };
 
-	virtual void fire(const glm::vec3& direction) {};	// handle the fire option
-
 	~gaActor();
 };

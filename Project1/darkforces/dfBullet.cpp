@@ -119,8 +119,9 @@ void dfBullet::dispatchMessage(gaMessage* message)
 				g_gaWorld.pushForNextFrame(m_animate_msg);
 			}
 			else {
-				// on collision, drop the bullet
-				g_gaWorld.sendMessage(m_name, nearest_entity->name(), GA_MSG_COLLIDE, 0, nullptr);
+				// on collision,, inform the target it was hit with the energy of the bullet
+				g_gaWorld.sendMessage(m_name, nearest_entity->name(), DF_MESSAGE_HIT_BULLET, 10, nullptr);
+				// drop the bullet
 				g_gaWorld.sendMessage(m_name, "_world", GA_MSG_DELETE_ENTITY, 0, nullptr);
 			}
 		}
@@ -130,6 +131,8 @@ void dfBullet::dispatchMessage(gaMessage* message)
 		}
 		break;
 	}
+
+	gaEntity::dispatchMessage(message);
 }
 
 dfBullet::~dfBullet()

@@ -183,6 +183,10 @@ dfObject* dfParserObjects::parseObject(dfFileSystem* fs, dfObject* sprite, std::
 		}
 	}
 
+	// for enemies add an actor component
+	if (sprite->isLogic(DF_ENEMIES)) {
+		sprite->addComponent(new dfComponentActor());
+	}
 	return sprite;
 }
 

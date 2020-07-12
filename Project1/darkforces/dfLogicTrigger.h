@@ -11,7 +11,7 @@
 #include "../gaEngine/gaEntity.h"
 #include "../gaEngine/gaWorld.h"
 
-#include "dfActor.h"
+#include "dfComponent/dfComponentActor.h"
 #include "dfLogicElevator.h"
 
 class dfSector;

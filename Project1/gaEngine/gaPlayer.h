@@ -4,10 +4,12 @@
 
 class fwCamera;
 class gaActor;
+class dfComponentActor;
 
 class gaPlayer : public fwControlThirdPerson
 {
-	gaActor* m_actor = nullptr;
+	gaActor* m_entity = nullptr;
+	dfComponentActor* m_actor = nullptr;
 
 	virtual bool checkKeys(time_t delta);
 	virtual void updatePlayer(time_t delta);

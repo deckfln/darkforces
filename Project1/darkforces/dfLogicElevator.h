@@ -13,7 +13,7 @@
 #include "../gaEngine/gaEntity.h"
 #include "../gaEngine/gaMessage.h"
 
-#include "dfActor.h"
+#include "dfComponent/dfComponentActor.h"
 #include "dfLogicElevatorConst.h"
 
 class fwCylinder;

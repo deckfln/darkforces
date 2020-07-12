@@ -28,8 +28,32 @@ gaEntity::gaEntity(int mclass, const std::string& name, const glm::vec3& positio
 }
 
 /**
+ * extend teh components of the entity
+ */
+void gaEntity::addComponent(gaComponent* component)
+{
+	m_components.push_back(component);
+	component->parent(this);
+}
+
+/**
+ * check all components to find one with the proper type
+ */
+gaComponent* gaEntity::findComponent(int type)
+{
+	for (auto component : m_components) {
+		if (component->is(type)) {
+			return component;
+		}
+	}
+
+	return nullptr;
+}
+
+/**
  * add an entity inside that one (and increase the AABB if needed)
  */
+
 void gaEntity::addChild(gaEntity* entity)
 {
 	m_children.push_back(entity);
@@ -101,6 +125,16 @@ void gaEntity::updateWorldAABB(void)
 {
 	m_worldBounding.rotateFrom(m_modelAABB, m_quaternion);
 	m_worldBounding += m_position;
+}
+
+/**
+ * let an entity deal with a situation
+ */
+void gaEntity::dispatchMessage(gaMessage* message)
+{
+	for (auto component : m_components) {
+		component->dispatchMessage(message);
+	}
 }
 
 /**
