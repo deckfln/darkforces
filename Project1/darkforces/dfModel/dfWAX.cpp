@@ -287,7 +287,7 @@ int dfWAX::nextFrame(int state, unsigned int frame)
 		return frame + 1;	// next frame
 	}
 
-	return 0;	// cycle back to frame 0
+	return -1;	// cycle back to frame 0 but warn the object first
 }
 
 /**

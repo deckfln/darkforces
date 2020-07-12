@@ -4,6 +4,7 @@
 
 #include "../../gaEngine/gaWorld.h"
 
+#include "../dfObject/dfSpriteAnimated.h"
 #include "../dfObject.h"
 #include "../dfBullet.h"
 
@@ -95,6 +96,8 @@ void dfComponentActor::die(void)
 {
 	// inform the world it can remove the entity from its list
 	//g_gaWorld.sendMessage(m_parent->name(), "_world", GA_MSG_DELETE_ENTITY, 0, nullptr);
+	((dfSpriteAnimated*)m_parent)->state(DF_STATE_ENEMY_DIE_FROM_SHOT);
+
 	gaDebugLog(1, "dfActor::die", "remove " + m_parent->name() + " the entity from the world");
 }
 

@@ -21,7 +21,7 @@ const int DF_ENERGY_ENERGY = 100;
  *
  */
 dfObject::dfObject(dfModel *source, glm::vec3& position, float ambient, int type):
-	gaEntity(DF_ENTITY_OBJECT, source->name() + "(" + std::to_string(m_objectID) + ")"),
+	gaEntity(DF_ENTITY_OBJECT, source->name() + "(" + std::to_string(g_ids) + ")"),
 	m_source(source),
 	m_position_lvl(position),
 	m_ambient(ambient),

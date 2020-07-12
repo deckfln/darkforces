@@ -66,6 +66,19 @@ bool dfSpriteAnimated::update(time_t t)
 		time_t delta = t - m_lastFrame;
 		if (delta >= frameTime) {
 			m_frame = m_source->nextFrame(m_state, m_frame);
+			if (m_frame == -1) {
+				// when we loop back, first take some action
+				switch (m_state) {
+				case DF_STATE_ENEMY_DIE_FROM_PUNCH:
+				case DF_STATE_ENEMY_DIE_FROM_SHOT:
+					m_state = DF_STATE_ENEMY_LIE_DEAD;
+					m_frame = 0;
+					m_dirtyAnimation = true;
+					m_physical = false;			// remove collision box, they actor is dead
+					return false;
+				}
+			}
+
 			m_lastFrame = t;
 			m_dirtyAnimation = true;
 
