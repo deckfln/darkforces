@@ -323,14 +323,15 @@ dfAtlasTexture* dfParserObjects::buildAtlasTexture(void)
 void dfParserObjects::buildSprites(void)
 {
 	// build the sprites
-	m_sprites = new dfSprites(m_objects.size(), m_textures);
+	dfSprites* manager = new dfSprites(m_objects.size(), m_textures);
+	g_gaWorld.spritesManager(manager);
 
 	for (auto wax : m_waxes) {
-		m_sprites->addModel(wax);
+		manager->addModel(wax);
 	}
 
 	for (auto fme : m_fmes) {
-		m_sprites->addModel(fme);
+		manager->addModel(fme);
 	}
 
 	dfObject* object;
@@ -341,19 +342,20 @@ void dfParserObjects::buildSprites(void)
 			continue;
 		}
 
-		m_sprites->add((dfSprite *)object);
+		manager->add((dfSprite *)object);
 	}
 
 	time_t timer = GetTickCount64();
-	m_sprites->update();
+	manager->update();
 }
 
 void dfParserObjects::add2scene(fwScene* scene)
 {
+	dfSprites* manager = g_gaWorld.spritesManager();
 	if (!m_added) {
 		m_added = true;
-		m_sprites->set_name("dfSprites");
-		m_sprites->add2scene(scene);
+		manager->set_name("dfSprites");
+		manager->add2scene(scene);
 
 		for (auto object: m_objects) {
 			if (object && object->is(OBJECT_3DO)) {
@@ -361,24 +363,6 @@ void dfParserObjects::add2scene(fwScene* scene)
 			}
 		}
 	}
-
-	time_t timer = GetTickCount64();
-	update(timer);
-}
-
-/**
- * Update all object on the level
- */
-void dfParserObjects::update(time_t t)
-{
-	int i = 0;
-	for (auto object : m_objects) {
-		if (object && object->isLogic(DF_LOGIC_ANIM)) {
-			object->update(t);
-		}
-	}
-
-	m_sprites->update();
 }
 
 /**

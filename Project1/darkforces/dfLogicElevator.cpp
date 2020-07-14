@@ -713,34 +713,6 @@ void dfLogicElevator::dispatchMessage(gaMessage* message)
 }
 
 /**
- * pass the move detecttion to the mesh
- */
-bool dfLogicElevator::RcheckCollision(float step, glm::vec3& position, glm::vec3& target, float radius, glm::vec3& intersection)
-{
-	// only test the elevator mesh if the supersector it is bind to is visible
-	// and if the play Z (gl space) in inbetwen the vertical elevator extend (level space)
-	glm::vec3 plevel;
-	m_parent->gl2level(target, plevel);
-
-	float floor, ceiling;
-
-	if (m_pSector) {
-		floor = m_pSector->currentFloorAltitude();
-		ceiling = m_pSector->ceiling();
-	}
-	else {
-		floor = -1000;
-		ceiling = 1000;
-	}
-
-	if (m_mesh && m_mesh->visible() && plevel.z > m_zmin && plevel.z < m_zmax && plevel.z < ceiling) {
-		return m_mesh->RcheckCollision(step, position, target, radius, intersection, m_name);
-	}
-
-	return false;
-}
-
-/**
  * check move against a fwAABox
  */
 bool dfLogicElevator::checkCollision(fwAABBox& box)

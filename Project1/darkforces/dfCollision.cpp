@@ -25,13 +25,6 @@ float dfCollision::ground(glm::vec3& position)
 	return 0;
 }
 
-/**
- * test if there is a wall in front of the player
- */
-bool dfCollision::checkEnvironement(glm::vec3& position, glm::vec3& target, float height, float radius, glm::vec3& intersection)
-{
-	return m_level->RcheckCollision(DF_MAXIMUM_STEP, position, target, height, radius, intersection);
-}
 
 dfCollision::~dfCollision(void)
 {

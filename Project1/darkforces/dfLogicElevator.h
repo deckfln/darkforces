@@ -115,7 +115,6 @@ public:
 	bool animate(time_t delta);
 	void addSign(dfSign*);
 	void dispatchMessage(gaMessage* message);
-	bool RcheckCollision(float step, glm::vec3& position, glm::vec3& target, float radius, glm::vec3& intersection);
 	bool checkCollision(fwAABBox& box);
 
 	void getMessagesToSectors(std::list<std::string>& sectors);

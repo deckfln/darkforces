@@ -594,40 +594,6 @@ void dfLevel::draw(fwCamera* camera, fwScene* scene)
 }
 
 /**
- * Check move against any of the level component, static Wall and dynamic
- */
-bool dfLevel::RcheckCollision(float step, glm::vec3& position, glm::vec3& target, float height, float radius, glm::vec3& collision)
-{
-	dfSector* currentSector = findSector(position);
-	if (!currentSector) {
-		return false;
-	}
-
-	// convert glSpace to dfSpace
-	glm::vec3 dfCurrent(position.x * 10.0f, position.z * 10.0f, position.y * 10.0f);
-	glm::vec3 dfTarget(target.x * 10.0f, target.z * 10.0f, target.y * 10.0f);
-	glm::vec3 dfNew;
-
-	// check against static walls
-	if (currentSector->checkCollision(step*10.f, dfCurrent, dfTarget, height*10.0f, radius*10.f, dfNew)) {
-		// convert back to glSpace
-		collision.x = dfNew.x / 10.0f;
-		collision.y = dfNew.z / 10.0f;
-		collision.z = dfNew.y / 10.0f;
-		return true;
-	}
-
-	// check against the elevators
-	for (auto elevator : m_inf->m_elevators) {
-		// mesh move is done on glSpace
-		if (elevator->RcheckCollision(step, position, target, radius, collision)) {
-			return true;
-		}
-	}
-	return false;
-}
-
-/**
  * Check move against any of the level component, static (wall, floor, ceiling) and dynamic
  */
 bool dfLevel::checkEnvironement(fwCylinder& bounding, glm::vec3& direction, glm::vec3& intersection, std::list<gaCollisionPoint>& collisions)

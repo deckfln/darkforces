@@ -9,6 +9,7 @@
 #include "gaEntity.h"
 
 #include "../darkforces/dfSuperSector.h"
+#include "../darkforces/dfSprites.h"
 
 gaWorld g_gaWorld;
 
@@ -63,27 +64,44 @@ void gaWorld::addSector(dfSuperSector* client)
 }
 
 /**
+ * add the sprite maanager
+ */
+void gaWorld::spritesManager(dfSprites* sprites)
+{
+	m_sprites = sprites;
+}
+
+static int g_lastMessage = 0;
+static gaMessage g_messages[2048];
+
+/**
  * Allocate a new message
  */
-gaMessage* gaWorld::sendMessage(const std::string& from, const std::string& to, int action, int value, void* extra)
+static gaMessage* allocateMessage(void)
 {
-	static int lastMessage = 0;
-	static gaMessage messages[64];
-
 	// search for an available message
-	int count = 64;
+	int count = 2048;
 
 	gaMessage* ptr = nullptr;
 	do {
 		if (--count < 0) {
 			assert("not enough messages in gaWorld::getMessage");
 		}
-		ptr = &messages[lastMessage++];
-		if (lastMessage == 64) {
-			lastMessage = 0;
+		ptr = &g_messages[g_lastMessage++];
+		if (g_lastMessage == 2048) {
+			g_lastMessage = 0;
 		}
 	} while (ptr->m_used);
 
+	return ptr;
+}
+
+/**
+ * send a message for immediate action
+ */
+gaMessage* gaWorld::sendMessage(const std::string& from, const std::string& to, int action, int value, void* extra)
+{
+	gaMessage* ptr = allocateMessage();
 	ptr->m_used = true;
 
 	ptr->m_server = from;
@@ -96,6 +114,36 @@ gaMessage* gaWorld::sendMessage(const std::string& from, const std::string& to, 
 
 	return ptr;
 }
+
+void gaWorld::push(gaMessage* message)
+{
+	m_queue.push(message);
+}
+
+/**
+ * send message for next frame
+ */
+gaMessage* gaWorld::sendMessageDelayed(const std::string& from, const std::string& to, int action, int value, void* extra)
+{
+	gaMessage* ptr = allocateMessage();
+	ptr->m_used = true;
+
+	ptr->m_server = from;
+	ptr->m_client = to;
+	ptr->m_action = action;
+	ptr->m_value = value;
+	ptr->m_extra = extra;
+
+	m_for_next_frame.push(ptr);
+
+	return ptr;
+}
+
+void gaWorld::pushForNextFrame(gaMessage* message)
+{
+	m_for_next_frame.push(message);
+}
+
 
 /**
  * Search the entities map
@@ -157,16 +205,9 @@ bool gaWorld::checkCollision(gaEntity* source, fwCylinder& bounding, glm::vec3& 
 	return collisions.size() != 0;
 }
 
-void gaWorld::push(gaMessage* message)
-{
-	m_queue.push(message);
-}
-
-void gaWorld::pushForNextFrame(gaMessage* message)
-{
-	m_for_next_frame.push(message);
-}
-
+/**
+ * dispatch messages
+ */
 void gaWorld::process(time_t delta)
 {
 	/*
@@ -182,11 +223,13 @@ void gaWorld::process(time_t delta)
 		m_queue.pop();
 
 		// manage loops inside one run
-		if (loopDetector.count(message->m_client) > 0) {
+		std::string k = message->m_server + message->m_client;
+		if (loopDetector.count(k) > 0) {
+			message->m_used = false;
 			continue;
 		}
 
-		loopDetector[message->m_client] = true;
+		loopDetector[k] = true;
 
 		if (message->m_action != GA_MSG_TIMER) {
 			std::cerr << "gaWorld::process server=" << message->m_server << " action=" << message->m_action << " client=" << message->m_client << std::endl;;
@@ -223,6 +266,11 @@ void gaWorld::process(time_t delta)
 			}
 		}
 		message->m_used = false;
+	}
+
+	// update all sprites if needed
+	if (m_sprites) {
+		m_sprites->update();
 	}
 
 	// swap the current queue and the queue for next frame

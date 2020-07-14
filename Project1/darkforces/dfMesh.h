@@ -106,8 +106,6 @@ public:
 	void rotateZ(float angle);
 	void move(glm::vec3& position);
 
-	bool RcheckCollision(float step, glm::vec3& position, glm::vec3& target, float radius, glm::vec3& intersection, std::string& name);
-
 	bool checkCollision(fwCylinder& bounding, 
 		glm::vec3& target, 
 		glm::vec3& intersection, 

@@ -54,39 +54,55 @@ void dfSpriteAnimated::rotation(glm::vec3& rotation)
  */
 bool dfSpriteAnimated::update(time_t t)
 {
-	if (m_logics & DF_LOGIC_ANIM) {
-		int frameRate = m_source->framerate(m_state);
-		if (frameRate == 0) {
-			// static objects like FME are not updated
-			return false;
-		}
+	m_currentFrame += t;
 
-		time_t frameTime = 1000 / frameRate; // time of one frame in milliseconds
-
-		time_t delta = t - m_lastFrame;
-		if (delta >= frameTime) {
-			m_frame = m_source->nextFrame(m_state, m_frame);
-			if (m_frame == -1) {
-				// when we loop back, first take some action
-				switch (m_state) {
-				case DF_STATE_ENEMY_DIE_FROM_PUNCH:
-				case DF_STATE_ENEMY_DIE_FROM_SHOT:
-					m_state = DF_STATE_ENEMY_LIE_DEAD;
-					m_frame = 0;
-					m_dirtyAnimation = true;
-					m_physical = false;			// remove collision box, they actor is dead
-					return false;
-				}
-			}
-
-			m_lastFrame = t;
-			m_dirtyAnimation = true;
-
-			return true;
-		}
+	int frameRate = m_source->framerate(m_state);
+	if (frameRate == 0) {
+		// static objects like FME are not updated
+		return false;
 	}
 
-	return false;
+	time_t frameTime = 1000 / frameRate; // time of one frame in milliseconds
+
+	time_t delta = m_currentFrame - m_lastFrame;
+	if (delta >= frameTime) {
+		m_frame = m_source->nextFrame(m_state, m_frame);
+		if (m_frame == -1) {
+			// when we loop back, first take some action
+			switch (m_state) {
+			case DF_STATE_ENEMY_DIE_FROM_PUNCH:
+			case DF_STATE_ENEMY_DIE_FROM_SHOT:
+				m_state = DF_STATE_ENEMY_LIE_DEAD;
+				m_frame = 0;
+				m_dirtyAnimation = true;
+				m_physical = false;			// remove collision box, they actor is dead
+				return false;
+			}
+
+			// restart the counters
+			m_currentFrame = 0;
+		}
+
+		m_lastFrame = m_currentFrame;
+		m_dirtyAnimation = true;
+	}
+
+	return true;
+}
+
+/**
+ * Deal with animation messages
+ */
+void dfSpriteAnimated::dispatchMessage(gaMessage* message)
+{
+	switch (message->m_action) {
+	case GA_MSG_TIMER:
+		if (update(message->m_delta)) {
+			g_gaWorld.sendMessageDelayed(m_name, m_name, GA_MSG_TIMER, 0, nullptr);
+		}
+		break;
+	}
+	dfSprite::dispatchMessage(message);
 }
 
 dfSpriteAnimated::~dfSpriteAnimated()

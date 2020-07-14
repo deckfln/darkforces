@@ -30,7 +30,6 @@ class dfParserObjects
 
 	std::vector<dfObject *> m_objects;
 	int m_currentObject = 0;
-	dfSprites* m_sprites = nullptr;
 	bool m_added = false;
 
 	dfAtlasTexture* m_textures;

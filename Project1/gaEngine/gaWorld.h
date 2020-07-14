@@ -14,6 +14,7 @@ class gaEntity;
 class fwScene;
 class fwMesh;
 class dfSuperSector;
+class dfSprites;
 
 class gaWorld
 {
@@ -21,6 +22,7 @@ class gaWorld
 	std::queue<gaMessage*> m_for_next_frame;
 	std::map<std::string, std::list<gaEntity*>> m_entities;
 	std::vector<dfSuperSector*> m_sectors;
+	dfSprites* m_sprites;		// sprites manager
 
 	bool m_timer = true;		// pass DF_MESSAGE_TIMER event
 	fwScene* m_scene;			// current scene on screen;
@@ -34,9 +36,24 @@ public:
 	void removeClient(gaEntity* client);	// remove a spirit entity
 	void add2scene(gaEntity* client);		// add an entiuty mesh (if it has one) to the current scene
 	void addSector(dfSuperSector* client);	// add a game sector
+	void spritesManager(dfSprites* sprites);// add the sprites manager
 
-	gaMessage* sendMessage(const std::string& from, const std::string& to, int action, int value, void *extra);	
+	gaMessage* sendMessage(const std::string& from, 
+		const std::string& to, 
+		int action, 
+		int value, 
+		void *extra);									// send message for immediate action
+
+	gaMessage* sendMessageDelayed(const std::string& from,
+		const std::string& to,
+		int action,
+		int value,
+		void* extra);									// send message for next frame
+
 	gaEntity* getEntity(const std::string& name);
+	dfSprites* spritesManager(void) {
+		return m_sprites;
+	}
 
 	void findAABBCollision(fwAABBox& box, 
 		std::list<gaEntity*>& collisions, 
