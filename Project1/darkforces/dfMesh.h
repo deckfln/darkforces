@@ -105,13 +105,18 @@ public:
 	void moveTo(float z);			// move the dfMesh to altitude
 	void rotateZ(float angle);
 	void move(glm::vec3& position);
-	bool checkCollision(float step, glm::vec3& position, glm::vec3& target, float radius, glm::vec3& intersection, std::string& name);
+
+	bool RcheckCollision(float step, glm::vec3& position, glm::vec3& target, float radius, glm::vec3& intersection, std::string& name);
 
 	bool checkCollision(fwCylinder& bounding, 
 		glm::vec3& target, 
 		glm::vec3& intersection, 
 		std::string& name, 
-		std::list<gaCollisionPoint>& collisions);			// extended collision test after a sucessfull AABB collision
+		std::list<gaCollisionPoint>& collisions);			// extended cylinder collision test after a sucessfull AABB collision
+	bool collisionSegmentTriangle(const glm::vec3& p,
+		const glm::vec3& q,
+		std::list<gaCollisionPoint>& collisions);			// extended segment collision test after a sucessfull AABB collision
+
 
 	bool checkCollision(fwAABBox& box, std::string& name);
 	void parent(fwMesh* parent) { m_parentMesh = parent; };

@@ -97,7 +97,7 @@ dfLevel::dfLevel(dfFileSystem* fs, std::string file)
 			}
 
 			// keep track of the bounding box
-			m_boundingBox.extend(sector->m_boundingBox);
+			m_boundingBox.extend(sector->m_worldAABB);
 		}
 	}
 
@@ -285,6 +285,7 @@ void dfLevel::spacePartitioning(void)
 
 		// TODO will need to be deleted
 		//delete smallest;
+		smallest->remove();
 		m_supersectors.pop_back();
 	}
 
@@ -294,6 +295,16 @@ void dfLevel::spacePartitioning(void)
 
 		// create a full hierarchy
 		ssector->buildHiearchy(this);
+
+		// record the supersector in the world
+		g_gaWorld.addSector(ssector);
+	}
+
+	// delete unneeded super sector
+	for (auto ssector : vssectors) {
+		if (ssector->removed()) {
+			delete ssector;
+		}
 	}
 
 }
@@ -429,8 +440,9 @@ void dfLevel::testSwitch(fwAABBox& player)
 	static int first = 0;
 
 	std::list<gaEntity*> collisions;
+	std::list<dfSuperSector*> sectors;
 
-	g_gaWorld.findAABBCollision(player, collisions);
+	g_gaWorld.findAABBCollision(player, collisions, sectors);
 
 	if (collisions.size() > 0) {
 		gaMessage* message;
@@ -584,7 +596,7 @@ void dfLevel::draw(fwCamera* camera, fwScene* scene)
 /**
  * Check move against any of the level component, static Wall and dynamic
  */
-bool dfLevel::checkCollision(float step, glm::vec3& position, glm::vec3& target, float height, float radius, glm::vec3& collision)
+bool dfLevel::RcheckCollision(float step, glm::vec3& position, glm::vec3& target, float height, float radius, glm::vec3& collision)
 {
 	dfSector* currentSector = findSector(position);
 	if (!currentSector) {
@@ -608,7 +620,7 @@ bool dfLevel::checkCollision(float step, glm::vec3& position, glm::vec3& target,
 	// check against the elevators
 	for (auto elevator : m_inf->m_elevators) {
 		// mesh move is done on glSpace
-		if (elevator->checkCollision(step, position, target, radius, collision)) {
+		if (elevator->RcheckCollision(step, position, target, radius, collision)) {
 			return true;
 		}
 	}

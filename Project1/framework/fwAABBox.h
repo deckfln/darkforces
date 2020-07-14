@@ -50,7 +50,7 @@ public:
 	fwAABBox& multiplyBy(float v);
 	bool inside(glm::vec3& position);
 	bool inside(fwAABBox& box);
-	bool intersect(fwAABBox& box);
+	bool intersect(const fwAABBox& box);
 	void extend(fwAABBox& box);
 	void extend(glm::vec3& vertice);
 	float surface(void);

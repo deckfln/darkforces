@@ -19,6 +19,7 @@
 #include "dfMesh.h"
 #include "dfParseINF.h"
 #include "dfSign.h"
+#include "dfLevel.h"
 
 dfSector::dfSector(std::istringstream& infile, std::vector<dfSector*>& sectorsID):
 	m_sectorsID(sectorsID)
@@ -145,7 +146,13 @@ dfSector::dfSector(std::istringstream& infile, std::vector<dfSector*>& sectorsID
 	}
 
 	m_height = m_referenceCeilingAltitude - m_referenceFloorAltitude;
-	m_boundingBox = fwAABBox(min_x, max_x, min_y, max_y, m_referenceFloorAltitude, m_referenceCeilingAltitude);
+
+	// convert from level space to GL space
+	glm::vec3 p(min_x, min_y, m_referenceFloorAltitude);
+	glm::vec3 p1(max_x, max_y, m_referenceCeilingAltitude);
+	//dfLevel::level2gl(p);
+	//dfLevel::level2gl(p1);
+	m_worldAABB = fwAABBox(p, p1);
 
 	m_message = gaMessage(DF_MESSAGE_TRIGGER, 0, m_name);
 }
@@ -173,7 +180,7 @@ void dfSector::setTriggerFromWall(dfLogicTrigger* trigger)
  */
 void dfSector::setTriggerFromSector(dfLogicTrigger* trigger)
 {
-	trigger->boundingBox(m_boundingBox);
+	trigger->boundingBox(m_worldAABB);
 }
 
 /**
@@ -181,8 +188,8 @@ void dfSector::setTriggerFromSector(dfLogicTrigger* trigger)
  */
 void dfSector::setTriggerFromFloor(dfLogicTrigger* trigger)
 {
-	glm::vec2 left(m_boundingBox.m_p.x, m_boundingBox.m_p.y);
-	glm::vec2 right(m_boundingBox.m_p1.x, m_boundingBox.m_p1.y);
+	glm::vec2 left(m_worldAABB.m_p.x, m_worldAABB.m_p.y);
+	glm::vec2 right(m_worldAABB.m_p1.x, m_worldAABB.m_p1.y);
 
 	trigger->boundingBox(
 		left, right,
@@ -340,7 +347,7 @@ void dfSector::addObject(dfMesh* object)
 bool dfSector::isPointInside(glm::vec3 &p, bool fullTest)
 {
 	// quick check against the 3D bounding box
-	if (!m_boundingBox.inside(p)) {
+	if (!m_worldAABB.inside(p)) {
 		return false;
 	}
 
@@ -401,7 +408,7 @@ bool dfSector::isPointInside(glm::vec3 &p, bool fullTest)
  */
 float dfSector::boundingBoxSurface(void)
 {
-	return m_boundingBox.surface();
+	return m_worldAABB.surface();
 }
 
 /**
@@ -563,7 +570,7 @@ void dfSector::buildFloor(dfMesh* mesh)
  */
 bool dfSector::includedIn(dfSector* sector)
 {
-	if (!m_boundingBox.inside(sector->m_boundingBox)) {
+	if (!m_worldAABB.inside(sector->m_worldAABB)) {
 		return false;
 	}
 
@@ -841,6 +848,22 @@ bool dfSector::checkCollision(float step, glm::vec3& current, glm::vec3& target,
 
 	// no move
 	return false;
+}
+
+/**
+ * // quick test point inside AABB
+ */
+bool dfSector::inAABBox(glm::vec3& position)
+{
+	return m_worldAABB.inside(position);
+}
+
+/**
+ * quick test to find AABB collision
+ */
+bool dfSector::collideAABB(const fwAABBox& box)
+{
+	return m_worldAABB.intersect(box);
 }
 
 /**
@@ -1312,9 +1335,9 @@ void dfSector::addTrigger(dfLogicTrigger* trigger)
  */
 void dfSector::setAABBtop(float z)
 {
-	m_boundingBox.m_p1.z = z;
+	m_worldAABB.m_p1.z = z;
 	if (m_super) {
-		m_super->extendAABB(m_boundingBox);
+		m_super->extendAABB(m_worldAABB);
 	}
 }
 
@@ -1323,9 +1346,9 @@ void dfSector::setAABBtop(float z)
  */
 void dfSector::setAABBbottom(float z)
 {
-	m_boundingBox.m_p.z = z;
+	m_worldAABB.m_p.z = z;
 	if (m_super) {
-		m_super->extendAABB(m_boundingBox);
+		m_super->extendAABB(m_worldAABB);
 	}
 }
 

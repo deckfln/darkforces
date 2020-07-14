@@ -47,6 +47,7 @@ public:
 	bool is(int mclass) { return m_class == m_class; };
 	void physical(bool p) { m_physical = p; };
 	bool physical(void) { return m_physical; };
+	const fwAABBox& worldAABB(void) { return m_worldBounding; };
 
 	gaComponent *findComponent(int type);				// check all components to find one with the proper type
 	void addChild(gaEntity* entity);					// add an entity inside that one (and increase the AABB if needed)
@@ -55,6 +56,7 @@ public:
 	void drawBoundingBox(void);							// create a world boundingbox mesh
 	void rotate(const glm::vec3& rotation);				// rotate the object and update the AABB
 	float distanceTo(gaEntity* other);					// distance between the 2 entities
+	float distanceTo(const glm::vec3& p);				// distance from the entity position to the point
 	void add2scene(fwScene* scene);						// if the entity has a mesh, add to the scene
 	virtual void collideWith(gaEntity*) {};				// inform another entity of a collision
 	virtual void updateWorldAABB(void);					// update the world AABB based on position

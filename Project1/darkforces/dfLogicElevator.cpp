@@ -715,7 +715,7 @@ void dfLogicElevator::dispatchMessage(gaMessage* message)
 /**
  * pass the move detecttion to the mesh
  */
-bool dfLogicElevator::checkCollision(float step, glm::vec3& position, glm::vec3& target, float radius, glm::vec3& intersection)
+bool dfLogicElevator::RcheckCollision(float step, glm::vec3& position, glm::vec3& target, float radius, glm::vec3& intersection)
 {
 	// only test the elevator mesh if the supersector it is bind to is visible
 	// and if the play Z (gl space) in inbetwen the vertical elevator extend (level space)
@@ -734,7 +734,7 @@ bool dfLogicElevator::checkCollision(float step, glm::vec3& position, glm::vec3&
 	}
 
 	if (m_mesh && m_mesh->visible() && plevel.z > m_zmin && plevel.z < m_zmax && plevel.z < ceiling) {
-		return m_mesh->checkCollision(step, position, target, radius, intersection, m_name);
+		return m_mesh->RcheckCollision(step, position, target, radius, intersection, m_name);
 	}
 
 	return false;

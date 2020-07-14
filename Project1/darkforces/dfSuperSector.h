@@ -9,11 +9,14 @@
 #include "../framework/fwScene.h"
 #include "../framework/fwMaterialBasic.h"
 
+#include "../gaEngine/gaCollisionPoint.h"
+
 #include "dfSector.h"
 #include "dfBitmap.h"
 
 class dfSuperSector;
 class dfSign;
+class fwCylinder;
 
 /**
  * boundingSphere of a portal to a connected sector
@@ -48,13 +51,15 @@ class dfLevel;
 class dfMesh;
 
 class dfSuperSector {
+    bool m_removed = false;                   // yes we can delete the super sector
     int m_id = -1;
     std::string m_name;
     dfLevel* m_parent = nullptr;
 
-    fwAABBox m_boundingBox;
-    std::list <dfPortal> m_portals;
-    std::list <dfSector*> m_sectors;
+    fwAABBox m_worldAABBlvl;                // level space world AABB
+    fwAABBox m_worldAABB;                   // GL space world AABB
+    std::list <dfPortal> m_portals;         // lits of portals driving to other SuperSectors
+    std::list <dfSector*> m_sectors;        // list of basic sectors in the SuperSector
        
     std::vector <glm::vec3> m_vertices;		// level vertices
     std::vector <glm::vec2> m_uvs;			// UVs inside the source texture
@@ -81,7 +86,7 @@ public:
     dfSuperSector* smallestAdjoint(void);
     void buildPortals(std::vector<dfSector*>& sectors, std::vector<dfSuperSector*> &vssectors);
     float boundingBoxSurface(void);
-    bool inAABBox(glm::vec3& position) { return m_boundingBox.inside(position); };
+
     dfSector* findSector(glm::vec3& position);
     bool contains(int sectorID);
     void buildGeometry(std::vector<dfSector*>& sectors);
@@ -90,6 +95,9 @@ public:
     void visible(bool v) { m_visible = v; };
     bool visible(void) { return m_visible; };
     fwGeometry* geometry(void) { return m_geometry; };
+    void remove(void) { m_removed = true; };
+    bool removed(void) { return m_removed; };
+
     std::vector<dfBitmap*>& textures(void);
     std::map<std::string, dfSign*>& hSigns(void) { return m_hSigns; };
 
@@ -100,6 +108,18 @@ public:
     void sortSectors(void);
 
     void updateAmbientLight(float ambient, int start, int len);
+
+    bool inAABBox(glm::vec3& position) { 
+        return m_worldAABBlvl.inside(position); 
+    };                                                  // test if vec3 inside the AABB
+    bool collideAABB(const fwAABBox& box);				// quick test to find AABB collision
+    virtual bool checkCollision(fwCylinder& bounding,
+        glm::vec3& direction,
+        glm::vec3& intersection,
+        std::list<gaCollisionPoint>& collisions);		// extended collision test after a sucessfull AABB collision
+    bool collisionSegmentTriangle(const glm::vec3& p, 
+        const glm::vec3& q, 
+        std::list<gaCollisionPoint>& collisions);       // extended segment collision test after a sucessfull AABB collision
 
     ~dfSuperSector();
 };

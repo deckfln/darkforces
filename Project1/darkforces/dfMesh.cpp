@@ -627,7 +627,7 @@ static bool intersectSphereTriangle(const glm::vec3& center_es, const glm::vec3&
 /**
  * Test move againsta sphere
  */
-bool dfMesh::checkCollision(float step, glm::vec3& position, glm::vec3& target, float radius, glm::vec3& intersection, std::string& name)
+bool dfMesh::RcheckCollision(float step, glm::vec3& position, glm::vec3& target, float radius, glm::vec3& intersection, std::string& name)
 {
 	// convert player position (gl world space) into the elevator space (model space)
 	glm::vec3 glPosition = glm::vec3(m_mesh->inverseWorldMatrix() * glm::vec4(position, 1.0));
@@ -785,6 +785,28 @@ bool dfMesh::checkCollision(fwCylinder& bounding, glm::vec3& direction, glm::vec
 		}
 	}
 
+	return false;
+}
+
+/**
+ * // extended segment collision test after a sucessfull AABB collision
+ */
+bool dfMesh::collisionSegmentTriangle(const glm::vec3& p, const glm::vec3& q, std::list<gaCollisionPoint>& collisions)
+{
+	float u, v, w, t;
+	glm::vec3 collision;
+
+	for (unsigned int i = 0; i < m_vertices.size(); i += 3) {
+		if (IntersectSegmentTriangle(p, q,
+			m_vertices[i], m_vertices[i + 1], m_vertices[i + 2],
+			u, v, w, t
+		)) {
+			// rebuild collision point
+			collision = u * m_vertices[i] + v * m_vertices[i + 1] + w * m_vertices[i + 2];
+			collisions.push_back(gaCollisionPoint(fwCollisionLocation::BACK, collision, nullptr));
+		};
+	}
+	
 	return false;
 }
 

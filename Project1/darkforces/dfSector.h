@@ -12,13 +12,15 @@ using Point = std::array<Coord, 2>;
 #include "../framework/fwAABBox.h"
 #include "../framework/math/fwSphere.h"
 
-#include "dfLogicTrigger.h"
+#include "../gaEngine/gaMessage.h"
 
 class fwCylinder;
 class gaCollisionPoint;
+class gaEntity;
 class dfMesh;
 class dfSuperSector;
 class dfLogicElevator;
+class dfLogicTrigger;
 
 /**
  * Connection of each vertice to the left and the right
@@ -90,7 +92,7 @@ class dfSector
 
 	dfLogicElevator* m_elevator = nullptr;				// if the sector is managed by an elevator
 
-	float m_currentAmbient;							// current value for an elevator light
+	float m_currentAmbient;								// current value for an elevator light
 
 	void buildWalls(dfMesh* mesh, dfWallFlag displayPolygon);
 	void buildFloorAndCeiling(dfMesh* mesh);
@@ -100,7 +102,7 @@ class dfSector
 
 
 public:
-	fwAABBox m_boundingBox;
+	fwAABBox m_worldAABB;								// opengl World AABB
 
 	std::string m_name = "";
 	int m_id = -1;
@@ -108,7 +110,7 @@ public:
 	float m_ambient = 0;
 
 	// original values
-	float m_height = 0;				// height of the sector
+	float m_height = 0;									// height of the sector
 
 	glm::vec3 m_floorTexture;
 	glm::vec3 m_ceilingTexture;
@@ -131,7 +133,12 @@ public:
 	void setTriggerFromFloor(dfLogicTrigger* trigger);
 	void setTriggerFromSector(dfLogicTrigger* trigger);
 
-	bool inAABBox(glm::vec3& position) { return m_boundingBox.inside(position); };
+	bool inAABBox(glm::vec3& position);					// quick test point inside AABB
+	bool collideAABB(const fwAABBox& box);				// quick test to find AABB collision
+	virtual bool checkCollision(fwCylinder& bounding,
+		glm::vec3& direction,
+		glm::vec3& intersection,
+		std::list<gaCollisionPoint>& collisions);		// extended collision test after a sucessfull AABB collision
 
 	void ceiling(float z);
 
@@ -172,7 +179,6 @@ public:
 	void event(int event_mask);
 	void removeHollowWalls(void);
 	bool checkCollision(float step, glm::vec3& current, glm::vec3& target, float height, float radius, glm::vec3& collision);
-	bool checkCollision(fwCylinder& current, glm::vec3& direction, glm::vec3& collision, std::list<gaCollisionPoint>& collisions);
 
 	void wallVertices(int start, int len) { m_wallVerticesStart = start, m_wallVerticesLen = len; };
 	void floorVertices(int start, int len) { m_floorVerticesStart = start, m_floorVerticesLen = len; };

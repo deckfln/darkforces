@@ -18,6 +18,8 @@
 #include "../gaEngine/gaMessage.h"
 #include "../gaEngine/gaCollisionPoint.h"
 
+#include "../darkforces/dfSuperSector.h"
+
 const float bullet_length = 0.5f;
 const float bullet_radius = 0.01f;
 const float bullet_speed = 250.0f;
@@ -44,8 +46,8 @@ dfBullet::dfBullet(const glm::vec3& position, const glm::vec3& direction):
 	m_mesh = new fwMesh(g_blaster, &g_basic);
 	m_mesh->set_name(m_name);
 
-	glm::vec3 p = m_position + m_direction / bullet_speed;
-	m_mesh->translate(p);
+	m_position += m_direction *132.0f/ bullet_speed;
+	m_mesh->translate(m_position);
 
 	// convert the direction vector to a quaternion
 	glm::vec3 _up = glm::vec3(0.0f, 1.0f, 0.0f);
@@ -81,46 +83,70 @@ dfBullet::dfBullet(const glm::vec3& position, const glm::vec3& direction):
  */
 void dfBullet::dispatchMessage(gaMessage* message)
 {
+	std::list<gaEntity*> entities;
+	std::list<dfSuperSector*> sectors;
+	gaEntity* nearest_entity = nullptr;
+	dfSuperSector* nearest_sector = nullptr;
+	float distance = 99999999.0f;
+	float distance_sector = 99999999.0f;
+	float d;
 
 	switch (message->m_action) {
 	case GA_MSG_TIMER:
 		m_time += message->m_delta;
 
 		if (m_time < bullet_life) {
-			m_position += (m_direction * (float)message->m_delta / bullet_speed);
-			moveTo(m_position);
-			m_mesh->translate(m_position);
+			glm::vec3 direction = (m_direction * (float)message->m_delta / bullet_speed);
+			std::list<gaCollisionPoint> collisions;
 
-			// check collision with entities
+			g_gaWorld.findAABBCollision(m_worldBounding, entities, sectors);
 
-			// get all the entities which AABB checkCollision with the bullet
-			std::list<gaEntity*> entities;
-			g_gaWorld.findAABBCollision(m_worldBounding, entities);
-
-			gaEntity* nearest_entity=nullptr;
-			float distance = 99999999.0f;
-
+			// do an AABB collision against AABB collision with entities
 			for (auto entity : entities) {
-				if (entity == this || entity->name() == "player") {
-					continue;
-				}
-				// only test entities that can physically checkCollision, but still inform the target of the collision
+				// only test entities that can physically checkCollision
 				if (entity->physical()) {
-					float d = this->distanceTo(entity);
+					d = this->distanceTo(entity);
 					if (d < distance) {
 						nearest_entity = entity;
 						distance = d;
 					}
 				}
 			}
+
+			// do an segment collision against the sectors triangles
+			for (auto sector : sectors) {
+				sector->collisionSegmentTriangle(m_position, m_position + direction, collisions);
+
+				for (auto c : collisions) {
+					d = this->distanceTo(c.m_position);
+					if (d < distance_sector) {
+						nearest_sector = sector;
+						distance_sector = d;
+					}
+				}
+			}
+
 			// and take action
-			if (nearest_entity == nullptr) {
+			if (nearest_entity == nullptr && nearest_sector == nullptr) {
 				// next animation
+				m_position += direction;
+				moveTo(m_position);
+				m_mesh->translate(m_position);
+
 				g_gaWorld.pushForNextFrame(m_animate_msg);
 			}
 			else {
-				// on collision,, inform the target it was hit with the energy of the bullet
-				g_gaWorld.sendMessage(m_name, nearest_entity->name(), DF_MESSAGE_HIT_BULLET, 10, nullptr);
+				// if nearest is an entity
+				if (distance < distance_sector) {
+					// on collision,, inform the target it was hit with the energy of the bullet
+					g_gaWorld.sendMessage(m_name, nearest_entity->name(), DF_MESSAGE_HIT_BULLET, 10, nullptr);
+					gaDebugLog(REDUCED_DEBUG, "dfBullet::dispatchMessage", "hit entity");
+				}
+				else {
+					// draw an impact
+					// TODO add an impact sprite
+					gaDebugLog(LOW_DEBUG, "dfBullet::dispatchMessage", "hit wall");
+				}
 				// drop the bullet
 				g_gaWorld.sendMessage(m_name, "_world", GA_MSG_DELETE_ENTITY, 0, nullptr);
 			}
@@ -128,6 +154,7 @@ void dfBullet::dispatchMessage(gaMessage* message)
 		else {
 			// get the bullet deleted after 5s
 			g_gaWorld.sendMessage(m_name, "_world", GA_MSG_DELETE_ENTITY, 0, nullptr);
+			gaDebugLog(LOW_DEBUG, "dfBullet::dispatchMessage", "remove bullet");
 		}
 		break;
 	}

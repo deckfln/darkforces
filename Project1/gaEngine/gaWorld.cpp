@@ -8,6 +8,8 @@
 
 #include "gaEntity.h"
 
+#include "../darkforces/dfSuperSector.h"
+
 gaWorld g_gaWorld;
 
 /**
@@ -50,6 +52,14 @@ void gaWorld::removeClient(gaEntity* client)
 void gaWorld::add2scene(gaEntity* client)
 {
 	client->add2scene(m_scene);
+}
+
+/**
+ * add a game sector
+ */
+void gaWorld::addSector(dfSuperSector* client)
+{
+	m_sectors.push_back(client);
 }
 
 /**
@@ -103,14 +113,20 @@ gaEntity* gaWorld::getEntity(const std::string& name)
 /**
  * parse entities to check for collision with the given one
  */
-void gaWorld::findAABBCollision(fwAABBox& box, std::list<gaEntity*>& collisions)
+void gaWorld::findAABBCollision(fwAABBox& box, std::list<gaEntity*>& entities, std::list<dfSuperSector*>& sectors)
 {
 	for (auto entry : m_entities) {
 		// test all entity with the same name
 		for (auto entity : entry.second) {
 			if (entity->collideAABB(box)) {
-				collisions.push_back(entity);
+				entities.push_back(entity);
 			}
+		}
+	}
+
+	for (auto sector : m_sectors) {
+		if (sector->collideAABB(box)) {
+			sectors.push_back(sector);
 		}
 	}
 }
@@ -126,7 +142,8 @@ bool gaWorld::checkCollision(gaEntity* source, fwCylinder& bounding, glm::vec3& 
 	fwAABBox aabb(bounding);
 	aabb += direction;
 	std::list<gaEntity*> entities;
-	g_gaWorld.findAABBCollision(aabb, entities);
+	std::list<dfSuperSector*> sectors;
+	g_gaWorld.findAABBCollision(aabb, entities, sectors);
 
 	for (auto entity : entities) {
 		// only test entities that can physically checkCollision, but still inform the target of the collision
@@ -186,7 +203,6 @@ void gaWorld::process(time_t delta)
 			case GA_MSG_DELETE_ENTITY:
 				// delete all instances of the given entity
 				if (m_entities.count(message->m_server) > 0) {
-					gaEntity* entity;
 					for (auto entity : m_entities[message->m_server]) {
 						delete entity;
 						m_entities.erase(message->m_server);

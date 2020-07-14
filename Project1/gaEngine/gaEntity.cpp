@@ -97,6 +97,14 @@ float gaEntity::distanceTo(gaEntity* other)
 }
 
 /**
+ * distance from the entity position to the point
+ */
+float gaEntity::distanceTo(const glm::vec3& p)
+{
+	return glm::distance(m_position, p);
+}
+
+/**
  * if the entity has a mesh, add to the scene
  */
 void gaEntity::add2scene(fwScene* scene)

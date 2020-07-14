@@ -18,7 +18,7 @@ static fwMaterialBasic* material_portal = new fwMaterialBasic(&white);
 
 dfSuperSector::dfSuperSector(dfSector* sector, fwMaterialBasic* material, std::vector<dfBitmap*>& bitmaps) :
 	m_id(nbSuperSectors++),
-	m_boundingBox(sector->m_boundingBox),
+	m_worldAABBlvl(sector->m_worldAABB),
 	m_material(material)
 {
 	m_sectors.push_back(sector);
@@ -31,7 +31,7 @@ dfSuperSector::dfSuperSector(dfSector* sector, fwMaterialBasic* material, std::v
  */
 float dfSuperSector::boundingBoxSurface(void)
 {
-	return m_boundingBox.surface();
+	return m_worldAABBlvl.surface();
 }
 
 /**
@@ -40,7 +40,7 @@ float dfSuperSector::boundingBoxSurface(void)
 void dfSuperSector::extend(dfSuperSector* ssector)
 {
 	// extend the bounding box
-	m_boundingBox.extend(ssector->m_boundingBox);
+	m_worldAABBlvl.extend(ssector->m_worldAABBlvl);
 
 	// extend the list of sectors
 	m_sectors.insert(m_sectors.end(), ssector->m_sectors.begin(), ssector->m_sectors.end());
@@ -68,7 +68,45 @@ void dfSuperSector::extend(dfSuperSector* ssector)
  */
 void dfSuperSector::extendAABB(fwAABBox& box)
 {
-	m_boundingBox.extend(box);
+	m_worldAABBlvl.extend(box);
+}
+
+/**
+ * quick AABB check for entities collision
+ */
+bool dfSuperSector::collideAABB(const fwAABBox& box)
+{
+	if (m_worldAABB.not_init()) {
+		glm::vec3 p, p1;
+		dfLevel::level2gl(m_worldAABBlvl.m_p, p);
+		dfLevel::level2gl(m_worldAABBlvl.m_p1, p1);
+
+		m_worldAABB = fwAABBox(p, p1);
+	}
+
+	return m_worldAABB.intersect(box);
+}
+
+/**
+ * extended collision test after a sucessfull AABB collision
+ */
+bool dfSuperSector::checkCollision(fwCylinder& bounding, glm::vec3& direction, glm::vec3& intersection, std::list<gaCollisionPoint>& collisions)
+{
+	if (m_dfmesh) {
+		m_dfmesh->checkCollision(bounding, direction, intersection, m_name, collisions);
+	}
+	return false;
+}
+
+/**
+ * extended segment collision test after a sucessfull AABB collision
+ */
+bool dfSuperSector::collisionSegmentTriangle(const glm::vec3& p, const glm::vec3& q, std::list<gaCollisionPoint>& collisions)
+{
+	if (m_dfmesh) {
+		m_dfmesh->collisionSegmentTriangle(p, q, collisions);
+	}
+	return false;
 }
 
 /**
@@ -290,6 +328,7 @@ void dfSuperSector::updateAmbientLight(float ambient, int start, int len)
 {
 	m_dfmesh->changeAmbient(ambient, start, len);
 }
+
 
 dfSuperSector::~dfSuperSector()
 {

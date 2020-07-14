@@ -262,7 +262,7 @@ bool fwAABBox::inside(fwAABBox& box)
 /**
  * test if the 2 boxes intesect
  */
-bool fwAABBox::intersect(fwAABBox& box)
+bool fwAABBox::intersect(const fwAABBox& box)
 {
 	// using 6 splitting planes to rule out intersections.
 	return (box.m_p1.x < m_p.x || box.m_p.x > m_p1.x ||
