@@ -20,6 +20,8 @@
 
 #include "../darkforces/dfSuperSector.h"
 #include "../darkforces/dfObject/dfSpriteAnimated.h"
+#include "../darkforces/dfModel/dfWAX.h"
+#include "../darkforces/dfSprites.h"
 
 const float bullet_length = 0.5f;
 const float bullet_radius = 0.01f;
@@ -137,6 +139,21 @@ void dfBullet::dispatchMessage(gaMessage* message)
 				g_gaWorld.pushForNextFrame(m_animate_msg);
 			}
 			else {
+				// add an impact sprite
+				dfWAX* wax = (dfWAX*)g_gaWorld.getModel("BULLEXP.WAX");
+
+				// constructor of a sripte expects a level space
+				glm::vec3 p;
+				dfLevel::gl2level(m_position, p);
+				dfSpriteAnimated* impact = new dfSpriteAnimated(wax, p, 1.0f);
+				impact->state(DF_STATE_ENEMY_MOVE);
+				dfSprites* manager = g_gaWorld.spritesManager();
+				manager->add((dfSprite*)impact);
+				manager->update();
+
+				g_gaWorld.addClient(impact);
+				g_gaWorld.sendMessageDelayed(impact->name(), impact->name(), GA_MSG_TIMER, 0, nullptr);
+
 				// if nearest is an entity
 				if (distance < distance_sector) {
 					// on collision,, inform the target it was hit with the energy of the bullet
@@ -144,11 +161,6 @@ void dfBullet::dispatchMessage(gaMessage* message)
 					gaDebugLog(REDUCED_DEBUG, "dfBullet::dispatchMessage", "hit entity");
 				}
 				else {
-					// add an impact sprite
-					//dfSpriteAnimated* impact = new dfSpriteAnimated("BULLEXP.WAX", m_position, 1.0f);
-					//g_gaWorld.addClient(impact);
-					//g_gaWorld.sendMessageDelayed(impact, impact, GA_MSG_TIMER, 0, nullptr);
-
 					gaDebugLog(LOW_DEBUG, "dfBullet::dispatchMessage", "hit wall");
 				}
 				// drop the bullet

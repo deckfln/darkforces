@@ -65,7 +65,7 @@ struct _dfWaxFrame {
 // create runtime classes
 const uint32_t g_wax_class = GameEngine::gaModel::m_modelClasses++;
 
-dfWAX::dfWAX(dfFileSystem* fs, dfPalette* palette, std::string& name) :
+dfWAX::dfWAX(dfFileSystem* fs, dfPalette* palette, const std::string& name) :
 	dfModel(name, g_wax_class, true)
 {
 	int size;

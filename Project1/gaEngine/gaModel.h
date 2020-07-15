@@ -2,6 +2,10 @@
 #include <string>
 
 namespace GameEngine {
+	enum {
+		PRELOAD = 0
+	};
+
 	class gaModel
 	{
 		uint32_t m_modelClass=0;

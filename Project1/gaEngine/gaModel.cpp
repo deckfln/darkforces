@@ -3,7 +3,7 @@
 using namespace GameEngine;
 
 uint32_t g_modelIDs = 0;
-uint32_t GameEngine::gaModel::m_modelClasses = 0;
+uint32_t GameEngine::gaModel::m_modelClasses = 32;
 
 gaModel::gaModel(const std::string& name, uint32_t myclass):
 	m_modelID(g_modelIDs++),

@@ -318,6 +318,17 @@ dfParserObjects::dfParserObjects(dfFileSystem* fs, dfPalette* palette, std::stri
 		}
 	}
 
+	// load the 'pre-loaded' sprites
+	std::list<GameEngine::gaModel*> l;
+	g_gaWorld.getModelsByClass(GameEngine::PRELOAD, l);
+	for (auto model : l) {
+		dfWAX* wax = new dfWAX(fs, palette, model->name());
+
+		// replace the place holder with the real model
+		g_gaWorld.removeModel(model->name());
+		g_gaWorld.addModel(wax);
+	}
+
 	delete sec;
 }
 

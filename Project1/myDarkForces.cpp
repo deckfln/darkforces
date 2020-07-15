@@ -16,6 +16,7 @@
 #include "gaEngine/gaActor.h"
 #include "gaEngine/gaPlayer.h"
 #include "gaEngine/gaWorld.h"
+#include "gaEngine/gaModel.h"
 
 #include "darkforces/dfLevel.h"
 #include "darkforces/dfCollision.h"
@@ -62,6 +63,11 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 
 	m_renderer->customLight("/data/shaders/lightning.glsl");
 
+	// preload animations
+	GameEngine::gaModel* wax = new GameEngine::gaModel("BULLEXP.WAX", GameEngine::PRELOAD);
+	g_gaWorld.addModel(wax);
+
+	// load first level
 	m_level = new dfLevel(m_filesystem, "SECBASE");
 	m_player->bind(m_level);
 

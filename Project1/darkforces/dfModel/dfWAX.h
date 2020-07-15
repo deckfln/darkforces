@@ -58,7 +58,7 @@ class dfWAX: public dfModel
 	std::map<int, dfFrame *> m_frames;
 
 public:
-	dfWAX(dfFileSystem* fs, dfPalette *palette, std::string& name);
+	dfWAX(dfFileSystem* fs, dfPalette *palette, const std::string& name);
 	void getFrames(std::vector<dfBitmapImage*>& m_frames);
 	virtual int textureID(int state, int frame);
 	virtual void spriteModel(GLmodel& model, int id);
