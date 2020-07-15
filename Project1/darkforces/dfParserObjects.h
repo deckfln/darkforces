@@ -21,13 +21,6 @@ class gaCollisionPoint;
 
 class dfParserObjects
 {
-	int m_currentWax = 0;
-	std::vector<dfWAX *> m_waxes;
-	int m_currentFME = 0;
-	std::vector<dfFME *> m_fmes;
-	int m_current3DO = 0;
-	std::vector<df3DO*> m_3DOs;
-
 	std::vector<dfObject *> m_objects;
 	int m_currentObject = 0;
 	bool m_added = false;

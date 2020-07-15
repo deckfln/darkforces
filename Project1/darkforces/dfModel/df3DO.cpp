@@ -62,11 +62,14 @@ static std::vector<struct df3DOQuadIndex> quadIndex;		// Vertices 0:, 1:
 static std::vector<struct df3DOQuadIndex> triangleIndex;		// Vertices 0:, 1:
 static int currentTexture;
 
+// create runtime classes
+const uint32_t g_3do_class = GameEngine::gaModel::m_modelClasses++;
+
 /**
  *
  */
 df3DO::df3DO(dfFileSystem* fs, dfPalette* palette, std::string file) :
-	dfModel(file,true)
+	dfModel(file, g_3do_class, true)
 {
 	int size;
 	char* sec = fs->load(DF_DARK_GOB, file, size);

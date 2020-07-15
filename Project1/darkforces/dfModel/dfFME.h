@@ -6,6 +6,9 @@ class dfPalette;
 class dfFileSystem;
 class dfFrame;
 
+// create runtime classes
+extern const uint32_t g_fme_class;
+
 class dfFME: public dfModel
 {
 	int m_references = 1;

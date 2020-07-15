@@ -10,11 +10,15 @@
 
 const float FME_WORLDSIZE_X = 95.0f;
 const float FME_WORLDSIZE_Y = 95.0f;
+
+// create runtime classes
+const uint32_t g_fme_class = GameEngine::gaModel::m_modelClasses++;
+
 /**
  * Create a FME from a file
  */
 dfFME::dfFME(dfFileSystem* fs, dfPalette* palette, std::string& name):
-	dfModel(name, false)
+	dfModel(name, g_fme_class, false)
 {
 	int size;
 	m_fromGOB = fs->load(DF_SPRITES_GOB, name, size);

@@ -43,7 +43,7 @@ dfSprites::dfSprites(int nbSprites, dfAtlasTexture* atlas):
  */
 void dfSprites::addModel(dfModel* model)
 {
-	std::string& modelName = model->name();
+	const std::string& modelName = model->name();
 	m_modelsIndex[modelName] = m_nbModels;
 
 	model->spriteModel(m_models, m_nbModels);

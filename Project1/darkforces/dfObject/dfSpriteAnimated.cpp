@@ -19,6 +19,8 @@ void dfSpriteAnimated::state(int state)
 	m_state = state;
 	modelAABB(((dfWAX*)m_source)->bounding(m_state));
 	dfSprite::updateWorldAABB();
+	m_lastFrame = m_currentFrame = 0;
+	t = GetTickCount64();
 }
 
 bool dfSpriteAnimated::updateSprite(glm::vec3* position, glm::vec4* texture, glm::vec3* direction)
@@ -67,6 +69,7 @@ bool dfSpriteAnimated::update(time_t t)
 	time_t delta = m_currentFrame - m_lastFrame;
 	if (delta >= frameTime) {
 		m_frame = m_source->nextFrame(m_state, m_frame);
+
 		if (m_frame == -1) {
 			// when we loop back, first take some action
 			switch (m_state) {
@@ -86,6 +89,7 @@ bool dfSpriteAnimated::update(time_t t)
 		m_lastFrame = m_currentFrame;
 		m_dirtyAnimation = true;
 	}
+
 
 	return true;
 }

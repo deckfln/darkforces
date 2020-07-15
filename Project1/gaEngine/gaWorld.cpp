@@ -64,6 +64,56 @@ void gaWorld::addSector(dfSuperSector* client)
 }
 
 /**
+ * add a new model to the world
+ */
+void gaWorld::addModel(GameEngine::gaModel* model)
+{
+	if (model->name() != "") {
+		m_models[model->name()] = model;
+	}
+	else {
+		m_models[std::to_string(model->id())] = model;
+	}
+}
+
+/**
+ * get a model from the world
+ */
+GameEngine::gaModel* gaWorld::getModel(const std::string& name)
+{
+	if (m_models.count(name) > 0) {
+		return m_models[name];
+	}
+
+	return nullptr;
+}
+
+/**
+ * remove a model from the world
+ */
+bool gaWorld::removeModel(const std::string& name)
+{
+	if (m_models.count(name) > 0) {
+		m_models.erase(name);
+		return true;
+	}
+
+	return false;
+}
+
+/**
+ * return all models of a specific class
+ */
+void gaWorld::getModelsByClass(uint32_t myclass, std::list<GameEngine::gaModel*>& r)
+{
+	for (auto model : m_models) {
+		if (model.second->modelClass() == myclass) {
+			r.push_back(model.second);
+		}
+	}
+}
+
+/**
  * add the sprite maanager
  */
 void gaWorld::spritesManager(dfSprites* sprites)

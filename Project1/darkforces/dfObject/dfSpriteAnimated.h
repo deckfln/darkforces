@@ -13,7 +13,7 @@ class dfSpriteAnimated: public dfSprite
 	glm::vec3 m_direction = glm::vec3(0);	// direction the object is looking to
 	time_t m_lastFrame = 0;					// time of the last animation frame
 	time_t m_currentFrame = 0;				// time of the current animation frame
-
+	time_t t;
 
 public:
 	dfSpriteAnimated(dfWAX* wax, glm::vec3& position, float ambient);

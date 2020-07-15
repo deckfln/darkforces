@@ -453,11 +453,11 @@
     <ClCompile Include="gaEngine\gaComponent\gaComponentMesh.cpp">
       <Filter>Fichiers sources\gaEngine\gaComponent</Filter>
     </ClCompile>
-    <ClCompile Include="darkforces\gaComponent\dfComponentActor.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
     <ClCompile Include="darkforces\dfComponent\dfComponentActor.cpp">
       <Filter>Fichiers sources\Dark Forces\dfComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="gaEngine\gaModel.cpp">
+      <Filter>Fichiers sources\gaEngine</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -866,11 +866,11 @@
     <ClInclude Include="gaEngine\gaComponent\gaComponentMesh.h">
       <Filter>Fichiers d%27en-tête\gaEngine\gaComponent</Filter>
     </ClInclude>
-    <ClInclude Include="darkforces\gaComponent\dfComponentActor.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
     <ClInclude Include="darkforces\dfComponent\dfComponentActor.h">
       <Filter>Fichiers d%27en-tête\DarkForces\dfComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="gaEngine\gaModel.h">
+      <Filter>Fichiers d%27en-tête\gaEngine</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

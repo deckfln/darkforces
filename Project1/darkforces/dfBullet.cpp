@@ -19,10 +19,11 @@
 #include "../gaEngine/gaCollisionPoint.h"
 
 #include "../darkforces/dfSuperSector.h"
+#include "../darkforces/dfObject/dfSpriteAnimated.h"
 
 const float bullet_length = 0.5f;
 const float bullet_radius = 0.01f;
-const float bullet_speed = 250.0f;
+const float bullet_speed = 500.0f;
 const int bullet_life = 2000;
 
 static int g_bulletID = 0;
@@ -143,8 +144,11 @@ void dfBullet::dispatchMessage(gaMessage* message)
 					gaDebugLog(REDUCED_DEBUG, "dfBullet::dispatchMessage", "hit entity");
 				}
 				else {
-					// draw an impact
-					// TODO add an impact sprite
+					// add an impact sprite
+					//dfSpriteAnimated* impact = new dfSpriteAnimated("BULLEXP.WAX", m_position, 1.0f);
+					//g_gaWorld.addClient(impact);
+					//g_gaWorld.sendMessageDelayed(impact, impact, GA_MSG_TIMER, 0, nullptr);
+
 					gaDebugLog(LOW_DEBUG, "dfBullet::dispatchMessage", "hit wall");
 				}
 				// drop the bullet

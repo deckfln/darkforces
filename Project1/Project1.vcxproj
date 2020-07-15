@@ -225,6 +225,7 @@
     <ClCompile Include="gaEngine\gaDebug.cpp" />
     <ClCompile Include="gaEngine\gaEntity.cpp" />
     <ClCompile Include="gaEngine\gaMessage.cpp" />
+    <ClCompile Include="gaEngine\gaModel.cpp" />
     <ClCompile Include="gaEngine\gaPlayer.cpp" />
     <ClCompile Include="gaEngine\gaWorld.cpp" />
     <ClCompile Include="glEngine\framebuffer\glDepthCubeMap.cpp" />
@@ -362,6 +363,7 @@
     <ClInclude Include="gaEngine\gaDebug.h" />
     <ClInclude Include="gaEngine\gaEntity.h" />
     <ClInclude Include="gaEngine\gaMessage.h" />
+    <ClInclude Include="gaEngine\gaModel.h" />
     <ClInclude Include="gaEngine\gaPlayer.h" />
     <ClInclude Include="gaEngine\gaWorld.h" />
     <ClInclude Include="glEngine\framebuffer\glDepthCubeMap.h" />

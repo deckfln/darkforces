@@ -90,7 +90,7 @@ int dfObject::difficulty(void)
 /**
  * get the name of the model the object is based on
  */
-std::string& dfObject::model(void)
+const std::string& dfObject::model(void)
 {
 	return m_source->name();
 }

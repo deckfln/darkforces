@@ -1,14 +1,9 @@
 #include "dfModel.h"
 
-dfModel::dfModel(std::string& name, bool collision):
-	m_name(name),
+dfModel::dfModel(const std::string& name, uint32_t myclass, bool collision):
+	GameEngine::gaModel(name, myclass),
 	m_testColision(collision)
 {
-}
-
-bool dfModel::named(std::string& name)
-{
-	return m_name == name;
 }
 
 /**
@@ -38,5 +33,5 @@ fwMesh* dfModel::drawBoundingBox(void)
  */
 void dfModel::spriteModel(GLmodel& model, int id)
 {
-	m_id = id;
+	m_modelID = id;
 }

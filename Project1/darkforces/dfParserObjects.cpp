@@ -41,6 +41,9 @@ static bool g_difficultyTable[][3] = {
 	{0, 0, 1}
 };
 
+/**
+ *
+ */
 dfObject* dfParserObjects::parseObject(dfFileSystem* fs, dfObject* sprite, std::istringstream& infile)
 {
 	std::string line, dump;
@@ -190,6 +193,9 @@ dfObject* dfParserObjects::parseObject(dfFileSystem* fs, dfObject* sprite, std::
 	return sprite;
 }
 
+/**
+ *
+ */
 dfParserObjects::dfParserObjects(dfFileSystem* fs, dfPalette* palette, std::string file, dfLevel *level)
 {
 	int size;
@@ -197,6 +203,14 @@ dfParserObjects::dfParserObjects(dfFileSystem* fs, dfPalette* palette, std::stri
 	std::istringstream infile(sec);
 	std::string line, dump;
 	std::map<std::string, std::string> tokenMap;
+
+	int currentWax = 0;
+	int currentFME = 0;
+	int current3DO = 0;
+
+	std::vector<std::string> waxes;
+	std::vector<std::string> fmes;
+	std::vector<std::string> t3DOs;
 
 	while (std::getline(infile, line))
 	{
@@ -212,22 +226,28 @@ dfParserObjects::dfParserObjects(dfFileSystem* fs, dfPalette* palette, std::stri
 		}
 
 		if (tokens[0] == "SPRS") {
-			m_waxes.resize(std::stoi(tokens[1]));
+			waxes.resize(std::stoi(tokens[1]));
 		}
 		else if (tokens[0] == "FMES") {
-			m_fmes.resize(std::stoi(tokens[1]));
+			fmes.resize(std::stoi(tokens[1]));
 		}
 		else if (tokens[0] == "PODS") {
-			m_3DOs.resize(std::stoi(tokens[1]));
+			t3DOs.resize(std::stoi(tokens[1]));
 		}
 		else if (tokens[0] == "FME:") {
-			m_fmes[m_currentFME++] = new dfFME(fs, palette, tokens[1]);
+			dfFME* fme = new dfFME(fs, palette, tokens[1]);
+			g_gaWorld.addModel(fme);
+			fmes[currentFME++] = fme->name();
 		}
 		else if (tokens[0] == "SPR:") {
-			m_waxes[m_currentWax++] = new dfWAX(fs, palette, tokens[1]);
+			dfWAX* wax = new dfWAX(fs, palette, tokens[1]);
+			g_gaWorld.addModel(wax);
+			waxes[currentWax++] = wax->name();
 		}
 		else if (tokens[0] == "POD:") {
-			m_3DOs[m_current3DO++] = new df3DO(fs, palette, tokens[1]);
+			df3DO* threeDO = new df3DO(fs, palette, tokens[1]);
+			g_gaWorld.addModel(threeDO);
+			t3DOs[current3DO++] = threeDO->name();
 		}
 		else if (tokens[0] == "OBJECTS") {
 			m_objects.resize(std::stoi(tokens[1]));
@@ -268,7 +288,8 @@ dfParserObjects::dfParserObjects(dfFileSystem* fs, dfPalette* palette, std::stri
 			}
 
 			if (tokenMap["CLASS:"] == "SPRITE") {
-				dfSpriteAnimated* sprite = new dfSpriteAnimated(m_waxes[data], position, ambient);
+				dfWAX* wax = (dfWAX*)g_gaWorld.getModel(waxes[data]);
+				dfSpriteAnimated* sprite = new dfSpriteAnimated(wax, position, ambient);
 				sprite->difficulty(difficulty);
 				sprite->rotation(rotation);
 				m_objects[m_currentObject] = parseObject(fs, sprite, infile);
@@ -276,13 +297,15 @@ dfParserObjects::dfParserObjects(dfFileSystem* fs, dfPalette* palette, std::stri
 				m_currentObject++;
 			}
 			else if (tokenMap["CLASS:"] == "FRAME") {
-				dfObject* frame = new dfSprite(m_fmes[data], position, ambient);
+				dfFME* fme = (dfFME*)g_gaWorld.getModel(fmes[data]);
+				dfObject* frame = new dfSprite(fme, position, ambient);
 				frame->difficulty(difficulty);
 				m_objects[m_currentObject] = parseObject(fs, frame, infile);
 				m_currentObject++;
 			}
 			else if (tokenMap["CLASS:"] == "3D") {
-				dfObject3D* threedo = new dfObject3D(m_3DOs[data], position, ambient);
+				df3DO* tdo = (df3DO*)g_gaWorld.getModel(t3DOs[data]);
+				dfObject3D* threedo = new dfObject3D(tdo, position, ambient);
 				threedo->difficulty(difficulty);
 				m_objects[m_currentObject] = parseObject(fs, threedo, infile);
 				m_currentObject++;
@@ -304,11 +327,17 @@ dfParserObjects::dfParserObjects(dfFileSystem* fs, dfPalette* palette, std::stri
 dfAtlasTexture* dfParserObjects::buildAtlasTexture(void)
 {
 	std::vector<dfBitmapImage*> frames;
-	for (auto wax : m_waxes) {
-		wax->getFrames(frames);
+
+	std::list<GameEngine::gaModel*> l;
+	g_gaWorld.getModelsByClass(g_wax_class, l);
+	for (auto wax : l) {
+		((dfWAX*)wax)->getFrames(frames);
 	}
-	for (auto fme : m_fmes) {
-		frames.push_back((dfBitmapImage *)fme->frame());
+
+	l.clear();
+	g_gaWorld.getModelsByClass(g_fme_class, l);
+	for (auto fme : l) {
+		frames.push_back((dfBitmapImage *)((dfFME*)fme)->frame());
 	}
 
 	m_textures = new dfAtlasTexture(frames);
@@ -326,12 +355,17 @@ void dfParserObjects::buildSprites(void)
 	dfSprites* manager = new dfSprites(m_objects.size(), m_textures);
 	g_gaWorld.spritesManager(manager);
 
-	for (auto wax : m_waxes) {
-		manager->addModel(wax);
+	std::list<GameEngine::gaModel*> l;
+	g_gaWorld.getModelsByClass(g_wax_class, l);
+
+	for (auto wax : l) {
+		manager->addModel((dfWAX*)wax);
 	}
 
-	for (auto fme : m_fmes) {
-		manager->addModel(fme);
+	l.clear();
+	g_gaWorld.getModelsByClass(g_fme_class, l);
+	for (auto fme : l) {
+		manager->addModel((dfFME*)fme);
 	}
 
 	dfObject* object;
@@ -381,9 +415,6 @@ bool dfParserObjects::checkCollision(fwCylinder& bounding, glm::vec3& direction,
 
 dfParserObjects::~dfParserObjects()
 {
-	for (auto wax : m_waxes) {
-		delete wax;
-	}
 	for (auto object : m_objects) {
 		delete object;
 	}

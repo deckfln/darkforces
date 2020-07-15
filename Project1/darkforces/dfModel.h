@@ -6,6 +6,8 @@
 #include <vector>
 #include "../glad/glad.h"
 
+#include "../gaEngine/gaModel.h"
+
 // data for sprite model
 
 struct Angle {
@@ -40,11 +42,9 @@ struct GLmodel {
 
 class fwMesh;
 
-class dfModel
+class dfModel: public GameEngine::gaModel
 {
 protected:
-	std::string m_name;
-	int m_id = 0;
 	glm::vec2 m_size_gl = glm::vec2(0);		// size in gl space (for sprites)
 	glm::vec2 m_insert_gl = glm::vec2(0);	// offset in gl space from position (for sprites)
 	bool m_testColision = false;			// can this object colide ?
@@ -55,10 +55,7 @@ protected:
 	void updateBoundingBox(void);			// refresh the boundingbox based on m_size_gl & m_insert_gl
 
 public:
-	dfModel(std::string& name, bool collision=false);
-	bool named(std::string& name);
-	std::string& name(void) { return m_name; };
-	int id(void) { return m_id; };
+	dfModel(const std::string& name, uint32_t myclass, bool collision = false);
 	const fwAABBox& bounding(void) { return m_bounding_gl; };
 	bool collision(void) { return m_testColision; };
 	fwMesh* drawBoundingBox(void);

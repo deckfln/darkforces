@@ -120,7 +120,7 @@ public:
 	bool named(std::string name);
 	bool is(int type);
 	bool isLogic(int logic);
-	std::string& model(void);
+	const std::string& model(void);
 	void logic(int logic);
 	void add2scene(fwScene* scene);
 

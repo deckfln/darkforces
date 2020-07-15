@@ -6,7 +6,7 @@
 #include "render/fwRendererForward.h"
 #include "render/fwRendererDefered.h"
 
-const int caped_fps = FALSE;
+const int caped_fps = TRUE;
 
 // settings
 unsigned int SCR_WIDTH = 800;

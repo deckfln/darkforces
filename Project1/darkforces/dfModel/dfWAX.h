@@ -37,6 +37,9 @@ struct dfWaxState {
 	fwAABBox m_bounding;				// AABB boundingbox of that specific state
 };
 
+// compile time class
+extern const uint32_t g_wax_class;
+
 class dfWAX: public dfModel
 {
 	void* m_data = nullptr;
