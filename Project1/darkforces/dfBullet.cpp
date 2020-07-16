@@ -82,6 +82,15 @@ dfBullet::dfBullet(const glm::vec3& position, const glm::vec3& direction):
 }
 
 /**
+  * trigger when the bullet is added to the world
+  * Also add the mesh to the scene
+  */
+void dfBullet::OnWorldInsert(void)
+{
+	g_gaWorld.add2scene(this);
+}
+
+/**
  * move the bullet forward
  */
 void dfBullet::dispatchMessage(gaMessage* message)
@@ -140,19 +149,12 @@ void dfBullet::dispatchMessage(gaMessage* message)
 			}
 			else {
 				// add an impact sprite
-				dfWAX* wax = (dfWAX*)g_gaWorld.getModel("BULLEXP.WAX");
-
 				// constructor of a sripte expects a level space
 				glm::vec3 p;
 				dfLevel::gl2level(m_position, p);
-				dfSpriteAnimated* impact = new dfSpriteAnimated(wax, p, 1.0f);
+				dfSpriteAnimated* impact = new dfSpriteAnimated("BULLEXP.WAX", p, 1.0f);
 				impact->state(DF_STATE_ENEMY_MOVE);
-				dfSprites* manager = g_gaWorld.spritesManager();
-				manager->add((dfSprite*)impact);
-				manager->update();
-
 				g_gaWorld.addClient(impact);
-				g_gaWorld.sendMessageDelayed(impact->name(), impact->name(), GA_MSG_TIMER, 0, nullptr);
 
 				// if nearest is an entity
 				if (distance < distance_sector) {

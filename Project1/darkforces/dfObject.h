@@ -109,7 +109,7 @@ protected:
 	dfModel* m_source = nullptr;
 
 public:
-	dfObject(dfModel *source, glm::vec3& position, float ambient, int type);
+	dfObject(dfModel *source, const glm::vec3& position, float ambient, int type);
 	void height(float h) { m_height = h; };
 	float height(void) { return m_height; };
 	void radius(float r) { m_radius = r; };
@@ -122,7 +122,6 @@ public:
 	bool isLogic(int logic);
 	const std::string& model(void);
 	void logic(int logic);
-	void add2scene(fwScene* scene);
 
 	virtual bool checkCollision(fwCylinder& bounding,
 		glm::vec3& direction,

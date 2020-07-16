@@ -98,6 +98,8 @@ bool dfObject3D::update(time_t t)
 			m_lastFrame = t;
 			dfObject::moveTo(m_position_lvl);	// update the bounding box
 		}
+
+		return true;
 	}
 	return false;
 }
@@ -109,6 +111,34 @@ void dfObject3D::updateWorldAABB(void)
 {
 	// take the opportunity to update the world bounding box
 	m_worldBounding.transform(m_source->bounding(), m_position, m_animRotation, glm::vec3(0.10f, 0.10f, 0.10f));
+}
+
+/**
+ * Deal with animation messages
+ */
+void dfObject3D::dispatchMessage(gaMessage* message)
+{
+	switch (message->m_action) {
+	case GA_MSG_TIMER:
+		if (update(message->m_delta)) {
+			g_gaWorld.sendMessageDelayed(m_name, m_name, GA_MSG_TIMER, 0, nullptr);
+		}
+		break;
+	}
+	dfObject::dispatchMessage(message);
+}
+
+/**
+ * trigger when inserted in a gaWorld
+ *  add the mesg on the scene
+ *  init the animation loop
+ */
+void dfObject3D::OnWorldInsert(void)
+{
+	g_gaWorld.add2scene(this);
+	g_gaWorld.sendMessageDelayed(m_name, m_name, GA_MSG_TIMER, 0, nullptr);
+
+	dfObject::OnWorldInsert();
 }
 
 dfObject3D::~dfObject3D()

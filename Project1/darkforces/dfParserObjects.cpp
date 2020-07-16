@@ -292,23 +292,19 @@ dfParserObjects::dfParserObjects(dfFileSystem* fs, dfPalette* palette, std::stri
 				dfSpriteAnimated* sprite = new dfSpriteAnimated(wax, position, ambient);
 				sprite->difficulty(difficulty);
 				sprite->rotation(rotation);
-				m_objects[m_currentObject] = parseObject(fs, sprite, infile);
-
-				m_currentObject++;
+				m_objects[m_currentObject++] = parseObject(fs, sprite, infile);
 			}
 			else if (tokenMap["CLASS:"] == "FRAME") {
 				dfFME* fme = (dfFME*)g_gaWorld.getModel(fmes[data]);
 				dfObject* frame = new dfSprite(fme, position, ambient);
 				frame->difficulty(difficulty);
-				m_objects[m_currentObject] = parseObject(fs, frame, infile);
-				m_currentObject++;
+				m_objects[m_currentObject++] = parseObject(fs, frame, infile);
 			}
 			else if (tokenMap["CLASS:"] == "3D") {
 				df3DO* tdo = (df3DO*)g_gaWorld.getModel(t3DOs[data]);
 				dfObject3D* threedo = new dfObject3D(tdo, position, ambient);
 				threedo->difficulty(difficulty);
-				m_objects[m_currentObject] = parseObject(fs, threedo, infile);
-				m_currentObject++;
+				m_objects[m_currentObject++] = parseObject(fs, threedo, infile);
 			}
 			else {
 #ifdef DEBUG
@@ -379,15 +375,11 @@ void dfParserObjects::buildSprites(void)
 		manager->addModel((dfFME*)fme);
 	}
 
-	dfObject* object;
-	for (auto i = 0; i < m_currentObject; i++) {
-		object = m_objects[i];
-
-		if (object->is(OBJECT_3DO)) {
-			continue;
+	// add to the world
+	for (auto object: m_objects) {
+		if (object != nullptr) {
+			g_gaWorld.addClient(object);
 		}
-
-		manager->add((dfSprite *)object);
 	}
 
 	time_t timer = GetTickCount64();
@@ -401,12 +393,6 @@ void dfParserObjects::add2scene(fwScene* scene)
 		m_added = true;
 		manager->set_name("dfSprites");
 		manager->add2scene(scene);
-
-		for (auto object: m_objects) {
-			if (object && object->is(OBJECT_3DO)) {
-				((dfObject3D*)object)->add2scene(scene);
-			}
-		}
 	}
 }
 

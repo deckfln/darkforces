@@ -23,7 +23,7 @@ class gaWorld
 	std::queue<gaMessage*> m_for_next_frame;
 	std::map<std::string, std::list<gaEntity*>> m_entities;
 	std::vector<dfSuperSector*> m_sectors;
-	dfSprites* m_sprites;							// sprites manager
+	dfSprites* m_sprites=nullptr;							// sprites manager
 	std::map<std::string, GameEngine::gaModel*> m_models;	// list of models (images, 3D objects ...)
 
 	bool m_timer = true;							// pass DF_MESSAGE_TIMER event

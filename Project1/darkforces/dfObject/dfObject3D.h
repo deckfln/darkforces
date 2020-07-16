@@ -2,9 +2,12 @@
 
 #include "../dfObject.h"
 
-class df3DO;
 class fwMesh;
 class fwScene;
+
+class gaMessage;
+
+class df3DO;
 class dfVue;
 class dfFileSystem;
 
@@ -25,12 +28,14 @@ public:
 	dfObject3D(df3DO* threedo, glm::vec3& position, float ambient);
 	void animRotationAxe(int axe);
 	void animRotationSpeed(float s);
-	void add2scene(fwScene* scene);
 	void pause(bool p) { m_pause = p; };
 	void vue(dfFileSystem *fs, std::string& vue, std::string& component);
 
-	virtual bool update(time_t t);					// update based on timer
+	virtual bool update(time_t t);						// update based on timer
 	virtual void updateWorldAABB(void);
+	virtual void dispatchMessage(gaMessage* message);
+	virtual void OnWorldInsert(void);					// trigger when inserted in a gaWorld
+	virtual void add2scene(fwScene* scene);				// if the entity has a mesh, add to the scene
 
 	~dfObject3D();
 };

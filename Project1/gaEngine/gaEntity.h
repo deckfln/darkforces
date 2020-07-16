@@ -57,7 +57,7 @@ public:
 	void rotate(const glm::vec3& rotation);				// rotate the object and update the AABB
 	float distanceTo(gaEntity* other);					// distance between the 2 entities
 	float distanceTo(const glm::vec3& p);				// distance from the entity position to the point
-	void add2scene(fwScene* scene);						// if the entity has a mesh, add to the scene
+	virtual void add2scene(fwScene* scene);				// if the entity has a mesh, add to the scene
 	virtual void collideWith(gaEntity*) {};				// inform another entity of a collision
 	virtual void updateWorldAABB(void);					// update the world AABB based on position
 	virtual void moveTo(const glm::vec3& position);		// move the the object and update the AABB
@@ -67,6 +67,7 @@ public:
 		glm::vec3& direction, 
 		glm::vec3& intersection, 
 		std::list<gaCollisionPoint>& collisions);		// extended collision test after a sucessfull AABB collision
+	virtual void OnWorldInsert(void) {};				// trigger when inserted in a gaWorld
 
 	~gaEntity();
 };

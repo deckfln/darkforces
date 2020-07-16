@@ -1,15 +1,17 @@
 #include "dfSprite.h"
 
+#include "../../gaEngine/gaWorld.h"
+#include "../dfSprites.h"
 #include "../dfLevel.h"
 #include "../dfModel.h"
 #include "../dfModel/dfFME.h"
 
-dfSprite::dfSprite(dfFME* fme, glm::vec3& position, float ambient):
+dfSprite::dfSprite(dfFME* fme, const glm::vec3& position, float ambient):
 	dfObject(fme, position, ambient, OBJECT_FME)
 {
 }
 
-dfSprite::dfSprite(dfModel* model, glm::vec3& position, float ambient, int type):
+dfSprite::dfSprite(dfModel* model, const glm::vec3& position, float ambient, int type):
 	dfObject(model, position, ambient, type)
 {
 }
@@ -35,6 +37,17 @@ bool dfSprite::updateSprite(glm::vec3* position, glm::vec4* texture, glm::vec3* 
 	}
 
 	return updates > 0;
+}
+
+/**
+ * trigger when inserted in a gaWorld
+ */
+void dfSprite::OnWorldInsert(void)
+{
+	dfSprites* manager = g_gaWorld.spritesManager();
+	manager->add((dfSprite*)this);
+
+	dfObject::OnWorldInsert();
 }
 
 dfSprite::~dfSprite()

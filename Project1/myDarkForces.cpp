@@ -39,12 +39,17 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 	// camera
 	m_camera = new fwCamera(width, height);
 
+	// scene
+	m_scene = new fwScene();
+	g_gaWorld.scene(m_scene);
+
 	// player
 	glm::vec3 start = glm::vec3(-21.26f, 0.95f, 29.064f);	// main hall
 	fwCylinder bounding(start, c_radius, c_height);
 
 	m_player = new gaActor(DF_ENTITY_OBJECT, "player", bounding, c_eyes, c_ankle);
 	m_player->addComponent(new dfComponentActor());
+	g_gaWorld.addClient(m_player);
 
 	// controls
 	m_control = new gaPlayer(m_camera, m_player, c_direction);
@@ -86,8 +91,6 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 
 	// init the m_scene
 	glm::vec3* yellow = new glm::vec3(255, 255, 0);
-	m_scene = new fwScene();
-	g_gaWorld.scene(m_scene);
 
 	// add the HUD
 	m_scene->hud(statuslt);

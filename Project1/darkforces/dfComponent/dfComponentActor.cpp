@@ -81,10 +81,10 @@ void dfComponentActor::dispatchMessage(gaMessage* message)
 void dfComponentActor::fire(const glm::vec3& direction)
 {
 	// create a bullet
+	// and add to the world to live its life
 	dfBullet* bullet = new dfBullet(m_parent->position() + glm::vec3(0, 0.3, 0), direction);
 
-	// and add to the world to live its life
-	g_gaWorld.add2scene(bullet);
+	g_gaWorld.addClient(bullet);
 
 	gaDebugLog(1, "dfActor::fire", "bullet");
 }

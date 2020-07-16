@@ -12,6 +12,7 @@
 #include "../framework/geometries/fwPlaneGeometry.h"
 #include "../framework/math/fwCylinder.h"
 
+#include "../gaEngine/gaWorld.h"
 #include "../gaEngine/gaBoundingBoxes.h"
 #include "../gaEngine/gaCollisionPoint.h"
 
@@ -143,6 +144,7 @@ dfLevel::dfLevel(dfFileSystem* fs, std::string file)
 
 	// bind the trigger to the elevator
 	for (auto trigger : m_inf->m_triggers) {
+		g_gaWorld.addClient(trigger);
 		dfSector* sector = m_sectorsName[trigger->sector()];
 		dfLogicElevator* elevator = m_elevators[sector->m_name];
 
@@ -207,8 +209,18 @@ dfLevel::dfLevel(dfFileSystem* fs, std::string file)
 	spacePartitioning();		// partion of space for quick move
 	buildGeometry();			// build the geometry of each super sectors
 
-	createTriggers();		// for elevator_spin1, create triggers
+	createTriggers();			// for elevator_spin1, create triggers
 	initElevators();			// move all elevators to position 0
+
+	// Add elevators to the world
+	for (auto elevator : m_inf->m_elevators) {
+		g_gaWorld.addClient(elevator);
+	}
+
+	// triggers to the world
+	for (auto trigger : m_inf->m_triggers) {
+		g_gaWorld.addClient(trigger);
+	}
 
 	free(sec);
 }

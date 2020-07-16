@@ -13,18 +13,19 @@ class dfSpriteAnimated: public dfSprite
 	glm::vec3 m_direction = glm::vec3(0);	// direction the object is looking to
 	time_t m_lastFrame = 0;					// time of the last animation frame
 	time_t m_currentFrame = 0;				// time of the current animation frame
-	time_t t;
 
 public:
-	dfSpriteAnimated(dfWAX* wax, glm::vec3& position, float ambient);
+	dfSpriteAnimated(dfWAX* wax, const glm::vec3& position, float ambient);
+	dfSpriteAnimated(const std::string& model, const glm::vec3& position, float ambient);
 	void state(int state);
-	void rotation(glm::vec3& rotation);
+	void rotation(const glm::vec3& rotation);
 
 	virtual bool updateSprite(glm::vec3* position, 
 		glm::vec4* texture, 
 		glm::vec3* direction);
 	virtual bool update(time_t t);			// update based on timer
 	virtual void dispatchMessage(gaMessage* message);	// let an entity deal with a situation
+	virtual void OnWorldInsert(void);					// trigger when inserted in a gaWorld
 
 	~dfSpriteAnimated();
 };

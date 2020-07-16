@@ -933,6 +933,7 @@
     <None Include="framework\shaders\hud\hud_vs.glsl">
       <Filter>Fichiers de ressources\framework</Filter>
     </None>
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="todo.txt">

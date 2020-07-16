@@ -26,6 +26,7 @@ gaWorld::gaWorld()
 void gaWorld::addClient(gaEntity* client)
 {
 	m_entities[client->name()].push_back(client);
+	client->OnWorldInsert();
 }
 
 /**

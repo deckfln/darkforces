@@ -5,8 +5,20 @@
 #include "../dfModel/dfWAX.h"
 #include "../dfLevel.h"
 
-dfSpriteAnimated::dfSpriteAnimated(dfWAX* wax, glm::vec3& position, float ambient):
+/**
+ * create a sprite from a pointer to a model
+ */
+dfSpriteAnimated::dfSpriteAnimated(dfWAX* wax, const glm::vec3& position, float ambient):
 	dfSprite(wax, position, ambient, OBJECT_WAX)
+{
+	gaEntity::updateWorldAABB();
+}
+
+/**
+ * create a sprite from a model name, the real model is extracted from the world
+ */
+dfSpriteAnimated::dfSpriteAnimated(const std::string& model, const glm::vec3& position, float ambient):
+	dfSprite((dfWAX*)g_gaWorld.getModel(model), position, ambient, OBJECT_WAX)
 {
 	gaEntity::updateWorldAABB();
 }
@@ -20,7 +32,6 @@ void dfSpriteAnimated::state(int state)
 	modelAABB(((dfWAX*)m_source)->bounding(m_state));
 	dfSprite::updateWorldAABB();
 	m_lastFrame = m_currentFrame = 0;
-	t = GetTickCount64();
 }
 
 bool dfSpriteAnimated::updateSprite(glm::vec3* position, glm::vec4* texture, glm::vec3* direction)
@@ -42,7 +53,7 @@ bool dfSpriteAnimated::updateSprite(glm::vec3* position, glm::vec4* texture, glm
 /**
  * Create a direction vector ased on pch, yaw, rol
  */
-void dfSpriteAnimated::rotation(glm::vec3& rotation)
+void dfSpriteAnimated::rotation(const glm::vec3& rotation)
 {
 	// YAW = value in degrees where 0 is at the "top of the screen when you look at the map". The value increases clockwise
 	float yaw = glm::radians(rotation.y);
@@ -107,6 +118,16 @@ void dfSpriteAnimated::dispatchMessage(gaMessage* message)
 		break;
 	}
 	dfSprite::dispatchMessage(message);
+}
+
+/**
+ * trigger when inserted in a gaWorld
+ * start the animation loop
+ */
+void dfSpriteAnimated::OnWorldInsert(void)
+{
+	g_gaWorld.sendMessageDelayed(m_name, m_name, GA_MSG_TIMER, 0, nullptr);
+	dfSprite::OnWorldInsert();
 }
 
 dfSpriteAnimated::~dfSpriteAnimated()
