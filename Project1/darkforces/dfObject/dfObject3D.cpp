@@ -92,10 +92,8 @@ bool dfObject3D::update(time_t t)
 		}
 		else {
 			// rotate the object
-			float delta = (float)t - m_lastFrame;
-			m_animRotation += m_animRotationAxe * m_aniRotationSpeed * delta;
+			m_animRotation += m_animRotationAxe * m_aniRotationSpeed * (float)t;
 			m_mesh->rotate(m_animRotation);
-			m_lastFrame = t;
 			dfObject::moveTo(m_position_lvl);	// update the bounding box
 		}
 

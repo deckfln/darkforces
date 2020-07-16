@@ -78,7 +78,7 @@ glm::mat4* dfVue::firstFrame(time_t t)
 {
 	static glm::mat4x4 matrice;
 
-	m_currentFrame = t;
+	m_currentFrame = 0;
 
 	glm::vec3 translation = m_animations[0].m_position;
 	glm::vec3 rotation = m_animations[0].m_rotation;
@@ -98,9 +98,9 @@ glm::mat4* dfVue::nextFrame(time_t t)
 {
 	static glm::mat4x4 matrice;
 
-	time_t delta = t - m_currentFrame;
+	m_currentFrame += t;
 
-	float frame = delta * m_fps / 1000.0f;
+	float frame = m_currentFrame * m_fps / 1000.0f;
 	if (frame + 1 >= m_animations.size()) {
 		return nullptr;
 	}
