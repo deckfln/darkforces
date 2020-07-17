@@ -19,9 +19,10 @@
 #include "../gaEngine/gaCollisionPoint.h"
 
 #include "../darkforces/dfSuperSector.h"
-#include "../darkforces/dfObject/dfSpriteAnimated.h"
 #include "../darkforces/dfModel/dfWAX.h"
 #include "../darkforces/dfSprites.h"
+#include "../darkforces/dfObject/dfSpriteAnimated.h"
+#include "../darkforces/dfObject/dfBulletExplode.h"
 
 const float bullet_length = 0.5f;
 const float bullet_radius = 0.01f;
@@ -149,11 +150,10 @@ void dfBullet::dispatchMessage(gaMessage* message)
 			}
 			else {
 				// add an impact sprite
-				// constructor of a sripte expects a level space
+				// constructor of a sprite expects a level space
 				glm::vec3 p;
 				dfLevel::gl2level(m_position, p);
-				dfSpriteAnimated* impact = new dfSpriteAnimated("BULLEXP.WAX", p, 1.0f);
-				impact->state(DF_STATE_ENEMY_MOVE);
+				dfBulletExplode* impact = new dfBulletExplode(p, 1.0f);
 				g_gaWorld.addClient(impact);
 
 				// if nearest is an entity

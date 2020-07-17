@@ -57,18 +57,29 @@ void dfSprites::addModel(dfModel* model)
  */
 void dfSprites::add(dfSprite *object)
 {
-	m_objects.resize(m_objects.size() + 1);
-	m_objects[m_nbObjects++] = object;
+	// find an empty slot
+	size_t slot;
 
-	m_textureIndex[m_toDisplay].g = (float)m_modelsIndex[object->model()];
+	if (m_freeList.size() == 0) {
+		slot = m_objects.size();
+		m_objects.resize(m_objects.size() + 1);
+		m_nbObjects++;
+		m_toDisplay++;
+	}
+	else {
+		slot = m_freeList.front();
+		m_freeList.pop();
+	}
+
+	m_objects[slot] = object;
+	m_textureIndex[slot].g = (float)m_modelsIndex[object->model()];
 
 	object->updateSprite(
-		&m_positions[m_toDisplay],
-		&m_textureIndex[m_toDisplay],
-		&m_directions[m_toDisplay]
+		&m_positions[slot],
+		&m_textureIndex[slot],
+		&m_directions[slot]
 	);
 
-	m_toDisplay++;
 	m_updated = true;
 }
 
@@ -79,13 +90,20 @@ void dfSprites::update(void)
 {
 	int i = 0;
 	for (auto object : m_objects) {
-		// if the animation got updated, update the sprite buffers
-		if (object->updateSprite(
-			&m_positions[i],
-			&m_textureIndex[i],
-			&m_directions[i]
-		)) {
-			m_updated = true;
+
+		if (object) {
+			// if the animation got updated, update the sprite buffers
+			if (object->updateSprite(
+				&m_positions[i],
+				&m_textureIndex[i],
+				&m_directions[i]
+			)) {
+				m_updated = true;
+			}
+		}
+		else {
+			// mark the model as non-existent
+			m_textureIndex[i] = glm::vec4(65536, 0, 0, 0);
 		}
 		i++;
 	}
@@ -101,6 +119,22 @@ void dfSprites::update(void)
 		models->map(&m_models.models, 0, sizeof(struct GLmodel));
 		models->unbind();
 		m_dirtyModels = false;
+	}
+}
+
+/**
+ * Remove a sprite from the list
+ */
+void dfSprites::remove(dfSprite* object)
+{
+	for (size_t i = 0; i < m_objects.size(); i++) {
+		if (m_objects[i] == object) {
+			m_objects[i] = nullptr;
+			m_updated = true;
+
+			m_freeList.push(i);	// register the empty slot
+			break;
+		}
 	}
 }
 

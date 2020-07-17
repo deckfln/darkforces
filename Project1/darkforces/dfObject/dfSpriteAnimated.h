@@ -14,11 +14,17 @@ class dfSpriteAnimated: public dfSprite
 	time_t m_lastFrame = 0;					// time of the last animation frame
 	time_t m_currentFrame = 0;				// time of the current animation frame
 
+protected:
+	bool m_loopAnimation = true;			// animations are looping (default)
+
 public:
 	dfSpriteAnimated(dfWAX* wax, const glm::vec3& position, float ambient);
 	dfSpriteAnimated(const std::string& model, const glm::vec3& position, float ambient);
 	void state(int state);
 	void rotation(const glm::vec3& rotation);
+
+	void loop(bool l) { m_loopAnimation = l; };
+	bool loop(void) { return m_loopAnimation; };
 
 	virtual bool updateSprite(glm::vec3* position, 
 		glm::vec4* texture, 

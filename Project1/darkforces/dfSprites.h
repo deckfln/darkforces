@@ -4,6 +4,7 @@
 #include <vector>
 #include <map>
 #include <string>
+#include <queue>
 
 #include "../framework/fwSprites.h"
 #include "dfAtlasTexture.h"
@@ -17,10 +18,11 @@ class dfSprites: public fwSprites
 {
 	std::vector<glm::vec3> m_positions;		// position of each sprite
 	std::vector<glm::vec3> m_directions;	// direction of the virtual object
-	std::vector<glm::vec4> m_textureIndex;	// stae, frame for the GPU to display the correct texture
+	std::vector<glm::vec4> m_textureIndex;	// state & frame for the GPU to display the correct texture
 
 	int m_nbObjects= 0;
-	std::vector<dfSprite *> m_objects;
+	std::vector<dfSprite *> m_objects;		// list of objects (may include NULL when released)
+	std::queue<int> m_freeList;				// Queue of available slots in m_objects
 
 	int m_nbModels = 0;
 	bool m_dirtyModels = true;
@@ -35,8 +37,9 @@ class dfSprites: public fwSprites
 public:
 	dfSprites(int nbSprites, dfAtlasTexture *atlas);
 	void addModel(dfModel *model);
-	void add(dfSprite *object);
+	void add(dfSprite *object);				// add a sprite
 	void update(void);						// push changes to the GPU
+	void remove(dfSprite* object);			// remove a sprite
 	void add2scene(fwScene* scene);
 	~dfSprites();
 };

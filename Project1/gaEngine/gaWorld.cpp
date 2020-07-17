@@ -39,6 +39,8 @@ void gaWorld::removeClient(gaEntity* client)
 		return;
 	}
 
+	client->OnWorldRemove();
+
 	// remove from the list
 	m_entities[client->name()].remove(client);
 
@@ -298,6 +300,7 @@ void gaWorld::process(time_t delta)
 				// delete all instances of the given entity
 				if (m_entities.count(message->m_server) > 0) {
 					for (auto entity : m_entities[message->m_server]) {
+						entity->OnWorldRemove();
 						delete entity;
 						m_entities.erase(message->m_server);
 						break;

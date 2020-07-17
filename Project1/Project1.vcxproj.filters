@@ -58,6 +58,12 @@
     <Filter Include="Fichiers sources\Dark Forces\dfComponent">
       <UniqueIdentifier>{49281473-9b0b-4cac-8b25-d7c5dd940786}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Fichiers d%27en-tête\DarkForces\dfObject">
+      <UniqueIdentifier>{e89a3403-02b5-498f-8024-19b28736c505}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers sources\Dark Forces\dfObject">
+      <UniqueIdentifier>{dfc6f7a8-33db-41b8-92fb-390d7583198c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source.cpp">
@@ -458,6 +464,9 @@
     </ClCompile>
     <ClCompile Include="gaEngine\gaModel.cpp">
       <Filter>Fichiers sources\gaEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="darkforces\dfObject\dfBulletExplode.cpp">
+      <Filter>Fichiers sources\Dark Forces\dfObject</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -871,6 +880,9 @@
     </ClInclude>
     <ClInclude Include="gaEngine\gaModel.h">
       <Filter>Fichiers d%27en-tête\gaEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="darkforces\dfObject\dfBulletExplode.h">
+      <Filter>Fichiers d%27en-tête\DarkForces\dfObject</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

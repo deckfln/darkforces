@@ -16,5 +16,6 @@ public:
 		glm::vec4* texture, 
 		glm::vec3* direction);
 	virtual void OnWorldInsert(void);					// trigger when inserted in a gaWorld
+	virtual void OnWorldRemove(void);					// trigger when from the gaWorld
 	~dfSprite();
 };

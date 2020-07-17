@@ -90,7 +90,12 @@ bool dfSpriteAnimated::update(time_t t)
 				m_frame = 0;
 				m_dirtyAnimation = true;
 				m_physical = false;			// remove collision box, they actor is dead
-				return false;
+				return false;				// Stop animation loop
+			}
+
+			// does the animation loop ?
+			if (!m_loopAnimation) {
+				return false;				// Stop animation loop
 			}
 
 			// restart the counters
@@ -101,8 +106,7 @@ bool dfSpriteAnimated::update(time_t t)
 		m_dirtyAnimation = true;
 	}
 
-
-	return true;
+	return true;	// continue animation loop
 }
 
 /**
@@ -113,7 +117,12 @@ void dfSpriteAnimated::dispatchMessage(gaMessage* message)
 	switch (message->m_action) {
 	case GA_MSG_TIMER:
 		if (update(message->m_delta)) {
+			// continue the animation loop
 			g_gaWorld.sendMessageDelayed(m_name, m_name, GA_MSG_TIMER, 0, nullptr);
+		}
+		else {
+			// end of animation loop
+			g_gaWorld.sendMessageDelayed(m_name, m_name, DF_MESSAGE_END_LOOP, 0, nullptr);
 		}
 		break;
 	}

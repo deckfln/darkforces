@@ -44,25 +44,31 @@ void main()
     uint frameID = uint(aData.b);
 	vAmbient = aData.a;
 
-    sm.size = modelTable[modelID].size;
-    sm.insert = modelTable[modelID].insert;
-	sm.statesIndex = modelTable[modelID].statesIndex;
+	if (modelID < uint(65536)) {
+		sm.size = modelTable[modelID].size;
+		sm.insert = modelTable[modelID].insert;
+		sm.statesIndex = modelTable[modelID].statesIndex;
 	
-	if (sm.statesIndex.r < 65535) {
-		// animated sprite
-		vec3 viewer2object = normalize(aPos - viewPos);
-		float viewAngle = (dot(aDirection, viewer2object) + 1) * 8.0;
-		//https://stackoverflow.com/questions/1560492/how-to-tell-whether-a-point-is-to-the-right-or-left-side-of-a-line
-		//Use the sign of the determinant of vectors (AB,AM), where M(X,Y) is the query point:
-		float det = sign(aDirection.x * viewer2object.z - aDirection.z * viewer2object.x);
-		det = 1.0-clamp(det, 0, 1);
+		if (sm.statesIndex.r < 65535) {
+			// animated sprite
+			vec3 viewer2object = normalize(aPos - viewPos);
+			float viewAngle = (dot(aDirection, viewer2object) + 1) * 8.0;
+			//https://stackoverflow.com/questions/1560492/how-to-tell-whether-a-point-is-to-the-right-or-left-side-of-a-line
+			//Use the sign of the determinant of vectors (AB,AM), where M(X,Y) is the query point:
+			float det = sign(aDirection.x * viewer2object.z - aDirection.z * viewer2object.x);
+			det = 1.0-clamp(det, 0, 1);
 
-		uint angles = indexes[uint(stateID)+uint(sm.statesIndex.r)].x;
-		uint frames = indexes[angles + spriteangle[uint(viewAngle + det * 16)]].y;
-		vTextureID = indexes[frames + frameID].z;
+			uint angles = indexes[uint(stateID)+uint(sm.statesIndex.r)].x;
+			uint frames = indexes[angles + spriteangle[uint(viewAngle + det * 16)]].y;
+			vTextureID = indexes[frames + frameID].z;
+		}
+		else {
+			vTextureID = uint(sm.statesIndex.g);
+		}
 	}
 	else {
-		vTextureID = uint(sm.statesIndex.g);
+		// empty slow, draw nothing
+		vTextureID = uint(65536);
 	}
 
 	vWorld = vec3(model * vec4(aPos, 1.0));

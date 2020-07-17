@@ -27,6 +27,10 @@ out vec3 world;
 void main()
 {
     textureID = vTextureID[0];  // Point has only one vertex
+    if (textureID == uint(65536)) {
+        return;
+    }
+
     ambient = vAmbient[0];      // Point has only one vertex
 
     world = vWorld[0];         // gl_in[0].gl_Position;

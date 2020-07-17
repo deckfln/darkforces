@@ -68,6 +68,7 @@ public:
 		glm::vec3& intersection, 
 		std::list<gaCollisionPoint>& collisions);		// extended collision test after a sucessfull AABB collision
 	virtual void OnWorldInsert(void) {};				// trigger when inserted in a gaWorld
+	virtual void OnWorldRemove(void) {};				// trigger when from the gaWorld
 
 	~gaEntity();
 };
