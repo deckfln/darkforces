@@ -598,9 +598,6 @@ void dfLevel::draw(fwCamera* camera, fwScene* scene)
 		m_skyboxAdded = true;
 	}
 
-	// add the sprites
-	m_objects->add2scene(scene);
-
 	// draw the boundingboxes
 	g_gaBoundingBoxes.draw(scene);
 }

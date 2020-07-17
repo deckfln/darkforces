@@ -21,6 +21,15 @@ gaWorld::gaWorld()
 }
 
 /**
+ *  register the scene
+ */
+void gaWorld::scene(fwScene* scene)
+{
+	m_scene = scene;
+	set("scene", scene);
+}
+
+/**
  * Add a new gaEntity
  */
 void gaWorld::addClient(gaEntity* client)
@@ -64,6 +73,26 @@ void gaWorld::add2scene(gaEntity* client)
 void gaWorld::addSector(dfSuperSector* client)
 {
 	m_sectors.push_back(client);
+}
+
+/**
+ * add a new generic object
+ */
+void gaWorld::set(const std::string& name, void* object)
+{
+	m_registry[name] = object;
+}
+
+/**
+ * retrieve a generic object
+ */
+void* gaWorld::get(const std::string& name)
+{
+	if (m_registry.count(name) > 0) {
+		return m_registry[name];
+	}
+
+	return nullptr;
 }
 
 /**
@@ -122,6 +151,7 @@ void gaWorld::getModelsByClass(uint32_t myclass, std::list<GameEngine::gaModel*>
 void gaWorld::spritesManager(dfSprites* sprites)
 {
 	m_sprites = sprites;
+	sprites->OnWorldInsert();
 }
 
 static int g_lastMessage = 0;

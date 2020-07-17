@@ -386,16 +386,6 @@ void dfParserObjects::buildSprites(void)
 	manager->update();
 }
 
-void dfParserObjects::add2scene(fwScene* scene)
-{
-	dfSprites* manager = g_gaWorld.spritesManager();
-	if (!m_added) {
-		m_added = true;
-		manager->set_name("dfSprites");
-		manager->add2scene(scene);
-	}
-}
-
 /**
  * test the objects for a collision
  */

@@ -25,6 +25,7 @@ class gaWorld
 	std::vector<dfSuperSector*> m_sectors;
 	dfSprites* m_sprites=nullptr;							// sprites manager
 	std::map<std::string, GameEngine::gaModel*> m_models;	// list of models (images, 3D objects ...)
+	std::map<std::string, void*> m_registry;				// list of objects
 
 	bool m_timer = true;							// pass DF_MESSAGE_TIMER event
 	fwScene* m_scene;								// current scene on screen;
@@ -32,12 +33,14 @@ class gaWorld
 public:
 	gaWorld(void);
 
-	void scene(fwScene* scene) { m_scene = scene; };
+	void scene(fwScene* scene);							// register the scene
 
 	void addClient(gaEntity* client);					// add a spirit entity
 	void removeClient(gaEntity* client);				// remove a spirit entity
 	void add2scene(gaEntity* client);					// add an entiuty mesh (if it has one) to the current scene
 	void addSector(dfSuperSector* client);				// add a game sector
+	void set(const std::string& name, void* object);	// add a new generic object
+	void* get(const std::string& name);					// retrieve a generic object
 
 	void addModel(GameEngine::gaModel* model);							// add a new model to the world
 	GameEngine::gaModel* getModel(const std::string& name);				// get a model from the world

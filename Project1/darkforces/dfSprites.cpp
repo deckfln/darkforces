@@ -14,6 +14,8 @@ static fwUniform* modelsUniform = nullptr;
 dfSprites::dfSprites(int nbSprites, dfAtlasTexture* atlas):
 	fwSprites(nbSprites)
 {
+	set_name("dfSprites");
+
 	m_positions.resize(nbSprites);
 	m_directions.resize(nbSprites);
 	m_textureIndex.resize(nbSprites);
@@ -138,12 +140,22 @@ void dfSprites::remove(dfSprite* object)
 	}
 }
 
-void dfSprites::add2scene(fwScene* scene)
+/**
+ *
+ */
+void dfSprites::OnWorldInsert(void)
 {
-	if (!m_added) {
-		m_added = true;
-		scene->addChild(this);
-	}
+	fwScene* scene = (fwScene * )g_gaWorld.get("scene");
+	scene->addChild(this);
+}
+
+/**
+ * trigger when from the gaWorld
+ */
+void dfSprites::OnWorldRemove(void)
+{
+	fwScene* scene = (fwScene*)g_gaWorld.get("scene");
+	scene->removeChild(this);
 }
 
 dfSprites::~dfSprites()

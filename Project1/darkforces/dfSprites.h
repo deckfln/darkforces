@@ -40,6 +40,8 @@ public:
 	void add(dfSprite *object);				// add a sprite
 	void update(void);						// push changes to the GPU
 	void remove(dfSprite* object);			// remove a sprite
-	void add2scene(fwScene* scene);
+	void OnWorldInsert(void);				// trigger when inserted in a gaWorld
+	void OnWorldRemove(void);				// trigger when from the gaWorld
+
 	~dfSprites();
 };
