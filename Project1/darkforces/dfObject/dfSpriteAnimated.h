@@ -31,7 +31,6 @@ public:
 		glm::vec3* direction) override;
 	bool update(time_t t) override;						// update based on timer
 	void dispatchMessage(gaMessage* message) override;	// let an entity deal with a situation
-	void OnWorldInsert(void) override;					// trigger when inserted in a gaWorld
 
 	~dfSpriteAnimated();
 };

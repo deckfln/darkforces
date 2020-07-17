@@ -32,6 +32,21 @@ void dfSpriteAnimated::state(int state)
 	modelAABB(((dfWAX*)m_source)->bounding(m_state));
 	dfSprite::updateWorldAABB();
 	m_lastFrame = m_currentFrame = 0;
+	m_frame = 0;
+	m_dirtyAnimation = true;
+
+	// trigger the animation, unless the object is static or has no animation
+	if (m_state != DF_STATE_ENEMY_LIE_DEAD &&
+		m_state != DF_STATE_ENEMY_STAY_STILL &&
+		m_source->framerate(m_state) != 0)
+	{
+		g_gaWorld.sendMessageDelayed(m_name, m_name, GA_MSG_TIMER, 0, nullptr);
+	}
+	else if (m_state == DF_STATE_ENEMY_LIE_DEAD) {
+		m_physical = false;			// remove collision box, they actor is dead
+
+		g_gaWorld.sendMessage(m_name, m_name, DF_MESSAGE_DIES, 0, nullptr);
+	}
 }
 
 bool dfSpriteAnimated::updateSprite(glm::vec3* position, glm::vec4* texture, glm::vec3* direction)
@@ -86,13 +101,7 @@ bool dfSpriteAnimated::update(time_t t)
 			switch (m_state) {
 			case DF_STATE_ENEMY_DIE_FROM_PUNCH:
 			case DF_STATE_ENEMY_DIE_FROM_SHOT:
-				m_state = DF_STATE_ENEMY_LIE_DEAD;
-				m_frame = 0;
-				m_dirtyAnimation = true;
-				m_physical = false;			// remove collision box, they actor is dead
-
-				g_gaWorld.sendMessage(m_name, m_name, DF_MESSAGE_DIES, 0, nullptr);
-
+				state(DF_STATE_ENEMY_LIE_DEAD);
 				return false;				// Stop animation loop
 			}
 
@@ -130,16 +139,6 @@ void dfSpriteAnimated::dispatchMessage(gaMessage* message)
 		break;
 	}
 	dfSprite::dispatchMessage(message);
-}
-
-/**
- * trigger when inserted in a gaWorld
- * start the animation loop
- */
-void dfSpriteAnimated::OnWorldInsert(void)
-{
-	g_gaWorld.sendMessageDelayed(m_name, m_name, GA_MSG_TIMER, 0, nullptr);
-	dfSprite::OnWorldInsert();
 }
 
 dfSpriteAnimated::~dfSpriteAnimated()
