@@ -17,7 +17,8 @@ public:
 	dfBullet(const glm::vec3& position, const glm::vec3& direction);
 	fwMesh* mesh(void) { return m_mesh; };
 
-	virtual void OnWorldInsert(void);				// trigger when the bullet is added to the world
-	virtual void dispatchMessage(gaMessage* message);
+	void OnWorldInsert(void) override;				// trigger when the bullet is added to the world
+	void dispatchMessage(gaMessage* message) override;
+
 	~dfBullet();
 };

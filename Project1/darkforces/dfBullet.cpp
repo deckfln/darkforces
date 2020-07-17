@@ -41,7 +41,7 @@ dfBullet::dfBullet(const glm::vec3& position, const glm::vec3& direction):
 	// create a mesh for the blaster
 	if (g_blaster == nullptr) {
 		g_basic.makeStatic();
-		g_blaster = new fwGeometryCylinder(bullet_radius, bullet_length);
+		g_blaster = new fwGeometryCylinder(bullet_radius, bullet_length, 8, -1);
 		g_blaster->makeStatic();
 	}
 	// the AABOX is just the direction vector

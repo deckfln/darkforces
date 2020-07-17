@@ -5,6 +5,13 @@
 
 #include <list>
 
+/// create a cylinder fwGeometry
+/// 
+/// radius:
+/// height:
+/// widthSegments:
+/// heightSegments: if negative means created backward
+/// <returns></returns>
 fwGeometryCylinder::fwGeometryCylinder(float radius, float height, float widthSegments, float heightSegments)
 {
     // copy/pasted from THREE.JS
@@ -16,7 +23,12 @@ fwGeometryCylinder::fwGeometryCylinder(float radius, float height, float widthSe
 
     std::vector<std::vector<int>> grid;
 
+    // direction
+    float s = (heightSegments > 0) ? 1.0f : -1.0f;
+    heightSegments = abs(heightSegments);
+
     // generate vertices, normals and uvs
+
     for (auto iy = 0; iy < heightSegments + 1; iy++) {
         std::vector<int> verticesRow;
 
@@ -32,7 +44,7 @@ fwGeometryCylinder::fwGeometryCylinder(float radius, float height, float widthSe
 
             // vertex
             m_vertices.push_back(
-                glm::vec3(radius * sinTheta, radius * cosTheta , -v * height + halfHeight)
+                glm::vec3(radius * sinTheta, radius * cosTheta , -v * s * height + halfHeight)
             );
 
             // normal
