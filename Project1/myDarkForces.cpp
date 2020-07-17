@@ -69,8 +69,18 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 	m_renderer->customLight("/data/shaders/lightning.glsl");
 
 	// preload animations
-	GameEngine::gaModel* wax = new GameEngine::gaModel("BULLEXP.WAX", GameEngine::PRELOAD);
-	g_gaWorld.addModel(wax);
+	const std::vector<std::string> preloads = {
+		"BULLEXP.WAX",
+		"IST-GUNI.FME",
+		"IKEYR.FME",
+		"IENERGY.FME",
+		"IPOWER.FME"
+	};
+	GameEngine::gaModel* mod;
+	for (const std::string& n: preloads) {
+		mod = new GameEngine::gaModel(n, GameEngine::PRELOAD);
+		g_gaWorld.addModel(mod);
+	}
 
 	// load first level
 	m_level = new dfLevel(m_filesystem, "SECBASE");

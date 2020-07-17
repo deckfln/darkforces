@@ -26,12 +26,12 @@ public:
 	void loop(bool l) { m_loopAnimation = l; };
 	bool loop(void) { return m_loopAnimation; };
 
-	virtual bool updateSprite(glm::vec3* position, 
+	bool updateSprite(glm::vec3* position, 
 		glm::vec4* texture, 
-		glm::vec3* direction);
-	virtual bool update(time_t t);			// update based on timer
-	virtual void dispatchMessage(gaMessage* message);	// let an entity deal with a situation
-	virtual void OnWorldInsert(void);					// trigger when inserted in a gaWorld
+		glm::vec3* direction) override;
+	bool update(time_t t) override;						// update based on timer
+	void dispatchMessage(gaMessage* message) override;	// let an entity deal with a situation
+	void OnWorldInsert(void) override;					// trigger when inserted in a gaWorld
 
 	~dfSpriteAnimated();
 };

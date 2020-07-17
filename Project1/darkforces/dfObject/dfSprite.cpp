@@ -1,18 +1,33 @@
 #include "dfSprite.h"
 
 #include "../../gaEngine/gaWorld.h"
+
 #include "../dfSprites.h"
 #include "../dfLevel.h"
 #include "../dfModel.h"
 #include "../dfModel/dfFME.h"
 
+/**
+ * create from an image
+ */
 dfSprite::dfSprite(dfFME* fme, const glm::vec3& position, float ambient):
 	dfObject(fme, position, ambient, OBJECT_FME)
 {
 }
 
+/**
+ * create from a model
+ */
 dfSprite::dfSprite(dfModel* model, const glm::vec3& position, float ambient, int type):
 	dfObject(model, position, ambient, type)
+{
+}
+
+/**
+ * create from a model name
+ */
+dfSprite::dfSprite(const std::string& name, const glm::vec3& position, float ambient, int type) :
+	dfObject((dfFME*)g_gaWorld.getModel(name), position, ambient, type)
 {
 }
 

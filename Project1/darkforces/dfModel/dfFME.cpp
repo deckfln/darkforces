@@ -17,7 +17,7 @@ const uint32_t g_fme_class = GameEngine::gaModel::m_modelClasses++;
 /**
  * Create a FME from a file
  */
-dfFME::dfFME(dfFileSystem* fs, dfPalette* palette, std::string& name):
+dfFME::dfFME(dfFileSystem* fs, dfPalette* palette, const std::string& name):
 	dfModel(name, g_fme_class, false)
 {
 	int size;

@@ -306,7 +306,7 @@ void gaWorld::process(time_t delta)
 		m_queue.pop();
 
 		// manage loops inside one run
-		std::string k = message->m_server + message->m_client;
+		std::string k = message->m_server + message->m_client + std::to_string(message->m_action);
 		if (loopDetector.count(k) > 0) {
 			message->m_used = false;
 			continue;

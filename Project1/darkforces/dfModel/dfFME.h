@@ -16,7 +16,7 @@ class dfFME: public dfModel
 	dfFrame* m_image = nullptr;
 
 public:
-	dfFME(dfFileSystem* fs, dfPalette* palette, std::string& name);
+	dfFME(dfFileSystem* fs, dfPalette* palette, const std::string& name);
 	dfFrame* frame(void) { return m_image; };
 	void spriteModel(GLmodel& model, int id);
 	~dfFME();

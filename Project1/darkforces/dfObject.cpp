@@ -11,6 +11,7 @@
 #include "dfLevel.h"
 #include "dfCollision.h"
 #include "dfComponent/dfComponentActor.h"
+#include "dfObject/dfSprite.h"
 
 static int g_ids = 0;
 
@@ -48,7 +49,7 @@ void dfObject::logic(int logic)
 	m_logics |= logic;
 
 	// Only enemies cannot be walked through
-	if (m_logics & DF_ENEMIES) {
+	if (m_logics & DF_LOGIC_ENEMIES) {
 		physical(true);
 	}
 
@@ -159,6 +160,57 @@ void dfObject::collideWith(gaEntity* entity)
 			moveTo(glm::vec3(0));
 		}
 	}
+}
+
+/**
+ * drop the bag of the object when it dies
+ */
+void dfObject::dispatchMessage(gaMessage* message)
+{
+	switch (message->m_action) {
+	case DF_MESSAGE_DIES:
+		die();
+	}
+
+	gaEntity::dispatchMessage(message);
+}
+
+/**
+ * when the object dies
+ */
+void dfObject::die(void)
+{
+	if (m_logics & DF_LOGIC_ENEMIES) {
+		if (m_logics & (DF_LOGIC_COMMANDO | DF_LOGIC_TROOP)) {
+			drop("IST-GUNI.FME");
+		}
+		else if (m_logics & DF_LOGIC_I_OFFICER) {
+			if (m_logics & DF_LOGIC_RED_KEY) {
+				drop("IKEYR.FME");
+			}
+			drop("IENERGY.FME");
+		}
+		else if (m_logics & DF_LOGIC_MOUSEBOT) {
+			drop("DEDMOUSE.FME");
+			drop("IBATTERY.FME");
+		}
+		else if (m_logics & DF_LOGIC_INTDROID) {
+			drop("IPOWER.FME");
+		}
+	}
+}
+
+
+/**
+ * object to drop in the scene at the current position
+ */
+void dfObject::drop(const std::string& object)
+{
+	// constructor of a sprite expects a level space
+	glm::vec3 p;
+	dfLevel::gl2level(m_position, p);
+	dfSprite* obj = new dfSprite(object, p, 1.0f, OBJECT_FME);
+	g_gaWorld.addClient(obj);
 }
 
 /**

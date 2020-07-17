@@ -81,7 +81,7 @@ enum {
 };
 
 // list of all enemies
-const unsigned long DF_ENEMIES = DF_LOGIC_I_OFFICER | DF_LOGIC_COMMANDO | DF_LOGIC_TROOP;
+const unsigned long DF_LOGIC_ENEMIES = DF_LOGIC_I_OFFICER | DF_LOGIC_COMMANDO | DF_LOGIC_TROOP;
 
 class dfObject: public gaEntity
 {
@@ -122,15 +122,19 @@ public:
 	bool isLogic(int logic);
 	const std::string& model(void);
 	void logic(int logic);
+	void drop(const std::string& object);				// object to drop in the scene at the current position
 
-	virtual bool checkCollision(fwCylinder& bounding,
+	bool checkCollision(fwCylinder& bounding,
 		glm::vec3& direction,
 		glm::vec3& intersection,
-		std::list<gaCollisionPoint>& collisions);	// extended collision test after a sucessfull AABB collision
-	virtual void moveTo(const glm::vec3& position);	// update the object position
-	virtual void updateWorldAABB(void);				// update the world AABB based on position
-	virtual bool update(time_t t);					// update based on timer
-	virtual void collideWith(gaEntity*);			// reaction on a collision with another entity
+		std::list<gaCollisionPoint>& collisions) override;	// extended collision test after a sucessfull AABB collision
+	void moveTo(const glm::vec3& position) override;	// update the object position
+	void updateWorldAABB(void) override;				// update the world AABB based on position
+	bool update(time_t t) override;						// update based on timer
+	void collideWith(gaEntity*) override;				// reaction on a collision with another entity
+	void dispatchMessage(gaMessage* message) override;
+
+	virtual void die(void);							// when the object dies
 
 	~dfObject();
 };

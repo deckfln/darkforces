@@ -187,7 +187,7 @@ dfObject* dfParserObjects::parseObject(dfFileSystem* fs, dfObject* sprite, std::
 	}
 
 	// for enemies add an actor component
-	if (sprite->isLogic(DF_ENEMIES)) {
+	if (sprite->isLogic(DF_LOGIC_ENEMIES)) {
 		sprite->addComponent(new dfComponentActor());
 	}
 	return sprite;
@@ -318,11 +318,17 @@ dfParserObjects::dfParserObjects(dfFileSystem* fs, dfPalette* palette, std::stri
 	std::list<GameEngine::gaModel*> l;
 	g_gaWorld.getModelsByClass(GameEngine::PRELOAD, l);
 	for (auto model : l) {
-		dfWAX* wax = new dfWAX(fs, palette, model->name());
+		g_gaWorld.removeModel(model->name());
 
 		// replace the place holder with the real model
-		g_gaWorld.removeModel(model->name());
-		g_gaWorld.addModel(wax);
+		if (model->name().find(".WAX") != std::string::npos) {
+			dfWAX* wax = new dfWAX(fs, palette, model->name());
+			g_gaWorld.addModel(wax);
+		}
+		else if (model->name().find(".FME") != std::string::npos) {
+			dfFME* fme = new dfFME(fs, palette, model->name());
+			g_gaWorld.addModel(fme);
+		}
 	}
 
 	delete sec;
