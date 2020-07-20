@@ -229,6 +229,8 @@
     <ClCompile Include="gaEngine\gaModel.cpp" />
     <ClCompile Include="gaEngine\gaPlayer.cpp" />
     <ClCompile Include="gaEngine\gaWorld.cpp" />
+    <ClCompile Include="gaEngine\Lexer.cpp" />
+    <ClCompile Include="gaEngine\Parser.cpp" />
     <ClCompile Include="glEngine\framebuffer\glDepthCubeMap.cpp" />
     <ClCompile Include="glEngine\glBufferAttribute.cpp" />
     <ClCompile Include="glEngine\glBufferObject.cpp" />
@@ -300,6 +302,7 @@
     <ClInclude Include="darkforces\dfVOC.h" />
     <ClInclude Include="darkforces\dfVue.h" />
     <ClInclude Include="darkforces\dfWall.h" />
+    <ClInclude Include="darkforces\lexer\dfObject.lex.h" />
     <ClInclude Include="framework\background\fwSkybox.h" />
     <ClInclude Include="framework\background\fwSkyline.h" />
     <ClInclude Include="framework\camera\fwCameraPanoramic.h" />
@@ -368,6 +371,8 @@
     <ClInclude Include="gaEngine\gaModel.h" />
     <ClInclude Include="gaEngine\gaPlayer.h" />
     <ClInclude Include="gaEngine\gaWorld.h" />
+    <ClInclude Include="gaEngine\Lexer.h" />
+    <ClInclude Include="gaEngine\Parser.h" />
     <ClInclude Include="glEngine\framebuffer\glDepthCubeMap.h" />
     <ClInclude Include="glEngine\glBufferAttribute.h" />
     <ClInclude Include="glEngine\glBufferObject.h" />

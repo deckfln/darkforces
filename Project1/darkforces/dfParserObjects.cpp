@@ -6,6 +6,10 @@
 #include "../config.h"
 #include "../framework/fwScene.h"
 
+#include "../gaEngine/Lexer.h"
+
+#include "lexer/dfObject.lex.h"
+
 #include "dfFileSystem.h"
 #include "dfParseINF.h"
 #include "dfModel/dfWAX.h"
@@ -20,6 +24,7 @@
 #include "dfSprites.h"
 #include "dfGame.h"
 #include "dfLevel.h"
+
 
 /*
 DIFF	EASY	MED	HARD
@@ -204,6 +209,9 @@ dfParserObjects::dfParserObjects(dfFileSystem* fs, dfPalette* palette, std::stri
 	std::string line, dump;
 	std::map<std::string, std::string> tokenMap;
 
+	GameEngine::Lexer lexer(std::string(sec), g_keywords);
+	GameEngine::Parser parser(lexer, g_dfObjectParse, g_keywords);
+
 	int currentWax = 0;
 	int currentFME = 0;
 	int current3DO = 0;
@@ -211,6 +219,8 @@ dfParserObjects::dfParserObjects(dfFileSystem* fs, dfPalette* palette, std::stri
 	std::vector<std::string> waxes;
 	std::vector<std::string> fmes;
 	std::vector<std::string> t3DOs;
+
+	const struct GameEngine::token* token;
 
 	while (std::getline(infile, line))
 	{
