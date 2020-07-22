@@ -14,7 +14,7 @@ enum {
 	O_FMES,	//1030
 	O_FME,
 	O_SOUNDS,
-	O_OBJECTS,
+	O_OBJECTS,	// 1033
 	O_CLASS,
 	O_SPIRIT,
 	O_DATA,
@@ -25,7 +25,7 @@ enum {
 	O_YAW,
 	O_ROL,
 	O_DIFF,
-	O_SEQ,
+	O_SEQ,		//1044
 	O_SEQEND,	//1045
 	O_LOGIC,	//1046
 	O_EYE,
@@ -56,7 +56,7 @@ enum {
 	O_MEDKIT,
 	O_STORM1,
 	O_INT_DROID,
-	O_FRAME,
+	O_FRAME,	//1075
 	O_SPRITE,
 	O_SAFE,
 	O_RADIUS,
@@ -138,15 +138,15 @@ enum {
 	E_PODS,				
 	E_PODSEQ,	// 4099
 	E_POD,		// 4100
-	E_SPRS,
+	E_SPRS,		// 4101
 	E_SPRSEQ,
 	E_SPR,
-	E_FMES,
+	E_FMES,		//4104
 	E_FMESEQ,	//4105
 	E_FME,
-	E_SOUNDS,
-	E_OBJECTS,
-	E_CLASS,
+	E_SOUNDS,	//4107
+	E_OBJECTS,	//4108
+	E_CLASS,		//4109
 	E_CLASSTYPE,	//4110
 	E_DATA,
 	E_X,
@@ -159,8 +159,8 @@ enum {
 	E_CLASSHEADER,
 	E_CLASSBODY,	//4120
 	E_COMPONENT,	//4121
-	E_CLASSFULL,
-	E_LOGIC,
+	E_CLASSFULL,	//4122
+	E_LOGIC,		//4123
 	E_LOGICTYPE,	//4124
 	E_ITEM,
 	E_EYE,			//4126
@@ -176,50 +176,58 @@ enum {
 	E_ITEMTYPE,
 	E_SHIELD,
 	E_ENERGY,
-	E_STRING
+	E_STRING,
+	E_CLASSSEQ,		//4140
+	E_CLASSATTR,	//4141
+	E_POSITION,
+	E_ROTATION
 };
 
-std::map <uint32_t,  struct GameEngine::ParserGrammar> g_dfObjectParse = {
-{E_MAGIC,		{E_MAGIC,		GameEngine::PARSER_AND, 2,	{O_KW, GameEngine::DIGIT}}},
-{E_LEVELNAME,	{E_LEVELNAME,	GameEngine::PARSER_AND, 2,	{O_LEVELNAME, GameEngine::STRING}}},
-{E_PODS,		{E_PODS,		GameEngine::PARSER_AND, 3,	{O_PODS, GameEngine::DIGIT, E_PODSEQ}}},
-{E_PODSEQ,		{E_PODSEQ,		GameEngine::PARSER_LIST,1,	{E_POD}}},
-{E_POD,			{E_POD,			GameEngine::PARSER_AND, 3,	{O_POD, GameEngine::COLON, GameEngine::STRING}}},
-{E_SPRS,		{E_SPRS,		GameEngine::PARSER_AND, 2,	{O_SPRS, GameEngine::DIGIT}}},
-{E_SPRSEQ,		{E_SPRSEQ,		GameEngine::PARSER_LIST,1,	{E_SPR}}},
-{E_SPR,			{E_SPR,			GameEngine::PARSER_AND, 3,	{O_SPR, GameEngine::COLON, GameEngine::STRING}}},
-{E_FMES,		{E_FMES,		GameEngine::PARSER_AND, 2,	{O_FMES, GameEngine::DIGIT}}},
-{E_FMESEQ,		{E_FMESEQ,		GameEngine::PARSER_LIST,1,	{E_FME}}},
-{E_FME,			{E_FME,			GameEngine::PARSER_AND, 3,	{O_FME, GameEngine::COLON, GameEngine::STRING}}},
-{E_SOUNDS,		{E_SOUNDS,		GameEngine::PARSER_AND, 2,	{O_SOUNDS, GameEngine::DIGIT}}},
-{E_OBJECTS,		{E_OBJECTS,		GameEngine::PARSER_AND, 2,	{O_OBJECTS, GameEngine::DIGIT}}},
-{E_CLASS,		{E_CLASS,		GameEngine::PARSER_AND, 3,	{O_CLASS, GameEngine::COLON, E_CLASSTYPE}}},
-{E_CLASSTYPE,	{E_CLASSTYPE,	GameEngine::PARSER_OR,	5,	{O_SPIRIT, O_SPRITE, O_SAFE, O_FRAME, O_3D }}},
-{E_DATA,		{E_DATA,		GameEngine::PARSER_AND, 3,	{O_DATA, GameEngine::COLON, GameEngine::DIGIT}}},
-{E_X,			{E_X,			GameEngine::PARSER_AND, 3,	{O_X, GameEngine::COLON, GameEngine::DIGIT}}},
-{E_Y,			{E_Y,			GameEngine::PARSER_AND, 3,	{O_Y, GameEngine::COLON, GameEngine::DIGIT}}},
-{E_Z,			{E_Z,			GameEngine::PARSER_AND, 3,	{O_Z, GameEngine::COLON, GameEngine::DIGIT}}},
-{E_YAW,			{E_YAW,			GameEngine::PARSER_AND, 3,	{O_YAW, GameEngine::COLON, GameEngine::DIGIT}}},
-{E_ROL,			{E_ROL,			GameEngine::PARSER_AND, 3,	{O_ROL, GameEngine::COLON, GameEngine::DIGIT}}},
-{E_PCH,			{E_PCH,			GameEngine::PARSER_AND, 3,	{O_PCH, GameEngine::COLON, GameEngine::DIGIT}}},
-{E_DIFF,		{E_DIFF,		GameEngine::PARSER_AND, 3,	{O_DIFF, GameEngine::COLON, GameEngine::DIGIT}}},
-{E_CLASSHEADER,	{E_CLASSHEADER, GameEngine::PARSER_AND, 9,	{E_CLASS, E_DATA, E_X, E_Y, E_Z, E_PCH, E_YAW, E_ROL, E_DIFF}}},
-{E_CLASSBODY,	{E_CLASSBODY,	GameEngine::PARSER_LIST,1,	{E_COMPONENT}}},
-{E_COMPONENT,	{E_COMPONENT,	GameEngine::PARSER_OR,	9,	{E_LOGIC, E_EYE, E_TYPE, E_FLAGS, E_D_YAW, E_RADIUS, E_HEIGHT, E_PAUSE, E_VUE}}},
-{E_LOGIC,		{E_LOGIC,		GameEngine::PARSER_AND, 3,	{O_LOGIC, GameEngine::COLON, E_LOGICTYPE}}},
-{E_LOGICTYPE,	{E_LOGICTYPE,	GameEngine::PARSER_OR,	22,	{O_PLAYER, O_UPDATE, O_PLANS, E_ITEM, O_ANIM, O_SCENERY, O_BATTERY, O_STORM1, I_OFFICER, O_OFFICERR, O_MOUSEBOT, O_INT_DROID, O_MEDKIT, O_COMMANDO, O_SHIELD, O_TROOP, O_SUPERCHARGE, O_LIFE, O_KEY, O_GOGGLES, O_RIFLE, O_REVIVE}}},
-{E_ITEM,		{E_ITEM,		GameEngine::PARSER_OR,	2,	{E_SHIELD, E_ENERGY}}},
-{E_SHIELD,		{E_SHIELD,		GameEngine::PARSER_AND,	2,	{O_ITEM, O_SHIELD}}},
-{E_ENERGY,		{E_ENERGY,		GameEngine::PARSER_AND,	2,	{O_ITEM, O_ENERGY}}},
-{E_EYE,			{E_EYE,			GameEngine::PARSER_AND, 3,	{O_EYE, GameEngine::COLON, E_TRUEFALSE}}},
-{E_TRUEFALSE,	{E_TRUEFALSE,	GameEngine::PARSER_OR,	2,	{O_TRUE, O_FALSE}}},
-{E_TYPE,		{E_TYPE,		GameEngine::PARSER_AND, 3,	{O_TYPE, GameEngine::COLON, E_LOGICTYPE}}},
-{E_FLAGS,		{E_FLAGS,		GameEngine::PARSER_AND, 3,	{O_FLAGS, GameEngine::COLON, GameEngine::DIGIT}}},
-{E_D_YAW,		{E_D_YAW,		GameEngine::PARSER_AND, 3,	{O_D_YAW, GameEngine::COLON, GameEngine::DIGIT}}},
-{E_RADIUS,		{E_RADIUS,		GameEngine::PARSER_AND, 3,	{O_RADIUS, GameEngine::COLON, GameEngine::DIGIT}}},
-{E_HEIGHT,		{E_HEIGHT,		GameEngine::PARSER_AND, 3,	{O_HEIGHT, GameEngine::COLON, GameEngine::DIGIT}}},
-{E_PAUSE,		{E_PAUSE,		GameEngine::PARSER_AND, 3,	{O_PAUSE, GameEngine::COLON, E_TRUEFALSE}}},
-{E_STRING,		{E_STRING,		GameEngine::PARSER_AND, 3,	{GameEngine::QUOTE, GameEngine::STRING, GameEngine::QUOTE}}},
-{E_VUE,			{E_VUE,			GameEngine::PARSER_AND, 4,	{O_VUE, GameEngine::COLON, GameEngine::STRING, E_STRING}}},
-{E_CLASSFULL,	{E_CLASSFULL,	GameEngine::PARSER_AND, 4,	{E_CLASSHEADER, O_SEQ, E_CLASSBODY, O_SEQEND}}}
+std::vector <struct GameEngine::ParserRule> g_dfObjectParse = {
+{E_MAGIC,		GameEngine::PARSER_AND, {O_KW, GameEngine::DIGIT}},
+{E_LEVELNAME,	GameEngine::PARSER_AND, {O_LEVELNAME, GameEngine::STRING}},
+{E_PODS,		GameEngine::PARSER_AND, {O_PODS, GameEngine::DIGIT, E_PODSEQ}},
+{E_PODSEQ,		GameEngine::PARSER_LIST,{E_POD}},
+{E_POD,			GameEngine::PARSER_AND, {O_POD, GameEngine::COLON, GameEngine::STRING}},
+{E_SPRS,		GameEngine::PARSER_AND, {O_SPRS, GameEngine::DIGIT, E_SPRSEQ}},
+{E_SPRSEQ,		GameEngine::PARSER_LIST,{E_SPR}},
+{E_SPR,			GameEngine::PARSER_AND, {O_SPR, GameEngine::COLON, GameEngine::STRING}},
+{E_FMES,		GameEngine::PARSER_AND, {O_FMES, GameEngine::DIGIT, E_FMESEQ}},
+{E_FMESEQ,		GameEngine::PARSER_LIST,{E_FME}},
+{E_FME,			GameEngine::PARSER_AND, {O_FME, GameEngine::COLON, GameEngine::STRING}},
+{E_SOUNDS,		GameEngine::PARSER_AND, {O_SOUNDS, GameEngine::DIGIT}},
+{E_OBJECTS,		GameEngine::PARSER_AND, {O_OBJECTS, GameEngine::DIGIT, E_CLASSSEQ}},
+{E_CLASS,		GameEngine::PARSER_AND, {O_CLASS, GameEngine::COLON, E_CLASSTYPE}},
+{E_CLASSTYPE,	GameEngine::PARSER_OR,	{O_SPIRIT, O_SPRITE, O_FRAME, O_3D }},
+{E_DATA,		GameEngine::PARSER_AND, {O_DATA, GameEngine::COLON, GameEngine::DIGIT}},
+{E_X,			GameEngine::PARSER_AND, {O_X, GameEngine::COLON, GameEngine::DIGIT}},
+{E_Y,			GameEngine::PARSER_AND, {O_Y, GameEngine::COLON, GameEngine::DIGIT}},
+{E_Z,			GameEngine::PARSER_AND, {O_Z, GameEngine::COLON, GameEngine::DIGIT}},
+{E_YAW,			GameEngine::PARSER_AND, {O_YAW, GameEngine::COLON, GameEngine::DIGIT}},
+{E_ROL,			GameEngine::PARSER_AND, {O_ROL, GameEngine::COLON, GameEngine::DIGIT}},
+{E_PCH,			GameEngine::PARSER_AND, {O_PCH, GameEngine::COLON, GameEngine::DIGIT}},
+{E_DIFF,		GameEngine::PARSER_AND, {O_DIFF, GameEngine::COLON, GameEngine::DIGIT}},
+{E_POSITION,	GameEngine::PARSER_AND, {E_X, E_Y, E_Z}},
+{E_ROTATION,	GameEngine::PARSER_AND, {E_PCH, E_YAW, E_ROL}},
+{E_CLASSATTR,	GameEngine::PARSER_AND, {E_DATA, E_POSITION, E_ROTATION, E_DIFF}},
+{E_CLASSBODY,	GameEngine::PARSER_LIST,{E_COMPONENT}},
+{E_COMPONENT,	GameEngine::PARSER_OR,	{E_LOGIC, E_EYE, E_TYPE, E_FLAGS, E_D_YAW, E_RADIUS, E_HEIGHT, E_PAUSE, E_VUE}},
+{E_LOGIC,		GameEngine::PARSER_AND, {O_LOGIC, GameEngine::COLON, E_LOGICTYPE}},
+{E_LOGICTYPE,	GameEngine::PARSER_OR,	{O_PLAYER, O_UPDATE, O_PLANS, E_ITEM, O_ANIM, O_SCENERY, O_BATTERY, O_STORM1, I_OFFICER, O_OFFICERR, O_MOUSEBOT, O_INT_DROID, O_MEDKIT, O_COMMANDO, O_SHIELD, O_TROOP, O_SUPERCHARGE, O_LIFE, O_KEY, O_GOGGLES, O_RIFLE, O_REVIVE}},
+{E_ITEM,		GameEngine::PARSER_OR,	{E_SHIELD, E_ENERGY}},
+{E_SHIELD,		GameEngine::PARSER_AND,	{O_ITEM, O_SHIELD}},
+{E_ENERGY,		GameEngine::PARSER_AND,	{O_ITEM, O_ENERGY}},
+{E_EYE,			GameEngine::PARSER_AND, {O_EYE, GameEngine::COLON, E_TRUEFALSE}},
+{E_TRUEFALSE,	GameEngine::PARSER_OR,	{O_TRUE, O_FALSE}},
+{E_TYPE,		GameEngine::PARSER_AND, {O_TYPE, GameEngine::COLON, E_LOGICTYPE}},
+{E_FLAGS,		GameEngine::PARSER_AND, {O_FLAGS, GameEngine::COLON, GameEngine::DIGIT}},
+{E_D_YAW,		GameEngine::PARSER_AND, {O_D_YAW, GameEngine::COLON, GameEngine::DIGIT}},
+{E_RADIUS,		GameEngine::PARSER_AND, {O_RADIUS, GameEngine::COLON, GameEngine::DIGIT}},
+{E_HEIGHT,		GameEngine::PARSER_AND, {O_HEIGHT, GameEngine::COLON, GameEngine::DIGIT}},
+{E_PAUSE,		GameEngine::PARSER_AND, {O_PAUSE, GameEngine::COLON, E_TRUEFALSE}},
+{E_STRING,		GameEngine::PARSER_AND, {GameEngine::QUOTE, GameEngine::STRING, GameEngine::QUOTE}},
+{E_VUE,			GameEngine::PARSER_AND, {O_VUE, GameEngine::COLON, GameEngine::STRING, E_STRING}},
+{E_CLASSFULL,	GameEngine::PARSER_AND, {E_CLASS, E_CLASSATTR, O_SEQ, E_CLASSBODY, O_SEQEND}},
+{E_CLASSFULL,	GameEngine::PARSER_AND, {O_CLASS, GameEngine::COLON, O_SAFE, E_CLASSATTR}},
+{E_CLASSSEQ,	GameEngine::PARSER_LIST,{E_CLASSFULL}},
 };

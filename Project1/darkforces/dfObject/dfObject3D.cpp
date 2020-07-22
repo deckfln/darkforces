@@ -68,7 +68,7 @@ void dfObject3D::add2scene(fwScene* scene)
 /**
  * Bind the proper animation VUE to the object
  */
-void dfObject3D::vue(dfFileSystem *fs, std::string& vue, std::string& component)
+void dfObject3D::vue(dfFileSystem *fs, const std::string& vue, const std::string& component)
 {
 	m_vue = new dfVue(fs, vue, component);
 }

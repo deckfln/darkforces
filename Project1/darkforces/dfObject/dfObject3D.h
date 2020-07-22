@@ -29,7 +29,7 @@ public:
 	void animRotationAxe(int axe);
 	void animRotationSpeed(float s);
 	void pause(bool p) { m_pause = p; };
-	void vue(dfFileSystem *fs, std::string& vue, std::string& component);
+	void vue(dfFileSystem *fs, const std::string& vue, const std::string& component);
 
 	virtual bool update(time_t t);						// update based on timer
 	virtual void updateWorldAABB(void);

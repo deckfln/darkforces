@@ -2,6 +2,7 @@
 
 #include <string>
 #include <vector>
+#include <list>
 
 #include "Lexer.h"
 
@@ -14,14 +15,11 @@ namespace GameEngine
 		PARSER_SINGLE
 	};
 
-	struct ParserGrammar {
+	struct ParserRule {
 		uint32_t m_expression;
 		uint32_t m_and_or;
-		uint32_t m_nbExpressions;
-		uint16_t m_expressions[32];
-
-		struct ParserGrammar* m_children[32];
-		struct ParserGrammar* m_parent=nullptr;
+		std::vector<uint16_t> m_expressions;
+		size_t m_depth = 0;
 	};
 
 	struct ParserExpression {
@@ -34,13 +32,27 @@ namespace GameEngine
 
 	class Parser
 	{
-		std::map<uint32_t, ParserGrammar>& m_grammar;
+		std::vector<ParserRule>& m_grammar;
 		std::vector<ParserExpression> m_listA;
+		std::vector<ParserExpression> *m_pListA;
+
 		std::vector<ParserExpression> m_listB;
+		std::vector<ParserExpression> *m_pListB;
+		size_t m_current = 0;
+		size_t m_sizeA = 0;
+
+		std::map<uint32_t, ParserRule*> m_lists;
+		std::map<uint32_t, std::vector<ParserRule*>> m_mapRules;
+		std::map<uint32_t, std::vector<ParserRule*>> m_mapRulesByDepth;
+
+		size_t count(uint32_t expression, size_t depth);
+		void buildTreeRule(void);
+		void applyRules(std::vector<ParserRule*>& rules);
 
 	public:
 		Parser(Lexer& lexer, 
-			std::map<uint32_t, ParserGrammar>& grammar,
+			std::vector<ParserRule>& grammar,
 			std::map<std::string, uint32_t>& keywords);
+		ParserExpression* next(void);
 	};
 }

@@ -8,57 +8,77 @@
 
 using namespace GameEngine;
 
-Parser::Parser(Lexer& lexer, 
-	std::map<uint32_t, ParserGrammar>& grammar, 
-	std::map<std::string, uint32_t>& keywords):
-	m_grammar(grammar)
+/**
+ * count the depth of each rule
+ * build from bottom to top: record the parent rule of each rule
+ */
+size_t Parser::count(uint32_t expression, size_t depth)
 {
-	std::map<uint32_t, ParserGrammar*> lists;
-	
-		// build a reverse lookup by first code
-	// build a reverse lookup by list
+	size_t max_depth = depth;
+	size_t d = depth;
 
-	std::map<uint32_t, std::list<ParserGrammar*>> m_byFirstExpression;
-	for (auto& kw : m_grammar) {
-		struct ParserGrammar* rule = &kw.second;
+	if (m_mapRules.count(expression) == 0) {
+		return depth;
+	}
 
+	for (auto rule : m_mapRules[expression]) {
+		for (size_t i = 0; i < rule->m_expressions.size(); i++) {
+			d = count(rule->m_expressions[i], depth + 1);
+			if (d > max_depth) {
+				max_depth = d;
+			}
+		}
+	}
+	return max_depth;
+}
+
+/**
+ * build a tree of rules
+ * the deeper a rule the more priority it get
+ */
+void Parser::buildTreeRule(void) 
+{
+	// build from top to bottom: record the parent rule of each rule
+	for (auto& rule : m_grammar) {
+		m_mapRules[rule.m_expression].push_back(&rule);
+	}
+
+	for (auto& rule : m_grammar) {
+		int depth = count(rule.m_expression, 0);
+
+		if (depth > rule.m_depth) {
+			rule.m_depth = depth;
+		}
+	}
+}
+
+/**
+ * Apply a set of rules on the list until none can be applied
+ */
+void GameEngine::Parser::applyRules(std::vector<ParserRule*>& rules)
+{
+	//build a reverse lookup by first expression of the rules
+
+	std::map<uint32_t, std::list<ParserRule*>> byFirstExpression;
+
+	for (auto& rule : rules) {
 		switch (rule->m_and_or) {
 		case PARSER_AND: {
 			uint32_t code = rule->m_expressions[0];
-			m_byFirstExpression[code].push_back(rule);
+			byFirstExpression[code].push_back(rule);
 			break; }
 		case PARSER_OR: {
-			for (size_t i = 0; i < rule->m_nbExpressions; i++) {
-				m_byFirstExpression[rule->m_expressions[i]].push_back(rule);
+			for (size_t i = 0; i < rule->m_expressions.size(); i++) {
+				byFirstExpression[rule->m_expressions[i]].push_back(rule);
 			}
 			break; }
 		case PARSER_LIST:
-			m_byFirstExpression[rule->m_expressions[0]].push_back(rule);
-			lists[rule->m_expression] = rule;
+			byFirstExpression[rule->m_expressions[0]].push_back(rule);
 			break;
 		}
 	}
-	// extend the grammar with the parser basics
-	grammar[STRING] = { STRING, PARSER_SINGLE, 0 };
-	grammar[COLON] = { COLON, PARSER_SINGLE, 0 };
-	grammar[DIGIT] = { DIGIT, PARSER_SINGLE, 0 };
 
-	// extend the grammar by adding the keywords
-	for (auto& kw : keywords) {
-		grammar[kw.second] = { kw.second, PARSER_SINGLE, 0 };
-	}
-
-	// create the first list of expressions
-	const struct token* token;
-
-	m_listA.resize(lexer.size());
-	size_t i=0;
-
-	while (token = lexer.next()) {
-		m_listA[i].m_expression = token->m_code;
-		m_listA[i].m_token = token;
-		i++;
-	}
+	// start parsing
 
 	struct ParserExpression* current_expression;
 	struct ParserExpression* next_expression;
@@ -68,14 +88,9 @@ Parser::Parser(Lexer& lexer,
 	bool applyRules = true;
 	bool foundRule = true;
 
-	m_listB.resize(1);
-
-	std::vector<ParserExpression> *listA = &m_listA;
-	std::vector<ParserExpression> *listB = &m_listB;
 	std::vector<ParserExpression>* tmp = nullptr;
 	size_t indexA = 0;
 	size_t indexB = 0;
-	size_t sizeA = listA->size();
 
 	while (applyRules) {
 		applyRules = false;
@@ -83,33 +98,30 @@ Parser::Parser(Lexer& lexer,
 		// clean the target
 		indexB = 0;
 
-		for (indexA = 0; indexA < sizeA; indexA++) {
+		for (indexA = 0; indexA < m_sizeA; indexA++) {
 			foundRule = false;
 
-			current_expression = &listA->at(indexA);
+			current_expression = &m_pListA->at(indexA);
 			code = current_expression->m_expression;
 
-			if (code == 1066) {
-				printf("");
-			}
 			// the code is start of a rule
-			if (m_byFirstExpression.count(code) != 0) {
-				std::list<ParserGrammar*> rules = m_byFirstExpression[code];
+			if (byFirstExpression.count(code) != 0) {
+				std::list<ParserRule*> rules = byFirstExpression[code];
 
 				// test all compatible rules
 				for (auto rule : rules) {
 					bool result = true;
 
-					next_expression = &listA->at(indexA + 1);
+					next_expression = &m_pListA->at(indexA + 1);
 
 					switch (rule->m_and_or) {
 					case PARSER_AND:
 						// test all components
-						for (size_t i = 1; i < rule->m_nbExpressions; i++) {
-							if (indexA + i == listA->size()) {
+						for (size_t i = 1; i < rule->m_expressions.size(); i++) {
+							if (indexA + i == m_pListA->size()) {
 								break;
 							}
-							result &= listA->at(indexA + i).m_expression == rule->m_expressions[i];
+							result &= m_pListA->at(indexA + i).m_expression == rule->m_expressions[i];
 						}
 						break;
 
@@ -127,26 +139,26 @@ Parser::Parser(Lexer& lexer,
 					// do we have a matching expression
 					if (result) {
 
-						listB->at(indexB).m_expression = rule->m_expression;
-						listB->at(indexB).m_token = nullptr;
-						listB->at(indexB).m_children.clear();
+						m_pListB->at(indexB).m_expression = rule->m_expression;
+						m_pListB->at(indexB).m_token = nullptr;
+						m_pListB->at(indexB).m_children.clear();
 
 						// record the children of the expression
 						switch (rule->m_and_or) {
 						case PARSER_AND:
 							// all elements need to be accounted for
-							for (size_t i = 0; i < rule->m_nbExpressions; i++) {
-								listB->at(indexB).m_children.push_back(listA->at(indexA + i));
+							for (size_t i = 0; i < rule->m_expressions.size(); i++) {
+								m_pListB->at(indexB).m_children.push_back(m_pListA->at(indexA + i));
 							}
-							indexA += (rule->m_nbExpressions - 1);
+							indexA += (rule->m_expressions.size() - 1);
 							break;
 						case PARSER_OR:
 							// only the current element is accounted for
-							listB->at(indexB).m_children.push_back(listA->at(indexA));
+							m_pListB->at(indexB).m_children.push_back(m_pListA->at(indexA));
 							break;
 						case PARSER_LIST:
-							while (indexA < sizeA && listA->at(indexA).m_expression == code) {
-								listB->at(indexB).m_children.push_back(listA->at(indexA));
+							while (indexA < m_sizeA && m_pListA->at(indexA).m_expression == code) {
+								m_pListB->at(indexB).m_children.push_back(m_pListA->at(indexA));
 								indexA++;
 							}
 							indexA--;
@@ -159,44 +171,98 @@ Parser::Parser(Lexer& lexer,
 					}
 				}
 			}	// END the code is start of a rule
-			else if (lists.count(code) > 0) {
+			else if (m_lists.count(code) > 0) {
 				// merge list of list
 				size_t start = indexA;
-				while (indexA < sizeA && listA->at(indexA + 1).m_expression == code) {
-					for (size_t j = 0; j < listA->at(indexA + 1).m_children.size(); j++) {
-						listA->at(start).m_children.push_back(listA->at(indexA + 1).m_children[j]);
+				while (indexA < m_sizeA && m_pListA->at(indexA + 1).m_expression == code) {
+					for (size_t j = 0; j < m_pListA->at(indexA + 1).m_children.size(); j++) {
+						m_pListA->at(start).m_children.push_back(m_pListA->at(indexA + 1).m_children[j]);
 					}
 					indexA++;
 					applyRules = true;
 				}
-				listB->at(indexB) = listA->at(start);
+				m_pListB->at(indexB) = m_pListA->at(start);
 				indexB++;
 				foundRule = true;
 			}
 
 			if (!foundRule) {
 				//copy the expression to listB
-				listB->at(indexB) = listA->at(indexA);
+				m_pListB->at(indexB) = m_pListA->at(indexA);
 				indexB++;
 			}
 
 			// add the rule to listB
-			if (indexB == listB->size()) {
-				listB->resize(indexB + 1);
+			if (indexB == m_pListB->size()) {
+				m_pListB->resize(indexB + 1);
 
 			}
 		};
 
 		// swap the lists
-		tmp = listA;
-		listA = listB;
-		listB = tmp;
+		tmp = m_pListA;
+		m_pListA = m_pListB;
+		m_pListB = tmp;
 
-		sizeA = indexB;
-
-		std::cout << "******************************************************************" << std::endl;
-		for (size_t indexA = 0; indexA < listA->size(); indexA++) {
-			std::cout << listA->at(indexA).m_expression << std::endl;
-		};
+		m_sizeA = indexB;
 	}
+}
+
+/**
+ *
+ */
+Parser::Parser(Lexer& lexer, 
+	std::vector<ParserRule>& grammar, 
+	std::map<std::string, uint32_t>& keywords):
+	m_grammar(grammar)
+{
+	// build a tree of rules
+	buildTreeRule();
+
+	// sort the rules by depth and deal with the deepest first
+	int max_depth = 0;
+	for (auto& rule : m_grammar) {
+		m_mapRulesByDepth[rule.m_depth].push_back(&rule);
+		if (rule.m_depth > max_depth) {
+			max_depth = rule.m_depth;
+		}
+	}
+
+	// create the first list of expressions
+	const struct token* token;
+
+	m_listA.resize(lexer.size());
+	size_t i=0;
+
+	while (token = lexer.next()) {
+		m_listA[i].m_expression = token->m_code;
+		m_listA[i].m_token = token;
+		i++;
+	}
+
+	// init list A & B
+	m_listB.resize(1);
+
+	m_pListA = &m_listA;
+	m_pListB = &m_listB;
+	m_sizeA = m_pListA->size();
+
+	// apply the rules by order of depth
+	for (int i = 0; i <= max_depth; i++) {
+		if (m_mapRulesByDepth.count(i) > 0) {
+			applyRules(m_mapRulesByDepth[i]);
+		}
+	}
+}
+
+/**
+ * return the next expression
+ */
+ParserExpression* GameEngine::Parser::next(void)
+{
+	if (m_current >= m_sizeA) {
+		return nullptr;
+	}
+
+	return &m_pListA->at(m_current++);
 }

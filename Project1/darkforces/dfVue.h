@@ -19,7 +19,7 @@ class dfVue {
 	unsigned int m_fps = 20;	// default value
 
 public:
-	dfVue(dfFileSystem* fs, std::string& file, std::string& component);
+	dfVue(dfFileSystem* fs, const std::string& file, const std::string& component);
 	glm::mat4* firstFrame(time_t t);
 	glm::mat4* nextFrame(time_t t);
 	~dfVue();

@@ -14,7 +14,7 @@
 #include "dfFileSystem.h"
 #include "dfParseINF.h"
 
-dfVue::dfVue(dfFileSystem* fs, std::string& file, std::string& component)
+dfVue::dfVue(dfFileSystem* fs, const std::string& file, const std::string& component)
 {
 	int size;
 	char* sec = fs->load(DF_DARK_GOB, file, size);
