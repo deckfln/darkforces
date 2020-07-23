@@ -88,17 +88,6 @@ bool dfSuperSector::collideAABB(const fwAABBox& box)
 }
 
 /**
- * extended collision test after a sucessfull AABB collision
- */
-bool dfSuperSector::checkCollision(fwCylinder& bounding, glm::vec3& direction, glm::vec3& intersection, std::list<gaCollisionPoint>& collisions)
-{
-	if (m_dfmesh) {
-		m_dfmesh->checkCollision(bounding, direction, intersection, m_name, collisions);
-	}
-	return false;
-}
-
-/**
  * extended segment collision test after a sucessfull AABB collision
  */
 bool dfSuperSector::collisionSegmentTriangle(const glm::vec3& p, const glm::vec3& q, std::list<gaCollisionPoint>& collisions)

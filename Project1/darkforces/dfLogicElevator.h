@@ -115,15 +115,9 @@ public:
 	bool animate(time_t delta);
 	void addSign(dfSign*);
 	void dispatchMessage(gaMessage* message);
-	bool checkCollision(fwAABBox& box);
 
 	void getMessagesToSectors(std::list<std::string>& sectors);
 	void sound(int effect, dfVOC* sound);
-
-	virtual bool checkCollision(fwCylinder& bounding,
-		glm::vec3& direction,
-		glm::vec3& intersection,
-		std::list<gaCollisionPoint>& collisions);		 // extended collision test after a sucessfull AABB collision
 
 	~dfLogicElevator(void);
 };

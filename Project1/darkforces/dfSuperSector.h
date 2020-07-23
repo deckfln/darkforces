@@ -113,10 +113,6 @@ public:
         return m_worldAABBlvl.inside(position); 
     };                                                  // test if vec3 inside the AABB
     bool collideAABB(const fwAABBox& box);				// quick test to find AABB collision
-    virtual bool checkCollision(fwCylinder& bounding,
-        glm::vec3& direction,
-        glm::vec3& intersection,
-        std::list<gaCollisionPoint>& collisions);		// extended collision test after a sucessfull AABB collision
     bool collisionSegmentTriangle(const glm::vec3& p, 
         const glm::vec3& q, 
         std::list<gaCollisionPoint>& collisions);       // extended segment collision test after a sucessfull AABB collision

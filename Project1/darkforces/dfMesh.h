@@ -109,17 +109,10 @@ public:
 	void rotateZ(float angle);
 	void move(glm::vec3& position);
 
-	bool checkCollision(fwCylinder& bounding, 
-		glm::vec3& target, 
-		glm::vec3& intersection, 
-		std::string& name, 
-		std::list<gaCollisionPoint>& collisions);			// extended cylinder collision test after a sucessfull AABB collision
 	bool collisionSegmentTriangle(const glm::vec3& p,
 		const glm::vec3& q,
 		std::list<gaCollisionPoint>& collisions);			// extended segment collision test after a sucessfull AABB collision
 
-
-	bool checkCollision(fwAABBox& box, std::string& name);
 	void parent(fwMesh* parent) { m_parentMesh = parent; };
 	bool visible(void);
 	void visible(bool status);

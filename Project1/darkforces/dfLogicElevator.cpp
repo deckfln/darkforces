@@ -740,59 +740,6 @@ void dfLogicElevator::dispatchMessage(gaMessage* message)
 }
 
 /**
- * check move against a fwAABox
- */
-bool dfLogicElevator::checkCollision(fwAABBox& box)
-{
-	// only test the elevator mesh if the supersector it is bind to is visible
-	// and if the play Z in inbetwen the vertical elevator extend
-	float z = box.m_p.z;
-
-	if (m_mesh && m_mesh->visible() && z > m_zmin && z < m_zmax) {
-		return m_mesh->checkCollision(box, m_name);
-	}
-
-	return false;
-}
-
-/**
- * extended collision test after a sucessfull AABB collision
- * test against all vertices of the dfMesh it is based on
- */
-bool dfLogicElevator::checkCollision(fwCylinder& bounding, glm::vec3& direction, glm::vec3& intersection, std::list<gaCollisionPoint>& collisions)
-{
-	// only test the elevator mesh if the supersector it is bind to is visible
-	// and if the play Z (gl space) in inbetwen the vertical elevator extend (level space)
-	glm::vec3 plevel;
-	glm::vec3 target = bounding.position() + direction;
-	m_parent->gl2level(target, plevel);
-
-	float floor, ceiling;
-
-	if (m_pSector) {
-		floor = m_pSector->currentFloorAltitude();
-		ceiling = m_pSector->ceiling();
-	}
-	else {
-		floor = -1000;
-		ceiling = 1000;
-	}
-
-	/*
-	if (m_name == "red_door") {
-		printf("dfLogicElevator::checkCollision\n");
-	}
-	*/
-	// Hack to deal with sector elev3-1. The plateform is physically impossible, there is not enough space
-	// from the top to the bottom where there is sector 149
-	if (m_mesh && m_mesh->visible() && plevel.z > (m_zmin - 4.0) && plevel.z < m_zmax && plevel.z < ceiling) {
-		return m_mesh->checkCollision(bounding, direction, intersection, m_name, collisions);
-	}
-
-	return false;
-}
-
-/**
  * Get a list of all Sectors that receive messages from that elevator
  */
 void dfLogicElevator::getMessagesToSectors(std::list<std::string>& sectors)
