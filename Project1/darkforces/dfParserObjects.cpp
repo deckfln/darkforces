@@ -46,157 +46,6 @@ static bool g_difficultyTable[][3] = {
 	{0, 0, 1}
 };
 
-/**
- *
- */
-dfObject* dfParserObjects::parseObject(dfFileSystem* fs, dfObject* sprite, std::istringstream& infile)
-{
-	std::string line, dump;
-
-	std::map<std::string, std::string> tokenMap;
-
-	while (std::getline(infile, line))
-	{
-		// ignore comment
-		if (line.length() == 0) {
-			continue;
-		}
-
-		// per token
-		std::vector <std::string> tokens = dfParseTokens(line, tokenMap);
-		if (tokens.size() == 0) {
-			continue;
-		}
-
-		if (tokens[0] == "SEQ") {
-			// pass
-		}
-		else if (tokens[0] == "SEQEND") {
-			break;
-		}
-		else if (tokens[0] == "LOGIC:") {
-			if (tokenMap["LOGIC:"] == "SCENERY") {
-				sprite->logic(DF_LOGIC_SCENERY);
-				((dfSpriteAnimated *)sprite)->state(DF_STATE_SCENERY_NORMAL);
-			}
-			else if (tokenMap["LOGIC:"] == "ANIM") {
-				sprite->logic(DF_LOGIC_ANIM);
-			}
-			else if (tokenMap["LOGIC:"] == "STORM1") {
-				sprite->logic(DF_LOGIC_TROOP | DF_LOGIC_ANIM);
-				((dfSpriteAnimated*)sprite)->state(DF_STATE_ENEMY_STAY_STILL);
-			}
-			else if (tokenMap["LOGIC:"] == "INT_DROID") {
-				sprite->logic(DF_LOGIC_INTDROID | DF_LOGIC_ANIM);
-				((dfSpriteAnimated*)sprite)->state(DF_STATE_ENEMY_STAY_STILL);
-			}
-			else if (tokenMap["LOGIC:"] == "COMMANDO") {
-				sprite->logic(DF_LOGIC_COMMANDO | DF_LOGIC_ANIM);
-				((dfSpriteAnimated*)sprite)->state(DF_STATE_ENEMY_STAY_STILL);
-			}
-			else if (tokenMap["LOGIC:"] == "I_OFFICER") {
-				sprite->logic(DF_LOGIC_I_OFFICER | DF_LOGIC_ANIM);
-				((dfSpriteAnimated*)sprite)->state(DF_STATE_ENEMY_STAY_STILL);
-			}
-			else if (tokenMap["LOGIC:"] == "ITEM") {
-				if (tokens[2] == "SHIELD") {
-					sprite->logic(DF_LOGIC_ITEM_SHIELD);
-				}
-				else if (tokens[2] == "ENERGY") {
-					sprite->logic(DF_LOGIC_ITEM_ENERGY);
-				}
-				else {
-#ifdef DEBUG
-					gaDebugLog(LOW_DEBUG, "dfParserObjects::parseObject", " logic: item " + tokens[2] + " not implemented");
-#endif
-				}
-			}
-			else if (tokenMap["LOGIC:"] == "SHIELD") {
-				sprite->logic(DF_LOGIC_ITEM_SHIELD);
-			}
-			else if (tokenMap["LOGIC:"] == "LIFE") {
-				sprite->logic(DF_LOGIC_LIFE);
-			}
-			else if (tokenMap["LOGIC:"] == "REVIVE") {
-				sprite->logic(DF_LOGIC_REVIVE);
-			}
-			else if (tokenMap["LOGIC:"] == "UPDATE") {
-				sprite->logic(DF_LOGIC_ANIM);
-			}
-			else if (tokenMap["LOGIC:"] == "KEY") {
-				sprite->logic(DF_LOGIC_KEY_TRIGGER);
-				//TODO : remove the hack
-				sprite->logic(DF_LOGIC_ANIM);
-			}
-			else {
-#ifdef DEBUG
-				gaDebugLog(LOW_DEBUG, "dfParserObjects::parseObject", " logic: " + tokenMap["LOGIC:"] + " not implemented");
-#endif // DEBUG
-			}
-		}
-		else if (tokens[0] == "TYPE:") {
-			if (tokenMap["TYPE:"] == "I_OFFICER") {
-				sprite->logic(DF_LOGIC_I_OFFICER | DF_LOGIC_ANIM);
-				((dfSpriteAnimated*)sprite)->state(DF_STATE_ENEMY_STAY_STILL);
-			}
-			else if (tokenMap["TYPE:"] == "I_OFFICERR") {
-				sprite->logic(DF_LOGIC_I_OFFICER | DF_LOGIC_RED_KEY | DF_LOGIC_ANIM);
-				((dfSpriteAnimated*)sprite)->state(DF_STATE_ENEMY_STAY_STILL);
-			}
-			else if (tokenMap["TYPE:"] == "COMMANDO") {
-				sprite->logic(DF_LOGIC_COMMANDO | DF_LOGIC_ANIM);
-				((dfSpriteAnimated*)sprite)->state(DF_STATE_ENEMY_STAY_STILL);
-			}
-			else if (tokenMap["TYPE:"] == "TROOP") {
-				sprite->logic(DF_LOGIC_TROOP | DF_LOGIC_ANIM);
-				((dfSpriteAnimated*)sprite)->state(DF_STATE_ENEMY_STAY_STILL);
-			}
-			else if (tokenMap["TYPE:"] == "MOUSEBOT") {
-				sprite->logic(DF_LOGIC_MOUSEBOT | DF_LOGIC_ANIM);
-			}
-			else {
-#ifdef DEBUG
-				gaDebugLog(LOW_DEBUG, "dfParserObjects::parseObject", " type: " + tokenMap["TYPE:"] + " not implemented");
-#endif
-			}
-		}
-		else if (tokens[0] == "HEIGHT:") {
-			sprite->height(std::stof(tokenMap["HEIGHT:"]));
-		}
-		else if (tokens[0] == "RADIUS:") {
-			sprite->radius(std::stof(tokenMap["RADIUS:"]));
-		}
-		else if (tokens[0] == "FLAGS:") {
-			((dfObject3D*)sprite)->animRotationAxe(std::stoi(tokenMap["FLAGS:"]));
-		}
-		else if (tokens[0] == "D_YAW:") {
-			((dfObject3D*)sprite)->animRotationSpeed(std::stof(tokenMap["D_YAW:"]));
-		}
-		else if (tokens[0] == "D_PITCH:") {
-			((dfObject3D*)sprite)->animRotationSpeed(std::stof(tokenMap["D_PITCH:"]));
-		}
-		else if (tokens[0] == "D_ROLL:") {
-			((dfObject3D*)sprite)->animRotationSpeed(std::stof(tokenMap["D_ROLL:"]));
-		}
-		else if (tokens[0] == "PAUSE:") {
-			((dfObject3D*)sprite)->pause(tokenMap["PAUSE:"] == "TRUE");
-		}
-		else if (tokens[0] == "VUE:") {
-		((dfObject3D*)sprite)->vue(fs, tokens[1], tokens[2]);
-		}
-		else {
-#ifdef DEBUG
-		gaDebugLog(LOW_DEBUG, "dfParserObjects::parseObject", " command: " + tokens[0] + " not implemented");
-#endif
-		}
-	}
-
-	// for enemies add an actor component
-	if (sprite->isLogic(DF_LOGIC_ENEMIES)) {
-		sprite->addComponent(new dfComponentActor());
-	}
-	return sprite;
-}
 
 /**
  * Parse all component of an object
@@ -284,6 +133,7 @@ void dfParserObjects::parseObjectComponent(dfFileSystem* fs, dfObject* object, G
 			object->logic(DF_LOGIC_REVIVE);
 			break;
 		}
+
 		break; 
 	}
 	case E_EYE:
@@ -308,7 +158,7 @@ void dfParserObjects::parseObjectComponent(dfFileSystem* fs, dfObject* object, G
 	case E_VUE:
 		((dfObject3D*)object)->vue(fs,
 			component.m_children[2].m_token->m_tvalue,
-			component.m_children[3].m_children[0].m_token->m_tvalue
+			'"'+component.m_children[3].m_children[1].m_token->m_tvalue+'"'
 		);
 		break;
 	}
@@ -389,13 +239,23 @@ void dfParserObjects::parseObject(dfFileSystem* fs, GameEngine::ParserExpression
 			return;
 #endif
 		}
+		// record the object
+		m_objects.push_back(obj);
+
 		obj->difficulty(difficulty);
 
 		// load all components of the object
 		for (auto& component : body.m_children) {
 			parseObjectComponent(fs, obj, component.m_children[0]);
 		}
-		break; }
+
+		// for enemies add an actor component
+		if (obj->isLogic(DF_LOGIC_ENEMIES)) {
+			obj->addComponent(new dfComponentActor());
+		}
+
+		break; 
+	}
 	case O_CLASS:
 		break;
 	}
@@ -459,7 +319,7 @@ void dfParserObjects::parse(GameEngine::Parser& parser, dfFileSystem* fs, dfPale
 
 		case E_OBJECTS: {
 			// load all objcts
-			m_objects.resize(expression->m_children[1].m_token->m_vvalue);
+			//m_objects.resize(expression->m_children[1].m_token->m_vvalue);
 			for (auto& object : expression->m_children[2].m_children) {
 				parseObject(fs, object, level);
 			}
@@ -488,113 +348,6 @@ dfParserObjects::dfParserObjects(dfFileSystem* fs, dfPalette* palette, std::stri
 	GameEngine::Lexer lexer(std::string(sec), g_keywords);
 	GameEngine::Parser parser(lexer, g_dfObjectParse, g_keywords);
 	parse(parser, fs, palette, level);
-	/*
-	int currentWax = 0;
-	int currentFME = 0;
-	int current3DO = 0;
-
-	std::vector<std::string> waxes;
-	std::vector<std::string> fmes;
-	std::vector<std::string> t3DOs;
-
-	const struct GameEngine::token* token;
-
-	while (std::getline(infile, line))
-	{
-		// ignore comment
-		if (line.length() == 0) {
-			continue;
-		}
-
-		// per token
-		std::vector <std::string> tokens = dfParseTokens(line, tokenMap);
-		if (tokens.size() == 0) {
-			continue;
-		}
-
-		if (tokens[0] == "SPRS") {
-			waxes.resize(std::stoi(tokens[1]));
-		}
-		else if (tokens[0] == "FMES") {
-			fmes.resize(std::stoi(tokens[1]));
-		}
-		else if (tokens[0] == "PODS") {
-			t3DOs.resize(std::stoi(tokens[1]));
-		}
-		else if (tokens[0] == "FME:") {
-			dfFME* fme = new dfFME(fs, palette, tokens[1]);
-			g_gaWorld.addModel(fme);
-			fmes[currentFME++] = fme->name();
-		}
-		else if (tokens[0] == "SPR:") {
-			dfWAX* wax = new dfWAX(fs, palette, tokens[1]);
-			g_gaWorld.addModel(wax);
-			waxes[currentWax++] = wax->name();
-		}
-		else if (tokens[0] == "POD:") {
-			df3DO* threeDO = new df3DO(fs, palette, tokens[1]);
-			g_gaWorld.addModel(threeDO);
-			t3DOs[current3DO++] = threeDO->name();
-		}
-		else if (tokens[0] == "OBJECTS") {
-			m_objects.resize(std::stoi(tokens[1]));
-		}
-		else if (tokens[0] == "CLASS:") {
-			int data = std::stoi(tokenMap["DATA:"]);
-
-			glm::vec3 position(
-				-std::stof(tokenMap["X:"]),
-				std::stof(tokenMap["Z:"]),
-				-std::stof(tokenMap["Y:"])
-			);
-
-			// convert level space to gl space and search the sectors
-			float ambient = 0;
-			dfSector* sector = level->findSectorLVL(position);
-			if (sector) {
-				ambient = sector->m_ambient / 32.0f;
-			}
-			else {
-#ifdef DEBUG
-				gaDebugLog(LOW_DEBUG, "dfParserObjects::dfParserObjects", "cannot find sector for "+ std::to_string(position.x) + ":" + std::to_string(position.y) + " : " + std::to_string(position.z));
-#endif
-			}
-
-			glm::vec3 rotation(std::stof(tokenMap["PCH:"]),
-				std::stof(tokenMap["YAW:"]),
-				std::stof(tokenMap["ROL:"])
-			);
-
-			int difficulty = std::stoi(tokenMap["DIFF:"]);
-
-
-			if (tokenMap["CLASS:"] == "SPRITE") {
-				dfWAX* wax = (dfWAX*)g_gaWorld.getModel(waxes[data]);
-				dfSpriteAnimated* sprite = new dfSpriteAnimated(wax, position, ambient);
-				sprite->difficulty(difficulty);
-				sprite->rotation(rotation);
-				m_objects[m_currentObject++] = parseObject(fs, sprite, infile);
-			}
-			else if (tokenMap["CLASS:"] == "FRAME") {
-				dfFME* fme = (dfFME*)g_gaWorld.getModel(fmes[data]);
-				dfObject* frame = new dfSprite(fme, position, ambient);
-				frame->difficulty(difficulty);
-				m_objects[m_currentObject++] = parseObject(fs, frame, infile);
-			}
-			else if (tokenMap["CLASS:"] == "3D") {
-				df3DO* tdo = (df3DO*)g_gaWorld.getModel(t3DOs[data]);
-				dfObject3D* threedo = new dfObject3D(tdo, position, ambient);
-				threedo->difficulty(difficulty);
-				m_objects[m_currentObject++] = parseObject(fs, threedo, infile);
-			}
-			else {
-#ifdef DEBUG
-				gaDebugLog(LOW_DEBUG, "dfParserObjects::parseSprite", "class : " + tokenMap["CLASS : "] + " not implemented");
-#endif
-			}
-		}
-	}
-	*/
 
 	// load the 'pre-loaded' sprites
 	std::list<GameEngine::gaModel*> l;
