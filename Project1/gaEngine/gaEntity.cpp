@@ -105,6 +105,20 @@ float gaEntity::distanceTo(const glm::vec3& p)
 }
 
 /**
+ * send internal message to all components for immediate action
+ */
+void gaEntity::sendInternalMessage(int action, int value, void* extra)
+{
+	static gaMessage message("_component", "_component");
+
+	message.m_action = action;
+	message.m_value = value;
+	message.m_extra = extra;
+
+	dispatchMessage(&message);
+}
+
+/**
  * if the entity has a mesh, add to the scene
  */
 void gaEntity::add2scene(fwScene* scene)

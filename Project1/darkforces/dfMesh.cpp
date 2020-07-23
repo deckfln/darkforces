@@ -53,10 +53,10 @@ void dfMesh::display(fwScene* scene, bool visibility)
 {
 	m_visible = visibility;
 
-	if (!scene->hasChild(m_mesh)) {
+	if (!scene->hasChild(m_mesh->mesh())) {
 		if (visibility) {
 			// add the mesh on the scene
-			scene->addChild(m_mesh);
+			scene->addChild(m_mesh->mesh());
 			m_mesh->set_visible(true);
 		}
 		// no need to add the msh if the supersector is invisible
@@ -484,12 +484,12 @@ void dfMesh::updateWorldBoundingBox(dfMesh *parent)
 		else {
 			m_mesh->updateWorldMatrix(nullptr);
 		}
-		glm::mat4& worldMatrix = m_mesh->worldMatrix();
+		const glm::mat4& worldMatrix = m_mesh->worldMatrix();
 
 		m_worldBoundingBox.apply(m_boundingBox, worldMatrix);
 	}
 	else {
-		glm::mat4& worldMatrix = parent->m_mesh->worldMatrix();
+		const glm::mat4& worldMatrix = parent->m_mesh->worldMatrix();
 
 		m_worldBoundingBox.apply(m_boundingBox, worldMatrix);
 	}
@@ -880,7 +880,7 @@ void dfMesh::centerOnGeometryXYZ(glm::vec3& target)
 /**
  * build the fwMesh
  */
-fwMesh* dfMesh::buildMesh(void)
+GameEngine::ComponentMesh* dfMesh::buildMesh(void)
 {
 	int size = m_vertices.size();
 
@@ -896,39 +896,11 @@ fwMesh* dfMesh::buildMesh(void)
 		m_geometry->addAttribute("aAmbient", GL_ARRAY_BUFFER, &m_ambient[0], 1, size * sizeof(float), sizeof(float), false);
 	}
 
-	m_mesh = new fwMesh(m_geometry, m_material);
+	m_mesh = new GameEngine::ComponentMesh(m_geometry, m_material);
 	m_mesh->set_name(m_name);
 	position(m_position);
 
 	return m_mesh;
-}
-
-/**
- * Start playing a sound or check if it plays
- */
-bool dfMesh::play(dfVOC* voc)
-{
-	if (m_mesh) {
-		if (voc) {
-			std::cerr << "dfMesh::play " << voc->name() << std::endl;
-		}
-		return m_mesh->play(voc->sound());
-	}
-
-	return false;
-}
-
-/**
- * Stop playing a sound (or all sound if nullptr)
- */
-void dfMesh::stop(dfVOC* voc)
-{
-	if (m_mesh) {
-		if (voc) {
-			std::cerr << "dfMesh::stop " << voc->name() << std::endl;
-		}
-		m_mesh->stop(voc->sound());
-	}
 }
 
 dfMesh::~dfMesh()

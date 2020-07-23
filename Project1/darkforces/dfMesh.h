@@ -9,6 +9,8 @@
 #include "../framework/fwScene.h"
 #include "../framework/math/fwSphere.h"
 
+#include "../gaEngine/gaComponent/gaComponentMesh.h"
+
 #include "dfBitmap.h"
 
 const float dfOpengl2space = 10.0f;
@@ -44,7 +46,7 @@ class dfMesh {
 
 	fwMaterial* m_material = nullptr;
 	fwGeometry* m_geometry = nullptr;
-	fwMesh* m_mesh = nullptr;
+	GameEngine::ComponentMesh* m_mesh = nullptr;
 	fwMesh* m_parentMesh = nullptr;
 
 	bool m_visible = true;
@@ -90,7 +92,8 @@ public:
 	dfMesh(dfSuperSector*, std::vector<glm::vec3>* vertices, std::vector<glm::vec2>* uvs, std::vector<float>* textureIDs, std::vector <float>* m_ambientLights, std::vector<dfBitmap*>& textures);
 	dfMesh(dfMesh *parent);
 
-	fwMesh* mesh(void) { return m_mesh; };
+	GameEngine::ComponentMesh* componentMesh(void) { return m_mesh; };
+	fwMesh* mesh(void) { return m_mesh->mesh(); };
 	const fwAABBox& modelAABB(void) { return m_boundingBox; };
 	const glm::vec3& position(void) { return m_position; };
 
@@ -134,10 +137,6 @@ public:
 
 	virtual void setStatus(int status) {};
 
-	fwMesh* buildMesh(void);
-
-	// audio API
-	bool play(dfVOC* voc=nullptr);
-	void stop(dfVOC* voc=nullptr);
+	GameEngine::ComponentMesh* buildMesh(void);
 	~dfMesh();
 };

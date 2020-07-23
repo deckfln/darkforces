@@ -82,7 +82,7 @@ void dfComponentActor::fire(const glm::vec3& direction)
 {
 	// create a bullet
 	// and add to the world to live its life
-	dfBullet* bullet = new dfBullet(m_parent->position() + glm::vec3(0, 0.3, 0), direction);
+	dfBullet* bullet = new dfBullet(m_entity->position() + glm::vec3(0, 0.3, 0), direction);
 
 	g_gaWorld.addClient(bullet);
 
@@ -96,9 +96,9 @@ void dfComponentActor::die(void)
 {
 	// inform the world it can remove the entity from its list
 	//g_gaWorld.sendMessage(m_parent->name(), "_world", GA_MSG_DELETE_ENTITY, 0, nullptr);
-	((dfSpriteAnimated*)m_parent)->state(DF_STATE_ENEMY_DIE_FROM_SHOT);
+	((dfSpriteAnimated*)m_entity)->state(DF_STATE_ENEMY_DIE_FROM_SHOT);
 
-	gaDebugLog(1, "dfActor::die", "remove " + m_parent->name() + " the entity from the world");
+	gaDebugLog(1, "dfActor::die", "remove " + m_entity->name() + " the entity from the world");
 }
 
 dfComponentActor::~dfComponentActor()

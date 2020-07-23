@@ -261,7 +261,7 @@ dfMesh *dfLogicElevator::buildGeometry(fwMaterial* material, std::vector<dfBitma
 		}
 
 		if (m_mesh->buildMesh()) {
-			m_mesh->mesh()->set_name(m_pSector->m_name);
+			m_mesh->name(m_pSector->m_name);
 			m_pSector->addObject(m_mesh);
 		}
 		else {
@@ -331,6 +331,9 @@ dfMesh *dfLogicElevator::buildGeometry(fwMaterial* material, std::vector<dfBitma
 	m_position = m_mesh->position();
 	updateWorldAABB();
 
+	// record in the entity
+	addComponent(m_mesh->componentMesh());
+
 	return m_mesh;
 }
 
@@ -390,12 +393,20 @@ void dfLogicElevator::moveToNextStop(void)
 
 	// play the starting sound if it exists
 	if (m_mesh) {
-		if (m_sounds[dfElevatorSound::START] != nullptr) {
-			m_mesh->play(m_sounds[dfElevatorSound::START]);
+		dfVOC* voc = m_sounds[dfElevatorSound::START];
+		if (voc != nullptr) {
+			sendInternalMessage(GA_MSG_PLAY_SOUND, 0, voc->sound());
+#ifdef DEBUG
+			gaDebugLog(0, "dfLogicElevator::moveToNextStop play", voc->name());
+#endif
 		}
 		// play the moving sound if it exists
-		if (m_sounds[dfElevatorSound::MOVE] != nullptr) {
-			m_mesh->play(m_sounds[dfElevatorSound::MOVE]);
+		voc = m_sounds[dfElevatorSound::MOVE];
+		if (voc != nullptr) {
+			sendInternalMessage(GA_MSG_PLAY_SOUND, 0, voc->sound());
+#ifdef DEBUG
+			gaDebugLog(0, "dfLogicElevator::moveToNextStop play", voc->name());
+#endif
 		}
 	}
 }
@@ -452,23 +463,39 @@ bool dfLogicElevator::animateMoveZ(void)
 
 				// stop the move sound and play the end sound if it exists AND the stop is NOT zero
 				if (stop->time() != 0 && m_mesh) {
-					if (m_sounds[dfElevatorSound::MOVE] != nullptr) {
-						m_mesh->stop(m_sounds[dfElevatorSound::MOVE]);
+					dfVOC* voc = m_sounds[dfElevatorSound::MOVE];
+					if (voc != nullptr) {
+						sendInternalMessage(GA_MSG_STOP_SOUND, 0, voc->sound());
+#ifdef DEBUG
+						gaDebugLog(0, "dfLogicElevator::animateMoveZ stop", voc->name());
+#endif
 					}
-					if (m_sounds[dfElevatorSound::END] != nullptr) {
-						m_mesh->play(m_sounds[dfElevatorSound::END]);
+					voc = m_sounds[dfElevatorSound::END];
+					if ( voc != nullptr) {
+						sendInternalMessage(GA_MSG_STOP_SOUND, 0, voc->sound());
+#ifdef DEBUG
+						gaDebugLog(0, "dfLogicElevator::animateMoveZ stop", voc->name());
+#endif
 					}
 				}
 			}
 			else {
 				// play the end sound if it exists
 				if (m_mesh) {
-					if (m_sounds[dfElevatorSound::MOVE] != nullptr) {
-						m_mesh->stop(m_sounds[dfElevatorSound::MOVE]);
+					dfVOC* voc = m_sounds[dfElevatorSound::MOVE];
+					if (voc != nullptr) {
+						sendInternalMessage(GA_MSG_STOP_SOUND, 0, voc->sound());
+#ifdef DEBUG
+						gaDebugLog(0, "dfLogicElevator::animateMoveZ stop", voc->name());
+#endif
 					}
 
-					if (m_sounds[dfElevatorSound::END] != nullptr) {
-						m_mesh->play(m_sounds[dfElevatorSound::END]);
+					voc = m_sounds[dfElevatorSound::END];
+					if (voc != nullptr) {
+						sendInternalMessage(GA_MSG_PLAY_SOUND, 0, voc->sound());
+#ifdef DEBUG
+						gaDebugLog(0, "dfLogicElevator::animateMoveZ play", voc->name());
+#endif
 					}
 				}
 

@@ -1,18 +1,47 @@
 #include "gaComponentMesh.h"
 
+#include "../../alEngine/alSound.h"
+
 #include "../gaEntity.h"
 
-gaComponentMesh::gaComponentMesh(void):
+using namespace GameEngine;
+
+ComponentMesh::ComponentMesh(void):
 	gaComponent(GA_COMPONENT_MESH)
 {
 }
 
-gaComponentMesh::gaComponentMesh(fwGeometry* _geometry, fwMaterial* _material):
+ComponentMesh::ComponentMesh(fwGeometry* _geometry, fwMaterial* _material):
 	gaComponent(GA_COMPONENT_MESH),
 	m_mesh(_geometry, _material)
 {
 }
 
-gaComponentMesh::~gaComponentMesh()
+/**
+ * handle fwMesh actions
+ */
+void ComponentMesh::dispatchMessage(gaMessage* message)
+{
+	switch (message->m_action) {
+	case GA_MSG_MOVE:
+		glm::vec3 position = *(glm::vec3*)message->m_extra;
+		m_mesh.translate(position);
+		break;
+	case GA_MSG_PLAY_SOUND: {
+		 // Start playing a sound or check if it plays
+		alSound* voc = (alSound*)message->m_extra;
+		m_mesh.play(voc);
+		break;
+	}
+	case GA_MSG_STOP_SOUND: {
+		// Stop playing a sound (or all sound if nullptr)
+		alSound* voc = (alSound*)message->m_extra;
+		m_mesh.stop(voc);
+		break;
+	}
+	}
+}
+
+ComponentMesh::~ComponentMesh()
 {
 }

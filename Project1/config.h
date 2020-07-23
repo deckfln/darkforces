@@ -44,5 +44,5 @@ enum {
 	DF_MESSAGE_ADD_ENERGY,
 	DF_MESSAGE_HIT_BULLET,		// the object was hit by a bullet
 	DF_MESSAGE_END_LOOP,		// the animation loop stopped
-	DF_MESSAGE_DIES				// the object died
+	DF_MESSAGE_DIES,			// the object died
 };

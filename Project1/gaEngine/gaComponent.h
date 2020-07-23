@@ -14,12 +14,12 @@ class gaComponent
 	int m_type = GA_COMPONENT_NONE;
 
 protected:
-	gaEntity* m_parent = nullptr;
+	gaEntity* m_entity = nullptr;
 
 public:
 	gaComponent(int m_type);
 	bool is(int type) { return type == m_type; };
-	void parent(gaEntity* parent) { m_parent = parent; };
+	void parent(gaEntity* parent) { m_entity = parent; };
 	virtual void dispatchMessage(gaMessage* message) {};// let a component deal with a situation
 	~gaComponent();
 };

@@ -7,7 +7,10 @@
 enum {
 	GA_MSG_COLLIDE = 0,		// two entities checkCollision
 	GA_MSG_TIMER,			// animation message
-	GA_MSG_DELETE_ENTITY	// delete the given entity
+	GA_MSG_DELETE_ENTITY,	// delete the given entity
+	GA_MSG_MOVE,			// move the object
+	GA_MSG_PLAY_SOUND,
+	GA_MSG_STOP_SOUND
 };
 
 class gaEntity;
@@ -32,5 +35,6 @@ public:
 	gaMessage(int action);
 	gaMessage(int action, int value);
 	gaMessage(int action, int value, const std::string& client);
+	gaMessage(const std::string& server, const std::string& client);
 	std::string& client(void) { return m_client; };
 };
