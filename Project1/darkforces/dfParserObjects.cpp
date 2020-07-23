@@ -65,7 +65,7 @@ void dfParserObjects::parseObjectComponent(dfFileSystem* fs, dfObject* object, G
 		case O_PLANS:
 			break;
 		case E_ITEM: {
-			GameEngine::ParserExpression& item = component.m_children[2].m_children[0];
+			GameEngine::ParserExpression& item = component.m_children[2].m_children[0].m_children[0];
 			switch (item.m_expression) {
 			case E_SHIELD:
 				object->logic(DF_LOGIC_ITEM_SHIELD);
@@ -425,20 +425,6 @@ void dfParserObjects::buildSprites(void)
 
 	time_t timer = GetTickCount64();
 	manager->update();
-}
-
-/**
- * test the objects for a collision
- */
-bool dfParserObjects::checkCollision(fwCylinder& bounding, glm::vec3& direction, glm::vec3& intersection, std::list<gaCollisionPoint>& collisions)
-{
-	bool intersect = false;
-	for (auto object : m_objects) {
-		if (object != nullptr and object->checkCollision(bounding, direction, intersection, collisions)) {
-			intersect = true;
-		}
-	}
-	return intersect;
 }
 
 dfParserObjects::~dfParserObjects()

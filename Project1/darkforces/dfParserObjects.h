@@ -33,7 +33,6 @@ class dfParserObjects
 	std::vector<std::string> m_t3DOs;
 
 	dfAtlasTexture* m_textures;
-	dfObject* parseObject(dfFileSystem* fs, dfObject* sprite, std::istringstream& infile);
 	void parseObject(dfFileSystem* fs, GameEngine::ParserExpression& object, dfLevel* level);
 	void parseObjectComponent(dfFileSystem* fs, dfObject* object, GameEngine::ParserExpression& component);
 
@@ -41,7 +40,6 @@ public:
 	dfParserObjects(dfFileSystem* fs, dfPalette* palette, std::string file, dfLevel* level);
 	dfAtlasTexture* buildAtlasTexture(void);
 	void buildSprites(void);
-	bool checkCollision(fwCylinder& bounding, glm::vec3& direction, glm::vec3& intersection, std::list<gaCollisionPoint>& collisions);
 	void parse(GameEngine::Parser& parser, dfFileSystem* fs, dfPalette* palette, dfLevel* level);
 	~dfParserObjects();
 };
