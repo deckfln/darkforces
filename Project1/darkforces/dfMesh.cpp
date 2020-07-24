@@ -457,8 +457,7 @@ void dfMesh::move(glm::vec3& p)
  */
 void dfMesh::position(glm::vec3& position)
 {
-	glm::vec3 identity(0.0);
-
+	printf("dfMesh::position\n");
 	m_mesh->translate(position);
 	updateWorldBoundingBox(nullptr);
 }

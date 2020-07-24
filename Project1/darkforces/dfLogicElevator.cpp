@@ -634,6 +634,7 @@ void dfLogicElevator::moveTo(float z)
 	case dfElevatorType::DOOR:
 		m_mesh->moveTo(z);
 		m_position.y = z / 10.0f;
+		sendInternalMessage(GA_MSG_MOVE, 0, &m_position);
 		break;
 	case dfElevatorType::BASIC:
 		m_mesh->moveTo(z);

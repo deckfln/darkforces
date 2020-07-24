@@ -44,14 +44,16 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 	g_gaWorld.scene(m_scene);
 
 	// player
-	glm::vec3 start = glm::vec3(-21.26f, 0.95f, 29.064f);	// main hall
+	//glm::vec3 start = glm::vec3(-21.26f, 0.95f, 29.064f);	// main hall
+	glm::vec3 start = glm::vec3(-46, 0.9, 26.8); // super secret
+
 	fwCylinder bounding(start, c_radius, c_height);
 
 	m_player = new gaActor(DF_ENTITY_OBJECT, "player", bounding, c_eyes, c_ankle);
 	m_player->addComponent(new dfComponentActor());
 	g_gaWorld.addClient(m_player);
 
-	// controls
+	// controls	
 	m_control = new gaPlayer(m_camera, m_player, c_direction);
 
 	// secret area	m_control = new fwControlThirdPerson(m_camera, glm::vec3(-36.4, 2.3, 37.8), 0.55f, -pi / 2, 0.2f);
