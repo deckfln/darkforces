@@ -663,6 +663,7 @@ void dfLogicElevator::moveTo(float z)
 	case dfElevatorType::MORPH_MOVE1:
 		glm::vec3 p = m_center + m_move * z;
 		m_mesh->move(p);
+		dfLevel::level2gl(p, m_position);
 		sendInternalMessage(GA_MSG_MOVE, 0, &m_position);
 		break;
 	case dfElevatorType::CHANGE_LIGHT:
