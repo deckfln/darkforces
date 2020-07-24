@@ -136,8 +136,7 @@ void gaEntity::moveTo(const glm::vec3& position)
 {
 	m_position = position;
 
-	// take the opportunity to update the world bounding box
-	updateWorldAABB();
+	sendInternalMessage(GA_MSG_MOVE, 0, &m_position);
 }
 
 /**
@@ -154,6 +153,16 @@ void gaEntity::updateWorldAABB(void)
  */
 void gaEntity::dispatchMessage(gaMessage* message)
 {
+	switch (message->m_action)
+	{
+	case GA_MSG_MOVE:
+		// take the opportunity to update the world bounding box
+		updateWorldAABB();
+		break;
+	default:
+		break;
+	}
+
 	for (auto component : m_components) {
 		component->dispatchMessage(message);
 	}

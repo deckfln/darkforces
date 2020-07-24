@@ -37,6 +37,7 @@ static std::map<dfElevatorType, float> _speeds = {
 	{dfElevatorType::CHANGE_LIGHT, 10.0f},
 	{dfElevatorType::MOVE_CEILING, 20.0f},
 	{dfElevatorType::MORPH_SPIN1, 20.0f},
+	{dfElevatorType::MORPH_SPIN2, 20.0f},
 	{dfElevatorType::MORPH_MOVE1, 20.0f},
 	{dfElevatorType::DOOR, 20.0f}
 };
@@ -368,46 +369,61 @@ void dfLogicElevator::init(int stopID)
  */
 void dfLogicElevator::moveToNextStop(void)
 {
-	m_current = m_stops[m_currentStop]->z_position(m_type);
-	float t1 = m_stops[m_currentStop]->time();
-	float t2;
+	if (m_speed > 0) {
+		m_current = m_stops[m_currentStop]->z_position(m_type);
+		float t1 = m_stops[m_currentStop]->time();
+		float t2;
 
-	if (m_currentStop >= m_stops.size() - 1) {
-		// move backward
-		m_nextStop = 0;
+		if (m_currentStop >= m_stops.size() - 1) {
+			// move backward
+			m_nextStop = 0;
+		}
+		else {
+			// move upward
+			m_nextStop = m_currentStop + 1;
+		}
+
+		m_target = m_stops[m_nextStop]->z_position(m_type);
+		t2 = m_stops[m_nextStop]->time();
+
+		float delta = (t2 - t1) * 1000;	// time in milisecond
+
+		m_direction = m_target - m_current;
+
+		// TODO adapt the speed
+		m_delay = abs(m_direction) * 838 / m_speed;
+
+		// play the starting sound if it exists
+		if (m_mesh) {
+			dfVOC* voc = m_sounds[dfElevatorSound::START];
+			if (voc != nullptr) {
+				sendInternalMessage(GA_MSG_PLAY_SOUND, 0, voc->sound());
+#ifdef DEBUG
+				gaDebugLog(0, "dfLogicElevator::moveToNextStop play", voc->name());
+#endif
+			}
+			// play the moving sound if it exists
+			voc = m_sounds[dfElevatorSound::MOVE];
+			if (voc != nullptr) {
+				sendInternalMessage(GA_MSG_PLAY_SOUND, 0, voc->sound());
+#ifdef DEBUG
+				gaDebugLog(0, "dfLogicElevator::moveToNextStop play", voc->name());
+#endif
+			}
+		}
 	}
 	else {
-		// move upward
-		m_nextStop = m_currentStop + 1;
-	}
-
-	m_target = m_stops[m_nextStop]->z_position(m_type);
-	t2 = m_stops[m_nextStop]->time();
-
-	float delta = (t2 - t1) * 1000;	// time in milisecond
-
-	m_direction = m_target - m_current;
-
-	// TODO adapt the speed
-	m_delay = abs(m_direction) * 838 / m_speed;
-
-	// play the starting sound if it exists
-	if (m_mesh) {
-		dfVOC* voc = m_sounds[dfElevatorSound::START];
-		if (voc != nullptr) {
-			sendInternalMessage(GA_MSG_PLAY_SOUND, 0, voc->sound());
-#ifdef DEBUG
-			gaDebugLog(0, "dfLogicElevator::moveToNextStop play", voc->name());
-#endif
+		// instant move
+		if (m_currentStop >= m_stops.size() - 1) {
+			// move backward
+			m_currentStop = 0;
 		}
-		// play the moving sound if it exists
-		voc = m_sounds[dfElevatorSound::MOVE];
-		if (voc != nullptr) {
-			sendInternalMessage(GA_MSG_PLAY_SOUND, 0, voc->sound());
-#ifdef DEBUG
-			gaDebugLog(0, "dfLogicElevator::moveToNextStop play", voc->name());
-#endif
+		else {
+			// move upward
+			m_currentStop = m_currentStop + 1;
 		}
+
+		moveTo(m_stops[m_currentStop]);
 	}
 }
 
@@ -618,25 +634,24 @@ void dfLogicElevator::moveTo(float z)
 	case dfElevatorType::DOOR:
 		m_mesh->moveTo(z);
 		m_position.y = z / 10.0f;
-		gaEntity::moveTo(m_position);
 		break;
 	case dfElevatorType::BASIC:
 		m_mesh->moveTo(z);
 		m_position.y = z / 10.0f;
-		gaEntity::moveTo(m_position);
+		sendInternalMessage(GA_MSG_MOVE, 0, &m_position);
 		break;
 	case dfElevatorType::MOVE_FLOOR:
 		// move the sector the elevator is based on (for collision detection)
 		m_mesh->moveTo(z);
 		m_position.y = z / 10.0f;
-		gaEntity::moveTo(m_position);
+		sendInternalMessage(GA_MSG_MOVE, 0, &m_position);
 		m_pSector->currentFloorAltitude(z);
 		break;
 	case dfElevatorType::MOVE_CEILING:
 		// move the sector the elevator is based on (for collision detection)
 		m_mesh->moveTo(z);
 		m_position.y = z / 10.0f;
-		gaEntity::moveTo(m_position);
+		sendInternalMessage(GA_MSG_MOVE, 0, &m_position);
 		m_pSector->ceiling(z);
 		break;
 	case dfElevatorType::MORPH_SPIN1:
@@ -647,7 +662,7 @@ void dfLogicElevator::moveTo(float z)
 	case dfElevatorType::MORPH_MOVE1:
 		glm::vec3 p = m_center + m_move * z;
 		m_mesh->move(p);
-		gaEntity::moveTo(p);
+		sendInternalMessage(GA_MSG_MOVE, 0, &m_position);
 		break;
 	case dfElevatorType::CHANGE_LIGHT:
 		m_pSector->changeAmbient(z);
@@ -732,6 +747,10 @@ void dfLogicElevator::dispatchMessage(gaMessage* message)
 		animate(message->m_delta);
 		break;
 
+	case GA_MSG_MOVE:
+		// self reference
+		break;
+
 	default:
 		std::cerr << "dfLogicElevator::dispatchMessage message " << message->m_action << " not implemented" << std::endl;
 	}
@@ -793,6 +812,43 @@ void dfLogicElevator::keys(std::string& key)
 	if (key == dfKeyRed) {
 		m_keys |= DF_KEY_RED;
 	}
+}
+
+/**
+ * extended collision test after a sucessfull AABB collision
+ * test against all vertices of the dfMesh it is based on
+ */
+bool dfLogicElevator::checkCollision(fwCylinder& bounding, glm::vec3& direction, glm::vec3& intersection, std::list<gaCollisionPoint>& collisions)
+{
+	// only test the elevator mesh if the supersector it is bind to is visible
+	// and if the play Z (gl space) in inbetwen the vertical elevator extend (level space)
+	glm::vec3 plevel;
+	glm::vec3 target = bounding.position() + direction;
+	m_parent->gl2level(target, plevel);
+
+	float floor, ceiling;
+
+	if (m_pSector) {
+		floor = m_pSector->currentFloorAltitude();
+		ceiling = m_pSector->ceiling();
+	}
+	else {
+		floor = -1000;
+		ceiling = 1000;
+	}
+
+	/*
+	if (m_name == "red_door") {
+		printf("dfLogicElevator::checkCollision\n");
+	}
+	*/
+	// Hack to deal with sector elev3-1. The plateform is physically impossible, there is not enough space
+	// from the top to the bottom where there is sector 149
+	if (m_mesh && m_mesh->visible() && plevel.z > (m_zmin - 4.0) && plevel.z < m_zmax && plevel.z < ceiling) {
+		return m_mesh->checkCollision(bounding, direction, intersection, m_name, collisions);
+	}
+
+	return false;
 }
 
 dfLogicElevator::~dfLogicElevator(void)
