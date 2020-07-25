@@ -81,7 +81,6 @@ void gaEntity::modelAABB(const fwAABBox& box)
  */
 void gaEntity::rotate(const glm::vec3& rotation)
 {
-	m_rotation = rotation;
 	m_quaternion = glm::quat(glm::vec3(rotation.x, rotation.y, rotation.z));
 
 	// take the opportunity to update the world bounding box
@@ -157,6 +156,11 @@ void gaEntity::dispatchMessage(gaMessage* message)
 	{
 	case GA_MSG_MOVE:
 		// take the opportunity to update the world bounding box
+		updateWorldAABB();
+		break;
+	case GA_MSG_ROTATE:
+		// take the opportunity to update the world bounding box
+		m_quaternion = glm::quat(glm::vec3(m_rotation.x, m_rotation.y, m_rotation.z));
 		updateWorldAABB();
 		break;
 	default:

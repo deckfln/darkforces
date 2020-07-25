@@ -8,7 +8,8 @@ enum {
 	GA_MSG_COLLIDE = 0,		// two entities checkCollision
 	GA_MSG_TIMER,			// animation message
 	GA_MSG_DELETE_ENTITY,	// delete the given entity
-	GA_MSG_MOVE,			// move the object
+	GA_MSG_MOVE,			// move the entity
+	GA_MSG_ROTATE,			// rotate the entity
 	GA_MSG_PLAY_SOUND,
 	GA_MSG_STOP_SOUND
 };

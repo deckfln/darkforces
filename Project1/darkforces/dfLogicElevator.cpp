@@ -632,37 +632,32 @@ void dfLogicElevator::moveTo(float z)
 	switch (m_type) {
 	case dfElevatorType::INV:
 	case dfElevatorType::DOOR:
-		m_mesh->moveTo(z);
 		m_position.y = z / 10.0f;
 		sendInternalMessage(GA_MSG_MOVE, 0, &m_position);
 		break;
 	case dfElevatorType::BASIC:
-		m_mesh->moveTo(z);
 		m_position.y = z / 10.0f;
 		sendInternalMessage(GA_MSG_MOVE, 0, &m_position);
 		break;
 	case dfElevatorType::MOVE_FLOOR:
 		// move the sector the elevator is based on (for collision detection)
-		m_mesh->moveTo(z);
 		m_position.y = z / 10.0f;
 		sendInternalMessage(GA_MSG_MOVE, 0, &m_position);
 		m_pSector->currentFloorAltitude(z);
 		break;
 	case dfElevatorType::MOVE_CEILING:
 		// move the sector the elevator is based on (for collision detection)
-		m_mesh->moveTo(z);
 		m_position.y = z / 10.0f;
 		sendInternalMessage(GA_MSG_MOVE, 0, &m_position);
 		m_pSector->ceiling(z);
 		break;
 	case dfElevatorType::MORPH_SPIN1:
 	case dfElevatorType::MORPH_SPIN2:
-		m_mesh->rotateZ(glm::radians((z)));
-		gaEntity::rotate(glm::vec3(0, glm::radians(z), 0));
+		m_rotation = glm::vec3(0, glm::radians(z), 0);
+		sendInternalMessage(GA_MSG_ROTATE, 0, &m_rotation);
 		break;
 	case dfElevatorType::MORPH_MOVE1:
 		glm::vec3 p = m_center + m_move * z;
-		m_mesh->move(p);
 		dfLevel::level2gl(p, m_position);
 		sendInternalMessage(GA_MSG_MOVE, 0, &m_position);
 		break;
@@ -749,6 +744,7 @@ void dfLogicElevator::dispatchMessage(gaMessage* message)
 		animate(message->m_delta);
 		break;
 
+	case GA_MSG_ROTATE:
 	case GA_MSG_MOVE:
 		// self reference
 		break;

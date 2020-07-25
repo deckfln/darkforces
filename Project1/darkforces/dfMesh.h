@@ -59,16 +59,12 @@ class dfMesh {
 		glm::vec2& size,
 		int textureID,
 		float ambient);
-	void position(glm::vec3& position);
-	void rotation(glm::vec3& rotation);
-	void updateWorldBoundingBox(dfMesh *parent);
 
 protected:
 	std::string m_name;
 	dfMesh* m_parent = nullptr;							// Parent dfMesh
 	dfSuperSector* m_supersector = nullptr;
-	fwAABBox m_boundingBox;								// Model Space AABB
-	fwAABBox m_worldBoundingBox;						// Worl Space AABB
+	fwAABBox m_modelAABB;								// Model Space AABB
 	std::vector<dfBitmap*>& m_bitmaps = m_dummy;		// image map
 
 	// pointers, so we can reference other buffers
@@ -94,7 +90,7 @@ public:
 
 	GameEngine::ComponentMesh* componentMesh(void) { return m_mesh; };
 	fwMesh* mesh(void) { return m_mesh->mesh(); };
-	const fwAABBox& modelAABB(void) { return m_boundingBox; };
+	const fwAABBox& modelAABB(void);					// build the model AABB
 	const glm::vec3& position(void) { return m_position; };
 
 	void display(fwScene*, bool visibility);
@@ -104,10 +100,6 @@ public:
 	void addFloor(std::vector<std::vector<Point>>& polygons, float z, glm::vec3& texture, float ambient, bool clockwise);
 	void addPlane(float width, dfBitmapImage* image);
 	virtual void buildGeometry(dfSector* source, float bottom, float top);
-	virtual void rebuildAABB(void);
-	void moveTo(float z);			// move the dfMesh to altitude
-	void rotateZ(float angle);
-	void move(glm::vec3& position);
 
 	bool collisionSegmentTriangle(const glm::vec3& p,
 		const glm::vec3& q,

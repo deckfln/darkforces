@@ -277,9 +277,6 @@ bool gaWorld::checkCollision(gaEntity* source, fwCylinder& bounding, glm::vec3& 
 	g_gaWorld.findAABBCollision(aabb, entities, sectors);
 
 	for (auto entity : entities) {
-		if (entity->name() == "player") {
-			continue;
-		}
 		// only test entities that can physically checkCollision, but still inform the target of the collision
 		if (!entity->physical()) {
 			entity->collideWith(source);

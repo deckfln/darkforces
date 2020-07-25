@@ -31,9 +31,9 @@ void dfSign::setStatus(int status)
 
 void dfSign::rebuildAABB(void)
 {
-	m_boundingBox.reset();
+	m_modelAABB.reset();
 	for (int i = m_start; i < m_start + m_size; i++) {
-		m_boundingBox.extend((*m_pVertices)[i]);
+		m_modelAABB.extend((*m_pVertices)[i]);
 	}
 }
 

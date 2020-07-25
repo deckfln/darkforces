@@ -49,6 +49,18 @@ dfMesh::dfMesh(dfMesh* parent):
 	parent->addChild(this);
 }
 
+/**
+ * Build the AABB for the mesh
+ */
+const fwAABBox& dfMesh::modelAABB(void)
+{
+	for (auto& vertice : m_vertices) {
+		m_modelAABB.extend(vertice);
+	}
+
+	return m_modelAABB;
+}
+
 void dfMesh::display(fwScene* scene, bool visibility)
 {
 	m_visible = visibility;
@@ -73,17 +85,6 @@ void dfMesh::display(fwScene* scene, bool visibility)
 void dfMesh::buildGeometry(dfSector* source, float bottom, float top)
 {
 
-}
-
-/**
- * if vertices have been touched, rebuild the AABB
- */
-void dfMesh::rebuildAABB(void)
-{
-	m_boundingBox.reset();
-	for(auto &vertice: *m_pVertices) {
-		m_boundingBox.extend(vertice);
-	}
 }
 
 /**
@@ -130,9 +131,6 @@ void dfMesh::setVertice(int p, float x, float y, float z, float xoffset, float y
 	(*m_pUvs)[p] = glm::vec2(xoffset, yoffset);
 	(*m_pTextureIDs)[p] = (float)textureID;
 	(*m_pAmbientLights)[p] = ambient / 32.0f;
-
-	// extend the AABB
-	m_boundingBox.extend((*m_pVertices)[p]);
 }
 
 /**
@@ -422,81 +420,6 @@ void dfMesh::addPlane(float width, dfBitmapImage* image)
 }
 
 /**
- * Move the elevator floor
- */
-void dfMesh::moveTo(float z)
-{
-	glm::vec3 p = m_mesh->get_position();
-	p.y = z / 10.0f;
-	position(p);
-}
-
-/**
- * Rotate along Z axis
- */
-void dfMesh::rotateZ(float angle)
-{
-	glm::vec3 rotate(0, angle, 0);
-	rotation(rotate);
-}
-
-/**
- * force the position in level space
- */
-void dfMesh::move(glm::vec3& p)
-{
-	// convert to gl space
-	dfLevel::level2gl(p, m_position);
-
-	position(m_position);
-}
-
-/**
- * Override fwMesh::centerVertices to force the bounding box update
- * position is in GL space
- */
-void dfMesh::position(glm::vec3& position)
-{
-	updateWorldBoundingBox(nullptr);
-}
-
-/**
- * Override fwMesh::centerVertices to force the bounding box update
- */
-void dfMesh::rotation(glm::vec3& rotate)
-{
-	m_mesh->rotate(rotate);
-	updateWorldBoundingBox(nullptr);
-}
-
-/**
- * Apply the world matrix to the model space bounding box
- */
-void dfMesh::updateWorldBoundingBox(dfMesh* parent)
-{
-	if (m_mesh) {
-		if (parent) {
-			m_mesh->updateWorldMatrix(parent->m_mesh);
-		}
-		else {
-			m_mesh->updateWorldMatrix(nullptr);
-		}
-		const glm::mat4& worldMatrix = m_mesh->worldMatrix();
-
-		m_worldBoundingBox.apply(m_boundingBox, worldMatrix);
-	}
-	else {
-		const glm::mat4& worldMatrix = parent->m_mesh->worldMatrix();
-
-		m_worldBoundingBox.apply(m_boundingBox, worldMatrix);
-	}
-
-	for (auto child : m_children) {
-		child->updateWorldBoundingBox(this);
-	}
-}
-
-/**
  * // extended segment collision test after a sucessfull AABB collision
  */
 bool dfMesh::collisionSegmentTriangle(const glm::vec3& p, const glm::vec3& q, std::list<gaCollisionPoint>& collisions)
@@ -733,7 +656,6 @@ void dfMesh::moveVertices(glm::vec3& center)
 
 	m_mesh->translate(m_position);
 	m_mesh->updateVertices();	// reupload vertices to GPU
-	rebuildAABB();
 }
 
 /**
@@ -758,8 +680,6 @@ void dfMesh::centerOnGeometryXZ(glm::vec3& target)
 
 	m_mesh->translate(m_position);
 	m_mesh->updateVertices();	// reupload vertices to GPU
-
-	rebuildAABB();
 
 	// convert to gl space
 	dfLevel::gl2level(center, target);
@@ -786,8 +706,6 @@ void dfMesh::centerOnGeometryXYZ(glm::vec3& target)
 	m_mesh->translate(m_position);
 	m_mesh->updateVertices();	// reupload vertices to GPU
 
-	rebuildAABB();
-
 	// convert to gl space
 	dfLevel::gl2level(center, target);
 }
@@ -813,7 +731,6 @@ GameEngine::ComponentMesh* dfMesh::buildMesh(void)
 
 	m_mesh = new GameEngine::ComponentMesh(m_geometry, m_material);
 	m_mesh->set_name(m_name);
-	position(m_position);
 
 	return m_mesh;
 }
