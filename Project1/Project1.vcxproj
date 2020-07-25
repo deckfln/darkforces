@@ -134,6 +134,7 @@
     <ClCompile Include="darkforces\dfBullet.cpp" />
     <ClCompile Include="darkforces\dfCollision.cpp" />
     <ClCompile Include="darkforces\dfComponent\dfComponentActor.cpp" />
+    <ClCompile Include="darkforces\dfComponent\dfComponentLogic.cpp" />
     <ClCompile Include="darkforces\dfFileGOB.cpp" />
     <ClCompile Include="darkforces\dfFileSystem.cpp" />
     <ClCompile Include="darkforces\dfFrame.cpp" />
@@ -273,6 +274,7 @@
     <ClInclude Include="darkforces\dfBullet.h" />
     <ClInclude Include="darkforces\dfCollision.h" />
     <ClInclude Include="darkforces\dfComponent\dfComponentActor.h" />
+    <ClInclude Include="darkforces\dfComponent\dfComponentLogic.h" />
     <ClInclude Include="darkforces\dfFileGOB.h" />
     <ClInclude Include="darkforces\dfFileSystem.h" />
     <ClInclude Include="darkforces\dfFrame.h" />

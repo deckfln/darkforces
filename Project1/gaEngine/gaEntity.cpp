@@ -103,6 +103,7 @@ float gaEntity::distanceTo(const glm::vec3& p)
 	return glm::distance(m_position, p);
 }
 
+
 /**
  * send internal message to all components for immediate action
  */

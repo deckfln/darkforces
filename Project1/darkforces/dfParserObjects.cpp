@@ -24,7 +24,7 @@
 #include "dfSprites.h"
 #include "dfGame.h"
 #include "dfLevel.h"
-
+#include "dfComponent/dfComponentLogic.h"
 
 /*
 DIFF	EASY	MED	HARD

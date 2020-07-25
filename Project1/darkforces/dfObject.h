@@ -137,9 +137,5 @@ public:
 	bool update(time_t t) override;						// update based on timer
 	void collideWith(gaEntity*) override;				// reaction on a collision with another entity
 
-	void dispatchMessage(gaMessage* message) override;
-
-	virtual void die(void);							// when the object dies
-
 	~dfObject();
 };

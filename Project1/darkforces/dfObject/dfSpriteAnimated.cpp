@@ -4,6 +4,7 @@
 
 #include "../dfModel/dfWAX.h"
 #include "../dfLevel.h"
+#include "../dfComponent/dfComponentLogic.h"
 
 /**
  * create a sprite from a pointer to a model
@@ -45,8 +46,6 @@ void dfSpriteAnimated::state(int state)
 		}
 		else if (m_state == DF_STATE_ENEMY_LIE_DEAD) {
 			m_physical = false;			// remove collision box, they actor is dead
-
-			sendInternalMessage(DF_MESSAGE_DIES, 0, nullptr);
 		}
 	}
 	else {
@@ -117,6 +116,9 @@ bool dfSpriteAnimated::update(time_t t)
 void dfSpriteAnimated::dispatchMessage(gaMessage* message)
 {
 	switch (message->m_action) {
+	case DF_MSG_STATE:
+		state(message->m_value);
+		break;
 	case GA_MSG_TIMER:
 		if (update(message->m_delta)) {
 			// continue the animation loop
@@ -124,30 +126,15 @@ void dfSpriteAnimated::dispatchMessage(gaMessage* message)
 		}
 		else {
 			// end of animation loop
-			sendInternalMessage(DF_MESSAGE_END_LOOP, 0, nullptr);
+			sendInternalMessage(DF_MESSAGE_END_LOOP, m_state);
 		}
 		break;
 	case DF_MESSAGE_END_LOOP:
-		// animation loop for an object reached it's end
-		if (m_logics & DF_LOGIC_ENEMIES) {
-			switch (m_state) {
-			case DF_STATE_ENEMY_DIE_FROM_PUNCH:
-			case DF_STATE_ENEMY_DIE_FROM_SHOT:
-				state(DF_STATE_ENEMY_LIE_DEAD);
-			}
-		}
-		else {
-			// go for next animation if the animation loop ?
-			if (m_loopAnimation) {
-				// restart the counters
-				m_currentFrame = 0;
-				g_gaWorld.sendMessageDelayed(m_name, m_name, GA_MSG_TIMER, 0, nullptr);
-			}
-		}
-		break;
-	case DF_MESSAGE_HIT_BULLET:
-		if (m_logics & DF_LOGIC_SCENERY) {
-			state(DF_STATE_SCENERY_ATTACK);
+		// go for next animation if the animation loop ?
+		if (m_loopAnimation) {
+			// restart the counters
+			m_currentFrame = 0;
+			g_gaWorld.sendMessageDelayed(m_name, m_name, GA_MSG_TIMER, 0, nullptr);
 		}
 		break;
 	}

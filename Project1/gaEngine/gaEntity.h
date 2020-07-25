@@ -58,8 +58,8 @@ public:
 	float distanceTo(gaEntity* other);					// distance between the 2 entities
 	float distanceTo(const glm::vec3& p);				// distance from the entity position to the point
 	void sendInternalMessage(int action,
-		int value,
-		void* extra);									// send internal message to all components of the current entity
+		int value = 0,
+		void* extra = nullptr);							// send internal message to all components of the current entity
 	virtual void add2scene(fwScene* scene);				// if the entity has a mesh, add to the scene
 	virtual void collideWith(gaEntity*) {};				// inform another entity of a collision
 	virtual void updateWorldAABB(void);					// update the world AABB based on position

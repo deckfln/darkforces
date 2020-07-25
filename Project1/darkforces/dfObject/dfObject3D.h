@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../dfObject.h"
+#include "../dfComponent/dfComponentLogic.h"
 
 class fwMesh;
 class fwScene;
@@ -13,6 +14,8 @@ class dfFileSystem;
 
 class dfObject3D : public dfObject
 {
+	dfComponentLogic m_componentLogic;
+
 	glm::vec3 m_animRotation = glm::vec3(0);
 	glm::vec3 m_animRotationAxe = glm::vec3(0);
 	float m_aniRotationSpeed = 0;	//rotates from -999 (max anti-clockwise) to 999 (max clockwise)

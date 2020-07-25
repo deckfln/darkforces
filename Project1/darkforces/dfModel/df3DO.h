@@ -29,6 +29,7 @@ extern const uint32_t g_3do_class;
 
 class df3DO : public dfModel
 {
+
 	std::vector<glm::vec3> m_vertices;
 	std::vector<glm::vec3> m_colors;
 	std::vector<glm::vec3> m_textures;

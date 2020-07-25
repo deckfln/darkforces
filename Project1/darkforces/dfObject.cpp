@@ -11,6 +11,7 @@
 #include "dfLevel.h"
 #include "dfCollision.h"
 #include "dfComponent/dfComponentActor.h"
+#include "dfComponent/dfComponentLogic.h"
 #include "dfObject/dfSprite.h"
 
 static int g_ids = 0;
@@ -54,6 +55,11 @@ void dfObject::logic(int logic)
 	}
 
 	// start the animation loop
+	dfComponentLogic* lc = (dfComponentLogic*)findComponent(DF_COMPONENT_LOGIC);
+	if (lc) {
+		lc->logic(logic);
+	}
+
 	if (m_logics & DF_LOGIC_ANIM) {
 		g_gaWorld.sendMessageDelayed(m_name, m_name, GA_MSG_TIMER, 0, nullptr);
 	}
@@ -161,45 +167,6 @@ void dfObject::collideWith(gaEntity* entity)
 		}
 	}
 }
-
-/**
- */
-void dfObject::dispatchMessage(gaMessage* message)
-{
-	switch (message->m_action) {
-	case DF_MESSAGE_DIES:
-		die();
-	}
-
-	gaEntity::dispatchMessage(message);
-}
-
-/**
- * when the object dies
- */
-void dfObject::die(void)
-{
-	//drop the bag of the object when it dies
-	if (m_logics & DF_LOGIC_ENEMIES) {
-		if (m_logics & (DF_LOGIC_COMMANDO | DF_LOGIC_TROOP)) {
-			drop("IST-GUNI.FME");
-		}
-		else if (m_logics & DF_LOGIC_I_OFFICER) {
-			if (m_logics & DF_LOGIC_RED_KEY) {
-				drop("IKEYR.FME");
-			}
-			drop("IENERGY.FME");
-		}
-		else if (m_logics & DF_LOGIC_MOUSEBOT) {
-			drop("DEDMOUSE.FME");
-			drop("IBATTERY.FME");
-		}
-		else if (m_logics & DF_LOGIC_INTDROID) {
-			drop("IPOWER.FME");
-		}
-	}
-}
-
 
 /**
  * object to drop in the scene at the current position

@@ -13,6 +13,7 @@
 dfSprite::dfSprite(dfFME* fme, const glm::vec3& position, float ambient):
 	dfObject(fme, position, ambient, OBJECT_FME)
 {
+	addComponent(&m_componentLogic);
 }
 
 /**
@@ -21,6 +22,7 @@ dfSprite::dfSprite(dfFME* fme, const glm::vec3& position, float ambient):
 dfSprite::dfSprite(dfModel* model, const glm::vec3& position, float ambient, int type):
 	dfObject(model, position, ambient, type)
 {
+	addComponent(&m_componentLogic);
 }
 
 /**
@@ -29,6 +31,7 @@ dfSprite::dfSprite(dfModel* model, const glm::vec3& position, float ambient, int
 dfSprite::dfSprite(const std::string& name, const glm::vec3& position, float ambient, int type) :
 	dfObject((dfFME*)g_gaWorld.getModel(name), position, ambient, type)
 {
+	addComponent(&m_componentLogic);
 }
 
 /**

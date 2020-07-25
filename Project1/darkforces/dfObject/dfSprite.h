@@ -2,6 +2,7 @@
 
 #include "../dfObject.h"
 #include "../../framework/fwAABBox.h"
+#include "../dfComponent/dfComponentLogic.h"
 
 class dfFME;
 class fwAABBox;
@@ -9,6 +10,8 @@ class fwMesh;
 
 class dfSprite : public dfObject
 {
+	dfComponentLogic m_componentLogic;		// dealing with the logic of the object
+
 public:
 	dfSprite(dfFME* fme, const glm::vec3& position, float ambient);
 	dfSprite(dfModel* model, const glm::vec3& position, float ambient, int type);

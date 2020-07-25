@@ -15,6 +15,7 @@ dfObject3D::dfObject3D(df3DO* threedo, glm::vec3& position, float ambient):
 {
 	dfObject::moveTo(m_position_lvl);
 	physical(false);	// in dark forces, 3D objects can be traversed
+	addComponent(&m_componentLogic);
 }
 
 /**

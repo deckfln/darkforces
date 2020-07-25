@@ -30,7 +30,8 @@ enum {
  * type of component
  */
 enum {
-	DF_COMPONENT_ACTOR = 1024
+	DF_COMPONENT_ACTOR = 1024,
+	DF_COMPONENT_LOGIC
 };
 
 /**
@@ -45,4 +46,5 @@ enum {
 	DF_MESSAGE_HIT_BULLET,		// the object was hit by a bullet
 	DF_MESSAGE_END_LOOP,		// the animation loop stopped
 	DF_MESSAGE_DIES,			// the object died
+	DF_MSG_STATE,				// change the state of the object
 };
