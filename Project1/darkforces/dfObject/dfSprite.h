@@ -17,7 +17,7 @@ public:
 	virtual bool updateSprite(glm::vec3* position, 
 		glm::vec4* texture, 
 		glm::vec3* direction);
-	virtual void OnWorldInsert(void);					// trigger when inserted in a gaWorld
-	virtual void OnWorldRemove(void);					// trigger when from the gaWorld
+	void OnWorldInsert(void) override;					// trigger when inserted in a gaWorld
+	void OnWorldRemove(void) override;					// trigger when from the gaWorld
 	~dfSprite();
 };

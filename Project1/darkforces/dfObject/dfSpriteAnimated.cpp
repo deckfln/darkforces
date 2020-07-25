@@ -35,17 +35,22 @@ void dfSpriteAnimated::state(int state)
 	m_frame = 0;
 	m_dirtyAnimation = true;
 
-	// trigger the animation, unless the object is static or has no animation
-	if (m_state != DF_STATE_ENEMY_LIE_DEAD &&
-		m_state != DF_STATE_ENEMY_STAY_STILL &&
-		m_source->framerate(m_state) != 0)
-	{
-		g_gaWorld.sendMessageDelayed(m_name, m_name, GA_MSG_TIMER, 0, nullptr);
-	}
-	else if (m_state == DF_STATE_ENEMY_LIE_DEAD) {
-		m_physical = false;			// remove collision box, they actor is dead
+	if (m_logics & DF_LOGIC_ENEMIES) {
+		// trigger the animation, unless the object is static or has no animation
+		if (m_state != DF_STATE_ENEMY_LIE_DEAD &&
+			m_state != DF_STATE_ENEMY_STAY_STILL &&
+			m_source->framerate(m_state) != 0)
+		{
+			g_gaWorld.sendMessageDelayed(m_name, m_name, GA_MSG_TIMER, 0, nullptr);
+		}
+		else if (m_state == DF_STATE_ENEMY_LIE_DEAD) {
+			m_physical = false;			// remove collision box, they actor is dead
 
-		g_gaWorld.sendMessage(m_name, m_name, DF_MESSAGE_DIES, 0, nullptr);
+			sendInternalMessage(DF_MESSAGE_DIES, 0, nullptr);
+		}
+	}
+	else {
+		g_gaWorld.sendMessageDelayed(m_name, m_name, GA_MSG_TIMER, 0, nullptr);
 	}
 }
 
@@ -86,8 +91,7 @@ bool dfSpriteAnimated::update(time_t t)
 
 	int frameRate = m_source->framerate(m_state);
 	if (frameRate == 0) {
-		// static objects like FME are not updated
-		return false;
+		return false;	// static objects like FME are not updated
 	}
 
 	time_t frameTime = 1000 / frameRate; // time of one frame in milliseconds
@@ -97,21 +101,7 @@ bool dfSpriteAnimated::update(time_t t)
 		m_frame = m_source->nextFrame(m_state, m_frame);
 
 		if (m_frame == -1) {
-			// when we loop back, first take some action
-			switch (m_state) {
-			case DF_STATE_ENEMY_DIE_FROM_PUNCH:
-			case DF_STATE_ENEMY_DIE_FROM_SHOT:
-				state(DF_STATE_ENEMY_LIE_DEAD);
-				return false;				// Stop animation loop
-			}
-
-			// does the animation loop ?
-			if (!m_loopAnimation) {
-				return false;				// Stop animation loop
-			}
-
-			// restart the counters
-			m_currentFrame = 0;
+			return false;	// reached end of animation loop
 		}
 
 		m_lastFrame = m_currentFrame;
@@ -134,7 +124,30 @@ void dfSpriteAnimated::dispatchMessage(gaMessage* message)
 		}
 		else {
 			// end of animation loop
-			g_gaWorld.sendMessage(m_name, m_name, DF_MESSAGE_END_LOOP, 0, nullptr);
+			sendInternalMessage(DF_MESSAGE_END_LOOP, 0, nullptr);
+		}
+		break;
+	case DF_MESSAGE_END_LOOP:
+		// animation loop for an object reached it's end
+		if (m_logics & DF_LOGIC_ENEMIES) {
+			switch (m_state) {
+			case DF_STATE_ENEMY_DIE_FROM_PUNCH:
+			case DF_STATE_ENEMY_DIE_FROM_SHOT:
+				state(DF_STATE_ENEMY_LIE_DEAD);
+			}
+		}
+		else {
+			// go for next animation if the animation loop ?
+			if (m_loopAnimation) {
+				// restart the counters
+				m_currentFrame = 0;
+				g_gaWorld.sendMessageDelayed(m_name, m_name, GA_MSG_TIMER, 0, nullptr);
+			}
+		}
+		break;
+	case DF_MESSAGE_HIT_BULLET:
+		if (m_logics & DF_LOGIC_SCENERY) {
+			state(DF_STATE_SCENERY_ATTACK);
 		}
 		break;
 	}

@@ -83,6 +83,10 @@ enum {
 // list of all enemies
 const unsigned long DF_LOGIC_ENEMIES = DF_LOGIC_I_OFFICER | DF_LOGIC_COMMANDO | DF_LOGIC_TROOP;
 
+// list of all physical logics
+const unsigned long DF_LOGIC_PHYSICAL = DF_LOGIC_I_OFFICER | DF_LOGIC_COMMANDO | DF_LOGIC_TROOP | DF_LOGIC_SCENERY;
+
+
 class dfObject: public gaEntity
 {
 	int m_is = OBJECT_OBJ;
@@ -132,6 +136,7 @@ public:
 	void updateWorldAABB(void) override;				// update the world AABB based on position
 	bool update(time_t t) override;						// update based on timer
 	void collideWith(gaEntity*) override;				// reaction on a collision with another entity
+
 	void dispatchMessage(gaMessage* message) override;
 
 	virtual void die(void);							// when the object dies

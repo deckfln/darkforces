@@ -49,7 +49,7 @@ void dfObject::logic(int logic)
 	m_logics |= logic;
 
 	// Only enemies cannot be walked through
-	if (m_logics & DF_LOGIC_ENEMIES) {
+	if (m_logics & DF_LOGIC_PHYSICAL) {
 		physical(true);
 	}
 
@@ -163,7 +163,6 @@ void dfObject::collideWith(gaEntity* entity)
 }
 
 /**
- * drop the bag of the object when it dies
  */
 void dfObject::dispatchMessage(gaMessage* message)
 {
@@ -180,6 +179,7 @@ void dfObject::dispatchMessage(gaMessage* message)
  */
 void dfObject::die(void)
 {
+	//drop the bag of the object when it dies
 	if (m_logics & DF_LOGIC_ENEMIES) {
 		if (m_logics & (DF_LOGIC_COMMANDO | DF_LOGIC_TROOP)) {
 			drop("IST-GUNI.FME");
