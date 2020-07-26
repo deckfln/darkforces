@@ -38,9 +38,9 @@ protected:
 	fwMeshRendering m_rendering = fwMeshRendering::FW_MESH_TRIANGLES;	// Rendering mode of the mesh
 	float m_pointSize = 1.0;				// for FW_MESH_POINT rendering
 
-	fwGeometry *geometry = nullptr;
-	fwMaterial *material = nullptr;
-	std::map<GLuint, glVertexArray *>vao;
+	fwGeometry *m_geometry = nullptr;
+	fwMaterial *m_material = nullptr;
+	std::map<GLuint, glVertexArray *>m_vao;
 	GLuint buildVAO(glProgram* program);
 
 public:

@@ -26,18 +26,18 @@ dfSprites::dfSprites(int nbSprites, dfAtlasTexture* atlas):
 			{VERTEX_SHADER, "data/shaders/sprites/sprites_vs.glsl"},
 			{FRAGMENT_SHADER_DEFERED, "data/shaders/sprites/sprites_fs.glsl"}
 		};
-		material = spriteMaterial = new fwMaterialBasic(shaders);
+		m_material = spriteMaterial = new fwMaterialBasic(shaders);
 
 		models = new glUniformBuffer(sizeof(struct GLmodel));
 		modelsUniform = new fwUniform("Models", models);
-		material->addUniform(modelsUniform);
+		m_material->addUniform(modelsUniform);
 	}
 
 	set(&m_positions[0], atlas->texture(), 1000);
-	geometry->addAttribute("aData", GL_ARRAY_BUFFER, &m_textureIndex[0], 4, sizeof(glm::vec4) * m_size, sizeof(float), false);
-	geometry->addAttribute("aDirection", GL_ARRAY_BUFFER, &m_directions[0], 3, sizeof(glm::vec3) * m_size, sizeof(float), false);
+	m_geometry->addAttribute("aData", GL_ARRAY_BUFFER, &m_textureIndex[0], 4, sizeof(glm::vec4) * m_size, sizeof(float), false);
+	m_geometry->addAttribute("aDirection", GL_ARRAY_BUFFER, &m_directions[0], 3, sizeof(glm::vec3) * m_size, sizeof(float), false);
 
-	atlas->bindToMaterial(material);
+	atlas->bindToMaterial(m_material);
 }
 
 /**
@@ -65,6 +65,7 @@ void dfSprites::add(dfSprite *object)
 	if (m_freeList.size() == 0) {
 		slot = m_objects.size();
 		m_objects.resize(m_objects.size() + 1);
+		m_textureIndex.resize(m_objects.size() + 1);
 		m_nbObjects++;
 		m_toDisplay++;
 	}
@@ -111,8 +112,8 @@ void dfSprites::update(void)
 	}
 
 	if (m_updated) {
-		geometry->verticesToDisplay(m_toDisplay);
-		geometry->dirty();
+		m_geometry->verticesToDisplay(m_toDisplay);
+		m_geometry->dirty();
 		m_updated = false;
 	}
 

@@ -28,19 +28,19 @@ void fwInstancedMesh::draw(glProgram *program)
 	// create one VAO by shader class
 
 	GLuint id = program->getID();
-	if (vao.count(id) == 0) {
-		vao[id] = new glInstancedVertexArray(instances_to_draw);
-		geometry->enable_attributes(program);
+	if (m_vao.count(id) == 0) {
+		m_vao[id] = new glInstancedVertexArray(instances_to_draw);
+		m_geometry->enable_attributes(program);
 		glVertexAttribute *va = program->get_attribute("model");
 		if (va) {
 			va->EnableVertex(positions);
 		}
-		vao[id]->unbind();
+		m_vao[id]->unbind();
 		dirty_instances = false;
 	}
 	else {
 		if (dirty_instances) {
-			glInstancedVertexArray *va = (glInstancedVertexArray *)vao[id];
+			glInstancedVertexArray *va = (glInstancedVertexArray *)m_vao[id];
 			va->set_instances(instances_to_draw);
 			dirty_instances = false;
 		}
@@ -49,20 +49,20 @@ void fwInstancedMesh::draw(glProgram *program)
 	switch (m_rendering) {
 	case fwMeshRendering::FW_MESH_POINT:
 		glPointSize(m_pointSize);
-		geometry->draw(GL_POINTS, vao[id]);
+		m_geometry->draw(GL_POINTS, m_vao[id]);
 		glPointSize(1.0f);
 		break;
 	case fwMeshRendering::FW_MESH_LINES:
-		geometry->draw(GL_LINES, vao[id]);
+		m_geometry->draw(GL_LINES, m_vao[id]);
 		break;
 	case fwMeshRendering::FW_MESH_LINE:
 		glEnable(GL_LINE_WIDTH);
 		glLineWidth(16.0f);
-		geometry->draw(GL_LINE, vao[id]);
+		m_geometry->draw(GL_LINE, m_vao[id]);
 		glDisable(GL_LINE_WIDTH);
 		break;
 	default:
-		geometry->draw(GL_TRIANGLES, vao[id]);
+		m_geometry->draw(GL_TRIANGLES, m_vao[id]);
 		break;
 	}
 }

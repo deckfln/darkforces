@@ -41,10 +41,10 @@ fwParticles::fwParticles(int nb, const std::string& sprite, float radius) :
 	if (particleMaterial == nullptr) {
 		particleMaterial = new fwMaterial("shaders/sprite/particle/vertex.glsl", "shaders/sprite/fragment.glsl");
 		particleMaterial->addShader(FRAGMENT_SHADER, "shaders/sprite/fragment_defered.glsl", DEFERED_RENDER);
-		material = particleMaterial;
+		m_material = particleMaterial;
 	}
 
-	geometry->addAttribute("aColor", GL_ARRAY_BUFFER, m_colors, 3, sizeof(glm::vec3) * m_size, sizeof(float));
+	m_geometry->addAttribute("aColor", GL_ARRAY_BUFFER, m_colors, 3, sizeof(glm::vec3) * m_size, sizeof(float));
 }
 
 void fwParticles::update_particle(int &spwanable, int i, double timer)

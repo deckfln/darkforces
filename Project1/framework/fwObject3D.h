@@ -31,7 +31,7 @@ protected:
 	glm::vec3 m_Rotation = glm::vec3(0);
 	glm::quat m_quaternion;
 
-	bool updated = true;							// if the matrix components have been update (or are new)
+	bool m_updated = true;							// if the matrix components have been update (or are new)
 
 	std::list <fwObject3D *> m_children;
 
@@ -42,21 +42,21 @@ public:
 	fwObject3D();
 
 	bool is_class(int classID);
-	fwObject3D &set_name(std::string _name);
-	std::string& name(void) { return m_name;	};
+	fwObject3D &set_name(const std::string& _name);
+	const std::string& name(void) { return m_name;	};
 
-	fwObject3D &rotate(glm::vec3 &rotation);
+	fwObject3D &rotate(const glm::vec3 &rotation);
 	fwObject3D& rotate(const glm::quat& quaternion);
-	fwObject3D &translate(glm::vec3 &vector);
-	fwObject3D &translate(float x, float y, float z);
+	fwObject3D& translate(const glm::vec3 &vector);
+	fwObject3D& translate(float x, float y, float z);
+	fwObject3D& translate(glm::vec3* vector);
 
-	fwObject3D &set_scale(glm::vec3 &_scale);
+	fwObject3D &set_scale(const glm::vec3 &_scale);
 	fwObject3D &set_scale(float _scale);
-	glm::vec3 get_scale(void);
+	const glm::vec3& get_scale(void);
 
-	glm::vec3 &get_position(void);
-	//void position(glm::vec3& position) { m_Position = position; };
-	std::list <fwObject3D *> &get_children(void);
+	const glm::vec3& get_position(void);
+	const std::list <fwObject3D *> &get_children(void);
 	bool hasChild(fwObject3D* child);
 
 	void updateWorldMatrix(fwObject3D *parent, bool force = false);
@@ -67,10 +67,11 @@ public:
 	bool receiveShadow(void) { return m_receiveShadow; }
 	bool receiveShadow(bool s) { m_receiveShadow = s; return s; }
 
-	glm::mat4 &worldMatrix(void) { return m_worldMatrix; }
-	void worldMatrix(glm::mat4& worldMatrix);
+	const glm::mat4 &worldMatrix(void) { return m_worldMatrix; }
+	void worldMatrix(const glm::mat4& worldMatrix);
+	void worldMatrix(glm::mat4* pWorldMatrix);
 
-	glm::mat4& inverseWorldMatrix(void) { return m_inverseWorldMatrix; }
+	const glm::mat4& inverseWorldMatrix(void) { return m_inverseWorldMatrix; }
 
 	fwObject3D &addChild(fwObject3D * obj);			// add an object to the scene
 	void removeChild(fwObject3D* obj);				// remove an object from the scene

@@ -16,20 +16,20 @@ fwMesh::fwMesh():
 }
 
 fwMesh::fwMesh(fwGeometry *_geometry, fwMaterial *_material):
-	geometry(_geometry),
-	material(_material),
+	m_geometry(_geometry),
+	m_material(_material),
 	visible(true),
 	outlined(false),
 	m_id(g_ids++)
 {
 	classID |= MESH;
 
-	geometry->reference();
-	material->reference();
+	m_geometry->reference();
+	m_material->reference();
 
 	// for a material map, compute the tangent for each normal
-	if (material->type(DIFFUSE_MATERIAL) && ((fwMaterialDiffuse *)material)->normalMap()) {
-		geometry->computeTangent();
+	if (m_material->type(DIFFUSE_MATERIAL) && ((fwMaterialDiffuse *)m_material)->normalMap()) {
+		m_geometry->computeTangent();
 	}
 }
 
@@ -38,7 +38,7 @@ fwMesh::fwMesh(fwGeometry *_geometry, fwMaterial *_material):
  */
 fwMesh* fwMesh::clone(void)
 {
-	fwMesh *clone=new fwMesh(geometry, material);
+	fwMesh *clone=new fwMesh(m_geometry, m_material);
 	clone->m_rendering = m_rendering;
 	clone->m_pointSize = m_pointSize;
 	clone->m_name = m_name + "(" + std::to_string(clone->id()) + ")";
@@ -50,8 +50,8 @@ fwMesh* fwMesh::clone(void)
  */
 void fwMesh::clone(fwMesh* source)
 {
-	geometry = source->geometry;
-	material = source->material;
+	m_geometry = source->m_geometry;
+	m_material = source->m_material;
 	m_rendering = source->m_rendering;
 	m_pointSize = source->m_pointSize;
 	m_name = m_name + "(" + std::to_string(m_id) + ")";
@@ -109,17 +109,17 @@ GLuint fwMesh::buildVAO(glProgram* program)
 	GLuint id = program->getID();
 
 	// if one of the attribute was resized, need to rebuild a vao with the new attribute
-	if (vao.count(id) > 0 && geometry->resizedAttribute()) {
-		delete vao[id];
-		vao.erase(id);
+	if (m_vao.count(id) > 0 && m_geometry->resizedAttribute()) {
+		delete m_vao[id];
+		m_vao.erase(id);
 	}
 
 	// create one VAO by shader class
-	if (vao.count(id) == 0) {
-		vao[id] = new glVertexArray();
-		geometry->enable_attributes(program);
-		vao[id]->label(m_name.c_str());
-		vao[id]->unbind();
+	if (m_vao.count(id) == 0) {
+		m_vao[id] = new glVertexArray();
+		m_geometry->enable_attributes(program);
+		m_vao[id]->label(m_name.c_str());
+		m_vao[id]->unbind();
 	}
 
 	// update the mesh model
@@ -134,7 +134,7 @@ GLuint fwMesh::buildVAO(glProgram* program)
  */
 void fwMesh::centerOnGeometry(void)
 {
-	const glm::vec3& center = geometry->centerVertices();
+	const glm::vec3& center = m_geometry->centerVertices();
 
 	m_Position += center;
 }
@@ -152,37 +152,37 @@ void fwMesh::draw(glProgram *program)
 	switch (m_rendering) {
 	case fwMeshRendering::FW_MESH_POINT:
 		glPointSize(m_pointSize);
-		geometry->draw(GL_POINTS, vao[id]);
+		m_geometry->draw(GL_POINTS, m_vao[id]);
 		glPointSize(1.0f);
 		break;
 	case fwMeshRendering::FW_MESH_LINES:
-		geometry->draw(GL_LINES, vao[id]);
+		m_geometry->draw(GL_LINES, m_vao[id]);
 		break;
 	case fwMeshRendering::FW_MESH_LINE:
 		glEnable(GL_LINE_WIDTH);
 		glLineWidth(16.0f);
-		geometry->draw(GL_LINE, vao[id]);
+		m_geometry->draw(GL_LINE, m_vao[id]);
 		glDisable(GL_LINE_WIDTH);
 		break;
 	default:
-		geometry->draw(GL_TRIANGLES, vao[id]);
+		m_geometry->draw(GL_TRIANGLES, m_vao[id]);
 		break;
 	}
 }
 
 fwMaterial *fwMesh::get_material(void)
 {
-	return material;
+	return m_material;
 }
 
 fwGeometry *fwMesh::get_geometry(void)
 {
-	return geometry;
+	return m_geometry;
 }
 
 std::string fwMesh::getMaterialHash(void)
 {
-	return material->hashCode();
+	return m_material->hashCode();
 }
 
 /*
@@ -190,12 +190,12 @@ std::string fwMesh::getMaterialHash(void)
  */
 void fwMesh::updateVertices(int offset, int size)
 {
-	geometry->updateVertices(offset, size);
+	m_geometry->updateVertices(offset, size);
 }
 
 void fwMesh::updateAttribute(const std::string &attribute, int offset, int size)
 {
-	geometry->updateAttribute(attribute, offset, size);
+	m_geometry->updateAttribute(attribute, offset, size);
 }
 
 /**
@@ -203,7 +203,7 @@ void fwMesh::updateAttribute(const std::string &attribute, int offset, int size)
  */
 float fwMesh::sqDistance2boundingSphere(glm::vec3 position)
 {
-	return geometry->sqDistance2boundingSphere(position);
+	return m_geometry->sqDistance2boundingSphere(position);
 }
 
 /**
@@ -216,13 +216,13 @@ void fwMesh::rendering(fwMeshRendering render)
 
 fwMesh::~fwMesh()
 {
-	if (geometry->dereference())
-		delete geometry;
+	if (m_geometry->dereference())
+		delete m_geometry;
 
-	if (material->dereference())
-		delete material;
+	if (m_material->dereference())
+		delete m_material;
 
-	for (auto vo : vao) {
+	for (auto vo : m_vao) {
 		delete vo.second;
 	}
 }

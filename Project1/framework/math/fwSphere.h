@@ -21,7 +21,7 @@ public:
 	float radius(void) { return m_radius; }
 	float radius(float _radius) { m_radius = _radius; return m_radius; }
 	void set(glm::vec3& center, float radius) { m_center = center; m_radius = radius; };
-	void applyMatrix4From(glm::mat4 &matrix, fwSphere *source);
+	void applyMatrix4From(const glm::mat4 &matrix, fwSphere *source);
 	void applyMatrix4(glm::mat4& matrix);
 	~fwSphere();
 };

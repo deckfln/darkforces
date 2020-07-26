@@ -20,20 +20,20 @@ fwSprites::fwSprites(glm::vec3 *position, int nb, fwTexture *texture, float radi
 
 void fwSprites::set(glm::vec3* position, fwTexture* texture, float radius)
 {
-	geometry = new fwGeometry();
-	geometry->addVertices("aPos", position, 3, sizeof(glm::vec3) * m_size, sizeof(float));
-	geometry->setBoundingsphere(radius);
+	m_geometry = new fwGeometry();
+	m_geometry->addVertices("aPos", position, 3, sizeof(glm::vec3) * m_size, sizeof(float));
+	m_geometry->setBoundingsphere(radius);
 
 	if (spriteMaterial == nullptr) {
 		spriteMaterial = new fwMaterial("shaders/sprite/vertex.glsl", "shaders/sprite/fragment.glsl");
 		spriteMaterial->addShader(FRAGMENT_SHADER, "shaders/sprite/fragment_defered.glsl", DEFERED_RENDER);
 	}
 
-	if (material == nullptr) {
-		material = spriteMaterial;
+	if (m_material == nullptr) {
+		m_material = spriteMaterial;
 	}
 
-	material->addTexture("texture", texture);
+	m_material->addTexture("texture", texture);
 }
 
 void fwSprites::draw(glProgram *program)
@@ -47,7 +47,7 @@ void fwSprites::draw(glProgram *program)
 	// todo: this trigger an alert in nsigh :GL_INVALID_ENUM
 	//glEnable(GL_POINT_SMOOTH);
 
-	geometry->draw(GL_POINTS, vao[id]);
+	m_geometry->draw(GL_POINTS, m_vao[id]);
 
 	//glDisable(GL_POINT_SMOOTH);
 	glDisable(GL_PROGRAM_POINT_SIZE);
@@ -55,5 +55,5 @@ void fwSprites::draw(glProgram *program)
 
 fwSprites::~fwSprites()
 {
-	delete geometry;
+	delete m_geometry;
 }

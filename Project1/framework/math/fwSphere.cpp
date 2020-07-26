@@ -41,7 +41,7 @@ fwSphere::fwSphere(fwCylinder& cyl, bool inside)
 
 }
 
-void fwSphere::applyMatrix4From(glm::mat4 &matrix, fwSphere *source)
+void fwSphere::applyMatrix4From(const glm::mat4 &matrix, fwSphere *source)
 {
 	m_center = glm::vec3(matrix * glm::vec4(source->m_center, 1.0));
 
