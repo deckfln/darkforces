@@ -5,14 +5,17 @@
 #include <glm/vec3.hpp>
 #include <vector>
 
-#include "../dfModel.h"
 #include "../../framework/fwMesh.h"
+#include "../../gaEngine/gaComponent/gaComponentMesh.h"
 
-class dfFileSystem;
-class dfPalette;
+#include "../dfModel.h"
+
 class fwGeometry;
 class fwMesh;
 class fwScene;
+
+class dfFileSystem;
+class dfPalette;
 class dfBitmap;
 class dfAtlasTexture;
 
@@ -55,6 +58,6 @@ class df3DO : public dfModel
 
 public:
 	df3DO(dfFileSystem* fs, dfPalette* palette, std::string file);
-	fwMesh* clone();
+	void clone(GameEngine::ComponentMesh& mesh);
 	~df3DO();
 };

@@ -112,7 +112,7 @@ void dfBullet::dispatchMessage(gaMessage* message)
 			glm::vec3 direction = (m_direction * (float)message->m_delta / bullet_speed);
 			std::list<gaCollisionPoint> collisions;
 
-			g_gaWorld.findAABBCollision(m_worldBounding, entities, sectors);
+			g_gaWorld.findAABBCollision(m_worldBounding, entities, sectors, this);
 
 			// do an AABB collision against AABB collision with entities
 			for (auto entity : entities) {

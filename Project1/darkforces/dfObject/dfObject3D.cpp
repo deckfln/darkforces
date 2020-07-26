@@ -16,10 +16,11 @@ dfObject3D::dfObject3D(df3DO* threedo, glm::vec3& position, float ambient):
 	dfObject::moveTo(m_position_lvl);
 	physical(false);	// in dark forces, 3D objects can be traversed
 	addComponent(&m_componentLogic);
+	addComponent(&m_componentMesh);
 }
 
 /**
- * Record the rotation axe
+ * Record the rotation axes
  */
 void dfObject3D::animRotationAxe(int axe)
 {
@@ -59,10 +60,11 @@ void dfObject3D::add2scene(fwScene* scene)
 	if (model) {
 		dfLevel::level2gl(m_position_lvl, m_position);
 
-		m_mesh = model->clone();
-		m_mesh->translate(m_position);
-		m_mesh->set_scale(0.10f);
-		scene->addChild(m_mesh);
+		model->clone(m_componentMesh);
+
+		m_componentMesh.translate(m_position);
+		m_componentMesh.set_scale(0.10f);
+		scene->addChild(m_componentMesh.mesh());
 	}
 }
 
@@ -88,13 +90,13 @@ bool dfObject3D::update(time_t t)
 				mat4x4 = m_vue->firstFrame(m_lastFrame);
 				m_lastFrame = t;
 			}
-			m_mesh->worldMatrix(*mat4x4);
+			m_componentMesh.worldMatrix(*mat4x4);
 			m_worldBounding.apply(m_source->bounding(), *mat4x4);
 		}
 		else {
 			// rotate the object
 			m_animRotation += m_animRotationAxe * m_aniRotationSpeed * (float)t;
-			m_mesh->rotate(m_animRotation);
+			m_componentMesh.rotate(m_animRotation);
 			dfObject::moveTo(m_position_lvl);	// update the bounding box
 		}
 

@@ -28,7 +28,7 @@ gaEntity::gaEntity(int mclass, const std::string& name, const glm::vec3& positio
 }
 
 /**
- * extend teh components of the entity
+ * extend the components of the entity
  */
 void gaEntity::addComponent(gaComponent* component)
 {
@@ -109,12 +109,7 @@ float gaEntity::distanceTo(const glm::vec3& p)
  */
 void gaEntity::sendInternalMessage(int action, int value, void* extra)
 {
-	static gaMessage message("_component", "_component");
-
-	message.m_action = action;
-	message.m_value = value;
-	message.m_extra = extra;
-
+	gaMessage message("_component", "_component", action, value, extra);
 	dispatchMessage(&message);
 }
 

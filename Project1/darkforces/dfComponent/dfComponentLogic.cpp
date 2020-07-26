@@ -9,12 +9,27 @@ dfComponentLogic::dfComponentLogic() :
 {
 }
 
+/**
+ * add a logic
+ */
+void dfComponentLogic::logic(int logic)
+{
+	m_logics |= logic;
+
+	if (logic & DF_LOGIC_MOUSEBOT) {
+		m_entity->physical(true);
+	}
+}
+
 void dfComponentLogic::dispatchMessage(gaMessage* message)
 {
 	switch (message->m_action) {
 	case DF_MESSAGE_HIT_BULLET:
 		if (m_logics & DF_LOGIC_SCENERY) {
 			m_entity->sendInternalMessage(DF_MSG_STATE, DF_STATE_SCENERY_ATTACK);
+		}
+		else if (m_logics & DF_LOGIC_MOUSEBOT) {
+			m_entity->sendInternalMessage(DF_MESSAGE_DIES);
 		}
 		break;
 	case DF_MESSAGE_END_LOOP:
@@ -54,6 +69,12 @@ void dfComponentLogic::dispatchMessage(gaMessage* message)
 			else if (m_logics & DF_LOGIC_INTDROID) {
 				((dfObject*)m_entity)->drop("IPOWER.FME");
 			}
+		}
+		else if (m_logics & DF_LOGIC_MOUSEBOT) {
+			((dfObject*)m_entity)->drop("IENERGY.FME");
+			// 3D objects being registered in dfParserObject cannot be deleted, so move away
+			m_entity->moveTo(glm::vec3(0));
+			break;
 		}
 		break;
 	}

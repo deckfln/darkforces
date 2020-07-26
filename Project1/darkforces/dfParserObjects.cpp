@@ -165,7 +165,7 @@ void dfParserObjects::parseObjectComponent(dfFileSystem* fs, dfObject* object, G
 }
 
 /**
- * parse an obbject tree
+ * parse an object tree
  */
 void dfParserObjects::parseObject(dfFileSystem* fs, GameEngine::ParserExpression& object, dfLevel* level)
 {

@@ -45,6 +45,18 @@ fwMesh* fwMesh::clone(void)
 	return clone;
 }
 
+/**
+ * shallow clone by assigning data to the target
+ */
+void fwMesh::clone(fwMesh* source)
+{
+	geometry = source->geometry;
+	material = source->material;
+	m_rendering = source->m_rendering;
+	m_pointSize = source->m_pointSize;
+	m_name = m_name + "(" + std::to_string(m_id) + ")";
+}
+
 fwMesh &fwMesh::set_visible(bool _visible)
 {
 	visible = _visible;

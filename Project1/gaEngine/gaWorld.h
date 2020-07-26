@@ -70,12 +70,13 @@ public:
 
 	void findAABBCollision(fwAABBox& box, 
 		std::list<gaEntity*>& collisions, 
-		std::list<dfSuperSector*>& sectors);			// find colliding entities & sectors AABB
+		std::list<dfSuperSector*>& sectors,
+		gaEntity* source);								// find colliding entities & sectors AABB
 	virtual bool checkCollision(
 		gaEntity* source,
 		fwCylinder& bounding,
 		glm::vec3& direction,
-		std::list<gaCollisionPoint>& collisions);		// extended collision test after a sucessfull AABB collision
+		std::list<gaCollisionPoint>& collisions);		// extended collision test after a successful AABB collision
 
 	void push(gaMessage* message);
 	void pushForNextFrame(gaMessage* message);

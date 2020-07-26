@@ -11,6 +11,8 @@
 #include "../../framework/fwMaterial.h"
 #include "../../framework/fwScene.h"
 
+#include "../../gaEngine/gaComponent/gaComponentMesh.h"
+
 #include "../dfFileSystem.h"
 #include "../dfParseINF.h"
 #include "../dfPalette.h"
@@ -202,13 +204,13 @@ df3DO::df3DO(dfFileSystem* fs, dfPalette* palette, std::string file) :
 /**
  * Add the model directly into a scene
  */
-fwMesh* df3DO::clone(void)
+void df3DO::clone(GameEngine::ComponentMesh& mesh)
 {
-	return m_mesh->clone();
+	mesh.clone(m_mesh);
 }
 
 /**
- * Parse the vertice section
+ * Parse the vertices's section
  */
 void df3DO::parseVertices(std::istringstream & infile, int nbVertices)
 {

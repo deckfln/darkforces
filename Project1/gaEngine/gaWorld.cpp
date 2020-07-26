@@ -146,7 +146,7 @@ void gaWorld::getModelsByClass(uint32_t myclass, std::list<GameEngine::gaModel*>
 }
 
 /**
- * add the sprite maanager
+ * add the sprite manager
  */
 void gaWorld::spritesManager(dfSprites* sprites)
 {
@@ -244,11 +244,17 @@ gaEntity* gaWorld::getEntity(const std::string& name)
 /**
  * parse entities to check for collision with the given one
  */
-void gaWorld::findAABBCollision(fwAABBox& box, std::list<gaEntity*>& entities, std::list<dfSuperSector*>& sectors)
+void gaWorld::findAABBCollision(fwAABBox& box, std::list<gaEntity*>& entities, std::list<dfSuperSector*>& sectors, gaEntity* source)
 {
 	for (auto entry : m_entities) {
 		// test all entity with the same name
 		for (auto entity : entry.second) {
+
+			// skip the requester
+			if (entity == source) {
+				continue;
+			}
+
 			if (entity->collideAABB(box)) {
 				entities.push_back(entity);
 			}
@@ -263,7 +269,7 @@ void gaWorld::findAABBCollision(fwAABBox& box, std::list<gaEntity*>& entities, s
 }
 
 /**
- * extended collision test after a sucessfull AABB collision
+ * extended collision test after a successful AABB collision
  */
 bool gaWorld::checkCollision(gaEntity* source, fwCylinder& bounding, glm::vec3& direction, std::list<gaCollisionPoint>& collisions)
 {
@@ -274,7 +280,7 @@ bool gaWorld::checkCollision(gaEntity* source, fwCylinder& bounding, glm::vec3& 
 	aabb += direction;
 	std::list<gaEntity*> entities;
 	std::list<dfSuperSector*> sectors;
-	g_gaWorld.findAABBCollision(aabb, entities, sectors);
+	g_gaWorld.findAABBCollision(aabb, entities, sectors, source);
 
 	for (auto entity : entities) {
 		if (entity == source) {

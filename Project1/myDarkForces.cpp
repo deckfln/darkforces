@@ -175,7 +175,7 @@ glTexture* myDarkForces::draw(time_t delta, fwRenderer* renderer)
 	// Space key can only be sent ONCE
 	if (m_control->isKeyPressed(GLFW_KEY_SPACE)) {
 		if (!m_keySpace) {
-			m_level->testSwitch(player);
+			m_level->testSwitch(player, m_player);
 			m_keySpace = true;
 		}
 	}

@@ -446,7 +446,7 @@ void dfLevel::createTriggerForElevator(dfLogicElevator *elevator)
 /**
  * Check all triggers to find if one checkCollision with the source box
  */
-void dfLevel::testSwitch(fwAABBox& player)
+void dfLevel::testSwitch(fwAABBox& player, gaEntity* source)
 {
 	static gaMessage messages[32];
 	static int first = 0;
@@ -454,7 +454,7 @@ void dfLevel::testSwitch(fwAABBox& player)
 	std::list<gaEntity*> collisions;
 	std::list<dfSuperSector*> sectors;
 
-	g_gaWorld.findAABBCollision(player, collisions, sectors);
+	g_gaWorld.findAABBCollision(player, collisions, sectors, source);
 
 	if (collisions.size() > 0) {
 		gaMessage* message;

@@ -17,6 +17,14 @@ ComponentMesh::ComponentMesh(fwGeometry* _geometry, fwMaterial* _material):
 {
 }
 
+/***
+ * clone from an existing fwMesh
+ */
+void ComponentMesh::clone(fwMesh* mesh)
+{
+	m_mesh.clone(mesh);
+}
+
 /**
  * handle fwMesh actions
  */

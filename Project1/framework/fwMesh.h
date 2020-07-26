@@ -24,19 +24,19 @@ class fwMesh: public fwObject3D
 {
 	int m_id = 0;
 
-	bool visible = true;		// object is displayed in the scene
-	bool m_always_draw = false;	// ignore frustrum visibility and always draw
+	bool visible = true;					// object is displayed in the scene
+	bool m_always_draw = false;				// ignore frustum visibility and always draw
 	bool outlined = false;
 	bool normalHelper = false;
 	bool m_transparent = false;
-	int m_zorder = 0;			// 0 => sort meshed by distance to the camera
-								// 1... => the app is sorting the meshes. 1 is drawn first, then 2 ....
+	int m_zorder = 0;						// 0 => sort meshed by distance to the camera
+											// 1... => the app is sorting the meshes. 1 is drawn first, then 2 ....
 	void *m_pExtra = nullptr;
-	std::list <fwUniform*> m_uniforms;	// meshes can have dedicated uniforms (not included in the material)
+	std::list <fwUniform*> m_uniforms;		// meshes can have dedicated uniforms (not included in the material)
 
 protected:
 	fwMeshRendering m_rendering = fwMeshRendering::FW_MESH_TRIANGLES;	// Rendering mode of the mesh
-	float m_pointSize = 1.0;			// for FW_MESH_POINT rendering
+	float m_pointSize = 1.0;				// for FW_MESH_POINT rendering
 
 	fwGeometry *geometry = nullptr;
 	fwMaterial *material = nullptr;
@@ -47,7 +47,8 @@ public:
 	fwMesh();
 	fwMesh(fwGeometry *_geometry, fwMaterial *_material);
 
-	fwMesh* clone(void);
+	fwMesh* clone(void);					// create a new clone
+	void clone(fwMesh* source);				// shallow clone by assigning data to the target
 
 	fwMesh& addUniform(fwUniform* uniform);
 	void set_uniforms(glProgram* program);

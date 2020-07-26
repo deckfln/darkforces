@@ -147,7 +147,7 @@ std::list <fwObject3D *> &fwObject3D::get_children(void)
 }
 
 /**
- * recusivility test if we can find an object
+ * recursively test if we can find an object
  */
 bool fwObject3D::hasChild(fwObject3D* search)
 {
@@ -158,7 +158,7 @@ bool fwObject3D::hasChild(fwObject3D* search)
 		}
 	}
 
-	// didn't find so check recusively
+	// didn't find so check recursively
 	for (auto child : m_children) {
 		if (child->hasChild(search)) {
 			return true;

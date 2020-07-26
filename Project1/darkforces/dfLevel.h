@@ -87,7 +87,7 @@ public:
 	dfLevel(dfFileSystem* fs, std::string file);
 	dfSector* findSector(glm::vec3& position);
 	dfSector* findSectorLVL(glm::vec3& level_position);
-	void testSwitch(fwAABBox& player);
+	void testSwitch(fwAABBox& player, gaEntity* source);
 	void draw(fwCamera* camera, fwScene* scene);
 	std::vector<dfSector*>& sectorsID(void) { return m_sectorsID; };
 	std::vector<dfBitmap*>& textures(void) { return m_bitmaps; };

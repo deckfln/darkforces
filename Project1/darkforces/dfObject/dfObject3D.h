@@ -2,6 +2,7 @@
 
 #include "../dfObject.h"
 #include "../dfComponent/dfComponentLogic.h"
+#include "../../gaEngine/gaComponent/gaComponentMesh.h"
 
 class fwMesh;
 class fwScene;
@@ -15,6 +16,7 @@ class dfFileSystem;
 class dfObject3D : public dfObject
 {
 	dfComponentLogic m_componentLogic;
+	GameEngine::ComponentMesh m_componentMesh;
 
 	glm::vec3 m_animRotation = glm::vec3(0);
 	glm::vec3 m_animRotationAxe = glm::vec3(0);
@@ -22,10 +24,9 @@ class dfObject3D : public dfObject
 
 	dfVue* m_vue = nullptr;
 
-	fwMesh* m_mesh = nullptr;		// object mesh
 	bool m_pause = false;			// pause at the end of the animation
 
-	time_t m_lastFrame = 0;			// timestamp of the last frame
+	time_t m_lastFrame = 0;			// timestamps of the last frame
 
 public:
 	dfObject3D(df3DO* threedo, glm::vec3& position, float ambient);

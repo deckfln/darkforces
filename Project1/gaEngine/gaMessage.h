@@ -37,5 +37,6 @@ public:
 	gaMessage(int action, int value);
 	gaMessage(int action, int value, const std::string& client);
 	gaMessage(const std::string& server, const std::string& client);
+	gaMessage(const std::string& server, const std::string& client, int action, int value, void* extra);
 	std::string& client(void) { return m_client; };
 };
