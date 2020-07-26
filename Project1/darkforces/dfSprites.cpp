@@ -16,9 +16,18 @@ dfSprites::dfSprites(int nbSprites, dfAtlasTexture* atlas):
 {
 	set_name("dfSprites");
 
+	m_objects.resize(nbSprites);
 	m_positions.resize(nbSprites);
 	m_directions.resize(nbSprites);
 	m_textureIndex.resize(nbSprites);
+
+	m_nbObjects = nbSprites;
+	m_toDisplay = -1;
+
+	// create a list of available sprites
+	for (int i = nbSprites - 1; i >= 0; i--) {
+		m_freeList.push(i);
+	}
 
 	if (spriteMaterial == nullptr) {
 		std::map<ShaderType, std::string> shaders = {
@@ -64,18 +73,30 @@ void dfSprites::add(dfSprite *object)
 
 	if (m_freeList.size() == 0) {
 		slot = m_objects.size();
-		m_objects.resize(m_objects.size() + 1);
-		m_textureIndex.resize(m_objects.size() + 1);
+
+		m_objects.resize(slot + 16);
+		m_positions.resize(slot + 16);
+		m_directions.resize(slot + 16);
+		m_textureIndex.resize(slot + 16);
+
+		m_geometry->resizeAttribute("aPos", &m_positions[0], slot + 1);
+		m_geometry->resizeAttribute("aDirection", &m_directions[0], slot + 1);
+		m_geometry->resizeAttribute("aData", &m_textureIndex[0], slot + 1);
+
 		m_nbObjects++;
-		m_toDisplay++;
 	}
 	else {
 		slot = m_freeList.front();
 		m_freeList.pop();
 	}
 
+	if (slot >= m_toDisplay) {
+		m_toDisplay = slot + 1;
+	}
+
 	m_objects[slot] = object;
-	m_textureIndex[slot].g = (float)m_modelsIndex[object->model()];
+	float g = (float)m_modelsIndex[object->model()];
+	m_textureIndex[slot].g = g;
 
 	object->updateSprite(
 		&m_positions[slot],
@@ -112,8 +133,8 @@ void dfSprites::update(void)
 	}
 
 	if (m_updated) {
-		m_geometry->verticesToDisplay(m_toDisplay);
 		m_geometry->dirty();
+		m_geometry->verticesToDisplay(m_toDisplay);
 		m_updated = false;
 	}
 

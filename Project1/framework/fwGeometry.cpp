@@ -148,7 +148,7 @@ void fwGeometry::verticesToDisplay(int nb)
 		m_verticesToDisplay = nb;
 	}
 	else {
-		std::cerr << "fwGeometry::count try to display more vertices than the buffer contains" << std::endl;
+		std::cerr << "fwGeometry::verticesToDisplay try to display more vertices than the buffer contains" << std::endl;
 	}
 }
 

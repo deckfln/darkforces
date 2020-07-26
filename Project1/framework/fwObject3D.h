@@ -45,11 +45,12 @@ public:
 	fwObject3D &set_name(const std::string& _name);
 	const std::string& name(void) { return m_name;	};
 
-	fwObject3D &rotate(const glm::vec3 &rotation);
+	fwObject3D& rotate(const glm::vec3 &rotation);
 	fwObject3D& rotate(const glm::quat& quaternion);
+	fwObject3D& rotate(glm::vec3 *rotation);
 	fwObject3D& translate(const glm::vec3 &vector);
 	fwObject3D& translate(float x, float y, float z);
-	fwObject3D& translate(glm::vec3* vector);
+	fwObject3D& translate(glm::vec3 *vector);
 
 	fwObject3D &set_scale(const glm::vec3 &_scale);
 	fwObject3D &set_scale(float _scale);

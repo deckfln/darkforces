@@ -31,14 +31,16 @@ void ComponentMesh::clone(fwMesh* mesh)
 void ComponentMesh::dispatchMessage(gaMessage* message)
 {
 	switch (message->m_action) {
-	case GA_MSG_MOVE:
-		glm::vec3 position = *(glm::vec3*)message->m_extra;
+	case GA_MSG_MOVE: {
+		glm::vec3* position = (glm::vec3*)message->m_extra;
 		m_mesh.translate(position);
 		break;
-	case GA_MSG_ROTATE:
-		glm::vec3 rotation = *(glm::vec3*)message->m_extra;
+	}
+	case GA_MSG_ROTATE: {
+		glm::vec3* rotation = (glm::vec3*)message->m_extra;
 		m_mesh.rotate(rotation);
 		break;
+	}
 	case GA_MSG_PLAY_SOUND: {
 		 // Start playing a sound or check if it plays
 		alSound* voc = (alSound*)message->m_extra;
