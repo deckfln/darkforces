@@ -14,16 +14,8 @@ ComponentMesh::ComponentMesh(void):
 
 ComponentMesh::ComponentMesh(fwGeometry* _geometry, fwMaterial* _material):
 	gaComponent(GA_COMPONENT_MESH),
-	m_mesh(_geometry, _material)
+	fwMesh(_geometry, _material)
 {
-}
-
-/***
- * clone from an existing fwMesh
- */
-void ComponentMesh::clone(fwMesh* mesh)
-{
-	m_mesh.clone(mesh);
 }
 
 /**
@@ -34,33 +26,33 @@ void ComponentMesh::dispatchMessage(gaMessage* message)
 	switch (message->m_action) {
 	case GA_MSG_MOVE: {
 		glm::vec3* position = (glm::vec3*)message->m_extra;
-		m_mesh.translate(position);
+		translate(position);
 		break;
 	}
 	case GA_MSG_ROTATE: {
 		glm::vec3* rotation = (glm::vec3*)message->m_extra;
-		m_mesh.rotate(rotation);
+		rotate(rotation);
 		break;
 	}
 	case GA_MSG_PLAY_SOUND: {
 		 // Start playing a sound or check if it plays
 		alSound* voc = (alSound*)message->m_extra;
-		m_mesh.play(voc);
+		play(voc);
 		break;
 	}
 	case GA_MSG_STOP_SOUND: {
 		// Stop playing a sound (or all sound if nullptr)
 		alSound* voc = (alSound*)message->m_extra;
-		m_mesh.stop(voc);
+		stop(voc);
 		break;
 	}
 
 	case GA_MSG_WORLD_INSERT:
-		g_gaWorld.add2scene(&m_mesh);
+		g_gaWorld.add2scene(this);
 		break;
 
 	case GA_MSG_WORLD_REMOVE:
-		g_gaWorld.remove2scene(&m_mesh);
+		g_gaWorld.remove2scene(this);
 		break;
 	}
 }

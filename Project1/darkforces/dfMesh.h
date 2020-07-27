@@ -89,7 +89,7 @@ public:
 	dfMesh(dfMesh *parent);
 
 	GameEngine::ComponentMesh* componentMesh(void) { return m_mesh; };
-	fwMesh* mesh(void) { return m_mesh->mesh(); };
+	fwMesh* mesh(void) { return m_mesh; };
 	const fwAABBox& modelAABB(void);					// build the model AABB
 	const glm::vec3& position(void) { return m_position; };
 
