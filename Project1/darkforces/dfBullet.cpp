@@ -47,11 +47,11 @@ dfBullet::dfBullet(const glm::vec3& position, const glm::vec3& direction):
 	// the AABOX is just the direction vector
 	m_modelAABB = g_blaster->aabbox();
 
-	m_mesh = new fwMesh(g_blaster, &g_basic);
-	m_mesh->set_name(m_name);
+	m_componentMesh.set(g_blaster, &g_basic);
+	addComponent(&m_componentMesh);
 
 	m_position += m_direction *132.0f/ bullet_speed;
-	m_mesh->translate(m_position);
+	m_componentMesh.translate(m_position);
 
 	// convert the direction vector to a quaternion
 	glm::vec3 _up = glm::vec3(0.0f, 1.0f, 0.0f);
@@ -69,7 +69,7 @@ dfBullet::dfBullet(const glm::vec3& position, const glm::vec3& direction):
 
 	glm::quat quaternion = glm::quatLookAt(m_direction, up);
 
-	m_mesh->rotate(quaternion);
+	m_componentMesh.rotate(quaternion);
 	m_quaternion = quaternion;
 
 	updateWorldAABB();
@@ -78,17 +78,8 @@ dfBullet::dfBullet(const glm::vec3& position, const glm::vec3& direction):
 	m_animate_msg = new gaMessage(GA_MSG_TIMER);
 	m_animate_msg->m_client = m_name;
 
-	// trigger the naimation
+	// trigger the animation
 	g_gaWorld.pushForNextFrame(m_animate_msg);
-}
-
-/**
-  * trigger when the bullet is added to the world
-  * Also add the mesh to the scene
-  */
-void dfBullet::OnWorldInsert(void)
-{
-	g_gaWorld.add2scene(this);
 }
 
 /**
@@ -105,69 +96,40 @@ void dfBullet::dispatchMessage(gaMessage* message)
 	float d;
 
 	switch (message->m_action) {
+	case GA_MSG_MOVE_TO:
+		// move request was accepted
+		g_gaWorld.pushForNextFrame(m_animate_msg);
+		break;
+
+	case GA_MSG_COLLIDE: {
+		// add an impact sprite
+		// constructor of a sprite expects a level space
+		glm::vec3 p;
+		dfLevel::gl2level(m_position, p);
+		dfBulletExplode* impact = new dfBulletExplode(p, 1.0f);
+		g_gaWorld.addClient(impact);
+
+		// if hit an entity
+		if (message->m_value == 0) {
+			// on collision, inform the target it was hit with the energy of the bullet
+			g_gaWorld.sendMessage(m_name, message->m_server, DF_MESSAGE_HIT_BULLET, 10, nullptr);
+			gaDebugLog(REDUCED_DEBUG, "dfBullet::dispatchMessage", "hit entity");
+		}
+		else {
+			gaDebugLog(LOW_DEBUG, "dfBullet::dispatchMessage", "hit wall");
+		}
+		// drop the bullet
+		g_gaWorld.sendMessage(m_name, "_world", GA_MSG_DELETE_ENTITY, 0, nullptr);
+		break;
+	}
+
 	case GA_MSG_TIMER:
 		m_time += message->m_delta;
 
 		if (m_time < bullet_life) {
 			glm::vec3 direction = (m_direction * (float)message->m_delta / bullet_speed);
-			std::list<gaCollisionPoint> collisions;
-
-			g_gaWorld.findAABBCollision(m_worldBounding, entities, sectors, this);
-
-			// do an AABB collision against AABB collision with entities
-			for (auto entity : entities) {
-				// only test entities that can physically checkCollision
-				if (entity->physical()) {
-					d = this->distanceTo(entity);
-					if (d < distance) {
-						nearest_entity = entity;
-						distance = d;
-					}
-				}
-			}
-
-			// do an segment collision against the sectors triangles
-			for (auto sector : sectors) {
-				sector->collisionSegmentTriangle(m_position, m_position + direction, collisions);
-
-				for (auto c : collisions) {
-					d = this->distanceTo(c.m_position);
-					if (d < distance_sector) {
-						nearest_sector = sector;
-						distance_sector = d;
-					}
-				}
-			}
-
-			// and take action
-			if (nearest_entity == nullptr && nearest_sector == nullptr) {
-				// next animation
-				m_position += direction;
-				moveTo(m_position);
-				m_mesh->translate(m_position);
-
-				g_gaWorld.pushForNextFrame(m_animate_msg);
-			}
-			else {
-				// add an impact sprite
-				// constructor of a sprite expects a level space
-				glm::vec3 p;
-				dfLevel::gl2level(m_position, p);
-				dfBulletExplode* impact = new dfBulletExplode(p, 1.0f);
-				g_gaWorld.addClient(impact);
-
-				// if nearest is an entity
-				if (distance < distance_sector) {
-					// on collision,, inform the target it was hit with the energy of the bullet
-					g_gaWorld.sendMessage(m_name, nearest_entity->name(), DF_MESSAGE_HIT_BULLET, 10, nullptr);
-					gaDebugLog(REDUCED_DEBUG, "dfBullet::dispatchMessage", "hit entity");
-				}
-				else {
-					gaDebugLog(LOW_DEBUG, "dfBullet::dispatchMessage", "hit wall");
-				}
-				// drop the bullet
-				g_gaWorld.sendMessage(m_name, "_world", GA_MSG_DELETE_ENTITY, 0, nullptr);
-			}
+			m_futurePosition = direction;
+			sendMessageToWorld(GA_MSG_WANT_TO_MOVE, 0, &m_futurePosition);
 		}
 		else {
 			// get the bullet deleted after 5s
@@ -182,6 +144,5 @@ void dfBullet::dispatchMessage(gaMessage* message)
 
 dfBullet::~dfBullet()
 {
-	delete m_mesh;
 	delete m_animate_msg;
 }

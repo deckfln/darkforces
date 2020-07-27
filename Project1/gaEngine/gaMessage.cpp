@@ -39,4 +39,13 @@ gaMessage::gaMessage(const std::string& server, const std::string& client, int a
     m_extra(extra)
 {
 }
+
+void gaMessage::set(const std::string& server, const std::string& client, int action, int value, void* extra)
+{
+    m_server = server;
+    m_client = client;
+    m_action = action;
+    m_value = value;
+    m_extra = extra;
+}
 ;

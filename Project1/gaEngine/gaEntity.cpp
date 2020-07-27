@@ -103,6 +103,21 @@ float gaEntity::distanceTo(const glm::vec3& p)
 	return glm::distance(m_position, p);
 }
 
+/**
+ * Send message to another entity
+ */
+void gaEntity::sendMessage(const std::string& target, int action, int value, void* extra)
+{
+	g_gaWorld.sendMessage(m_name, target, action, value, extra);
+}
+
+/**
+ * Send message to the world
+ */
+void gaEntity::sendMessageToWorld(int action, int value, void* extra)
+{
+	g_gaWorld.sendMessage(m_name, "_world", action, value, extra);
+}
 
 /**
  * send internal message to all components for immediate action
@@ -150,15 +165,25 @@ void gaEntity::dispatchMessage(gaMessage* message)
 {
 	switch (message->m_action)
 	{
+	case GA_MSG_MOVE_TO:
+		// move the entity following a direction
+		glm::vec3 direction = *(glm::vec3*)message->m_extra;
+		m_position += direction;
+		sendInternalMessage(GA_MSG_MOVE, 0, &m_position);
+		break;
+
 	case GA_MSG_MOVE:
 		// take the opportunity to update the world bounding box
 		updateWorldAABB();
+		m_position = *(glm::vec3*)message->m_extra;
 		break;
+
 	case GA_MSG_ROTATE:
 		// take the opportunity to update the world bounding box
 		m_quaternion = glm::quat(glm::vec3(m_rotation.x, m_rotation.y, m_rotation.z));
 		updateWorldAABB();
 		break;
+
 	default:
 		break;
 	}

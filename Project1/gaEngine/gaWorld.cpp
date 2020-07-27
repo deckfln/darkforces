@@ -36,6 +36,7 @@ void gaWorld::addClient(gaEntity* client)
 {
 	m_entities[client->name()].push_back(client);
 	client->OnWorldInsert();
+	sendImmediateMessage("_world", client->name(), GA_MSG_WORLD_INSERT, 0, nullptr);
 }
 
 /**
@@ -49,6 +50,7 @@ void gaWorld::removeClient(gaEntity* client)
 	}
 
 	client->OnWorldRemove();
+	sendImmediateMessage("_world", client->name(), GA_MSG_WORLD_REMOVE, 0, nullptr);
 
 	// remove from the list
 	m_entities[client->name()].remove(client);
@@ -65,6 +67,19 @@ void gaWorld::removeClient(gaEntity* client)
 void gaWorld::add2scene(gaEntity* client)
 {
 	client->add2scene(m_scene);
+}
+
+void gaWorld::add2scene(fwMesh* mesh)
+{
+	m_scene->addChild(mesh);
+}
+
+/**
+ * Remove a mesh from the scene
+ */
+void gaWorld::remove2scene(fwMesh* mesh)
+{
+	m_scene->removeChild(mesh);
 }
 
 /**
@@ -222,6 +237,34 @@ gaMessage* gaWorld::sendMessageDelayed(const std::string& from, const std::strin
 	return ptr;
 }
 
+/**
+ * send message for immediate dispatch
+ */
+gaMessage* gaWorld::sendImmediateMessage(const std::string& from, const std::string& to, int action, int value, void* extra)
+{
+	gaMessage* ptr = allocateMessage();
+	ptr->m_used = true;
+
+	ptr->m_server = from;
+	ptr->m_client = to;
+	ptr->m_action = action;
+	ptr->m_value = value;
+	ptr->m_extra = extra;
+
+	if (m_entities.count(to) > 0) {
+		// dispatch messages to client
+		if (m_entities.count(from) > 0) {
+			ptr->m_pServer = m_entities[from].front();
+		}
+		for (auto entity : m_entities[to]) {
+			entity->dispatchMessage(ptr);
+		}
+	}
+	ptr->m_used = false;
+
+	return ptr;
+}
+
 void gaWorld::pushForNextFrame(gaMessage* message)
 {
 	m_for_next_frame.push(message);
@@ -251,7 +294,7 @@ void gaWorld::findAABBCollision(fwAABBox& box, std::list<gaEntity*>& entities, s
 		for (auto entity : entry.second) {
 
 			// skip the requester
-			if (entity == source) {
+			if (entity == source || entity->name() == "player") {
 				continue;
 			}
 
@@ -300,6 +343,77 @@ bool gaWorld::checkCollision(gaEntity* source, fwCylinder& bounding, glm::vec3& 
 }
 
 /**
+ * An entity wants to move
+ */
+void gaWorld::wantToMove(gaMessage* message)
+{
+	gaEntity* nearest_entity = nullptr;
+	dfSuperSector* nearest_sector = nullptr;
+	float distance = 99999999.0f;
+	float distance_sector = 99999999.0f;
+	float d;
+	glm::vec3 direction = *(glm::vec3*)(message->m_extra);
+	gaEntity* source = m_entities[message->m_server].front();
+	glm::vec3 position = source->position();
+	fwAABBox aabb = source->worldAABB();
+	aabb += direction;
+
+	std::list<gaEntity*> entities;
+	std::list<dfSuperSector*> sectors;
+	std::list<gaCollisionPoint> collisions;
+
+	// test for a collision
+	if (m_entities.count(message->m_server) > 0) {
+		findAABBCollision(aabb, entities, sectors, source);
+
+		// do an AABB collision against AABB collision with entities
+		for (auto entity : entities) {
+			// only test entities that can physically checkCollision
+			if (entity->physical()) {
+				d = source->distanceTo(entity);
+				if (d < distance) {
+					nearest_entity = entity;
+					distance = d;
+				}
+			}
+		}
+
+		// do an segment collision against the sectors triangles
+		for (auto sector : sectors) {
+			sector->collisionSegmentTriangle(position, position + direction, collisions);
+
+			for (auto c : collisions) {
+				d = source->distanceTo(c.m_position);
+				if (d < distance_sector) {
+					nearest_sector = sector;
+					distance_sector = d;
+				}
+			}
+		}
+
+		if (entities.size() > 0 || collisions.size() > 0) {
+			gaMessage collision;
+
+			// if nearest is an entity
+			if (distance < distance_sector) {
+				collision.set(nearest_entity->name(), source->name(), GA_MSG_COLLIDE, 0, message->m_extra);
+			}
+			else {
+				collision.set(nearest_sector->name(), source->name(), GA_MSG_COLLIDE, 1, message->m_extra);
+			}
+
+			// decline the move as it triggers a collision
+			source->dispatchMessage(&collision);
+		}
+		else {
+			// accept the move
+			gaMessage message("_world", source->name(), GA_MSG_MOVE_TO, 0, message->m_extra);
+			source->dispatchMessage(&message);
+		}
+	}
+}
+
+/**
  * dispatch messages
  */
 void gaWorld::process(time_t delta)
@@ -341,12 +455,18 @@ void gaWorld::process(time_t delta)
 				// delete all instances of the given entity
 				if (m_entities.count(message->m_server) > 0) {
 					for (auto entity : m_entities[message->m_server]) {
+						sendImmediateMessage("_world", entity->name(), GA_MSG_WORLD_REMOVE, 0, nullptr);
 						entity->OnWorldRemove();
 						delete entity;
 						m_entities.erase(message->m_server);
 						break;
 					}
 				}
+				break;
+
+			case GA_MSG_WANT_TO_MOVE:
+				wantToMove(message);
+				break;
 			}
 		}
 		else if (m_entities.count(message->m_client) > 0) {

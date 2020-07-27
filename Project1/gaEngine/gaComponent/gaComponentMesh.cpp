@@ -2,6 +2,7 @@
 
 #include "../../alEngine/alSound.h"
 
+#include "../gaWorld.h"
 #include "../gaEntity.h"
 
 using namespace GameEngine;
@@ -53,6 +54,14 @@ void ComponentMesh::dispatchMessage(gaMessage* message)
 		m_mesh.stop(voc);
 		break;
 	}
+
+	case GA_MSG_WORLD_INSERT:
+		g_gaWorld.add2scene(&m_mesh);
+		break;
+
+	case GA_MSG_WORLD_REMOVE:
+		g_gaWorld.remove2scene(&m_mesh);
+		break;
 	}
 }
 

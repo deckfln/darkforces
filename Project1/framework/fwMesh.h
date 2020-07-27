@@ -49,6 +49,8 @@ public:
 
 	fwMesh* clone(void);					// create a new clone
 	void clone(fwMesh* source);				// shallow clone by assigning data to the target
+	void set(fwGeometry* geometry, 
+		fwMaterial* material);				// initialize a mesh
 
 	fwMesh& addUniform(fwUniform* uniform);
 	void set_uniforms(glProgram* program);

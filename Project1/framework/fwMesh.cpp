@@ -54,7 +54,30 @@ void fwMesh::clone(fwMesh* source)
 	m_material = source->m_material;
 	m_rendering = source->m_rendering;
 	m_pointSize = source->m_pointSize;
+
+	m_geometry->reference();
+	m_material->reference();
+
 	m_name = m_name + "(" + std::to_string(m_id) + ")";
+}
+
+/**
+ * Init a mesh
+ */
+void fwMesh::set(fwGeometry* geometry, fwMaterial* material)
+{
+	visible = true;
+	outlined = false;
+	m_geometry = geometry;
+	m_material = material;
+
+	m_geometry->reference();
+	m_material->reference();
+
+	// for a material map, compute the tangent for each normal
+	if (m_material->type(DIFFUSE_MATERIAL) && ((fwMaterialDiffuse*)m_material)->normalMap()) {
+		m_geometry->computeTangent();
+	}
 }
 
 fwMesh &fwMesh::set_visible(bool _visible)

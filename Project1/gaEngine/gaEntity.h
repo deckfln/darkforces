@@ -22,6 +22,7 @@ protected:
 	int m_entityID = 0;
 	int m_class = 0;
 	glm::vec3 m_position = glm::vec3(0);	// position in gl space
+	glm::vec3 m_futurePosition=glm::vec3(0);// want to move to position
 	glm::vec3 m_rotation = glm::vec3(0);
 	glm::quat m_quaternion = glm::quat(0,0,0,0);
 	fwAABBox m_modelAABB;					// model space AABB
@@ -57,9 +58,18 @@ public:
 	void rotate(const glm::vec3& rotation);				// rotate the object and update the AABB
 	float distanceTo(gaEntity* other);					// distance between the 2 entities
 	float distanceTo(const glm::vec3& p);				// distance from the entity position to the point
+
+	void sendMessage(const std::string& target,
+		int action,
+		int value = 0,
+		void* extra = nullptr);							// send a message to an other entity
+	void sendMessageToWorld(int action,
+		int value = 0,
+		void* extra = nullptr);							// send a message to the world
 	void sendInternalMessage(int action,
 		int value = 0,
 		void* extra = nullptr);							// send internal message to all components of the current entity
+
 	virtual void add2scene(fwScene* scene);				// if the entity has a mesh, add to the scene
 	virtual void collideWith(gaEntity*) {};				// inform another entity of a collision
 	virtual void updateWorldAABB(void);					// update the world AABB based on position

@@ -38,8 +38,6 @@ public:
 	virtual bool update(time_t t);						// update based on timer
 	virtual void updateWorldAABB(void);
 	virtual void dispatchMessage(gaMessage* message);
-	virtual void OnWorldInsert(void);					// trigger when inserted in a gaWorld
-	virtual void add2scene(fwScene* scene);				// if the entity has a mesh, add to the scene
 
 	~dfObject3D();
 };

@@ -97,6 +97,7 @@ public:
     fwGeometry* geometry(void) { return m_geometry; };
     void remove(void) { m_removed = true; };
     bool removed(void) { return m_removed; };
+    const std::string& name(void) { return m_name; };
 
     std::vector<dfBitmap*>& textures(void);
     std::map<std::string, dfSign*>& hSigns(void) { return m_hSigns; };

@@ -13,10 +13,16 @@
 dfObject3D::dfObject3D(df3DO* threedo, glm::vec3& position, float ambient):
 	dfObject(threedo, position, ambient, OBJECT_3DO)
 {
-	dfObject::moveTo(m_position_lvl);
 	physical(false);	// in dark forces, 3D objects can be traversed
 	addComponent(&m_componentLogic);
 	addComponent(&m_componentMesh);
+
+	dfLevel::level2gl(m_position_lvl, m_position);
+
+	threedo->clone(m_componentMesh);
+	m_componentMesh.set_scale(0.10f);
+
+	dfObject::moveTo(m_position_lvl);
 }
 
 /**
@@ -49,23 +55,6 @@ void dfObject3D::animRotationSpeed(float s)
 	//		death star speed = 50. so 50 / 180 => 0.27r/ms
 
 	m_aniRotationSpeed = s / 180.0f * 0.0031415f;
-}
-
-/**
- * Add the mesh object
- */
-void dfObject3D::add2scene(fwScene* scene)
-{
-	df3DO* model = (df3DO*)m_source;
-	if (model) {
-		dfLevel::level2gl(m_position_lvl, m_position);
-
-		model->clone(m_componentMesh);
-
-		m_componentMesh.translate(m_position);
-		m_componentMesh.set_scale(0.10f);
-		scene->addChild(m_componentMesh.mesh());
-	}
 }
 
 /**
@@ -125,21 +114,13 @@ void dfObject3D::dispatchMessage(gaMessage* message)
 			g_gaWorld.sendMessageDelayed(m_name, m_name, GA_MSG_TIMER, 0, nullptr);
 		}
 		break;
+
+	case GA_MSG_WORLD_INSERT:
+		// trigger the animation
+		g_gaWorld.sendMessageDelayed(m_name, m_name, GA_MSG_TIMER, 0, nullptr);
+		break;
 	}
 	dfObject::dispatchMessage(message);
-}
-
-/**
- * trigger when inserted in a gaWorld
- *  add the mesg on the scene
- *  init the animation loop
- */
-void dfObject3D::OnWorldInsert(void)
-{
-	g_gaWorld.add2scene(this);
-	g_gaWorld.sendMessageDelayed(m_name, m_name, GA_MSG_TIMER, 0, nullptr);
-
-	dfObject::OnWorldInsert();
 }
 
 dfObject3D::~dfObject3D()

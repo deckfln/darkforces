@@ -30,6 +30,8 @@ class gaWorld
 	bool m_timer = true;							// pass DF_MESSAGE_TIMER event
 	fwScene* m_scene;								// current scene on screen;
 
+	void wantToMove(gaMessage* message);				// handle an entity requesting to move
+
 public:
 	gaWorld(void);
 
@@ -37,7 +39,9 @@ public:
 
 	void addClient(gaEntity* client);					// add a spirit entity
 	void removeClient(gaEntity* client);				// remove a spirit entity
-	void add2scene(gaEntity* client);					// add an entiuty mesh (if it has one) to the current scene
+	void add2scene(gaEntity* client);					// add an entity mesh (if it has one) to the current scene
+	void add2scene(fwMesh* mesh);						// add a mesh 
+	void remove2scene(fwMesh* mesh);					// remove a mesh
 	void addSector(dfSuperSector* client);				// add a game sector
 	void set(const std::string& name, void* object);	// add a new generic object
 	void* get(const std::string& name);					// retrieve a generic object
@@ -55,13 +59,19 @@ public:
 		const std::string& to, 
 		int action, 
 		int value, 
-		void *extra);									// send message for immediate action
+		void *extra);									// send message an the queue
 
 	gaMessage* sendMessageDelayed(const std::string& from,
 		const std::string& to,
 		int action,
 		int value,
 		void* extra);									// send message for next frame
+
+	gaMessage* sendImmediateMessage(const std::string& from,
+		const std::string& to,
+		int action,
+		int value,
+		void* extra);									// send message for immediate dispatch
 
 	gaEntity* getEntity(const std::string& name);
 	dfSprites* spritesManager(void) {
