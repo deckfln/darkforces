@@ -103,7 +103,6 @@ dfLogicElevator::dfLogicElevator(std::string& kind, dfSector* sector, dfLevel* p
 	m_pSector(sector),
 	m_parent(parent)
 {
-	m_msg_animate.m_client = m_name;
 	init(kind);
 }
 
@@ -111,7 +110,6 @@ dfLogicElevator::dfLogicElevator(std::string& kind, std::string& sector):
 	gaEntity(DF_ENTITY_ELEVATOR, sector),
 	m_sector(sector)
 {
-	m_msg_animate.m_client = m_name;
 	init(kind);
 }
 
@@ -357,7 +355,7 @@ void dfLogicElevator::init(int stopID)
 
 	if (m_type == dfElevatorType::CHANGE_LIGHT) {
 		// kick start animation
-		g_gaWorld.pushForNextFrame(&m_msg_animate);
+		g_gaWorld.sendMessageDelayed(m_name, m_name, GA_MSG_TIMER, 0, nullptr);
 	}
 
 	// send messages to the clients
@@ -545,7 +543,7 @@ bool dfLogicElevator::animateMoveZ(void)
 	}
 
 	// next animation
-	g_gaWorld.pushForNextFrame(&m_msg_animate);
+	g_gaWorld.sendMessageDelayed(m_name, m_name, GA_MSG_TIMER, 0, nullptr);
 	return false;
 }
 
@@ -571,7 +569,7 @@ bool dfLogicElevator::animate(time_t delta)
 			}
 			else {
 				// next animation
-				g_gaWorld.pushForNextFrame(&m_msg_animate);
+				g_gaWorld.sendMessageDelayed(m_name, m_name, GA_MSG_TIMER, 0, nullptr);
 			}
 		}
 		break;

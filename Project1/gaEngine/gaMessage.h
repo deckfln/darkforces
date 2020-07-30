@@ -30,7 +30,7 @@ public:
 
 	std::string m_server;	// from
 	std::string m_client;	// to
-
+	
 	int m_action = -1;
 	int m_value = 0;
 	void* m_extra = nullptr;
@@ -45,5 +45,5 @@ public:
 	gaMessage(const std::string& server, const std::string& client, int action, int value, void* extra);
 	void set(const std::string& server, const std::string& client, int action, int value, void* extra);
 
-	std::string& client(void) { return m_client; };
+	const std::string& client(void) { return m_client; };
 };

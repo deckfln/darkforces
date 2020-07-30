@@ -97,7 +97,7 @@ void dfParserObjects::parseObjectComponent(dfFileSystem* fs, dfObject* object, G
 			((dfSpriteAnimated*)object)->state(DF_STATE_ENEMY_STAY_STILL);
 			break;
 		case O_MOUSEBOT:
-			object->logic(DF_LOGIC_MOUSEBOT | DF_LOGIC_ANIM);
+			object->logic(DF_LOGIC_MOUSEBOT);
 			break;
 		case O_INT_DROID:
 			object->logic(DF_LOGIC_INTDROID | DF_LOGIC_ANIM);

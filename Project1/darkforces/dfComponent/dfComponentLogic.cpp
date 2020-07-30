@@ -2,6 +2,7 @@
 
 #include "../../config.h"
 #include "../dfObject.h"
+#include "dfComponentAI.h"
 
 dfComponentLogic::dfComponentLogic() :
 	gaComponent(DF_COMPONENT_LOGIC),
@@ -17,7 +18,9 @@ void dfComponentLogic::logic(int logic)
 	m_logics |= logic;
 
 	if (logic & DF_LOGIC_MOUSEBOT) {
+		m_ai = new dfComponentAI();
 		m_entity->physical(true);
+		m_entity->addComponent(m_ai);
 	}
 }
 
@@ -62,16 +65,13 @@ void dfComponentLogic::dispatchMessage(gaMessage* message)
 				}
 				((dfObject*)m_entity)->drop("IENERGY.FME");
 			}
-			else if (m_logics & DF_LOGIC_MOUSEBOT) {
-				((dfObject*)m_entity)->drop("DEDMOUSE.FME");
-				((dfObject*)m_entity)->drop("IBATTERY.FME");
-			}
 			else if (m_logics & DF_LOGIC_INTDROID) {
 				((dfObject*)m_entity)->drop("IPOWER.FME");
 			}
 		}
 		else if (m_logics & DF_LOGIC_MOUSEBOT) {
-			((dfObject*)m_entity)->drop("IENERGY.FME");
+			((dfObject*)m_entity)->drop("DEDMOUSE.FME");
+			((dfObject*)m_entity)->drop("IBATTERY.FME");
 			// 3D objects being registered in dfParserObject cannot be deleted, so move away
 			m_entity->moveTo(glm::vec3(0));
 			break;
@@ -82,4 +82,7 @@ void dfComponentLogic::dispatchMessage(gaMessage* message)
 
 dfComponentLogic::~dfComponentLogic()
 {
+	if (m_ai) {
+		delete m_ai;
+	}
 }

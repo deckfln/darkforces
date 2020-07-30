@@ -84,9 +84,8 @@ bool dfObject3D::update(time_t t)
 		}
 		else {
 			// rotate the object
-			m_animRotation += m_animRotationAxe * m_aniRotationSpeed * (float)t;
-			m_componentMesh.rotate(m_animRotation);
-			dfObject::moveTo(m_position_lvl);	// update the bounding box
+			m_rotation += m_animRotationAxe * m_aniRotationSpeed * (float)t;
+			sendInternalMessage(GA_MSG_ROTATE, 0, &m_rotation);
 		}
 
 		return true;
@@ -100,7 +99,7 @@ bool dfObject3D::update(time_t t)
 void dfObject3D::updateWorldAABB(void)
 {
 	// take the opportunity to update the world bounding box
-	m_worldBounding.transform(m_source->bounding(), m_position, m_animRotation, glm::vec3(0.10f, 0.10f, 0.10f));
+	m_worldBounding.transform(m_source->bounding(), m_position, m_rotation, glm::vec3(0.10f, 0.10f, 0.10f));
 }
 
 /**

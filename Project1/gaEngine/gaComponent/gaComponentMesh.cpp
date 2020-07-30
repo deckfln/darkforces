@@ -30,8 +30,14 @@ void ComponentMesh::dispatchMessage(gaMessage* message)
 		break;
 	}
 	case GA_MSG_ROTATE: {
-		glm::vec3* rotation = (glm::vec3*)message->m_extra;
-		rotate(rotation);
+		if (message->m_value == 0) {
+			glm::vec3* rotation = (glm::vec3*)message->m_extra;
+			rotate(rotation);
+		}
+		else {
+			glm::quat* quaternion = (glm::quat*)message->m_extra;
+			rotate(quaternion);
+		}
 		break;
 	}
 	case GA_MSG_PLAY_SOUND: {

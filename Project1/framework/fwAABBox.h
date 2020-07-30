@@ -62,6 +62,7 @@ public:
 	void rotateFrom(const fwAABBox& source, const glm::vec3& rotation);
 	void rotateFrom(const fwAABBox& source, const glm::quat& quaternion);
 	void transform(const fwAABBox& source, glm::vec3& translation, const glm::vec3& rotation, const glm::vec3& scale);
+	void transform(const fwAABBox& source, const glm::vec3& translation, const glm::quat& quaternion, const glm::vec3& scale);
 	void apply(const fwAABBox& source, const glm::mat4& matrix);
 	bool not_init(void);
 	fwAABBox& copy(fwAABBox& source);

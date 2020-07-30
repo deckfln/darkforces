@@ -48,6 +48,7 @@ public:
 	fwObject3D& rotate(const glm::vec3 &rotation);
 	fwObject3D& rotate(const glm::quat& quaternion);
 	fwObject3D& rotate(glm::vec3 *rotation);
+	fwObject3D& rotate(glm::quat const *quaternion);
 	fwObject3D& translate(const glm::vec3 &vector);
 	fwObject3D& translate(float x, float y, float z);
 	fwObject3D& translate(glm::vec3 *vector);

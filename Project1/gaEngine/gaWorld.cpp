@@ -369,12 +369,10 @@ void gaWorld::wantToMove(gaMessage* message)
 		// do an AABB collision against AABB collision with entities
 		for (auto entity : entities) {
 			// only test entities that can physically checkCollision
-			if (entity->physical()) {
-				d = source->distanceTo(entity);
-				if (d < distance) {
-					nearest_entity = entity;
-					distance = d;
-				}
+			d = source->distanceTo(entity);
+			if (d < distance) {
+				nearest_entity = entity;
+				distance = d;
 			}
 		}
 
@@ -392,23 +390,25 @@ void gaWorld::wantToMove(gaMessage* message)
 		}
 
 		if (entities.size() > 0 || collisions.size() > 0) {
-			gaMessage collision;
-
+			gaMessage* collision = allocateMessage();
 			// if nearest is an entity
 			if (distance < distance_sector) {
-				collision.set(nearest_entity->name(), source->name(), GA_MSG_COLLIDE, 0, message->m_extra);
+				collision->set(nearest_entity->name(), source->name(), GA_MSG_COLLIDE, 0, message->m_extra);
 			}
 			else {
-				collision.set(nearest_sector->name(), source->name(), GA_MSG_COLLIDE, 1, message->m_extra);
+				collision->set(nearest_sector->name(), source->name(), GA_MSG_COLLIDE, 1, message->m_extra);
 			}
 
 			// decline the move as it triggers a collision
-			source->dispatchMessage(&collision);
+			source->dispatchMessage(collision);
+			collision->m_used = false;
 		}
 		else {
 			// accept the move
-			gaMessage message("_world", source->name(), GA_MSG_MOVE_TO, 0, message->m_extra);
-			source->dispatchMessage(&message);
+			gaMessage* ok = allocateMessage();
+			ok->set("_world", source->name(), GA_MSG_MOVE_TO, 0, message->m_extra);
+			source->dispatchMessage(ok);
+			ok->m_used = false;
 		}
 	}
 }
@@ -439,7 +439,7 @@ void gaWorld::process(time_t delta)
 
 		loopDetector[k] = true;
 
-		if (message->m_action != GA_MSG_TIMER) {
+		if (message->m_action != GA_MSG_TIMER && message->m_action != GA_MSG_WANT_TO_MOVE) {
 			std::cerr << "gaWorld::process server=" << message->m_server << " action=" << message->m_action << " client=" << message->m_client << std::endl;;
 		}
 

@@ -69,6 +69,9 @@ public:
 	void sendInternalMessage(int action,
 		int value = 0,
 		void* extra = nullptr);							// send internal message to all components of the current entity
+	void sendDelayedMessage(int action,
+		int value = 0,
+		void* extra = nullptr);							// send a delayed message to myself
 
 	virtual void add2scene(fwScene* scene);				// if the entity has a mesh, add to the scene
 	virtual void collideWith(gaEntity*) {};				// inform another entity of a collision

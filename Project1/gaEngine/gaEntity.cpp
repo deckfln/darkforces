@@ -129,6 +129,14 @@ void gaEntity::sendInternalMessage(int action, int value, void* extra)
 }
 
 /**
+ * Send a delayed message to myself
+ */
+void gaEntity::sendDelayedMessage(int action, int value, void* extra)
+{
+	g_gaWorld.sendMessageDelayed(m_name, m_name, action, value, extra);
+}
+
+/**
  * if the entity has a mesh, add to the scene
  */
 void gaEntity::add2scene(fwScene* scene)
@@ -180,8 +188,15 @@ void gaEntity::dispatchMessage(gaMessage* message)
 
 	case GA_MSG_ROTATE:
 		// take the opportunity to update the world bounding box
-		m_quaternion = glm::quat(glm::vec3(m_rotation.x, m_rotation.y, m_rotation.z));
-		updateWorldAABB();
+		if (message->m_value == 0) {
+			m_rotation = *(glm::vec3*)message->m_extra;
+			m_quaternion = glm::quat(glm::vec3(m_rotation.x, m_rotation.y, m_rotation.z));
+			updateWorldAABB();
+		}
+		else {
+			m_quaternion = *(glm::quat*)message->m_extra;
+			m_worldBounding.transform(m_modelAABB, m_position, m_quaternion, glm::vec3(0.10f));
+		}
 		break;
 
 	default:

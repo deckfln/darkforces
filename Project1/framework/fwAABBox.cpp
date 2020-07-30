@@ -190,6 +190,33 @@ void fwAABBox::transform(const fwAABBox& source, glm::vec3& translation, const g
 	m_dirty = true;
 }
 
+void fwAABBox::transform(const fwAABBox& source, const glm::vec3& translation, const glm::quat& quaternion, const glm::vec3& scale)
+{
+	glm::mat4 rotationMatrix = glm::toMat4(quaternion);
+
+	glm::mat4 translateMatrix = glm::translate(translation);
+	glm::mat4 scaleMatrix = glm::scale(scale);
+
+	// rebuild the 8 vertices
+	glm::vec3 delta = source.m_p1 - source.m_p;
+
+	std::vector<glm::vec3> points = {
+		translateMatrix * scaleMatrix * rotationMatrix * glm::vec4(source.m_p, 1.0),
+		translateMatrix * scaleMatrix * rotationMatrix * glm::vec4(source.m_p + glm::vec3(delta.x, 0, 0), 1.0),
+		translateMatrix * scaleMatrix * rotationMatrix * glm::vec4(source.m_p + glm::vec3(delta.x, delta.y, 0), 1.0),
+		translateMatrix * scaleMatrix * rotationMatrix * glm::vec4(source.m_p + glm::vec3(0, delta.y, 0), 1.0),
+		translateMatrix * scaleMatrix * rotationMatrix * glm::vec4(source.m_p + glm::vec3(0, 0, delta.z), 1.0),
+		translateMatrix * scaleMatrix * rotationMatrix * glm::vec4(source.m_p + glm::vec3(delta.x, 0, delta.z), 1.0),
+		translateMatrix * scaleMatrix * rotationMatrix * glm::vec4(source.m_p + glm::vec3(delta.x, delta.y, delta.z), 1.0),
+		translateMatrix * scaleMatrix * rotationMatrix * glm::vec4(source.m_p + glm::vec3(0, delta.y, delta.z), 1.0)
+	};
+
+	// and extract the min and max
+	set(points);
+
+	m_dirty = true;
+}
+
 /**
  * apply a matrix4 to a source
  */

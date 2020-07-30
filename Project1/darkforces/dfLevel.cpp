@@ -166,7 +166,7 @@ dfLevel::dfLevel(dfFileSystem* fs, std::string file)
 			// if one of the client of trigger is the very sector the trigger is attached to
 			std::vector<gaMessage*>& messages = trigger->messages();
 			for (auto& message : messages) {
-				std::string& client = message->client();
+				const std::string& client = message->client();
 				if (client == sectorname) {
 					sectorIsElevator = true;
 					break;
@@ -191,7 +191,7 @@ dfLevel::dfLevel(dfFileSystem* fs, std::string file)
 	for (auto trigger : m_inf->m_triggers) {
 		std::vector<gaMessage *>& messages = trigger->messages();
 		for (auto& message : messages) {
-			std::string& client = message->client();
+			const std::string& client = message->client();
 			dfSector* sector = m_sectorsName[client];
 			sector->addTrigger(trigger);
 		}
@@ -463,14 +463,9 @@ void dfLevel::testSwitch(fwAABBox& player, gaEntity* source)
 			message = messages + first;
 
 			//TODO get the keys the player owns
-			message->m_server = "player";
-			message->m_client = entity->name();
-			message->m_action = DF_MESSAGE_TRIGGER;
-
 			// ignore the player
-			if (message->m_client != "player") {
-				g_gaWorld.push(message);
-
+			if (entity->name() != "player") {
+				g_gaWorld.sendMessage("player", entity->name(), DF_MESSAGE_TRIGGER, 0, nullptr);
 				first++;
 				if (first == 32) {
 					first = 0;

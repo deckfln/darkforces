@@ -75,11 +75,7 @@ dfBullet::dfBullet(const glm::vec3& position, const glm::vec3& direction):
 	updateWorldAABB();
 
 	// next animation
-	m_animate_msg = new gaMessage(GA_MSG_TIMER);
-	m_animate_msg->m_client = m_name;
-
-	// trigger the animation
-	g_gaWorld.pushForNextFrame(m_animate_msg);
+	g_gaWorld.sendMessageDelayed(m_name, m_name, GA_MSG_TIMER, 0, nullptr);
 }
 
 /**
@@ -98,7 +94,7 @@ void dfBullet::dispatchMessage(gaMessage* message)
 	switch (message->m_action) {
 	case GA_MSG_MOVE_TO:
 		// move request was accepted
-		g_gaWorld.pushForNextFrame(m_animate_msg);
+		g_gaWorld.sendMessageDelayed(m_name, m_name, GA_MSG_TIMER, 0, nullptr);
 		break;
 
 	case GA_MSG_COLLIDE: {

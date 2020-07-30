@@ -82,8 +82,6 @@ class dfLogicElevator: public gaEntity {
 
 	dfVOC* m_sounds[3] = { nullptr, nullptr, nullptr };
 
-	gaMessage m_msg_animate = gaMessage(GA_MSG_TIMER);
-
 	void moveTo(dfLogicStop* stop);
 	void moveTo(float z);
 	void moveToNextStop(void);
