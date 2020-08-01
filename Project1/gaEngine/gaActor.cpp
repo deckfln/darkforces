@@ -17,6 +17,7 @@ gaActor::gaActor(int mclass, const std::string& name, fwCylinder& bounding,float
 	m_ankle(ankle),
 	m_eyes(eyes)
 {
+	physical(true);
 	m_worldBounding= fwAABBox(m_bounding);
 }
 

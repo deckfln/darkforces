@@ -368,13 +368,14 @@ void gaWorld::wantToMove(gaMessage* message)
 		findAABBCollision(aabb, entities, sectors, entity);
 
 		// do an AABB collision against AABB collision with entities
-		for (auto entity : entities) {
+		for (auto ent : entities) {
 			// only test entities that can physically checkCollision
-			d = entity->distanceTo(entity);
+			d = ent->distanceTo(entity);
 			if (d < distance) {
-				nearest_entity = entity;
+				nearest_entity = ent;
 				distance = d;
 			}
+
 		}
 
 		// do an segment collision against the sectors triangles

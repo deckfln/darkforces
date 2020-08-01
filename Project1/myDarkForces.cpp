@@ -70,13 +70,14 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 
 	m_renderer->customLight("/data/shaders/lightning.glsl");
 
-	// preload animations
+	// pre-load animations
 	const std::vector<std::string> preloads = {
 		"BULLEXP.WAX",
 		"IST-GUNI.FME",
 		"IKEYR.FME",
 		"IENERGY.FME",
-		"IPOWER.FME"
+		"IPOWER.FME",
+		"DEDMOUSE.FME"
 	};
 	GameEngine::gaModel* mod;
 	for (const std::string& n: preloads) {

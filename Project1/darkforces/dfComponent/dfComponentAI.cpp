@@ -72,6 +72,10 @@ void dfComponentAI::dispatchMessage(gaMessage* message)
 		m_entity->sendDelayedMessage(GA_MSG_TIMER);
 		break;
 	}
+
+	case DF_MESSAGE_DIES:
+		m_active = false;
+		break;
 	}
 }
 

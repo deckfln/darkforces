@@ -108,7 +108,7 @@ void dfBullet::dispatchMessage(gaMessage* message)
 		// if hit an entity
 		if (message->m_value == 0) {
 			// on collision, inform the target it was hit with the energy of the bullet
-			g_gaWorld.sendMessage(m_name, message->m_server, DF_MESSAGE_HIT_BULLET, 10, nullptr);
+			sendMessage(message->m_server, DF_MESSAGE_HIT_BULLET, 10, nullptr);
 			gaDebugLog(REDUCED_DEBUG, "dfBullet::dispatchMessage", "hit entity");
 		}
 		else {

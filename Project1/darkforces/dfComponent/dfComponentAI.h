@@ -12,6 +12,7 @@ class dfComponentAI : public gaComponent
 	float m_alpha=0;								// rotation angle for the direction
 	float m_progress = 0.045f;						// 
 	int m_time = 0;									// time left to move in the direction
+	bool m_active = true;							// is AI active
 
 public:
 	dfComponentAI();
