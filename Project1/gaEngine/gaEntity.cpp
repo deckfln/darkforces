@@ -53,7 +53,6 @@ gaComponent* gaEntity::findComponent(int type)
 /**
  * add an entity inside that one (and increase the AABB if needed)
  */
-
 void gaEntity::addChild(gaEntity* entity)
 {
 	m_children.push_back(entity);

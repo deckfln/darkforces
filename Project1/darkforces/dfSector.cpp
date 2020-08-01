@@ -153,8 +153,6 @@ dfSector::dfSector(std::istringstream& infile, std::vector<dfSector*>& sectorsID
 	//dfLevel::level2gl(p);
 	//dfLevel::level2gl(p1);
 	m_worldAABB = fwAABBox(p, p1);
-
-	m_message = gaMessage(DF_MESSAGE_TRIGGER, 0, m_name);
 }
 
 /**
@@ -623,8 +621,7 @@ void dfSector::event(int event_mask)
 #ifdef DEBUG
 		gaDebugLog(LOW_DEBUG, "dfSector::event", "sector=" + m_name + " event=" + std::to_string(event_mask));
 #endif
-		m_message.m_server = m_name;
-		g_gaWorld.push(&m_message);
+		g_gaWorld.sendMessage(m_name, m_name, DF_MESSAGE_TRIGGER, 0, nullptr);
 	}
 }
 

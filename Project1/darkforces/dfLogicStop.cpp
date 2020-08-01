@@ -15,6 +15,7 @@ static std::map<std::string, int> _stops = {
 dfLogicStop::dfLogicStop(dfLogicElevator* parent):
 	m_parent(parent)
 {
+	m_name = "STOP:" + m_parent->name();
 }
 
 dfLogicStop::dfLogicStop(dfLogicElevator* parent, float altitude, dfSector* sector, std::string& action):
@@ -94,8 +95,7 @@ void dfLogicStop::message(gaMessage* message)
 void dfLogicStop::sendMessages()
 {
 	for (unsigned i = 0; i < m_messages.size(); i++) {
-		m_messages[i]->m_server = "STOP:" + m_parent->name();
-		g_gaWorld.push(m_messages[i]);
+		g_gaWorld.sendMessage(m_name, m_messages[i]->m_client, m_messages[i]->m_action, m_messages[i]->m_value, nullptr);
 	}
 }
 

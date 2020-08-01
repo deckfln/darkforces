@@ -110,13 +110,13 @@ void dfObject3D::dispatchMessage(gaMessage* message)
 	switch (message->m_action) {
 	case GA_MSG_TIMER:
 		if (update(message->m_delta)) {
-			g_gaWorld.sendMessageDelayed(m_name, m_name, GA_MSG_TIMER, 0, nullptr);
+			sendDelayedMessage(GA_MSG_TIMER);
 		}
 		break;
 
 	case GA_MSG_WORLD_INSERT:
 		// trigger the animation
-		g_gaWorld.sendMessageDelayed(m_name, m_name, GA_MSG_TIMER, 0, nullptr);
+		sendDelayedMessage(GA_MSG_TIMER);
 		break;
 	}
 	dfObject::dispatchMessage(message);

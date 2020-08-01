@@ -19,6 +19,8 @@ enum {
 };
 
 class dfLogicStop {
+	std::string m_name;
+
 	int m_flag = 0;			// content of the stop
 		// 1 : absolute
 		// 2 : relative
