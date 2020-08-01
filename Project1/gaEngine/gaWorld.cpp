@@ -352,11 +352,6 @@ void gaWorld::wantToMove(gaMessage* message)
 	float distance = 99999999.0f;
 	float distance_sector = 99999999.0f;
 	float d;
-	glm::vec3 direction = *(glm::vec3*)(message->m_extra);
-	gaEntity* source = m_entities[message->m_server].front();
-	glm::vec3 position = source->position();
-	fwAABBox aabb = source->worldAABB();
-	aabb += direction;
 
 	std::list<gaEntity*> entities;
 	std::list<dfSuperSector*> sectors;
@@ -364,12 +359,18 @@ void gaWorld::wantToMove(gaMessage* message)
 
 	// test for a collision
 	if (m_entities.count(message->m_server) > 0) {
-		findAABBCollision(aabb, entities, sectors, source);
+		glm::vec3 direction = *(glm::vec3*)(message->m_extra);
+		gaEntity* entity = m_entities[message->m_server].front();
+		glm::vec3 position = entity->position();
+		fwAABBox aabb = entity->worldAABB();
+		aabb += direction;
+
+		findAABBCollision(aabb, entities, sectors, entity);
 
 		// do an AABB collision against AABB collision with entities
 		for (auto entity : entities) {
 			// only test entities that can physically checkCollision
-			d = source->distanceTo(entity);
+			d = entity->distanceTo(entity);
 			if (d < distance) {
 				nearest_entity = entity;
 				distance = d;
@@ -381,10 +382,38 @@ void gaWorld::wantToMove(gaMessage* message)
 			sector->collisionSegmentTriangle(position, position + direction, collisions);
 
 			for (auto c : collisions) {
-				d = source->distanceTo(c.m_position);
+				d = entity->distanceTo(c.m_position);
 				if (d < distance_sector) {
 					nearest_sector = sector;
 					distance_sector = d;
+				}
+			}
+		}
+
+		// do an segment collision against the sectors floor
+		dfSuperSector* sector = entity->superSector();
+
+		if (sector) {
+			glm::vec3 down = glm::vec3(0, -0.1, 0);
+			std::list<gaCollisionPoint> falls;
+
+			sector->collisionSegmentTriangle(position + direction, position + direction + down, falls);
+
+			if (falls.size() == 0) {
+				// if there is no floor
+				if (message->m_value == GA_MSG_WANT_TO_MOVE_BREAK_IF_FALL) {
+					// if the entity wants to be informed of falling
+					gaMessage* fall = allocateMessage();
+					fall->set(entity->name(), entity->name(), GA_MSG_WOULD_FALL, 0, message->m_extra);
+
+					// decline the move as it triggers a fall
+					entity->dispatchMessage(fall);
+					fall->m_used = false;
+
+					return;
+				}
+				else {
+					// trigger physic engine
 				}
 			}
 		}
@@ -393,21 +422,21 @@ void gaWorld::wantToMove(gaMessage* message)
 			gaMessage* collision = allocateMessage();
 			// if nearest is an entity
 			if (distance < distance_sector) {
-				collision->set(nearest_entity->name(), source->name(), GA_MSG_COLLIDE, 0, message->m_extra);
+				collision->set(nearest_entity->name(), entity->name(), GA_MSG_COLLIDE, 0, message->m_extra);
 			}
 			else {
-				collision->set(nearest_sector->name(), source->name(), GA_MSG_COLLIDE, 1, message->m_extra);
+				collision->set(nearest_sector->name(), entity->name(), GA_MSG_COLLIDE, 1, message->m_extra);
 			}
 
 			// decline the move as it triggers a collision
-			source->dispatchMessage(collision);
+			entity->dispatchMessage(collision);
 			collision->m_used = false;
 		}
 		else {
 			// accept the move
 			gaMessage* ok = allocateMessage();
-			ok->set("_world", source->name(), GA_MSG_MOVE_TO, 0, message->m_extra);
-			source->dispatchMessage(ok);
+			ok->set("_world", entity->name(), GA_MSG_MOVE_TO, 0, message->m_extra);
+			entity->dispatchMessage(ok);
 			ok->m_used = false;
 		}
 	}

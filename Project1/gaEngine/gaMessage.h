@@ -16,7 +16,13 @@ enum {
 	GA_MSG_COLLISION,		// the entity cannot move, it would collide with ...
 	GA_MSG_MOVE_TO,			// Move the entity in a direction (m_extra)
 	GA_MSG_WORLD_INSERT,	// an entity is added to the world
-	GA_MSG_WORLD_REMOVE		// an entity is removed from the world
+	GA_MSG_WORLD_REMOVE,	// an entity is removed from the world
+	GA_MSG_WOULD_FALL,		// the objects would fall off after a WANT_TO_MOVE
+};
+
+enum {
+	GA_MSG_WANT_TO_MOVE_BREAK_IF_FALL,	// Object doesn't want to fall off and want to be informed
+	GA_MSG_WANT_TO_MOVE_FALL,			// object accepts to fall down
 };
 
 class gaEntity;

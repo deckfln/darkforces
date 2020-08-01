@@ -167,7 +167,7 @@ void dfParserObjects::parseObjectComponent(dfFileSystem* fs, dfObject* object, G
 /**
  * parse an object tree
  */
-void dfParserObjects::parseObject(dfFileSystem* fs, GameEngine::ParserExpression& object, dfLevel* level)
+void dfParserObjects::parseObject(dfFileSystem* fs, GameEngine::ParserExpression& object, dfLevel* level, uint32_t objectID)
 {
 	switch (object.m_children[0].m_expression) {
 	case E_CLASS: {
@@ -219,18 +219,18 @@ void dfParserObjects::parseObject(dfFileSystem* fs, GameEngine::ParserExpression
 		switch (mclass.m_expression) {
 		case O_SPRITE: {
 			dfWAX* wax = (dfWAX*)g_gaWorld.getModel(m_waxes[data]);
-			obj = new dfSpriteAnimated(wax, position, ambient);
+			obj = new dfSpriteAnimated(wax, position, ambient, objectID);
 			((dfSpriteAnimated*)obj)->rotation(rotation);
 			break;
 		}
 		case O_3D: {
 			df3DO* tdo = (df3DO*)g_gaWorld.getModel(m_t3DOs[data]);
-			obj = new dfObject3D(tdo, position, ambient);
+			obj = new dfObject3D(tdo, position, ambient, objectID);
 			break;
 		}
 		case O_FRAME: {
 			dfFME* fme = (dfFME*)g_gaWorld.getModel(m_fmes[data]);
-			obj = new dfSprite(fme, position, ambient);
+			obj = new dfSprite(fme, position, ambient, objectID);
 			break;
 		}
 		default:
@@ -242,7 +242,9 @@ void dfParserObjects::parseObject(dfFileSystem* fs, GameEngine::ParserExpression
 		// record the object
 		m_objects.push_back(obj);
 
+		// add attributes
 		obj->difficulty(difficulty);
+		obj->sector(sector);
 
 		// load all components of the object
 		for (auto& component : body.m_children) {
@@ -320,8 +322,10 @@ void dfParserObjects::parse(GameEngine::Parser& parser, dfFileSystem* fs, dfPale
 		case E_OBJECTS: {
 			// load all objcts
 			//m_objects.resize(expression->m_children[1].m_token->m_vvalue);
+			uint32_t objectID = 0;
 			for (auto& object : expression->m_children[2].m_children) {
-				parseObject(fs, object, level);
+				parseObject(fs, object, level, objectID);
+				objectID++;
 			}
 
 			break; }

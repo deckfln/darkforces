@@ -157,6 +157,8 @@ public:
 	float referenceCeiling(void) { return m_referenceCeilingAltitude; };
 
 	void parent(dfSuperSector* parent) { m_super = parent; };
+	dfSuperSector *parent(void) { return m_super; };
+
 	float height(void) { return m_height; };
 	unsigned flag(void) { return m_flag1; };
 	bool flag(int v) { return (m_flag1 & v) != 0; };

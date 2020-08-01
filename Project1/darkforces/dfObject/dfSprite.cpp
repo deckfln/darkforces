@@ -7,11 +7,13 @@
 #include "../dfModel.h"
 #include "../dfModel/dfFME.h"
 
+static uint32_t g_spriteID = 0;
+
 /**
  * create from an image
  */
-dfSprite::dfSprite(dfFME* fme, const glm::vec3& position, float ambient):
-	dfObject(fme, position, ambient, OBJECT_FME)
+dfSprite::dfSprite(dfFME* fme, const glm::vec3& position, float ambient, uint32_t objectID):
+	dfObject(fme, position, ambient, OBJECT_FME, objectID)
 {
 	addComponent(&m_componentLogic);
 }
@@ -19,8 +21,8 @@ dfSprite::dfSprite(dfFME* fme, const glm::vec3& position, float ambient):
 /**
  * create from a model
  */
-dfSprite::dfSprite(dfModel* model, const glm::vec3& position, float ambient, int type):
-	dfObject(model, position, ambient, type)
+dfSprite::dfSprite(dfModel* model, const glm::vec3& position, float ambient, int type, uint32_t objectID):
+	dfObject(model, position, ambient, type, objectID)
 {
 	addComponent(&m_componentLogic);
 }
@@ -29,7 +31,7 @@ dfSprite::dfSprite(dfModel* model, const glm::vec3& position, float ambient, int
  * create from a model name
  */
 dfSprite::dfSprite(const std::string& name, const glm::vec3& position, float ambient, int type) :
-	dfObject((dfFME*)g_gaWorld.getModel(name), position, ambient, type)
+	dfObject((dfFME*)g_gaWorld.getModel(name), position, ambient, type, g_spriteID++)
 {
 	addComponent(&m_componentLogic);
 }

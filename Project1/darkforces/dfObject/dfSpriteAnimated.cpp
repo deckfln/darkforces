@@ -6,11 +6,13 @@
 #include "../dfLevel.h"
 #include "../dfComponent/dfComponentLogic.h"
 
+static uint32_t g_animatedSpriteID = 0;
+
 /**
  * create a sprite from a pointer to a model
  */
-dfSpriteAnimated::dfSpriteAnimated(dfWAX* wax, const glm::vec3& position, float ambient):
-	dfSprite(wax, position, ambient, OBJECT_WAX)
+dfSpriteAnimated::dfSpriteAnimated(dfWAX* wax, const glm::vec3& position, float ambient, uint32_t objectID):
+	dfSprite(wax, position, ambient, OBJECT_WAX, objectID)
 {
 	gaEntity::updateWorldAABB();
 }
@@ -19,7 +21,7 @@ dfSpriteAnimated::dfSpriteAnimated(dfWAX* wax, const glm::vec3& position, float 
  * create a sprite from a model name, the real model is extracted from the world
  */
 dfSpriteAnimated::dfSpriteAnimated(const std::string& model, const glm::vec3& position, float ambient):
-	dfSprite((dfWAX*)g_gaWorld.getModel(model), position, ambient, OBJECT_WAX)
+	dfSprite((dfWAX*)g_gaWorld.getModel(model), position, ambient, OBJECT_WAX, g_animatedSpriteID++)
 {
 	gaEntity::updateWorldAABB();
 }

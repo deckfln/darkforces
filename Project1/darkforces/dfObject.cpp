@@ -22,8 +22,8 @@ const int DF_ENERGY_ENERGY = 100;
 /**
  *
  */
-dfObject::dfObject(dfModel *source, const glm::vec3& position, float ambient, int type):
-	gaEntity(DF_ENTITY_OBJECT, source->name() + "(" + std::to_string(g_ids) + ")"),
+dfObject::dfObject(dfModel *source, const glm::vec3& position, float ambient, int type, uint32_t objectID):
+	gaEntity(DF_ENTITY_OBJECT, source->name() + "(" + std::to_string(objectID) + ")"),
 	m_source(source),
 	m_position_lvl(position),
 	m_ambient(ambient),
@@ -192,7 +192,19 @@ void dfObject::updateWorldAABB(void)
 }
 
 /**
- * extended collision test after a sucessfull AABB collision
+ * populate the super sector if it is not there
+ */
+dfSuperSector* dfObject::superSector(void)
+{
+	if (m_supersector == nullptr) {
+		m_supersector = m_sector->parent();
+	}
+
+	return m_supersector;
+}
+
+/**
+ * extended collision test after a successful AABB collision
  * consider the object is a cylinder
  */
 bool dfObject::checkCollision(fwCylinder& bounding, glm::vec3& direction, glm::vec3& intersection, std::list<gaCollisionPoint>& collisions)

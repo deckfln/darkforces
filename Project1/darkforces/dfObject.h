@@ -16,6 +16,7 @@ class fwMesh;
 class fwCylinder;
 
 class dfModel;
+class dfSector;
 
 /**
  * Logic for objects
@@ -93,14 +94,14 @@ class dfObject: public gaEntity
 	int m_objectID = 0;
 
 protected:
-	int m_dirtyAnimation = true;	// animation of the object was updated
-	int m_dirtyPosition = true;		// position of the object was updated
+	int m_dirtyAnimation = true;			// animation of the object was updated
+	int m_dirtyPosition = true;				// position of the object was updated
 
-	glm::vec3 m_position_lvl = glm::vec3(0);		// position in level space
+	glm::vec3 m_position_lvl = glm::vec3(0);// position in level space
 
-	int m_logics = 0;				// logic of the object
-	int m_difficulty = 0;			// difficulty to be displayed
-	float m_ambient = 32.0f;		// ambient light inherited from the sector
+	int m_logics = 0;						// logic of the object
+	int m_difficulty = 0;					// difficulty to be displayed
+	float m_ambient = 32.0f;				// ambient light inherited from the sector
 
 	float m_radius = 0;			// This defines the size of an invisible circle around the object where the PLAYER cannot enter or shoot through.
 								// *Frames and sprites have radiuses by default*, but 3D objects don't, so you have to set one unless you want the
@@ -111,9 +112,10 @@ protected:
 
 
 	dfModel* m_source = nullptr;
+	dfSector* m_sector = nullptr;						// cached pointer to the sector hosting the object
 
 public:
-	dfObject(dfModel *source, const glm::vec3& position, float ambient, int type);
+	dfObject(dfModel *source, const glm::vec3& position, float ambient, int type, uint32_t objectID);
 	void height(float h) { m_height = h; };
 	float height(void) { return m_height; };
 	void radius(float r) { m_radius = r; };
@@ -127,6 +129,9 @@ public:
 	const std::string& model(void);
 	void logic(int logic);
 	void drop(const std::string& object);				// object to drop in the scene at the current position
+	dfSector* sector(void) { return m_sector; };
+	void sector(dfSector* s) { m_sector = s; };
+	dfSuperSector* superSector(void) override;
 
 	bool checkCollision(fwCylinder& bounding,
 		glm::vec3& direction,

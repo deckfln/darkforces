@@ -33,7 +33,7 @@ class dfParserObjects
 	std::vector<std::string> m_t3DOs;
 
 	dfAtlasTexture* m_textures;
-	void parseObject(dfFileSystem* fs, GameEngine::ParserExpression& object, dfLevel* level);
+	void parseObject(dfFileSystem* fs, GameEngine::ParserExpression& object, dfLevel* level, uint32_t objectID);
 	void parseObjectComponent(dfFileSystem* fs, dfObject* object, GameEngine::ParserExpression& component);
 
 public:

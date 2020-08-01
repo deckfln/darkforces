@@ -27,6 +27,7 @@ void dfComponentAI::dispatchMessage(gaMessage* message)
 		break;
 
 	case GA_MSG_COLLIDE:
+	case GA_MSG_WOULD_FALL:
 		m_direction = -m_direction;
 		m_entity->sendDelayedMessage(GA_MSG_TIMER);
 		break;
@@ -40,7 +41,10 @@ void dfComponentAI::dispatchMessage(gaMessage* message)
 
 		m_direction = glm::rotateY(m_direction, m_alpha);
 		m_movement = m_direction * 0.06f;
-		m_entity->sendMessageToWorld(GA_MSG_WANT_TO_MOVE, 0, &m_movement);
+		m_entity->sendMessageToWorld(
+			GA_MSG_WANT_TO_MOVE, 
+			GA_MSG_WANT_TO_MOVE_BREAK_IF_FALL,		// detects cliff
+			&m_movement);
 		break;
 
 	case GA_MSG_MOVE: {

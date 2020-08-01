@@ -102,7 +102,7 @@ int dfMesh::resize(int i)
 }
 
 /**
- * Return current number of vertices on the mesh
+ * Return current number of vertices's on the mesh
  */
 int dfMesh::nbVertices(void)
 {
@@ -134,7 +134,7 @@ void dfMesh::setVertice(int p, float x, float y, float z, float xoffset, float y
 }
 
 /**
- * Update the vertices of a rectangle
+ * Update the vertices's of a rectangle
  */
 void dfMesh::updateRectangle(int p, 
 	glm::vec3& pStart,
@@ -182,7 +182,7 @@ void dfMesh::updateRectangleAntiClockwise(int p,
 }
 
 /***
- * create vertices for a rectangle
+ * create vertices's for a rectangle
  */
 int dfMesh::addRectangle(int start, dfSector* sector, dfWall* wall, float z, float z1, int texture, float ambient)
 {
@@ -217,7 +217,7 @@ int dfMesh::addRectangle(int start, dfSector* sector, dfWall* wall, float z, flo
 		abs(z1 - z) * 8.0f / ypixel);
 
 	// get local texture offset on the wall
-	// TODO: current supposion : offset x 1 => 1 pixel from the begining on XXX width pixel texture
+	// TODO: current supposition : offset x 1 => 1 pixel from the beginning on XXX width pixel texture
 	glm::vec2 offset(
 		(wall->m_tex[texture].y * 8.0f) / xpixel,
 		(wall->m_tex[texture].z * 8.0f) / ypixel);
@@ -276,7 +276,7 @@ void dfMesh::addRectangle(dfSector* sector, dfWall* wall, float z, float z1, glm
 		abs(z1 - z) * 8.0f / ypixel);
 
 	// get local texture offset on the wall
-	// TODO: current supposion : offset x 1 => 1 pixel from the begining on XXX width pixel texture
+	// TODO: current supposition : offset x 1 => 1 pixel from the beginning on XXX width pixel texture
 	glm::vec2 offset(
 		(texture.y * 8.0f) / xpixel, 
 		(texture.z * 8.0f) / ypixel);
@@ -297,7 +297,7 @@ void dfMesh::addRectangle(dfSector* sector, dfWall* wall, float z, float z1, glm
 }
 
 /**
- * create a floor tesselation
+ * create a floor tessellation
  */
 void dfMesh::addFloor(std::vector<std::vector<Point>>& polygons, float z, glm::vec3& texture, float ambient, bool clockwise)
 {
@@ -307,7 +307,7 @@ void dfMesh::addFloor(std::vector<std::vector<Point>>& polygons, float z, glm::v
 	// Three subsequent indices form a triangle. Output triangles are clockwise.
 	std::vector<N> indices = mapbox::earcut<N>(polygons);
 
-	// index the indexes IN the polyines of polygon 
+	// index the indexes IN the poly-lines of polygon 
 	std::vector<Point> vertices;
 
 	for (auto poly : polygons) {
@@ -335,13 +335,13 @@ void dfMesh::addFloor(std::vector<std::vector<Point>>& polygons, float z, glm::v
 		int index = indices[i];
 
 		// get local texture offset on the floor
-		// TODO: current supposion : offset x 1 => 1 pixel from the begining on XXX width pixel texture
+		// TODO: current supposition : offset x 1 => 1 pixel from the beginning on XXX width pixel texture
 		float xoffset = ((vertices[index][0] + texture.g) * 8.0f) / xpixel;
 		float yoffset = ((vertices[index][1] + texture.b) * 8.0f) / ypixel;
 
 
 		if (!clockwise) {
-			// reverse vertices 2 and 3 to look upward
+			// reverse vertices's 2 and 3 to look upward
 			switch (currentVertice) {
 			case 1: j = 1; break;
 			case 2: j = -1; break;
@@ -393,7 +393,7 @@ void dfMesh::addPlane(float width, dfBitmapImage* image)
 
 	for (unsigned int i = 0; i < 6; i++) {
 		// get local texture offset on the floor
-		// TODO: current supposion : offset x 1 => 1 pixel from the begining on XXX width pixel texture
+		// TODO: current supposition : offset x 1 => 1 pixel from the beginning on XXX width pixel texture
 		switch (i) {
 		case 0:	t = -1; t1 = -1; break;
 		case 1:	t = 1; t1 = -1;  break;
@@ -420,7 +420,7 @@ void dfMesh::addPlane(float width, dfBitmapImage* image)
 }
 
 /**
- * // extended segment collision test after a sucessfull AABB collision
+ * // extended segment collision test after a successful AABB collision
  */
 bool dfMesh::collisionSegmentTriangle(const glm::vec3& p, const glm::vec3& q, std::list<gaCollisionPoint>& collisions)
 {
@@ -462,7 +462,7 @@ static bool intersectSphereTriangle(const glm::vec3& center_es, const glm::vec3&
 	signedDistance = glm::dot(center_es, normal) + plane.w;
 
 	if (signedDistance >= -1.0f && signedDistance <= 1.0f) {
-		// if the plane is passing trough the sphere (the ellipsoid deformed to look like a sphre)
+		// if the plane is passing trough the sphere (the ellipsoid deformed to look like a sphere)
 		// get the collision point of the sphere on the plane
 
 		p = center_es - normal * glm::abs(signedDistance);
@@ -487,7 +487,7 @@ static bool intersectSphereTriangle(const glm::vec3& center_es, const glm::vec3&
 		tr1 = a - p;
 		tarea3 = glm::length(glm::cross(tr0, tr1));
 
-		// if the sum of the 3 new triangles is equal to the gl triangle
+		// if the sum of the 3 new triangles is equal to the opengl triangle
 		if (abs(tarea1 + tarea2 + tarea3 - tarea) < 0.01) {
 			return true;
 		}
@@ -513,9 +513,9 @@ bool dfMesh::checkCollision(fwCylinder& bounding, glm::vec3& direction, glm::vec
 	// deform the model_space to make the ellipsoid  sphere
 	glm::vec3 ellipsoid_space(1.0 / ellipsoid.x, 1.0 / ellipsoid.y, 1.0 / ellipsoid.z);
 
-	// convert player position (gl world space) into the elevator space (model space)
+	// convert player position (opengl world space) into the elevator space (model space)
 	glm::vec3 center_ms = glm::vec3(m_mesh->inverseWorldMatrix() * glm::vec4(center_ws, 1.0));
-	// and convert to ellipsod space
+	// and convert to ellipsoid space
 	glm::vec3 center_es = center_ms * ellipsoid_space;
 
 	// test each triangle vs the ellipsoid
@@ -574,7 +574,7 @@ bool dfMesh::checkCollision(fwCylinder& bounding, glm::vec3& direction, glm::vec
 				collisions.push_back(gaCollisionPoint(fwCollisionLocation::FRONT, intersection, nullptr));
 				c = fwCollisionLocation::FRONT;
 			}
-			std::cerr << "dfMesh::checkCollision ellipoid collides with " << name << " on " << (int)c << std::endl;
+			std::cerr << "dfMesh::checkCollision ellipsoid collides with " << name << " on " << (int)c << std::endl;
 
 			return true;
 		}
@@ -619,7 +619,7 @@ void dfMesh::addChild(dfMesh* mesh)
 }
 
 /**
- * Registera sub fwmesh
+ * Register a sub fwmesh
  */
 void dfMesh::addMesh(fwMesh* mesh)
 {
@@ -643,11 +643,11 @@ void dfMesh::updateGeometryTextures(int start, int nb)
 }
 
 /**
- * Move all vertices as offset of the center
+ * Move all vertices's as offset of the center
  */
 void dfMesh::moveVertices(glm::vec3& center)
 {
-	// convert to gl space
+	// convert to opengl space
 	dfLevel::level2gl(center, m_position);
 
 	for (auto &vertice : m_vertices) {
@@ -655,11 +655,11 @@ void dfMesh::moveVertices(glm::vec3& center)
 	}
 
 	m_mesh->translate(m_position);
-	m_mesh->updateVertices();	// reupload vertices to GPU
+	m_mesh->updateVertices();	// re-upload vertices's to GPU
 }
 
 /**
- * Move all vertices to orbit around the center XZ of the geometry
+ * Move all vertices's to orbit around the center XZ of the geometry
  */
 void dfMesh::centerOnGeometryXZ(glm::vec3& target)
 {
@@ -679,14 +679,14 @@ void dfMesh::centerOnGeometryXZ(glm::vec3& target)
 	m_position.z += center.z;
 
 	m_mesh->translate(m_position);
-	m_mesh->updateVertices();	// reupload vertices to GPU
+	m_mesh->updateVertices();	// re-upload vertices's to GPU
 
-	// convert to gl space
+	// convert to opengl space
 	dfLevel::gl2level(center, target);
 }
 
 /**
- * Move all vertices to orbit around the center XZ of the geometry
+ * Move all vertices's to orbit around the center XZ of the geometry
  */
 void dfMesh::centerOnGeometryXYZ(glm::vec3& target)
 {
@@ -704,9 +704,9 @@ void dfMesh::centerOnGeometryXYZ(glm::vec3& target)
 	m_position.z += center.z;
 
 	m_mesh->translate(m_position);
-	m_mesh->updateVertices();	// reupload vertices to GPU
+	m_mesh->updateVertices();	// re-upload vertices's to GPU
 
-	// convert to gl space
+	// convert to opengl space
 	dfLevel::gl2level(center, target);
 }
 

@@ -88,7 +88,7 @@ bool dfSuperSector::collideAABB(const fwAABBox& box)
 }
 
 /**
- * extended segment collision test after a sucessfull AABB collision
+ * extended segment collision test after a successful AABB collision
  */
 bool dfSuperSector::collisionSegmentTriangle(const glm::vec3& p, const glm::vec3& q, std::list<gaCollisionPoint>& collisions)
 {
@@ -99,7 +99,7 @@ bool dfSuperSector::collisionSegmentTriangle(const glm::vec3& p, const glm::vec3
 }
 
 /**
- * parse all portals to find the smalled adjent
+ * parse all portals to find the smalled adjacent
  */
 dfSuperSector* dfSuperSector::smallestAdjoint(void)
 {
