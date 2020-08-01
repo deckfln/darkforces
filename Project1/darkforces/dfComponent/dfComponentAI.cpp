@@ -1,5 +1,7 @@
 #include "dfComponentAI.h"
 
+#include <glm/gtx/rotate_vector.hpp>
+
 #include "../../config.h"
 #include "../../gaEngine/gaWorld.h"
 #include "../../gaEngine/gaEntity.h"
@@ -19,21 +21,25 @@ void dfComponentAI::dispatchMessage(gaMessage* message)
 	case GA_MSG_WORLD_INSERT:
 		// kick start the AI
 		m_center = m_entity->position();
-		g_gaWorld.sendMessageDelayed(m_entity->name(), m_entity->name(), GA_MSG_TIMER, 0, nullptr);
+		m_alpha = (rand() / (float)RAND_MAX - 0.f) / 10.0f; // rotation angle to apply to the direction vector
+		m_time = rand() % (5 * 30);			// move 5s maximum using the same rotation angle
+		m_entity->sendMessage(m_entity->name(), GA_MSG_TIMER, 0, nullptr);
 		break;
 
 	case GA_MSG_COLLIDE:
-		alpha = 2.0f * 3.1514516f - alpha;
-		m_progress = -m_progress;
+		m_direction = -m_direction;
 		m_entity->sendDelayedMessage(GA_MSG_TIMER);
 		break;
 
 	case GA_MSG_TIMER:
-		alpha += m_progress;
+		if (--m_time < 0) {
+			// after the default delay, change the rotation angle
+			m_alpha = (rand() / (float)RAND_MAX - 0.5f) / 10.0f;
+			m_time = rand() % (5 * 30);
+		}
 
-		m_direction = glm::vec3(sin(alpha), 0, cos(alpha));
-		m_movement = m_direction * 0.06f ;
-
+		m_direction = glm::rotateY(m_direction, m_alpha);
+		m_movement = m_direction * 0.06f;
 		m_entity->sendMessageToWorld(GA_MSG_WANT_TO_MOVE, 0, &m_movement);
 		break;
 
