@@ -72,6 +72,14 @@ void dfSuperSector::extendAABB(fwAABBox& box)
 }
 
 /**
+ * check if point is inside the AABB
+ */
+bool dfSuperSector::isPointInside(const glm::vec3& position)
+{
+	return m_worldAABB.inside(position);
+}
+
+/**
  * quick AABB check for entities collision
  */
 bool dfSuperSector::collideAABB(const fwAABBox& box)
@@ -184,7 +192,7 @@ bool dfSuperSector::contains(int sectorID)
 /**
  * return the sector fitting the position
  */
-dfSector* dfSuperSector::findSector(glm::vec3& position)
+dfSector* dfSuperSector::findSector(const glm::vec3& position)
 {
 	// position is in level space
 	if (inAABBox(position)) {

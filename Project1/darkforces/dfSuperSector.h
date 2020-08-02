@@ -82,11 +82,12 @@ public:
 
     void extend(dfSuperSector*);
     void extendAABB(fwAABBox& box);
+    bool isPointInside(const glm::vec3& position);           // check if point is inside the AABB
     dfSuperSector* smallestAdjoint(void);
     void buildPortals(std::vector<dfSector*>& sectors, std::vector<dfSuperSector*> &vssectors);
     float boundingBoxSurface(void);
 
-    dfSector* findSector(glm::vec3& position);
+    dfSector* findSector(const glm::vec3& position);        // return the level sector
     bool contains(int sectorID);
     void buildGeometry(std::vector<dfSector*>& sectors);
 
@@ -109,7 +110,7 @@ public:
 
     void updateAmbientLight(float ambient, int start, int len);
 
-    bool inAABBox(glm::vec3& position) { 
+    bool inAABBox(const glm::vec3& position) { 
         return m_worldAABB.inside(position); 
     };                                                  // test if vec3 inside the AABB
     bool collideAABB(const fwAABBox& box);				// quick test to find AABB collision

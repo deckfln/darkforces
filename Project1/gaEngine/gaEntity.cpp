@@ -180,9 +180,13 @@ void gaEntity::dispatchMessage(gaMessage* message)
 		break;
 
 	case GA_MSG_MOVE:
+		m_position = *(glm::vec3*)message->m_extra;
+
 		// take the opportunity to update the world bounding box
 		updateWorldAABB();
-		m_position = *(glm::vec3*)message->m_extra;
+
+		// detect if the entity moved to a new sector
+		m_supersector = g_gaWorld.findSector(m_supersector, m_position);
 		break;
 
 	case GA_MSG_ROTATE:
@@ -208,7 +212,7 @@ void gaEntity::dispatchMessage(gaMessage* message)
 }
 
 /**
- * extended collision test after a succefull AABB collision
+ * extended collision test after a successful AABB collision
  */
 bool gaEntity::checkCollision(fwCylinder& bounding, glm::vec3& direction, glm::vec3& intersection, std::list<gaCollisionPoint>& collisions)
 {

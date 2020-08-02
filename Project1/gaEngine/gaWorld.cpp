@@ -8,15 +8,17 @@
 
 #include "gaEntity.h"
 
+#include "../darkforces/dfLevel.h"
 #include "../darkforces/dfSuperSector.h"
 #include "../darkforces/dfSprites.h"
 
 gaWorld g_gaWorld;
 
 /**
- * Create and init the world
+ * Create and initialize the world
  */
-gaWorld::gaWorld()
+gaWorld::gaWorld():
+	m_scene(nullptr)
 {
 }
 
@@ -88,6 +90,39 @@ void gaWorld::remove2scene(fwMesh* mesh)
 void gaWorld::addSector(dfSuperSector* client)
 {
 	m_sectors.push_back(client);
+}
+
+/**
+ * find the super sector the position is inside
+ *  used the last known super sector as base
+ */
+dfSuperSector* gaWorld::findSector(dfSuperSector* cached, const glm::vec3& position)
+{
+	void* sector;
+
+	// position is in opengl space
+	// TODO should move the opengl <-> level space conversion on a central place
+	glm::vec3 level_space;
+	dfLevel::gl2level(position, level_space);
+
+	// quick check on the last super sector
+	if (cached) {
+		if (cached->isPointInside(position)) {
+			return cached;
+		}
+	}
+
+	// moved out
+	for (auto ssector : m_sectors) {
+		sector = ssector->findSector(position);
+
+		if (sector) {
+			return ssector;
+		}
+	}
+
+	// force on the last position
+	return nullptr;
 }
 
 /**
@@ -358,88 +393,94 @@ void gaWorld::wantToMove(gaMessage* message)
 	std::list<gaCollisionPoint> collisions;
 
 	// test for a collision
-	if (m_entities.count(message->m_server) > 0) {
-		glm::vec3 direction = *(glm::vec3*)(message->m_extra);
-		gaEntity* entity = m_entities[message->m_server].front();
-		glm::vec3 position = entity->position();
-		fwAABBox aabb = entity->worldAABB();
-		aabb += direction;
+	if (m_entities.count(message->m_server) == 0) {
+		return;
+	}
 
-		findAABBCollision(aabb, entities, sectors, entity);
+	glm::vec3 direction = *(glm::vec3*)(message->m_extra);
+	gaEntity* entity = m_entities[message->m_server].front();
+	glm::vec3 position = entity->position();
+	fwAABBox aabb = entity->worldAABB();
+	aabb += direction;
+	float floor;
 
-		// do an AABB collision against AABB collision with entities
-		for (auto ent : entities) {
-			// only test entities that can physically checkCollision
-			d = ent->distanceTo(entity);
-			if (d < distance) {
-				nearest_entity = ent;
-				distance = d;
-			}
+	findAABBCollision(aabb, entities, sectors, entity);
 
+	// do an AABB collision against AABB collision with entities
+	for (auto ent : entities) {
+		// only test entities that can physically checkCollision
+		d = ent->distanceTo(entity);
+		if (d < distance) {
+			nearest_entity = ent;
+			distance = d;
 		}
 
-		// do an segment collision against the sectors triangles
-		for (auto sector : sectors) {
-			sector->collisionSegmentTriangle(position, position + direction, collisions);
+	}
 
-			for (auto c : collisions) {
-				d = entity->distanceTo(c.m_position);
-				if (d < distance_sector) {
-					nearest_sector = sector;
-					distance_sector = d;
-				}
+	// do an segment collision against the sectors triangles
+	for (auto sector : sectors) {
+		sector->collisionSegmentTriangle(position, position + direction, collisions);
+
+		for (auto c : collisions) {
+			d = entity->distanceTo(c.m_position);
+			if (d < distance_sector) {
+				nearest_sector = sector;
+				distance_sector = d;
 			}
 		}
+	}
 
-		// do an segment collision against the sectors floor
-		dfSuperSector* sector = entity->superSector();
+	// do an segment collision against the sectors floor
+	dfSuperSector* sector = entity->superSector();
 
-		if (sector) {
-			glm::vec3 down = glm::vec3(0, -0.1, 0);
-			std::list<gaCollisionPoint> falls;
+	if (sector) {
+		glm::vec3 down = glm::vec3(0, -0.1, 0);
+		std::list<gaCollisionPoint> falls;
 
-			sector->collisionSegmentTriangle(position + direction, position + direction + down, falls);
+		sector->collisionSegmentTriangle(position + direction, position + direction + down, falls);
 
-			if (falls.size() == 0) {
-				// if there is no floor
-				if (message->m_value == GA_MSG_WANT_TO_MOVE_BREAK_IF_FALL) {
-					// if the entity wants to be informed of falling
-					gaMessage* fall = allocateMessage();
-					fall->set(entity->name(), entity->name(), GA_MSG_WOULD_FALL, 0, message->m_extra);
+		if (falls.size() == 0) {
+			// if there is no floor
+			if (message->m_value == GA_MSG_WANT_TO_MOVE_BREAK_IF_FALL) {
+				// if the entity wants to be informed of falling
+				gaMessage* fall = allocateMessage();
+				fall->set(entity->name(), entity->name(), GA_MSG_WOULD_FALL, 0, message->m_extra);
 
-					// decline the move as it triggers a fall
-					entity->dispatchMessage(fall);
-					fall->m_used = false;
+				// decline the move as it triggers a fall
+				entity->dispatchMessage(fall);
+				fall->m_used = false;
 
-					return;
-				}
-				else {
-					// trigger physic engine
-				}
-			}
-		}
-
-		if (entities.size() > 0 || collisions.size() > 0) {
-			gaMessage* collision = allocateMessage();
-			// if nearest is an entity
-			if (distance < distance_sector) {
-				collision->set(nearest_entity->name(), entity->name(), GA_MSG_COLLIDE, 0, message->m_extra);
+				return;
 			}
 			else {
-				collision->set(nearest_sector->name(), entity->name(), GA_MSG_COLLIDE, 1, message->m_extra);
+				// trigger physic engine
 			}
-
-			// decline the move as it triggers a collision
-			entity->dispatchMessage(collision);
-			collision->m_used = false;
 		}
 		else {
-			// accept the move
-			gaMessage* ok = allocateMessage();
-			ok->set("_world", entity->name(), GA_MSG_MOVE_TO, 0, message->m_extra);
-			entity->dispatchMessage(ok);
-			ok->m_used = false;
+			floor = falls.front().m_position.y;
 		}
+	}
+
+	if (entities.size() > 0 || collisions.size() > 0) {
+		gaMessage* collision = allocateMessage();
+		// if nearest is an entity
+		if (distance < distance_sector) {
+			collision->set(nearest_entity->name(), entity->name(), GA_MSG_COLLIDE, 0, message->m_extra);
+		}
+		else {
+			collision->set(nearest_sector->name(), entity->name(), GA_MSG_COLLIDE, 1, message->m_extra);
+		}
+
+		// decline the move as it triggers a collision
+		entity->dispatchMessage(collision);
+		collision->m_used = false;
+	}
+	else {
+		// accept the move
+		gaMessage* ok = allocateMessage();
+		ok->set("_world", entity->name(), GA_MSG_MOVE_TO, 0, message->m_extra);
+		entity->dispatchMessage(ok);
+		ok->m_used = false;
 	}
 }
 

@@ -190,8 +190,8 @@ public:
 	bool visible(void);
 	void addTrigger(dfLogicTrigger*);
 
-	void setAABBtop(float z);
-	void setAABBbottom(float z);
+	void setAABBtop(float z_level);
+	void setAABBbottom(float z_level);
 
 	void elevator(dfLogicElevator* elevator) { m_elevator = elevator; };
 

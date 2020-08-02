@@ -43,6 +43,8 @@ public:
 	void add2scene(fwMesh* mesh);						// add a mesh 
 	void remove2scene(fwMesh* mesh);					// remove a mesh
 	void addSector(dfSuperSector* client);				// add a game sector
+	dfSuperSector* findSector(dfSuperSector* cached,
+		const glm::vec3& position);						// find the super sector the position is inside
 	void set(const std::string& name, void* object);	// add a new generic object
 	void* get(const std::string& name);					// retrieve a generic object
 

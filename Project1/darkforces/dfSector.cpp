@@ -1268,9 +1268,9 @@ void dfSector::addTrigger(dfLogicTrigger* trigger)
 /**
  * Update the AABB box
  */
-void dfSector::setAABBtop(float z)
+void dfSector::setAABBtop(float z_level)
 {
-	m_worldAABB.m_p1.y = z;
+	m_worldAABB.m_p1.y = z_level / 10.0f;	// convert to opengl space
 	if (m_super) {
 		m_super->extendAABB(m_worldAABB);
 	}
@@ -1279,9 +1279,9 @@ void dfSector::setAABBtop(float z)
 /**
  * Update the AABB box
  */
-void dfSector::setAABBbottom(float z)
+void dfSector::setAABBbottom(float z_level)
 {
-	m_worldAABB.m_p.y = z;
+	m_worldAABB.m_p.y = z_level / 10.0f;	// convert to opengl space
 	if (m_super) {
 		m_super->extendAABB(m_worldAABB);
 	}
