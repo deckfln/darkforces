@@ -1148,9 +1148,13 @@ void dfSector::buildGeometry(dfMesh* mesh, dfWallFlag displayPolygon)
 		return;
 	}
 
+	m_firstVertex = mesh->nbVertices();
+
 	buildWalls(mesh, displayPolygon);
 	buildFloorAndCeiling(mesh);
 	buildSigns(mesh);
+
+	m_nbVertices= mesh->nbVertices() - m_firstVertex;
 }
 
 

@@ -103,13 +103,19 @@ public:
 
 	bool collisionSegmentTriangle(const glm::vec3& p,
 		const glm::vec3& q,
-		std::list<gaCollisionPoint>& collisions);			// extended segment collision test after a sucessfull AABB collision
+		std::list<gaCollisionPoint>& collisions,
+		int firstVertex,
+		int nbVertices);									// extended segment collision on limited set of triangles
+
+	bool collisionSegmentTriangle(const glm::vec3& p,
+		const glm::vec3& q,
+		std::list<gaCollisionPoint>& collisions);			// extended segment collision test after a successful AABB collision
 
 	bool checkCollision(fwCylinder& bounding,
 		glm::vec3& direction,
 		glm::vec3& intersection,
 		std::string& name,
-		std::list<gaCollisionPoint>& collisions);			// extended segment collision test after a sucessfull AABB collision
+		std::list<gaCollisionPoint>& collisions);			// extended segment collision test after a successful AABB collision
 
 	void parent(fwMesh* parent) { m_parentMesh = parent; };
 	bool visible(void);

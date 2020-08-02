@@ -424,10 +424,19 @@ void dfMesh::addPlane(float width, dfBitmapImage* image)
  */
 bool dfMesh::collisionSegmentTriangle(const glm::vec3& p, const glm::vec3& q, std::list<gaCollisionPoint>& collisions)
 {
+	// test all triangles
+	return collisionSegmentTriangle(p, q, collisions, 0, m_vertices.size());
+}
+
+/**
+ * extended segment collision on limited set of triangles
+ */
+bool dfMesh::collisionSegmentTriangle(const glm::vec3& p, const glm::vec3& q, std::list<gaCollisionPoint>& collisions, int firstVertex, int nbVertices)
+{
 	float u, v, w, t;
 	glm::vec3 collision;
 
-	for (unsigned int i = 0; i < m_vertices.size(); i += 3) {
+	for (unsigned int i = firstVertex; i < nbVertices; i += 3) {
 		if (IntersectSegmentTriangle(p, q,
 			m_vertices[i], m_vertices[i + 1], m_vertices[i + 2],
 			u, v, w, t
@@ -437,7 +446,7 @@ bool dfMesh::collisionSegmentTriangle(const glm::vec3& p, const glm::vec3& q, st
 			collisions.push_back(gaCollisionPoint(fwCollisionLocation::BACK, collision, nullptr));
 		};
 	}
-	
+
 	return false;
 }
 

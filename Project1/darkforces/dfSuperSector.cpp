@@ -92,10 +92,31 @@ bool dfSuperSector::collideAABB(const fwAABBox& box)
  */
 bool dfSuperSector::collisionSegmentTriangle(const glm::vec3& p, const glm::vec3& q, std::list<gaCollisionPoint>& collisions)
 {
-	if (m_dfmesh) {
+	if (m_dfmesh == nullptr) {
+#ifdef DEBUG
+		gaDebugLog(LOW_DEBUG, "dfSuperSector::collisionSegmentTriangle", m_name + " has no mesh");
+		return false;
+#endif
+	}
+
+	// subdivide the triangles to sectors
+	dfSector* subSector = nullptr;
+	for (auto sector: m_sectors) {
+		if (sector->isPointInside(p, false)) {
+			subSector = sector;
+			break;
+		}
+	}
+
+	// do a limited search to the triangles in the sub-sector
+	if (subSector) {
+		m_dfmesh->collisionSegmentTriangle(p, q, collisions, subSector->firstVertex(), subSector->nbVertices());
+	}
+	else {
 		m_dfmesh->collisionSegmentTriangle(p, q, collisions);
 	}
-	return false;
+
+	return collisions.size() != 0;
 }
 
 /**
