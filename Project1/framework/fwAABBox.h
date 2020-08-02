@@ -48,7 +48,7 @@ public:
 	fwAABBox& operator+=(const glm::vec3& v);
 
 	fwAABBox& multiplyBy(float v);
-	bool inside(glm::vec3& position);
+	bool inside(const glm::vec3& position);
 	bool inside(fwAABBox& box);
 	bool intersect(const fwAABBox& box);
 	void extend(fwAABBox& box);

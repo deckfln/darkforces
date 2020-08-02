@@ -133,7 +133,7 @@ public:
 	void setTriggerFromFloor(dfLogicTrigger* trigger);
 	void setTriggerFromSector(dfLogicTrigger* trigger);
 
-	bool inAABBox(glm::vec3& position);					// quick test point inside AABB
+	bool inAABBox(const glm::vec3& position);					// quick test point inside AABB
 	bool collideAABB(const fwAABBox& box);				// quick test to find AABB collision
 	virtual bool checkCollision(fwCylinder& bounding,
 		glm::vec3& direction,
@@ -168,7 +168,7 @@ public:
 	std::vector<std::vector<Point>>& polygons(int displayPolygon);
 
 	void addObject(dfMesh* object);
-	bool isPointInside(glm::vec3& position, bool fullTest);
+	bool isPointInside(const glm::vec3& position, bool fullTest);
 	float boundingBoxSurface(void);
 	void linkWalls(void);
 	void buildElevator(gaEntity*parent, dfMesh *mesh, float bottom, float top, int what, bool clockwise, dfWallFlag flags);

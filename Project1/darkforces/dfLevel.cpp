@@ -80,7 +80,7 @@ dfLevel::dfLevel(dfFileSystem* fs, std::string file)
 			int layer = sector->m_layer;
 
 			// record the sector in the global list
-			// beware of sectors with the same same !
+			// beware of sectors with the same !
 			if (m_sectorsName.count(sector->m_name) == 0) {
 				m_sectorsName[sector->m_name] = sector;
 			}
@@ -122,7 +122,7 @@ dfLevel::dfLevel(dfFileSystem* fs, std::string file)
 		}
 	}
 
-	// load and ditribute the INF file
+	// load and distribute the INF file
 	m_inf = new dfParseINF(fs, file);
 
 	// load the Object file
@@ -131,7 +131,7 @@ dfLevel::dfLevel(dfFileSystem* fs, std::string file)
 	m_sprites->save("D:/dev/Project1/Project1/images/sprites.png");
 
 	// bind the sectors to the elevator logic
-	// bind the evelator logic to the level
+	// bind the elevator logic to the level
 	for (auto elevator : m_inf->m_elevators) {
 		m_elevators[elevator->name()] = elevator;
 		elevator->parent(this);
@@ -206,7 +206,7 @@ dfLevel::dfLevel(dfFileSystem* fs, std::string file)
 	m_atlasTexture->save("D:/dev/Project1/Project1/images/textures.png");
 	m_atlasTexture->bindToMaterial(m_material);
 
-	spacePartitioning();		// partion of space for quick move
+	spacePartitioning();		// partition of space for quick move
 	buildGeometry();			// build the geometry of each super sectors
 
 	createTriggers();			// for elevator_spin1, create triggers
@@ -252,7 +252,7 @@ void dfLevel::buildGeometry(void)
 		ssector->buildGeometry(m_sectorsID);
 	}
 
-	// finaly create the sky as a skybox
+	// finally create the sky as a sky box
 	if (m_skyAltitude > 0) {
 		dfBitmapImage* image = m_bitmaps[(int)m_skyTexture.r]->getImage();
 		m_skybox = image->convert2skyline();
@@ -280,7 +280,7 @@ void dfLevel::spacePartitioning(void)
 		ssector->buildPortals(m_sectorsID, vssectors);
 	}
 
-	// target 64 supersector
+	// target 64 super sector
 	// TODO : define as a constant or a value based on the number of sectors
 	while (m_supersectors.size() > 64) {
 		m_supersectors.sort([](dfSuperSector* a, dfSuperSector* b) { return a->boundingBoxSurface() > b->boundingBoxSurface(); });
@@ -302,13 +302,13 @@ void dfLevel::spacePartitioning(void)
 	}
 
 	for (auto ssector : m_supersectors) {
-		// sort the sectors in each supersector per size
+		// sort the sectors in each super sector per size
 		ssector->sortSectors();
 
 		// create a full hierarchy
 		ssector->buildHiearchy(this);
 
-		// record the supersector in the world
+		// record the super sector in the world
 		g_gaWorld.addSector(ssector);
 	}
 
@@ -322,7 +322,7 @@ void dfLevel::spacePartitioning(void)
 }
 
 /**
- * return the SuperSector fitting the position
+ * return the SuperSector fitting the opengl position
  */
 dfSuperSector* dfLevel::findSuperSector(glm::vec3& position)
 {
@@ -342,7 +342,7 @@ dfSuperSector* dfLevel::findSuperSector(glm::vec3& position)
 }
 
 /**
- * init all elevators of the level to their HOLD position
+ * initiate all elevators of the level to their HOLD position
  */
 void dfLevel::initElevators(void)
 {
@@ -354,7 +354,7 @@ void dfLevel::initElevators(void)
 }
 
 /**
- * for every sector 'DOOR', create an evelator and it stops PLUS trigger
+ * for every sector 'DOOR', create an elevator and it stops PLUS trigger
  */
 void dfLevel::convertDoors2Elevators(void)
 {
@@ -491,12 +491,12 @@ dfSector* dfLevel::findSector(glm::vec3& position)
 	// quick check on the last sector
 	if (m_lastSector) {
 		// do a full test including holes
-		if (m_lastSector->isPointInside(level_space, true)) {
+		if (m_lastSector->isPointInside(position, true)) {
 			return m_lastSector;
 		}
 
 		// nope, so quick check on the last super sector
-		sector = m_lastSuperSector->findSector(level_space);
+		sector = m_lastSuperSector->findSector(position);
 		if (sector) {
 #ifdef DEBUG
 			gaDebugLog(LOW_DEBUG, "dfLevel::findSector", " leave=" + m_lastSector->m_name + " enter=" + sector->m_name);
@@ -513,7 +513,7 @@ dfSector* dfLevel::findSector(glm::vec3& position)
 
 	// still nope, full search
 	for (auto ssector: m_supersectors) {
-		sector = ssector->findSector(level_space);
+		sector = ssector->findSector(position);
 
 		if (sector) {
 			if (m_lastSector) {
@@ -539,7 +539,8 @@ dfSector* dfLevel::findSector(glm::vec3& position)
 		}
 	}
 
-	return nullptr;	// not here
+	// force on the last position
+	return m_lastSector;
 }
 
 /**
@@ -548,8 +549,10 @@ dfSector* dfLevel::findSector(glm::vec3& position)
  */
 dfSector* dfLevel::findSectorLVL(glm::vec3& level_position)
 {
+	glm::vec3 gl_position;
+	dfLevel::level2gl(level_position, gl_position);
 	for (auto sector : m_sectorsID) {
-		if (sector->inAABBox(level_position)) {
+		if (sector->inAABBox(gl_position)) {
 			return sector;
 		}
 	}
@@ -557,17 +560,17 @@ dfSector* dfLevel::findSectorLVL(glm::vec3& level_position)
 }
 
 /**
- * parse the super sectors to find which one are in the camera frustrum
+ * parse the super sectors to find which one are in the camera frustum
  * use the portals to drill through portals
  */
 void dfLevel::draw(fwCamera* camera, fwScene* scene)
 {
 	glm::vec3 position = camera->get_position();
 
-	//TODO move the position to the feet of the player, but on the controler
+	//TODO move the position to the feet of the player, but on the controller
 	position.y -= 0.3f;
 
-	// mark all supersectors as NO VISBILE
+	// mark all super sectors as NO VISBILE
 	for (auto ssector : m_supersectors) {
 		ssector->visible(false);
 	}
@@ -577,12 +580,12 @@ void dfLevel::draw(fwCamera* camera, fwScene* scene)
 	if (sector) {
 		m_lastSuperSector->visible(true);
 
-		// recusivly test the portals to make supersectors visible in the camera frustrum 
+		// recursively test the portals to make super sectors visible in the camera frustum 
 		m_lastSuperSector->checkPortals(camera, 1);
 	}
 	// ELSE outside of the map
 
-	// parse the scene to update the supersectors visibility
+	// parse the scene to update the super sectors visibility
 	for (auto ssector : m_supersectors) {
 		ssector->add2scene(scene);
 	}
@@ -593,7 +596,7 @@ void dfLevel::draw(fwCamera* camera, fwScene* scene)
 		m_skyboxAdded = true;
 	}
 
-	// draw the boundingboxes
+	// draw the bounding boxes
 	g_gaBoundingBoxes.draw(scene);
 }
 
@@ -636,9 +639,9 @@ bool dfLevel::checkEnvironement(fwCylinder& bounding, glm::vec3& direction, glm:
 }
 
 /**
- * Convert level space to gl space
+ * Convert level space to opengl space
  */
-void dfLevel::level2gl(glm::vec3& level, glm::vec3& gl)
+void dfLevel::level2gl(const glm::vec3& level, glm::vec3& gl)
 {
 	gl.x = level.x / 10.0f;
 	gl.y = level.z / 10.0f;
@@ -666,9 +669,9 @@ void dfLevel::level2gl(fwCylinder& level, fwCylinder& gl)
 
 
 /**
- * Convert gl space to level space
+ * Convert opengl space to level space
  */
-void dfLevel::gl2level(glm::vec3& gl, glm::vec3& level)
+void dfLevel::gl2level(const glm::vec3& gl, glm::vec3& level)
 {
 	level.x = gl.x * 10.0f;
 	level.y = gl.z * 10.0f;
@@ -676,7 +679,7 @@ void dfLevel::gl2level(glm::vec3& gl, glm::vec3& level)
 }
 
 /**
- * Convert gl space to level space
+ * Convert opengl space to level space
  */
 void dfLevel::gl2level(fwCylinder& gl, fwCylinder& level)
 {

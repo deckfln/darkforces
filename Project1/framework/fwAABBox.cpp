@@ -268,7 +268,7 @@ fwAABBox& fwAABBox::multiplyBy(float v)
 /**
  * If point is inside the AABB
  */
-bool fwAABBox::inside(glm::vec3& position)
+bool fwAABBox::inside(const glm::vec3& position)
 {
 	return (position.x >= m_p.x && position.x <= m_p1.x &&
 		position.y >= m_p.y && position.y <= m_p1.y &&

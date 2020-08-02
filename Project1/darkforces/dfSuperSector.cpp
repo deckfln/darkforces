@@ -18,7 +18,7 @@ static fwMaterialBasic* material_portal = new fwMaterialBasic(&white);
 
 dfSuperSector::dfSuperSector(dfSector* sector, fwMaterialBasic* material, std::vector<dfBitmap*>& bitmaps) :
 	m_id(nbSuperSectors++),
-	m_worldAABBlvl(sector->m_worldAABB),
+	m_worldAABB(sector->m_worldAABB),
 	m_material(material)
 {
 	m_sectors.push_back(sector);
@@ -31,16 +31,16 @@ dfSuperSector::dfSuperSector(dfSector* sector, fwMaterialBasic* material, std::v
  */
 float dfSuperSector::boundingBoxSurface(void)
 {
-	return m_worldAABBlvl.surface();
+	return m_worldAABB.surface();
 }
 
 /**
- * merge a supersector into this one
+ * merge a super-sector into this one
  */
 void dfSuperSector::extend(dfSuperSector* ssector)
 {
 	// extend the bounding box
-	m_worldAABBlvl.extend(ssector->m_worldAABBlvl);
+	m_worldAABB.extend(ssector->m_worldAABB);
 
 	// extend the list of sectors
 	m_sectors.insert(m_sectors.end(), ssector->m_sectors.begin(), ssector->m_sectors.end());
@@ -49,8 +49,8 @@ void dfSuperSector::extend(dfSuperSector* ssector)
 	m_portals.remove_if([ssector](dfPortal& portal) { return portal.m_target == ssector;});
 	ssector->m_portals.remove_if([this](dfPortal& portal) { return portal.m_target == this;});
 
-	// parse all portals from the sssector. 
-	// It will be removed => adjoint supersectors have to reboud to point to the new supersector
+	// parse all portals from the super-sector. 
+	// It will be removed => adjoint super-sectors have to rebound to point to the new super-sector
 	for (auto &portal : ssector->m_portals) {
 		for (auto &remote_portal : portal.m_target->m_portals) {
 			if (remote_portal.m_target == ssector) {
@@ -68,7 +68,7 @@ void dfSuperSector::extend(dfSuperSector* ssector)
  */
 void dfSuperSector::extendAABB(fwAABBox& box)
 {
-	m_worldAABBlvl.extend(box);
+	m_worldAABB.extend(box);
 }
 
 /**
@@ -76,14 +76,6 @@ void dfSuperSector::extendAABB(fwAABBox& box)
  */
 bool dfSuperSector::collideAABB(const fwAABBox& box)
 {
-	if (m_worldAABB.not_init()) {
-		glm::vec3 p, p1;
-		dfLevel::level2gl(m_worldAABBlvl.m_p, p);
-		dfLevel::level2gl(m_worldAABBlvl.m_p1, p1);
-
-		m_worldAABB = fwAABBox(p, p1);
-	}
-
 	return m_worldAABB.intersect(box);
 }
 
@@ -178,7 +170,7 @@ void dfSuperSector::buildPortals(std::vector<dfSector*>& sectors, std::vector<df
 }
 
 /**
- * test if a supersector contains a specific sector
+ * test if a super-sector contains a specific sector
  */
 bool dfSuperSector::contains(int sectorID)
 {
@@ -219,7 +211,7 @@ void dfSuperSector::buildGeometry(std::vector<dfSector*>& sectors)
 	m_dfmesh->name(m_name);
 	m_dfmesh->buildMesh();
 
-	// TODO : fix the camera frustrum test to remove that line
+	// TODO : fix the camera frustum test to remove that line
 	// m_mesh->always_draw(true);
 
 	if (m_debugPortals) {
@@ -242,16 +234,16 @@ std::vector<dfBitmap*>& dfSuperSector::textures(void)
 }
 
 /**
- * test all portals of the supersector agsint the camera frustrum.
- * for any visible portal, add the attached supersector to the list of visible supersectors
- * and test the portals again. Avoid coming back to already visited supersectors
+ * test all portals of the super-sector against the camera frustum.
+ * for any visible portal, add the attached super-sector to the list of visible super-sectors
+ * and test the portals again. Avoid coming back to already visited super-sectors
  */
 void dfSuperSector::checkPortals(fwCamera* camera, int zOrder)
 {
 	m_dfmesh->zOrder(zOrder);
 
 	for (auto& portal : m_portals) {
-		// WARNING : the camera is using opengl space, but the boundSphere are translated to gl space
+		// WARNING : the camera is using opengl space, but the boundSphere are translated to opengl space
 		if (camera->is_inFrustum(portal.m_boundingSphere)) {
 			// only if the portal is looking outward
 			glm::vec3 look2portal = glm::normalize(camera->get_position() - portal.m_boundingSphere.center());
@@ -268,7 +260,7 @@ void dfSuperSector::checkPortals(fwCamera* camera, int zOrder)
 }
 
 /**
- * create a full hiearchy
+ * create a full hierarchy
  */
 void dfSuperSector::buildHiearchy(dfLevel* parent)
 {
@@ -280,8 +272,8 @@ void dfSuperSector::buildHiearchy(dfLevel* parent)
 }
 
 /**
- * parse the scene the find the supersector and change its visibility
- * if the superssector is not on the scene and is visible => add to the scene
+ * parse the scene the find the super-sector and change its visibility
+ * if the supers-sector is not on the scene and is visible => add to the scene
  */
 void dfSuperSector::add2scene(fwScene* scene)
 {

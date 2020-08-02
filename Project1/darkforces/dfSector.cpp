@@ -33,7 +33,7 @@ dfSector::dfSector(std::istringstream& infile, std::vector<dfSector*>& sectorsID
 	std::string line, dump;
 	std::map<std::string, std::string> tokenMap;
 
-	float min_x=99999, max_x=-99999, min_y=99999, max_y=-99999;	// build AABBox while parsing the vertices
+	float min_x=99999, max_x=-99999, min_y=99999, max_y=-99999;	// build AABBox while parsing the vertices's
 
 	// per line
 	while (std::getline(infile, line))
@@ -150,8 +150,8 @@ dfSector::dfSector(std::istringstream& infile, std::vector<dfSector*>& sectorsID
 	// convert from level space to GL space
 	glm::vec3 p(min_x, min_y, m_referenceFloorAltitude);
 	glm::vec3 p1(max_x, max_y, m_referenceCeilingAltitude);
-	//dfLevel::level2gl(p);
-	//dfLevel::level2gl(p1);
+	dfLevel::level2gl(p);
+	dfLevel::level2gl(p1);
 	m_worldAABB = fwAABBox(p, p1);
 }
 
@@ -303,7 +303,7 @@ std::vector<dfWall*>& dfSector::walls(dfWallFlag flags)
 }
 
 /**
- * Return the polygon(s) makeing the sector, based on the number of polygons to display
+ * Return the polygon(s) making the sector, based on the number of polygons to display
  */
 std::vector<std::vector<Point>>& dfSector::polygons(int displayPolygon)
 {
@@ -339,10 +339,9 @@ void dfSector::addObject(dfMesh* object)
 }
 
 /**
- * check if point is inside the boundingbox and inside the 2D surface : external polylines
- * TODO : how to deal with holes ?
+ * check if point is inside the openGL bounding box and inside the 2D surface : external polylines
  */
-bool dfSector::isPointInside(glm::vec3 &p, bool fullTest)
+bool dfSector::isPointInside(const glm::vec3 &p, bool fullTest)
 {
 	// quick check against the 3D bounding box
 	if (!m_worldAABB.inside(p)) {
@@ -353,16 +352,19 @@ bool dfSector::isPointInside(glm::vec3 &p, bool fullTest)
 	// http://www.ecse.rpi.edu/Homepages/wrf/Research/Short_Notes/pnpoly.html
 	bool inside = false;
 
+	glm::vec3 level_p;
+	dfLevel::gl2level(p, level_p);
+
 	// test holes
-	// if asked for AND if the sector default setup is 'handle all' : evelator SPIN1 & MOVE1 ignore hole
+	// if asked for AND if the sector default setup is 'handle all' : elevator SPIN1 & MOVE1 ignore hole
 	if (fullTest & (m_displayPolygons == 0)) {
 		for (unsigned int i = 1; i < m_polygons_vertices.size(); i++) {
 			std::vector<Point>& line = m_polygons_vertices[i];
 
 			for (unsigned int i = 0, j = line.size() - 1; i < line.size(); j = i++)
 			{
-				if ((line[i][1] > p.y) != (line[j][1] > p.y) &&
-					p.x < (line[j][0] - line[i][0]) * (p.y - line[i][1]) / (line[j][1] - line[i][1]) + line[i][0])
+				if ((line[i][1] > level_p.y) != (line[j][1] > level_p.y) &&
+					level_p.x < (line[j][0] - line[i][0]) * (level_p.y - line[i][1]) / (line[j][1] - line[i][1]) + line[i][0])
 				{
 					inside = !inside;
 				}
@@ -375,24 +377,12 @@ bool dfSector::isPointInside(glm::vec3 &p, bool fullTest)
 		}
 	}
 
-	/*
-	// TODO: these solution is supposed to deal with holes, but actually it doesn't work for secbase, when entering sector 58
-	for (unsigned int i = 0, j = m_vertices.size() - 1; i < m_vertices.size(); j = i++)
-	{
-		if ((m_vertices[i].y > p.y) != (m_vertices[j].y > p.y) &&
-			p.x < (m_vertices[j].x - m_vertices[i].x) * (p.y - m_vertices[i].y) / (m_vertices[j].y - m_vertices[i].y) + m_vertices[i].x)
-		{
-			inside = !inside;
-		}
-	}
-	*/
-
 	// finish with the external line
 	std::vector<Point>& outline = m_polygons_vertices[0];
 	for (unsigned int i = 0, j = outline.size() - 1; i < outline.size(); j = i++)
 	{
-		if ((outline[i][1] > p.y) != (outline[j][1] > p.y) &&
-			p.x < (outline[j][0] - outline[i][0]) * (p.y - outline[i][1]) / (outline[j][1] - outline[i][1]) + outline[i][0])
+		if ((outline[i][1] > level_p.y) != (outline[j][1] > level_p.y) &&
+			level_p.x < (outline[j][0] - outline[i][0]) * (level_p.y - outline[i][1]) / (outline[j][1] - outline[i][1]) + outline[i][0])
 		{
 			inside = !inside;
 		}
@@ -408,42 +398,6 @@ float dfSector::boundingBoxSurface(void)
 {
 	return m_worldAABB.surface();
 }
-
-/**
- * Change the sector floor & ceiling altitudes IN the super-sector openGL vertices
- *
-void dfSector::setFloor(float floor)
-{
-	m_ceilingAltitude = floor + m_height;
-	m_floorAltitude = floor;
-
-	if (m_super) {
-		m_super->updateSectorVertices(m_id);	// update the sector
-
-		// update the connected portals
-		for (auto portal : m_portals) {
-			m_super->updateSectorVertices(portal);
-		}
-	}
-}
-*/
-
-/**
- * Move the sector up or down. return the new floor altitude
- *
-void dfSector::updateVertices(void)
-{
-	// std::cout << m_floorAltitude << " " << m_ceilingAltitude << std::endl;
-	if (m_super) {
-		m_super->updateSectorVertices(m_id);	// update the sector
-
-		// update the connected portals
-		for (auto portal : m_portals) {
-			m_super->updateSectorVertices(portal);
-		}
-	}
-}
-*/
 
 /**
  * parse all vertices of the sector to link the walls together
@@ -473,7 +427,7 @@ void dfSector::linkWalls(void)
 					m_verticeConnexions[i].m_rightVertice != start &&		// detect loop
 					m_verticeConnexions[i].m_rightVertice != -1 &&			// detect open lines
 					!m_verticeConnexions[i].parsed;					// detect point used multiple times
-				i = m_verticeConnexions[i].m_rightVertice					// move to next vertice
+				i = m_verticeConnexions[i].m_rightVertice					// move to next vertex
 				) 
 			{
 				m_verticeConnexions[i].parsed = true;
@@ -546,24 +500,9 @@ void dfSector::linkWalls(void)
 }
 
 /**
- * Build only the floor of the sector, upward
- *
-void dfSector::buildFloor(dfMesh* mesh)
-{
-	if (!m_super) {
-		return;
-	}
-	std::vector<dfBitmap*>& textures = m_super->textures();
-	// build top and bottom
-
-	mesh->addFloor(m_polygons_vertices, 0, m_floorTexture, m_ambient, false);
-}
-*/
-
-/**
- * If all vertices of the current sectors are also in the target sector
+ * If all vertices's of the current sectors are also in the target sector
  *   the current sector is included in the target.
- *   register the data and overide the sector altitudes
+ *   register the data and override the sector altitudes
  *   EG: slider_sw is included in 113 on SECBASE.LEV
  */
 bool dfSector::includedIn(dfSector* sector)
@@ -773,11 +712,11 @@ bool dfSector::checkCollision(float step, glm::vec3& current, glm::vec3& target,
 			B = m_vertices[wall->m_right];
 
 			if (segment2segment(A, B, C, D, intersection)) {
-				// if the segment current->target (CD) intersect a wall (AB), we get a colision BEHIND the wall
+				// if the segment current->target (CD) intersect a wall (AB), we get a collision BEHIND the wall
 				checkCollision = true;
 			}
 			else if (CircLine(A, B, C, radius, intersection)) {
-				// if the circle target,radius intersect a wall (AB), we get a colision IN FRONT of the wall
+				// if the circle target,radius intersect a wall (AB), we get a collision IN FRONT of the wall
 
 				// check now if the move point is 'behind' the direction vector
 				DC = D - C;
@@ -799,7 +738,7 @@ bool dfSector::checkCollision(float step, glm::vec3& current, glm::vec3& target,
 
 			// do the segments intersect
 			if (checkCollision) {
-				// is the height sufficients
+				// is the height sufficient
 				float wall_z,	// ceiling of the wall (may depends on the adjoint floor), 
 					wallHeight, // absolute height of the wall
 					verticalSpace;
@@ -850,7 +789,7 @@ bool dfSector::checkCollision(float step, glm::vec3& current, glm::vec3& target,
 /**
  * // quick test point inside AABB
  */
-bool dfSector::inAABBox(glm::vec3& position)
+bool dfSector::inAABBox(const glm::vec3& position)
 {
 	return m_worldAABB.inside(position);
 }
@@ -908,7 +847,7 @@ bool dfSector::checkCollision(fwCylinder& current, glm::vec3& direction, glm::ve
 			B = m_vertices[wall->m_right];
 
 			if (CircLine(A, B, target2D, current.radius(), intersection)) {
-				// if the circle target,radius intersect a wall (AB), we get a colision IN FRONT of the wall
+				// if the circle target,radius intersect a wall (AB), we get a collision IN FRONT of the wall
 
 				// check now if the move point is 'behind' the direction vector
 				AC = intersection - target2D;
@@ -929,7 +868,7 @@ bool dfSector::checkCollision(fwCylinder& current, glm::vec3& direction, glm::ve
 
 			// do the segments intersect
 			if (checkCollision != NONE) {
-				// is the height sufficients
+				// is the height sufficient
 				float wall_z,	// ceiling of the wall (may depends on the adjoint floor), 
 					wallHeight, // absolute height of the wall
 					verticalSpace;
@@ -955,7 +894,7 @@ bool dfSector::checkCollision(fwCylinder& current, glm::vec3& direction, glm::ve
 						ceiling_adjoint = wall->m_pAdjoint->m_ceilingAltitude,
 						ceiling_current = m_ceilingAltitude;
 
-					if (floor_adjoint > feet_z) {		// the feet hit the lowerwall
+					if (floor_adjoint > feet_z) {		// the feet hit the lower wall
 #ifdef DEBUG
 						gaDebugLog(LOW_DEBUG, "dfSector::checkCollision", "sector " + m_name + " wall = " + std::to_string(wall->m_id) + " feet z = " + std::to_string(target3D.z));
 #endif
@@ -994,7 +933,7 @@ bool dfSector::checkCollision(fwCylinder& current, glm::vec3& direction, glm::ve
 }
 
 /**
- * Change the lightnin of the sector in the super-sector mesh
+ * Change the lightning of the sector in the super-sector mesh
  */
 void dfSector::changeAmbient(float ambient)
 {
@@ -1036,7 +975,7 @@ void dfSector::deferedAddSign(dfWall* wall)
 }
 
 /**
- * Create the signs at the end of the vertics buffer
+ * Create the signs at the end of the vertice's buffer
  */
 void dfSector::buildSigns(dfMesh *mesh)
 {
@@ -1086,7 +1025,6 @@ void dfSector::buildSigns(dfMesh *mesh)
 		}
 	}
 }
-
 
 /**
  * Add walls of the sector in the given dfMesh
@@ -1292,13 +1230,13 @@ void dfSector::buildElevator(gaEntity* parent, dfMesh* mesh, float bottom, float
 		}
 	}
 
-	// only build build top and bottom for vertical elevators (sliding ones : spin1 are not needed)
+	// only build top and bottom for vertical elevators (sliding ones : spin1 are not needed)
 	if (!((int)flags & (int)dfWallFlag::MORPHS_WITH_ELEV)) {
 		mesh->addFloor(polygons(1), bottom, m_ceilingTexture, m_ambient, clockwise);
 		mesh->addFloor(polygons(1), top, m_floorTexture, m_ambient, clockwise);
 	}
 
-	// add defered signs on the elevators (the sign is physically on an evelator)
+	// add deferred signs on the elevators (the sign is physically on an elevator)
 	// centerVertices the level space into the model space
 	for (auto wall : m_deferedSigns) {
 		dfSector* sector = wall->sector();
@@ -1332,7 +1270,7 @@ void dfSector::addTrigger(dfLogicTrigger* trigger)
  */
 void dfSector::setAABBtop(float z)
 {
-	m_worldAABB.m_p1.z = z;
+	m_worldAABB.m_p1.y = z;
 	if (m_super) {
 		m_super->extendAABB(m_worldAABB);
 	}
@@ -1343,7 +1281,7 @@ void dfSector::setAABBtop(float z)
  */
 void dfSector::setAABBbottom(float z)
 {
-	m_worldAABB.m_p.z = z;
+	m_worldAABB.m_p.y = z;
 	if (m_super) {
 		m_super->extendAABB(m_worldAABB);
 	}

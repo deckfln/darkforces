@@ -56,7 +56,6 @@ class dfSuperSector {
     std::string m_name;
     dfLevel* m_parent = nullptr;
 
-    fwAABBox m_worldAABBlvl;                // level space world AABB
     fwAABBox m_worldAABB;                   // GL space world AABB
     std::list <dfPortal> m_portals;         // lits of portals driving to other SuperSectors
     std::list <dfSector*> m_sectors;        // list of basic sectors in the SuperSector
@@ -111,7 +110,7 @@ public:
     void updateAmbientLight(float ambient, int start, int len);
 
     bool inAABBox(glm::vec3& position) { 
-        return m_worldAABBlvl.inside(position); 
+        return m_worldAABB.inside(position); 
     };                                                  // test if vec3 inside the AABB
     bool collideAABB(const fwAABBox& box);				// quick test to find AABB collision
     bool collisionSegmentTriangle(const glm::vec3& p, 
