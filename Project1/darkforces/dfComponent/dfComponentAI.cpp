@@ -33,6 +33,10 @@ void dfComponentAI::dispatchMessage(gaMessage* message)
 		break;
 
 	case GA_MSG_TIMER:
+		if (!m_active) {
+			break;
+		}
+
 		if (--m_time < 0) {
 			// after the default delay, change the rotation angle
 			m_alpha = (rand() / (float)RAND_MAX - 0.5f) / 10.0f;
@@ -49,6 +53,9 @@ void dfComponentAI::dispatchMessage(gaMessage* message)
 
 	case GA_MSG_MOVE: {
 		// move request was accepted
+		if (!m_active) {
+			break;
+		}
 
 		// align the object to the direction
 		//convert the direction vector to a quaternion
