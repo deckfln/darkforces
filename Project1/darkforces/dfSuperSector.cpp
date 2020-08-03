@@ -99,20 +99,33 @@ bool dfSuperSector::collisionSegmentTriangle(const glm::vec3& p, const glm::vec3
 #endif
 	}
 
-	// subdivide the triangles to sectors
-	dfSector* subSector = nullptr;
+	// Find the exact sectors the start and end points are
+	dfSector* subSectorStart = nullptr;
+	dfSector* subSectorEnd = nullptr;
+
 	for (auto sector: m_sectors) {
 		if (sector->isPointInside(p, false)) {
-			subSector = sector;
-			break;
+			subSectorStart = sector;
+		}
+		if (sector->isPointInside(q, false)) {
+			subSectorEnd = sector;
 		}
 	}
 
-	// do a limited search to the triangles in the sub-sector
-	if (subSector) {
-		m_dfmesh->collisionSegmentTriangle(p, q, collisions, subSector->firstVertex(), subSector->nbVertices());
+	// do a limited search to the triangles in the sub-sectors
+	if (subSectorStart && subSectorEnd) {
+		if (subSectorStart == subSectorEnd) {
+			// if start and end are on the same sector
+			m_dfmesh->collisionSegmentTriangle(p, q, collisions, subSectorStart->firstVertex(), subSectorStart->nbVertices());
+		}
+		else {
+			// 2 sectors
+			m_dfmesh->collisionSegmentTriangle(p, q, collisions, subSectorStart->firstVertex(), subSectorStart->nbVertices());
+			m_dfmesh->collisionSegmentTriangle(p, q, collisions, subSectorEnd->firstVertex(), subSectorEnd->nbVertices());
+		}
 	}
 	else {
+		// didn't spot an exact sector
 		m_dfmesh->collisionSegmentTriangle(p, q, collisions);
 	}
 
