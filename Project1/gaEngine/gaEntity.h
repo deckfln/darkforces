@@ -7,6 +7,7 @@
 #include <glm/vec3.hpp>
 #include <glm/gtc/quaternion.hpp>
 
+#include "../framework/fwObject3D.h"
 #include "../framework/fwAABBox.h"
 #include "gaMessage.h"
 #include "gaCollisionPoint.h"
@@ -21,20 +22,13 @@ class dfSuperSector;
 
 using namespace GameEngine;
 
-class gaEntity
+class gaEntity: public fwObject3D
 {
 protected:
 	std::string m_name;
 	int m_entityID = 0;
 	int m_class = 0;
-	glm::vec3 m_position = glm::vec3(0);			// position in opengl space
 	glm::vec3 m_futurePosition = glm::vec3(0);		// want to move to position
-	glm::vec3 m_rotation = glm::vec3(0);
-	glm::quat m_quaternion = glm::quat(0, 0, 0, 0);
-	glm::vec3 m_scale = glm::vec3(1.0);
-
-	glm::mat4 m_worldMatrix;
-	glm::mat4 m_inverseWorldMatrix;
 
 	fwAABBox m_modelAABB;							// model space AABB
 	fwAABBox m_worldBounding;						// AABB bounding box in world opengl space
@@ -59,7 +53,6 @@ public:
 	void addComponent(gaComponent* component);			// extend the components of the entity
 
 	const std::string& name(void) { return m_name; };
-	const glm::vec3& position(void) { return m_position; };
 	bool is(int mclass) { return m_class == m_class; };
 	void physical(bool p) { m_physical = p; };
 	bool physical(void) { return m_physical; };

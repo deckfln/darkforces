@@ -30,7 +30,7 @@ void fwCamera::set_ratio(int width, int height)
 
 void fwCamera::translate(glm::vec3 &translation)
 {
-	m_Position = translation;
+	m_position = translation;
 	update();
 }
 
@@ -60,7 +60,7 @@ void fwCamera::update(void)
 {
 	glm::vec3 _up = glm::vec3(0.0f, 1.0f, 0.0f);
 
-	m_direction = m_Position - target;
+	m_direction = m_position - target;
 	if (m_direction != glm::vec3(0)) {
 		m_direction = glm::normalize(m_direction);
 		right = glm::normalize(glm::cross(_up, m_direction));
@@ -70,11 +70,11 @@ void fwCamera::update(void)
 		up = _up;
 	}
 
-	g_Listener.position(m_Position);
+	g_Listener.position(m_position);
 	g_Listener.orientation(m_direction, up);
 
 	// from learn-opengl
-	view = glm::lookAt(m_Position, target, up);
+	view = glm::lookAt(m_position, target, up);
 
 	// from three.js: something to fix down the line
 	glm::mat4 THREEjs;
@@ -117,7 +117,7 @@ void fwCamera::set_uniforms(glProgram *program)
 {
 	program->set_uniform("view", view);
 	program->set_uniform("projection", m_projection);
-	program->set_uniform("viewPos", m_Position);
+	program->set_uniform("viewPos", m_position);
 }
 
 void fwCamera::set_uniformBuffer(void)
@@ -130,7 +130,7 @@ void fwCamera::set_uniformBuffer(void)
 
 	ubo->bind();
 	ubo->map(glm::value_ptr(camera[0]), 0, sizeof(camera));
-	ubo->map(glm::value_ptr(m_Position), sizeof(camera), sizeof(m_Position));
+	ubo->map(glm::value_ptr(m_position), sizeof(camera), sizeof(m_position));
 	ubo->unbind();
 }
 

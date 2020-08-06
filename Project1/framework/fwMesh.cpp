@@ -159,7 +159,7 @@ void fwMesh::centerOnGeometry(void)
 {
 	const glm::vec3& center = m_geometry->centerVertices();
 
-	m_Position += center;
+	m_position += center;
 }
 
 void fwMesh::draw(glProgram *program)

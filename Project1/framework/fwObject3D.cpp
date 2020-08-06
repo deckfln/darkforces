@@ -6,10 +6,12 @@
 #include "../alEngine/alSource.h"
 #include "../alEngine/alSound.h"
 
-fwObject3D::fwObject3D():
-	m_Position(0),
-	m_Scale(1),
-	m_modelMatrix(1)
+fwObject3D::fwObject3D()
+{
+}
+
+fwObject3D::fwObject3D(const glm::vec3& position):
+	m_position(position)
 {
 }
 
@@ -28,14 +30,14 @@ bool fwObject3D::is_class(int _classID)
 
 fwObject3D &fwObject3D::rotate(const glm::vec3 &_rotation)
 {
-	m_Rotation = _rotation;
+	m_rotation = _rotation;
 	m_quaternion= glm::quat(glm::vec3(_rotation.x, _rotation.y, _rotation.z));
 	m_updated = true;
 	return *this;
 }
 fwObject3D& fwObject3D::rotate(glm::vec3 *_rotation)
 {
-	m_Rotation = *_rotation;
+	m_rotation = *_rotation;
 	m_quaternion = glm::quat(glm::vec3(_rotation->x, _rotation->y, _rotation->z));
 	m_updated = true;
 	return *this;
@@ -55,46 +57,46 @@ fwObject3D& fwObject3D::rotate(const glm::quat& quaternion)
 
 fwObject3D &fwObject3D::translate(const glm::vec3 &vector)
 {
-	m_Position = vector;
+	m_position = vector;
 	m_updated = true;
 	if (m_source) {
-		m_source->position(m_Position);
+		m_source->position(m_position);
 	}
 	return *this;
 }
 
 fwObject3D &fwObject3D::translate(float x, float y, float z)
 {
-	m_Position.x = x;
-	m_Position.y = y;
-	m_Position.z = z;
+	m_position.x = x;
+	m_position.y = y;
+	m_position.z = z;
 	m_updated = true;
 	return *this;
 }
 
 fwObject3D& fwObject3D::translate(glm::vec3* pVector)
 {
-	m_Position = *pVector;
+	m_position = *pVector;
 	m_updated = true;
 	return *this;
 }
 
 fwObject3D &fwObject3D::set_scale(const glm::vec3 &_scale)
 {
-	m_Scale = _scale;
+	m_scale = _scale;
 	m_updated = true;
 	return *this;
 }
 
 const glm::vec3& fwObject3D::get_scale(void)
 {
-	return m_Scale;
+	return m_scale;
 }
 
 fwObject3D &fwObject3D::set_scale(float _scale)
 {
 	m_updated = true;
-	m_Scale *= _scale;
+	m_scale *= _scale;
 	return *this;
 }
 
@@ -117,6 +119,8 @@ void fwObject3D::worldMatrix(glm::mat4* pWorldMatrix)
 fwObject3D &fwObject3D::addChild(fwObject3D *mesh)
 {
 	m_children.push_front(mesh);
+	mesh->m_parent = this;
+
 	return *this;
 }
 
@@ -126,17 +130,16 @@ fwObject3D &fwObject3D::addChild(fwObject3D *mesh)
 void fwObject3D::removeChild(fwObject3D* obj)
 {
 	m_children.remove(obj);
+	obj->m_parent = nullptr;
 }
 
 void fwObject3D::updateWorldMatrix(fwObject3D *parent, bool force)
 {
 	//FIXME : checking the updated flag is bad => will not detect the shadowCamera projection
 	//if (updated) {
-		//glm::mat4 rotationMatrix = glm::rotate(m_Rotation.x, glm::vec3(1, 0, 0));
 		glm::mat4 rotationMatrix = glm::toMat4(m_quaternion);
-		glm::mat4 scaleMatrix = glm::scale(m_Scale);
-		glm::mat4 translateMatrix = glm::translate(m_Position);
-		// model = glm::rotate(model, rotation);
+		glm::mat4 scaleMatrix = glm::scale(m_scale);
+		glm::mat4 translateMatrix = glm::translate(m_position);
 		m_modelMatrix = translateMatrix * scaleMatrix * rotationMatrix;
 		//updated = false;
 		//force = true;
@@ -163,7 +166,7 @@ void fwObject3D::updateWorldMatrix(fwObject3D *parent, bool force)
 
 const glm::vec3 &fwObject3D::get_position(void)
 {
-	return m_Position;
+	return m_position;
 }
 
 const std::list <fwObject3D *> &fwObject3D::get_children(void)
@@ -198,7 +201,7 @@ bool fwObject3D::hasChild(fwObject3D* search)
  */
 float fwObject3D::sqDistanceTo(fwObject3D *to)
 {
-	debug = glm::distance2(m_Position, to->m_Position);
+	debug = glm::distance2(m_position, to->m_position);
 
 	return debug;
 }
@@ -211,7 +214,7 @@ bool fwObject3D::play(alSound* sound)
 {
 	if (m_source == nullptr) {
 		// create a sound source the first time
-		m_source = new alSource(m_Position);
+		m_source = new alSource(m_position);
 	}
 
 	return m_source->play(sound);

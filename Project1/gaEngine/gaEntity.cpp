@@ -22,10 +22,10 @@ gaEntity::gaEntity(int mclass, const std::string& name) :
 }
 
 gaEntity::gaEntity(int mclass, const std::string& name, const glm::vec3& position):
+	fwObject3D(position),
 	m_entityID(g_ids++),
 	m_name(name),
-	m_class(mclass),
-	m_position(position)
+	m_class(mclass)
 {
 	g_gaBoundingBoxes.add(&m_worldBounding);
 	m_collider.set(&m_modelAABB, &m_worldMatrix, &m_inverseWorldMatrix);
@@ -181,11 +181,7 @@ void gaEntity::moveTo(const glm::vec3& position)
  */
 void gaEntity::updateWorldAABB(void)
 {
-	glm::mat4 rotationMatrix = glm::toMat4(m_quaternion);
-	glm::mat4 scaleMatrix = glm::scale(m_scale);
-	glm::mat4 translateMatrix = glm::translate(m_position);
-	m_worldMatrix = translateMatrix * scaleMatrix * rotationMatrix;
-	m_inverseWorldMatrix = glm::inverse(m_worldMatrix);
+	updateWorldMatrix(nullptr);
 
 	m_worldBounding.apply(m_modelAABB, m_worldMatrix);
 }

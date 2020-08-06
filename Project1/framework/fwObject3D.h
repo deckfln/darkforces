@@ -26,13 +26,14 @@ protected:
 	glm::mat4 m_inverseWorldMatrix = glm::mat4(0);	// world space matrix (including children)
 
 
-	glm::vec3 m_Position = glm::vec3(0);
-	glm::vec3 m_Scale = glm::vec3(1);
-	glm::vec3 m_Rotation = glm::vec3(0);
+	glm::vec3 m_position = glm::vec3(0);
+	glm::vec3 m_scale = glm::vec3(1);
+	glm::vec3 m_rotation = glm::vec3(0);
 	glm::quat m_quaternion;
 
 	bool m_updated = true;							// if the matrix components have been update (or are new)
 
+	fwObject3D* m_parent = nullptr;
 	std::list <fwObject3D *> m_children;
 
 	bool m_castShadow = false;
@@ -40,6 +41,7 @@ protected:
 
 public:
 	fwObject3D();
+	fwObject3D(const glm::vec3& position);
 
 	bool is_class(int classID);
 	fwObject3D &set_name(const std::string& _name);
@@ -87,6 +89,7 @@ public:
 	void worldMatrix(const glm::mat4& worldMatrix);
 	void worldMatrix(glm::mat4* pWorldMatrix);
 
+	const glm::vec3& position(void) { return m_position; };
 
 	fwObject3D &addChild(fwObject3D * obj);			// add an object to the scene
 	void removeChild(fwObject3D* obj);				// remove an object from the scene

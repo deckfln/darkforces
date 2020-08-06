@@ -76,7 +76,7 @@ void fwLight::runShadowProgram(int i)
 	m_depth_program[i]->run();
 
 	if (m_updated) {
-		m_shadowCamera->translate(m_Position);
+		m_shadowCamera->translate(m_position);
 		m_updated = false;
 	}
 	m_shadowCamera->set_uniforms(m_depth_program[i]);

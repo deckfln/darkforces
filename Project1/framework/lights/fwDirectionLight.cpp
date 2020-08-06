@@ -13,7 +13,7 @@ fwDirectionLight::fwDirectionLight(glm::vec3 _direction, glm::vec3 _color, glm::
 	specular(_specular)
 {
 	classID |= FW_DIRECTIONAL_LIGHT;
-	m_Position = _direction;
+	m_position = _direction;
 	uniform_prefix = "dirlights";
 	type = 1;
 	shader_define = "DIRECTION_LIGHTS";
@@ -38,7 +38,7 @@ bool fwDirectionLight::castShadow(bool s)
 std::string fwDirectionLight::set_uniform(glProgram *program, int index)
 {
 	std::string prefix = fwLight::set_uniform(program, index);
-	program->set_uniform(prefix + ".direction", m_Position);
+	program->set_uniform(prefix + ".direction", m_position);
 	program->set_uniform(prefix + ".diffuse", diffuse);
 	program->set_uniform(prefix + ".specular", specular);
 
