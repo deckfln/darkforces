@@ -328,6 +328,10 @@ dfMesh *dfLogicElevator::buildGeometry(fwMaterial* material, std::vector<dfBitma
 	// build the model AABB
 	m_modelAABB = m_mesh->modelAABB();
 	m_position = m_mesh->position();
+
+	// change the default collider (AABB) to Geometry
+	m_collider.set(m_mesh->geometry(), &m_worldMatrix, &m_inverseWorldMatrix);
+
 	updateWorldAABB();
 
 	// record in the entity

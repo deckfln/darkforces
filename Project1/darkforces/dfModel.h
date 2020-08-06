@@ -49,14 +49,14 @@ protected:
 	glm::vec2 m_insert_gl = glm::vec2(0);	// offset in gl space from position (for sprites)
 	bool m_testColision = false;			// can this object colide ?
 
-	fwAABBox m_bounding_gl;					// bounding box in model gl space
+	fwAABBox m_modelAABB;					// bounding box in model gl space
 	fwMesh* m_meshAABB = nullptr;			// mesh showing the bounding box (GL model space)
 
 	void updateBoundingBox(void);			// refresh the boundingbox based on m_size_gl & m_insert_gl
 
 public:
 	dfModel(const std::string& name, uint32_t myclass, bool collision = false);
-	const fwAABBox& bounding(void) { return m_bounding_gl; };
+	const fwAABBox& modelAABB(void) { return m_modelAABB; };
 	bool collision(void) { return m_testColision; };
 	fwMesh* drawBoundingBox(void);
 	virtual int textureID(int state, int frame) { return 0; };

@@ -15,25 +15,25 @@ static int g_nbGeometries = 0;
 
 fwGeometry::fwGeometry()
 {
-	vertices = nullptr;
+	m_vertices = nullptr;
 	index = nullptr;
 	m_id = g_nbGeometries++;
 }
 
 fwGeometry& fwGeometry::addVertices(const std::string _name, void *_data, GLsizei itemSize, GLsizei len, GLuint _sizeof_element, bool delete_on_exit)
 {
-	vertices = new glBufferAttribute(_name, GL_ARRAY_BUFFER, _data, itemSize, len, _sizeof_element, delete_on_exit);
+	m_vertices = new glBufferAttribute(_name, GL_ARRAY_BUFFER, _data, itemSize, len, _sizeof_element, delete_on_exit);
 	indexedGeometry = false;
-	m_attributes[_name] = vertices;
+	m_attributes[_name] = m_vertices;
 
 	return *this;
 }
 
 fwGeometry& fwGeometry::addDynamicVertices(const std::string _name, void *_data, GLsizei itemSize, GLsizei len, GLuint _sizeof_element, bool delete_on_exit)
 {
-	vertices = new glDynamicBufferAttribute(_name, GL_ARRAY_BUFFER, _data, itemSize, len, _sizeof_element, delete_on_exit);
+	m_vertices = new glDynamicBufferAttribute(_name, GL_ARRAY_BUFFER, _data, itemSize, len, _sizeof_element, delete_on_exit);
 	indexedGeometry = false;
-	m_attributes[_name] = vertices;
+	m_attributes[_name] = m_vertices;
 
 	return *this;
 }
@@ -78,7 +78,7 @@ void fwGeometry::enable_attributes(glProgram *program)
  */
 void fwGeometry::updateVertices(int offset, int size)
 {
-	vertices->update(offset, size);
+	m_vertices->update(offset, size);
 }
 
 void fwGeometry::updateAttribute(const std::string& name, int offset, int size)
@@ -108,7 +108,7 @@ void fwGeometry::update(void)
 {
 	if (m_verticesToDisplay > 0) {
 		// limited number of vertices
-		vertices->update(0, m_verticesToDisplay);
+		m_vertices->update(0, m_verticesToDisplay);
 
 		for (auto attribute : m_attributes) {
 			attribute.second->update(0, m_verticesToDisplay);
@@ -141,7 +141,7 @@ void fwGeometry::verticesToDisplay(int nb)
 		nbVertices = index->count();
 	}
 	else {
-		nbVertices = vertices->count();
+		nbVertices = m_vertices->count();
 	}
 
 	if (nb < nbVertices) {
@@ -163,7 +163,7 @@ void fwGeometry::updateIfDirty(void)
 	}
 	else {
 		// and test each of the attibute individualy
-		vertices->updateIfDirty();
+		m_vertices->updateIfDirty();
 		for (auto attribute : m_attributes) {
 			attribute.second->updateIfDirty();
 		}
@@ -200,7 +200,7 @@ void fwGeometry::draw(GLenum mode, glVertexArray *va)
 			va->draw(mode, true, index->count());
 		}
 		else {
-			va->draw(mode, false, vertices->count());
+			va->draw(mode, false, m_vertices->count());
 		}
 	}
 }
@@ -223,7 +223,7 @@ const glm::vec3& fwGeometry::center(void)
  */
 const glm::vec3& fwGeometry::centerVertices(void)
 {
-	glm::vec3* _vertices = (glm::vec3*)vertices->data();
+	glm::vec3* _vertices = (glm::vec3*)m_vertices->data();
 
 	// compute the bounding sphere (to find the center)
 	if (m_pBoundingsphere == nullptr) {
@@ -232,11 +232,27 @@ const glm::vec3& fwGeometry::centerVertices(void)
 
 	const glm::vec3& center = m_pBoundingsphere->center();
 
-	for (auto i = 0; i < vertices->count(); i++) {
+	for (auto i = 0; i < m_vertices->count(); i++) {
 		*(_vertices++) -= center;
 	}
 
 	return center;
+}
+
+/**
+ * direct access to the vertices
+ */
+glm::vec3 const* fwGeometry::vertices(void)
+{
+	return 	(glm::vec3 const*)m_vertices->data();
+}
+
+/**
+ * direct access to the #vertices
+ */
+uint32_t fwGeometry::nbvertices(void)
+{
+	return m_vertices->count();
 }
 
 /**
@@ -248,9 +264,9 @@ fwSphere *fwGeometry::computeBoundingsphere(void)
 		m_pBoundingsphere = new fwSphere();
 	}
 
-	if (vertices) {
+	if (m_vertices) {
 		if (m_modelAABB.not_init()) {
-			m_modelAABB.set(vertices);
+			m_modelAABB.set(m_vertices);
 		}
 		const glm::vec3& center = m_modelAABB.center();
 		m_pBoundingsphere->center(center);
@@ -259,8 +275,8 @@ fwSphere *fwGeometry::computeBoundingsphere(void)
 		// boundingSphere of the boundingBox: sqrt(3) smaller in the best case
 
 		float maxRadiusSq = 0;
-		for (unsigned int i = 0; i < vertices->count(); ++i) {
-			glm::vec3 *v = (glm::vec3 *)vertices->get_index(i);
+		for (unsigned int i = 0; i < m_vertices->count(); ++i) {
+			glm::vec3 *v = (glm::vec3 *)m_vertices->get_index(i);
 			maxRadiusSq = fmax(maxRadiusSq, glm::distance2(center, *v));
 		}
 
@@ -276,7 +292,7 @@ fwSphere *fwGeometry::computeBoundingsphere(void)
 const fwAABBox& fwGeometry::aabbox(void)
 {
 	if (m_modelAABB.not_init()) {
-		m_modelAABB.set(vertices);
+		m_modelAABB.set(m_vertices);
 	}
 
 	return m_modelAABB;
@@ -328,9 +344,9 @@ void fwGeometry::computeTangent(void)
 
 	glBufferAttribute *uvs = m_attributes["aTexCoord"];
 
-	int nb_vertices = vertices->count();
+	int nb_vertices = m_vertices->count();
 	glm::vec3 *tangents = new glm::vec3 [nb_vertices];
-	glm::vec3 *_vertices = (glm::vec3 *)vertices->data();
+	glm::vec3 *_vertices = (glm::vec3 *)m_vertices->data();
 	glm::vec2 *_uv = (glm::vec2 *)uvs->data();
 
 	if (index == nullptr) {

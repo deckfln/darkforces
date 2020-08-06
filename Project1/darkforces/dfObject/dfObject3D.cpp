@@ -14,6 +14,8 @@ dfObject3D::dfObject3D(df3DO* threedo, glm::vec3& position, float ambient, uint3
 	dfObject(threedo, position, ambient, OBJECT_3DO, objectID)
 {
 	physical(false);	// in dark forces, 3D objects can be traversed
+	m_scale = glm::vec3(0.1);
+
 	addComponent(&m_componentLogic);
 	addComponent(&m_componentMesh);
 
@@ -80,7 +82,7 @@ bool dfObject3D::update(time_t t)
 				m_lastFrame = t;
 			}
 			m_componentMesh.worldMatrix(*mat4x4);
-			m_worldBounding.apply(m_source->bounding(), *mat4x4);
+			m_worldBounding.apply(m_source->modelAABB(), *mat4x4);
 		}
 		else {
 			// rotate the object
@@ -95,12 +97,13 @@ bool dfObject3D::update(time_t t)
 
 /**
  * use the current state of update the world AABB
- */
+ *
 void dfObject3D::updateWorldAABB(void)
 {
 	// take the opportunity to update the world bounding box
-	m_worldBounding.transform(m_source->bounding(), m_position, m_rotation, glm::vec3(0.10f, 0.10f, 0.10f));
+	m_worldBounding.transform(m_source->modelAABB(), m_position, m_rotation, glm::vec3(0.10f, 0.10f, 0.10f));
 }
+*/
 
 /**
  * Deal with animation messages

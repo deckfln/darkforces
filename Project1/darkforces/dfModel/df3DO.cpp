@@ -185,7 +185,7 @@ df3DO::df3DO(dfFileSystem* fs, dfPalette* palette, std::string file) :
 	}
 
 	// build the model space aabb
-	m_bounding_gl.set(m_vertices);
+	m_modelAABB.set(m_vertices);
 
 	// and the mesh
 	if (m_textureNames.size() > 0) {

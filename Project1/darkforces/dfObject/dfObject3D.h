@@ -34,9 +34,9 @@ public:
 	void pause(bool p) { m_pause = p; };
 	void vue(dfFileSystem *fs, const std::string& vue, const std::string& component);
 
-	virtual bool update(time_t t);						// update based on timer
-	virtual void updateWorldAABB(void);
-	virtual void dispatchMessage(gaMessage* message);
+	bool update(time_t t) override;						// update based on timer
+	// virtual void updateWorldAABB(void);
+	void dispatchMessage(gaMessage* message) override;
 
 	~dfObject3D();
 };

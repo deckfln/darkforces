@@ -16,7 +16,7 @@ class fwGeometry: public Reference
 	int m_id = 0;
 
 	glBufferAttribute *index = nullptr;
-	glBufferAttribute *vertices = nullptr;
+	glBufferAttribute *m_vertices = nullptr;
 
 	int m_verticesToDisplay = -1;	// number of vertices to display from the buffers
 									// -1 == all vertices
@@ -68,6 +68,9 @@ public:
 
 	const glm::vec3& center(void);						// get the center of the boundingsphere around the geometry
 	const glm::vec3& centerVertices(void);				// move all vertices along the translation
+
+	glm::vec3 const* vertices(void);					// direct access to the vertices
+	uint32_t nbvertices(void);							// direct access to the #vertices
 
 	~fwGeometry();
 };

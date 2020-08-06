@@ -30,7 +30,7 @@ dfObject::dfObject(dfModel *source, const glm::vec3& position, float ambient, in
 	m_is(type),
 	m_objectID(g_ids++)
 {
-	modelAABB(m_source->bounding());
+	modelAABB(m_source->modelAABB());
 	moveTo(position);
 }
 

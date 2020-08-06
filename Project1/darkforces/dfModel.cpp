@@ -11,7 +11,7 @@ dfModel::dfModel(const std::string& name, uint32_t myclass, bool collision):
  */
 void dfModel::updateBoundingBox(void)
 {
-	m_bounding_gl.set(
+	m_modelAABB.set(
 		-m_size_gl.x / 2, m_insert_gl.y, -m_size_gl.x / 2,
 		m_size_gl.x / 2, m_size_gl.y + m_insert_gl.y, m_size_gl.x / 2
 	);
@@ -23,7 +23,7 @@ void dfModel::updateBoundingBox(void)
 fwMesh* dfModel::drawBoundingBox(void)
 {
 	if (m_meshAABB == nullptr) {
-		m_meshAABB = m_bounding_gl.draw();
+		m_meshAABB = m_modelAABB.draw();
 	}
 	return m_meshAABB;
 }

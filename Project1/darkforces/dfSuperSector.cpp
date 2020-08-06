@@ -253,6 +253,9 @@ void dfSuperSector::buildGeometry(std::vector<dfSector*>& sectors)
 	m_dfmesh->name(m_name);
 	m_dfmesh->buildMesh();
 
+	// prepare the collider
+	m_collider.set(m_dfmesh->geometry(), m_dfmesh->worldMatrix(), m_dfmesh->inverseWorldMatrix());
+
 	// TODO : fix the camera frustum test to remove that line
 	// m_mesh->always_draw(true);
 

@@ -397,6 +397,7 @@ void gaWorld::wantToMove(gaMessage* message)
 		return;
 	}
 
+	glm::vec3 collisionPoint;
 	glm::vec3 direction = *(glm::vec3*)(message->m_extra);
 	gaEntity* entity = m_entities[message->m_server].front();
 	glm::vec3 position = entity->position();
@@ -404,25 +405,25 @@ void gaWorld::wantToMove(gaMessage* message)
 	aabb += direction;
 	float floor;
 
+	// do an AABB collision against AABB collision with entities
 	findAABBCollision(aabb, entities, sectors, entity);
 
-	// do an AABB collision against AABB collision with entities
+	// and then collide the objects
 	for (auto ent : entities) {
-		// only test entities that can physically checkCollision
-		d = ent->distanceTo(entity);
-		if (d < distance) {
-			nearest_entity = ent;
-			distance = d;
+		if (entity->collide(ent, direction, collisionPoint)) {
+			// only test entities that can physically checkCollision
+			d = ent->distanceTo(entity);
+			if (d < distance) {
+				nearest_entity = ent;
+				distance = d;
+			}
 		}
-
 	}
 
 	// do an segment collision against the sectors triangles
 	for (auto sector : sectors) {
-		sector->collisionSegmentTriangle(position, position + direction, collisions);
-
-		for (auto c : collisions) {
-			d = entity->distanceTo(c.m_position);
+		if (entity->collide(sector->collider(), direction, collisionPoint)) {
+			d = entity->distanceTo(collisionPoint);
 			if (d < distance_sector) {
 				nearest_sector = sector;
 				distance_sector = d;
@@ -461,7 +462,7 @@ void gaWorld::wantToMove(gaMessage* message)
 		}
 	}
 
-	if (entities.size() > 0 || collisions.size() > 0) {
+	if (distance < 99999999.0f) {
 		gaMessage* collision = allocateMessage();
 		// if nearest is an entity
 		if (distance < distance_sector) {

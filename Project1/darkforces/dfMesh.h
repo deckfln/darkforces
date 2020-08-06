@@ -90,6 +90,10 @@ public:
 
 	GameEngine::ComponentMesh* componentMesh(void) { return m_mesh; };
 	fwMesh* mesh(void) { return m_mesh; };
+	fwGeometry* geometry(void) { return m_geometry; };
+	glm::mat4* worldMatrix(void) { return m_mesh->pWorldMatrix(); };
+	glm::mat4* inverseWorldMatrix(void) { return m_mesh->pInverseWorldMatrix(); };
+
 	const fwAABBox& modelAABB(void);					// build the model AABB
 	const glm::vec3& position(void) { return m_position; };
 

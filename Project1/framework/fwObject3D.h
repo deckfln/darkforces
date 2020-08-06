@@ -27,7 +27,7 @@ protected:
 
 
 	glm::vec3 m_Position = glm::vec3(0);
-	glm::vec3 m_Scale = glm::vec3(0);
+	glm::vec3 m_Scale = glm::vec3(1);
 	glm::vec3 m_Rotation = glm::vec3(0);
 	glm::quat m_quaternion;
 
@@ -69,11 +69,24 @@ public:
 	bool receiveShadow(void) { return m_receiveShadow; }
 	bool receiveShadow(bool s) { m_receiveShadow = s; return s; }
 
-	const glm::mat4 &worldMatrix(void) { return m_worldMatrix; }
+	const glm::mat4& worldMatrix(void) { 
+		updateWorldMatrix(nullptr);
+		return m_worldMatrix; 
+	}
+	const glm::mat4& inverseWorldMatrix(void) { 
+		return m_inverseWorldMatrix; 
+	}
+	glm::mat4* pWorldMatrix(void) { 
+		updateWorldMatrix(nullptr);
+		return &m_worldMatrix; 
+	}
+	glm::mat4* pInverseWorldMatrix(void) { 
+		return &m_inverseWorldMatrix; 
+	}
+
 	void worldMatrix(const glm::mat4& worldMatrix);
 	void worldMatrix(glm::mat4* pWorldMatrix);
 
-	const glm::mat4& inverseWorldMatrix(void) { return m_inverseWorldMatrix; }
 
 	fwObject3D &addChild(fwObject3D * obj);			// add an object to the scene
 	void removeChild(fwObject3D* obj);				// remove an object from the scene

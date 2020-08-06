@@ -1,5 +1,9 @@
 #include "gaEntity.h"
 
+#include <glm/gtc/matrix_transform.hpp> 
+#include <glm/gtx/transform.hpp>
+#include <glm/gtx/quaternion.hpp>
+
 #include "../framework/fwScene.h"
 #include "../framework/fwMesh.h"
 
@@ -14,7 +18,7 @@ gaEntity::gaEntity(int mclass, const std::string& name) :
 	m_class(mclass)
 {
 	g_gaBoundingBoxes.add(&m_worldBounding);
-	//g_gaWorld.addClient(this);
+	m_collider.set(&m_modelAABB, &m_worldMatrix, &m_inverseWorldMatrix);
 }
 
 gaEntity::gaEntity(int mclass, const std::string& name, const glm::vec3& position):
@@ -24,7 +28,7 @@ gaEntity::gaEntity(int mclass, const std::string& name, const glm::vec3& positio
 	m_position(position)
 {
 	g_gaBoundingBoxes.add(&m_worldBounding);
-	//g_gaWorld.addClient(this);
+	m_collider.set(&m_modelAABB, &m_worldMatrix, &m_inverseWorldMatrix);
 }
 
 /**
@@ -66,6 +70,22 @@ void gaEntity::addChild(gaEntity* entity)
 bool gaEntity::collideAABB(fwAABBox& box)
 {
 	return m_worldBounding.intersect(box);
+}
+
+/**
+ * extended collision using colliders
+ */
+bool gaEntity::collide(gaEntity* entity, const glm::vec3 &direction, glm::vec3 &collision)
+{
+	return m_collider.collision(entity->m_collider, direction, collision);
+}
+
+/**
+ * extended collision using colliders
+ */
+bool gaEntity::collide(GameEngine::Collider collider, const glm::vec3& direction, glm::vec3& collision)
+{
+	return m_collider.collision(collider, direction, collision);
 }
 
 /**
@@ -161,8 +181,13 @@ void gaEntity::moveTo(const glm::vec3& position)
  */
 void gaEntity::updateWorldAABB(void)
 {
-	m_worldBounding.rotateFrom(m_modelAABB, m_quaternion);
-	m_worldBounding += m_position;
+	glm::mat4 rotationMatrix = glm::toMat4(m_quaternion);
+	glm::mat4 scaleMatrix = glm::scale(m_scale);
+	glm::mat4 translateMatrix = glm::translate(m_position);
+	m_worldMatrix = translateMatrix * scaleMatrix * rotationMatrix;
+	m_inverseWorldMatrix = glm::inverse(m_worldMatrix);
+
+	m_worldBounding.apply(m_modelAABB, m_worldMatrix);
 }
 
 /**
@@ -176,6 +201,7 @@ void gaEntity::dispatchMessage(gaMessage* message)
 		// move the entity following a direction
 		glm::vec3 direction = *(glm::vec3*)message->m_extra;
 		m_position += direction;
+
 		sendInternalMessage(GA_MSG_MOVE, 0, &m_position);
 		break;
 

@@ -11,6 +11,7 @@
 #include "gaMessage.h"
 #include "gaCollisionPoint.h"
 #include "gaComponent.h"
+#include "Collider.h"
 
 class fwCylinder;
 class fwScene;
@@ -18,29 +19,37 @@ class fwMesh;
 
 class dfSuperSector;
 
+using namespace GameEngine;
+
 class gaEntity
 {
 protected:
 	std::string m_name;
 	int m_entityID = 0;
 	int m_class = 0;
-	glm::vec3 m_position = glm::vec3(0);	// position in gl space
-	glm::vec3 m_futurePosition = glm::vec3(0);// want to move to position
+	glm::vec3 m_position = glm::vec3(0);			// position in opengl space
+	glm::vec3 m_futurePosition = glm::vec3(0);		// want to move to position
 	glm::vec3 m_rotation = glm::vec3(0);
 	glm::quat m_quaternion = glm::quat(0, 0, 0, 0);
-	fwAABBox m_modelAABB;					// model space AABB
-	fwAABBox m_worldBounding;				// AABB bounding box in world gl space
-	bool m_physical = false;				// if this entity has a body to checkCollision with
-	time_t m_time = 0;						// elapsed time when running animation
-	std::list<gaEntity*> m_children;		// included entities
+	glm::vec3 m_scale = glm::vec3(1.0);
 
-	fwScene* m_scene = nullptr;				// if the entity has a mesh added to a scene
+	glm::mat4 m_worldMatrix;
+	glm::mat4 m_inverseWorldMatrix;
+
+	fwAABBox m_modelAABB;							// model space AABB
+	fwAABBox m_worldBounding;						// AABB bounding box in world opengl space
+	bool m_physical = false;						// if this entity has a body to checkCollision with
+	time_t m_time = 0;								// elapsed time when running animation
+	std::list<gaEntity*> m_children;				// included entities
+
+	fwScene* m_scene = nullptr;						// if the entity has a mesh added to a scene
 	fwMesh* m_mesh = nullptr;
 
-	std::vector<gaComponent*> m_components;	// all components of the entity
-	std::map<std::string, void*> m_attributes;//	dictionary of attributes
+	std::vector<gaComponent*> m_components;			// all components of the entity
+	std::map<std::string, void*> m_attributes;		// dictionary of attributes
 
-	dfSuperSector* m_supersector = nullptr;				// cached super_sector hosting the object
+	dfSuperSector* m_supersector = nullptr;			// cached super_sector hosting the object
+	Collider m_collider;							// if there is a collider
 
 public:
 	gaEntity(int mclass, const std::string& name);
@@ -63,6 +72,12 @@ public:
 	gaComponent *findComponent(int type);				// check all components to find one with the proper type
 	void addChild(gaEntity* entity);					// add an entity inside that one (and increase the AABB if needed)
 	bool collideAABB(fwAABBox& box);					// quick test to find AABB collision
+	bool collide(gaEntity* entity, 
+		const glm::vec3& direction, 
+		glm::vec3& collision);							// extended collision using colliders
+	bool collide(GameEngine::Collider collider,
+		const glm::vec3& direction,
+		glm::vec3& collision);							// extended collision using colliders
 	void modelAABB(const fwAABBox& box);				// set the model space AABB
 	void drawBoundingBox(void);							// create a world bounding box mesh
 	void rotate(const glm::vec3& rotation);				// rotate the object and update the AABB

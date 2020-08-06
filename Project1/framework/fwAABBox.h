@@ -38,6 +38,7 @@ public:
 	fwAABBox(fwSphere& sphere);
 	fwAABBox(const glm::vec3& p1, const glm::vec3& p2);
 	fwAABBox(fwAABBox& source, glm::mat4& matrix);
+	fwAABBox(fwAABBox *source, glm::mat4& matrix);
 	fwAABBox(fwCylinder& cylinder);
 
 	void set(float, float, float, float, float, float);	// build from points

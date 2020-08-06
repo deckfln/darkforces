@@ -49,6 +49,12 @@ fwAABBox::fwAABBox(fwAABBox& source, glm::mat4& matrix)
 	m_p1 = glm::vec3(matrix * glm::vec4(source.m_p1, 1.0));
 }
 
+fwAABBox::fwAABBox(fwAABBox* source, glm::mat4& matrix)
+{
+	m_p = glm::vec3(matrix * glm::vec4(source->m_p, 1.0));
+	m_p1 = glm::vec3(matrix * glm::vec4(source->m_p1, 1.0));
+}
+
 /**
  * Create from a cylinder
  */
