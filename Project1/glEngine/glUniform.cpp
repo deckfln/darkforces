@@ -59,7 +59,7 @@ GLint glUniform::get_location(void)
 	return location;
 }
 
-const std::string glUniform::get_name(void)
+const std::string& glUniform::get_name(void)
 {
 	return name;
 }
@@ -150,7 +150,7 @@ void glUniform::set_value(GLfloat r, GLfloat g, GLfloat b, GLfloat a)
 	glUniform4f(location, r, g, b, a);
 }
 
-void glUniform::set_value(glm::vec4 &vec4)
+void glUniform::set_value(const glm::vec4 &vec4)
 {
 	if (type != GL_FLOAT_VEC4) {
 		std::cout << "glUniform::set_value " << name.c_str() << " not G_FLOAT_VEC4" << std::endl;
@@ -180,7 +180,7 @@ void glUniform::set_value(const glm::vec3 &vec3)
 	}
 }
 
-void glUniform::set_value(glm::vec2 &vec2)
+void glUniform::set_value(const glm::vec2 &vec2)
 {
 	if (type != GL_FLOAT_VEC2) {
 		std::cout << "glUniform::set_value " << name.c_str() << " not G_FLOAT_VEC2" << std::endl;
@@ -195,7 +195,7 @@ void glUniform::set_value(glm::vec2 &vec2)
 	}
 }
 
-void glUniform::set_value(glm::mat4 &mat4)
+void glUniform::set_value(const glm::mat4 &mat4)
 {
 	if (type != GL_FLOAT_MAT4) {
 		std::cout << "glUniform::set_value " << name.c_str() << " not G_FLOAT_MAT4" << std::endl;

@@ -18,7 +18,9 @@
 
 List Shaders;
 
-std::string load_shader_file(const std::string shader_file, std::string defines, std::map <std::string, std::string> *variables)
+std::string load_shader_file(const std::string& shader_file, 
+	const std::string& defines, 
+	std::map <std::string, std::string> *variables)
 {
 	static std::string empty="";
 
@@ -112,7 +114,10 @@ glProgram::glProgram(void)
 {
 }
 
-glProgram::glProgram(const std::string vertexShader, const std::string fragmentShader, const std::string geometryShader, const std::string defines)
+glProgram::glProgram(const std::string& vertexShader, 
+	const std::string& fragmentShader, 
+	const std::string& geometryShader, 
+	const std::string& defines)
 {
 	glShader *vertex = new glShader(vertexShader, defines, GL_VERTEX_SHADER);
 	glShader *fragment = new glShader(fragmentShader, defines, GL_FRAGMENT_SHADER);
@@ -194,7 +199,7 @@ void glProgram::run(void)
 	glUseProgram(id);
 }
 
-glVertexAttribute *glProgram::get_attribute(const std::string name)
+glVertexAttribute *glProgram::get_attribute(const std::string& name)
 {
 	glVertexAttribute *attr = attributes[name];
 	if (!attr) {
@@ -204,7 +209,7 @@ glVertexAttribute *glProgram::get_attribute(const std::string name)
 	return attr;
 }
 
-bool glProgram::bindBufferAttribute(std::string name, int bindingPoint)
+bool glProgram::bindBufferAttribute(const std::string& name, int bindingPoint)
 {
 	if (uniformBufferBindingPoints.count(name) == 0) {
 		GLuint blockIndex = glGetUniformBlockIndex(id, name.c_str());
@@ -220,7 +225,7 @@ bool glProgram::bindBufferAttribute(std::string name, int bindingPoint)
 	return false;
 }
 
-glUniform *glProgram::get_uniform(std::string name)
+glUniform *glProgram::get_uniform(const std::string& name)
 {
 	glUniform *attr = uniforms[name];
 	if (!attr) {
@@ -229,77 +234,77 @@ glUniform *glProgram::get_uniform(std::string name)
 	return attr;
 }
 
-void glProgram::set_uniform(const std::string name, GLint id)
+void glProgram::set_uniform(const std::string& name, GLint id)
 {
 	glUniform *uniform = get_uniform(name);
 	if (uniform)
 		uniform->set_value(id);
 }
 
-void glProgram::set_uniform(const std::string name, GLfloat f)
+void glProgram::set_uniform(const std::string& name, GLfloat f)
 {
 	glUniform *uniform = get_uniform(name);
 	if (uniform)
 		uniform->set_value(f);
 }
 
-void glProgram::set_uniform(const std::string name, GLfloat r, GLfloat g, GLfloat b)
+void glProgram::set_uniform(const std::string& name, GLfloat r, GLfloat g, GLfloat b)
 {
 	glUniform *uniform = get_uniform(name);
 	if (uniform)
 		uniform->set_value(r, g, b);
 }
 
-void glProgram::set_uniform(const std::string name, GLfloat r, GLfloat g, GLfloat b, GLfloat a)
+void glProgram::set_uniform(const std::string& name, GLfloat r, GLfloat g, GLfloat b, GLfloat a)
 {
 	glUniform *uniform = get_uniform(name);
 	if (uniform)
 		uniform->set_value(r, g, b, a);
 }
 
-void glProgram::set_uniform(const std::string name, glm::mat4 &mat4)
+void glProgram::set_uniform(const std::string& name, const glm::mat4 &mat4)
 {
 	glUniform *uniform = get_uniform(name);
 	if (uniform)
 		uniform->set_value(mat4);
 }
 
-void glProgram::set_uniform(const std::string name, glm::vec4 &vec4)
+void glProgram::set_uniform(const std::string& name, const glm::vec4 &vec4)
 {
 	glUniform *uniform = get_uniform(name);
 	if (uniform)
 		uniform->set_value(vec4);
 }
 
-void glProgram::set_uniform(const std::string name, glm::vec4* vec4, int size)
+void glProgram::set_uniform(const std::string& name, glm::vec4* vec4, int size)
 {
 	glUniform* uniform = get_uniform(name);
 	if (uniform)
 		uniform->set_value(vec4, size);
 }
 
-void glProgram::set_uniform(const std::string name, const glm::vec3 &vec3)
+void glProgram::set_uniform(const std::string& name, const glm::vec3 &vec3)
 {
 	glUniform *uniform = get_uniform(name);
 	if (uniform)
 		uniform->set_value(vec3);
 }
 
-void glProgram::set_uniform(const std::string name, glm::vec2 &vec2)
+void glProgram::set_uniform(const std::string& name, const glm::vec2 &vec2)
 {
 	glUniform *uniform = get_uniform(name);
 	if (uniform)
 		uniform->set_value(vec2);
 }
 
-void glProgram::set_uniform(const std::string name, glm::mat4 *mat4, int size)
+void glProgram::set_uniform(const std::string& name, glm::mat4 *mat4, int size)
 {
 	glUniform* uniform = get_uniform(name);
 	if (uniform)
 		uniform->set_value(mat4, size);
 }
 
-void glProgram::set_uniform(const std::string name, glTexture *texture)
+void glProgram::set_uniform(const std::string& name, glTexture *texture)
 {
 	glUniform *uniform = get_uniform(name);
 	if (uniform) {
