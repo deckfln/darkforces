@@ -61,7 +61,7 @@ std::string fwPointLight::set_uniform(glProgram *program, int index)
 	program->set_uniform(prefix + ".radius", m_radius);
 
 	if (m_shadowCamera) {
-		m_shadowCamera->set_uniform(prefix + ".far_plane", "far_plane", program);
+		//m_shadowCamera->set_uniform(prefix + ".far_plane", "far_plane", program);
 	}
 	return prefix;
 }

@@ -4,7 +4,7 @@
 #include "fwConstants.h"
 #include "../glEngine/glDepthMap.h"
 
-fwLight::fwLight(glm::vec3 & _color):
+fwLight::fwLight(const glm::vec3 & _color):
 	ambient(_color),
 	uniform_prefix("ambient"),
 	type(0),

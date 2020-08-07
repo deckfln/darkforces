@@ -10,8 +10,8 @@ class glShader
 public:
 	GLuint id;
 
-	glShader(const std::string shader_file, const std::string defines, GLuint type);
-	const std::string get_source(void);
+	glShader(const std::string& shader_file, const std::string& defines, GLuint type);
+	const std::string& get_source(void);
 	GLuint get_type(void);
 	~glShader();
 };

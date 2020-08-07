@@ -29,7 +29,7 @@ protected:
 
 public:
 	fwLight();
-	fwLight(glm::vec3 &_color);
+	fwLight(const glm::vec3 &_color);
 	fwLight(float r, float g, float b);
 
 	std::string &getDefine(void);

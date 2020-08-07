@@ -34,10 +34,10 @@ class fwGeometry: public Reference
 
 public:
 	fwGeometry();
-	fwGeometry& addVertices(const std::string _name, void *_data, GLsizei itemSize, GLsizei len, GLuint _sizeof_element, bool delete_on_exit=true);
-	fwGeometry& addDynamicVertices(const std::string _name, void *_data, GLsizei itemSize, GLsizei len, GLuint _sizeof_element, bool delete_on_exit = true);
+	fwGeometry& addVertices(const std::string& _name, void *_data, GLsizei itemSize, GLsizei len, GLuint _sizeof_element, bool delete_on_exit=true);
+	fwGeometry& addDynamicVertices(const std::string& _name, void *_data, GLsizei itemSize, GLsizei len, GLuint _sizeof_element, bool delete_on_exit = true);
 	fwGeometry& addIndex(void *_data, GLsizei itemSize, GLsizei len, GLuint _sizeof_element, bool delete_on_exit = true);
-	fwGeometry& addAttribute(const std::string _name, GLuint _type, void *_data, GLsizei itemSize, GLsizei len, GLuint _sizeof_element, bool delete_on_exit = true);
+	fwGeometry& addAttribute(const std::string& _name, GLuint _type, void *_data, GLsizei itemSize, GLsizei len, GLuint _sizeof_element, bool delete_on_exit = true);
 
 	void updateVertices(int offset = 0, int size = -1);
 	void updateAttribute(const std::string& name, int offset=0, int size = -1);
@@ -58,7 +58,7 @@ public:
 	fwSphere *boundingsphere(void) { return m_pBoundingsphere; };
 	fwSphere *computeBoundingsphere(void);
 	const fwAABBox& aabbox(void);			// return or initialize the model space AABB
-	float sqDistance2boundingSphere(glm::vec3& position);
+	float sqDistance2boundingSphere(const glm::vec3& position);
 	fwSphere* setBoundingsphere(float radius);
 	void computeTangent(void);
 

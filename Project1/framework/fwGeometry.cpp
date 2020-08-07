@@ -20,7 +20,7 @@ fwGeometry::fwGeometry()
 	m_id = g_nbGeometries++;
 }
 
-fwGeometry& fwGeometry::addVertices(const std::string _name, void *_data, GLsizei itemSize, GLsizei len, GLuint _sizeof_element, bool delete_on_exit)
+fwGeometry& fwGeometry::addVertices(const std::string& _name, void *_data, GLsizei itemSize, GLsizei len, GLuint _sizeof_element, bool delete_on_exit)
 {
 	m_vertices = new glBufferAttribute(_name, GL_ARRAY_BUFFER, _data, itemSize, len, _sizeof_element, delete_on_exit);
 	indexedGeometry = false;
@@ -29,7 +29,7 @@ fwGeometry& fwGeometry::addVertices(const std::string _name, void *_data, GLsize
 	return *this;
 }
 
-fwGeometry& fwGeometry::addDynamicVertices(const std::string _name, void *_data, GLsizei itemSize, GLsizei len, GLuint _sizeof_element, bool delete_on_exit)
+fwGeometry& fwGeometry::addDynamicVertices(const std::string& _name, void *_data, GLsizei itemSize, GLsizei len, GLuint _sizeof_element, bool delete_on_exit)
 {
 	m_vertices = new glDynamicBufferAttribute(_name, GL_ARRAY_BUFFER, _data, itemSize, len, _sizeof_element, delete_on_exit);
 	indexedGeometry = false;
@@ -46,7 +46,7 @@ fwGeometry& fwGeometry::addIndex(void *_data, GLsizei itemSize, GLsizei len, GLu
 	return *this;
 }
 
-fwGeometry& fwGeometry::addAttribute(const std::string name, GLuint type, void *data, GLsizei itemSize, GLsizei len, GLuint sizeof_element, bool delete_on_exit)
+fwGeometry& fwGeometry::addAttribute(const std::string& name, GLuint type, void *data, GLsizei itemSize, GLsizei len, GLuint sizeof_element, bool delete_on_exit)
 {
 	glBufferAttribute *ba = new	glBufferAttribute(name, type, data, itemSize, len, sizeof_element, delete_on_exit);
 	std::pair<const std::string, glBufferAttribute *> in(name, ba);
@@ -298,7 +298,7 @@ const fwAABBox& fwGeometry::aabbox(void)
 	return m_modelAABB;
 }
 
-float fwGeometry::sqDistance2boundingSphere(glm::vec3& position)
+float fwGeometry::sqDistance2boundingSphere(const glm::vec3& position)
 {
 	assert(m_pBoundingsphere != nullptr);
 	float debug = glm::distance2(m_pBoundingsphere->center(), position);

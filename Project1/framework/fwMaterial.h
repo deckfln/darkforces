@@ -40,15 +40,15 @@ protected:
 public:
 	fwMaterial();
 	int type(int flag) { return m_type & flag; };
-	fwMaterial(std::string vertexShader, std::string fragmentShader, std::string geometryShader = "");
+	fwMaterial(const std::string& vertexShader, const std::string& fragmentShader, const std::string& geometryShader = "");
 	fwMaterial(std::map<ShaderType, std::string>& shaders);
-	fwMaterial &addTexture(std::string uniform, fwTexture *texture);
-	fwMaterial &addTexture(std::string uniform, glTexture *texture);
-	fwMaterial& addTextures(std::string uniform, fwTextures* textures);
+	fwMaterial &addTexture(const std::string& uniform, fwTexture *texture);
+	fwMaterial &addTexture(const std::string& uniform, glTexture *texture);
+	fwMaterial& addTextures(const std::string& uniform, fwTextures* textures);
 
 	// fwMaterial &addShaders(std::string vertexShader, std::string fragmentShader, const std::string defines = "");
 	fwMaterial &addUniform(fwUniform *uniform);
-	fwMaterial &addShader(int shader, std::string file, RenderType render = FORWARD_RENDER);
+	fwMaterial &addShader(int shader, const std::string& file, RenderType render = FORWARD_RENDER);
 
 	std::string hashCode(void);
 

@@ -30,7 +30,7 @@ void fwCameraPanoramic::set_uniform(std::string name, std::string attr, glProgra
         program->set_uniform(name, m_far);
     }
     else {
-        fwCamera::set_uniform(name, attr, program);
+        //fwCamera::set_uniform(name, attr, program);
     }
 }
 

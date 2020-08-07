@@ -1,5 +1,7 @@
 #include "fwFrustum.h"
 
+#include "math/fwSphere.h"
+
 fwFrustum::fwFrustum()
 {
 }
@@ -32,36 +34,36 @@ bool fwFrustum::intersectsObject(fwMesh *object)
 
 	sphere.applyMatrix4From(object->worldMatrix(), geometry->boundingsphere());
 
-	return intersectsSphere(sphere, geometry->boundingsphere());
+	return intersectsSphere(sphere, *geometry->boundingsphere());
 }
 
-bool fwFrustum::intersectsSphere(fwSphere &sphere, fwSphere *source)
+bool fwFrustum::intersectsSphere(fwSphere &sphere, fwSphere& source)
 {
-	glm::vec3 center = sphere.center();
+	const glm::vec3& center = sphere.center();
 	float negRadius = -sphere.radius();
 	float distance = -1;
 
-	if (source->cache() >= 0) {
-		distance = m_planes[source->cache()].distanceToPoint(center);
+	if (source.cache() >= 0) {
+		distance = m_planes[source.cache()].distanceToPoint(center);
 		if (distance < negRadius) {
 			return false;
 		}
 	}
 
 	for (int p = 0; p < 6; ++p) {
-		if (p == source->cache()) {
+		if (p == source.cache()) {
 			continue;
 		}
 
 		distance = m_planes[p].distanceToPoint(center);
 
 		if (distance < negRadius) {
-			source->cache(p);
+			source.cache(p);
 			return false;
 		}
 	}
 
-	source->cache(-1);
+	source.cache(-1);
 	return true;
 }
 

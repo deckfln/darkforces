@@ -5,7 +5,7 @@
 #include <sstream>
 
 
-glShader::glShader(const std::string code, const std::string defines, GLuint _type)
+glShader::glShader(const std::string& code, const std::string& defines, GLuint _type)
 {
 	source = code;
 	int hasDefines = source.find("#define DEFINES");
@@ -40,7 +40,7 @@ glShader::glShader(const std::string code, const std::string defines, GLuint _ty
 	}
 }
 
-const std::string glShader::get_source(void)
+const std::string& glShader::get_source(void)
 {
 	return source;
 }

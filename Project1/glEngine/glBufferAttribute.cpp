@@ -5,7 +5,7 @@ glBufferAttribute::glBufferAttribute()
 
 }
 
-glBufferAttribute::glBufferAttribute(const std::string _name, GLuint _type, void *_data, GLsizei _itemSize, GLsizei _len, GLuint _sizeof_element, bool _delete_on_exit):
+glBufferAttribute::glBufferAttribute(const std::string& _name, GLuint _type, void *_data, GLsizei _itemSize, GLsizei _len, GLuint _sizeof_element, bool _delete_on_exit):
 	m_name(_name),
 	m_type(_type),
 	m_data(_data),

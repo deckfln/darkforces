@@ -107,11 +107,6 @@ glm::mat4 &fwCamera::GetMatrix(void)
 	return m_matrix;
 }
 
-void fwCamera::set_uniform(std::string name, std::string attr, glProgram* program)
-{
-
-}
-
 void fwCamera::set_uniforms(glProgram *program)
 {
 	program->set_uniform("view", view);
@@ -149,7 +144,7 @@ bool fwCamera::is_inFrustum(fwMesh *mesh)
  */
 bool fwCamera::is_inFrustum(fwSphere& boundingSphere)
 {
-	return m_frustum.intersectsSphere(boundingSphere, &boundingSphere);
+	return m_frustum.intersectsSphere(boundingSphere, boundingSphere);
 }
 
 fwCamera::~fwCamera()

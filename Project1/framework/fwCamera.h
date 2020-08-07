@@ -32,9 +32,8 @@ protected:
 public:
 	fwCamera();
 	fwCamera(int height, int width);
+	void set_uniforms(glProgram* program);
 	void set_ratio(int width, int height);
-	virtual void set_uniforms(glProgram *program);
-	virtual void set_uniform(std::string name, std::string attr, glProgram* program);
 	void translate(const glm::vec3 &translation);
 	void translate(float x, float y, float z);
 

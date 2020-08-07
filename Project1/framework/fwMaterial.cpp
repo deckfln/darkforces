@@ -23,7 +23,7 @@ fwMaterial::fwMaterial():
 {
 }
 
-fwMaterial::fwMaterial(std::string _vertexShader, std::string _fragmentShader, std::string _geometryShader):
+fwMaterial::fwMaterial(const std::string& _vertexShader, const std::string& _fragmentShader, const std::string& _geometryShader):
 	m_id(g_materialID++)
 {
 	addShader(VERTEX_SHADER, _vertexShader);
@@ -52,7 +52,7 @@ fwMaterial::fwMaterial(std::map<ShaderType, std::string>& shaders):
 /**
  * Add a single hiegh level texture
  */
-fwMaterial& fwMaterial::addTexture(std::string uniform, fwTexture *texture)
+fwMaterial& fwMaterial::addTexture(const std::string& uniform, fwTexture *texture)
 {
 	glTexture *glTex = new glTexture(texture);
 	m_textures[texture->id()] = glTex;
@@ -65,7 +65,7 @@ fwMaterial& fwMaterial::addTexture(std::string uniform, fwTexture *texture)
 /**
  * Add a single low level texture
  */
-fwMaterial& fwMaterial::addTexture(std::string uniform, glTexture *texture)
+fwMaterial& fwMaterial::addTexture(const std::string& uniform, glTexture *texture)
 {
 	// m_textures[texture->getID()] = texture;
 
@@ -77,7 +77,7 @@ fwMaterial& fwMaterial::addTexture(std::string uniform, glTexture *texture)
 /**
  * Add a high level multi-texture
  */
-fwMaterial& fwMaterial::addTextures(std::string uniform, fwTextures* textures)
+fwMaterial& fwMaterial::addTextures(const std::string& uniform, fwTextures* textures)
 {
 	glTextureArray* glTex = new glTextureArray(textures);
 	m_textureArrays.push_front(glTex);
@@ -161,7 +161,7 @@ const std::string& fwMaterial::get_fragmentShader(void)
 	return get_shader(FRAGMENT_SHADER);
 }
 
-fwMaterial &fwMaterial::addShader(int shader, std::string file, RenderType render)
+fwMaterial &fwMaterial::addShader(int shader, const std::string& file, RenderType render)
 {
 	m_files[render][shader] = file; 
 	m_shaders[render][shader] = "";

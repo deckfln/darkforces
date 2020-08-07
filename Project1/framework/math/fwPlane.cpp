@@ -32,7 +32,7 @@ fwPlane &fwPlane::normalize(void)
 	return *this;
 }
 
-float fwPlane::distanceToPoint(glm::vec3 &point)
+float fwPlane::distanceToPoint(const glm::vec3 &point)
 {
 	return glm::dot(m_normal, point) + m_constant;
 }
