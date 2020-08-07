@@ -165,7 +165,7 @@ void glUniform::set_value(glm::vec4 &vec4)
 	}
 }
 
-void glUniform::set_value(glm::vec3 &vec3)
+void glUniform::set_value(const glm::vec3 &vec3)
 {
 	if (type != GL_FLOAT_VEC3) {
 		std::cout << "glUniform::set_value " << name.c_str() << " not G_FLOAT_VEC3" << std::endl;

@@ -50,8 +50,8 @@ dfBullet::dfBullet(const glm::vec3& position, const glm::vec3& direction):
 	m_componentMesh.set(g_blaster, &g_basic);
 	addComponent(&m_componentMesh);
 
-	m_position += m_direction *132.0f/ bullet_speed;
-	m_componentMesh.translate(m_position);
+	glm::vec3 d(m_direction * 132.0f / bullet_speed);
+	sendInternalMessage(GA_MSG_MOVE, 0, (void*)&d);
 
 	// convert the direction vector to a quaternion
 	glm::vec3 _up = glm::vec3(0.0f, 1.0f, 0.0f);
@@ -69,10 +69,7 @@ dfBullet::dfBullet(const glm::vec3& position, const glm::vec3& direction):
 
 	glm::quat quaternion = glm::quatLookAt(m_direction, up);
 
-	m_componentMesh.rotate(quaternion);
-	m_quaternion = quaternion;
-
-	updateWorldAABB();
+	sendInternalMessage(GA_MSG_ROTATE, 1, (void*)&quaternion);
 
 	// next animation
 	g_gaWorld.sendMessageDelayed(m_name, m_name, GA_MSG_TIMER, 0, nullptr);
@@ -101,7 +98,7 @@ void dfBullet::dispatchMessage(gaMessage* message)
 		// add an impact sprite
 		// constructor of a sprite expects a level space
 		glm::vec3 p;
-		dfLevel::gl2level(m_position, p);
+		dfLevel::gl2level(position(), p);
 		dfBulletExplode* impact = new dfBulletExplode(p, 1.0f);
 		g_gaWorld.addClient(impact);
 

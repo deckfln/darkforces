@@ -11,12 +11,12 @@ fwCameraPanoramic::fwCameraPanoramic(float aspect, float _near, float _far) :
 void fwCameraPanoramic::update(void)
 {
     // build a transformation matrix per face of the shadow cube
-    m_transforms[0] = m_projection * glm::lookAt(m_position, m_position + glm::vec3(1.0, 0.0, 0.0), glm::vec3(0.0, -1.0, 0.0));
-    m_transforms[1] = m_projection * glm::lookAt(m_position, m_position + glm::vec3(-1.0, 0.0, 0.0), glm::vec3(0.0, -1.0, 0.0));
-    m_transforms[2] = m_projection * glm::lookAt(m_position, m_position + glm::vec3(0.0, 1.0, 0.0), glm::vec3(0.0, 0.0, 1.0));
-    m_transforms[3] = m_projection * glm::lookAt(m_position, m_position + glm::vec3(0.0, -1.0, 0.0), glm::vec3(0.0, 0.0, -1.0));
-    m_transforms[4] = m_projection * glm::lookAt(m_position, m_position + glm::vec3(0.0, 0.0, 1.0), glm::vec3(0.0, -1.0, 0.0));
-    m_transforms[5] = m_projection * glm::lookAt(m_position, m_position + glm::vec3(0.0, 0.0, -1.0), glm::vec3(0.0, -1.0, 0.0));
+    m_transforms[0] = m_projection * glm::lookAt(position(), position() + glm::vec3(1.0, 0.0, 0.0), glm::vec3(0.0, -1.0, 0.0));
+    m_transforms[1] = m_projection * glm::lookAt(position(), position() + glm::vec3(-1.0, 0.0, 0.0), glm::vec3(0.0, -1.0, 0.0));
+    m_transforms[2] = m_projection * glm::lookAt(position(), position() + glm::vec3(0.0, 1.0, 0.0), glm::vec3(0.0, 0.0, 1.0));
+    m_transforms[3] = m_projection * glm::lookAt(position(), position() + glm::vec3(0.0, -1.0, 0.0), glm::vec3(0.0, 0.0, -1.0));
+    m_transforms[4] = m_projection * glm::lookAt(position(), position() + glm::vec3(0.0, 0.0, 1.0), glm::vec3(0.0, -1.0, 0.0));
+    m_transforms[5] = m_projection * glm::lookAt(position(), position() + glm::vec3(0.0, 0.0, -1.0), glm::vec3(0.0, -1.0, 0.0));
 
     updateWorldMatrix(nullptr, false);
     m_projScreenMatrix = m_projection * glm::inverse(m_worldMatrix);

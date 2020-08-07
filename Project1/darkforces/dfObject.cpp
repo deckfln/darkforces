@@ -105,14 +105,14 @@ const std::string& dfObject::model(void)
 /**
  * Update the object position (given in level space) and update the worldboundingBox(in gl space)
  */
-void dfObject::moveTo(const glm::vec3& position)
+void dfObject::moveTo(const glm::vec3& pposition)
 {
-	m_position_lvl = position;
-	dfLevel::level2gl(m_position_lvl, m_position);
+	m_position_lvl = pposition;
 
+	glm::vec3 p;
+	dfLevel::level2gl(m_position_lvl, p);
 	m_dirtyPosition = true;
-
-	gaEntity::moveTo(m_position);
+	gaEntity::moveTo(p);
 }
 
 /**
@@ -162,7 +162,7 @@ void dfObject::collideWith(gaEntity* entity)
 				nullptr);
 
 			// and remove the object from the scene
-			m_position = glm::vec3(0);
+			translate(glm::vec3(0));
 			moveTo(glm::vec3(0));
 		}
 	}
@@ -175,7 +175,7 @@ void dfObject::drop(const std::string& object)
 {
 	// constructor of a sprite expects a level space
 	glm::vec3 p;
-	dfLevel::gl2level(m_position, p);
+	dfLevel::gl2level(position(), p);
 	dfSprite* obj = new dfSprite(object, p, 1.0f, OBJECT_FME);
 	g_gaWorld.addClient(obj);
 }

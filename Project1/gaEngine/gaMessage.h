@@ -25,6 +25,13 @@ enum {
 	GA_MSG_WANT_TO_MOVE_FALL,			// object accepts to fall down
 };
 
+enum {
+	GA_MSG_ROTATE_VEC3,
+	GA_MSG_ROTATE_QUAT,
+	GA_MSG_ROTATE_BY,
+
+};
+
 class gaEntity;
 
 class gaMessage {

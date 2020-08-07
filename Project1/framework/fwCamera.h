@@ -35,7 +35,7 @@ public:
 	void set_ratio(int width, int height);
 	virtual void set_uniforms(glProgram *program);
 	virtual void set_uniform(std::string name, std::string attr, glProgram* program);
-	void translate(glm::vec3 &translation);
+	void translate(const glm::vec3 &translation);
 	void translate(float x, float y, float z);
 
 	void lookAt(glm::vec3 &target);

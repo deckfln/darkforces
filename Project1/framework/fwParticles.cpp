@@ -74,7 +74,7 @@ void fwParticles::update_particle(int &spwanable, int i, double timer)
 
 			spwanable--;
 
-			*origin = m_position;
+			*origin = fwObject3D::position();
 		}
 		else {
 			return;

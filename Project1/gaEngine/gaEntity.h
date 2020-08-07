@@ -73,9 +73,6 @@ public:
 		glm::vec3& collision);							// extended collision using colliders
 	void modelAABB(const fwAABBox& box);				// set the model space AABB
 	void drawBoundingBox(void);							// create a world bounding box mesh
-	void rotate(const glm::vec3& rotation);				// rotate the object and update the AABB
-	float distanceTo(gaEntity* other);					// distance between the 2 entities
-	float distanceTo(const glm::vec3& p);				// distance from the entity position to the point
 
 	void sendMessage(const std::string& target,
 		int action,

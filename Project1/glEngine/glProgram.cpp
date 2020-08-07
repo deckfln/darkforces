@@ -278,7 +278,7 @@ void glProgram::set_uniform(const std::string name, glm::vec4* vec4, int size)
 		uniform->set_value(vec4, size);
 }
 
-void glProgram::set_uniform(const std::string name, glm::vec3 &vec3)
+void glProgram::set_uniform(const std::string name, const glm::vec3 &vec3)
 {
 	glUniform *uniform = get_uniform(name);
 	if (uniform)

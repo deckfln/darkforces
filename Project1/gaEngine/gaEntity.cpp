@@ -95,32 +95,6 @@ void gaEntity::modelAABB(const fwAABBox& box)
 {
 	m_modelAABB = box;
 }
-/**
- * rotate the object and update the AABB
- */
-void gaEntity::rotate(const glm::vec3& rotation)
-{
-	m_quaternion = glm::quat(glm::vec3(rotation.x, rotation.y, rotation.z));
-
-	// take the opportunity to update the world bounding box
-	updateWorldAABB();
-}
-
-/**
- * distance between the 2 entities
- */
-float gaEntity::distanceTo(gaEntity* other)
-{
-	return glm::distance(m_position, other->m_position);
-}
-
-/**
- * distance from the entity position to the point
- */
-float gaEntity::distanceTo(const glm::vec3& p)
-{
-	return glm::distance(m_position, p);
-}
 
 /**
  * Send message to another entity
@@ -171,9 +145,7 @@ void gaEntity::add2scene(fwScene* scene)
  */
 void gaEntity::moveTo(const glm::vec3& position)
 {
-	m_position = position;
-
-	sendInternalMessage(GA_MSG_MOVE, 0, &m_position);
+	sendInternalMessage(GA_MSG_MOVE, 0, (void *)&position);
 }
 
 /**
@@ -195,33 +167,35 @@ void gaEntity::dispatchMessage(gaMessage* message)
 	{
 	case GA_MSG_MOVE_TO:
 		// move the entity following a direction
-		glm::vec3 direction = *(glm::vec3*)message->m_extra;
-		m_position += direction;
+		moveBy((glm::vec3*)message->m_extra);
 
-		sendInternalMessage(GA_MSG_MOVE, 0, &m_position);
+		sendInternalMessage(GA_MSG_MOVE, 0, (void *)&position());
 		break;
 
 	case GA_MSG_MOVE:
-		m_position = *(glm::vec3*)message->m_extra;
+		translate((glm::vec3*)message->m_extra);
 
 		// take the opportunity to update the world bounding box
 		updateWorldAABB();
 
 		// detect if the entity moved to a new sector
-		m_supersector = g_gaWorld.findSector(m_supersector, m_position);
+		m_supersector = g_gaWorld.findSector(m_supersector, position());
 		break;
 
 	case GA_MSG_ROTATE:
 		// take the opportunity to update the world bounding box
-		if (message->m_value == 0) {
-			m_rotation = *(glm::vec3*)message->m_extra;
-			m_quaternion = glm::quat(glm::vec3(m_rotation.x, m_rotation.y, m_rotation.z));
-			updateWorldAABB();
+		switch (message->m_value) {
+			case GA_MSG_ROTATE_VEC3:
+				rotate((glm::vec3*)message->m_extra);
+				break;
+			case GA_MSG_ROTATE_QUAT:
+				rotate((glm::quat*)message->m_extra);
+				break;
+			case GA_MSG_ROTATE_BY:
+				rotateBy((glm::vec3*)message->m_extra);
+				break;
 		}
-		else {
-			m_quaternion = *(glm::quat*)message->m_extra;
-			m_worldBounding.transform(m_modelAABB, m_position, m_quaternion, glm::vec3(0.10f));
-		}
+		updateWorldAABB();
 		break;
 
 	default:

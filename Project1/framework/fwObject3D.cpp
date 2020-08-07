@@ -55,6 +55,26 @@ fwObject3D& fwObject3D::rotate(const glm::quat& quaternion)
 	return *this;
 }
 
+/**
+ * rotate BY a delta vector
+ */
+fwObject3D& fwObject3D::rotateBy(const glm::vec3& delta)
+{
+	m_rotation += delta;
+	m_updated = true;
+	return *this;
+}
+
+fwObject3D& fwObject3D::rotateBy(const glm::vec3* pDelta)
+{
+	m_rotation += *pDelta;
+	m_updated = true;
+	return *this;
+}
+
+/**
+ * Move an object
+ */
 fwObject3D &fwObject3D::translate(const glm::vec3 &vector)
 {
 	m_position = vector;
@@ -81,6 +101,26 @@ fwObject3D& fwObject3D::translate(glm::vec3* pVector)
 	return *this;
 }
 
+/**
+ * move the position BY a delta vector
+ */
+fwObject3D& fwObject3D::moveBy(const glm::vec3& delta)
+{
+	m_position += delta;
+	m_updated = true;
+	return *this;
+}
+
+fwObject3D& fwObject3D::moveBy(const glm::vec3* pDelta)
+{
+	m_position += *pDelta;
+	m_updated = true;
+	return *this;
+}
+
+/**
+ * change the scale of the object
+ */
 fwObject3D &fwObject3D::set_scale(const glm::vec3 &_scale)
 {
 	m_scale = _scale;
@@ -133,6 +173,25 @@ void fwObject3D::removeChild(fwObject3D* obj)
 	obj->m_parent = nullptr;
 }
 
+/**
+ * distance between the 2 objects
+ */
+float fwObject3D::distanceTo(fwObject3D* other)
+{
+	return glm::distance(m_position, other->m_position);
+}
+
+/**
+ * distance from the entity position to the point
+ */
+float fwObject3D::distanceTo(const glm::vec3& p)
+{
+	return glm::distance(m_position, p);
+}
+
+/**
+ * based on modified attributes, recompute the worldMatrix
+ */
 void fwObject3D::updateWorldMatrix(fwObject3D *parent, bool force)
 {
 	//FIXME : checking the updated flag is bad => will not detect the shadowCamera projection

@@ -132,8 +132,8 @@ void dfLogicTrigger::boundingBox(glm::vec2& left, glm::vec2& right, float floor,
 	}
 
 	// set the lower corner as the position
-	glm::vec3 level(lx, ly, floor);
-	dfLevel::level2gl(level, m_position);
+	glm::vec3 p(lx, ly, floor);
+	dfLevel::level2gl(p);
 
 	// and extend the size
 	glm::vec3 p1_gl(0, 0, 0);
@@ -142,7 +142,8 @@ void dfLogicTrigger::boundingBox(glm::vec2& left, glm::vec2& right, float floor,
 	dfLevel::level2gl(p2_level, p2_gl);
 
 	m_modelAABB = fwAABBox(p1_gl, p2_gl);
-	updateWorldAABB();
+
+	sendInternalMessage(GA_MSG_MOVE, 0, &p);
 }
 
 /**
@@ -151,16 +152,17 @@ void dfLogicTrigger::boundingBox(glm::vec2& left, glm::vec2& right, float floor,
 void dfLogicTrigger::boundingBox(fwAABBox& box)
 {
 	// set the lower corner as the position
-	dfLevel::level2gl(box.m_p, m_position);
+	glm::vec3 p(box.m_p);
+	dfLevel::level2gl(p);
 
 	// and extend the size
 	glm::vec3 p_gl(0);
 	glm::vec3 p1_gl;
 	dfLevel::level2gl(box.m_p1, p1_gl);
-	p1_gl = p1_gl - m_position;
+	p1_gl = p1_gl - p;
 	m_modelAABB = fwAABBox(p_gl, p1_gl);
 
-	updateWorldAABB();
+	sendInternalMessage(GA_MSG_MOVE, 0, &p);
 }
 
 /**
@@ -214,8 +216,9 @@ void dfLogicTrigger::config(void)
  */
 void dfLogicTrigger::moveZ(float z)
 {
-	m_position.y = z;
-	moveTo(m_position);
+	glm::vec3 p = position();
+	p.y = z;
+	moveTo(p);
 }
 
 /**
@@ -223,8 +226,9 @@ void dfLogicTrigger::moveZ(float z)
  */
 void dfLogicTrigger::moveCeiling(float z)
 {
-	m_position.y = z - m_modelAABB.height();
-	moveTo(m_position);
+	glm::vec3 p = position();
+	p.y = z - m_modelAABB.height();
+	moveTo(p);
 }
 
 /**

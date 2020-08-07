@@ -65,7 +65,7 @@ void fwLight::startShadowMap(void)
 	glGetIntegerv(GL_CULL_FACE_MODE, &m_previousCulling);
 	glCullFace(GL_FRONT);
 
-	// build the shaders if needed
+	// build the shader if needed
 	if (m_depth_program[0] == nullptr) {
 		shadowShaders();
 	}
@@ -75,9 +75,9 @@ void fwLight::runShadowProgram(int i)
 {
 	m_depth_program[i]->run();
 
-	if (m_updated) {
-		m_shadowCamera->translate(m_position);
-		m_updated = false;
+	if (updated()) {
+		m_shadowCamera->translate(position());
+		updated(false);
 	}
 	m_shadowCamera->set_uniforms(m_depth_program[i]);
 }

@@ -28,16 +28,15 @@ void fwCamera::set_ratio(int width, int height)
 	m_frustum.setFromMatrix(m_projScreenMatrix);
 }
 
-void fwCamera::translate(glm::vec3 &translation)
+void fwCamera::translate(const glm::vec3 &translation)
 {
-	m_position = translation;
+	fwObject3D::translate(translation);
 	update();
 }
 
 void fwCamera::translate(const float x, const float y, const float z)
 {
 	fwObject3D::translate(x, y, z);
-
 	update();
 }
 
@@ -60,7 +59,7 @@ void fwCamera::update(void)
 {
 	glm::vec3 _up = glm::vec3(0.0f, 1.0f, 0.0f);
 
-	m_direction = m_position - target;
+	m_direction = position() - target;
 	if (m_direction != glm::vec3(0)) {
 		m_direction = glm::normalize(m_direction);
 		right = glm::normalize(glm::cross(_up, m_direction));
@@ -70,11 +69,11 @@ void fwCamera::update(void)
 		up = _up;
 	}
 
-	g_Listener.position(m_position);
+	g_Listener.position(position());
 	g_Listener.orientation(m_direction, up);
 
 	// from learn-opengl
-	view = glm::lookAt(m_position, target, up);
+	view = glm::lookAt(position(), target, up);
 
 	// from three.js: something to fix down the line
 	glm::mat4 THREEjs;
@@ -82,11 +81,11 @@ void fwCamera::update(void)
 	THREEjs[0][1] = right.y; THREEjs[1][1] = up.y; THREEjs[2][1] = m_direction.y;
 	THREEjs[0][2] = right.z; THREEjs[1][2] = up.z; THREEjs[2][2] = m_direction.z;
 
-	m_quaternion = glm::quatLookAt(-m_direction, up);
+	glm::quat q = glm::quatLookAt(-m_direction, up);
+	rotate(q);
 
 	m_matrix = m_projection * view;
 
-	m_updated = true;
 	updateWorldMatrix(nullptr, false);
 	m_projScreenMatrix = m_projection * glm::inverse(m_worldMatrix);
 
@@ -117,7 +116,7 @@ void fwCamera::set_uniforms(glProgram *program)
 {
 	program->set_uniform("view", view);
 	program->set_uniform("projection", m_projection);
-	program->set_uniform("viewPos", m_position);
+	program->set_uniform("viewPos", position());
 }
 
 void fwCamera::set_uniformBuffer(void)
@@ -127,10 +126,10 @@ void fwCamera::set_uniformBuffer(void)
 	}
 
 	glm::mat4 camera[2] = { view, m_projection };
-
+	glm::vec3& p = (glm::vec3 &)position();
 	ubo->bind();
 	ubo->map(glm::value_ptr(camera[0]), 0, sizeof(camera));
-	ubo->map(glm::value_ptr(m_position), sizeof(camera), sizeof(m_position));
+	ubo->map(glm::value_ptr(p), sizeof(camera), sizeof(p));
 	ubo->unbind();
 }
 

@@ -327,12 +327,10 @@ dfMesh *dfLogicElevator::buildGeometry(fwMaterial* material, std::vector<dfBitma
 
 	// build the model AABB
 	m_modelAABB = m_mesh->modelAABB();
-	m_position = m_mesh->position();
+	sendInternalMessage(GA_MSG_MOVE, 0, (void*)&m_mesh->position());
 
 	// change the default collider (AABB) to Geometry
 	m_collider.set(m_mesh->geometry(), &m_worldMatrix, &m_inverseWorldMatrix);
-
-	updateWorldAABB();
 
 	// record in the entity
 	addComponent(m_mesh->componentMesh());
@@ -631,37 +629,38 @@ void dfLogicElevator::moveTo(float z)
 	}
 
 	// run the move
+	glm::vec3 p = position();
 	switch (m_type) {
 	case dfElevatorType::INV:
 	case dfElevatorType::DOOR:
-		m_position.y = z / 10.0f;
-		sendInternalMessage(GA_MSG_MOVE, 0, &m_position);
+		p.y = z / 10.0f;
+		sendInternalMessage(GA_MSG_MOVE, 0, &p);
 		break;
 	case dfElevatorType::BASIC:
-		m_position.y = z / 10.0f;
-		sendInternalMessage(GA_MSG_MOVE, 0, &m_position);
+		p.y = z / 10.0f;
+		sendInternalMessage(GA_MSG_MOVE, 0, &p);
 		break;
 	case dfElevatorType::MOVE_FLOOR:
 		// move the sector the elevator is based on (for collision detection)
-		m_position.y = z / 10.0f;
-		sendInternalMessage(GA_MSG_MOVE, 0, &m_position);
+		p.y = z / 10.0f;
+		sendInternalMessage(GA_MSG_MOVE, 0, &p);
 		m_pSector->currentFloorAltitude(z);
 		break;
 	case dfElevatorType::MOVE_CEILING:
 		// move the sector the elevator is based on (for collision detection)
-		m_position.y = z / 10.0f;
-		sendInternalMessage(GA_MSG_MOVE, 0, &m_position);
+		p.y = z / 10.0f;
+		sendInternalMessage(GA_MSG_MOVE, 0, &p);
 		m_pSector->ceiling(z);
 		break;
 	case dfElevatorType::MORPH_SPIN1:
 	case dfElevatorType::MORPH_SPIN2:
-		m_rotation = glm::vec3(0, glm::radians(z), 0);
-		sendInternalMessage(GA_MSG_ROTATE, 0, &m_rotation);
+		glm::vec3 r = glm::vec3(0, glm::radians(z), 0);
+		sendInternalMessage(GA_MSG_ROTATE, 0, &r);
 		break;
 	case dfElevatorType::MORPH_MOVE1:
 		glm::vec3 p = m_center + m_move * z;
-		dfLevel::level2gl(p, m_position);
-		sendInternalMessage(GA_MSG_MOVE, 0, &m_position);
+		dfLevel::level2gl(p);
+		sendInternalMessage(GA_MSG_MOVE, 0, &p);
 		break;
 	case dfElevatorType::CHANGE_LIGHT:
 		m_pSector->changeAmbient(z);
@@ -672,7 +671,7 @@ void dfLogicElevator::moveTo(float z)
 }
 
 /**
- * Records signs that trigger the evelvator
+ * Records signs that trigger the elevator
  */
 void dfLogicElevator::addSign(dfSign* sign)
 {

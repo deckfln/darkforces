@@ -14,12 +14,10 @@ dfObject3D::dfObject3D(df3DO* threedo, glm::vec3& position, float ambient, uint3
 	dfObject(threedo, position, ambient, OBJECT_3DO, objectID)
 {
 	physical(false);	// in dark forces, 3D objects can be traversed
-	m_scale = glm::vec3(0.1);
+	set_scale(glm::vec3(0.1));
 
 	addComponent(&m_componentLogic);
 	addComponent(&m_componentMesh);
-
-	dfLevel::level2gl(m_position_lvl, m_position);
 
 	threedo->clone(m_componentMesh);
 	m_componentMesh.set_scale(0.10f);
@@ -86,8 +84,8 @@ bool dfObject3D::update(time_t t)
 		}
 		else {
 			// rotate the object
-			m_rotation += m_animRotationAxe * m_aniRotationSpeed * (float)t;
-			sendInternalMessage(GA_MSG_ROTATE, 0, &m_rotation);
+			glm::vec3 r = m_animRotationAxe * m_aniRotationSpeed * (float)t;
+			sendInternalMessage(GA_MSG_ROTATE, GA_MSG_ROTATE_BY, &r);
 		}
 
 		return true;

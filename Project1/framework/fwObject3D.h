@@ -17,14 +17,7 @@ class fwObject3D : public Reference
 	float debug = 0;
 	alSource* m_source = nullptr;		// sound source, creation defered to the first time a sound is played
 
-protected:
-	std::string m_name;
-	int classID = 0;
-
 	glm::mat4 m_modelMatrix;						// model space matrix
-	glm::mat4 m_worldMatrix = glm::mat4(0);			// world space matrix (including children)
-	glm::mat4 m_inverseWorldMatrix = glm::mat4(0);	// world space matrix (including children)
-
 
 	glm::vec3 m_position = glm::vec3(0);
 	glm::vec3 m_scale = glm::vec3(1);
@@ -33,11 +26,21 @@ protected:
 
 	bool m_updated = true;							// if the matrix components have been update (or are new)
 
+protected:
+	std::string m_name;
+	int classID = 0;
+
+	glm::mat4 m_worldMatrix = glm::mat4(0);			// world space matrix (including children)
+	glm::mat4 m_inverseWorldMatrix = glm::mat4(0);	// world space matrix (including children)
+
 	fwObject3D* m_parent = nullptr;
 	std::list <fwObject3D *> m_children;
 
 	bool m_castShadow = false;
 	bool m_receiveShadow = false;
+
+	bool updated(void) { return m_updated; };
+	void updated(bool b) { m_updated = b; };
 
 public:
 	fwObject3D();
@@ -49,19 +52,26 @@ public:
 
 	fwObject3D& rotate(const glm::vec3 &rotation);
 	fwObject3D& rotate(const glm::quat& quaternion);
+	fwObject3D& rotateBy(const glm::vec3& delta);			// rotate BY a delta vector
+	fwObject3D& rotateBy(const glm::vec3* pDelta);			// rotate BY a delta vector
 	fwObject3D& rotate(glm::vec3 *rotation);
 	fwObject3D& rotate(glm::quat const *quaternion);
 	fwObject3D& translate(const glm::vec3 &vector);
 	fwObject3D& translate(float x, float y, float z);
 	fwObject3D& translate(glm::vec3 *vector);
-
+	fwObject3D& moveBy(const glm::vec3& delta);			// move the position BY a delta vector
+	fwObject3D& moveBy(const glm::vec3* pDelta);		// move the position BY a delta vector
 	fwObject3D &set_scale(const glm::vec3 &_scale);
 	fwObject3D &set_scale(float _scale);
 	const glm::vec3& get_scale(void);
-
 	const glm::vec3& get_position(void);
+
+	float distanceTo(fwObject3D* other);				// distance between the 2 objects
+	float distanceTo(const glm::vec3& p);				// distance from the entity position to the point
+
 	const std::list <fwObject3D *> &get_children(void);
 	bool hasChild(fwObject3D* child);
+
 
 	void updateWorldMatrix(fwObject3D *parent, bool force = false);
 
