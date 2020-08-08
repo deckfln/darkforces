@@ -23,6 +23,7 @@ enum {
 enum {
 	GA_MSG_WANT_TO_MOVE_BREAK_IF_FALL,	// Object doesn't want to fall off and want to be informed
 	GA_MSG_WANT_TO_MOVE_FALL,			// object accepts to fall down
+	GA_MSG_WANT_TO_MOVE_LASER			// object is not impacted by gravity
 };
 
 enum {

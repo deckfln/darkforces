@@ -47,11 +47,11 @@ dfBullet::dfBullet(const glm::vec3& position, const glm::vec3& direction):
 	// the AABOX is just the direction vector
 	m_modelAABB = g_blaster->aabbox();
 
+	// change the collider to a geometry
+	m_collider.set(&m_modelAABB, &m_worldMatrix, &m_inverseWorldMatrix);
+
 	m_componentMesh.set(g_blaster, &g_basic);
 	addComponent(&m_componentMesh);
-
-	glm::vec3 d(m_direction * 132.0f / bullet_speed);
-	sendInternalMessage(GA_MSG_MOVE, 0, (void*)&d);
 
 	// convert the direction vector to a quaternion
 	glm::vec3 _up = glm::vec3(0.0f, 1.0f, 0.0f);
@@ -70,9 +70,10 @@ dfBullet::dfBullet(const glm::vec3& position, const glm::vec3& direction):
 	glm::quat quaternion = glm::quatLookAt(m_direction, up);
 
 	sendInternalMessage(GA_MSG_ROTATE, 1, (void*)&quaternion);
+	sendInternalMessage(GA_MSG_MOVE, 0, (void*)&position);
 
-	// next animation
-	g_gaWorld.sendMessageDelayed(m_name, m_name, GA_MSG_TIMER, 0, nullptr);
+	// kick start animation
+	sendDelayedMessage(GA_MSG_TIMER, 0, nullptr);
 }
 
 /**
@@ -91,7 +92,7 @@ void dfBullet::dispatchMessage(gaMessage* message)
 	switch (message->m_action) {
 	case GA_MSG_MOVE_TO:
 		// move request was accepted
-		g_gaWorld.sendMessageDelayed(m_name, m_name, GA_MSG_TIMER, 0, nullptr);
+		sendDelayedMessage(GA_MSG_TIMER, 0, nullptr);
 		break;
 
 	case GA_MSG_COLLIDE: {
@@ -112,7 +113,7 @@ void dfBullet::dispatchMessage(gaMessage* message)
 			gaDebugLog(LOW_DEBUG, "dfBullet::dispatchMessage", "hit wall");
 		}
 		// drop the bullet
-		g_gaWorld.sendMessage(m_name, "_world", GA_MSG_DELETE_ENTITY, 0, nullptr);
+		sendMessageToWorld(GA_MSG_DELETE_ENTITY, 0, nullptr);
 		break;
 	}
 
@@ -122,11 +123,11 @@ void dfBullet::dispatchMessage(gaMessage* message)
 		if (m_time < bullet_life) {
 			glm::vec3 direction = (m_direction * (float)message->m_delta / bullet_speed);
 			m_futurePosition = direction;
-			sendMessageToWorld(GA_MSG_WANT_TO_MOVE, 0, &m_futurePosition);
+			sendMessageToWorld(GA_MSG_WANT_TO_MOVE, GA_MSG_WANT_TO_MOVE_LASER, &m_futurePosition);
 		}
 		else {
 			// get the bullet deleted after 5s
-			g_gaWorld.sendMessage(m_name, "_world", GA_MSG_DELETE_ENTITY, 0, nullptr);
+			sendMessageToWorld(GA_MSG_DELETE_ENTITY, 0, nullptr);
 			gaDebugLog(LOW_DEBUG, "dfBullet::dispatchMessage", "remove bullet");
 		}
 		break;

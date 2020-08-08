@@ -73,7 +73,7 @@ void dfComponentAI::dispatchMessage(gaMessage* message)
 		}
 
 		glm::quat quaternion = glm::quatLookAt(m_direction, up);
-		m_entity->sendInternalMessage(GA_MSG_ROTATE, 1, &quaternion);
+		m_entity->sendInternalMessage(GA_MSG_ROTATE, GA_MSG_ROTATE_QUAT, &quaternion);
 
 		// go for next movement
 		m_entity->sendDelayedMessage(GA_MSG_TIMER);

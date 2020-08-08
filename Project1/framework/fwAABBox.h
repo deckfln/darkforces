@@ -44,6 +44,7 @@ public:
 	void set(float, float, float, float, float, float);	// build from points
 	void set(std::vector<glm::vec3>& vertices);			// build from vertices
 	void set(glBufferAttribute* attribute);				// build from an GL attribute
+	void set(glm::vec3 const *pVertices, int nb);		// build from vertices pointers
 
 	fwAABBox operator+(const glm::vec3& v);
 	fwAABBox& operator+=(const glm::vec3& v);
@@ -65,6 +66,7 @@ public:
 	void transform(const fwAABBox& source, glm::vec3& translation, const glm::vec3& rotation, const glm::vec3& scale);
 	void transform(const fwAABBox& source, const glm::vec3& translation, const glm::quat& quaternion, const glm::vec3& scale);
 	void apply(const fwAABBox& source, const glm::mat4& matrix);
+	void apply(fwAABBox const *pSource, const glm::mat4& matrix);
 	bool not_init(void);
 	fwAABBox& copy(fwAABBox& source);
 	fwAABBcollision collisionSide(void) { return m_collisionSide; };

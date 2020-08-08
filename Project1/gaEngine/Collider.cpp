@@ -74,20 +74,21 @@ bool Collider::collisionAABBgeometry(const Collider& aabb, const Collider& geome
 	// move the AABB from model space to worldSpace and then to geometry model space
 	glm::mat4 mat = *geometry.m_inverseWorldMatrix * *aabb.m_worldMatrix;
 	fwAABBox aabb_geometry_space(aabb.m_aabb, mat);
+	aabb_geometry_space += direction;
 
-	// test segment triangle collision for each of the 8 vertices (moved the to geometry model space
-	std::vector<glm::vec3> points = {
-		aabb_geometry_space.m_p,
-		aabb_geometry_space.m_p1,
-		glm::vec3(aabb_geometry_space.m_p.x,	aabb_geometry_space.m_p1.x,	aabb_geometry_space.m_p.z),
-		glm::vec3(aabb_geometry_space.m_p.x,	aabb_geometry_space.m_p1.x,	aabb_geometry_space.m_p1.z),
-		glm::vec3(aabb_geometry_space.m_p.x,	aabb_geometry_space.m_p.x,	aabb_geometry_space.m_p1.z),
-		glm::vec3(aabb_geometry_space.m_p1.x,	aabb_geometry_space.m_p.x,	aabb_geometry_space.m_p.z),
-		glm::vec3(aabb_geometry_space.m_p1.x,	aabb_geometry_space.m_p1.x,	aabb_geometry_space.m_p.z),
-		glm::vec3(aabb_geometry_space.m_p1.x,	aabb_geometry_space.m_p.x,	aabb_geometry_space.m_p1.z),
-	};
+	// for each triangle, extract the AABB in geometry space and check collision with the source AABB in geometry space
+	fwAABBox triangle;
 
 	for (unsigned int i = 0; i < nbVertices; i += 3) {
+		triangle.set(vertices + i, 3);
+
+		if (triangle.intersect(aabb_geometry_space)) {
+			// TODO: improve an estimated collision point
+			collision = (triangle.center() + aabb_geometry_space.center()) / 2.0f;
+			collision = *geometry.m_worldMatrix * glm::vec4(collision, 1.0);
+			return true;
+		}
+		/*
 		for (auto& p : points) {
 			glm::vec3 q = p + direction;
 
@@ -101,6 +102,7 @@ bool Collider::collisionAABBgeometry(const Collider& aabb, const Collider& geome
 				return true;
 			};
 		}
+		*/
 	}
 
 	return false;

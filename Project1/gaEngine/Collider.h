@@ -9,6 +9,7 @@ class fwGeometry;
 namespace GameEngine
 {
 	enum class ColliderType {
+		NONE,
 		AABB,
 		ELIPSOID,
 		GEOMETRY
@@ -16,7 +17,7 @@ namespace GameEngine
 
 	class Collider
 	{
-		ColliderType m_type;
+		ColliderType m_type=ColliderType::NONE;
 
 		const glm::mat4 *m_worldMatrix = nullptr;
 		const glm::mat4 *m_inverseWorldMatrix = nullptr;

@@ -434,7 +434,7 @@ void gaWorld::wantToMove(gaMessage* message)
 	// do an segment collision against the sectors floor
 	dfSuperSector* sector = entity->superSector();
 
-	if (sector) {
+	if (message->m_value != GA_MSG_WANT_TO_MOVE_LASER && sector != nullptr) {
 		glm::vec3 down = glm::vec3(0, -0.1, 0);
 		std::list<gaCollisionPoint> falls;
 
@@ -462,7 +462,7 @@ void gaWorld::wantToMove(gaMessage* message)
 		}
 	}
 
-	if (distance < 99999999.0f) {
+	if (distance < 99999999.0f || distance_sector < 99999999.0f) {
 		gaMessage* collision = allocateMessage();
 		// if nearest is an entity
 		if (distance < distance_sector) {

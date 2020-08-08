@@ -44,7 +44,7 @@ fwGeometryCylinder::fwGeometryCylinder(float radius, float height, float widthSe
 
             // vertex
             m_vertices.push_back(
-                glm::vec3(radius * sinTheta, radius * cosTheta , -v * s * height + halfHeight)
+                glm::vec3(radius * sinTheta, radius * cosTheta , -v * s * height)
             );
 
             // normal
@@ -78,7 +78,36 @@ fwGeometryCylinder::fwGeometryCylinder(float radius, float height, float widthSe
             m_indices.push_back(d);
         }
     }
-    
+
+    /*
+    int p = m_vertices.size();
+
+    m_vertices.push_back(glm::vec3(0.025, 0.025, 0.025));
+    m_vertices.push_back(glm::vec3(0.025, 0.025, -0.025));
+    m_vertices.push_back(glm::vec3(-0.025, 0.025, -0.025));
+    m_vertices.push_back(glm::vec3(-0.025, 0.025, 0.025));
+    m_vertices.push_back(glm::vec3(0.025, -0.025, 0.025));
+    m_vertices.push_back(glm::vec3(0.025, -0.025, -0.025));
+    m_vertices.push_back(glm::vec3(-0.025, -0.025, -0.025));
+    m_vertices.push_back(glm::vec3(-0.025, -0.025, 0.025));
+
+    m_indices.push_back(p);
+    m_indices.push_back(p+2);
+    m_indices.push_back(p+1);
+
+    m_indices.push_back(p);
+    m_indices.push_back(p + 3);
+    m_indices.push_back(p + 2);
+
+    m_indices.push_back(p + 4);
+    m_indices.push_back(p + 5);
+    m_indices.push_back(p + 6);
+
+    m_indices.push_back(p + 4);
+    m_indices.push_back(p + 6);
+    m_indices.push_back(p + 7);
+    */
+
     // build geometry
     addVertices("aPos", &m_vertices[0], 3, m_vertices.size() * sizeof(glm::vec3), sizeof(float));
     addAttribute("aTexCoord", GL_ARRAY_BUFFER, &m_uvs[0], 2, m_uvs.size() * sizeof(glm::vec2), sizeof(float));

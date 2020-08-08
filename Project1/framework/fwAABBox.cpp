@@ -45,14 +45,12 @@ fwAABBox::fwAABBox(const glm::vec3& p1, const glm::vec3& p2)
 
 fwAABBox::fwAABBox(fwAABBox& source, glm::mat4& matrix)
 {
-	m_p = glm::vec3(matrix * glm::vec4(source.m_p, 1.0));
-	m_p1 = glm::vec3(matrix * glm::vec4(source.m_p1, 1.0));
+	apply(source, matrix);
 }
 
 fwAABBox::fwAABBox(fwAABBox* source, glm::mat4& matrix)
 {
-	m_p = glm::vec3(matrix * glm::vec4(source->m_p, 1.0));
-	m_p1 = glm::vec3(matrix * glm::vec4(source->m_p1, 1.0));
+	apply(source, matrix);
 }
 
 /**
@@ -117,6 +115,32 @@ void fwAABBox::set(glBufferAttribute* attribute)
 	}
 	m_p = glm::vec3(minX, minY, minZ);
 	m_p1= glm::vec3(maxX, maxY, maxZ);
+}
+
+/**
+ * build from vertices pointers
+ */
+void fwAABBox::set(glm::vec3 const* pVertices, int nb)
+{
+	float minX = INFINITY;
+	float minY = INFINITY;
+	float minZ = INFINITY;
+
+	float maxX = -INFINITY;
+	float maxY = -INFINITY;
+	float maxZ = -INFINITY;
+
+	for (unsigned int i = 0; i < nb; i++) {
+		if (pVertices[i].x < minX) minX = pVertices[i].x;
+		if (pVertices[i].y < minY) minY = pVertices[i].y;
+		if (pVertices[i].z < minZ) minZ = pVertices[i].z;
+
+		if (pVertices[i].x > maxX) maxX = pVertices[i].x;
+		if (pVertices[i].y > maxY) maxY = pVertices[i].y;
+		if (pVertices[i].z > maxZ) maxZ = pVertices[i].z;
+	}
+	m_p = glm::vec3(minX, minY, minZ);
+	m_p1 = glm::vec3(maxX, maxY, maxZ);
 }
 
 /**
@@ -228,17 +252,43 @@ void fwAABBox::transform(const fwAABBox& source, const glm::vec3& translation, c
  */
 void fwAABBox::apply(const fwAABBox& source, const glm::mat4& matrix)
 {
-	glm::vec3 p = glm::vec3(matrix * glm::vec4(source.m_p, 1.0));
-	glm::vec3 p1 = glm::vec3(matrix * glm::vec4(source.m_p1, 1.0));
+	// rebuild the 8 vertices
+	glm::vec3 delta = source.m_p1 - source.m_p;
 
-	// ensure p is always min and p1 is always max
-	m_p.x = std::min(p.x, p1.x);
-	m_p.y = std::min(p.y, p1.y);
-	m_p.z = std::min(p.z, p1.z);
+	std::vector<glm::vec3> points = {
+		matrix * glm::vec4(source.m_p, 1.0),
+		matrix * glm::vec4(source.m_p + glm::vec3(delta.x, 0, 0), 1.0),
+		matrix * glm::vec4(source.m_p + glm::vec3(delta.x, delta.y, 0), 1.0),
+		matrix * glm::vec4(source.m_p + glm::vec3(0, delta.y, 0), 1.0),
+		matrix * glm::vec4(source.m_p + glm::vec3(0, 0, delta.z), 1.0),
+		matrix * glm::vec4(source.m_p + glm::vec3(delta.x, 0, delta.z), 1.0),
+		matrix * glm::vec4(source.m_p + glm::vec3(delta.x, delta.y, delta.z), 1.0),
+		matrix * glm::vec4(source.m_p + glm::vec3(0, delta.y, delta.z), 1.0)
+	};
 
-	m_p1.x = std::max(p.x, p1.x);
-	m_p1.y = std::max(p.y, p1.y);
-	m_p1.z = std::max(p.z, p1.z);
+	// and extract the min and max
+	set(points);
+	m_dirty = true;
+}
+
+void fwAABBox::apply(fwAABBox const *pSource, const glm::mat4& matrix)
+{
+	// rebuild the 8 vertices
+	glm::vec3 delta = pSource->m_p1 - pSource->m_p;
+
+	std::vector<glm::vec3> points = {
+		matrix * glm::vec4(pSource->m_p, 1.0),
+		matrix * glm::vec4(pSource->m_p + glm::vec3(delta.x, 0, 0), 1.0),
+		matrix * glm::vec4(pSource->m_p + glm::vec3(delta.x, delta.y, 0), 1.0),
+		matrix * glm::vec4(pSource->m_p + glm::vec3(0, delta.y, 0), 1.0),
+		matrix * glm::vec4(pSource->m_p + glm::vec3(0, 0, delta.z), 1.0),
+		matrix * glm::vec4(pSource->m_p + glm::vec3(delta.x, 0, delta.z), 1.0),
+		matrix * glm::vec4(pSource->m_p + glm::vec3(delta.x, delta.y, delta.z), 1.0),
+		matrix * glm::vec4(pSource->m_p + glm::vec3(0, delta.y, delta.z), 1.0)
+	};
+
+	// and extract the min and max
+	set(points);
 	m_dirty = true;
 }
 
@@ -293,7 +343,7 @@ bool fwAABBox::inside(fwAABBox& box)
 }
 
 /**
- * test if the 2 boxes intesect
+ * test if the 2 boxes intersect
  */
 bool fwAABBox::intersect(const fwAABBox& box)
 {
@@ -456,7 +506,7 @@ fwMesh *fwAABBox::draw(void)
 }
 
 /**
- * upate the vertices of the boundingbox mesh
+ * pate the vertices of the boundingbox mesh
  */
 bool fwAABBox::updateMeshVertices(glm::vec3* vertices)
 {
@@ -503,7 +553,7 @@ bool fwAABBox::updateMeshVertices(glm::vec3* vertices)
 }
 
 /**
- * If the point align verticaly with the AABB (is inside OR on top OR just below)
+ * If the point align vertical with the AABB (is inside OR on top OR just below)
  * using opengl coordinate
  */
 bool fwAABBox::verticalAlign(const glm::vec3& point)
