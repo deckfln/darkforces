@@ -2,6 +2,9 @@
 
 #include <glm/vec3.hpp>
 #include <glm/mat4x4.hpp>
+#include <list>
+
+#include "gaCollisionPoint.h"
 
 class fwAABBox;
 class fwGeometry;
@@ -27,8 +30,10 @@ namespace GameEngine
 
 		bool collisionAABBgeometry(const Collider& aabb, 
 			const Collider& geometry, 
-			const glm::vec3& direction, 
-			glm::vec3& collision);							// do a AABB vs geometry collision check. Return the first collision
+			const glm::mat4& worldMatrix,
+			const glm::vec3& forward,
+			const glm::vec3& down,
+			std::list<gaCollisionPoint>& collisions);							// do a AABB vs geometry collision check. Return the first collision
 
 	public:
 		Collider(void) {};									// empty collider
@@ -45,8 +50,10 @@ namespace GameEngine
 			glm::mat4* worldMatrix,
 			glm::mat4* inverseWorldMatrix);
 		bool collision(const Collider& source,
-			const glm::vec3& direction, 
-			glm::vec3& collision);							// run a collision test between 2 colliders
+			const glm::mat4& worldMatrix,
+			const glm::vec3& forward, 
+			const glm::vec3& down,
+			std::list<gaCollisionPoint>& collisions);							// run a collision test between 2 colliders
 	};
 }
 

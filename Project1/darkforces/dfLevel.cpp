@@ -125,11 +125,6 @@ dfLevel::dfLevel(dfFileSystem* fs, std::string file)
 	// load and distribute the INF file
 	m_inf = new dfParseINF(fs, file);
 
-	// load the Object file
-	m_objects = new dfParserObjects(fs, m_palette, file, this);
-	m_sprites = m_objects->buildAtlasTexture();
-	m_sprites->save("D:/dev/Project1/Project1/images/sprites.png");
-
 	// bind the sectors to the elevator logic
 	// bind the elevator logic to the level
 	for (auto elevator : m_inf->m_elevators) {
@@ -221,6 +216,11 @@ dfLevel::dfLevel(dfFileSystem* fs, std::string file)
 	for (auto trigger : m_inf->m_triggers) {
 		g_gaWorld.addClient(trigger);
 	}
+
+	// load the Object file
+	m_objects = new dfParserObjects(fs, m_palette, file, this);
+	m_sprites = m_objects->buildAtlasTexture();
+	m_sprites->save("D:/dev/Project1/Project1/images/sprites.png");
 
 	free(sec);
 }

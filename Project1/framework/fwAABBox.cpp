@@ -43,12 +43,12 @@ fwAABBox::fwAABBox(const glm::vec3& p1, const glm::vec3& p2)
 	m_p1 = glm::max(p1, p2);
 }
 
-fwAABBox::fwAABBox(fwAABBox& source, glm::mat4& matrix)
+fwAABBox::fwAABBox(const fwAABBox& source, const glm::mat4& matrix)
 {
 	apply(source, matrix);
 }
 
-fwAABBox::fwAABBox(fwAABBox* source, glm::mat4& matrix)
+fwAABBox::fwAABBox(const fwAABBox* source, const glm::mat4& matrix)
 {
 	apply(source, matrix);
 }

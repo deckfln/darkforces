@@ -12,7 +12,6 @@ class gaMessage;
 class dfBullet : public gaEntity
 {
 	glm::vec3 m_direction;
-	gaMessage* m_animate_msg = nullptr;
 	GameEngine::ComponentMesh m_componentMesh;
 
 public:

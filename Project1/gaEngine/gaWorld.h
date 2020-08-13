@@ -30,8 +30,6 @@ class gaWorld
 	bool m_timer = true;							// pass DF_MESSAGE_TIMER event
 	fwScene* m_scene;								// current scene on screen;
 
-	void wantToMove(gaMessage* message);				// handle an entity requesting to move
-
 public:
 	gaWorld(void);
 
@@ -89,6 +87,11 @@ public:
 		fwCylinder& bounding,
 		glm::vec3& direction,
 		std::list<gaCollisionPoint>& collisions);		// extended collision test after a successful AABB collision
+
+	int wantToMove(gaEntity *entity, 
+		int flag, 
+		const glm::mat4& worldMatrix,
+		const glm::vec3& d);							// handle an entity requesting to move
 
 	void push(gaMessage* message);
 	void pushForNextFrame(gaMessage* message);

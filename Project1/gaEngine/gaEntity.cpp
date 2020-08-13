@@ -75,17 +75,25 @@ bool gaEntity::collideAABB(fwAABBox& box)
 /**
  * extended collision using colliders
  */
-bool gaEntity::collide(gaEntity* entity, const glm::vec3 &direction, glm::vec3 &collision)
+bool gaEntity::collide(gaEntity* entity, 
+	const glm::mat4& worldMatrix,
+	const glm::vec3& forward,
+	const glm::vec3& down,
+	std::list<gaCollisionPoint>& collisions)
 {
-	return m_collider.collision(entity->m_collider, direction, collision);
+	return m_collider.collision(entity->m_collider, worldMatrix, forward, down, collisions);
 }
 
 /**
  * extended collision using colliders
  */
-bool gaEntity::collide(GameEngine::Collider collider, const glm::vec3& direction, glm::vec3& collision)
+bool gaEntity::collide(GameEngine::Collider collider, 
+	const glm::mat4& worldMatrix,
+	const glm::vec3& forward,
+	const glm::vec3& down,
+	std::list<gaCollisionPoint>& collisions)
 {
-	return m_collider.collision(collider, direction, collision);
+	return m_collider.collision(collider, worldMatrix, forward, down, collisions);
 }
 
 /**
@@ -110,6 +118,11 @@ void gaEntity::sendMessage(const std::string& target, int action, int value, voi
 void gaEntity::sendMessageToWorld(int action, int value, void* extra)
 {
 	g_gaWorld.sendMessage(m_name, "_world", action, value, extra);
+}
+
+void gaEntity::sendDelayedMessageToWorld(int action, int value, void* extra)
+{
+	g_gaWorld.sendMessageDelayed(m_name, "_world", action, value, extra);
 }
 
 /**
@@ -159,6 +172,22 @@ void gaEntity::updateWorldAABB(void)
 }
 
 /**
+ * try to move an manage collision
+ */
+int gaEntity::tryToMove(int flag, const glm::mat4& worldMatrix, const glm::vec3& direction)
+{
+	switch (g_gaWorld.wantToMove(this, flag, worldMatrix, direction)) {
+	case GA_MSG_COLLIDE:
+		return GA_MSG_COLLIDE;
+
+	case GA_MSG_WOULD_FALL:
+		return GA_MSG_WOULD_FALL;
+	}
+
+	return GA_MSG_MOVE;
+}
+
+/**
  * let an entity deal with a situation
  */
 void gaEntity::dispatchMessage(gaMessage* message)
@@ -174,10 +203,7 @@ void gaEntity::dispatchMessage(gaMessage* message)
 
 	case GA_MSG_MOVE:
 		translate((glm::vec3*)message->m_extra);
-
-		// take the opportunity to update the world bounding box
 		updateWorldAABB();
-
 		// detect if the entity moved to a new sector
 		m_supersector = g_gaWorld.findSector(m_supersector, position());
 		break;

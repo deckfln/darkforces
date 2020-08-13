@@ -57,6 +57,7 @@ public:
 	void physical(bool p) { m_physical = p; };
 	bool physical(void) { return m_physical; };
 	const fwAABBox& worldAABB(void) { return m_worldBounding; };
+	const fwAABBox& modelAABB(void) { return m_modelAABB; };
 	void superSector(dfSuperSector* s) { m_supersector = s; };
 
 	void set(const std::string& v, void* ptr) { m_attributes[v] = ptr; };
@@ -66,11 +67,15 @@ public:
 	void addChild(gaEntity* entity);					// add an entity inside that one (and increase the AABB if needed)
 	bool collideAABB(fwAABBox& box);					// quick test to find AABB collision
 	bool collide(gaEntity* entity, 
-		const glm::vec3& direction, 
-		glm::vec3& collision);							// extended collision using colliders
+		const glm::mat4& worldMatrix,
+		const glm::vec3& forward, 
+		const glm::vec3& down,
+		std::list<gaCollisionPoint>& collisions);		// extended collision using colliders
 	bool collide(GameEngine::Collider collider,
-		const glm::vec3& direction,
-		glm::vec3& collision);							// extended collision using colliders
+		const glm::mat4& worldMatrix,
+		const glm::vec3& forward,
+		const glm::vec3& down,
+		std::list<gaCollisionPoint>& collisions);		// extended collision using colliders
 	void modelAABB(const fwAABBox& box);				// set the model space AABB
 	void drawBoundingBox(void);							// create a world bounding box mesh
 
@@ -81,12 +86,19 @@ public:
 	void sendMessageToWorld(int action,
 		int value = 0,
 		void* extra = nullptr);							// send a message to the world
+	void sendDelayedMessageToWorld(int action,
+		int value = 0,
+		void* extra = nullptr);							// send a message to the world
 	void sendInternalMessage(int action,
 		int value = 0,
 		void* extra = nullptr);							// send internal message to all components of the current entity
 	void sendDelayedMessage(int action,
 		int value = 0,
 		void* extra = nullptr);							// send a delayed message to myself
+
+	int tryToMove(int flag, 
+		const glm::mat4& worldMatrix, 
+		const glm::vec3& direction);					// try to move the entity
 
 	virtual void add2scene(fwScene* scene);				// if the entity has a mesh, add to the scene
 	virtual void collideWith(gaEntity*) {};				// inform another entity of a collision

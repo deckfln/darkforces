@@ -69,7 +69,7 @@ dfBullet::dfBullet(const glm::vec3& position, const glm::vec3& direction):
 
 	glm::quat quaternion = glm::quatLookAt(m_direction, up);
 
-	sendInternalMessage(GA_MSG_ROTATE, 1, (void*)&quaternion);
+	sendInternalMessage(GA_MSG_ROTATE, GA_MSG_ROTATE_QUAT, (void*)&quaternion);
 	sendInternalMessage(GA_MSG_MOVE, 0, (void*)&position);
 
 	// kick start animation
@@ -138,5 +138,4 @@ void dfBullet::dispatchMessage(gaMessage* message)
 
 dfBullet::~dfBullet()
 {
-	delete m_animate_msg;
 }
