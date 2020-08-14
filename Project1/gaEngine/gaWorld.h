@@ -78,7 +78,7 @@ public:
 		return m_sprites;
 	}
 
-	void findAABBCollision(fwAABBox& box, 
+	void findAABBCollision(const fwAABBox& box, 
 		std::list<gaEntity*>& collisions, 
 		std::list<dfSuperSector*>& sectors,
 		gaEntity* source);								// find colliding entities & sectors AABB
@@ -88,10 +88,8 @@ public:
 		glm::vec3& direction,
 		std::list<gaCollisionPoint>& collisions);		// extended collision test after a successful AABB collision
 
-	int wantToMove(gaEntity *entity, 
-		int flag, 
-		const glm::mat4& worldMatrix,
-		const glm::vec3& d);							// handle an entity requesting to move
+	void wantToMove(gaEntity *entity, 
+		gaMessage *message);							// handle an entity requesting to move
 
 	void push(gaMessage* message);
 	void pushForNextFrame(gaMessage* message);

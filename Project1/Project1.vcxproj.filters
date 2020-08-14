@@ -926,6 +926,9 @@
     <ClInclude Include="gaEngine\Collider.h">
       <Filter>Fichiers d%27en-tête\gaEngine</Filter>
     </ClInclude>
+    <ClInclude Include="framework\fwTransforms.h">
+      <Filter>Fichiers d%27en-tête\Framework</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\fragment.glsl">

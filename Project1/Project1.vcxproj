@@ -336,6 +336,7 @@
     <ClInclude Include="framework\fwPostProcessing.h" />
     <ClInclude Include="framework\fwSprites.h" />
     <ClInclude Include="framework\fwTextures.h" />
+    <ClInclude Include="framework\fwTransforms.h" />
     <ClInclude Include="framework\geometries\fwBoxGeometry.h" />
     <ClInclude Include="framework\geometries\fwGeometryCylinder.h" />
     <ClInclude Include="framework\geometries\fwGeometrySphere.h" />

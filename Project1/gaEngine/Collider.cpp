@@ -48,16 +48,15 @@ void GameEngine::Collider::set(fwAABBox* modelAABB, glm::mat4* worldMatrix, glm:
  * check 2 colliders after a successful worldAABB collision detection
  */
 bool Collider::collision(const Collider& source, 
-	const glm::mat4& worldMatrix,
 	const glm::vec3& forward,
 	const glm::vec3& down,
 	std::list<gaCollisionPoint>& collisions)
 {
 	if (source.m_type == ColliderType::AABB && m_type == ColliderType::GEOMETRY) {
-		return collisionAABBgeometry(source, *this, worldMatrix, forward, down, collisions);
+		return collisionAABBgeometry(source, *this, forward, down, collisions);
 	}
 	else if (m_type == ColliderType::AABB && source.m_type == ColliderType::GEOMETRY) {
-		return collisionAABBgeometry(*this, source, worldMatrix, forward, down, collisions);
+		return collisionAABBgeometry(*this, source, forward, down, collisions);
 	}
 	else if (m_type == ColliderType::AABB && source.m_type == ColliderType::AABB) {
 		return true;	// the worldAABB already collide, no need for further test
@@ -70,7 +69,6 @@ bool Collider::collision(const Collider& source,
  */
 bool Collider::collisionAABBgeometry(const Collider& aabb, 
 	const Collider& geometry, 
-	const glm::mat4& worldMatrix,
 	const glm::vec3& forward, // in world space
 	const glm::vec3& down,
 	std::list<gaCollisionPoint>& collisions)
@@ -81,7 +79,7 @@ bool Collider::collisionAABBgeometry(const Collider& aabb,
 	float u, v, w, t;
 
 	// move the AABB from model space to worldSpace and then to geometry model space
-	glm::mat4 mat = *geometry.m_inverseWorldMatrix * worldMatrix;
+	glm::mat4 mat = *geometry.m_inverseWorldMatrix * *aabb.m_worldMatrix;
 	fwAABBox aabb_geometry_space(aabb.m_aabb, mat);
 	glm::vec3 forward_geometry_space = glm::normalize(glm::vec3(*geometry.m_inverseWorldMatrix * glm::vec4(forward, 1.0)));
 

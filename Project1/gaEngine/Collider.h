@@ -30,7 +30,6 @@ namespace GameEngine
 
 		bool collisionAABBgeometry(const Collider& aabb, 
 			const Collider& geometry, 
-			const glm::mat4& worldMatrix,
 			const glm::vec3& forward,
 			const glm::vec3& down,
 			std::list<gaCollisionPoint>& collisions);							// do a AABB vs geometry collision check. Return the first collision
@@ -50,7 +49,6 @@ namespace GameEngine
 			glm::mat4* worldMatrix,
 			glm::mat4* inverseWorldMatrix);
 		bool collision(const Collider& source,
-			const glm::mat4& worldMatrix,
 			const glm::vec3& forward, 
 			const glm::vec3& down,
 			std::list<gaCollisionPoint>& collisions);							// run a collision test between 2 colliders

@@ -17,6 +17,41 @@ dfComponentAI::dfComponentAI():
 	m_movement = m_direction * 0.01f;
 }
 
+/**
+ *
+ */
+void dfComponentAI::tryToMove(void)
+{
+	m_direction = glm::rotateY(m_direction, m_alpha);
+
+	// align the object to the direction
+	//convert the direction vector to a quaternion
+	glm::vec3 _up = glm::vec3(0.0f, 1.0f, 0.0f);
+	glm::vec3 right;
+	glm::vec3 up;
+
+	if (m_direction != glm::vec3(0)) {
+		m_direction = glm::normalize(m_direction);
+		right = glm::normalize(glm::cross(_up, m_direction));
+		up = glm::cross(m_direction, right);
+	}
+	else {
+		up = _up;
+	}
+
+	m_transforms.m_direction = m_direction * 0.06f;
+	m_transforms.m_position = m_entity->position() + m_transforms.m_direction;
+	m_transforms.m_quaternion = glm::quatLookAt(m_direction, up);
+	m_transforms.m_scale = m_entity->get_scale();
+
+	m_entity->sendDelayedMessage(GA_MSG_WANT_TO_MOVE, 
+		GA_MSG_WANT_TO_MOVE_BREAK_IF_FALL, 
+		&m_transforms);
+}
+
+/**
+ *
+ */
 void dfComponentAI::dispatchMessage(gaMessage* message)
 {
 
@@ -26,11 +61,15 @@ void dfComponentAI::dispatchMessage(gaMessage* message)
 		m_center = m_entity->position();
 		m_alpha = (rand() / (float)RAND_MAX - 0.f) / 10.0f; // rotation angle to apply to the direction vector
 		m_time = rand() % (5 * 30);			// move 5s maximum using the same rotation angle
-		m_movement = m_direction * 0.06f;
-		m_entity->sendMessage(m_entity->name(), GA_MSG_WANT_TO_MOVE);
+		tryToMove();
 		break;
 
-	case GA_MSG_WANT_TO_MOVE:
+	case GA_MSG_COLLIDE:
+	case GA_MSG_WOULD_FALL:
+		m_direction = -m_direction;
+		// PASS THROUGH
+
+	case GA_MSG_MOVE:
 		// move request was accepted, so trigger a new one
 		if (!m_active) {
 			break;
@@ -43,45 +82,7 @@ void dfComponentAI::dispatchMessage(gaMessage* message)
 			m_time = rand() % (5 * 30);
 		}
 
-		// align the object to the direction
-		//convert the direction vector to a quaternion
-		glm::vec3 _up = glm::vec3(0.0f, 1.0f, 0.0f);
-		glm::vec3 right;
-		glm::vec3 up;
-
-		if (m_direction != glm::vec3(0)) {
-			m_direction = glm::normalize(m_direction);
-			right = glm::normalize(glm::cross(_up, m_direction));
-			up = glm::cross(m_direction, right);
-		}
-		else {
-			up = _up;
-		}
-
-		m_direction = glm::rotateY(m_direction, m_alpha);
-		m_movement = m_direction * 0.06f;
-
-		glm::quat quaternion = glm::quatLookAt(m_direction, up);
-		glm::vec3 position = m_entity->position() + m_movement;
-
-		glm::mat4 rotationMatrix = glm::toMat4(quaternion);
-		glm::mat4 scaleMatrix = glm::scale(m_entity->get_scale());
-		glm::mat4 translateMatrix = glm::translate(position);
-		glm::mat4 modelMatrix = translateMatrix * scaleMatrix * rotationMatrix;
-
-		switch (m_entity->tryToMove(GA_MSG_WANT_TO_MOVE_BREAK_IF_FALL, modelMatrix, m_movement)) {
-		case GA_MSG_COLLIDE:
-		case GA_MSG_WOULD_FALL:
-			m_direction = -m_direction;
-			break;
-
-		case GA_MSG_MOVE:
-			m_entity->sendInternalMessage(GA_MSG_ROTATE, GA_MSG_ROTATE_QUAT, &quaternion);
-			m_entity->sendInternalMessage(GA_MSG_MOVE, 0, &position);
-			break;
-		}
-
-		m_entity->sendDelayedMessage(GA_MSG_WANT_TO_MOVE);
+		tryToMove();
 		break;
 
 	case DF_MESSAGE_DIES:

@@ -25,8 +25,15 @@ void ComponentMesh::dispatchMessage(gaMessage* message)
 {
 	switch (message->m_action) {
 	case GA_MSG_MOVE: {
-		glm::vec3* position = (glm::vec3*)message->m_extra;
-		translate(position);
+		if (message->m_extra != nullptr) {
+			glm::vec3* position = (glm::vec3*)message->m_extra;
+			translate(position);
+		}
+		else {
+			worldMatrix(m_entity->worldMatrix(),
+				m_entity->inverseWorldMatrix()
+			);
+		}
 		break;
 	}
 	case GA_MSG_ROTATE: {

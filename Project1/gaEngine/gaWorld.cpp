@@ -5,6 +5,7 @@
 
 #include "../framework/fwScene.h"
 #include "../framework/fwMesh.h"
+#include "../framework/fwTransforms.h"
 
 #include "gaEntity.h"
 
@@ -322,7 +323,10 @@ gaEntity* gaWorld::getEntity(const std::string& name)
 /**
  * parse entities to check for collision with the given one
  */
-void gaWorld::findAABBCollision(fwAABBox& box, std::list<gaEntity*>& entities, std::list<dfSuperSector*>& sectors, gaEntity* source)
+void gaWorld::findAABBCollision(const fwAABBox& box, 
+	std::list<gaEntity*>& entities, 
+	std::list<dfSuperSector*>& sectors, 
+	gaEntity* source)
 {
 	for (auto entry : m_entities) {
 		// test all entity with the same name
@@ -380,13 +384,12 @@ bool gaWorld::checkCollision(gaEntity* source, fwCylinder& bounding, glm::vec3& 
 /**
  * An entity wants to move
  */
-int gaWorld::wantToMove(gaEntity *entity, 
-	int flag, 
-	const glm::mat4& worldMatrix,
-	const glm::vec3& direction)
+void gaWorld::wantToMove(gaEntity *entity, gaMessage *message)
 {
 	gaEntity* nearest_entity = nullptr;
 	dfSuperSector* nearest_sector = nullptr;
+	Framework::fwTransforms* tranform = (Framework::fwTransforms*)message->m_extra;
+
 	float distance = 99999999.0f;
 	float distance_sector = 99999999.0f;
 	float d;
@@ -396,16 +399,17 @@ int gaWorld::wantToMove(gaEntity *entity,
 	std::list<gaCollisionPoint> collisions;
 
 	glm::vec3 collisionPoint;
-	fwAABBox aabb(entity->modelAABB(), worldMatrix);
+	entity->pushTransformations();
+	entity->transform(tranform);
 
 	glm::vec3 down(0, -1, 0);
 
 	// do an AABB collision against AABB collision with entities
-	findAABBCollision(aabb, entities, sectors, entity);
+	findAABBCollision(entity->worldAABB(), entities, sectors, entity);
 
 	// and then collide the objects
 	for (auto ent : entities) {
-		if (entity->collide(ent, worldMatrix, direction, down, collisions)) {
+		if (entity->collide(ent, tranform->m_direction, down, collisions)) {
 			// only test entities that can physically checkCollision
 			d = ent->distanceTo(entity);
 			if (d < distance) {
@@ -419,7 +423,7 @@ int gaWorld::wantToMove(gaEntity *entity,
 	bool fall = true;
 
 	for (auto sector : sectors) {
-		if (entity->collide(sector->collider(), worldMatrix, direction, down, collisions)) {
+		if (entity->collide(sector->collider(), tranform->m_direction, down, collisions)) {
 
 			for (auto& collision : collisions) {
 				switch (collision.m_location) {
@@ -448,21 +452,24 @@ int gaWorld::wantToMove(gaEntity *entity,
 
 	if (fall) {
 		// if there is no floor
-		if (flag == GA_MSG_WANT_TO_MOVE_BREAK_IF_FALL) {
+		if (message->m_value == GA_MSG_WANT_TO_MOVE_BREAK_IF_FALL) {
 			// if the entity wants to be informed of falling
-			return GA_MSG_WOULD_FALL;
+			message->m_action = GA_MSG_WOULD_FALL;
+			entity->popTransformations();			// restore previous position
 		}
 		else {
 			// trigger physic engine
 		}
 	}
-
-	if (distance < 99999999.0f || distance_sector < 99999999.0f) {
-		return GA_MSG_COLLIDE;
+	else if (distance < 99999999.0f || distance_sector < 99999999.0f) {
+		message->m_action = GA_MSG_COLLIDE;
+		entity->popTransformations();				// restore previous position
 	}
-
-	// accept the move
-	return GA_MSG_MOVE;
+	else {
+		// accept the move
+		message->m_action = GA_MSG_MOVE;
+		message->m_extra = nullptr;			// object was already moved
+	}
 }
 
 /**
@@ -525,6 +532,11 @@ void gaWorld::process(time_t delta)
 				message->m_pServer = m_entities[message->m_server].front();
 			}
 			for (auto entity : m_entities[message->m_client]) {
+
+				if (message->m_action == GA_MSG_WANT_TO_MOVE) {
+					wantToMove(entity, message);
+				}
+
 				entity->dispatchMessage(message);
 			}
 		}

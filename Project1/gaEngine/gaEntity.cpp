@@ -67,7 +67,7 @@ void gaEntity::addChild(gaEntity* entity)
 /**
  * quick AABB check for entities collision
  */
-bool gaEntity::collideAABB(fwAABBox& box)
+bool gaEntity::collideAABB(const fwAABBox& box)
 {
 	return m_worldBounding.intersect(box);
 }
@@ -76,24 +76,22 @@ bool gaEntity::collideAABB(fwAABBox& box)
  * extended collision using colliders
  */
 bool gaEntity::collide(gaEntity* entity, 
-	const glm::mat4& worldMatrix,
 	const glm::vec3& forward,
 	const glm::vec3& down,
 	std::list<gaCollisionPoint>& collisions)
 {
-	return m_collider.collision(entity->m_collider, worldMatrix, forward, down, collisions);
+	return m_collider.collision(entity->m_collider, forward, down, collisions);
 }
 
 /**
  * extended collision using colliders
  */
 bool gaEntity::collide(GameEngine::Collider collider, 
-	const glm::mat4& worldMatrix,
 	const glm::vec3& forward,
 	const glm::vec3& down,
 	std::list<gaCollisionPoint>& collisions)
 {
-	return m_collider.collision(collider, worldMatrix, forward, down, collisions);
+	return m_collider.collision(collider, forward, down, collisions);
 }
 
 /**
@@ -162,6 +160,15 @@ void gaEntity::moveTo(const glm::vec3& position)
 }
 
 /**
+ * apply a transformation and update the worldAABB
+ */
+void gaEntity::transform(Framework::fwTransforms* transform)
+{
+	fwObject3D::transform(transform);
+	updateWorldAABB();
+}
+
+/**
  * update the world AABB based on position
  */
 void gaEntity::updateWorldAABB(void)
@@ -169,22 +176,6 @@ void gaEntity::updateWorldAABB(void)
 	updateWorldMatrix(nullptr);
 
 	m_worldBounding.apply(m_modelAABB, m_worldMatrix);
-}
-
-/**
- * try to move an manage collision
- */
-int gaEntity::tryToMove(int flag, const glm::mat4& worldMatrix, const glm::vec3& direction)
-{
-	switch (g_gaWorld.wantToMove(this, flag, worldMatrix, direction)) {
-	case GA_MSG_COLLIDE:
-		return GA_MSG_COLLIDE;
-
-	case GA_MSG_WOULD_FALL:
-		return GA_MSG_WOULD_FALL;
-	}
-
-	return GA_MSG_MOVE;
 }
 
 /**
@@ -202,8 +193,12 @@ void gaEntity::dispatchMessage(gaMessage* message)
 		break;
 
 	case GA_MSG_MOVE:
-		translate((glm::vec3*)message->m_extra);
-		updateWorldAABB();
+		// if the there is no position, this is just a notification
+		if (message->m_extra != nullptr) {
+			translate((glm::vec3*)message->m_extra);
+			updateWorldAABB();
+		}
+
 		// detect if the entity moved to a new sector
 		m_supersector = g_gaWorld.findSector(m_supersector, position());
 		break;

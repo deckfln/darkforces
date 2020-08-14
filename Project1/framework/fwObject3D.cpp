@@ -15,6 +15,39 @@ fwObject3D::fwObject3D(const glm::vec3& position):
 {
 }
 
+/**
+ * push the current transformations
+ */
+void fwObject3D::pushTransformations(void)
+{
+	m_saveModelMatrix = m_modelMatrix;
+	m_saveWorldMatrix = m_worldMatrix;
+	m_saveInverseWorldMatrix = m_inverseWorldMatrix;
+	m_savePosition = m_position;
+	m_saveScale = m_scale;
+	m_saverotation = m_rotation;
+	m_saveQuaternion = m_quaternion;
+}
+
+/**
+ * pop the transformations
+ */
+void fwObject3D::popTransformations(void)
+{
+	m_modelMatrix = m_saveModelMatrix;
+	m_worldMatrix = m_saveWorldMatrix;
+	m_inverseWorldMatrix = m_saveInverseWorldMatrix;
+	m_position = m_savePosition;
+	m_scale = m_saveScale;
+	m_rotation = m_saverotation;
+	m_quaternion = m_saveQuaternion;
+
+	m_updated = false;
+}
+
+/**
+ * set the object name
+ */
 fwObject3D &fwObject3D::set_name(const std::string& _name)
 {
 	m_name = _name;
@@ -141,12 +174,47 @@ fwObject3D &fwObject3D::set_scale(float _scale)
 }
 
 /**
+ *
+ */
+fwObject3D& fwObject3D::transform(const fwTransforms& transforms)
+{
+	m_position = transforms.m_position;
+	m_scale = transforms.m_scale;
+	m_quaternion = transforms.m_quaternion;
+	m_updated = true;
+
+	return *this;
+}
+
+fwObject3D& fwObject3D::transform(fwTransforms* pTransforms)
+{
+	m_position = pTransforms->m_position;
+	m_scale = pTransforms->m_scale;
+	m_quaternion = pTransforms->m_quaternion;
+	m_updated = true;
+
+	return *this;
+}
+
+/**
  * Force a worldMatrix
  */
+void fwObject3D::worldMatrix(const glm::mat4& worldMatrix, const glm::mat4& inverseWorldMatrix)
+{
+	m_worldMatrix = worldMatrix;
+	m_inverseWorldMatrix = inverseWorldMatrix;
+	m_updated = false;
+}
 void fwObject3D::worldMatrix(const glm::mat4& worldMatrix)
 {
 	m_worldMatrix = worldMatrix;
-	m_inverseWorldMatrix = glm::inverse(m_worldMatrix);
+	m_inverseWorldMatrix = glm::inverse(worldMatrix);
+	m_updated = false;
+}
+void fwObject3D::worldMatrix(glm::mat4* pWorldMatrix, glm::mat4* pInverseWorldMatrix)
+{
+	m_worldMatrix = *pWorldMatrix;
+	m_inverseWorldMatrix = *pInverseWorldMatrix;
 	m_updated = false;
 }
 void fwObject3D::worldMatrix(glm::mat4* pWorldMatrix)

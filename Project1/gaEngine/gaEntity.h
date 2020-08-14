@@ -7,6 +7,7 @@
 #include <glm/vec3.hpp>
 #include <glm/gtc/quaternion.hpp>
 
+#include "../framework/fwTransforms.h"
 #include "../framework/fwObject3D.h"
 #include "../framework/fwAABBox.h"
 #include "gaMessage.h"
@@ -63,16 +64,16 @@ public:
 	void set(const std::string& v, void* ptr) { m_attributes[v] = ptr; };
 	void* get(const std::string& v) { return m_attributes[v]; };
 
+	void transform(Framework::fwTransforms* transform);	// apply a transformation and update the worldAABB
+
 	gaComponent *findComponent(int type);				// check all components to find one with the proper type
 	void addChild(gaEntity* entity);					// add an entity inside that one (and increase the AABB if needed)
-	bool collideAABB(fwAABBox& box);					// quick test to find AABB collision
+	bool collideAABB(const fwAABBox& box);				// quick test to find AABB collision
 	bool collide(gaEntity* entity, 
-		const glm::mat4& worldMatrix,
 		const glm::vec3& forward, 
 		const glm::vec3& down,
 		std::list<gaCollisionPoint>& collisions);		// extended collision using colliders
 	bool collide(GameEngine::Collider collider,
-		const glm::mat4& worldMatrix,
 		const glm::vec3& forward,
 		const glm::vec3& down,
 		std::list<gaCollisionPoint>& collisions);		// extended collision using colliders

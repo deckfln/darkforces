@@ -79,7 +79,7 @@ bool dfObject3D::update(time_t t)
 				mat4x4 = m_vue->firstFrame(m_lastFrame);
 				m_lastFrame = t;
 			}
-			m_componentMesh.worldMatrix(*mat4x4);
+			m_componentMesh.worldMatrix(mat4x4);
 			m_worldBounding.apply(m_source->modelAABB(), *mat4x4);
 		}
 		else {
