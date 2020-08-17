@@ -15,7 +15,7 @@ void dfBulletExplode::dispatchMessage(gaMessage* message)
 	switch (message->m_action) {
 	case DF_MESSAGE_END_LOOP:
 		// remove the explosition from the world
-		g_gaWorld.sendMessageDelayed(m_name, "_world", GA_MSG_DELETE_ENTITY, 0, nullptr);
+		g_gaWorld.sendMessageDelayed(m_name, "_world", gaMessage::DELETE_ENTITY, 0, nullptr);
 		break;
 	}
 

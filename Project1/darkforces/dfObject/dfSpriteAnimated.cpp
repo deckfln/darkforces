@@ -44,14 +44,14 @@ void dfSpriteAnimated::state(int state)
 			m_state != DF_STATE_ENEMY_STAY_STILL &&
 			m_source->framerate(m_state) != 0)
 		{
-			g_gaWorld.sendMessageDelayed(m_name, m_name, GA_MSG_TIMER, 0, nullptr);
+			g_gaWorld.sendMessageDelayed(m_name, m_name, gaMessage::TIMER, 0, nullptr);
 		}
 		else if (m_state == DF_STATE_ENEMY_LIE_DEAD) {
 			m_physical = false;			// remove collision box, they actor is dead
 		}
 	}
 	else {
-		g_gaWorld.sendMessageDelayed(m_name, m_name, GA_MSG_TIMER, 0, nullptr);
+		g_gaWorld.sendMessageDelayed(m_name, m_name, gaMessage::TIMER, 0, nullptr);
 	}
 }
 
@@ -121,10 +121,10 @@ void dfSpriteAnimated::dispatchMessage(gaMessage* message)
 	case DF_MSG_STATE:
 		state(message->m_value);
 		break;
-	case GA_MSG_TIMER:
+	case gaMessage::TIMER:
 		if (update(message->m_delta)) {
 			// continue the animation loop
-			g_gaWorld.sendMessageDelayed(m_name, m_name, GA_MSG_TIMER, 0, nullptr);
+			g_gaWorld.sendMessageDelayed(m_name, m_name, gaMessage::TIMER, 0, nullptr);
 		}
 		else {
 			// end of animation loop
@@ -136,7 +136,7 @@ void dfSpriteAnimated::dispatchMessage(gaMessage* message)
 		if (m_loopAnimation) {
 			// restart the counters
 			m_currentFrame = 0;
-			g_gaWorld.sendMessageDelayed(m_name, m_name, GA_MSG_TIMER, 0, nullptr);
+			g_gaWorld.sendMessageDelayed(m_name, m_name, gaMessage::TIMER, 0, nullptr);
 		}
 		break;
 	}

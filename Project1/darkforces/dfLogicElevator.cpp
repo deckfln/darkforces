@@ -327,7 +327,7 @@ dfMesh *dfLogicElevator::buildGeometry(fwMaterial* material, std::vector<dfBitma
 
 	// build the model AABB
 	m_modelAABB = m_mesh->modelAABB();
-	sendInternalMessage(GA_MSG_MOVE, 0, (void*)&m_mesh->position());
+	sendInternalMessage(gaMessage::MOVE, 0, (void*)&m_mesh->position());
 
 	// change the default collider (AABB) to Geometry
 	m_collider.set(m_mesh->geometry(), &m_worldMatrix, &m_inverseWorldMatrix);
@@ -357,7 +357,7 @@ void dfLogicElevator::init(int stopID)
 
 	if (m_type == dfElevatorType::CHANGE_LIGHT) {
 		// kick start animation
-		g_gaWorld.sendMessageDelayed(m_name, m_name, GA_MSG_TIMER, 0, nullptr);
+		g_gaWorld.sendMessageDelayed(m_name, m_name, gaMessage::TIMER, 0, nullptr);
 	}
 
 	// send messages to the clients
@@ -397,7 +397,7 @@ void dfLogicElevator::moveToNextStop(void)
 		if (m_mesh) {
 			dfVOC* voc = m_sounds[dfElevatorSound::START];
 			if (voc != nullptr) {
-				sendInternalMessage(GA_MSG_PLAY_SOUND, 0, voc->sound());
+				sendInternalMessage(gaMessage::PLAY_SOUND, 0, voc->sound());
 #ifdef DEBUG
 				gaDebugLog(0, "dfLogicElevator::moveToNextStop play", voc->name());
 #endif
@@ -405,7 +405,7 @@ void dfLogicElevator::moveToNextStop(void)
 			// play the moving sound if it exists
 			voc = m_sounds[dfElevatorSound::MOVE];
 			if (voc != nullptr) {
-				sendInternalMessage(GA_MSG_PLAY_SOUND, 0, voc->sound());
+				sendInternalMessage(gaMessage::PLAY_SOUND, 0, voc->sound());
 #ifdef DEBUG
 				gaDebugLog(0, "dfLogicElevator::moveToNextStop play", voc->name());
 #endif
@@ -481,14 +481,14 @@ bool dfLogicElevator::animateMoveZ(void)
 				if (stop->time() != 0 && m_mesh) {
 					dfVOC* voc = m_sounds[dfElevatorSound::MOVE];
 					if (voc != nullptr) {
-						sendInternalMessage(GA_MSG_STOP_SOUND, 0, voc->sound());
+						sendInternalMessage(gaMessage::STOP_SOUND, 0, voc->sound());
 #ifdef DEBUG
 						gaDebugLog(0, "dfLogicElevator::animateMoveZ stop", voc->name());
 #endif
 					}
 					voc = m_sounds[dfElevatorSound::END];
 					if ( voc != nullptr) {
-						sendInternalMessage(GA_MSG_STOP_SOUND, 0, voc->sound());
+						sendInternalMessage(gaMessage::STOP_SOUND, 0, voc->sound());
 #ifdef DEBUG
 						gaDebugLog(0, "dfLogicElevator::animateMoveZ stop", voc->name());
 #endif
@@ -500,7 +500,7 @@ bool dfLogicElevator::animateMoveZ(void)
 				if (m_mesh) {
 					dfVOC* voc = m_sounds[dfElevatorSound::MOVE];
 					if (voc != nullptr) {
-						sendInternalMessage(GA_MSG_STOP_SOUND, 0, voc->sound());
+						sendInternalMessage(gaMessage::STOP_SOUND, 0, voc->sound());
 #ifdef DEBUG
 						gaDebugLog(0, "dfLogicElevator::animateMoveZ stop", voc->name());
 #endif
@@ -508,7 +508,7 @@ bool dfLogicElevator::animateMoveZ(void)
 
 					voc = m_sounds[dfElevatorSound::END];
 					if (voc != nullptr) {
-						sendInternalMessage(GA_MSG_PLAY_SOUND, 0, voc->sound());
+						sendInternalMessage(gaMessage::PLAY_SOUND, 0, voc->sound());
 #ifdef DEBUG
 						gaDebugLog(0, "dfLogicElevator::animateMoveZ play", voc->name());
 #endif
@@ -545,7 +545,7 @@ bool dfLogicElevator::animateMoveZ(void)
 	}
 
 	// next animation
-	g_gaWorld.sendMessageDelayed(m_name, m_name, GA_MSG_TIMER, 0, nullptr);
+	g_gaWorld.sendMessageDelayed(m_name, m_name, gaMessage::TIMER, 0, nullptr);
 	return false;
 }
 
@@ -571,7 +571,7 @@ bool dfLogicElevator::animate(time_t delta)
 			}
 			else {
 				// next animation
-				g_gaWorld.sendMessageDelayed(m_name, m_name, GA_MSG_TIMER, 0, nullptr);
+				g_gaWorld.sendMessageDelayed(m_name, m_name, gaMessage::TIMER, 0, nullptr);
 			}
 		}
 		break;
@@ -634,33 +634,33 @@ void dfLogicElevator::moveTo(float z)
 	case dfElevatorType::INV:
 	case dfElevatorType::DOOR:
 		p.y = z / 10.0f;
-		sendInternalMessage(GA_MSG_MOVE, 0, &p);
+		sendInternalMessage(gaMessage::MOVE, 0, &p);
 		break;
 	case dfElevatorType::BASIC:
 		p.y = z / 10.0f;
-		sendInternalMessage(GA_MSG_MOVE, 0, &p);
+		sendInternalMessage(gaMessage::MOVE, 0, &p);
 		break;
 	case dfElevatorType::MOVE_FLOOR:
 		// move the sector the elevator is based on (for collision detection)
 		p.y = z / 10.0f;
-		sendInternalMessage(GA_MSG_MOVE, 0, &p);
+		sendInternalMessage(gaMessage::MOVE, 0, &p);
 		m_pSector->currentFloorAltitude(z);
 		break;
 	case dfElevatorType::MOVE_CEILING:
 		// move the sector the elevator is based on (for collision detection)
 		p.y = z / 10.0f;
-		sendInternalMessage(GA_MSG_MOVE, 0, &p);
+		sendInternalMessage(gaMessage::MOVE, 0, &p);
 		m_pSector->ceiling(z);
 		break;
 	case dfElevatorType::MORPH_SPIN1:
 	case dfElevatorType::MORPH_SPIN2:
 		glm::vec3 r = glm::vec3(0, glm::radians(z), 0);
-		sendInternalMessage(GA_MSG_ROTATE, 0, &r);
+		sendInternalMessage(gaMessage::ROTATE, 0, &r);
 		break;
 	case dfElevatorType::MORPH_MOVE1:
 		glm::vec3 p = m_center + m_move * z;
 		dfLevel::level2gl(p);
-		sendInternalMessage(GA_MSG_MOVE, 0, &p);
+		sendInternalMessage(gaMessage::MOVE, 0, &p);
 		break;
 	case dfElevatorType::CHANGE_LIGHT:
 		m_pSector->changeAmbient(z);
@@ -741,12 +741,12 @@ void dfLogicElevator::dispatchMessage(gaMessage* message)
 		}
 		break;
 
-	case GA_MSG_TIMER:
+	case gaMessage::TIMER:
 		animate(message->m_delta);
 		break;
 
-	case GA_MSG_ROTATE:
-	case GA_MSG_MOVE:
+	case gaMessage::ROTATE:
+	case gaMessage::MOVE:
 		// self reference
 		break;
 

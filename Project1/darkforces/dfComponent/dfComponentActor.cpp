@@ -95,7 +95,7 @@ void dfComponentActor::fire(const glm::vec3& direction)
 void dfComponentActor::die(void)
 {
 	// inform the world it can remove the entity from its list
-	//g_gaWorld.sendMessage(m_parent->name(), "_world", GA_MSG_DELETE_ENTITY, 0, nullptr);
+	//g_gaWorld.sendMessage(m_parent->name(), "_world", gaMessage::DELETE_ENTITY, 0, nullptr);
 	((dfSpriteAnimated*)m_entity)->state(DF_STATE_ENEMY_DIE_FROM_SHOT);
 
 	gaDebugLog(1, "dfActor::die", "remove " + m_entity->name() + " the entity from the world");

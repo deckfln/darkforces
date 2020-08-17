@@ -156,7 +156,7 @@ void gaEntity::add2scene(fwScene* scene)
  */
 void gaEntity::moveTo(const glm::vec3& position)
 {
-	sendInternalMessage(GA_MSG_MOVE, 0, (void *)&position);
+	sendInternalMessage(gaMessage::MOVE, 0, (void *)&position);
 }
 
 /**
@@ -185,14 +185,14 @@ void gaEntity::dispatchMessage(gaMessage* message)
 {
 	switch (message->m_action)
 	{
-	case GA_MSG_MOVE_TO:
+	case gaMessage::MOVE_TO:
 		// move the entity following a direction
 		moveBy((glm::vec3*)message->m_extra);
 
-		sendInternalMessage(GA_MSG_MOVE, 0, (void *)&position());
+		sendInternalMessage(gaMessage::MOVE, 0, (void *)&position());
 		break;
 
-	case GA_MSG_MOVE:
+	case gaMessage::MOVE:
 		// if the there is no position, this is just a notification
 		if (message->m_extra != nullptr) {
 			translate((glm::vec3*)message->m_extra);
@@ -203,16 +203,16 @@ void gaEntity::dispatchMessage(gaMessage* message)
 		m_supersector = g_gaWorld.findSector(m_supersector, position());
 		break;
 
-	case GA_MSG_ROTATE:
+	case gaMessage::ROTATE:
 		// take the opportunity to update the world bounding box
 		switch (message->m_value) {
-			case GA_MSG_ROTATE_VEC3:
+		case gaMessage::Flag::ROTATE_VEC3:
 				rotate((glm::vec3*)message->m_extra);
 				break;
-			case GA_MSG_ROTATE_QUAT:
+		case gaMessage::Flag::ROTATE_QUAT:
 				rotate((glm::quat*)message->m_extra);
 				break;
-			case GA_MSG_ROTATE_BY:
+		case gaMessage::Flag::ROTATE_BY:
 				rotateBy((glm::vec3*)message->m_extra);
 				break;
 		}

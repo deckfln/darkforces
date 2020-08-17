@@ -44,8 +44,8 @@ void dfComponentAI::tryToMove(void)
 	m_transforms.m_quaternion = glm::quatLookAt(m_direction, up);
 	m_transforms.m_scale = m_entity->get_scale();
 
-	m_entity->sendDelayedMessage(GA_MSG_WANT_TO_MOVE, 
-		GA_MSG_WANT_TO_MOVE_BREAK_IF_FALL, 
+	m_entity->sendDelayedMessage(gaMessage::WANT_TO_MOVE, 
+		gaMessage::Flag::WANT_TO_MOVE_BREAK_IF_FALL, 
 		&m_transforms);
 }
 
@@ -56,7 +56,7 @@ void dfComponentAI::dispatchMessage(gaMessage* message)
 {
 
 	switch (message->m_action) {
-	case GA_MSG_WORLD_INSERT:
+	case gaMessage::WORLD_INSERT:
 		// kick start the AI
 		m_center = m_entity->position();
 		m_alpha = (rand() / (float)RAND_MAX - 0.f) / 10.0f; // rotation angle to apply to the direction vector
@@ -64,12 +64,12 @@ void dfComponentAI::dispatchMessage(gaMessage* message)
 		tryToMove();
 		break;
 
-	case GA_MSG_COLLIDE:
-	case GA_MSG_WOULD_FALL:
+	case gaMessage::COLLIDE:
+	case gaMessage::WOULD_FALL:
 		m_direction = -m_direction;
 		// PASS THROUGH
 
-	case GA_MSG_MOVE:
+	case gaMessage::MOVE:
 		// move request was accepted, so trigger a new one
 		if (!m_active) {
 			break;

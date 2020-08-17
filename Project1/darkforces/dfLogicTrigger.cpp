@@ -143,7 +143,7 @@ void dfLogicTrigger::boundingBox(glm::vec2& left, glm::vec2& right, float floor,
 
 	m_modelAABB = fwAABBox(p1_gl, p2_gl);
 
-	sendInternalMessage(GA_MSG_MOVE, 0, &p);
+	sendInternalMessage(gaMessage::MOVE, 0, &p);
 }
 
 /**
@@ -162,7 +162,7 @@ void dfLogicTrigger::boundingBox(fwAABBox& box)
 	p1_gl = p1_gl - p;
 	m_modelAABB = fwAABBox(p_gl, p1_gl);
 
-	sendInternalMessage(GA_MSG_MOVE, 0, &p);
+	sendInternalMessage(gaMessage::MOVE, 0, &p);
 }
 
 /**

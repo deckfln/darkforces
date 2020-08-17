@@ -39,7 +39,7 @@ void gaWorld::addClient(gaEntity* client)
 {
 	m_entities[client->name()].push_back(client);
 	client->OnWorldInsert();
-	sendImmediateMessage("_world", client->name(), GA_MSG_WORLD_INSERT, 0, nullptr);
+	sendImmediateMessage("_world", client->name(), gaMessage::WORLD_INSERT, 0, nullptr);
 }
 
 /**
@@ -53,7 +53,7 @@ void gaWorld::removeClient(gaEntity* client)
 	}
 
 	client->OnWorldRemove();
-	sendImmediateMessage("_world", client->name(), GA_MSG_WORLD_REMOVE, 0, nullptr);
+	sendImmediateMessage("_world", client->name(), gaMessage::WORLD_REMOVE, 0, nullptr);
 
 	// remove from the list
 	m_entities[client->name()].remove(client);
@@ -398,7 +398,6 @@ void gaWorld::wantToMove(gaEntity *entity, gaMessage *message)
 	std::list<dfSuperSector*> sectors;
 	std::list<gaCollisionPoint> collisions;
 
-	glm::vec3 collisionPoint;
 	entity->pushTransformations();
 	entity->transform(tranform);
 
@@ -437,7 +436,7 @@ void gaWorld::wantToMove(gaEntity *entity, gaMessage *message)
 				case fwCollisionLocation::BOTTOM:
 					fall = false;
 					/*
-					if (flag != GA_MSG_WANT_TO_MOVE_LASER) {
+					if (flag != gaMessage::Flag::WANT_TO_MOVE_LASER) {
 						float d = p.y + p.y - collision.m_position.y;
 						if (d > 0.5) {
 							p.y = collision.m_position.y;		// move up the stair
@@ -450,23 +449,30 @@ void gaWorld::wantToMove(gaEntity *entity, gaMessage *message)
 		}
 	}
 
-	if (fall && message->m_value != GA_MSG_WANT_TO_MOVE_LASER) {
+	if (fall && message->m_value != gaMessage::Flag::WANT_TO_MOVE_LASER) {
 		// if there is no floor
 		switch (message->m_value) {
-		case GA_MSG_WANT_TO_MOVE_BREAK_IF_FALL:
+		case gaMessage::Flag::WANT_TO_MOVE_BREAK_IF_FALL:
 			// if the entity wants to be informed of falling
-			message->m_action = GA_MSG_WOULD_FALL;
+			message->m_action = gaMessage::WOULD_FALL;
 			entity->popTransformations();			// restore previous position
 			break;
 		}
 	}
 	else if (distance < 99999999.0f || distance_sector < 99999999.0f) {
-		message->m_action = GA_MSG_COLLIDE;
+		message->m_action = gaMessage::gaMessage::COLLIDE;
+		if (distance < 99999999.0f) {
+			message->m_server = nearest_entity->name();
+			message->m_value = gaMessage::Flag::COLLIDE_ENTITY;
+		}
+		else {
+			message->m_value = gaMessage::Flag::COLLIDE_WALL;
+		}
 		entity->popTransformations();				// restore previous position
 	}
 	else {
 		// accept the move
-		message->m_action = GA_MSG_MOVE;
+		message->m_action = gaMessage::MOVE;
 		message->m_extra = nullptr;					// object was already moved
 	}
 }
@@ -497,23 +503,23 @@ void gaWorld::process(time_t delta)
 
 		loopDetector[k] = true;
 
-		if (message->m_action != GA_MSG_TIMER && message->m_action != GA_MSG_WANT_TO_MOVE) {
+		if (message->m_action != gaMessage::TIMER && message->m_action != gaMessage::WANT_TO_MOVE) {
 			std::cerr << "gaWorld::process server=" << message->m_server << " action=" << message->m_action << " client=" << message->m_client << std::endl;;
 		}
 
 		// animation suspended ?
-		if (!m_timer && message->m_action == GA_MSG_TIMER) {
+		if (!m_timer && message->m_action == gaMessage::TIMER) {
 			continue;
 		}
 
 		if (message->m_client == "_world") {
 			// catch messages for the world
 			switch (message->m_action) {
-			case GA_MSG_DELETE_ENTITY:
+			case gaMessage::DELETE_ENTITY:
 				// delete all instances of the given entity
 				if (m_entities.count(message->m_server) > 0) {
 					for (auto entity : m_entities[message->m_server]) {
-						sendImmediateMessage("_world", entity->name(), GA_MSG_WORLD_REMOVE, 0, nullptr);
+						sendImmediateMessage("_world", entity->name(), gaMessage::WORLD_REMOVE, 0, nullptr);
 						entity->OnWorldRemove();
 						delete entity;
 						m_entities.erase(message->m_server);
@@ -532,7 +538,7 @@ void gaWorld::process(time_t delta)
 			}
 			for (auto entity : m_entities[message->m_client]) {
 
-				if (message->m_action == GA_MSG_WANT_TO_MOVE) {
+				if (message->m_action == gaMessage::WANT_TO_MOVE) {
 					wantToMove(entity, message);
 				}
 

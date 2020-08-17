@@ -85,7 +85,7 @@ bool dfObject3D::update(time_t t)
 		else {
 			// rotate the object
 			glm::vec3 r = m_animRotationAxe * m_aniRotationSpeed * (float)t;
-			sendInternalMessage(GA_MSG_ROTATE, GA_MSG_ROTATE_BY, &r);
+			sendInternalMessage(gaMessage::ROTATE, gaMessage::Flag::ROTATE_BY, &r);
 		}
 
 		return true;
@@ -109,15 +109,15 @@ void dfObject3D::updateWorldAABB(void)
 void dfObject3D::dispatchMessage(gaMessage* message)
 {
 	switch (message->m_action) {
-	case GA_MSG_TIMER:
+	case gaMessage::TIMER:
 		if (update(message->m_delta)) {
-			sendDelayedMessage(GA_MSG_TIMER);
+			sendDelayedMessage(gaMessage::TIMER);
 		}
 		break;
 
-	case GA_MSG_WORLD_INSERT:
+	case gaMessage::WORLD_INSERT:
 		// trigger the animation
-		sendDelayedMessage(GA_MSG_TIMER);
+		sendDelayedMessage(gaMessage::TIMER);
 		break;
 	}
 	dfObject::dispatchMessage(message);

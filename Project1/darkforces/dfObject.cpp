@@ -61,7 +61,7 @@ void dfObject::logic(int logic)
 	}
 
 	if (m_logics & DF_LOGIC_ANIM) {
-		g_gaWorld.sendMessageDelayed(m_name, m_name, GA_MSG_TIMER, 0, nullptr);
+		g_gaWorld.sendMessageDelayed(m_name, m_name, gaMessage::TIMER, 0, nullptr);
 	}
 }
 

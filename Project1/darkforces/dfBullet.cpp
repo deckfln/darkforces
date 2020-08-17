@@ -79,8 +79,8 @@ void dfBullet::tryToMove(void)
 {
 	m_transforms.m_position = position() + m_transforms.m_direction;
 
-	sendDelayedMessage(GA_MSG_WANT_TO_MOVE,
-		GA_MSG_WANT_TO_MOVE_BREAK_IF_FALL,
+	sendDelayedMessage(gaMessage::WANT_TO_MOVE,
+		gaMessage::Flag::WANT_TO_MOVE_BREAK_IF_FALL,
 		&m_transforms);
 }
 
@@ -90,13 +90,13 @@ void dfBullet::tryToMove(void)
 void dfBullet::dispatchMessage(gaMessage* message)
 {
 	switch (message->m_action) {
-	case GA_MSG_WORLD_INSERT:
-		sendDelayedMessage(GA_MSG_WANT_TO_MOVE,
-			GA_MSG_WANT_TO_MOVE_LASER,
+	case gaMessage::WORLD_INSERT:
+		sendDelayedMessage(gaMessage::WANT_TO_MOVE,
+			gaMessage::Flag::WANT_TO_MOVE_LASER,
 			&m_transforms);
 		break;
 
-	case GA_MSG_COLLIDE: {
+	case gaMessage::COLLIDE: {
 		// add an impact sprite
 		// constructor of a sprite expects a level space
 		glm::vec3 p;
@@ -105,20 +105,20 @@ void dfBullet::dispatchMessage(gaMessage* message)
 		g_gaWorld.addClient(impact);
 
 		// if hit an entity
-		if (message->m_value == 0) {
+		if (message->m_value == gaMessage::Flag::COLLIDE_ENTITY) {
 			// on collision, inform the target it was hit with the energy of the bullet
 			sendMessage(message->m_server, DF_MESSAGE_HIT_BULLET, 10, nullptr);
-			gaDebugLog(REDUCED_DEBUG, "dfBullet::dispatchMessage", "hit entity");
+			gaDebugLog(REDUCED_DEBUG, "dfBullet::dispatchMessage", "hit");
 		}
 		else {
 			gaDebugLog(LOW_DEBUG, "dfBullet::dispatchMessage", "hit wall");
 		}
 		// drop the bullet
-		sendMessageToWorld(GA_MSG_DELETE_ENTITY, 0, nullptr);
+		sendMessageToWorld(gaMessage::DELETE_ENTITY, 0, nullptr);
 		break;
 	}
 
-	case GA_MSG_MOVE:
+	case gaMessage::MOVE:
 		m_time += message->m_delta;
 
 		if (m_time < bullet_life) {
@@ -126,13 +126,13 @@ void dfBullet::dispatchMessage(gaMessage* message)
 			m_transforms.m_position = position() + d;
 			m_transforms.m_direction = -(m_modelAABB.m_p1.z - m_modelAABB.m_p.z) * m_direction;
 
-			sendDelayedMessage(GA_MSG_WANT_TO_MOVE,
-				GA_MSG_WANT_TO_MOVE_LASER,
+			sendDelayedMessage(gaMessage::WANT_TO_MOVE,
+				gaMessage::Flag::WANT_TO_MOVE_LASER,
 				&m_transforms);
 		}
 		else {
 			// get the bullet deleted after 5s
-			sendMessageToWorld(GA_MSG_DELETE_ENTITY, 0, nullptr);
+			sendMessageToWorld(gaMessage::DELETE_ENTITY, 0, nullptr);
 			gaDebugLog(LOW_DEBUG, "dfBullet::dispatchMessage", "remove bullet");
 		}
 		break;
