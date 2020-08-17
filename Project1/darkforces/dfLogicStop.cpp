@@ -5,20 +5,20 @@
 #include "../gaEngine/gaWorld.h"
 
 #include "dfSector.h"
-#include "dfLogicElevator.h"
+#include "dfElevator.h"
 
 static std::map<std::string, dfLogicStop::Action> _stops = {
 	{ "hold", dfLogicStop::Action::HOLD},
 	{ "terminate", dfLogicStop::Action::TERMINATE}
 };
 
-dfLogicStop::dfLogicStop(dfLogicElevator* parent):
+dfLogicStop::dfLogicStop(dfElevator* parent):
 	m_parent(parent)
 {
 	m_name = "STOP:" + m_parent->name();
 }
 
-dfLogicStop::dfLogicStop(dfLogicElevator* parent, float altitude, dfSector* sector, std::string& action):
+dfLogicStop::dfLogicStop(dfElevator* parent, float altitude, dfSector* sector, std::string& action):
 	m_parent(parent),
 	m_flag(2 | 16),
 	m_relatiave(altitude),
@@ -27,7 +27,7 @@ dfLogicStop::dfLogicStop(dfLogicElevator* parent, float altitude, dfSector* sect
 	dfLogicStop::action(action);
 }
 
-dfLogicStop::dfLogicStop(dfLogicElevator* parent, float altitude, dfSector* sector, float time):
+dfLogicStop::dfLogicStop(dfElevator* parent, float altitude, dfSector* sector, float time):
 	m_parent(parent),
 	m_flag(2 | 8),
 	m_relatiave(altitude),
@@ -36,7 +36,7 @@ dfLogicStop::dfLogicStop(dfLogicElevator* parent, float altitude, dfSector* sect
 {
 }
 
-dfLogicStop::dfLogicStop(dfLogicElevator* parent, float altitude, std::string& action):
+dfLogicStop::dfLogicStop(dfElevator* parent, float altitude, std::string& action):
 	m_parent(parent),
 	m_flag(1 | 16),
 	m_absolute(altitude)
@@ -44,7 +44,7 @@ dfLogicStop::dfLogicStop(dfLogicElevator* parent, float altitude, std::string& a
 	dfLogicStop::action(action);
 }
 
-dfLogicStop::dfLogicStop(dfLogicElevator* parent, float altitude, float time):
+dfLogicStop::dfLogicStop(dfElevator* parent, float altitude, float time):
 	m_parent(parent),
 	m_flag(1 | 8),
 	m_absolute(altitude),
@@ -99,7 +99,7 @@ void dfLogicStop::sendMessages()
 	}
 }
 
-float dfLogicStop::z_position(dfLogicElevator::Type elevatorClass)
+float dfLogicStop::z_position(dfElevator::Type elevatorClass)
 {
 	switch (m_flag) {
 		case 9:
@@ -122,7 +122,7 @@ float dfLogicStop::z_position(dfLogicElevator::Type elevatorClass)
 		case 12:
 		case 20:
 			switch (elevatorClass) {
-			case dfLogicElevator::Type::MOVE_FLOOR:
+			case dfElevator::Type::MOVE_FLOOR:
 				return m_pSector->referenceCeiling();	// coy the ceiling of another sector
 			default:
 				return m_pSector->referenceFloor();		// coy the floor of another sector

@@ -58,7 +58,7 @@ dfLogicTrigger::dfLogicTrigger(std::string& kind, std::string& sector, int wallI
 /**
  * Create a trigger based on a wall of a sector, and record the elevator client
  */
-dfLogicTrigger::dfLogicTrigger(std::string& kind, dfSector* sector, int wallIndex,  dfLogicElevator* client) :
+dfLogicTrigger::dfLogicTrigger(std::string& kind, dfSector* sector, int wallIndex,  dfElevator* client) :
 	gaEntity(DF_ENTITY_TRIGGER, sector->m_name + "(" + std::to_string(wallIndex) + ")"),
 	m_wallIndex(wallIndex),
 	m_sector(sector->m_name),
@@ -73,7 +73,7 @@ dfLogicTrigger::dfLogicTrigger(std::string& kind, dfSector* sector, int wallInde
 /**
  * Create a trigger based on the floor of a sector, and record the elevator client
  */
-dfLogicTrigger::dfLogicTrigger(std::string& kind, dfSector* sector, dfLogicElevator* client) :
+dfLogicTrigger::dfLogicTrigger(std::string& kind, dfSector* sector, dfElevator* client) :
 	gaEntity(DF_ENTITY_TRIGGER, sector->m_name),
 	m_sector(sector->m_name),
 	m_keys(client->keys()),
@@ -86,7 +86,7 @@ dfLogicTrigger::dfLogicTrigger(std::string& kind, dfSector* sector, dfLogicEleva
 /**
  * Create a trigger based on ono the sector managed by the elevator
  */
-dfLogicTrigger::dfLogicTrigger(std::string& kind, dfLogicElevator* client):
+dfLogicTrigger::dfLogicTrigger(std::string& kind, dfElevator* client):
 	gaEntity(DF_ENTITY_TRIGGER, client->sector() + "(0)"),
 	m_keys(client->keys()),
 	m_pElevator(client)
@@ -168,7 +168,7 @@ void dfLogicTrigger::boundingBox(fwAABBox& box)
 /**
  * bind the bounding box to an elevator (the elevator might move)
  */
-void dfLogicTrigger::boundingBox(dfLogicElevator* elevator)
+void dfLogicTrigger::boundingBox(dfElevator* elevator)
 {
 	m_pElevator = elevator;
 }
@@ -258,7 +258,7 @@ void dfLogicTrigger::dispatchMessage(gaMessage* message)
 /**
  * bind the trigger to it's elevator
  */
-void dfLogicTrigger::elevator(dfLogicElevator* elevator)
+void dfLogicTrigger::elevator(dfElevator* elevator)
 {
 	if (m_pElevator == nullptr) {
 		m_pElevator = elevator;

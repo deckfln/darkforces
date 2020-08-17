@@ -8,7 +8,7 @@
 #include "../config.h"
 #include "dfParseINF.h"
 #include "dfLogicStop.h"
-#include "dfLogicElevator.h"
+#include "dfElevator.h"
 #include "dfFileSystem.h"
 #include "dfVOC.h"
 
@@ -197,7 +197,7 @@ void dfParseINF::parseSector(std::istringstream& infile, std::string& sector)
 	std::string line, dump;
 	bool start = false;
 
-	dfLogicElevator* elevator = nullptr;
+	dfElevator* elevator = nullptr;
 	dfLogicTrigger* trigger = nullptr;
 	dfLogicStop* stop = nullptr;
 	std::map<std::string, std::string> tokenMap;
@@ -233,7 +233,7 @@ void dfParseINF::parseSector(std::istringstream& infile, std::string& sector)
 		}
 		else if (tokens[0] == "class:") {
 			if (tokens[1] == "elevator") {
-				elevator = new dfLogicElevator(tokens[2], sector);
+				elevator = new dfElevator(tokens[2], sector);
 			}
 			else if (tokens[1] == "trigger") {
 				if (tokens.size() == 2) {

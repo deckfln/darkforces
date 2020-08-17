@@ -25,7 +25,7 @@ class dfVOC;
 class dfLogicStop;
 class dfSector;
 
-class dfLogicElevator: public gaEntity {
+class dfElevator: public gaEntity {
 public:
 	enum class Type {
 		INV,		// moving up
@@ -109,8 +109,8 @@ private:
 	void init(const std::string& kind);
 
 public:
-	dfLogicElevator(std::string& kind, dfSector* sector, dfLevel *parent);
-	dfLogicElevator(std::string& kind, std::string& name);
+	dfElevator(std::string& kind, dfSector* sector, dfLevel *parent);
+	dfElevator(std::string& kind, std::string& name);
 
 	void speed(float speed) { m_speed = speed; };
 	void eventMask(int eventMask) { m_eventMask = eventMask; };
@@ -120,7 +120,7 @@ public:
 	void center(float x, float y) { m_center.x = x; m_center.y = y; };
 	int keys(void) { return m_keys; };
 	bool needsKeys(void) { return m_keys != 0; };
-	bool is(dfLogicElevator::Type type) { return m_type == type; };
+	bool is(dfElevator::Type type) { return m_type == type; };
 	dfMesh* mesh(void) { return m_mesh; };
 	void angle(float angle);
 	dfLogicStop* stop(int i);
@@ -141,5 +141,5 @@ public:
 	void getMessagesToSectors(std::list<std::string>& sectors);
 	void sound(int effect, dfVOC* sound);
 
-	~dfLogicElevator(void);
+	~dfElevator(void);
 };

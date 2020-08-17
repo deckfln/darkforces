@@ -1142,7 +1142,7 @@ void dfSector::buildFloorAndCeiling(dfMesh* mesh)
  */
 void dfSector::buildGeometry(dfMesh* mesh, dfWallFlag displayPolygon)
 {
-	if (m_includedIn != nullptr && m_elevator != nullptr && !m_elevator->is(dfLogicElevator::Type::CHANGE_LIGHT)) {
+	if (m_includedIn != nullptr && m_elevator != nullptr && !m_elevator->is(dfElevator::Type::CHANGE_LIGHT)) {
 		// for sectors that are included in other sector as elevator
 		// do not add them on the supermesh, they have their own mesh in the elevator
 		return;

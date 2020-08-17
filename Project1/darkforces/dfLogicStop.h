@@ -7,7 +7,7 @@
 #include "../framework/fwAABBox.h"
 #include "../gaEngine/gaMessage.h"
 
-#include "dfLogicElevator.h"
+#include "dfElevator.h"
 
 class dfSector;
 
@@ -38,7 +38,7 @@ private:
 
 	float m_time = 0;			// time (millisecond) to stop the elevator a position (absolute or relative or sector)
 
-	dfLogicElevator* m_parent = nullptr;
+	dfElevator* m_parent = nullptr;
 
 	// [hold elevator] will remain at stop indefinitely 
 	// [terminate] elevator will stay at the stop permanently 
@@ -48,11 +48,11 @@ private:
 	std::vector<gaMessage* > m_messages;
 
 public:
-	dfLogicStop(dfLogicElevator *parent);
-	dfLogicStop(dfLogicElevator* parent, float altitude, dfSector* sector, std::string& action);
-	dfLogicStop(dfLogicElevator* parent, float altitude, dfSector* sector, float time);
-	dfLogicStop(dfLogicElevator* parent, float altitude, std::string& action);
-	dfLogicStop(dfLogicElevator* parent, float altitude, float time);
+	dfLogicStop(dfElevator *parent);
+	dfLogicStop(dfElevator* parent, float altitude, dfSector* sector, std::string& action);
+	dfLogicStop(dfElevator* parent, float altitude, dfSector* sector, float time);
+	dfLogicStop(dfElevator* parent, float altitude, std::string& action);
+	dfLogicStop(dfElevator* parent, float altitude, float time);
 
 	void absolute(float absolute) { m_flag |= 1; m_absolute = absolute; };
 	void relative(float relative) { m_flag |= 2; m_relatiave = relative; };
@@ -66,7 +66,7 @@ public:
 	bool isTimeBased(void);
 	void message(gaMessage* message);
 	void sendMessages();
-	float z_position(dfLogicElevator::Type elevatorClass);
+	float z_position(dfElevator::Type elevatorClass);
 	void getMessagesToSectors(std::list<std::string>& sectors);
 
 	~dfLogicStop();

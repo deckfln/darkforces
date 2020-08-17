@@ -14,7 +14,7 @@
 #include "dfSuperSector.h"
 #include "dfBitmap.h"
 #include "dfParseINF.h"
-#include "dfLogicElevator.h"
+#include "dfElevator.h"
 #include "dfFileGOB.h"
 
 class fwCylinder;
@@ -22,7 +22,7 @@ class fwCylinder;
 class dfMesh;
 class dfParserObjects;
 class dfAtlasTexture;
-class dfLogicElevator;
+class dfElevator;
 class dfPalette;
 class gaCollisionPoint;
 
@@ -38,7 +38,7 @@ class dfLevel
 	std::vector<dfSector*> m_sectorsID;			// all sectors of the level by ID
 	std::vector<dfBitmap*> m_bitmaps;			// all textures of the level
 
-	std::map<std::string, dfLogicElevator*> m_elevators;	// all elevators of the sector
+	std::map<std::string, dfElevator*> m_elevators;	// all elevators of the sector
 
 	glm::vec3 m_skyTexture;						// Identify texture for sectors FLAGS1 = 1
 	float m_skyAltitude=0;						
@@ -81,7 +81,7 @@ class dfLevel
 	void initElevators(void);
 	void convertDoors2Elevators(void);
 	void createTriggers(void);
-	void createTriggerForElevator(dfLogicElevator *elevator);
+	void createTriggerForElevator(dfElevator *elevator);
 
 public:
 	dfLevel(dfFileSystem* fs, std::string file);

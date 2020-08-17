@@ -19,7 +19,7 @@ class gaCollisionPoint;
 class gaEntity;
 class dfMesh;
 class dfSuperSector;
-class dfLogicElevator;
+class dfElevator;
 class dfLogicTrigger;
 
 /**
@@ -92,7 +92,7 @@ class dfSector
 	std::vector<dfSector*> m_includes;					// list of sectors included in the current one
 	dfSector* m_includedIn = nullptr;					// if the sector is included in another one
 
-	dfLogicElevator* m_elevator = nullptr;				// if the sector is managed by an elevator
+	dfElevator* m_elevator = nullptr;				// if the sector is managed by an elevator
 
 	float m_currentAmbient;								// current value for an elevator light
 
@@ -199,7 +199,7 @@ public:
 	void setAABBtop(float z_level);
 	void setAABBbottom(float z_level);
 
-	void elevator(dfLogicElevator* elevator) { m_elevator = elevator; };
+	void elevator(dfElevator* elevator) { m_elevator = elevator; };
 
 	~dfSector();
 };

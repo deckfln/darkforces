@@ -16,7 +16,7 @@
 #include "../gaEngine/gaBoundingBoxes.h"
 #include "../gaEngine/gaCollisionPoint.h"
 
-#include "dfLogicElevator.h"
+#include "dfElevator.h"
 #include "dfBitmap.h"
 #include "dfSign.h"
 #include "dfMesh.h"
@@ -142,7 +142,7 @@ dfLevel::dfLevel(dfFileSystem* fs, std::string file)
 	for (auto trigger : m_inf->m_triggers) {
 		g_gaWorld.addClient(trigger);
 		dfSector* sector = m_sectorsName[trigger->sector()];
-		dfLogicElevator* elevator = m_elevators[sector->m_name];
+		dfElevator* elevator = m_elevators[sector->m_name];
 
 		trigger->elevator(elevator);
 	}
@@ -365,7 +365,7 @@ void dfLevel::convertDoors2Elevators(void)
 
 	for (auto sector: m_sectorsID) {
 		if (sector->flag() & dfSectorFlag::DOOR) {
-			dfLogicElevator* elevator = new dfLogicElevator(door, sector, this);
+			dfElevator* elevator = new dfElevator(door, sector, this);
 			dfLogicStop* closed = new dfLogicStop(elevator, sector->referenceFloor(), hold);
 			dfLogicStop* opened = new dfLogicStop(elevator, sector->referenceCeiling(), 5000);
 
@@ -414,8 +414,8 @@ void dfLevel::createTriggers(void)
 		if (explicits.count(elevator->name()) == 0) {
 			createTriggerForElevator(elevator);
 		}
-		else if (elevator->is(dfLogicElevator::Type::MORPH_SPIN1) ||
-				elevator->is(dfLogicElevator::Type::MORPH_MOVE1)) {
+		else if (elevator->is(dfElevator::Type::MORPH_SPIN1) ||
+				elevator->is(dfElevator::Type::MORPH_MOVE1)) {
 			createTriggerForElevator(elevator);
 		}
 	}
@@ -424,13 +424,13 @@ void dfLevel::createTriggers(void)
 /**
  * Create dedicated trigger by elevator class
  */
-void dfLevel::createTriggerForElevator(dfLogicElevator *elevator)
+void dfLevel::createTriggerForElevator(dfElevator *elevator)
 {
 	static std::string standard = "switch1";
 
-	if (elevator->is(dfLogicElevator::Type::MORPH_SPIN1) || 
-		elevator->is(dfLogicElevator::Type::MORPH_MOVE1) ||
-		elevator->is(dfLogicElevator::Type::MOVE_CEILING) ||
+	if (elevator->is(dfElevator::Type::MORPH_SPIN1) || 
+		elevator->is(dfElevator::Type::MORPH_MOVE1) ||
+		elevator->is(dfElevator::Type::MOVE_CEILING) ||
 		elevator->needsKeys()
 		) {
 		dfLogicTrigger* trigger = new dfLogicTrigger(standard, elevator);
@@ -503,11 +503,11 @@ dfSector* dfLevel::findSector(glm::vec3& position)
 			gaDebugLog(LOW_DEBUG, "dfLevel::findSector", " leave=" + m_lastSector->m_name + " enter=" + sector->m_name);
 #endif
 
-			m_lastSector->event(dfLogicElevator::Message::LEAVE_SECTOR);
+			m_lastSector->event(dfElevator::Message::LEAVE_SECTOR);
 
 			m_lastSector = sector;
 
-			sector->event(dfLogicElevator::Message::ENTER_SECTOR);
+			sector->event(dfElevator::Message::ENTER_SECTOR);
 			return sector;
 		}
 	}
@@ -518,7 +518,7 @@ dfSector* dfLevel::findSector(glm::vec3& position)
 
 		if (sector) {
 			if (m_lastSector) {
-				m_lastSector->event(dfLogicElevator::Message::LEAVE_SECTOR);
+				m_lastSector->event(dfElevator::Message::LEAVE_SECTOR);
 			}
 
 #ifdef DEBUG
@@ -535,7 +535,7 @@ dfSector* dfLevel::findSector(glm::vec3& position)
 			m_lastSector = sector;
 			m_lastSuperSector = ssector;
 
-			sector->event(dfLogicElevator::Message::ENTER_SECTOR);
+			sector->event(dfElevator::Message::ENTER_SECTOR);
 			return sector;
 		}
 	}

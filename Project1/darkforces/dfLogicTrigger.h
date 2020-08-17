@@ -12,13 +12,13 @@
 #include "../gaEngine/gaWorld.h"
 
 #include "dfComponent/dfComponentActor.h"
-#include "dfLogicElevator.h"
+#include "dfElevator.h"
 
 class dfSector;
 class dfWall;
 class dfSign;
 class dfMesh;
-class dfLogicElevator;
+class dfElevator;
 
 enum {
 	DF_TRIGGER_SWITCH1,
@@ -37,7 +37,7 @@ class dfLogicTrigger: public gaEntity {
 	int m_wallIndex = -1;			// index of the wall being a trigger
 
 	dfMesh* m_pMesh= nullptr;		// Mesh being a trigger (has a bounding box)
-	dfLogicElevator* m_pElevator= nullptr;		// Mesh being a trigger (has a bounding box)
+	dfElevator* m_pElevator= nullptr;		// Mesh being a trigger (has a bounding box)
 
 	//fwAABBox m_boundingBox;			// bouding box of the triggers
 	//glm::vec3 m_boundingBoxCenter;	// original position of the bounding box
@@ -49,9 +49,9 @@ class dfLogicTrigger: public gaEntity {
 public:
 	dfLogicTrigger(std::string& kind, std::string& sector);
 	dfLogicTrigger(std::string& kind, std::string& sector, int wallIndex);
-	dfLogicTrigger(std::string& kind, dfSector* sector, int wallIndex, dfLogicElevator *client);
-	dfLogicTrigger(std::string& kind, dfSector* sector, dfLogicElevator* client);
-	dfLogicTrigger(std::string& kind, dfLogicElevator* client);
+	dfLogicTrigger(std::string& kind, dfSector* sector, int wallIndex, dfElevator *client);
+	dfLogicTrigger(std::string& kind, dfSector* sector, dfElevator* client);
+	dfLogicTrigger(std::string& kind, dfElevator* client);
 
 	void eventMask(int eventMask) { m_eventMask = eventMask; };
 	void client(std::string& client) { m_clients.push_back(client); }
@@ -64,7 +64,7 @@ public:
 
 	void boundingBox(glm::vec2& left, glm::vec2& right, float floor, float ceiling);
 	void boundingBox(fwAABBox& box);
-	void boundingBox(dfLogicElevator* elevator);
+	void boundingBox(dfElevator* elevator);
 
 	void message(gaMessage *message);
 	void config(void);
@@ -74,7 +74,7 @@ public:
 	void activate(const std::string& activor);
 	void dispatchMessage(gaMessage* message);
 
-	void elevator(dfLogicElevator* elevator);
+	void elevator(dfElevator* elevator);
 
 	std::vector<gaMessage *>& messages(void) { return m_messages; };	// return messages
 

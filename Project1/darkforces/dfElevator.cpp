@@ -1,4 +1,4 @@
-#include "dfLogicElevator.h"
+#include "dfElevator.h"
 
 #define _USE_MATH_DEFINES // for C++
 #include <math.h>
@@ -18,29 +18,29 @@
 #include "dfLogicStop.h"
 
 // elevator categories
-static std::map<std::string, dfLogicElevator::Type>  keywords = {
-	{"inv",			dfLogicElevator::Type::INV},
-	{"basic",		dfLogicElevator::Type::BASIC},
-	{"move_floor",	dfLogicElevator::Type::MOVE_FLOOR},
-	{"change_light",dfLogicElevator::Type::CHANGE_LIGHT},
-	{"move_ceiling",dfLogicElevator::Type::MOVE_CEILING},
-	{"morph_spin1",	dfLogicElevator::Type::MORPH_SPIN1},
-	{"morph_move1",	dfLogicElevator::Type::MORPH_MOVE1},
-	{"morph_spin2",	dfLogicElevator::Type::MORPH_SPIN2},
-	{"door",		dfLogicElevator::Type::DOOR }
+static std::map<std::string, dfElevator::Type>  keywords = {
+	{"inv",			dfElevator::Type::INV},
+	{"basic",		dfElevator::Type::BASIC},
+	{"move_floor",	dfElevator::Type::MOVE_FLOOR},
+	{"change_light",dfElevator::Type::CHANGE_LIGHT},
+	{"move_ceiling",dfElevator::Type::MOVE_CEILING},
+	{"morph_spin1",	dfElevator::Type::MORPH_SPIN1},
+	{"morph_move1",	dfElevator::Type::MORPH_MOVE1},
+	{"morph_spin2",	dfElevator::Type::MORPH_SPIN2},
+	{"door",		dfElevator::Type::DOOR }
 };
 
 // default elevators speed
-static std::map<dfLogicElevator::Type, float> _speeds = {
-	{dfLogicElevator::Type::INV, 20.f},
-	{dfLogicElevator::Type::BASIC, 20.0f},	
-	{dfLogicElevator::Type::MOVE_FLOOR, 20.0f},
-	{dfLogicElevator::Type::CHANGE_LIGHT, 10.0f},
-	{dfLogicElevator::Type::MOVE_CEILING, 20.0f},
-	{dfLogicElevator::Type::MORPH_SPIN1, 20.0f},
-	{dfLogicElevator::Type::MORPH_SPIN2, 20.0f},
-	{dfLogicElevator::Type::MORPH_MOVE1, 20.0f},
-	{dfLogicElevator::Type::DOOR, 20.0f}
+static std::map<dfElevator::Type, float> _speeds = {
+	{dfElevator::Type::INV, 20.f},
+	{dfElevator::Type::BASIC, 20.0f},	
+	{dfElevator::Type::MOVE_FLOOR, 20.0f},
+	{dfElevator::Type::CHANGE_LIGHT, 10.0f},
+	{dfElevator::Type::MOVE_CEILING, 20.0f},
+	{dfElevator::Type::MORPH_SPIN1, 20.0f},
+	{dfElevator::Type::MORPH_SPIN2, 20.0f},
+	{dfElevator::Type::MORPH_MOVE1, 20.0f},
+	{dfElevator::Type::DOOR, 20.0f}
 };
 
 // default elevators sounds
@@ -50,15 +50,15 @@ static std::vector<std::vector<std::string>> g_Default_sounds = {
 	{ { "door.voc", "", ""} }
 };
 
-static std::map<dfLogicElevator::Type, int> g_sound_evelators = {
-	{dfLogicElevator::Type::INV, 1},
-	{dfLogicElevator::Type::BASIC, 0},
-	{dfLogicElevator::Type::MOVE_FLOOR, 0},
-	{dfLogicElevator::Type::MOVE_CEILING, 1},
-	{dfLogicElevator::Type::MORPH_SPIN1, 1},
-	{dfLogicElevator::Type::MORPH_MOVE1, 1},
-	{dfLogicElevator::Type::MORPH_SPIN2, 1},
-	{dfLogicElevator::Type::DOOR, 2}
+static std::map<dfElevator::Type, int> g_sound_evelators = {
+	{dfElevator::Type::INV, 1},
+	{dfElevator::Type::BASIC, 0},
+	{dfElevator::Type::MOVE_FLOOR, 0},
+	{dfElevator::Type::MOVE_CEILING, 1},
+	{dfElevator::Type::MORPH_SPIN1, 1},
+	{dfElevator::Type::MORPH_MOVE1, 1},
+	{dfElevator::Type::MORPH_SPIN2, 1},
+	{dfElevator::Type::DOOR, 2}
 };
 
 static std::map<std::string, dfVOC*> m_cachedVOC;
@@ -66,7 +66,7 @@ static std::map<std::string, dfVOC*> m_cachedVOC;
 /**
  * Initialize the elevator
  */
-void dfLogicElevator::init(const std::string& kind) 
+void dfElevator::init(const std::string& kind) 
 {
 	// convert the elevator category from text to bind
 	if (keywords.count(kind) > 0) {
@@ -89,7 +89,7 @@ void dfLogicElevator::init(const std::string& kind)
 		}
 	}
 	else {
-		std::cerr << "dfLogicElevator::dfLogicElevator " << kind << " not implemented" << std::endl;
+		std::cerr << "dfElevator::dfElevator " << kind << " not implemented" << std::endl;
 	}
 
 	physical(true);	// elevators cannot be traversed
@@ -98,7 +98,7 @@ void dfLogicElevator::init(const std::string& kind)
 /**
  *
  */
-dfLogicElevator::dfLogicElevator(std::string& kind, dfSector* sector, dfLevel* parent):
+dfElevator::dfElevator(std::string& kind, dfSector* sector, dfLevel* parent):
 	gaEntity(DF_ENTITY_ELEVATOR, sector->m_name),
 	m_sector(sector->m_name),
 	m_pSector(sector),
@@ -107,7 +107,7 @@ dfLogicElevator::dfLogicElevator(std::string& kind, dfSector* sector, dfLevel* p
 	init(kind);
 }
 
-dfLogicElevator::dfLogicElevator(std::string& kind, std::string& sector):
+dfElevator::dfElevator(std::string& kind, std::string& sector):
 	gaEntity(DF_ENTITY_ELEVATOR, sector),
 	m_sector(sector)
 {
@@ -118,7 +118,7 @@ dfLogicElevator::dfLogicElevator(std::string& kind, std::string& sector):
  * bind the evelator to its sector
  * for any relative stop, record the floor
  */
-void dfLogicElevator::bindSector(dfSector* pSector)
+void dfElevator::bindSector(dfSector* pSector)
 {
 	static std::string standard = "standard";
 
@@ -142,27 +142,27 @@ void dfLogicElevator::bindSector(dfSector* pSector)
 	}
 
 	switch (m_type) {
-	case dfLogicElevator::Type::INV:
-	case dfLogicElevator::Type::DOOR:
+	case dfElevator::Type::INV:
+	case dfElevator::Type::DOOR:
 		m_pSector->staticCeilingAltitude(amax);
 		break;
 
-	case dfLogicElevator::Type::MOVE_FLOOR:
+	case dfElevator::Type::MOVE_FLOOR:
 		m_pSector->staticFloorAltitude(amin);
 		break;
 	
-	case dfLogicElevator::Type::BASIC:
+	case dfElevator::Type::BASIC:
 		m_pSector->staticCeilingAltitude(amax);
 		break;
 
-	case dfLogicElevator::Type::MOVE_CEILING:
+	case dfElevator::Type::MOVE_CEILING:
 		m_pSector->staticCeilingAltitude(amax);
 		m_pSector->ceiling( m_pSector->referenceFloor() );
 		break;
 
-	case dfLogicElevator::Type::MORPH_SPIN1:
-	case dfLogicElevator::Type::MORPH_MOVE1:
-	case dfLogicElevator::Type::MORPH_SPIN2:
+	case dfElevator::Type::MORPH_SPIN1:
+	case dfElevator::Type::MORPH_MOVE1:
+	case dfElevator::Type::MORPH_SPIN2:
 		// remove all non-portal walls. These walls will be stored on the Elevator mesh
 		m_pSector->removeHollowWalls();
 
@@ -179,7 +179,7 @@ void dfLogicElevator::bindSector(dfSector* pSector)
 /**
  * register the STOP in the correct list
  */
-void dfLogicElevator::addStop(dfLogicStop* stop)
+void dfElevator::addStop(dfLogicStop* stop)
 {
 	m_stops.push_back(stop);
 }
@@ -187,7 +187,7 @@ void dfLogicElevator::addStop(dfLogicStop* stop)
 /**
  * Create an Mesh for the elevator
  */
-dfMesh *dfLogicElevator::buildGeometry(fwMaterial* material, std::vector<dfBitmap*>& bitmaps)
+dfMesh *dfElevator::buildGeometry(fwMaterial* material, std::vector<dfBitmap*>& bitmaps)
 {
 	if (!m_pSector) {
 		return nullptr;
@@ -197,11 +197,11 @@ dfMesh *dfLogicElevator::buildGeometry(fwMaterial* material, std::vector<dfBitma
 	// get the maximum extend of the elevator -> will become the height of the object
 	//
 	switch (m_type) {
-	case dfLogicElevator::Type::INV:
-	case dfLogicElevator::Type::DOOR:
-	case dfLogicElevator::Type::BASIC:
-	case dfLogicElevator::Type::MOVE_FLOOR:
-	case dfLogicElevator::Type::MOVE_CEILING:
+	case dfElevator::Type::INV:
+	case dfElevator::Type::DOOR:
+	case dfElevator::Type::BASIC:
+	case dfElevator::Type::MOVE_FLOOR:
+	case dfElevator::Type::MOVE_CEILING:
 		// only vertical moving elevator needs to be tested against the stop
 		float c;
 		for (auto stop : m_stops) {
@@ -219,13 +219,13 @@ dfMesh *dfLogicElevator::buildGeometry(fwMaterial* material, std::vector<dfBitma
 	// Build a mesh depending of the type
 	//
 	switch (m_type) {
-	case dfLogicElevator::Type::INV:
-	case dfLogicElevator::Type::DOOR:
-	case dfLogicElevator::Type::BASIC:
+	case dfElevator::Type::INV:
+	case dfElevator::Type::DOOR:
+	case dfElevator::Type::BASIC:
 		m_mesh = new dfMesh(material, bitmaps);
 
 		// the elevator bottom is actually the ceiling
-		if (m_type == dfLogicElevator::Type::INV || m_type == dfLogicElevator::Type::DOOR) {
+		if (m_type == dfElevator::Type::INV || m_type == dfElevator::Type::DOOR) {
 			m_pSector->buildElevator(this, m_mesh, 0, m_zmax - m_zmin, DFWALL_TEXTURE_TOP, true, dfWallFlag::ALL);
 			m_pSector->setAABBtop(m_zmax);
 		}
@@ -245,11 +245,11 @@ dfMesh *dfLogicElevator::buildGeometry(fwMaterial* material, std::vector<dfBitma
 		}
 		break;
 
-	case dfLogicElevator::Type::MOVE_FLOOR:
-	case dfLogicElevator::Type::MOVE_CEILING:
+	case dfElevator::Type::MOVE_FLOOR:
+	case dfElevator::Type::MOVE_CEILING:
 		m_mesh = new dfMesh(material, bitmaps);
 
-		if (m_type == dfLogicElevator::Type::MOVE_FLOOR) {
+		if (m_type == dfElevator::Type::MOVE_FLOOR) {
 			// the elevator top is actually the floor
 			m_pSector->buildElevator(this, m_mesh, -(m_zmax - m_zmin), 0, DFWALL_TEXTURE_BOTTOM, false, dfWallFlag::ALL);
 			m_pSector->setAABBbottom(m_zmin);
@@ -272,9 +272,9 @@ dfMesh *dfLogicElevator::buildGeometry(fwMaterial* material, std::vector<dfBitma
 		}
 		break;
 
-	case dfLogicElevator::Type::MORPH_SPIN1:
-	case dfLogicElevator::Type::MORPH_MOVE1:
-	case dfLogicElevator::Type::MORPH_SPIN2:
+	case dfElevator::Type::MORPH_SPIN1:
+	case dfElevator::Type::MORPH_MOVE1:
+	case dfElevator::Type::MORPH_SPIN2:
 		m_mesh = new dfMesh(material, bitmaps);
 
 		// only use the inner polygon (the hole)
@@ -304,20 +304,20 @@ dfMesh *dfLogicElevator::buildGeometry(fwMaterial* material, std::vector<dfBitma
 	// translate the vertices to the center of the elevator
 	//
 	switch (m_type) {
-	case dfLogicElevator::Type::INV:
-	case dfLogicElevator::Type::DOOR:
-	case dfLogicElevator::Type::BASIC:
-	case dfLogicElevator::Type::MOVE_FLOOR:
-	case dfLogicElevator::Type::MOVE_CEILING:
+	case dfElevator::Type::INV:
+	case dfElevator::Type::DOOR:
+	case dfElevator::Type::BASIC:
+	case dfElevator::Type::MOVE_FLOOR:
+	case dfElevator::Type::MOVE_CEILING:
 		// for these elevator, Z is defined by the elevator, so center on XY (in level space)
 		m_mesh->centerOnGeometryXZ(m_center);
 		break;
-	case dfLogicElevator::Type::MORPH_MOVE1:
+	case dfElevator::Type::MORPH_MOVE1:
 		// for this elevator, move along an axes from a center, so center on XYZ (in level space)
 		m_mesh->centerOnGeometryXYZ(m_center);
 		break;
-	case dfLogicElevator::Type::MORPH_SPIN1:
-	case dfLogicElevator::Type::MORPH_SPIN2:
+	case dfElevator::Type::MORPH_SPIN1:
+	case dfElevator::Type::MORPH_SPIN2:
 		// move the vertices around the center (in level space)
 		m_center.z = m_pSector->referenceFloor();
 		m_mesh->moveVertices(m_center);
@@ -342,13 +342,13 @@ dfMesh *dfLogicElevator::buildGeometry(fwMaterial* material, std::vector<dfBitma
 /**
  * move the connected elevator to its HOLD position
  */
-void dfLogicElevator::init(int stopID)
+void dfElevator::init(int stopID)
 {
 	m_currentStop = stopID;
 	dfLogicStop* stop = m_stops[m_currentStop];
 
 	if (this->m_sector == "elev3-5") {
-		std::cerr << "dfLogicElevator::init ignored elevator elev3-5" << std::endl;
+		std::cerr << "dfElevator::init ignored elevator elev3-5" << std::endl;
 		return;
 	}
 
@@ -356,7 +356,7 @@ void dfLogicElevator::init(int stopID)
 		moveTo(stop);
 	}
 
-	if (m_type == dfLogicElevator::Type::CHANGE_LIGHT) {
+	if (m_type == dfElevator::Type::CHANGE_LIGHT) {
 		// kick start animation
 		g_gaWorld.sendMessageDelayed(m_name, m_name, gaMessage::TIMER, 0, nullptr);
 	}
@@ -368,7 +368,7 @@ void dfLogicElevator::init(int stopID)
 /**
  * compute the move to the next Stop
  */
-void dfLogicElevator::moveToNextStop(void)
+void dfElevator::moveToNextStop(void)
 {
 	if (m_speed > 0) {
 		m_current = m_stops[m_currentStop]->z_position(m_type);
@@ -396,19 +396,19 @@ void dfLogicElevator::moveToNextStop(void)
 
 		// play the starting sound if it exists
 		if (m_mesh) {
-			dfVOC* voc = m_sounds[dfLogicElevator::Sound::START];
+			dfVOC* voc = m_sounds[dfElevator::Sound::START];
 			if (voc != nullptr) {
 				sendInternalMessage(gaMessage::PLAY_SOUND, 0, voc->sound());
 #ifdef DEBUG
-				gaDebugLog(0, "dfLogicElevator::moveToNextStop play", voc->name());
+				gaDebugLog(0, "dfElevator::moveToNextStop play", voc->name());
 #endif
 			}
 			// play the moving sound if it exists
-			voc = m_sounds[dfLogicElevator::Sound::MOVE];
+			voc = m_sounds[dfElevator::Sound::MOVE];
 			if (voc != nullptr) {
 				sendInternalMessage(gaMessage::PLAY_SOUND, 0, voc->sound());
 #ifdef DEBUG
-				gaDebugLog(0, "dfLogicElevator::moveToNextStop play", voc->name());
+				gaDebugLog(0, "dfElevator::moveToNextStop play", voc->name());
 #endif
 			}
 		}
@@ -431,21 +431,21 @@ void dfLogicElevator::moveToNextStop(void)
 /**
  * Move the object on the 2 axis
  */
-bool dfLogicElevator::animateMoveZ(void)
+bool dfElevator::animateMoveZ(void)
 {
 	switch (m_status) {
-	case dfLogicElevator::Status::TERMINATED:
+	case dfElevator::Status::TERMINATED:
 		// the elevator cannot be moved
 		return true;
 
-	case dfLogicElevator::Status::HOLD:
-		m_status = dfLogicElevator::Status::MOVE;
+	case dfElevator::Status::HOLD:
+		m_status = dfElevator::Status::MOVE;
 		m_tick = 0;
 
 		moveToNextStop();
 		break;
 
-	case dfLogicElevator::Status::MOVE: {
+	case dfElevator::Status::MOVE: {
 		if (m_direction != 0) {
 			m_current = m_target - m_direction * (1.0f - m_tick / m_delay);
 		}
@@ -476,22 +476,22 @@ bool dfLogicElevator::animateMoveZ(void)
 
 			if (stop->isTimeBased()) {
 				// put the elevator on wait
-				m_status = dfLogicElevator::Status::WAIT;
+				m_status = dfElevator::Status::WAIT;
 
 				// stop the move sound and play the end sound if it exists AND the stop is NOT zero
 				if (stop->time() != 0 && m_mesh) {
-					dfVOC* voc = m_sounds[dfLogicElevator::Sound::MOVE];
+					dfVOC* voc = m_sounds[dfElevator::Sound::MOVE];
 					if (voc != nullptr) {
 						sendInternalMessage(gaMessage::STOP_SOUND, 0, voc->sound());
 #ifdef DEBUG
-						gaDebugLog(0, "dfLogicElevator::animateMoveZ stop", voc->name());
+						gaDebugLog(0, "dfElevator::animateMoveZ stop", voc->name());
 #endif
 					}
-					voc = m_sounds[dfLogicElevator::Sound::END];
+					voc = m_sounds[dfElevator::Sound::END];
 					if ( voc != nullptr) {
 						sendInternalMessage(gaMessage::STOP_SOUND, 0, voc->sound());
 #ifdef DEBUG
-						gaDebugLog(0, "dfLogicElevator::animateMoveZ stop", voc->name());
+						gaDebugLog(0, "dfElevator::animateMoveZ stop", voc->name());
 #endif
 					}
 				}
@@ -499,50 +499,50 @@ bool dfLogicElevator::animateMoveZ(void)
 			else {
 				// play the end sound if it exists
 				if (m_mesh) {
-					dfVOC* voc = m_sounds[dfLogicElevator::Sound::MOVE];
+					dfVOC* voc = m_sounds[dfElevator::Sound::MOVE];
 					if (voc != nullptr) {
 						sendInternalMessage(gaMessage::STOP_SOUND, 0, voc->sound());
 #ifdef DEBUG
-						gaDebugLog(0, "dfLogicElevator::animateMoveZ stop", voc->name());
+						gaDebugLog(0, "dfElevator::animateMoveZ stop", voc->name());
 #endif
 					}
 
-					voc = m_sounds[dfLogicElevator::Sound::END];
+					voc = m_sounds[dfElevator::Sound::END];
 					if (voc != nullptr) {
 						sendInternalMessage(gaMessage::PLAY_SOUND, 0, voc->sound());
 #ifdef DEBUG
-						gaDebugLog(0, "dfLogicElevator::animateMoveZ play", voc->name());
+						gaDebugLog(0, "dfElevator::animateMoveZ play", voc->name());
 #endif
 					}
 				}
 
 				switch (stop->action()) {
 				case dfLogicStop::Action::HOLD:
-						m_status = dfLogicElevator::Status::HOLD;
+						m_status = dfElevator::Status::HOLD;
 						// stop the animation
 						return true;
 				case dfLogicStop::Action::TERMINATE:
-					m_status = dfLogicElevator::Status::TERMINATED;
+					m_status = dfElevator::Status::TERMINATED;
 					// stop the animation
 					return true;
 				default:
-					std::cerr << "dfLogicElevator::animate action " << static_cast<int>(stop->action()) << " not implemented" << std::endl;
+					std::cerr << "dfElevator::animate action " << static_cast<int>(stop->action()) << " not implemented" << std::endl;
 				}
 			}
 		}
 		break;
 	}
 
-	case dfLogicElevator::Status::WAIT:
+	case dfElevator::Status::WAIT:
 		if (m_tick >= m_stops[m_currentStop]->time()) {
 			moveToNextStop();
-			m_status = dfLogicElevator::Status::MOVE;
+			m_status = dfElevator::Status::MOVE;
 			m_tick = 0;
 		}
 		break;
 
 	default:
-		std::cerr << "dfLogicElevator::animate unknown status " << int(m_status) << std::endl;
+		std::cerr << "dfElevator::animate unknown status " << int(m_status) << std::endl;
 	}
 
 	// next animation
@@ -550,7 +550,7 @@ bool dfLogicElevator::animateMoveZ(void)
 	return false;
 }
 
-void dfLogicElevator::setSignsStatus(int status)
+void dfElevator::setSignsStatus(int status)
 {
 	for (auto sign : m_signs) {
 		sign->setStatus(status);	// the elevator is open'
@@ -560,12 +560,12 @@ void dfLogicElevator::setSignsStatus(int status)
 /**
  * move through the animations of the elevator
  */
-bool dfLogicElevator::animate(time_t delta)
+bool dfElevator::animate(time_t delta)
 {
 	m_tick += delta;
 
 	switch (m_type) {
-	case dfLogicElevator::Type::CHANGE_LIGHT:
+	case dfElevator::Type::CHANGE_LIGHT:
 		if (m_pSector) {
 			if (m_pSector->visible()) {
 				return animateMoveZ();
@@ -576,17 +576,17 @@ bool dfLogicElevator::animate(time_t delta)
 			}
 		}
 		break;
-	case dfLogicElevator::Type::BASIC:
-	case dfLogicElevator::Type::INV:
-	case dfLogicElevator::Type::DOOR:
-	case dfLogicElevator::Type::MOVE_FLOOR:
-	case dfLogicElevator::Type::MOVE_CEILING:
-	case dfLogicElevator::Type::MORPH_SPIN1:
-	case dfLogicElevator::Type::MORPH_MOVE1:
-	case dfLogicElevator::Type::MORPH_SPIN2:
+	case dfElevator::Type::BASIC:
+	case dfElevator::Type::INV:
+	case dfElevator::Type::DOOR:
+	case dfElevator::Type::MOVE_FLOOR:
+	case dfElevator::Type::MOVE_CEILING:
+	case dfElevator::Type::MORPH_SPIN1:
+	case dfElevator::Type::MORPH_MOVE1:
+	case dfElevator::Type::MORPH_SPIN2:
 		return animateMoveZ();
 	default:
-		std::cerr << "dfLogicElevator::animate m_type=" << int(m_type) << " not implemented" << std::endl;
+		std::cerr << "dfElevator::animate m_type=" << int(m_type) << " not implemented" << std::endl;
 	}
 
 	return true;	// Animation is not implemented, stop it
@@ -595,7 +595,7 @@ bool dfLogicElevator::animate(time_t delta)
 /**
  * Compute a floor altitude based on elevator kind and stop
  */
-void dfLogicElevator::moveTo(dfLogicStop *stop)
+void dfElevator::moveTo(dfLogicStop *stop)
 {
 	float z = stop->z_position(m_type);
 	moveTo(z);
@@ -604,24 +604,24 @@ void dfLogicElevator::moveTo(dfLogicStop *stop)
 /**
  * Compute a floor altitude based on elevator kind and stop
  */
-void dfLogicElevator::moveTo(float z)
+void dfElevator::moveTo(float z)
 {
 	// security check
 	switch (m_type) {
-	case dfLogicElevator::Type::INV:
-	case dfLogicElevator::Type::DOOR:
-	case dfLogicElevator::Type::BASIC:
-	case dfLogicElevator::Type::MOVE_FLOOR:
-	case dfLogicElevator::Type::MOVE_CEILING:
-	case dfLogicElevator::Type::MORPH_SPIN1:
-	case dfLogicElevator::Type::MORPH_MOVE1:
-	case dfLogicElevator::Type::MORPH_SPIN2:
+	case dfElevator::Type::INV:
+	case dfElevator::Type::DOOR:
+	case dfElevator::Type::BASIC:
+	case dfElevator::Type::MOVE_FLOOR:
+	case dfElevator::Type::MOVE_CEILING:
+	case dfElevator::Type::MORPH_SPIN1:
+	case dfElevator::Type::MORPH_MOVE1:
+	case dfElevator::Type::MORPH_SPIN2:
 		if (m_mesh == nullptr) {
 			//std::cerr << "dfLogicElevator::moveTo mesh not implemented for " << m_sector << std::endl;
 			return;
 		}
 		break;
-	case dfLogicElevator::Type::CHANGE_LIGHT:
+	case dfElevator::Type::CHANGE_LIGHT:
 		if (m_pSector == nullptr) {
 			//std::cerr << "dfLogicElevator::moveTo sector not found " << m_sector << std::endl;
 			return;
@@ -632,49 +632,49 @@ void dfLogicElevator::moveTo(float z)
 	// run the move
 	glm::vec3 p = position();
 	switch (m_type) {
-	case dfLogicElevator::Type::INV:
-	case dfLogicElevator::Type::DOOR:
+	case dfElevator::Type::INV:
+	case dfElevator::Type::DOOR:
 		p.y = z / 10.0f;
 		sendInternalMessage(gaMessage::MOVE, 0, &p);
 		break;
-	case dfLogicElevator::Type::BASIC:
+	case dfElevator::Type::BASIC:
 		p.y = z / 10.0f;
 		sendInternalMessage(gaMessage::MOVE, 0, &p);
 		break;
-	case dfLogicElevator::Type::MOVE_FLOOR:
+	case dfElevator::Type::MOVE_FLOOR:
 		// move the sector the elevator is based on (for collision detection)
 		p.y = z / 10.0f;
 		sendInternalMessage(gaMessage::MOVE, 0, &p);
 		m_pSector->currentFloorAltitude(z);
 		break;
-	case dfLogicElevator::Type::MOVE_CEILING:
+	case dfElevator::Type::MOVE_CEILING:
 		// move the sector the elevator is based on (for collision detection)
 		p.y = z / 10.0f;
 		sendInternalMessage(gaMessage::MOVE, 0, &p);
 		m_pSector->ceiling(z);
 		break;
-	case dfLogicElevator::Type::MORPH_SPIN1:
-	case dfLogicElevator::Type::MORPH_SPIN2:
+	case dfElevator::Type::MORPH_SPIN1:
+	case dfElevator::Type::MORPH_SPIN2:
 		glm::vec3 r = glm::vec3(0, glm::radians(z), 0);
 		sendInternalMessage(gaMessage::ROTATE, 0, &r);
 		break;
-	case dfLogicElevator::Type::MORPH_MOVE1:
+	case dfElevator::Type::MORPH_MOVE1:
 		glm::vec3 p = m_center + m_move * z;
 		dfLevel::level2gl(p);
 		sendInternalMessage(gaMessage::MOVE, 0, &p);
 		break;
-	case dfLogicElevator::Type::CHANGE_LIGHT:
+	case dfElevator::Type::CHANGE_LIGHT:
 		m_pSector->changeAmbient(z);
 		break;
 	default:
-		std::cerr << "dfLogicElevator::moveTo m_type==" << int(m_type) << " not implemented" << std::endl;
+		std::cerr << "dfElevator::moveTo m_type==" << int(m_type) << " not implemented" << std::endl;
 	}
 }
 
 /**
  * Records signs that trigger the elevator
  */
-void dfLogicElevator::addSign(dfSign* sign)
+void dfElevator::addSign(dfSign* sign)
 {
 	m_signs.push_back(sign);
 }
@@ -682,31 +682,31 @@ void dfLogicElevator::addSign(dfSign* sign)
 /**
  * Dispatch and handle messages
  */
-void dfLogicElevator::dispatchMessage(gaMessage* message)
+void dfElevator::dispatchMessage(gaMessage* message)
 {
 	switch (message->m_action) {
 	case DF_MESSAGE_TRIGGER:
-		std::cerr << "dfLogicElevator::dispatchMessage TRIGGER sector=" << m_name << " action=" << message->m_action << " status=" << int(m_status) << std::endl;;
+		std::cerr << "dfElevator::dispatchMessage TRIGGER sector=" << m_name << " action=" << message->m_action << " status=" << int(m_status) << std::endl;;
 
-		if (m_status != dfLogicElevator::Status::HOLD) {
+		if (m_status != dfElevator::Status::HOLD) {
 			// break the animation and move directly to the next stop
 			moveToNextStop();
-			m_status = dfLogicElevator::Status::MOVE;
+			m_status = dfElevator::Status::MOVE;
 			m_tick = 0;
 			// no need for animation, there is already one on the message queue
 		}
 		else {
 			// for speed = 0, move instantly to the next stop
 			if (m_speed == 0) {
-				std::cerr << "dfLogicElevator::trigger speed==0 not implemented" << std::endl;
+				std::cerr << "dfElevator::trigger speed==0 not implemented" << std::endl;
 			}
 			animate(0);
 		}
 		break;
 
 	case DF_MESSAGE_GOTO_STOP:
-		std::cerr << "dfLogicElevator::dispatchMessage GOTO_STOP sector=" << m_name << " action=" << message->m_action << " status=" << int(m_status) << std::endl;;
-		if (m_type == dfLogicElevator::Type::MORPH_SPIN1 && m_status != dfLogicElevator::Status::HOLD) {
+		std::cerr << "dfElevator::dispatchMessage GOTO_STOP sector=" << m_name << " action=" << message->m_action << " status=" << int(m_status) << std::endl;;
+		if (m_type == dfElevator::Type::MORPH_SPIN1 && m_status != dfElevator::Status::HOLD) {
 			// MORPH_SPIN animation cannot be broken
 			return;
 		}
@@ -731,7 +731,7 @@ void dfLogicElevator::dispatchMessage(gaMessage* message)
 			// TODO adapt the speed
 			m_delay = abs(m_direction) * 1600 / m_speed;
 
-			m_status = dfLogicElevator::Status::MOVE;
+			m_status = dfElevator::Status::MOVE;
 			m_tick = 0;
 			animate(0);
 		}
@@ -752,7 +752,7 @@ void dfLogicElevator::dispatchMessage(gaMessage* message)
 		break;
 
 	default:
-		std::cerr << "dfLogicElevator::dispatchMessage message " << message->m_action << " not implemented" << std::endl;
+		std::cerr << "dfElevator::dispatchMessage message " << message->m_action << " not implemented" << std::endl;
 	}
 
 	gaEntity::dispatchMessage(message);
@@ -761,7 +761,7 @@ void dfLogicElevator::dispatchMessage(gaMessage* message)
 /**
  * Get a list of all Sectors that receive messages from that elevator
  */
-void dfLogicElevator::getMessagesToSectors(std::list<std::string>& sectors)
+void dfElevator::getMessagesToSectors(std::list<std::string>& sectors)
 {
 
 	for (auto stop : m_stops) {
@@ -772,10 +772,10 @@ void dfLogicElevator::getMessagesToSectors(std::list<std::string>& sectors)
 /**
  * Register the sound of the elevator
  */
-void dfLogicElevator::sound(int effect, dfVOC* sound)
+void dfElevator::sound(int effect, dfVOC* sound)
 {
 	if (effect < 0 || effect > 3) {
-		std::cerr << "dfLogicElevator::sound incorrect sound number" << std::endl;
+		std::cerr << "dfElevator::sound incorrect sound number" << std::endl;
 		return;
 	}
 
@@ -785,7 +785,7 @@ void dfLogicElevator::sound(int effect, dfVOC* sound)
 /**
  * for morph_move1, convert angle translation to a vector translation
  */
-void dfLogicElevator::angle(float angle)
+void dfElevator::angle(float angle)
 {
 	angle = glm::radians(angle);	// conver degrees to radians
 	m_move = glm::vec3(-sin(angle), cos(angle), 0);
@@ -794,7 +794,7 @@ void dfLogicElevator::angle(float angle)
 /**
  * Return stop number #
  */
-dfLogicStop* dfLogicElevator::stop(int i)
+dfLogicStop* dfElevator::stop(int i)
 {
 	if (i < m_stops.size()) {
 		return m_stops[i];
@@ -807,7 +807,7 @@ dfLogicStop* dfLogicElevator::stop(int i)
  */
 const std::string dfKeyRed = "red";
 
-void dfLogicElevator::keys(std::string& key)
+void dfElevator::keys(std::string& key)
 {
 	if (key == dfKeyRed) {
 		m_keys |= DF_KEY_RED;
@@ -818,7 +818,7 @@ void dfLogicElevator::keys(std::string& key)
  * extended collision test after a successful AABB collision
  * test against all vertices of the dfMesh it is based on
  */
-bool dfLogicElevator::checkCollision(fwCylinder& bounding, glm::vec3& direction, glm::vec3& intersection, std::list<gaCollisionPoint>& collisions)
+bool dfElevator::checkCollision(fwCylinder& bounding, glm::vec3& direction, glm::vec3& intersection, std::list<gaCollisionPoint>& collisions)
 {
 	// only test the elevator mesh if the super-sector it is bind to is visible
 	// and if the play Z (lg space) in between the vertical elevator extend (level space)
@@ -851,7 +851,7 @@ bool dfLogicElevator::checkCollision(fwCylinder& bounding, glm::vec3& direction,
 	return false;
 }
 
-dfLogicElevator::~dfLogicElevator(void)
+dfElevator::~dfElevator(void)
 {
 	for (auto stop : m_stops) {
 		delete stop;
