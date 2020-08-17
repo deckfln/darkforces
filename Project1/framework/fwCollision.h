@@ -60,3 +60,11 @@ bool IntersectSegmentTriangle(const glm::vec3& p,
     float& v,
     float& w,
     float& t);
+
+bool lineSegIntersectTri(
+    const glm::vec3& p,
+    const glm::vec3& q,
+    const glm::vec3& a,
+    const glm::vec3& b,
+    const glm::vec3& c,
+    glm::vec3& point);

@@ -79,7 +79,6 @@ fwGeometryCylinder::fwGeometryCylinder(float radius, float height, float widthSe
         }
     }
 
-    /*
     int p = m_vertices.size();
 
     m_vertices.push_back(glm::vec3(0.025, 0.025, 0.025));
@@ -106,7 +105,6 @@ fwGeometryCylinder::fwGeometryCylinder(float radius, float height, float widthSe
     m_indices.push_back(p + 4);
     m_indices.push_back(p + 6);
     m_indices.push_back(p + 7);
-    */
 
     // build geometry
     addVertices("aPos", &m_vertices[0], 3, m_vertices.size() * sizeof(glm::vec3), sizeof(float));

@@ -81,12 +81,14 @@ bool Collider::collisionAABBgeometry(const Collider& aabb,
 	// move the AABB from model space to worldSpace and then to geometry model space
 	glm::mat4 mat = *geometry.m_inverseWorldMatrix * *aabb.m_worldMatrix;
 	fwAABBox aabb_geometry_space(aabb.m_aabb, mat);
-	glm::vec3 forward_geometry_space = glm::normalize(glm::vec3(*geometry.m_inverseWorldMatrix * glm::vec4(forward, 1.0)));
+	glm::vec3 forward_geometry_space = glm::vec3(*geometry.m_inverseWorldMatrix * glm::vec4(forward, 1.0));
 
 	// half of the length of the source AABB
-	float half_len = aabb.m_aabb->m_p1.z;
+	float half_len = aabb.m_aabb->m_p1.z - aabb.m_aabb->m_p.z;
 	float half_height = (aabb.m_aabb->m_p1.y - aabb.m_aabb->m_p.y) / 2.0f;
-	glm::vec3 center = glm::vec3(mat * glm::vec4(0, 0, 0, 1.0));
+	glm::vec3 center = glm::vec3(mat * glm::vec4(0, 0, 0, 1));
+	glm::vec3 fwsensor = center + forward_geometry_space;		// forward sensor
+	glm::vec3 dwsensor = center + down * half_height;			// downward sensor
 
 	// for each triangle, extract the AABB in geometry space and check collision with the source AABB in geometry space
 	fwAABBox triangle;
@@ -98,23 +100,24 @@ bool Collider::collisionAABBgeometry(const Collider& aabb,
 		if (triangle.intersect(aabb_geometry_space)) {
 			// got a collision, now check each sensor
 
-			// forward
-			glm::vec3 sensor = center + forward_geometry_space * half_len;
-
-			if (IntersectSegmentTriangle(center, sensor,
+			/*
+			if (IntersectSegmentTriangle(center, fwsensor,
 				vertices[i], vertices[i + 1], vertices[i + 2],
 				u, v, w, t
-			)) {
+			))
+			*/
+			if (lineSegIntersectTri(center, fwsensor,
+				vertices[i], vertices[i + 1], vertices[i + 2],
+				collision
+			))
+			{
 				// rebuild collision point (geometry space) to world space 
-				collision = u * vertices[i] + v * vertices[i + 1] + w * vertices[i + 2];
+				//collision = u * vertices[i] + v * vertices[i + 1] + w * vertices[i + 2];
 				collision = glm::vec3(*geometry.m_worldMatrix * glm::vec4(collision, 1.0));
 				collisions.push_back(gaCollisionPoint(fwCollisionLocation::FRONT, collision, nullptr));
 			};
 
-			// downward
-			sensor = center + down * half_height;
-
-			if (IntersectSegmentTriangle(center, sensor,
+			if (IntersectSegmentTriangle(center, dwsensor,
 				vertices[i], vertices[i + 1], vertices[i + 2],
 				u, v, w, t
 			)) {

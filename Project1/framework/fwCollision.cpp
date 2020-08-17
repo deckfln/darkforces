@@ -69,3 +69,52 @@ bool IntersectSegmentTriangle(const glm::vec3& p,
 	u = 1.0f-v-w;
 	return true;
 }
+
+// https://www.thetopsites.net/article/53962225.shtml
+#define EPSILON 0.000001f
+bool lineSegIntersectTri(
+	const glm::vec3 &p,
+	const glm::vec3 &q,
+	const glm::vec3& a,
+	const glm::vec3& b,
+	const glm::vec3& c,
+	glm::vec3  &point
+) {
+	glm::vec3 e0 = b - a;
+	glm::vec3 e1 = c - a;
+
+	glm::vec3 dir = q - p;
+	glm::vec3 dir_norm = glm::normalize(dir);
+
+	glm::vec3 h = glm::cross(dir_norm, e1);
+	const float d = glm::dot(e0, h);
+
+	if (d > -EPSILON && d < EPSILON) {
+		return false;
+	}
+
+	glm::vec3 s = p - a;
+	const float f = 1.0f / d;
+	const float u = f * glm::dot(s, h);
+
+	if (u < 0.0f || u > 1.0f) {
+		return false;
+	}
+
+	glm::vec3 q1 = glm::cross(s, e0);
+	const float v = f * glm::dot(dir_norm, q1);
+
+	if (v < 0.0f || u + v > 1.0f) {
+		return false;
+	}
+
+	const float t = f * glm::dot(e1, q1);
+
+	if (t > EPSILON && t < sqrtf(glm::dot(dir, dir))) { // segment intersection
+		point = p + dir_norm * t;
+
+		return true;
+	}
+
+	return false;
+}

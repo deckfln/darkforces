@@ -36,7 +36,7 @@ static fwGeometryCylinder *g_blaster=nullptr;
 
 dfBullet::dfBullet(const glm::vec3& position, const glm::vec3& direction):
 	gaEntity(DF_ENTITY_BULLET, "bullet("+std::to_string(g_bulletID++)+")", position),
-	m_direction(direction)
+	m_direction(glm::normalize(direction))
 {
 	// create a mesh for the blaster
 	if (g_blaster == nullptr) {
@@ -59,7 +59,6 @@ dfBullet::dfBullet(const glm::vec3& position, const glm::vec3& direction):
 	glm::vec3 up;
 
 	if (m_direction != glm::vec3(0)) {
-		m_direction = glm::normalize(m_direction);
 		right = glm::normalize(glm::cross(_up, m_direction));
 		up = glm::cross(m_direction, right);
 	}
@@ -67,13 +66,22 @@ dfBullet::dfBullet(const glm::vec3& position, const glm::vec3& direction):
 		up = _up;
 	}
 
-	glm::quat quaternion = glm::quatLookAt(m_direction, up);
+	m_transforms.m_direction = glm::vec3(0);
+	m_transforms.m_quaternion = glm::quatLookAt(m_direction, up);
+	m_transforms.m_scale = get_scale();
+	m_transforms.m_position = position;
+}
 
-	sendInternalMessage(GA_MSG_ROTATE, GA_MSG_ROTATE_QUAT, (void*)&quaternion);
-	sendInternalMessage(GA_MSG_MOVE, 0, (void*)&position);
+/**
+ *
+ */
+void dfBullet::tryToMove(void)
+{
+	m_transforms.m_position = position() + m_transforms.m_direction;
 
-	// kick start animation
-	sendDelayedMessage(GA_MSG_TIMER, 0, nullptr);
+	sendDelayedMessage(GA_MSG_WANT_TO_MOVE,
+		GA_MSG_WANT_TO_MOVE_BREAK_IF_FALL,
+		&m_transforms);
 }
 
 /**
@@ -81,18 +89,11 @@ dfBullet::dfBullet(const glm::vec3& position, const glm::vec3& direction):
  */
 void dfBullet::dispatchMessage(gaMessage* message)
 {
-	std::list<gaEntity*> entities;
-	std::list<dfSuperSector*> sectors;
-	gaEntity* nearest_entity = nullptr;
-	dfSuperSector* nearest_sector = nullptr;
-	float distance = 99999999.0f;
-	float distance_sector = 99999999.0f;
-	float d;
-
 	switch (message->m_action) {
-	case GA_MSG_MOVE_TO:
-		// move request was accepted
-		sendDelayedMessage(GA_MSG_TIMER, 0, nullptr);
+	case GA_MSG_WORLD_INSERT:
+		sendDelayedMessage(GA_MSG_WANT_TO_MOVE,
+			GA_MSG_WANT_TO_MOVE_LASER,
+			&m_transforms);
 		break;
 
 	case GA_MSG_COLLIDE: {
@@ -117,13 +118,17 @@ void dfBullet::dispatchMessage(gaMessage* message)
 		break;
 	}
 
-	case GA_MSG_TIMER:
+	case GA_MSG_MOVE:
 		m_time += message->m_delta;
 
 		if (m_time < bullet_life) {
-			glm::vec3 direction = (m_direction * (float)message->m_delta / bullet_speed);
-			m_futurePosition = direction;
-			sendMessageToWorld(GA_MSG_WANT_TO_MOVE, GA_MSG_WANT_TO_MOVE_LASER, &m_futurePosition);
+			glm::vec3 d = (m_direction * (float)message->m_delta / bullet_speed);
+			m_transforms.m_position = position() + d;
+			m_transforms.m_direction = -(m_modelAABB.m_p1.z - m_modelAABB.m_p.z) * m_direction;
+
+			sendDelayedMessage(GA_MSG_WANT_TO_MOVE,
+				GA_MSG_WANT_TO_MOVE_LASER,
+				&m_transforms);
 		}
 		else {
 			// get the bullet deleted after 5s

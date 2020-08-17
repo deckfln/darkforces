@@ -422,6 +422,9 @@ void gaWorld::wantToMove(gaEntity *entity, gaMessage *message)
 	// do an segment collision against the sectors triangles
 	bool fall = true;
 
+	if (entity->name() == "bullet(0)") {
+		printf("gaWorld::wantToMove\n");
+	}
 	for (auto sector : sectors) {
 		if (entity->collide(sector->collider(), tranform->m_direction, down, collisions)) {
 
@@ -450,15 +453,14 @@ void gaWorld::wantToMove(gaEntity *entity, gaMessage *message)
 		}
 	}
 
-	if (fall) {
+	if (fall && message->m_value != GA_MSG_WANT_TO_MOVE_LASER) {
 		// if there is no floor
-		if (message->m_value == GA_MSG_WANT_TO_MOVE_BREAK_IF_FALL) {
+		switch (message->m_value) {
+		case GA_MSG_WANT_TO_MOVE_BREAK_IF_FALL:
 			// if the entity wants to be informed of falling
 			message->m_action = GA_MSG_WOULD_FALL;
 			entity->popTransformations();			// restore previous position
-		}
-		else {
-			// trigger physic engine
+			break;
 		}
 	}
 	else if (distance < 99999999.0f || distance_sector < 99999999.0f) {
@@ -468,7 +470,7 @@ void gaWorld::wantToMove(gaEntity *entity, gaMessage *message)
 	else {
 		// accept the move
 		message->m_action = GA_MSG_MOVE;
-		message->m_extra = nullptr;			// object was already moved
+		message->m_extra = nullptr;					// object was already moved
 	}
 }
 
