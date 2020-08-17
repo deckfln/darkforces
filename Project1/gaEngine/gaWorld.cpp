@@ -422,9 +422,6 @@ void gaWorld::wantToMove(gaEntity *entity, gaMessage *message)
 	// do an segment collision against the sectors triangles
 	bool fall = true;
 
-	if (entity->name() == "bullet(0)") {
-		printf("gaWorld::wantToMove\n");
-	}
 	for (auto sector : sectors) {
 		if (entity->collide(sector->collider(), tranform->m_direction, down, collisions)) {
 

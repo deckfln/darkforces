@@ -1,5 +1,7 @@
 #include "Collider.h"
 
+#include <glm/gtx/intersect.hpp>
+
 #include "../framework/fwAABBox.h"
 #include "../framework/fwGeometry.h"
 #include "../framework/fwCollision.h"
@@ -88,7 +90,7 @@ bool Collider::collisionAABBgeometry(const Collider& aabb,
 	float half_height = (aabb.m_aabb->m_p1.y - aabb.m_aabb->m_p.y) / 2.0f;
 	glm::vec3 center = glm::vec3(mat * glm::vec4(0, 0, 0, 1));
 	glm::vec3 fwsensor = center + forward_geometry_space;		// forward sensor
-	glm::vec3 dwsensor = center + down * half_height;			// downward sensor
+	glm::vec3 dwsensor = down * half_height;			// downward sensor
 
 	// for each triangle, extract the AABB in geometry space and check collision with the source AABB in geometry space
 	fwAABBox triangle;
@@ -100,31 +102,40 @@ bool Collider::collisionAABBgeometry(const Collider& aabb,
 		if (triangle.intersect(aabb_geometry_space)) {
 			// got a collision, now check each sensor
 
-			/*
-			if (IntersectSegmentTriangle(center, fwsensor,
+			if (glm::intersectLineTriangle(center,
+				forward_geometry_space,
 				vertices[i], vertices[i + 1], vertices[i + 2],
-				u, v, w, t
-			))
-			*/
-			if (lineSegIntersectTri(center, fwsensor,
-				vertices[i], vertices[i + 1], vertices[i + 2],
-				collision
-			))
+				collision))
 			{
+				u = collision.x;
+				v = collision.y;
+				w = 1 - (u + v);
+
+				collision.x = (u * vertices[i].x + v * vertices[i + 1].x + w * vertices[i + 2].x);
+				collision.y = (u * vertices[i].y + v * vertices[i + 1].y + w * vertices[i + 2].y);
+				collision.z = (u * vertices[i].z + v * vertices[i + 1].z + w * vertices[i + 2].z);
+
 				// rebuild collision point (geometry space) to world space 
 				//collision = u * vertices[i] + v * vertices[i + 1] + w * vertices[i + 2];
 				collision = glm::vec3(*geometry.m_worldMatrix * glm::vec4(collision, 1.0));
 				collisions.push_back(gaCollisionPoint(fwCollisionLocation::FRONT, collision, nullptr));
 			};
 
-			if (IntersectSegmentTriangle(center, dwsensor,
+			if (glm::intersectLineTriangle(center,
+				dwsensor,
 				vertices[i], vertices[i + 1], vertices[i + 2],
-				u, v, w, t
-			)) {
-				// rebuild collision point (geometry space) to world space 
-				collision = u * vertices[i] + v * vertices[i + 1] + w * vertices[i + 2];
-				collision = glm::vec3(*geometry.m_worldMatrix * glm::vec4(collision, 1.0));
-				collisions.push_back(gaCollisionPoint(fwCollisionLocation::BOTTOM, collision, nullptr));
+				collision)) 
+			{
+			u = collision.x;
+			v = collision.y;
+			w = 1 - (u + v);
+
+			collision.x = (u * vertices[i].x + v * vertices[i+1].x + w * vertices[i+2].x);
+			collision.y = (u * vertices[i].y + v * vertices[i+1].y + w * vertices[i+2].y);
+			collision.z = (u * vertices[i].z + v * vertices[i+1].z + w * vertices[i+2].z);
+
+			collision = glm::vec3(*geometry.m_worldMatrix * glm::vec4(collision, 1.0));
+			collisions.push_back(gaCollisionPoint(fwCollisionLocation::BOTTOM, collision, nullptr));
 			};
 		}
 	}
