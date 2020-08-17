@@ -7,9 +7,9 @@
 #include "dfSector.h"
 #include "dfLogicElevator.h"
 
-static std::map<std::string, int> _stops = {
-	{ "hold", DF_STOP_HOLD},
-	{ "terminate", DF_STOP_TERMINATE}
+static std::map<std::string, dfLogicStop::Action> _stops = {
+	{ "hold", dfLogicStop::Action::HOLD},
+	{ "terminate", dfLogicStop::Action::TERMINATE}
 };
 
 dfLogicStop::dfLogicStop(dfLogicElevator* parent):
@@ -99,7 +99,7 @@ void dfLogicStop::sendMessages()
 	}
 }
 
-float dfLogicStop::z_position(dfElevatorType elevatorClass)
+float dfLogicStop::z_position(dfLogicElevator::Type elevatorClass)
 {
 	switch (m_flag) {
 		case 9:
@@ -122,7 +122,7 @@ float dfLogicStop::z_position(dfElevatorType elevatorClass)
 		case 12:
 		case 20:
 			switch (elevatorClass) {
-			case dfElevatorType::MOVE_FLOOR:
+			case dfLogicElevator::Type::MOVE_FLOOR:
 				return m_pSector->referenceCeiling();	// coy the ceiling of another sector
 			default:
 				return m_pSector->referenceFloor();		// coy the floor of another sector

@@ -3,8 +3,6 @@
 #include <string>
 #include <vector>
 
-#include "dfLogicStop.h"
-
 #include "../config.h"
 
 #include "../framework/fwMaterial.h"
@@ -14,7 +12,6 @@
 #include "../gaEngine/gaMessage.h"
 
 #include "dfComponent/dfComponentActor.h"
-#include "dfLogicElevatorConst.h"
 
 class fwCylinder;
 class gaCollisionPoint;
@@ -25,29 +22,51 @@ class gaMessage;
 class dfSign;
 class dfBitmap;
 class dfVOC;
-
-enum {
-	DF_ELEVATOR_CROSSLINE_FRONT = 1,	// Cross line from front side 
-	DF_ELEVATOR_CROSSLINE_BACK = 2,		// Cross line from back side 
-	DF_ELEVATOR_ENTER_SECTOR = 4,		// Enter sector
-	DF_ELEVATOR_LEAVE_SECTOR = 8,		// Leave sector 
-	DF_ELEVATOR_NUDGE_FRONT_INSIDE = 16,// Nudge line from front side / Nudge sector from inside 
-	DF_ELEVATOR_NUDGE_BACK_OUTSIE = 32,	// Nudge line from back side / Nudge sector from outside 
-	DF_ELEVATOR_EXPLOSION = 64,			// Explosion 
-	DF_ELEVATOR_SHOOT = 128,			//Shoot or punch line(see entity_mask) 
-	DF_ELEVATOR_LAND = 512				// Land on floor of sector
-} ;
-
-/* Sounds to play when elevator move
- */
-enum dfElevatorSound {
-	START = 0,	// leaving a stop
-	MOVE = 1,	// moving between stops
-	END = 2		// arriving at stop
-};
+class dfLogicStop;
+class dfSector;
 
 class dfLogicElevator: public gaEntity {
-	dfElevatorType m_type = dfElevatorType::INV;	// class of elevator
+public:
+	enum class Type {
+		INV,		// moving up
+		BASIC,		// moving down
+		MOVE_FLOOR,
+		CHANGE_LIGHT,
+		MOVE_CEILING,
+		MORPH_SPIN1,
+		MORPH_MOVE1,
+		MORPH_SPIN2,
+		DOOR
+	};
+	enum class Status {
+		HOLD,		// elevator is not animated
+		MOVE,		// is moving
+		WAIT,		// is waiting at a stop
+		TERMINATED	// the elevator cannot be activated anymore
+	};
+
+	/* Sounds to play when elevator move */
+	enum Sound {
+		START = 0,	// leaving a stop
+		MOVE = 1,	// moving between stops
+		END = 2		// arriving at stop
+	};
+
+	/* Message send/received */
+	enum Message {
+		CROSSLINE_FRONT = 1,	// Cross line from front side 
+		CROSSLINE_BACK = 2,		// Cross line from back side 
+		ENTER_SECTOR = 4,		// Enter sector
+		LEAVE_SECTOR = 8,		// Leave sector 
+		NUDGE_FRONT_INSIDE = 16,// Nudge line from front side / Nudge sector from inside 
+		NUDGE_BACK_OUTSIE = 32,	// Nudge line from back side / Nudge sector from outside 
+		EXPLOSION = 64,			// Explosion 
+		SHOOT = 128,			//Shoot or punch line(see entity_mask) 
+		LAND = 512				// Land on floor of sector
+	};
+
+private:
+	Type m_type = Type::INV;	// class of elevator
 
 	//TODO adapt the default speed
 	float m_speed = 20;					// time in millisecond between 2 stops
@@ -61,12 +80,12 @@ class dfLogicElevator: public gaEntity {
 	bool m_master = true;				// is the elevator operational ?
 	int m_keys = DF_KEY_NONE;			// key activating the elevator
 
-	std::vector<dfLogicStop*> m_stops;	// all stops of the evelator
+	std::vector<dfLogicStop*> m_stops;	// all stops of the elevator
 
-	std::string m_sector;				// sector that is an evelator
+	std::string m_sector;				// sector that is an elevator
 	dfSector* m_pSector = nullptr;
 
-	dfElevatorStatus m_status = dfElevatorStatus::HOLD;	// status of the elevator
+	Status m_status = Status::HOLD;	// status of the elevator
 	float m_tick = 0;					// current timer
 	float m_delay = 0;					// time to run the elevator
 	unsigned int m_currentStop = 0;		// current stop for the running animation
@@ -101,7 +120,7 @@ public:
 	void center(float x, float y) { m_center.x = x; m_center.y = y; };
 	int keys(void) { return m_keys; };
 	bool needsKeys(void) { return m_keys != 0; };
-	bool is(dfElevatorType type) { return m_type == type; };
+	bool is(dfLogicElevator::Type type) { return m_type == type; };
 	dfMesh* mesh(void) { return m_mesh; };
 	void angle(float angle);
 	dfLogicStop* stop(int i);
@@ -117,7 +136,7 @@ public:
 	bool checkCollision(fwCylinder& bounding,
 		glm::vec3& direction,
 		glm::vec3& intersection,
-		std::list<gaCollisionPoint>& collisions) override;		//extended collision test after a sucessfull AABB collision
+		std::list<gaCollisionPoint>& collisions) override;		//extended collision test after a successful AABB collision
 
 	void getMessagesToSectors(std::list<std::string>& sectors);
 	void sound(int effect, dfVOC* sound);

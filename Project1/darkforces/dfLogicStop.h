@@ -7,24 +7,25 @@
 #include "../framework/fwAABBox.h"
 #include "../gaEngine/gaMessage.h"
 
-#include "dfLogicElevatorConst.h"
+#include "dfLogicElevator.h"
 
 class dfSector;
-class dfLogicElevator;
-
-enum {
-	DF_STOP_HOLD,
-	DF_STOP_COMPLETE,
-	DF_STOP_TERMINATE
-};
 
 class dfLogicStop {
+public:
+	enum class Action {
+		HOLD,
+		COMPLETE,
+		TERMINATE
+	};
+
+private:
 	std::string m_name;
 
 	int m_flag = 0;			// content of the stop
 		// 1 : absolute
 		// 2 : relative
-		// 4 : based on antoher sector
+		// 4 : based on another sector
 
 		// 8 : time to spend at a stop
 		// 16 : action at the stop
@@ -42,7 +43,7 @@ class dfLogicStop {
 	// [hold elevator] will remain at stop indefinitely 
 	// [terminate] elevator will stay at the stop permanently 
 	// [complete] mission will be complete when elev arrives at stop
-	int m_action = 0;
+	dfLogicStop::Action m_action = dfLogicStop::Action::HOLD;
 
 	std::vector<gaMessage* > m_messages;
 
@@ -61,11 +62,11 @@ public:
 	void time(float time) { m_flag |= 8; m_time = time * 1000; };
 	float time(void) { return m_time; };
 	void action(std::string& action);
-	int action(void) { return m_action; };
+	dfLogicStop::Action action(void) { return m_action; };
 	bool isTimeBased(void);
 	void message(gaMessage* message);
 	void sendMessages();
-	float z_position(dfElevatorType elevatorClass);
+	float z_position(dfLogicElevator::Type elevatorClass);
 	void getMessagesToSectors(std::list<std::string>& sectors);
 
 	~dfLogicStop();

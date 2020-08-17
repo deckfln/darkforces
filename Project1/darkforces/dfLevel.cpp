@@ -24,6 +24,7 @@
 #include "dfFileSystem.h"
 #include "dfAtlasTexture.h"
 #include "dfPalette.h"
+#include "dfLogicStop.h"
 
 dfLevel::dfLevel(dfFileSystem* fs, std::string file)
 {
@@ -413,8 +414,8 @@ void dfLevel::createTriggers(void)
 		if (explicits.count(elevator->name()) == 0) {
 			createTriggerForElevator(elevator);
 		}
-		else if (elevator->is(dfElevatorType::MORPH_SPIN1) ||
-				elevator->is(dfElevatorType::MORPH_MOVE1)) {
+		else if (elevator->is(dfLogicElevator::Type::MORPH_SPIN1) ||
+				elevator->is(dfLogicElevator::Type::MORPH_MOVE1)) {
 			createTriggerForElevator(elevator);
 		}
 	}
@@ -427,9 +428,9 @@ void dfLevel::createTriggerForElevator(dfLogicElevator *elevator)
 {
 	static std::string standard = "switch1";
 
-	if (elevator->is(dfElevatorType::MORPH_SPIN1) || 
-		elevator->is(dfElevatorType::MORPH_MOVE1) ||
-		elevator->is(dfElevatorType::MOVE_CEILING) ||
+	if (elevator->is(dfLogicElevator::Type::MORPH_SPIN1) || 
+		elevator->is(dfLogicElevator::Type::MORPH_MOVE1) ||
+		elevator->is(dfLogicElevator::Type::MOVE_CEILING) ||
 		elevator->needsKeys()
 		) {
 		dfLogicTrigger* trigger = new dfLogicTrigger(standard, elevator);
@@ -502,11 +503,11 @@ dfSector* dfLevel::findSector(glm::vec3& position)
 			gaDebugLog(LOW_DEBUG, "dfLevel::findSector", " leave=" + m_lastSector->m_name + " enter=" + sector->m_name);
 #endif
 
-			m_lastSector->event(DF_ELEVATOR_LEAVE_SECTOR);
+			m_lastSector->event(dfLogicElevator::Message::LEAVE_SECTOR);
 
 			m_lastSector = sector;
 
-			sector->event(DF_ELEVATOR_ENTER_SECTOR);
+			sector->event(dfLogicElevator::Message::ENTER_SECTOR);
 			return sector;
 		}
 	}
@@ -517,7 +518,7 @@ dfSector* dfLevel::findSector(glm::vec3& position)
 
 		if (sector) {
 			if (m_lastSector) {
-				m_lastSector->event(DF_ELEVATOR_LEAVE_SECTOR);
+				m_lastSector->event(dfLogicElevator::Message::LEAVE_SECTOR);
 			}
 
 #ifdef DEBUG
@@ -534,7 +535,7 @@ dfSector* dfLevel::findSector(glm::vec3& position)
 			m_lastSector = sector;
 			m_lastSuperSector = ssector;
 
-			sector->event(DF_ELEVATOR_ENTER_SECTOR);
+			sector->event(dfLogicElevator::Message::ENTER_SECTOR);
 			return sector;
 		}
 	}

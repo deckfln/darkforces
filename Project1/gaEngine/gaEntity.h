@@ -78,7 +78,6 @@ public:
 		const glm::vec3& down,
 		std::list<gaCollisionPoint>& collisions);		// extended collision using colliders
 	void modelAABB(const fwAABBox& box);				// set the model space AABB
-	void drawBoundingBox(void);							// create a world bounding box mesh
 
 	void sendMessage(const std::string& target,
 		int action,
@@ -96,10 +95,6 @@ public:
 	void sendDelayedMessage(int action,
 		int value = 0,
 		void* extra = nullptr);							// send a delayed message to myself
-
-	int tryToMove(int flag, 
-		const glm::mat4& worldMatrix, 
-		const glm::vec3& direction);					// try to move the entity
 
 	virtual void add2scene(fwScene* scene);				// if the entity has a mesh, add to the scene
 	virtual void collideWith(gaEntity*) {};				// inform another entity of a collision
