@@ -657,7 +657,7 @@ void dfElevator::moveTo(float z)
 	case dfElevator::Type::MORPH_SPIN1:
 	case dfElevator::Type::MORPH_SPIN2:
 		glm::vec3 r = glm::vec3(0, glm::radians(z), 0);
-		sendInternalMessage(gaMessage::ROTATE, 0, &r);
+		sendInternalMessage(gaMessage::ROTATE, gaMessage::Flag::ROTATE_VEC3, &r);
 		break;
 	case dfElevator::Type::MORPH_MOVE1:
 		glm::vec3 p = m_center + m_move * z;

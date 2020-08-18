@@ -37,7 +37,7 @@ void ComponentMesh::dispatchMessage(gaMessage* message)
 		break;
 	}
 	case gaMessage::ROTATE: {
-		if (message->m_value == 0) {
+		if (message->m_value == gaMessage::Flag::ROTATE_VEC3) {
 			glm::vec3* rotation = (glm::vec3*)message->m_extra;
 			rotate(rotation);
 		}
