@@ -83,7 +83,11 @@ bool Collider::collisionAABBgeometry(const Collider& aabb,
 	// move the AABB from model space to worldSpace and then to geometry model space
 	glm::mat4 mat = *geometry.m_inverseWorldMatrix * *aabb.m_worldMatrix;
 	fwAABBox aabb_geometry_space(aabb.m_aabb, mat);
-	glm::vec3 forward_geometry_space = glm::vec3(*geometry.m_inverseWorldMatrix * glm::vec4(forward, 1.0));
+
+	// remove the translation part, this is a direction vector
+	glm::mat4 rotation_scale = *geometry.m_inverseWorldMatrix;
+	rotation_scale[3][0] = rotation_scale[3][1] = rotation_scale[3][2] = 0;
+	glm::vec3 forward_geometry_space = glm::vec3(rotation_scale * glm::vec4(forward, 1.0));
 
 	// half of the length of the source AABB
 	float half_height = (aabb.m_aabb->m_p1.y - aabb.m_aabb->m_p.y) / 2.0f;
