@@ -9,9 +9,9 @@
 using Coord = float;
 using Point = std::array<Coord, 2>;
 
-#include "../framework/fwAABBox.h"
 #include "../framework/math/fwSphere.h"
 
+#include "../gaEngine/AABBoxTree.h"
 #include "../gaEngine/gaMessage.h"
 
 class fwCylinder;
@@ -92,7 +92,7 @@ class dfSector
 	std::vector<dfSector*> m_includes;					// list of sectors included in the current one
 	dfSector* m_includedIn = nullptr;					// if the sector is included in another one
 
-	dfElevator* m_elevator = nullptr;				// if the sector is managed by an elevator
+	dfElevator* m_elevator = nullptr;					// if the sector is managed by an elevator
 
 	float m_currentAmbient;								// current value for an elevator light
 
@@ -102,9 +102,8 @@ class dfSector
 	dfLogicTrigger* addSign(dfMesh *mesh, dfWall* wall, float z, float z1, int texture);
 	void deferedAddSign(dfWall* wall);
 
-
 public:
-	fwAABBox m_worldAABB;								// opengl World AABB
+	GameEngine::AABBoxTree m_worldAABB;						// opengl World AABB
 
 	std::string m_name = "";
 	int m_id = -1;

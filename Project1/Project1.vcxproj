@@ -220,6 +220,8 @@
     <ClCompile Include="framework\render\fwRendererForward.cpp" />
     <ClCompile Include="framework\fwTexture.cpp" />
     <ClCompile Include="framework\fwUniform.cpp" />
+    <ClCompile Include="gaEngine\AABBBox.cpp" />
+    <ClCompile Include="gaEngine\AABBoxTree.cpp" />
     <ClCompile Include="gaEngine\Collider.cpp" />
     <ClCompile Include="gaEngine\gaActor.cpp" />
     <ClCompile Include="gaEngine\gaBoundingBoxes.cpp" />
@@ -365,6 +367,7 @@
     <ClInclude Include="framework\render\fwRendererForward.h" />
     <ClInclude Include="framework\fwTexture.h" />
     <ClInclude Include="framework\fwUniform.h" />
+    <ClInclude Include="gaEngine\AABBoxTree.h" />
     <ClInclude Include="gaEngine\Collider.h" />
     <ClInclude Include="gaEngine\gaActor.h" />
     <ClInclude Include="gaEngine\gaBoundingBoxes.h" />

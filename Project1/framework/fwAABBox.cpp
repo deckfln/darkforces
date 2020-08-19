@@ -356,7 +356,7 @@ bool fwAABBox::intersect(const fwAABBox& box)
 /**
  * Extend the current AABBB y including the give one
  */
-void fwAABBox::extend(fwAABBox& box)
+void fwAABBox::extend(const fwAABBox& box)
 {
 	if (m_p.x > box.m_p.x) m_p.x = box.m_p.x;
 	if (m_p1.x < box.m_p1.x) m_p1.x = box.m_p1.x;

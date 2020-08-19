@@ -152,7 +152,7 @@ dfSector::dfSector(std::istringstream& infile, std::vector<dfSector*>& sectorsID
 	glm::vec3 p1(max_x, max_y, m_referenceCeilingAltitude);
 	dfLevel::level2gl(p);
 	dfLevel::level2gl(p1);
-	m_worldAABB = fwAABBox(p, p1);
+	m_worldAABB = GameEngine::AABBoxTree(p, p1);
 }
 
 /**
@@ -1155,6 +1155,12 @@ void dfSector::buildGeometry(dfMesh* mesh, dfWallFlag displayPolygon)
 	buildSigns(mesh);
 
 	m_nbVertices= mesh->nbVertices() - m_firstVertex;
+
+	m_worldAABB.geometry(mesh->vertice(m_firstVertex), m_nbVertices);
+	m_worldAABB.m_extra = &m_name;
+
+	// build hierarchy of AABB
+	mesh->addModelAABB(&m_worldAABB);
 }
 
 

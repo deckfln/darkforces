@@ -4,12 +4,12 @@
 #include <vector>
 #include <array>
 
-#include "../framework/fwAABBox.h"
 #include "../framework/fwMesh.h"
 #include "../framework/fwScene.h"
 #include "../framework/math/fwSphere.h"
 
 #include "../gaEngine/gaComponent/gaComponentMesh.h"
+#include "../gaEngine/AABBoxTree.h"
 
 #include "dfBitmap.h"
 
@@ -64,7 +64,7 @@ protected:
 	std::string m_name;
 	dfMesh* m_parent = nullptr;							// Parent dfMesh
 	dfSuperSector* m_supersector = nullptr;
-	fwAABBox m_modelAABB;								// Model Space AABB
+	GameEngine::AABBoxTree m_modelAABB;						// Model Space AABB
 	std::vector<dfBitmap*>& m_bitmaps = m_dummy;		// image map
 
 	// pointers, so we can reference other buffers
@@ -94,7 +94,8 @@ public:
 	glm::mat4* worldMatrix(void) { return m_mesh->pWorldMatrix(); };
 	glm::mat4* inverseWorldMatrix(void) { return m_mesh->pInverseWorldMatrix(); };
 
-	const fwAABBox& modelAABB(void);					// build the model AABB
+	const GameEngine::AABBoxTree& modelAABB(void);				// build the model AABB
+	void addModelAABB(GameEngine::AABBoxTree* child);			// create a hierarchy of AABB pointing to triangles
 	const glm::vec3& position(void) { return m_position; };
 
 	void display(fwScene*, bool visibility);
@@ -129,7 +130,8 @@ public:
 	void addMesh(fwMesh* mesh);
 	void zOrder(int z);
 	void updateGeometryTextures(int start, int nb);
-	int nbVertices(void);
+	int nbVertices(void);									// current vertices on the geometry
+	glm::vec3 const* vertice(uint32_t index);				// address of the vertices
 	void name(std::string& name);
 
 	void moveVertices(glm::vec3& center);

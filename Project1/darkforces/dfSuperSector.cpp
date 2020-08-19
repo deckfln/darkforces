@@ -250,11 +250,15 @@ void dfSuperSector::buildGeometry(std::vector<dfSector*>& sectors)
 
 		// buildSigns(sector, sectors);
 	}
+
 	m_dfmesh->name(m_name);
 	m_dfmesh->buildMesh();
 
 	// prepare the collider
-	m_collider.set(m_dfmesh->geometry(), m_dfmesh->worldMatrix(), m_dfmesh->inverseWorldMatrix());
+	m_collider.set(
+		(GameEngine::AABBoxTree*)&m_dfmesh->modelAABB(), 
+		m_dfmesh->worldMatrix(), 
+		m_dfmesh->inverseWorldMatrix());
 
 	// TODO : fix the camera frustum test to remove that line
 	// m_mesh->always_draw(true);
@@ -267,8 +271,6 @@ void dfSuperSector::buildGeometry(std::vector<dfSector*>& sectors)
 			glm::vec3 position = portal.m_boundingSphere.center();
 
 			portal.m_debug_portal->translate(position);
-
-			m_mesh->addChild(portal.m_debug_portal);
 		}
 	}
 }
@@ -331,7 +333,6 @@ void dfSuperSector::add2scene(fwScene* scene)
 void dfSuperSector::addObject(dfMesh* object)
 {
 	m_dfmesh->addMesh(object->mesh());
-	object->parent(m_mesh);
 }
 
 /**
@@ -358,8 +359,7 @@ void dfSuperSector::updateAmbientLight(float ambient, int start, int len)
 
 dfSuperSector::~dfSuperSector()
 {
-	delete m_geometry;
-	delete m_mesh;
+	//delete m_mesh;
 
 	for (auto sign : m_hSigns) {
 		delete sign.second;

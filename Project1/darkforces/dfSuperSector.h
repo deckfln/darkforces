@@ -4,7 +4,6 @@
 #include <map>
 #include <glm/mat4x4.hpp>
 
-#include "../framework/fwAABBox.h"
 #include "../framework/fwGeometry.h"
 #include "../framework/fwCamera.h"
 #include "../framework/fwScene.h"
@@ -12,6 +11,7 @@
 
 #include "../gaEngine/gaCollisionPoint.h"
 #include "../gaEngine/Collider.h"
+#include "../gaEngine/AABBoxTree.h"
 
 #include "dfSector.h"
 #include "dfBitmap.h"
@@ -59,20 +59,18 @@ class dfSuperSector
     std::string m_name;
     dfLevel* m_parent = nullptr;
 
-    fwAABBox m_worldAABB;                       // GL space world AABB
+    GameEngine::AABBoxTree m_worldAABB;             // GL space world AABB hierarchy
 
     std::list <dfPortal> m_portals;             // lits of portals driving to other SuperSectors
     std::list <dfSector*> m_sectors;            // list of basic sectors in the SuperSector
        
-    std::vector <glm::vec3> m_vertices;		    // level vertices
-    std::vector <glm::vec2> m_uvs;			    // UVs inside the source texture
-    std::vector <float> m_textureID;		    // TextureID inside the mega-texture
+    //std::vector <glm::vec3> m_vertices;		    // level vertices
+    //std::vector <glm::vec2> m_uvs;			    // UVs inside the source texture
+    //std::vector <float> m_textureID;		    // TextureID inside the mega-texture
     std::vector <float> m_ambientLight;		    // % of ambient light
     std::map <int, glm::ivec3> m_sectorIndex;   // start of the sector vertices in the vertices buffer : x = start of walls, y = start of floors, z = #vertices on the floor. Ceiling vertices = y + z
 
-    fwGeometry* m_geometry = nullptr;
     fwMaterialBasic* m_material = nullptr;
-    fwMesh* m_mesh = nullptr;                   // static mesh of the super sector
                                                 // moving meshes are children of the super sector (like elevators)
     dfMesh* m_dfmesh = nullptr;
 
@@ -102,7 +100,6 @@ public:
     int id(void) { return m_id; };
     void visible(bool v) { m_visible = v; };
     bool visible(void) { return m_visible; };
-    fwGeometry* geometry(void) { return m_geometry; };
     void remove(void) { m_removed = true; };
     bool removed(void) { return m_removed; };
     const std::string& name(void) { return m_name; };

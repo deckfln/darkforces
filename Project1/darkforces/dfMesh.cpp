@@ -52,13 +52,23 @@ dfMesh::dfMesh(dfMesh* parent):
 /**
  * Build the AABB for the mesh
  */
-const fwAABBox& dfMesh::modelAABB(void)
+const GameEngine::AABBoxTree& dfMesh::modelAABB(void)
 {
 	for (auto& vertice : m_vertices) {
 		m_modelAABB.extend(vertice);
 	}
 
+	m_modelAABB.geometry(&m_vertices[0], m_vertices.size());
+
 	return m_modelAABB;
+}
+
+/**
+ * Create a hierarchy of AABB pointing to triangles
+ */
+void dfMesh::addModelAABB(GameEngine::AABBoxTree* child)
+{
+	m_modelAABB.add(child);
 }
 
 void dfMesh::display(fwScene* scene, bool visibility)
@@ -107,6 +117,18 @@ int dfMesh::resize(int i)
 int dfMesh::nbVertices(void)
 {
 	return m_pVertices->size();
+}
+
+/**
+ * address of the vertex
+ */
+glm::vec3 const* dfMesh::vertice(uint32_t index)
+{
+	if (index > m_pVertices->size()) {
+		return nullptr;
+	}
+
+	return &m_pVertices->at(index);
 }
 
 /**

@@ -53,7 +53,7 @@ public:
 	bool inside(const glm::vec3& position);
 	bool inside(fwAABBox& box);
 	bool intersect(const fwAABBox& box);
-	void extend(fwAABBox& box);
+	void extend(const fwAABBox& box);
 	void extend(glm::vec3& vertice);
 	float surface(void);
 	float volume(void);
