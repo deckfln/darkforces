@@ -51,20 +51,31 @@ public:
     ~fwCollision(void);
 };
 
-bool IntersectSegmentTriangle(const glm::vec3& p,
-    const glm::vec3& q,
-    const glm::vec3& a,
-    const glm::vec3& b,
-    const glm::vec3& c,
-    float& u,
-    float& v,
-    float& w,
-    float& t);
+namespace Framework 
+{
+    bool IntersectSegmentTriangle(const glm::vec3& p,
+        const glm::vec3& q,
+        const glm::vec3& a,
+        const glm::vec3& b,
+        const glm::vec3& c,
+        float& u,
+        float& v,
+        float& w,
+        float& t);
 
-bool lineSegIntersectTri(
-    const glm::vec3& p,
-    const glm::vec3& q,
-    const glm::vec3& a,
-    const glm::vec3& b,
-    const glm::vec3& c,
-    glm::vec3& point);
+    bool lineSegIntersectTri(
+        const glm::vec3& p,
+        const glm::vec3& q,
+        const glm::vec3& a,
+        const glm::vec3& b,
+        const glm::vec3& c,
+        glm::vec3& point);
+
+    /**
+     * Sphere/Triangle intersection (other version)
+     */
+    bool intersectSphereTriangle(
+        const glm::vec3& center_es,
+        const glm::vec3& a, const glm::vec3 b, const glm::vec3 c,
+        glm::vec3& p);
+}

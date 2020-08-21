@@ -459,7 +459,7 @@ bool dfMesh::collisionSegmentTriangle(const glm::vec3& p, const glm::vec3& q, st
 	glm::vec3 collision;
 
 	for (unsigned int i = firstVertex; i < nbVertices; i += 3) {
-		if (IntersectSegmentTriangle(p, q,
+		if (Framework::IntersectSegmentTriangle(p, q,
 			m_vertices[i], m_vertices[i + 1], m_vertices[i + 2],
 			u, v, w, t
 		)) {
@@ -467,61 +467,6 @@ bool dfMesh::collisionSegmentTriangle(const glm::vec3& p, const glm::vec3& q, st
 			collision = u * m_vertices[i] + v * m_vertices[i + 1] + w * m_vertices[i + 2];
 			collisions.push_back(gaCollisionPoint(fwCollisionLocation::BACK, collision, nullptr));
 		};
-	}
-
-	return false;
-}
-
-/**
- * Sphere/Triangle intersection (other version)
- */
-static bool intersectSphereTriangle(const glm::vec3& center_es, const glm::vec3& a, const glm::vec3 b, const glm::vec3 c, glm::vec3& p)
-{
-	// plane equation
-	glm::vec3 normal;
-	glm::vec4 plane;
-	float signedDistance;
-
-	// triangle equation
-	glm::vec3 tr0;
-	glm::vec3 tr1;
-	float tarea, tarea1, tarea2, tarea3;
-
-	// first, test the intersection with the triangle plane
-	normal = glm::normalize(glm::cross(b - a, c - a));
-	plane = glm::vec4(normal.x, normal.y, normal.z, -(normal.x * a.x + normal.y * a.y + normal.z * a.z));
-	signedDistance = glm::dot(center_es, normal) + plane.w;
-
-	if (signedDistance >= -1.0f && signedDistance <= 1.0f) {
-		// if the plane is passing trough the sphere (the ellipsoid deformed to look like a sphere)
-		// get the collision point of the sphere on the plane
-
-		p = center_es - normal * glm::abs(signedDistance);
-
-		// test if the collision origin in INSIDE the triangle
-
-		// area of the GL triangle
-		tr0 = a - b;
-		tr1 = c - b;
-		tarea = glm::length(glm::cross(tr0, tr1));
-
-		// area of the triangles using the intersection point as vertex
-		tr0 = a - p;
-		tr1 = b - p;
-		tarea1 = glm::length(glm::cross(tr0, tr1));
-
-		tr0 = b - p;
-		tr1 = c - p;
-		tarea2 = glm::length(glm::cross(tr0, tr1));
-
-		tr0 = c - p;
-		tr1 = a - p;
-		tarea3 = glm::length(glm::cross(tr0, tr1));
-
-		// if the sum of the 3 new triangles is equal to the opengl triangle
-		if (abs(tarea1 + tarea2 + tarea3 - tarea) < 0.01) {
-			return true;
-		}
 	}
 
 	return false;
@@ -560,7 +505,7 @@ bool dfMesh::checkCollision(fwCylinder& bounding, glm::vec3& direction, glm::vec
 		v2_es = m_vertices[i + 1] * ellipsoid_space;
 		v3_es = m_vertices[i + 2] * ellipsoid_space;
 
-		if (intersectSphereTriangle(center_es, v1_es, v2_es, v3_es, origin)) {
+		if (Framework::intersectSphereTriangle(center_es, v1_es, v2_es, v3_es, origin)) {
 			// the intersection point is inside the triangle
 
 			// convert the intersection point back to model space

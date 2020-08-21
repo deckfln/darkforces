@@ -14,7 +14,7 @@ fwCollision::~fwCollision(void)
 // Given segment pq and triangle abc, returns whether segment intersects
 // triangle and if so, also returns the barycentric coordinates (u,v,w)
 // of the intersection point
-bool IntersectSegmentTriangle(const glm::vec3& p, 
+bool Framework::IntersectSegmentTriangle(const glm::vec3& p,
 	const glm::vec3& q, 
 	const glm::vec3& a,
 	const glm::vec3& b, 
@@ -72,7 +72,7 @@ bool IntersectSegmentTriangle(const glm::vec3& p,
 
 // https://www.thetopsites.net/article/53962225.shtml
 #define EPSILON 0.000001f
-bool lineSegIntersectTri(
+bool Framework::lineSegIntersectTri(
 	const glm::vec3 &p,
 	const glm::vec3 &q,
 	const glm::vec3& a,
@@ -114,6 +114,64 @@ bool lineSegIntersectTri(
 		point = p + dir_norm * t;
 
 		return true;
+	}
+
+	return false;
+}
+
+/**
+ * Sphere/Triangle intersection (other version)
+ */
+bool Framework::intersectSphereTriangle(
+	const glm::vec3& center_es, 
+	const glm::vec3& a,	const glm::vec3 b, const glm::vec3 c, 
+	glm::vec3& p)
+{
+	// plane equation
+	glm::vec3 normal;
+	glm::vec4 plane;
+	float signedDistance;
+
+	// triangle equation
+	glm::vec3 tr0;
+	glm::vec3 tr1;
+	float tarea, tarea1, tarea2, tarea3;
+
+	// first, test the intersection with the triangle plane
+	normal = glm::normalize(glm::cross(b - a, c - a));
+	plane = glm::vec4(normal.x, normal.y, normal.z, -(normal.x * a.x + normal.y * a.y + normal.z * a.z));
+	signedDistance = glm::dot(center_es, normal) + plane.w;
+
+	if (signedDistance >= -1.0f && signedDistance <= 1.0f) {
+		// if the plane is passing trough the sphere (the ellipsoid deformed to look like a sphere)
+		// get the collision point of the sphere on the plane
+
+		p = center_es - normal * glm::abs(signedDistance);
+
+		// test if the collision origin in INSIDE the triangle
+
+		// area of the GL triangle
+		tr0 = a - b;
+		tr1 = c - b;
+		tarea = glm::length(glm::cross(tr0, tr1));
+
+		// area of the triangles using the intersection point as vertex
+		tr0 = a - p;
+		tr1 = b - p;
+		tarea1 = glm::length(glm::cross(tr0, tr1));
+
+		tr0 = b - p;
+		tr1 = c - p;
+		tarea2 = glm::length(glm::cross(tr0, tr1));
+
+		tr0 = c - p;
+		tr1 = a - p;
+		tarea3 = glm::length(glm::cross(tr0, tr1));
+
+		// if the sum of the 3 new triangles is equal to the opengl triangle
+		if (abs(tarea1 + tarea2 + tarea3 - tarea) < 0.01) {
+			return true;
+		}
 	}
 
 	return false;

@@ -8,6 +8,7 @@
 
 class fwAABBox;
 class fwGeometry;
+class fwCylinder;
 
 namespace GameEngine
 {
@@ -18,32 +19,36 @@ namespace GameEngine
 		AABB,
 		ELIPSOID,
 		GEOMETRY,
-		AABB_TREE
+		AABB_TREE,
+		CYLINDER
 	};
 
 	class Collider
 	{
 		ColliderType m_type=ColliderType::NONE;
 
-		const glm::mat4 *m_worldMatrix = nullptr;
-		const glm::mat4 *m_inverseWorldMatrix = nullptr;
+		glm::mat4 const *m_worldMatrix = nullptr;
+		glm::mat4 const *m_inverseWorldMatrix = nullptr;
 
-		fwAABBox *m_aabb=nullptr;				// using a Framework AABB
-		fwGeometry *m_geometry=nullptr;			// using a Framework geometry
-		AABBoxTree* m_aabbTree = nullptr;				// using a GameEngine AABB
+		void* m_source = nullptr;
 
-		bool collisionAABBgeometry(const Collider& aabb, 
+		static bool collision_fwAABB_geometry(const Collider& aabb, 
 			const Collider& geometry, 
 			const glm::vec3& forward,
 			const glm::vec3& down,
 			std::list<gaCollisionPoint>& collisions);		// do a fwAABB vs geometry collision check (test all geometry triangles)
 
-		bool collision_fwAABB_gaAABB(const Collider& fwAABB,
+		static bool collision_fwAABB_gaAABB(const Collider& fwAABB,
 			const Collider& gaAABB,
 			const glm::vec3& forward,
 			const glm::vec3& down,
 			std::list<gaCollisionPoint>& collisions);		// do a fwAABB vs gaAABB collision check (test only subset of triangles)
 
+		static bool collision_cylinder_geometry(const Collider& cylinder,
+			const Collider& geometry,
+			const glm::vec3& forward,
+			const glm::vec3& down,
+			std::list<gaCollisionPoint>& collisions);		// do a fwAABB vs cylinder
 
 	public:
 		Collider(void) {};									// empty collider
@@ -61,7 +66,10 @@ namespace GameEngine
 			glm::mat4* inverseWorldMatrix);
 		void set(AABBoxTree* modelAABB,
 			glm::mat4* worldMatrix,
-			glm::mat4* inverseWorldMatrix);					// collider based on a gaAABB (split triangles by AABB)
+			glm::mat4* inverseWorldMatrix);					// collider based on a a tree of AABB (split triangles by AABB)
+		void set(fwCylinder* modelAABB,
+			glm::mat4* worldMatrix,
+			glm::mat4* inverseWorldMatrix);					// collider based on a cylinder
 		bool collision(const Collider& source,
 			const glm::vec3& forward, 
 			const glm::vec3& down,
