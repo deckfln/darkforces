@@ -2,9 +2,9 @@
 
 #include "gaEntity.h"
 
-gaCollisionPoint::gaCollisionPoint(fwCollisionLocation location, const glm::vec3& position, gaEntity* entity) :
+gaCollisionPoint::gaCollisionPoint(fwCollisionLocation location, const glm::vec3& position, uint32_t triangle) :
 	fwCollisionPoint(location, position),
-	m_entity(entity)
+	m_triangle(triangle)
 {
 }
 

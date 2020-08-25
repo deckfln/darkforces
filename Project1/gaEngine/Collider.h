@@ -50,6 +50,12 @@ namespace GameEngine
 			const glm::vec3& down,
 			std::list<gaCollisionPoint>& collisions);		// do a fwAABB vs cylinder
 
+		static bool collision_cylinder_aabb_tree(const Collider& cylinder,
+			const Collider& aabb_tree,
+			const glm::vec3& forward,
+			const glm::vec3& down,
+			std::list<gaCollisionPoint>& collisions);		// do a fwAABB vs AABBTree (pointing to triangles)
+
 	public:
 		Collider(void) {};									// empty collider
 		Collider(fwAABBox* aabb, 

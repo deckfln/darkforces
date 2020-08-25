@@ -36,7 +36,7 @@ private:
 	std::string m_sector;	// based on sector XXX
 	dfSector *m_pSector = nullptr;
 
-	float m_time = 0;			// time (millisecond) to stop the elevator a position (absolute or relative or sector)
+	float m_animation_time = 0;			// time (millisecond) to stop the elevator a position (absolute or relative or sector)
 
 	dfElevator* m_parent = nullptr;
 
@@ -59,8 +59,8 @@ public:
 	void sector(std::string& sector) { m_flag |= 4; m_sector = sector; };
 	std::string& sector(void) { return m_sector; };
 	void sector(dfSector* pSector);
-	void time(float time) { m_flag |= 8; m_time = time * 1000; };
-	float time(void) { return m_time; };
+	void time(float time) { m_flag |= 8; m_animation_time = time * 1000; };
+	float time(void) { return m_animation_time; };
 	void action(std::string& action);
 	dfLogicStop::Action action(void) { return m_action; };
 	bool isTimeBased(void);

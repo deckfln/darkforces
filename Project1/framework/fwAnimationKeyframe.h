@@ -5,7 +5,7 @@
 
 class fwAnimationKeyframe
 {
-	time_t m_time;
+	time_t m_animation_time;
 	glm::vec3 m_translation = glm::vec3(0);
 	glm::quat m_rotation = glm::quat();
 	glm::vec3 m_scale = glm::vec3(0);

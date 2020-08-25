@@ -79,7 +79,7 @@ public:
 	fwObject3D &set_scale(const glm::vec3 &_scale);
 	fwObject3D &set_scale(float _scale);
 	fwObject3D& transform(const fwTransforms& transforms);
-	fwObject3D& transform(fwTransforms *pTransforms);
+	fwObject3D& transform(fwTransforms const *pTransforms);
 
 	const glm::vec3& get_scale(void);
 	const glm::vec3& get_position(void);

@@ -186,7 +186,7 @@ fwObject3D& fwObject3D::transform(const fwTransforms& transforms)
 	return *this;
 }
 
-fwObject3D& fwObject3D::transform(fwTransforms* pTransforms)
+fwObject3D& fwObject3D::transform(fwTransforms const* pTransforms)
 {
 	m_position = pTransforms->m_position;
 	m_scale = pTransforms->m_scale;

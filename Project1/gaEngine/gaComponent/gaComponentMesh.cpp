@@ -8,12 +8,12 @@
 using namespace GameEngine;
 
 ComponentMesh::ComponentMesh(void):
-	gaComponent(GA_COMPONENT_MESH)
+	gaComponent(gaComponent::MESH)
 {
 }
 
 ComponentMesh::ComponentMesh(fwGeometry* _geometry, fwMaterial* _material):
-	gaComponent(GA_COMPONENT_MESH),
+	gaComponent(gaComponent::MESH),
 	fwMesh(_geometry, _material)
 {
 }

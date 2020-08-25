@@ -233,7 +233,7 @@ bool dfObject::checkCollision(fwCylinder& bounding, glm::vec3& direction, glm::v
 	}
 
 	// send a message: YES we checkCollision
-	collisions.push_back(gaCollisionPoint(fwCollisionLocation::COLLIDE, intersection, this));
+	collisions.push_back(gaCollisionPoint(fwCollisionLocation::COLLIDE, intersection, -1));
 
 	// ALL these objects can be traversed
 	if (isLogic(DF_LOGIC_ITEM_SHIELD | DF_LOGIC_ITEM_ENERGY | DF_LOGIC_LIFE | DF_LOGIC_REVIVE)) {
@@ -247,7 +247,7 @@ bool dfObject::checkCollision(fwCylinder& bounding, glm::vec3& direction, glm::v
 	if (aabb.verticalAlign(playerCenter)) {
 		if (aabb.m_p.y < m_worldBounding.m_p1.y && aabb.m_p1.y > m_worldBounding.m_p1.y) {
 			intersection.y = m_worldBounding.m_p1.y;
-			collisions.push_back(gaCollisionPoint(fwCollisionLocation::BOTTOM, intersection, this));
+			collisions.push_back(gaCollisionPoint(fwCollisionLocation::BOTTOM, intersection, -1));
 
 #ifdef DEBUG
 			std::string message = " BOTTOM z=" + std::to_string(intersection.y);
@@ -256,7 +256,7 @@ bool dfObject::checkCollision(fwCylinder& bounding, glm::vec3& direction, glm::v
 		}
 		if (aabb.m_p1.y > m_worldBounding.m_p.y && aabb.m_p1.y < m_worldBounding.m_p1.y) {
 			intersection.y = m_worldBounding.m_p.y;
-			collisions.push_back(gaCollisionPoint(fwCollisionLocation::TOP, intersection, this));
+			collisions.push_back(gaCollisionPoint(fwCollisionLocation::TOP, intersection, -1));
 #ifdef DEBUG
 			std::string message = " TOP z=" + std::to_string(intersection.y);
 			gaDebugLog(LOW_DEBUG, "dfObject::checkCollision", message);
@@ -310,7 +310,7 @@ bool dfObject::checkCollision(fwCylinder& bounding, glm::vec3& direction, glm::v
 			p = "BACK";
 		}
 
-		collisions.push_back(gaCollisionPoint(c, intersection, this));
+		collisions.push_back(gaCollisionPoint(c, intersection, -1));
 
 #ifdef DEBUG
 		std::string message = " " + p + " z=" + std::to_string(intersection.y);

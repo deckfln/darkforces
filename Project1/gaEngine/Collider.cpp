@@ -106,7 +106,7 @@ bool Collider::collision(const Collider& source,
 			printf("Collider::collision GA_AABB vs Geometry not implemented");
 			return true;
 		case ColliderType::CYLINDER:
-			return true;
+			return collision_cylinder_aabb_tree(source, *this, forward, down, collisions);
 		}
 		break;
 	case ColliderType::GEOMETRY:
@@ -128,7 +128,7 @@ bool Collider::collision(const Collider& source,
 		case ColliderType::AABB:
 			return true;
 		case ColliderType::AABB_TREE:
-			return true;
+			return collision_cylinder_aabb_tree(*this, source, forward, down, collisions);
 		case ColliderType::GEOMETRY:
 			return collision_cylinder_geometry(*this, source, forward, down, collisions);
 		case ColliderType::CYLINDER:
@@ -190,12 +190,12 @@ static void testSensors(
 
 	// check the forward sensor
 	if (testSensor(worldMatrix, center, forward_geometry_space, a,b,c, collision))	{
-		collisions.push_back(gaCollisionPoint(fwCollisionLocation::FRONT, collision, nullptr));
+		collisions.push_back(gaCollisionPoint(fwCollisionLocation::FRONT, collision, -1));
 	};
 
 	// check the downward sensor
 	if (testSensor(worldMatrix, center, down, a, b, c, collision)) {
-		collisions.push_back(gaCollisionPoint(fwCollisionLocation::BOTTOM, collision, nullptr));
+		collisions.push_back(gaCollisionPoint(fwCollisionLocation::BOTTOM, collision, -1));
 	};
 }
 
@@ -358,6 +358,44 @@ bool Collider::collision_fwAABB_gaAABB(const Collider& fwAABB,
 	return collisions.size() != 0;
 }
 
+/************************************************
+ *
+ */
+static void init_elipsoide(
+	fwCylinder *cylinder,
+	const glm::mat4& cylinder_worldMatrix,
+	const glm::mat4& aabbtree_inverseWorldMatrix,
+	const glm::vec3& forward,
+	glm::vec3& ellipsoid_space,
+	glm::vec3& center_gs,
+	glm::vec3& forward_gs,
+	glm::vec3& center_es,
+	fwAABBox& cyl_aabb_gs
+	)
+{
+	// extract the ellipsoid from the cylinder
+	glm::vec3 ellipsoid(cylinder->radius(), cylinder->height() / 2.0f, cylinder->radius());
+
+	// deform the model_space to make the ellipsoid  sphere
+	ellipsoid_space = glm::vec3(1.0 / ellipsoid.x, 1.0 / ellipsoid.y, 1.0 / ellipsoid.z);
+
+	// convert cylinder space (opengl world space) into the geometry space (model space)
+	glm::mat4 mat = aabbtree_inverseWorldMatrix * cylinder_worldMatrix;
+	glm::vec3 center_cs(0, cylinder->height()/2.0f, 0);
+	center_gs = glm::vec3(mat * glm::vec4(center_cs, 1.0));
+
+	cyl_aabb_gs = fwAABBox(*cylinder);
+	cyl_aabb_gs.transform(mat);
+
+	// remove the translation part, this is a direction vector
+	glm::mat4 rotation_scale = aabbtree_inverseWorldMatrix;
+	rotation_scale[3][0] = rotation_scale[3][1] = rotation_scale[3][2] = 0;
+	forward_gs = glm::vec3(rotation_scale * glm::vec4(forward, 1.0));
+
+	// and convert to ellipsoid space
+	center_es = center_gs * ellipsoid_space;
+}
+
 /**
  * do a cylinder vs geometry collision check
  * test ALL triangles 
@@ -369,27 +407,22 @@ bool Collider::collision_cylinder_geometry(
 	const glm::vec3& down, 
 	std::list<gaCollisionPoint>& collisions)
 {
-	fwCylinder* cyl = static_cast<fwCylinder*>(cylinder.m_source);
-	fwAABBox aabb(*cyl);	// convert to AABB for fast test
+	glm::vec3 ellipsoid_space;
+	glm::vec3 center_gs;
+	glm::vec3 forward_gs;
+	glm::vec3 center_es;
+	fwAABBox cyl_aabb_gs;	// AABB enclosing the cylinder translated to the geometry space
 
-	// extract the ellipsoid from the cylinder
-	glm::vec3 ellipsoid(cyl->height() / 2.0f, cyl->radius(), cyl->radius());
-
-	// deform the model_space to make the ellipsoid  sphere
-	glm::vec3 ellipsoid_space(1.0 / ellipsoid.x, 1.0 / ellipsoid.y, 1.0 / ellipsoid.z);
-
-	// convert cylinder space (opengl world space) into the geometry space (model space)
-	glm::mat4 mat = *geometry.m_inverseWorldMatrix * *cylinder.m_worldMatrix;
-	glm::vec3 center_cs(0, cyl->height(), 0);
-	glm::vec3 center_gs = glm::vec3(mat * glm::vec4(center_cs, 1.0));
-
-	// remove the translation part, this is a direction vector
-	glm::mat4 rotation_scale = *geometry.m_inverseWorldMatrix;
-	rotation_scale[3][0] = rotation_scale[3][1] = rotation_scale[3][2] = 0;
-	glm::vec3 forward_gs = glm::vec3(rotation_scale * glm::vec4(forward, 1.0));
-
-	// and convert to ellipsoid space
-	glm::vec3 center_es = center_gs * ellipsoid_space;
+	init_elipsoide(
+		static_cast<fwCylinder*>(cylinder.m_source),
+		*cylinder.m_worldMatrix,
+		*geometry.m_inverseWorldMatrix,
+		forward,
+		ellipsoid_space,
+		center_gs,
+		forward_gs,
+		center_es,
+		cyl_aabb_gs);
 
 	// test each triangle vs the ellipsoid
 	glm::vec3 v1_es, v2_es, v3_es;
@@ -422,6 +455,92 @@ bool Collider::collision_cylinder_geometry(
 				collisions);
 		}
 	}
+
+	return collisions.size() != 0;
+}
+
+/**
+ * do a fwAABB vs AABBTree (pointing to triangles)
+ */
+bool Collider::collision_cylinder_aabb_tree(const Collider& cylinder, 
+	const Collider& aabb_tree, 
+	const glm::vec3& forward, 
+	const glm::vec3& down, 
+	std::list<gaCollisionPoint>& collisions)
+{
+	glm::vec3 ellipsoid_space;
+	glm::vec3 center_gs;
+	glm::vec3 forward_gs;
+	glm::vec3 center_es;
+	fwAABBox cyl_aabb_gs;
+
+	init_elipsoide(
+		static_cast<fwCylinder*>(cylinder.m_source),
+		*cylinder.m_worldMatrix,
+		*aabb_tree.m_inverseWorldMatrix,
+		forward,
+		ellipsoid_space,
+		center_gs,
+		forward_gs,
+		center_es,
+		cyl_aabb_gs);
+
+	GameEngine::AABBoxTree* pAabbTree = static_cast<GameEngine::AABBoxTree*>(aabb_tree.m_source);
+
+	// find the smallest set of gaAABB intersecting with the fwAABB
+	// and test only the included triangles
+	// for each triangle, extract the AABB in geometry space and check collision with the source AABB in geometry space
+	std::vector<GameEngine::AABBoxTree*> hits;
+	if (!pAabbTree->find(cyl_aabb_gs, hits)) {
+		return false;
+	}
+
+	glm::vec3 const* vertices_gs;
+	uint32_t nbVertices;
+	glm::vec3 v1_es, v2_es, v3_es;
+	glm::vec3 intersection_es;
+	glm::vec3 intersection_gs;
+	glm::vec3 intersection_ws;
+
+	vertices_gs = pAabbTree->vertices();
+	nbVertices = pAabbTree->nbVertices();
+
+	//for (auto aabb : hits) {
+	//	vertices_gs = aabb->vertices();
+	//	nbVertices = aabb->nbVertices();
+
+		for (unsigned int i = 0; i < nbVertices; i += 3) {
+			// convert each model space vertex to ellipsoid space
+			v1_es = vertices_gs[i] * ellipsoid_space;
+			v2_es = vertices_gs[i + 1] * ellipsoid_space;
+			v3_es = vertices_gs[i + 2] * ellipsoid_space;
+
+			//if (i == 174 && nbVertices==594) {
+			//	printf("Collider::collision_cylinder_aabb_tree\n");
+			//}
+			if (Framework::intersectSphereTriangle(center_es, v1_es, v2_es, v3_es, intersection_es)) {
+				// the intersection point is inside the triangle
+
+				// convert the intersection from ellipsoid-space to cylinder-space
+				intersection_gs = intersection_es / ellipsoid_space;
+
+				// convert from cylinder-space => world-space
+				intersection_ws = glm::vec3(*aabb_tree.m_worldMatrix * glm::vec4(intersection_gs, 1.0));
+
+				// inform if the collision point in world space(let the entity decide what to do with the collision)
+				collisions.push_back(gaCollisionPoint(fwCollisionLocation::COLLIDE, intersection_ws, i));
+
+				/*
+				testSensors(*aabb_tree.m_worldMatrix,
+					center_gs,
+					forward_gs,
+					down,
+					vertices_gs[i], vertices_gs[i + 1], vertices_gs[i + 2],
+					collisions);
+				*/
+			}
+		}
+	//}
 
 	return collisions.size() != 0;
 }

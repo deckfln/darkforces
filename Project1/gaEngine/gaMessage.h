@@ -3,13 +3,22 @@
 #include <string>
 #include <vector>
 #include <queue>
+#include "../framework/fwTransforms.h"
 
 class gaEntity;
+
+namespace GameEngine {
+	struct Transform : Framework::fwTransforms {
+		glm::vec3 m_forward;
+		glm::vec3 m_downward;
+
+	};
+}
 
 class gaMessage {
 
 public:
-	enum {
+	enum Action {
 		COLLIDE = 0,		// two entities checkCollision
 		TIMER,			// animation message
 		DELETE_ENTITY,	// delete the given entity
@@ -23,6 +32,7 @@ public:
 		WORLD_INSERT,	// an entity is added to the world
 		WORLD_REMOVE,	// an entity is removed from the world
 		WOULD_FALL,		// the objects would fall off after a WANT_TO_MOVE
+		FALL
 	};
 	// flags stored in messages
 	enum Flag {

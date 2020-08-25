@@ -3,6 +3,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/transform.hpp>
 #include <math.h>
+#include <memory>
 
 #include "config.h"
 #include "framework/fwMaterialBasic.h"
@@ -46,16 +47,17 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 	// player
 	//glm::vec3 start = glm::vec3(-21.26f, 0.95f, 29.064f);	// main hall
 	//glm::vec3 start = glm::vec3(-46, 0.9, 26.8); // super secret
-	glm::vec3 start = glm::vec3(-27.4f, 2.1f, 33.6f);	// gen_d
+	glm::vec3 start = glm::vec3(-30.2f, 2.1f, 35.87f);	// gen_d
 
-	fwCylinder bounding(start, c_radius, c_height);
+	fwCylinder bounding(glm::vec3(0), c_radius, c_height);
 
-	m_player = new gaActor(DF_ENTITY_OBJECT, "player", bounding, c_eyes, c_ankle);
+	m_player = new gaActor(DF_ENTITY_OBJECT, "player", bounding, start, c_eyes, c_ankle);
 	m_player->addComponent(new dfComponentActor());
-	g_gaWorld.addClient(m_player);
 
 	// controls	
 	m_control = new gaPlayer(m_camera, m_player, c_direction);
+
+	g_gaWorld.addClient(m_player);
 
 	// secret area	m_control = new fwControlThirdPerson(m_camera, glm::vec3(-36.4, 2.3, 37.8), 0.55f, -pi / 2, 0.2f);
 	// start m_control = new fwControlThirdPerson(m_camera, glm::vec3(-23.2, 4.3, 29.9), 0.55f, -pi / 2, 0.2f);

@@ -3,7 +3,7 @@
 #include <glm/vec3.hpp>
 
 class fwCylinder {
-	glm::vec3 m_position = glm::vec3(0);	// center of the botton part
+	glm::vec3 m_position = glm::vec3(0);	// center of the bottom part
 	float m_radius = 0;
 	float m_height = 0;
 public:

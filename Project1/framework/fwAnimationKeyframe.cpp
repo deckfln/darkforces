@@ -6,7 +6,7 @@
 #include <glm/gtx/transform.hpp>
 
 fwAnimationKeyframe::fwAnimationKeyframe(time_t time) :
-	m_time(time)
+	m_animation_time(time)
 {
 }
 

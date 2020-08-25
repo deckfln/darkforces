@@ -11,6 +11,7 @@
 #include "../gaEngine/gaBoundingBoxes.h"
 
 static int g_ids = 0;
+static const float c_gravity = -0.00000981f;
 
 gaEntity::gaEntity(int mclass, const std::string& name) :
 	m_entityID(g_ids++),
@@ -141,6 +142,31 @@ void gaEntity::sendDelayedMessage(int action, int value, void* extra)
 }
 
 /**
+ * engage the physic engine
+ */
+void gaEntity::engagePhysics(const glm::vec3& pos, const glm::vec3& direction)
+{
+	// engage the physic engine
+	m_physic[0][0] = 0;			m_physic[1][0] = direction.x / 100.0f;		m_physic[2][0] = pos.x;
+	m_physic[0][1] = c_gravity; m_physic[1][1] = direction.y;				m_physic[2][1] = pos.y;
+	m_physic[0][2] = 0;			m_physic[1][2] = direction.z / 100.0f;		m_physic[2][2] = pos.z;
+
+	m_physic_time_elpased = 33;
+}
+
+/**
+ * execute the physic engine
+ */
+void gaEntity::applyPhysics(time_t delta, GameEngine::Transform *transform)
+{
+	// manage physic driven trajectory
+	m_physic_time_elpased += delta;
+	glm::vec3 t3x3(m_physic_time_elpased * m_physic_time_elpased / 2, m_physic_time_elpased, 1);
+	transform->m_position = m_physic * t3x3;
+	transform->m_forward = glm::vec3(transform->m_position.x - position().x, 0, transform->m_position.z - position().z);
+}
+
+/**
  * if the entity has a mesh, add to the scene
  */
 void gaEntity::add2scene(fwScene* scene)
@@ -162,7 +188,7 @@ void gaEntity::moveTo(const glm::vec3& position)
 /**
  * apply a transformation and update the worldAABB
  */
-void gaEntity::transform(Framework::fwTransforms* transform)
+void gaEntity::transform(GameEngine::Transform* transform)
 {
 	fwObject3D::transform(transform);
 	updateWorldAABB();
@@ -201,6 +227,7 @@ void gaEntity::dispatchMessage(gaMessage* message)
 
 		// detect if the entity moved to a new sector
 		m_supersector = g_gaWorld.findSector(m_supersector, position());
+		m_physic_time_elpased = 0;
 		break;
 
 	case gaMessage::ROTATE:
@@ -218,6 +245,21 @@ void gaEntity::dispatchMessage(gaMessage* message)
 		}
 		updateWorldAABB();
 		break;
+
+	case gaMessage::FALL: {
+		GameEngine::Transform* _transform = static_cast<GameEngine::Transform*>(message->m_extra);
+		// no collision at all => nothing under the feet of the actor => free fall
+		if (m_physic_time_elpased == 0) {
+			engagePhysics(_transform->m_position, _transform->m_forward);
+		}
+		else {
+			applyPhysics(message->m_delta, _transform);
+		}
+		sendDelayedMessage(gaMessage::WANT_TO_MOVE,
+			gaMessage::Flag::WANT_TO_MOVE_FALL,
+			(void *)_transform);
+
+		break;	}
 
 	default:
 		break;

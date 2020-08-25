@@ -34,7 +34,7 @@ struct dfWaxState {
 
 	glm::ivec2 m_size = glm::vec2(0);	// size in pixels of the state (maximum size of each frame/angle)
 	glm::ivec2 m_insert = glm::vec2(0);	// offset of object (maximum size of each frame/angle)
-	fwAABBox m_bounding;				// AABB boundingbox of that specific state
+	fwAABBox m_cylinder;				// AABB boundingbox of that specific state
 };
 
 // compile time class

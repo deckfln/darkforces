@@ -6,9 +6,10 @@ class gaEntity;
 
 class gaCollisionPoint : public fwCollisionPoint
 {
-	gaEntity* m_entity = nullptr;
+	uint32_t m_triangle=-1;	// collision triangle
+
 public:
-	gaCollisionPoint(fwCollisionLocation location, const glm::vec3& position, gaEntity *entity);
-	gaEntity* entity(void) { return m_entity; };
+	gaCollisionPoint(fwCollisionLocation location, const glm::vec3& position, uint32_t triangle);
+	inline const uint32_t triangle(void) {return m_triangle; };
 	~gaCollisionPoint();
 };

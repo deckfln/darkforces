@@ -826,14 +826,14 @@ bool dfSector::checkCollision(fwCylinder& current, glm::vec3& direction, glm::ve
 	if (feet_z < m_floorAltitude) {
 		collision = current.position();
 		collision.z = m_floorAltitude;
-		collisions.push_back(gaCollisionPoint(fwCollisionLocation::BOTTOM, collision, nullptr));
+		collisions.push_back(gaCollisionPoint(fwCollisionLocation::BOTTOM, collision, -1));
 	}
 
 	// test ceiling
 	if (head_z > m_ceilingAltitude) {
 		collision = current.position();
 		collision.z = m_ceilingAltitude;
-		collisions.push_back(gaCollisionPoint(fwCollisionLocation::TOP, collision, nullptr));
+		collisions.push_back(gaCollisionPoint(fwCollisionLocation::TOP, collision, -1));
 	}
 
 	// Test polylines on the walls based on the setup (may ignore internals polylines (like for elevator SPIN1)
@@ -879,7 +879,7 @@ bool dfSector::checkCollision(fwCylinder& current, glm::vec3& direction, glm::ve
 					collision.y = intersection.y;
 					collision.z = (m_ceilingAltitude + m_floorAltitude) / 2.0f;
 
-					collisions.push_back(gaCollisionPoint(fwCollisionLocation::FRONT, collision, nullptr));
+					collisions.push_back(gaCollisionPoint(fwCollisionLocation::FRONT, collision, -1));
 
 #ifdef DEBUG
 					gaDebugLog(LOW_DEBUG, "dfSector::checkCollision", "sector=" + m_name + " full wall=" + std::to_string(wall->m_id) + " z=" + std::to_string(target3D.z));
@@ -903,7 +903,7 @@ bool dfSector::checkCollision(fwCylinder& current, glm::vec3& direction, glm::ve
 						collision.z = floor_adjoint;
 
 						// otherwise it is a front collision
-						collisions.push_back(gaCollisionPoint(fwCollisionLocation::FRONT_BOTTOM, collision, nullptr));
+						collisions.push_back(gaCollisionPoint(fwCollisionLocation::FRONT_BOTTOM, collision, -1));
 
 						i = dp;
 					}
@@ -915,7 +915,7 @@ bool dfSector::checkCollision(fwCylinder& current, glm::vec3& direction, glm::ve
 						collision.y = intersection.y;
 						collision.z = ceiling_adjoint;
 
-						collisions.push_back(gaCollisionPoint(fwCollisionLocation::FRONT_TOP, collision, nullptr));
+						collisions.push_back(gaCollisionPoint(fwCollisionLocation::FRONT_TOP, collision, -1));
 
 						i = dp;
 					}

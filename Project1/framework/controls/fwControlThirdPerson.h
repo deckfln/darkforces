@@ -28,7 +28,7 @@ class fwControlThirdPerson : public fwControl
 	float m_radius = 1;			// player cyclinder radius 
 
 	glm::mat3 m_physic = glm::mat3(0);	// matrice for physic engine when in 'free fall'
-	time_t m_time = 0;
+	time_t m_animation_time = 0;
 
 	glm::vec3 m_debug;			// start of jump for debug
 
@@ -54,5 +54,6 @@ public:
 	void lockView(double down, double up) { m_theta_lock_down = down; m_theta_lock_up = up; };
 	void keyEvent(int key, int scancode, int action);
 	void updateCamera(time_t delta);
+	const glm::vec3& direction(void) { return m_direction; };
 	~fwControlThirdPerson();
 };

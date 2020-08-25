@@ -32,7 +32,7 @@ dfLogicStop::dfLogicStop(dfElevator* parent, float altitude, dfSector* sector, f
 	m_flag(2 | 8),
 	m_relatiave(altitude),
 	m_pSector(sector),
-	m_time(time)
+	m_animation_time(time)
 {
 }
 
@@ -48,7 +48,7 @@ dfLogicStop::dfLogicStop(dfElevator* parent, float altitude, float time):
 	m_parent(parent),
 	m_flag(1 | 8),
 	m_absolute(altitude),
-	m_time(time)
+	m_animation_time(time)
 {
 }
 

@@ -39,8 +39,9 @@ void dfComponentAI::tryToMove(void)
 		up = _up;
 	}
 
-	m_transforms.m_direction = m_direction * 0.06f;
-	m_transforms.m_position = m_entity->position() + m_transforms.m_direction;
+	m_transforms.m_forward = m_direction * 0.06f;
+	m_transforms.m_downward = glm::vec3(0, -1, 0);
+	m_transforms.m_position = m_entity->position() + m_transforms.m_forward;
 	m_transforms.m_quaternion = glm::quatLookAt(m_direction, up);
 	m_transforms.m_scale = m_entity->get_scale();
 
@@ -60,7 +61,7 @@ void dfComponentAI::dispatchMessage(gaMessage* message)
 		// kick start the AI
 		m_center = m_entity->position();
 		m_alpha = (rand() / (float)RAND_MAX - 0.f) / 10.0f; // rotation angle to apply to the direction vector
-		m_time = rand() % (5 * 30);			// move 5s maximum using the same rotation angle
+		m_animation_time = rand() % (5 * 30);			// move 5s maximum using the same rotation angle
 		tryToMove();
 		break;
 
@@ -76,10 +77,10 @@ void dfComponentAI::dispatchMessage(gaMessage* message)
 		}
 
 		// go for next movement
-		if (--m_time < 0) {
+		if (--m_animation_time < 0) {
 			// after the default delay, change the rotation angle
 			m_alpha = (rand() / (float)RAND_MAX - 0.5f) / 10.0f;
-			m_time = rand() % (5 * 30);
+			m_animation_time = rand() % (5 * 30);
 		}
 
 		tryToMove();

@@ -13,7 +13,7 @@ class gaMessage;
 
 class dfBullet : public gaEntity
 {
-	Framework::fwTransforms m_transforms;			// transforms to move the object
+	GameEngine::Transform m_transforms;			// transforms to move the object
 	glm::vec3 m_direction;
 	GameEngine::ComponentMesh m_componentMesh;
 

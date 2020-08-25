@@ -14,6 +14,7 @@ gaPlayer::gaPlayer(fwCamera *camera, gaActor* actor, float phi):
 	m_entity(actor)
 {
 	m_actor = (dfComponentActor*)m_entity->findComponent(DF_COMPONENT_ACTOR);
+	m_entity->parent(this);
 }
 
 /**
@@ -40,12 +41,14 @@ bool gaPlayer::checkKeys(time_t delta)
 
 void gaPlayer::updatePlayer(time_t delta)
 {
-	if (m_entity->moveTo(delta, m_velocity)) {
-		// freefalling
-		m_locked = true;
-	}
-	else {
-		m_locked = false;
+	if (m_velocity != glm::vec3(0)) {
+		if (m_entity->moveTo(delta, m_velocity)) {
+			// freefalling
+			m_locked = true;
+		}
+		else {
+			m_locked = false;
+		}
 	}
 	m_position = m_entity->position();
 }

@@ -190,7 +190,7 @@ dfWAX::dfWAX(dfFileSystem* fs, dfPalette* palette, const std::string& name) :
 		glm::vec2 size_gl = glm::vec2(state->m_size.x / widthFactor, state->m_size.y / heightFactor);
 		glm::vec2 insert_gl = glm::vec2(state->m_insert.x / widthFactor, (-state->m_insert.y - state->m_size.y - 1) / heightFactor);
 
-		state->m_bounding.set(
+		state->m_cylinder.set(
 			-size_gl.x / 2, insert_gl.y, -size_gl.x / 2,
 			size_gl.x / 2, size_gl.y + insert_gl.y, size_gl.x / 2);
 	}
@@ -298,7 +298,7 @@ int dfWAX::nextFrame(int state, unsigned int frame)
  */
 const fwAABBox& dfWAX::bounding(int state)
 {
-	return m_states[state]->m_bounding;
+	return m_states[state]->m_cylinder;
 }
 
 dfWAX::~dfWAX()

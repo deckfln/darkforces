@@ -7,7 +7,6 @@
 #include <glm/vec3.hpp>
 #include <glm/gtc/quaternion.hpp>
 
-#include "../framework/fwTransforms.h"
 #include "../framework/fwObject3D.h"
 #include "../framework/fwAABBox.h"
 #include "gaMessage.h"
@@ -29,12 +28,14 @@ protected:
 	std::string m_name;
 	int m_entityID = 0;
 	int m_class = 0;
-	glm::vec3 m_futurePosition = glm::vec3(0);		// want to move to position
+
+	glm::mat3x3 m_physic = glm::mat3x3(0);
+	time_t m_physic_time_elpased = 0;				// physic engine
 
 	fwAABBox m_modelAABB;							// model space AABB
 	fwAABBox m_worldBounding;						// AABB bounding box in world opengl space
 	bool m_physical = false;						// if this entity has a body to checkCollision with
-	time_t m_time = 0;								// elapsed time when running animation
+	time_t m_animation_time = 0;					// elapsed time when running animation
 	std::list<gaEntity*> m_children;				// included entities
 
 	fwScene* m_scene = nullptr;						// if the entity has a mesh added to a scene
@@ -64,7 +65,7 @@ public:
 	void set(const std::string& v, void* ptr) { m_attributes[v] = ptr; };
 	void* get(const std::string& v) { return m_attributes[v]; };
 
-	void transform(Framework::fwTransforms* transform);	// apply a transformation and update the worldAABB
+	void transform(GameEngine::Transform* transform);	// apply a transformation and update the worldAABB
 
 	gaComponent *findComponent(int type);				// check all components to find one with the proper type
 	void addChild(gaEntity* entity);					// add an entity inside that one (and increase the AABB if needed)
@@ -96,6 +97,12 @@ public:
 		int value = 0,
 		void* extra = nullptr);							// send a delayed message to myself
 
+	void engagePhysics(const glm::vec3& pos, 
+		const glm::vec3& direction);					// engage the physic engine
+	void applyPhysics(time_t delta, 
+		GameEngine::Transform* transform);				// execute the physic engine
+
+
 	virtual void add2scene(fwScene* scene);				// if the entity has a mesh, add to the scene
 	virtual void collideWith(gaEntity*) {};				// inform another entity of a collision
 	virtual void updateWorldAABB(void);					// update the world AABB based on position
@@ -108,6 +115,7 @@ public:
 		std::list<gaCollisionPoint>& collisions);		// extended collision test after a sucessfull AABB collision
 	virtual void OnWorldInsert(void) {};				// trigger when inserted in a gaWorld
 	virtual void OnWorldRemove(void) {};				// trigger when from the gaWorld
+
 	virtual dfSuperSector* superSector(void) { return m_supersector; };
 
 	~gaEntity();

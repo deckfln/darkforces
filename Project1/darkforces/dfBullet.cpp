@@ -66,7 +66,8 @@ dfBullet::dfBullet(const glm::vec3& position, const glm::vec3& direction):
 		up = _up;
 	}
 
-	m_transforms.m_direction = glm::vec3(0);
+	m_transforms.m_forward = glm::vec3(0);
+	m_transforms.m_downward = glm::vec3(0);
 	m_transforms.m_quaternion = glm::quatLookAt(m_direction, up);
 	m_transforms.m_scale = get_scale();
 	m_transforms.m_position = position;
@@ -77,7 +78,7 @@ dfBullet::dfBullet(const glm::vec3& position, const glm::vec3& direction):
  */
 void dfBullet::tryToMove(void)
 {
-	m_transforms.m_position = position() + m_transforms.m_direction;
+	m_transforms.m_position = position() + m_transforms.m_forward;
 
 	sendDelayedMessage(gaMessage::WANT_TO_MOVE,
 		gaMessage::Flag::WANT_TO_MOVE_BREAK_IF_FALL,
@@ -119,12 +120,12 @@ void dfBullet::dispatchMessage(gaMessage* message)
 	}
 
 	case gaMessage::MOVE:
-		m_time += message->m_delta;
+		m_animation_time += message->m_delta;
 
-		if (m_time < bullet_life) {
+		if (m_animation_time < bullet_life) {
 			glm::vec3 d = (m_direction * (float)message->m_delta / bullet_speed);
 			m_transforms.m_position = position() + d;
-			m_transforms.m_direction = -(m_modelAABB.m_p1.z - m_modelAABB.m_p.z) * m_direction;
+			m_transforms.m_forward = -(m_modelAABB.m_p1.z - m_modelAABB.m_p.z) * m_direction;
 
 			sendDelayedMessage(gaMessage::WANT_TO_MOVE,
 				gaMessage::Flag::WANT_TO_MOVE_LASER,
