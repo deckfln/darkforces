@@ -176,3 +176,44 @@ bool Framework::intersectSphereTriangle(
 
 	return false;
 }
+
+/********************************************************
+ * https://gamedev.stackexchange.com/questions/65723/finding-z-given-x-y-coordinates-on-terrain
+ */
+template <typename T> int sgn(T val) {
+	return (T(0) < val) - (val < T(0));
+}
+
+static bool same_sign(const float a, const float b) {
+	return sgn(a) == sgn(b);
+}
+
+static float scalar_product(const glm::vec3& a, const glm::vec3& b, const glm::vec3& c) {
+	return glm::dot(glm::cross(a, b), c);
+}
+
+bool Framework::IntersectLineTriangle(
+	const glm::vec3& p, const glm::vec3& q, 
+	const glm::vec3& a, const glm::vec3& b, const glm::vec3& c,
+	float& u, float& v, float& w)
+{
+	const glm::vec3 pq = q - p;
+	const glm::vec3 pa = a - p;
+	const glm::vec3 pb = b - p;
+	const glm::vec3 pc = c - p;
+
+	glm::vec3 m = glm::cross(pq, pc);
+	u = glm::dot(pb, m);
+	v = -glm::dot(pa, m);
+	if (!same_sign(u, v)) return false;
+	w = scalar_product(pq, pb, pa);
+	if (!same_sign(u, w)) return false;
+
+	if (u + v + w == 0) return false;
+
+	const float denom = 1.0f / (u + v + w);
+	u *= denom;
+	v *= denom;
+	w *= denom; // w = 1.0f - u - v;
+	return true;
+}

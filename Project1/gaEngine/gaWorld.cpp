@@ -398,6 +398,8 @@ void gaWorld::wantToMove(gaEntity *entity, gaMessage *message)
 	std::list<dfSuperSector*> sectors;
 	std::list<gaCollisionPoint> collisions;
 
+	glm::vec3 old_position = entity->position();
+
 	entity->pushTransformations();
 	entity->transform(tranform);
 
@@ -406,7 +408,41 @@ void gaWorld::wantToMove(gaEntity *entity, gaMessage *message)
 			+ " " + std::to_string(tranform->m_position.y)
 			+ " " + std::to_string(tranform->m_position.z));
 
-	// do an AABB collision against AABB collision with entities
+	// do a warpThrough quick test
+	fwAABBox aabb_ws(entity->position(), old_position);
+	glm::vec3 collision;
+	std::vector<glm::vec3> warps;
+
+	for (auto sector : m_sectors) {
+		if (sector->collideAABB(aabb_ws)) {
+			// do a warpTrough full test
+			if (entity->warpThrough(sector->collider(), old_position, collision)) {
+				warps.push_back(collision);
+			}
+		}
+	}
+
+	if (warps.size() > 0) {
+		float nearest = 9999999;
+		glm::vec3 near_c=glm::vec3(0);
+
+		// find the nearest point
+		for (auto& collision : warps) {
+			if (glm::distance2(old_position, collision) < nearest) {
+				nearest = glm::distance2(old_position, collision);
+				near_c = collision;
+			}
+		}
+		if (near_c == glm::vec3(0)) {
+			printf("\n");
+		}
+		// and force the object there
+		message->m_action = gaMessage::MOVE;
+		tranform->m_position = near_c;
+		return;
+	}
+
+	// do an AABB collision against AABB with entities
 	findAABBCollision(entity->worldAABB(), entities, sectors, entity);
 
 	//if (entity->name() == "player" && tranform->m_forward != glm::vec3(0)) {
@@ -430,7 +466,7 @@ void gaWorld::wantToMove(gaEntity *entity, gaMessage *message)
 
 	for (auto sector : sectors) {
 		if (entity->collide(sector->collider(), tranform->m_forward, tranform->m_downward, collisions)) {
-
+			// no warping, so test deeper
 			for (auto& collision : collisions) {
 				switch (collision.m_location) {
 				case fwCollisionLocation::FRONT:

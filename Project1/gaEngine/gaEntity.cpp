@@ -96,6 +96,14 @@ bool gaEntity::collide(GameEngine::Collider collider,
 }
 
 /**
+ * check if the entity moved so fast it went trough another one
+ */
+bool gaEntity::warpThrough(GameEngine::Collider collider, const glm::vec3& old_position, glm::vec3& collision)
+{
+	return m_collider.warpThrough(collider, position(), old_position, collision);
+}
+
+/**
  * set the model space AABB
  */
 void gaEntity::modelAABB(const fwAABBox& box)

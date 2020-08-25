@@ -46,15 +46,16 @@ namespace GameEngine
 
 		static bool collision_cylinder_geometry(const Collider& cylinder,
 			const Collider& geometry,
-			const glm::vec3& forward,
-			const glm::vec3& down,
 			std::list<gaCollisionPoint>& collisions);		// do a fwAABB vs cylinder
 
 		static bool collision_cylinder_aabb_tree(const Collider& cylinder,
 			const Collider& aabb_tree,
-			const glm::vec3& forward,
-			const glm::vec3& down,
 			std::list<gaCollisionPoint>& collisions);		// do a fwAABB vs AABBTree (pointing to triangles)
+
+		static bool warpThroughAABBTree(const Collider& aabbtree,
+			const glm::vec3& position,
+			const glm::vec3& old_position,
+			glm::vec3& collision);
 
 	public:
 		Collider(void) {};									// empty collider
@@ -79,7 +80,11 @@ namespace GameEngine
 		bool collision(const Collider& source,
 			const glm::vec3& forward, 
 			const glm::vec3& down,
-			std::list<gaCollisionPoint>& collisions);							// run a collision test between 2 colliders
+			std::list<gaCollisionPoint>& collisions);		// run a collision test between 2 colliders
+		bool warpThrough(const Collider& source,
+			const glm::vec3& position,
+			const glm::vec3& old_position,
+			glm::vec3& collision);							// check if the entity moved so fast it went trough another one
 	};
 }
 

@@ -78,6 +78,9 @@ public:
 		const glm::vec3& forward,
 		const glm::vec3& down,
 		std::list<gaCollisionPoint>& collisions);		// extended collision using colliders
+	bool warpThrough(GameEngine::Collider collider,
+		const glm::vec3& old_position,
+		glm::vec3& collision);							// check if the entity moved so fast it went trough another one
 	void modelAABB(const fwAABBox& box);				// set the model space AABB
 
 	void sendMessage(const std::string& target,

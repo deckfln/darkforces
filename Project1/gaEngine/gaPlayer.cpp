@@ -7,6 +7,8 @@
 #include "../framework/fwCamera.h"
 
 #include "gaActor.h"
+#include "gaMessage.h"
+
 #include "../darkforces/dfComponent/dfComponentActor.h"
 
 gaPlayer::gaPlayer(fwCamera *camera, gaActor* actor, float phi):
@@ -42,13 +44,7 @@ bool gaPlayer::checkKeys(time_t delta)
 void gaPlayer::updatePlayer(time_t delta)
 {
 	if (m_velocity != glm::vec3(0)) {
-		if (m_entity->moveTo(delta, m_velocity)) {
-			// freefalling
-			m_locked = true;
-		}
-		else {
-			m_locked = false;
-		}
+		m_entity->sendInternalMessage(gaMessage::CONTROLLER, delta, &m_velocity);
 	}
 	m_position = m_entity->position();
 }

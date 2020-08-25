@@ -19,7 +19,7 @@ class gaMessage {
 
 public:
 	enum Action {
-		COLLIDE = 0,		// two entities checkCollision
+		COLLIDE = 0,	// two entities checkCollision
 		TIMER,			// animation message
 		DELETE_ENTITY,	// delete the given entity
 		MOVE,			// move the entity to an absolution position
@@ -28,11 +28,12 @@ public:
 		STOP_SOUND,
 		WANT_TO_MOVE,	// the entity want to move in a direction (sent to the world)
 		COLLISION,		// the entity cannot move, it would collide with ...
-		MOVE_TO,			// Move the entity in a direction (m_extra)
+		MOVE_TO,		// Move the entity in a direction (m_extra)
 		WORLD_INSERT,	// an entity is added to the world
 		WORLD_REMOVE,	// an entity is removed from the world
 		WOULD_FALL,		// the objects would fall off after a WANT_TO_MOVE
-		FALL
+		FALL,			// Object is falling
+		CONTROLLER		// Controller is requesting a move
 	};
 	// flags stored in messages
 	enum Flag {

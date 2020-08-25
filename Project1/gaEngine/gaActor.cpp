@@ -279,6 +279,11 @@ void gaActor::dispatchMessage(gaMessage* message)
 			&m_transforms);
 
 		break; }
+	case gaMessage::CONTROLLER:
+		if (m_physic_time_elpased == 0) {
+			moveTo(message->m_value, *(glm::vec3*)message->m_extra);
+		}
+		break;
 	}
 
 	gaEntity::dispatchMessage(message);
