@@ -433,12 +433,12 @@ void gaWorld::wantToMove(gaEntity *entity, gaMessage *message)
 				near_c = collision;
 			}
 		}
-		if (near_c == glm::vec3(0)) {
-			printf("\n");
-		}
 		// and force the object there
 		message->m_action = gaMessage::MOVE;
 		tranform->m_position = near_c;
+		if (entity->name() == "player") {
+			gaDebugLog(1, "gaWorld::wantToMove", "warp detected, fixed at " + std::to_string(near_c.y));
+		}
 		return;
 	}
 
@@ -476,6 +476,9 @@ void gaWorld::wantToMove(gaEntity *entity, gaMessage *message)
 						distance_sector = d;
 					}
 					fall = false;
+					if (entity->name() == "player") {
+						gaDebugLog(1, "gaWorld::wantToMove", "FRONT detected at " + std::to_string(collision.m_position.y));
+					}
 					break;
 				case fwCollisionLocation::BOTTOM:
 					fall = false;
@@ -484,6 +487,9 @@ void gaWorld::wantToMove(gaEntity *entity, gaMessage *message)
 						if (d < 0.5) {
 							tranform->m_position.y = collision.m_position.y;		// move up the stair
 						}
+					}
+					if (entity->name() == "player") {
+						gaDebugLog(1, "gaWorld::wantToMove", "BOTTOM detected at " + std::to_string(collision.m_position.y));
 					}
 					break;
 				case fwCollisionLocation::COLLIDE: {
@@ -503,7 +509,7 @@ void gaWorld::wantToMove(gaEntity *entity, gaMessage *message)
 					float d = glm::dot(glm::normalize(tranform->m_downward), AC);
 					*/
 					fwCollisionLocation c;
-					if (d < 0.05) {
+					if (d < 0.101) {
 						c = fwCollisionLocation::BOTTOM;
 						if (d != 0) {
 							tranform->m_position.y = collision.m_position.y;
@@ -517,16 +523,19 @@ void gaWorld::wantToMove(gaEntity *entity, gaMessage *message)
 					else if (d > bb.m_p1.y) {
 						c = fwCollisionLocation::TOP;
 						tranform->m_position.y = collision.m_position.y - bb.m_p1.y;
+						if (entity->name() == "player") {
+							gaDebugLog(1, "gaWorld::wantToMove", "found ceiling at " + std::to_string(collision.m_position.y));
+						}
 					}
 					else {
+						if (entity->name() == "player") {
+							gaDebugLog(1, "gaWorld::wantToMove", "collide at " + std::to_string(collision.triangle()));
+						}
 						c = fwCollisionLocation::COLLIDE;
 						d = entity->distanceTo(collision.m_position);
 						if (d < distance_sector) {
 							nearest_sector = sector;
 							distance_sector = d;
-						}
-						if (entity->name() == "player") {
-							gaDebugLog(1, "gaWorld::wantToMove", "collide at " + std::to_string(collision.triangle()));
 						}
 					}
 				}

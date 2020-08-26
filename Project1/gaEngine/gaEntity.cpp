@@ -156,7 +156,7 @@ void gaEntity::engagePhysics(const glm::vec3& pos, const glm::vec3& direction)
 {
 	// engage the physic engine
 	m_physic[0][0] = 0;			m_physic[1][0] = direction.x / 100.0f;		m_physic[2][0] = pos.x;
-	m_physic[0][1] = c_gravity; m_physic[1][1] = direction.y;				m_physic[2][1] = pos.y;
+	m_physic[0][1] = c_gravity; m_physic[1][1] = direction.y / 100.0f;		m_physic[2][1] = pos.y;
 	m_physic[0][2] = 0;			m_physic[1][2] = direction.z / 100.0f;		m_physic[2][2] = pos.z;
 
 	m_physic_time_elpased = 33;

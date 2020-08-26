@@ -1,6 +1,7 @@
 #include "Collider.h"
 
 #include <glm/gtx/intersect.hpp>
+#include <glm/gtx/norm.hpp>
 
 #include "../framework/fwAABBox.h"
 #include "../framework/fwGeometry.h"
@@ -146,8 +147,8 @@ bool Collider::collision(const Collider& source,
 
 static bool testSensor(
 	const glm::mat4& worldMatrix,
-	const glm::vec3& center,
-	const glm::vec3& direction,
+	const glm::vec3& p1,
+	const glm::vec3& p2,
 	const glm::vec3& a, const glm::vec3& b, const glm::vec3& c,
 	glm::vec3& collision
 )
@@ -156,12 +157,21 @@ static bool testSensor(
 	float u, v, w;
 
 	// check the forward sensor
-	if (Framework::IntersectLineTriangle(center,
-		center + direction,
+	if (Framework::IntersectLineTriangle(p1,
+		p2,
 		a, b, c,
 		u, v, w))
 	{
 		collision = (u * a + v * b + w * c);
+
+		// check if point is on the segment
+		float d = glm::dot(p2 - p1, collision - p1);
+		if (d < 0) {
+			return false;
+		}
+		if (d > glm::distance2(p2, p1)) {
+			return false;
+		}
 
 		// rebuild collision point (geometry space) to world space 
 		collision = glm::vec3(worldMatrix * glm::vec4(collision, 1.0));
@@ -201,7 +211,7 @@ bool Collider::warpThroughAABBTree(const Collider& aabbtree,
 		if (triangle.intersect(aabb_gs)) {
 			if (testSensor(*aabbtree.m_worldMatrix,
 				position_gs,
-				direction_gs,
+				old_position_gs,
 				vertices_gs[i], vertices_gs[i + 1], vertices_gs[i + 2],
 				collision)) {
 				return true;
@@ -554,7 +564,7 @@ bool Collider::collision_cylinder_aabb_tree(const Collider& cylinder,
 			v2_es = vertices_gs[i + 1] * ellipsoid_space;
 			v3_es = vertices_gs[i + 2] * ellipsoid_space;
 
-			//if (i == 174 && nbVertices==594) {
+			//if (i == 378 && nbVertices==534) {
 			//	printf("Collider::collision_cylinder_aabb_tree\n");
 			//}
 			if (Framework::intersectSphereTriangle(center_es, v1_es, v2_es, v3_es, intersection_es)) {

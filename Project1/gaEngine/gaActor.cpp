@@ -206,7 +206,7 @@ bool gaActor::moveTo_old(time_t delta, glm::vec3& velocity)
 			// no collision at all => nothing under the feet of the actor => freefall
 			// engage the physic engine
 			m_physic[0][0] = 0;			m_physic[1][0] = direction.x/20.0f;		m_physic[2][0] = target.x;
-			m_physic[0][1] = c_gravity; m_physic[1][1] = direction.y;		m_physic[2][1] = target.y;
+			m_physic[0][1] = c_gravity; m_physic[1][1] = direction.y/20.0f;		m_physic[2][1] = target.y;
 			m_physic[0][2] = 0;			m_physic[1][2] = direction.z/20.0f;		m_physic[2][2] = target.z;
 
 			m_animation_time = delta;
@@ -234,10 +234,10 @@ void gaActor::jump(const glm::vec3& velocity)
 	direction.y = c_jump;
 
 	m_physic[0][0] = 0;			m_physic[1][0] = direction.x/20.0f;		m_physic[2][0] = m_cylinder.position().x;
-	m_physic[0][1] = c_gravity; m_physic[1][1] = direction.y;		m_physic[2][1] = m_cylinder.position().y;
+	m_physic[0][1] = c_gravity; m_physic[1][1] = direction.y/20.0f;		m_physic[2][1] = m_cylinder.position().y;
 	m_physic[0][2] = 0;			m_physic[1][2] = direction.z/20.0f;		m_physic[2][2] = m_cylinder.position().z;
 
-	m_animation_time = 33;
+	m_physic_time_elpased = 33;
 }
 
 /**
