@@ -2,7 +2,7 @@
 
 #include <glm/vec3.hpp>
 #include <glm/mat4x4.hpp>
-#include <list>
+#include <vector>
 
 #include "gaCollisionPoint.h"
 
@@ -36,21 +36,21 @@ namespace GameEngine
 			const Collider& geometry, 
 			const glm::vec3& forward,
 			const glm::vec3& down,
-			std::list<gaCollisionPoint>& collisions);		// do a fwAABB vs geometry collision check (test all geometry triangles)
+			std::vector<gaCollisionPoint>& collisions);		// do a fwAABB vs geometry collision check (test all geometry triangles)
 
 		static bool collision_fwAABB_gaAABB(const Collider& fwAABB,
 			const Collider& gaAABB,
 			const glm::vec3& forward,
 			const glm::vec3& down,
-			std::list<gaCollisionPoint>& collisions);		// do a fwAABB vs gaAABB collision check (test only subset of triangles)
+			std::vector<gaCollisionPoint>& collisions);		// do a fwAABB vs gaAABB collision check (test only subset of triangles)
 
 		static bool collision_cylinder_geometry(const Collider& cylinder,
 			const Collider& geometry,
-			std::list<gaCollisionPoint>& collisions);		// do a fwAABB vs cylinder
+			std::vector<gaCollisionPoint>& collisions);		// do a fwAABB vs cylinder
 
 		static bool collision_cylinder_aabb_tree(const Collider& cylinder,
 			const Collider& aabb_tree,
-			std::list<gaCollisionPoint>& collisions);		// do a fwAABB vs AABBTree (pointing to triangles)
+			std::vector<gaCollisionPoint>& collisions);		// do a fwAABB vs AABBTree (pointing to triangles)
 
 		static bool warpThroughAABBTree(const Collider& aabbtree,
 			const glm::vec3& position,
@@ -80,7 +80,7 @@ namespace GameEngine
 		bool collision(const Collider& source,
 			const glm::vec3& forward, 
 			const glm::vec3& down,
-			std::list<gaCollisionPoint>& collisions);		// run a collision test between 2 colliders
+			std::vector<gaCollisionPoint>& collisions);		// run a collision test between 2 colliders
 		bool warpThrough(const Collider& source,
 			const glm::vec3& position,
 			const glm::vec3& old_position,

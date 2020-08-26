@@ -79,7 +79,7 @@ bool gaEntity::collideAABB(const fwAABBox& box)
 bool gaEntity::collide(gaEntity* entity, 
 	const glm::vec3& forward,
 	const glm::vec3& down,
-	std::list<gaCollisionPoint>& collisions)
+	std::vector<gaCollisionPoint>& collisions)
 {
 	return m_collider.collision(entity->m_collider, forward, down, collisions);
 }
@@ -90,7 +90,7 @@ bool gaEntity::collide(gaEntity* entity,
 bool gaEntity::collide(GameEngine::Collider collider, 
 	const glm::vec3& forward,
 	const glm::vec3& down,
-	std::list<gaCollisionPoint>& collisions)
+	std::vector<gaCollisionPoint>& collisions)
 {
 	return m_collider.collision(collider, forward, down, collisions);
 }

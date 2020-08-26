@@ -81,7 +81,7 @@ void Collider::set(fwCylinder* cylinder, glm::mat4* worldMatrix, glm::mat4* inve
 bool Collider::collision(const Collider& source, 
 	const glm::vec3& forward,
 	const glm::vec3& down,
-	std::list<gaCollisionPoint>& collisions)
+	std::vector<gaCollisionPoint>& collisions)
 {
 	switch (m_type) {
 	case ColliderType::AABB:
@@ -246,7 +246,7 @@ static void testSensors(
 	const glm::vec3 &forward_geometry_space,
 	const glm::vec3 &down,
 	const glm::vec3 &a, const glm::vec3& b, const glm::vec3& c,
-	std::list<gaCollisionPoint>& collisions
+	std::vector<gaCollisionPoint>& collisions
 )
 {
 	glm::vec3 collision;
@@ -304,7 +304,7 @@ static void aabb_triangles(
 	const fwAABBox& aabb_geometry_space,
 	glm::vec3 const* vertices,
 	uint32_t nbVertices,
-	std::list<gaCollisionPoint>& collisions)
+	std::vector<gaCollisionPoint>& collisions)
 {
 	// for each triangle, extract the AABB in geometry space and check collision with the source AABB in geometry space
 	fwAABBox triangle;
@@ -331,7 +331,7 @@ bool Collider::collision_fwAABB_geometry(const Collider& aabb,
 	const Collider& geometry, 
 	const glm::vec3& forward, // in world space
 	const glm::vec3& down,
-	std::list<gaCollisionPoint>& collisions)
+	std::vector<gaCollisionPoint>& collisions)
 {
 	glm::vec3 const* vertices = static_cast<fwGeometry*>(geometry.m_source)->vertices();
 	uint32_t nbVertices = static_cast<fwGeometry*>(geometry.m_source)->nbvertices();
@@ -377,7 +377,7 @@ bool Collider::collision_fwAABB_gaAABB(const Collider& fwAABB,
 	const Collider& gaAABB, 
 	const glm::vec3& forward, 
 	const glm::vec3& down, 
-	std::list<gaCollisionPoint>& collisions)
+	std::vector<gaCollisionPoint>& collisions)
 {
 	fwAABBox aabb_geometry_space;
 	glm::vec3 center;
@@ -459,7 +459,7 @@ static void init_elipsoide(
 bool Collider::collision_cylinder_geometry(
 	const Collider& cylinder, 
 	const Collider& geometry, 
-	std::list<gaCollisionPoint>& collisions)
+	std::vector<gaCollisionPoint>& collisions)
 {
 	glm::vec3 ellipsoid_space;
 	glm::vec3 center_gs;
@@ -517,7 +517,7 @@ bool Collider::collision_cylinder_geometry(
  */
 bool Collider::collision_cylinder_aabb_tree(const Collider& cylinder, 
 	const Collider& aabb_tree, 
-	std::list<gaCollisionPoint>& collisions)
+	std::vector<gaCollisionPoint>& collisions)
 {
 	glm::vec3 ellipsoid_space;
 	glm::vec3 center_gs;
@@ -584,4 +584,3 @@ bool Collider::collision_cylinder_aabb_tree(const Collider& cylinder,
 
 	return collisions.size() != 0;
 }
-

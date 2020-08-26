@@ -386,17 +386,11 @@ bool gaWorld::checkCollision(gaEntity* source, fwCylinder& bounding, glm::vec3& 
  */
 void gaWorld::wantToMove(gaEntity *entity, gaMessage *message)
 {
-	gaEntity* nearest_entity = nullptr;
-	dfSuperSector* nearest_sector = nullptr;
 	GameEngine::Transform* tranform = static_cast<GameEngine::Transform*>(message->m_extra);
 
-	float distance = 99999999.0f;
-	float distance_sector = 99999999.0f;
-	float d;
-
-	std::list<gaEntity*> entities;
-	std::list<dfSuperSector*> sectors;
-	std::list<gaCollisionPoint> collisions;
+	std::vector<gaEntity*> entities;
+	std::vector<dfSuperSector*> sectors;
+	std::vector<gaCollisionPoint> collisions;
 
 	glm::vec3 old_position = entity->position();
 
@@ -409,15 +403,15 @@ void gaWorld::wantToMove(gaEntity *entity, gaMessage *message)
 			+ " " + std::to_string(tranform->m_position.z));
 
 	// do a warpThrough quick test
+	glm::vec3 warp;
 	fwAABBox aabb_ws(entity->position(), old_position);
-	glm::vec3 collision;
 	std::vector<glm::vec3> warps;
 
 	for (auto sector : m_sectors) {
 		if (sector->collideAABB(aabb_ws)) {
 			// do a warpTrough full test
-			if (entity->warpThrough(sector->collider(), old_position, collision)) {
-				warps.push_back(collision);
+			if (entity->warpThrough(sector->collider(), old_position, warp)) {
+				warps.push_back(warp);
 			}
 		}
 	}
@@ -442,109 +436,128 @@ void gaWorld::wantToMove(gaEntity *entity, gaMessage *message)
 		return;
 	}
 
-	// do an AABB collision against AABB with entities
-	findAABBCollision(entity->worldAABB(), entities, sectors, entity);
+	// collide against the entities
+	uint32_t size;
 
-	//if (entity->name() == "player" && tranform->m_forward != glm::vec3(0)) {
-	//	printf("gaWorld::wantToMove\n");
-	//}
-	// and then collide the objects
-	for (auto ent : entities) {
-		if (entity->collide(ent, tranform->m_forward, tranform->m_downward, collisions)) {
-			// only test entities that can physically checkCollision
-			d = ent->distanceTo(entity);
-			if (d < distance) {
-				nearest_entity = ent;
-				distance = d;
+	for (auto entry : m_entities) {
+		for (auto ent : entry.second) {
+			if (ent != entity && entity->collideAABB(ent->worldAABB())) {
+				if (entity->name() == "player") {
+					gaDebugLog(1, "gaWorld::wantToMove", "warp detected, fixed at ");
+				}
+				size = collisions.size();
+				if (entity->collide(ent, tranform->m_forward, tranform->m_downward, collisions)) {
+					for (auto i = size; i < collisions.size(); i++) {
+						collisions[i].m_source = ent;
+						collisions[i].m_class = gaCollisionPoint::Source::ENTITY;
+					}
+				}
 			}
 		}
 	}
 
-	// do an segment collision against the sectors triangles
+	// collide against the sectors
 	bool fall = true;
 	bool fix_y = false;	// do we enter the ground and need Y to be fixed
 
-	for (auto sector : sectors) {
-		if (entity->collide(sector->collider(), tranform->m_forward, tranform->m_downward, collisions)) {
-			// no warping, so test deeper
-			for (auto& collision : collisions) {
-				switch (collision.m_location) {
-				case fwCollisionLocation::FRONT:
-					d = entity->distanceTo(collision.m_position);
-					if (d < distance_sector) {
-						nearest_sector = sector;
-						distance_sector = d;
-					}
-					fall = false;
-					if (entity->name() == "player") {
-						gaDebugLog(1, "gaWorld::wantToMove", "FRONT detected at " + std::to_string(collision.m_position.y));
-					}
-					break;
-				case fwCollisionLocation::BOTTOM:
-					fall = false;
-					if (message->m_value != gaMessage::Flag::WANT_TO_MOVE_LASER) {
-						float d = abs(tranform->m_position.y - collision.m_position.y);
-						if (d < 0.5) {
-							tranform->m_position.y = collision.m_position.y;		// move up the stair
-						}
-					}
-					if (entity->name() == "player") {
-						gaDebugLog(1, "gaWorld::wantToMove", "BOTTOM detected at " + std::to_string(collision.m_position.y));
-					}
-					break;
-				case fwCollisionLocation::COLLIDE: {
-					// cylinder collision (player)
-					// position of the intersection compared to the direction
-					const fwAABBox& bb = entity->modelAABB();
-					glm::vec3 p = entity->position();
-					// p.y += bb.center().y;
-					float d = collision.m_position.y - p.y;
-
-					/*
-					glm::vec3 AC = glm::normalize(entity->position() - collision.m_position);
-					float f = 0;
-					if (tranform->m_forward != glm::vec3(0)) {
-						f = glm::dot(glm::normalize(tranform->m_forward), AC);
-					}
-					float d = glm::dot(glm::normalize(tranform->m_downward), AC);
-					*/
-					fwCollisionLocation c;
-					if (d < 0.101) {
-						c = fwCollisionLocation::BOTTOM;
-						if (d != 0) {
-							tranform->m_position.y = collision.m_position.y;
-							fix_y = true;
-						}
-						fall = false;
-						if (entity->name() == "player") {
-							gaDebugLog(1, "gaWorld::wantToMove", "found ground at " + std::to_string(collision.m_position.y));
-						}
-					}
-					else if (d > bb.m_p1.y) {
-						c = fwCollisionLocation::TOP;
-						tranform->m_position.y = collision.m_position.y - bb.m_p1.y;
-						if (entity->name() == "player") {
-							gaDebugLog(1, "gaWorld::wantToMove", "found ceiling at " + std::to_string(collision.m_position.y));
-						}
-					}
-					else {
-						if (entity->name() == "player") {
-							gaDebugLog(1, "gaWorld::wantToMove", "collide at " + std::to_string(collision.triangle()));
-						}
-						c = fwCollisionLocation::COLLIDE;
-						d = entity->distanceTo(collision.m_position);
-						if (d < distance_sector) {
-							nearest_sector = sector;
-							distance_sector = d;
-						}
-					}
-				}
-				}
+	for (auto sector : m_sectors) {
+		size = collisions.size();
+		if (sector->collideAABB(entity->worldAABB()) && 
+			entity->collide(sector->collider(), tranform->m_forward, tranform->m_downward, collisions)) 
+		{
+			for (auto i = size; i < collisions.size(); i++) {
+				collisions[i].m_source = sector;
+				collisions[i].m_class = gaCollisionPoint::Source::SECTOR;
 			}
 		}
 	}
 
-	if (fall && message->m_value != gaMessage::Flag::WANT_TO_MOVE_LASER) {
+	// find the nearest collisions
+	gaCollisionPoint* nearest_collision = nullptr;
+	gaCollisionPoint* nearest_ground = nullptr;
+	float distance = 99999999.0f;
+	float ground = -9999999.0f;
+	float d;
+
+	for (auto& collision : collisions) {
+		switch (collision.m_location) {
+		case fwCollisionLocation::FRONT:
+			d = entity->distanceTo(collision.m_position);
+			if (d < distance) {
+				nearest_collision = &collision;
+				distance = d;
+			}
+			fall = false;
+			if (entity->name() == "player") {
+				gaDebugLog(1, "gaWorld::wantToMove", "FRONT detected at " + std::to_string(collision.m_position.y));
+			}
+			break;
+		case fwCollisionLocation::BOTTOM:
+			fall = false;
+			if (message->m_value != gaMessage::Flag::WANT_TO_MOVE_LASER) {
+				float d = abs(tranform->m_position.y - collision.m_position.y);
+				if (d > ground) {
+					nearest_ground = &collision;
+					ground = d;
+				}
+			}
+			if (entity->name() == "player") {
+				gaDebugLog(1, "gaWorld::wantToMove", "BOTTOM detected at " + std::to_string(collision.m_position.y));
+			}
+			break;
+		case fwCollisionLocation::COLLIDE: {
+			// cylinder collision (player)
+			// position of the intersection compared to the direction
+			const fwAABBox& bb = entity->modelAABB();
+			glm::vec3 p = entity->position();
+			// p.y += bb.center().y;
+			float d = collision.m_position.y - p.y;
+
+			fwCollisionLocation c;
+			if (d < 0.101) {
+				// BOTTOM
+				if (d > ground) {
+					nearest_ground = &collision;
+					ground = d;
+				}
+			}
+			else if (d > bb.m_p1.y) {
+				// TOP;
+				tranform->m_position.y = collision.m_position.y - bb.m_p1.y;
+				if (entity->name() == "player") {
+					gaDebugLog(1, "gaWorld::wantToMove", "found ceiling at " + std::to_string(collision.m_position.y));
+				}
+			}
+			else {
+				// FRONT/BACK/LEFT/RIGHT
+				if (entity->name() == "player") {
+					gaDebugLog(1, "gaWorld::wantToMove", "collide at " + std::to_string(collision.triangle()));
+				}
+				d = entity->distanceTo(collision.m_position);
+				if (d < distance) {
+					nearest_collision = &collision;
+					distance = d;
+				}
+			}
+		}
+		}
+	}
+
+	// take actions
+
+	// manage ground collision and accept to jump up if over a step
+	if (nearest_ground) {
+		if (ground < 0.101) {
+			if (ground != 0) {
+				tranform->m_position.y = nearest_ground->m_position.y;
+				fix_y = true;
+			}
+			if (entity->name() == "player") {
+				gaDebugLog(1, "gaWorld::wantToMove", "set ground at " + std::to_string(nearest_ground->m_position.y));
+			}
+		}
+	}
+	else if (message->m_value != gaMessage::Flag::WANT_TO_MOVE_LASER) {
 		// if there is no floor
 		switch (message->m_value) {
 		case gaMessage::Flag::WANT_TO_MOVE_BREAK_IF_FALL:
@@ -561,30 +574,32 @@ void gaWorld::wantToMove(gaEntity *entity, gaMessage *message)
 			break;
 		}
 	}
-	else if (distance < 99999999.0f || distance_sector < 99999999.0f) {
-		message->m_action = gaMessage::gaMessage::COLLIDE;
-		if (distance < 99999999.0f) {
-			message->m_server = nearest_entity->name();
+
+	if (nearest_collision) {
+		message->m_action = gaMessage::COLLIDE;
+		if (nearest_collision->m_class == gaCollisionPoint::Source::ENTITY) {
+			message->m_server = static_cast<gaEntity*>(nearest_collision->m_source)->name();
 			message->m_value = gaMessage::Flag::COLLIDE_ENTITY;
 		}
 		else {
+			message->m_server = static_cast<dfSuperSector*>(nearest_collision->m_source)->name();
 			message->m_value = gaMessage::Flag::COLLIDE_WALL;
 		}
 		entity->popTransformations();				// restore previous position
 	}
 	else {
 		// accept the move
-		message->m_action = gaMessage::MOVE;
+		if (message->m_action == gaMessage::WANT_TO_MOVE) {
+			if (!fix_y) {
+				message->m_extra = nullptr;					// object was correctly moved
+			}
+			else {
+				if (entity->name() == "player")
+					gaDebugLog(1, "gaWorld::wantToMove", "fixed " + std::to_string(tranform->m_position.x)
+						+ " " + std::to_string(tranform->m_position.y)
+						+ " " + std::to_string(tranform->m_position.z));
 
-		if (!fix_y) {
-			message->m_extra = nullptr;					// object was correctly moved
-		}
-		else {
-			if (entity->name() == "player")
-			gaDebugLog(1, "gaWorld::wantToMove", "fixed " + std::to_string(tranform->m_position.x)
-				+ " " + std::to_string(tranform->m_position.y)
-				+ " " + std::to_string(tranform->m_position.z));
-
+			}
 		}
 	}
 }
