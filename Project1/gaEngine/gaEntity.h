@@ -47,6 +47,8 @@ protected:
 
 	dfSuperSector* m_supersector = nullptr;			// cached super_sector hosting the object
 	Collider m_collider;							// if there is a collider
+	bool m_gravity = true;							// does gravity effect the entity
+	bool m_collideSectors = true;					// does the entity collide with sectors
 
 public:
 	gaEntity(int mclass, const std::string& name);
@@ -58,15 +60,19 @@ public:
 	const std::string& name(void) { return m_name; };
 	bool is(int mclass) { return m_class == m_class; };
 	void physical(bool p) { m_physical = p; };
-	bool physical(void) { return m_physical; };
-	const fwAABBox& worldAABB(void) { return m_worldBounding; };
-	const fwAABBox& modelAABB(void) { return m_modelAABB; };
+	inline bool physical(void) { return m_physical; };
+	inline bool gravity(void) { return m_gravity; };
+	inline bool collideSectors(void) { return m_collideSectors; };
+	inline const fwAABBox& worldAABB(void) { return m_worldBounding; };
+	inline const fwAABBox& modelAABB(void) { return m_modelAABB; };
 	void superSector(dfSuperSector* s) { m_supersector = s; };
 
 	void set(const std::string& v, void* ptr) { m_attributes[v] = ptr; };
 	void* get(const std::string& v) { return m_attributes[v]; };
 
 	void transform(GameEngine::Transform* transform);	// apply a transformation and update the worldAABB
+
+	float radius(void);									// maximum radius of the entity
 
 	gaComponent *findComponent(int type);				// check all components to find one with the proper type
 	void addChild(gaEntity* entity);					// add an entity inside that one (and increase the AABB if needed)

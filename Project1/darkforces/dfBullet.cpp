@@ -71,6 +71,8 @@ dfBullet::dfBullet(const glm::vec3& position, const glm::vec3& direction):
 	m_transforms.m_quaternion = glm::quatLookAt(m_direction, up);
 	m_transforms.m_scale = get_scale();
 	m_transforms.m_position = position;
+
+	m_gravity = false;	// laser are not affected by gravity
 }
 
 /**

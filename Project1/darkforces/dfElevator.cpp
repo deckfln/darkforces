@@ -93,7 +93,9 @@ void dfElevator::init(const std::string& kind)
 		std::cerr << "dfElevator::dfElevator " << kind << " not implemented" << std::endl;
 	}
 
-	physical(true);	// elevators cannot be traversed
+	m_physical = false;		// elevators cannot be traversed
+	m_gravity = false;		// elevators are not affected by gravity
+	m_collideSectors=false;	// elevators doesn't need to check collision with sectors
 }
 
 /**
@@ -641,7 +643,7 @@ void dfElevator::moveTo(float z)
 		// move the sector the elevator is based on (for collision detection)
 		m_transforms.m_position = position();
 		m_transforms.m_position.y = z / 10.0f;
-		sendMessage(this->m_name, gaMessage::Action::WANT_TO_MOVE, gaMessage::Flag::FORCE_MOVE, &m_transforms);
+		sendMessage(this->m_name, gaMessage::Action::WANT_TO_MOVE, gaMessage::Flag::PUSH_ENTITIES, &m_transforms);
 		m_pSector->currentFloorAltitude(z);
 		break;
 	case dfElevator::Type::MOVE_CEILING:

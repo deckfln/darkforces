@@ -41,7 +41,7 @@ public:
 		WANT_TO_MOVE_BREAK_IF_FALL,	// Object doesn't want to fall off and want to be informed
 		WANT_TO_MOVE_FALL,			// object accepts to fall down
 		WANT_TO_MOVE_LASER,			// object is not impacted by gravity
-		FORCE_MOVE,					// move will go forward even if collision (but inform the other object of the collision)
+		PUSH_ENTITIES,				// push objects we are colliding with
 		COLLIDE_ENTITY,
 		COLLIDE_WALL,
 		ROTATE_VEC3,
@@ -59,6 +59,7 @@ public:
 	int m_action = -1;
 	int m_value = 0;
 	float m_fvalue = 0.0f;
+	glm::vec3 m_v3value = glm::vec3(0.0f);
 	void* m_extra = nullptr;
 
 	time_t m_delta = 0;	// time since the last frame

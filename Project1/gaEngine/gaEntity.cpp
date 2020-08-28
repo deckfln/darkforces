@@ -203,6 +203,18 @@ void gaEntity::transform(GameEngine::Transform* transform)
 }
 
 /**
+ * maximum radius of the entity
+ */
+float gaEntity::radius(void)
+{
+	float r1 = m_modelAABB.m_p1.x - m_modelAABB.m_p.x;
+	float r2 = m_modelAABB.m_p1.z - m_modelAABB.m_p.z;
+	float r = std::min(r1, r2);
+
+	return r / 2.0f;
+}
+
+/**
  * update the world AABB based on position
  */
 void gaEntity::updateWorldAABB(void)
@@ -273,6 +285,17 @@ void gaEntity::dispatchMessage(gaMessage* message)
 		// entity is being lifted by an entity is sits on top
 		m_transforms.m_position = position();
 		m_transforms.m_position.y += message->m_fvalue;
+		sendMessage(
+			m_name,
+			gaMessage::Action::WANT_TO_MOVE,
+			gaMessage::Flag::PUSH_ENTITIES,
+			&m_transforms);
+		break;
+
+	case gaMessage::Action::PUSHED_ASIDE:
+		// entity is being pushed aside by an entity
+		m_transforms.m_position = position();
+		m_transforms.m_position += message->m_v3value;
 		sendMessage(
 			m_name,
 			gaMessage::Action::WANT_TO_MOVE,
