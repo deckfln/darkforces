@@ -91,13 +91,13 @@ void dfBullet::tryToMove(void)
 void dfBullet::dispatchMessage(gaMessage* message)
 {
 	switch (message->m_action) {
-	case gaMessage::WORLD_INSERT:
+	case gaMessage::Action::WORLD_INSERT:
 		sendDelayedMessage(gaMessage::WANT_TO_MOVE,
 			gaMessage::Flag::WANT_TO_MOVE_LASER,
 			&m_transforms);
 		break;
 
-	case gaMessage::COLLIDE: {
+	case gaMessage::Action::COLLIDE: {
 		// add an impact sprite
 		// constructor of a sprite expects a level space
 		glm::vec3 p;
@@ -119,7 +119,7 @@ void dfBullet::dispatchMessage(gaMessage* message)
 		break;
 	}
 
-	case gaMessage::MOVE:
+	case gaMessage::Action::MOVE:
 		m_animation_time += message->m_delta;
 
 		if (m_animation_time < bullet_life) {

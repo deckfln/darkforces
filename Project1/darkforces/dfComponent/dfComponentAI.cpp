@@ -57,7 +57,7 @@ void dfComponentAI::dispatchMessage(gaMessage* message)
 {
 
 	switch (message->m_action) {
-	case gaMessage::WORLD_INSERT:
+	case gaMessage::Action::WORLD_INSERT:
 		// kick start the AI
 		m_center = m_entity->position();
 		m_alpha = (rand() / (float)RAND_MAX - 0.f) / 10.0f; // rotation angle to apply to the direction vector
@@ -65,12 +65,12 @@ void dfComponentAI::dispatchMessage(gaMessage* message)
 		tryToMove();
 		break;
 
-	case gaMessage::COLLIDE:
-	case gaMessage::WOULD_FALL:
+	case gaMessage::Action::COLLIDE:
+	case gaMessage::Action::WOULD_FALL:
 		m_direction = -m_direction;
 		// PASS THROUGH
 
-	case gaMessage::MOVE:
+	case gaMessage::Action::MOVE:
 		// move request was accepted, so trigger a new one
 		if (!m_active) {
 			break;

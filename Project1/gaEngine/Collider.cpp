@@ -18,6 +18,7 @@ using namespace GameEngine;
 Collider::Collider(fwAABBox* aabb, glm::mat4* worldMatrix, glm::mat4* inverseWorldMatrix):
 	m_type(ColliderType::AABB),
 	m_source(aabb),
+	m_aabb(aabb),
 	m_worldMatrix(worldMatrix),
 	m_inverseWorldMatrix(inverseWorldMatrix)
 {
@@ -48,7 +49,7 @@ void Collider::set(fwGeometry* geometry, glm::mat4* worldMatrix, glm::mat4* inve
 void Collider::set(fwAABBox* modelAABB, glm::mat4* worldMatrix, glm::mat4* inverseWorldMatrix)
 {
 	m_type = ColliderType::AABB;
-	m_source = modelAABB;
+	m_source = m_aabb = modelAABB;
 	m_worldMatrix = worldMatrix;
 	m_inverseWorldMatrix = inverseWorldMatrix;
 }
@@ -59,7 +60,7 @@ void Collider::set(fwAABBox* modelAABB, glm::mat4* worldMatrix, glm::mat4* inver
 void Collider::set(AABBoxTree* modelAABB, glm::mat4* worldMatrix, glm::mat4* inverseWorldMatrix)
 {
 	m_type = ColliderType::AABB_TREE;
-	m_source = modelAABB;
+	m_source = m_aabb = modelAABB;
 	m_worldMatrix = worldMatrix;
 	m_inverseWorldMatrix = inverseWorldMatrix;
 }
@@ -71,6 +72,7 @@ void Collider::set(fwCylinder* cylinder, glm::mat4* worldMatrix, glm::mat4* inve
 {
 	m_type = ColliderType::CYLINDER;
 	m_source = cylinder;
+	m_aabb = nullptr;
 	m_worldMatrix = worldMatrix;
 	m_inverseWorldMatrix = inverseWorldMatrix;
 }
@@ -115,11 +117,10 @@ bool Collider::collision(const Collider& source,
 		case ColliderType::AABB:
 			return collision_fwAABB_geometry(source, *this, forward, down, collisions);
 		case ColliderType::AABB_TREE:
-			printf("Collider::collision Geometry vs GA_AABB not implemented");
-			return true;
+			return collision_fwAABB_geometry(source, *this, forward, down, collisions);
 		case ColliderType::GEOMETRY:
-			printf("Collider::collision Geometry vs Geometry not implemented");
-			return true;
+			// convert to AABB vs Geometry
+			return collision_fwAABB_geometry(*this, source, forward, down, collisions);
 		case ColliderType::CYLINDER:
 			return collision_cylinder_geometry(source, *this, collisions);
 		}
@@ -166,7 +167,7 @@ static bool testSensor(
 
 		// check if point is on the segment
 		float d = glm::dot(p2 - p1, collision - p1);
-		if (d < 0) {
+		if (d < 0.01) {
 			return false;
 		}
 		if (d > glm::distance2(p2, p1)) {
@@ -346,7 +347,7 @@ bool Collider::collision_fwAABB_geometry(const Collider& aabb,
 		*geometry.m_inverseWorldMatrix,
 		forward,
 		down,
-		static_cast<fwAABBox*>(aabb.m_source),
+		aabb.m_aabb,
 
 		forward_geometry_space,
 		dwsensor,

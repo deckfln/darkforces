@@ -30,7 +30,8 @@ namespace GameEngine
 		glm::mat4 const *m_worldMatrix = nullptr;
 		glm::mat4 const *m_inverseWorldMatrix = nullptr;
 
-		void* m_source = nullptr;
+		void* m_source = nullptr;		// maximum level of collision (AABB, Cylinder, Geometry)
+		fwAABBox* m_aabb = nullptr;		// minimum level of collision => modelAABB
 
 		static bool collision_fwAABB_geometry(const Collider& aabb, 
 			const Collider& geometry, 

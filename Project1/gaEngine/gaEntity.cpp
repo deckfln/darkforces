@@ -219,14 +219,14 @@ void gaEntity::dispatchMessage(gaMessage* message)
 {
 	switch (message->m_action)
 	{
-	case gaMessage::MOVE_TO:
+	case gaMessage::Action::MOVE_TO:
 		// move the entity following a direction
 		moveBy((glm::vec3*)message->m_extra);
 
 		sendInternalMessage(gaMessage::MOVE, 0, (void *)&position());
 		break;
 
-	case gaMessage::MOVE:
+	case gaMessage::Action::MOVE:
 		// if the there is no position, this is just a notification
 		if (message->m_extra != nullptr) {
 			translate((glm::vec3*)message->m_extra);
@@ -238,7 +238,7 @@ void gaEntity::dispatchMessage(gaMessage* message)
 		m_physic_time_elpased = 0;
 		break;
 
-	case gaMessage::ROTATE:
+	case gaMessage::Action::ROTATE:
 		// take the opportunity to update the world bounding box
 		switch (message->m_value) {
 		case gaMessage::Flag::ROTATE_VEC3:
@@ -254,9 +254,9 @@ void gaEntity::dispatchMessage(gaMessage* message)
 		updateWorldAABB();
 		break;
 
-	case gaMessage::FALL: {
-		GameEngine::Transform* _transform = static_cast<GameEngine::Transform*>(message->m_extra);
+	case gaMessage::Action::FALL: {
 		// no collision at all => nothing under the feet of the actor => free fall
+		GameEngine::Transform* _transform = static_cast<GameEngine::Transform*>(message->m_extra);
 		if (m_physic_time_elpased == 0) {
 			engagePhysics(_transform->m_position, _transform->m_forward);
 		}
@@ -268,6 +268,17 @@ void gaEntity::dispatchMessage(gaMessage* message)
 			(void *)_transform);
 
 		break;	}
+
+	case gaMessage::Action::LIFTED:
+		// entity is being lifted by an entity is sits on top
+		m_transforms.m_position = position();
+		m_transforms.m_position.y += message->m_fvalue;
+		sendMessage(
+			m_name,
+			gaMessage::Action::WANT_TO_MOVE,
+			gaMessage::Flag::WANT_TO_MOVE_FALL,
+			&m_transforms);
+		break;
 
 	default:
 		break;

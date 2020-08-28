@@ -17,7 +17,6 @@ class gaPlayer;
 class gaActor: public gaEntity
 {
 	fwCylinder m_cylinder;						// player bounding cylinder
-	GameEngine::Transform m_transforms;		// transforms to move the object
 
 	float m_speed = 0.0480f;					// normal speed
 

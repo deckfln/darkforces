@@ -31,6 +31,7 @@ protected:
 
 	glm::mat3x3 m_physic = glm::mat3x3(0);
 	time_t m_physic_time_elpased = 0;				// physic engine
+	GameEngine::Transform m_transforms;				// transforms to move the object
 
 	fwAABBox m_modelAABB;							// model space AABB
 	fwAABBox m_worldBounding;						// AABB bounding box in world opengl space

@@ -54,11 +54,13 @@ dfMesh::dfMesh(dfMesh* parent):
  */
 const GameEngine::AABBoxTree& dfMesh::modelAABB(void)
 {
-	for (auto& vertice : m_vertices) {
-		m_modelAABB.extend(vertice);
-	}
+	if (m_modelAABB.not_init()) {
+		for (auto& vertice : m_vertices) {
+			m_modelAABB.extend(vertice);
+		}
 
-	m_modelAABB.geometry(&m_vertices[0], m_vertices.size());
+		m_modelAABB.geometry(&m_vertices[0], m_vertices.size());
+	}
 
 	return m_modelAABB;
 }
@@ -707,7 +709,9 @@ GameEngine::ComponentMesh* dfMesh::buildMesh(void)
 
 	m_mesh = new GameEngine::ComponentMesh(m_geometry, m_material);
 	m_mesh->set_name(m_name);
-
+	
+	// record the full size of the geometry
+	m_modelAABB.geometry(&m_vertices[0], size);
 	return m_mesh;
 }
 

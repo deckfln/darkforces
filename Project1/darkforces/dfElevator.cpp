@@ -348,11 +348,6 @@ void dfElevator::init(int stopID)
 	m_currentStop = stopID;
 	dfLogicStop* stop = m_stops[m_currentStop];
 
-	if (this->m_sector == "elev3-5") {
-		std::cerr << "dfElevator::init ignored elevator elev3-5" << std::endl;
-		return;
-	}
-
 	if (m_mesh) {
 		moveTo(stop);
 	}
@@ -644,8 +639,9 @@ void dfElevator::moveTo(float z)
 		break;
 	case dfElevator::Type::MOVE_FLOOR:
 		// move the sector the elevator is based on (for collision detection)
-		p.y = z / 10.0f;
-		sendInternalMessage(gaMessage::MOVE, 0, &p);
+		m_transforms.m_position = position();
+		m_transforms.m_position.y = z / 10.0f;
+		sendMessage(this->m_name, gaMessage::Action::WANT_TO_MOVE, gaMessage::Flag::FORCE_MOVE, &m_transforms);
 		m_pSector->currentFloorAltitude(z);
 		break;
 	case dfElevator::Type::MOVE_CEILING:
@@ -746,14 +742,6 @@ void dfElevator::dispatchMessage(gaMessage* message)
 	case gaMessage::TIMER:
 		animate(message->m_delta);
 		break;
-
-	case gaMessage::ROTATE:
-	case gaMessage::MOVE:
-		// self reference
-		break;
-
-	default:
-		std::cerr << "dfElevator::dispatchMessage message " << message->m_action << " not implemented" << std::endl;
 	}
 
 	gaEntity::dispatchMessage(message);

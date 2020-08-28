@@ -50,11 +50,6 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 	//glm::vec3 start = glm::vec3(-30.2f, 2.1f, 35.87f);	// gen_d
 	glm::vec3 start = glm::vec3(-20.8f, 0.4f, 29.7f);	// stage
 
-	glm::vec2 p1(-21.0, 31.2);
-	glm::vec2 p2(-20, 28.8);
-	glm::vec2 p(-20.9, 29.7);
-	float d = ((p2.y - p1.y) * p.x - (p2.x - p1.x) * p.y + p2.x * p1.y - p2.y * p1.x) / sqrt(pow(p2.y - p1.y, 2) + pow(p2.x - p1.x, 2));
-
 	fwCylinder bounding(glm::vec3(0), c_radius, c_height);
 
 	m_player = new gaActor(DF_ENTITY_OBJECT, "player", bounding, start, c_eyes, c_ankle);

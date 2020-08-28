@@ -249,6 +249,25 @@ gaMessage* gaWorld::sendMessage(const std::string& from, const std::string& to, 
 	return ptr;
 }
 
+/**
+ * send a message for immediate action
+ */
+gaMessage* gaWorld::sendMessage(const std::string& from, const std::string& to, int action, float value, void* extra)
+{
+	gaMessage* ptr = allocateMessage();
+	ptr->m_used = true;
+
+	ptr->m_server = from;
+	ptr->m_client = to;
+	ptr->m_action = action;
+	ptr->m_fvalue = value;
+	ptr->m_extra = extra;
+
+	m_queue.push(ptr);
+
+	return ptr;
+}
+
 void gaWorld::push(gaMessage* message)
 {
 	m_queue.push(message);
@@ -384,6 +403,25 @@ bool gaWorld::checkCollision(gaEntity* source, fwCylinder& bounding, glm::vec3& 
 /**
  * An entity wants to move
  */
+
+static void debugCollision(const gaCollisionPoint& collision, gaEntity* entity, const std::string& msg)
+{
+	std::string collider;
+
+	if (collision.m_class == gaCollisionPoint::Source::ENTITY) {
+		collider = static_cast<gaEntity*>(collision.m_source)->name();
+	}
+	else {
+		collider = static_cast<dfSuperSector*>(collision.m_source)->name();
+	}
+
+	gaDebugLog(1, "gaWorld::wantToMove",
+		entity->name() + " found collision " + msg
+		+ "with " + collider
+		+ " at " + std::to_string(collision.m_position.y)
+	);
+}
+
 void gaWorld::wantToMove(gaEntity *entity, gaMessage *message)
 {
 	GameEngine::Transform* tranform = static_cast<GameEngine::Transform*>(message->m_extra);
@@ -397,43 +435,43 @@ void gaWorld::wantToMove(gaEntity *entity, gaMessage *message)
 	entity->pushTransformations();
 	entity->transform(tranform);
 
-	if (entity->name() == "player")
-		gaDebugLog(1, "gaWorld::wantToMove", "to " + std::to_string(tranform->m_position.x)
+	if (entity->name() == "elev3-5")
+		gaDebugLog(1, "gaWorld::wantToMove", entity->name() + " to " + std::to_string(tranform->m_position.x)
 			+ " " + std::to_string(tranform->m_position.y)
 			+ " " + std::to_string(tranform->m_position.z));
 
-	// do a warpThrough quick test
-	glm::vec3 warp;
-	fwAABBox aabb_ws(entity->position(), old_position);
-	std::vector<glm::vec3> warps;
+	if (message->m_value != gaMessage::Flag::FORCE_MOVE) {
+		// do a warpThrough quick test
+		glm::vec3 warp;
+		fwAABBox aabb_ws(entity->position(), old_position);
+		std::vector<glm::vec3> warps;
 
-	for (auto sector : m_sectors) {
-		if (sector->collideAABB(aabb_ws)) {
-			// do a warpTrough full test
-			if (entity->warpThrough(sector->collider(), old_position, warp)) {
-				warps.push_back(warp);
+		for (auto sector : m_sectors) {
+			if (sector->collideAABB(aabb_ws)) {
+				// do a warpTrough full test
+				if (entity->warpThrough(sector->collider(), old_position, warp)) {
+					warps.push_back(warp);
+				}
 			}
 		}
-	}
 
-	if (warps.size() > 0) {
-		float nearest = 9999999;
-		glm::vec3 near_c=glm::vec3(0);
+		if (warps.size() > 0) {
+			float nearest = 9999999;
+			glm::vec3 near_c = glm::vec3(0);
 
-		// find the nearest point
-		for (auto& collision : warps) {
-			if (glm::distance2(old_position, collision) < nearest) {
-				nearest = glm::distance2(old_position, collision);
-				near_c = collision;
+			// find the nearest point
+			for (auto& collision : warps) {
+				if (glm::distance2(old_position, collision) < nearest) {
+					nearest = glm::distance2(old_position, collision);
+					near_c = collision;
+				}
 			}
+			// and force the object there
+			message->m_action = gaMessage::MOVE;
+			tranform->m_position = near_c;
+			gaDebugLog(1, "gaWorld::wantToMove", entity->name() + " warp detected, fixed at " + std::to_string(near_c.y));
+			return;
 		}
-		// and force the object there
-		message->m_action = gaMessage::MOVE;
-		tranform->m_position = near_c;
-		if (entity->name() == "player") {
-			gaDebugLog(1, "gaWorld::wantToMove", "warp detected, fixed at " + std::to_string(near_c.y));
-		}
-		return;
 	}
 
 	// collide against the entities
@@ -442,9 +480,6 @@ void gaWorld::wantToMove(gaEntity *entity, gaMessage *message)
 	for (auto entry : m_entities) {
 		for (auto ent : entry.second) {
 			if (ent != entity && entity->collideAABB(ent->worldAABB())) {
-				if (entity->name() == "player") {
-					gaDebugLog(1, "gaWorld::wantToMove", "warp detected, fixed at ");
-				}
 				size = collisions.size();
 				if (entity->collide(ent, tranform->m_forward, tranform->m_downward, collisions)) {
 					for (auto i = size; i < collisions.size(); i++) {
@@ -457,17 +492,21 @@ void gaWorld::wantToMove(gaEntity *entity, gaMessage *message)
 	}
 
 	// collide against the sectors
-	bool fall = true;
+	bool fall = false;
 	bool fix_y = false;	// do we enter the ground and need Y to be fixed
 
-	for (auto sector : m_sectors) {
-		size = collisions.size();
-		if (sector->collideAABB(entity->worldAABB()) && 
-			entity->collide(sector->collider(), tranform->m_forward, tranform->m_downward, collisions)) 
-		{
-			for (auto i = size; i < collisions.size(); i++) {
-				collisions[i].m_source = sector;
-				collisions[i].m_class = gaCollisionPoint::Source::SECTOR;
+	// elevators don't need to be checked against sectors
+	if (message->m_value != gaMessage::Flag::FORCE_MOVE) {
+		fall = true;
+		for (auto sector : m_sectors) {
+			size = collisions.size();
+			if (sector->collideAABB(entity->worldAABB()) &&
+				entity->collide(sector->collider(), tranform->m_forward, tranform->m_downward, collisions))
+			{
+				for (auto i = size; i < collisions.size(); i++) {
+					collisions[i].m_source = sector;
+					collisions[i].m_class = gaCollisionPoint::Source::SECTOR;
+				}
 			}
 		}
 	}
@@ -478,6 +517,10 @@ void gaWorld::wantToMove(gaEntity *entity, gaMessage *message)
 	float distance = 99999999.0f;
 	float ground = -9999999.0f;
 	float d;
+	float dBottom = 0;		// distance from worldAAB bottom to collision Y
+	float dTop = 0;			// distance from worldAAB top to collision Y
+	float lifted = 0;		// if collision on top for elevator, record the Y lifting
+	float pushed_aside = 0;	// if collision on border of elevator, record the XZ direction
 
 	for (auto& collision : collisions) {
 		switch (collision.m_location) {
@@ -508,36 +551,43 @@ void gaWorld::wantToMove(gaEntity *entity, gaMessage *message)
 		case fwCollisionLocation::COLLIDE: {
 			// cylinder collision (player)
 			// position of the intersection compared to the direction
-			const fwAABBox& bb = entity->modelAABB();
-			glm::vec3 p = entity->position();
-			// p.y += bb.center().y;
-			float d = collision.m_position.y - p.y;
+			const fwAABBox& worldAABB = entity->worldAABB();
+
+			dBottom = collision.m_position.y - worldAABB.m_p.y;
+			dTop = worldAABB.m_p1.y - collision.m_position.y;
 
 			fwCollisionLocation c;
-			if (d < 0.101) {
-				// BOTTOM
-				if (d > ground) {
+			if (dBottom < 0.101) {				// BOTTOM
+				debugCollision(collision, entity, "on bottom");
+
+				if (dBottom > ground) {
 					nearest_ground = &collision;
-					ground = d;
+					ground = dBottom;
 				}
 			}
-			else if (d > bb.m_p1.y) {
-				// TOP;
-				tranform->m_position.y = collision.m_position.y - bb.m_p1.y;
-				if (entity->name() == "player") {
-					gaDebugLog(1, "gaWorld::wantToMove", "found ceiling at " + std::to_string(collision.m_position.y));
-				}
-			}
-			else {
-				// FRONT/BACK/LEFT/RIGHT
-				if (entity->name() == "player") {
-					gaDebugLog(1, "gaWorld::wantToMove", "collide at " + std::to_string(collision.triangle()));
-				}
+			else if (dTop < 0.101) {			// TOP
+				debugCollision(collision, entity, "on top");
+
 				d = entity->distanceTo(collision.m_position);
 				if (d < distance) {
 					nearest_collision = &collision;
 					distance = d;
 				}
+				lifted = tranform->m_position.y - old_position.y;
+			}
+			else {							// FRONT/BACK/LEFT/RIGHT
+				debugCollision(collision, entity, "on edge");
+
+				d = entity->distanceTo(collision.m_position);
+				if (d < distance) {
+					nearest_collision = &collision;
+					distance = d;
+				}
+
+				glm::vec2 p(tranform->m_position.x, tranform->m_position.z),
+					p1(old_position.x, old_position.z);
+
+				pushed_aside = glm::distance(p, p1);
 			}
 		}
 		}
@@ -552,54 +602,101 @@ void gaWorld::wantToMove(gaEntity *entity, gaMessage *message)
 				tranform->m_position.y = nearest_ground->m_position.y;
 				fix_y = true;
 			}
-			if (entity->name() == "player") {
-				gaDebugLog(1, "gaWorld::wantToMove", "set ground at " + std::to_string(nearest_ground->m_position.y));
-			}
+			gaDebugLog(1, "gaWorld::wantToMove", entity->name() + " found ground at " + std::to_string(nearest_ground->m_position.y));
 		}
 	}
-	else if (message->m_value != gaMessage::Flag::WANT_TO_MOVE_LASER) {
+	else {
 		// if there is no floor
 		switch (message->m_value) {
+		case gaMessage::Flag::WANT_TO_MOVE_LASER:
+		case gaMessage::Flag::FORCE_MOVE:
+			// ignore falling (for laser and elevators)
+			break;
+
 		case gaMessage::Flag::WANT_TO_MOVE_BREAK_IF_FALL:
 			// if the entity wants to be informed of falling
 			message->m_action = gaMessage::Action::WOULD_FALL;
 			entity->popTransformations();			// restore previous position
-			break;
+			return;
 		default:
 			// if the entity wants to be informed of falling
 			message->m_action = gaMessage::Action::FALL;
-			if (entity->name() == "player") {
-				gaDebugLog(1, "gaWorld::wantToMove", "falling");
-			}
-			break;
+			gaDebugLog(1, "gaWorld::wantToMove", entity->name() + "falling");
+			return;
 		}
 	}
 
 	if (nearest_collision) {
-		message->m_action = gaMessage::COLLIDE;
+		// if there is a collision
+
 		if (nearest_collision->m_class == gaCollisionPoint::Source::ENTITY) {
-			message->m_server = static_cast<gaEntity*>(nearest_collision->m_source)->name();
-			message->m_value = gaMessage::Flag::COLLIDE_ENTITY;
-		}
-		else {
-			message->m_server = static_cast<dfSuperSector*>(nearest_collision->m_source)->name();
-			message->m_value = gaMessage::Flag::COLLIDE_WALL;
-		}
-		entity->popTransformations();				// restore previous position
-	}
-	else {
-		// accept the move
-		if (message->m_action == gaMessage::WANT_TO_MOVE) {
-			if (!fix_y) {
-				message->m_extra = nullptr;					// object was correctly moved
+			// inform a collided entity
+
+			if (message->m_value == gaMessage::Flag::FORCE_MOVE) {
+				// inform being lifted or pushed aside
+				if (lifted > 0) {
+					sendMessage(
+						message->m_client,
+						static_cast<gaEntity*>(nearest_collision->m_source)->name(),
+						gaMessage::Action::LIFTED,
+						lifted,
+						nullptr
+					);
+				}
+				else if (pushed_aside > 0) {
+					sendMessage(
+						message->m_client,
+						static_cast<gaEntity*>(nearest_collision->m_source)->name(),
+						gaMessage::Action::PUSHED_ASIDE,
+						pushed_aside,
+						nullptr
+					);
+				}
 			}
 			else {
-				if (entity->name() == "player")
-					gaDebugLog(1, "gaWorld::wantToMove", "fixed " + std::to_string(tranform->m_position.x)
-						+ " " + std::to_string(tranform->m_position.y)
-						+ " " + std::to_string(tranform->m_position.z));
-
+				// just inform of a collision
+				sendMessage(
+					message->m_client,
+					static_cast<gaEntity*>(nearest_collision->m_source)->name(),
+					gaMessage::Action::COLLIDE,
+					gaMessage::Flag::COLLIDE_ENTITY,
+					nullptr
+				);
 			}
+		}
+
+		if (message->m_value != gaMessage::Flag::FORCE_MOVE) {
+			gaDebugLog(1, "gaWorld::wantToMove", entity->name() + " deny move " + std::to_string(tranform->m_position.x)
+					+ " " + std::to_string(tranform->m_position.y)
+					+ " " + std::to_string(tranform->m_position.z));
+
+			// and we do not force the move
+			// refuse the move and inform both element from the collision
+			message->m_action = gaMessage::Action::COLLIDE;
+			if (nearest_collision->m_class == gaCollisionPoint::Source::ENTITY) {
+				message->m_server = static_cast<gaEntity*>(nearest_collision->m_source)->name();
+				message->m_value = gaMessage::Flag::COLLIDE_ENTITY;
+			}
+			else {
+				message->m_server = static_cast<dfSuperSector*>(nearest_collision->m_source)->name();
+				message->m_value = gaMessage::Flag::COLLIDE_WALL;
+			}
+			entity->popTransformations();				// restore previous position
+			return;
+		}
+	}
+
+	// accept the move
+	if (message->m_action == gaMessage::WANT_TO_MOVE) {
+		message->m_action = gaMessage::MOVE;
+		if (!fix_y) {
+			message->m_extra = nullptr;					// object was correctly moved
+		}
+		else {
+			gaDebugLog(1, "gaWorld::wantToMove", entity->name() + " fixed ground " + std::to_string(tranform->m_position.x)
+					+ " " + std::to_string(tranform->m_position.y)
+					+ " " + std::to_string(tranform->m_position.z));
+
 		}
 	}
 }
@@ -614,15 +711,17 @@ void gaWorld::process(time_t delta)
 		std::cerr << ">>>>>>>>>> gaWorld::process" << std::endl;
 	}
 	*/
+	gaMessage* message;
+	std::string k;
 
 	std::map<std::string, bool> loopDetector;
 
 	while (m_queue.size() > 0) {
-		gaMessage* message = m_queue.front();
+		message = m_queue.front();
 		m_queue.pop();
 
 		// manage loops inside one run
-		std::string k = message->m_server + message->m_client + std::to_string(message->m_action);
+		k = message->m_server + message->m_client + std::to_string(message->m_action);
 		if (loopDetector.count(k) > 0) {
 			message->m_used = false;
 			continue;

@@ -11,7 +11,6 @@ namespace GameEngine {
 	struct Transform : Framework::fwTransforms {
 		glm::vec3 m_forward;
 		glm::vec3 m_downward;
-
 	};
 }
 
@@ -33,13 +32,16 @@ public:
 		WORLD_REMOVE,	// an entity is removed from the world
 		WOULD_FALL,		// the objects would fall off after a WANT_TO_MOVE
 		FALL,			// Object is falling
-		CONTROLLER		// Controller is requesting a move
+		CONTROLLER,		// Controller is requesting a move
+		LIFTED,			// Entity is sitting on top of a lifted object
+		PUSHED_ASIDE	// Entity is pushed away by a moving object
 	};
 	// flags stored in messages
 	enum Flag {
 		WANT_TO_MOVE_BREAK_IF_FALL,	// Object doesn't want to fall off and want to be informed
 		WANT_TO_MOVE_FALL,			// object accepts to fall down
 		WANT_TO_MOVE_LASER,			// object is not impacted by gravity
+		FORCE_MOVE,					// move will go forward even if collision (but inform the other object of the collision)
 		COLLIDE_ENTITY,
 		COLLIDE_WALL,
 		ROTATE_VEC3,
@@ -56,6 +58,7 @@ public:
 	
 	int m_action = -1;
 	int m_value = 0;
+	float m_fvalue = 0.0f;
 	void* m_extra = nullptr;
 
 	time_t m_delta = 0;	// time since the last frame
