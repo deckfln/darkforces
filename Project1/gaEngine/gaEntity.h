@@ -29,13 +29,16 @@ protected:
 	int m_entityID = 0;
 	int m_class = 0;
 
+	bool m_physical = false;						// if this entity has a body to checkCollision with
+	bool m_gravity = true;							// does gravity effect the entity
+	bool m_collideSectors = true;					// does the entity collide with sectors
+
 	glm::mat3x3 m_physic = glm::mat3x3(0);
 	time_t m_physic_time_elpased = 0;				// physic engine
 	GameEngine::Transform m_transforms;				// transforms to move the object
 
 	fwAABBox m_modelAABB;							// model space AABB
 	fwAABBox m_worldBounding;						// AABB bounding box in world opengl space
-	bool m_physical = false;						// if this entity has a body to checkCollision with
 	time_t m_animation_time = 0;					// elapsed time when running animation
 	std::list<gaEntity*> m_children;				// included entities
 
@@ -47,8 +50,8 @@ protected:
 
 	dfSuperSector* m_supersector = nullptr;			// cached super_sector hosting the object
 	Collider m_collider;							// if there is a collider
-	bool m_gravity = true;							// does gravity effect the entity
-	bool m_collideSectors = true;					// does the entity collide with sectors
+
+	std::map<std::string, gaEntity*> m_sittingOnTop;		// cached list of the entities sitting on top of that one
 
 public:
 	gaEntity(int mclass, const std::string& name);
@@ -57,14 +60,17 @@ public:
 	int entityID(void) { return m_entityID; };
 	void addComponent(gaComponent* component);			// extend the components of the entity
 
-	const std::string& name(void) { return m_name; };
 	bool is(int mclass) { return m_class == m_class; };
 	void physical(bool p) { m_physical = p; };
+
+	inline const std::string& name(void) { return m_name; };
 	inline bool physical(void) { return m_physical; };
 	inline bool gravity(void) { return m_gravity; };
 	inline bool collideSectors(void) { return m_collideSectors; };
 	inline const fwAABBox& worldAABB(void) { return m_worldBounding; };
 	inline const fwAABBox& modelAABB(void) { return m_modelAABB; };
+	inline std::map<std::string, gaEntity*>& sittingOnTop(void) { return m_sittingOnTop; };
+
 	void superSector(dfSuperSector* s) { m_supersector = s; };
 
 	void set(const std::string& v, void* ptr) { m_attributes[v] = ptr; };
@@ -76,7 +82,10 @@ public:
 
 	gaComponent *findComponent(int type);				// check all components to find one with the proper type
 	void addChild(gaEntity* entity);					// add an entity inside that one (and increase the AABB if needed)
+
 	bool collideAABB(const fwAABBox& box);				// quick test to find AABB collision
+	bool collideAABB(gaEntity const* with);				// quick test to find AABB collision
+
 	bool collide(gaEntity* entity, 
 		const glm::vec3& forward, 
 		const glm::vec3& down,

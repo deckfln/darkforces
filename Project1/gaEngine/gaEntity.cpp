@@ -73,6 +73,11 @@ bool gaEntity::collideAABB(const fwAABBox& box)
 	return m_worldBounding.intersect(box);
 }
 
+bool gaEntity::collideAABB(gaEntity const* with)
+{
+	return m_worldBounding.intersect(with->m_worldBounding);
+}
+
 /**
  * extended collision using colliders
  */

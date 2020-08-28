@@ -540,6 +540,7 @@ void gaWorld::wantToMove(gaEntity *entity, gaMessage *message)
 	float dTop = 0;							// distance from worldAAB top to collision Y
 	float lifted = 0;						// if collision on top for elevator, record the Y lifting
 	glm::vec3 pushed_aside=glm::vec3(0);	// if collision on border of elevator, record the XZ direction
+	std::map<std::string, gaEntity*>& sittingOnTop = entity->sittingOnTop();
 
 	for (auto& collision : collisions) {
 		switch (collision.m_location) {
@@ -592,7 +593,26 @@ void gaWorld::wantToMove(gaEntity *entity, gaMessage *message)
 					nearest_collision = &collision;
 					distance = d;
 				}
+
 				lifted = tranform->m_position.y - old_position.y;
+
+				// inform the other entity it is lifted
+				if (collision.m_class == gaCollisionPoint::Source::ENTITY && 
+					message->m_value == gaMessage::Flag::PUSH_ENTITIES
+					) {
+					gaEntity* top = static_cast<gaEntity*>(collision.m_source);
+					sendMessage(
+						message->m_client,
+						top->name(),
+						gaMessage::Action::LIFTED,
+						lifted,
+						nullptr
+					);
+
+					if (sittingOnTop.count(top->name()) == 0) {
+						sittingOnTop[top->name()] = top;
+					}
+				}
 			}
 			else {							// FRONT/BACK/LEFT/RIGHT
   				debugCollision(collision, entity, "on edge");
@@ -622,7 +642,22 @@ void gaWorld::wantToMove(gaEntity *entity, gaMessage *message)
 					tranform->m_position.y = nearest_ground->m_position.y;
 					fix_y = true;
 				}
+
+				// inform the other entity we are sitting on top
+				if (nearest_ground->m_class == gaCollisionPoint::Source::ENTITY) {
+					gaEntity* top = static_cast<gaEntity*>(nearest_ground->m_source);
+					std::map<std::string, gaEntity*>& _sittingOnTop = top->sittingOnTop();
+
+					if (_sittingOnTop.count(entity->name()) == 0) {
+						_sittingOnTop[entity->name()] = entity;
+					}
+				}
+
 				gaDebugLog(1, "gaWorld::wantToMove", entity->name() + " found ground at " + std::to_string(nearest_ground->m_position.y));
+			}
+			else {
+				// convert the down collision to a nearest
+				nearest_collision = nearest_ground;
 			}
 		}
 		else {
@@ -647,16 +682,7 @@ void gaWorld::wantToMove(gaEntity *entity, gaMessage *message)
 
 		if (message->m_value == gaMessage::Flag::PUSH_ENTITIES) {
 			// inform being lifted or pushed aside
-			if (lifted > 0) {
-				sendMessage(
-					message->m_client,
-					static_cast<gaEntity*>(nearest_collision->m_source)->name(),
-					gaMessage::Action::LIFTED,
-					lifted,
-					nullptr
-				);
-			}
-			else if (pushed_aside != glm::vec3(0)) {
+			if (pushed_aside != glm::vec3(0)) {
 				if (nearest_collision->m_class == gaCollisionPoint::Source::ENTITY) {
 					// push another entity aside
 					sendMessage(
@@ -712,6 +738,21 @@ void gaWorld::wantToMove(gaEntity *entity, gaMessage *message)
 					+ " " + std::to_string(tranform->m_position.y)
 					+ " " + std::to_string(tranform->m_position.z));
 
+		}
+
+		// inform all objects that are sitting on that one
+		lifted = tranform->m_position.y - old_position.y;
+		if (lifted < 0) {
+			for (auto entry : sittingOnTop) {
+				sendMessage(
+					message->m_client,
+					entry.second->name(),
+					gaMessage::Action::LIFTED,
+					lifted,
+					nullptr
+				);
+			}
+			sittingOnTop.clear();	// clear the cache, it will be reimplemented by the object if it is still on top
 		}
 	}
 }
