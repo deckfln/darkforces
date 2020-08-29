@@ -13,7 +13,7 @@ class dfComponentAI : public gaComponent
 	float m_progress = 0.045f;						// 
 	int m_animation_time = 0;									// time left to move in the direction
 	bool m_active = true;							// is AI active
-	GameEngine::Transform m_transforms;				// transforms to move the object
+	GameEngine::Transform *m_transforms=nullptr;	// transforms to move the object
 
 	void tryToMove(void);
 

@@ -9,7 +9,8 @@
 
 #include "gaCollisionPoint.h"
 #include "gaMessage.h"
-#include "../gaEngine/gaModel.h"
+#include "gaModel.h"
+#include "Physics.h"
 
 class gaEntity;
 class fwScene;
@@ -27,8 +28,11 @@ class gaWorld
 	std::map<std::string, GameEngine::gaModel*> m_models;	// list of models (images, 3D objects ...)
 	std::map<std::string, void*> m_registry;				// list of objects
 
-	bool m_timer = true;							// pass DF_MESSAGE_TIMER event
-	fwScene* m_scene;								// current scene on screen;
+	bool m_timer = true;								// pass DF_MESSAGE_TIMER event
+	fwScene* m_scene;									// current scene on screen;
+	GameEngine::Physics m_physic;						// physic/collision engine
+
+	friend GameEngine::Physics;
 
 public:
 	gaWorld(void);
@@ -99,9 +103,6 @@ public:
 		fwCylinder& bounding,
 		glm::vec3& direction,
 		std::list<gaCollisionPoint>& collisions);		// extended collision test after a successful AABB collision
-
-	void wantToMove(gaEntity *entity, 
-		gaMessage *message);							// handle an entity requesting to move
 
 	void push(gaMessage* message);
 	void pushForNextFrame(gaMessage* message);

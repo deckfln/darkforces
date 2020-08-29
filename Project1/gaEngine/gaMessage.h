@@ -11,6 +11,7 @@ namespace GameEngine {
 	struct Transform : Framework::fwTransforms {
 		glm::vec3 m_forward;
 		glm::vec3 m_downward;
+		int m_flag;
 	};
 }
 

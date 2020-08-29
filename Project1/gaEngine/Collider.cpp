@@ -155,19 +155,18 @@ static bool testSensor(
 )
 {
 	static int debug = 0;
-	float u, v, w;
+	double u, v, w;
 
 	// check the forward sensor
 	if (Framework::IntersectLineTriangle(p1,
 		p2,
 		a, b, c,
-		u, v, w))
+		collision))
 	{
-		collision = (u * a + v * b + w * c);
 
 		// check if point is on the segment
 		float d = glm::dot(p2 - p1, collision - p1);
-		if (d < 0.01) {
+		if (d < 0) {
 			return false;
 		}
 		if (d > glm::distance2(p2, p1)) {
@@ -253,12 +252,12 @@ static void testSensors(
 	glm::vec3 collision;
 
 	// check the forward sensor
-	if (testSensor(worldMatrix, center, forward_geometry_space, a,b,c, collision))	{
+	if (testSensor(worldMatrix, center, center + forward_geometry_space, a,b,c, collision))	{
 		collisions.push_back(gaCollisionPoint(fwCollisionLocation::FRONT, collision, -1));
 	};
 
 	// check the downward sensor
-	if (testSensor(worldMatrix, center, down, a, b, c, collision)) {
+	if (testSensor(worldMatrix, center, center + down, a, b, c, collision)) {
 		collisions.push_back(gaCollisionPoint(fwCollisionLocation::BOTTOM, collision, -1));
 	};
 }
@@ -384,6 +383,7 @@ bool Collider::collision_fwAABB_gaAABB(const Collider& fwAABB,
 	glm::vec3 center;
 	glm::vec3 dwsensor;					// downward sensor
 	glm::vec3 forward_geometry_space;
+	GameEngine::AABBoxTree *pAABBtree = static_cast<GameEngine::AABBoxTree*>(gaAABB.m_source);
 
 	init_aabb_triangles(
 		*fwAABB.m_worldMatrix,
@@ -401,23 +401,23 @@ bool Collider::collision_fwAABB_gaAABB(const Collider& fwAABB,
 	// find the smallest set of gaAABB intersecting with the fwAABB
 	// and test only the included triangles
 	// for each triangle, extract the AABB in geometry space and check collision with the source AABB in geometry space
-	std::vector<GameEngine::AABBoxTree*> hits;
-	if (!static_cast<GameEngine::AABBoxTree*>(gaAABB.m_source)->find(aabb_geometry_space, hits)) {
-		return false;
-	}
+	//std::vector<GameEngine::AABBoxTree*> hits;
+	//if (!pAABBtree->find(aabb_geometry_space, hits)) {
+	//	return false;
+	//}
 
-	for (auto aabb : hits) {
+//	for (auto aabb : hits) {
 		aabb_triangles(
 			*gaAABB.m_worldMatrix,
 			forward_geometry_space,
 			dwsensor,
 			center,
 			aabb_geometry_space,
-			aabb->vertices(),
-			aabb->nbVertices(),
+			pAABBtree->vertices(),
+			pAABBtree->nbVertices(),
 			collisions
 		);
-	}
+//	}
 
 	return collisions.size() != 0;
 }

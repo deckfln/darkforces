@@ -85,5 +85,5 @@ namespace Framework
     bool IntersectLineTriangle(
         const glm::vec3& p, const glm::vec3& q, 
         const glm::vec3& a, const glm::vec3& b, const glm::vec3& c,
-        float& u, float& v, float& w);
+        glm::vec3& collision);
 }

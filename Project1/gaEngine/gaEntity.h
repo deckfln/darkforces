@@ -70,6 +70,8 @@ public:
 	inline const fwAABBox& worldAABB(void) { return m_worldBounding; };
 	inline const fwAABBox& modelAABB(void) { return m_modelAABB; };
 	inline std::map<std::string, gaEntity*>& sittingOnTop(void) { return m_sittingOnTop; };
+	inline GameEngine::Transform& transform(void) { return m_transforms; };
+	inline GameEngine::Transform* pTransform(void) { return &m_transforms; };
 
 	void superSector(dfSuperSector* s) { m_supersector = s; };
 

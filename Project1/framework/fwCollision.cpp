@@ -195,7 +195,7 @@ static float scalar_product(const glm::vec3& a, const glm::vec3& b, const glm::v
 bool Framework::IntersectLineTriangle(
 	const glm::vec3& p, const glm::vec3& q, 
 	const glm::vec3& a, const glm::vec3& b, const glm::vec3& c,
-	float& u, float& v, float& w)
+	glm::vec3& collision)
 {
 	const glm::vec3 pq = q - p;
 	const glm::vec3 pa = a - p;
@@ -203,17 +203,22 @@ bool Framework::IntersectLineTriangle(
 	const glm::vec3 pc = c - p;
 
 	glm::vec3 m = glm::cross(pq, pc);
-	u = glm::dot(pb, m);
-	v = -glm::dot(pa, m);
+	double u = glm::dot(pb, m);
+	double v = -glm::dot(pa, m);
 	if (!same_sign(u, v)) return false;
-	w = scalar_product(pq, pb, pa);
+	double w = scalar_product(pq, pb, pa);
 	if (!same_sign(u, w)) return false;
 
 	if (u + v + w == 0) return false;
 
-	const float denom = 1.0f / (u + v + w);
+	const double denom = 1.0 / (u + v + w);
 	u *= denom;
 	v *= denom;
 	w *= denom; // w = 1.0f - u - v;
+
+	collision.x = (u * a.x + v * b.x + w * c.x);
+	collision.y = (u * a.y + v * b.y + w * c.y);
+	collision.z = (u * a.z + v * b.z + w * c.z);
+
 	return true;
 }

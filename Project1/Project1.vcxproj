@@ -237,6 +237,7 @@
     <ClCompile Include="gaEngine\gaWorld.cpp" />
     <ClCompile Include="gaEngine\Lexer.cpp" />
     <ClCompile Include="gaEngine\Parser.cpp" />
+    <ClCompile Include="gaEngine\Physics.cpp" />
     <ClCompile Include="glEngine\framebuffer\glDepthCubeMap.cpp" />
     <ClCompile Include="glEngine\glBufferAttribute.cpp" />
     <ClCompile Include="glEngine\glBufferObject.cpp" />
@@ -384,6 +385,7 @@
     <ClInclude Include="gaEngine\gaWorld.h" />
     <ClInclude Include="gaEngine\Lexer.h" />
     <ClInclude Include="gaEngine\Parser.h" />
+    <ClInclude Include="gaEngine\Physics.h" />
     <ClInclude Include="glEngine\framebuffer\glDepthCubeMap.h" />
     <ClInclude Include="glEngine\glBufferAttribute.h" />
     <ClInclude Include="glEngine\glBufferObject.h" />

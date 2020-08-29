@@ -105,7 +105,7 @@ bool gaEntity::collide(GameEngine::Collider collider,
  */
 bool gaEntity::warpThrough(GameEngine::Collider collider, const glm::vec3& old_position, glm::vec3& collision)
 {
-	return m_collider.warpThrough(collider, position(), old_position, collision);
+	return m_collider.warpThrough(collider, position() + modelAABB().center(), old_position + modelAABB().center(), collision);
 }
 
 /**
@@ -273,16 +273,15 @@ void gaEntity::dispatchMessage(gaMessage* message)
 
 	case gaMessage::Action::FALL: {
 		// no collision at all => nothing under the feet of the actor => free fall
-		GameEngine::Transform* _transform = static_cast<GameEngine::Transform*>(message->m_extra);
 		if (m_physic_time_elpased == 0) {
-			engagePhysics(_transform->m_position, _transform->m_forward);
+			engagePhysics(m_transforms.m_position, m_transforms.m_forward);
 		}
 		else {
-			applyPhysics(message->m_delta, _transform);
+			applyPhysics(message->m_delta,& m_transforms);
 		}
 		sendDelayedMessage(gaMessage::WANT_TO_MOVE,
 			gaMessage::Flag::WANT_TO_MOVE_FALL,
-			(void *)_transform);
+			(void *)&m_transforms);
 
 		break;	}
 
