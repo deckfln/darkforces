@@ -33,9 +33,7 @@ public:
 		WORLD_REMOVE,	// an entity is removed from the world
 		WOULD_FALL,		// the objects would fall off after a WANT_TO_MOVE
 		FALL,			// Object is falling
-		CONTROLLER,		// Controller is requesting a move
-		LIFTED,			// Entity is sitting on top of a lifted object
-		PUSHED_ASIDE	// Entity is pushed away by a moving object
+		CONTROLLER		// Controller is requesting a move
 	};
 	// flags stored in messages
 	enum Flag {

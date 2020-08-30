@@ -44,7 +44,7 @@ void dfComponentAI::tryToMove(void)
 	m_transforms->m_position = m_entity->position() + m_transforms->m_forward;
 	m_transforms->m_quaternion = glm::quatLookAt(m_direction, up);
 	m_transforms->m_scale = m_entity->get_scale();
-	m_transforms->m_flag = 0;
+	m_transforms->m_flag = gaMessage::Flag::WANT_TO_MOVE_BREAK_IF_FALL;
 
 	m_entity->sendDelayedMessage(gaMessage::WANT_TO_MOVE, 
 		gaMessage::Flag::WANT_TO_MOVE_BREAK_IF_FALL, 

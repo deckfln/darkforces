@@ -436,6 +436,10 @@ void gaWorld::process(time_t delta)
 
 	std::map<std::string, bool> loopDetector;
 
+	// first deal with falling objects
+	m_physic.update(delta);
+
+	// now deal with messages
 	while (m_queue.size() > 0) {
 		message = m_queue.front();
 		m_queue.pop();

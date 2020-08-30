@@ -11,7 +11,6 @@
 #include "../gaEngine/gaBoundingBoxes.h"
 
 static int g_ids = 0;
-static const float c_gravity = -0.00000981f;
 
 gaEntity::gaEntity(int mclass, const std::string& name) :
 	m_entityID(g_ids++),
@@ -20,6 +19,8 @@ gaEntity::gaEntity(int mclass, const std::string& name) :
 {
 	g_gaBoundingBoxes.add(&m_worldBounding);
 	m_collider.set(&m_modelAABB, &m_worldMatrix, &m_inverseWorldMatrix);
+
+	m_transforms.m_flag = gaMessage::Flag::WANT_TO_MOVE_FALL;	// accept falling down
 }
 
 gaEntity::gaEntity(int mclass, const std::string& name, const glm::vec3& position):
@@ -30,6 +31,8 @@ gaEntity::gaEntity(int mclass, const std::string& name, const glm::vec3& positio
 {
 	g_gaBoundingBoxes.add(&m_worldBounding);
 	m_collider.set(&m_modelAABB, &m_worldMatrix, &m_inverseWorldMatrix);
+
+	m_transforms.m_flag = gaMessage::Flag::WANT_TO_MOVE_FALL;	// accept falling down
 }
 
 /**
@@ -105,7 +108,17 @@ bool gaEntity::collide(GameEngine::Collider collider,
  */
 bool gaEntity::warpThrough(GameEngine::Collider collider, const glm::vec3& old_position, glm::vec3& collision)
 {
-	return m_collider.warpThrough(collider, position() + modelAABB().center(), old_position + modelAABB().center(), collision);
+	glm::vec3 center = m_worldBounding.center();
+	glm::vec3 d = center - position();
+	glm::vec3 old_center = old_position + d;
+
+	bool b  = m_collider.warpThrough(collider, center, old_center, collision);
+
+	if (b) {
+		collision = collision - d;
+	}
+
+	return b;
 }
 
 /**
@@ -152,31 +165,6 @@ void gaEntity::sendInternalMessage(int action, int value, void* extra)
 void gaEntity::sendDelayedMessage(int action, int value, void* extra)
 {
 	g_gaWorld.sendMessageDelayed(m_name, m_name, action, value, extra);
-}
-
-/**
- * engage the physic engine
- */
-void gaEntity::engagePhysics(const glm::vec3& pos, const glm::vec3& direction)
-{
-	// engage the physic engine
-	m_physic[0][0] = 0;			m_physic[1][0] = direction.x / 100.0f;		m_physic[2][0] = pos.x;
-	m_physic[0][1] = c_gravity; m_physic[1][1] = direction.y / 100.0f;		m_physic[2][1] = pos.y;
-	m_physic[0][2] = 0;			m_physic[1][2] = direction.z / 100.0f;		m_physic[2][2] = pos.z;
-
-	m_physic_time_elpased = 33;
-}
-
-/**
- * execute the physic engine
- */
-void gaEntity::applyPhysics(time_t delta, GameEngine::Transform *transform)
-{
-	// manage physic driven trajectory
-	m_physic_time_elpased += delta;
-	glm::vec3 t3x3(m_physic_time_elpased * m_physic_time_elpased / 2, m_physic_time_elpased, 1);
-	transform->m_position = m_physic * t3x3;
-	transform->m_forward = glm::vec3(transform->m_position.x - position().x, 0, transform->m_position.z - position().z);
 }
 
 /**
@@ -252,7 +240,6 @@ void gaEntity::dispatchMessage(gaMessage* message)
 
 		// detect if the entity moved to a new sector
 		m_supersector = g_gaWorld.findSector(m_supersector, position());
-		m_physic_time_elpased = 0;
 		break;
 
 	case gaMessage::Action::ROTATE:
@@ -271,40 +258,7 @@ void gaEntity::dispatchMessage(gaMessage* message)
 		updateWorldAABB();
 		break;
 
-	case gaMessage::Action::FALL: {
-		// no collision at all => nothing under the feet of the actor => free fall
-		if (m_physic_time_elpased == 0) {
-			engagePhysics(m_transforms.m_position, m_transforms.m_forward);
-		}
-		else {
-			applyPhysics(message->m_delta,& m_transforms);
-		}
-		sendDelayedMessage(gaMessage::WANT_TO_MOVE,
-			gaMessage::Flag::WANT_TO_MOVE_FALL,
-			(void *)&m_transforms);
-
-		break;	}
-
-	case gaMessage::Action::LIFTED:
-		// entity is being lifted by an entity is sits on top
-		m_transforms.m_position = position();
-		m_transforms.m_position.y += message->m_fvalue;
-		sendMessage(
-			m_name,
-			gaMessage::Action::WANT_TO_MOVE,
-			gaMessage::Flag::PUSH_ENTITIES,
-			&m_transforms);
-		break;
-
-	case gaMessage::Action::PUSHED_ASIDE:
-		// entity is being pushed aside by an entity
-		m_transforms.m_position = position();
-		m_transforms.m_position += message->m_v3value;
-		sendMessage(
-			m_name,
-			gaMessage::Action::WANT_TO_MOVE,
-			gaMessage::Flag::WANT_TO_MOVE_FALL,
-			&m_transforms);
+	case gaMessage::Action::FALL:
 		break;
 
 	default:

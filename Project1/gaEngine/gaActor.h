@@ -7,8 +7,8 @@
 #include "../framework/math/fwCylinder.h"
 
 #include "gaEntity.h"
+#include "Physics.h"
 
-const float c_gravity = -0.00000981f;
 const float c_jump = -c_gravity * 300.0f;
 
 class dfLevel;

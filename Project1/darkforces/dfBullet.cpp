@@ -83,7 +83,7 @@ void dfBullet::tryToMove(void)
 	m_transforms.m_position = position() + m_transforms.m_forward;
 
 	sendDelayedMessage(gaMessage::WANT_TO_MOVE,
-		gaMessage::Flag::WANT_TO_MOVE_BREAK_IF_FALL,
+		gaMessage::Flag::WANT_TO_MOVE_LASER,
 		&m_transforms);
 }
 

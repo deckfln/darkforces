@@ -74,7 +74,9 @@ bool gaActor::moveTo(time_t delta, glm::vec3& velocity)
 	m_transforms.m_quaternion = glm::quatLookAt(velocity, up);
 	m_transforms.m_scale = get_scale();
 
-	sendDelayedMessage(gaMessage::WANT_TO_MOVE,
+	sendMessage(
+		m_name,
+		gaMessage::Action::WANT_TO_MOVE,
 		gaMessage::Flag::WANT_TO_MOVE_FALL,
 		&m_transforms);
 
@@ -237,7 +239,7 @@ void gaActor::jump(const glm::vec3& velocity)
 	m_physic[0][1] = c_gravity; m_physic[1][1] = direction.y/20.0f;		m_physic[2][1] = m_cylinder.position().y;
 	m_physic[0][2] = 0;			m_physic[1][2] = direction.z/20.0f;		m_physic[2][2] = m_cylinder.position().z;
 
-	m_physic_time_elpased = 33;
+	//m_physic_time_elpased = 33;
 }
 
 /**
@@ -274,15 +276,13 @@ void gaActor::dispatchMessage(gaMessage* message)
 		m_transforms.m_quaternion = glm::quatLookAt(direction, up);
 		m_transforms.m_scale = get_scale();
 
-		sendDelayedMessage(gaMessage::WANT_TO_MOVE,
+		sendDelayedMessageToWorld(gaMessage::WANT_TO_MOVE,
 			gaMessage::Flag::WANT_TO_MOVE_FALL,
 			&m_transforms);
 
 		break; }
 	case gaMessage::CONTROLLER:
-		if (m_physic_time_elpased == 0) {
-			moveTo(message->m_value, *(glm::vec3*)message->m_extra);
-		}
+		moveTo(message->m_value, *(glm::vec3*)message->m_extra);
 		break;
 	}
 

@@ -33,8 +33,6 @@ protected:
 	bool m_gravity = true;							// does gravity effect the entity
 	bool m_collideSectors = true;					// does the entity collide with sectors
 
-	glm::mat3x3 m_physic = glm::mat3x3(0);
-	time_t m_physic_time_elpased = 0;				// physic engine
 	GameEngine::Transform m_transforms;				// transforms to move the object
 
 	fwAABBox m_modelAABB;							// model space AABB
@@ -117,12 +115,6 @@ public:
 	void sendDelayedMessage(int action,
 		int value = 0,
 		void* extra = nullptr);							// send a delayed message to myself
-
-	void engagePhysics(const glm::vec3& pos, 
-		const glm::vec3& direction);					// engage the physic engine
-	void applyPhysics(time_t delta, 
-		GameEngine::Transform* transform);				// execute the physic engine
-
 
 	virtual void add2scene(fwScene* scene);				// if the entity has a mesh, add to the scene
 	virtual void collideWith(gaEntity*) {};				// inform another entity of a collision
