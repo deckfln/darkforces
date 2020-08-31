@@ -17,6 +17,7 @@ namespace GameEngine
 	struct Ballistic {
 		time_t m_physic_time_elpased = 0;				// physic engine
 		glm::mat3x3 m_physic = glm::mat3x3(0);
+		bool m_inUse = true;
 
 		Ballistic() {
 		}

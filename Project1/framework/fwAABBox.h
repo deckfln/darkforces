@@ -53,6 +53,9 @@ public:
 	bool inside(const glm::vec3& position);
 	bool inside(fwAABBox& box);
 	bool intersect(const fwAABBox& box);
+	bool isAbove(const fwAABBox& box);
+	bool not_init(void);
+
 	void extend(const fwAABBox& box);
 	void extend(glm::vec3& vertice);
 	float surface(void);
@@ -68,7 +71,6 @@ public:
 	void transform(const glm::mat4& matrix);
 	void apply(const fwAABBox& source, const glm::mat4& matrix);
 	void apply(fwAABBox const *pSource, const glm::mat4& matrix);
-	bool not_init(void);
 	fwAABBox& copy(fwAABBox& source);
 	fwAABBcollision collisionSide(void) { return m_collisionSide; };
 	bool collision(fwAABBcollision side) { return (int)m_collisionSide & (int)side; };

@@ -49,7 +49,8 @@ protected:
 	dfSuperSector* m_supersector = nullptr;			// cached super_sector hosting the object
 	Collider m_collider;							// if there is a collider
 
-	std::map<std::string, gaEntity*> m_sittingOnTop;		// cached list of the entities sitting on top of that one
+	int m_defaultCollision = gaMessage::Flag::COLLIDE_ENTITY;
+	std::map<std::string, gaEntity*> m_sittingOnTop;// cached list of the entities sitting on top of that one
 
 public:
 	gaEntity(int mclass, const std::string& name);
@@ -70,6 +71,7 @@ public:
 	inline std::map<std::string, gaEntity*>& sittingOnTop(void) { return m_sittingOnTop; };
 	inline GameEngine::Transform& transform(void) { return m_transforms; };
 	inline GameEngine::Transform* pTransform(void) { return &m_transforms; };
+	inline int defaultCollision(void) { return m_defaultCollision; };
 
 	void superSector(dfSuperSector* s) { m_supersector = s; };
 

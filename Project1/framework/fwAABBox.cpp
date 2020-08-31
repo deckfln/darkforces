@@ -375,6 +375,14 @@ bool fwAABBox::intersect(const fwAABBox& box)
 }
 
 /**
+ * if the current AABB is above the given one
+ */
+bool fwAABBox::isAbove(const fwAABBox& box)
+{
+	return m_p.y > box.m_p.y;
+}
+
+/**
  * Extend the current AABBB y including the give one
  */
 void fwAABBox::extend(const fwAABBox& box)

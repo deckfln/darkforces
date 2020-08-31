@@ -467,7 +467,7 @@ bool dfMesh::collisionSegmentTriangle(const glm::vec3& p, const glm::vec3& q, st
 		)) {
 			// rebuild collision point
 			collision = u * m_vertices[i] + v * m_vertices[i + 1] + w * m_vertices[i + 2];
-			collisions.push_back(gaCollisionPoint(fwCollisionLocation::BACK, collision, -1));
+			collisions.push_back(gaCollisionPoint(fwCollisionLocation::BACK, collision, &m_vertices[i]));
 		};
 	}
 
@@ -523,33 +523,33 @@ bool dfMesh::checkCollision(fwCylinder& bounding, glm::vec3& direction, glm::vec
 			float delta = center_es.y - origin.y;
 			fwCollisionLocation c;
 			if (delta > 0.9) {
-				collisions.push_back(gaCollisionPoint(fwCollisionLocation::BOTTOM, intersection, -1));
+				collisions.push_back(gaCollisionPoint(fwCollisionLocation::BOTTOM, intersection, &m_vertices[i]));
 				c = fwCollisionLocation::BOTTOM;
 			}
 			else if (delta < -0.9) {
-				collisions.push_back(gaCollisionPoint(fwCollisionLocation::TOP, intersection, -1));
+				collisions.push_back(gaCollisionPoint(fwCollisionLocation::TOP, intersection, &m_vertices[i]));
 				c = fwCollisionLocation::TOP;
 			}
 			else if (delta > 0.5 && d > 0) {
-				collisions.push_back(gaCollisionPoint(fwCollisionLocation::FRONT_BOTTOM, intersection, -1));
+				collisions.push_back(gaCollisionPoint(fwCollisionLocation::FRONT_BOTTOM, intersection, &m_vertices[i]));
 				c = fwCollisionLocation::FRONT_BOTTOM;
 			}
 			else if (delta < -0.5 && d > 0) {
-				collisions.push_back(gaCollisionPoint(fwCollisionLocation::FRONT_TOP, intersection, -1));
+				collisions.push_back(gaCollisionPoint(fwCollisionLocation::FRONT_TOP, intersection, &m_vertices[i]));
 				c = fwCollisionLocation::FRONT_TOP;
 			}
 			else if (d <= 0) {
-				collisions.push_back(gaCollisionPoint(fwCollisionLocation::BACK, intersection, -1));
+				collisions.push_back(gaCollisionPoint(fwCollisionLocation::BACK, intersection, &m_vertices[i]));
 				c = fwCollisionLocation::BACK;
 			}
 			else if (d <= 0.4) {
-				collisions.push_back(gaCollisionPoint(fwCollisionLocation::LEFT, intersection, -1));
+				collisions.push_back(gaCollisionPoint(fwCollisionLocation::LEFT, intersection, &m_vertices[i]));
 				c = fwCollisionLocation::LEFT;
 			}
 			else {
 				float l = glm::length(intersection - center_ws);
 				float l1 = glm::length(origin - center_es);
-				collisions.push_back(gaCollisionPoint(fwCollisionLocation::FRONT, intersection, -1));
+				collisions.push_back(gaCollisionPoint(fwCollisionLocation::FRONT, intersection, &m_vertices[i]));
 				c = fwCollisionLocation::FRONT;
 			}
 			std::cerr << "dfMesh::checkCollision ellipsoid collides with " << name << " on " << (int)c << std::endl;

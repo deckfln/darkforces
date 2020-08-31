@@ -245,20 +245,20 @@ static void testSensors(
 	const glm::vec3 &center,
 	const glm::vec3 &forward_geometry_space,
 	const glm::vec3 &down,
-	const glm::vec3 &a, const glm::vec3& b, const glm::vec3& c,
+	glm::vec3 const *triangle,
 	std::vector<gaCollisionPoint>& collisions
 )
 {
 	glm::vec3 collision;
 
 	// check the forward sensor
-	if (testSensor(worldMatrix, center, center + forward_geometry_space, a,b,c, collision))	{
-		collisions.push_back(gaCollisionPoint(fwCollisionLocation::FRONT, collision, -1));
+	if (testSensor(worldMatrix, center, center + forward_geometry_space, triangle[0], triangle[1], triangle[2], collision))	{
+		collisions.push_back(gaCollisionPoint(fwCollisionLocation::FRONT, collision, triangle));
 	};
 
 	// check the downward sensor
-	if (testSensor(worldMatrix, center, center + down, a, b, c, collision)) {
-		collisions.push_back(gaCollisionPoint(fwCollisionLocation::BOTTOM, collision, -1));
+	if (testSensor(worldMatrix, center, center + down, triangle[0], triangle[1], triangle[2], collision)) {
+		collisions.push_back(gaCollisionPoint(fwCollisionLocation::BOTTOM, collision, triangle));
 	};
 }
 
@@ -317,7 +317,7 @@ static void aabb_triangles(
 				center,
 				forward_geometry_space,
 				dwsensor,
-				vertices[i], vertices[i + 1], vertices[i + 2],
+				&vertices[i],
 				collisions);
 		}
 	}
@@ -495,18 +495,14 @@ bool Collider::collision_cylinder_geometry(
 		if (Framework::intersectSphereTriangle(center_es, v1_es, v2_es, v3_es, intersection_es)) {
 			// the intersection point is inside the triangle
 
-			if (Framework::intersectSphereTriangle(center_es, v1_es, v2_es, v3_es, intersection_es)) {
-				// the intersection point is inside the triangle
+			// convert the intersection from ellipsoid-space to cylinder-space
+			intersection_gs = intersection_es / ellipsoid_space;
 
-				// convert the intersection from ellipsoid-space to cylinder-space
-				intersection_gs = intersection_es / ellipsoid_space;
+			// convert from cylinder-space => world-space
+			intersection_ws = glm::vec3(*geometry.m_worldMatrix * glm::vec4(intersection_gs, 1.0));
 
-				// convert from cylinder-space => world-space
-				intersection_ws = glm::vec3(*geometry.m_worldMatrix * glm::vec4(intersection_gs, 1.0));
-
-				// inform if the collision point in world space(let the entity decide what to do with the collision)
-				collisions.push_back(gaCollisionPoint(fwCollisionLocation::COLLIDE, intersection_ws, i));
-			}
+			// inform if the collision point in world space(let the entity decide what to do with the collision)
+			collisions.push_back(gaCollisionPoint(fwCollisionLocation::COLLIDE, intersection_ws, &vertices_gs[i]));
 		}
 	}
 
@@ -578,7 +574,7 @@ bool Collider::collision_cylinder_aabb_tree(const Collider& cylinder,
 				intersection_ws = glm::vec3(*aabb_tree.m_worldMatrix * glm::vec4(intersection_gs, 1.0));
 
 				// inform if the collision point in world space(let the entity decide what to do with the collision)
-				collisions.push_back(gaCollisionPoint(fwCollisionLocation::COLLIDE, intersection_ws, i));
+				collisions.push_back(gaCollisionPoint(fwCollisionLocation::COLLIDE, intersection_ws, &vertices_gs[i]));
 			}
 		}
 	//}

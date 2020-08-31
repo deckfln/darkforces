@@ -1,7 +1,7 @@
 #include "Physics.h"
 
 #include <memory>
-
+#include <glm/gtx/normal.hpp>
 #include "gaWorld.h"
 #include "gaMessage.h"
 #include "gaEntity.h"
@@ -11,6 +11,8 @@
 #include "../darkforces/dfSuperSector.h"
 
 using namespace GameEngine;
+
+const float EPSILON = 0.001;
 
 Physics::Physics(gaWorld* world) :
 	m_world(world)
@@ -155,7 +157,7 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 
 	// kick start actions
 	actions.push(
-		Action(entity, gaMessage::Flag::COLLIDE_ENTITY)
+		Action(entity, entity->defaultCollision())
 	);
 
 	while (actions.size() != 0) {
@@ -178,6 +180,12 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 
 		if (entity->collideSectors()) {
 			if (warpThrough(entity, old_position, tranform)) {
+
+				// if the entity was driving by physics, remove from the list
+				if (m_ballistics.count(entity->name()) > 0) {
+					m_remove.push_back(entity->name());
+				}
+
 				continue;	// object warped through a triangle
 			}
 		}
@@ -216,6 +224,7 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 					gaDebugLog(1, "gaWorld::wantToMove", "FRONT detected at " + std::to_string(collision.m_position.y));
 				}
 				break;
+
 			case fwCollisionLocation::BOTTOM:
 				fall = false;
 				if (entity->gravity()) {
@@ -229,24 +238,72 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 					gaDebugLog(1, "gaWorld::wantToMove", "BOTTOM detected at " + std::to_string(collision.m_position.y));
 				}
 				break;
+
 			case fwCollisionLocation::COLLIDE: {
 				// cylinder collision (player)
 				// position of the intersection compared to the direction
 				const fwAABBox& worldAABB = entity->worldAABB();
 
-				dBottom = collision.m_position.y - worldAABB.m_p.y;
+				// check if the triangle is horizontal or vertical
+				glm::vec3 normal = glm::triangleNormal(
+					collision.m_triangle[0],
+					collision.m_triangle[1],
+					collision.m_triangle[2]
+					);
+				float horizontal = glm::dot(glm::vec3(0, 1, 0), normal);
+				bool isFloor = horizontal > 0.99;
+				bool isCelling = horizontal < -0.99;
+
 				dTop = worldAABB.m_p1.y - collision.m_position.y;
 
-				if (dBottom < 0.101) {				// BOTTOM
-					if (entity->name() == "player")
-						debugCollision(collision, entity, "on bottom");
-
-					if (dBottom > ground) {
+				if (isFloor) {				// BOTTOM
+					if (collision.m_position.y > ground) {
 						nearest_ground = &collision;
-						ground = dBottom;
+						ground = collision.m_position.y;
+					}
+
+					dBottom = collision.m_position.y - worldAABB.m_p.y;
+
+					if (collision.m_class == gaCollisionPoint::Source::ENTITY) {
+						// entities
+						gaEntity* collider = static_cast<gaEntity*>(collision.m_source);
+
+						if (abs(dBottom) > EPSILON) {
+							if (entity->name() == "player")
+								debugCollision(collision, entity, "on bottom");
+
+							// for elevator or pushing objects
+							// inform the other entity we are pushing
+							if (action.m_flag == gaMessage::Flag::PUSH_ENTITIES)
+							{
+
+								GameEngine::Transform& t = collider->transform();
+								t.m_position = collider->position();
+								t.m_position.y += (tranform.m_position.y - old_position.y);
+
+								actions.push(
+									Action(collider, gaMessage::Flag::PUSH_ENTITIES)
+								);
+							}
+						}
+
+						fwAABBox& entityAABB = (fwAABBox&)entity->worldAABB();
+						const fwAABBox& colliderAABB = collider->worldAABB();
+						if (entityAABB.isAbove(colliderAABB)) {
+							std::map<std::string, gaEntity*>& _sittingOnTop = collider->sittingOnTop();
+
+							if (_sittingOnTop.count(entity->name()) == 0) {
+								_sittingOnTop[entity->name()] = entity;
+							}
+						}
+						else {
+							if (sittingOnTop.count(collider->name()) == 0) {
+								sittingOnTop[collider->name()] = collider;
+							}
+						}
 					}
 				}
-				else if (dTop < 0.101) {			// TOP
+				else if (isCelling) {		// TOP
 					if (entity->name() == "player")
 						debugCollision(collision, entity, "on top");
 
@@ -254,26 +311,6 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 					if (d < distance) {
 						nearest_collision = &collision;
 						distance = d;
-					}
-
-					lifted = tranform.m_position.y - old_position.y;
-
-					// add the other entity on the list of action
-					if (collision.m_class == gaCollisionPoint::Source::ENTITY &&
-						action.m_flag == gaMessage::Flag::PUSH_ENTITIES
-						) {
-						gaEntity* top = static_cast<gaEntity*>(collision.m_source);
-						actions.push(
-							Action(top, gaMessage::Flag::PUSH_ENTITIES)
-						);
-
-						GameEngine::Transform& t = top->transform();
-						t.m_position = top->position();
-						t.m_position.y += lifted;
-
-						if (sittingOnTop.count(top->name()) == 0) {
-							sittingOnTop[top->name()] = top;
-						}
 					}
 				}
 				else {							// FRONT/BACK/LEFT/RIGHT
@@ -300,18 +337,26 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 		// manage ground collision and accept to jump up if over a step
 		if (entity->gravity()) {
 			if (nearest_ground) {
-				// if the object was falling, remove from the list
-				if (m_ballistics.count(entity->name()) > 0) {
+				if (m_ballistics.count(entity->name()) > 0 && m_ballistics[entity->name()].m_inUse) {
+					// if the object was falling, remove from the list and force the position
 					m_remove.push_back(entity->name());
-				}
+					m_ballistics[entity->name()].m_inUse = false;
 
-				// if there is a step and the entity and step over
-				if (ground < 0.101) {
+					tranform.m_position.y = ground;
+					actions.push(
+						Action(entity, gaMessage::Flag::PUSH_ENTITIES)
+					);	// fix the entity altitude
+					fix_y = true;
 					if (entity->name() == "player")
-						gaDebugLog(1, "gaWorld::wantToMove", entity->name() + " found ground at " + std::to_string(nearest_ground->m_position.y));
-
-					if (abs(ground) > 0.001) {	// if more than epsilon, fix the position
-						tranform.m_position.y = nearest_ground->m_position.y;
+						gaDebugLog(1, "gaWorld::wantToMove", entity->name() + " falling to ground " + std::to_string(tranform.m_position.x)
+							+ " " + std::to_string(tranform.m_position.y)
+							+ " " + std::to_string(tranform.m_position.z));
+				}
+				else if (tranform.m_position.y - ground < 0.101) {
+					// if there is a step and the entity can step over
+					if (abs(ground - tranform.m_position.y) > EPSILON) {	
+						// if more than epsilon, fix the position
+						tranform.m_position.y = ground;
 						actions.push(
 							Action(entity, gaMessage::Flag::PUSH_ENTITIES)
 						);	// fix the entity altitude
@@ -321,17 +366,6 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 								+ " " + std::to_string(tranform.m_position.y)
 								+ " " + std::to_string(tranform.m_position.z));
 					}
-
-					// inform the other entity we are sitting on top
-					if (nearest_ground->m_class == gaCollisionPoint::Source::ENTITY) {
-						gaEntity* top = static_cast<gaEntity*>(nearest_ground->m_source);
-						std::map<std::string, gaEntity*>& _sittingOnTop = top->sittingOnTop();
-
-						if (_sittingOnTop.count(entity->name()) == 0) {
-							_sittingOnTop[entity->name()] = entity;
-						}
-					}
-
 				}
 				else {
 					// convert the down collision to a nearest
@@ -461,7 +495,7 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 				);
 
 				GameEngine::Transform& t = pushed->transform();
-				t.m_position = entity->position();
+				t.m_position = pushed->position();
 				t.m_position.y += lifted;
 			}
 			sittingOnTop.clear();	// clear the cache, it will be reimplemented by the object if it is still on top

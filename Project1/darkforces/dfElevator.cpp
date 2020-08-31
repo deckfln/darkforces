@@ -96,6 +96,7 @@ void dfElevator::init(const std::string& kind)
 	m_physical = false;		// elevators cannot be traversed
 	m_gravity = false;		// elevators are not affected by gravity
 	m_collideSectors=false;	// elevators doesn't need to check collision with sectors
+	m_defaultCollision = gaMessage::Flag::PUSH_ENTITIES;
 }
 
 /**
