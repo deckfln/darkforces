@@ -110,7 +110,7 @@ bool Framework::lineSegIntersectTri(
 
 	const float t = f * glm::dot(e1, q1);
 
-	if (t > EPSILON && t < sqrtf(glm::dot(dir, dir))) { // segment intersection
+	if (t >=0 && t < sqrtf(glm::dot(dir, dir))) { // segment intersection
 		point = p + dir_norm * t;
 
 		return true;

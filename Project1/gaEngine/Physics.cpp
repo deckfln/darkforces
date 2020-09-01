@@ -12,7 +12,7 @@
 
 using namespace GameEngine;
 
-const float EPSILON = 0.001;
+const float EPSILON = 0.001f;
 
 Physics::Physics(gaWorld* world) :
 	m_world(world)
@@ -173,7 +173,7 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 		entity->pushTransformations();
 		entity->transform(&tranform);
 
-		if (entity->name() == "player")
+		if (entity->name() == "MOUSEBOT.3DO(40)")
 			gaDebugLog(1, "gaWorld::wantToMove", entity->name() + " to " + std::to_string(tranform.m_position.x)
 				+ " " + std::to_string(tranform.m_position.y)
 				+ " " + std::to_string(tranform.m_position.z));
@@ -228,13 +228,12 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 			case fwCollisionLocation::BOTTOM:
 				fall = false;
 				if (entity->gravity()) {
-					d = abs(tranform.m_position.y - collision.m_position.y);
-					if (d > ground) {
+					if (collision.m_position.y > ground) {
 						nearest_ground = &collision;
-						ground = d;
+						ground = collision.m_position.y;
 					}
 				}
-				if (entity->name() == "player") {
+				if (entity->name() == "MOUSEBOT.3DO(40)") {
 					gaDebugLog(1, "gaWorld::wantToMove", "BOTTOM detected at " + std::to_string(collision.m_position.y));
 				}
 				break;
@@ -352,7 +351,7 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 							+ " " + std::to_string(tranform.m_position.y)
 							+ " " + std::to_string(tranform.m_position.z));
 				}
-				else if (tranform.m_position.y - ground < 0.101) {
+				else if (tranform.m_position.y - ground < 0.101f) {
 					// if there is a step and the entity can step over
 					if (abs(ground - tranform.m_position.y) > EPSILON) {	
 						// if more than epsilon, fix the position

@@ -47,8 +47,8 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 	// player
 	//glm::vec3 start = glm::vec3(-21.26f, 0.95f, 29.064f);	// main hall
 	//glm::vec3 start = glm::vec3(-46, 0.9, 26.8); // super secret
-	//glm::vec3 start = glm::vec3(-30.2f, 2.1f, 35.87f);	// gen_d
-	glm::vec3 start = glm::vec3(-20.8f, 0.4f, 29.7f);	// stage
+	glm::vec3 start = glm::vec3(-30.08f, 2.1f, 35.87f);	// gen_d
+	//glm::vec3 start = glm::vec3(-20.8f, 0.4f, 29.7f);	// stage
 
 	fwCylinder bounding(glm::vec3(0), c_radius, c_height);
 

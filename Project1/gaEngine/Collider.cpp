@@ -154,10 +154,32 @@ static bool testSensor(
 	glm::vec3& collision
 )
 {
+	if (Framework::lineSegIntersectTri(p1, p2, a, b, c, collision)) {
+		return true;
+	}
+/*
 	static int debug = 0;
-	double u, v, w;
+	double u, v, w, t;
+	glm::vec3 point;
+	glm::vec3 direction = p2 - p1;
 
-	// check the forward sensor
+	if (glm::intersectLineTriangle(p1, direction, a, b, c, point)) {
+		// rebuild collision point (geometry space) to world space 
+		double u, v, w;
+		u = point.x;
+		v = point.y;
+		w = 1 - (u+v);
+
+		collision.x = (u * a.x + v * b.x + w * c.x);
+		collision.y = (u * a.y + v * b.y + w * c.y);
+		collision.z = (u * a.z + v * b.z + w * c.z);
+
+		collision = glm::vec3(worldMatrix * glm::vec4(collision, 1.0));
+
+		return true;
+	}
+*/
+/*
 	if (Framework::IntersectLineTriangle(p1,
 		p2,
 		a, b, c,
@@ -178,7 +200,7 @@ static bool testSensor(
 
 		return true;
 	};
-
+*/
 	return false;
 }
 
@@ -308,17 +330,41 @@ static void aabb_triangles(
 {
 	// for each triangle, extract the AABB in geometry space and check collision with the source AABB in geometry space
 	fwAABBox triangle;
+	glm::vec3 p2;
+	glm::vec3 collision;
 
 	for (uint32_t i = 0; i < nbVertices; i += 3) {
 		triangle.set(vertices + i, 3);
+		/*
+		if (i == 384) {
+			glm::vec3 p1 = center;
+			glm::vec3 p2 = center + dwsensor;
+			glm::vec3 a = vertices[i];
+			glm::vec3 b = vertices[i + 1];
+			glm::vec3 c = vertices[i + 2];
+			float u, v, w, t;
+			glm::vec3 point;
 
+			bool b1 = Framework::IntersectSegmentTriangle(p1, p2, a, b, c, u, v, w, t);
+			bool b2 = Framework::lineSegIntersectTri(p1, p2, a, b, c, point);
+			bool b3 = glm::intersectLineTriangle(p1, dwsensor, a, b, c, point);
+			bool b4 = Framework::IntersectLineTriangle(p1, p2, a, b, c, point);
+			printf("\n");
+		}
+		*/
 		if (triangle.intersect(aabb_geometry_space)) {
-			testSensors(worldMatrix,
-				center,
-				forward_geometry_space,
-				dwsensor,
-				&vertices[i],
-				collisions);
+			p2 = center + forward_geometry_space;
+
+			// check the forward sensor
+			if (Framework::lineSegIntersectTri(center, p2, vertices[i], vertices[i + 1], vertices[i + 2], collision)) {
+				collisions.push_back(gaCollisionPoint(fwCollisionLocation::FRONT, collision, &vertices[i]));
+			};
+
+			p2 = center + dwsensor;
+			// check the downward sensor
+			if (Framework::lineSegIntersectTri(center, p2, vertices[i], vertices[i + 1], vertices[i + 2], collision)) {
+				collisions.push_back(gaCollisionPoint(fwCollisionLocation::BOTTOM, collision, &vertices[i]));
+			};
 		}
 	}
 }
