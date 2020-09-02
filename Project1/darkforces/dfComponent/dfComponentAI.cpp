@@ -59,17 +59,13 @@ void dfComponentAI::dispatchMessage(gaMessage* message)
 
 	switch (message->m_action) {
 	case gaMessage::Action::WORLD_INSERT:
-		if (m_entity->name() == "MOUSEBOT.3DO(40)") {
-			m_transforms = m_entity->pTransform();
-			// kick start the AI
-			m_entity->translate(glm::vec3(-27.5, 2.0, 30.08));
-			m_direction = glm::vec3(0, 0, -1.0);
-			m_center = m_entity->position();
-			//m_alpha = (rand() / (float)RAND_MAX - 0.f) / 10.0f; // rotation angle to apply to the direction vector
-			m_animation_time = rand() % (5 * 30);				// move 5s maximum using the same rotation angle
+		m_transforms = m_entity->pTransform();
+		// kick start the AI
+		m_center = m_entity->position();
+		m_alpha = (rand() / (float)RAND_MAX - 0.f) / 10.0f; // rotation angle to apply to the direction vector
+		m_animation_time = rand() % (5 * 30);				// move 5s maximum using the same rotation angle
 
-			tryToMove();
-		}
+		tryToMove();
 		break;
 
 	case gaMessage::Action::COLLIDE:
