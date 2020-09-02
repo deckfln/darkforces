@@ -607,9 +607,9 @@ bool Collider::collision_cylinder_aabb_tree(const Collider& cylinder,
 			v2_es = vertices_gs[i + 1] * ellipsoid_space;
 			v3_es = vertices_gs[i + 2] * ellipsoid_space;
 
-			//if (i == 378 && nbVertices==534) {
-			//	printf("Collider::collision_cylinder_aabb_tree\n");
-			//}
+			if (i == 612 && nbVertices==1890) {
+				printf("Collider::collision_cylinder_aabb_tree\n");
+			}
 			if (Framework::intersectSphereTriangle(center_es, v1_es, v2_es, v3_es, intersection_es)) {
 				// the intersection point is inside the triangle
 

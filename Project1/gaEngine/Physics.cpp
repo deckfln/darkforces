@@ -173,7 +173,7 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 		entity->pushTransformations();
 		entity->transform(&tranform);
 
-		if (entity->name() == "MOUSEBOT.3DO(40)")
+		if (entity->name() == "player")
 			gaDebugLog(1, "gaWorld::wantToMove", entity->name() + " to " + std::to_string(tranform.m_position.x)
 				+ " " + std::to_string(tranform.m_position.y)
 				+ " " + std::to_string(tranform.m_position.z));
@@ -220,9 +220,6 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 					distance = d;
 				}
 				fall = false;
-				if (entity->name() == "MOUSEBOT.3DO(40)") {
-					gaDebugLog(1, "gaWorld::wantToMove", "FRONT detected at " + std::to_string(collision.m_position.y));
-				}
 				break;
 
 			case fwCollisionLocation::BOTTOM:
@@ -232,9 +229,6 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 						nearest_ground = &collision;
 						ground = collision.m_position.y;
 					}
-				}
-				if (entity->name() == "MOUSEBOT.3DO(40)") {
-					gaDebugLog(1, "gaWorld::wantToMove", "BOTTOM detected at " + std::to_string(collision.m_position.y));
 				}
 				break;
 

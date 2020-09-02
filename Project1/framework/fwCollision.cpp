@@ -142,7 +142,7 @@ bool Framework::intersectSphereTriangle(
 	plane = glm::vec4(normal.x, normal.y, normal.z, -(normal.x * a.x + normal.y * a.y + normal.z * a.z));
 	signedDistance = glm::dot(center_es, normal) + plane.w;
 
-	if (signedDistance >= -1.0f && signedDistance <= 1.0f) {
+	if (signedDistance >= -1.0f - EPSILON && signedDistance <= 1.0f + EPSILON) {
 		// if the plane is passing trough the sphere (the ellipsoid deformed to look like a sphere)
 		// get the collision point of the sphere on the plane
 
