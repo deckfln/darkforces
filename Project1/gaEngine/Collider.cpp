@@ -128,7 +128,7 @@ bool Collider::collision(const Collider& source,
 	case ColliderType::CYLINDER:
 		switch (source.m_type) {
 		case ColliderType::AABB:
-			return true;
+			return collision_cylinder_aabb(*this, source, collisions);
 		case ColliderType::AABB_TREE:
 			return collision_cylinder_aabb_tree(*this, source, collisions);
 		case ColliderType::GEOMETRY:
@@ -623,6 +623,132 @@ bool Collider::collision_cylinder_aabb_tree(const Collider& cylinder,
 				collisions.push_back(gaCollisionPoint(fwCollisionLocation::COLLIDE, intersection_ws, &vertices_gs[i]));
 			}
 		}
+	//}
+
+	return collisions.size() != 0;
+}
+
+/**
+ * cylinder vs AABB
+ */
+static glm::vec3 _vertices[] = {
+	// back face
+	{-1.0f, -1.0f, -1.0f}, // bottom-left
+	{ 1.0f,  1.0f, -1.0f}, // top-right
+	{ 1.0f, -1.0f, -1.0f}, // bottom-right         
+	{ 1.0f,  1.0f, -1.0f}, // top-right
+	{-1.0f, -1.0f, -1.0f}, // bottom-left
+	{-1.0f,  1.0f, -1.0f}, // top-left
+	// front face
+	{-1.0f, -1.0f,  1.0f}, // bottom-left
+	{ 1.0f, -1.0f,  1.0f}, // bottom-right
+	{ 1.0f,  1.0f,  1.0f}, // top-right
+	{ 1.0f,  1.0f,  1.0f}, // top-right
+	{-1.0f,  1.0f,  1.0f}, // top-left
+	{-1.0f, -1.0f,  1.0f}, // bottom-left
+	// left face
+	{-1.0f,  1.0f,  1.0f}, // top-right
+	{-1.0f,  1.0f, -1.0f}, // top-left
+	{-1.0f, -1.0f, -1.0f}, // bottom-left
+	{-1.0f, -1.0f, -1.0f}, // bottom-left
+	{-1.0f, -1.0f,  1.0f}, // bottom-right
+	{-1.0f,  1.0f,  1.0f}, // top-right
+	// right face
+	{ 1.0f,  1.0f,  1.0f}, // top-left
+	{ 1.0f, -1.0f, -1.0f}, // bottom-right
+	{ 1.0f,  1.0f, -1.0f}, // top-right         
+	{ 1.0f, -1.0f, -1.0f}, // bottom-right
+	{ 1.0f,  1.0f,  1.0f}, // top-left
+	{ 1.0f, -1.0f,  1.0f}, // bottom-left     
+	// bottom face
+	{-1.0f, -1.0f, -1.0f}, // top-right
+	{ 1.0f, -1.0f, -1.0f}, // top-left
+	{ 1.0f, -1.0f,  1.0f}, // bottom-left
+	{ 1.0f, -1.0f,  1.0f}, // bottom-left
+	{-1.0f, -1.0f,  1.0f}, // bottom-right
+	{-1.0f, -1.0f, -1.0f}, // top-right
+	// top face
+	{-1.0f,  1.0f, -1.0f}, // top-left
+	{ 1.0f,  1.0f , 1.0f}, // bottom-right
+	{ 1.0f,  1.0f, -1.0f}, // top-right     
+	{ 1.0f,  1.0f,  1.0f}, // bottom-right
+	{-1.0f,  1.0f, -1.0f}, // top-left
+	{-1.0f,  1.0f,  1.0f} // bottom-left        
+};
+static glm::vec3 geometry[36];
+
+bool Collider::collision_cylinder_aabb(const Collider& cylinder, const Collider& aabb, std::vector<gaCollisionPoint>& collisions)
+{
+	glm::vec3 ellipsoid_space;
+	glm::vec3 center_gs;
+	glm::vec3 forward_gs;
+	glm::vec3 center_es;
+	fwAABBox cyl_aabb_gs;
+
+	init_elipsoide(
+		static_cast<fwCylinder*>(cylinder.m_source),
+		*cylinder.m_worldMatrix,
+		*aabb.m_inverseWorldMatrix,
+		ellipsoid_space,
+		center_gs,
+		center_es,
+		cyl_aabb_gs);
+
+	glm::vec3 const* vertices_gs;
+	uint32_t nbVertices;
+	glm::vec3 v1_es, v2_es, v3_es;
+	glm::vec3 intersection_es;
+	glm::vec3 intersection_gs;
+	glm::vec3 intersection_ws;
+
+	fwAABBox* pAabb = static_cast<fwAABBox*>(aabb.m_source);
+
+	// convert AABB space into the cylinder space
+	glm::mat4 mat = *cylinder.m_inverseWorldMatrix * *aabb.m_worldMatrix;
+	fwAABBox aabb_gs = *pAabb;
+	aabb_gs.transform(mat);
+
+	// build a geometry
+	for (auto i = 0; i < 36; i++) {
+		if (_vertices[i].x < 0) {
+			geometry[i].x = aabb_gs.m_p.x;
+		}
+		else {
+			geometry[i].x = aabb_gs.m_p1.x;
+		}
+		if (_vertices[i].y < 0) {
+			geometry[i].y = aabb_gs.m_p.y;
+		}
+		else {
+			geometry[i].y = aabb_gs.m_p1.y;
+		}
+		if (_vertices[i].z < 0) {
+			geometry[i].z = aabb_gs.m_p.z;
+		}
+		else {
+			geometry[i].z = aabb_gs.m_p1.z;
+		}
+	}
+
+	for (unsigned int i = 0; i < 36; i += 3) {
+		// convert each model space vertex to ellipsoid space
+		v1_es = geometry[i] * ellipsoid_space;
+		v2_es = geometry[i + 1] * ellipsoid_space;
+		v3_es = geometry[i + 2] * ellipsoid_space;
+
+		if (Framework::intersectSphereTriangle(center_es, v1_es, v2_es, v3_es, intersection_es)) {
+			// the intersection point is inside the triangle
+
+			// convert the intersection from ellipsoid-space to cylinder-space
+			intersection_gs = intersection_es / ellipsoid_space;
+
+			// convert from cylinder-space => world-space
+			intersection_ws = glm::vec3(*aabb.m_worldMatrix * glm::vec4(intersection_gs, 1.0));
+
+			// inform if the collision point in world space(let the entity decide what to do with the collision)
+			collisions.push_back(gaCollisionPoint(fwCollisionLocation::COLLIDE, intersection_ws, &geometry[i]));
+		}
+	}
 	//}
 
 	return collisions.size() != 0;
