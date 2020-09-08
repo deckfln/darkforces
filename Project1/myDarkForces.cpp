@@ -28,7 +28,7 @@ const float c_height = 0.70f;
 const float c_radius = 0.2f;
 const float c_eyes = 0.55f;
 const float c_ankle = 0.26f;
-const float c_direction = -pi / 1.0f;
+const float c_direction = +pi / 1.0f;
 
 myDarkForces::myDarkForces(std::string name, int width, int height) :
 	fwApp(name, width, height, "shaders/gamma", "#define GAMMA_CORRECTION 1\n")
@@ -47,7 +47,7 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 	// player
 	//glm::vec3 start = glm::vec3(-21.26f, 0.95f, 29.064f);	// main hall
 	//glm::vec3 start = glm::vec3(-46, 0.9, 26.8); // super secret
-	glm::vec3 start = glm::vec3(-30.08f, 2.1f, 35.87f);	// gen_d
+	glm::vec3 start = glm::vec3(-29.5f, 2.0f, 30.808f);	// gen_d
 	//glm::vec3 start = glm::vec3(-20.8f, 0.4f, 29.7f);	// stage
 
 	fwCylinder bounding(glm::vec3(0), c_radius, c_height);

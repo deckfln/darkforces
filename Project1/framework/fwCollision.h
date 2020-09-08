@@ -86,4 +86,12 @@ namespace Framework
         const glm::vec3& p, const glm::vec3& q, 
         const glm::vec3& a, const glm::vec3& b, const glm::vec3& c,
         glm::vec3& collision);
+
+    // http://realtimecollisiondetection.net/blog/?p=103
+    bool IntersectLineTriangle(
+        const glm::vec3& p1,
+        const glm::vec3& p2,
+        const glm::vec3& p3,
+        const glm::vec3& P,
+        float r);
 }

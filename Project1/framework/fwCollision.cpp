@@ -222,3 +222,84 @@ bool Framework::IntersectLineTriangle(
 
 	return true;
 }
+
+/*************************************************
+ */
+ // http://realtimecollisiondetection.net/blog/?p=103
+bool Framework::IntersectLineTriangle(
+	const glm::vec3& p1,
+	const glm::vec3& p2,
+	const glm::vec3& p3,
+	const glm::vec3& P,
+	float r)
+{
+	glm::vec3 A = p1 - P;
+	glm::vec3 B = p2 - P;
+	glm::vec3 C = p2 - P;
+
+	double rr = (float)r * r;
+	glm::vec3 V = glm::cross(B - A, C - A);
+	double d = glm::dot(A, V);
+	double e = glm::dot(V, V);
+	int sep1 = d * d > rr * e;
+
+	if (sep1)
+		return true;
+
+	double aa = glm::dot(A, A);
+	double ab = glm::dot(A, B);
+	double ac = glm::dot(A, C);
+	int sep2 = (aa > rr) & (ab > aa) & (ac > aa);
+
+	if (sep2)
+		return true;
+
+	double bb = glm::dot(B, B);
+	double bc = glm::dot(B, C);
+	int sep3 = (bb > rr) & (ab > bb) & (bc > bb);
+
+	if (sep3)
+		return true;
+
+	double cc = glm::dot(C, C);
+	int sep4 = (cc > rr) & (ac > cc) & (bc > cc);
+
+	if (sep4)
+		return true;
+
+	glm::vec3 AB = B - A;
+	glm::vec3 BC = C - B;
+	glm::vec3 CA = A - C;
+
+	float d1 = ab - aa;
+	float e1 = glm::dot(AB, AB);
+
+	glm::vec3 Q1 = A * e1 - AB * d1;
+	glm::vec3 QC = C * e1 - Q1;
+	int sep5 = (glm::dot(Q1, Q1) > rr * e1 * e1) & (glm::dot(Q1, QC) > 0);
+
+	if (sep5)
+		return true;
+
+	float d2 = bc - bb;
+	float e2 = glm::dot(BC, BC);
+
+	glm::vec3 Q2 = B * e2 - BC * d2;
+	glm::vec3 QA = A * e2 - Q2;
+	int sep6 = (glm::dot(Q2, Q2) > rr * e2 * e2) & (glm::dot(Q2, QA) > 0);
+
+	if (sep6)
+		return true;
+
+	float d3 = ac - cc;
+	float e3 = glm::dot(CA, CA);
+
+	glm::vec3 Q3 = C * e3 - CA * d3;
+	glm::vec3 QB = B * e3 - Q3;
+	int sep7 = (glm::dot(Q3, Q3) > rr * e3 * e3) & (glm::dot(Q3, QB) > 0);
+
+	if (sep7)
+		return true;
+
+	return false;
+}
