@@ -94,4 +94,10 @@ namespace Framework
         const glm::vec3& p3,
         const glm::vec3& P,
         float r);
+
+    bool IntersectionSphereLine(const glm::vec3& center,
+        const float radius,
+        const glm::vec3& pt0,
+        const glm::vec3& pt1,
+        glm::vec3& collision);
 }

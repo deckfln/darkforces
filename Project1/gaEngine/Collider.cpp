@@ -606,7 +606,7 @@ bool Collider::collision_cylinder_aabb_tree(const Collider& cylinder,
 			v2_es = vertices_gs[i + 1] * ellipsoid_space;
 			v3_es = vertices_gs[i + 2] * ellipsoid_space;
 
-			if (i == 612 && nbVertices==1890) {
+			if (i == 66 && nbVertices==594) {
 				printf("Collider::collision_cylinder_aabb_tree\n");
 			}
 			if (Framework::intersectSphereTriangle(center_es, v1_es, v2_es, v3_es, intersection_es)) {
@@ -722,11 +722,11 @@ bool Collider::collision_cylinder_aabb(const Collider& cylinder,
 	glm::vec3 center_cs(0, pCylinder->height() / 2.0f, 0);
 	center_gs = glm::vec3(mat * glm::vec4(center_cs, 1.0));
 
-	cyl_aabb_gs = fwAABBox(*pCylinder);
-	cyl_aabb_gs.transform(mat);
+	//cyl_aabb_gs = fwAABBox(*pCylinder);
+	//cyl_aabb_gs.transform(mat);
 
 	// and convert to ellipsoid space
-	center_es = center_gs * ellipsoid_space;
+	center_es = center_cs * ellipsoid_space;
 
 	glm::vec3 v1_es, v2_es, v3_es;
 	glm::vec3 intersection_es;
@@ -736,7 +736,7 @@ bool Collider::collision_cylinder_aabb(const Collider& cylinder,
 	fwAABBox* pAabb = static_cast<fwAABBox*>(aabb.m_source);
 
 	// convert AABB space into the cylinder space
-	mat = *aabb.m_worldMatrix;
+	mat = *cylinder.m_inverseWorldMatrix * *aabb.m_worldMatrix;
 	convertVertex(0, pAabb->m_p.x, pAabb->m_p.y, pAabb->m_p.z, mat);
 	convertVertex(1, pAabb->m_p1.x, pAabb->m_p1.y, pAabb->m_p.z, mat);
 	convertVertex(2, pAabb->m_p1.x, pAabb->m_p.y, pAabb->m_p.z, mat);
@@ -757,8 +757,11 @@ bool Collider::collision_cylinder_aabb(const Collider& cylinder,
 		v2_es = _triangles[i][1] * ellipsoid_space;
 		v3_es = _triangles[i][2] * ellipsoid_space;
 
-/*
-		if (Framework::intersectSphereTriangle(center_es, v1_es, v2_es, v3_es, intersection_es)) {
+		v1_es.y--;
+		v2_es.y--;
+		v3_es.y--;
+
+		if (Framework::intersectSphereTriangle(glm::vec3(0), v1_es, v2_es, v3_es, intersection_es)) {
 			// the intersection point is inside the triangle
 
 			// convert the intersection from ellipsoid-space to cylinder-space
@@ -768,20 +771,9 @@ bool Collider::collision_cylinder_aabb(const Collider& cylinder,
 			//intersection_ws = glm::vec3(*aabb.m_worldMatrix * glm::vec4(intersection_gs, 1.0));
 
 			// inform if the collision point in world space(let the entity decide what to do with the collision)
-			collisions.push_back(gaCollisionPoint(fwCollisionLocation::COLLIDE, intersection_gs, _triangle));
-			break;
-		}
-*/
-		if (Framework::IntersectLineTriangle(v1_es, v2_es, v3_es, center_es, 1.0f)) {
-			// the triangle intersect the ellipsoide
-			// return the triangle barycenter as fake collision point
-			intersection_gs = (_triangles[i][0] + _triangles[i][1] + _triangles[i][2])/3.0f;
-
-			// inform if the collision point in world space(let the entity decide what to do with the collision)
 			collisions.push_back(gaCollisionPoint(fwCollisionLocation::COLLIDE, intersection_gs, _triangles[i]));
 		}
 	}
-	//}
 
 	return collisions.size() != 0;
 }

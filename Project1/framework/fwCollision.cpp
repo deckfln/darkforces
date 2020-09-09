@@ -172,6 +172,17 @@ bool Framework::intersectSphereTriangle(
 		if (abs(tarea1 + tarea2 + tarea3 - tarea) < 0.01) {
 			return true;
 		}
+
+		// the point might be away, so test the edges
+		if (Framework::IntersectionSphereLine(center_es, 1.0f, a, b, p)) {
+			return true;
+		}
+		if (Framework::IntersectionSphereLine(center_es, 1.0f, b, c, p)) {
+			return true;
+		}
+		if (Framework::IntersectionSphereLine(center_es, 1.0f, c, a, p)) {
+			return true;
+		}
 	}
 
 	return false;
@@ -302,4 +313,76 @@ bool Framework::IntersectLineTriangle(
 		return true;
 
 	return false;
+}
+
+//https://www.flipcode.com/archives/Moving_Sphere_VS_Triangle_Collision.shtml
+//http://www.ambrsoft.com/TrigoCalc/Sphere/SpherLineIntersection_.htm
+
+bool Framework::IntersectionSphereLine(const glm::vec3& center,
+	const float radius,
+	const glm::vec3& pt0,
+	const glm::vec3& pt1,
+	glm::vec3& collision)
+{
+	float a, b, c, i;
+
+	a = pow(pt1.x - pt0.x, 2) + pow(pt1.y - pt0.y, 2) + pow(pt1.z - pt0.z, 2);
+	b = 2 * ((pt1.x - pt0.x) * (pt0.x - center.x)
+		+ (pt1.y - pt0.y) * (pt0.y - center.y)
+		+ (pt1.z - pt0.z) * (pt0.z - center.z));
+	c = pow(center.x, 2) + pow(center.y, 2) +
+		pow(center.z, 2) + pow(pt0.x, 2) +
+		pow(pt0.y, 2) + pow(pt0.z, 2) -
+		2 * (center.x * pt0.x + center.y * pt0.y + center.z * pt0.z) - pow(radius, 2);
+	i = b * b - 4 * a * c;
+
+	if (i < 0)
+		return false;
+
+	if (i == 0) {	
+		// intersection on the sphere
+		float t0 = -b / (2 * a);
+
+		// check the collision point is on the segment
+		collision=glm::vec3(
+			pt0.x + (pt1.x - pt0.x) * t0,
+			pt0.y + (pt1.y - pt0.y) * t0,
+			pt0.z + (pt1.z - pt0.z) * t0
+			);
+		float d = glm::dot(pt1 - pt0, pt1 - pt0);
+		float v = glm::dot(pt1 - pt0, collision - pt0);
+		if (v < 0 || v > d) {
+			return false;
+		}
+	}
+	else {			
+		// intersection through the sphere
+		float t0 = (-b + sqrtf(pow(b, 2) - 4 * a * c)) / (2 * a);
+		float t1 = (-b - sqrtf(pow(b ,2) - 4 * a * c)) / (2 * a);
+
+		// check the collision point is on the segment
+		glm::vec3 p0(
+			pt0.x + (pt1.x - pt0.x) * t0,
+			pt0.y + (pt1.y - pt0.y) * t0,
+			pt0.z + (pt1.z - pt0.z) * t0
+		);
+		glm::vec3 p1(
+			pt0.x + (pt1.x - pt0.x) * t1,
+			pt0.y + (pt1.y - pt0.y) * t1,
+			pt0.z + (pt1.z - pt0.z) * t1
+		);
+		float d = glm::dot(pt1 - pt0, pt1 - pt0);
+		float v = glm::dot(pt1 - pt0, p0 - pt0);
+		if (v < 0 || v > d) {
+			return false;
+		}
+		float v1 = glm::dot(pt1 - pt0, p1 - pt0);
+		if (v1 < 0 || v1 > d) {
+			return false;
+		}
+
+		collision = (p0 + p1) / 2.0f;
+	}
+
+	return true;
 }
