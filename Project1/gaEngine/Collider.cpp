@@ -592,23 +592,32 @@ bool Collider::collision_cylinder_aabb_tree(const Collider& cylinder,
 	glm::vec3 intersection_es;
 	glm::vec3 intersection_gs;
 	glm::vec3 intersection_ws;
+	fwAABBox triangle;
 
 	vertices_gs = pAabbTree->vertices();
 	nbVertices = pAabbTree->nbVertices();
 
-	//for (auto aabb : hits) {
-	//	vertices_gs = aabb->vertices();
-	//	nbVertices = aabb->nbVertices();
+	for (auto aabb : hits) {
+		vertices_gs = aabb->vertices();
+		nbVertices = aabb->nbVertices();
 
 		for (unsigned int i = 0; i < nbVertices; i += 3) {
+			triangle.set(vertices_gs + i, 3);
+
+			if (!triangle.intersect(cyl_aabb_gs)) {
+				continue;
+			}
+
 			// convert each model space vertex to ellipsoid space
 			v1_es = vertices_gs[i] * ellipsoid_space;
 			v2_es = vertices_gs[i + 1] * ellipsoid_space;
 			v3_es = vertices_gs[i + 2] * ellipsoid_space;
 
+			/*
 			if (i == 66 && nbVertices==594) {
 				printf("Collider::collision_cylinder_aabb_tree\n");
 			}
+			*/
 			if (Framework::intersectSphereTriangle(center_es, v1_es, v2_es, v3_es, intersection_es)) {
 				// the intersection point is inside the triangle
 
@@ -622,7 +631,7 @@ bool Collider::collision_cylinder_aabb_tree(const Collider& cylinder,
 				collisions.push_back(gaCollisionPoint(fwCollisionLocation::COLLIDE, intersection_ws, &vertices_gs[i]));
 			}
 		}
-	//}
+	}
 
 	return collisions.size() != 0;
 }
