@@ -81,6 +81,9 @@ void Physics::testEntities(gaEntity* entity, const Transform& tranform, std::vec
 	for (auto entry : m_world->m_entities) {
 		for (auto ent : entry.second) {
 			if (ent != entity && entity->collideAABB(ent->worldAABB())) {
+				if (ent->name() == "elev3-5") {
+					printf("Physics::testEntities\n");
+				}
 				size = collisions.size();
 				if (entity->collide(ent, tranform.m_forward, tranform.m_downward, collisions)) {
 					for (auto i = size; i < collisions.size(); i++) {
@@ -275,11 +278,16 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 				if (isFloor) {				// BOTTOM
 					float deltaY = new_position.y - collision.m_position.y;
 
-					// discard if there is no triangle above the position
+					// if the floor is ABOVE the entity
 					if (deltaY < -0.01f) {
-						glm::vec3 bottom2collision(new_position.x, collision.m_position.y + EPSILON, new_position.z);
-						if (!testSectorsVertical(entity, bottom2collision)) {
-							continue;
+						// if the collision point is NOT more or less straight above the entity
+						if (abs(new_position.x - collision.m_position.x) > EPSILON || abs(new_position.z - collision.m_position.z) > EPSILON) {
+							// test explicitly there is a triangle above the entity
+							glm::vec3 bottom2collision(new_position.x, collision.m_position.y + EPSILON, new_position.z);
+							if (!testSectorsVertical(entity, bottom2collision)) {
+								// discard the collision if the 
+								continue;
+							}
 						}
 					}
 
