@@ -122,6 +122,8 @@ public:
     bool collisionSegmentTriangle(const glm::vec3& p, 
         const glm::vec3& q, 
         std::list<gaCollisionPoint>& collisions);       // extended segment collision test after a successful AABB collision
+    bool collide(const glm::vec3& start, 
+        const glm::vec3& end);                          // if the segment collide with the sector
 
     ~dfSuperSector();
 };

@@ -210,7 +210,7 @@ static bool testSensor(
 bool Collider::warpThroughAABBTree(const Collider& aabbtree,
 	const glm::vec3& position,
 	const glm::vec3& old_position,
-	glm::vec3& collision)
+	std::vector<gaCollisionPoint>& collisions)
 {
 	// move the AABB from model space to worldSpace and then to geometry model space
 	GameEngine::AABBoxTree* pAabbTree = static_cast<GameEngine::AABBoxTree*>(aabbtree.m_source);
@@ -226,6 +226,7 @@ bool Collider::warpThroughAABBTree(const Collider& aabbtree,
 
 	// for each triangle, extract the AABB in geometry space and check collision with the source AABB in geometry space
 	fwAABBox triangle;
+	glm::vec3 collision;
 
 	for (uint32_t i = 0; i < nbVertices; i += 3) {
 		triangle.set(vertices_gs + i, 3);
@@ -235,13 +236,16 @@ bool Collider::warpThroughAABBTree(const Collider& aabbtree,
 				position_gs,
 				old_position_gs,
 				vertices_gs[i], vertices_gs[i + 1], vertices_gs[i + 2],
-				collision)) {
-				return true;
+				collision)) 
+			{
+				// convert the collision point back to worldspace
+				collision = glm::vec3(*aabbtree.m_worldMatrix * glm::vec4(collision, 1.0));
+				collisions.push_back(gaCollisionPoint(fwCollisionLocation::WARP, collision, vertices_gs + i));
 			}
 		}
 	}
 
-	return false;
+	return collisions.size() > 0;
 }
 
 /**
@@ -250,13 +254,13 @@ bool Collider::warpThroughAABBTree(const Collider& aabbtree,
 bool Collider::warpThrough(const Collider& source, 
 	const glm::vec3& position, 
 	const glm::vec3& old_position, 
-	glm::vec3& collision)
+	std::vector<gaCollisionPoint>& collisions)
 {
 	return warpThroughAABBTree(
 		source,
 		position, 
 		old_position, 
-		collision);
+		collisions);
 }
 
 /**
@@ -447,12 +451,12 @@ bool Collider::collision_fwAABB_gaAABB(const Collider& fwAABB,
 	// find the smallest set of gaAABB intersecting with the fwAABB
 	// and test only the included triangles
 	// for each triangle, extract the AABB in geometry space and check collision with the source AABB in geometry space
-	//std::vector<GameEngine::AABBoxTree*> hits;
-	//if (!pAABBtree->find(aabb_geometry_space, hits)) {
-	//	return false;
-	//}
+	std::vector<GameEngine::AABBoxTree*> hits;
+	if (!pAABBtree->find(aabb_geometry_space, hits)) {
+		return false;
+	}
 
-//	for (auto aabb : hits) {
+	for (auto aabb : hits) {
 		aabb_triangles(
 			*gaAABB.m_worldMatrix,
 			forward_geometry_space,
@@ -463,7 +467,7 @@ bool Collider::collision_fwAABB_gaAABB(const Collider& fwAABB,
 			pAABBtree->nbVertices(),
 			collisions
 		);
-//	}
+	}
 
 	return collisions.size() != 0;
 }
@@ -602,6 +606,7 @@ bool Collider::collision_cylinder_aabb_tree(const Collider& cylinder,
 		nbVertices = aabb->nbVertices();
 
 		for (unsigned int i = 0; i < nbVertices; i += 3) {
+
 			triangle.set(vertices_gs + i, 3);
 
 			if (!triangle.intersect(cyl_aabb_gs)) {
@@ -785,4 +790,31 @@ bool Collider::collision_cylinder_aabb(const Collider& cylinder,
 	}
 
 	return collisions.size() != 0;
+}
+
+/**
+ * run a collision with a segment
+ */
+bool Collider::collision(const glm::vec3& start, const glm::vec3& end)
+{
+	const glm::mat4& inverseWorldMatrix = *m_inverseWorldMatrix;
+	glm::vec3 p1 = glm::vec3(inverseWorldMatrix * glm::vec4(start, 1.0));
+	glm::vec3 p2 = glm::vec3(inverseWorldMatrix * glm::vec4(end, 1.0));
+
+	GameEngine::AABBoxTree* pAabbTree = static_cast<GameEngine::AABBoxTree*>(m_source);
+
+	glm::vec3 const* vertices_gs = pAabbTree->vertices();
+	uint32_t nbVertices = pAabbTree->nbVertices();
+	glm::vec3 collision;
+
+	for (unsigned int i = 0; i < nbVertices; i += 3) {
+		if (testSensor(inverseWorldMatrix,
+			p1, p2,
+			vertices_gs[i], vertices_gs[i + 1], vertices_gs[i + 2],
+			collision)) {
+			return true;
+		}
+	}
+
+	return false;
 }

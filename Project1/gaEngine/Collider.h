@@ -60,7 +60,7 @@ namespace GameEngine
 		static bool warpThroughAABBTree(const Collider& aabbtree,
 			const glm::vec3& position,
 			const glm::vec3& old_position,
-			glm::vec3& collision);
+			std::vector<gaCollisionPoint>& collisions);
 
 	public:
 		Collider(void) {};									// empty collider
@@ -86,10 +86,13 @@ namespace GameEngine
 			const glm::vec3& forward, 
 			const glm::vec3& down,
 			std::vector<gaCollisionPoint>& collisions);		// run a collision test between 2 colliders
+		bool collision(const glm::vec3& start,
+			const glm::vec3& end);							// run a collision with a segment
+
 		bool warpThrough(const Collider& source,
 			const glm::vec3& position,
 			const glm::vec3& old_position,
-			glm::vec3& collision);							// check if the entity moved so fast it went trough another one
+			std::vector<gaCollisionPoint>& collisions);		// check if the entity moved so fast it went trough another one
 	};
 }
 

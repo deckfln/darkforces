@@ -95,7 +95,7 @@ bool gaEntity::collide(gaEntity* entity,
 /**
  * extended collision using colliders
  */
-bool gaEntity::collide(GameEngine::Collider collider, 
+bool gaEntity::collide(const GameEngine::Collider& collider, 
 	const glm::vec3& forward,
 	const glm::vec3& down,
 	std::vector<gaCollisionPoint>& collisions)
@@ -106,19 +106,15 @@ bool gaEntity::collide(GameEngine::Collider collider,
 /**
  * check if the entity moved so fast it went trough another one
  */
-bool gaEntity::warpThrough(GameEngine::Collider collider, const glm::vec3& old_position, glm::vec3& collision)
+bool gaEntity::warpThrough(const GameEngine::Collider& collider, 
+	const glm::vec3& old_position, 
+	std::vector<gaCollisionPoint>& collisions)
 {
 	glm::vec3 center = m_worldBounding.center();
 	glm::vec3 d = center - position();
 	glm::vec3 old_center = old_position + d;
 
-	bool b  = m_collider.warpThrough(collider, center, old_center, collision);
-
-	if (b) {
-		collision = collision - d;
-	}
-
-	return b;
+	return m_collider.warpThrough(collider, center, old_center, collisions);
 }
 
 /**

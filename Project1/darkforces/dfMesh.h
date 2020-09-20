@@ -131,7 +131,7 @@ public:
 	void zOrder(int z);
 	void updateGeometryTextures(int start, int nb);
 	int nbVertices(void);									// current vertices on the geometry
-	glm::vec3 const* vertice(uint32_t index);				// address of the vertices
+	std::vector<glm::vec3>* vertice(void);					// address of the vertices
 	void name(std::string& name);
 
 	void moveVertices(glm::vec3& center);

@@ -133,6 +133,14 @@ bool dfSuperSector::collisionSegmentTriangle(const glm::vec3& p, const glm::vec3
 }
 
 /**
+ * if the segment collide with the sector
+ */
+bool dfSuperSector::collide(const glm::vec3& start, const glm::vec3& end)
+{
+	return m_collider.collision(start, end);
+}
+
+/**
  * parse all portals to find the smalled adjacent
  */
 dfSuperSector* dfSuperSector::smallestAdjoint(void)

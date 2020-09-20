@@ -59,7 +59,7 @@ const GameEngine::AABBoxTree& dfMesh::modelAABB(void)
 			m_modelAABB.extend(vertice);
 		}
 
-		m_modelAABB.geometry(&m_vertices[0], m_vertices.size());
+		m_modelAABB.geometry(&m_vertices, 0, m_vertices.size());
 	}
 
 	return m_modelAABB;
@@ -124,13 +124,9 @@ int dfMesh::nbVertices(void)
 /**
  * address of the vertex
  */
-glm::vec3 const* dfMesh::vertice(uint32_t index)
+std::vector<glm::vec3> *dfMesh::vertice(void)
 {
-	if (index > m_pVertices->size()) {
-		return nullptr;
-	}
-
-	return &m_pVertices->at(index);
+	return m_pVertices;
 }
 
 /**
@@ -711,7 +707,7 @@ GameEngine::ComponentMesh* dfMesh::buildMesh(void)
 	m_mesh->set_name(m_name);
 	
 	// record the full size of the geometry
-	m_modelAABB.geometry(&m_vertices[0], size);
+	m_modelAABB.geometry(&m_vertices, 0, size);
 	return m_mesh;
 }
 
