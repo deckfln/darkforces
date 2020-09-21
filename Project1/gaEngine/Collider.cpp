@@ -598,9 +598,6 @@ bool Collider::collision_cylinder_aabb_tree(const Collider& cylinder,
 	glm::vec3 intersection_ws;
 	fwAABBox triangle;
 
-	vertices_gs = pAabbTree->vertices();
-	nbVertices = pAabbTree->nbVertices();
-
 	for (auto aabb : hits) {
 		vertices_gs = aabb->vertices();
 		nbVertices = aabb->nbVertices();

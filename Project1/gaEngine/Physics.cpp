@@ -363,7 +363,7 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 
 					// if we are hitting a low corner of the cylinder, we might be able to walk over
 					// so discard the collision
-					if (deltaY > 0 && deltaY < 0.101f) {
+					if (deltaY > 0 && deltaY < 0.201f) {
 						continue;
 					}
 
@@ -496,7 +496,7 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 					m_remove.push_back(entity->name());
 					m_ballistics[entity->name()].m_inUse = false;
 
-					tranform.m_position.y = nearest_ground->m_position.y;
+					tranform.m_position.y = nearest_ground->m_triangle[0].y;
 					actions.push(
 						Action(entity, gaMessage::Flag::PUSH_ENTITIES)
 					);	// fix the entity altitude
