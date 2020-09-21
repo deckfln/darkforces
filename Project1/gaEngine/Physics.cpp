@@ -81,9 +81,6 @@ void Physics::testEntities(gaEntity* entity, const Transform& tranform, std::vec
 	for (auto entry : m_world->m_entities) {
 		for (auto ent : entry.second) {
 			if (ent != entity && entity->collideAABB(ent->worldAABB())) {
-				if (ent->name() == "elev3-5") {
-					printf("Physics::testEntities\n");
-				}
 				size = collisions.size();
 				if (entity->collide(ent, tranform.m_forward, tranform.m_downward, collisions)) {
 					for (auto i = size; i < collisions.size(); i++) {

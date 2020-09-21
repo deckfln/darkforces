@@ -30,6 +30,9 @@ void ComponentMesh::dispatchMessage(gaMessage* message)
 			translate(position);
 		}
 		else {
+			translate(m_entity->position());
+			rotate(m_entity->quaternion());
+			set_scale(m_entity->get_scale());
 			worldMatrix(m_entity->worldMatrix(),
 				m_entity->inverseWorldMatrix()
 			);
