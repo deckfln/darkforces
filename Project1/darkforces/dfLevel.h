@@ -92,7 +92,6 @@ public:
 	std::vector<dfSector*>& sectorsID(void) { return m_sectorsID; };
 	std::vector<dfBitmap*>& textures(void) { return m_bitmaps; };
 	dfPalette* palette(void) { return m_palette; };
-	bool checkEnvironement(fwCylinder& bounding, glm::vec3& direction, glm::vec3& intersection, std::list<gaCollisionPoint>& collisions);
 	static void level2gl(const glm::vec3& source, glm::vec3& target);
 	static void level2gl(glm::vec3& source);
 	static void level2gl(fwCylinder& source, fwCylinder& target);

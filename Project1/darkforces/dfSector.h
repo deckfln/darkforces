@@ -136,10 +136,6 @@ public:
 
 	bool inAABBox(const glm::vec3& position);					// quick test point inside AABB
 	bool collideAABB(const fwAABBox& box);				// quick test to find AABB collision
-	virtual bool checkCollision(fwCylinder& bounding,
-		glm::vec3& direction,
-		glm::vec3& intersection,
-		std::list<gaCollisionPoint>& collisions);		// extended collision test after a sucessfull AABB collision
 
 	void ceiling(float z);
 
@@ -181,7 +177,6 @@ public:
 
 	void event(int event_mask);
 	void removeHollowWalls(void);
-	bool checkCollision(float step, glm::vec3& current, glm::vec3& target, float height, float radius, glm::vec3& collision);
 
 	void wallVertices(int start, int len) { m_wallVerticesStart = start, m_wallVerticesLen = len; };
 	void floorVertices(int start, int len) { m_floorVerticesStart = start, m_floorVerticesLen = len; };

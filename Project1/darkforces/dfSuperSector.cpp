@@ -88,51 +88,6 @@ bool dfSuperSector::collideAABB(const fwAABBox& box)
 }
 
 /**
- * extended segment collision test after a successful AABB collision
- */
-bool dfSuperSector::collisionSegmentTriangle(const glm::vec3& p, const glm::vec3& q, std::list<gaCollisionPoint>& collisions)
-{
-	if (m_dfmesh == nullptr) {
-#ifdef DEBUG
-		gaDebugLog(LOW_DEBUG, "dfSuperSector::collisionSegmentTriangle", m_name + " has no mesh");
-		return false;
-#endif
-	}
-
-	// Find the exact sectors the start and end points are
-	dfSector* subSectorStart = nullptr;
-	dfSector* subSectorEnd = nullptr;
-
-	for (auto sector: m_sectors) {
-		if (sector->isPointInside(p, false)) {
-			subSectorStart = sector;
-		}
-		if (sector->isPointInside(q, false)) {
-			subSectorEnd = sector;
-		}
-	}
-
-	// do a limited search to the triangles in the sub-sectors
-	if (subSectorStart && subSectorEnd) {
-		if (subSectorStart == subSectorEnd) {
-			// if start and end are on the same sector
-			m_dfmesh->collisionSegmentTriangle(p, q, collisions, subSectorStart->firstVertex(), subSectorStart->nbVertices());
-		}
-		else {
-			// 2 sectors
-			m_dfmesh->collisionSegmentTriangle(p, q, collisions, subSectorStart->firstVertex(), subSectorStart->nbVertices());
-			m_dfmesh->collisionSegmentTriangle(p, q, collisions, subSectorEnd->firstVertex(), subSectorEnd->nbVertices());
-		}
-	}
-	else {
-		// didn't spot an exact sector
-		m_dfmesh->collisionSegmentTriangle(p, q, collisions);
-	}
-
-	return collisions.size() != 0;
-}
-
-/**
  * if the segment collide with the sector
  */
 bool dfSuperSector::collide(const glm::vec3& start, const glm::vec3& end)

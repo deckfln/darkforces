@@ -602,44 +602,6 @@ void dfLevel::draw(fwCamera* camera, fwScene* scene)
 }
 
 /**
- * Check move against any of the level component, static (wall, floor, ceiling) and dynamic
- */
-bool dfLevel::checkEnvironement(fwCylinder& bounding, glm::vec3& direction, glm::vec3& intersection, std::list<gaCollisionPoint>& collisions)
-{
-	// us the center of the cylinder to search for the sector
-	glm::vec3 p = bounding.position();	
-	p.y += bounding.height() / 2.0f;
-
-	dfSector* currentSector = findSector(p);
-	if (!currentSector) {
-		return false;
-	}
-
-	// convert glSpace to dfSpace
-	fwCylinder dfCurrent;
-	glm::vec3 dfIntersection;
-	gl2level(bounding, dfCurrent);
-
-	glm::vec3 dfDirection;
-	gl2level(direction, dfDirection);
-
-	// check against static walls, floor and ceiling
-	if (currentSector->checkCollision(dfCurrent, dfDirection, dfIntersection, collisions)) {
-		for (auto& collision : collisions) {
-			// convert back to glSpace
-			level2gl(collision.m_position);
-
-			if (collision.m_location == fwCollisionLocation::FRONT) {
-				// if we are hitting a wall there is no need to check the elevators
-				return true;
-			}
-		}
-	}
-
-	return collisions.size() != 0;
-}
-
-/**
  * Convert level space to opengl space
  */
 void dfLevel::level2gl(const glm::vec3& level, glm::vec3& gl)

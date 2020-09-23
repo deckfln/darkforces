@@ -386,3 +386,116 @@ bool Framework::IntersectionSphereLine(const glm::vec3& center,
 
 	return true;
 }
+
+/**
+ * compute the intersection of 2 segments AB et CD
+ * https://www.developpez.net/forums/d369370/applications/developpement-2d-3d-jeux/algo-intersection-2-segments/
+ */
+bool Framework::segment2segment(glm::vec2& A, glm::vec2& B, glm::vec2& C, glm::vec2& D, glm::vec2& result)
+{
+	float Ax = A.x;
+	float Ay = A.y;
+	float Bx = B.x;
+	float By = B.y;
+	float Cx = C.x;
+	float Cy = C.y;
+	float Dx = D.x;
+	float Dy = D.y;
+
+	float Sx;
+	float Sy;
+
+	if (Ax == Bx)
+	{
+		if (Cx == Dx) return false;
+		else
+		{
+			float pCD = (Cy - Dy) / (Cx - Dx);
+			Sx = Ax;
+			Sy = pCD * (Ax - Cx) + Cy;
+		}
+	}
+	else
+	{
+		if (Cx == Dx)
+		{
+			float pAB = (Ay - By) / (Ax - Bx);
+			Sx = Cx;
+			Sy = pAB * (Cx - Ax) + Ay;
+		}
+		else
+		{
+			float pCD = (Cy - Dy) / (Cx - Dx);
+			float pAB = (Ay - By) / (Ax - Bx);
+			float oCD = Cy - pCD * Cx;
+			float oAB = Ay - pAB * Ax;
+			Sx = (oAB - oCD) / (pCD - pAB);
+			Sy = pCD * Sx + oCD;
+		}
+	}
+	if ((Sx < Ax && Sx < Bx) | (Sx > Ax && Sx > Bx) | (Sx < Cx && Sx < Dx) | (Sx > Cx && Sx > Dx)
+		| (Sy < Ay && Sy < By) | (Sy > Ay && Sy > By) | (Sy < Cy && Sy < Dy) | (Sy > Cy && Sy > Dy)) return false;
+
+	result.x = Sx;
+	result.y = Sy;
+	return true;
+}
+
+
+/**
+ * compute the intersection of 1 segment AB and a circle C,r
+ * https://stackoverflow.com/questions/1073336/circle-line-segment-move-detection-algorithm
+ */
+bool Framework::fat_point_collides_segment(glm::vec2& A, glm::vec2& B, glm::vec2& C, float r, glm::vec2& result)
+{
+	glm::vec2 s0s1 = B - A;
+	glm::vec2 s0qp = C - A;
+	float rSqr = r * r;
+
+	auto a = glm::dot(s0s1, s0s1);
+	//if( a != 0 ) // if you haven't zero-length segments omit this, as it would save you 1 _mm_comineq_ss() instruction and 1 memory fetch
+	{
+		auto b = glm::dot(s0s1, s0qp);
+		auto t = b / a; // length of projection of s0qp onto s0s1
+		//std::cout << "t = " << t << "\n";
+		if ((t >= 0) && (t <= 1)) // 
+		{
+			auto c = glm::dot(s0qp, s0qp);
+			auto r2 = c - a * t * t;
+			if (r2 <= rSqr) {
+				result = s0s1 * t + A;
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
+/**
+ * return the move point of a circle with a segment in 2D
+ */
+bool Framework::CircLine(glm::vec2& A, glm::vec2& B, glm::vec2& C, float r, glm::vec2& result)
+{
+	glm::vec2 AC = C - A;
+	glm::vec2 AB = B - A;
+	float ab2 = glm::dot(AB, AB);
+	float acab = glm::dot(AC, AB);
+	float t = acab / ab2;
+
+	if (t < 0.0)
+		t = 0.0;
+	else if (t > 1.0)
+		t = 1.0;
+
+	//P = A + t * AB;
+	result = AB * t + A;
+
+	glm::vec2 H = result - C;
+	float h2 = glm::dot(H, H);
+	float r2 = r * r;
+
+	if (h2 > r2)
+		return false;
+	else
+		return true;
+}

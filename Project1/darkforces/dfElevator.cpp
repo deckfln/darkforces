@@ -806,43 +806,6 @@ void dfElevator::keys(std::string& key)
 	}
 }
 
-/**
- * extended collision test after a successful AABB collision
- * test against all vertices of the dfMesh it is based on
- */
-bool dfElevator::checkCollision(fwCylinder& bounding, glm::vec3& direction, glm::vec3& intersection, std::list<gaCollisionPoint>& collisions)
-{
-	// only test the elevator mesh if the super-sector it is bind to is visible
-	// and if the play Z (lg space) in between the vertical elevator extend (level space)
-	glm::vec3 plevel;
-	glm::vec3 target = bounding.position() + direction;
-	m_parent->gl2level(target, plevel);
-
-	float floor, ceiling;
-
-	if (m_pSector) {
-		floor = m_pSector->currentFloorAltitude();
-		ceiling = m_pSector->ceiling();
-	}
-	else {
-		floor = -1000;
-		ceiling = 1000;
-	}
-
-	/*
-	if (m_name == "red_door") {
-		printf("dfLogicElevator::checkCollision\n");
-	}
-	*/
-	// Hack to deal with sector elev3-1. The plateform is physically impossible, there is not enough space
-	// from the top to the bottom where there is sector 149
-	if (m_mesh && m_mesh->visible() && plevel.z > (m_zmin - 4.0) && plevel.z < m_zmax && plevel.z < ceiling) {
-		return m_mesh->checkCollision(bounding, direction, intersection, m_name, collisions);
-	}
-
-	return false;
-}
-
 dfElevator::~dfElevator(void)
 {
 	for (auto stop : m_stops) {

@@ -133,11 +133,6 @@ public:
 	void addSign(dfSign*);
 	void dispatchMessage(gaMessage* message);
 
-	bool checkCollision(fwCylinder& bounding,
-		glm::vec3& direction,
-		glm::vec3& intersection,
-		std::list<gaCollisionPoint>& collisions) override;		//extended collision test after a successful AABB collision
-
 	void getMessagesToSectors(std::list<std::string>& sectors);
 	void sound(int effect, dfVOC* sound);
 

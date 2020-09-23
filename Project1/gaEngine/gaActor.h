@@ -40,7 +40,6 @@ public:
 		float ankle						// distance from the feet to the ankles (can step over)
 		);
 	bool moveTo(time_t delta, glm::vec3& velocity);
-	bool moveTo_old(time_t delta, glm::vec3& velocity);
 	void rotate(const glm::vec3& direction);
 	float height(void);
 	float radius(void);

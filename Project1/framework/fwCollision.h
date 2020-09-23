@@ -7,6 +7,7 @@
 #pragma once
 
 #include <glm/vec3.hpp>
+#include <glm/vec2.hpp>
 
 enum class fwCollisionLocation {
     NONE,
@@ -101,4 +102,8 @@ namespace Framework
         const glm::vec3& pt0,
         const glm::vec3& pt1,
         glm::vec3& collision);
+
+    bool segment2segment(glm::vec2& A, glm::vec2& B, glm::vec2& C, glm::vec2& D, glm::vec2& result);
+    bool fat_point_collides_segment(glm::vec2& A, glm::vec2& B, glm::vec2& C, float r, glm::vec2& result);
+    bool CircLine(glm::vec2& A, glm::vec2& B, glm::vec2& C, float r, glm::vec2& result);
 }
