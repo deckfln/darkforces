@@ -25,8 +25,12 @@ gaActor::gaActor(
 	m_ankle(ankle),
 	m_eyes(eyes)
 {
-	physical(true);
 	translate(feet);
+
+	m_physical = true;
+	m_canStep = true;
+	m_step = 0.2061f;
+
 	m_modelAABB = fwAABBox(cylinder);
 	updateWorldAABB();
 	m_collider.set(&m_cylinder, &m_worldMatrix, &m_inverseWorldMatrix);

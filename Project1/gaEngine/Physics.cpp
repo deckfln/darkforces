@@ -7,6 +7,7 @@
 #include "gaEntity.h"
 #include "gaCollisionPoint.h"
 #include "gaDebug.h"
+#include "gaActor.h"
 
 #include "../darkforces/dfSuperSector.h"
 
@@ -360,8 +361,10 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 
 					// if we are hitting a low corner of the cylinder, we might be able to walk over
 					// so discard the collision
-					if (deltaY > 0 && deltaY < 0.201f) {
-						continue;
+					if (entity->canStep()) {
+						if(deltaY > 0 && deltaY < static_cast<gaActor*>(entity)->step()) {
+							continue;
+						}
 					}
 
 					if (entity->name() == "player")
@@ -503,19 +506,21 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 							+ " " + std::to_string(tranform.m_position.y)
 							+ " " + std::to_string(tranform.m_position.z));
 				}
-				else if (new_position.y - nearest_ground->m_position.y < 0.101f) {
-					// if there is a step and the entity can step over
-					if (abs(nearest_ground->m_position.y - new_position.y) > EPSILON) {
-						// if more than epsilon, fix the position
-						tranform.m_position.y = nearest_ground->m_position.y;
-						actions.push(
-							Action(entity, gaMessage::Flag::PUSH_ENTITIES)
-						);	// fix the entity altitude
-						fix_y = true;
-						if (entity->name() == "player")
-							gaDebugLog(1, "gaWorld::wantToMove", entity->name() + " fixed ground " + std::to_string(tranform.m_position.x)
-								+ " " + std::to_string(tranform.m_position.y)
-								+ " " + std::to_string(tranform.m_position.z));
+				else if (entity->canStep()) {
+					if (new_position.y - nearest_ground->m_position.y < static_cast<gaActor*>(entity)->step()) {
+						// if there is a step and the entity can step over
+						if (abs(nearest_ground->m_position.y - new_position.y) > EPSILON) {
+							// if more than epsilon, fix the position
+							tranform.m_position.y = nearest_ground->m_position.y;
+							actions.push(
+								Action(entity, gaMessage::Flag::PUSH_ENTITIES)
+							);	// fix the entity altitude
+							fix_y = true;
+							if (entity->name() == "player")
+								gaDebugLog(1, "gaWorld::wantToMove", entity->name() + " fixed ground " + std::to_string(tranform.m_position.x)
+									+ " " + std::to_string(tranform.m_position.y)
+									+ " " + std::to_string(tranform.m_position.z));
+						}
 					}
 				}
 				else {
@@ -525,6 +530,30 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 			}
 			else {
 				// if there is no floor
+
+				// check if there is a at STEP distance below the entity
+				if (entity->canStep()) {
+					float step = static_cast<gaActor*>(entity)->step();
+					glm::vec3 down(new_position.x, new_position.y - step, new_position.z);
+					if (testSectorsVertical(entity, down)) {
+						// we found a floor !
+						tranform.m_position.y -= step;
+						actions.push(
+							Action(entity, gaMessage::Flag::PUSH_ENTITIES)
+						);	
+						
+						// fix the entity altitude and give it another try
+						if (entity->name() == "player")
+							gaDebugLog(1, "gaWorld::wantToMove", entity->name() + " step down to ground " + std::to_string(tranform.m_position.x)
+								+ " " + std::to_string(tranform.m_position.y)
+								+ " " + std::to_string(tranform.m_position.z));
+
+						continue;
+					}
+
+				}
+
+				// OK we definitely need to fall
 				switch (tranform.m_flag) {
 				case gaMessage::Flag::WANT_TO_MOVE_BREAK_IF_FALL:
 					// if the entity wants to be informed of falling

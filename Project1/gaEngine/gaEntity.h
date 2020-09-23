@@ -32,6 +32,7 @@ protected:
 	bool m_physical = false;						// if this entity has a body to checkCollision with
 	bool m_gravity = true;							// does gravity effect the entity
 	bool m_collideSectors = true;					// does the entity collide with sectors
+	bool m_canStep = false;							// can the entity step up or down a stair
 
 	GameEngine::Transform m_transforms;				// transforms to move the object
 
@@ -65,6 +66,7 @@ public:
 	inline const std::string& name(void) { return m_name; };
 	inline bool physical(void) { return m_physical; };
 	inline bool gravity(void) { return m_gravity; };
+	inline bool canStep(void) { return m_canStep; };
 	inline bool collideSectors(void) { return m_collideSectors; };
 	inline const fwAABBox& worldAABB(void) { return m_worldBounding; };
 	inline const fwAABBox& modelAABB(void) { return m_modelAABB; };

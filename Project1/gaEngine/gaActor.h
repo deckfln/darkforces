@@ -22,12 +22,13 @@ class gaActor: public gaEntity
 
 	float m_ankle = 0;							// maximum step the actor can walk up
 	float m_eyes = 0;							// position of the eyes (from the feet)
+	float m_step = 0;							// how up/down can the actor step over
 
 	glm::mat3x3 m_physic=glm::mat3x3(0);
-	time_t m_animation_time = 0;							// start of the physic driven movement
+	time_t m_animation_time = 0;				// start of the physic driven movement
 
 	dfLevel* m_level = nullptr;
-	gaPlayer* m_parent = nullptr;			// parent player
+	gaPlayer* m_parent = nullptr;				// parent player
 
 public:
 	gaActor(
@@ -43,7 +44,8 @@ public:
 	void rotate(const glm::vec3& direction);
 	float height(void);
 	float radius(void);
-	float eyes(void) { return m_eyes; };
+	inline float eyes(void) { return m_eyes; };
+	inline float step(void) { return m_step; };
 	void jump(const glm::vec3& velocity);
 	void bind(dfLevel* level) { m_level = level; };
 	void parent(gaPlayer* parent) { m_parent = parent; };
