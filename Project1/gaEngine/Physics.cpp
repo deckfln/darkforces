@@ -245,7 +245,7 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 			case fwCollisionLocation::BOTTOM:
 				fall = false;
 				if (entity->gravity()) {
-					if (collision.m_position.y > ground) {
+					if (collision.m_position.y < ground) {
 						nearest_ground = &collision;
 						ground = collision.m_position.y;
 					}

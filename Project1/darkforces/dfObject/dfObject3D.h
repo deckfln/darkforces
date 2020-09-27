@@ -28,7 +28,7 @@ class dfObject3D : public dfObject
 	time_t m_lastFrame = 0;			// timestamps of the last frame
 
 public:
-	dfObject3D(df3DO* threedo, glm::vec3& position, float ambient, uint32_t objectID);
+	dfObject3D(df3DO* threedo, const glm::vec3& position, float ambient, uint32_t objectID);
 	void animRotationAxe(int axe);
 	void animRotationSpeed(float s);
 	void pause(bool p) { m_pause = p; };

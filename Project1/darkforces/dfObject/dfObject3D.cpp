@@ -10,11 +10,11 @@
 #include "../dfLevel.h"
 #include "../dfVue.h"
 
-dfObject3D::dfObject3D(df3DO* threedo, glm::vec3& position, float ambient, uint32_t objectID):
+dfObject3D::dfObject3D(df3DO* threedo, const glm::vec3& position, float ambient, uint32_t objectID):
 	dfObject(threedo, position, ambient, OBJECT_3DO, objectID)
 {
 	physical(false);	// in dark forces, 3D objects can be traversed
-	set_scale(glm::vec3(0.1));
+	set_scale(glm::vec3(0.1f));
 
 	addComponent(&m_componentLogic);
 	addComponent(&m_componentMesh);

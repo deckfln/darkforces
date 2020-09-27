@@ -57,6 +57,10 @@ namespace GameEngine
 			const Collider& aabb,
 			std::vector<gaCollisionPoint>& collisions);		// do a cylinder vs AABB
 
+		static bool collision_cylinder_cylinder(const Collider& cylinder1,
+			const Collider& cylinder2,
+			std::vector<gaCollisionPoint>& collisions);		// do a cylinder vs cylinder
+
 		static bool warpThroughAABBTree(const Collider& aabbtree,
 			const glm::vec3& position,
 			const glm::vec3& old_position,

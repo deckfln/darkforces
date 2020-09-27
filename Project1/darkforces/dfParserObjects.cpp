@@ -26,6 +26,8 @@
 #include "dfLevel.h"
 #include "dfComponent/dfComponentLogic.h"
 
+#include "dfObject/dfObject3D/MouseBot.h"
+
 /*
 DIFF	EASY	MED	HARD
 -3		X		X	X
@@ -46,6 +48,71 @@ static bool g_difficultyTable[][3] = {
 	{0, 0, 1}
 };
 
+/**
+ * find the type of an object
+ */
+static uint32_t objectType(const GameEngine::ParserExpression& body)
+{
+	for (auto& component : body.m_children) {
+		switch (component.m_children[0].m_expression) {
+		case E_TYPE:
+		case E_LOGIC: {
+			const GameEngine::ParserExpression& logicType = component.m_children[0].m_children[2].m_children[0];
+			switch (logicType.m_expression) {
+			case O_PLAYER:
+				return O_PLAYER;
+			case O_PLANS:
+				return O_PLANS;
+			case E_ITEM: {
+				const GameEngine::ParserExpression& item = component.m_children[0].m_children[2].m_children[0].m_children[0];
+				switch (item.m_expression) {
+				case E_SHIELD:
+					return E_SHIELD;
+				case E_ENERGY:
+					return E_ENERGY;
+				}
+				break;
+			}
+			case O_SCENERY:
+				return O_SCENERY;
+			case O_BATTERY:
+				return O_BATTERY;
+			case O_STORM1:
+				return O_STORM1;
+			case O_OFFICERR:
+			case I_OFFICER:
+				return I_OFFICER;
+			case O_MOUSEBOT:
+				return O_MOUSEBOT;
+			case O_INT_DROID:
+				return O_INT_DROID;
+			case O_MEDKIT:
+				return O_MEDKIT;
+			case O_COMMANDO:
+				return O_COMMANDO;
+			case O_SHIELD:
+				return O_SHIELD;
+			case O_TROOP:
+				return O_TROOP;
+			case O_SUPERCHARGE:
+				return O_SUPERCHARGE;
+			case O_LIFE:
+				return O_LIFE;
+			case O_KEY:
+				return O_KEY;
+			case O_GOGGLES:
+				return O_GOGGLES;
+			case O_RIFLE:
+				return O_RIFLE;
+			case O_REVIVE:
+				return O_REVIVE;
+			}
+		}
+		}
+	}
+
+	return -1;
+}
 
 /**
  * Parse all component of an object
@@ -96,9 +163,6 @@ void dfParserObjects::parseObjectComponent(dfFileSystem* fs, dfObject* object, G
 			object->logic(DF_LOGIC_I_OFFICER | DF_LOGIC_ANIM);
 			((dfSpriteAnimated*)object)->state(DF_STATE_ENEMY_STAY_STILL);
 			break;
-		case O_MOUSEBOT:
-			object->logic(DF_LOGIC_MOUSEBOT);
-			break;
 		case O_INT_DROID:
 			object->logic(DF_LOGIC_INTDROID | DF_LOGIC_ANIM);
 			((dfSpriteAnimated*)object)->state(DF_STATE_ENEMY_STAY_STILL);
@@ -139,7 +203,7 @@ void dfParserObjects::parseObjectComponent(dfFileSystem* fs, dfObject* object, G
 	case E_EYE:
 		break;
 	case E_FLAGS:
-		((dfObject3D*)object)->animRotationAxe(component.m_children[2].m_token->m_vvalue);
+		((dfObject3D*)object)->animRotationAxe((int)component.m_children[2].m_token->m_vvalue);
 		break;
 	case E_D_YAW:
 		((dfObject3D*)object)->animRotationSpeed(component.m_children[2].m_token->m_vvalue);
@@ -177,7 +241,7 @@ void dfParserObjects::parseObject(dfFileSystem* fs, GameEngine::ParserExpression
 
 		// extract attributes
 
-		int data = attributes.m_children[0].m_children[2].m_token->m_vvalue;
+		int data = (int)attributes.m_children[0].m_children[2].m_token->m_vvalue;
 		GameEngine::ParserExpression& e_position = attributes.m_children[1];
 		glm::vec3 position(
 			-e_position.m_children[0].m_children[2].m_token->m_vvalue,
@@ -191,7 +255,7 @@ void dfParserObjects::parseObject(dfFileSystem* fs, GameEngine::ParserExpression
 			e_rotation.m_children[2].m_children[2].m_token->m_vvalue
 		);
 
-		int difficulty = attributes.m_children[3].m_children[2].m_token->m_vvalue;
+		int difficulty = (int)attributes.m_children[3].m_children[2].m_token->m_vvalue;
 
 		// ignore objects of higher difficulty
 		int y = Game.difficulty();
@@ -215,6 +279,7 @@ void dfParserObjects::parseObject(dfFileSystem* fs, GameEngine::ParserExpression
 
 		// create the object
 		dfObject* obj=nullptr;
+		uint32_t type = objectType(body);
 
 		switch (mclass.m_expression) {
 		case O_SPRITE: {
@@ -225,7 +290,14 @@ void dfParserObjects::parseObject(dfFileSystem* fs, GameEngine::ParserExpression
 		}
 		case O_3D: {
 			df3DO* tdo = (df3DO*)g_gaWorld.getModel(m_t3DOs[data]);
-			obj = new dfObject3D(tdo, position, ambient, objectID);
+
+			switch (type) {
+			case O_MOUSEBOT:
+				obj = new DarkForces::MouseBot(tdo, position, ambient, objectID);
+				break;
+			default:
+				obj = new dfObject3D(tdo, position, ambient, objectID);
+			}
 			break;
 		}
 		case O_FRAME: {
@@ -269,7 +341,6 @@ void dfParserObjects::parseObject(dfFileSystem* fs, GameEngine::ParserExpression
 void dfParserObjects::parse(GameEngine::Parser& parser, dfFileSystem* fs, dfPalette* palette, dfLevel* level)
 {
 	GameEngine::ParserExpression* expression;
-	GameEngine::ParserExpression* sub_expression;
 
 	int currentWax = 0;
 	int currentFME = 0;
@@ -288,7 +359,7 @@ void dfParserObjects::parse(GameEngine::Parser& parser, dfFileSystem* fs, dfPale
 
 		case E_PODS: {
 			// load all 3DO models
-			m_t3DOs.resize(expression->m_children[1].m_token->m_vvalue);
+			m_t3DOs.resize((size_t)expression->m_children[1].m_token->m_vvalue);
 			for (auto& expr : expression->m_children[2].m_children) {
 				df3DO* threeDO = new df3DO(fs, palette, expr.m_children[2].m_token->m_tvalue);
 				g_gaWorld.addModel(threeDO);
@@ -298,7 +369,7 @@ void dfParserObjects::parse(GameEngine::Parser& parser, dfFileSystem* fs, dfPale
 
 		case E_SPRS: {
 			// load all WAX models
-			m_waxes.resize(expression->m_children[1].m_token->m_vvalue);
+			m_waxes.resize((size_t)expression->m_children[1].m_token->m_vvalue);
 			for (auto& expr : expression->m_children[2].m_children) {
 				dfWAX* wax = new dfWAX(fs, palette, expr.m_children[2].m_token->m_tvalue);
 				g_gaWorld.addModel(wax);
@@ -308,7 +379,7 @@ void dfParserObjects::parse(GameEngine::Parser& parser, dfFileSystem* fs, dfPale
 
 		case E_FMES: {
 			// load all FME models
-			m_fmes.resize(expression->m_children[1].m_token->m_vvalue);
+			m_fmes.resize((size_t)expression->m_children[1].m_token->m_vvalue);
 			for (auto& expr : expression->m_children[2].m_children) {
 				dfFME* fme = new dfFME(fs, palette, expr.m_children[2].m_token->m_tvalue);
 				g_gaWorld.addModel(fme);
