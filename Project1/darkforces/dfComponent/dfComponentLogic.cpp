@@ -2,7 +2,6 @@
 
 #include "../../config.h"
 #include "../dfObject.h"
-#include "dfComponentAI.h"
 
 dfComponentLogic::dfComponentLogic() :
 	gaComponent(DF_COMPONENT_LOGIC),
@@ -16,12 +15,6 @@ dfComponentLogic::dfComponentLogic() :
 void dfComponentLogic::logic(int logic)
 {
 	m_logics |= logic;
-
-	if (logic & DF_LOGIC_MOUSEBOT) {
-		m_ai = new dfComponentAI();
-		m_entity->physical(true);
-		m_entity->addComponent(m_ai);
-	}
 }
 
 void dfComponentLogic::dispatchMessage(gaMessage* message)
@@ -82,7 +75,4 @@ void dfComponentLogic::dispatchMessage(gaMessage* message)
 
 dfComponentLogic::~dfComponentLogic()
 {
-	if (m_ai) {
-		delete m_ai;
-	}
 }

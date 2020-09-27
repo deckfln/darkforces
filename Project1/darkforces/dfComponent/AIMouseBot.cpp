@@ -1,4 +1,4 @@
-#include "dfComponentAI.h"
+#include "AIMouseBot.h"
 
 #include <glm/gtx/rotate_vector.hpp>
 #include <glm/gtc/matrix_transform.hpp> 
@@ -9,7 +9,9 @@
 #include "../../gaEngine/gaWorld.h"
 #include "../../gaEngine/gaEntity.h"
 
-dfComponentAI::dfComponentAI():
+using namespace DarkForces;
+
+AIMouseBot::AIMouseBot():
 	gaComponent(DF_COMPONENT_AI)
 {
 	// find the sector the mousebot is running into
@@ -20,7 +22,7 @@ dfComponentAI::dfComponentAI():
 /**
  *
  */
-void dfComponentAI::tryToMove(void)
+void AIMouseBot::tryToMove(void)
 {
 	m_direction = glm::rotateY(m_direction, m_alpha);
 
@@ -54,7 +56,7 @@ void dfComponentAI::tryToMove(void)
 /**
  *
  */
-void dfComponentAI::dispatchMessage(gaMessage* message)
+void AIMouseBot::dispatchMessage(gaMessage* message)
 {
 
 	switch (message->m_action) {
@@ -96,6 +98,6 @@ void dfComponentAI::dispatchMessage(gaMessage* message)
 	}
 }
 
-dfComponentAI::~dfComponentAI()
+AIMouseBot::~AIMouseBot()
 {
 }
