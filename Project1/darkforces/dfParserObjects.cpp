@@ -27,6 +27,7 @@
 #include "dfComponent/dfComponentLogic.h"
 
 #include "dfObject/dfObject3D/MouseBot.h"
+#include "dfObject/dfSprite/dfSpriteAnimated/Enemy.h"
 
 /*
 DIFF	EASY	MED	HARD
@@ -284,7 +285,19 @@ void dfParserObjects::parseObject(dfFileSystem* fs, GameEngine::ParserExpression
 		switch (mclass.m_expression) {
 		case O_SPRITE: {
 			dfWAX* wax = (dfWAX*)g_gaWorld.getModel(m_waxes[data]);
-			obj = new dfSpriteAnimated(wax, position, ambient, objectID);
+
+			switch (type) {
+			case O_STORM1:
+			case O_OFFICERR:
+			case I_OFFICER:
+			case O_INT_DROID:
+			case O_COMMANDO:
+			case O_TROOP:
+				obj = new DarkForces::Enemy(wax, position, ambient, objectID);
+				break;
+			default:
+				obj = new dfSpriteAnimated(wax, position, ambient, objectID);
+			}
 			((dfSpriteAnimated*)obj)->rotation(rotation);
 			break;
 		}

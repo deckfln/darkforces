@@ -79,6 +79,18 @@
     <Filter Include="Fichiers sources\Dark Forces\dfObject\dfObject3D">
       <UniqueIdentifier>{4bd2dc8d-4565-43be-b434-9a80900e43fb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Fichiers d%27en-tête\DarkForces\dfObject\dfSprite">
+      <UniqueIdentifier>{bc5bc72e-268a-49c4-b898-d7e164643582}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers d%27en-tête\DarkForces\dfObject\dfSprite\dfSpriteAnimated">
+      <UniqueIdentifier>{b050ea31-02aa-4fbe-8e2a-8fc7b7fa9bad}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers sources\Dark Forces\dfObject\dfSprite">
+      <UniqueIdentifier>{8565c20d-021e-4ac4-a9ba-080a0d29ef70}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers sources\Dark Forces\dfObject\dfSprite\dfSpriteAnimated">
+      <UniqueIdentifier>{bb1cb4b1-400e-405e-884a-00cfbe387732}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source.cpp">
@@ -512,6 +524,9 @@
     </ClCompile>
     <ClCompile Include="darkforces\dfObject\dfObject3D\MouseBot.cpp">
       <Filter>Fichiers sources\Dark Forces\dfObject\dfObject3D</Filter>
+    </ClCompile>
+    <ClCompile Include="darkforces\dfObject\dfSprite\dfSpriteAnimated\Enemy.cpp">
+      <Filter>Fichiers sources\Dark Forces\dfObject\dfSprite\dfSpriteAnimated</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -958,6 +973,9 @@
     </ClInclude>
     <ClInclude Include="darkforces\dfObject\dfObject3D\MouseBot.h">
       <Filter>Fichiers d%27en-tête\DarkForces\dfObject\dfObject3D</Filter>
+    </ClInclude>
+    <ClInclude Include="darkforces\dfObject\dfSprite\dfSpriteAnimated\Enemy.h">
+      <Filter>Fichiers d%27en-tête\DarkForces\dfObject\dfSprite\dfSpriteAnimated</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
