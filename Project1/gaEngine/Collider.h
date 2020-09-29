@@ -4,6 +4,8 @@
 #include <glm/mat4x4.hpp>
 #include <vector>
 
+#include "../framework/math/Segment.h"
+
 #include "gaCollisionPoint.h"
 
 class fwAABBox;
@@ -20,7 +22,8 @@ namespace GameEngine
 		ELIPSOID,
 		GEOMETRY,
 		AABB_TREE,
-		CYLINDER
+		CYLINDER,
+		SEGMENT
 	};
 
 	class Collider
@@ -61,6 +64,14 @@ namespace GameEngine
 			const Collider& cylinder2,
 			std::vector<gaCollisionPoint>& collisions);		// do a cylinder vs cylinder
 
+		static bool collision_aabbTree_segment(const Collider& cylinder1,
+			const Collider& cylinder2,
+			std::vector<gaCollisionPoint>& collisions);		// do a aabb tree vs segment
+
+		static bool collision_cylinder_segment(const Collider& cylinder1,
+			const Collider& cylinder2,
+			std::vector<gaCollisionPoint>& collisions);		// do a cylinder vs segment
+
 		static bool warpThroughAABBTree(const Collider& aabbtree,
 			const glm::vec3& position,
 			const glm::vec3& old_position,
@@ -86,6 +97,9 @@ namespace GameEngine
 		void set(fwCylinder* modelAABB,
 			glm::mat4* worldMatrix,
 			glm::mat4* inverseWorldMatrix);					// collider based on a cylinder
+		void set(Framework::Segment* segment,
+			glm::mat4* worldMatrix,
+			glm::mat4* inverseWorldMatrix);					// collider based on a segment
 		bool collision(const Collider& source,
 			const glm::vec3& forward, 
 			const glm::vec3& down,

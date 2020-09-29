@@ -45,6 +45,7 @@ public:
 	float radius(void);
 	inline float eyes(void) { return m_eyes; };
 	inline float step(void) { return m_step; };
+	inline const fwCylinder& cylinder(void) { return m_cylinder; };
 	void jump(const glm::vec3& velocity);
 	void bind(dfLevel* level) { m_level = level; };
 	void parent(gaPlayer* parent) { m_parent = parent; };

@@ -7,6 +7,7 @@
 #include "../dfObject/dfSpriteAnimated.h"
 #include "../dfObject.h"
 #include "../dfBullet.h"
+#include "../../gaEngine/gaActor.h"
 
 dfComponentActor::dfComponentActor(void):
 	gaComponent(DF_COMPONENT_ACTOR)
@@ -82,7 +83,10 @@ void dfComponentActor::fire(const glm::vec3& direction)
 {
 	// create a bullet
 	// and add to the world to live its life
-	dfBullet* bullet = new dfBullet(m_entity->position() + glm::vec3(0, 0.3, 0), direction);
+	gaActor* actor = static_cast<gaActor*>(m_entity);
+	dfBullet* bullet = new dfBullet(
+		m_entity->position() + direction * actor->radius(),
+		direction);
 
 	g_gaWorld.addClient(bullet);
 

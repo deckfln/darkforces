@@ -78,6 +78,18 @@ void Collider::set(fwCylinder* cylinder, glm::mat4* worldMatrix, glm::mat4* inve
 }
 
 /**
+ * Collider based on a segment
+ */
+void Collider::set(Framework::Segment* segment, glm::mat4* worldMatrix, glm::mat4* inverseWorldMatrix)
+{
+	m_type = ColliderType::SEGMENT;
+	m_source = segment;
+	m_aabb = nullptr;
+	m_worldMatrix = worldMatrix;
+	m_inverseWorldMatrix = inverseWorldMatrix;
+}
+
+/**
  * check 2 colliders after a successful worldAABB collision detection
  */
 bool Collider::collision(const Collider& source, 
@@ -96,6 +108,9 @@ bool Collider::collision(const Collider& source,
 			return collision_fwAABB_geometry(*this, source, forward, down, collisions);
 		case ColliderType::CYLINDER:
 			break;
+		case ColliderType::SEGMENT:
+			printf("Collider::collision GEOMETRY vs SEGMENT not implemented");
+			break;
 		}
 		break;
 	case ColliderType::AABB_TREE:
@@ -104,12 +119,14 @@ bool Collider::collision(const Collider& source,
 			return collision_fwAABB_gaAABB(source, *this, forward, down, collisions);
 		case ColliderType::AABB_TREE:
 			printf("Collider::collision GA_AABB vs GA_AABB not implemented");
-			return true;
+			break;
 		case ColliderType::GEOMETRY:
 			printf("Collider::collision GA_AABB vs Geometry not implemented");
-			return true;
+			break;
 		case ColliderType::CYLINDER:
 			return collision_cylinder_aabb_tree(source, *this, collisions);
+		case ColliderType::SEGMENT:
+			return collision_aabbTree_segment(*this, source, collisions);
 		}
 		break;
 	case ColliderType::GEOMETRY:
@@ -123,6 +140,9 @@ bool Collider::collision(const Collider& source,
 			return collision_fwAABB_geometry(*this, source, forward, down, collisions);
 		case ColliderType::CYLINDER:
 			return collision_cylinder_geometry(source, *this, collisions);
+		case ColliderType::SEGMENT:
+			printf("Collider::collision GEOMETRY vs SEGMENT not implemented");
+			break;
 		}
 		break;
 	case ColliderType::CYLINDER:
@@ -135,6 +155,25 @@ bool Collider::collision(const Collider& source,
 			return collision_cylinder_geometry(*this, source, collisions);
 		case ColliderType::CYLINDER:
 			return collision_cylinder_cylinder(*this, source, collisions);
+		case ColliderType::SEGMENT:
+			return collision_cylinder_segment(*this, source, collisions);
+		}
+		break;
+	case ColliderType::SEGMENT:
+		switch (source.m_type) {
+		case ColliderType::AABB:
+			printf("Collider::collision SEGMENT vs GEOMETRY not implemented");
+			break;
+		case ColliderType::AABB_TREE:
+			return collision_aabbTree_segment(source, *this, collisions);
+		case ColliderType::GEOMETRY:
+			printf("Collider::collision SEGMENT vs GEOMETRY not implemented");
+			break;
+		case ColliderType::CYLINDER:
+			return collision_cylinder_segment(source , *this, collisions);
+		case ColliderType::SEGMENT:
+			printf("Collider::collision SEGMENT vs SEGMENT not implemented");
+			break;
 		}
 		break;
 	}
@@ -559,7 +598,7 @@ bool Collider::collision_cylinder_geometry(
 	return collisions.size() != 0;
 }
 
-/**
+/******************************************************************************
  * do a fwAABB vs AABBTree (pointing to triangles)
  */
 bool Collider::collision_cylinder_aabb_tree(const Collider& cylinder, 
@@ -896,6 +935,120 @@ bool Collider::collision_cylinder_cylinder(const Collider& cylinder1,
 }
 
 /******************************************************************************
+ * run a collision aabb tree vs segment
+ */
+bool Collider::collision_aabbTree_segment(const Collider& aabbtree, 
+	const Collider& segment, 
+	std::vector<gaCollisionPoint>& collisions)
+{
+	GameEngine::AABBoxTree* pAabbTree = static_cast<GameEngine::AABBoxTree*>(aabbtree.m_source);
+	Framework::Segment* pSegment = static_cast<Framework::Segment*>(segment.m_source);
+
+	// convert segment space (opengl world space) into the geometry space (model space)
+	glm::mat4 mat = *aabbtree.m_inverseWorldMatrix * *segment.m_worldMatrix;
+	glm::vec3 p1 = glm::vec3(mat * glm::vec4(pSegment->m_start, 1.0));
+	glm::vec3 p2 = glm::vec3(mat * glm::vec4(pSegment->m_end, 1.0));
+
+	fwAABBox segment_gs(p1, p2);
+
+	// find the smallest set of gaAABB intersecting with the fwAABB
+	// and test only the included triangles
+	// for each triangle, extract the AABB in geometry space and check collision with the source AABB in geometry space
+	std::vector<GameEngine::AABBoxTree*> hits;
+	if (!pAabbTree->find(segment_gs, hits)) {
+		return false;
+	}
+
+	glm::vec3 const* vertices_gs = pAabbTree->vertices();
+	uint32_t nbVertices = pAabbTree->nbVertices();
+	glm::vec3 collision;
+
+	for (auto aabb : hits) {
+		vertices_gs = aabb->vertices();
+		nbVertices = aabb->nbVertices();
+
+		for (unsigned int i = 0; i < nbVertices; i += 3) {
+			if (testSensor(*aabbtree.m_inverseWorldMatrix,
+				p1, p2,
+				vertices_gs[i], vertices_gs[i + 1], vertices_gs[i + 2],
+				collision)) 
+			{
+				collision = glm::vec3(*aabbtree.m_worldMatrix * glm::vec4(collision, 1.0));
+				collisions.push_back(gaCollisionPoint(fwCollisionLocation::COLLIDE, collision, vertices_gs + i));
+			}
+		}
+	}
+
+	return collisions.size() != 0;
+}
+
+/******************************************************************************
+ * do a cylinder vs segment
+ */
+bool Collider::collision_cylinder_segment(const Collider& cylinder,
+	const Collider& segment, 
+	std::vector<gaCollisionPoint>& collisions)
+{
+	fwCylinder* pCylinder = static_cast<fwCylinder*>(cylinder.m_source);
+	Framework::Segment* pSegment = static_cast<Framework::Segment*>(segment.m_source);
+
+	// convert segment space (opengl world space) into the cylinder space (model space)
+	glm::mat4 mat = *cylinder.m_inverseWorldMatrix * *segment.m_worldMatrix;
+	glm::vec3 p1 = glm::vec3(mat * glm::vec4(pSegment->m_start, 1.0));
+	glm::vec3 p2 = glm::vec3(mat * glm::vec4(pSegment->m_end, 1.0));
+
+	fwAABBox segment_gs(p1, p2);
+
+	glm::vec3 ellipsoid(pCylinder->radius(), pCylinder->height() / 2.0f, pCylinder->radius());
+
+	// deform the model_space to make the ellipsoid  sphere
+	glm::vec3 ellipsoid_space = glm::vec3(1.0 / ellipsoid.x, 1.0 / ellipsoid.y, 1.0 / ellipsoid.z);
+
+	// and move the segment accordingly
+	p1 *= ellipsoid_space;
+	p2 *= ellipsoid_space;
+	p2.y--;
+	p1.y--;	// move the center down
+
+	/*
+	float d1 = glm::length2(p1);
+	float d2 = glm::length2(p2);
+	if (d1 <= 1.0f || d2 <= 1.0f) {
+		// if either start or end is inside the sphere
+
+	}
+	else {
+		// project the center (0,0) of the ellipsoid on the line
+		glm::vec3 ap = p1;
+		glm::vec3 ab = p2 - p1;
+		glm::vec3 p = p1 + glm::dot(ap, ab) / glm::dot(ab, ab) * ab;
+
+		if (glm::length2(p) < 1.0f) {
+
+		}
+	}
+	*/
+	glm::vec3 position1, position2;
+	glm::vec3 normal1, normal2;
+	glm::vec3 center(0);
+	if (glm::intersectLineSphere(p1, p2,
+		center,
+		1.0f,
+		position1, normal1,
+		position2, normal2)) 
+	{
+		position1++;	// move the center up
+		position1 /= ellipsoid_space;
+
+		position1 = glm::vec3(*cylinder.m_worldMatrix * glm::vec4(position1, 1.0));
+
+		collisions.push_back(gaCollisionPoint(fwCollisionLocation::COLLIDE, position1, nullptr));
+	}
+
+	return collisions.size() != 0;
+}
+
+/******************************************************************************
  * run a collision with a segment
  */
 bool Collider::collision(const glm::vec3& start, const glm::vec3& end)
@@ -905,17 +1058,31 @@ bool Collider::collision(const glm::vec3& start, const glm::vec3& end)
 	glm::vec3 p2 = glm::vec3(inverseWorldMatrix * glm::vec4(end, 1.0));
 
 	GameEngine::AABBoxTree* pAabbTree = static_cast<GameEngine::AABBoxTree*>(m_source);
+	fwAABBox segment_gs(p1, p2);
+
+	// find the smallest set of gaAABB intersecting with the fwAABB
+	// and test only the included triangles
+	// for each triangle, extract the AABB in geometry space and check collision with the source AABB in geometry space
+	std::vector<GameEngine::AABBoxTree*> hits;
+	if (!pAabbTree->find(segment_gs, hits)) {
+		return false;
+	}
 
 	glm::vec3 const* vertices_gs = pAabbTree->vertices();
 	uint32_t nbVertices = pAabbTree->nbVertices();
 	glm::vec3 collision;
 
-	for (unsigned int i = 0; i < nbVertices; i += 3) {
-		if (testSensor(inverseWorldMatrix,
-			p1, p2,
-			vertices_gs[i], vertices_gs[i + 1], vertices_gs[i + 2],
-			collision)) {
-			return true;
+	for (auto aabb : hits) {
+		vertices_gs = aabb->vertices();
+		nbVertices = aabb->nbVertices();
+
+		for (unsigned int i = 0; i < nbVertices; i += 3) {
+			if (testSensor(inverseWorldMatrix,
+				p1, p2,
+				vertices_gs[i], vertices_gs[i + 1], vertices_gs[i + 2],
+				collision)) {
+				return true;
+			}
 		}
 	}
 

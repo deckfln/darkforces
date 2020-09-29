@@ -99,17 +99,18 @@ void Physics::testEntities(gaEntity* entity, const Transform& tranform, std::vec
  */
 void Physics::testSectors(gaEntity* entity, const Transform& tranform, std::vector<gaCollisionPoint>& collisions)
 {
-	// elevators don't need to be checked against sectors
 	uint32_t size;
 	if (entity->collideSectors()) {
 		for (auto sector : m_world->m_sectors) {
 			size = collisions.size();
-			if (sector->collideAABB(entity->worldAABB()) &&
-				entity->collide(sector->collider(), tranform.m_forward, tranform.m_downward, collisions))
+			if (sector->collideAABB(entity->worldAABB()))
 			{
-				for (auto i = size; i < collisions.size(); i++) {
-					collisions[i].m_source = sector;
-					collisions[i].m_class = gaCollisionPoint::Source::SECTOR;
+				if (entity->collide(sector->collider(), tranform.m_forward, tranform.m_downward, collisions))
+				{
+					for (auto i = size; i < collisions.size(); i++) {
+						collisions[i].m_source = sector;
+						collisions[i].m_class = gaCollisionPoint::Source::SECTOR;
+					}
 				}
 			}
 		}
@@ -193,7 +194,7 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 		glm::vec3 new_position = entity->position();
 		glm::vec3 direction = glm::normalize(old_position - new_position);
 
-		if (entity->name() == "player")
+		if (entity->name() == "bullet(0)")
 			gaDebugLog(1, "gaWorld::wantToMove", entity->name() + " to " + std::to_string(tranform.m_position.x)
 				+ " " + std::to_string(tranform.m_position.y)
 				+ " " + std::to_string(tranform.m_position.z));
@@ -256,20 +257,26 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 				// cylinder collision (player)
 				// position of the intersection compared to the direction
 				const fwAABBox& worldAABB = entity->worldAABB();
+				bool isFloor = false;
+				bool isCelling = false;
+				bool isFacing = true;
+				float facing = false;
 
-				// check if the triangle is horizontal or vertical
-				glm::vec3 normal = glm::triangleNormal(
-					collision.m_triangle[0],
-					collision.m_triangle[1],
-					collision.m_triangle[2]
+				if (collision.m_triangle != nullptr) {
+					// check if the triangle is horizontal or vertical
+					glm::vec3 normal = glm::triangleNormal(
+						collision.m_triangle[0],
+						collision.m_triangle[1],
+						collision.m_triangle[2]
 					);
-				float horizontal = glm::dot(glm::vec3(0, 1, 0), normal);
-				bool isFloor = horizontal > 0.99;
-				bool isCelling = horizontal < -0.99;
+					float horizontal = glm::dot(glm::vec3(0, 1, 0), normal);
+					isFloor = horizontal > 0.99;
+					isCelling = horizontal < -0.99;
 
-				// check if the triangle is facing the entity
-				float facing = glm::dot(direction, normal);
-				bool isFacing = facing > 0.0f;
+					// check if the triangle is facing the entity
+					facing = glm::dot(direction, normal);
+					isFacing = facing > 0.0f;
+				}
 
 				dTop = worldAABB.m_p1.y - collision.m_position.y;
 

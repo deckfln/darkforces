@@ -44,11 +44,14 @@ dfBullet::dfBullet(const glm::vec3& position, const glm::vec3& direction):
 		g_blaster = new fwGeometryCylinder(bullet_radius, bullet_length, 8, -1);
 		g_blaster->makeStatic();
 	}
-	// the AABOX is just the direction vector
-	m_modelAABB = g_blaster->aabbox();
-
+	
 	// change the collider to a geometry
-	m_collider.set(&m_modelAABB, &m_worldMatrix, &m_inverseWorldMatrix);
+	m_segment.m_start = glm::vec3(0);
+	m_segment.m_end = m_direction * 33.0f / bullet_speed;
+	m_collider.set(&m_segment, &m_worldMatrix, &m_inverseWorldMatrix);
+
+	// the AABOX is just the direction vector multiplied by a 30fps frame
+	m_modelAABB.set(m_segment.m_start, m_segment.m_end);
 
 	m_componentMesh.set(g_blaster, &g_basic);
 	addComponent(&m_componentMesh);

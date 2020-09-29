@@ -216,6 +216,7 @@
     <ClCompile Include="framework\math\fwCylinder.cpp" />
     <ClCompile Include="framework\math\fwPlane.cpp" />
     <ClCompile Include="framework\math\fwSphere.cpp" />
+    <ClCompile Include="framework\math\Segment.cpp" />
     <ClCompile Include="framework\mesh\fwMeshSkinned.cpp" />
     <ClCompile Include="framework\postprocessing\fwPostProcessingBloom.cpp" />
     <ClCompile Include="framework\render\fwRendererDefered.cpp" />
@@ -367,6 +368,7 @@
     <ClInclude Include="framework\math\fwCylinder.h" />
     <ClInclude Include="framework\math\fwPlane.h" />
     <ClInclude Include="framework\math\fwSphere.h" />
+    <ClInclude Include="framework\math\Segment.h" />
     <ClInclude Include="framework\mesh\fwMeshSkinned.h" />
     <ClInclude Include="framework\postprocessing\fwPostProcessingBloom.h" />
     <ClInclude Include="framework\render\fwRendererDefered.h" />

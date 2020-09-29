@@ -45,6 +45,7 @@ public:
 	void set(std::vector<glm::vec3>& vertices);			// build from vertices
 	void set(glBufferAttribute* attribute);				// build from an GL attribute
 	void set(glm::vec3 const *pVertices, int nb);		// build from vertices pointers
+	void set(const glm::vec3& p1, const glm::vec3& p2);	// build from 2 points
 
 	fwAABBox operator+(const glm::vec3& v);
 	fwAABBox& operator+=(const glm::vec3& v);

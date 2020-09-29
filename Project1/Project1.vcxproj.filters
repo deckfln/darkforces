@@ -91,6 +91,12 @@
     <Filter Include="Fichiers sources\Dark Forces\dfObject\dfSprite\dfSpriteAnimated">
       <UniqueIdentifier>{bb1cb4b1-400e-405e-884a-00cfbe387732}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Fichiers d%27en-tête\Framework\math">
+      <UniqueIdentifier>{463a39e8-292e-4dfd-ae5a-7a17e03e4802}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers sources\Framework\math">
+      <UniqueIdentifier>{0ee94ef7-ac78-4118-b770-7fb62d6fae32}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source.cpp">
@@ -527,6 +533,9 @@
     </ClCompile>
     <ClCompile Include="darkforces\dfComponent\AIMouseBot.cpp">
       <Filter>Fichiers sources\Dark Forces\dfComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="framework\math\Segment.cpp">
+      <Filter>Fichiers sources\Framework\math</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -976,6 +985,9 @@
     </ClInclude>
     <ClInclude Include="darkforces\dfComponent\AIMouseBot.h">
       <Filter>Fichiers d%27en-tête\DarkForces\dfComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="framework\math\Segment.h">
+      <Filter>Fichiers d%27en-tête\Framework\math</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

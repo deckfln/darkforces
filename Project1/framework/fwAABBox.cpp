@@ -39,8 +39,7 @@ fwAABBox::fwAABBox(fwSphere& sphere)
 
 fwAABBox::fwAABBox(const glm::vec3& p1, const glm::vec3& p2)
 {
-	m_p = glm::min(p1, p2);
-	m_p1 = glm::max(p1, p2);
+	set(p1, p2);
 }
 
 fwAABBox::fwAABBox(const fwAABBox& source, const glm::mat4& matrix)
@@ -141,6 +140,15 @@ void fwAABBox::set(glm::vec3 const* pVertices, int nb)
 	}
 	m_p = glm::vec3(minX, minY, minZ);
 	m_p1 = glm::vec3(maxX, maxY, maxZ);
+}
+
+/**
+ * build from 2 points
+ */
+void fwAABBox::set(const glm::vec3& p1, const glm::vec3& p2)
+{
+	m_p = glm::min(p1, p2);
+	m_p1 = glm::max(p1, p2);
 }
 
 /**
