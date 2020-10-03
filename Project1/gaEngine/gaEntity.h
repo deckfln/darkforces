@@ -57,11 +57,11 @@ public:
 	gaEntity(int mclass, const std::string& name);
 	gaEntity(int mclass, const std::string& name, const glm::vec3& position);
 
-	int entityID(void) { return m_entityID; };
+	inline int entityID(void) { return m_entityID; };
 	void addComponent(gaComponent* component);			// extend the components of the entity
 
-	bool is(int mclass) { return m_class == m_class; };
-	void physical(bool p) { m_physical = p; };
+	inline bool is(int mclass) { return m_class == mclass; };
+	inline void physical(bool p) { m_physical = p; };
 
 	inline const std::string& name(void) { return m_name; };
 	inline bool physical(void) { return m_physical; };
@@ -69,13 +69,14 @@ public:
 	inline bool canStep(void) { return m_canStep; };
 	inline bool collideSectors(void) { return m_collideSectors; };
 	inline const fwAABBox& worldAABB(void) { return m_worldBounding; };
+	inline void worldAABB(const glm::vec3 p1, glm::vec3 p2) { m_worldBounding.set(p1, p2); };
 	inline const fwAABBox& modelAABB(void) { return m_modelAABB; };
 	inline std::map<std::string, gaEntity*>& sittingOnTop(void) { return m_sittingOnTop; };
 	inline GameEngine::Transform& transform(void) { return m_transforms; };
 	inline GameEngine::Transform* pTransform(void) { return &m_transforms; };
 	inline int defaultCollision(void) { return m_defaultCollision; };
 
-	void superSector(dfSuperSector* s) { m_supersector = s; };
+	inline void superSector(dfSuperSector* s) { m_supersector = s; };
 
 	void set(const std::string& v, void* ptr) { m_attributes[v] = ptr; };
 	void* get(const std::string& v) { return m_attributes[v]; };

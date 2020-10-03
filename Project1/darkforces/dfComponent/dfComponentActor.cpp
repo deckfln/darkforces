@@ -84,9 +84,10 @@ void dfComponentActor::fire(const glm::vec3& direction)
 	// create a bullet
 	// and add to the world to live its life
 	gaActor* actor = static_cast<gaActor*>(m_entity);
-	dfBullet* bullet = new dfBullet(
-		m_entity->position() + direction * actor->radius(),
-		direction);
+	glm::vec3 p = m_entity->position();
+	p.y += actor->height() / 2.0f;
+
+	dfBullet* bullet = new dfBullet(p + direction * actor->radius(), direction);
 
 	g_gaWorld.addClient(bullet);
 

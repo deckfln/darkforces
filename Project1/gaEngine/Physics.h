@@ -77,6 +77,7 @@ namespace GameEngine
 			std::vector<gaCollisionPoint>& collisions);	// test if the entity collide sectors
 		bool testSectorsVertical(gaEntity* entity,
 			const glm::vec3& vertical);
+		void moveBullet(gaEntity* entity, gaMessage* message);
 
 	public:
 		Physics(gaWorld *world);

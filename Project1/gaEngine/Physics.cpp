@@ -9,6 +9,8 @@
 #include "gaDebug.h"
 #include "gaActor.h"
 
+#include "../config.h"
+
 #include "../darkforces/dfSuperSector.h"
 
 using namespace GameEngine;
@@ -157,10 +159,77 @@ static void debugCollision(const gaCollisionPoint& collision, gaEntity* entity, 
 }
 
 /**
+ * Move a bullet
+ */
+void Physics::moveBullet(gaEntity* entity, gaMessage* message)
+{
+	std::vector<gaCollisionPoint> collisions;
+
+	GameEngine::Transform& tranform = entity->transform();
+	glm::vec3 old_position = entity->position();
+
+	entity->pushTransformations();
+	entity->transform(&tranform);
+	glm::vec3 new_position = entity->position();
+	glm::vec3 direction = glm::normalize(old_position - new_position);
+
+	// force the worldAABB based by the bullet movement
+	entity->worldAABB(new_position, old_position);
+
+	// collide against the entities
+	testEntities(entity, tranform, collisions);
+
+	// collide against the sectors
+	testSectors(entity, tranform, collisions);
+
+	for (auto& collision : collisions) {
+		// and we do not force the move
+		// refuse the move and inform both element from the collision
+		entity->popTransformations();				// restore previous position
+
+		if (collision.m_class == gaCollisionPoint::Source::ENTITY) {
+			m_world->sendMessage(
+				static_cast<gaEntity*>(collision.m_source)->name(),
+				entity->name(),
+				gaMessage::Action::COLLIDE,
+				gaMessage::Flag::COLLIDE_ENTITY,
+				nullptr
+			);
+			return;
+		}
+		else {
+			m_world->sendMessage(
+				static_cast<dfSuperSector*>(collision.m_source)->name(),
+				entity->name(),
+				gaMessage::Action::COLLIDE,
+				gaMessage::Flag::COLLIDE_WALL,
+				nullptr
+			);
+			return;
+		}
+	}
+
+	// acknowledge the move
+	m_world->sendMessage(
+		entity->name(),
+		entity->name(),
+		gaMessage::Action::MOVE,
+		0,
+		nullptr
+	);
+}
+
+/**
  * An entity wants to move
  */
 void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 {
+	// bullets are special case
+	if (entity->is(DF_ENTITY_BULLET)) {
+		moveBullet(entity, message);
+		return;
+	}
+
 	std::vector<gaCollisionPoint> collisions;
 
 	struct Action {
@@ -194,7 +263,7 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 		glm::vec3 new_position = entity->position();
 		glm::vec3 direction = glm::normalize(old_position - new_position);
 
-		if (entity->name() == "bullet(0)")
+		if (entity->name() == "player")
 			gaDebugLog(1, "gaWorld::wantToMove", entity->name() + " to " + std::to_string(tranform.m_position.x)
 				+ " " + std::to_string(tranform.m_position.y)
 				+ " " + std::to_string(tranform.m_position.z));
