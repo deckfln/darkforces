@@ -56,8 +56,9 @@ protected:
 
 public:
 	dfModel(const std::string& name, uint32_t myclass, bool collision = false);
-	const fwAABBox& modelAABB(void) { return m_modelAABB; };
-	bool collision(void) { return m_testColision; };
+	inline const fwAABBox& modelAABB(void) { return m_modelAABB; };
+	inline bool collision(void) { return m_testColision; };
+	inline const glm::vec2& sizeGL(void) { return m_size_gl; };
 	fwMesh* drawBoundingBox(void);
 	virtual int textureID(int state, int frame) { return 0; };
 	virtual void spriteModel(GLmodel& model, int id);
