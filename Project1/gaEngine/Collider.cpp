@@ -141,7 +141,7 @@ bool Collider::collision(const Collider& source,
 		case ColliderType::CYLINDER:
 			return collision_cylinder_geometry(source, *this, collisions);
 		case ColliderType::SEGMENT:
-			printf("Collider::collision GEOMETRY vs SEGMENT not implemented");
+			return collision_geometry_segment(*this, source, collisions);
 			break;
 		}
 		break;
@@ -167,10 +167,10 @@ bool Collider::collision(const Collider& source,
 		case ColliderType::AABB_TREE:
 			return collision_aabbTree_segment(source, *this, collisions);
 		case ColliderType::GEOMETRY:
-			printf("Collider::collision SEGMENT vs GEOMETRY not implemented");
+			return collision_geometry_segment(source, *this, collisions);
 			break;
 		case ColliderType::CYLINDER:
-			return collision_cylinder_segment(source , *this, collisions);
+			return collision_cylinder_segment(source, *this, collisions);
 		case ColliderType::SEGMENT:
 			printf("Collider::collision SEGMENT vs SEGMENT not implemented");
 			break;
@@ -928,6 +928,41 @@ bool Collider::collision_cylinder_cylinder(const Collider& cylinder1,
 
 			// inform if the collision point in world space(let the entity decide what to do with the collision)
 			collisions.push_back(gaCollisionPoint(fwCollisionLocation::COLLIDE, intersection_gs, _triangles[i]));
+		}
+	}
+
+	return collisions.size() != 0;
+}
+
+/******************************************************************************
+ * run a collision geometry vs segment
+ */
+bool Collider::collision_geometry_segment(const Collider& geometry,
+	const Collider& segment,
+	std::vector<gaCollisionPoint>& collisions)
+{
+	fwGeometry* pGeometry = static_cast<fwGeometry*>(geometry.m_source);
+	Framework::Segment* pSegment = static_cast<Framework::Segment*>(segment.m_source);
+
+	// convert segment space (opengl world space) into the geometry space (model space)
+	glm::mat4 mat = *geometry.m_inverseWorldMatrix * *segment.m_worldMatrix;
+	glm::vec3 p1 = glm::vec3(mat * glm::vec4(pSegment->m_start, 1.0));
+	glm::vec3 p2 = glm::vec3(mat * glm::vec4(pSegment->m_end, 1.0));
+
+	fwAABBox segment_gs(p1, p2);
+
+	glm::vec3 const* vertices_gs = pGeometry->vertices();
+	uint32_t nbVertices = pGeometry->nbvertices();
+	glm::vec3 collision;
+
+	for (unsigned int i = 0; i < nbVertices; i += 3) {
+		if (testSensor(*geometry.m_inverseWorldMatrix,
+			p1, p2,
+			vertices_gs[i], vertices_gs[i + 1], vertices_gs[i + 2],
+			collision))
+		{
+			collision = glm::vec3(*geometry.m_worldMatrix * glm::vec4(collision, 1.0));
+			collisions.push_back(gaCollisionPoint(fwCollisionLocation::COLLIDE, collision, vertices_gs + i));
 		}
 	}
 

@@ -64,6 +64,10 @@ namespace GameEngine
 			const Collider& cylinder2,
 			std::vector<gaCollisionPoint>& collisions);		// do a cylinder vs cylinder
 
+		static bool collision_geometry_segment(const Collider& geometry,
+			const Collider& segment,
+			std::vector<gaCollisionPoint>& collisions);		// do a aabb tree vs segment
+
 		static bool collision_aabbTree_segment(const Collider& cylinder1,
 			const Collider& cylinder2,
 			std::vector<gaCollisionPoint>& collisions);		// do a aabb tree vs segment
