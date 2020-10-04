@@ -16,9 +16,6 @@
 
 static int g_ids = 0;
 
-const int DF_SHIELD_ENERGY = 100;
-const int DF_ENERGY_ENERGY = 100;
-
 /**
  *
  */
@@ -124,59 +121,36 @@ bool dfObject::update(time_t t)
 }
 
 /**
- *  reaction on a collision with another entity
- */
-void dfObject::collideWith(gaEntity* entity)
-{
-	// extra security
-	if (entity == nullptr) {
-		return;
-	}
-
-	if (m_logics & DF_LOGIC_ITEM_SHIELD) {
-		// ADD ARMOR
-		if (entity->findComponent(DF_COMPONENT_ACTOR)) {
-			// if the collider is a DF_ACTOR
-			// send shield from me to the actor
-			gaMessage* msg = g_gaWorld.sendMessage(
-				m_name,
-				entity->name(),
-				DF_MESSAGE_ADD_SHIELD,
-				DF_SHIELD_ENERGY,
-				nullptr);
-
-			// and remove the object from the scene
-			moveTo(glm::vec3(0));
-		}
-	}
-	else if (m_logics & DF_LOGIC_ITEM_ENERGY) {
-		// ADD ENERGY
-		if (entity->findComponent(DF_COMPONENT_ACTOR)) {
-			// if the collider is a DF_ACTOR
-			// send energy from me to the actor
-			gaMessage* msg = g_gaWorld.sendMessage(
-				m_name,
-				entity->name(),
-				DF_MESSAGE_ADD_ENERGY,
-				DF_ENERGY_ENERGY,
-				nullptr);
-
-			// and remove the object from the scene
-			translate(glm::vec3(0));
-			moveTo(glm::vec3(0));
-		}
-	}
-}
-
-/**
  * object to drop in the scene at the current position
  */
-void dfObject::drop(const std::string& object)
+void dfObject::drop(uint32_t logic)
 {
+	dfSprite* obj=nullptr;
+
 	// constructor of a sprite expects a level space
 	glm::vec3 p;
 	dfLevel::gl2level(position(), p);
-	dfSprite* obj = new dfSprite(object, p, 1.0f, OBJECT_FME);
+	switch (logic) {
+	case DF_LOGIC_DEAD_MOUSE:
+		obj = new dfSprite("DEDMOUSE.FME", p, 1.0f, OBJECT_FME);
+		break;
+	case DF_LOGIC_ITEM_BATTERY:
+		obj = new dfSprite("IBATTERY.FME", p, 1.0f, OBJECT_FME);
+		break;
+	case DF_LOGIC_ITEM_RIFLE:
+		obj = new dfSprite("IST-GUNI.FME", p, 1.0f, OBJECT_FME);
+		break;
+	case DF_LOGIC_ITEM_POWER:
+		obj = new dfSprite("IPOWER.FME", p, 1.0f, OBJECT_FME);
+		break;
+	case DF_LOGIC_ITEM_ENERGY:
+		obj = new dfSprite("IENERGY.FME", p, 1.0f, OBJECT_FME);
+		break;
+	case DF_LOGIC_RED_KEY:
+		obj = new dfSprite("IKEYR.FME", p, 1.0f, OBJECT_FME);
+		break;
+	}
+	obj->logic(logic);
 	g_gaWorld.addClient(obj);
 }
 

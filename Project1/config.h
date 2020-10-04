@@ -17,7 +17,7 @@ enum {
 };
 
 /**
- * Categoty of entities
+ * Category of entities
  */
 enum {
 	DF_ENTITY_OBJECT,	// static objects (armor, energy, rock)
@@ -48,4 +48,8 @@ enum {
 	DF_MESSAGE_END_LOOP,		// the animation loop stopped
 	DF_MESSAGE_DIES,			// the object died
 	DF_MSG_STATE,				// change the state of the object
+	DF_MSG_PICK_RIFLE_AND_BULLETS
 };
+
+const int DF_SHIELD_ENERGY = 100;
+const int DF_ENERGY_ENERGY = 100;

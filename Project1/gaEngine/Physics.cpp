@@ -539,18 +539,36 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 
 					// and we do not force the move
 					// refuse the move and inform both element from the collision
-					entity->popTransformations();				// restore previous position
 
 					if (nearest_collision->m_class == gaCollisionPoint::Source::ENTITY) {
+						gaEntity* collisionWith = static_cast<gaEntity*>(nearest_collision->m_source);
+
+						// ONLY refuse the move if the entity is a physical one
+						if (collisionWith->physical()) {
+							entity->popTransformations();				// restore previous position
+						}
+
+						// always inform the source entity 
 						m_world->sendMessage(
-							static_cast<gaEntity*>(nearest_collision->m_source)->name(),
+							collisionWith->name(),
 							entity->name(),
+							gaMessage::Action::COLLIDE,
+							gaMessage::Flag::COLLIDE_ENTITY,
+							nullptr
+						);
+						// always inform the colliding entity 
+						m_world->sendMessage(
+							entity->name(),
+							collisionWith->name(),
 							gaMessage::Action::COLLIDE,
 							gaMessage::Flag::COLLIDE_ENTITY,
 							nullptr
 						);
 					}
 					else {
+						// sectors always block the movement
+						entity->popTransformations();				// restore previous position
+
 						m_world->sendMessage(
 							static_cast<dfSuperSector*>(nearest_collision->m_source)->name(),
 							entity->name(),
@@ -559,7 +577,7 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 							nullptr
 						);
 					}
-					continue;
+					continue;									// block the move
 				}
 			}
 		}

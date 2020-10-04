@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
 #include <list>
-
+#include <stdint.h>
 #include <glm/vec3.hpp>
 #include <glm/vec4.hpp>
 
@@ -35,7 +35,11 @@ enum {
 	DF_LOGIC_LIFE = 512,
 	DF_LOGIC_REVIVE = 1024,
 	DF_LOGIC_MOUSEBOT = 2048,
-	DF_LOGIC_KEY_TRIGGER = 4096
+	DF_LOGIC_KEY_TRIGGER = 4096,
+	DF_LOGIC_ITEM_RIFLE = 8192,
+	DF_LOGIC_ITEM_POWER = 16384,
+	DF_LOGIC_ITEM_BATTERY = 32732,
+	DF_LOGIC_DEAD_MOUSE = 64536
 };
 
 /**
@@ -128,7 +132,7 @@ public:
 	bool isLogic(int logic);
 	const std::string& model(void);
 	void logic(int logic);
-	void drop(const std::string& object);				// object to drop in the scene at the current position
+	void drop(uint32_t logic);				// object to drop in the scene at the current position
 	dfSector* sector(void) { return m_sector; };
 	void sector(dfSector* s) { m_sector = s; };
 	dfSuperSector* superSector(void) override;
@@ -140,7 +144,6 @@ public:
 	void moveTo(const glm::vec3& position) override;	// update the object position
 	void updateWorldAABB(void) override;				// update the world AABB based on position
 	bool update(time_t t) override;						// update based on timer
-	void collideWith(gaEntity*) override;				// reaction on a collision with another entity
 
 	~dfObject();
 };

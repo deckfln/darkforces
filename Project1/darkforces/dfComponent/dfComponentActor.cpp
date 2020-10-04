@@ -73,6 +73,10 @@ void dfComponentActor::dispatchMessage(gaMessage* message)
 	case DF_MESSAGE_HIT_BULLET:
 		hitBullet(message->m_value);
 		break;
+	case DF_MSG_PICK_RIFLE_AND_BULLETS:
+		addEnergy(message->m_value);
+		//TODO add a weapon to a player
+		//addWeapon(O_RIFLE);
 	}
 }
 
