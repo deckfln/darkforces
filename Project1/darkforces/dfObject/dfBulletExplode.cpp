@@ -14,7 +14,7 @@ dfBulletExplode::dfBulletExplode(const glm::vec3& position, float ambient) :
 	moveTo(m_position_lvl);
 
 	m_loopAnimation = false;
-	state(DF_STATE_ENEMY_MOVE);
+	state(dfState::ENEMY_MOVE);
 }
 
 /**

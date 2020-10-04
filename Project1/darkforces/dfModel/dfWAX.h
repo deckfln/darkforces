@@ -7,6 +7,7 @@
 
 #include "../../framework/fwAABBox.h"
 #include "../dfModel.h"
+#include "../dfObject.h"
 
 class dfFileSystem;
 class dfFrame;
@@ -66,6 +67,6 @@ public:
 	virtual int nextFrame(int state, unsigned int frame);
 	int insertX(void) { return m_insertX; };
 	int insertY(void) { return m_insertY; };
-	const fwAABBox& bounding(int state);
+	const fwAABBox& bounding(dfState state);
 	~dfWAX();
 };

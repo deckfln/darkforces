@@ -42,7 +42,7 @@ bool dfObject::named(std::string name)
 /**
  * Stack up logics
  */
-void dfObject::logic(int logic)
+void dfObject::logic(uint32_t logic)
 {
 	m_logics |= logic;
 
@@ -57,7 +57,7 @@ void dfObject::logic(int logic)
 		lc->logic(logic);
 	}
 
-	if (m_logics & DF_LOGIC_ANIM) {
+	if (m_logics & dfLogic::ANIM) {
 		g_gaWorld.sendMessageDelayed(m_name, m_name, gaMessage::TIMER, 0, nullptr);
 	}
 }
@@ -81,7 +81,7 @@ bool dfObject::is(int type)
 /**
  * test the logic
  */
-bool dfObject::isLogic(int logic)
+bool dfObject::isLogic(uint32_t logic)
 {
 	return (m_logics & logic) != 0;
 }
@@ -131,22 +131,22 @@ void dfObject::drop(uint32_t logic)
 	glm::vec3 p;
 	dfLevel::gl2level(position(), p);
 	switch (logic) {
-	case DF_LOGIC_DEAD_MOUSE:
+	case dfLogic::DEAD_MOUSE:
 		obj = new dfSprite("DEDMOUSE.FME", p, 1.0f, OBJECT_FME);
 		break;
-	case DF_LOGIC_ITEM_BATTERY:
+	case dfLogic::ITEM_BATTERY:
 		obj = new dfSprite("IBATTERY.FME", p, 1.0f, OBJECT_FME);
 		break;
-	case DF_LOGIC_ITEM_RIFLE:
+	case dfLogic::ITEM_RIFLE:
 		obj = new dfSprite("IST-GUNI.FME", p, 1.0f, OBJECT_FME);
 		break;
-	case DF_LOGIC_ITEM_POWER:
+	case dfLogic::ITEM_POWER:
 		obj = new dfSprite("IPOWER.FME", p, 1.0f, OBJECT_FME);
 		break;
-	case DF_LOGIC_ITEM_ENERGY:
+	case dfLogic::ITEM_ENERGY:
 		obj = new dfSprite("IENERGY.FME", p, 1.0f, OBJECT_FME);
 		break;
-	case DF_LOGIC_RED_KEY:
+	case dfLogic::RED_KEY:
 		obj = new dfSprite("IKEYR.FME", p, 1.0f, OBJECT_FME);
 		break;
 	}
@@ -210,7 +210,7 @@ bool dfObject::checkCollision(fwCylinder& bounding, glm::vec3& direction, glm::v
 	collisions.push_back(gaCollisionPoint(fwCollisionLocation::COLLIDE, intersection, nullptr));
 
 	// ALL these objects can be traversed
-	if (isLogic(DF_LOGIC_ITEM_SHIELD | DF_LOGIC_ITEM_ENERGY | DF_LOGIC_LIFE | DF_LOGIC_REVIVE)) {
+	if (isLogic(dfLogic::ITEM_SHIELD | dfLogic::ITEM_ENERGY | dfLogic::LIFE | dfLogic::REVIVE)) {
 		return false;
 	}
 

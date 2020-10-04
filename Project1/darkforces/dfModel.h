@@ -6,6 +6,8 @@
 #include <vector>
 #include "../glad/glad.h"
 
+#include "dfObject.h"
+
 #include "../gaEngine/gaModel.h"
 
 // data for sprite model
@@ -62,6 +64,6 @@ public:
 	fwMesh* drawBoundingBox(void);
 	virtual int textureID(int state, int frame) { return 0; };
 	virtual void spriteModel(GLmodel& model, int id);
-	virtual int framerate(int state) { return 0; }
-	virtual int nextFrame(int state, unsigned int frame) { return 0; };
+	virtual int framerate(dfState state) { return 0; }
+	virtual int nextFrame(dfState state, unsigned int frame) { return 0; };
 };

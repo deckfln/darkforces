@@ -128,7 +128,7 @@ void dfParserObjects::parseObjectComponent(dfFileSystem* fs, dfObject* object, G
 		case O_PLAYER:
 			break;
 		case O_UPDATE:
-			object->logic(DF_LOGIC_ANIM);
+			object->logic(dfLogic::ANIM);
 			break;
 		case O_PLANS:
 			break;
@@ -136,66 +136,66 @@ void dfParserObjects::parseObjectComponent(dfFileSystem* fs, dfObject* object, G
 			GameEngine::ParserExpression& item = component.m_children[2].m_children[0].m_children[0];
 			switch (item.m_expression) {
 			case E_SHIELD:
-				object->logic(DF_LOGIC_ITEM_SHIELD);
+				object->logic(dfLogic::ITEM_SHIELD);
 				break;
 			case E_ENERGY:
-				object->logic(DF_LOGIC_ITEM_ENERGY);
+				object->logic(dfLogic::ITEM_ENERGY);
 				break;
 			}
 			break;
 		}
 		case O_ANIM:
-			object->logic(DF_LOGIC_ANIM);
+			object->logic(dfLogic::ANIM);
 			break;
 		case O_SCENERY:
-			object->logic(DF_LOGIC_SCENERY);
-			((dfSpriteAnimated*)object)->state(DF_STATE_SCENERY_NORMAL);
+			object->logic(dfLogic::SCENERY);
+			((dfSpriteAnimated*)object)->state(dfState::SCENERY_NORMAL);
 			break;
 		case O_BATTERY:
 			break;
 		case O_STORM1:
-			object->logic(DF_LOGIC_TROOP | DF_LOGIC_ANIM);
-			((dfSpriteAnimated*)object)->state(DF_STATE_ENEMY_STAY_STILL);
+			object->logic(dfLogic::TROOP | dfLogic::ANIM);
+			((dfSpriteAnimated*)object)->state(dfState::ENEMY_STAY_STILL);
 			break;
 		case O_OFFICERR:
-			object->logic(DF_LOGIC_RED_KEY);
+			object->logic(dfLogic::RED_KEY);
 			// pass through
 		case I_OFFICER:
-			object->logic(DF_LOGIC_I_OFFICER | DF_LOGIC_ANIM);
-			((dfSpriteAnimated*)object)->state(DF_STATE_ENEMY_STAY_STILL);
+			object->logic(dfLogic::OFFICER | dfLogic::ANIM);
+			((dfSpriteAnimated*)object)->state(dfState::ENEMY_STAY_STILL);
 			break;
 		case O_INT_DROID:
-			object->logic(DF_LOGIC_INTDROID | DF_LOGIC_ANIM);
-			((dfSpriteAnimated*)object)->state(DF_STATE_ENEMY_STAY_STILL);
+			object->logic(dfLogic::INTDROID | dfLogic::ANIM);
+			((dfSpriteAnimated*)object)->state(dfState::ENEMY_STAY_STILL);
 			break;
 		case O_MEDKIT:
 			break;
 		case O_COMMANDO:
-			object->logic(DF_LOGIC_COMMANDO | DF_LOGIC_ANIM);
-			((dfSpriteAnimated*)object)->state(DF_STATE_ENEMY_STAY_STILL);
+			object->logic(dfLogic::COMMANDO | dfLogic::ANIM);
+			((dfSpriteAnimated*)object)->state(dfState::ENEMY_STAY_STILL);
 			break;
 		case O_SHIELD:
 			break;
 		case O_TROOP:
-			object->logic(DF_LOGIC_TROOP | DF_LOGIC_ANIM);
-			((dfSpriteAnimated*)object)->state(DF_STATE_ENEMY_STAY_STILL);
+			object->logic(dfLogic::TROOP | dfLogic::ANIM);
+			((dfSpriteAnimated*)object)->state(dfState::ENEMY_STAY_STILL);
 			break;
 		case O_SUPERCHARGE:
 			break;
 		case O_LIFE:
-			object->logic(DF_LOGIC_LIFE);
+			object->logic(dfLogic::LIFE);
 			break;
 		case O_KEY:
-			object->logic(DF_LOGIC_KEY_TRIGGER);
+			object->logic(dfLogic::KEY_TRIGGER);
 			//TODO : remove the hack
-			object->logic(DF_LOGIC_ANIM);
+			object->logic(dfLogic::ANIM);
 			break;
 		case O_GOGGLES:
 			break;
 		case O_RIFLE:
 			break;
 		case O_REVIVE:
-			object->logic(DF_LOGIC_REVIVE);
+			object->logic(dfLogic::REVIVE);
 			break;
 		}
 

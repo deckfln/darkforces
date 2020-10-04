@@ -296,9 +296,9 @@ int dfWAX::nextFrame(int state, unsigned int frame)
 /**
  * get the specific AABB from a state
  */
-const fwAABBox& dfWAX::bounding(int state)
+const fwAABBox& dfWAX::bounding(dfState state)
 {
-	return m_states[state]->m_cylinder;
+	return m_states[(int)state]->m_cylinder;
 }
 
 dfWAX::~dfWAX()

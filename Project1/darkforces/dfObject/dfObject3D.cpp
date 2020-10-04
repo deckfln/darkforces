@@ -70,7 +70,7 @@ void dfObject3D::vue(dfFileSystem *fs, const std::string& vue, const std::string
  */
 bool dfObject3D::update(time_t t)
 {
-	if (m_logics & DF_LOGIC_ANIM) {
+	if (m_logics & dfLogic::ANIM) {
 
 		if (m_vue != nullptr) {
 			// follow a path

@@ -21,58 +21,60 @@ class dfSector;
 /**
  * Logic for objects
  */
-enum {
-	DF_LOGIC_NONE,
-	DF_LOGIC_SCENERY = 1,
-	DF_LOGIC_ANIM = 2,
-	DF_LOGIC_I_OFFICER = 4,
-	DF_LOGIC_COMMANDO = 8,
-	DF_LOGIC_TROOP = 16,
-	DF_LOGIC_RED_KEY = 32,
-	DF_LOGIC_INTDROID = 64,
-	DF_LOGIC_ITEM_SHIELD = 128,
-	DF_LOGIC_ITEM_ENERGY = 256,
-	DF_LOGIC_LIFE = 512,
-	DF_LOGIC_REVIVE = 1024,
-	DF_LOGIC_MOUSEBOT = 2048,
-	DF_LOGIC_KEY_TRIGGER = 4096,
-	DF_LOGIC_ITEM_RIFLE = 8192,
-	DF_LOGIC_ITEM_POWER = 16384,
-	DF_LOGIC_ITEM_BATTERY = 32732,
-	DF_LOGIC_DEAD_MOUSE = 64536
+enum dfLogic {
+	NONE,
+	SCENERY = 1,
+	ANIM = 2,
+	OFFICER = 4,
+	COMMANDO = 8,
+	TROOP = 16,
+	RED_KEY = 32,
+	INTDROID = 64,
+	ITEM_SHIELD = 128,
+	ITEM_ENERGY = 256,
+	LIFE = 512,
+	REVIVE = 1024,
+	MOUSEBOT = 2048,
+	KEY_TRIGGER = 4096,
+	ITEM_RIFLE = 8192,
+	ITEM_POWER = 16384,
+	ITEM_BATTERY = 32732,
+	DEAD_MOUSE = 64536
 };
 
 /**
  * State of every object
  */
-enum {
+enum class dfState {
+	NONE = 0,
+
 	// state of i_officer, commando ...
-	DF_STATE_ENEMY_MOVE = 0,
-	DF_STATE_ENEMY_ATTACK = 1,
-	DF_STATE_ENEMY_DIE_FROM_PUNCH = 2,
-	DF_STATE_ENEMY_DIE_FROM_SHOT = 3,
-	DF_STATE_ENEMY_LIE_DEAD = 4,
-	DF_STATE_ENEMY_STAY_STILL = 5,
-	DF_STATE_ENEMY_FOLLOW_PRIMARY_ATTACK = 6,
-	DF_STATE_ENEMY_SECONDARY_ATTACK = 7,
-	DF_STATE_ENEMY_FOLLOW_SECONDARY_ATTACK = 8,
-	DF_STATE_ENEMY_JUMP = 9,
-	DF_STATE_ENEMY_INJURED = 12,
-	DF_STATE_ENEMY_SPECIAL = 13,
+	ENEMY_MOVE = 0,
+	ENEMY_ATTACK = 1,
+	ENEMY_DIE_FROM_PUNCH = 2,
+	ENEMY_DIE_FROM_SHOT = 3,
+	ENEMY_LIE_DEAD = 4,
+	ENEMY_STAY_STILL = 5,
+	ENEMY_FOLLOW_PRIMARY_ATTACK = 6,
+	ENEMY_SECONDARY_ATTACK = 7,
+	ENEMY_FOLLOW_SECONDARY_ATTACK = 8,
+	ENEMY_JUMP = 9,
+	ENEMY_INJURED = 12,
+	ENEMY_SPECIAL = 13,
 
 	// state of remote
-	DF_STATE_REMOTE_MOVE = 0,
-	DF_STATE_REMOTE_STAY_STILL = 1,
-	DF_STATE_REMOTE_DIE = 2,
-	DF_STATE_REMOTE_DIE1 = 3,
+	REMOTE_MOVE = 0,
+	REMOTE_STAY_STILL = 1,
+	REMOTE_DIE = 2,
+	REMOTE_DIE1 = 3,
 
 	// state of sceneries
-	DF_STATE_SCENERY_NORMAL = 0,
-	DF_STATE_SCENERY_ATTACK = 1,
+	SCENERY_NORMAL = 0,
+	SCENERY_ATTACK = 1,
 
 	// state of barrel
-	DF_STATE_BARREL_NORMAL = 0,
-	DF_STATE_BARREL_EXPLODE = 1
+	BARREL_NORMAL = 0,
+	BARREL_EXPLODE = 1
 };
 
 /**
@@ -86,10 +88,10 @@ enum {
 };
 
 // list of all enemies
-const unsigned long DF_LOGIC_ENEMIES = DF_LOGIC_I_OFFICER | DF_LOGIC_COMMANDO | DF_LOGIC_TROOP;
+const uint32_t DF_LOGIC_ENEMIES = dfLogic::OFFICER | dfLogic::COMMANDO | dfLogic::TROOP;
 
 // list of all physical logics
-const unsigned long DF_LOGIC_PHYSICAL = DF_LOGIC_I_OFFICER | DF_LOGIC_COMMANDO | DF_LOGIC_TROOP | DF_LOGIC_SCENERY;
+const uint32_t DF_LOGIC_PHYSICAL = dfLogic::OFFICER | dfLogic::COMMANDO | dfLogic::TROOP | dfLogic::SCENERY;
 
 
 class dfObject: public gaEntity
@@ -103,7 +105,7 @@ protected:
 
 	glm::vec3 m_position_lvl = glm::vec3(0);// position in level space
 
-	int m_logics = 0;						// logic of the object
+	uint32_t m_logics = dfLogic::NONE;		// logic of the object
 	int m_difficulty = 0;					// difficulty to be displayed
 	float m_ambient = 32.0f;				// ambient light inherited from the sector
 
@@ -129,9 +131,9 @@ public:
 	bool collision(void);
 	bool named(std::string name);
 	bool is(int type);
-	bool isLogic(int logic);
+	bool isLogic(uint32_t logic);
 	const std::string& model(void);
-	void logic(int logic);
+	void logic(uint32_t logic);
 	void drop(uint32_t logic);				// object to drop in the scene at the current position
 	dfSector* sector(void) { return m_sector; };
 	void sector(dfSector* s) { m_sector = s; };

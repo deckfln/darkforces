@@ -29,7 +29,7 @@ dfSpriteAnimated::dfSpriteAnimated(const std::string& model, const glm::vec3& po
 /**
  * Change the state of an object
  */
-void dfSpriteAnimated::state(int state)
+void dfSpriteAnimated::state(dfState state)
 {
 	m_state = state;
 	modelAABB(((dfWAX*)m_source)->bounding(m_state));
@@ -40,13 +40,13 @@ void dfSpriteAnimated::state(int state)
 
 	if (m_logics & DF_LOGIC_ENEMIES) {
 		// trigger the animation, unless the object is static or has no animation
-		if (m_state != DF_STATE_ENEMY_LIE_DEAD &&
-			m_state != DF_STATE_ENEMY_STAY_STILL &&
+		if (m_state != dfState::ENEMY_LIE_DEAD &&
+			m_state != dfState::ENEMY_STAY_STILL &&
 			m_source->framerate(m_state) != 0)
 		{
 			g_gaWorld.sendMessageDelayed(m_name, m_name, gaMessage::TIMER, 0, nullptr);
 		}
-		else if (m_state == DF_STATE_ENEMY_LIE_DEAD) {
+		else if (m_state == dfState::ENEMY_LIE_DEAD) {
 			m_physical = false;			// remove collision box, they actor is dead
 		}
 	}
@@ -119,7 +119,7 @@ void dfSpriteAnimated::dispatchMessage(gaMessage* message)
 {
 	switch (message->m_action) {
 	case DF_MSG_STATE:
-		state(message->m_value);
+		state((dfState)message->m_value);
 		break;
 	case gaMessage::TIMER:
 		if (update(message->m_delta)) {
@@ -128,7 +128,7 @@ void dfSpriteAnimated::dispatchMessage(gaMessage* message)
 		}
 		else {
 			// end of animation loop
-			sendInternalMessage(DF_MESSAGE_END_LOOP, m_state);
+			sendInternalMessage(DF_MESSAGE_END_LOOP, (int)m_state);
 		}
 		break;
 	case DF_MESSAGE_END_LOOP:
