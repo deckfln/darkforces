@@ -93,7 +93,7 @@ void dfElevator::init(const std::string& kind)
 		std::cerr << "dfElevator::dfElevator " << kind << " not implemented" << std::endl;
 	}
 
-	m_physical = false;		// elevators cannot be traversed
+	m_physical = true;		// elevators cannot be traversed
 	m_gravity = false;		// elevators are not affected by gravity
 	m_collideSectors=false;	// elevators doesn't need to check collision with sectors
 	m_defaultCollision = gaMessage::Flag::PUSH_ENTITIES;
@@ -602,8 +602,9 @@ void dfElevator::moveTo(dfLogicStop *stop)
 
 /**
  * Compute a floor altitude based on elevator kind and stop
+ * Z is given in level space
  */
-void dfElevator::moveTo(float z)
+void dfElevator::moveTo(float z_lvl)
 {
 	// security check
 	switch (m_type) {
@@ -633,38 +634,30 @@ void dfElevator::moveTo(float z)
 	switch (m_type) {
 	case dfElevator::Type::INV:
 	case dfElevator::Type::DOOR:
-		p.y = z / 10.0f;
-		sendInternalMessage(gaMessage::MOVE, 0, &p);
-		break;
 	case dfElevator::Type::BASIC:
-		p.y = z / 10.0f;
-		sendInternalMessage(gaMessage::MOVE, 0, &p);
-		break;
 	case dfElevator::Type::MOVE_FLOOR:
 		// move the sector the elevator is based on (for collision detection)
 		m_transforms.m_position = position();
-		m_transforms.m_position.y = z / 10.0f;
+		m_transforms.m_position.y = z_lvl / 10.0f;
 		sendMessage(this->m_name, gaMessage::Action::WANT_TO_MOVE, gaMessage::Flag::PUSH_ENTITIES, &m_transforms);
-		m_pSector->currentFloorAltitude(z);
 		break;
 	case dfElevator::Type::MOVE_CEILING:
 		// move the sector the elevator is based on (for collision detection)
-		p.y = z / 10.0f;
+		p.y = z_lvl / 10.0f;
 		sendInternalMessage(gaMessage::MOVE, 0, &p);
-		m_pSector->ceiling(z);
 		break;
 	case dfElevator::Type::MORPH_SPIN1:
 	case dfElevator::Type::MORPH_SPIN2:
-		glm::vec3 r = glm::vec3(0, glm::radians(z), 0);
+		glm::vec3 r = glm::vec3(0, glm::radians(z_lvl), 0);
 		sendInternalMessage(gaMessage::ROTATE, gaMessage::Flag::ROTATE_VEC3, &r);
 		break;
 	case dfElevator::Type::MORPH_MOVE1:
-		glm::vec3 p = m_center + m_move * z;
+		glm::vec3 p = m_center + m_move * z_lvl;
 		dfLevel::level2gl(p);
 		sendInternalMessage(gaMessage::MOVE, 0, &p);
 		break;
 	case dfElevator::Type::CHANGE_LIGHT:
-		m_pSector->changeAmbient(z);
+		m_pSector->changeAmbient(z_lvl);
 		break;
 	default:
 		std::cerr << "dfElevator::moveTo m_type==" << int(m_type) << " not implemented" << std::endl;

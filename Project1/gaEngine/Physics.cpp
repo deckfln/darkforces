@@ -722,7 +722,7 @@ void Physics::update(time_t delta)
 		Ballistic& b = en.second;
 
 		for (auto entity : m_world->m_entities[en.first]) {
-			printf("Physics::update\n");
+			gaDebugLog(1, "Physics::update", entity->name());
 			b.apply(delta, entity->pTransform());
 
 			moveEntity(entity, nullptr);
