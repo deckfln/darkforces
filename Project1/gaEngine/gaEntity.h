@@ -61,11 +61,12 @@ public:
 	void addComponent(gaComponent* component);			// extend the components of the entity
 
 	inline bool is(int mclass) { return m_class == mclass; };
-	inline void physical(bool p) { m_physical = p; };
 
 	inline const std::string& name(void) { return m_name; };
 	inline bool physical(void) { return m_physical; };
+	inline void physical(bool p) { m_physical = p; };
 	inline bool gravity(void) { return m_gravity; };
+	inline void gravity(bool p) { m_gravity = p; };
 	inline bool canStep(void) { return m_canStep; };
 	inline bool collideSectors(void) { return m_collideSectors; };
 	inline const fwAABBox& worldAABB(void) { return m_worldBounding; };

@@ -151,6 +151,9 @@ void dfObject::drop(uint32_t logic)
 		break;
 	}
 	obj->logic(logic);
+	obj->physical(false);	// objects can be traversed and are not subject to gravity
+	obj->gravity(false);
+
 	g_gaWorld.addClient(obj);
 }
 

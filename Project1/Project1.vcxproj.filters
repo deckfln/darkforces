@@ -186,9 +186,6 @@
     <ClCompile Include="darkforces\dfSign.cpp">
       <Filter>Fichiers sources\Dark Forces</Filter>
     </ClCompile>
-    <ClCompile Include="darkforces\dfObject\dfSprite.cpp">
-      <Filter>Fichiers sources\Dark Forces</Filter>
-    </ClCompile>
     <ClCompile Include="darkforces\dfObject\dfSpriteAnimated.cpp">
       <Filter>Fichiers sources\Dark Forces</Filter>
     </ClCompile>
@@ -536,6 +533,9 @@
     </ClCompile>
     <ClCompile Include="framework\math\Segment.cpp">
       <Filter>Fichiers sources\Framework\math</Filter>
+    </ClCompile>
+    <ClCompile Include="darkforces\dfObject\dfSprite.cpp">
+      <Filter>Fichiers sources\Dark Forces\dfObject</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

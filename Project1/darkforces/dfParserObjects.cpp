@@ -142,6 +142,8 @@ void dfParserObjects::parseObjectComponent(dfFileSystem* fs, dfObject* object, G
 				object->logic(dfLogic::ITEM_ENERGY);
 				break;
 			}
+			object->physical(false);	// objects can be traversed and are not subject to gravity
+			object->gravity(false);
 			break;
 		}
 		case O_ANIM:
@@ -152,6 +154,8 @@ void dfParserObjects::parseObjectComponent(dfFileSystem* fs, dfObject* object, G
 			((dfSpriteAnimated*)object)->state(dfState::SCENERY_NORMAL);
 			break;
 		case O_BATTERY:
+			object->physical(false);	// objects can be traversed and are not subject to gravity
+			object->gravity(false);
 			break;
 		case O_STORM1:
 			object->logic(dfLogic::TROOP | dfLogic::ANIM);
@@ -169,32 +173,48 @@ void dfParserObjects::parseObjectComponent(dfFileSystem* fs, dfObject* object, G
 			((dfSpriteAnimated*)object)->state(dfState::ENEMY_STAY_STILL);
 			break;
 		case O_MEDKIT:
+			object->physical(false);	// objects can be traversed and are not subject to gravity
+			object->gravity(false);
 			break;
 		case O_COMMANDO:
 			object->logic(dfLogic::COMMANDO | dfLogic::ANIM);
 			((dfSpriteAnimated*)object)->state(dfState::ENEMY_STAY_STILL);
 			break;
 		case O_SHIELD:
+			object->physical(false);	// objects can be traversed and are not subject to gravity
+			object->gravity(false);
 			break;
 		case O_TROOP:
 			object->logic(dfLogic::TROOP | dfLogic::ANIM);
 			((dfSpriteAnimated*)object)->state(dfState::ENEMY_STAY_STILL);
 			break;
 		case O_SUPERCHARGE:
+			object->physical(false);	// objects can be traversed and are not subject to gravity
+			object->gravity(false);
 			break;
 		case O_LIFE:
+			object->physical(false);	// objects can be traversed and are not subject to gravity
+			object->gravity(false);
 			object->logic(dfLogic::LIFE);
 			break;
 		case O_KEY:
+			object->physical(false);	// objects can be traversed and are not subject to gravity
+			object->gravity(false);
 			object->logic(dfLogic::KEY_TRIGGER);
 			//TODO : remove the hack
 			object->logic(dfLogic::ANIM);
 			break;
 		case O_GOGGLES:
+			object->physical(false);	// objects can be traversed and are not subject to gravity
+			object->gravity(false);
 			break;
 		case O_RIFLE:
+			object->physical(false);	// objects can be traversed and are not subject to gravity
+			object->gravity(false);
 			break;
 		case O_REVIVE:
+			object->physical(false);	// objects can be traversed and are not subject to gravity
+			object->gravity(false);
 			object->logic(dfLogic::REVIVE);
 			break;
 		}
