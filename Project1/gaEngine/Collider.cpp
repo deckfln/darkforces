@@ -796,6 +796,7 @@ bool Collider::collision_cylinder_aabb(const Collider& cylinder,
 	convertVertex(6, pAabb->m_p1.x, pAabb->m_p1.y, pAabb->m_p1.z, mat);
 	convertVertex(7, pAabb->m_p.x, pAabb->m_p1.y, pAabb->m_p1.z, mat);
 
+	bool collide = false;
 	for (unsigned int i = 0; i < 36; i += 3) {
 		// extract triangle
 		_triangles[i][0] = _vertexCube[_indexCube[i]];
@@ -822,10 +823,12 @@ bool Collider::collision_cylinder_aabb(const Collider& cylinder,
 
 			// inform if the collision point in world space(let the entity decide what to do with the collision)
 			collisions.push_back(gaCollisionPoint(fwCollisionLocation::COLLIDE, intersection_gs, _triangles[i]));
+
+			collide = true;
 		}
 	}
 
-	return collisions.size() != 0;
+	return collide;
 }
 
 /******************************************************************************

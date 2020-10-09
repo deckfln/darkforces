@@ -29,7 +29,7 @@ void dfComponentLogic::dispatchMessage(gaMessage* message)
 				m_entity->sendMessage(message->m_server, DF_MESSAGE_ADD_SHIELD, DF_SHIELD_ENERGY, nullptr);
 
 				// and remove the object from the scene
-				m_entity->moveTo(glm::vec3(0));
+				m_entity->sendMessageToWorld(gaMessage::DELETE_ENTITY, 0, nullptr);
 			}
 		}
 		else if (m_logics & dfLogic::ITEM_ENERGY) {
@@ -40,7 +40,7 @@ void dfComponentLogic::dispatchMessage(gaMessage* message)
 				m_entity->sendMessage(message->m_server, DF_MESSAGE_ADD_ENERGY, DF_ENERGY_ENERGY, nullptr);
 
 				// and remove the object from the scene
-				m_entity->moveTo(glm::vec3(0));
+				m_entity->sendMessageToWorld(gaMessage::DELETE_ENTITY, 0, nullptr);
 			}
 		}
 		else if (m_logics & dfLogic::ITEM_RIFLE) {
@@ -51,9 +51,21 @@ void dfComponentLogic::dispatchMessage(gaMessage* message)
 				m_entity->sendMessage(message->m_server, DF_MSG_PICK_RIFLE_AND_BULLETS, DF_SHIELD_ENERGY, nullptr);
 
 				// and remove the object from the scene
-				m_entity->moveTo(glm::vec3(0));
+				m_entity->sendMessageToWorld(gaMessage::DELETE_ENTITY, 0, nullptr);
 			}
 		}
+		else if (m_logics & dfLogic::ITEM_BATTERY) {
+			// pick a rifle and bullets
+			if (message->m_pServer->findComponent(DF_COMPONENT_ACTOR)) {
+				// if the collider is a DF_ACTOR
+				// send shield from me to the actor
+				m_entity->sendMessage(message->m_server, DF_MSG_ADD_BATTERY, DF_BATTERY_ENERGY, nullptr);
+
+				// and remove the object from the scene
+				m_entity->sendMessageToWorld(gaMessage::DELETE_ENTITY, 0, nullptr);
+			}
+		}
+		
 		break;
 	case DF_MESSAGE_HIT_BULLET:
 		if (m_logics & dfLogic::SCENERY) {

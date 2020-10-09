@@ -107,6 +107,9 @@ void dfComponentActor::die(void)
 	//g_gaWorld.sendMessage(m_parent->name(), "_world", gaMessage::DELETE_ENTITY, 0, nullptr);
 	((dfSpriteAnimated*)m_entity)->state(dfState::ENEMY_DIE_FROM_SHOT);
 
+	// object can now be traversed
+	((dfSpriteAnimated*)m_entity)->hasCollider(false);
+
 	gaDebugLog(1, "dfActor::die", "remove " + m_entity->name() + " the entity from the world");
 }
 

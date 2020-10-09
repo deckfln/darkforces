@@ -133,21 +133,27 @@ void dfObject::drop(uint32_t logic)
 	switch (logic) {
 	case dfLogic::DEAD_MOUSE:
 		obj = new dfSprite("DEDMOUSE.FME", p, 1.0f, OBJECT_FME);
+		obj->hasCollider(false);
 		break;
 	case dfLogic::ITEM_BATTERY:
 		obj = new dfSprite("IBATTERY.FME", p, 1.0f, OBJECT_FME);
+		obj->hasCollider(true);
 		break;
 	case dfLogic::ITEM_RIFLE:
 		obj = new dfSprite("IST-GUNI.FME", p, 1.0f, OBJECT_FME);
+		obj->hasCollider(true);
 		break;
 	case dfLogic::ITEM_POWER:
 		obj = new dfSprite("IPOWER.FME", p, 1.0f, OBJECT_FME);
+		obj->hasCollider(true);
 		break;
 	case dfLogic::ITEM_ENERGY:
 		obj = new dfSprite("IENERGY.FME", p, 1.0f, OBJECT_FME);
+		obj->hasCollider(true);
 		break;
 	case dfLogic::RED_KEY:
 		obj = new dfSprite("IKEYR.FME", p, 1.0f, OBJECT_FME);
+		obj->hasCollider(true);
 		break;
 	}
 	obj->logic(logic);

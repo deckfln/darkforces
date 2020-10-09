@@ -46,9 +46,6 @@ void dfSpriteAnimated::state(dfState state)
 		{
 			g_gaWorld.sendMessageDelayed(m_name, m_name, gaMessage::TIMER, 0, nullptr);
 		}
-		else if (m_state == dfState::ENEMY_LIE_DEAD) {
-			m_physical = false;			// remove collision box, they actor is dead
-		}
 	}
 	else {
 		g_gaWorld.sendMessageDelayed(m_name, m_name, gaMessage::TIMER, 0, nullptr);

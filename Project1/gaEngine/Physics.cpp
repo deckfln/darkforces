@@ -83,9 +83,17 @@ void Physics::testEntities(gaEntity* entity, const Transform& tranform, std::vec
 
 	for (auto entry : m_world->m_entities) {
 		for (auto ent : entry.second) {
+			// ignore ghosts
+			if (!ent->hasCollider()) {
+				continue;
+			}
+
 			if (ent != entity && entity->collideAABB(ent->worldAABB())) {
 				size = collisions.size();
 				if (entity->collide(ent, tranform.m_forward, tranform.m_downward, collisions)) {
+					if (ent->name() == "IBATTERY.FME(1)") {
+						printf("\n");
+					}
 					for (auto i = size; i < collisions.size(); i++) {
 						collisions[i].m_source = ent;
 						collisions[i].m_class = gaCollisionPoint::Source::ENTITY;
@@ -532,11 +540,6 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 					continue; // ignore the floor, will be extracted on next run
 				}
 				else {
-					if (entity->name() == "player")
-						gaDebugLog(1, "gaWorld::wantToMove", entity->name() + " deny move " + std::to_string(tranform.m_position.x)
-							+ " " + std::to_string(tranform.m_position.y)
-							+ " " + std::to_string(tranform.m_position.z));
-
 					// and we do not force the move
 					// refuse the move and inform both element from the collision
 
@@ -545,7 +548,18 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 
 						// ONLY refuse the move if the entity is a physical one
 						if (collisionWith->physical()) {
+							if (entity->name() == "player")
+								gaDebugLog(1, "gaWorld::wantToMove", entity->name() + " deny move " + std::to_string(tranform.m_position.x)
+									+ " " + std::to_string(tranform.m_position.y)
+									+ " " + std::to_string(tranform.m_position.z));
+
 							entity->popTransformations();				// restore previous position
+						}
+						else {
+							if (entity->name() == "player")
+								gaDebugLog(1, "gaWorld::wantToMove", entity->name() + " collide " + std::to_string(tranform.m_position.x)
+									+ " " + std::to_string(tranform.m_position.y)
+									+ " " + std::to_string(tranform.m_position.z));
 						}
 
 						// always inform the source entity 

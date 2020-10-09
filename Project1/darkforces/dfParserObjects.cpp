@@ -126,11 +126,13 @@ void dfParserObjects::parseObjectComponent(dfFileSystem* fs, dfObject* object, G
 		GameEngine::ParserExpression& logicType = component.m_children[2].m_children[0];
 		switch (logicType.m_expression) {
 		case O_PLAYER:
+			object->hasCollider(true);
 			break;
 		case O_UPDATE:
 			object->logic(dfLogic::ANIM);
 			break;
 		case O_PLANS:
+			object->hasCollider(true);
 			break;
 		case E_ITEM: {
 			GameEngine::ParserExpression& item = component.m_children[2].m_children[0].m_children[0];
@@ -144,6 +146,7 @@ void dfParserObjects::parseObjectComponent(dfFileSystem* fs, dfObject* object, G
 			}
 			object->physical(false);	// objects can be traversed and are not subject to gravity
 			object->gravity(false);
+			object->hasCollider(true);
 			break;
 		}
 		case O_ANIM:
@@ -156,10 +159,12 @@ void dfParserObjects::parseObjectComponent(dfFileSystem* fs, dfObject* object, G
 		case O_BATTERY:
 			object->physical(false);	// objects can be traversed and are not subject to gravity
 			object->gravity(false);
+			object->hasCollider(true);
 			break;
 		case O_STORM1:
 			object->logic(dfLogic::TROOP | dfLogic::ANIM);
 			((dfSpriteAnimated*)object)->state(dfState::ENEMY_STAY_STILL);
+			object->hasCollider(true);
 			break;
 		case O_OFFICERR:
 			object->logic(dfLogic::RED_KEY);
@@ -167,38 +172,47 @@ void dfParserObjects::parseObjectComponent(dfFileSystem* fs, dfObject* object, G
 		case I_OFFICER:
 			object->logic(dfLogic::OFFICER | dfLogic::ANIM);
 			((dfSpriteAnimated*)object)->state(dfState::ENEMY_STAY_STILL);
+			object->hasCollider(true);
 			break;
 		case O_INT_DROID:
 			object->logic(dfLogic::INTDROID | dfLogic::ANIM);
 			((dfSpriteAnimated*)object)->state(dfState::ENEMY_STAY_STILL);
+			object->hasCollider(true);
 			break;
 		case O_MEDKIT:
 			object->physical(false);	// objects can be traversed and are not subject to gravity
 			object->gravity(false);
+			object->hasCollider(true);
 			break;
 		case O_COMMANDO:
 			object->logic(dfLogic::COMMANDO | dfLogic::ANIM);
 			((dfSpriteAnimated*)object)->state(dfState::ENEMY_STAY_STILL);
+			object->hasCollider(true);
 			break;
 		case O_SHIELD:
 			object->physical(false);	// objects can be traversed and are not subject to gravity
 			object->gravity(false);
+			object->hasCollider(true);
 			break;
 		case O_TROOP:
 			object->logic(dfLogic::TROOP | dfLogic::ANIM);
 			((dfSpriteAnimated*)object)->state(dfState::ENEMY_STAY_STILL);
+			object->hasCollider(true);
 			break;
 		case O_SUPERCHARGE:
 			object->physical(false);	// objects can be traversed and are not subject to gravity
 			object->gravity(false);
+			object->hasCollider(true);
 			break;
 		case O_LIFE:
 			object->physical(false);	// objects can be traversed and are not subject to gravity
 			object->gravity(false);
+			object->hasCollider(true);
 			object->logic(dfLogic::LIFE);
 			break;
 		case O_KEY:
 			object->physical(false);	// objects can be traversed and are not subject to gravity
+			object->hasCollider(true);
 			object->gravity(false);
 			object->logic(dfLogic::KEY_TRIGGER);
 			//TODO : remove the hack
@@ -207,15 +221,23 @@ void dfParserObjects::parseObjectComponent(dfFileSystem* fs, dfObject* object, G
 		case O_GOGGLES:
 			object->physical(false);	// objects can be traversed and are not subject to gravity
 			object->gravity(false);
+			object->hasCollider(true);
 			break;
 		case O_RIFLE:
 			object->physical(false);	// objects can be traversed and are not subject to gravity
 			object->gravity(false);
+			object->hasCollider(true);
 			break;
 		case O_REVIVE:
 			object->physical(false);	// objects can be traversed and are not subject to gravity
 			object->gravity(false);
+			object->hasCollider(true);
+
 			object->logic(dfLogic::REVIVE);
+			break;
+		case O_MOUSEBOT:
+			object->logic(dfLogic::MOUSEBOT);
+			object->hasCollider(true);
 			break;
 		}
 

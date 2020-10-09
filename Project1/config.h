@@ -48,8 +48,10 @@ enum {
 	DF_MESSAGE_END_LOOP,		// the animation loop stopped
 	DF_MESSAGE_DIES,			// the object died
 	DF_MSG_STATE,				// change the state of the object
-	DF_MSG_PICK_RIFLE_AND_BULLETS
+	DF_MSG_PICK_RIFLE_AND_BULLETS,
+	DF_MSG_ADD_BATTERY
 };
 
 const int DF_SHIELD_ENERGY = 100;
-const int DF_ENERGY_ENERGY = 100;
+const int DF_ENERGY_ENERGY = 15;
+const int DF_BATTERY_ENERGY = 100;
