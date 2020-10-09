@@ -9,6 +9,8 @@
 #include <glm/vec3.hpp>
 #include <glm/vec2.hpp>
 
+#include "fwAABBox.h"
+
 enum class fwCollisionLocation {
     NONE,
     TOP,
@@ -106,4 +108,7 @@ namespace Framework
     bool segment2segment(glm::vec2& A, glm::vec2& B, glm::vec2& C, glm::vec2& D, glm::vec2& result);
     bool fat_point_collides_segment(glm::vec2& A, glm::vec2& B, glm::vec2& C, float r, glm::vec2& result);
     bool CircLine(glm::vec2& A, glm::vec2& B, glm::vec2& C, float r, glm::vec2& result);
+
+    bool intersectRayAABox2(const glm::vec3& p0, const glm::vec3& p1, const fwAABBox& box, float& tnear, float& tfar);
+
 }

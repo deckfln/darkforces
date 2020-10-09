@@ -499,3 +499,94 @@ bool Framework::CircLine(glm::vec2& A, glm::vec2& B, glm::vec2& C, float r, glm:
 	else
 		return true;
 }
+
+/**
+ * test if ray intersect with a AABBox
+ * https://gamedev.stackexchange.com/questions/18436/most-efficient-aabb-vs-ray-collision-algorithms
+ */
+bool Framework::intersectRayAABox2(const glm::vec3& p0, const glm::vec3& p1, const fwAABBox& box, float& tnear, float& tfar)
+{
+	glm::vec3 T_1, T_2, temp; // vectors to hold the T-values for every direction
+	double t_near = -DBL_MAX; // maximums defined in float.h
+	double t_far = DBL_MAX;
+
+	glm::vec3 direction = p1 - p0;
+
+	if (direction.x == 0) { // ray parallel to planes in this direction
+		if ((p0.x < box.m_p.x) || (p0.x > box.m_p1.x)) {
+			return false; // parallel AND outside box : no intersection possible
+		}
+	}
+	else { // ray not parallel to planes in this direction
+		T_1.x = (box.m_p.x - p0.x) / direction.x;
+		T_2.x = (box.m_p1.x - p0.x) / direction.x;
+
+		if (T_1.x > T_2.x) { // we want T_1 to hold values for intersection with near plane
+			temp = T_2;
+			T_2 = T_1;
+			T_1 = temp;
+		}
+		if (T_1.x > t_near) {
+			t_near = T_1.x;
+		}
+		if (T_2.x < t_far) {
+			t_far = T_2.x;
+		}
+		if ((t_near > t_far) || (t_far < 0)) {
+			return false;
+		}
+	}
+
+	if (direction.y == 0) { // ray parallel to planes in this direction
+		if ((p0.y < box.m_p.y) || (p0.x > box.m_p1.y)) {
+			return false; // parallel AND outside box : no intersection possible
+		}
+	}
+	else { // ray not parallel to planes in this direction
+		T_1.y = (box.m_p.y - p0.y) / direction.y;
+		T_2.y = (box.m_p1.y - p0.y) / direction.y;
+
+		if (T_1.y > T_2.y) { // we want T_1 to hold values for intersection with near plane
+			temp = T_2;
+			T_2 = T_1;
+			T_1 = temp;
+		}
+		if (T_1.y > t_near) {
+			t_near = T_1.y;
+		}
+		if (T_2.y < t_far) {
+			t_far = T_2.y;
+		}
+		if ((t_near > t_far) || (t_far < 0)) {
+			return false;
+		}
+	}
+
+	if (direction.z == 0) { // ray parallel to planes in this direction
+		if ((p0.z < box.m_p.z) || (p0.z > box.m_p1.z)) {
+			return false; // parallel AND outside box : no intersection possible
+		}
+	}
+	else { // ray not parallel to planes in this direction
+		T_1.z = (box.m_p.z - p0.z) / direction.z;
+		T_2.z = (box.m_p1.z - p0.z) / direction.z;
+
+		if (T_1.z > T_2.z) { // we want T_1 to hold values for intersection with near plane
+			temp = T_2;
+			T_2 = T_1;
+			T_1 = temp;
+		}
+		if (T_1.z > t_near) {
+			t_near = T_1.z;
+		}
+		if (T_2.z < t_far) {
+			t_far = T_2.z;
+		}
+		if ((t_near > t_far) || (t_far < 0)) {
+			return false;
+		}
+	}
+
+	tnear = t_near; tfar = t_far; // put return values in place
+	return true; // if we made it here, there was an intersection - YAY
+}

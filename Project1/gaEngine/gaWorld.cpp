@@ -220,9 +220,9 @@ static gaMessage* allocateMessage(void)
 
 	gaMessage* ptr = nullptr;
 	do {
-		if (--count < 0) {
-			assert("not enough messages in gaWorld::getMessage");
-		}
+		--count;
+		assert(count > 0, "not enough messages in gaWorld::getMessage");
+
 		ptr = &g_messages[g_lastMessage++];
 		if (g_lastMessage == 2048) {
 			g_lastMessage = 0;

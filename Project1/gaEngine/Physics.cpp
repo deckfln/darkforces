@@ -1,7 +1,9 @@
 #include "Physics.h"
 
 #include <memory>
+#include <map>
 #include <glm/gtx/normal.hpp>
+
 #include "gaWorld.h"
 #include "gaMessage.h"
 #include "gaEntity.h"
@@ -92,7 +94,7 @@ void Physics::testEntities(gaEntity* entity, const Transform& tranform, std::vec
 				size = collisions.size();
 				if (entity->collide(ent, tranform.m_forward, tranform.m_downward, collisions)) {
 					if (ent->name() == "IBATTERY.FME(1)") {
-						printf("\n");
+						printf("Physics::testEntities IBATTERY.FME(1)\n");
 					}
 					for (auto i = size; i < collisions.size(); i++) {
 						collisions[i].m_source = ent;
@@ -239,6 +241,7 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 	}
 
 	std::vector<gaCollisionPoint> collisions;
+	std::map<std::string, bool> collidedEntities;
 
 	struct Action {
 		gaEntity* m_entity;
@@ -276,6 +279,7 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 				+ " " + std::to_string(tranform.m_position.y)
 				+ " " + std::to_string(tranform.m_position.z));
 
+		// check if we warp through a triangle
 		if (entity->collideSectors()) {
 			if (warpThrough(entity, old_position, tranform, collisions)) {
 
@@ -287,6 +291,22 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 				continue;	// object warped through a triangle
 			}
 		}
+
+		// check if we warp through an entity AABB
+		/*
+		float tnear, tfar;
+		for (auto& entities : m_world->m_entities) {
+			for (auto ent : entities.second) {
+				if (ent->hasCollider()) {
+					if (Framework::intersectRayAABox2(old_position, new_position, ent->worldAABB(), tnear, tfar)) {
+						if (tnear > 0.0f && tfar < 1.0f) {
+							printf("Physics::moveEntity\n");
+						}
+					}
+				}
+			}
+		}
+		*/
 
 		// collide against the entities
 		testEntities(entity, tranform, collisions);
@@ -309,7 +329,13 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 
 		std::map<std::string, gaEntity*>& sittingOnTop = entity->sittingOnTop();
 
+		gaEntity* collidedEntity;
 		for (auto& collision : collisions) {
+			collidedEntity = nullptr;
+			if (collision.m_class == gaCollisionPoint::Source::ENTITY) {
+				gaEntity* collidedEntity = static_cast<gaEntity*>(collision.m_source);
+			}
+
 			switch (collision.m_location) {
 			case fwCollisionLocation::FRONT:
 				d = entity->distanceTo(collision.m_position);
@@ -331,8 +357,39 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 				break;
 
 			case fwCollisionLocation::COLLIDE: {
-				// cylinder collision (player)
-				// position of the intersection compared to the direction
+
+				// non physical entities need no specific handling
+				// just trigger a collision
+				if (collidedEntity) {
+					if (!collidedEntity->physical()) {
+						// only send once
+						if (collidedEntities.count(collidedEntity->name()) > 0) {
+							continue;
+						}
+
+						// always inform the source entity 
+						collidedEntities[collidedEntity->name()] = true;
+
+						m_world->sendMessage(
+							collidedEntity->name(),
+							entity->name(),
+							gaMessage::Action::COLLIDE,
+							gaMessage::Flag::COLLIDE_ENTITY,
+							nullptr
+						);
+						// always inform the colliding entity 
+						m_world->sendMessage(
+							entity->name(),
+							collidedEntity->name(),
+							gaMessage::Action::COLLIDE,
+							gaMessage::Flag::COLLIDE_ENTITY,
+							nullptr
+						);
+						continue;	// check next collision
+					}
+				}
+
+				// test the collided triangle (wall, floor, ceiling)
 				const fwAABBox& worldAABB = entity->worldAABB();
 				bool isFloor = false;
 				bool isCelling = false;
@@ -385,10 +442,7 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 
 					dBottom = collision.m_position.y - worldAABB.m_p.y;
 
-					if (collision.m_class == gaCollisionPoint::Source::ENTITY) {
-						// entities
-						gaEntity* collider = static_cast<gaEntity*>(collision.m_source);
-
+					if (collidedEntity) {
 						if (abs(dBottom) > EPSILON) {
 							if (entity->name() == "player")
 								debugCollision(collision, entity, "on bottom");
@@ -398,28 +452,28 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 							if (action.m_flag == gaMessage::Flag::PUSH_ENTITIES)
 							{
 
-								GameEngine::Transform& t = collider->transform();
-								t.m_position = collider->position();
+								GameEngine::Transform& t = collidedEntity->transform();
+								t.m_position = collidedEntity->position();
 								t.m_position.y += (tranform.m_position.y - old_position.y);
 
 								actions.push(
-									Action(collider, gaMessage::Flag::PUSH_ENTITIES)
+									Action(collidedEntity, gaMessage::Flag::PUSH_ENTITIES)
 								);
 							}
 						}
 
 						fwAABBox& entityAABB = (fwAABBox&)entity->worldAABB();
-						const fwAABBox& colliderAABB = collider->worldAABB();
+						const fwAABBox& colliderAABB = collidedEntity->worldAABB();
 						if (entityAABB.isAbove(colliderAABB)) {
-							std::map<std::string, gaEntity*>& _sittingOnTop = collider->sittingOnTop();
+							std::map<std::string, gaEntity*>& _sittingOnTop = collidedEntity->sittingOnTop();
 
 							if (_sittingOnTop.count(entity->name()) == 0) {
 								_sittingOnTop[entity->name()] = entity;
 							}
 						}
 						else {
-							if (sittingOnTop.count(collider->name()) == 0) {
-								sittingOnTop[collider->name()] = collider;
+							if (sittingOnTop.count(collidedEntity->name()) == 0) {
+								sittingOnTop[collidedEntity->name()] = collidedEntity;
 							}
 						}
 					}
