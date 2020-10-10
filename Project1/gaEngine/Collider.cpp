@@ -834,25 +834,38 @@ bool Collider::collision_cylinder_aabb(const Collider& cylinder,
 /******************************************************************************
  * cylinder vs ellipsoid
  */
-static glm::vec3 _vertexSphereBase[6] = {
+static glm::vec3 _vertexSphereBase[10] = {
 	{-1.0f,  0.0f,  0.0f},
+	{-0.707f, 0.0f, 0.707f},
 	{ 0.0f,  0.0f,  1.0f},
+	{ 0.707f, 0.0f, 0.707f},
 	{ 1.0f,  0.0f,  0.0f},
+	{ 0.707f, 0.0f, -0.707f},
 	{ 0.0f,  0.0f, -1.0f},
+	{ -0.707f, 0.0f, -0.707f},
 	{ 0.0f,  1.0f,  0.0f},
-	{ 0.0f,  1.0f,  0.0f}
+	{ 0.0f, -1.0f,  0.0f}
 };
 static glm::vec3 _vertexSphere[6];
 static const uint32_t _indexSphere[] = {
-	0, 1, 4,
-	1, 2, 4,
-	2, 3, 4,
-	3, 0, 4,
-	0, 5, 1,
-	1, 5, 2,
-	2, 5, 3,
-	3, 5, 0
+	0, 1, 8,
+	1, 2, 8,
+	2, 3, 8,
+	3, 4, 8,
+	4, 5, 8,
+	5, 6, 8,
+	6, 7, 8,
+	7, 0, 8,
+	1, 0, 9,
+	2, 1, 9,
+	3, 2, 9,
+	4, 3, 9,
+	5, 4, 9,
+	6, 5, 9,
+	7, 6, 9,
+	0, 7, 9
 };
+
 static void convertVertexSphere(const uint32_t i, const glm::mat4& mat)
 {
 	_vertexSphere[i] = mat * glm::vec4(_vertexSphereBase[i], 1.0);
@@ -905,7 +918,7 @@ bool Collider::collision_cylinder_cylinder(const Collider& cylinder1,
 	convertVertexSphere(4, mat);
 	convertVertexSphere(5, mat);
 
-	for (unsigned int i = 0; i < 24; i += 3) {
+	for (unsigned int i = 0; i < sizeof(_indexSphere)/sizeof(uint32_t); i += 3) {
 		// extract triangle
 		_triangles[i][0] = _vertexSphere[_indexSphere[i]];
 		_triangles[i][1] = _vertexSphere[_indexSphere[i + 1]];
