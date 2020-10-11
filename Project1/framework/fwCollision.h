@@ -46,6 +46,11 @@ public:
 class fwCollision
 {
 public:
+    enum class Test {
+        WITH_BORDERS,       // includes the borders of the objects
+        WITHOUT_BORDERS     // only in-between (based on EPSILON)
+    };
+
     fwCollision();
 
     // ground 'around" the character (floor or platform, below or slightly above for stairs)
@@ -73,6 +78,7 @@ namespace Framework
         const glm::vec3& a,
         const glm::vec3& b,
         const glm::vec3& c,
+        fwCollision::Test test,
         glm::vec3& point);
 
     /**

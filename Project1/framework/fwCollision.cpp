@@ -71,13 +71,15 @@ bool Framework::IntersectSegmentTriangle(const glm::vec3& p,
 }
 
 // https://www.thetopsites.net/article/53962225.shtml
-#define EPSILON 0.000001f
+const float EPSILON = 0.001f;
+
 bool Framework::lineSegIntersectTri(
 	const glm::vec3 &p,
 	const glm::vec3 &q,
 	const glm::vec3& a,
 	const glm::vec3& b,
 	const glm::vec3& c,
+	fwCollision::Test test,
 	glm::vec3  &point
 ) {
 	glm::vec3 e0 = b - a;
@@ -110,10 +112,21 @@ bool Framework::lineSegIntersectTri(
 
 	const float t = f * glm::dot(e1, q1);
 
-	if (t >=0 && t < sqrtf(glm::dot(dir, dir))) { // segment intersection
-		point = p + dir_norm * t;
+	if (test == fwCollision::Test::WITH_BORDERS) {
+		if (t >= 0 && t < sqrtf(glm::dot(dir, dir))) { // segment intersection
+			point = p + dir_norm * t;
 
-		return true;
+			return true;
+		}
+	}
+	else {
+		float t1 = sqrtf(glm::dot(dir, dir)) - EPSILON;
+		float a = t - EPSILON;
+		if (a >= 0 && t <= t1) { // segment intersection
+			point = p + dir_norm * t;
+
+			return true;
+		}
 	}
 
 	return false;

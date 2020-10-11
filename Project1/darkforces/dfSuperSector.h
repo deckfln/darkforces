@@ -120,7 +120,8 @@ public:
     };                                                  // test if vec3 inside the AABB
     bool collideAABB(const fwAABBox& box);				// quick test to find AABB collision
     bool collide(const glm::vec3& start, 
-        const glm::vec3& end);                          // if the segment collide with the sector
+        const glm::vec3& end, 
+        fwCollision::Test test);                    // if the segment collide with the sector
 
     ~dfSuperSector();
 };

@@ -189,11 +189,12 @@ static bool testSensor(
 	const glm::mat4& worldMatrix,
 	const glm::vec3& p1,
 	const glm::vec3& p2,
+	fwCollision::Test test,
 	const glm::vec3& a, const glm::vec3& b, const glm::vec3& c,
 	glm::vec3& collision
 )
 {
-	if (Framework::lineSegIntersectTri(p1, p2, a, b, c, collision)) {
+	if (Framework::lineSegIntersectTri(p1, p2, a, b, c, test, collision)) {
 		return true;
 	}
 /*
@@ -274,6 +275,7 @@ bool Collider::warpThroughAABBTree(const Collider& aabbtree,
 			if (testSensor(*aabbtree.m_worldMatrix,
 				position_gs,
 				old_position_gs,
+				fwCollision::Test::WITH_BORDERS,
 				vertices_gs[i], vertices_gs[i + 1], vertices_gs[i + 2],
 				collision)) 
 			{
@@ -317,12 +319,20 @@ static void testSensors(
 	glm::vec3 collision;
 
 	// check the forward sensor
-	if (testSensor(worldMatrix, center, center + forward_geometry_space, triangle[0], triangle[1], triangle[2], collision))	{
+	if (testSensor(worldMatrix, 
+		center, center + forward_geometry_space, 
+		fwCollision::Test::WITH_BORDERS,
+		triangle[0], triangle[1], triangle[2], 
+		collision))	{
 		collisions.push_back(gaCollisionPoint(fwCollisionLocation::FRONT, collision, triangle));
 	};
 
 	// check the downward sensor
-	if (testSensor(worldMatrix, center, center + down, triangle[0], triangle[1], triangle[2], collision)) {
+	if (testSensor(worldMatrix
+		, center, center + down, 
+		fwCollision::Test::WITH_BORDERS,
+		triangle[0], triangle[1], triangle[2], 
+		collision)) {
 		collisions.push_back(gaCollisionPoint(fwCollisionLocation::BOTTOM, collision, triangle));
 	};
 }
@@ -399,13 +409,19 @@ static void aabb_triangles(
 			p2 = center + forward_geometry_space;
 
 			// check the forward sensor
-			if (Framework::lineSegIntersectTri(center, p2, vertices[i], vertices[i + 1], vertices[i + 2], collision)) {
+			if (Framework::lineSegIntersectTri(center, p2, 
+				vertices[i], vertices[i + 1], vertices[i + 2], 
+				fwCollision::Test::WITH_BORDERS, 
+				collision)) {
 				collisions.push_back(gaCollisionPoint(fwCollisionLocation::FRONT, collision, &vertices[i]));
 			};
 
 			p2 = center + dwsensor;
 			// check the downward sensor
-			if (Framework::lineSegIntersectTri(center, p2, vertices[i], vertices[i + 1], vertices[i + 2], collision)) {
+			if (Framework::lineSegIntersectTri(center, p2, 
+				vertices[i], vertices[i + 1], vertices[i + 2], 
+				fwCollision::Test::WITH_BORDERS,
+				collision)) {
 				collisions.push_back(gaCollisionPoint(fwCollisionLocation::BOTTOM, collision, &vertices[i]));
 			};
 		}
@@ -629,8 +645,8 @@ bool Collider::collision_cylinder_aabb_tree(const Collider& cylinder,
 		return false;
 	}
 
-	glm::vec3 const* vertices_gs;
-	uint32_t nbVertices;
+	glm::vec3 const* vertices_gs = pAabbTree->vertices();
+	uint32_t nbVertices = pAabbTree->nbVertices();
 	glm::vec3 v1_es, v2_es, v3_es;
 	glm::vec3 intersection_es;
 	glm::vec3 intersection_gs;
@@ -669,7 +685,7 @@ bool Collider::collision_cylinder_aabb_tree(const Collider& cylinder,
 				intersection_ws = glm::vec3(*aabb_tree.m_worldMatrix * glm::vec4(intersection_gs, 1.0));
 
 				// inform if the collision point in world space(let the entity decide what to do with the collision)
-				collisions.push_back(gaCollisionPoint(fwCollisionLocation::COLLIDE, intersection_ws, &vertices_gs[i]));
+				collisions.push_back(gaCollisionPoint(fwCollisionLocation::COLLIDE, intersection_ws, &vertices_gs[i], i));
 			}
 		}
 	}
@@ -974,6 +990,7 @@ bool Collider::collision_geometry_segment(const Collider& geometry,
 	for (unsigned int i = 0; i < nbVertices; i += 3) {
 		if (testSensor(*geometry.m_inverseWorldMatrix,
 			p1, p2,
+			fwCollision::Test::WITH_BORDERS,
 			vertices_gs[i], vertices_gs[i + 1], vertices_gs[i + 2],
 			collision))
 		{
@@ -1021,6 +1038,7 @@ bool Collider::collision_aabbTree_segment(const Collider& aabbtree,
 		for (unsigned int i = 0; i < nbVertices; i += 3) {
 			if (testSensor(*aabbtree.m_inverseWorldMatrix,
 				p1, p2,
+				fwCollision::Test::WITH_BORDERS,
 				vertices_gs[i], vertices_gs[i + 1], vertices_gs[i + 2],
 				collision)) 
 			{
@@ -1102,7 +1120,7 @@ bool Collider::collision_cylinder_segment(const Collider& cylinder,
 /******************************************************************************
  * run a collision with a segment
  */
-bool Collider::collision(const glm::vec3& start, const glm::vec3& end)
+bool Collider::collision(const glm::vec3& start, const glm::vec3& end, fwCollision::Test test)
 {
 	const glm::mat4& inverseWorldMatrix = *m_inverseWorldMatrix;
 	glm::vec3 p1 = glm::vec3(inverseWorldMatrix * glm::vec4(start, 1.0));
@@ -1130,6 +1148,7 @@ bool Collider::collision(const glm::vec3& start, const glm::vec3& end)
 		for (unsigned int i = 0; i < nbVertices; i += 3) {
 			if (testSensor(inverseWorldMatrix,
 				p1, p2,
+				test,
 				vertices_gs[i], vertices_gs[i + 1], vertices_gs[i + 2],
 				collision)) {
 				return true;

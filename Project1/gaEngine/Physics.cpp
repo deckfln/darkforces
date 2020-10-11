@@ -132,12 +132,13 @@ void Physics::testSectors(gaEntity* entity, const Transform& tranform, std::vect
 /**
  * test if the entity collide sectors
  */
-bool Physics::testSectorsVertical(gaEntity* entity, const glm::vec3& vertical)
+bool Physics::testSegmentSector(const glm::vec3& p1, const glm::vec3& p2, fwCollision::Test test)
 {
-	// elevators don't need to be checked against sectors
+	fwAABBox aabb(p1, p2);
+
 	for (auto sector : m_world->m_sectors) {
-		if (sector->collideAABB(entity->worldAABB())) {
-			if (sector->collide(entity->position(), vertical))
+		if (sector->collideAABB(aabb)) {
+			if (sector->collide(p1, p2, test))
 			{
 				return true;
 			}
@@ -274,7 +275,7 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 		glm::vec3 new_position = entity->position();
 		glm::vec3 direction = glm::normalize(old_position - new_position);
 
-		if (entity->name() == "player")
+		if (entity->name() == "post_elev_w")
 			gaDebugLog(1, "gaWorld::wantToMove", entity->name() + " to " + std::to_string(tranform.m_position.x)
 				+ " " + std::to_string(tranform.m_position.y)
 				+ " " + std::to_string(tranform.m_position.z));
@@ -423,8 +424,10 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 						if (abs(new_position.x - collision.m_position.x) > EPSILON || abs(new_position.z - collision.m_position.z) > EPSILON) {
 							// test explicitly there is a triangle above the entity
 							glm::vec3 bottom2collision(new_position.x, collision.m_position.y + EPSILON, new_position.z);
-							if (!testSectorsVertical(entity, bottom2collision)) {
-								// discard the collision if the 
+							if (!testSegmentSector(entity->position(), bottom2collision, fwCollision::Test::WITHOUT_BORDERS)) {
+								// OK, so we are colliding with a floor that is not exactly above the entity
+								// discard the ground testing
+								// convert to a wall testing
 								continue;
 							}
 						}
@@ -679,7 +682,7 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 							);	// fix the entity altitude
 							fix_y = true;
 							if (entity->name() == "player")
-								gaDebugLog(1, "gaWorld::wantToMove", entity->name() + " fixed ground " + std::to_string(tranform.m_position.x)
+  								gaDebugLog(1, "gaWorld::wantToMove", entity->name() + " fixed ground " + std::to_string(tranform.m_position.x)
 									+ " " + std::to_string(tranform.m_position.y)
 									+ " " + std::to_string(tranform.m_position.z));
 						}
@@ -696,8 +699,8 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 				// check if there is a at STEP distance below the entity
 				if (entity->canStep()) {
 					float step = static_cast<gaActor*>(entity)->step();
-					glm::vec3 down(new_position.x, new_position.y - step, new_position.z);
-					if (testSectorsVertical(entity, down)) {
+	 				glm::vec3 down(new_position.x, new_position.y - step, new_position.z);
+					if (testSegmentSector(entity->position(), down, fwCollision::Test::WITHOUT_BORDERS)) {
 						// we found a floor !
 						tranform.m_position.y -= step;
 						actions.push(
@@ -706,7 +709,7 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 						
 						// fix the entity altitude and give it another try
 						if (entity->name() == "player")
-							gaDebugLog(1, "gaWorld::wantToMove", entity->name() + " step down to ground " + std::to_string(tranform.m_position.x)
+ 							gaDebugLog(1, "gaWorld::wantToMove", entity->name() + " step down to ground " + std::to_string(tranform.m_position.x)
 								+ " " + std::to_string(tranform.m_position.y)
 								+ " " + std::to_string(tranform.m_position.z));
 

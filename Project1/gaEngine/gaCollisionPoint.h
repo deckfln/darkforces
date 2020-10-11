@@ -13,10 +13,11 @@ public:
 		ENTITY,
 		SECTOR
 	};
+	void* m_source = nullptr;					// collision source
+	int m_triangleID = 0;
 	glm::vec3 const *m_triangle = nullptr;		// collision triangle
-	void* m_source = nullptr;	// collision source
 	Source m_class = Source::NONE;
 
-	gaCollisionPoint(fwCollisionLocation location, const glm::vec3& position, glm::vec3 const* triangle);
+	gaCollisionPoint(fwCollisionLocation location, const glm::vec3& position, glm::vec3 const* triangle, int index=0);
 	~gaCollisionPoint();
 };

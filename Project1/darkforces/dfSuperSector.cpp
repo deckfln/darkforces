@@ -90,9 +90,9 @@ bool dfSuperSector::collideAABB(const fwAABBox& box)
 /**
  * if the segment collide with the sector
  */
-bool dfSuperSector::collide(const glm::vec3& start, const glm::vec3& end)
+bool dfSuperSector::collide(const glm::vec3& start, const glm::vec3& end, fwCollision::Test test)
 {
-	return m_collider.collision(start, end);
+	return m_collider.collision(start, end, test);
 }
 
 /**

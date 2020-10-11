@@ -75,8 +75,10 @@ namespace GameEngine
 		void testSectors(gaEntity* entity,
 			const Transform& tranform,
 			std::vector<gaCollisionPoint>& collisions);	// test if the entity collide sectors
-		bool testSectorsVertical(gaEntity* entity,
-			const glm::vec3& vertical);
+		bool testSegmentSector(
+			const glm::vec3& p1, 
+			const glm::vec3& p2, 
+			fwCollision::Test test);					// test if a segment collide with a triangle of any sector
 		void moveBullet(gaEntity* entity, gaMessage* message);
 
 	public:
