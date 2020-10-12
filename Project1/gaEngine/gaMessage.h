@@ -19,7 +19,7 @@ class gaMessage {
 
 public:
 	enum Action {
-		COLLIDE = 0,	// two entities checkCollision
+		COLLIDE = 0,	// entity collides with another one
 		TIMER,			// animation message
 		DELETE_ENTITY,	// delete the given entity
 		MOVE,			// move the entity to an absolution position
@@ -41,8 +41,10 @@ public:
 		WANT_TO_MOVE_FALL,			// object accepts to fall down
 		WANT_TO_MOVE_LASER,			// object is not impacted by gravity
 		PUSH_ENTITIES,				// push objects we are colliding with
-		COLLIDE_ENTITY,
+		COLLIDE_ENTITY,				// collide with a hard physical object
 		COLLIDE_WALL,
+		TRAVERSE_ENTITY,			// traverse a non-physical object
+		TRAVERSE_WALL,
 		ROTATE_VEC3,
 		ROTATE_QUAT,
 		ROTATE_BY,

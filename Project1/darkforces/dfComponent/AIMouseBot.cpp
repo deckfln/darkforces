@@ -71,10 +71,13 @@ void AIMouseBot::dispatchMessage(gaMessage* message)
 		break;
 
 	case gaMessage::Action::COLLIDE:
+		if (message->m_value == gaMessage::Flag::TRAVERSE_ENTITY) {
+			break;	// ignore non-physical objects
+		}
+		// PASS THROUGH
 	case gaMessage::Action::WOULD_FALL:
 		m_direction = -m_direction;
 		// PASS THROUGH
-
 	case gaMessage::Action::MOVE:
 		// move request was accepted, so trigger a new one
 		if (!m_active) {

@@ -378,7 +378,7 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 							collidedEntity->name(),
 							entity->name(),
 							gaMessage::Action::COLLIDE,
-							gaMessage::Flag::COLLIDE_ENTITY,
+							gaMessage::Flag::TRAVERSE_ENTITY,
 							nullptr
 						);
 						// always inform the colliding entity 
@@ -386,7 +386,7 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 							entity->name(),
 							collidedEntity->name(),
 							gaMessage::Action::COLLIDE,
-							gaMessage::Flag::COLLIDE_ENTITY,
+							gaMessage::Flag::TRAVERSE_ENTITY,
 							nullptr
 						);
 						continue;	// check next collision
