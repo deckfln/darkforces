@@ -254,6 +254,7 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 	};
 
 	std::queue<Action> actions;
+	std::map<std::string, bool> pushedEntities;	// list of entities we are pushing, only push an entity once per run
 
 	// kick start actions
 	actions.push(
@@ -275,7 +276,7 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 		glm::vec3 new_position = entity->position();
 		glm::vec3 direction = glm::normalize(old_position - new_position);
 
-		if (entity->name() == "post_elev_w")
+		if (entity->name() == "player")
 			gaDebugLog(1, "gaWorld::wantToMove", entity->name() + " to " + std::to_string(tranform.m_position.x)
 				+ " " + std::to_string(tranform.m_position.y)
 				+ " " + std::to_string(tranform.m_position.z));
@@ -331,10 +332,12 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 		std::map<std::string, gaEntity*>& sittingOnTop = entity->sittingOnTop();
 
 		gaEntity* collidedEntity;
+		pushedEntities.clear();
+
 		for (auto& collision : collisions) {
 			collidedEntity = nullptr;
 			if (collision.m_class == gaCollisionPoint::Source::ENTITY) {
-				gaEntity* collidedEntity = static_cast<gaEntity*>(collision.m_source);
+				collidedEntity = static_cast<gaEntity*>(collision.m_source);
 			}
 
 			switch (collision.m_location) {
@@ -450,10 +453,11 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 							if (entity->name() == "player")
 								debugCollision(collision, entity, "on bottom");
 
-							// for elevator or pushing objects
-							// inform the other entity we are pushing
-							if (action.m_flag == gaMessage::Flag::PUSH_ENTITIES)
+							// for pushing objects (like elevators)
+							// push the other entity (but do it only once
+							if (action.m_flag == gaMessage::Flag::PUSH_ENTITIES && pushedEntities.count(entity->name()) == 0)
 							{
+								pushedEntities[entity->name()] = true;
 
 								GameEngine::Transform& t = collidedEntity->transform();
 								t.m_position = collidedEntity->position();
