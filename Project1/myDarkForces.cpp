@@ -16,8 +16,8 @@
 
 #include "gaEngine/gaActor.h"
 #include "gaEngine/gaPlayer.h"
-#include "gaEngine/gaWorld.h"
-#include "gaEngine/gaModel.h"
+#include "gaEngine/World.h"
+#include "gaEngine/Model.h"
 
 #include "darkforces/dfLevel.h"
 #include "darkforces/dfCollision.h"
@@ -83,9 +83,9 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 		"IPOWER.FME",
 		"DEDMOUSE.FME"
 	};
-	GameEngine::gaModel* mod;
+	GameEngine::Model* mod;
 	for (const std::string& n: preloads) {
-		mod = new GameEngine::gaModel(n, GameEngine::PRELOAD);
+		mod = new GameEngine::Model(n, GameEngine::PRELOAD);
 		g_gaWorld.addModel(mod);
 	}
 

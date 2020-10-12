@@ -7,7 +7,7 @@
 #include "../framework/fwScene.h"
 #include "../framework/fwMesh.h"
 
-#include "gaWorld.h"
+#include "World.h"
 #include "../gaEngine/gaBoundingBoxes.h"
 
 static int g_ids = 0;

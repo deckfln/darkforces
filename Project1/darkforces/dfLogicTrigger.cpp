@@ -6,7 +6,7 @@
 #include "../config.h"
 
 #include "../gaEngine/gaDebug.h"
-#include "../gaEngine/gaWorld.h"
+#include "../gaEngine/World.h"
 #include "../gaEngine/gaActor.h"
 
 #include "dfComponent/dfComponentActor.h"

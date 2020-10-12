@@ -7,7 +7,7 @@
 
 #include "../framework/math/fwCylinder.h"
 
-#include "../gaEngine/gaWorld.h"
+#include "../gaEngine/World.h"
 #include "../gaEngine/gaBoundingBoxes.h"
 
 #include "dfMesh.h"

@@ -12,7 +12,7 @@ const float FME_WORLDSIZE_X = 95.0f;
 const float FME_WORLDSIZE_Y = 95.0f;
 
 // create runtime classes
-const uint32_t g_fme_class = GameEngine::gaModel::m_modelClasses++;
+const uint32_t g_fme_class = GameEngine::Model::m_modelClasses++;
 
 /**
  * Create a FME from a file

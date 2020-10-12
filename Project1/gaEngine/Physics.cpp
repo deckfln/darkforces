@@ -4,7 +4,7 @@
 #include <map>
 #include <glm/gtx/normal.hpp>
 
-#include "gaWorld.h"
+#include "World.h"
 #include "gaMessage.h"
 #include "gaEntity.h"
 #include "gaCollisionPoint.h"
@@ -19,7 +19,7 @@ using namespace GameEngine;
 
 const float EPSILON = 0.001f;
 
-Physics::Physics(gaWorld* world) :
+Physics::Physics(World* world) :
 	m_world(world)
 {
 }
@@ -67,7 +67,7 @@ bool Physics::warpThrough(gaEntity *entity,
 			nullptr
 		);
 		if (entity->name() == "player")
-			gaDebugLog(1, "gaWorld::wantToMove", entity->name() + " warp detected, fixed at " + std::to_string(tranform.m_position.x)
+			gaDebugLog(1, "GameEngine::Physics::wantToMove", entity->name() + " warp detected, fixed at " + std::to_string(tranform.m_position.x)
 				+ " " + std::to_string(tranform.m_position.y)
 				+ " " + std::to_string(tranform.m_position.z));
 		return true;	// go to next entity
@@ -94,7 +94,7 @@ void Physics::testEntities(gaEntity* entity, const Transform& tranform, std::vec
 				size = collisions.size();
 				if (entity->collide(ent, tranform.m_forward, tranform.m_downward, collisions)) {
 					if (ent->name() == "IBATTERY.FME(1)") {
-						printf("Physics::testEntities IBATTERY.FME(1)\n");
+						printf("GameEngine::Physics::testEntities IBATTERY.FME(1)\n");
 					}
 					for (auto i = size; i < collisions.size(); i++) {
 						collisions[i].m_source = ent;
@@ -162,7 +162,7 @@ static void debugCollision(const gaCollisionPoint& collision, gaEntity* entity, 
 		collider = static_cast<dfSuperSector*>(collision.m_source)->name();
 	}
 
-	gaDebugLog(1, "gaWorld::wantToMove",
+	gaDebugLog(1, "GameEngine::Physics::wantToMove",
 		entity->name() + " found collision " + msg
 		+ "with " + collider
 		+ " at " + std::to_string(collision.m_position.y)
@@ -277,7 +277,7 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 		glm::vec3 direction = glm::normalize(old_position - new_position);
 
 		if (entity->name() == "player")
-			gaDebugLog(1, "gaWorld::wantToMove", entity->name() + " to " + std::to_string(tranform.m_position.x)
+			gaDebugLog(1, "GameEngine::Physics::wantToMove", entity->name() + " to " + std::to_string(tranform.m_position.x)
 				+ " " + std::to_string(tranform.m_position.y)
 				+ " " + std::to_string(tranform.m_position.z));
 
@@ -536,7 +536,7 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 			// if there is a collision
 
 			if (entity->name() == "player")
-				gaDebugLog(1, "gaWorld::wantToMove", entity->name() + " pushes ");
+				gaDebugLog(1, "GameEngine::Physics::wantToMove", entity->name() + " pushes ");
 
 			if (action.m_flag == gaMessage::Flag::PUSH_ENTITIES) {
 				// inform being lifted or pushed aside
@@ -549,7 +549,7 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 						);
 
 						if (entity->name() == "player")
-							gaDebugLog(1, "gaWorld::wantToMove", entity->name() + " pushes " + pushed->name());
+							gaDebugLog(1, "GameEngine::Physics::wantToMove", entity->name() + " pushes " + pushed->name());
 
 						GameEngine::Transform& t = pushed->transform();
 						t.m_position = entity->position();
@@ -569,7 +569,7 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 						);
 
 						if (entity->name() == "player")
-							gaDebugLog(1, "gaWorld::wantToMove", entity->name() + " pushed by sector");
+							gaDebugLog(1, "GameEngine::Physics::wantToMove", entity->name() + " pushed by sector");
 
 						continue; // ignore the floor, will be extracted on next run
 					}
@@ -596,7 +596,7 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 					);
 
 					if (entity->name() == "player")
-						gaDebugLog(1, "gaWorld::wantToMove", entity->name() + " pushed by sector");
+						gaDebugLog(1, "GameEngine::Physics::wantToMove", entity->name() + " pushed by sector");
 
 					continue; // ignore the floor, will be extracted on next run
 				}
@@ -610,7 +610,7 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 						// ONLY refuse the move if the entity is a physical one
 						if (collisionWith->physical()) {
 							if (entity->name() == "player")
-								gaDebugLog(1, "gaWorld::wantToMove", entity->name() + " deny move " + std::to_string(tranform.m_position.x)
+								gaDebugLog(1, "GameEngine::Physics::wantToMove", entity->name() + " deny move " + std::to_string(tranform.m_position.x)
 									+ " " + std::to_string(tranform.m_position.y)
 									+ " " + std::to_string(tranform.m_position.z));
 
@@ -618,7 +618,7 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 						}
 						else {
 							if (entity->name() == "player")
-								gaDebugLog(1, "gaWorld::wantToMove", entity->name() + " collide " + std::to_string(tranform.m_position.x)
+								gaDebugLog(1, "GameEngine::Physics::wantToMove", entity->name() + " collide " + std::to_string(tranform.m_position.x)
 									+ " " + std::to_string(tranform.m_position.y)
 									+ " " + std::to_string(tranform.m_position.z));
 						}
@@ -671,7 +671,7 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 					);	// fix the entity altitude
 					fix_y = true;
 					if (entity->name() == "player")
-						gaDebugLog(1, "gaWorld::wantToMove", entity->name() + " falling to ground " + std::to_string(tranform.m_position.x)
+						gaDebugLog(1, "GameEngine::Physics::wantToMove", entity->name() + " falling to ground " + std::to_string(tranform.m_position.x)
 							+ " " + std::to_string(tranform.m_position.y)
 							+ " " + std::to_string(tranform.m_position.z));
 				}
@@ -686,7 +686,7 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 							);	// fix the entity altitude
 							fix_y = true;
 							if (entity->name() == "player")
-  								gaDebugLog(1, "gaWorld::wantToMove", entity->name() + " fixed ground " + std::to_string(tranform.m_position.x)
+  								gaDebugLog(1, "GameEngine::Physics::wantToMove", entity->name() + " fixed ground " + std::to_string(tranform.m_position.x)
 									+ " " + std::to_string(tranform.m_position.y)
 									+ " " + std::to_string(tranform.m_position.z));
 						}
@@ -713,7 +713,7 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 						
 						// fix the entity altitude and give it another try
 						if (entity->name() == "player")
- 							gaDebugLog(1, "gaWorld::wantToMove", entity->name() + " step down to ground " + std::to_string(tranform.m_position.x)
+ 							gaDebugLog(1, "GameEngine::Physics::wantToMove", entity->name() + " step down to ground " + std::to_string(tranform.m_position.x)
 								+ " " + std::to_string(tranform.m_position.y)
 								+ " " + std::to_string(tranform.m_position.z));
 
@@ -751,7 +751,7 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 					}
 
 					if (entity->name() == "player")
-						gaDebugLog(1, "gaWorld::wantToMove", entity->name() + " falling");
+						gaDebugLog(1, "GameEngine::Physics::wantToMove", entity->name() + " falling");
 					continue;
 				}
 			}
@@ -797,7 +797,7 @@ void Physics::update(time_t delta)
 		Ballistic& b = en.second;
 
 		for (auto entity : m_world->m_entities[en.first]) {
-			gaDebugLog(1, "Physics::update", entity->name());
+			gaDebugLog(1, "GameEngine::Physics::update", entity->name());
 			b.apply(delta, entity->pTransform());
 
 			moveEntity(entity, nullptr);

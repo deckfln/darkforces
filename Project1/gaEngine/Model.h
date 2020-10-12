@@ -6,7 +6,7 @@ namespace GameEngine {
 		PRELOAD = 0
 	};
 
-	class gaModel
+	class Model
 	{
 		uint32_t m_modelClass=0;
 
@@ -16,8 +16,8 @@ namespace GameEngine {
 
 	public:
 		static uint32_t m_modelClasses;
-		gaModel(const std::string& name, uint32_t myclass);
-		gaModel(uint32_t myclass);
+		Model(const std::string& name, uint32_t myclass);
+		Model(uint32_t myclass);
 		bool named(const std::string& name);
 		const std::string& name(void) { return m_name; };
 		uint32_t id(void) { return m_modelID; };

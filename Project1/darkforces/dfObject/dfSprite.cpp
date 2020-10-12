@@ -1,6 +1,6 @@
 #include "dfSprite.h"
 
-#include "../../gaEngine/gaWorld.h"
+#include "../../gaEngine/World.h"
 
 #include "../dfSprites.h"
 #include "../dfLevel.h"

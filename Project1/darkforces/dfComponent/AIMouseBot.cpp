@@ -6,7 +6,7 @@
 #include <glm/gtx/norm.hpp>
 
 #include "../../config.h"
-#include "../../gaEngine/gaWorld.h"
+#include "../../gaEngine/World.h"
 #include "../../gaEngine/gaEntity.h"
 
 using namespace DarkForces;

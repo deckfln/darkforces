@@ -1,7 +1,7 @@
 #include "dfModel.h"
 
 dfModel::dfModel(const std::string& name, uint32_t myclass, bool collision):
-	GameEngine::gaModel(name, myclass),
+	GameEngine::Model(name, myclass),
 	m_testColision(collision)
 {
 }

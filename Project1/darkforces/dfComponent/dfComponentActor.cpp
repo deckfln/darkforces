@@ -2,7 +2,7 @@
 
 #include "../../config.h"
 
-#include "../../gaEngine/gaWorld.h"
+#include "../../gaEngine/World.h"
 
 #include "../dfObject/dfSpriteAnimated.h"
 #include "../dfObject.h"

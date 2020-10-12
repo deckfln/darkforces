@@ -9,7 +9,7 @@
 
 #include "../framework/fwAABBox.h"
 #include "../gaEngine/gaEntity.h"
-#include "../gaEngine/gaWorld.h"
+#include "../gaEngine/World.h"
 
 #include "dfComponent/dfComponentActor.h"
 #include "dfElevator.h"

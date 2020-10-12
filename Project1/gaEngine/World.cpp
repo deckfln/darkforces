@@ -1,4 +1,4 @@
-#include "gaWorld.h"
+#include "World.h"
 
 #include <iostream>
 #include <map>
@@ -14,12 +14,14 @@
 #include "../darkforces/dfSuperSector.h"
 #include "../darkforces/dfSprites.h"
 
-gaWorld g_gaWorld;
+using namespace GameEngine;
+
+GameEngine::World g_gaWorld;
 
 /**
  * Create and initialize the world
  */
-gaWorld::gaWorld():
+World::World():
 	m_scene(nullptr),
 	m_physic(this)
 {
@@ -28,7 +30,7 @@ gaWorld::gaWorld():
 /**
  *  register the scene
  */
-void gaWorld::scene(fwScene* scene)
+void World::scene(fwScene* scene)
 {
 	m_scene = scene;
 	set("scene", scene);
@@ -37,7 +39,7 @@ void gaWorld::scene(fwScene* scene)
 /**
  * Add a new gaEntity
  */
-void gaWorld::addClient(gaEntity* client)
+void World::addClient(gaEntity* client)
 {
 	m_entities[client->name()].push_back(client);
 	client->OnWorldInsert();
@@ -47,7 +49,7 @@ void gaWorld::addClient(gaEntity* client)
 /**
  * remove a gaEntity
  */
-void gaWorld::removeClient(gaEntity* client)
+void World::removeClient(gaEntity* client)
 {
 	if (m_entities.count(client->name()) == 0) {
 		// no such client on the map
@@ -69,12 +71,12 @@ void gaWorld::removeClient(gaEntity* client)
 /**
  * add a mesh to the current scene
  */
-void gaWorld::add2scene(gaEntity* client)
+void World::add2scene(gaEntity* client)
 {
 	client->add2scene(m_scene);
 }
 
-void gaWorld::add2scene(fwMesh* mesh)
+void World::add2scene(fwMesh* mesh)
 {
 	m_scene->addChild(mesh);
 }
@@ -82,7 +84,7 @@ void gaWorld::add2scene(fwMesh* mesh)
 /**
  * Remove a mesh from the scene
  */
-void gaWorld::remove2scene(fwMesh* mesh)
+void World::remove2scene(fwMesh* mesh)
 {
 	m_scene->removeChild(mesh);
 }
@@ -90,7 +92,7 @@ void gaWorld::remove2scene(fwMesh* mesh)
 /**
  * add a game sector
  */
-void gaWorld::addSector(dfSuperSector* client)
+void World::addSector(dfSuperSector* client)
 {
 	m_sectors.push_back(client);
 }
@@ -99,7 +101,7 @@ void gaWorld::addSector(dfSuperSector* client)
  * find the super sector the position is inside
  *  used the last known super sector as base
  */
-dfSuperSector* gaWorld::findSector(dfSuperSector* cached, const glm::vec3& position)
+dfSuperSector* World::findSector(dfSuperSector* cached, const glm::vec3& position)
 {
 	void* sector;
 
@@ -131,7 +133,7 @@ dfSuperSector* gaWorld::findSector(dfSuperSector* cached, const glm::vec3& posit
 /**
  * add a new generic object
  */
-void gaWorld::set(const std::string& name, void* object)
+void World::set(const std::string& name, void* object)
 {
 	m_registry[name] = object;
 }
@@ -139,7 +141,7 @@ void gaWorld::set(const std::string& name, void* object)
 /**
  * retrieve a generic object
  */
-void* gaWorld::get(const std::string& name)
+void* World::get(const std::string& name)
 {
 	if (m_registry.count(name) > 0) {
 		return m_registry[name];
@@ -151,7 +153,7 @@ void* gaWorld::get(const std::string& name)
 /**
  * add a new model to the world
  */
-void gaWorld::addModel(GameEngine::gaModel* model)
+void World::addModel(GameEngine::Model* model)
 {
 	if (model->name() != "") {
 		m_models[model->name()] = model;
@@ -164,7 +166,7 @@ void gaWorld::addModel(GameEngine::gaModel* model)
 /**
  * get a model from the world
  */
-GameEngine::gaModel* gaWorld::getModel(const std::string& name)
+Model* World::getModel(const std::string& name)
 {
 	if (m_models.count(name) > 0) {
 		return m_models[name];
@@ -176,7 +178,7 @@ GameEngine::gaModel* gaWorld::getModel(const std::string& name)
 /**
  * remove a model from the world
  */
-bool gaWorld::removeModel(const std::string& name)
+bool World::removeModel(const std::string& name)
 {
 	if (m_models.count(name) > 0) {
 		m_models.erase(name);
@@ -189,7 +191,7 @@ bool gaWorld::removeModel(const std::string& name)
 /**
  * return all models of a specific class
  */
-void gaWorld::getModelsByClass(uint32_t myclass, std::list<GameEngine::gaModel*>& r)
+void World::getModelsByClass(uint32_t myclass, std::list<GameEngine::Model*>& r)
 {
 	for (auto model : m_models) {
 		if (model.second->modelClass() == myclass) {
@@ -201,7 +203,7 @@ void gaWorld::getModelsByClass(uint32_t myclass, std::list<GameEngine::gaModel*>
 /**
  * add the sprite manager
  */
-void gaWorld::spritesManager(dfSprites* sprites)
+void World::spritesManager(dfSprites* sprites)
 {
 	m_sprites = sprites;
 	sprites->OnWorldInsert();
@@ -235,7 +237,7 @@ static gaMessage* allocateMessage(void)
 /**
  * send a message for immediate action
  */
-gaMessage* gaWorld::sendMessage(const std::string& from, const std::string& to, int action, int value, void* extra)
+gaMessage* World::sendMessage(const std::string& from, const std::string& to, int action, int value, void* extra)
 {
 	gaMessage* ptr = allocateMessage();
 	ptr->m_used = true;
@@ -254,7 +256,7 @@ gaMessage* gaWorld::sendMessage(const std::string& from, const std::string& to, 
 /**
  * send a message for immediate action
  */
-gaMessage* gaWorld::sendMessage(const std::string& from, const std::string& to, int action, float value, void* extra)
+gaMessage* World::sendMessage(const std::string& from, const std::string& to, int action, float value, void* extra)
 {
 	gaMessage* ptr = allocateMessage();
 	ptr->m_used = true;
@@ -273,7 +275,7 @@ gaMessage* gaWorld::sendMessage(const std::string& from, const std::string& to, 
 /**
  * send a message for immediate action
  */
-gaMessage* gaWorld::sendMessage(const std::string& from, const std::string& to, int action, const glm::vec3& value, void* extra)
+gaMessage* World::sendMessage(const std::string& from, const std::string& to, int action, const glm::vec3& value, void* extra)
 {
 	gaMessage* ptr = allocateMessage();
 	ptr->m_used = true;
@@ -289,7 +291,7 @@ gaMessage* gaWorld::sendMessage(const std::string& from, const std::string& to, 
 	return ptr;
 }
 
-void gaWorld::push(gaMessage* message)
+void World::push(gaMessage* message)
 {
 	m_queue.push(message);
 }
@@ -297,7 +299,7 @@ void gaWorld::push(gaMessage* message)
 /**
  * send message for next frame
  */
-gaMessage* gaWorld::sendMessageDelayed(const std::string& from, const std::string& to, int action, int value, void* extra)
+gaMessage* World::sendMessageDelayed(const std::string& from, const std::string& to, int action, int value, void* extra)
 {
 	gaMessage* ptr = allocateMessage();
 	ptr->m_used = true;
@@ -316,7 +318,7 @@ gaMessage* gaWorld::sendMessageDelayed(const std::string& from, const std::strin
 /**
  * send message for immediate dispatch
  */
-gaMessage* gaWorld::sendImmediateMessage(const std::string& from, const std::string& to, int action, int value, void* extra)
+gaMessage* World::sendImmediateMessage(const std::string& from, const std::string& to, int action, int value, void* extra)
 {
 	gaMessage* ptr = allocateMessage();
 	ptr->m_used = true;
@@ -341,7 +343,7 @@ gaMessage* gaWorld::sendImmediateMessage(const std::string& from, const std::str
 	return ptr;
 }
 
-void gaWorld::pushForNextFrame(gaMessage* message)
+void World::pushForNextFrame(gaMessage* message)
 {
 	m_for_next_frame.push(message);
 }
@@ -350,7 +352,7 @@ void gaWorld::pushForNextFrame(gaMessage* message)
 /**
  * Search the entities map
  */
-gaEntity* gaWorld::getEntity(const std::string& name)
+gaEntity* World::getEntity(const std::string& name)
 {
 	// search new entities
 	if (m_entities.count(name) > 0) {
@@ -363,7 +365,7 @@ gaEntity* gaWorld::getEntity(const std::string& name)
 /**
  * parse entities to check for collision with the given one
  */
-void gaWorld::findAABBCollision(const fwAABBox& box, 
+void World::findAABBCollision(const fwAABBox& box, 
 	std::list<gaEntity*>& entities, 
 	std::list<dfSuperSector*>& sectors, 
 	gaEntity* source)
@@ -393,7 +395,7 @@ void gaWorld::findAABBCollision(const fwAABBox& box,
 /**
  * extended collision test after a successful AABB collision
  */
-bool gaWorld::checkCollision(gaEntity* source, fwCylinder& bounding, glm::vec3& direction, std::list<gaCollisionPoint>& collisions)
+bool World::checkCollision(gaEntity* source, fwCylinder& bounding, glm::vec3& direction, std::list<gaCollisionPoint>& collisions)
 {
 	glm::vec3 intersection;
 
@@ -424,7 +426,7 @@ bool gaWorld::checkCollision(gaEntity* source, fwCylinder& bounding, glm::vec3& 
 /**
  * dispatch messages
  */
-void gaWorld::process(time_t delta)
+void World::process(time_t delta)
 {
 	/*
 	if (m_queue.size() > 0) {
@@ -511,11 +513,11 @@ void gaWorld::process(time_t delta)
 	m_queue.swap(m_for_next_frame);
 }
 
-void gaWorld::suspendTimer(void)
+void World::suspendTimer(void)
 {
 	m_timer = false;
 }
 
-gaWorld::~gaWorld()
+World::~World()
 {
 }

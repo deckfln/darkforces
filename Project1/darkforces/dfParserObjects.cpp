@@ -480,7 +480,7 @@ dfParserObjects::dfParserObjects(dfFileSystem* fs, dfPalette* palette, std::stri
 	parse(parser, fs, palette, level);
 
 	// load the 'pre-loaded' sprites
-	std::list<GameEngine::gaModel*> l;
+	std::list<GameEngine::Model*> l;
 	g_gaWorld.getModelsByClass(GameEngine::PRELOAD, l);
 	for (auto model : l) {
 		g_gaWorld.removeModel(model->name());
@@ -506,7 +506,7 @@ dfAtlasTexture* dfParserObjects::buildAtlasTexture(void)
 {
 	std::vector<dfBitmapImage*> frames;
 
-	std::list<GameEngine::gaModel*> l;
+	std::list<GameEngine::Model*> l;
 	g_gaWorld.getModelsByClass(g_wax_class, l);
 	for (auto wax : l) {
 		((dfWAX*)wax)->getFrames(frames);
@@ -533,7 +533,7 @@ void dfParserObjects::buildSprites(void)
 	dfSprites* manager = new dfSprites(m_objects.size(), m_textures);
 	g_gaWorld.spritesManager(manager);
 
-	std::list<GameEngine::gaModel*> l;
+	std::list<GameEngine::Model*> l;
 	g_gaWorld.getModelsByClass(g_wax_class, l);
 
 	for (auto wax : l) {

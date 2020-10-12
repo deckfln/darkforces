@@ -8,7 +8,7 @@
 
 #include "dfObject.h"
 
-#include "../gaEngine/gaModel.h"
+#include "../gaEngine/Model.h"
 
 // data for sprite model
 
@@ -44,7 +44,7 @@ struct GLmodel {
 
 class fwMesh;
 
-class dfModel: public GameEngine::gaModel
+class dfModel: public GameEngine::Model
 {
 protected:
 	glm::vec2 m_size_gl = glm::vec2(0);		// size in gl space (for sprites)

@@ -13,7 +13,7 @@
 #include "../framework/fwCollision.h"
 
 #include "../gaEngine/gaCollisionPoint.h"
-#include "../gaEngine/gaWorld.h"
+#include "../gaEngine/World.h"
 
 #include "dfSuperSector.h"
 #include "dfMesh.h"

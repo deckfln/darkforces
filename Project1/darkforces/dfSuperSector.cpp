@@ -7,7 +7,7 @@
 
 #include "../framework/geometries/fwGeometrySphere.h"
 
-#include "../gaEngine/gaWorld.h"
+#include "../gaEngine/World.h"
 
 #include "dfLevel.h"
 #include "dfSign.h"

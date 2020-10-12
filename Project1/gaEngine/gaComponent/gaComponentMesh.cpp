@@ -2,7 +2,7 @@
 
 #include "../../alEngine/alSound.h"
 
-#include "../gaWorld.h"
+#include "../World.h"
 #include "../gaEntity.h"
 
 using namespace GameEngine;

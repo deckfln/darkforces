@@ -12,7 +12,7 @@
 #include "../framework/geometries/fwPlaneGeometry.h"
 #include "../framework/math/fwCylinder.h"
 
-#include "../gaEngine/gaWorld.h"
+#include "../gaEngine/World.h"
 #include "../gaEngine/gaBoundingBoxes.h"
 #include "../gaEngine/gaCollisionPoint.h"
 

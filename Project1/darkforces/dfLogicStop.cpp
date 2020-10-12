@@ -2,7 +2,7 @@
 
 #include <map>
 
-#include "../gaEngine/gaWorld.h"
+#include "../gaEngine/World.h"
 
 #include "dfSector.h"
 #include "dfElevator.h"

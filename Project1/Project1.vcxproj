@@ -235,9 +235,9 @@
     <ClCompile Include="gaEngine\gaDebug.cpp" />
     <ClCompile Include="gaEngine\gaEntity.cpp" />
     <ClCompile Include="gaEngine\gaMessage.cpp" />
-    <ClCompile Include="gaEngine\gaModel.cpp" />
+    <ClCompile Include="gaEngine\Model.cpp" />
     <ClCompile Include="gaEngine\gaPlayer.cpp" />
-    <ClCompile Include="gaEngine\gaWorld.cpp" />
+    <ClCompile Include="gaEngine\World.cpp" />
     <ClCompile Include="gaEngine\Lexer.cpp" />
     <ClCompile Include="gaEngine\Parser.cpp" />
     <ClCompile Include="gaEngine\Physics.cpp" />
@@ -386,9 +386,9 @@
     <ClInclude Include="gaEngine\gaDebug.h" />
     <ClInclude Include="gaEngine\gaEntity.h" />
     <ClInclude Include="gaEngine\gaMessage.h" />
-    <ClInclude Include="gaEngine\gaModel.h" />
+    <ClInclude Include="gaEngine\Model.h" />
     <ClInclude Include="gaEngine\gaPlayer.h" />
-    <ClInclude Include="gaEngine\gaWorld.h" />
+    <ClInclude Include="gaEngine\World.h" />
     <ClInclude Include="gaEngine\Lexer.h" />
     <ClInclude Include="gaEngine\Parser.h" />
     <ClInclude Include="gaEngine\Physics.h" />

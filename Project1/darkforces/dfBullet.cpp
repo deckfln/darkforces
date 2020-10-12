@@ -14,7 +14,7 @@
 #include "../framework/fwMaterialBasic.h"
 #include "../framework/geometries/fwGeometryCylinder.h"
 
-#include "../gaEngine/gaWorld.h"
+#include "../gaEngine/World.h"
 #include "../gaEngine/gaMessage.h"
 #include "../gaEngine/gaCollisionPoint.h"
 

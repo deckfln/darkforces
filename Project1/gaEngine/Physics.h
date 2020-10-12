@@ -6,7 +6,6 @@
 
 #include <map>
 
-class gaWorld;
 class gaEntity;
 class gaMessage;
 
@@ -14,6 +13,8 @@ static const float c_gravity = -0.00000981f;
 
 namespace GameEngine
 {
+	class World;
+
 	struct Ballistic {
 		time_t m_physic_time_elpased = 0;				// physic engine
 		glm::mat3x3 m_physic = glm::mat3x3(0);
@@ -61,7 +62,7 @@ namespace GameEngine
 	};
 
 	class Physics {
-		gaWorld* m_world = nullptr;
+		World* m_world = nullptr;
 		std::map<std::string, Ballistic> m_ballistics;	// falling objects
 		std::vector<std::string> m_remove;				// list of objects to remove from the falling
 
@@ -82,7 +83,7 @@ namespace GameEngine
 		void moveBullet(gaEntity* entity, gaMessage* message);
 
 	public:
-		Physics(gaWorld *world);
+		Physics(World *world);
 		void moveEntity(gaEntity *entity, gaMessage* message);
 		void update(time_t delta);
 	};

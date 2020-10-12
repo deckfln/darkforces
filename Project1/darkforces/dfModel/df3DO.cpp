@@ -65,7 +65,7 @@ static std::vector<struct df3DOQuadIndex> triangleIndex;		// Vertices 0:, 1:
 static int currentTexture;
 
 // create runtime classes
-const uint32_t g_3do_class = GameEngine::gaModel::m_modelClasses++;
+const uint32_t g_3do_class = GameEngine::Model::m_modelClasses++;
 
 /**
  *
