@@ -81,6 +81,7 @@ namespace GameEngine
 			const glm::vec3& p2, 
 			fwCollision::Test test);					// test if a segment collide with a triangle of any sector
 		void moveBullet(gaEntity* entity, gaMessage* message);
+		void informCollision(gaEntity* from, gaEntity* to);
 
 	public:
 		Physics(World *world);

@@ -170,6 +170,29 @@ static void debugCollision(const gaCollisionPoint& collision, gaEntity* entity, 
 }
 
 /**
+ * Send a collision message between 2 entities
+ */
+void Physics::informCollision(gaEntity* from, gaEntity* to)
+{
+	// always inform the source entity 
+	m_world->sendMessage(
+		from->name(),
+		to->name(),
+		gaMessage::Action::COLLIDE,
+		gaMessage::Flag::COLLIDE_ENTITY,
+		nullptr
+	);
+	// always inform the colliding entity 
+	m_world->sendMessage(
+		to->name(),
+		from->name(),
+		gaMessage::Action::COLLIDE,
+		gaMessage::Flag::COLLIDE_ENTITY,
+		nullptr
+	);
+}
+
+/**
  * Move a bullet
  */
 void Physics::moveBullet(gaEntity* entity, gaMessage* message)
@@ -319,6 +342,8 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 		// find the nearest collisions
 		gaCollisionPoint* nearest_collision = nullptr;
 		gaCollisionPoint* nearest_ground = nullptr;
+		gaCollisionPoint* nearest_ceiling = nullptr;		float nearest_ceiling_y = 999999;
+
 		float distance = 99999999.0f;
 		float ground = 9999999.0f;
 		float d;
@@ -374,21 +399,7 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 						// always inform the source entity 
 						collidedEntities[collidedEntity->name()] = true;
 
-						m_world->sendMessage(
-							collidedEntity->name(),
-							entity->name(),
-							gaMessage::Action::COLLIDE,
-							gaMessage::Flag::TRAVERSE_ENTITY,
-							nullptr
-						);
-						// always inform the colliding entity 
-						m_world->sendMessage(
-							entity->name(),
-							collidedEntity->name(),
-							gaMessage::Action::COLLIDE,
-							gaMessage::Flag::TRAVERSE_ENTITY,
-							nullptr
-						);
+						informCollision(collidedEntity, entity);
 						continue;	// check next collision
 					}
 				}
@@ -485,14 +496,13 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 						}
 					}
 				}
-				else if (isCelling) {		// TOP
+				else if (isCelling) {			// TOP
 					if (entity->name() == "player")
-						debugCollision(collision, entity, "on top");
+						debugCollision(collision, entity, " hit ceiling");
 
-					d = entity->distanceTo(collision.m_position);
-					if (d < distance) {
-						nearest_collision = &collision;
-						distance = d;
+					if (collision.m_position.y < nearest_ceiling_y) {
+						nearest_ceiling = &collision;
+						nearest_ceiling_y = collision.m_position.y;
 					}
 				}
 				else {							// FRONT/BACK/LEFT/RIGHT
@@ -624,21 +634,7 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 						}
 
 						// always inform the source entity 
-						m_world->sendMessage(
-							collisionWith->name(),
-							entity->name(),
-							gaMessage::Action::COLLIDE,
-							gaMessage::Flag::COLLIDE_ENTITY,
-							nullptr
-						);
-						// always inform the colliding entity 
-						m_world->sendMessage(
-							entity->name(),
-							collisionWith->name(),
-							gaMessage::Action::COLLIDE,
-							gaMessage::Flag::COLLIDE_ENTITY,
-							nullptr
-						);
+						informCollision(collisionWith, entity);
 					}
 					else {
 						// sectors always block the movement
@@ -657,6 +653,67 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 			}
 		}
 
+		// only test ceiling collision if the entity is moving up
+		if (nearest_ceiling != nullptr && new_position.y > old_position.y) {
+			// if the entity hit the ceiling BUT can be pushed aside by another triangle
+			if (nearest_ceiling->m_class == gaCollisionPoint::Source::ENTITY) {
+				gaEntity* collisionWith = static_cast<gaEntity*>(nearest_ceiling->m_source);
+
+				// ONLY refuse the move if the entity is a physical one
+				if (collisionWith->physical()) {
+					if (entity->name() == "player")
+						gaDebugLog(1, "GameEngine::Physics::wantToMove", entity->name() + " deny move upward " + std::to_string(tranform.m_position.x)
+							+ " " + std::to_string(tranform.m_position.y)
+							+ " " + std::to_string(tranform.m_position.z));
+
+					entity->popTransformations();				// restore previous position
+				}
+				else {
+					if (entity->name() == "player")
+						gaDebugLog(1, "GameEngine::Physics::wantToMove", entity->name() + " collide upward " + std::to_string(tranform.m_position.x)
+							+ " " + std::to_string(tranform.m_position.y)
+							+ " " + std::to_string(tranform.m_position.z));
+				}
+
+				// always inform the source entity 
+				informCollision(collisionWith, entity);
+			}
+			else {
+				// sectors always block the movement
+				entity->popTransformations();				// restore previous position
+
+				// stop ballistic move
+				if (m_ballistics.count(entity->name()) > 0 && m_ballistics[entity->name()].m_inUse) {
+					// if the object was going upward, force the position
+					tranform.m_position.y = nearest_ceiling_y;
+					m_ballistics[entity->name()] = Ballistic(tranform.m_position, old_position);
+
+					actions.push(
+						Action(entity, gaMessage::Flag::PUSH_ENTITIES)
+					);	// fix the entity altitude
+					fix_y = true;
+					if (entity->name() == "player")
+						gaDebugLog(1, "GameEngine::Physics::wantToMove", entity->name() + " falling to ground " + std::to_string(tranform.m_position.x)
+							+ " " + std::to_string(tranform.m_position.y)
+							+ " " + std::to_string(tranform.m_position.z));
+				}
+
+				if (entity->name() == "player")
+					gaDebugLog(1, "GameEngine::Physics::wantToMove", entity->name() + " hit sector ceiling " + std::to_string(tranform.m_position.x)
+					+ " " + std::to_string(tranform.m_position.y)
+					+ " " + std::to_string(tranform.m_position.z));
+
+				m_world->sendMessage(
+					static_cast<dfSuperSector*>(nearest_ceiling->m_source)->name(),
+					entity->name(),
+					gaMessage::Action::COLLIDE,
+					gaMessage::Flag::COLLIDE_WALL,
+					nullptr
+				);
+			}
+			continue;									// block the move
+		}
+
 		// manage ground collision and accept to jump up if over a step
 		if (entity->gravity()) {
 			if (nearest_ground) {
@@ -666,9 +723,6 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 					m_ballistics[entity->name()].m_inUse = false;
 
 					tranform.m_position.y = nearest_ground->m_triangle[0].y;
-					actions.push(
-						Action(entity, gaMessage::Flag::PUSH_ENTITIES)
-					);	// fix the entity altitude
 					fix_y = true;
 					if (entity->name() == "player")
 						gaDebugLog(1, "GameEngine::Physics::wantToMove", entity->name() + " falling to ground " + std::to_string(tranform.m_position.x)

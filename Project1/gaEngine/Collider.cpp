@@ -590,6 +590,8 @@ bool Collider::collision_cylinder_geometry(
 	glm::vec3 intersection_gs;
 	glm::vec3 intersection_ws;
 
+	glm::vec3 triangle_ws[3];
+
 	for (unsigned int i = 0; i < nbVertices; i += 3) {
 
 		// convert each model space vertex to ellipsoid space
@@ -605,9 +607,12 @@ bool Collider::collision_cylinder_geometry(
 
 			// convert from cylinder-space => world-space
 			intersection_ws = glm::vec3(*geometry.m_worldMatrix * glm::vec4(intersection_gs, 1.0));
+			triangle_ws[0] = glm::vec3(*geometry.m_worldMatrix * glm::vec4(vertices_gs[i], 1.0));
+			triangle_ws[1] = glm::vec3(*geometry.m_worldMatrix * glm::vec4(vertices_gs[i+1], 1.0));
+			triangle_ws[2] = glm::vec3(*geometry.m_worldMatrix * glm::vec4(vertices_gs[i+2], 1.0));
 
 			// inform if the collision point in world space(let the entity decide what to do with the collision)
-			collisions.push_back(gaCollisionPoint(fwCollisionLocation::COLLIDE, intersection_ws, &vertices_gs[i]));
+			collisions.push_back(gaCollisionPoint(fwCollisionLocation::COLLIDE, intersection_ws, triangle_ws));
 		}
 	}
 
