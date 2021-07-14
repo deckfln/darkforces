@@ -33,6 +33,9 @@ namespace GameEngine
 		glm::mat4 const *m_worldMatrix = nullptr;
 		glm::mat4 const *m_inverseWorldMatrix = nullptr;
 
+		void* m_parent = nullptr;
+		gaCollisionPoint::Source m_parent_class = gaCollisionPoint::Source::NONE;
+
 		void* m_source = nullptr;		// maximum level of collision (AABB, Cylinder, Geometry)
 		fwAABBox* m_aabb = nullptr;		// minimum level of collision => modelAABB
 
@@ -97,7 +100,8 @@ namespace GameEngine
 			glm::mat4* inverseWorldMatrix);
 		void set(AABBoxTree* modelAABB,
 			glm::mat4* worldMatrix,
-			glm::mat4* inverseWorldMatrix);					// collider based on a a tree of AABB (split triangles by AABB)
+			glm::mat4* inverseWorldMatrix,
+			void *parent, gaCollisionPoint::Source source);	// collider based on a a tree of AABB (split triangles by AABB)
 		void set(fwCylinder* modelAABB,
 			glm::mat4* worldMatrix,
 			glm::mat4* inverseWorldMatrix);					// collider based on a cylinder
@@ -116,6 +120,9 @@ namespace GameEngine
 			const glm::vec3& position,
 			const glm::vec3& old_position,
 			std::vector<gaCollisionPoint>& collisions);		// check if the entity moved so fast it went trough another one
+
+		inline const void* parent(void) { return m_parent; };
+		inline const gaCollisionPoint::Source parent_class(void) { return m_parent_class; };
 	};
 }
 

@@ -57,12 +57,17 @@ void Collider::set(fwAABBox* modelAABB, glm::mat4* worldMatrix, glm::mat4* inver
 /**
  * collider based on a gaAABB (split triangles by AABB)
  */
-void Collider::set(AABBoxTree* modelAABB, glm::mat4* worldMatrix, glm::mat4* inverseWorldMatrix)
+void Collider::set(AABBoxTree* modelAABB, 
+	glm::mat4* worldMatrix, 
+	glm::mat4* inverseWorldMatrix, 
+	void* parent, gaCollisionPoint::Source parent_class)
 {
 	m_type = ColliderType::AABB_TREE;
 	m_source = m_aabb = modelAABB;
 	m_worldMatrix = worldMatrix;
 	m_inverseWorldMatrix = inverseWorldMatrix;
+	m_parent = parent;
+	m_parent_class = parent_class;
 }
 
 /**
@@ -281,7 +286,12 @@ bool Collider::warpThroughAABBTree(const Collider& aabbtree,
 			{
 				// convert the collision point back to worldspace
 				collision = glm::vec3(*aabbtree.m_worldMatrix * glm::vec4(collision, 1.0));
-				collisions.push_back(gaCollisionPoint(fwCollisionLocation::WARP, collision, vertices_gs + i));
+
+				collisions.push_back(
+					gaCollisionPoint(fwCollisionLocation::WARP, collision, vertices_gs + i, i,
+						aabbtree.m_parent, aabbtree.m_parent_class
+					)
+				);
 			}
 		}
 	}

@@ -19,5 +19,10 @@ public:
 	Source m_class = Source::NONE;
 
 	gaCollisionPoint(fwCollisionLocation location, const glm::vec3& position, glm::vec3 const* triangle, int index=0);
+
+	gaCollisionPoint(fwCollisionLocation location, const glm::vec3& position, glm::vec3 const* triangle, int index,
+		void* parent,
+		gaCollisionPoint::Source parent_class);
+
 	~gaCollisionPoint();
 };

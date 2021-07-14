@@ -221,7 +221,8 @@ void dfSuperSector::buildGeometry(std::vector<dfSector*>& sectors)
 	m_collider.set(
 		(GameEngine::AABBoxTree*)&m_dfmesh->modelAABB(), 
 		m_dfmesh->worldMatrix(), 
-		m_dfmesh->inverseWorldMatrix());
+		m_dfmesh->inverseWorldMatrix(),
+		this, gaCollisionPoint::Source::SECTOR);
 
 	// TODO : fix the camera frustum test to remove that line
 	// m_mesh->always_draw(true);

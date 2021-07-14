@@ -49,8 +49,17 @@ bool Physics::warpThrough(gaEntity *entity,
 		float nearest = 9999999;
 		glm::vec3 near_c = glm::vec3(0);
 
+		dfSuperSector* collidedEntity = nullptr;
+
+		if (entity->name() == "player")
+			gaDebugLog(1, "GameEngine::Physics::wantToMove", entity->name() + " warp detected");
+
 		// find the nearest point
 		for (auto& collision : collisions) {
+			if (collision.m_class == gaCollisionPoint::Source::SECTOR) {
+				collidedEntity = static_cast<dfSuperSector*>(collision.m_source);
+			}
+
 			if (glm::distance2(old_position, collision.m_position) < nearest) {
 				nearest = glm::distance2(old_position, collision.m_position);
 				near_c = collision.m_position;
@@ -66,10 +75,12 @@ bool Physics::warpThrough(gaEntity *entity,
 			0,
 			nullptr
 		);
+
 		if (entity->name() == "player")
-			gaDebugLog(1, "GameEngine::Physics::wantToMove", entity->name() + " warp detected, fixed at " + std::to_string(tranform.m_position.x)
+			gaDebugLog(1, "GameEngine::Physics::wantToMove", entity->name() + " warp fixed at " + std::to_string(tranform.m_position.x)
 				+ " " + std::to_string(tranform.m_position.y)
 				+ " " + std::to_string(tranform.m_position.z));
+
 		return true;	// go to next entity
 	}
 
@@ -93,9 +104,6 @@ void Physics::testEntities(gaEntity* entity, const Transform& tranform, std::vec
 			if (ent != entity && entity->collideAABB(ent->worldAABB())) {
 				size = collisions.size();
 				if (entity->collide(ent, tranform.m_forward, tranform.m_downward, collisions)) {
-					if (ent->name() == "IBATTERY.FME(1)") {
-						printf("GameEngine::Physics::testEntities IBATTERY.FME(1)\n");
-					}
 					for (auto i = size; i < collisions.size(); i++) {
 						collisions[i].m_source = ent;
 						collisions[i].m_class = gaCollisionPoint::Source::ENTITY;
@@ -258,6 +266,9 @@ void Physics::moveBullet(gaEntity* entity, gaMessage* message)
  */
 void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 {
+	if (entity->name() == "post_elev_e") {
+		printf("Physics::moveEntity post_elev_e\n");
+	}
 	// bullets are special case
 	if (entity->is(DF_ENTITY_BULLET)) {
 		moveBullet(entity, message);
@@ -466,9 +477,9 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 
 							// for pushing objects (like elevators)
 							// push the other entity (but do it only once
-							if (action.m_flag == gaMessage::Flag::PUSH_ENTITIES && pushedEntities.count(entity->name()) == 0)
+							if (action.m_flag == gaMessage::Flag::PUSH_ENTITIES && pushedEntities.count(collidedEntity->name()) == 0)
 							{
-								pushedEntities[entity->name()] = true;
+								pushedEntities[collidedEntity->name()] = true;
 
 								GameEngine::Transform& t = collidedEntity->transform();
 								t.m_position = collidedEntity->position();
