@@ -1,5 +1,9 @@
 #include "fwapp.h"
 
+#include "imgui.h"
+#include "imgui_impl_glfw.h"
+#include "imgui_impl_opengl3.h"
+
 #include <iostream>
 
 #include "fwRenderer.h"
@@ -74,6 +78,26 @@ fwApp::fwApp(std::string name, int _width, int _height, std::string post_process
 	{
 		std::cout << "Failed to initialize GLAD" << std::endl;
 	}
+
+	// Setup Dear ImGui context
+	const char* glsl_version = "#version 130";
+	IMGUI_CHECKVERSION();
+	ImGui::CreateContext();
+	ImGuiIO& io = ImGui::GetIO();
+	//io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
+	//io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+	io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
+
+	// Setup Dear ImGui style
+	ImGui::StyleColorsDark();
+	//ImGui::StyleColorsClassic();
+
+	// Setup Platform/Renderer backends
+	ImGui_ImplGlfw_InitForOpenGL(window, true);
+	ImGui_ImplOpenGL3_Init(glsl_version);
+
+	// setup the backend render
+	glfwMakeContextCurrent(window);
 
 	m_renderer = new fwRendererDefered(SCR_WIDTH, SCR_HEIGHT);
 
@@ -166,6 +190,7 @@ void fwApp::run(void)
 	std::string s;
 
 	int fps = 0;
+	bool show_demo_window = true;
 
 	while (!glfwWindowShouldClose(window))
 	{
@@ -181,6 +206,8 @@ void fwApp::run(void)
 		if ((fps % 3) == 0) {
 			time_budget++;	// compensate for the 33.33333ms that we round to 33ms
 		}
+
+		glfwPollEvents();
 
 		// input
 		// -----
@@ -206,8 +233,36 @@ void fwApp::run(void)
 
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
 		// -------------------------------------------------------------------------------
+
+		// Start the Dear ImGui frame
+		// Update and Render additional Platform Windows
+
+		ImGui_ImplOpenGL3_NewFrame();
+		ImGui_ImplGlfw_NewFrame();
+		ImGui::NewFrame();
+
+		// render your GUI
+		ImGui::Begin("Hello, world!");                          // Create a window called "Hello, world!" and append into it.
+		ImGui::Button("Hello!");
+		ImGui::End();
+
+		// Render dear imgui into screen
+		ImGui::Render();
+
+		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+		// Update and Render additional Platform Windows
+		if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+		{
+			GLFWwindow* backup_current_context = glfwGetCurrentContext();
+			ImGui::UpdatePlatformWindows();
+			ImGui::RenderPlatformWindowsDefault();
+			glfwMakeContextCurrent(backup_current_context);
+		}
+
 		glfwSwapBuffers(window);
-		glfwPollEvents();
+
+		// render the game
 
 		if (caped_fps) {
 			now = GetTickCount64();
@@ -235,6 +290,10 @@ void fwApp::run(void)
 		}
 	}
 
+	ImGui_ImplOpenGL3_Shutdown();
+	ImGui_ImplGlfw_Shutdown();
+	ImGui::DestroyContext();
+
 	std::cout << "Frames " << fps << std::endl;
 }
 
@@ -246,6 +305,8 @@ fwApp::~fwApp()
 	delete m_renderer;
 	delete postProcessing;
 	delete source;
+
+	glfwDestroyWindow(window);
 
 	// glfw: terminate, clearing all previously allocated GLFW resources.
 	// ------------------------------------------------------------------
