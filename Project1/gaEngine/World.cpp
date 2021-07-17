@@ -34,6 +34,22 @@ World::World():
 }
 
 /**
+ * Let the game engine process events
+ */
+void GameEngine::World::run(void)
+{
+	m_run = true;
+}
+
+/**
+ * Suspend the game engine, no event will be processed
+ */
+void GameEngine::World::suspend(void)
+{
+	m_run = false;
+}
+
+/**
  *  register the scene
  */
 void World::scene(fwScene* scene)
@@ -434,6 +450,11 @@ bool World::checkCollision(gaEntity* source, fwCylinder& bounding, glm::vec3& di
  */
 void World::process(time_t delta)
 {
+	// is the engine actually running ?
+	if (!m_run) {
+		return;
+	}
+
 #ifdef DEBUG
 	g_Blackbox.recordState();
 #endif

@@ -22,6 +22,7 @@ class dfSprites;
 namespace GameEngine {
 	class World
 	{
+		bool m_run=true;									// run or suspend the engine
 		std::deque<gaMessage*> m_queue;
 		std::deque<gaMessage*> m_for_next_frame;
 		std::map<std::string, std::list<gaEntity*>> m_entities;
@@ -40,6 +41,8 @@ namespace GameEngine {
 	public:
 		World(void);
 
+		void run(void);										// run the game engine
+		void suspend(void);									// suspend the game engine
 		void scene(fwScene* scene);							// register the scene
 
 		void addClient(gaEntity* client);					// add a spirit entity

@@ -2,6 +2,7 @@
 
 #include <glm/glm.hpp>
 
+#include "config.h"
 #include "framework/fwApp.h"
 
 class fwCamera;
@@ -14,6 +15,10 @@ class dfLevel;
 
 class gaActor;
 class gaPlayer;
+
+#ifdef DEBUG
+#include "Debugger/Debug.h"
+#endif
 
 class myDarkForces : public fwApp
 {
@@ -32,6 +37,10 @@ class myDarkForces : public fwApp
 	bool m_keySpace = false;	// SPACE is pressed
 	bool m_headlight = false;
 	bool m_f5 = false;
+
+#ifdef DEBUG
+	friend Debugger::Debug;
+#endif
 
 public:
 	myDarkForces(std::string name, int width, int height);

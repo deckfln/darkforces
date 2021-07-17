@@ -166,6 +166,7 @@
     <ClCompile Include="darkforces\dfVOC.cpp" />
     <ClCompile Include="darkforces\dfVue.cpp" />
     <ClCompile Include="darkforces\dfWall.cpp" />
+    <ClCompile Include="Debugger\Debug.cpp" />
     <ClCompile Include="flightRecorder\Blackbox.cpp" />
     <ClCompile Include="framework\background\fwSkybox.cpp" />
     <ClCompile Include="framework\background\fwSkyline.cpp" />
@@ -317,6 +318,7 @@
     <ClInclude Include="darkforces\dfVue.h" />
     <ClInclude Include="darkforces\dfWall.h" />
     <ClInclude Include="darkforces\lexer\dfObject.lex.h" />
+    <ClInclude Include="Debugger\Debug.h" />
     <ClInclude Include="flightRecorder\AABBox.h" />
     <ClInclude Include="flightRecorder\Blackbox.h" />
     <ClInclude Include="flightRecorder\classes.h" />

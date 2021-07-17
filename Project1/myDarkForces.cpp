@@ -180,15 +180,9 @@ glTexture* myDarkForces::draw(time_t delta, fwRenderer* renderer)
  */
 void myDarkForces::renderGUI(void)
 {
-	glm::vec3 p = m_player->position();
-	ImGui::Begin("imGUI");                          // Create a window called "Hello, world!" and append into it.
-	ImGui::Text("Player x:%.3f y:%.3f z:%.3f", p.x, p.y, p.z);
-	int frame=0;
-	ImGui::Button("Play"); ImGui::SameLine();
-	ImGui::Button("Save"); ImGui::SameLine();
-	ImGui::SliderInt("flightRecorder", &frame, 0, 300);
-	g_gaWorld.renderGUI();
-	ImGui::End();
+#ifdef DEBUG
+	g_Debugger.render(this);
+#endif
 }
 
 void myDarkForces::keypress()

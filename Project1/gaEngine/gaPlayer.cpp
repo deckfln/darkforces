@@ -13,6 +13,10 @@
 
 #include "../darkforces/dfComponent/dfComponentActor.h"
 
+#ifdef DEBUG
+#include "../Debugger/Debug.h"
+#endif
+
 gaPlayer::gaPlayer(fwCamera *camera, gaActor* actor, float phi):
 	fwControlThirdPerson(camera, actor->position(), actor->eyes(), phi, actor->radius()),
 	m_entity(actor)
@@ -59,7 +63,7 @@ bool gaPlayer::checkKeys(time_t delta)
 		myfile.close();
 	}
 	if (m_currentKeys[GLFW_KEY_F2]) {
-		m_entity->sendMessageToWorld(gaMessage::SAVE_WORLD, 0, nullptr);
+		g_Debugger.debugMode(true);
 	}
 #endif
 

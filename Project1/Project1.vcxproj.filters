@@ -103,6 +103,12 @@
     <Filter Include="Fichiers sources\flightRecorder">
       <UniqueIdentifier>{c49bf31b-a9ee-4916-9833-cdd48c16d454}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Fichiers d%27en-tête\Debugger">
+      <UniqueIdentifier>{2ecae84f-7330-4701-8c77-6be54758908b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers sources\Debugger">
+      <UniqueIdentifier>{f9c406ed-e98f-44b3-bdb4-59b582322e2c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source.cpp">
@@ -545,6 +551,9 @@
     </ClCompile>
     <ClCompile Include="flightRecorder\Blackbox.cpp">
       <Filter>Fichiers sources\flightRecorder</Filter>
+    </ClCompile>
+    <ClCompile Include="Debugger\Debug.cpp">
+      <Filter>Fichiers sources\Debugger</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1015,6 +1024,9 @@
     </ClInclude>
     <ClInclude Include="flightRecorder\Message.h">
       <Filter>Fichiers d%27en-tête\flightRecorder</Filter>
+    </ClInclude>
+    <ClInclude Include="Debugger\Debug.h">
+      <Filter>Fichiers d%27en-tête\Debugger</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
