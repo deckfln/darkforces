@@ -275,6 +275,21 @@ bool gaEntity::checkCollision(fwCylinder& bounding, glm::vec3& direction, glm::v
 	return true;
 }
 
+/**
+ * return a record of the entity state (for debug)
+ */
+void gaEntity::recordState(void *r)
+{
+	flightRecorder::Entity *record = (flightRecorder::Entity *)r;
+	record->size = sizeof(flightRecorder::Entity*);
+	strncpy_s(record->name, m_name.c_str(), 64);
+	fwObject3D::recordState(&record->object3D);
+	m_transforms.recordState(&record->transforms);		// transforms to move the object
+	m_modelAABB.recordState(&record->modelAABB);		// model space AABB
+	m_worldBounding.recordState(&record->worldBounding);// AABB bounding box in world opengl space
+	record->animation_time = m_animation_time;			// elapsed time when running animation
+}
+
 gaEntity::~gaEntity()
 {
 	g_gaWorld.removeClient(this);

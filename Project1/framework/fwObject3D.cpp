@@ -357,6 +357,17 @@ void fwObject3D::stop(alSound *sound)
 	}
 }
 
+/**
+ * Record the state of the object
+ */
+void fwObject3D::recordState(flightRecorder::Object3D* record)
+{
+	record->position = m_position;
+	record->scale = m_scale;
+	record->rotation = m_rotation;
+	record->quaternion = m_quaternion;
+}
+
 fwObject3D::~fwObject3D()
 {
 	if (m_source) {

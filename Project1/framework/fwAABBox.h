@@ -10,6 +10,8 @@ class fwSphere;
 class fwCylinder;
 class fwMesh;
 
+#include "../flightRecorder/AABBox.h"
+
 enum class fwAABBcollision {
 	NONE = 0,
 	TOP = 1,
@@ -80,5 +82,6 @@ public:
 	fwMesh *draw(void);
 	bool updateMeshVertices(glm::vec3* vertices);
 	bool verticalAlign(const glm::vec3& point);
+	void recordState(flightRecorder::AABBox* record);	// record the state of the AABBox
 	~fwAABBox();
 };

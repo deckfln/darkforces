@@ -4,6 +4,11 @@
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 
+#include <imgui.h>
+#include <imgui_impl_glfw.h>
+#include <imgui_impl_opengl3.h>
+
+
 #include "../glEngine/glColorMap.h"
 #include "fwPostProcessing.h"
 #include "fwControl.h"
@@ -37,6 +42,7 @@ public:
 	virtual glTexture* draw(time_t delta, fwRenderer *renderer) { return nullptr; };
 	virtual void resize(int x, int y) {};
 	virtual void keypress(void) {};
+	virtual void renderGUI(void) {};
 
 	~fwApp();
 };

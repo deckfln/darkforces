@@ -3,6 +3,10 @@
 #include <iostream>
 #include <map>
 
+#include <imgui.h>
+#include <imgui_impl_glfw.h>
+#include <imgui_impl_opengl3.h>
+
 #include "../framework/fwScene.h"
 #include "../framework/fwMesh.h"
 #include "../framework/fwTransforms.h"
@@ -13,6 +17,8 @@
 #include "../darkforces/dfLevel.h"
 #include "../darkforces/dfSuperSector.h"
 #include "../darkforces/dfSprites.h"
+
+#include "../flightRecorder/Blackbox.h"
 
 using namespace GameEngine;
 
@@ -248,7 +254,7 @@ gaMessage* World::sendMessage(const std::string& from, const std::string& to, in
 	ptr->m_value = value;
 	ptr->m_extra = extra;
 
-	m_queue.push(ptr);
+	m_queue.push_back(ptr);
 
 	return ptr;
 }
@@ -267,7 +273,7 @@ gaMessage* World::sendMessage(const std::string& from, const std::string& to, in
 	ptr->m_fvalue = value;
 	ptr->m_extra = extra;
 
-	m_queue.push(ptr);
+	m_queue.push_back(ptr);
 
 	return ptr;
 }
@@ -286,14 +292,14 @@ gaMessage* World::sendMessage(const std::string& from, const std::string& to, in
 	ptr->m_v3value = value;
 	ptr->m_extra = extra;
 
-	m_queue.push(ptr);
+	m_queue.push_back(ptr);
 
 	return ptr;
 }
 
 void World::push(gaMessage* message)
 {
-	m_queue.push(message);
+	m_queue.push_back(message);
 }
 
 /**
@@ -310,7 +316,7 @@ gaMessage* World::sendMessageDelayed(const std::string& from, const std::string&
 	ptr->m_value = value;
 	ptr->m_extra = extra;
 
-	m_for_next_frame.push(ptr);
+	m_for_next_frame.push_back(ptr);
 
 	return ptr;
 }
@@ -345,7 +351,7 @@ gaMessage* World::sendImmediateMessage(const std::string& from, const std::strin
 
 void World::pushForNextFrame(gaMessage* message)
 {
-	m_for_next_frame.push(message);
+	m_for_next_frame.push_back(message);
 }
 
 
@@ -428,11 +434,16 @@ bool World::checkCollision(gaEntity* source, fwCylinder& bounding, glm::vec3& di
  */
 void World::process(time_t delta)
 {
+#ifdef DEBUG
+	g_Blackbox.recordState();
+#endif
+
 	/*
 	if (m_queue.size() > 0) {
 		std::cerr << ">>>>>>>>>> gaWorld::process" << std::endl;
 	}
 	*/
+
 	gaMessage* message;
 	std::string k;
 
@@ -444,7 +455,7 @@ void World::process(time_t delta)
 	// now deal with messages
 	while (m_queue.size() > 0) {
 		message = m_queue.front();
-		m_queue.pop();
+		m_queue.pop_front();
 
 		// manage loops inside one run
 		if (message->m_action >= 512) {
@@ -482,6 +493,9 @@ void World::process(time_t delta)
 					}
 				}
 				break;
+			case gaMessage::SAVE_WORLD:
+				g_Blackbox.saveStates();
+				break;
 			}
 		}
 		else if (m_entities.count(message->m_client) > 0) {
@@ -516,6 +530,26 @@ void World::process(time_t delta)
 void World::suspendTimer(void)
 {
 	m_timer = false;
+}
+
+/**
+ * Render the list of entities on the debug imGUI
+ */
+void GameEngine::World::renderGUI(void)
+{
+	if (ImGui::TreeNode("Entities")) {
+		for (auto entry : m_entities) {
+			for (auto ent : entry.second) {
+				const std::string& name = ent->name();
+				if (ImGui::TreeNode(name.c_str())) {
+					glm::vec3 p = ent->position();
+					ImGui::Text("Pos x:%.3f y:%.3f z:%.3f", p.x, p.y, p.z);
+					ImGui::TreePop();
+				}
+			}
+		}
+		ImGui::TreePop();
+	}
 }
 
 World::~World()

@@ -10,6 +10,7 @@
 #include "fwTransforms.h"
 
 #include "../Reference.h"
+#include "../flightRecorder/Object3D.h"
 
 using namespace Framework;
 
@@ -134,5 +135,9 @@ public:
 	bool play(alSound* sound);
 	void stop(alSound* sound);
 
+	// state API
+	void recordState(flightRecorder::Object3D* record);
+
+	// delete
 	~fwObject3D();
 };

@@ -35,7 +35,9 @@ class myDarkForces : public fwApp
 
 public:
 	myDarkForces(std::string name, int width, int height);
-	glTexture* draw(time_t delta, fwRenderer* renderer);
+	glTexture* draw(time_t delta, fwRenderer* renderer) override;
+	void renderGUI(void) override;
+
 	void resize(int x, int y);
 	void keypress(void);
 	~myDarkForces();

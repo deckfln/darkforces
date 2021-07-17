@@ -123,45 +123,6 @@ void myDarkForces::resize(int width, int height)
 	m_camera->set_ratio(width, height);
 }
 
-static time_t progress[] = {
-33,
-		62,
-		4,
-		33,
-	33,
-	33,
-	33,
-	33,
-	33,
-	33,
-	33,
-	33,
-	33,
-	33,
-	33,
-	33,
-	33,
-	33,
-	33,
-	33,
-	33,
-	33,
-	33,
-	33,
-	33,
-	33,
-	33,
-	33,
-	33,
-	33,
-	33,
-	33,
-	33,
-	33,
-	33,
-	33,
-	33
-};
 static int pFrame = 0;
 static int current = 0;
 
@@ -212,6 +173,22 @@ glTexture* myDarkForces::draw(time_t delta, fwRenderer* renderer)
 	m_control->updateCamera(33);			// and move the player if the level changed
 
 	return renderer->draw(m_camera, m_scene);
+}
+
+/**
+ * Render the debug GUI
+ */
+void myDarkForces::renderGUI(void)
+{
+	glm::vec3 p = m_player->position();
+	ImGui::Begin("imGUI");                          // Create a window called "Hello, world!" and append into it.
+	ImGui::Text("Player x:%.3f y:%.3f z:%.3f", p.x, p.y, p.z);
+	int frame=0;
+	ImGui::Button("Play"); ImGui::SameLine();
+	ImGui::Button("Save"); ImGui::SameLine();
+	ImGui::SliderInt("flightRecorder", &frame, 0, 300);
+	g_gaWorld.renderGUI();
+	ImGui::End();
 }
 
 void myDarkForces::keypress()

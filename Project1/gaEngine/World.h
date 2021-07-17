@@ -11,6 +11,7 @@
 #include "gaMessage.h"
 #include "Model.h"
 #include "Physics.h"
+#include "../flightRecorder/Blackbox.h"
 
 class gaEntity;
 class fwScene;
@@ -21,8 +22,8 @@ class dfSprites;
 namespace GameEngine {
 	class World
 	{
-		std::queue<gaMessage*> m_queue;
-		std::queue<gaMessage*> m_for_next_frame;
+		std::deque<gaMessage*> m_queue;
+		std::deque<gaMessage*> m_for_next_frame;
 		std::map<std::string, std::list<gaEntity*>> m_entities;
 		std::vector<dfSuperSector*> m_sectors;
 		dfSprites* m_sprites = nullptr;							// sprites manager
@@ -33,7 +34,8 @@ namespace GameEngine {
 		fwScene* m_scene;									// current scene on screen;
 		GameEngine::Physics m_physic;						// physic/collision engine
 
-		friend GameEngine::Physics;
+		friend GameEngine::Physics;							// physic engine has direct access to world data
+		friend flightRecorder::Blackbox;					// flight recorder has direct access to everything
 
 	public:
 		World(void);
@@ -109,6 +111,7 @@ namespace GameEngine {
 		void pushForNextFrame(gaMessage* message);
 		void process(time_t delta);
 		void suspendTimer(void);
+		void renderGUI(void);								// render the imGUI debug
 		~World();
 	};
 }

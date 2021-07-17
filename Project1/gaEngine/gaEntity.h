@@ -14,11 +14,14 @@
 #include "gaComponent.h"
 #include "Collider.h"
 
+#include "../flightRecorder/Entity.h"
+
 class fwCylinder;
 class fwScene;
 class fwMesh;
 
 class dfSuperSector;
+struct recordEntity;
 
 using namespace GameEngine;
 
@@ -137,8 +140,13 @@ public:
 		std::list<gaCollisionPoint>& collisions);		// extended collision test after a sucessfull AABB collision
 	virtual void OnWorldInsert(void) {};				// trigger when inserted in a gaWorld
 	virtual void OnWorldRemove(void) {};				// trigger when from the gaWorld
-
-	virtual dfSuperSector* superSector(void) { return m_supersector; };
+	virtual dfSuperSector* superSector(void) {			// return the supersector the entity is in
+		return m_supersector; 
+	};
+	virtual int recordSize(void) {
+		return sizeof(flightRecorder::Entity);
+	}													// size of one record
+	virtual void recordState(void* record);				// return a record of the entity state (for debug)
 
 	~gaEntity();
 };

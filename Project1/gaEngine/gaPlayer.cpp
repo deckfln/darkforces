@@ -58,6 +58,9 @@ bool gaPlayer::checkKeys(time_t delta)
 		}
 		myfile.close();
 	}
+	if (m_currentKeys[GLFW_KEY_F2]) {
+		m_entity->sendMessageToWorld(gaMessage::SAVE_WORLD, 0, nullptr);
+	}
 #endif
 
 	if (!m_locked) {

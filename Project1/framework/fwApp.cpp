@@ -1,9 +1,5 @@
 #include "fwapp.h"
 
-#include "imgui.h"
-#include "imgui_impl_glfw.h"
-#include "imgui_impl_opengl3.h"
-
 #include <iostream>
 
 #include "fwRenderer.h"
@@ -87,6 +83,7 @@ fwApp::fwApp(std::string name, int _width, int _height, std::string post_process
 	//io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
 	//io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
 	io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
+	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 
 	// Setup Dear ImGui style
 	ImGui::StyleColorsDark();
@@ -242,9 +239,7 @@ void fwApp::run(void)
 		ImGui::NewFrame();
 
 		// render your GUI
-		ImGui::Begin("Hello, world!");                          // Create a window called "Hello, world!" and append into it.
-		ImGui::Button("Hello!");
-		ImGui::End();
+		renderGUI();
 
 		// Render dear imgui into screen
 		ImGui::Render();

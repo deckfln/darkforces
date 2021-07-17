@@ -97,6 +97,12 @@
     <Filter Include="Fichiers sources\Framework\math">
       <UniqueIdentifier>{0ee94ef7-ac78-4118-b770-7fb62d6fae32}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Fichiers d%27en-tête\flightRecorder">
+      <UniqueIdentifier>{d6051bce-78ff-475a-9827-263a36415621}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers sources\flightRecorder">
+      <UniqueIdentifier>{c49bf31b-a9ee-4916-9833-cdd48c16d454}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source.cpp">
@@ -536,6 +542,9 @@
     </ClCompile>
     <ClCompile Include="gaEngine\World.cpp">
       <Filter>Fichiers sources\gaEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="flightRecorder\Blackbox.cpp">
+      <Filter>Fichiers sources\flightRecorder</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -988,6 +997,24 @@
     </ClInclude>
     <ClInclude Include="gaEngine\World.h">
       <Filter>Fichiers d%27en-tête\gaEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="flightRecorder\AABBox.h">
+      <Filter>Fichiers d%27en-tête\flightRecorder</Filter>
+    </ClInclude>
+    <ClInclude Include="flightRecorder\classes.h">
+      <Filter>Fichiers d%27en-tête\flightRecorder</Filter>
+    </ClInclude>
+    <ClInclude Include="flightRecorder\Entity.h">
+      <Filter>Fichiers d%27en-tête\flightRecorder</Filter>
+    </ClInclude>
+    <ClInclude Include="flightRecorder\Object3D.h">
+      <Filter>Fichiers d%27en-tête\flightRecorder</Filter>
+    </ClInclude>
+    <ClInclude Include="flightRecorder\Blackbox.h">
+      <Filter>Fichiers d%27en-tête\flightRecorder</Filter>
+    </ClInclude>
+    <ClInclude Include="flightRecorder\Message.h">
+      <Filter>Fichiers d%27en-tête\flightRecorder</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

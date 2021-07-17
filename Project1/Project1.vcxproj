@@ -166,6 +166,7 @@
     <ClCompile Include="darkforces\dfVOC.cpp" />
     <ClCompile Include="darkforces\dfVue.cpp" />
     <ClCompile Include="darkforces\dfWall.cpp" />
+    <ClCompile Include="flightRecorder\Blackbox.cpp" />
     <ClCompile Include="framework\background\fwSkybox.cpp" />
     <ClCompile Include="framework\background\fwSkyline.cpp" />
     <ClCompile Include="framework\camera\fwCameraPanoramic.cpp" />
@@ -316,6 +317,12 @@
     <ClInclude Include="darkforces\dfVue.h" />
     <ClInclude Include="darkforces\dfWall.h" />
     <ClInclude Include="darkforces\lexer\dfObject.lex.h" />
+    <ClInclude Include="flightRecorder\AABBox.h" />
+    <ClInclude Include="flightRecorder\Blackbox.h" />
+    <ClInclude Include="flightRecorder\classes.h" />
+    <ClInclude Include="flightRecorder\Entity.h" />
+    <ClInclude Include="flightRecorder\Message.h" />
+    <ClInclude Include="flightRecorder\Object3D.h" />
     <ClInclude Include="framework\background\fwSkybox.h" />
     <ClInclude Include="framework\background\fwSkyline.h" />
     <ClInclude Include="framework\camera\fwCameraPanoramic.h" />

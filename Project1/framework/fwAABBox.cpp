@@ -598,6 +598,12 @@ bool fwAABBox::verticalAlign(const glm::vec3& point)
 	return point.x >= m_p.x && point.x <= m_p1.x && point.z >= m_p.z && point.z <= m_p1.z;
 }
 
+void fwAABBox::recordState(flightRecorder::AABBox* record)
+{
+	record->p = m_p;
+	record->p1 = m_p1;
+}
+
 fwAABBox::~fwAABBox()
 {
 }

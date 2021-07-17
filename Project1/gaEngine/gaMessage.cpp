@@ -48,4 +48,18 @@ void gaMessage::set(const std::string& server, const std::string& client, int ac
     m_value = value;
     m_extra = extra;
 }
-;
+
+/**
+ * Save the state of the message
+ */
+void gaMessage::recordState(void* r)
+{
+    flightRecorder::Message* record = (flightRecorder::Message * )r;
+    strncpy_s(record->client, m_client.c_str(), sizeof(record->client));
+    strncpy_s(record->server, m_server.c_str(), sizeof(record->server));
+    record->action = m_action;
+    record->delta = m_delta;
+    record->fvalue = m_fvalue;
+    record->v3value = m_v3value;
+    record->value = m_value;
+}

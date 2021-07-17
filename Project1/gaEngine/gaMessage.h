@@ -4,6 +4,7 @@
 #include <vector>
 #include <queue>
 #include "../framework/fwTransforms.h"
+#include "../flightRecorder/Message.h"
 
 class gaEntity;
 
@@ -12,6 +13,13 @@ namespace GameEngine {
 		glm::vec3 m_forward;
 		glm::vec3 m_downward;
 		int m_flag;
+
+		void recordState(Transform* record) {
+			Framework::fwTransforms::recordState((Framework::fwTransforms*)record);
+			record->m_forward = m_forward;
+			record->m_downward = m_downward;
+			record->m_flag = m_flag;
+		}
 	};
 }
 
@@ -33,7 +41,8 @@ public:
 		WORLD_REMOVE,	// an entity is removed from the world
 		WOULD_FALL,		// the objects would fall off after a WANT_TO_MOVE
 		FALL,			// Object is falling
-		CONTROLLER		// Controller is requesting a move
+		CONTROLLER,		// Controller is requesting a move
+		SAVE_WORLD		// save the status
 	};
 	// flags stored in messages
 	enum Flag {
@@ -74,4 +83,9 @@ public:
 	void set(const std::string& server, const std::string& client, int action, int value, void* extra);
 
 	const std::string& client(void) { return m_client; };
+
+	int recordSize(void) {
+		return sizeof(flightRecorder::Message);
+	}													// size of one record
+	void recordState(void* record);
 };
