@@ -448,10 +448,10 @@ bool World::checkCollision(gaEntity* source, fwCylinder& bounding, glm::vec3& di
 /**
  * dispatch messages
  */
-void World::process(time_t delta)
+void World::process(time_t delta, bool force)
 {
 	// is the engine actually running ?
-	if (!m_run) {
+	if (!m_run && !force) {
 		return;
 	}
 

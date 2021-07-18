@@ -8,7 +8,7 @@ class myDarkForces;
 namespace Debugger {
 	class Debug {
 		bool m_debug = false;	// entered debug mode
-		int m_frame = 0;		// frame # during a replay
+		bool m_framebyframe = false;
 
 		// flight recorder V1
 		std::array<glm::vec3, 3000> m_recorder;

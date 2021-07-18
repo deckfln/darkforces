@@ -65,7 +65,11 @@ void Debugger::Debug::render(myDarkForces *dark)
 	ImGui::Begin("Debugger");                          // Create a window called "Hello, world!" and append into it.
 	ImGui::Text("Player x:%.3f y:%.3f z:%.3f", p.x, p.y, p.z);
 
-	if (m_debug) {
+	if (m_debug || m_framebyframe) {
+		if (m_framebyframe) {
+			g_gaWorld.suspend();
+		}
+
 		if (ImGui::Button("Exit debug")) {
 			m_debug = false;
 			g_gaWorld.run();
@@ -88,6 +92,17 @@ void Debugger::Debug::render(myDarkForces *dark)
 			}
 
 			ImGui::SameLine(); ImGui::SliderInt("frame", &m_recorder_end, 0, m_recorder_len);
+			if (m_recorder_end < m_recorder_len) {
+				// display frame by frame up to the last frame
+				ImGui::SameLine(); if (ImGui::Button(">>")) {
+					playRecorderV1();
+					g_gaWorld.run();
+
+					m_framebyframe = true;
+					m_replay = true;
+					m_debug = false;
+				}
+			}
 		}
 
 		// display entities

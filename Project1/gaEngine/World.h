@@ -112,7 +112,7 @@ namespace GameEngine {
 
 		void push(gaMessage* message);
 		void pushForNextFrame(gaMessage* message);
-		void process(time_t delta);
+		void process(time_t delta, bool force=false);
 		void suspendTimer(void);
 		void renderGUI(void);								// render the imGUI debug
 		~World();
