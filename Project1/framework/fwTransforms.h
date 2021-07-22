@@ -16,5 +16,10 @@ namespace Framework
 			record->m_scale = m_scale;
 			record->m_quaternion = m_quaternion;
 		}
+		void loadState(fwTransforms* record) {
+			record->m_position = m_position;
+			record->m_scale = m_scale;
+			record->m_quaternion = m_quaternion;
+		}
 	};
 }

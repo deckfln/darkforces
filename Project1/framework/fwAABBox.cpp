@@ -600,8 +600,15 @@ bool fwAABBox::verticalAlign(const glm::vec3& point)
 
 void fwAABBox::recordState(flightRecorder::AABBox* record)
 {
+	record->classID = flightRecorder::TYPE::AABBOX;
 	record->p = m_p;
 	record->p1 = m_p1;
+}
+
+void fwAABBox::loadState(flightRecorder::AABBox* record)
+{
+	m_p = record->p;
+	m_p1 = record->p1;
 }
 
 fwAABBox::~fwAABBox()

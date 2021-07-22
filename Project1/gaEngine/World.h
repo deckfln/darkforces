@@ -12,6 +12,7 @@
 #include "Model.h"
 #include "Physics.h"
 #include "../flightRecorder/Blackbox.h"
+#include "../flightRecorder/Message.h"
 
 class gaEntity;
 class fwScene;
@@ -83,6 +84,8 @@ namespace GameEngine {
 			const glm::vec3& value,
 			void* extra);									// send message an the queue
 
+		gaMessage* sendMessage(flightRecorder::Message *message);// send message an the queue
+
 		gaMessage* sendMessageDelayed(const std::string& from,
 			const std::string& to,
 			int action,
@@ -115,6 +118,7 @@ namespace GameEngine {
 		void process(time_t delta, bool force=false);
 		void suspendTimer(void);
 		void renderGUI(void);								// render the imGUI debug
+		void clearQueue(void);								// clear the message queue
 		~World();
 	};
 }

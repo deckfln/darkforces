@@ -5,11 +5,10 @@
  */
 #include <glm/vec3.hpp>
 #include "classes.h"
-#include "../framework/fwAABBox.h"
 
 namespace flightRecorder {
 	struct AABBox {
-		TYPE classID = TYPE::AABBOX;
+		TYPE classID;
 		glm::vec3 p;
 		glm::vec3 p1;
 	};

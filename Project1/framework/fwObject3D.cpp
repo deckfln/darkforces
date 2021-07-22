@@ -368,6 +368,19 @@ void fwObject3D::recordState(flightRecorder::Object3D* record)
 	record->quaternion = m_quaternion;
 }
 
+/**
+ * reload the state of the object from the flight recorder
+ */
+void fwObject3D::loadState(flightRecorder::Object3D* record)
+{
+	m_position = record->position;
+	m_scale = record->scale;
+	m_rotation = record->rotation;
+	m_quaternion = record->quaternion;
+
+	m_updated = true;	// force to rebuild the transforms matrixes
+}
+
 fwObject3D::~fwObject3D()
 {
 	if (m_source) {

@@ -14,6 +14,7 @@
 #include "../config.h"
 
 #include "../darkforces/dfSuperSector.h"
+#include "../flightRecorder/Ballistic.h"
 
 using namespace GameEngine;
 
@@ -892,5 +893,21 @@ void Physics::update(time_t delta)
 	for (auto& name : m_remove) {
 		m_ballistics.erase(name);
 	}
+}
+
+/**
+ * record state of an object
+ */
+void GameEngine::Physics::recordState(const std::string& name, flightRecorder::Ballistic* record)
+{
+	m_ballistics[name].recordState(name, record);
+}
+
+/**
+ * reload the state of an object
+ */
+void GameEngine::Physics::loadState(flightRecorder::Ballistic* object)
+{
+	m_ballistics[object->name] = Ballistic(object);
 }
 

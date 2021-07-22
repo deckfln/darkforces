@@ -37,6 +37,12 @@ gaActor::gaActor(
 	m_collider.set(&m_cylinder, &m_worldMatrix, &m_inverseWorldMatrix);
 }
 
+gaActor::gaActor(flightRecorder::Entity* record) :
+	gaEntity(record)
+{
+
+}
+
 /**
  * return data from the bounding cylinder
  */
@@ -148,6 +154,38 @@ void gaActor::dispatchMessage(gaMessage* message)
 	}
 
 	gaEntity::dispatchMessage(message);
+}
+
+/**
+ * return a record of an actor state (for debug)
+ */
+void gaActor::recordState(void* r)
+{
+	gaEntity::recordState(r);
+	flightRecorder::Actor* record = (flightRecorder::Actor*)r;
+	record->entity.classID = flightRecorder::TYPE::ENTITY_ACTOR;
+	record->entity.size = sizeof(flightRecorder::Actor);
+	record->speed = m_speed;				// normal speed
+	record->ankle = m_ankle;				// maximum step the actor can walk up
+	record->eyes = m_eyes;					// position of the eyes (from the feet)
+	record->step = m_step;					// how up/down can the actor step over
+	record->physic = m_physic;
+	record->animation_time = m_animation_time;// start of the physic driven movement
+}
+
+/**
+ * reload an actor state from a record
+ */
+void gaActor::loadState(flightRecorder::Entity* r)
+{
+	gaEntity::loadState(r);
+	flightRecorder::Actor* record = (flightRecorder::Actor*)r;
+	m_speed = record->speed;				// normal speed
+	m_ankle = record->ankle;				// maximum step the actor can walk up
+	m_eyes = record->eyes;					// position of the eyes (from the feet)
+	m_step = record->step;					// how up/down can the actor step over
+	m_physic = record->physic;
+	m_animation_time = record->animation_time;// start of the physic driven movement
 }
 
 gaActor::~gaActor()

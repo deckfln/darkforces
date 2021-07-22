@@ -20,6 +20,13 @@ namespace GameEngine {
 			record->m_downward = m_downward;
 			record->m_flag = m_flag;
 		}
+
+		void loadState(Transform* record) {
+			Framework::fwTransforms::loadState((Framework::fwTransforms*)record);
+			m_forward = record->m_forward;
+			m_downward = record->m_downward;
+			m_flag = record->m_flag;
+		}
 	};
 }
 
@@ -80,6 +87,7 @@ public:
 	gaMessage(int action, int value, const std::string& client);
 	gaMessage(const std::string& server, const std::string& client);
 	gaMessage(const std::string& server, const std::string& client, int action, int value, void* extra);
+	gaMessage(void *record);
 	void set(const std::string& server, const std::string& client, int action, int value, void* extra);
 
 	const std::string& client(void) { return m_client; };

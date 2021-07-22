@@ -24,7 +24,7 @@ Debugger::Debug::Debug()
 void Debugger::Debug::loadRecorderV1(void)
 {
 	std::ifstream myfile;
-	myfile.open("player.txt", std::ios::in | std::ios::binary);
+	myfile.open("D:/dev/Project1/Project1/player.txt", std::ios::in | std::ios::binary);
 	myfile.read((char*)&m_recorder_len, sizeof(m_recorder_len));
 	for (int i = 0; i < m_recorder_len; i++)
 	{
@@ -70,43 +70,86 @@ void Debugger::Debug::render(myDarkForces *dark)
 			g_gaWorld.suspend();
 		}
 
+		ImGui::BeginGroup();
 		if (ImGui::Button("Exit debug")) {
 			m_debug = false;
 			g_gaWorld.run();
 		}
+		ImGui::EndGroup();
 
-		ImGui::Text("flightRecorder");
-		ImGui::SameLine(); if (ImGui::Button("Load")) {
-			loadRecorderV1();
-		}
-		ImGui::SameLine(); if (ImGui::Button("Save")) {
-			g_Blackbox.saveStates();
-		}
-		if (m_recorder_len > 0) {
-			ImGui::SameLine(); if (ImGui::Button(">")) {
-				if (!m_replay) {
-					m_replay = true;
+		ImGui::SameLine();
+
+		ImGui::BeginGroup();
+			ImGui::BeginGroup();
+				ImGui::Text("flightRecorder v2");
+				ImGui::SameLine(); if (ImGui::Button("Load")) {
+					g_Blackbox.loadStates();
+					g_Blackbox.setState(m_frame);
 				}
-				m_debug = false;
-				g_gaWorld.run();
-			}
-
-			ImGui::SameLine(); ImGui::SliderInt("frame", &m_recorder_end, 0, m_recorder_len);
-			if (m_recorder_end < m_recorder_len) {
-				// display frame by frame up to the last frame
-				ImGui::SameLine(); if (ImGui::Button(">>")) {
-					playRecorderV1();
-					g_gaWorld.run();
-
-					m_framebyframe = true;
-					m_replay = true;
-					m_debug = false;
+				ImGui::SameLine(); if (ImGui::Button("Save")) {
+					g_Blackbox.saveStates();
 				}
-			}
-		}
+				if (g_Blackbox.len() > 0) {
+					ImGui::SameLine(); if (ImGui::Button(">")) {
+						if (!m_replay) {
+							m_replay = true;
+						}
+						m_debug = false;
+						g_gaWorld.run();
+					}
+
+					int old_frame = m_frame;
+					ImGui::SameLine(); ImGui::SliderInt("frame", &m_frame, 0, g_Blackbox.len());
+					if (old_frame != m_frame) {
+						g_Blackbox.setState(m_frame);
+					}
+
+					if (m_frame < g_Blackbox.len()) {
+						// display frame by frame up to the last frame
+						ImGui::SameLine(); if (ImGui::Button(">>")) {
+							g_gaWorld.run();
+
+							m_framebyframe = true;
+							m_replay = true;
+							m_debug = false;
+						}
+					}
+				}
+			ImGui::EndGroup();
+
+			ImGui::BeginGroup();
+				ImGui::Text("flightRecorder v1");
+				ImGui::SameLine(); if (ImGui::Button("Load##1")) {
+					loadRecorderV1();
+				}
+				if (m_recorder_len > 0) {
+					ImGui::SameLine(); if (ImGui::Button(">##1")) {
+						if (!m_replay) {
+							m_replay = true;
+						}
+						m_debug = false;
+						g_gaWorld.run();
+					}
+
+					ImGui::SameLine(); ImGui::SliderInt("f##1", &m_recorder_end, 0, m_recorder_len);
+					if (m_recorder_end < m_recorder_len) {
+						// display frame by frame up to the last frame
+						ImGui::SameLine(); if (ImGui::Button(">>##1")) {
+							playRecorderV1();
+							g_gaWorld.run();
+
+							m_framebyframe = true;
+							m_replay = true;
+							m_debug = false;
+						}
+					}
+				}
+			ImGui::EndGroup();
 
 		// display entities
 		g_gaWorld.renderGUI();
+
+		ImGui::EndGroup();
 	}
 	else {
 		if (m_replay) {

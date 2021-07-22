@@ -1028,6 +1028,12 @@
     <ClInclude Include="Debugger\Debug.h">
       <Filter>Fichiers d%27en-tête\Debugger</Filter>
     </ClInclude>
+    <ClInclude Include="flightRecorder\Ballistic.h">
+      <Filter>Fichiers d%27en-tête\flightRecorder</Filter>
+    </ClInclude>
+    <ClInclude Include="flightRecorder\Actor.h">
+      <Filter>Fichiers d%27en-tête\flightRecorder</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\fragment.glsl">

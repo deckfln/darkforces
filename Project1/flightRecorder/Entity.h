@@ -13,7 +13,7 @@ namespace flightRecorder {
 	 */
 	struct Entity {
 		int size = 0;						// size of the record
-		TYPE classID = TYPE::ENTITY;		// class gaEntity
+		TYPE classID;						// class gaEntity
 		char name[64];						// name of the entity
 		Object3D object3D;					// source object
 		GameEngine::Transform transforms;	// transforms to move the object

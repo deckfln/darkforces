@@ -231,8 +231,9 @@ void World::spritesManager(dfSprites* sprites)
 	sprites->OnWorldInsert();
 }
 
+#define MAXIMUM_MESSAGES 2048
 static int g_lastMessage = 0;
-static gaMessage g_messages[2048];
+static gaMessage g_messages[MAXIMUM_MESSAGES];
 
 /**
  * Allocate a new message
@@ -248,7 +249,7 @@ static gaMessage* allocateMessage(void)
 		assert(count > 0, "not enough messages in gaWorld::getMessage");
 
 		ptr = &g_messages[g_lastMessage++];
-		if (g_lastMessage == 2048) {
+		if (g_lastMessage == MAXIMUM_MESSAGES) {
 			g_lastMessage = 0;
 		}
 	} while (ptr->m_used);
@@ -307,6 +308,27 @@ gaMessage* World::sendMessage(const std::string& from, const std::string& to, in
 	ptr->m_action = action;
 	ptr->m_v3value = value;
 	ptr->m_extra = extra;
+
+	m_queue.push_back(ptr);
+
+	return ptr;
+}
+
+/**
+ * Replay the flight recorder
+ */
+gaMessage* GameEngine::World::sendMessage(flightRecorder::Message* record)
+{
+	gaMessage* ptr = allocateMessage();
+	ptr->m_used = true;
+
+	ptr->m_client = record->client;
+	ptr->m_server = record->server;
+	ptr->m_action = record->action;
+	ptr->m_delta = record->delta;
+	ptr->m_fvalue = record->fvalue;
+	ptr->m_v3value = record->v3value;
+	ptr->m_value = record->value;
 
 	m_queue.push_back(ptr);
 
@@ -571,6 +593,19 @@ void GameEngine::World::renderGUI(void)
 		}
 		ImGui::TreePop();
 	}
+}
+
+/**
+ * Clear the message queue
+ */
+void GameEngine::World::clearQueue(void)
+{
+	m_queue.clear();
+
+	for (auto& message : g_messages) {
+		message.m_used = false;
+	}
+	g_lastMessage = 0;
 }
 
 World::~World()

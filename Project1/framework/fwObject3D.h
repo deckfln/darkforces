@@ -137,6 +137,7 @@ public:
 
 	// state API
 	void recordState(flightRecorder::Object3D* record);
+	void loadState(flightRecorder::Object3D* record);
 
 	// delete
 	~fwObject3D();

@@ -60,6 +60,7 @@ protected:
 public:
 	gaEntity(int mclass, const std::string& name);
 	gaEntity(int mclass, const std::string& name, const glm::vec3& position);
+	gaEntity(flightRecorder::Entity* record);
 
 	inline int entityID(void) { return m_entityID; };
 	void addComponent(gaComponent* component);			// extend the components of the entity
@@ -147,6 +148,7 @@ public:
 		return sizeof(flightRecorder::Entity);
 	}													// size of one record
 	virtual void recordState(void* record);				// return a record of the entity state (for debug)
+	virtual void loadState(flightRecorder::Entity* record);				// reload an entity state from a record
 
 	~gaEntity();
 };

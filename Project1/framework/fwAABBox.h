@@ -83,5 +83,6 @@ public:
 	bool updateMeshVertices(glm::vec3* vertices);
 	bool verticalAlign(const glm::vec3& point);
 	void recordState(flightRecorder::AABBox* record);	// record the state of the AABBox
+	void loadState(flightRecorder::AABBox* record);	// reload the state of the AABBox
 	~fwAABBox();
 };

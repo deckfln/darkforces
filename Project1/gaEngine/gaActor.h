@@ -9,6 +9,8 @@
 #include "gaEntity.h"
 #include "Physics.h"
 
+#include "../flightRecorder/Actor.h"
+
 const float c_jump = -c_gravity * 300.0f;
 
 class dfLevel;
@@ -39,6 +41,8 @@ public:
 		float eyes,						// distance from the feet to the eyes (camera view)
 		float ankle						// distance from the feet to the ankles (can step over)
 		);
+	gaActor(flightRecorder::Entity* record);
+
 	bool moveTo(time_t delta, glm::vec3& velocity);
 	void rotate(const glm::vec3& direction);
 	float height(void);
@@ -51,6 +55,14 @@ public:
 	void parent(gaPlayer* parent) { m_parent = parent; };
 
 	void dispatchMessage(gaMessage* message) override;
+
+	int recordSize(void) override {
+		return sizeof(flightRecorder::Actor);
+	};														// size of one record
+
+	void recordState(void* record) override;				// return a record of an actor state (for debug)
+	void loadState(flightRecorder::Entity* record) override;// reload an actor state from a record
+
 
 	~gaActor();
 };

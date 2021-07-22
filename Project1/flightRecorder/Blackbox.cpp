@@ -2,11 +2,14 @@
 
 #include <iostream>
 #include <fstream>
+#include <map>
 
 #include "../gaEngine/World.h"
+#include "../gaEngine/Physics.h"
+#include "../gaEngine/gaMessage.h"
+
 #include "../gaEngine/gaEntity.h"
-#include "Message.h"
-#include "Entity.h"
+#include "../gaEngine/gaActor.h"
 
 /**
  * global flight recorder
@@ -20,13 +23,7 @@ flightRecorder::Blackbox::Blackbox()
 /**
  *
  */
-struct bufferMessages {
-	int data_size;	// size in bytes of the buffer
-	int size;		// number of entries in the buffer
-	flightRecorder::Message messages[0];
-};
-
-void flightRecorder::Blackbox::recordMessages()
+void flightRecorder::Blackbox::recordMessages(void)
 {
 	/**
 	 * get a buffer for messages
@@ -36,10 +33,10 @@ void flightRecorder::Blackbox::recordMessages()
 	int data_size = sizeof(bufferMessages) + messages * sizeof(flightRecorder::Message);
 
 	// we may need more memory than the previous allocated buffer
-	bMessages = (bufferMessages*)m_messages[m_last];
+	bMessages = m_messages[m_last];
 
 	if (bMessages == nullptr || m_len == 0) {
-		// at begining, build from scratch
+		// at beginning, build from scratch
 		bMessages = (bufferMessages*)malloc(data_size);
 	}
 	else {
@@ -66,32 +63,26 @@ void flightRecorder::Blackbox::recordMessages()
 /**
  *
  */
-struct bufferEntities {
-	int buffer_size;	// size in bytes of the buffer
-	int data_size;		// number of used bytes in the buffer
-	int size;			// number of entries in the buffer
-	char data[0];		// start of the data
-};
-
-void flightRecorder::Blackbox::recordEntities()
+void flightRecorder::Blackbox::recordEntities(void)
 {
 	//get a buffer for messages
 	bufferEntities* bEntities = nullptr;
-	int entities = g_gaWorld.m_entities.size();
+	int entities = 0;
 
 	// compute the needed space
-	int data_size = sizeof(bufferMessages);
+	int data_size = sizeof(bufferEntities);
 	for (auto entry : g_gaWorld.m_entities) {
 		for (auto entity : entry.second) {
 			data_size += entity->recordSize();
+			entities++;
 		}
 	}
 
 	// we may need more memory than the previous allocated buffer
-	bEntities = (bufferEntities*)m_entities[m_last];
+	bEntities = m_entities[m_last];
 
 	if (bEntities == nullptr || m_len == 0) {
-		// at begining, build from scratch
+		// at beginning, build from scratch
 		bEntities = (bufferEntities*)malloc(data_size);
 		bEntities->buffer_size = data_size;
 	}
@@ -117,12 +108,72 @@ void flightRecorder::Blackbox::recordEntities()
 }
 
 /**
+ * 
+ */
+
+void flightRecorder::Blackbox::recordPhysics(void)
+{
+	/**
+	 * get a buffer for messages
+	 */
+	bufferPhysics* bPhysics = nullptr;
+	int objects = g_gaWorld.m_physic.m_ballistics.size();
+	int data_size = sizeof(bufferPhysics) + objects * sizeof(flightRecorder::Ballistic);
+
+	// we may need more memory than the previous allocated buffer
+	bPhysics= m_ballistics[m_last];
+
+	if (bPhysics== nullptr || m_len == 0) {
+		// at beginning, build from scratch
+		bPhysics = (bufferPhysics*)malloc(data_size);
+	}
+	else {
+		if (objects> bPhysics->size) {
+			free(bPhysics);
+			bPhysics = (bufferPhysics*)malloc(data_size);
+		}
+	}
+	m_ballistics[m_last] = bPhysics;
+
+	bPhysics->data_size = data_size;
+	bPhysics->size = objects;
+
+	/**
+	 * save all objects in the buffer
+	 */
+	GameEngine::Ballistic* object;
+	int i = 0;
+	for (auto& object: g_gaWorld.m_physic.m_ballistics) {
+		g_gaWorld.m_physic.recordState(object.first, &bPhysics->objects[i]);
+		i++;
+	}
+}
+
+/**
+ * Create a polymorphic entity
+ */
+static gaEntity* createEntity(flightRecorder::Entity* record)
+{
+	gaEntity* entity = nullptr;
+	switch (record->classID) {
+	case flightRecorder::TYPE::ENTITY:
+		entity = new gaEntity(record);
+		break;
+	case flightRecorder::TYPE::ENTITY_ACTOR:
+		entity = new gaActor(record);
+		break;
+	}
+	return entity;
+}
+
+/**
  *
  */
 void flightRecorder::Blackbox::recordState(void)
 {
 	recordMessages();
 	recordEntities();
+	recordPhysics();
 
 	/*
 	 * find the next record(cycle at the end of the recorder)
@@ -150,13 +201,13 @@ void flightRecorder::Blackbox::recordState(void)
 void flightRecorder::Blackbox::saveStates(void)
 {
 	std::ofstream myfile;
-	myfile.open("records.bin", std::ios::out | std::ios::binary);
+	myfile.open("D:/dev/Project1/records.bin", std::ios::out | std::ios::binary);
 
 	myfile.write((char*)&m_len, sizeof(m_len));
 
 	for (int i = 0, p = m_last; i < m_len; i++)
 	{
-		bufferMessages* messages = (bufferMessages *)m_messages[p];
+		bufferMessages* messages = m_messages[p];
 		myfile.write((char*)&messages->data_size, sizeof(messages->data_size));
 		myfile.write((char*)messages, messages->data_size);
 		p++;
@@ -167,7 +218,7 @@ void flightRecorder::Blackbox::saveStates(void)
 
 	for (int i = 0, p = m_last; i < m_len; i++)
 	{
-		bufferEntities* entities = (bufferEntities*)m_entities[p];
+		bufferEntities* entities = m_entities[p];
 		myfile.write((char*)&entities->buffer_size, sizeof(entities->buffer_size));
 		myfile.write((char*)entities, entities->buffer_size);
 		p++;
@@ -176,7 +227,126 @@ void flightRecorder::Blackbox::saveStates(void)
 		}
 	}
 
+	for (int i = 0, p = m_last; i < m_len; i++)
+	{
+		bufferPhysics* objects = m_ballistics[p];
+		myfile.write((char*)&objects->data_size, sizeof(objects->data_size));
+		myfile.write((char*)objects, objects->data_size);
+		p++;
+		if (p >= MAXIMUM_RECORDS) {
+			p = 0;
+		}
+	}
+
 	myfile.close();
+}
+
+/**
+ *
+ */
+void flightRecorder::Blackbox::loadStates(void)
+{
+	std::ifstream myfile;
+
+	// start freeing all previous records
+	for (int i = 0, p = m_last; i < m_len; i++)
+	{
+		if (m_messages[i])  { free(m_messages[i]);	m_messages[i] = nullptr; }
+		if (m_entities[i])  { free(m_entities[i]);	m_entities[i] = nullptr; }
+		if (m_ballistics[i]){ free(m_ballistics[i]);	m_ballistics[i] = nullptr; }
+	}
+
+	myfile.open("D:/dev/Project1/records.bin", std::ios::in | std::ios::binary);
+
+	//start loading the number of records
+	int data_size;
+	myfile.read((char*)&m_len, sizeof(m_len));
+
+	// load the messages
+	for (int i = 0, p = m_last; i < m_len; i++) {
+		myfile.read((char*)&data_size, sizeof(data_size));
+		m_messages[i] = (bufferMessages*)malloc(data_size);
+		myfile.read((char*)m_messages[i], data_size);
+	}
+
+	// load the entities
+	for (int i = 0, p = m_last; i < m_len; i++) {
+		myfile.read((char*)&data_size, sizeof(data_size));
+		m_entities[i] = (bufferEntities*)malloc(data_size);
+		myfile.read((char*)m_entities[i], data_size);
+	}
+
+	// load the ballistics objects
+	for (int i = 0, p = m_last; i < m_len; i++) {
+		myfile.read((char*)&data_size, sizeof(data_size));
+		m_ballistics[i] = (bufferPhysics*)malloc(data_size);
+		myfile.read((char*)m_ballistics[i], data_size);
+	}
+
+	m_first = 0;
+	m_last = m_len;
+}
+
+/**
+ *
+ */
+void flightRecorder::Blackbox::setState(int frame)
+{
+	// reset the messages and reload from the records
+	g_gaWorld.clearQueue();
+	bufferMessages* bMessages = m_messages[frame];
+	if (bMessages == nullptr) {
+		return;
+	}
+
+	flightRecorder::Message* record = &bMessages->messages[0];
+	for (auto i = 0; i < bMessages->size; i++) {
+		g_gaWorld.sendMessage(record);
+	}
+
+	// build a list of the entities in the save
+	bufferEntities* bEntities= m_entities[frame];
+	std::map<std::string, flightRecorder::Entity*> entities;
+	int size = bEntities->size;
+	flightRecorder::Entity* rEntity;
+	char* p = &bEntities->data[0];
+	for (auto i = 0; i < size; i++) {
+		rEntity = (flightRecorder::Entity*)p;
+
+		entities[rEntity->name] = rEntity;
+
+		p += rEntity->size;
+	}
+
+	//remove entities from the world that are not in the save
+	for (auto &entity : g_gaWorld.m_entities) {
+		if (entities.count(entity.first) == 0) {
+			g_gaWorld.m_entities.erase(entity.first);
+		}
+	}
+
+	// add entities to the world that are not in the save
+	gaEntity* child;
+	for (auto& entity : entities) {
+		if (g_gaWorld.m_entities.count(entity.first) == 0) {
+			child = createEntity(entity.second);
+			g_gaWorld.m_entities[entity.first].push_back(child);
+		}
+	}
+
+	// and reload their states
+	for (auto &entry : g_gaWorld.m_entities) {
+		for (auto &ent : entry.second) {
+			ent->loadState(entities[entry.first]);
+		}
+	}
+
+	// reload the ballistic engine
+	g_gaWorld.m_physic.m_ballistics.clear();
+	bufferPhysics* bPhysics= m_ballistics[frame];
+	for (auto i = 0; i < bPhysics->size; i++) {
+		g_gaWorld.m_physic.loadState(&bPhysics->objects[i]);
+	}
 }
 
 /**

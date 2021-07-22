@@ -10,6 +10,9 @@ namespace Debugger {
 		bool m_debug = false;	// entered debug mode
 		bool m_framebyframe = false;
 
+		// flight recorder v2
+		int m_frame = 0;	// current frame for replay
+
 		// flight recorder V1
 		std::array<glm::vec3, 3000> m_recorder;
 		int m_recorder_start = 0;

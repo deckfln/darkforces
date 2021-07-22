@@ -9,6 +9,9 @@
 class gaEntity;
 class gaMessage;
 
+#include "../flightRecorder/Blackbox.h"
+#include "../flightRecorder/Ballistic.h"
+
 static const float c_gravity = -0.00000981f;
 
 namespace GameEngine
@@ -35,6 +38,20 @@ namespace GameEngine
 			m_physic_time_elpased = 33;
 		}
 
+		Ballistic(flightRecorder::Ballistic* record) {
+			m_inUse = record->inUse;
+			m_physic = record->physic;
+			m_physic_time_elpased = record->physic_time_elpased;
+		}
+
+		void recordState(const std::string&name, flightRecorder::Ballistic* record) {
+			record->classID = flightRecorder::TYPE::PHYSICS;
+			strncpy_s(record->name, name.c_str(), sizeof(record->name));
+			record->inUse = m_inUse;
+			record->physic = m_physic;
+			record->physic_time_elpased = m_physic_time_elpased;
+		}
+
 		/**
 		 * execute the physic engine
 		 */
@@ -59,6 +76,8 @@ namespace GameEngine
 
 			m_physic_time_elpased = 33;
 		}
+
+
 	};
 
 	class Physics {
@@ -84,9 +103,13 @@ namespace GameEngine
 		void moveBullet(gaEntity* entity, gaMessage* message);
 		void informCollision(gaEntity* from, gaEntity* to);
 
+		friend flightRecorder::Blackbox;
+
 	public:
 		Physics(World *world);
 		void moveEntity(gaEntity *entity, gaMessage* message);
 		void update(time_t delta);
+		void recordState(const std::string& name, flightRecorder::Ballistic* object);
+		void loadState(flightRecorder::Ballistic* object);
 	};
 }

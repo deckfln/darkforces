@@ -40,6 +40,21 @@ gaMessage::gaMessage(const std::string& server, const std::string& client, int a
 {
 }
 
+/**
+ * create from the flight recorder
+ */
+gaMessage::gaMessage(void* r)
+{
+    flightRecorder::Message* record = (flightRecorder::Message*)r;
+    m_client = record->client;
+    m_server = record->server;
+    m_action = record->action;
+    m_delta = record->delta;
+    m_fvalue = record->fvalue;
+    m_v3value = record->v3value;
+    m_value = record->value;
+}
+
 void gaMessage::set(const std::string& server, const std::string& client, int action, int value, void* extra)
 {
     m_server = server;
