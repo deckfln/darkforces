@@ -13,6 +13,8 @@
 
 #include "dfComponent/dfComponentActor.h"
 
+#include "../flightRecorder/frElevator.h"
+
 class fwCylinder;
 class gaCollisionPoint;
 class dfLevel;
@@ -66,6 +68,7 @@ public:
 	};
 
 private:
+	// static state
 	Type m_type = Type::INV;	// class of elevator
 
 	//TODO adapt the default speed
@@ -85,7 +88,8 @@ private:
 	std::string m_sector;				// sector that is an elevator
 	dfSector* m_pSector = nullptr;
 
-	Status m_status = Status::HOLD;	// status of the elevator
+	// Dynamic state
+	Status m_status = Status::HOLD;		// status of the elevator
 	float m_tick = 0;					// current timer
 	float m_delay = 0;					// time to run the elevator
 	unsigned int m_currentStop = 0;		// current stop for the running animation
@@ -111,6 +115,7 @@ private:
 public:
 	dfElevator(std::string& kind, dfSector* sector, dfLevel *parent);
 	dfElevator(std::string& kind, std::string& name);
+	dfElevator(dfElevator *source);
 
 	void speed(float speed) { m_speed = speed; };
 	void eventMask(int eventMask) { m_eventMask = eventMask; };
@@ -135,6 +140,13 @@ public:
 
 	void getMessagesToSectors(std::list<std::string>& sectors);
 	void sound(int effect, dfVOC* sound);
+
+	// flight recorder data
+	int recordSize(void) override {
+		return sizeof(flightRecorder::Elevator);
+	};														// size of one record
+	void recordState(void* record) override;				// return a record of an actor state (for debug)
+	void loadState(flightRecorder::Entity* record) override;// reload an actor state from a record
 
 	~dfElevator(void);
 };

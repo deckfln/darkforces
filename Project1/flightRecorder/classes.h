@@ -8,6 +8,8 @@ namespace flightRecorder {
 		TRANFORMS,
 		AABBOX,
 		MESSAGE,
-		PHYSICS
+		PHYSICS,
+		DF_ENTITY_ELEVATOR,
+		DF_ENTITY_BULLET,
 	};
 }

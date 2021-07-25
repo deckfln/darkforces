@@ -1,10 +1,10 @@
 #pragma once
 
 #define MAXIMUM_RECORDS 300
-
 #include "Message.h"
 #include "Entity.h"
 #include "Ballistic.h"
+
 
 namespace flightRecorder {
 	/**

@@ -18,6 +18,8 @@
 #include "dfFileSystem.h"
 #include "dfLogicStop.h"
 
+#include "../flightRecorder/frElevator.h"
+
 // elevator categories
 static std::map<std::string, dfElevator::Type>  keywords = {
 	{"inv",			dfElevator::Type::INV},
@@ -112,6 +114,9 @@ dfElevator::dfElevator(std::string& kind, dfSector* sector, dfLevel* parent):
 	init(kind);
 }
 
+/**
+ *
+ */
 dfElevator::dfElevator(std::string& kind, std::string& sector):
 	gaEntity(DF_ENTITY_ELEVATOR, sector),
 	m_sector(sector)
@@ -120,7 +125,24 @@ dfElevator::dfElevator(std::string& kind, std::string& sector):
 }
 
 /**
- * bind the evelator to its sector
+ *
+ */
+dfElevator::dfElevator(dfElevator* source):
+	gaEntity((flightRecorder::Entity*)source)
+{
+	m_status = source->m_status;		// status of the elevator
+	m_tick = source->m_tick;			// current timer
+	m_delay = source->m_delay;			// time to run the elevator
+	m_currentStop = source->m_delay;	// current stop for the running animation
+	m_nextStop = source->m_delay;		// target altitude
+
+	m_current = source->m_current;		// current altitude of the part to move (floor or ceiling)
+	m_direction = source->m_direction;	// direction and speed of the move
+	m_target = source->m_direction;		// target altitude
+}
+
+/**
+ * bind the elevator to its sector
  * for any relative stop, record the floor
  */
 void dfElevator::bindSector(dfSector* pSector)
@@ -798,6 +820,53 @@ void dfElevator::keys(std::string& key)
 	if (key == dfKeyRed) {
 		m_keys |= DF_KEY_RED;
 	}
+}
+
+/**
+ * return a record of an actor state (for debug)
+ */
+void dfElevator::recordState(void* r)
+{
+	gaEntity::recordState(r);
+	flightRecorder::Elevator* record = (flightRecorder::Elevator*)r;
+	record->entity.classID = flightRecorder::TYPE::DF_ENTITY_ELEVATOR;
+	record->entity.size = sizeof(flightRecorder::Elevator);
+	record->m_status = (int)m_status;	// status of the elevator
+	record->m_tick = m_tick;			// current timer
+	record->m_delay = m_delay;			// time to run the elevator
+	record->m_currentStop = m_delay;	// current stop for the running animation
+	record->m_nextStop = m_delay;		// target altitude
+
+	record->m_current = m_current;		// current altitude of the part to move (floor or ceiling)
+	record->m_direction = m_direction;	// direction and speed of the move
+	record->m_target = m_direction;		// target altitude
+
+}
+
+/**
+ * reload an actor state from a record
+ */
+void dfElevator::loadState(flightRecorder::Entity* r)
+{
+	gaEntity::loadState(r);
+	flightRecorder::Elevator* record = (flightRecorder::Elevator*)r;
+
+	m_status = (dfElevator::Status)record->m_status;	// status of the elevator
+	m_tick = record->m_tick;			// current timer
+	m_delay = record->m_delay;			// time to run the elevator
+	m_currentStop = record->m_delay;	// current stop for the running animation
+	m_nextStop = record->m_delay;		// target altitude
+
+	m_current = record->m_current;		// current altitude of the part to move (floor or ceiling)
+	m_direction = record->m_direction;	// direction and speed of the move
+	m_target = record->m_direction;		// target altitude
+}
+
+/**
+ *
+ */
+void* frCreate_Elevator(void* record) {
+	return new dfElevator((dfElevator*)record);
 }
 
 dfElevator::~dfElevator(void)

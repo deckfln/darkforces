@@ -78,6 +78,12 @@ dfBullet::dfBullet(const glm::vec3& position, const glm::vec3& direction):
 	m_gravity = false;	// laser are not affected by gravity
 }
 
+dfBullet::dfBullet(flightRecorder::dfBullet* record):
+	gaEntity(&record->entity)
+{
+	m_direction = record->m_direction;
+}
+
 /**
  *
  */
@@ -145,6 +151,34 @@ void dfBullet::dispatchMessage(gaMessage* message)
 	}
 
 	gaEntity::dispatchMessage(message);
+}
+
+/**
+ * return a record of an actor state (for debug)
+ */
+void dfBullet::recordState(void* r)
+{
+	flightRecorder::dfBullet* record = (flightRecorder::dfBullet*)r;
+	gaEntity::recordState(&record->entity);
+	record->entity.classID = flightRecorder::TYPE::DF_ENTITY_BULLET;
+	record->m_direction = m_direction;
+}
+
+/**
+ * reload an actor state from a record
+ */
+void dfBullet::loadState(flightRecorder::Entity* r)
+{
+	flightRecorder::dfBullet* record = (flightRecorder::dfBullet*)r;
+	gaEntity::loadState(&record->entity);
+	m_direction = record->m_direction;
+}
+
+/**
+ *
+ */
+void* frCreate_Bullet(void* record) {
+	return new dfBullet((flightRecorder::dfBullet*)record);
 }
 
 dfBullet::~dfBullet()

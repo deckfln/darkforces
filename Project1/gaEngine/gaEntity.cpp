@@ -12,6 +12,10 @@
 
 static int g_ids = 0;
 
+void* frCreate_Entity(void *record) {
+	return new gaEntity((flightRecorder::Entity *)record);
+}
+
 gaEntity::gaEntity(int mclass, const std::string& name) :
 	m_entityID(g_ids++),
 	m_name(name),

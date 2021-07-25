@@ -323,8 +323,11 @@
     <ClInclude Include="flightRecorder\Actor.h" />
     <ClInclude Include="flightRecorder\Ballistic.h" />
     <ClInclude Include="flightRecorder\Blackbox.h" />
+    <ClInclude Include="flightRecorder\Callbacks.h" />
     <ClInclude Include="flightRecorder\classes.h" />
     <ClInclude Include="flightRecorder\Entity.h" />
+    <ClInclude Include="flightRecorder\frBullet.h" />
+    <ClInclude Include="flightRecorder\frElevator.h" />
     <ClInclude Include="flightRecorder\Message.h" />
     <ClInclude Include="flightRecorder\Object3D.h" />
     <ClInclude Include="framework\background\fwSkybox.h" />

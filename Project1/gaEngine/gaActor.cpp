@@ -13,6 +13,16 @@
 
 #include "../darkforces/dfLevel.h"
 
+/**
+ *
+ */
+void* frCreate_Actor(void* record) {
+	return new gaActor((flightRecorder::Entity*)record);
+}
+
+/**
+ *
+ */
 gaActor::gaActor(
 	int mclass, 
 	const std::string& name, 
@@ -37,6 +47,9 @@ gaActor::gaActor(
 	m_collider.set(&m_cylinder, &m_worldMatrix, &m_inverseWorldMatrix);
 }
 
+/**
+ *
+ */
 gaActor::gaActor(flightRecorder::Entity* record) :
 	gaEntity(record)
 {

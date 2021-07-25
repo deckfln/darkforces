@@ -11,13 +11,35 @@
 #include "../gaEngine/gaEntity.h"
 #include "../gaEngine/gaActor.h"
 
+#include "Callbacks.h"
+
 /**
  * global flight recorder
  */
 flightRecorder::Blackbox g_Blackbox;
 
+/**
+ * 	callbacks to create new entities
+ */
+
+#define MAXIMUM_CALLBACKS 1024
+void* (*g_Callbacks[MAXIMUM_CALLBACKS])(void* record) = { nullptr };
+
+static gaEntity* createEntity(flightRecorder::Entity* record)
+{
+	int mclass = (int)record->classID;
+	if (g_Callbacks[mclass]) {
+		return (gaEntity*)(*g_Callbacks[mclass])(record);
+	}
+	return nullptr;
+}
+
+/**
+ *
+ */
 flightRecorder::Blackbox::Blackbox()
 {
+	init_callbacks();
 }
 
 /**
@@ -147,23 +169,6 @@ void flightRecorder::Blackbox::recordPhysics(void)
 		g_gaWorld.m_physic.recordState(object.first, &bPhysics->objects[i]);
 		i++;
 	}
-}
-
-/**
- * Create a polymorphic entity
- */
-static gaEntity* createEntity(flightRecorder::Entity* record)
-{
-	gaEntity* entity = nullptr;
-	switch (record->classID) {
-	case flightRecorder::TYPE::ENTITY:
-		entity = new gaEntity(record);
-		break;
-	case flightRecorder::TYPE::ENTITY_ACTOR:
-		entity = new gaActor(record);
-		break;
-	}
-	return entity;
 }
 
 /**
@@ -354,5 +359,23 @@ void flightRecorder::Blackbox::setState(int frame)
  */
 flightRecorder::Blackbox::~Blackbox()
 {
+}
+
+
+/**
+ * Create a polymorphic entity
+ */
+static gaEntity* createEntity1(flightRecorder::Entity* record)
+{
+	gaEntity* entity = nullptr;
+	switch (record->classID) {
+	case flightRecorder::TYPE::ENTITY:
+		entity = new gaEntity(record);
+		break;
+	case flightRecorder::TYPE::ENTITY_ACTOR:
+		entity = new gaActor(record);
+		break;
+	}
+	return entity;
 }
 

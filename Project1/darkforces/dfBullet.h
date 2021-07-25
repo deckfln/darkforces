@@ -8,6 +8,8 @@
 #include "../gaEngine/gaEntity.h"
 #include "../gaEngine/gaComponent/gaComponentMesh.h"
 
+#include "../flightRecorder/frBullet.h"
+
 class fwMesh;
 class fwScene;
 class gaMessage;
@@ -22,8 +24,16 @@ class dfBullet : public gaEntity
 
 public:
 	dfBullet(const glm::vec3& position, const glm::vec3& direction);
+	dfBullet(flightRecorder::dfBullet *record);
 
 	void dispatchMessage(gaMessage* message) override;
+
+	// flight recorder data
+	int recordSize(void) override {
+		return sizeof(flightRecorder::dfBullet);
+	};														// size of one record
+	void recordState(void* record) override;				// return a record of an actor state (for debug)
+	void loadState(flightRecorder::Entity* record) override;// reload an actor state from a record
 
 	~dfBullet();
 };

@@ -22,3 +22,5 @@ namespace flightRecorder {
 		time_t animation_time;				// elapsed time when running animation
 	};
 }
+
+extern void* frCreate_Entity(void*);
