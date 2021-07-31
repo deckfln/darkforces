@@ -1,6 +1,7 @@
 #pragma once
 
 #include <math.h>
+#include <time.h>
 #include <glm/vec3.hpp>
 
 #include "fwCamera.h"
@@ -28,12 +29,12 @@ protected:
 	double m_startx = 0;
 	double m_starty = 0;
 
-	bool m_autoupdate = false;	// controler update itself without user action (like when the key is kept pressed)
+	bool m_autoupdate = false;	// controller update itself without user action (like when the key is kept pressed)
 
-	fwCamera *camera = nullptr;
+	fwCamera *m_camera = nullptr;
 	fwCollision* m_collision = nullptr;	// move engine
 
-	virtual void updateCamera(void) {};
+	virtual void updateCamera(time_t delta) {};
 
 public:
 	fwControl(fwCamera *);
@@ -45,5 +46,6 @@ public:
 	void bind(fwCollision* collision) { m_collision = collision; };
 	virtual void update(time_t) {};
 	bool isKeyPressed(int key);
+	fwCamera* bindCamera(fwCamera* camera);		// bind the controller to another camera
 	~fwControl();
 };

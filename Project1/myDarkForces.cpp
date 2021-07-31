@@ -15,7 +15,6 @@
 #include "framework/fwHUDelement.h"
 
 #include "gaEngine/gaActor.h"
-#include "gaEngine/gaPlayer.h"
 #include "gaEngine/World.h"
 #include "gaEngine/Model.h"
 
@@ -56,7 +55,8 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 	m_player->addComponent(new dfComponentActor());
 
 	// controls	
-	m_control = new gaPlayer(m_camera, m_player, c_direction);
+	m_playerControl = new DarkForces::PlayerControl(m_camera, m_player, c_direction);
+	m_playerControl->setMyDarkForce(this);
 
 	g_gaWorld.addClient(m_player);
 
@@ -68,9 +68,9 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 	// armory	m_control = new fwControlThirdPerson(m_camera, glm::vec3(-37, -2, 36), 0.55f, -pi / 2, 0.2f);
 
 	// lock the view -45° to +45°
-	m_control->lockView(M_PI / 4, M_PI / 4 + M_PI / 2);
+	m_playerControl->lockView(M_PI / 4, M_PI / 4 + M_PI / 2);
 
-	bindControl((fwControl*)m_control);
+	bindControl((fwControl*)m_playerControl);
 
 	m_renderer->customLight("/data/shaders/lightning.glsl");
 
@@ -126,53 +126,17 @@ void myDarkForces::resize(int width, int height)
 static int pFrame = 0;
 static int current = 0;
 
+/**
+ * Render the world
+ */
 glTexture* myDarkForces::draw(time_t delta, fwRenderer* renderer)
 {
-	glm::vec3 lightPos;
-
-	// create a player AA BoundingBox
-	glm::vec3 position = m_camera->get_position();
-	fwAABBox player(
-		position.x - 0.4, position.x + 0.4,
-		position.y - 0.3, position.y + 0.3,
-		position.z - 0.4, position.z + 0.4
-		);
-
-	// Space key can only be sent ONCE
-	if (m_control->isKeyPressed(GLFW_KEY_SPACE)) {
-		if (!m_keySpace) {
-			m_level->testSwitch(player, m_player);
-			m_keySpace = true;
-		}
-	}
-	else {
-		m_keySpace = false;
-	}
-
-	// DEBUG : suspend the timer
-	if (m_control->isKeyPressed(GLFW_KEY_S)) {
-		g_gaWorld.suspendTimer();
-	}
-
-	// get the status of the headlight
-	if (m_control->isKeyPressed(GLFW_KEY_F5)) {
-		if (!m_f5) {
-			m_headlight = !m_headlight;
-			m_f5 = true;
-		}
-	}
-	else {
-		m_f5 = false;
-	}
-
 	m_renderer->customDefine("HEADLIGHT", m_headlight);
 
 	m_level->draw(m_camera, m_scene); 	// update visible objects
 	g_gaWorld.process(33);
 
-	m_control->updateCamera(33);			// and move the player if the level changed
-
-	return renderer->draw(m_camera, m_scene);
+	return m_renderer->draw(m_camera, m_scene);
 }
 
 /**
@@ -185,8 +149,24 @@ void myDarkForces::renderGUI(void)
 #endif
 }
 
-void myDarkForces::keypress()
+void myDarkForces::keypress(int key)
 {
+	switch (key) {
+	case GLFW_KEY_SPACE: {
+		// create a player AA BoundingBox
+		glm::vec3 position = m_camera->get_position();
+		fwAABBox player(
+			position.x - 0.4, position.x + 0.4,
+			position.y - 0.3, position.y + 0.3,
+			position.z - 0.4, position.z + 0.4
+		);
+
+		m_level->testSwitch(player, m_player);
+		break;	}
+	case GLFW_KEY_F5:
+		m_headlight = !m_headlight;
+		break;
+	}
 }
 
 myDarkForces::~myDarkForces()

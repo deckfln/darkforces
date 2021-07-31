@@ -107,6 +107,29 @@ glm::mat4 &fwCamera::GetMatrix(void)
 	return m_matrix;
 }
 
+/**
+ * Save the camera position
+ */
+void fwCamera::push(void)
+{
+	m_positions.push(position());
+	m_targets.push(target);
+}
+
+/**
+ * restore the camera position
+ */
+void fwCamera::pop(void)
+{
+	translate( m_positions.front() );
+	target = m_targets.front();
+
+	m_positions.pop();
+	m_targets.pop();
+
+	update();
+}
+
 void fwCamera::set_uniforms(glProgram *program)
 {
 	program->set_uniform("view", view);
@@ -139,12 +162,27 @@ bool fwCamera::is_inFrustum(fwMesh *mesh)
 }
 
 /**
- * Test a WORLD positioning boundingSphere against the frustrum
+ * Test a WORLD positioning boundingSphere against the frustum
  * TODO convert the boundingSphere to a 3D object (Mesh, Object3D) than can be moved around
  */
 bool fwCamera::is_inFrustum(fwSphere& boundingSphere)
 {
 	return m_frustum.intersectsSphere(boundingSphere, boundingSphere);
+}
+
+/**
+ * return a ray starting from screen coordinate [x,y]
+ * https://gdbooks.gitbooks.io/3dcollisions/content/Chapter5/picking.html
+ */
+void fwCamera::rayFromMouse(float x, float y, glm::vec3& ray_ori, glm::vec3& ray_dir)
+{
+	glm::vec4 viewport( 0.0f, 0.0f, 1.0f, 1.0f );
+
+	glm::vec3 pnear = glm::unProject(glm::vec3(x, y, 0.0f), view, m_projection, viewport);
+	glm::vec3 pfar = glm::unProject(glm::vec3(x, y, 1.0f), view, m_projection, viewport);
+
+	ray_ori = pnear;
+	ray_dir = pfar - pnear;
 }
 
 fwCamera::~fwCamera()

@@ -2,6 +2,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <queue>
 
 #include "../glEngine/glUniformBuffer.h"
 #include "../glEngine/glProgram.h"
@@ -18,6 +19,10 @@ protected:
 	glm::vec3 up = glm::vec3(0);
 	glm::vec3 right = glm::vec3(0);
 
+	// used to push/pop camera position
+	std::queue<glm::vec3> m_positions;
+	std::queue<glm::vec3> m_targets;
+
 	glm::mat4 view = glm::mat4(1);
 	glm::mat4 m_projection = glm::mat4(1);
 	glm::mat4 m_matrix = glm::mat4(1);	// transformation matrix projection * view
@@ -27,6 +32,7 @@ protected:
 
 	fwFrustum m_frustum;
 
+	glm::vec3 unproject(glm::vec3& windowCoordinate);	// unproject the point on the viewport
 	virtual void update(void);
 
 public:
@@ -41,6 +47,9 @@ public:
 	void lookAt(float x, float y, float z);
 	glm::vec3 lookAt(void) { return target; };
 
+	void push(void);						// save the camera position
+	void pop(void);							// restore the camera position
+
 	glm::mat4 GetViewMatrix(void);
 	glm::mat4 GetProjectionMatrix(void);
 	glm::mat4 &GetMatrix(void);
@@ -52,5 +61,7 @@ public:
 	void set_uniformBuffer(void);
 	void bind_uniformBuffer(glProgram *program);
 
+	void rayFromMouse(float x, float y, 
+		glm::vec3& ray_ori, glm::vec3& ray_dir);		// return a ray starting from screen coordinate [x,y]
 	~fwCamera();
 };

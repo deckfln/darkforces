@@ -85,7 +85,7 @@ bool fwControlThirdPerson::checkKeys(time_t delta)
 }
 
 /**
- * Move the player in the given sirection if there is no move
+ * Move the player in the given direction if there is no move
  */
 bool fwControlThirdPerson::checkCollision(glm::vec3& target)
 {
@@ -123,12 +123,12 @@ void fwControlThirdPerson::updateCamera(time_t delta)
 	glm::vec3 lookAt = m_lookDirection + eye;
 
 	//std::cout << m_phi << " " << tmp.x << " " << tmp.y << std::endl;
-	camera->lookAt(lookAt);
-	camera->translate(eye);
+	m_camera->lookAt(lookAt);
+	m_camera->translate(eye);
 }
 
 /**
- * auto update the controler if autoupdated
+ * auto update the controller if auto-updated
  */
 void fwControlThirdPerson::update(time_t delta)
 {

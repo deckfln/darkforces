@@ -14,23 +14,22 @@ class dfFileSystem;
 class dfLevel;
 
 class gaActor;
-class gaPlayer;
 
 #ifdef DEBUG
 #include "Debugger/Debug.h"
 #endif
 
+#include "darkforces/PlayerControl.h"
+
 class myDarkForces : public fwApp
 {
-	fwCamera* m_camera = nullptr;
 	fwLight* m_light = nullptr;
 	fwSkybox* m_skybox = nullptr;
-	fwScene* m_scene = nullptr;;
 	glm::vec4* white = nullptr;
 	fwMesh* m_fwCamera = nullptr;
 
 	gaActor* m_player = nullptr;
-	gaPlayer* m_control = nullptr;
+	DarkForces::PlayerControl* m_playerControl = nullptr;
 
 	dfFileSystem* m_filesystem = nullptr;
 	dfLevel* m_level = nullptr;
@@ -48,6 +47,6 @@ public:
 	void renderGUI(void) override;
 
 	void resize(int x, int y);
-	void keypress(void);
+	void keypress(int);
 	~myDarkForces();
 };

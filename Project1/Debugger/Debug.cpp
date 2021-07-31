@@ -16,6 +16,7 @@ Debugger::Debug g_Debugger;
  */
 Debugger::Debug::Debug()
 {
+	m_control = new fwOrbitControl(nullptr, 20, glm::vec3(0));
 }
 
 /**
@@ -61,9 +62,17 @@ void Debugger::Debug::debugMode(bool mode)
  */
 void Debugger::Debug::render(myDarkForces *dark)
 {
-	glm::vec3 p = dark->m_player->position();
+	bool old_state = m_debug;
+
 	ImGui::Begin("Debugger");                          // Create a window called "Hello, world!" and append into it.
+
+	glm::vec3 p = dark->m_player->position();
 	ImGui::Text("Player x:%.3f y:%.3f z:%.3f", p.x, p.y, p.z);
+
+	p = dark->m_camera->position();
+	glm::vec3 p1 = dark->m_camera->lookAt();
+	ImGui::Text("camera x:%.3f y:%.3f z:%.3f->x:%.3f y:%.3f z:%.3f", p.x, p.y, p.z, p1.x, p1.y, p1.z);
+
 
 	if (m_debug || m_framebyframe) {
 		if (m_framebyframe) {
@@ -169,6 +178,25 @@ void Debugger::Debug::render(myDarkForces *dark)
 		}
 	}
 	ImGui::End();
+
+	// if we are entering debug state, 
+	// save the game camera & control
+	// and inject the debugger camera & control
+	if (old_state == false && m_debug == true) {
+		dark->m_camera->push();
+		m_gameControl = (fwControl *)dark->m_control;
+		m_control->bindCamera(dark->m_camera);
+		m_control->setFromCamera();
+		dark->bindControl((fwControl*)m_control);
+	}
+
+	// if we leave debug state, 
+	// restore the game camera & control
+	if (old_state == true && m_debug == false) {
+		dark->m_camera->pop();
+		dark->bindControl(m_gameControl);
+		m_gameControl = nullptr;
+	}
 }
 
 Debugger::Debug::~Debug()

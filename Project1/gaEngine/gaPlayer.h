@@ -13,8 +13,9 @@ class gaPlayer : public fwControlThirdPerson
 	gaActor* m_entity = nullptr;
 	dfComponentActor* m_actor = nullptr;
 
-	virtual bool checkKeys(time_t delta);
-	virtual void updatePlayer(time_t delta);
+protected:
+	bool checkKeys(time_t delta) override;
+	void updatePlayer(time_t delta) override;
 
 public:
 	gaPlayer(fwCamera* camera, gaActor* actor, float phi);

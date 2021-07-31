@@ -555,6 +555,9 @@
     <ClCompile Include="Debugger\Debug.cpp">
       <Filter>Fichiers sources\Debugger</Filter>
     </ClCompile>
+    <ClCompile Include="darkforces\PlayerControl.cpp">
+      <Filter>Fichiers sources\Dark Forces</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="glad\glad.h">
@@ -1042,6 +1045,9 @@
     </ClInclude>
     <ClInclude Include="flightRecorder\frBullet.h">
       <Filter>Fichiers d%27en-tête\flightRecorder</Filter>
+    </ClInclude>
+    <ClInclude Include="darkforces\PlayerControl.h">
+      <Filter>Fichiers d%27en-tête\DarkForces</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

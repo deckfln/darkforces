@@ -14,11 +14,10 @@ void fwOrbitControl::_mouseButton(int action)
 {
 	switch (m_button) {
 	case GLFW_MOUSE_BUTTON_LEFT:
-		break;
 	case GLFW_MOUSE_BUTTON_RIGHT:
-		m_camera = camera->get_position();
-		m_origLookAt = camera->lookAt();
-		m_inverseCamera = glm::inverse(camera->GetProjectionMatrix() * camera->GetViewMatrix());
+		m_center = m_camera->get_position();
+		m_origLookAt = m_camera->lookAt();
+		m_inverseCamera = glm::inverse(m_camera->GetProjectionMatrix() * m_camera->GetViewMatrix());
 		break;
 	case GLFW_MOUSE_BUTTON_MIDDLE:
 		break;
@@ -49,20 +48,31 @@ void fwOrbitControl::_mouseMove(float xdir, float ydir)
 		c.z *= c.w;
 
 		// move the camera and the camera target
-		glm::vec3 delta = glm::vec3(c) - m_camera;
+		glm::vec3 delta = glm::vec3(c) - m_center;
 		m_lookAt = m_origLookAt + delta;
 		break;
 	}
 }
 
-void fwOrbitControl::updateCamera(void)
+void fwOrbitControl::updateCamera(time_t delta)
 {
 	float z = m_radius * cos(m_phi)*sin(m_theta) + m_lookAt.z;
 	float x = m_radius * sin(m_phi)*sin(m_theta) + m_lookAt.x;
 	float y = m_radius * cos(m_theta) + m_lookAt.y;
 
-	camera->translate(x, y, z);
-	camera->lookAt(m_lookAt);
+	m_camera->translate(x, y, z);
+	m_camera->lookAt(m_lookAt);
+}
+
+/**
+ * set center & lookAt from the current camera
+ */
+void fwOrbitControl::setFromCamera(void)
+{
+	m_center = m_camera->get_position();
+	m_lookAt = m_camera->get_position();
+
+	updateCamera(0);
 }
 
 fwOrbitControl::~fwOrbitControl()

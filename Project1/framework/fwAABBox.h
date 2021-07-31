@@ -55,9 +55,13 @@ public:
 	fwAABBox& multiplyBy(float v);
 	bool inside(const glm::vec3& position);
 	bool inside(fwAABBox& box);
-	bool intersect(const fwAABBox& box);
 	bool isAbove(const fwAABBox& box);
 	bool not_init(void);
+
+	bool intersect(const fwAABBox& box);				// intersect with another AABB
+	bool intersect(
+		const glm::vec3& ray_orig, const glm::vec3& ray_dir, 
+		glm::vec3 &point);								// intersect with a ray
 
 	void extend(const fwAABBox& box);
 	void extend(glm::vec3& vertice);

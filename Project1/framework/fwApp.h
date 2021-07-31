@@ -17,6 +17,9 @@
 class fwApp
 {
 protected:
+	fwCamera* m_camera = nullptr;
+	fwScene* m_scene = nullptr;;
+
 	int height = 0;
 	int width = 0;
 	glm::vec2 m_pixelsize = glm::vec2(0);
@@ -25,8 +28,6 @@ protected:
 	fwControl *m_control = nullptr;
 	fwUniform *source = nullptr;
 	fwRenderer* m_renderer = nullptr;
-
-	void processInput(GLFWwindow *window);
 
 public:
 	fwApp(std::string name, int _width, int _height, std::string post_processing, std::string defines);
@@ -43,6 +44,7 @@ public:
 	virtual void resize(int x, int y) {};
 	virtual void keypress(void) {};
 	virtual void renderGUI(void) {};
+	virtual void processInput(void);
 
 	~fwApp();
 };

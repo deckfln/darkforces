@@ -9,10 +9,6 @@
 
 class fwControlThirdPerson : public fwControl
 {
-	glm::vec3 m_camera = glm::vec3(0);
-	glm::vec3 m_origLookAt = glm::vec3(0);
-	glm::mat4 m_inverseCamera = glm::mat4(1);
-
 	double m_radSpeed = pi / 2;	// map mouse move 0..1 to 0..pi/2
 	double m_theta = pi / 2;		// current up/down angle
 	double m_phi = -pi / 2;		// current left/right angle
@@ -25,9 +21,9 @@ class fwControlThirdPerson : public fwControl
 
 	float m_speed = 0.015f;
 	float m_height = 1;			// player eye position
-	float m_radius = 1;			// player cyclinder radius 
+	float m_radius = 1;			// player cylinder radius 
 
-	glm::mat3 m_physic = glm::mat3(0);	// matrice for physic engine when in 'free fall'
+	glm::mat3 m_physic = glm::mat3(0);	// matrices for physic engine when in 'free fall'
 	time_t m_animation_time = 0;
 
 	glm::vec3 m_debug;			// start of jump for debug
@@ -38,7 +34,7 @@ class fwControlThirdPerson : public fwControl
 	bool checkCollision(glm::vec3& target);
 
 protected:
-	bool m_locked = false;		// block movement (like in a freefall)
+	bool m_locked = false;		// block movement (like in a free-fall)
 
 	glm::vec3 m_direction = glm::vec3(0);
 	glm::vec3 m_position = glm::vec3(0);

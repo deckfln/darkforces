@@ -118,7 +118,7 @@ void fwApp::bindControl(fwControl *_control)
 	m_control = _control;
 }
 
-void fwApp::processInput(GLFWwindow *window)
+void fwApp::processInput(void)
 {
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, true);
@@ -208,9 +208,9 @@ void fwApp::run(void)
 
 		// input
 		// -----
-		processInput(window);
+		processInput();
 		if (m_control)
-			m_control->update(last_frame_time);	// let the controler update itself if needed
+			m_control->update(last_frame_time);	// let the controller update itself if needed
 
 		// todo this trigger an error in nsigh
 		//glEnable(GL_CULL_FACE);
@@ -219,12 +219,10 @@ void fwApp::run(void)
 
 		// 2nd pass : render to color buffer
 		m_renderer->start();
-
 		glTexture *color = draw(last_frame_time, m_renderer);
-		
 		m_renderer->stop();
 
-		// 3rd pass : postprocessing
+		// 3rd pass : post-processing
 		//glCullFace(GL_BACK);
 		postProcessing->draw(color);
 

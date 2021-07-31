@@ -383,6 +383,89 @@ bool fwAABBox::intersect(const fwAABBox& box)
 }
 
 /**
+ * intersect with a ray
+ * https://github.com/erich666/GraphicsGems/blob/master/gems/RayBox.c
+ */
+enum class RAY_INTERSECT
+{
+	RIGHT,
+	LEFT,
+	MIDDLE
+};
+#define NUMDIM 3
+
+bool fwAABBox::intersect(const glm::vec3& ray_orig, const glm::vec3& ray_dir, glm::vec3& point)
+{
+	bool inside = TRUE;
+	RAY_INTERSECT quadrant[NUMDIM];
+	register int i;
+	int whichPlane;
+	float maxT[NUMDIM];
+	float candidatePlane[NUMDIM];
+
+	float minB[NUMDIM] = { m_p.x, m_p.y, m_p.z },
+		maxB[NUMDIM] = { m_p1.x, m_p1.y, m_p1.z };		/*box */
+	float origin[NUMDIM] = { ray_orig.x, ray_orig.y, ray_orig.z },
+		dir[NUMDIM] = { ray_dir.x, ray_dir.y, ray_dir.z };		/*ray */
+	float coord[NUMDIM];					/* hit point */
+
+	/* Find candidate planes; this loop can be avoided if
+	rays cast all from the eye(assume perpsective view) */
+	for (i = 0; i < NUMDIM; i++)
+		if (origin[i] < minB[i]) {
+			quadrant[i] = RAY_INTERSECT::LEFT;
+			candidatePlane[i] = minB[i];
+			inside = FALSE;
+		}
+		else if (origin[i] > maxB[i]) {
+			quadrant[i] = RAY_INTERSECT::RIGHT;
+			candidatePlane[i] = maxB[i];
+			inside = FALSE;
+		}
+		else {
+			quadrant[i] = RAY_INTERSECT::MIDDLE;
+		}
+
+	/* Ray origin inside bounding box */
+	if (inside) {
+		point = ray_orig;
+		return true;
+	}
+
+
+	/* Calculate T distances to candidate planes */
+	for (i = 0; i < NUMDIM; i++)
+		if (quadrant[i] != RAY_INTERSECT::MIDDLE && dir[i] != 0.)
+			maxT[i] = (candidatePlane[i] - origin[i]) / dir[i];
+		else
+			maxT[i] = -1.;
+
+	/* Get largest of the maxT's for final choice of intersection */
+	whichPlane = 0;
+	for (i = 1; i < NUMDIM; i++)
+		if (maxT[whichPlane] < maxT[i])
+			whichPlane = i;
+
+	/* Check final candidate actually inside box */
+	if (maxT[whichPlane] < 0.) return false;
+	for (i = 0; i < NUMDIM; i++)
+		if (whichPlane != i) {
+			coord[i] = origin[i] + maxT[whichPlane] * dir[i];
+			if (coord[i] < minB[i] || coord[i] > maxB[i])
+				return false;
+		}
+		else {
+			coord[i] = candidatePlane[i];
+		}
+
+	point.x = coord[0];
+	point.y = coord[1];
+	point.z = coord[2];
+
+	return true;				/* ray hits box */
+}
+
+/**
  * if the current AABB is above the given one
  */
 bool fwAABBox::isAbove(const fwAABBox& box)

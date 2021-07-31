@@ -3,7 +3,7 @@
 #include <GLFW/glfw3.h>
 
 fwControl::fwControl(fwCamera* _camera) :
-	camera(_camera)
+	m_camera(_camera)
 {
 	update(0);
 }
@@ -67,18 +67,18 @@ void fwControl::mouseMove(double xpos, double ypos)
 			break;
 		}
 
-		updateCamera();
+		updateCamera(0);
 	}
 }
 
 void fwControl::mouseScroll(double xoffset, double yoffset)
 {
 	_mouseScroll(xoffset, yoffset);
-	updateCamera();
+	updateCamera(0);
 }
 
 /**
- * Deal with key pressed, released to activate autoupdate
+ * Deal with key pressed, released to activate auto-update
  */
 void fwControl::keyEvent(int key, int scancode, int action, int mods)
 {
@@ -93,7 +93,7 @@ void fwControl::keyEvent(int key, int scancode, int action, int mods)
 		break;
 	}
 
-	// trigger autoupdate if there is at least 1 key presssed
+	// trigger auto-update if there is at least 1 key pressed
 	m_autoupdate = false;
 	for (auto key : m_currentKeys) {
 		if (key.second) {
@@ -106,6 +106,16 @@ void fwControl::keyEvent(int key, int scancode, int action, int mods)
 bool fwControl::isKeyPressed(int key)
 {
 	return m_currentKeys[key];
+}
+
+/**
+ * Bind the controller to a new camera
+ */
+fwCamera* fwControl::bindCamera(fwCamera* camera)
+{
+	fwCamera* old = m_camera;  
+	m_camera = camera; 
+	return old;
 }
 
 fwControl::~fwControl()
