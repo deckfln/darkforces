@@ -110,7 +110,13 @@ void Debugger::Debug::render(myDarkForces *dark)
 					int old_frame = m_frame;
 					ImGui::SameLine(); ImGui::SliderInt("frame", &m_frame, 0, g_Blackbox.len());
 					if (old_frame != m_frame) {
+						// Set the game state
 						g_Blackbox.setState(m_frame);
+
+						// set the debug camera based on the player position
+						m_control->translateCamera(
+							dark->m_player->position()
+							);
 					}
 
 					if (m_frame < g_Blackbox.len()) {

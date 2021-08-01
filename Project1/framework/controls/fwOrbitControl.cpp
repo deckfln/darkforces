@@ -88,6 +88,15 @@ void fwOrbitControl::setFromCamera(void)
 	updateCamera(0);
 }
 
+/*
+ * move the center of the orbit camera
+ */
+void fwOrbitControl::translateCamera(const glm::vec3& pos)
+{
+	m_lookAt = m_center = pos;
+	updateCamera(0);
+}
+
 fwOrbitControl::~fwOrbitControl()
 {
 
