@@ -26,15 +26,20 @@ void fwOrbitControl::_mouseButton(int action)
 
 void fwOrbitControl::_mouseScroll(double xoffset, double yoffset)
 {
-	m_radius -= yoffset;
+	if (yoffset > 0)
+		m_radius -= m_radius / 10.0f;
+	else 
+		m_radius += m_radius / 10.0f;
 }
 
 void fwOrbitControl::_mouseMove(float xdir, float ydir)
 {
 	switch (m_button) {
 	case GLFW_MOUSE_BUTTON_LEFT:
-		m_theta += ydir;
+		m_theta -= ydir;
 		m_phi += xdir;
+		m_startx = m_currentX;
+		m_starty = m_currentY;
 		break;
 
 	case GLFW_MOUSE_BUTTON_RIGHT:
@@ -50,6 +55,7 @@ void fwOrbitControl::_mouseMove(float xdir, float ydir)
 		// move the camera and the camera target
 		glm::vec3 delta = glm::vec3(c) - m_center;
 		m_lookAt = m_origLookAt + delta;
+
 		break;
 	}
 }
@@ -70,7 +76,14 @@ void fwOrbitControl::updateCamera(time_t delta)
 void fwOrbitControl::setFromCamera(void)
 {
 	m_center = m_camera->get_position();
-	m_lookAt = m_camera->get_position();
+	m_lookAt = m_camera->lookAt();
+
+	glm::vec3 direction = glm::normalize(m_lookAt - m_center);
+	m_lookAt = m_center;
+	m_center -= direction;
+	m_radius = 1.0f;
+	m_theta = acos(direction.y);
+	m_phi = acos(direction.z / sin(m_theta));
 
 	updateCamera(0);
 }
