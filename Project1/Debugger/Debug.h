@@ -11,6 +11,7 @@ class myDarkForces;
 namespace Debugger {
 	class Debug {
 		bool m_debug = false;	// entered debug mode
+		bool m_requestDebug = false;
 		bool m_framebyframe = false;
 
 		// flight recorder v2

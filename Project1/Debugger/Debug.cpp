@@ -54,7 +54,7 @@ void Debugger::Debug::playRecorderV1(void)
  */
 void Debugger::Debug::debugMode(bool mode)
 {
-	m_debug = mode;
+	m_requestDebug = mode;
 }
 
 /**
@@ -83,7 +83,7 @@ void Debugger::Debug::render(myDarkForces *dark)
 		ImGui::BeginGroup();
 		if (ImGui::Button("Exit debug")) {
 			m_debug = false;
-			g_gaWorld.run();
+			m_requestDebug = false;
 		}
 		ImGui::EndGroup();
 
@@ -176,9 +176,9 @@ void Debugger::Debug::render(myDarkForces *dark)
 			ImGui::SameLine(); ImGui::SliderInt("frame", &m_recorder_end, 0, m_recorder_len);;
 		}
 		else {
-			if (ImGui::Button("Enter debug")) {
+			if (ImGui::Button("Enter debug") || m_requestDebug) {
 				m_debug = true;
-				g_gaWorld.suspend();
+				m_requestDebug = false;
 			}
 		}
 	}
@@ -194,6 +194,7 @@ void Debugger::Debug::render(myDarkForces *dark)
 		m_control->bindCamera(dark->m_camera);
 		m_control->setFromCamera();
 		dark->bindControl((fwControl*)m_control);
+		g_gaWorld.suspend();
 	}
 
 	// if we leave debug state, 
@@ -202,6 +203,7 @@ void Debugger::Debug::render(myDarkForces *dark)
 		dark->m_camera->pop();
 		dark->bindControl(m_gameControl);
 		m_gameControl = nullptr;
+		g_gaWorld.run();
 	}
 }
 
