@@ -578,21 +578,31 @@ void World::suspendTimer(void)
 /**
  * Render the list of entities on the debug imGUI
  */
-void GameEngine::World::renderGUI(void)
+void GameEngine::World::debugGUI(void)
 {
-	if (ImGui::TreeNode("Entities")) {
-		for (auto entry : m_entities) {
-			for (auto ent : entry.second) {
-				const std::string& name = ent->name();
-				if (ImGui::TreeNode(name.c_str())) {
-					glm::vec3 p = ent->position();
-					ImGui::Text("Pos x:%.3f y:%.3f z:%.3f", p.x, p.y, p.z);
-					ImGui::TreePop();
-				}
+	// list entities to pick from
+	ImGui::BeginGroup();
+	for (auto entry : m_entities) {
+		for (auto ent : entry.second) {
+			const std::string& name = ent->name();
+			ImGui::Checkbox(name.c_str(), &m_watch[name]);
+		}
+	}
+	ImGui::EndGroup();
+
+	ImGui::SameLine();
+
+	// display entities monitored
+	ImGui::BeginGroup();
+	for (auto &watch : m_watch) {
+		if (watch.second) {
+			auto &entities = m_entities[watch.first];
+			for (auto entity : entities) {
+				entity->debugGUI(&m_watch[watch.first]);
 			}
 		}
-		ImGui::TreePop();
 	}
+	ImGui::EndGroup();
 }
 
 /**

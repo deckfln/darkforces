@@ -74,7 +74,7 @@ private:
 	//TODO adapt the default speed
 	float m_speed = 20;					// time in millisecond between 2 stops
 	int m_eventMask = 0;
-	float m_zmin = 99999;					// for elevator inv, standard : extend of the elevator
+	float m_zmin = 99999;				// for elevator inv, standard : extend of the elevator
 	float m_zmax = -99999;
 	glm::vec3 m_center = glm::vec3(0);	// rotation axis for SPIN1 elevators
 	glm::vec3 m_move = glm::vec3(0);	// based off 'angle' for MOVE1 elevators
@@ -147,6 +147,6 @@ public:
 	};														// size of one record
 	void recordState(void* record) override;				// return a record of an actor state (for debug)
 	void loadState(flightRecorder::Entity* record) override;// reload an actor state from a record
-
+	void debugGUI(bool *close) override;					// display inner data to the debugger
 	~dfElevator(void);
 };

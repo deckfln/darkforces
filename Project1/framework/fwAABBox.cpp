@@ -692,6 +692,7 @@ void fwAABBox::loadState(flightRecorder::AABBox* record)
 {
 	m_p = record->p;
 	m_p1 = record->p1;
+	m_dirty = true;		// force debug AABOX to refresh
 }
 
 fwAABBox::~fwAABBox()

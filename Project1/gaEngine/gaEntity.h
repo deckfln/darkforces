@@ -148,7 +148,8 @@ public:
 		return sizeof(flightRecorder::Entity);
 	}													// size of one record
 	virtual void recordState(void* record);				// return a record of the entity state (for debug)
-	virtual void loadState(flightRecorder::Entity* record);				// reload an entity state from a record
+	virtual void loadState(flightRecorder::Entity* record);// reload an entity state from a record
+	virtual void debugGUI(bool *close);					// debug the entity
 
 	~gaEntity();
 };

@@ -73,6 +73,7 @@ void Debugger::Debug::render(myDarkForces *dark)
 	glm::vec3 p1 = dark->m_camera->lookAt();
 	ImGui::Text("camera x:%.3f y:%.3f z:%.3f->x:%.3f y:%.3f z:%.3f", p.x, p.y, p.z, p1.x, p1.y, p1.z);
 
+	// display entities
 
 	if (m_debug || m_framebyframe) {
 		if (m_framebyframe) {
@@ -85,8 +86,6 @@ void Debugger::Debug::render(myDarkForces *dark)
 			g_gaWorld.run();
 		}
 		ImGui::EndGroup();
-
-		ImGui::SameLine();
 
 		ImGui::BeginGroup();
 			ImGui::BeginGroup();
@@ -114,9 +113,9 @@ void Debugger::Debug::render(myDarkForces *dark)
 						g_Blackbox.setState(m_frame);
 
 						// set the debug camera based on the player position
-						m_control->translateCamera(
-							dark->m_player->position()
-							);
+						//m_control->translateCamera(
+						//	dark->m_player->position()
+						//	);
 					}
 
 					if (m_frame < g_Blackbox.len()) {
@@ -161,10 +160,10 @@ void Debugger::Debug::render(myDarkForces *dark)
 				}
 			ImGui::EndGroup();
 
-		// display entities
-		g_gaWorld.renderGUI();
-
 		ImGui::EndGroup();
+
+		// display all entities to pick from
+		g_gaWorld.debugGUI();
 	}
 	else {
 		if (m_replay) {
@@ -183,6 +182,7 @@ void Debugger::Debug::render(myDarkForces *dark)
 			}
 		}
 	}
+
 	ImGui::End();
 
 	// if we are entering debug state, 

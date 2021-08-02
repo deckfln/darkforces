@@ -3,6 +3,7 @@
 #include <glm/gtc/matrix_transform.hpp> 
 #include <glm/gtx/transform.hpp>
 #include <glm/gtx/quaternion.hpp>
+#include <imgui.h>
 
 #include "../framework/fwScene.h"
 #include "../framework/fwMesh.h"
@@ -311,12 +312,32 @@ void gaEntity::loadState(flightRecorder::Entity* record)
 {
 	m_name = record->name;
 	fwObject3D::loadState(&record->object3D);
+
+	// transfer to all components
+	sendInternalMessage(gaMessage::MOVE, 0, nullptr);
+
 	m_transforms.loadState(&record->transforms);
 	m_modelAABB.loadState(&record->modelAABB);
 	m_worldBounding.loadState(&record->worldBounding);
 	m_animation_time = record->animation_time;
 }
 
+/**
+ * debug the entity
+ */
+void gaEntity::debugGUI(bool *close)
+{
+	const glm::vec3& p = position();
+	const glm::mat4& m = worldMatrix();
+
+	if (ImGui::CollapsingHeader(m_name.c_str())) {
+		ImGui::Text("Pos %.2f %.2f %.2f", p.x, p.y, p.z);
+	}
+}
+
+/**
+ *
+ */
 gaEntity::~gaEntity()
 {
 	g_gaWorld.removeClient(this);

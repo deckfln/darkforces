@@ -39,6 +39,7 @@ namespace GameEngine {
 		friend GameEngine::Physics;							// physic engine has direct access to world data
 		friend flightRecorder::Blackbox;					// flight recorder has direct access to everything
 
+		std::map<std::string, bool>	m_watch;				// keep a list of entities to display in the debugger
 	public:
 		World(void);
 
@@ -117,7 +118,7 @@ namespace GameEngine {
 		void pushForNextFrame(gaMessage* message);
 		void process(time_t delta, bool force=false);
 		void suspendTimer(void);
-		void renderGUI(void);								// render the imGUI debug
+		void debugGUI(void);								// render the imGUI debug
 		void clearQueue(void);								// clear the message queue
 		~World();
 	};

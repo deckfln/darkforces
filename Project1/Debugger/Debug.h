@@ -22,6 +22,9 @@ namespace Debugger {
 		// debug controller
 		fwOrbitControl* m_control = nullptr;
 
+		// list of entities to display
+		std::map<std::string, void*> m_debugEntities;
+
 		// flight recorder V1
 		std::array<glm::vec3, 3000> m_recorder = {};
 		int m_recorder_start = 0;
@@ -30,7 +33,6 @@ namespace Debugger {
 		bool m_replay = false;
 		void loadRecorderV1(void);
 		void playRecorderV1(void);
-
 
 	public:
 		Debug();

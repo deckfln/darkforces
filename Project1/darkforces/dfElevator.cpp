@@ -2,6 +2,7 @@
 
 #define _USE_MATH_DEFINES // for C++
 #include <math.h>
+#include <imgui.h>
 
 #include "../config.h"
 
@@ -860,6 +861,38 @@ void dfElevator::loadState(flightRecorder::Entity* r)
 	m_current = record->m_current;		// current altitude of the part to move (floor or ceiling)
 	m_direction = record->m_direction;	// direction and speed of the move
 	m_target = record->m_direction;		// target altitude
+}
+
+/**
+ * display inner data to the debugger
+ */
+void dfElevator::debugGUI(bool* close)
+{
+	gaEntity::debugGUI(close);
+
+	const char* text = nullptr;
+
+	switch (m_status) {
+	case dfElevator::Status::HOLD:
+		text = "HOLD";
+		break;
+	case dfElevator::Status::MOVE:
+		text = "MOVE";
+		break;
+	case dfElevator::Status::TERMINATED:
+		text = "TERMINATED";
+		break;
+	case dfElevator::Status::WAIT:
+		text = "WAIT";
+		break;
+	}
+
+	ImGui::Text("Status : %s", text);
+	ImGui::Text("Tick: %.2f", m_tick);
+	ImGui::Text("Delay: %.2f", m_delay);
+	ImGui::Text("Stops: current:%d next:%d", m_currentStop, m_nextStop);
+	ImGui::Text("Z: current:%.2f target:%.2f", m_current, m_target);
+	ImGui::Text("Speed: %.2f", m_direction);
 }
 
 /**
