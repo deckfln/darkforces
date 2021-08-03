@@ -22,5 +22,7 @@ public:
 	dfVue(dfFileSystem* fs, const std::string& file, const std::string& component);
 	glm::mat4* firstFrame(time_t t);
 	glm::mat4* nextFrame(time_t t);
+	time_t currentFrame(void);			// return the time of the current frame
+	void currentFrame(time_t t);		// set a new frame time
 	~dfVue();
 };

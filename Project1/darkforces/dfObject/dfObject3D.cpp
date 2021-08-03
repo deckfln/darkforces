@@ -1,5 +1,7 @@
 #include "dfObject3D.h"
 
+#include <imgui.h>
+
 #include "../../framework/fwMesh.h"
 #include "../../framework/fwScene.h"
 
@@ -23,6 +25,11 @@ dfObject3D::dfObject3D(df3DO* threedo, const glm::vec3& position, float ambient,
 	m_componentMesh.set_scale(0.10f);
 
 	dfObject::moveTo(m_position_lvl);
+}
+
+dfObject3D::dfObject3D(flightRecorder::DarkForces::Object3D* record) :
+	dfObject(&record->object)
+{
 }
 
 /**
@@ -121,6 +128,59 @@ void dfObject3D::dispatchMessage(gaMessage* message)
 		break;
 	}
 	dfObject::dispatchMessage(message);
+}
+
+/**
+ * return a record of the entity state (for debug)
+ */
+void* frCreate_df_Object3D(void* record) {
+	return new dfObject3D((flightRecorder::DarkForces::Object3D*)record);
+}
+
+/**
+ * return a record of the entity state (for debug)
+ */
+void dfObject3D::recordState(void* r)
+{
+	dfObject::recordState(r);
+	flightRecorder::DarkForces::Object3D* record = (flightRecorder::DarkForces::Object3D*)r;
+
+	record->object.entity.classID = flightRecorder::TYPE::DF_ENTITY_OBJECT;
+	record->object.entity.size = sizeof(flightRecorder::DarkForces::Object3D);
+
+	record->lastFrame = m_lastFrame;
+	record->vue = false;
+
+	if (m_vue) {
+		record->vue = true;
+		record->currentVueFrame = m_vue->currentFrame();
+	}
+}
+
+/**
+ * reload an entity state from a record
+ */
+void dfObject3D::loadState(flightRecorder::Entity* r)
+{
+	dfObject::loadState(r);
+	flightRecorder::DarkForces::Object3D* record = (flightRecorder::DarkForces::Object3D*)r;
+	m_lastFrame= record->lastFrame;
+
+	if (record->vue) {
+		m_vue->currentFrame(record->currentVueFrame);
+	}
+}
+
+/**
+ * Add dedicated component debug the entity
+ */
+void dfObject3D::debugGUIChildClass(void)
+{
+	dfObject::debugGUIChildClass();
+	ImGui::Text("frame: %d", m_lastFrame);
+	if (m_vue) {
+		ImGui::Text("VUE frame: %d", m_vue->currentFrame());
+	}
 }
 
 dfObject3D::~dfObject3D()

@@ -122,6 +122,23 @@ glm::mat4* dfVue::nextFrame(time_t t)
 	return &matrice;
 }
 
+/**
+ * return the time of the current frame
+ */
+time_t dfVue::currentFrame(void)
+{
+	return m_currentFrame;
+}
+
+/**
+ * set a new frame time
+ */
+void dfVue::currentFrame(time_t t)
+{
+	m_currentFrame = t;
+	nextFrame(0);
+}
+
 dfVue::~dfVue()
 {
 }

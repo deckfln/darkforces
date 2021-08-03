@@ -4,6 +4,8 @@
 #include "../dfComponent/dfComponentLogic.h"
 #include "../../gaEngine/gaComponent/gaComponentMesh.h"
 
+#include "../flightRecorder/Object3D.h"
+
 class fwMesh;
 class fwScene;
 
@@ -29,6 +31,7 @@ class dfObject3D : public dfObject
 
 public:
 	dfObject3D(df3DO* threedo, const glm::vec3& position, float ambient, uint32_t objectID);
+	dfObject3D(flightRecorder::DarkForces::Object3D*);
 	void animRotationAxe(int axe);
 	void animRotationSpeed(float s);
 	void pause(bool p) { m_pause = p; };
@@ -37,6 +40,14 @@ public:
 	bool update(time_t t) override;						// update based on timer
 	// virtual void updateWorldAABB(void);
 	void dispatchMessage(gaMessage* message) override;
+
+	// flight recorder and debugger
+	inline int recordSize(void) override {
+		return sizeof(flightRecorder::DarkForces::Object3D);
+	}													// size of one record
+	void recordState(void* record) override;			// return a record of the entity state (for debug)
+	void loadState(flightRecorder::Entity* record) override;// reload an entity state from a record
+	void debugGUIChildClass(void) override;				// Add dedicated component debug the entity
 
 	~dfObject3D();
 };
