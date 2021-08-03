@@ -88,6 +88,8 @@ void Debugger::Debug::render(myDarkForces *dark)
 		ImGui::EndGroup();
 
 		ImGui::BeginGroup();
+		g_Blackbox.debugGUI();
+/*
 			ImGui::BeginGroup();
 				ImGui::Text("flightRecorder v2");
 				ImGui::SameLine(); if (ImGui::Button("Load")) {
@@ -130,7 +132,7 @@ void Debugger::Debug::render(myDarkForces *dark)
 					}
 				}
 			ImGui::EndGroup();
-
+*/
 			ImGui::BeginGroup();
 				ImGui::Text("flightRecorder v1");
 				ImGui::SameLine(); if (ImGui::Button("Load##1")) {

@@ -475,6 +475,7 @@ bool dfElevator::animateMoveZ(void)
 		else {
 			m_current = m_target;
 		}
+
 		moveTo(m_current);
 
 		bool reached = false;
@@ -891,7 +892,7 @@ void dfElevator::debugGUI(bool* close)
 	ImGui::Text("Tick: %.2f", m_tick);
 	ImGui::Text("Delay: %.2f", m_delay);
 	ImGui::Text("Stops: current:%d next:%d", m_currentStop, m_nextStop);
-	ImGui::Text("Z: current:%.2f target:%.2f", m_current, m_target);
+	ImGui::Text("Z: current:%.4f target:%.2f", m_current, m_target);
 	ImGui::Text("Speed: %.2f", m_direction);
 }
 

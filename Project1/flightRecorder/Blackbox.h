@@ -39,13 +39,20 @@ namespace flightRecorder {
 	 *
 	 */
 	class Blackbox {
+		// circular buffers
 		struct bufferEntities* m_entities[MAXIMUM_RECORDS];
 		struct bufferMessages* m_messages[MAXIMUM_RECORDS];
 		struct bufferPhysics* m_ballistics[MAXIMUM_RECORDS];
 
+		// recording
 		int m_first = 0;	// first record (cycle once reaching MAXIMUM_RECORDS
 		int m_last = 0;		// last record
 		int m_len = 0;		// number of records
+
+		//replay
+		bool m_replay = false;
+		int m_currentFrame = -1;
+
 
 		void recordMessages(void);
 		void recordEntities(void);
@@ -59,6 +66,8 @@ namespace flightRecorder {
 		void setState(int frame);
 
 		inline int len(void) { return m_len; }
+
+		void debugGUI(void);		// display the flight recorder data on the debugger
 
 		~Blackbox();
 	};

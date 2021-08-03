@@ -3,6 +3,7 @@
 #include <iostream>
 #include <fstream>
 #include <map>
+#include <imgui.h>
 
 #include "../gaEngine/World.h"
 #include "../gaEngine/Physics.h"
@@ -352,6 +353,60 @@ void flightRecorder::Blackbox::setState(int frame)
 	for (auto i = 0; i < bPhysics->size; i++) {
 		g_gaWorld.m_physic.loadState(&bPhysics->objects[i]);
 	}
+}
+
+/*/
+ * display the flight recorder data on the debugger
+ */
+void flightRecorder::Blackbox::debugGUI(void)
+{
+	ImGui::BeginGroup();
+	ImGui::Text("flightRecorder v2");
+	ImGui::SameLine(); if (ImGui::Button("Load")) {
+		// load a flight recorder and position as frame 0
+		loadStates();
+		setState(0);
+	}
+	ImGui::SameLine(); if (ImGui::Button("Save")) {
+		saveStates();
+	}
+	if (m_len > 0) {
+		ImGui::SameLine(); if (ImGui::Button(">")) {
+			if (!m_replay) {
+				m_replay = true;
+			}
+			g_gaWorld.run();
+		}
+
+		if (m_currentFrame < 0) {
+			m_currentFrame = m_len - 1;
+		}
+
+		int old_frame = m_currentFrame;
+		ImGui::SameLine(); ImGui::SliderInt("frame", &m_currentFrame, 0, m_len);
+		if (old_frame != m_currentFrame) {
+			// convert the absolute frame number to the circular buffer
+			int convertFrame = (m_first + m_currentFrame) % m_len;
+
+			// Set the game state
+			setState(convertFrame);
+
+			// set the debug camera based on the player position
+			//m_control->translateCamera(
+			//	dark->m_player->position()
+			//	);
+		}
+
+		if (m_currentFrame < m_len) {
+			// display frame by frame up to the last frame
+			ImGui::SameLine(); if (ImGui::Button(">>")) {
+				g_gaWorld.run();
+
+				m_replay = true;
+			}
+		}
+	}
+	ImGui::EndGroup();
 }
 
 /**

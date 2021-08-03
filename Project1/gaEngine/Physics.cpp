@@ -282,7 +282,7 @@ void Physics::moveBullet(gaEntity* entity, gaMessage* message)
  */
 void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 {
-	if (entity->name() == "post_elev_e") {
+	if (entity->name() == "post_elev_w") {
 		printf("Physics::moveEntity post_elev_e\n");
 	}
 	// bullets are special case
@@ -499,7 +499,7 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 
 								GameEngine::Transform& t = collidedEntity->transform();
 								t.m_position = collidedEntity->position();
-								t.m_position.y += (tranform.m_position.y - old_position.y);
+								t.m_position.y = tranform.m_position.y; // += (tranform.m_position.y - old_position.y);
 
 								actions.push(
 									Action(collidedEntity, gaMessage::Flag::PUSH_ENTITIES)
