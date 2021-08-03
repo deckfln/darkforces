@@ -318,6 +318,7 @@
     <ClInclude Include="darkforces\dfVOC.h" />
     <ClInclude Include="darkforces\dfVue.h" />
     <ClInclude Include="darkforces\dfWall.h" />
+    <ClInclude Include="darkforces\flightRecorder\frObject.h" />
     <ClInclude Include="darkforces\lexer\dfObject.lex.h" />
     <ClInclude Include="darkforces\PlayerControl.h" />
     <ClInclude Include="Debugger\Debug.h" />

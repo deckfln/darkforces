@@ -1,5 +1,7 @@
 #include "dfObject.h"
 
+#include <imgui.h>
+
 #include "../config.h"
 #include "../framework/math/fwCylinder.h"
 
@@ -29,6 +31,14 @@ dfObject::dfObject(dfModel *source, const glm::vec3& position, float ambient, in
 {
 	modelAABB(m_source->modelAABB());
 	moveTo(position);
+}
+
+/**
+ * create a full object from a saved state
+ */
+dfObject::dfObject(flightRecorder::DarkForces::dfObject* record) :
+	gaEntity(&record->entity)
+{
 }
 
 /**
@@ -301,6 +311,45 @@ bool dfObject::checkCollision(fwCylinder& bounding, glm::vec3& direction, glm::v
 #endif
 	}
 	return true;
+}
+
+/**
+ * return a record of the entity state (for debug)
+ */
+void* frCreate_dfObject(void* record) {
+	return new dfObject((flightRecorder::DarkForces::dfObject*)record);
+}
+
+/**
+ * return a record of the entity state (for debug)
+ */
+void dfObject::recordState(void* r)
+{
+	gaEntity::recordState(r);
+	flightRecorder::DarkForces::dfObject* record = (flightRecorder::DarkForces::dfObject*)r;
+
+	record->entity.classID = flightRecorder::TYPE::DF_ENTITY_OBJECT;
+	record->entity.size = sizeof(flightRecorder::DarkForces::dfObject);
+
+	record->position_level = m_position_lvl;
+}
+
+/**
+ * reload an entity state from a record
+ */
+void dfObject::loadState(flightRecorder::Entity* r)
+{
+	gaEntity::loadState(r);
+	flightRecorder::DarkForces::dfObject* record = (flightRecorder::DarkForces::dfObject*)r;
+	m_position_lvl = record->position_level;
+}
+
+/**
+ * Add dedicated component debug the entity
+ */
+void dfObject::debugGUIChildClass(void)
+{
+	ImGui::Text("LevelPos %.2f %.2f %.2f", m_position_lvl.x, m_position_lvl.y, m_position_lvl.z);
 }
 
 dfObject::~dfObject()

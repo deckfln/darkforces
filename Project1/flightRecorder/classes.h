@@ -9,7 +9,9 @@ namespace flightRecorder {
 		AABBOX,
 		MESSAGE,
 		PHYSICS,
+
 		DF_ENTITY_ELEVATOR,
 		DF_ENTITY_BULLET,
+		DF_ENTITY_OBJECT
 	};
 }

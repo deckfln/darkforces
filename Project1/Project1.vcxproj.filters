@@ -109,6 +109,9 @@
     <Filter Include="Fichiers sources\Debugger">
       <UniqueIdentifier>{f9c406ed-e98f-44b3-bdb4-59b582322e2c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Fichiers d%27en-tête\DarkForces\flightRecorder">
+      <UniqueIdentifier>{914054cd-b39c-4a48-b8ed-f0f8aaaf46ef}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source.cpp">
@@ -1048,6 +1051,9 @@
     </ClInclude>
     <ClInclude Include="darkforces\PlayerControl.h">
       <Filter>Fichiers d%27en-tête\DarkForces</Filter>
+    </ClInclude>
+    <ClInclude Include="darkforces\flightRecorder\frObject.h">
+      <Filter>Fichiers d%27en-tête\DarkForces\flightRecorder</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

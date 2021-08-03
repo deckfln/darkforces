@@ -865,12 +865,10 @@ void dfElevator::loadState(flightRecorder::Entity* r)
 }
 
 /**
- * display inner data to the debugger
+ * Add dedicated component debug the entity
  */
-void dfElevator::debugGUI(bool* close)
+void dfElevator::debugGUIChildClass(void)
 {
-	gaEntity::debugGUI(close);
-
 	const char* text = nullptr;
 
 	switch (m_status) {

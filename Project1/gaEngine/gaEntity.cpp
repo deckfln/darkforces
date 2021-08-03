@@ -332,7 +332,15 @@ void gaEntity::debugGUI(bool *close)
 
 	if (ImGui::CollapsingHeader(m_name.c_str())) {
 		ImGui::Text("Pos %.2f %.2f %.2f", p.x, p.y, p.z);
+		debugGUIChildClass();
 	}
+}
+
+/**
+ * Add dedicated component debug the entity
+ */
+void gaEntity::debugGUIChildClass(void)
+{
 }
 
 /**

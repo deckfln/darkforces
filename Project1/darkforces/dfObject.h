@@ -11,6 +11,8 @@
 
 #include "dfCollision.h"
 
+#include "flightRecorder/frObject.h"
+
 class fwScene;
 class fwMesh;
 class fwCylinder;
@@ -122,6 +124,7 @@ protected:
 
 public:
 	dfObject(dfModel *source, const glm::vec3& position, float ambient, int type, uint32_t objectID);
+	dfObject(flightRecorder::DarkForces::dfObject *record);
 	void height(float h) { m_height = h; };
 	float height(void) { return m_height; };
 	void radius(float r) { m_radius = r; };
@@ -146,6 +149,15 @@ public:
 	void moveTo(const glm::vec3& position) override;	// update the object position
 	void updateWorldAABB(void) override;				// update the world AABB based on position
 	bool update(time_t t) override;						// update based on timer
+
+	// flight recorder and debugger
+	inline int recordSize(void) override {
+		return sizeof(flightRecorder::DarkForces::dfObject);
+	}													// size of one record
+	void recordState(void* record) override;			// return a record of the entity state (for debug)
+	void loadState(flightRecorder::Entity* record) override;// reload an entity state from a record
+
+	void debugGUIChildClass(void ) override;			// Add dedicated component debug the entity
 
 	~dfObject();
 };

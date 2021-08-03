@@ -147,6 +147,6 @@ public:
 	};														// size of one record
 	void recordState(void* record) override;				// return a record of an actor state (for debug)
 	void loadState(flightRecorder::Entity* record) override;// reload an actor state from a record
-	void debugGUI(bool *close) override;					// display inner data to the debugger
+	void debugGUIChildClass(void) override;					// Add dedicated component debug the entity
 	~dfElevator(void);
 };
