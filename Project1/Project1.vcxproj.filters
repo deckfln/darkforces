@@ -1043,9 +1043,6 @@
     <ClInclude Include="flightRecorder\Callbacks.h">
       <Filter>Fichiers d%27en-tête\flightRecorder</Filter>
     </ClInclude>
-    <ClInclude Include="flightRecorder\frElevator.h">
-      <Filter>Fichiers d%27en-tête\flightRecorder</Filter>
-    </ClInclude>
     <ClInclude Include="flightRecorder\frBullet.h">
       <Filter>Fichiers d%27en-tête\flightRecorder</Filter>
     </ClInclude>
@@ -1053,6 +1050,9 @@
       <Filter>Fichiers d%27en-tête\DarkForces</Filter>
     </ClInclude>
     <ClInclude Include="darkforces\flightRecorder\frObject.h">
+      <Filter>Fichiers d%27en-tête\DarkForces\flightRecorder</Filter>
+    </ClInclude>
+    <ClInclude Include="flightRecorder\frElevator.h">
       <Filter>Fichiers d%27en-tête\DarkForces\flightRecorder</Filter>
     </ClInclude>
   </ItemGroup>

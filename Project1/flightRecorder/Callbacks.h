@@ -6,8 +6,8 @@ extern void* (*g_Callbacks[])(void*);
 
 #include "Entity.h"
 #include "Actor.h"
-#include "frElevator.h"
 #include "frBullet.h"
+#include "../darkforces/flightRecorder/frElevator.h"
 #include "../darkforces/flightRecorder/frObject.h"
 
 namespace flightRecorder {

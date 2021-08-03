@@ -19,7 +19,7 @@
 #include "dfFileSystem.h"
 #include "dfLogicStop.h"
 
-#include "../flightRecorder/frElevator.h"
+#include "flightRecorder/frElevator.h"
 
 // elevator categories
 static std::map<std::string, dfElevator::Type>  keywords = {
@@ -830,9 +830,9 @@ void dfElevator::keys(std::string& key)
 void dfElevator::recordState(void* r)
 {
 	gaEntity::recordState(r);
-	flightRecorder::Elevator* record = (flightRecorder::Elevator*)r;
+	flightRecorder::DarkForces::Elevator* record = (flightRecorder::DarkForces::Elevator*)r;
 	record->entity.classID = flightRecorder::TYPE::DF_ENTITY_ELEVATOR;
-	record->entity.size = sizeof(flightRecorder::Elevator);
+	record->entity.size = sizeof(flightRecorder::DarkForces::Elevator);
 	record->m_status = (int)m_status;	// status of the elevator
 	record->m_tick = m_tick;			// current timer
 	record->m_delay = m_delay;			// time to run the elevator
@@ -851,7 +851,7 @@ void dfElevator::recordState(void* r)
 void dfElevator::loadState(flightRecorder::Entity* r)
 {
 	gaEntity::loadState(r);
-	flightRecorder::Elevator* record = (flightRecorder::Elevator*)r;
+	flightRecorder::DarkForces::Elevator* record = (flightRecorder::DarkForces::Elevator*)r;
 
 	m_status = (dfElevator::Status)record->m_status;	// status of the elevator
 	m_tick = record->m_tick;			// current timer
