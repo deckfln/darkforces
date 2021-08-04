@@ -40,13 +40,15 @@ void ComponentMesh::dispatchMessage(gaMessage* message)
 		break;
 	}
 	case gaMessage::ROTATE: {
-		if (message->m_value == gaMessage::Flag::ROTATE_VEC3) {
-			glm::vec3* rotation = (glm::vec3*)message->m_extra;
-			rotate(rotation);
-		}
-		else {
-			glm::quat* quaternion = (glm::quat*)message->m_extra;
-			rotate(quaternion);
+		switch (message->m_value) {
+		case gaMessage::Flag::ROTATE_VEC3:
+			rotate((glm::vec3*)message->m_extra);
+			break;
+		case gaMessage::Flag::ROTATE_QUAT:
+			rotate((glm::quat*)message->m_extra);
+			break;
+		case gaMessage::Flag::ROTATE_BY:
+			rotateBy((glm::vec3*)message->m_extra);
 		}
 		break;
 	}

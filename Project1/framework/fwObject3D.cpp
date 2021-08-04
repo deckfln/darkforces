@@ -95,6 +95,7 @@ fwObject3D& fwObject3D::rotate(const glm::quat& quaternion)
 fwObject3D& fwObject3D::rotateBy(const glm::vec3& delta)
 {
 	m_rotation += delta;
+	rotate(m_rotation);
 	m_updated = true;
 	return *this;
 }
@@ -102,6 +103,7 @@ fwObject3D& fwObject3D::rotateBy(const glm::vec3& delta)
 fwObject3D& fwObject3D::rotateBy(const glm::vec3* pDelta)
 {
 	m_rotation += *pDelta;
+	rotate(m_rotation);
 	m_updated = true;
 	return *this;
 }
