@@ -138,6 +138,7 @@ public:
 	// state API
 	void recordState(flightRecorder::Object3D* record);
 	void loadState(flightRecorder::Object3D* record);
+	virtual void debugGUIChildClass(void);			// Add dedicated component debug the entity
 
 	// delete
 	~fwObject3D();

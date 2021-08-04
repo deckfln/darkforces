@@ -322,25 +322,12 @@ void gaEntity::loadState(flightRecorder::Entity* record)
 	m_animation_time = record->animation_time;
 }
 
-/**
- * debug the entity
- */
-void gaEntity::debugGUI(bool *close)
+void gaEntity::debugGUI(bool* close)
 {
-	const glm::vec3& p = position();
-	const glm::mat4& m = worldMatrix();
-
 	if (ImGui::CollapsingHeader(m_name.c_str())) {
-		ImGui::Text("Pos %.2f %.2f %.2f", p.x, p.y, p.z);
+		fwObject3D::debugGUIChildClass();
 		debugGUIChildClass();
 	}
-}
-
-/**
- * Add dedicated component debug the entity
- */
-void gaEntity::debugGUIChildClass(void)
-{
 }
 
 /**

@@ -2,6 +2,7 @@
 #include <glm/gtc/matrix_transform.hpp> 
 #include <glm/gtx/transform.hpp>
 #include <glm/gtx/norm.hpp>
+#include <imgui.h>
 
 #include "../alEngine/alSource.h"
 #include "../alEngine/alSound.h"
@@ -379,6 +380,16 @@ void fwObject3D::loadState(flightRecorder::Object3D* record)
 	m_quaternion = record->quaternion;
 
 	m_updated = true;	// force to rebuild the transforms matrixes
+}
+
+/**
+ * Add dedicated component debug the entity
+ */
+void fwObject3D::debugGUIChildClass(void)
+{
+	ImGui::Text("Position %.2f %.2f %.2f", m_position.x, m_position.y, m_position.z);
+	ImGui::Text("Rotation %.2f %.2f %.2f", m_rotation.x, m_rotation.y, m_rotation.z);
+	ImGui::Text("Scale    %.2f %.2f %.2f", m_scale.x, m_scale.y, m_scale.z);
 }
 
 fwObject3D::~fwObject3D()
