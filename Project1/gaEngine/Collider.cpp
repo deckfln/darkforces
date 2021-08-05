@@ -828,16 +828,16 @@ bool Collider::collision_cylinder_aabb(const Collider& cylinder,
 	convertVertex(7, pAabb->m_p.x, pAabb->m_p1.y, pAabb->m_p1.z, mat);
 
 	bool collide = false;
-	for (unsigned int i = 0; i < 36; i += 3) {
+	for (unsigned int i = 0, j=0; i < 36; i += 3, j++) {
 		// extract triangle
-		_triangles[i][0] = _vertexCube[_indexCube[i]];
-		_triangles[i][1] = _vertexCube[_indexCube[i + 1]];
-		_triangles[i][2] = _vertexCube[_indexCube[i + 2]];
+		_triangles[j][0] = _vertexCube[_indexCube[i]];
+		_triangles[j][1] = _vertexCube[_indexCube[i + 1]];
+		_triangles[j][2] = _vertexCube[_indexCube[i + 2]];
 
 		// convert each model space vertex to ellipsoid space
-		v1_es = _triangles[i][0] * ellipsoid_space;
-		v2_es = _triangles[i][1] * ellipsoid_space;
-		v3_es = _triangles[i][2] * ellipsoid_space;
+		v1_es = _triangles[j][0] * ellipsoid_space;
+		v2_es = _triangles[j][1] * ellipsoid_space;
+		v3_es = _triangles[j][2] * ellipsoid_space;
 
 		v1_es.y--;
 		v2_es.y--;
@@ -853,7 +853,7 @@ bool Collider::collision_cylinder_aabb(const Collider& cylinder,
 			//intersection_ws = glm::vec3(*aabb.m_worldMatrix * glm::vec4(intersection_gs, 1.0));
 
 			// inform if the collision point in world space(let the entity decide what to do with the collision)
-			collisions.push_back(gaCollisionPoint(fwCollisionLocation::COLLIDE, intersection_gs, _triangles[i]));
+			collisions.push_back(gaCollisionPoint(fwCollisionLocation::COLLIDE, intersection_gs, _triangles[j]));
 
 			collide = true;
 		}
@@ -877,7 +877,7 @@ static glm::vec3 _vertexSphereBase[10] = {
 	{ 0.0f,  1.0f,  0.0f},
 	{ 0.0f, -1.0f,  0.0f}
 };
-static glm::vec3 _vertexSphere[6];
+static glm::vec3 _vertexSphere[10];
 static const uint32_t _indexSphere[] = {
 	0, 1, 8,
 	1, 2, 8,
@@ -942,23 +942,20 @@ bool Collider::collision_cylinder_cylinder(const Collider& cylinder1,
 
 	// convert cylinder2 space into cylinder1 space
 	mat = *cylinder1.m_inverseWorldMatrix * *cylinder2.m_worldMatrix * ellipsoid2_space;
-	convertVertexSphere(0, mat);
-	convertVertexSphere(1, mat);
-	convertVertexSphere(2, mat);
-	convertVertexSphere(3, mat);
-	convertVertexSphere(4, mat);
-	convertVertexSphere(5, mat);
+	for (auto i = 0; i < sizeof(_vertexSphereBase) / sizeof(glm::vec3); i++) {
+		convertVertexSphere(i, mat);
+	}
 
-	for (unsigned int i = 0; i < sizeof(_indexSphere)/sizeof(uint32_t); i += 3) {
+	for (unsigned int i = 0, j=0; i < sizeof(_indexSphere)/sizeof(uint32_t); i += 3, j++) {
 		// extract triangle
-		_triangles[i][0] = _vertexSphere[_indexSphere[i]];
-		_triangles[i][1] = _vertexSphere[_indexSphere[i + 1]];
-		_triangles[i][2] = _vertexSphere[_indexSphere[i + 2]];
+		_triangles[j][0] = _vertexSphere[_indexSphere[i]];
+		_triangles[j][1] = _vertexSphere[_indexSphere[i + 1]];
+		_triangles[j][2] = _vertexSphere[_indexSphere[i + 2]];
 
 		// convert each model space vertex to ellipsoid space
-		v1_es = _triangles[i][0] * ellipsoid1_space;
-		v2_es = _triangles[i][1] * ellipsoid1_space;
-		v3_es = _triangles[i][2] * ellipsoid1_space;
+		v1_es = _triangles[j][0] * ellipsoid1_space;
+		v2_es = _triangles[j][1] * ellipsoid1_space;
+		v3_es = _triangles[j][2] * ellipsoid1_space;
 
 		v1_es.y--;
 		v2_es.y--;
@@ -974,7 +971,7 @@ bool Collider::collision_cylinder_cylinder(const Collider& cylinder1,
 			//intersection_ws = glm::vec3(*aabb.m_worldMatrix * glm::vec4(intersection_gs, 1.0));
 
 			// inform if the collision point in world space(let the entity decide what to do with the collision)
-			collisions.push_back(gaCollisionPoint(fwCollisionLocation::COLLIDE, intersection_gs, _triangles[i]));
+			collisions.push_back(gaCollisionPoint(fwCollisionLocation::COLLIDE, intersection_gs, _triangles[j]));
 		}
 	}
 

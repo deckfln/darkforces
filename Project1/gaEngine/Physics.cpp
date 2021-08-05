@@ -188,7 +188,7 @@ static void debugCollision(const gaCollisionPoint& collision, gaEntity* entity, 
 
 	gaDebugLog(1, "GameEngine::Physics::wantToMove",
 		entity->name() + " found collision " + msg
-		+ "with " + collider
+		+ " with " + collider
 		+ " at " + std::to_string(collision.m_position.y)
 	);
 }
