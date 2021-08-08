@@ -360,9 +360,8 @@ void flightRecorder::Blackbox::setState(int frame)
  */
 void flightRecorder::Blackbox::debugGUI(void)
 {
-	ImGui::BeginGroup();
-	ImGui::Text("flightRecorder v2");
-	ImGui::SameLine(); if (ImGui::Button("Load")) {
+	ImGui::Begin("flightRecorder v2");
+	if (ImGui::Button("Load")) {
 		// load a flight recorder and position as frame 0
 		loadStates();
 		setState(0);
@@ -406,7 +405,7 @@ void flightRecorder::Blackbox::debugGUI(void)
 			}
 		}
 	}
-	ImGui::EndGroup();
+	ImGui::End();
 }
 
 /**

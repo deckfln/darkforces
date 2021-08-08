@@ -2,7 +2,7 @@
 
 #include <GLFW/glfw3.h>
 
-#include "gaEngine/World.h"
+#include "../gaEngine/World.h"
 #include "../myDarkForces.h"
 
 bool DarkForces::PlayerControl::checkKeys(time_t delta)

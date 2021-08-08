@@ -581,19 +581,17 @@ void World::suspendTimer(void)
 void GameEngine::World::debugGUI(void)
 {
 	// list entities to pick from
-	ImGui::BeginGroup();
+	ImGui::Begin("Entities");
 	for (auto entry : m_entities) {
 		for (auto ent : entry.second) {
 			const std::string& name = ent->name();
 			ImGui::Checkbox(name.c_str(), &m_watch[name]);
 		}
 	}
-	ImGui::EndGroup();
-
-	ImGui::SameLine();
+	ImGui::End();
 
 	// display entities monitored
-	ImGui::BeginGroup();
+	ImGui::Begin("Monitor");
 	for (auto &watch : m_watch) {
 		if (watch.second) {
 			auto &entities = m_entities[watch.first];
@@ -602,7 +600,7 @@ void GameEngine::World::debugGUI(void)
 			}
 		}
 	}
-	ImGui::EndGroup();
+	ImGui::End();
 }
 
 /**
