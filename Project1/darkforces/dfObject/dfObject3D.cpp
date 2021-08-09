@@ -1,4 +1,4 @@
-#include "dfObject3D.h"
+#include "dfObject3D.h"fix 
 
 #include <imgui.h>
 
@@ -168,6 +168,7 @@ void dfObject3D::loadState(flightRecorder::Entity* r)
 
 	if (record->vue) {
 		m_vue->currentFrame(record->currentVueFrame);
+		update(0);
 	}
 }
 
