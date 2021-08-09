@@ -1,8 +1,10 @@
 #include "fwScene.h"
+
 #include <iterator> 
 #include <map>
 #include <list>
 #include <string>
+#include <imgui.h>
 
 #include "../glEngine/glColorMap.h"
 
@@ -43,6 +45,28 @@ fwScene& fwScene::hud(fwHUDelement* element)
 	m_hud->add(element);
 
 	return *this;
+}
+
+/**
+ * Display the scene content on the debugger
+ */
+void fwScene::debugGUI(void)
+{
+	ImGui::Begin("Scene");
+	for (auto child : m_children) {
+		const std::string& name = child->className();
+		ImGui::Checkbox(name.c_str(), &m_inspector[child]);
+	}
+	ImGui::End();
+
+	// display entities monitored
+	ImGui::Begin("Inspector");
+	for (auto& watch : m_inspector) {
+		if (watch.second) {
+			watch.first->debugGUI();
+		}
+	}
+	ImGui::End();
 }
 
 fwScene::~fwScene()

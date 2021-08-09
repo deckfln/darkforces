@@ -47,6 +47,7 @@ public:
 	fwMesh();
 	fwMesh(fwGeometry *_geometry, fwMaterial *_material);
 
+	inline int id(void) { return m_id; };
 	fwMesh* clone(void);					// create a new clone
 	void clone(fwMesh* source);				// shallow clone by assigning data to the target
 	void set(fwGeometry* geometry, 
@@ -65,7 +66,6 @@ public:
 	fwMesh &outline(bool _outlined);
 	bool is_outlined(void);
 
-	int id(void) { return m_id; };
 	fwMesh& always_draw(bool al) { m_always_draw = al; return *this; };
 	bool always_draw(void) { return m_always_draw; };
 
@@ -92,5 +92,10 @@ public:
 	void centerOnGeometry(void);
 
 	virtual void draw(glProgram *);
+
+	const std::string className(void) override;					// return user friendly class name
+	void debugGUI(void) override;
+	void debugGUIChildClass(void) override;
+
 	~fwMesh();
 };

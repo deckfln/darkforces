@@ -14,11 +14,15 @@
 #include "fwControl.h"
 #include "fwRenderer.h"
 
+#include "fwDebug.h"
+
 class fwApp
 {
 protected:
 	fwCamera* m_camera = nullptr;
 	fwScene* m_scene = nullptr;;
+
+	Framework::Debug* m_debugger = nullptr;
 
 	int height = 0;
 	int width = 0;
@@ -28,6 +32,8 @@ protected:
 	fwControl *m_control = nullptr;
 	fwUniform *source = nullptr;
 	fwRenderer* m_renderer = nullptr;
+
+	friend Framework::Debug;
 
 public:
 	fwApp(std::string name, int _width, int _height, std::string post_processing, std::string defines);
@@ -43,7 +49,7 @@ public:
 	virtual glTexture* draw(time_t delta, fwRenderer *renderer) { return nullptr; };
 	virtual void resize(int x, int y) {};
 	virtual void keypress(void) {};
-	virtual void renderGUI(void) {};
+	virtual void renderGUI(void);
 	virtual void processInput(void);
 
 	~fwApp();

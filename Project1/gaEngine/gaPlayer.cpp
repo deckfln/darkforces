@@ -14,7 +14,7 @@
 #include "../darkforces/dfComponent/dfComponentActor.h"
 
 #ifdef DEBUG
-#include "../Debugger/Debug.h"
+#include "Debug.h"
 #endif
 
 gaPlayer::gaPlayer(fwCamera *camera, gaActor* actor, float phi):
@@ -34,9 +34,12 @@ bool gaPlayer::checkKeys(time_t delta)
 
 	// in recording mode, save the status
 #ifdef DEBUG
+	//TODO find how to pass the information to the debugger
+	/*
 	if (m_currentKeys[GLFW_KEY_F1]) {
 		g_Debugger.debugMode(true);
 	}
+	*/
 #endif
 
 	if (!m_locked) {

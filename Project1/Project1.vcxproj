@@ -167,7 +167,6 @@
     <ClCompile Include="darkforces\dfVue.cpp" />
     <ClCompile Include="darkforces\dfWall.cpp" />
     <ClCompile Include="darkforces\PlayerControl.cpp" />
-    <ClCompile Include="Debugger\Debug.cpp" />
     <ClCompile Include="flightRecorder\Blackbox.cpp" />
     <ClCompile Include="framework\background\fwSkybox.cpp" />
     <ClCompile Include="framework\background\fwSkyline.cpp" />
@@ -175,6 +174,7 @@
     <ClCompile Include="framework\camera\fwOrthographicCamera.cpp" />
     <ClCompile Include="framework\controls\fwControlThirdPerson.cpp" />
     <ClCompile Include="framework\controls\fwOrbitControl.cpp" />
+    <ClCompile Include="framework\fwDebug.cpp" />
     <ClCompile Include="framework\fwAABBox.cpp" />
     <ClCompile Include="framework\fwAnimation.cpp" />
     <ClCompile Include="framework\fwAnimationKeyframe.cpp" />
@@ -229,6 +229,7 @@
     <ClCompile Include="gaEngine\AABBBox.cpp" />
     <ClCompile Include="gaEngine\AABBoxTree.cpp" />
     <ClCompile Include="gaEngine\Collider.cpp" />
+    <ClCompile Include="gaEngine\Debug.cpp" />
     <ClCompile Include="gaEngine\gaActor.cpp" />
     <ClCompile Include="gaEngine\gaBoundingBoxes.cpp" />
     <ClCompile Include="gaEngine\gaCollisionPoint.cpp" />
@@ -322,7 +323,6 @@
     <ClInclude Include="darkforces\flightRecorder\Object3D.h" />
     <ClInclude Include="darkforces\lexer\dfObject.lex.h" />
     <ClInclude Include="darkforces\PlayerControl.h" />
-    <ClInclude Include="Debugger\Debug.h" />
     <ClInclude Include="flightRecorder\AABBox.h" />
     <ClInclude Include="flightRecorder\Actor.h" />
     <ClInclude Include="flightRecorder\Ballistic.h" />
@@ -340,6 +340,7 @@
     <ClInclude Include="framework\camera\fwOrthographicCamera.h" />
     <ClInclude Include="framework\controls\fwControlThirdPerson.h" />
     <ClInclude Include="framework\controls\fwOrbitControl.h" />
+    <ClInclude Include="framework\fwDebug.h" />
     <ClInclude Include="framework\fwAABBox.h" />
     <ClInclude Include="framework\fwAnimation.h" />
     <ClInclude Include="framework\fwAnimationKeyframe.h" />
@@ -395,6 +396,7 @@
     <ClInclude Include="framework\fwUniform.h" />
     <ClInclude Include="gaEngine\AABBoxTree.h" />
     <ClInclude Include="gaEngine\Collider.h" />
+    <ClInclude Include="gaEngine\Debug.h" />
     <ClInclude Include="gaEngine\gaActor.h" />
     <ClInclude Include="gaEngine\gaBoundingBoxes.h" />
     <ClInclude Include="gaEngine\gaCollisionPoint.h" />

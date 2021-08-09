@@ -1,6 +1,8 @@
 #include "fwMesh.h"
 #include "../glad/glad.h"
 
+#include <imgui.h>
+
 #include "fwMaterialDiffuse.h"
 #include <string>
 
@@ -235,6 +237,43 @@ float fwMesh::sqDistance2boundingSphere(glm::vec3 position)
 void fwMesh::rendering(fwMeshRendering render)
 {
 	m_rendering = render;
+}
+
+/**
+ * return user friendly class name
+ */
+const std::string fwMesh::className(void)
+{
+	const std::string n = "fwMesh";
+	if (m_name != "") {
+		return n + std::to_string(m_id) + " (" + m_name + ")";
+
+	}
+	return n + std::to_string(m_id);
+}
+
+/**
+ * display the object in the debugger 
+ */
+void fwMesh::debugGUI(void)
+{
+	if (ImGui::CollapsingHeader(className().c_str())) {
+		debugGUIChildClass();
+	}
+}
+
+/**
+ * display the mesh in a debugger
+ */
+void fwMesh::debugGUIChildClass(void)
+{
+	fwObject3D::debugGUIChildClass();
+	ImGui::Text("Id: %d", m_id);
+	ImGui::Text("Visible: %s", (visible) ? "Yes": "No");
+	ImGui::Text("Always Draw: %s", (m_always_draw) ? "Yes" : "No");
+	ImGui::Text("Outlined: %s", (outlined) ? "Yes" : "No");
+	ImGui::Text("Transparent: %s", (m_transparent) ? "Yes" : "No");
+	ImGui::Text("zOrder: %d", m_zorder);
 }
 
 fwMesh::~fwMesh()

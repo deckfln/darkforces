@@ -17,6 +17,7 @@
 #include "gaEngine/gaActor.h"
 #include "gaEngine/World.h"
 #include "gaEngine/Model.h"
+#include "gaEngine/Debug.h"
 
 #include "darkforces/dfLevel.h"
 #include "darkforces/dfCollision.h"
@@ -42,6 +43,10 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 	// scene
 	m_scene = new fwScene();
 	g_gaWorld.scene(m_scene);
+
+#ifdef DEBUG
+	m_debugger = new GameEngine::Debug(this);
+#endif
 
 	// player
 	//glm::vec3 start = glm::vec3(-21.26f, 0.95f, 29.064f);	// main hall
@@ -138,16 +143,6 @@ glTexture* myDarkForces::draw(time_t delta, fwRenderer* renderer)
 	g_gaWorld.process(33);
 
 	return m_renderer->draw(m_camera, m_scene);
-}
-
-/**
- * Render the debug GUI
- */
-void myDarkForces::renderGUI(void)
-{
-#ifdef DEBUG
-	g_Debugger.render(this);
-#endif
 }
 
 void myDarkForces::keypress(int key)

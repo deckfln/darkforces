@@ -1,6 +1,8 @@
 #pragma once
 #include <list>
 #include <glm/vec3.hpp>
+#include <string>
+#include <map>
 
 #include "../glEngine/glProgram.h"
 #include "../glEngine/glUniformBuffer.h"
@@ -21,6 +23,9 @@ class fwScene : public fwObject3D
 
 	glm::vec3 *outlinecolor = nullptr;
 
+	// debugger
+	std::map<fwObject3D*, bool> m_inspector;
+
 public:
 	fwScene();
 	fwScene &addLight(fwLight *light);
@@ -32,6 +37,8 @@ public:
 
 	fwScene& hud(fwHUDelement* element);
 	fwHUD* hud(void) { return m_hud; };
+
+	void debugGUI(void);
 
 	~fwScene();
 };

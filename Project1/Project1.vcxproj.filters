@@ -103,12 +103,6 @@
     <Filter Include="Fichiers sources\flightRecorder">
       <UniqueIdentifier>{c49bf31b-a9ee-4916-9833-cdd48c16d454}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Fichiers d%27en-tête\Debugger">
-      <UniqueIdentifier>{2ecae84f-7330-4701-8c77-6be54758908b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Fichiers sources\Debugger">
-      <UniqueIdentifier>{f9c406ed-e98f-44b3-bdb4-59b582322e2c}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Fichiers d%27en-tête\DarkForces\flightRecorder">
       <UniqueIdentifier>{914054cd-b39c-4a48-b8ed-f0f8aaaf46ef}</UniqueIdentifier>
     </Filter>
@@ -555,11 +549,14 @@
     <ClCompile Include="flightRecorder\Blackbox.cpp">
       <Filter>Fichiers sources\flightRecorder</Filter>
     </ClCompile>
-    <ClCompile Include="Debugger\Debug.cpp">
-      <Filter>Fichiers sources\Debugger</Filter>
-    </ClCompile>
     <ClCompile Include="darkforces\PlayerControl.cpp">
       <Filter>Fichiers sources\Dark Forces</Filter>
+    </ClCompile>
+    <ClCompile Include="framework\fwDebug.cpp">
+      <Filter>Fichiers sources\Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="gaEngine\Debug.cpp">
+      <Filter>Fichiers sources\gaEngine</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1031,9 +1028,6 @@
     <ClInclude Include="flightRecorder\Message.h">
       <Filter>Fichiers d%27en-tête\flightRecorder</Filter>
     </ClInclude>
-    <ClInclude Include="Debugger\Debug.h">
-      <Filter>Fichiers d%27en-tête\Debugger</Filter>
-    </ClInclude>
     <ClInclude Include="flightRecorder\Ballistic.h">
       <Filter>Fichiers d%27en-tête\flightRecorder</Filter>
     </ClInclude>
@@ -1057,6 +1051,12 @@
     </ClInclude>
     <ClInclude Include="darkforces\flightRecorder\Object3D.h">
       <Filter>Fichiers d%27en-tête\DarkForces\flightRecorder</Filter>
+    </ClInclude>
+    <ClInclude Include="framework\fwDebug.h">
+      <Filter>Fichiers d%27en-tête\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="gaEngine\Debug.h">
+      <Filter>Fichiers d%27en-tête\gaEngine</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

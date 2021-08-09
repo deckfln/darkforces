@@ -385,10 +385,31 @@ void fwObject3D::loadState(flightRecorder::Object3D* record)
 }
 
 /**
+ * return user friendly class name
+ */
+const std::string fwObject3D::className(void)
+{
+	return "fwObject3D";
+}
+
+/**
+ * Display the object alone in the debugger
+ */
+void fwObject3D::debugGUI(void)
+{
+	if (ImGui::CollapsingHeader("fwObject3D")) {
+		debugGUIChildClass();
+	}
+}
+
+/**
  * Add dedicated component debug the entity
  */
 void fwObject3D::debugGUIChildClass(void)
 {
+	if (m_name != "") {
+		ImGui::Text(m_name.c_str());
+	}
 	ImGui::Text("Position %.2f %.2f %.2f", m_position.x, m_position.y, m_position.z);
 	ImGui::Text("Rotation %.2f %.2f %.2f", m_rotation.x, m_rotation.y, m_rotation.z);
 	ImGui::Text("Scale    %.2f %.2f %.2f", m_scale.x, m_scale.y, m_scale.z);

@@ -1,6 +1,7 @@
 #include "fwapp.h"
 
 #include <iostream>
+#include "../config.h"
 
 #include "fwRenderer.h"
 #include "render/fwRendererForward.h"
@@ -75,6 +76,7 @@ fwApp::fwApp(std::string name, int _width, int _height, std::string post_process
 		std::cout << "Failed to initialize GLAD" << std::endl;
 	}
 
+#ifdef DEBUG
 	// Setup Dear ImGui context
 	const char* glsl_version = "#version 130";
 	IMGUI_CHECKVERSION();
@@ -92,6 +94,7 @@ fwApp::fwApp(std::string name, int _width, int _height, std::string post_process
 	// Setup Platform/Renderer backends
 	ImGui_ImplGlfw_InitForOpenGL(window, true);
 	ImGui_ImplOpenGL3_Init(glsl_version);
+#endif
 
 	// setup the backend render
 	glfwMakeContextCurrent(window);
@@ -116,6 +119,17 @@ fwApp::fwApp(std::string name, int _width, int _height, std::string post_process
 void fwApp::bindControl(fwControl *_control)
 {
 	m_control = _control;
+}
+
+/**
+ * Render the debugger
+ */
+void fwApp::renderGUI(void)
+{
+#ifdef DEBUG
+	if (m_debugger)
+		m_debugger->render();
+#endif
 }
 
 void fwApp::processInput(void)
@@ -229,15 +243,16 @@ void fwApp::run(void)
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
 		// -------------------------------------------------------------------------------
 
+#ifdef DEBUG
 		// Start the Dear ImGui frame
 		// Update and Render additional Platform Windows
-
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
 
 		// render your GUI
-		renderGUI();
+		if (m_debugger)
+			m_debugger->render();
 
 		// Render dear imgui into screen
 		ImGui::Render();
@@ -252,7 +267,7 @@ void fwApp::run(void)
 			ImGui::RenderPlatformWindowsDefault();
 			glfwMakeContextCurrent(backup_current_context);
 		}
-
+#endif
 		glfwSwapBuffers(window);
 
 		// render the game
@@ -283,9 +298,12 @@ void fwApp::run(void)
 		}
 	}
 
+#ifdef DEBUG
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplGlfw_Shutdown();
 	ImGui::DestroyContext();
+#endif
+
 
 	std::cout << "Frames " << fps << std::endl;
 }

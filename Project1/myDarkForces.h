@@ -16,7 +16,7 @@ class dfLevel;
 class gaActor;
 
 #ifdef DEBUG
-#include "Debugger/Debug.h"
+#include "gaEngine/Debug.h"
 #endif
 
 #include "darkforces/PlayerControl.h"
@@ -38,13 +38,12 @@ class myDarkForces : public fwApp
 	bool m_f5 = false;
 
 #ifdef DEBUG
-	friend Debugger::Debug;
+	friend GameEngine::Debug;
 #endif
 
 public:
 	myDarkForces(std::string name, int width, int height);
 	glTexture* draw(time_t delta, fwRenderer* renderer) override;
-	void renderGUI(void) override;
 
 	void resize(int x, int y);
 	void keypress(int);

@@ -591,7 +591,7 @@ void GameEngine::World::debugGUI(void)
 	ImGui::End();
 
 	// display entities monitored
-	ImGui::Begin("Monitor");
+	ImGui::Begin("Inspector");
 	for (auto &watch : m_watch) {
 		if (watch.second) {
 			auto &entities = m_entities[watch.first];

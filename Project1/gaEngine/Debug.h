@@ -3,15 +3,14 @@
 #include <array>
 #include <glm/vec3.hpp>
 
+#include "../framework/fwDebug.h"
 #include "../framework/controls/fwOrbitControl.h"
 #include "../framework/fwCamera.h"
 
 class myDarkForces;
 
-namespace Debugger {
-	class Debug {
-		bool m_debug = false;	// entered debug mode
-		bool m_requestDebug = false;
+namespace GameEngine {
+	class Debug : public Framework::Debug {
 		bool m_framebyframe = false;
 
 		// flight recorder v2
@@ -36,11 +35,8 @@ namespace Debugger {
 		void playRecorderV1(void);
 
 	public:
-		Debug();
-		void debugMode(bool mode);
-		void render(myDarkForces *dark);
+		Debug(myDarkForces *app);
+		void render(void) override;
 		~Debug();
 	};
 }
-
-extern Debugger::Debug g_Debugger;
