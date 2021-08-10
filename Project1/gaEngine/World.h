@@ -120,6 +120,7 @@ namespace GameEngine {
 		void suspendTimer(void);
 		void debugGUI(void);								// render the imGUI debug
 		void clearQueue(void);								// clear the message queue
+		inline int queueLen(void) { return m_queue.size(); }// number of messages on the queue
 		~World();
 	};
 }

@@ -36,7 +36,7 @@ void Framework::Debug::render(void)
 {
 	bool old_state = m_debug;
 
-	ImGui::Begin("Scene");                          // Create a window called "Hello, world!" and append into it.
+	ImGui::Begin("Menu");                          // Create a window called "Hello, world!" and append into it.
 
 	if (m_debug) {
 		if (ImGui::Button("Exit debug")) {

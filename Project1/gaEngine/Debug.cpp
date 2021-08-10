@@ -102,16 +102,24 @@ void GameEngine::Debug::render(void)
 
 	Framework::Debug::render();
 
-	ImGui::Begin("Player");                          // Create a window called "Hello, world!" and append into it.
+	ImGui::Begin("Menu");                          // Create a window called "Hello, world!" and append into it.
 
 	glm::vec3 p = app->m_player->position();
 	ImGui::Text("Player x:%.3f y:%.3f z:%.3f", p.x, p.y, p.z);
 
+	/*
 	p = app->m_camera->position();
 	glm::vec3 p1 = app->m_camera->lookAt();
 	ImGui::Text("camera x:%.3f y:%.3f z:%.3f->x:%.3f y:%.3f z:%.3f", p.x, p.y, p.z, p1.x, p1.y, p1.z);
-	// display entities
+	*/
 
+	int messages = g_gaWorld.queueLen();
+	ImGui::Text("Messages: %d", messages);
+
+	// monitor the queue len and trigger the debugger if needed
+	if (messages > 1024) {
+		m_debug = true;
+	}
 	ImGui::End();
 
 	if (m_debug || m_framebyframe) {

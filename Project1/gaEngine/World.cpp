@@ -601,6 +601,58 @@ void GameEngine::World::debugGUI(void)
 		}
 	}
 	ImGui::End();
+
+	static const char* actions[] = {
+		"COLLIDE",
+		"TIMER",
+		"DELETE_ENTITY",
+		"MOVE",			// move the entity to an absolution position
+		"ROTATE",			// rotate the entity
+		"PLAY_SOUND",
+		"STOP_SOUND",
+		"WANT_TO_MOVE",	// the entity want to move in a direction (sent to the world)
+		"COLLISION",		// the entity cannot move, it would collide with ...
+		"MOVE_TO",		// Move the entity in a direction (m_extra)
+		"WORLD_INSERT",	// an entity is added to the world
+		"WORLD_REMOVE",	// an entity is removed from the world
+		"WOULD_FALL",		// the objects would fall off after a WANT_TO_MOVE
+		"FALL",			// Object is falling
+		"CONTROLLER",		// Controller is requesting a move
+		"SAVE_WORLD"		// save the status
+	};
+
+	// display messages
+	ImGui::Begin("Messages");
+	if (ImGui::BeginTable("Messages", 5, ImGuiTableFlags_Resizable)) {
+		ImGui::TableSetupColumn("From");
+		ImGui::TableSetupColumn("To");
+		ImGui::TableSetupColumn("Action");
+		ImGui::TableSetupColumn("iValue");
+		ImGui::TableSetupColumn("fValue");
+		ImGui::TableHeadersRow();
+
+		for (auto message : m_queue) {
+			ImGui::TableNextColumn();
+			ImGui::Text(message->m_server.c_str());
+			ImGui::TableNextColumn();
+			ImGui::Text(message->m_client.c_str());
+			ImGui::TableNextColumn();
+
+			if (message->m_action > sizeof(actions)) {
+				ImGui::Text("***%d***", message->m_action);
+			}
+			else {
+				ImGui::Text(actions[message->m_action]);
+			}
+			ImGui::TableNextColumn();
+			ImGui::Text("%d", message->m_value);
+			ImGui::TableNextColumn();
+			ImGui::Text("%.2f", message->m_fvalue);
+			ImGui::TableNextRow();
+		}
+		ImGui::EndTable();
+	}
+	ImGui::End();
 }
 
 /**

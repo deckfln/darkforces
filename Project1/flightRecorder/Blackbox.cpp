@@ -77,7 +77,7 @@ void flightRecorder::Blackbox::recordMessages(void)
 	 * save all messages in the buffer
 	 */
 	gaMessage* message;
-	for (int i = 0; i < messages - 1; i++) {
+	for (int i = 0; i < messages; i++) {
 		message = g_gaWorld.m_queue[i];
 		message->recordState(&bMessages->messages[i]);
 	}
@@ -308,6 +308,7 @@ void flightRecorder::Blackbox::setState(int frame)
 	flightRecorder::Message* record = &bMessages->messages[0];
 	for (auto i = 0; i < bMessages->size; i++) {
 		g_gaWorld.sendMessage(record);
+		record++;
 	}
 
 	// build a list of the entities in the save
