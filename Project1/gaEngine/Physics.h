@@ -101,7 +101,7 @@ namespace GameEngine
 			const glm::vec3& p2,
 			fwCollision::Test test, gaEntity * entity);					// test if a segment collide with a triangle of any sector
 		void moveBullet(gaEntity* entity, gaMessage* message);
-		void informCollision(gaEntity* from, gaEntity* to);
+		void informCollision(gaEntity* from, gaEntity* to, int flag);
 
 		friend flightRecorder::Blackbox;
 

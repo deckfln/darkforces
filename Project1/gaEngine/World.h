@@ -24,6 +24,7 @@ namespace GameEngine {
 	class World
 	{
 		bool m_run=true;									// run or suspend the engine
+		uint32_t m_frame = 0;								// current frame
 		std::deque<gaMessage*> m_queue;
 		std::deque<gaMessage*> m_for_next_frame;
 		std::map<std::string, std::list<gaEntity*>> m_entities;
@@ -121,6 +122,7 @@ namespace GameEngine {
 		void debugGUI(void);								// render the imGUI debug
 		void clearQueue(void);								// clear the message queue
 		inline int queueLen(void) { return m_queue.size(); }// number of messages on the queue
+		inline int frame(void) { return m_frame; }// number of messages on the queue
 		~World();
 	};
 }

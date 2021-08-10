@@ -115,6 +115,7 @@ void GameEngine::Debug::render(void)
 
 	int messages = g_gaWorld.queueLen();
 	ImGui::Text("Messages: %d", messages);
+	ImGui::Text("Frame: %d", g_gaWorld.frame());
 
 	// monitor the queue len and trigger the debugger if needed
 	if (messages > 1024) {

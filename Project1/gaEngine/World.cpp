@@ -477,6 +477,8 @@ void World::process(time_t delta, bool force)
 		return;
 	}
 
+	m_frame++;
+
 #ifdef DEBUG
 	g_Blackbox.recordState();
 #endif
@@ -498,6 +500,13 @@ void World::process(time_t delta, bool force)
 	// now deal with messages
 	while (m_queue.size() > 0) {
 		message = m_queue.front();
+
+		/*
+		if (m_frame == 544 && message->m_client == "MOUSEBOT.3DO(40)") {
+			__debugbreak();
+		}
+		*/
+
 		m_queue.pop_front();
 
 		// manage loops inside one run
@@ -551,9 +560,11 @@ void World::process(time_t delta, bool force)
 			for (auto entity : m_entities[message->m_client]) {
 
 				if (message->m_action == gaMessage::Action::WANT_TO_MOVE) {
+
 					m_physic.moveEntity(entity, message);
 				}
 				else {
+					message->m_frame = m_frame;
 					entity->dispatchMessage(message);
 				}
 			}

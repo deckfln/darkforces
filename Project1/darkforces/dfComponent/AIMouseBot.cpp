@@ -79,6 +79,16 @@ void AIMouseBot::dispatchMessage(gaMessage* message)
 		m_direction = -m_direction;
 		// PASS THROUGH
 	case gaMessage::Action::MOVE:
+#ifdef DEBUG
+		if (m_frame == message->m_frame) {
+			// second time we receive the same message inside the same frame
+			// => we collided with a second (or third) object
+			printf("AIMouseBot::dispatchMessage same request\n");
+		}
+		else {
+			m_frame = message->m_frame;
+		}
+#endif
 		// move request was accepted, so trigger a new one
 		if (!m_active) {
 			break;

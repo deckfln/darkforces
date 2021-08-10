@@ -196,14 +196,14 @@ static void debugCollision(const gaCollisionPoint& collision, gaEntity* entity, 
 /**
  * Send a collision message between 2 entities
  */
-void Physics::informCollision(gaEntity* from, gaEntity* to)
+void Physics::informCollision(gaEntity* from, gaEntity* to, int flag)
 {
 	// always inform the source entity 
 	m_world->sendMessage(
 		from->name(),
 		to->name(),
 		gaMessage::Action::COLLIDE,
-		gaMessage::Flag::COLLIDE_ENTITY,
+		flag,
 		nullptr
 	);
 	// always inform the colliding entity 
@@ -211,7 +211,7 @@ void Physics::informCollision(gaEntity* from, gaEntity* to)
 		to->name(),
 		from->name(),
 		gaMessage::Action::COLLIDE,
-		gaMessage::Flag::COLLIDE_ENTITY,
+		flag,
 		nullptr
 	);
 }
@@ -380,6 +380,7 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 		glm::vec3 pushed_aside = glm::vec3(0);	// if collision on border of elevator, record the XZ direction
 		bool fall = false;						// are we falling
 		bool fix_y = false;						// do we enter the ground and need Y to be fixed
+		bool block_move = false;				// we found a collision that needs to block the request
 
 		std::map<std::string, gaEntity*>& sittingOnTop = entity->sittingOnTop();
 
@@ -426,11 +427,12 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 						// always inform the source entity 
 						collidedEntities[collidedEntity->name()] = true;
 
-						informCollision(collidedEntity, entity);
+						informCollision(collidedEntity, entity, gaMessage::Flag::TRAVERSE_ENTITY);
+
+						// accept the move at that stage
 						continue;	// check next collision
 					}
 				}
-
 				// test the collided triangle (wall, floor, ceiling)
 				const fwAABBox& worldAABB = entity->worldAABB();
 				bool isFloor = false;
@@ -568,7 +570,6 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 		}
 
 		// take actions
-
 		if (nearest_collision) {
 			// if there is a collision
 
@@ -652,6 +653,7 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 									+ " " + std::to_string(tranform.m_position.z));
 
 							entity->popTransformations();				// restore previous position
+							block_move = true;
 						}
 						else {
 							if (entity->name() == "player")
@@ -661,12 +663,12 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 						}
 
 						// always inform the source entity 
-						informCollision(collisionWith, entity);
+						informCollision(collisionWith, entity, gaMessage::Flag::COLLIDE_ENTITY);
 					}
 					else {
 						// sectors always block the movement
 						entity->popTransformations();				// restore previous position
-
+						block_move = true;
 						m_world->sendMessage(
 							static_cast<dfSuperSector*>(nearest_collision->m_source)->name(),
 							entity->name(),
@@ -703,7 +705,7 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 				}
 
 				// always inform the source entity 
-				informCollision(collisionWith, entity);
+				informCollision(collisionWith, entity, gaMessage::Flag::COLLIDE_ENTITY);
 			}
 			else {
 				// sectors always block the movement
@@ -839,7 +841,7 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 		}
 
 		// accept the move if we do not fix the position
-		if (!fix_y) {
+		if (!fix_y && !block_move) {
 			m_world->sendMessage(
 				entity->name(),
 				entity->name(),
