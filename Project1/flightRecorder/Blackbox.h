@@ -43,6 +43,7 @@ namespace flightRecorder {
 		struct bufferEntities* m_entities[MAXIMUM_RECORDS];
 		struct bufferMessages* m_messages[MAXIMUM_RECORDS];
 		struct bufferPhysics* m_ballistics[MAXIMUM_RECORDS];
+		uint32_t			  m_frames[MAXIMUM_RECORDS];
 
 		// recording
 		int m_first = 0;	// first record (cycle once reaching MAXIMUM_RECORDS

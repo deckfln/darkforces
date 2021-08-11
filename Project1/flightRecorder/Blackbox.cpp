@@ -177,6 +177,8 @@ void flightRecorder::Blackbox::recordPhysics(void)
  */
 void flightRecorder::Blackbox::recordState(void)
 {
+	m_frames[m_last] = g_gaWorld.m_frame;
+
 	recordMessages();
 	recordEntities();
 	recordPhysics();
@@ -210,6 +212,8 @@ void flightRecorder::Blackbox::saveStates(void)
 	myfile.open("D:/dev/Project1/records.bin", std::ios::out | std::ios::binary);
 
 	myfile.write((char*)&m_len, sizeof(m_len));
+
+	myfile.write((char*)m_frames, sizeof(m_frames));
 
 	for (int i = 0, p = m_last; i < m_len; i++)
 	{
@@ -268,6 +272,8 @@ void flightRecorder::Blackbox::loadStates(void)
 	int data_size;
 	myfile.read((char*)&m_len, sizeof(m_len));
 
+	myfile.read((char*)m_frames, sizeof(m_frames));
+
 	// load the messages
 	for (int i = 0, p = m_last; i < m_len; i++) {
 		myfile.read((char*)&data_size, sizeof(data_size));
@@ -300,6 +306,8 @@ void flightRecorder::Blackbox::setState(int frame)
 {
 	// reset the messages and reload from the records
 	g_gaWorld.clearQueue();
+	g_gaWorld.m_frame = m_frames[frame];
+
 	bufferMessages* bMessages = m_messages[frame];
 	if (bMessages == nullptr) {
 		return;

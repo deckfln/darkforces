@@ -282,9 +282,6 @@ void Physics::moveBullet(gaEntity* entity, gaMessage* message)
  */
 void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 {
-	if (entity->name() == "post_elev_w") {
-		printf("Physics::moveEntity post_elev_e\n");
-	}
 	// bullets are special case
 	if (entity->is(DF_ENTITY_BULLET)) {
 		moveBullet(entity, message);
@@ -618,6 +615,7 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 
 				// if the collision is 'behind' the entity, push the entity forward
 				glm::vec3 coll = nearest_collision->m_position - new_position;
+				coll.y = 0;		// keep the entity on the same plane
 				float dot = glm::dot(glm::normalize(coll), direction);
 
 				if (dot > 0 && nearest_collision->m_class == gaCollisionPoint::Source::SECTOR) {
