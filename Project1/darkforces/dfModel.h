@@ -66,4 +66,5 @@ public:
 	virtual void spriteModel(GLmodel& model, int id);
 	virtual int framerate(dfState state) { return 0; }
 	virtual int nextFrame(dfState state, unsigned int frame) { return 0; };
+	virtual uint32_t nbFrames(dfState state) { return 0; };
 };

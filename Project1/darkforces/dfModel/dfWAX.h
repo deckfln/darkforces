@@ -63,8 +63,9 @@ public:
 	void getFrames(std::vector<dfBitmapImage*>& m_frames);
 	virtual int textureID(dfState state, int frame);
 	virtual void spriteModel(GLmodel& model, int id);
-	virtual int framerate(dfState state) override;
-	virtual int nextFrame(dfState state, unsigned int frame);
+	int framerate(dfState state) override;
+	int nextFrame(dfState state, unsigned int frame);
+	uint32_t nbFrames(dfState state) override;					// number of frames in the animation of state #
 	int insertX(void) { return m_insertX; };
 	int insertY(void) { return m_insertY; };
 	const fwAABBox& bounding(dfState state);

@@ -283,14 +283,22 @@ int dfWAX::framerate(dfState state)
  */
 int dfWAX::nextFrame(dfState state, unsigned int frame)
 {
-	dfWaxState* angles = m_states[static_cast<uint32_t>(state)];
-	dfWaxAnimation* animation = angles->animations[0];	// animation of state XX viewed under angle 0
-
-	if ((frame + 1 ) < animation->m_nbframes) {
+	if ((frame + 1 ) < nbFrames(state)) {
 		return frame + 1;	// next frame
 	}
 
 	return -1;	// cycle back to frame 0 but warn the object first
+}
+
+/**
+ * number of frames in the animation of state #
+ */
+uint32_t dfWAX::nbFrames(dfState state)
+{
+	dfWaxState* angles = m_states[static_cast<uint32_t>(state)];
+	dfWaxAnimation* animation = angles->animations[0];	// animation of state XX viewed under angle 0
+
+	return animation->m_nbframes;
 }
 
 /**

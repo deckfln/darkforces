@@ -501,12 +501,11 @@ void World::process(time_t delta, bool force)
 	while (m_queue.size() > 0) {
 		message = m_queue.front();
 
-		/*
-		if (m_frame == 2 && message->m_client == "IARMOR.WAX(6)") {
+/*
+		if (m_frame == 20 && message->m_client == "ROCK.WAX(91)") {
 			__debugbreak();
 		}
-	*/
-
+*/
 		m_queue.pop_front();
 
 		// manage loops inside one run

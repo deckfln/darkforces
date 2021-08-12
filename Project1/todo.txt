@@ -44,7 +44,9 @@ bug
 [ ] double collisions des mousebot => vont recevoir 2 messages de collision et déclencher 2 messages want_to_move
 [X] mousebot tapant un murpeut s'enfoncer dans le sol
 [ ] elev_post_e and w don't lift when enterting the post
-[ ] avoid animation loop for static objects like rocks
+[X] avoid animation loop for static objects like rocks
 [X] debugger don't change the sprite for animated sprites (eg iarmor.wax)
 [X] debugger uses keys < & > to move frame to frame
-[ ] move dfSprites as an gaEntity that can do "things" like TIMER and update
+[ ] move dfSprites as an gaEntity that can receive messages like TIMER and update
+[ ] display dfSpriteAnimated state as text (based on the spite logic)
+[ ] replace all the "#ifdef DEBUG" by the status of the compiler (if vc compile for debug, activate the features)

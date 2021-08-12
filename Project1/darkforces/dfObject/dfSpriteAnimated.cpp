@@ -50,13 +50,16 @@ void dfSpriteAnimated::state(dfState state)
 		// trigger the animation, unless the object is static or has no animation
 		if (m_state != dfState::ENEMY_LIE_DEAD &&
 			m_state != dfState::ENEMY_STAY_STILL &&
-			m_source->framerate(m_state) != 0)
+			m_source->nbFrames(m_state) > 1)
 		{
 			g_gaWorld.sendMessageDelayed(m_name, m_name, gaMessage::TIMER, 0, nullptr);
 		}
 	}
 	else {
-		g_gaWorld.sendMessageDelayed(m_name, m_name, gaMessage::TIMER, 0, nullptr);
+		// trigger an animation loop if there is actually an animation loop
+		if (m_source->nbFrames(m_state) > 1) {
+			g_gaWorld.sendMessageDelayed(m_name, m_name, gaMessage::TIMER, 0, nullptr);
+		}
 	}
 }
 
@@ -95,11 +98,14 @@ bool dfSpriteAnimated::update(time_t t)
 {
 	m_currentFrame += t;
 
-	int frameRate = m_source->framerate(m_state);
-	if (frameRate == 0) {
-		return false;	// static objects like FME are not updated
+	uint32_t nbFrames = m_source->nbFrames(m_state);
+
+	if (nbFrames <= 1) {
+		return false;	// static objects like FME are not updated, 
+						// objects with only 1 frame in the animation loop are also not updated
 	}
 
+	uint32_t frameRate = m_source->framerate(m_state);
 	time_t frameTime = 1000 / frameRate; // time of one frame in milliseconds
 
 	time_t delta = m_currentFrame - m_lastFrame;
@@ -137,7 +143,7 @@ void dfSpriteAnimated::dispatchMessage(gaMessage* message)
 		break;
 	case DF_MESSAGE_END_LOOP:
 		// go for next animation if the animation loop ?
-		if (m_loopAnimation) {
+		if (m_loopAnimation && m_source->nbFrames(m_state) > 1) {
 			// restart the counters
 			m_lastFrame = m_currentFrame = 0;
 			m_frame = 0;
