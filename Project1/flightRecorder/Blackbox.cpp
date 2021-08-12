@@ -302,7 +302,7 @@ void flightRecorder::Blackbox::loadStates(void)
 /**
  *
  */
-void flightRecorder::Blackbox::setState(int frame)
+void flightRecorder::Blackbox::setFrame(int frame)
 {
 	// reset the messages and reload from the records
 	g_gaWorld.clearQueue();
@@ -367,6 +367,36 @@ void flightRecorder::Blackbox::setState(int frame)
 	g_gaWorld.update();
 }
 
+/*
+ * reload next frame
+ */
+void flightRecorder::Blackbox::nextFrame(void)
+{
+	if (m_currentFrame < m_len - 1) {
+		m_currentFrame++;
+		// convert the absolute frame number to the circular buffer
+		int convertFrame = (m_first + m_currentFrame) % m_len;
+
+		// Set the game state
+		setFrame(convertFrame);
+	}
+}
+
+/**
+ * reload previous frame
+ */
+void flightRecorder::Blackbox::previousFrame(void)
+{
+	if (m_currentFrame > 0) {
+		m_currentFrame--;
+		// convert the absolute frame number to the circular buffer
+		int convertFrame = (m_first + m_currentFrame) % m_len;
+
+		// Set the game state
+		setFrame(convertFrame);
+	}
+}
+
 /*/
  * display the flight recorder data on the debugger
  */
@@ -376,13 +406,13 @@ void flightRecorder::Blackbox::debugGUI(void)
 	if (ImGui::Button("Load")) {
 		// load a flight recorder and position as frame 0
 		loadStates();
-		setState(0);
+		setFrame(0);
 	}
 	ImGui::SameLine(); if (ImGui::Button("Save")) {
 		saveStates();
 	}
 	if (m_len > 0) {
-		ImGui::SameLine(); if (ImGui::Button(">")) {
+		if (ImGui::Button(">")) {
 			if (!m_replay) {
 				m_replay = true;
 			}
@@ -400,7 +430,7 @@ void flightRecorder::Blackbox::debugGUI(void)
 			int convertFrame = (m_first + m_currentFrame) % m_len;
 
 			// Set the game state
-			setState(convertFrame);
+			setFrame(convertFrame);
 
 			// set the debug camera based on the player position
 			//m_control->translateCamera(
@@ -408,12 +438,17 @@ void flightRecorder::Blackbox::debugGUI(void)
 			//	);
 		}
 
+		if (m_currentFrame > 0) {
+			// display frame by frame up to the last frame
+			ImGui::SameLine(); if (ImGui::Button("<<")) {
+				previousFrame();
+			}
+		}
+
 		if (m_currentFrame < m_len) {
 			// display frame by frame up to the last frame
 			ImGui::SameLine(); if (ImGui::Button(">>")) {
-				g_gaWorld.run();
-
-				m_replay = true;
+				nextFrame();
 			}
 		}
 	}

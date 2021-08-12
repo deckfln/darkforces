@@ -46,5 +46,5 @@ bug
 [ ] elev_post_e and w don't lift when enterting the post
 [ ] avoid animation loop for static objects like rocks
 [X] debugger don't change the sprite for animated sprites (eg iarmor.wax)
-[ ] debugger uses keys < & > to move frame to frame
+[X] debugger uses keys < & > to move frame to frame
 [ ] move dfSprites as an gaEntity that can do "things" like TIMER and update

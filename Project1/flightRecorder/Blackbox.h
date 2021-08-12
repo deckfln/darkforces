@@ -64,7 +64,9 @@ namespace flightRecorder {
 		void recordState(void);
 		void saveStates(void);
 		void loadStates(void);
-		void setState(int frame);
+		void setFrame(int frame);	// reload frame #
+		void nextFrame(void);		// reload next frame
+		void previousFrame(void);	// reload previous frame
 
 		inline int len(void) { return m_len; }
 

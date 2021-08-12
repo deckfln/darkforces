@@ -128,6 +128,13 @@ void GameEngine::Debug::render(void)
 			g_gaWorld.suspend();
 		}
 
+		if (m_control->isKeyPressed(GLFW_KEY_RIGHT)) {
+			g_Blackbox.nextFrame();
+		}
+		if (m_control->isKeyPressed(GLFW_KEY_LEFT)) {
+			g_Blackbox.previousFrame();
+		}
+
 		g_Blackbox.debugGUI();
 		ImGui::Begin("FlightRecorder v1");
 			if (ImGui::Button("Load##1")) {
