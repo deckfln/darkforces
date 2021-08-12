@@ -110,7 +110,7 @@ bool dfSpriteAnimated::update(time_t t)
 			return false;	// reached end of animation loop
 		}
 
-		m_lastFrame = m_currentFrame;
+		m_lastFrame = (m_currentFrame / frameTime) * frameTime;
 		m_dirtyAnimation = true;
 	}
 
@@ -132,7 +132,6 @@ void dfSpriteAnimated::dispatchMessage(gaMessage* message)
 			g_gaWorld.sendMessageDelayed(m_name, m_name, gaMessage::TIMER, 0, nullptr);
 		}
 		else {
-			// end of animation loop
 			sendInternalMessage(DF_MESSAGE_END_LOOP, (int)m_state);
 		}
 		break;
@@ -140,7 +139,10 @@ void dfSpriteAnimated::dispatchMessage(gaMessage* message)
 		// go for next animation if the animation loop ?
 		if (m_loopAnimation) {
 			// restart the counters
-			m_currentFrame = 0;
+			m_lastFrame = m_currentFrame = 0;
+			m_frame = 0;
+			m_dirtyAnimation = true;
+			// and reboot the timer for the next frame
 			g_gaWorld.sendMessageDelayed(m_name, m_name, gaMessage::TIMER, 0, nullptr);
 		}
 		break;
@@ -195,8 +197,9 @@ void dfSpriteAnimated::debugGUIChildClass(void)
 	dfObject::debugGUIChildClass();
 	ImGui::Text("State: %d", static_cast<uint32_t>(m_state));
 	ImGui::Text("Frame: %d", static_cast<uint32_t>(m_frame));
-	ImGui::Text("time last frame: % d", static_cast<uint32_t>(m_lastFrame));
-	ImGui::Text("time current frame: %d", static_cast<uint32_t>(m_state));
+	ImGui::Text("time last frame: %d", m_lastFrame);
+	ImGui::Text("time current frame: %d", m_currentFrame);
+	ImGui::Text("frame rate: %d", m_source->framerate(m_state));
 }
 
 dfSpriteAnimated::~dfSpriteAnimated()

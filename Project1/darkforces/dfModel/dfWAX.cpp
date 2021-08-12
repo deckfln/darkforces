@@ -216,9 +216,9 @@ void dfWAX::getFrames(std::vector<dfBitmapImage*>& frames)
 /**
  * Return the textureId of the current frame
  */
-int dfWAX::textureID(int state, int frame)
+int dfWAX::textureID(dfState state, int frame)
 {
-	return m_states[state]->animations[0]->frames[frame]->m_textureID;
+	return m_states[static_cast<uint32_t>(state)]->animations[0]->frames[frame]->m_textureID;
 }
 
 /**
@@ -273,17 +273,17 @@ void dfWAX::spriteModel(GLmodel &model, int id)
 /**
  * Return the frame rate of a state
  */
-int dfWAX::framerate(int state)
+int dfWAX::framerate(dfState state)
 {
-	return m_states[state]->m_FrameRate;
+	return m_states[static_cast<uint32_t>(state)]->m_FrameRate;
 }
 
 /**
  * Return the next frame of the state
  */
-int dfWAX::nextFrame(int state, unsigned int frame)
+int dfWAX::nextFrame(dfState state, unsigned int frame)
 {
-	dfWaxState* angles = m_states[state];
+	dfWaxState* angles = m_states[static_cast<uint32_t>(state)];
 	dfWaxAnimation* animation = angles->animations[0];	// animation of state XX viewed under angle 0
 
 	if ((frame + 1 ) < animation->m_nbframes) {

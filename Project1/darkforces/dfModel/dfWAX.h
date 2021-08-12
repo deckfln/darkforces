@@ -61,10 +61,10 @@ class dfWAX: public dfModel
 public:
 	dfWAX(dfFileSystem* fs, dfPalette *palette, const std::string& name);
 	void getFrames(std::vector<dfBitmapImage*>& m_frames);
-	virtual int textureID(int state, int frame);
+	virtual int textureID(dfState state, int frame);
 	virtual void spriteModel(GLmodel& model, int id);
-	virtual int framerate(int state);
-	virtual int nextFrame(int state, unsigned int frame);
+	virtual int framerate(dfState state) override;
+	virtual int nextFrame(dfState state, unsigned int frame);
 	int insertX(void) { return m_insertX; };
 	int insertY(void) { return m_insertY; };
 	const fwAABBox& bounding(dfState state);
