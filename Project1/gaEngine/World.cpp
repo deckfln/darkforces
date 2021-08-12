@@ -572,10 +572,7 @@ void World::process(time_t delta, bool force)
 		message->m_used = false;
 	}
 
-	// update all sprites if needed
-	if (m_sprites) {
-		m_sprites->update();
-	}
+	update();	// update extra attributes of the world
 
 	// swap the current queue and the queue for next frame
 	m_queue.swap(m_for_next_frame);
@@ -677,6 +674,17 @@ void GameEngine::World::clearQueue(void)
 		message.m_used = false;
 	}
 	g_lastMessage = 0;
+}
+
+/**
+ * force an update of the world
+ */
+void GameEngine::World::update(void)
+{
+	// update all sprites if needed
+	if (m_sprites) {
+		m_sprites->update();
+	}
 }
 
 World::~World()

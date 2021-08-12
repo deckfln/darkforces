@@ -117,12 +117,13 @@ namespace GameEngine {
 
 		void push(gaMessage* message);
 		void pushForNextFrame(gaMessage* message);
-		void process(time_t delta, bool force=false);
-		void suspendTimer(void);
+		void process(time_t delta, bool force=false);		// process messages on the queue
+		void suspendTimer(void);							// stop the engine
 		void debugGUI(void);								// render the imGUI debug
 		void clearQueue(void);								// clear the message queue
 		inline int queueLen(void) { return m_queue.size(); }// number of messages on the queue
-		inline int frame(void) { return m_frame; }// number of messages on the queue
+		inline int frame(void) { return m_frame; }			// number of messages on the queue
+		void update(void);									// force an update of the world
 		~World();
 	};
 }

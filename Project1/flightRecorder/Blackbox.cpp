@@ -362,6 +362,9 @@ void flightRecorder::Blackbox::setState(int frame)
 	for (auto i = 0; i < bPhysics->size; i++) {
 		g_gaWorld.m_physic.loadState(&bPhysics->objects[i]);
 	}
+
+	// and update the world
+	g_gaWorld.update();
 }
 
 /*/

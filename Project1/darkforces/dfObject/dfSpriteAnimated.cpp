@@ -187,6 +187,8 @@ void dfSpriteAnimated::loadState(flightRecorder::Entity* r)
 	m_direction = record->direction;	// direction the object is looking to
 	m_lastFrame = record->lastFrame;		// time of the last animation frame
 	m_currentFrame = record->currentFrame;	// time of the current animation frame
+
+	m_dirtyAnimation = true;				// force refresh of the sprite
 }
 
 /**

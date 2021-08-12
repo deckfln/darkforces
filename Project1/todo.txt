@@ -38,3 +38,13 @@ bug
 #7				24/11/19	marie-jane "walking" doesn't display left boot
 #8	FIXED		24/11/19	marie-jane all animations : face might be blackened (stencil buffer ?)
 #9	CANCELED	25/11/19	marie-jane head is masked when the bloomed cube is behind here: automaticaly fixed
+
+[X] animation des lampes:ko
+[X] animation des pack de santé:ko
+[ ] double collisions des mousebot => vont recevoir 2 messages de collision et déclencher 2 messages want_to_move
+[X] mousebot tapant un murpeut s'enfoncer dans le sol
+[ ] elev_post_e and w don't lift when enterting the post
+[ ] avoid animation loop for static objects like rocks
+[X] debugger don't change the sprite for animated sprites (eg iarmor.wax)
+[ ] debugger uses keys < & > to move frame to frame
+[ ] move dfSprites as an gaEntity that can do "things" like TIMER and update
