@@ -502,7 +502,7 @@ void World::process(time_t delta, bool force)
 		message = m_queue.front();
 
 /*
-		if (m_frame == 20 && message->m_client == "ROCK.WAX(91)") {
+		if (message->m_client == "post_top") {
 			__debugbreak();
 		}
 */

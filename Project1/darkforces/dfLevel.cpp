@@ -502,7 +502,6 @@ dfSector* dfLevel::findSector(glm::vec3& position)
 #ifdef _DEBUG
 			gaDebugLog(LOW_DEBUG, "dfLevel::findSector", " leave=" + m_lastSector->m_name + " enter=" + sector->m_name);
 #endif
-
 			m_lastSector->event(dfElevator::Message::LEAVE_SECTOR);
 
 			m_lastSector = sector;
@@ -530,6 +529,7 @@ dfSector* dfLevel::findSector(glm::vec3& position)
 
 			message = " enter=" + sector->m_name;
 			gaDebugLog(LOW_DEBUG, "dfLevel::findSector", message);
+
 #endif
 
 			m_lastSector = sector;

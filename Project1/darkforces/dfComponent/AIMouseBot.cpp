@@ -83,7 +83,7 @@ void AIMouseBot::dispatchMessage(gaMessage* message)
 		if (m_frame == message->m_frame) {
 			// second time we receive the same message inside the same frame
 			// => we collided with a second (or third) object
-			__debugbreak();
+//			__debugbreak();
 		}
 		else {
 			m_frame = message->m_frame;

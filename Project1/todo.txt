@@ -43,12 +43,17 @@ bug
 [X] animation des pack de santé:ko
 [ ] double collisions des mousebot => vont recevoir 2 messages de collision et déclencher 2 messages want_to_move
 [X] mousebot tapant un murpeut s'enfoncer dans le sol
-[ ] elev_post_e and w don't lift when enterting the post
+[X] elev_post_e and w don't lift when enterting the post
+[ ] when entering post_top, elev_post_e comes up but do not HOLD and goes back down
 [X] avoid animation loop for static objects like rocks
 [X] debugger don't change the sprite for animated sprites (eg iarmor.wax)
 [X] debugger uses keys < & > to move frame to frame
 [ ] move dfSprites as an gaEntity that can receive messages like TIMER and update
-[ ] display dfSpriteAnimated state as text (based on the spite logic)
+[X] display dfSpriteAnimated state as text (based on the spite logic)
 [X] replace all the "#ifdef DEBUG" by the status of the compiler (if vc compile for debug, activate the features)
 [ ] redirect the debug logs to the debugger to be displayed frame by frame
 [X] dfSpriteAnimated should only trigger TIMER events if the object has logic ANIM
+[ ] replace int by uint32_t
+[ ] move alSound from fwMesh into components of entity
+[ ] refactor how player/sectors interact (no more in dfLevel during a draw)
+[ ] refactor sector message handling (move dfSector into an enity)
