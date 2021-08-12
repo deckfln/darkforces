@@ -41,6 +41,21 @@ gaMessage::gaMessage(const std::string& server, const std::string& client, int a
 }
 
 /**
+ * duplicate a message
+ */
+gaMessage::gaMessage(gaMessage* source)
+{
+    m_client = source->m_client;
+    m_server = source->m_server;
+    m_action = source->m_action;
+    m_delta = source->m_delta;
+    m_fvalue = source->m_fvalue;
+    m_v3value = source->m_v3value;
+    m_value = source->m_value;
+
+}
+
+/**
  * create from the flight recorder
  */
 gaMessage::gaMessage(void* r)

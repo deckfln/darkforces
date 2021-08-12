@@ -41,7 +41,10 @@ dfLogicTrigger::dfLogicTrigger(std::string & kind, std::string & sector) :
 	m_sector(sector)
 {
 	m_class = class2int(kind);
-	m_messages.push_back(new gaMessage(DF_MESSAGE_TRIGGER, 0, m_name));
+
+	// triger standard come with its own messages to send
+	if (m_class != DF_TRIGGER_STANDARD)
+		m_messages.push_back(new gaMessage(DF_MESSAGE_TRIGGER, 0, m_name));
 }
 
 /**
@@ -201,9 +204,10 @@ void dfLogicTrigger::config(void)
 		gaMessage* message;
 		for (int i = m_messages.size() - 1; i >= 0; i--) {
 			m_messages[i]->m_client = m_clients[0];	// fix the first
-			// add the next ones
-			message = m_messages[i];
+			// duplicate the next ones and change the client
+			message = new gaMessage(m_messages[i]);
 			for (unsigned int j = 1; j < m_clients.size(); j++) {
+
 				message->m_client = m_clients[j];
 				m_messages.push_back(message);
 			}

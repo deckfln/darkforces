@@ -44,7 +44,7 @@ bug
 [ ] double collisions des mousebot => vont recevoir 2 messages de collision et déclencher 2 messages want_to_move
 [X] mousebot tapant un murpeut s'enfoncer dans le sol
 [X] elev_post_e and w don't lift when enterting the post
-[ ] when entering post_top, elev_post_e comes up but do not HOLD and goes back down
+[X] when entering post_top, elev_post_e comes up but do not HOLD and goes back down
 [X] avoid animation loop for static objects like rocks
 [X] debugger don't change the sprite for animated sprites (eg iarmor.wax)
 [X] debugger uses keys < & > to move frame to frame
@@ -56,4 +56,5 @@ bug
 [ ] replace int by uint32_t
 [ ] move alSound from fwMesh into components of entity
 [ ] refactor how player/sectors interact (no more in dfLevel during a draw)
-[ ] refactor sector message handling (move dfSector into an enity)
+[ ] refactor sector message handling (move dfSector into an entity)
+[ ] sector post_top appear twice as entity, why ?

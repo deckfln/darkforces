@@ -501,11 +501,6 @@ void World::process(time_t delta, bool force)
 	while (m_queue.size() > 0) {
 		message = m_queue.front();
 
-/*
-		if (message->m_client == "post_top") {
-			__debugbreak();
-		}
-*/
 		m_queue.pop_front();
 
 		// manage loops inside one run

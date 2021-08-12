@@ -89,6 +89,8 @@ public:
 	gaMessage(const std::string& server, const std::string& client);
 	gaMessage(const std::string& server, const std::string& client, int action, int value, void* extra);
 	gaMessage(void *record);
+	gaMessage(gaMessage* source);
+
 	void set(const std::string& server, const std::string& client, int action, int value, void* extra);
 
 	const std::string& client(void) { return m_client; };

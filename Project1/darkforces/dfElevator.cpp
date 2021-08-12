@@ -749,9 +749,12 @@ void dfElevator::dispatchMessage(gaMessage* message)
 			// TODO adapt the speed
 			m_delay = abs(m_direction) * 1600 / m_speed;
 
-			m_status = dfElevator::Status::MOVE;
-			m_tick = 0;
-			animate(0);
+			// only trigger a loop if the object is currently still
+			if (m_status == dfElevator::Status::HOLD) {
+				m_status = dfElevator::Status::MOVE;
+				m_tick = 0;
+				animate(0);
+			}
 		}
 		else {
 			// instant move
