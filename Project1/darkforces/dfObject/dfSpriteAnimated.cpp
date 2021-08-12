@@ -2,6 +2,8 @@
 
 #include <glm/trigonometric.hpp>
 
+#include <imgui.h>
+
 #include "../dfModel/dfWAX.h"
 #include "../dfLevel.h"
 #include "../dfComponent/dfComponentLogic.h"
@@ -24,6 +26,12 @@ dfSpriteAnimated::dfSpriteAnimated(const std::string& model, const glm::vec3& po
 	dfSprite((dfWAX*)g_gaWorld.getModel(model), position, ambient, OBJECT_WAX, g_animatedSpriteID++)
 {
 	gaEntity::updateWorldAABB();
+}
+
+dfSpriteAnimated::dfSpriteAnimated(flightRecorder::DarkForces::SpriteAnimated* record) :
+	dfSprite(&record->sprite)
+{
+	loadState((flightRecorder::Entity *)record);
 }
 
 /**
@@ -138,6 +146,57 @@ void dfSpriteAnimated::dispatchMessage(gaMessage* message)
 		break;
 	}
 	dfSprite::dispatchMessage(message);
+}
+
+/**
+ * return a record of the entity state (for debug)
+ */
+void* frCreate_dfSpriteAnimated(void* record) {
+	return new dfSpriteAnimated((flightRecorder::DarkForces::SpriteAnimated*)record);
+}
+
+/**
+ * return a record of the entity state (for debug)
+ */
+void dfSpriteAnimated::recordState(void* r)
+{
+	dfSprite::recordState(r);
+	flightRecorder::DarkForces::SpriteAnimated* record = static_cast<flightRecorder::DarkForces::SpriteAnimated*>(r);
+
+	record->sprite.object.entity.classID = flightRecorder::TYPE::DF_ENTITY_SPRITEANIMATED;
+	record->sprite.object.entity.size = sizeof(flightRecorder::DarkForces::SpriteAnimated);
+
+	record->state = static_cast<uint32_t>(m_state);			// state of the object for WAX, unused for others
+	record->frame = m_frame;			// current frame to display based on frameSpeed
+	record->direction = m_direction;	// direction the object is looking to
+	record->lastFrame = m_lastFrame;		// time of the last animation frame
+	record->currentFrame = m_currentFrame;	// time of the current animation frame
+}
+
+/**
+ * reload an entity state from a record
+ */
+void dfSpriteAnimated::loadState(flightRecorder::Entity* r)
+{
+	dfSprite::loadState(r);
+	flightRecorder::DarkForces::SpriteAnimated* record = static_cast<flightRecorder::DarkForces::SpriteAnimated*>((void *)r);
+	m_state = static_cast<dfState>(record->state);			// state of the object for WAX, unused for others
+	m_frame = record->frame;			// current frame to display based on frameSpeed
+	m_direction = record->direction;	// direction the object is looking to
+	m_lastFrame = record->lastFrame;		// time of the last animation frame
+	m_currentFrame = record->currentFrame;	// time of the current animation frame
+}
+
+/**
+ * Add dedicated component debug the entity
+ */
+void dfSpriteAnimated::debugGUIChildClass(void)
+{
+	dfObject::debugGUIChildClass();
+	ImGui::Text("State: %d", static_cast<uint32_t>(m_state));
+	ImGui::Text("Frame: %d", static_cast<uint32_t>(m_frame));
+	ImGui::Text("time last frame: % d", static_cast<uint32_t>(m_lastFrame));
+	ImGui::Text("time current frame: %d", static_cast<uint32_t>(m_state));
 }
 
 dfSpriteAnimated::~dfSpriteAnimated()

@@ -320,6 +320,8 @@
     <ClInclude Include="darkforces\dfVue.h" />
     <ClInclude Include="darkforces\dfWall.h" />
     <ClInclude Include="darkforces\flightRecorder\frObject.h" />
+    <ClInclude Include="darkforces\flightRecorder\frSprite.h" />
+    <ClInclude Include="darkforces\flightRecorder\frSpriteAnimated.h" />
     <ClInclude Include="darkforces\flightRecorder\Object3D.h" />
     <ClInclude Include="darkforces\lexer\dfObject.lex.h" />
     <ClInclude Include="darkforces\PlayerControl.h" />

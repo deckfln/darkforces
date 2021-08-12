@@ -144,6 +144,8 @@ public:
 	virtual dfSuperSector* superSector(void) {			// return the supersector the entity is in
 		return m_supersector; 
 	};
+
+	// flight recorder & debugger
 	virtual int recordSize(void) {
 		return sizeof(flightRecorder::Entity);
 	}													// size of one record

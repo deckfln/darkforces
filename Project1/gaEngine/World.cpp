@@ -501,11 +501,10 @@ void World::process(time_t delta, bool force)
 	while (m_queue.size() > 0) {
 		message = m_queue.front();
 
-/*
-		if (m_frame == 977 && message->m_client == "MOUSEBOT.3DO(40)") {
+		if (m_frame == 2000 && message->m_client == "IARMOR.WAX(6)") {
 			__debugbreak();
 		}
-*/		
+	
 
 		m_queue.pop_front();
 

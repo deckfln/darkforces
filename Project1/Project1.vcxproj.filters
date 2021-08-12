@@ -1058,6 +1058,12 @@
     <ClInclude Include="gaEngine\Debug.h">
       <Filter>Fichiers d%27en-tête\gaEngine</Filter>
     </ClInclude>
+    <ClInclude Include="darkforces\flightRecorder\frSpriteAnimated.h">
+      <Filter>Fichiers d%27en-tête\DarkForces\flightRecorder</Filter>
+    </ClInclude>
+    <ClInclude Include="darkforces\flightRecorder\frSprite.h">
+      <Filter>Fichiers d%27en-tête\DarkForces\flightRecorder</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\fragment.glsl">

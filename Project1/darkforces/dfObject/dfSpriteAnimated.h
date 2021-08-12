@@ -4,6 +4,8 @@
 #include <glm/vec4.hpp>
 #include <glm/vec3.hpp>
 
+#include "../flightRecorder/frSpriteAnimated.h"
+
 class dfWAX;
 
 class dfSpriteAnimated: public dfSprite
@@ -20,6 +22,7 @@ protected:
 public:
 	dfSpriteAnimated(dfWAX* wax, const glm::vec3& position, float ambient, uint32_t objectID);
 	dfSpriteAnimated(const std::string& model, const glm::vec3& position, float ambient);
+	dfSpriteAnimated(flightRecorder::DarkForces::SpriteAnimated* record);
 	void state(dfState state);
 	void rotation(const glm::vec3& rotation);
 
@@ -32,5 +35,13 @@ public:
 	bool update(time_t t) override;						// update based on timer
 	void dispatchMessage(gaMessage* message) override;	// let an entity deal with a situation
 
+	// flight recorder and debugger
+	inline int recordSize(void) override {
+		return sizeof(flightRecorder::DarkForces::SpriteAnimated);
+	}													// size of one record
+	void recordState(void* record) override;			// return a record of the entity state (for debug)
+	void loadState(flightRecorder::Entity* record) override;// reload an entity state from a record
+
+	void debugGUIChildClass(void) override;			// Add dedicated component debug the entity
 	~dfSpriteAnimated();
 };

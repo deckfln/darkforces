@@ -9,6 +9,7 @@ extern void* (*g_Callbacks[])(void*);
 #include "frBullet.h"
 #include "../darkforces/flightRecorder/frElevator.h"
 #include "../darkforces/flightRecorder/frObject.h"
+#include "../darkforces/flightRecorder/frSpriteAnimated.h"
 
 namespace flightRecorder {
 	void init_callbacks(void) {
@@ -17,5 +18,6 @@ namespace flightRecorder {
 		g_Callbacks[(int)TYPE::DF_ENTITY_ELEVATOR] = frCreate_Elevator;
 		g_Callbacks[(int)TYPE::DF_ENTITY_BULLET] = frCreate_Bullet;
 		g_Callbacks[(int)TYPE::DF_ENTITY_OBJECT] = frCreate_dfObject;
+		g_Callbacks[(int)TYPE::DF_ENTITY_SPRITEANIMATED] = frCreate_dfSpriteAnimated;
 	}
 }

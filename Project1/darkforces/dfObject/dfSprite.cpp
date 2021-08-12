@@ -36,6 +36,11 @@ dfSprite::dfSprite(const std::string& name, const glm::vec3& position, float amb
 	addComponent(&m_componentLogic);
 }
 
+dfSprite::dfSprite(flightRecorder::DarkForces::Sprite* record):
+	dfObject(&record->object)
+{
+}
+
 /**
  * Update the sprite buffers if the object is different
  */
