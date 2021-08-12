@@ -499,7 +499,7 @@ dfSector* dfLevel::findSector(glm::vec3& position)
 		// nope, so quick check on the last super sector
 		sector = m_lastSuperSector->findSector(position);
 		if (sector) {
-#ifdef DEBUG
+#ifdef _DEBUG
 			gaDebugLog(LOW_DEBUG, "dfLevel::findSector", " leave=" + m_lastSector->m_name + " enter=" + sector->m_name);
 #endif
 
@@ -521,7 +521,7 @@ dfSector* dfLevel::findSector(glm::vec3& position)
 				m_lastSector->event(dfElevator::Message::LEAVE_SECTOR);
 			}
 
-#ifdef DEBUG
+#ifdef _DEBUG
 			std::string message = "dfLevel::findSector leave=";
 			if (m_lastSector) {
 				message += m_lastSector->m_name;

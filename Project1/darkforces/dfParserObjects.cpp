@@ -315,7 +315,7 @@ void dfParserObjects::parseObject(dfFileSystem* fs, GameEngine::ParserExpression
 			ambient = sector->m_ambient / 32.0f;
 		}
 		else {
-#ifdef DEBUG
+#ifdef _DEBUG
 			gaDebugLog(LOW_DEBUG, "dfParserObjects::parseObject", "cannot find sector for " + std::to_string(position.x) + ":" + std::to_string(position.y) + " : " + std::to_string(position.z));
 #endif
 		}
@@ -361,7 +361,7 @@ void dfParserObjects::parseObject(dfFileSystem* fs, GameEngine::ParserExpression
 			break;
 		}
 		default:
-#ifdef DEBUG
+#ifdef _DEBUG
 			gaDebugLog(LOW_DEBUG, "dfParserObjects::parseObject", "unknown code " + std::to_string(mclass.m_expression));
 			return;
 #endif

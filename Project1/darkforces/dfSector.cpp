@@ -294,7 +294,7 @@ std::vector<dfWall*>& dfSector::walls(dfWallFlag flags)
 		}
 		break;
 	default:
-#ifdef DEBUG
+#ifdef _DEBUG
 		gaDebugLog(LOW_DEBUG, "dfSector::walls", " flags=" + std::to_string((int)flags) + " not implemented");
 #endif
 	}
@@ -459,7 +459,7 @@ void dfSector::linkWalls(void)
 	if (m_polygons_vertices.size() > 1) {
 
 		if (m_polygons_vertices.size() > 2) {
-#ifdef DEBUG
+#ifdef _DEBUG
 			gaDebugLog(LOW_DEBUG, "dfSector::linkWalls", "sector with more than 1 hole is not implemented");
 #endif
 		}
@@ -557,7 +557,7 @@ void dfSector::bindWall2Sector(void)
 void dfSector::event(int event_mask)
 {
 	if (m_eventMask & event_mask) {
-#ifdef DEBUG
+#ifdef _DEBUG
 		gaDebugLog(LOW_DEBUG, "dfSector::event", "sector=" + m_name + " event=" + std::to_string(event_mask));
 #endif
 		g_gaWorld.sendMessage(m_name, m_name, DF_MESSAGE_TRIGGER, 0, nullptr);
@@ -713,7 +713,7 @@ void dfSector::buildWalls(dfMesh* mesh, dfWallFlag displayPolygon)
 		}
 		break;
 	default:
-#ifdef DEBUG
+#ifdef _DEBUG
 		gaDebugLog(LOW_DEBUG, "dfSector::walls", "flags=" + std::to_string((int)displayPolygon) +" not implemented for sector=" + std::to_string(m_id));
 #endif
 	}
@@ -775,7 +775,7 @@ void dfSector::buildFloorAndCeiling(dfMesh* mesh)
 	// Ignore strange sector whose ceiling is below the floor
 	if (m_staticMeshCeilingAltitude < m_staticMeshFloorAltitude) {
 		//TODO do not forget that 'thing'
-#ifdef DEBUG
+#ifdef _DEBUG
 		gaDebugLog(LOW_DEBUG, "dfSector::buildFloorAndCeiling", "ignore dfSuperSector::buildFloor sector " + std::to_string(m_id));
 #endif
 		return;

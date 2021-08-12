@@ -49,4 +49,5 @@ bug
 [X] debugger uses keys < & > to move frame to frame
 [ ] move dfSprites as an gaEntity that can receive messages like TIMER and update
 [ ] display dfSpriteAnimated state as text (based on the spite logic)
-[ ] replace all the "#ifdef DEBUG" by the status of the compiler (if vc compile for debug, activate the features)
+[X] replace all the "#ifdef DEBUG" by the status of the compiler (if vc compile for debug, activate the features)
+[ ] redirect the debug logs to the debugger to be displayed frame by frame

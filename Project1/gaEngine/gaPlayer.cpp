@@ -13,7 +13,7 @@
 
 #include "../darkforces/dfComponent/dfComponentActor.h"
 
-#ifdef DEBUG
+#ifdef _DEBUG
 #include "Debug.h"
 #endif
 
@@ -33,7 +33,7 @@ bool gaPlayer::checkKeys(time_t delta)
 	fwControlThirdPerson::checkKeys(delta);
 
 	// in recording mode, save the status
-#ifdef DEBUG
+#ifdef _DEBUG
 	//TODO find how to pass the information to the debugger
 	/*
 	if (m_currentKeys[GLFW_KEY_F1]) {

@@ -15,7 +15,7 @@ class dfLevel;
 
 class gaActor;
 
-#ifdef DEBUG
+#ifdef _DEBUG
 #include "gaEngine/Debug.h"
 #endif
 
@@ -37,7 +37,7 @@ class myDarkForces : public fwApp
 	bool m_headlight = false;
 	bool m_f5 = false;
 
-#ifdef DEBUG
+#ifdef _DEBUG
 	friend GameEngine::Debug;
 #endif
 

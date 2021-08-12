@@ -479,7 +479,7 @@ void World::process(time_t delta, bool force)
 
 	m_frame++;
 
-#ifdef DEBUG
+#ifdef _DEBUG
 	g_Blackbox.recordState();
 #endif
 

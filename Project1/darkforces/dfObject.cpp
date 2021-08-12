@@ -242,7 +242,7 @@ bool dfObject::checkCollision(fwCylinder& bounding, glm::vec3& direction, glm::v
 			intersection.y = m_worldBounding.m_p1.y;
 			collisions.push_back(gaCollisionPoint(fwCollisionLocation::BOTTOM, intersection, nullptr));
 
-#ifdef DEBUG
+#ifdef _DEBUG
 			std::string message = " BOTTOM z=" + std::to_string(intersection.y);
 			gaDebugLog(FULL_DEBUG, "dfObject::checkCollision", message);
 #endif
@@ -250,7 +250,7 @@ bool dfObject::checkCollision(fwCylinder& bounding, glm::vec3& direction, glm::v
 		if (aabb.m_p1.y > m_worldBounding.m_p.y && aabb.m_p1.y < m_worldBounding.m_p1.y) {
 			intersection.y = m_worldBounding.m_p.y;
 			collisions.push_back(gaCollisionPoint(fwCollisionLocation::TOP, intersection, nullptr));
-#ifdef DEBUG
+#ifdef _DEBUG
 			std::string message = " TOP z=" + std::to_string(intersection.y);
 			gaDebugLog(LOW_DEBUG, "dfObject::checkCollision", message);
 #endif
@@ -305,7 +305,7 @@ bool dfObject::checkCollision(fwCylinder& bounding, glm::vec3& direction, glm::v
 
 		collisions.push_back(gaCollisionPoint(c, intersection, nullptr));
 
-#ifdef DEBUG
+#ifdef _DEBUG
 		std::string message = " " + p + " z=" + std::to_string(intersection.y);
 		gaDebugLog(LOW_DEBUG, "dfObject::checkCollision", message);
 #endif

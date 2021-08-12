@@ -247,7 +247,7 @@ void dfLogicTrigger::dispatchMessage(gaMessage* message)
 		m_actived = false;
 		break;
 	default:
-#ifdef DEBUG
+#ifdef _DEBUG
 		gaDebugLog(REDUCED_DEBUG, "dfLogicTrigger::dispatchMessage",  "action " + std::to_string(message->m_action) + " not implemented");
 #endif
 	}
@@ -263,7 +263,7 @@ void dfLogicTrigger::elevator(dfElevator* elevator)
 	if (m_pElevator == nullptr) {
 		m_pElevator = elevator;
 	}
-#ifdef DEBUG
+#ifdef _DEBUG
 	else if (m_pElevator != elevator) {
 		gaDebugLog(LOW_DEBUG, "dfLogicTrigger::elevator", "elevators are different");
 	}
@@ -280,7 +280,7 @@ void dfLogicTrigger::activate(const std::string& activator)
 		return;
 	}
 
-#ifdef DEBUG
+#ifdef _DEBUG
 	gaDebugLog(REDUCED_DEBUG, "dfLogicTrigger::activate", m_name);
 #endif
 

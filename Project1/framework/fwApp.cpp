@@ -76,7 +76,7 @@ fwApp::fwApp(std::string name, int _width, int _height, std::string post_process
 		std::cout << "Failed to initialize GLAD" << std::endl;
 	}
 
-#ifdef DEBUG
+#ifdef _DEBUG
 	// Setup Dear ImGui context
 	const char* glsl_version = "#version 130";
 	IMGUI_CHECKVERSION();
@@ -126,7 +126,7 @@ void fwApp::bindControl(fwControl *_control)
  */
 void fwApp::renderGUI(void)
 {
-#ifdef DEBUG
+#ifdef _DEBUG
 	if (m_debugger)
 		m_debugger->render();
 #endif
@@ -243,7 +243,7 @@ void fwApp::run(void)
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
 		// -------------------------------------------------------------------------------
 
-#ifdef DEBUG
+#ifdef _DEBUG
 		// Start the Dear ImGui frame
 		// Update and Render additional Platform Windows
 		ImGui_ImplOpenGL3_NewFrame();
@@ -298,7 +298,7 @@ void fwApp::run(void)
 		}
 	}
 
-#ifdef DEBUG
+#ifdef _DEBUG
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplGlfw_Shutdown();
 	ImGui::DestroyContext();

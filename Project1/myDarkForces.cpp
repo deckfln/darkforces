@@ -44,7 +44,7 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 	m_scene = new fwScene();
 	g_gaWorld.scene(m_scene);
 
-#ifdef DEBUG
+#ifdef _DEBUG
 	m_debugger = new GameEngine::Debug(this);
 #endif
 

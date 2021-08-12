@@ -422,7 +422,7 @@ void dfElevator::moveToNextStop(void)
 			dfVOC* voc = m_sounds[dfElevator::Sound::START];
 			if (voc != nullptr) {
 				sendInternalMessage(gaMessage::PLAY_SOUND, 0, voc->sound());
-#ifdef DEBUG
+#ifdef _DEBUG
 				gaDebugLog(0, "dfElevator::moveToNextStop play", voc->name());
 #endif
 			}
@@ -430,7 +430,7 @@ void dfElevator::moveToNextStop(void)
 			voc = m_sounds[dfElevator::Sound::MOVE];
 			if (voc != nullptr) {
 				sendInternalMessage(gaMessage::PLAY_SOUND, 0, voc->sound());
-#ifdef DEBUG
+#ifdef _DEBUG
 				gaDebugLog(0, "dfElevator::moveToNextStop play", voc->name());
 #endif
 			}
@@ -507,14 +507,14 @@ bool dfElevator::animateMoveZ(void)
 					dfVOC* voc = m_sounds[dfElevator::Sound::MOVE];
 					if (voc != nullptr) {
 						sendInternalMessage(gaMessage::STOP_SOUND, 0, voc->sound());
-#ifdef DEBUG
+#ifdef _DEBUG
 						gaDebugLog(0, "dfElevator::animateMoveZ stop", voc->name());
 #endif
 					}
 					voc = m_sounds[dfElevator::Sound::END];
 					if ( voc != nullptr) {
 						sendInternalMessage(gaMessage::STOP_SOUND, 0, voc->sound());
-#ifdef DEBUG
+#ifdef _DEBUG
 						gaDebugLog(0, "dfElevator::animateMoveZ stop", voc->name());
 #endif
 					}
@@ -526,7 +526,7 @@ bool dfElevator::animateMoveZ(void)
 					dfVOC* voc = m_sounds[dfElevator::Sound::MOVE];
 					if (voc != nullptr) {
 						sendInternalMessage(gaMessage::STOP_SOUND, 0, voc->sound());
-#ifdef DEBUG
+#ifdef _DEBUG
 						gaDebugLog(0, "dfElevator::animateMoveZ stop", voc->name());
 #endif
 					}
@@ -534,7 +534,7 @@ bool dfElevator::animateMoveZ(void)
 					voc = m_sounds[dfElevator::Sound::END];
 					if (voc != nullptr) {
 						sendInternalMessage(gaMessage::PLAY_SOUND, 0, voc->sound());
-#ifdef DEBUG
+#ifdef _DEBUG
 						gaDebugLog(0, "dfElevator::animateMoveZ play", voc->name());
 #endif
 					}
