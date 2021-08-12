@@ -57,7 +57,7 @@ void dfSpriteAnimated::state(dfState state)
 	}
 	else {
 		// trigger an animation loop if there is actually an animation loop
-		if (m_source->nbFrames(m_state) > 1) {
+		if ((m_logics & dfLogic::ANIM) && m_source->nbFrames(m_state) > 1) {
 			g_gaWorld.sendMessageDelayed(m_name, m_name, gaMessage::TIMER, 0, nullptr);
 		}
 	}
@@ -96,10 +96,13 @@ void dfSpriteAnimated::rotation(const glm::vec3& rotation)
  */
 bool dfSpriteAnimated::update(time_t t)
 {
+	if (!(m_logics & dfLogic::ANIM)) {
+		return false;
+	}
+
 	m_currentFrame += t;
 
 	uint32_t nbFrames = m_source->nbFrames(m_state);
-
 	if (nbFrames <= 1) {
 		return false;	// static objects like FME are not updated, 
 						// objects with only 1 frame in the animation loop are also not updated
@@ -197,13 +200,40 @@ void dfSpriteAnimated::loadState(flightRecorder::Entity* r)
 	m_dirtyAnimation = true;				// force refresh of the sprite
 }
 
+static std::map < uint32_t, const char*> debugStatesEnemies = {
+	{0, "ENEMY_MOVE"},
+	{1, "ENEMY_ATTACK" },
+	{2, "ENEMY_DIE_FROM_PUNCH"},
+	{3, "ENEMY_DIE_FROM_SHOT"},
+	{4, "ENEMY_LIE_DEAD"},
+	{5, "ENEMY_STAY_STILL"},
+	{6, "ENEMY_FOLLOW_PRIMARY_ATTACK"},
+	{7, "ENEMY_SECONDARY_ATTACK"},
+	{8, "ENEMY_FOLLOW_SECONDARY_ATTACK"},
+	{9, "ENEMY_JUMP"},
+	{10, "ENEMY_INJURED"},
+	{13, "ENEMY_SPECIAL"},
+};
+static std::map<uint32_t, const char*> debugStatesScenery = {
+	{0, "SCENERY_NORMAL"},
+	{1, "SCENERY_ATTACK"},
+};
+
 /**
  * Add dedicated component debug the entity
  */
 void dfSpriteAnimated::debugGUIChildClass(void)
 {
 	dfObject::debugGUIChildClass();
-	ImGui::Text("State: %d", static_cast<uint32_t>(m_state));
+	if (m_logics & DF_LOGIC_ENEMIES) {
+		ImGui::Text("State: %s", debugStatesEnemies[static_cast<uint32_t>(m_state)]);
+	}
+	else if(m_logics & dfLogic::SCENERY) {
+		ImGui::Text("State: %s", debugStatesScenery[static_cast<uint32_t>(m_state)]);
+	}
+	else {
+		ImGui::Text("State: %d", static_cast<uint32_t>(m_state));
+	}
 	ImGui::Text("Frame: %d", static_cast<uint32_t>(m_frame));
 	ImGui::Text("time last frame: %d", m_lastFrame);
 	ImGui::Text("time current frame: %d", m_currentFrame);

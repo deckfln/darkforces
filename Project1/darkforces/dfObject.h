@@ -90,11 +90,10 @@ enum {
 };
 
 // list of all enemies
-const uint32_t DF_LOGIC_ENEMIES = dfLogic::OFFICER | dfLogic::COMMANDO | dfLogic::TROOP;
+const uint32_t DF_LOGIC_ENEMIES = dfLogic::OFFICER | dfLogic::COMMANDO | dfLogic::TROOP | dfLogic::INTDROID;
 
 // list of all physical logics
-const uint32_t DF_LOGIC_PHYSICAL = dfLogic::OFFICER | dfLogic::COMMANDO | dfLogic::TROOP | dfLogic::SCENERY;
-
+const uint32_t DF_LOGIC_PHYSICAL = DF_LOGIC_ENEMIES | dfLogic::SCENERY;
 
 class dfObject: public gaEntity
 {

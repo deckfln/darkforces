@@ -344,11 +344,39 @@ void dfObject::loadState(flightRecorder::Entity* r)
 	m_position_lvl = record->position_level;
 }
 
+static std::map<uint32_t, const char*> debugLogic = {
+	{1, "SCENERY"},
+	{2, "ANIM"},
+	{4, "OFFICER"},
+	{8, "COMMANDO"},
+	{16, "TROOP"},
+	{32, "RED_KEY"},
+	{64, "INTDROID"},
+	{128, "ITEM_SHIELD"},
+	{256, "ITEM_ENERGY"},
+	{512, "LIFE"},
+	{1024, "REVIVE"},
+	{2048, "MOUSEBOT"},
+	{4096, "KEY_TRIGGER"},
+	{8192, "ITEM_RIFLE"},
+	{16384, "ITEM_POWER"},
+	{32768, "ITEM_BATTERY"},
+	{65536, "DEAD_MOUSE"}
+};
+
 /**
  * Add dedicated component debug the entity
  */
 void dfObject::debugGUIChildClass(void)
 {
+	std::string sLogic = "";
+	for (auto& logic : debugLogic) {
+		if (m_logics & logic.first) {
+			sLogic.append("|");
+			sLogic.append(logic.second);
+		}
+	}
+	ImGui::Text("Logic: %s", sLogic.c_str());
 	ImGui::Text("LevelPos %.2f %.2f %.2f", m_position_lvl.x, m_position_lvl.y, m_position_lvl.z);
 }
 

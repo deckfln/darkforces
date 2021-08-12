@@ -51,3 +51,4 @@ bug
 [ ] display dfSpriteAnimated state as text (based on the spite logic)
 [X] replace all the "#ifdef DEBUG" by the status of the compiler (if vc compile for debug, activate the features)
 [ ] redirect the debug logs to the debugger to be displayed frame by frame
+[X] dfSpriteAnimated should only trigger TIMER events if the object has logic ANIM
