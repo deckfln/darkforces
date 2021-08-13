@@ -138,6 +138,7 @@ dfLevel::dfLevel(dfFileSystem* fs, std::string file)
 		}
 	}
 
+	// currently, only INF elevators exist in m_inf->triggers
 	// bind the trigger to the elevator
 	for (auto trigger : m_inf->m_triggers) {
 		g_gaWorld.addClient(trigger);
@@ -213,9 +214,11 @@ dfLevel::dfLevel(dfFileSystem* fs, std::string file)
 		g_gaWorld.addClient(elevator);
 	}
 
-	// triggers to the world
+	// Add the missing triggers to the world
 	for (auto trigger : m_inf->m_triggers) {
-		g_gaWorld.addClient(trigger);
+		if (g_gaWorld.getEntity(trigger->name()) == nullptr) {
+			g_gaWorld.addClient(trigger);
+		}
 	}
 
 	// load the Object file
