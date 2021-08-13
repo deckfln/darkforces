@@ -14,7 +14,6 @@
 #include "framework/fwAABBox.h"
 #include "framework/fwHUDelement.h"
 
-#include "gaEngine/gaActor.h"
 #include "gaEngine/World.h"
 #include "gaEngine/Model.h"
 #include "gaEngine/Debug.h"
@@ -23,6 +22,7 @@
 #include "darkforces/dfCollision.h"
 #include "darkforces/dfComponent/dfComponentActor.h"
 #include "darkforces/dfFileSystem.h"
+#include "darkforces/dfActor.h"
 
 const float c_height = 0.70f;
 const float c_radius = 0.2f;
@@ -58,7 +58,7 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 	//glm::vec3 start = glm::vec3(-20, 2.0, 34);	// mousebot(40)
 	fwCylinder bounding(glm::vec3(0), c_radius, c_height);
 
-	m_player = new gaActor(DF_ENTITY_OBJECT, "player", bounding, start, c_eyes, c_ankle);
+	m_player = new DarkForces::Actor(DF_ENTITY_OBJECT, "player", bounding, start, c_eyes, c_ankle);
 	m_player->addComponent(new dfComponentActor());
 
 	// controls	

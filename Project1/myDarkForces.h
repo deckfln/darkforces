@@ -13,13 +13,12 @@ class fwLight;
 class dfFileSystem;
 class dfLevel;
 
-class gaActor;
-
 #ifdef _DEBUG
 #include "gaEngine/Debug.h"
 #endif
 
 #include "darkforces/PlayerControl.h"
+#include "darkforces/dfActor.h"
 
 class myDarkForces : public fwApp
 {
@@ -28,7 +27,7 @@ class myDarkForces : public fwApp
 	glm::vec4* white = nullptr;
 	fwMesh* m_fwCamera = nullptr;
 
-	gaActor* m_player = nullptr;
+	DarkForces::Actor* m_player = nullptr;
 	DarkForces::PlayerControl* m_playerControl = nullptr;
 
 	dfFileSystem* m_filesystem = nullptr;

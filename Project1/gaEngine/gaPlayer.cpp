@@ -60,7 +60,7 @@ bool gaPlayer::checkKeys(time_t delta)
 void gaPlayer::updatePlayer(time_t delta)
 {
 	if (m_velocity != glm::vec3(0)) {
-		m_entity->sendInternalMessage(gaMessage::CONTROLLER, delta, &m_velocity);
+		m_entity->sendInternalMessage(gaMessage::CONTROLLER, (uint32_t)delta, &m_velocity);
 	}
 	m_position = m_entity->position();
 }

@@ -85,8 +85,9 @@ class dfLevel
 
 public:
 	dfLevel(dfFileSystem* fs, std::string file);
-	dfSector* findSector(glm::vec3& position);
-	dfSector* findSectorLVL(glm::vec3& level_position);
+	dfSector* findSector(const glm::vec3& position);			// find sector by GL coordinate
+	dfSector* findSector(char *name);					// find sector by name
+	dfSector* findSectorLVL(const glm::vec3& level_position);	// find sector by level coordinate
 	void testSwitch(fwAABBox& player, gaEntity* source);
 	void draw(fwCamera* camera, fwScene* scene);
 	std::vector<dfSector*>& sectorsID(void) { return m_sectorsID; };

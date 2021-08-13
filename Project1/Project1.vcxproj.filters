@@ -558,6 +558,9 @@
     <ClCompile Include="gaEngine\Debug.cpp">
       <Filter>Fichiers sources\gaEngine</Filter>
     </ClCompile>
+    <ClCompile Include="darkforces\dfActor.cpp">
+      <Filter>Fichiers sources\Dark Forces</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="glad\glad.h">
@@ -1046,9 +1049,6 @@
     <ClInclude Include="darkforces\flightRecorder\frObject.h">
       <Filter>Fichiers d%27en-tête\DarkForces\flightRecorder</Filter>
     </ClInclude>
-    <ClInclude Include="flightRecorder\frElevator.h">
-      <Filter>Fichiers d%27en-tête\DarkForces\flightRecorder</Filter>
-    </ClInclude>
     <ClInclude Include="darkforces\flightRecorder\Object3D.h">
       <Filter>Fichiers d%27en-tête\DarkForces\flightRecorder</Filter>
     </ClInclude>
@@ -1062,6 +1062,15 @@
       <Filter>Fichiers d%27en-tête\DarkForces\flightRecorder</Filter>
     </ClInclude>
     <ClInclude Include="darkforces\flightRecorder\frSprite.h">
+      <Filter>Fichiers d%27en-tête\DarkForces\flightRecorder</Filter>
+    </ClInclude>
+    <ClInclude Include="darkforces\dfActor.h">
+      <Filter>Fichiers d%27en-tête\DarkForces</Filter>
+    </ClInclude>
+    <ClInclude Include="darkforces\flightRecorder\frActor.h">
+      <Filter>Fichiers d%27en-tête\DarkForces\flightRecorder</Filter>
+    </ClInclude>
+    <ClInclude Include="darkforces\flightRecorder\frElevator.h">
       <Filter>Fichiers d%27en-tête\DarkForces\flightRecorder</Filter>
     </ClInclude>
   </ItemGroup>

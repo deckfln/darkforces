@@ -29,7 +29,6 @@ class gaActor: public gaEntity
 	glm::mat3x3 m_physic=glm::mat3x3(0);
 	time_t m_animation_time = 0;				// start of the physic driven movement
 
-	dfLevel* m_level = nullptr;
 	gaPlayer* m_parent = nullptr;				// parent player
 
 public:
@@ -51,7 +50,6 @@ public:
 	inline float step(void) { return m_step; };
 	inline const fwCylinder& cylinder(void) { return m_cylinder; };
 	void jump(const glm::vec3& velocity);
-	void bind(dfLevel* level) { m_level = level; };
 	void parent(gaPlayer* parent) { m_parent = parent; };
 
 	void dispatchMessage(gaMessage* message) override;

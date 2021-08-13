@@ -129,6 +129,7 @@
     <ClCompile Include="alEngine\alListener.cpp" />
     <ClCompile Include="alEngine\alSound.cpp" />
     <ClCompile Include="alEngine\alSource.cpp" />
+    <ClCompile Include="darkforces\dfActor.cpp" />
     <ClCompile Include="darkforces\dfAtlasTexture.cpp" />
     <ClCompile Include="darkforces\dfBitmap.cpp" />
     <ClCompile Include="darkforces\dfBullet.cpp" />
@@ -282,6 +283,7 @@
     <ClInclude Include="alEngine\alSound.h" />
     <ClInclude Include="alEngine\alSource.h" />
     <ClInclude Include="config.h" />
+    <ClInclude Include="darkforces\dfActor.h" />
     <ClInclude Include="darkforces\dfAtlasTexture.h" />
     <ClInclude Include="darkforces\dfBitmap.h" />
     <ClInclude Include="darkforces\dfBullet.h" />
@@ -319,6 +321,8 @@
     <ClInclude Include="darkforces\dfVOC.h" />
     <ClInclude Include="darkforces\dfVue.h" />
     <ClInclude Include="darkforces\dfWall.h" />
+    <ClInclude Include="darkforces\flightRecorder\frActor.h" />
+    <ClInclude Include="darkforces\flightRecorder\frElevator.h" />
     <ClInclude Include="darkforces\flightRecorder\frObject.h" />
     <ClInclude Include="darkforces\flightRecorder\frSprite.h" />
     <ClInclude Include="darkforces\flightRecorder\frSpriteAnimated.h" />
@@ -333,7 +337,6 @@
     <ClInclude Include="flightRecorder\classes.h" />
     <ClInclude Include="flightRecorder\Entity.h" />
     <ClInclude Include="flightRecorder\frBullet.h" />
-    <ClInclude Include="flightRecorder\frElevator.h" />
     <ClInclude Include="flightRecorder\Message.h" />
     <ClInclude Include="flightRecorder\Object3D.h" />
     <ClInclude Include="framework\background\fwSkybox.h" />

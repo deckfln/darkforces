@@ -482,7 +482,7 @@ void dfLevel::testSwitch(fwAABBox& player, gaEntity* source)
 /**
  * return the sector fitting the GL position
  */
-dfSector* dfLevel::findSector(glm::vec3& position)
+dfSector* dfLevel::findSector(const glm::vec3& position)
 {
 	dfSector* sector;
 	// std::cout << position.x << ":" << position.y << ":" << position.z << std::endl;
@@ -505,11 +505,11 @@ dfSector* dfLevel::findSector(glm::vec3& position)
 #ifdef _DEBUG
 			gaDebugLog(LOW_DEBUG, "dfLevel::findSector", " leave=" + m_lastSector->m_name + " enter=" + sector->m_name);
 #endif
-			m_lastSector->event(dfElevator::Message::LEAVE_SECTOR);
+//			m_lastSector->event(dfElevator::Message::LEAVE_SECTOR);
 
 			m_lastSector = sector;
 
-			sector->event(dfElevator::Message::ENTER_SECTOR);
+//			sector->event(dfElevator::Message::ENTER_SECTOR);
 			return sector;
 		}
 	}
@@ -538,7 +538,7 @@ dfSector* dfLevel::findSector(glm::vec3& position)
 			m_lastSector = sector;
 			m_lastSuperSector = ssector;
 
-			sector->event(dfElevator::Message::ENTER_SECTOR);
+//			sector->event(dfElevator::Message::ENTER_SECTOR);
 			return sector;
 		}
 	}
@@ -548,10 +548,18 @@ dfSector* dfLevel::findSector(glm::vec3& position)
 }
 
 /**
+ * find sector by name
+ */
+dfSector* dfLevel::findSector(char* name)
+{
+	return m_sectorsName[name];
+}
+
+/**
  * Parse all sectors to find the one with the position
  * provided by level space
  */
-dfSector* dfLevel::findSectorLVL(glm::vec3& level_position)
+dfSector* dfLevel::findSectorLVL(const glm::vec3& level_position)
 {
 	glm::vec3 gl_position;
 	dfLevel::level2gl(level_position, gl_position);
