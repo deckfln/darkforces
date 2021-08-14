@@ -1,5 +1,7 @@
 #include "dfBulletExplode.h"
 
+#include "../../gaEngine/World.h"
+
 #include "../dfModel.h"
 #include "../dfLevel.h"
 

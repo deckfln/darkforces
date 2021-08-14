@@ -4,6 +4,7 @@
 #include "../framework/fwScene.h"
 
 #include "../gaEngine/gaBoundingBoxes.h"
+#include "../gaEngine/World.h"
 
 #include "dfObject/dfSpriteAnimated.h"
 

@@ -1,6 +1,10 @@
 #pragma once
 
 #include "../gaEngine/gaActor.h"
+#include "dfComponent/dfComponentActor.h"
+
+#include "dfLevel.h"
+
 #include "flightRecorder/frActor.h"
 
 class dfSector;
@@ -11,7 +15,7 @@ namespace DarkForces {
 	 * Actor for dark forces with the dfSector the actor is
 	 */
 	class Actor : public gaActor {
-		dfSector* m_currentSector = nullptr;	// in what sector is the sector located
+		dfComponentActor m_defaultAI;
 		dfLevel* m_level = nullptr;
 
 	public:
@@ -25,8 +29,7 @@ namespace DarkForces {
 		);
 		Actor(flightRecorder::Entity* record);
 
-		void dispatchMessage(gaMessage* message) override;
-		void bind(dfLevel* level) { m_level = level; };
+		void bind(dfLevel* level);
 
 		int recordSize(void) override {
 			return sizeof(flightRecorder::DarkForces::Actor);

@@ -13,6 +13,7 @@
 
 #include "dfComponent/dfComponentActor.h"
 #include "dfElevator.h"
+#include "../config.h"
 
 class dfSector;
 class dfWall;
@@ -31,7 +32,7 @@ class dfLogicTrigger: public gaEntity {
 	bool m_master = true;			// is the trigger operational ?
 	bool m_actived = false;			// trigger was activated and shall not accept any new activation
 	std::vector<std::string> m_clients;		// name of the target sector 
-	int m_keys = DF_KEY_NONE;		// keys needed to activate the triggers
+	uint32_t m_keys = DarkForces::Keys::NONE;		// keys needed to activate the triggers
 
 	std::string m_sector;			// sector that host the trigger
 	int m_wallIndex = -1;			// index of the wall being a trigger

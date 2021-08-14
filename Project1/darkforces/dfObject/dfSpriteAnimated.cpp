@@ -4,6 +4,8 @@
 
 #include <imgui.h>
 
+#include "../../gaEngine/World.h"
+
 #include "../dfModel/dfWAX.h"
 #include "../dfLevel.h"
 #include "../dfComponent/dfComponentLogic.h"

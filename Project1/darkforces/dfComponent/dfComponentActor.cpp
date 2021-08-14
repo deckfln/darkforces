@@ -79,6 +79,24 @@ void dfComponentActor::dispatchMessage(gaMessage* message)
 		addEnergy(message->m_value);
 		//TODO add a weapon to a player
 		//addWeapon(O_RIFLE);
+		break;
+	case gaMessage::MOVE:
+		// identity the DF sector and trigger enter/leave if changing
+		if (message->m_extra == nullptr) {
+			dfSector* current = m_level->findSector(m_entity->position());
+			if (current != m_currentSector) {
+				if (m_currentSector != nullptr) {
+					m_currentSector->event(dfElevator::Message::LEAVE_SECTOR);
+					m_entity->sendMessage(m_currentSector->name(), DF_MSG_EVENT, DarkForces::MessageEvent::LEAVE_SECTOR);
+				}
+				if (current != nullptr) {
+					current->event(dfElevator::Message::ENTER_SECTOR);
+					m_entity->sendMessage(current->name(), DF_MSG_EVENT, DarkForces::MessageEvent::ENTER_SECTOR);
+				}
+				m_currentSector = current;
+			}
+		}
+		break;
 	}
 }
 
@@ -121,6 +139,10 @@ void dfComponentActor::die(void)
 void dfComponentActor::debugGUIinline(void)
 {
 	if (ImGui::TreeNode("dfComponentActor")) {
+		if (m_currentSector) {
+			ImGui::Text("Sector:%s", m_currentSector->name().c_str());
+		}
+
 		ImGui::Text("Shield: %d / %d", m_shield, m_maxShield);
 		ImGui::Text("Energy: %d / %d", m_energy, m_maxEnergy);
 		ImGui::Text("Battery: %d", m_battery);

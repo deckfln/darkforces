@@ -380,7 +380,9 @@ void dfParserObjects::parseObject(dfFileSystem* fs, GameEngine::ParserExpression
 
 		// for enemies add an actor component
 		if (obj->isLogic(DF_LOGIC_ENEMIES)) {
-			obj->addComponent(new dfComponentActor());
+			dfComponentActor* actor = new dfComponentActor();
+			actor->bind(level);
+			obj-> addComponent(actor);
 		}
 
 		break; 
@@ -396,6 +398,8 @@ void dfParserObjects::parseObject(dfFileSystem* fs, GameEngine::ParserExpression
 void dfParserObjects::parse(GameEngine::Parser& parser, dfFileSystem* fs, dfPalette* palette, dfLevel* level)
 {
 	GameEngine::ParserExpression* expression;
+
+	m_level = level;
 
 	int currentWax = 0;
 	int currentFME = 0;

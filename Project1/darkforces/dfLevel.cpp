@@ -25,6 +25,7 @@
 #include "dfAtlasTexture.h"
 #include "dfPalette.h"
 #include "dfLogicStop.h"
+#include "dfParseINF.h"
 
 dfLevel::dfLevel(dfFileSystem* fs, std::string file)
 {

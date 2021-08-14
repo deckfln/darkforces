@@ -13,7 +13,6 @@
 #include "dfSector.h"
 #include "dfSuperSector.h"
 #include "dfBitmap.h"
-#include "dfParseINF.h"
 #include "dfElevator.h"
 #include "dfFileGOB.h"
 
@@ -25,6 +24,7 @@ class dfAtlasTexture;
 class dfElevator;
 class dfPalette;
 class gaCollisionPoint;
+class dfParseINF;
 
 /**
  *

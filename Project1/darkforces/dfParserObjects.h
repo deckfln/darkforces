@@ -27,6 +27,7 @@ class dfParserObjects
 	std::vector<dfObject *> m_objects;
 	int m_currentObject = 0;
 	bool m_added = false;
+	dfLevel* m_level = nullptr;
 
 	std::vector<std::string> m_waxes;
 	std::vector<std::string> m_fmes;

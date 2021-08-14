@@ -13,7 +13,7 @@
 #include "dfVOC.h"
 #include "dfComponent/InfProgram.h"
 #include "dfSector.h"
-#include "dfLevel.h"
+//#include "dfLevel.h"
 
 static dfFileSystem* dfFiles = nullptr;
 static std::map<std::string, dfVOC*> g_cachedVOC;

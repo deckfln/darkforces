@@ -81,7 +81,7 @@ private:
 
 	float m_p = 0;
 	bool m_master = true;				// is the elevator operational ?
-	int m_keys = DF_KEY_NONE;			// key activating the elevator
+	uint32_t m_keys = DarkForces::Keys::NONE;// key activating the elevator
 
 	std::vector<dfLogicStop*> m_stops;	// all stops of the elevator
 

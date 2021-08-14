@@ -823,7 +823,7 @@ const std::string dfKeyRed = "red";
 void dfElevator::keys(std::string& key)
 {
 	if (key == dfKeyRed) {
-		m_keys |= DF_KEY_RED;
+		m_keys |= DarkForces::Keys::RED;
 	}
 }
 

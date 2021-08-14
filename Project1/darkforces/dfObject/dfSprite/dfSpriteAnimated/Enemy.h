@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../../dfSpriteAnimated.h"
+#include "../../../../framework/math/fwCylinder.h"
 
 namespace DarkForces {
 	class Enemy : public dfSpriteAnimated

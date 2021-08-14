@@ -7,6 +7,7 @@
 
 #include "../gaEngine/gaCollisionPoint.h"
 #include "../gaEngine/gaDebug.h"
+#include "../gaEngine/World.h"
 
 #include "dfModel.h"
 #include "dfSprites.h"

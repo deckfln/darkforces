@@ -83,6 +83,11 @@ namespace DarkForces {
 		SHOOT = 128,			// Shoot or punch line(see entity_mask) 
 		LAND = 512				// Land on floor of sector
 	};
+
+	enum Keys {
+		NONE = 0,
+		RED = 1
+	};
 }
 
 const int DF_SHIELD_ENERGY = 100;

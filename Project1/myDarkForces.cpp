@@ -59,7 +59,6 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 	fwCylinder bounding(glm::vec3(0), c_radius, c_height);
 
 	m_player = new DarkForces::Actor(DF_ENTITY_OBJECT, "player", bounding, start, c_eyes, c_ankle);
-	m_player->addComponent(new dfComponentActor());
 
 	// controls	
 	m_playerControl = new DarkForces::PlayerControl(m_camera, m_player, c_direction);
