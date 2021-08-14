@@ -308,7 +308,7 @@ void dfSuperSector::sortSectors(void)
 
 	// take the opportunity to create a name for the super sector
 	for (auto sector : m_sectors) {
-		m_name += sector->m_name + ";";
+		m_name += sector->name() + ";";
 	}
 }
 

@@ -48,7 +48,7 @@ class dfLogicTrigger: public gaEntity {
 
 public:
 	dfLogicTrigger(std::string& kind, std::string& sector);
-	dfLogicTrigger(std::string& kind, std::string& sector, int wallIndex);
+	dfLogicTrigger(std::string& kind, const std::string& sector, int wallIndex);
 	dfLogicTrigger(std::string& kind, dfSector* sector, int wallIndex, dfElevator *client);
 	dfLogicTrigger(std::string& kind, dfSector* sector, dfElevator* client);
 	dfLogicTrigger(std::string& kind, dfElevator* client);

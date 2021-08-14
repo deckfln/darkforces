@@ -30,9 +30,11 @@ void DarkForces::Actor::dispatchMessage(gaMessage* message)
 			if (current != m_currentSector) {
 				if (m_currentSector != nullptr) {
 					m_currentSector->event(dfElevator::Message::LEAVE_SECTOR);
+					sendMessage(m_currentSector->name(), DF_MSG_EVENT, DarkForces::MessageEvent::LEAVE_SECTOR);
 				}
 				if (current != nullptr) {
 					current->event(dfElevator::Message::ENTER_SECTOR);
+					sendMessage(current->name(), DF_MSG_EVENT, DarkForces::MessageEvent::ENTER_SECTOR);
 				}
 				m_currentSector = current;
 			}
@@ -54,7 +56,7 @@ void DarkForces::Actor::recordState(void* record)
 	r->actor.entity.classID = flightRecorder::TYPE::DF_ACTOR;
 
 	if (m_currentSector != nullptr) {
-		strncpy_s(r->currentSector, m_currentSector->m_name.c_str(), sizeof(r->currentSector));
+		strncpy_s(r->currentSector, m_currentSector->name().c_str(), sizeof(r->currentSector));
 	}
 	else {
 		r->currentSector[0] = 0;
@@ -82,6 +84,6 @@ void DarkForces::Actor::loadState(flightRecorder::Entity* record)
 void DarkForces::Actor::debugGUIChildClass(void)
 {
 	if (m_currentSector) {
-		ImGui::Text("Sector:%s", m_currentSector->m_name.c_str());
+		ImGui::Text("Sector:%s", m_currentSector->name().c_str());
 	}
 }

@@ -132,7 +132,7 @@ std::vector<glm::vec3> *dfMesh::vertice(void)
 /**
  * set the name of the dfMesh and the associated fwMesh
  */
-void dfMesh::name(std::string& name)
+void dfMesh::name(const std::string& name)
 {
 	m_name = name;
 	if (m_mesh) {

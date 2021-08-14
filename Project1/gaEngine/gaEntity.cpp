@@ -17,6 +17,12 @@ void* frCreate_Entity(void *record) {
 	return new gaEntity((flightRecorder::Entity *)record);
 }
 
+gaEntity::gaEntity(int mclass):
+	m_entityID(g_ids++),
+	m_class(mclass)
+{
+}
+
 gaEntity::gaEntity(int mclass, const std::string& name) :
 	m_entityID(g_ids++),
 	m_name(name),
@@ -325,8 +331,14 @@ void gaEntity::loadState(flightRecorder::Entity* record)
 void gaEntity::debugGUI(bool* close)
 {
 	if (ImGui::CollapsingHeader(m_name.c_str())) {
-		fwObject3D::debugGUIChildClass();
+		ImGui::Checkbox("Physical", &m_physical);
 		debugGUIChildClass();
+
+		if (m_components.size() > 0) {
+			for (auto component : m_components) {
+				component->debugGUIinline();
+			}
+		}
 	}
 }
 

@@ -7,7 +7,7 @@
 dfSign::dfSign(dfMesh *mesh, dfSector* sector, dfWall* wall, float z, float z1) :
 	dfMesh(mesh)
 {
-	m_name = sector->m_name + "(" + std::to_string(wall->m_id) + ")";
+	m_name = sector->name() + "(" + std::to_string(wall->m_id) + ")";
 	buildGeometry(sector, wall, z, z1);
 }
 

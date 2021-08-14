@@ -561,6 +561,9 @@
     <ClCompile Include="darkforces\dfActor.cpp">
       <Filter>Fichiers sources\Dark Forces</Filter>
     </ClCompile>
+    <ClCompile Include="darkforces\dfComponent\InfProgram.cpp">
+      <Filter>Fichiers sources\Dark Forces\dfComponent</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="glad\glad.h">
@@ -1072,6 +1075,9 @@
     </ClInclude>
     <ClInclude Include="darkforces\flightRecorder\frElevator.h">
       <Filter>Fichiers d%27en-tête\DarkForces\flightRecorder</Filter>
+    </ClInclude>
+    <ClInclude Include="darkforces\dfComponent\InfProgram.h">
+      <Filter>Fichiers d%27en-tête\DarkForces\dfComponent</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

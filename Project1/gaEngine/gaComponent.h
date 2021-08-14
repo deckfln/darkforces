@@ -20,7 +20,8 @@ public:
 	gaComponent(int m_type);
 	bool is(int type) { return type == m_type; };
 	void parent(gaEntity* parent) { m_entity = parent; };
-	virtual void dispatchMessage(gaMessage* message) {};// let a component deal with a situation
+	virtual void dispatchMessage(gaMessage* message) {};	// let a component deal with a situation
+	virtual inline void debugGUIinline(void) {};			// display the component in the debugger
 	~gaComponent();
 
 private:

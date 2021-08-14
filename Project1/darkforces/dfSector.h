@@ -13,10 +13,12 @@ using Point = std::array<Coord, 2>;
 
 #include "../gaEngine/AABBoxTree.h"
 #include "../gaEngine/gaMessage.h"
+#include "../gaEngine/gaEntity.h"
+
+#include "dfComponent/InfProgram.h"
 
 class fwCylinder;
 class gaCollisionPoint;
-class gaEntity;
 class dfMesh;
 class dfSuperSector;
 class dfElevator;
@@ -60,7 +62,7 @@ enum dfSectorFlag {
 	SECRET_SECTOR = 524288,			// increments the % secret when entered
 };
 
-class dfSector
+class dfSector : public gaEntity
 {
 	float m_staticMeshFloorAltitude = 0;				// floor altitude for the superSector static mesh
 	float m_staticMeshCeilingAltitude = 0;				// ceiling altitude for the superSector static mesh
@@ -72,6 +74,9 @@ class dfSector
 	float m_ceilingAltitude = 0;						// current ceiling altitude from the INF file
 
 	std::list <dfLogicTrigger*> m_triggers;				// list of all triggers on the sector.
+	std::list <dfLogicTrigger*> m_remoteTriggers;		// list of triggers on other sector with impact on that one
+	std::list <DarkForces::InfProgram*> m_programs;
+
 	int m_eventMask = 0;								// events triggering messages
 	gaMessage m_message;								// message to send
 	std::vector <struct dfVerticeConnexion> m_verticeConnexions;	// get the vertice to the right and the left of each vertice
@@ -84,7 +89,6 @@ class dfSector
 	int m_wallVerticesLen = 0;
 	int m_floorVerticesStart = 0;						// position of the first floor vertice in the super-sector vertices
 	int m_floorVerticesLen = 0;
-	std::list <dfLogicTrigger*> m_remoteTriggers;		// list of triggers on other sector with impact on that one
 	std::list <dfWall*>m_deferedSigns;					// list of signs to add later (likely when the sector is an elevator)
 	std::vector<dfSector *> m_dummy;
 	std::vector<dfSector *> &m_sectorsID = m_dummy;		// all neighbour sectors of the level by ID
@@ -103,9 +107,8 @@ class dfSector
 	void deferedAddSign(dfWall* wall);
 
 public:
-	GameEngine::AABBoxTree m_worldAABB;						// opengl World AABB
+	GameEngine::AABBoxTree m_worldAABB;						// TODO: remove as it is now part of the gaEntity
 
-	std::string m_name = "";
 	int m_id = -1;
 	int m_layer = -1;
 	float m_ambient = 0;
@@ -189,6 +192,7 @@ public:
 
 	bool visible(void);
 	void addTrigger(dfLogicTrigger*);
+	void addProgram(DarkForces::InfProgram*);	// register a program for the sector
 
 	void setAABBtop(float z_level);
 	void setAABBbottom(float z_level);

@@ -58,7 +58,6 @@ void AIMouseBot::tryToMove(void)
  */
 void AIMouseBot::dispatchMessage(gaMessage* message)
 {
-
 	switch (message->m_action) {
 	case gaMessage::Action::WORLD_INSERT:
 		m_transforms = m_entity->pTransform();

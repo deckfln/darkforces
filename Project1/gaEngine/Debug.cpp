@@ -136,6 +136,7 @@ void GameEngine::Debug::render(void)
 		}
 
 		g_Blackbox.debugGUI();
+		/*
 		ImGui::Begin("FlightRecorder v1");
 			if (ImGui::Button("Load##1")) {
 				loadRecorderV1();
@@ -163,7 +164,7 @@ void GameEngine::Debug::render(void)
 				}
 			}
 		ImGui::End();
-
+		*/
 		// display all entities to pick from
 		g_gaWorld.debugGUI();
 	}

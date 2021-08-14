@@ -11,9 +11,53 @@
 #include "dfElevator.h"
 #include "dfFileSystem.h"
 #include "dfVOC.h"
+#include "dfComponent/InfProgram.h"
+#include "dfSector.h"
+#include "dfLevel.h"
 
 static dfFileSystem* dfFiles = nullptr;
 static std::map<std::string, dfVOC*> g_cachedVOC;
+
+/**
+ *
+ */
+dfParseINF::dfParseINF(dfFileSystem* fs, const std::string& file, dfLevel *level)
+{
+	int size;
+
+	dfFiles = fs;
+	m_level = level;
+	char* sec = fs->load(DF_DARK_GOB, file + ".INF", size);
+	std::istringstream infile(sec);
+	std::string line, dump;
+	std::map<std::string, std::string> tokenMap;
+
+	while (std::getline(infile, line))
+	{
+		// ignore comment
+		if (line.length() == 0) {
+			continue;
+		}
+
+		// per token
+		std::vector <std::string> tokens = dfParseTokens(line, tokenMap);
+		if (tokens.size() == 0) {
+			continue;
+		}
+
+		if (tokens[0] == "items") {
+			m_items = std::stoi(tokens[1]);
+		}
+		else if (tokens[0] == "item:") {
+			if (tokens[1] == "sector") {
+				parseSector(infile, tokens[3]);
+			}
+			else if (tokens[1] == "line") {
+				parseLine(infile, tokens[3], std::stoi(tokens[5]));
+			}
+		}
+	}
+}
 
 std::vector<std::string>& dfParseTokens(std::string& line, std::map<std::string, std::string>& tokenMap)
 {
@@ -87,44 +131,6 @@ std::vector<std::string>& dfParseTokens(std::string& line, std::map<std::string,
 	return tokens;
 }
 
-dfParseINF::dfParseINF(dfFileSystem* fs, std::string file)
-{
-	int size;
-
-	dfFiles = fs;
-
-	char* sec = fs->load(DF_DARK_GOB, file + ".INF", size);
-	std::istringstream infile(sec);
-	std::string line, dump;
-	std::map<std::string, std::string> tokenMap;
-
-	while (std::getline(infile, line))
-	{
-		// ignore comment
-		if (line.length() == 0) {
-			continue;
-		}
-
-		// per token
-		std::vector <std::string> tokens = dfParseTokens(line, tokenMap);
-		if (tokens.size() == 0) {
-			continue;
-		}
-
-		if (tokens[0] == "items") {
-			m_items = std::stoi(tokens[1]);
-		}
-		else if (tokens[0] == "item:") {
-			if (tokens[1] == "sector") {
-				parseSector(infile, tokens[3]);
-			}
-			else if (tokens[1] == "line") {
-				parseLine(infile, tokens[3], std::stoi(tokens[5]));
-			}
-		}
-	}
-}
-
 /**
  * Parse the message tokens
  */
@@ -182,23 +188,15 @@ static gaMessage* parseMessage(std::vector<std::string>& tokens)
 	return new gaMessage(action, value, client);
 }
 
-dfParseINF::~dfParseINF(void)
-{
-	for (auto elevator : m_elevators) {
-		delete elevator;
-	}
-	for (auto trigger: m_triggers) {
-		delete trigger;
-	}
-}
-
-void dfParseINF::parseSector(std::istringstream& infile, std::string& sector)
+void dfParseINF::parseSector(std::istringstream& infile, const std::string& sector)
 {
 	std::string line, dump;
 	bool start = false;
 
+	dfSector* pSector = m_level->findSector(sector);
 	dfElevator* elevator = nullptr;
-	dfLogicTrigger* trigger = nullptr;
+	DarkForces::InfProgram* program = nullptr;
+
 	dfLogicStop* stop = nullptr;
 	std::map<std::string, std::string> tokenMap;
 
@@ -225,9 +223,8 @@ void dfParseINF::parseSector(std::istringstream& infile, std::string& sector)
 			if (elevator) {
 				m_elevators.push_back(elevator);
 			}
-			else if (trigger) {
-				trigger->config();
-				m_triggers.push_back(trigger);
+			else if (program) {
+				pSector->addProgram(program);
 			}
 			break;
 		}
@@ -240,7 +237,7 @@ void dfParseINF::parseSector(std::istringstream& infile, std::string& sector)
 					std::cerr << "*class: trigger* not implemented" << std::endl;
 				}
 				else {
-					trigger = new dfLogicTrigger(tokens[2], sector);
+					program = new DarkForces::InfProgram(tokens[2], sector);
 				}
 			}
 		}
@@ -263,21 +260,21 @@ void dfParseINF::parseSector(std::istringstream& infile, std::string& sector)
 			if (elevator) {
 				elevator->eventMask(std::stoi(tokens[1]));
 			}
-			else if (trigger) {
-				trigger->eventMask(std::stoi(tokens[1]));
+			else if (program) {
+				program->eventMask(std::stoi(tokens[1]));
 			}
 		}
 		else if (tokens[0] == "key:") {
 			if (elevator) {
 				elevator->keys(tokens[1]);
 			}
-			else if (trigger) {
+			else if (program) {
 				std::cerr << "dfParseINF::parseSector kkey not implmented for  triggers" << std::endl;
 			}
 		}
 		else if (tokens[0] == "client:") {
-			if (trigger) {
-				trigger->client(tokens[1]);
+			if (program) {
+				program->client(tokens[1]);
 			}
 		}
 		else if (tokens[0] == "message:") {
@@ -290,8 +287,8 @@ void dfParseINF::parseSector(std::istringstream& infile, std::string& sector)
 					std::cerr << "dfParseINF::parseSector stop/messages not in order for " << sector << " stop #" << nbStops << " message #" << i << std::endl;
 				}
 			}
-			else if (trigger) {
-				trigger->message( parseMessage(tokens) );
+			else if (program) {
+				program->message( parseMessage(tokens) );
 			}
 		}
 		else if (tokens[0] == "stop:") {
@@ -358,7 +355,7 @@ void dfParseINF::parseSector(std::istringstream& infile, std::string& sector)
 	}
 }
 
-void dfParseINF::parseLine(std::istringstream& infile, std::string &sector, int wallIndex)
+void dfParseINF::parseLine(std::istringstream& infile, const std::string &sector, int wallIndex)
 {
 	std::string line, dump;
 	bool start = false;
@@ -408,5 +405,15 @@ void dfParseINF::parseLine(std::istringstream& infile, std::string &sector, int 
 		else if (tokens[0] == "sound:") {
 			std::cerr << "dfParseINF::parseLine sound: not implemented" << std::endl;
 		}
+	}
+}
+
+dfParseINF::~dfParseINF(void)
+{
+	for (auto elevator : m_elevators) {
+		delete elevator;
+	}
+	for (auto trigger : m_triggers) {
+		delete trigger;
 	}
 }

@@ -107,8 +107,8 @@ void dfElevator::init(const std::string& kind)
  *
  */
 dfElevator::dfElevator(std::string& kind, dfSector* sector, dfLevel* parent):
-	gaEntity(DF_ENTITY_ELEVATOR, sector->m_name),
-	m_sector(sector->m_name),
+	gaEntity(DF_ENTITY_ELEVATOR, sector->name()),
+	m_sector(sector->name()),
 	m_pSector(sector),
 	m_parent(parent)
 {
@@ -118,7 +118,7 @@ dfElevator::dfElevator(std::string& kind, dfSector* sector, dfLevel* parent):
 /**
  *
  */
-dfElevator::dfElevator(std::string& kind, std::string& sector):
+dfElevator::dfElevator(std::string& kind, const std::string& sector):
 	gaEntity(DF_ENTITY_ELEVATOR, sector),
 	m_sector(sector)
 {
@@ -289,7 +289,7 @@ dfMesh *dfElevator::buildGeometry(fwMaterial* material, std::vector<dfBitmap*>& 
 		}
 
 		if (m_mesh->buildMesh()) {
-			m_mesh->name(m_pSector->m_name);
+			m_mesh->name(m_pSector->name());
 			m_pSector->addObject(m_mesh);
 		}
 		else {

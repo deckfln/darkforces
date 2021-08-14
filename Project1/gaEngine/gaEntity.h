@@ -25,7 +25,7 @@ struct recordEntity;
 
 using namespace GameEngine;
 
-class gaEntity: public fwObject3D
+class gaEntity : public fwObject3D
 {
 protected:
 	std::string m_name;
@@ -58,6 +58,7 @@ protected:
 	std::map<std::string, gaEntity*> m_sittingOnTop;// cached list of the entities sitting on top of that one
 
 public:
+	gaEntity(int mclass);
 	gaEntity(int mclass, const std::string& name);
 	gaEntity(int mclass, const std::string& name, const glm::vec3& position);
 	gaEntity(flightRecorder::Entity* record);
@@ -68,6 +69,7 @@ public:
 	inline bool is(int mclass) { return m_class == mclass; };
 
 	inline const std::string& name(void) { return m_name; };
+	inline void name(const std::string& name) { m_name = name; };
 	inline bool physical(void) { return m_physical; };
 	inline void physical(bool p) { m_physical = p; };
 	inline bool gravity(void) { return m_gravity; };
@@ -93,7 +95,9 @@ public:
 
 	float radius(void);									// maximum radius of the entity
 
-	gaComponent *findComponent(int type);				// check all components to find one with the proper type
+	gaComponent* findComponent(int type);				// check all components to find one with the proper type
+	inline uint32_t components(void) { return m_components.size(); };
+
 	void addChild(gaEntity* entity);					// add an entity inside that one (and increase the AABB if needed)
 
 	bool collideAABB(const fwAABBox& box);				// quick test to find AABB collision

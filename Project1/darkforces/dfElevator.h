@@ -114,7 +114,7 @@ private:
 
 public:
 	dfElevator(std::string& kind, dfSector* sector, dfLevel *parent);
-	dfElevator(std::string& kind, std::string& name);
+	dfElevator(std::string& kind, const std::string& name);
 	dfElevator(dfElevator *source);
 
 	void speed(float speed) { m_speed = speed; };

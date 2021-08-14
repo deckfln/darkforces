@@ -116,7 +116,7 @@ public:
 	void updateGeometryTextures(int start, int nb);
 	int nbVertices(void);									// current vertices on the geometry
 	std::vector<glm::vec3>* vertice(void);					// address of the vertices
-	void name(std::string& name);
+	void name(const std::string& name);
 
 	void moveVertices(glm::vec3& center);
 	void centerOnGeometryXZ(glm::vec3& target);

@@ -75,18 +75,18 @@ dfLevel::dfLevel(dfFileSystem* fs, std::string file)
 
 			dfSector* sector = new dfSector(data, m_sectorsID);
 			sector->m_id = nSector;
-			if (sector->m_name == "") {
-				sector->m_name = std::to_string(nSector);
+			if (sector->name() == "") {
+				sector->name(std::to_string(nSector));
 			}
 			int layer = sector->m_layer;
 
 			// record the sector in the global list
 			// beware of sectors with the same !
-			if (m_sectorsName.count(sector->m_name) == 0) {
-				m_sectorsName[sector->m_name] = sector;
+			if (m_sectorsName.count(sector->name()) == 0) {
+				m_sectorsName[sector->name()] = sector;
 			}
 			else {
-				m_sectorsName[sector->m_name + "(1)"] = sector;
+				m_sectorsName[sector->name() + "(1)"] = sector;
 			}
 			m_sectorsID[nSector] = sector;
 
@@ -124,7 +124,14 @@ dfLevel::dfLevel(dfFileSystem* fs, std::string file)
 	}
 
 	// load and distribute the INF file
-	m_inf = new dfParseINF(fs, file);
+	m_inf = new dfParseINF(fs, file, this);
+
+	// find all sectors with a InfProgram component and add them to the world
+	for (auto sector : m_sectorsID) {
+		if (sector->components() > 0) {
+			g_gaWorld.addClient(sector);
+		}
+	}
 
 	// bind the sectors to the elevator logic
 	// bind the elevator logic to the level
@@ -139,12 +146,13 @@ dfLevel::dfLevel(dfFileSystem* fs, std::string file)
 	}
 
 	// currently, only INF elevators exist in m_inf->triggers
-	// bind the trigger to the elevator
+	// if the trigger is related to an elevator, bind them
 	for (auto trigger : m_inf->m_triggers) {
 		g_gaWorld.addClient(trigger);
 		dfSector* sector = m_sectorsName[trigger->sector()];
-		dfElevator* elevator = m_elevators[sector->m_name];
+		dfElevator* elevator = m_elevators[sector->name()];
 
+		sector->addTrigger(trigger);
 		trigger->elevator(elevator);
 	}
 
@@ -503,7 +511,7 @@ dfSector* dfLevel::findSector(const glm::vec3& position)
 		sector = m_lastSuperSector->findSector(position);
 		if (sector) {
 #ifdef _DEBUG
-			gaDebugLog(LOW_DEBUG, "dfLevel::findSector", " leave=" + m_lastSector->m_name + " enter=" + sector->m_name);
+			gaDebugLog(LOW_DEBUG, "dfLevel::findSector", " leave=" + m_lastSector->name() + " enter=" + sector->name());
 #endif
 //			m_lastSector->event(dfElevator::Message::LEAVE_SECTOR);
 
@@ -526,11 +534,11 @@ dfSector* dfLevel::findSector(const glm::vec3& position)
 #ifdef _DEBUG
 			std::string message = "dfLevel::findSector leave=";
 			if (m_lastSector) {
-				message += m_lastSector->m_name;
+				message += m_lastSector->name();
 			}
 			gaDebugLog(LOW_DEBUG, "dfLevel::findSector", message);
 
-			message = " enter=" + sector->m_name;
+			message = " enter=" + sector->name();
 			gaDebugLog(LOW_DEBUG, "dfLevel::findSector", message);
 
 #endif
@@ -551,6 +559,11 @@ dfSector* dfLevel::findSector(const glm::vec3& position)
  * find sector by name
  */
 dfSector* dfLevel::findSector(char* name)
+{
+	return m_sectorsName[name];
+}
+
+dfSector* dfLevel::findSector(const std::string& name)
 {
 	return m_sectorsName[name];
 }

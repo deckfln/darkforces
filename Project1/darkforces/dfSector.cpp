@@ -22,8 +22,11 @@
 #include "dfLevel.h"
 
 dfSector::dfSector(std::istringstream& infile, std::vector<dfSector*>& sectorsID):
+	gaEntity(DF_ENTITY_SECTOR),
 	m_sectorsID(sectorsID)
 {
+	physical(false);	// object is a virtual entity (cannot collide)
+
 	int nbVertices;
 	int currentVertice = 0;
 
@@ -203,12 +206,6 @@ void dfSector::setTriggerFromFloor(dfLogicTrigger* trigger)
 void dfSector::currentFloorAltitude(float z)
 {
 	m_floorAltitude = z;
-
-	/*
-	for (auto trigger : m_triggers) {
-		trigger->moveZ(z);
-	}
-	*/
 }
 
 /**
@@ -254,12 +251,6 @@ float dfSector::staticCeilingAltitude(void)
 void dfSector::ceiling(float z)
 {
 	m_ceilingAltitude = z;
-
-	/*
-	for (auto trigger : m_triggers) {
-		trigger->moveCeiling(z);
-	}
-	*/
 }
 
 /**
@@ -932,6 +923,15 @@ void dfSector::addTrigger(dfLogicTrigger* trigger)
 {
 	m_triggers.push_back(trigger);
 }
+/**
+ * register a program for the sector
+ */
+void dfSector::addProgram(DarkForces::InfProgram* program)
+{
+	program->compile();
+	addComponent(program);
+	m_programs.push_back(program);	// keep track to delete the program when needed
+}
 
 /**
  * Update the AABB box
@@ -959,5 +959,9 @@ dfSector::~dfSector()
 {
 	for (auto wall: m_walls) {
 		delete wall;
+	}
+
+	for (auto program : m_programs) {
+		delete program;
 	}
 }
