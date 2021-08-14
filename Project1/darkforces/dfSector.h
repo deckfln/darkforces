@@ -199,5 +199,8 @@ public:
 
 	void elevator(dfElevator* elevator) { m_elevator = elevator; };
 
+	// debugger
+	void debugGUIChildClass(void) override;			// Add dedicated component debug the entity
+
 	~dfSector();
 };

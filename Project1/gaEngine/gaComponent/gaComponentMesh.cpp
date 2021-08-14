@@ -1,5 +1,7 @@
 #include "gaComponentMesh.h"
 
+#include <imgui.h>
+
 #include "../../alEngine/alSound.h"
 
 #include "../World.h"
@@ -72,6 +74,17 @@ void ComponentMesh::dispatchMessage(gaMessage* message)
 	case gaMessage::WORLD_REMOVE:
 		g_gaWorld.remove2scene(this);
 		break;
+	}
+}
+
+/**
+ * display the component in the debugger
+ */
+void ComponentMesh::debugGUIinline(void)
+{
+	if (ImGui::TreeNode("Mesh")) {
+		ImGui::Text("ID %d", id());
+		ImGui::TreePop();
 	}
 }
 

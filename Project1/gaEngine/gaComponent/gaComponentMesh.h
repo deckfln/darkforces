@@ -15,7 +15,8 @@ namespace GameEngine
 		ComponentMesh(void);
 		ComponentMesh(fwGeometry* _geometry, fwMaterial* _material);
 	
-		void dispatchMessage(gaMessage* message) override;				// let a component deal with a situation
+		void dispatchMessage(gaMessage* message) override;	// let a component deal with a situation
+		void debugGUIinline(void) override;					// display the component in the debugger
 
 		~ComponentMesh();
 	};

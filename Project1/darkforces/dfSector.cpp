@@ -6,6 +6,7 @@
 #include <array>
 #include <algorithm>
 #include <glm/glm.hpp>
+#include <imgui.h>
 
 #include "../config.h"
 
@@ -952,6 +953,18 @@ void dfSector::setAABBbottom(float z_level)
 	m_worldAABB.m_p.y = z_level / 10.0f;	// convert to opengl space
 	if (m_super) {
 		m_super->extendAABB(m_worldAABB);
+	}
+}
+
+/**
+ * Add dedicated component debug the entity
+ */
+void dfSector::debugGUIChildClass(void)
+{
+	if (ImGui::TreeNode("dfSector")) {
+		ImGui::Text("ID:%d", m_id);
+		ImGui::Text("Ambient:%d", m_ambient);
+		ImGui::TreePop();
 	}
 }
 

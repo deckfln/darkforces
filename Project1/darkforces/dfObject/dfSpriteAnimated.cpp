@@ -224,20 +224,24 @@ static std::map<uint32_t, const char*> debugStatesScenery = {
  */
 void dfSpriteAnimated::debugGUIChildClass(void)
 {
-	dfObject::debugGUIChildClass();
-	if (m_logics & DF_LOGIC_ENEMIES) {
-		ImGui::Text("State: %s", debugStatesEnemies[static_cast<uint32_t>(m_state)]);
+	dfSprite::debugGUIChildClass();
+
+	if (ImGui::TreeNode("dfSpriteAnimated")) {
+		if (m_logics & DF_LOGIC_ENEMIES) {
+			ImGui::Text("State: %s", debugStatesEnemies[static_cast<uint32_t>(m_state)]);
+		}
+		else if (m_logics & dfLogic::SCENERY) {
+			ImGui::Text("State: %s", debugStatesScenery[static_cast<uint32_t>(m_state)]);
+		}
+		else {
+			ImGui::Text("State: %d", static_cast<uint32_t>(m_state));
+		}
+		ImGui::Text("Frame: %d", static_cast<uint32_t>(m_frame));
+		ImGui::Text("time last frame: %d", m_lastFrame);
+		ImGui::Text("time current frame: %d", m_currentFrame);
+		ImGui::Text("frame rate: %d", m_source->framerate(m_state));
+		ImGui::TreePop();
 	}
-	else if(m_logics & dfLogic::SCENERY) {
-		ImGui::Text("State: %s", debugStatesScenery[static_cast<uint32_t>(m_state)]);
-	}
-	else {
-		ImGui::Text("State: %d", static_cast<uint32_t>(m_state));
-	}
-	ImGui::Text("Frame: %d", static_cast<uint32_t>(m_frame));
-	ImGui::Text("time last frame: %d", m_lastFrame);
-	ImGui::Text("time current frame: %d", m_currentFrame);
-	ImGui::Text("frame rate: %d", m_source->framerate(m_state));
 }
 
 dfSpriteAnimated::~dfSpriteAnimated()

@@ -178,9 +178,13 @@ void dfObject3D::loadState(flightRecorder::Entity* r)
 void dfObject3D::debugGUIChildClass(void)
 {
 	dfObject::debugGUIChildClass();
-	ImGui::Text("frame: %d", m_lastFrame);
-	if (m_vue) {
-		ImGui::Text("VUE frame: %d", m_vue->currentFrame());
+
+	if (ImGui::TreeNode("dfObject3D")) {
+		ImGui::Text("frame: %d", m_lastFrame);
+		if (m_vue) {
+			ImGui::Text("VUE frame: %d", m_vue->currentFrame());
+		}
+		ImGui::TreePop();
 	}
 }
 

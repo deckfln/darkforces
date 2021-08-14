@@ -2,6 +2,7 @@
 
 #include "../../config.h"
 #include "../dfObject.h"
+#include <imgui.h>
 
 dfComponentLogic::dfComponentLogic() :
 	gaComponent(DF_COMPONENT_LOGIC),
@@ -12,7 +13,7 @@ dfComponentLogic::dfComponentLogic() :
 /**
  * add a logic
  */
-void dfComponentLogic::logic(int logic)
+void dfComponentLogic::logic(uint32_t logic)
 {
 	m_logics |= logic;
 }
@@ -117,6 +118,44 @@ void dfComponentLogic::dispatchMessage(gaMessage* message)
 			break;
 		}
 		break;
+	}
+}
+
+static std::map<uint32_t, const char*> debugLogic = {
+	{1, "SCENERY"},
+	{2, "ANIM"},
+	{4, "OFFICER"},
+	{8, "COMMANDO"},
+	{16, "TROOP"},
+	{32, "RED_KEY"},
+	{64, "INTDROID"},
+	{128, "ITEM_SHIELD"},
+	{256, "ITEM_ENERGY"},
+	{512, "LIFE"},
+	{1024, "REVIVE"},
+	{2048, "MOUSEBOT"},
+	{4096, "KEY_TRIGGER"},
+	{8192, "ITEM_RIFLE"},
+	{16384, "ITEM_POWER"},
+	{32768, "ITEM_BATTERY"},
+	{65536, "DEAD_MOUSE"}
+};
+
+/**
+ * display the component in the debugger
+ */
+void dfComponentLogic::debugGUIinline(void)
+{
+	if (ImGui::TreeNode("dfComponentLogic")) {
+		std::string sLogic = "";
+		for (auto& logic : debugLogic) {
+			if (m_logics & logic.first) {
+				sLogic.append("|");
+				sLogic.append(logic.second);
+			}
+		}
+		ImGui::Text("Logic: %s", sLogic.c_str());
+		ImGui::TreePop();
 	}
 }
 

@@ -407,12 +407,15 @@ void fwObject3D::debugGUI(void)
  */
 void fwObject3D::debugGUIChildClass(void)
 {
-	if (m_name != "") {
-		ImGui::Text(m_name.c_str());
+	if (ImGui::TreeNode("fwObject3D")) {
+		if (m_name != "") {
+			ImGui::Text(m_name.c_str());
+		}
+		ImGui::Text("Position %.2f %.2f %.2f", m_position.x, m_position.y, m_position.z);
+		ImGui::Text("Rotation %.2f %.2f %.2f", m_rotation.x, m_rotation.y, m_rotation.z);
+		ImGui::Text("Scale    %.2f %.2f %.2f", m_scale.x, m_scale.y, m_scale.z);
+		ImGui::TreePop();
 	}
-	ImGui::Text("Position %.2f %.2f %.2f", m_position.x, m_position.y, m_position.z);
-	ImGui::Text("Rotation %.2f %.2f %.2f", m_rotation.x, m_rotation.y, m_rotation.z);
-	ImGui::Text("Scale    %.2f %.2f %.2f", m_scale.x, m_scale.y, m_scale.z);
 }
 
 fwObject3D::~fwObject3D()

@@ -1,5 +1,7 @@
 #include "dfComponentActor.h"
 
+#include <imgui.h>
+
 #include "../../config.h"
 
 #include "../../gaEngine/World.h"
@@ -17,7 +19,7 @@ dfComponentActor::dfComponentActor(void):
 /**
  * Increase or decrease the shield and update the HUD
  */
-void dfComponentActor::addShield(int value)
+void dfComponentActor::addShield(int32_t value)
 {
 	m_shield += value;
 	if (m_shield > m_maxShield) {
@@ -31,7 +33,7 @@ void dfComponentActor::addShield(int value)
 /**
  * Increase or decrease the energy and update the HUD
  */
-void dfComponentActor::addEnergy(int value)
+void dfComponentActor::addEnergy(int32_t value)
 {
 	m_energy += value;
 	if (m_energy > m_maxEnergy) {
@@ -45,7 +47,7 @@ void dfComponentActor::addEnergy(int value)
 /**
  * hit by a bullet, reduce shield and life
  */
-void dfComponentActor::hitBullet(int value)
+void dfComponentActor::hitBullet(int32_t value)
 {
 	if (m_shield > 0) {
 		m_shield -= value;
@@ -111,6 +113,21 @@ void dfComponentActor::die(void)
 	((dfSpriteAnimated*)m_entity)->hasCollider(false);
 
 	gaDebugLog(1, "dfActor::die", "remove " + m_entity->name() + " the entity from the world");
+}
+
+/**
+ * display the component in the debugger
+ */
+void dfComponentActor::debugGUIinline(void)
+{
+	if (ImGui::TreeNode("dfComponentActor")) {
+		ImGui::Text("Shield: %d / %d", m_shield, m_maxShield);
+		ImGui::Text("Energy: %d / %d", m_energy, m_maxEnergy);
+		ImGui::Text("Battery: %d", m_battery);
+		ImGui::Text("Life: %d", m_life);
+		ImGui::Text("Keys: %d", m_keys);
+		ImGui::TreePop();
+	}
 }
 
 dfComponentActor::~dfComponentActor()

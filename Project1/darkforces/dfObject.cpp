@@ -369,15 +369,20 @@ static std::map<uint32_t, const char*> debugLogic = {
  */
 void dfObject::debugGUIChildClass(void)
 {
-	std::string sLogic = "";
-	for (auto& logic : debugLogic) {
-		if (m_logics & logic.first) {
-			sLogic.append("|");
-			sLogic.append(logic.second);
+	gaEntity::debugGUIChildClass();
+
+	if (ImGui::TreeNode("dfObject")) {
+		std::string sLogic = "";
+		for (auto& logic : debugLogic) {
+			if (m_logics & logic.first) {
+				sLogic.append("|");
+				sLogic.append(logic.second);
+			}
 		}
+		ImGui::Text("Logic: %s", sLogic.c_str());
+		ImGui::Text("LevelPos %.2f %.2f %.2f", m_position_lvl.x, m_position_lvl.y, m_position_lvl.z);
+		ImGui::TreePop();
 	}
-	ImGui::Text("Logic: %s", sLogic.c_str());
-	ImGui::Text("LevelPos %.2f %.2f %.2f", m_position_lvl.x, m_position_lvl.y, m_position_lvl.z);
 }
 
 dfObject::~dfObject()

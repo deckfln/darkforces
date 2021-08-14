@@ -331,12 +331,18 @@ void gaEntity::loadState(flightRecorder::Entity* record)
 void gaEntity::debugGUI(bool* close)
 {
 	if (ImGui::CollapsingHeader(m_name.c_str())) {
-		ImGui::Checkbox("Physical", &m_physical);
+		if (ImGui::TreeNode("gaEntity")) {
+			ImGui::Checkbox("Physical", &m_physical);
+			ImGui::TreePop();
+		}
 		debugGUIChildClass();
 
 		if (m_components.size() > 0) {
-			for (auto component : m_components) {
-				component->debugGUIinline();
+			if (ImGui::TreeNode("components")) {
+				for (auto component : m_components) {
+					component->debugGUIinline();
+				}
+				ImGui::TreePop();
 			}
 		}
 	}
