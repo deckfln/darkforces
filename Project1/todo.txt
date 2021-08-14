@@ -57,10 +57,12 @@ bug
 [ ] move alSound from fwMesh into components of entity
 [X] refactor how player/sectors interact (no more in dfLevel during a draw)
 [x] refactor sector message handling (move dfSector into an entity for 'trigger standard')
-[ ] refactor sector message handling (move dfSector into an entity for 'elevator change_light')
+[X] refactor sector message handling (move dfSector into an entity for 'elevator change_light')
 [ ] refactor sector message handling (move dfSector into an entity for 'elevator *')
 [X] sector post_top appear twice as entity, why ?
 [ ] debug messages generated in-frame. Currently only messages available start-of-frame are recorded
 [X] replace DarkForces dfActor by dfComponentActor and add the component to any actors (like enemies)
 [X] refactor the debugger to display entities by class (in treeviewmode)
 [ ] save the gaComponent's in the flightDebugger
+[ ] convert InfProgram=>InfStandardTrigger (from ComponentInf) and dfComponentElevator to dfInfElevator (from dfComponentInf)
+[ ] ParseINF::parseSector cannot find "plan_spot"

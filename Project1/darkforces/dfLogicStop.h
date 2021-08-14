@@ -11,6 +11,12 @@
 
 class dfSector;
 
+namespace DarkForces {
+	namespace Component {
+		class Elevator;
+	}
+}
+
 class dfLogicStop {
 public:
 	enum class Action {
@@ -53,6 +59,7 @@ public:
 	dfLogicStop(dfElevator* parent, float altitude, dfSector* sector, float time);
 	dfLogicStop(dfElevator* parent, float altitude, std::string& action);
 	dfLogicStop(dfElevator* parent, float altitude, float time);
+	dfLogicStop(const std::string& sector);
 
 	void absolute(float absolute) { m_flag |= 1; m_absolute = absolute; };
 	void relative(float relative) { m_flag |= 2; m_relatiave = relative; };

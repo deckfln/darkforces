@@ -24,6 +24,7 @@ dfLogicStop::dfLogicStop(dfElevator* parent, float altitude, dfSector* sector, s
 	m_relatiave(altitude),
 	m_pSector(sector)
 {
+	m_name = "STOP:" + m_parent->name();
 	dfLogicStop::action(action);
 }
 
@@ -34,6 +35,7 @@ dfLogicStop::dfLogicStop(dfElevator* parent, float altitude, dfSector* sector, f
 	m_pSector(sector),
 	m_animation_time(time)
 {
+	m_name = "STOP:" + m_parent->name();
 }
 
 dfLogicStop::dfLogicStop(dfElevator* parent, float altitude, std::string& action):
@@ -41,6 +43,7 @@ dfLogicStop::dfLogicStop(dfElevator* parent, float altitude, std::string& action
 	m_flag(1 | 16),
 	m_absolute(altitude)
 {
+	m_name = "STOP:" + m_parent->name();
 	dfLogicStop::action(action);
 }
 
@@ -50,6 +53,12 @@ dfLogicStop::dfLogicStop(dfElevator* parent, float altitude, float time):
 	m_absolute(altitude),
 	m_animation_time(time)
 {
+	m_name = "STOP:" + m_parent->name();
+}
+
+dfLogicStop::dfLogicStop(const std::string& sector)
+{
+	m_name = "STOP:" + sector;
 }
 
 /**

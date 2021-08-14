@@ -136,6 +136,8 @@
     <ClCompile Include="darkforces\dfCollision.cpp" />
     <ClCompile Include="darkforces\dfComponent\dfComponentActor.cpp" />
     <ClCompile Include="darkforces\dfComponent\AIMouseBot.cpp" />
+    <ClCompile Include="darkforces\dfComponent\dfComponentElevator.cpp" />
+    <ClCompile Include="darkforces\dfComponent\dfComponentElevator\dfComponentElevatorLight.cpp" />
     <ClCompile Include="darkforces\dfComponent\dfComponentLogic.cpp" />
     <ClCompile Include="darkforces\dfComponent\InfProgram.cpp" />
     <ClCompile Include="darkforces\dfFileGOB.cpp" />
@@ -291,6 +293,8 @@
     <ClInclude Include="darkforces\dfCollision.h" />
     <ClInclude Include="darkforces\dfComponent\dfComponentActor.h" />
     <ClInclude Include="darkforces\dfComponent\AIMouseBot.h" />
+    <ClInclude Include="darkforces\dfComponent\dfComponentElevator.h" />
+    <ClInclude Include="darkforces\dfComponent\dfComponentElevator\dfComponentElevatorLight.h" />
     <ClInclude Include="darkforces\dfComponent\dfComponentLogic.h" />
     <ClInclude Include="darkforces\dfComponent\InfProgram.h" />
     <ClInclude Include="darkforces\dfFileGOB.h" />

@@ -21,6 +21,7 @@
 #include "dfParseINF.h"
 #include "dfSign.h"
 #include "dfLevel.h"
+#include "dfComponent/dfComponentElevator.h"
 
 dfSector::dfSector(std::istringstream& infile, std::vector<dfSector*>& sectorsID):
 	gaEntity(DF_ENTITY_SECTOR),
@@ -935,6 +936,15 @@ void dfSector::addProgram(DarkForces::InfProgram* program)
 }
 
 /**
+ * register a INF elevator on the sector
+ */
+void dfSector::addElevator(DarkForces::Component::Elevator* elevator)
+{
+	addComponent(elevator);
+	m_elevators.push_back(elevator);	// keep track to delete the program when needed
+}
+
+/**
  * Update the AABB box
  */
 void dfSector::setAABBtop(float z_level)
@@ -976,5 +986,8 @@ dfSector::~dfSector()
 
 	for (auto program : m_programs) {
 		delete program;
+	}
+	for (auto elevator: m_elevators) {
+		delete elevator;
 	}
 }

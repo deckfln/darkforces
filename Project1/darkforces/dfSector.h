@@ -24,6 +24,12 @@ class dfSuperSector;
 class dfElevator;
 class dfLogicTrigger;
 
+namespace DarkForces {
+	namespace Component {
+		class Elevator;
+	}
+}
+
 /**
  * Connection of each vertice to the left and the right
  */
@@ -75,7 +81,8 @@ class dfSector : public gaEntity
 
 	std::list <dfLogicTrigger*> m_triggers;				// list of all triggers on the sector.
 	std::list <dfLogicTrigger*> m_remoteTriggers;		// list of triggers on other sector with impact on that one
-	std::list <DarkForces::InfProgram*> m_programs;
+	std::list <DarkForces::InfProgram*> m_programs;		// triggers standard bound to the sector
+	std::list <DarkForces::Component::Elevator*> m_elevators;	// elevator(s) bound to the sector
 
 	int m_eventMask = 0;								// events triggering messages
 	gaMessage m_message;								// message to send
@@ -192,8 +199,8 @@ public:
 
 	bool visible(void);
 	void addTrigger(dfLogicTrigger*);
-	void addProgram(DarkForces::InfProgram*);	// register a program for the sector
-
+	void addProgram(DarkForces::InfProgram*);	// register a INF trigger standard on the sector
+	void addElevator(DarkForces::Component::Elevator* elevator); // register a INF elevator on the sector
 	void setAABBtop(float z_level);
 	void setAABBbottom(float z_level);
 

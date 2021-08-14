@@ -12,8 +12,9 @@
 #include "dfFileSystem.h"
 #include "dfVOC.h"
 #include "dfComponent/InfProgram.h"
+#include "dfComponent/dfComponentElevator/dfComponentElevatorLight.h"
+
 #include "dfSector.h"
-//#include "dfLevel.h"
 
 static dfFileSystem* dfFiles = nullptr;
 static std::map<std::string, dfVOC*> g_cachedVOC;
@@ -194,8 +195,14 @@ void dfParseINF::parseSector(std::istringstream& infile, const std::string& sect
 	bool start = false;
 
 	dfSector* pSector = m_level->findSector(sector);
-	dfElevator* elevator = nullptr;
-	DarkForces::InfProgram* program = nullptr;
+	if (pSector == nullptr) {
+		gaDebugLog(1, "dfParseINF::parseSector", "sector " + sector + "not in the level");
+		return;
+	}
+
+	dfElevator* elevator = nullptr;				// for an elevator
+	DarkForces::InfProgram* program = nullptr;	// for a trigger standard
+	DarkForces::Component::ElevatorLight* light = nullptr;	// for elevator change_light
 
 	dfLogicStop* stop = nullptr;
 	std::map<std::string, std::string> tokenMap;
@@ -226,11 +233,19 @@ void dfParseINF::parseSector(std::istringstream& infile, const std::string& sect
 			else if (program) {
 				pSector->addProgram(program);
 			}
+			else if (light && pSector) {
+				pSector->addElevator(light);
+			}
 			break;
 		}
 		else if (tokens[0] == "class:") {
 			if (tokens[1] == "elevator") {
-				elevator = new dfElevator(tokens[2], sector);
+				if (tokens[2] == "change_light") {
+					light = new DarkForces::Component::ElevatorLight(pSector);
+				}
+				else {
+					elevator = new dfElevator(tokens[2], sector);
+				}
 			}
 			else if (tokens[1] == "trigger") {
 				if (tokens.size() == 2) {
@@ -244,6 +259,9 @@ void dfParseINF::parseSector(std::istringstream& infile, const std::string& sect
 		else if (tokens[0] == "speed:") {
 			if (elevator) {
 				elevator->speed(std::stof(tokens[1]));
+			}
+			else if (light) {
+				light->speed(std::stof(tokens[1]));
 			}
 		}
 		else if (tokens[0] == "center:") {
@@ -262,6 +280,9 @@ void dfParseINF::parseSector(std::istringstream& infile, const std::string& sect
 			}
 			else if (program) {
 				program->eventMask(std::stoi(tokens[1]));
+			}
+			else if (light) {
+				light->eventMask(std::stoi(tokens[1]));
 			}
 		}
 		else if (tokens[0] == "key:") {
@@ -290,9 +311,16 @@ void dfParseINF::parseSector(std::istringstream& infile, const std::string& sect
 			else if (program) {
 				program->message( parseMessage(tokens) );
 			}
+			else if (elevator || light) {
+				gaDebugLog(1, "dfParseINF::parseSector", "message: not implement for elevators");
+			}
 		}
 		else if (tokens[0] == "stop:") {
-			stop = new dfLogicStop(elevator);
+			if (elevator)
+				stop = new dfLogicStop(elevator);
+			else
+				stop = new dfLogicStop(sector);
+
 			nbStops++;
 			char* p;
 
@@ -336,21 +364,36 @@ void dfParseINF::parseSector(std::istringstream& infile, const std::string& sect
 			if (elevator) {
 				elevator->addStop(stop);
 			}
+			else if (light) {
+				light->addStop(stop);
+			}
 		}
 		else if (tokens[0] == "sound:") {
-			if (elevator) {
-				int effect = std::stoi(tokens[1]);
+			if (elevator || light) {
+				uint32_t effect = std::stoi(tokens[1]);
 				if (tokens[2] != "0") {
 					if (g_cachedVOC.count(tokens[2]) == 0) {
 						g_cachedVOC[tokens[2]] = new dfVOC(dfFiles, tokens[2]);
 					}
 
-					elevator->sound(effect - 1, g_cachedVOC[tokens[2]]);
+					if (elevator)
+						elevator->sound(effect - 1, g_cachedVOC[tokens[2]]);
+					else
+						light->addSound(effect - 1, g_cachedVOC[tokens[2]]);
 				}
 				else {
-					elevator->sound(effect - 1, nullptr);	// silent the default sound
+					if (elevator)
+						elevator->sound(effect - 1, nullptr);	// silent the default sound
+					else
+						light->addSound(effect - 1, g_cachedVOC[tokens[2]]);
 				}
 			}
+			else if (program) {
+				gaDebugLog(1, "dfParseINF::parseSector", "sound: not implement for triggers");
+			}
+		}
+		else {
+			gaDebugLog(1, "dfParseINF::parseSector", tokens[0]+" not implement");
 		}
 	}
 }
