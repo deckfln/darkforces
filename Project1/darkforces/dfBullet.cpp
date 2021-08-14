@@ -156,12 +156,15 @@ void dfBullet::dispatchMessage(gaMessage* message)
 /**
  * return a record of an actor state (for debug)
  */
-void dfBullet::recordState(void* r)
+uint32_t dfBullet::recordState(void* r)
 {
 	flightRecorder::dfBullet* record = (flightRecorder::dfBullet*)r;
 	gaEntity::recordState(&record->entity);
 	record->entity.classID = flightRecorder::TYPE::DF_ENTITY_BULLET;
+	record->entity.size = sizeof(flightRecorder::dfBullet);
 	record->m_direction = m_direction;
+
+	return record->entity.size;
 }
 
 /**

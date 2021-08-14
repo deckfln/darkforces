@@ -153,7 +153,10 @@ public:
 	virtual int recordSize(void) {
 		return sizeof(flightRecorder::Entity);
 	}													// size of one record
-	virtual void recordState(void* record);				// return a record of the entity state (for debug)
+	uint32_t componentsSize(void);						// size of all the components
+	uint32_t recordComponents(void* p);					// save the components starting at p
+	void loadComponents(void* p);						// load the components starting at p
+	virtual uint32_t recordState(void* record);			// return a record of the entity state (for debug)
 	virtual void loadState(flightRecorder::Entity* record);// reload an entity state from a record
 	virtual void debugGUI(bool* close);				// debug the entity
 

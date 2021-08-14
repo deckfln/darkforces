@@ -136,7 +136,7 @@ public:
 	void stop(alSound* sound);
 
 	// state API
-	void recordState(flightRecorder::Object3D* record);
+	uint32_t recordState(flightRecorder::Object3D* record);
 	void loadState(flightRecorder::Object3D* record);
 	virtual const std::string className(void);					// return user friendly class name
 	virtual void debugGUI(void);					// display an object

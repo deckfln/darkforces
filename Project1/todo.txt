@@ -63,6 +63,6 @@ bug
 [ ] debug messages generated in-frame. Currently only messages available start-of-frame are recorded
 [X] replace DarkForces dfActor by dfComponentActor and add the component to any actors (like enemies)
 [X] refactor the debugger to display entities by class (in treeviewmode)
-[ ] save the gaComponent's in the flightDebugger
+[X] save the gaComponent's in the flightDebugger
 [ ] convert InfProgram=>InfStandardTrigger (from ComponentInf) and dfComponentElevator to dfInfElevator (from dfComponentInf)
 [ ] ParseINF::parseSector cannot find "plan_spot"

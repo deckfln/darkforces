@@ -970,7 +970,7 @@ void dfSector::setAABBbottom(float z_level)
 /**
  * return a record of the entity state (for debug)
  */
-void dfSector::recordState(void* r)
+uint32_t dfSector::recordState(void* r)
 {
 	gaEntity::recordState(r);
 	flightRecorder::DarkForces::Sector* record = (flightRecorder::DarkForces::Sector*)r;
@@ -979,6 +979,8 @@ void dfSector::recordState(void* r)
 	record->entity.size = sizeof(flightRecorder::DarkForces::Sector);
 
 	record->ambient = m_ambient;
+
+	return record->entity.size;
 }
 
 /**

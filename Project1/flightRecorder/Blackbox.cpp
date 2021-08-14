@@ -94,9 +94,9 @@ void flightRecorder::Blackbox::recordEntities(void)
 
 	// compute the needed space
 	int data_size = sizeof(bufferEntities);
-	for (auto entry : g_gaWorld.m_entities) {
+	for (auto& entry : g_gaWorld.m_entities) {
 		for (auto entity : entry.second) {
-			data_size += entity->recordSize();
+			data_size += entity->recordSize() + entity->componentsSize();
 			entities++;
 		}
 	}
@@ -122,10 +122,12 @@ void flightRecorder::Blackbox::recordEntities(void)
 
 	// save each entity at the end of the previous
 	char *p = &bEntities->data[0];
+	char* c = nullptr;
 	for (auto entry : g_gaWorld.m_entities) {
 		for (auto entity : entry.second) {
 			entity->recordState(p);
 			p += entity->recordSize();
+			p += entity->recordComponents(p);
 		}
 	}
 }
@@ -322,8 +324,11 @@ void flightRecorder::Blackbox::setFrame(int frame)
 	// build a list of the entities in the save
 	bufferEntities* bEntities= m_entities[frame];
 	std::map<std::string, flightRecorder::Entity*> entities;
+	std::map<std::string, void*> components;
+
 	int size = bEntities->size;
 	flightRecorder::Entity* rEntity;
+	uint32_t* component=nullptr;
 	char* p = &bEntities->data[0];
 	for (auto i = 0; i < size; i++) {
 		rEntity = (flightRecorder::Entity*)p;
@@ -331,6 +336,13 @@ void flightRecorder::Blackbox::setFrame(int frame)
 		entities[rEntity->name] = rEntity;
 
 		p += rEntity->size;
+
+		// start of the components
+		components[rEntity->name] = p;
+		for (auto i = 0; i < rEntity->nbComponents; i++) {
+			component = (uint32_t*)p;
+			p += *component;		// move to next component 
+		}
 	}
 
 	//remove entities from the world that are not in the save
@@ -353,6 +365,7 @@ void flightRecorder::Blackbox::setFrame(int frame)
 	for (auto &entry : g_gaWorld.m_entities) {
 		for (auto &ent : entry.second) {
 			ent->loadState(entities[entry.first]);
+			ent->loadComponents(components[entry.first]);
 		}
 	}
 

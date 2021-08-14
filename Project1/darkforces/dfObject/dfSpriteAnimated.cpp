@@ -171,7 +171,7 @@ void* frCreate_dfSpriteAnimated(void* record) {
 /**
  * return a record of the entity state (for debug)
  */
-void dfSpriteAnimated::recordState(void* r)
+uint32_t dfSpriteAnimated::recordState(void* r)
 {
 	dfSprite::recordState(r);
 	flightRecorder::DarkForces::SpriteAnimated* record = static_cast<flightRecorder::DarkForces::SpriteAnimated*>(r);
@@ -184,6 +184,8 @@ void dfSpriteAnimated::recordState(void* r)
 	record->direction = m_direction;	// direction the object is looking to
 	record->lastFrame = m_lastFrame;		// time of the last animation frame
 	record->currentFrame = m_currentFrame;	// time of the current animation frame
+
+	return record->sprite.object.entity.size;
 }
 
 /**

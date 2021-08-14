@@ -212,7 +212,7 @@ public:
 	inline int recordSize(void) override {
 		return sizeof(flightRecorder::DarkForces::Sector);
 	}													// size of one record
-	void recordState(void* record) override;			// return a record of the entity state (for debug)
+	uint32_t recordState(void* record) override;			// return a record of the entity state (for debug)
 	void loadState(flightRecorder::Entity* record) override;// reload an entity state from a record
 	void debugGUIChildClass(void) override;			// Add dedicated component debug the entity
 

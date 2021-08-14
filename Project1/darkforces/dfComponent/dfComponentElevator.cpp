@@ -10,6 +10,8 @@
 #include "../dfVOC.h"
 #include "../dfSector.h"
 
+#include "../flightRecorder/frCompElevator.h"
+
 /**
  * move to the given position (virtual function) => every elevator has its own
  */
@@ -276,6 +278,55 @@ void DarkForces::Component::Elevator::dispatchMessage(gaMessage* message)
 		animate(message->m_delta);
 		break;
 	}
+}
+
+/**
+ * size of the component
+ */
+inline uint32_t DarkForces::Component::Elevator::recordSize(void)
+{
+	return sizeof(flightRecorder::DarkForces::CompElevator);
+}
+
+/**
+ * save the component state in a record
+ */
+uint32_t DarkForces::Component::Elevator::recordState(void* r)
+{
+	flightRecorder::DarkForces::CompElevator* record = static_cast<flightRecorder::DarkForces::CompElevator*>(r);
+	record->size = sizeof(flightRecorder::DarkForces::CompElevator);
+	record->id = m_id;
+	record->m_status = (uint32_t)m_status;		// status of the elevator
+	record->m_tick = m_tick;				// current timer
+	record->m_delay = m_delay;				// time to run the elevator
+	record->m_currentStop = m_currentStop;	// current stop for the running animation
+	record->m_nextStop = m_nextStop;		// target altitude
+
+	record->m_current = m_current;			// current altitude of the part to move (floor or ceiling)
+	record->m_direction = m_direction;		// direction and speed of the move
+	record->m_target = m_direction;			// target altitude
+
+	return record->size;
+}
+
+/**
+ * reload a component state from a record
+ */
+uint32_t DarkForces::Component::Elevator::loadState(void* r)
+{
+	flightRecorder::DarkForces::CompElevator* record = (flightRecorder::DarkForces::CompElevator*)r;
+
+	m_status = (Status)record->m_status;	// status of the elevator
+	m_tick = record->m_tick;			// current timer
+	m_delay = record->m_delay;			// time to run the elevator
+	m_currentStop = record->m_currentStop;	// current stop for the running animation
+	m_nextStop = record->m_nextStop;		// target altitude
+
+	m_current = record->m_current;		// current altitude of the part to move (floor or ceiling)
+	m_direction = record->m_direction;	// direction and speed of the move
+	m_target = record->m_direction;		// target altitude
+
+	return record->size;
 }
 
 /**

@@ -35,7 +35,7 @@ namespace DarkForces {
 			return sizeof(flightRecorder::DarkForces::Actor);
 		};														// size of one record
 
-		void recordState(void* record) override;				// return a record of an actor state (for debug)
+		uint32_t recordState(void* record) override;				// return a record of an actor state (for debug)
 		void loadState(flightRecorder::Entity* record) override;// reload an actor state from a record
 		void debugGUIChildClass(void) override;					// Add dedicated component debug the entity
 	};

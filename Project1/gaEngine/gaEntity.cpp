@@ -296,9 +296,21 @@ bool gaEntity::checkCollision(fwCylinder& bounding, glm::vec3& direction, glm::v
 }
 
 /**
+ * size of all the components
+ */
+uint32_t gaEntity::componentsSize(void)
+{
+	uint32_t size = 0;
+	for (auto component : m_components) {
+		size += component->recordSize();
+	}
+	return size;
+}
+
+/**
  * return a record of the entity state (for debug)
  */
-void gaEntity::recordState(void *r)
+uint32_t gaEntity::recordState(void *r)
 {
 	flightRecorder::Entity *record = (flightRecorder::Entity *)r;
 	record->size = sizeof(flightRecorder::Entity);
@@ -309,6 +321,32 @@ void gaEntity::recordState(void *r)
 	m_modelAABB.recordState(&record->modelAABB);		// model space AABB
 	m_worldBounding.recordState(&record->worldBounding);// AABB bounding box in world opengl space
 	record->animation_time = m_animation_time;			// elapsed time when running animation
+	record->nbComponents = m_components.size();			// number of components to be found at the end of the record
+
+	return record->size;
+}
+
+/**
+ * save the components starting at p
+ */
+uint32_t gaEntity::recordComponents(void* p)
+{
+	char* c = (char *)p;
+	for (auto component : m_components) {
+		c += component->recordState(c);
+	}
+	return c - p;
+}
+
+/**
+ * load the components starting at p
+ */
+void gaEntity::loadComponents(void* p)
+{
+	char* c = (char*)p;
+	for (auto component : m_components) {
+		c += component->loadState(c);
+	}
 }
 
 /**

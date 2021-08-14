@@ -830,7 +830,7 @@ void dfElevator::keys(std::string& key)
 /**
  * return a record of an actor state (for debug)
  */
-void dfElevator::recordState(void* r)
+uint32_t dfElevator::recordState(void* r)
 {
 	gaEntity::recordState(r);
 	flightRecorder::DarkForces::Elevator* record = (flightRecorder::DarkForces::Elevator*)r;
@@ -846,6 +846,7 @@ void dfElevator::recordState(void* r)
 	record->m_direction = m_direction;	// direction and speed of the move
 	record->m_target = m_direction;		// target altitude
 
+	return record->entity.size;
 }
 
 /**

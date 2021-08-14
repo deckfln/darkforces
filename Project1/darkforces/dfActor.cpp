@@ -29,7 +29,7 @@ void DarkForces::Actor::bind(dfLevel* level)
 /**
  * return a record of the entity state (for debug)
  */
-void DarkForces::Actor::recordState(void* record)
+uint32_t DarkForces::Actor::recordState(void* record)
 {
 	flightRecorder::DarkForces::Actor* r = static_cast<flightRecorder::DarkForces::Actor*>(record);
 	gaActor::recordState(&r->actor);
@@ -42,6 +42,8 @@ void DarkForces::Actor::recordState(void* record)
 	else {
 		r->currentSector[0] = 0;
 	}
+
+	return sizeof(flightRecorder::DarkForces::Actor);
 }
 
 /**

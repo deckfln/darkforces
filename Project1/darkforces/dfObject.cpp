@@ -324,7 +324,7 @@ void* frCreate_dfObject(void* record) {
 /**
  * return a record of the entity state (for debug)
  */
-void dfObject::recordState(void* r)
+uint32_t dfObject::recordState(void* r)
 {
 	gaEntity::recordState(r);
 	flightRecorder::DarkForces::dfObject* record = (flightRecorder::DarkForces::dfObject*)r;
@@ -333,6 +333,8 @@ void dfObject::recordState(void* r)
 	record->entity.size = sizeof(flightRecorder::DarkForces::dfObject);
 
 	record->position_level = m_position_lvl;
+
+	return record->entity.size;
 }
 
 /**

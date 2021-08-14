@@ -140,7 +140,7 @@ void* frCreate_df_Object3D(void* record) {
 /**
  * return a record of the entity state (for debug)
  */
-void dfObject3D::recordState(void* r)
+uint32_t dfObject3D::recordState(void* r)
 {
 	dfObject::recordState(r);
 	flightRecorder::DarkForces::Object3D* record = (flightRecorder::DarkForces::Object3D*)r;
@@ -155,6 +155,7 @@ void dfObject3D::recordState(void* r)
 		record->vue = true;
 		record->currentVueFrame = m_vue->currentFrame();
 	}
+	return record->object.entity.size;
 }
 
 /**

@@ -172,7 +172,7 @@ void gaActor::dispatchMessage(gaMessage* message)
 /**
  * return a record of an actor state (for debug)
  */
-void gaActor::recordState(void* r)
+uint32_t gaActor::recordState(void* r)
 {
 	gaEntity::recordState(r);
 	flightRecorder::Actor* record = (flightRecorder::Actor*)r;
@@ -184,6 +184,8 @@ void gaActor::recordState(void* r)
 	record->step = m_step;					// how up/down can the actor step over
 	record->physic = m_physic;
 	record->animation_time = m_animation_time;// start of the physic driven movement
+
+	return record->entity.size;
 }
 
 /**
