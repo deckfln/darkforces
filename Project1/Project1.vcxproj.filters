@@ -1097,6 +1097,9 @@
     <ClInclude Include="darkforces\dfComponent\dfComponentElevator\dfComponentElevatorLight.h">
       <Filter>Fichiers d%27en-tête\DarkForces\dfComponent\dfComponentElevator</Filter>
     </ClInclude>
+    <ClInclude Include="darkforces\flightRecorder\frSector.h">
+      <Filter>Fichiers d%27en-tête\DarkForces\flightRecorder</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\fragment.glsl">

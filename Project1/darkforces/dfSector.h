@@ -17,6 +17,8 @@ using Point = std::array<Coord, 2>;
 
 #include "dfComponent/InfProgram.h"
 
+#include "flightRecorder/frSector.h"
+
 class fwCylinder;
 class gaCollisionPoint;
 class dfMesh;
@@ -207,6 +209,11 @@ public:
 	void elevator(dfElevator* elevator) { m_elevator = elevator; };
 
 	// debugger
+	inline int recordSize(void) override {
+		return sizeof(flightRecorder::DarkForces::Sector);
+	}													// size of one record
+	void recordState(void* record) override;			// return a record of the entity state (for debug)
+	void loadState(flightRecorder::Entity* record) override;// reload an entity state from a record
 	void debugGUIChildClass(void) override;			// Add dedicated component debug the entity
 
 	~dfSector();

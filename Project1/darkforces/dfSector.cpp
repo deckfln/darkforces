@@ -589,7 +589,8 @@ bool dfSector::collideAABB(const fwAABBox& box)
  */
 void dfSector::changeAmbient(float ambient)
 {
-	m_currentAmbient = ambient / 32.0f;
+	m_ambient = ambient;		// DF light
+	m_currentAmbient = ambient / 32.0f;	// GL light
 
 	if (m_wallVerticesLen > 0) {
 		m_super->updateAmbientLight(m_currentAmbient, m_wallVerticesStart, m_wallVerticesLen);
@@ -967,13 +968,37 @@ void dfSector::setAABBbottom(float z_level)
 }
 
 /**
+ * return a record of the entity state (for debug)
+ */
+void dfSector::recordState(void* r)
+{
+	gaEntity::recordState(r);
+	flightRecorder::DarkForces::Sector* record = (flightRecorder::DarkForces::Sector*)r;
+
+	record->entity.classID = flightRecorder::TYPE::DF_ENTITY_SECTOR;
+	record->entity.size = sizeof(flightRecorder::DarkForces::Sector);
+
+	record->ambient = m_ambient;
+}
+
+/**
+ * reload an entity state from a record
+ */
+void dfSector::loadState(flightRecorder::Entity* r)
+{
+	gaEntity::loadState(r);
+	flightRecorder::DarkForces::Sector* record = (flightRecorder::DarkForces::Sector*)r;
+	changeAmbient(record->ambient);
+}
+
+/**
  * Add dedicated component debug the entity
  */
 void dfSector::debugGUIChildClass(void)
 {
 	if (ImGui::TreeNode("dfSector")) {
 		ImGui::Text("ID:%d", m_id);
-		ImGui::Text("Ambient:%d", m_ambient);
+		ImGui::Text("Ambient:%.2f", m_ambient);
 		ImGui::TreePop();
 	}
 }
