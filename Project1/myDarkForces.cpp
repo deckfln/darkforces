@@ -49,11 +49,11 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 #endif
 
 	// player
-	//glm::vec3 start = glm::vec3(-21.26f, 0.95f, 29.064f);	// main hall
+	glm::vec3 start = glm::vec3(-21.26f, 0.95f, 29.064f);	// main hall
 	//glm::vec3 start = glm::vec3(-46, 0.9, 26.8); // super secret
 	//glm::vec3 start = glm::vec3(-29.5f, 2.0f, 30.808f);	// gen_d
 	//glm::vec3 start = glm::vec3(-20.8f, 0.4f, 29.7f);	// stage
-	glm::vec3 start = glm::vec3(-21.29, -0.3, 16.6);	// post_e
+	//glm::vec3 start = glm::vec3(-21.29, -0.3, 16.6);	// post_e
 	//glm::vec3 start = glm::vec3(-17.60, -2.0, 27.77);	// projector
 	//glm::vec3 start = glm::vec3(-20, 2.0, 34);	// mousebot(40)
 	fwCylinder bounding(glm::vec3(0), c_radius, c_height);

@@ -243,7 +243,9 @@ void dfSpriteAnimated::debugGUIChildClass(void)
 		ImGui::Text("Frame: %d", static_cast<uint32_t>(m_frame));
 		ImGui::Text("time last frame: %d", m_lastFrame);
 		ImGui::Text("time current frame: %d", m_currentFrame);
-		ImGui::Text("frame rate: %d", m_source->framerate(m_state));
+		if (m_source) {
+			ImGui::Text("frame rate: %d", m_source->framerate(m_state));
+		}
 		ImGui::TreePop();
 	}
 }
