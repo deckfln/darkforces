@@ -52,10 +52,12 @@ fwScene& fwScene::hud(fwHUDelement* element)
  */
 void fwScene::debugGUI(void)
 {
-	ImGui::Begin("Scene");
-	for (auto child : m_children) {
-		const std::string& name = child->className();
-		ImGui::Checkbox(name.c_str(), &m_inspector[child]);
+	ImGui::Begin("Explorer");
+	if (ImGui::CollapsingHeader("fwScene")) {
+		for (auto child : m_children) {
+			const std::string& name = child->className();
+			ImGui::Checkbox(name.c_str(), &m_inspector[child]);
+		}
 	}
 	ImGui::End();
 

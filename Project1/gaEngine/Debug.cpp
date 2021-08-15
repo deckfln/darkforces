@@ -95,7 +95,7 @@ void GameEngine::Debug::render(void)
 		ImGuiID dockBottom = ImGui::DockBuilderSplitNode(dockMain, ImGuiDir_Down, 0.40f, NULL, &dockMain);
 
 		ImGui::DockBuilderDockWindow("Player", dockLeft);
-		ImGui::DockBuilderDockWindow("Entities", dockLeft);
+		ImGui::DockBuilderDockWindow("Explorer", dockLeft);
 		ImGui::DockBuilderDockWindow("Inspector", dockRight);
 		ImGui::DockBuilderFinish(dockSpaceId);
 	}
@@ -103,6 +103,20 @@ void GameEngine::Debug::render(void)
 	Framework::Debug::render();
 
 	ImGui::Begin("Menu");                          // Create a window called "Hello, world!" and append into it.
+
+
+	if (ImGui::BeginMainMenuBar())	{
+		if (ImGui::BeginMenu("View")) {
+			if (ImGui::MenuItem("Explorer")) {
+				//Do something
+			}
+			if (ImGui::MenuItem("Inspector")) {
+				//Do something
+			}
+			ImGui::EndMenu();
+		}
+		ImGui::EndMainMenuBar();
+	}
 
 	glm::vec3 p = app->m_player->position();
 	ImGui::Text("Player x:%.3f y:%.3f z:%.3f", p.x, p.y, p.z);

@@ -632,11 +632,13 @@ static void debugGUIMessage(gaMessage* message)
 void GameEngine::World::debugGUI(void)
 {
 	// list entities to pick from
-	ImGui::Begin("Entities");
-	for (auto entry : m_entities) {
-		for (auto ent : entry.second) {
-			const std::string& name = ent->name();
-			ImGui::Checkbox(name.c_str(), &m_watch[name]);
+	ImGui::Begin("Explorer");
+	if (ImGui::CollapsingHeader("gaEntities")) {
+		for (auto entry : m_entities) {
+			for (auto ent : entry.second) {
+				const std::string& name = ent->name();
+				ImGui::Checkbox(name.c_str(), &m_watch[name]);
+			}
 		}
 	}
 	ImGui::End();
