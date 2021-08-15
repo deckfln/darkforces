@@ -167,6 +167,7 @@ void GameEngine::Debug::render(void)
 		*/
 		// display all entities to pick from
 		g_gaWorld.debugGUI();
+		g_Blackbox.debugGUIinframe();
 	}
 	else {
 		if (m_replay) {

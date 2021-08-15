@@ -120,6 +120,7 @@ namespace GameEngine {
 		void process(time_t delta, bool force=false);		// process messages on the queue
 		void suspendTimer(void);							// stop the engine
 		void debugGUI(void);								// render the imGUI debug
+		void debugGUImessages(std::list<gaMessage>&l);		// render the imGUI debug messages
 		void clearQueue(void);								// clear the message queue
 		inline int queueLen(void) { return m_queue.size(); }// number of messages on the queue
 		inline int frame(void) { return m_frame; }			// number of messages on the queue

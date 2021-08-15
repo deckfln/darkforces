@@ -52,8 +52,8 @@ void flightRecorder::Blackbox::recordMessages(void)
 	 * get a buffer for messages
 	 */
 	bufferMessages* bMessages = nullptr;
-	int messages = g_gaWorld.m_queue.size();
-	int data_size = sizeof(bufferMessages) + messages * sizeof(flightRecorder::Message);
+	uint32_t messages = g_gaWorld.m_queue.size();
+	uint32_t data_size = sizeof(bufferMessages) + messages * sizeof(flightRecorder::Message);
 
 	// we may need more memory than the previous allocated buffer
 	bMessages = m_messages[m_last];
@@ -72,15 +72,19 @@ void flightRecorder::Blackbox::recordMessages(void)
 
 	bMessages->data_size = data_size;
 	bMessages->size = messages;
+	bMessages->current = 0;
 
 	/**
-	 * save all messages in the buffer
+	 * save all start_of_frame messages in the buffer
 	 */
 	gaMessage* message;
-	for (int i = 0; i < messages; i++) {
+	for (uint32_t i = 0; i < messages; i++) {
 		message = g_gaWorld.m_queue[i];
 		message->recordState(&bMessages->messages[i]);
 	}
+
+	// empty the inframe message list
+	m_inframe_messages[m_last].clear();
 }
 
 /**
@@ -93,7 +97,7 @@ void flightRecorder::Blackbox::recordEntities(void)
 	int entities = 0;
 
 	// compute the needed space
-	int data_size = sizeof(bufferEntities);
+	uint32_t data_size = sizeof(bufferEntities);
 	for (auto& entry : g_gaWorld.m_entities) {
 		for (auto entity : entry.second) {
 			data_size += entity->recordSize() + entity->componentsSize();
@@ -142,8 +146,8 @@ void flightRecorder::Blackbox::recordPhysics(void)
 	 * get a buffer for messages
 	 */
 	bufferPhysics* bPhysics = nullptr;
-	int objects = g_gaWorld.m_physic.m_ballistics.size();
-	int data_size = sizeof(bufferPhysics) + objects * sizeof(flightRecorder::Ballistic);
+	uint32_t objects = g_gaWorld.m_physic.m_ballistics.size();
+	uint32_t data_size = sizeof(bufferPhysics) + objects * sizeof(flightRecorder::Ballistic);
 
 	// we may need more memory than the previous allocated buffer
 	bPhysics= m_ballistics[m_last];
@@ -175,7 +179,7 @@ void flightRecorder::Blackbox::recordPhysics(void)
 }
 
 /**
- *
+ * record the state of g_gaWorld at begining of frame
  */
 void flightRecorder::Blackbox::recordState(void)
 {
@@ -184,6 +188,8 @@ void flightRecorder::Blackbox::recordState(void)
 	recordMessages();
 	recordEntities();
 	recordPhysics();
+
+	m_current = m_last;
 
 	/*
 	 * find the next record(cycle at the end of the recorder)
@@ -206,6 +212,22 @@ void flightRecorder::Blackbox::recordState(void)
 }
 
 /**
+ * record messages on the fly 
+ *   up to bEntities.size, do nothing
+ *   over size, record in _inframe_ list
+ */
+void flightRecorder::Blackbox::recordMessage(gaMessage* message)
+{
+	bufferMessages* bMessages = m_messages[m_current];
+	if (bMessages->current > bMessages->size) {
+		m_inframe_messages[m_current].push_back(*message);
+	}
+	else {
+		bMessages->current++;
+	}
+}
+
+/**
  *
  */
 void flightRecorder::Blackbox::saveStates(void)
@@ -217,7 +239,7 @@ void flightRecorder::Blackbox::saveStates(void)
 
 	myfile.write((char*)m_frames, sizeof(m_frames));
 
-	for (int i = 0, p = m_last; i < m_len; i++)
+	for (uint32_t i = 0, p = m_last; i < m_len; i++)
 	{
 		bufferMessages* messages = m_messages[p];
 		myfile.write((char*)&messages->data_size, sizeof(messages->data_size));
@@ -228,7 +250,7 @@ void flightRecorder::Blackbox::saveStates(void)
 		}
 	}
 
-	for (int i = 0, p = m_last; i < m_len; i++)
+	for (uint32_t i = 0, p = m_last; i < m_len; i++)
 	{
 		bufferEntities* entities = m_entities[p];
 		myfile.write((char*)&entities->buffer_size, sizeof(entities->buffer_size));
@@ -239,7 +261,7 @@ void flightRecorder::Blackbox::saveStates(void)
 		}
 	}
 
-	for (int i = 0, p = m_last; i < m_len; i++)
+	for (uint32_t i = 0, p = m_last; i < m_len; i++)
 	{
 		bufferPhysics* objects = m_ballistics[p];
 		myfile.write((char*)&objects->data_size, sizeof(objects->data_size));
@@ -261,7 +283,7 @@ void flightRecorder::Blackbox::loadStates(void)
 	std::ifstream myfile;
 
 	// start freeing all previous records
-	for (int i = 0, p = m_last; i < m_len; i++)
+	for (uint32_t i = 0, p = m_last; i < m_len; i++)
 	{
 		if (m_messages[i])  { free(m_messages[i]);	m_messages[i] = nullptr; }
 		if (m_entities[i])  { free(m_entities[i]);	m_entities[i] = nullptr; }
@@ -277,21 +299,21 @@ void flightRecorder::Blackbox::loadStates(void)
 	myfile.read((char*)m_frames, sizeof(m_frames));
 
 	// load the messages
-	for (int i = 0, p = m_last; i < m_len; i++) {
+	for (uint32_t i = 0, p = m_last; i < m_len; i++) {
 		myfile.read((char*)&data_size, sizeof(data_size));
 		m_messages[i] = (bufferMessages*)malloc(data_size);
 		myfile.read((char*)m_messages[i], data_size);
 	}
 
 	// load the entities
-	for (int i = 0, p = m_last; i < m_len; i++) {
+	for (uint32_t i = 0, p = m_last; i < m_len; i++) {
 		myfile.read((char*)&data_size, sizeof(data_size));
 		m_entities[i] = (bufferEntities*)malloc(data_size);
 		myfile.read((char*)m_entities[i], data_size);
 	}
 
 	// load the ballistics objects
-	for (int i = 0, p = m_last; i < m_len; i++) {
+	for (uint32_t i = 0, p = m_last; i < m_len; i++) {
 		myfile.read((char*)&data_size, sizeof(data_size));
 		m_ballistics[i] = (bufferPhysics*)malloc(data_size);
 		myfile.read((char*)m_ballistics[i], data_size);
@@ -316,7 +338,7 @@ void flightRecorder::Blackbox::setFrame(int frame)
 	}
 
 	flightRecorder::Message* record = &bMessages->messages[0];
-	for (auto i = 0; i < bMessages->size; i++) {
+	for (uint32_t i = 0; i < bMessages->size; i++) {
 		g_gaWorld.sendMessage(record);
 		record++;
 	}
@@ -326,11 +348,11 @@ void flightRecorder::Blackbox::setFrame(int frame)
 	std::map<std::string, flightRecorder::Entity*> entities;
 	std::map<std::string, void*> components;
 
-	int size = bEntities->size;
+	uint32_t size = bEntities->size;
 	flightRecorder::Entity* rEntity;
 	uint32_t* component=nullptr;
 	char* p = &bEntities->data[0];
-	for (auto i = 0; i < size; i++) {
+	for (uint32_t i = 0; i < size; i++) {
 		rEntity = (flightRecorder::Entity*)p;
 
 		entities[rEntity->name] = rEntity;
@@ -339,7 +361,7 @@ void flightRecorder::Blackbox::setFrame(int frame)
 
 		// start of the components
 		components[rEntity->name] = p;
-		for (auto i = 0; i < rEntity->nbComponents; i++) {
+		for (uint32_t i = 0; i < rEntity->nbComponents; i++) {
 			component = (uint32_t*)p;
 			p += *component;		// move to next component 
 		}
@@ -372,7 +394,7 @@ void flightRecorder::Blackbox::setFrame(int frame)
 	// reload the ballistic engine
 	g_gaWorld.m_physic.m_ballistics.clear();
 	bufferPhysics* bPhysics= m_ballistics[frame];
-	for (auto i = 0; i < bPhysics->size; i++) {
+	for (uint32_t i = 0; i < bPhysics->size; i++) {
 		g_gaWorld.m_physic.loadState(&bPhysics->objects[i]);
 	}
 
@@ -466,6 +488,16 @@ void flightRecorder::Blackbox::debugGUI(void)
 		}
 	}
 	ImGui::End();
+}
+
+/**
+ * display messages inframe
+ */
+void flightRecorder::Blackbox::debugGUIinframe(void)
+{
+	// convert the absolute frame number to the circular buffer
+	int convertFrame = (m_first + m_currentFrame) % m_len;
+	g_gaWorld.debugGUImessages(m_inframe_messages[convertFrame]);
 }
 
 /**
