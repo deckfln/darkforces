@@ -1,8 +1,11 @@
 #include "Enemy.h"
 
+static const char* g_className = "dfEnemy";
+
 DarkForces::Enemy::Enemy(dfWAX* model, const glm::vec3& position, float ambient, uint32_t objectID):
 	dfSpriteAnimated(model, position, ambient, objectID)
 {
+	m_class_name = g_className;
 	physical(true);
 
 	m_cylinder.height(m_modelAABB.height());

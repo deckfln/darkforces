@@ -8,6 +8,7 @@
 #include "../dfModel/dfFME.h"
 
 static uint32_t g_spriteID = 0;
+static const char* g_className = "dfSprite";
 
 /**
  * create from an image
@@ -15,6 +16,7 @@ static uint32_t g_spriteID = 0;
 dfSprite::dfSprite(dfFME* fme, const glm::vec3& position, float ambient, uint32_t objectID):
 	dfObject(fme, position, ambient, OBJECT_FME, objectID)
 {
+	m_class_name = g_className;
 	addComponent(&m_componentLogic);
 }
 
@@ -24,6 +26,7 @@ dfSprite::dfSprite(dfFME* fme, const glm::vec3& position, float ambient, uint32_
 dfSprite::dfSprite(dfModel* model, const glm::vec3& position, float ambient, int type, uint32_t objectID):
 	dfObject(model, position, ambient, type, objectID)
 {
+	m_class_name = g_className;
 	addComponent(&m_componentLogic);
 }
 
@@ -33,12 +36,14 @@ dfSprite::dfSprite(dfModel* model, const glm::vec3& position, float ambient, int
 dfSprite::dfSprite(const std::string& name, const glm::vec3& position, float ambient, int type) :
 	dfObject((dfFME*)g_gaWorld.getModel(name), position, ambient, type, g_spriteID++)
 {
+	m_class_name = g_className;
 	addComponent(&m_componentLogic);
 }
 
 dfSprite::dfSprite(flightRecorder::DarkForces::Sprite* record):
 	dfObject(&record->object)
 {
+	m_class_name = g_className;
 }
 
 /**

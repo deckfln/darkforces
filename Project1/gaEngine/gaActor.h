@@ -42,6 +42,10 @@ public:
 		);
 	gaActor(flightRecorder::Entity* record);
 
+	static void *create(void* record) {
+		return new gaActor((flightRecorder::Entity*)record);
+	}
+
 	bool moveTo(time_t delta, glm::vec3& velocity);
 	void rotate(const glm::vec3& direction);
 	float height(void);

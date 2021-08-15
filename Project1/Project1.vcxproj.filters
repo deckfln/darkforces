@@ -1052,9 +1052,6 @@
     <ClInclude Include="flightRecorder\Actor.h">
       <Filter>Fichiers d%27en-tête\flightRecorder</Filter>
     </ClInclude>
-    <ClInclude Include="flightRecorder\Callbacks.h">
-      <Filter>Fichiers d%27en-tête\flightRecorder</Filter>
-    </ClInclude>
     <ClInclude Include="flightRecorder\frBullet.h">
       <Filter>Fichiers d%27en-tête\flightRecorder</Filter>
     </ClInclude>

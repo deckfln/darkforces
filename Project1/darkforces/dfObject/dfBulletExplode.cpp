@@ -5,9 +5,13 @@
 #include "../dfModel.h"
 #include "../dfLevel.h"
 
+static const char* g_className = "dfBulletExplode";
+
 dfBulletExplode::dfBulletExplode(const glm::vec3& position, float ambient) :
 	dfSpriteAnimated("BULLEXP.WAX", position, ambient)
 {
+	m_class_name = g_className;
+
 	// origin of a bullet explosion is at the center of the sprite
 	glm::vec3 p;
 	dfLevel::level2gl(position, p);

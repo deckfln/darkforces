@@ -14,5 +14,3 @@ namespace flightRecorder {
 		};
 	}
 }
-
-extern void* frCreate_dfObject(void*);

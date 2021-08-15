@@ -117,6 +117,10 @@ public:
 	dfElevator(std::string& kind, const std::string& name);
 	dfElevator(dfElevator *source);
 
+	static void* create(void* record) {
+		return new dfElevator((dfElevator*)record);
+	}
+
 	void speed(float speed) { m_speed = speed; };
 	void eventMask(int eventMask) { m_eventMask = eventMask; };
 	std::string& sector(void) { return m_sector; };

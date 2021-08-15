@@ -17,5 +17,3 @@ namespace flightRecorder {
 		};
 	}
 }
-
-extern void* frCreate_df_Object3D(void*);

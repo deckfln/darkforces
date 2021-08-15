@@ -8,5 +8,3 @@ namespace flightRecorder {
 		glm::vec3 m_direction;
 	};
 }
-
-extern void* frCreate_Bullet(void*);

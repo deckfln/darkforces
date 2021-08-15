@@ -13,12 +13,7 @@
 
 #include "../darkforces/dfLevel.h"
 
-/**
- *
- */
-void* frCreate_Actor(void* record) {
-	return new gaActor((flightRecorder::Entity*)record);
-}
+static const char* g_className = "gaActor";
 
 /**
  *
@@ -35,6 +30,8 @@ gaActor::gaActor(
 	m_ankle(ankle),
 	m_eyes(eyes)
 {
+	m_class_name = g_className;
+
 	translate(feet);
 
 	m_physical = true;
@@ -53,7 +50,7 @@ gaActor::gaActor(
 gaActor::gaActor(flightRecorder::Entity* record) :
 	gaEntity(record)
 {
-
+	m_class_name = g_className;
 }
 
 /**

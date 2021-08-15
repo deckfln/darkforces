@@ -28,9 +28,11 @@ using namespace GameEngine;
 class gaEntity : public fwObject3D
 {
 protected:
+	const char* m_class_name = nullptr;				// display name of the class
+	int m_class = 0;								// numerical form TODO: get ride of it
+
 	std::string m_name;
 	int m_entityID = 0;
-	int m_class = 0;
 
 	bool m_physical = false;						// if this entity has a body to checkCollision with
 	bool m_gravity = true;							// does gravity effect the entity
@@ -58,10 +60,16 @@ protected:
 	std::map<std::string, gaEntity*> m_sittingOnTop;// cached list of the entities sitting on top of that one
 
 public:
+
 	gaEntity(int mclass);
 	gaEntity(int mclass, const std::string& name);
 	gaEntity(int mclass, const std::string& name, const glm::vec3& position);
 	gaEntity(flightRecorder::Entity* record);
+
+	// external creator
+	static void *create(void* record) {
+		return new gaEntity((flightRecorder::Entity*)record);
+	};
 
 	inline int entityID(void) { return m_entityID; };
 	void addComponent(gaComponent* component);			// extend the components of the entity

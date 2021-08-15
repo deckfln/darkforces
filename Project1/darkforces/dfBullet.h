@@ -26,6 +26,10 @@ public:
 	dfBullet(const glm::vec3& position, const glm::vec3& direction);
 	dfBullet(flightRecorder::dfBullet *record);
 
+	static void* create(void* record) {
+		return new dfBullet((flightRecorder::dfBullet*)record);
+	}
+
 	void dispatchMessage(gaMessage* message) override;
 
 	// flight recorder data

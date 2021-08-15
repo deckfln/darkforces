@@ -11,6 +11,7 @@
 #include "../dfComponent/dfComponentLogic.h"
 
 static uint32_t g_animatedSpriteID = 0;
+static const char* g_className = "dfSpriteAnimated";
 
 /**
  * create a sprite from a pointer to a model
@@ -19,6 +20,7 @@ dfSpriteAnimated::dfSpriteAnimated(dfWAX* wax, const glm::vec3& position, float 
 	dfSprite(wax, position, ambient, OBJECT_WAX, objectID)
 {
 	gaEntity::updateWorldAABB();
+	m_class_name = g_className;
 }
 
 /**
@@ -28,12 +30,14 @@ dfSpriteAnimated::dfSpriteAnimated(const std::string& model, const glm::vec3& po
 	dfSprite((dfWAX*)g_gaWorld.getModel(model), position, ambient, OBJECT_WAX, g_animatedSpriteID++)
 {
 	gaEntity::updateWorldAABB();
+	m_class_name = g_className;
 }
 
 dfSpriteAnimated::dfSpriteAnimated(flightRecorder::DarkForces::SpriteAnimated* record) :
 	dfSprite(&record->sprite)
 {
 	loadState((flightRecorder::Entity *)record);
+	m_class_name = g_className;
 }
 
 /**
@@ -159,13 +163,6 @@ void dfSpriteAnimated::dispatchMessage(gaMessage* message)
 		break;
 	}
 	dfSprite::dispatchMessage(message);
-}
-
-/**
- * return a record of the entity state (for debug)
- */
-void* frCreate_dfSpriteAnimated(void* record) {
-	return new dfSpriteAnimated((flightRecorder::DarkForces::SpriteAnimated*)record);
 }
 
 /**

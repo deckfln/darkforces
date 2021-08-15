@@ -17,12 +17,14 @@
 #include "gaEngine/World.h"
 #include "gaEngine/Model.h"
 #include "gaEngine/Debug.h"
-
 #include "darkforces/dfLevel.h"
 #include "darkforces/dfCollision.h"
 #include "darkforces/dfComponent/dfComponentActor.h"
 #include "darkforces/dfFileSystem.h"
 #include "darkforces/dfActor.h"
+#include "darkforces/dfLogicTrigger.h"
+#include "darkforces/dfObject/dfSpriteAnimated.h"
+#include "darkforces/dfBullet.h"
 
 const float c_height = 0.70f;
 const float c_radius = 0.2f;
@@ -122,6 +124,13 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 
 	// mandatory to get all data together
 	resizeEvent(width, height);
+
+	// prepare the flight recorder
+	g_Blackbox.registerClass("gaEntity", &gaEntity::create);
+	g_Blackbox.registerClass("gaActor", &gaActor::create);
+	g_Blackbox.registerClass("dfElevator", &dfElevator::create);
+	g_Blackbox.registerClass("dfBullet", &dfBullet::create);
+	g_Blackbox.registerClass("dfSpriteAnimated", &dfSpriteAnimated::create);
 }
 
 void myDarkForces::resize(int width, int height)

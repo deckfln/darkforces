@@ -1,6 +1,7 @@
 #pragma once
 
 #include <list>
+#include <map>
 
 #define MAXIMUM_RECORDS 300
 #include "Message.h"
@@ -42,6 +43,9 @@ namespace flightRecorder {
 	 *
 	 */
 	class Blackbox {
+		// creation function for classes of entities
+		std::map<std::string, void* (*)(void *)> m_callbacks;
+
 		// circular buffers
 		struct bufferEntities* m_entities[MAXIMUM_RECORDS];
 		struct bufferMessages* m_messages[MAXIMUM_RECORDS];
@@ -65,6 +69,9 @@ namespace flightRecorder {
 
 	public:
 		Blackbox();
+
+		void registerClass(const std::string& className, void* (*func)(void*));	// register the callback creation function for the class name
+
 		void recordState(void);
 		void recordMessage(gaMessage*);	// record messages on the fly (# over number of start of frame, move to _inframe_)
 		void saveStates(void);

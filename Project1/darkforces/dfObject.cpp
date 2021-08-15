@@ -18,6 +18,7 @@
 #include "dfObject/dfSprite.h"
 
 static int g_ids = 0;
+static const char* g_className = "dfObject";
 
 /**
  *
@@ -32,6 +33,7 @@ dfObject::dfObject(dfModel *source, const glm::vec3& position, float ambient, in
 {
 	modelAABB(m_source->modelAABB());
 	moveTo(position);
+	m_class_name = g_className;
 }
 
 /**
@@ -40,6 +42,7 @@ dfObject::dfObject(dfModel *source, const glm::vec3& position, float ambient, in
 dfObject::dfObject(flightRecorder::DarkForces::dfObject* record) :
 	gaEntity(&record->entity)
 {
+	m_class_name = g_className;
 }
 
 /**
@@ -312,13 +315,6 @@ bool dfObject::checkCollision(fwCylinder& bounding, glm::vec3& direction, glm::v
 #endif
 	}
 	return true;
-}
-
-/**
- * return a record of the entity state (for debug)
- */
-void* frCreate_dfObject(void* record) {
-	return new dfObject((flightRecorder::DarkForces::dfObject*)record);
 }
 
 /**

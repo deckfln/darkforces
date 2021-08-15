@@ -17,5 +17,3 @@ namespace flightRecorder {
 		time_t animation_time;					// start of the physic driven movement
 	};
 }
-
-extern void* frCreate_Actor(void*);

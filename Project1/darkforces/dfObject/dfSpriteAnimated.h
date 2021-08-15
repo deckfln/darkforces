@@ -23,6 +23,11 @@ public:
 	dfSpriteAnimated(dfWAX* wax, const glm::vec3& position, float ambient, uint32_t objectID);
 	dfSpriteAnimated(const std::string& model, const glm::vec3& position, float ambient);
 	dfSpriteAnimated(flightRecorder::DarkForces::SpriteAnimated* record);
+
+	static void* create(void* record) {
+		return new dfSpriteAnimated((flightRecorder::DarkForces::SpriteAnimated*)record);
+	}
+
 	void state(dfState state);
 	void rotation(const glm::vec3& rotation);
 

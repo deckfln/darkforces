@@ -33,11 +33,14 @@ static int g_bulletID = 0;
 static glm::vec4 g_red(1.0, 0.0, 0.0, 1.0);
 static fwMaterialBasic g_basic(&g_red);
 static fwGeometryCylinder *g_blaster=nullptr;
+static const char* g_className = "dfBullet";
 
 dfBullet::dfBullet(const glm::vec3& position, const glm::vec3& direction):
 	gaEntity(DF_ENTITY_BULLET, "bullet("+std::to_string(g_bulletID++)+")", position),
 	m_direction(glm::normalize(direction))
 {
+	m_class_name = g_className;
+
 	// create a mesh for the blaster
 	if (g_blaster == nullptr) {
 		g_basic.makeStatic();
@@ -175,13 +178,6 @@ void dfBullet::loadState(flightRecorder::Entity* r)
 	flightRecorder::dfBullet* record = (flightRecorder::dfBullet*)r;
 	gaEntity::loadState(&record->entity);
 	m_direction = record->m_direction;
-}
-
-/**
- *
- */
-void* frCreate_Bullet(void* record) {
-	return new dfBullet((flightRecorder::dfBullet*)record);
 }
 
 dfBullet::~dfBullet()

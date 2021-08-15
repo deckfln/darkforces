@@ -18,5 +18,3 @@ namespace flightRecorder {
 		};
 	}
 }
-
-extern void* frCreate_Elevator(void*);

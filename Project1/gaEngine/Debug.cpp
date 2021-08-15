@@ -57,8 +57,9 @@ void GameEngine::Debug::render(void)
 {
 	bool old_state = m_debug;
 	myDarkForces* app = static_cast<myDarkForces *>(m_app);
+
+	// create defaul layout	
 	/*
-	// Create the docking environment
 	ImGuiWindowFlags windowFlags = ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoTitleBar |
 		ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove |
 		ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus |
@@ -72,51 +73,46 @@ void GameEngine::Debug::render(void)
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
-	ImGui::Begin("InvisibleWindow", nullptr, windowFlags);
+	ImGui::Begin("InvisibleWindow", nullptr, windowFlags); // This is basically the background window that contains all the dockable windows
 	ImGui::PopStyleVar(3);
 
 	ImGuiID dockSpaceId = ImGui::GetID("InvisibleWindowDockSpace");
-
-	ImGui::DockSpace(dockSpaceId, ImVec2(0.0f, 0.0f), ImGuiDockNodeFlags_PassthruCentralNode);
-	ImGui::End();
-	*/
-	// create defaul layout	
-	ImGuiID dockSpaceId = ImGui::GetID("InvisibleWindowDockSpace");
-	bool dockSpaceCreated = ImGui::DockBuilderGetNode(dockSpaceId) != nullptr;
-	if (!dockSpaceCreated) {
+	if (!ImGui::DockBuilderGetNode(dockSpaceId)) {
 		ImGui::DockBuilderRemoveNode(dockSpaceId);
-		ImGuiDockNodeFlags dockSpaceFlags = 0;
+		ImGuiDockNodeFlags dockSpaceFlags = ImGuiDockNodeFlags_None;;
 		dockSpaceFlags |= ImGuiDockNodeFlags_PassthruCentralNode;
-		ImGui::DockBuilderAddNode(dockSpaceId, dockSpaceFlags);
+		ImGui::DockBuilderAddNode(dockSpaceId, ImGuiDockNodeFlags_DockSpace);
 
 		ImGuiID dockMain = dockSpaceId;
 		ImGuiID dockLeft = ImGui::DockBuilderSplitNode(dockMain, ImGuiDir_Left, 0.40f, NULL, &dockMain);
 		ImGuiID dockRight = ImGui::DockBuilderSplitNode(dockMain, ImGuiDir_Right, 0.40f, NULL, &dockMain);
 		ImGuiID dockBottom = ImGui::DockBuilderSplitNode(dockMain, ImGuiDir_Down, 0.40f, NULL, &dockMain);
 
-		ImGui::DockBuilderDockWindow("Player", dockLeft);
+		ImGui::DockBuilderDockWindow("MainWindow", dockMain);
+		ImGui::DockBuilderDockWindow("Player", dockBottom);
 		ImGui::DockBuilderDockWindow("Explorer", dockLeft);
 		ImGui::DockBuilderDockWindow("Inspector", dockRight);
+		ImGui::DockBuilderDockWindow("Messages", dockRight);
 		ImGui::DockBuilderFinish(dockSpaceId);
 	}
-
+	*/
 	Framework::Debug::render();
 
-	ImGui::Begin("Menu");                          // Create a window called "Hello, world!" and append into it.
-
-
-	if (ImGui::BeginMainMenuBar())	{
-		if (ImGui::BeginMenu("View")) {
-			if (ImGui::MenuItem("Explorer")) {
+	/*
+	if (ImGui::BeginMainMenuBar()) {
+		if (ImGui::BeginMenu("xView")) {
+			if (ImGui::MenuItem("xExplorer")) {
 				//Do something
 			}
-			if (ImGui::MenuItem("Inspector")) {
+			if (ImGui::MenuItem("xInspector")) {
 				//Do something
 			}
 			ImGui::EndMenu();
 		}
 		ImGui::EndMainMenuBar();
 	}
+	*/
+	ImGui::Begin("Menu");                          // Create a window called "Hello, world!" and append into it.
 
 	glm::vec3 p = app->m_player->position();
 	ImGui::Text("Player x:%.3f y:%.3f z:%.3f", p.x, p.y, p.z);

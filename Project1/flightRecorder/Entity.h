@@ -14,6 +14,7 @@ namespace flightRecorder {
 	struct Entity {
 		uint32_t size;						// size of the record
 		TYPE classID;						// class gaEntity
+		char className[32];					// class name
 		char name[64];						// name of the entity
 		Object3D object3D;					// source object
 		GameEngine::Transform transforms;	// transforms to move the object
@@ -23,5 +24,3 @@ namespace flightRecorder {
 		uint32_t nbComponents;				// number of components at the end of the record
 	};
 }
-
-extern void* frCreate_Entity(void*);

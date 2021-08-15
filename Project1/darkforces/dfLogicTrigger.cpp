@@ -18,6 +18,7 @@
 
 static const std::string switch1 = "switch1";
 static const std::string standard = "standard";
+static const char* g_className = "dfLogicTrigger";
 
 static int class2int(std::string kind)
 {
@@ -41,6 +42,7 @@ dfLogicTrigger::dfLogicTrigger(std::string & kind, std::string & sector) :
 	m_sector(sector)
 {
 	m_class = class2int(kind);
+	m_class_name = g_className;
 
 	// triger standard come with its own messages to send
 	if (m_class != DF_TRIGGER_STANDARD)
@@ -56,6 +58,7 @@ dfLogicTrigger::dfLogicTrigger(std::string& kind, const std::string& sector, int
 	m_wallIndex(wallIndex)
 {
 	m_class = class2int(kind);
+	m_class_name = g_className;
 }
 
 /**
@@ -71,6 +74,7 @@ dfLogicTrigger::dfLogicTrigger(std::string& kind, dfSector* sector, int wallInde
 	m_clients.push_back(sector->name());
 	sector->setTriggerFromWall(this);
 	m_class = class2int(kind);
+	m_class_name = g_className;
 }
 
 /**
@@ -84,6 +88,7 @@ dfLogicTrigger::dfLogicTrigger(std::string& kind, dfSector* sector, dfElevator* 
 {
 	m_clients.push_back(sector->name());
 	m_class = class2int(kind);
+	m_class_name = g_className;
 }
 
 /**
@@ -98,6 +103,7 @@ dfLogicTrigger::dfLogicTrigger(std::string& kind, dfElevator* client):
 	m_clients.push_back(client->sector());
 	m_class = class2int(kind);
 	m_sector = client->sector();
+	m_class_name = g_className;
 }
 
 /**

@@ -12,35 +12,24 @@
 #include "../gaEngine/gaEntity.h"
 #include "../gaEngine/gaActor.h"
 
-#include "Callbacks.h"
-
 /**
  * global flight recorder
  */
 flightRecorder::Blackbox g_Blackbox;
 
 /**
- * 	callbacks to create new entities
- */
-
-#define MAXIMUM_CALLBACKS 1024
-void* (*g_Callbacks[MAXIMUM_CALLBACKS])(void* record) = { nullptr };
-
-static gaEntity* createEntity(flightRecorder::Entity* record)
-{
-	int mclass = (int)record->classID;
-	if (g_Callbacks[mclass]) {
-		return (gaEntity*)(*g_Callbacks[mclass])(record);
-	}
-	return nullptr;
-}
-
-/**
  *
  */
 flightRecorder::Blackbox::Blackbox()
 {
-	init_callbacks();
+}
+
+/**
+ * register the callback creation function for the class name
+ */
+void flightRecorder::Blackbox::registerClass(const std::string& className, void* (*func)(void*))
+{
+	m_callbacks[className] = func;
 }
 
 /**
@@ -382,14 +371,23 @@ void flightRecorder::Blackbox::setFrame(int frame)
 	gaEntity* child;
 	for (auto& entity : entities) {
 		if (g_gaWorld.m_entities.count(entity.first) == 0) {
-			child = createEntity(entity.second);
-			g_gaWorld.m_entities[entity.first].push_back(child);
+			flightRecorder::Entity* record = entity.second;
+
+			if (m_callbacks.count(record->className) > 0) {
+				void* (*create)(void*) = m_callbacks[record->className];
+
+				child = (gaEntity *)create(entity.second);
+				g_gaWorld.m_entities[entity.first].push_back(child);
+			}
+			else {
+				__debugbreak();
+			}
 		}
 	}
 
 	// and reload their states
 	for (auto &entry : g_gaWorld.m_entities) {
-		for (auto &ent : entry.second) {
+ 		for (auto &ent : entry.second) {
 			ent->loadState(entities[entry.first]);
 			ent->loadComponents(components[entry.first]);
 		}
@@ -509,23 +507,5 @@ void flightRecorder::Blackbox::debugGUIinframe(void)
  */
 flightRecorder::Blackbox::~Blackbox()
 {
-}
-
-
-/**
- * Create a polymorphic entity
- */
-static gaEntity* createEntity1(flightRecorder::Entity* record)
-{
-	gaEntity* entity = nullptr;
-	switch (record->classID) {
-	case flightRecorder::TYPE::ENTITY:
-		entity = new gaEntity(record);
-		break;
-	case flightRecorder::TYPE::ENTITY_ACTOR:
-		entity = new gaActor(record);
-		break;
-	}
-	return entity;
 }
 

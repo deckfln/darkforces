@@ -67,6 +67,8 @@ static std::map<dfElevator::Type, int> g_sound_evelators = {
 
 static std::map<std::string, dfVOC*> m_cachedVOC;
 
+static const char* g_className = "dfElevator";
+
 /**
  * Initialize the elevator
  */
@@ -101,6 +103,7 @@ void dfElevator::init(const std::string& kind)
 	m_collideSectors=false;	// elevators doesn't need to check collision with sectors
 	m_hasCollider = true;	// test collision with elevators
 	m_defaultCollision = gaMessage::Flag::PUSH_ENTITIES;
+	m_class_name = g_className;
 }
 
 /**
@@ -140,6 +143,7 @@ dfElevator::dfElevator(dfElevator* source):
 	m_current = source->m_current;		// current altitude of the part to move (floor or ceiling)
 	m_direction = source->m_direction;	// direction and speed of the move
 	m_target = source->m_direction;		// target altitude
+	m_class_name = g_className;
 }
 
 /**
@@ -901,13 +905,6 @@ void dfElevator::debugGUIChildClass(void)
 		ImGui::Text("Speed: %.2f", m_direction);
 		ImGui::TreePop();
 	}
-}
-
-/**
- *
- */
-void* frCreate_Elevator(void* record) {
-	return new dfElevator((dfElevator*)record);
 }
 
 dfElevator::~dfElevator(void)

@@ -12,9 +12,12 @@
 #include "../dfLevel.h"
 #include "../dfVue.h"
 
+static const char* g_className = "dfObject3D";
+
 dfObject3D::dfObject3D(df3DO* threedo, const glm::vec3& position, float ambient, uint32_t objectID):
 	dfObject(threedo, position, ambient, OBJECT_3DO, objectID)
 {
+	m_class_name = g_className;
 	physical(false);	// in dark forces, 3D objects can be traversed
 	set_scale(glm::vec3(0.1f));
 
@@ -30,6 +33,7 @@ dfObject3D::dfObject3D(df3DO* threedo, const glm::vec3& position, float ambient,
 dfObject3D::dfObject3D(flightRecorder::DarkForces::Object3D* record) :
 	dfObject(&record->object)
 {
+	m_class_name = g_className;
 }
 
 /**

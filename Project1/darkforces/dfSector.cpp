@@ -23,11 +23,14 @@
 #include "dfLevel.h"
 #include "dfComponent/dfComponentElevator.h"
 
+static const char* g_className = "dfSector";
+
 dfSector::dfSector(std::istringstream& infile, std::vector<dfSector*>& sectorsID):
 	gaEntity(DF_ENTITY_SECTOR),
 	m_sectorsID(sectorsID)
 {
 	physical(false);	// object is a virtual entity (cannot collide)
+	m_class_name = g_className;
 
 	int nbVertices;
 	int currentVertice = 0;
