@@ -25,6 +25,7 @@
 #include "darkforces/dfLogicTrigger.h"
 #include "darkforces/dfObject/dfSpriteAnimated.h"
 #include "darkforces/dfBullet.h"
+#include "darkforces/dfObject/dfBulletExplode.h"
 
 const float c_height = 0.70f;
 const float c_radius = 0.2f;
@@ -131,6 +132,7 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 	g_Blackbox.registerClass("dfElevator", &dfElevator::create);
 	g_Blackbox.registerClass("dfBullet", &dfBullet::create);
 	g_Blackbox.registerClass("dfSpriteAnimated", &dfSpriteAnimated::create);
+	g_Blackbox.registerClass("dfBulletExplode", &dfBulletExplode::create);
 }
 
 void myDarkForces::resize(int width, int height)
