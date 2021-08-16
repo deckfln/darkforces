@@ -11,6 +11,8 @@
 #include "../dfBullet.h"
 #include "../../gaEngine/gaActor.h"
 
+#include "../flightRecorder/frCompActor.h"
+
 dfComponentActor::dfComponentActor(void):
 	gaComponent(DF_COMPONENT_ACTOR)
 {
@@ -131,6 +133,52 @@ void dfComponentActor::die(void)
 	((dfSpriteAnimated*)m_entity)->hasCollider(false);
 
 	gaDebugLog(1, "dfActor::die", "remove " + m_entity->name() + " the entity from the world");
+}
+
+/**
+ * size of the component
+ */
+inline uint32_t dfComponentActor::recordSize(void)
+{
+	return sizeof(flightRecorder::DarkForces::CompActor);
+}
+
+/**
+ * save the component state in a record
+ */
+uint32_t dfComponentActor::recordState(void* r)
+{
+	flightRecorder::DarkForces::CompActor* record = static_cast<flightRecorder::DarkForces::CompActor*>(r);
+	record->size = sizeof(flightRecorder::DarkForces::CompActor);
+	record->id = m_id;
+
+	record->shield = m_shield;
+	record->maxShield = m_maxShield;
+	record->energy = m_energy;
+	record->maxEnergy = m_maxEnergy;
+	record->battery = m_battery;
+	record->life = m_life;
+	record->keys = m_keys;
+
+	return record->size;
+}
+
+/**
+ * reload a component state from a record
+ */
+uint32_t dfComponentActor::loadState(void* r)
+{
+	flightRecorder::DarkForces::CompActor* record = (flightRecorder::DarkForces::CompActor*)r;
+
+	m_shield = record->shield;
+	m_maxShield = record->maxShield;
+	m_energy = record->energy;
+	m_maxEnergy = record->maxEnergy;
+	m_battery = record->battery;
+	m_life = record->life;
+	m_keys = record->keys;
+
+	return record->size;
 }
 
 /**

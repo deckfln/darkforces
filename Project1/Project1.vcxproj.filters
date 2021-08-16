@@ -1100,6 +1100,9 @@
     <ClInclude Include="darkforces\flightRecorder\frCompElevator.h">
       <Filter>Fichiers d%27en-tête\DarkForces\flightRecorder</Filter>
     </ClInclude>
+    <ClInclude Include="darkforces\flightRecorder\frCompActor.h">
+      <Filter>Fichiers d%27en-tête\DarkForces\flightRecorder</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\fragment.glsl">

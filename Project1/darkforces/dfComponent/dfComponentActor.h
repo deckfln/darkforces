@@ -34,6 +34,13 @@ public:
 	inline void currentSector(dfSector* sector) { m_currentSector = sector; };
 	inline void bind(dfLevel* level) { m_level = level; };
 	void dispatchMessage(gaMessage* message) override;	// let an entity deal with a situation
+
+	// flight recorder status
+	inline uint32_t recordSize(void);					// size of the component record
+	uint32_t recordState(void* record);					// save the component state in a record
+	uint32_t loadState(void* record);					// reload a component state from a record
+
+	//debugger
 	void debugGUIinline(void) override;					// display the component in the debugger
 
 	~dfComponentActor();
