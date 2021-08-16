@@ -43,6 +43,7 @@ dfSprite::dfSprite(const std::string& name, const glm::vec3& position, float amb
 dfSprite::dfSprite(flightRecorder::DarkForces::Sprite* record):
 	dfObject(&record->object)
 {
+	g_spriteID++;
 	m_class_name = g_className;
 }
 
@@ -91,6 +92,29 @@ void dfSprite::OnWorldRemove(void)
 	manager->remove(this);
 
 	dfObject::OnWorldRemove();
+}
+
+/**
+ * return a record of the entity state (for debug)
+ */
+uint32_t dfSprite::recordState(void* r)
+{
+	flightRecorder::DarkForces::Sprite* record = static_cast<flightRecorder::DarkForces::Sprite*>(r);
+	dfObject::recordState(&record->object);
+
+	record->object.entity.classID = flightRecorder::TYPE::DF_ENTITY_SPRITEANIMATED;
+	record->object.entity.size = sizeof(flightRecorder::DarkForces::Sprite);
+
+	return sizeof(flightRecorder::DarkForces::Sprite);
+}
+
+/**
+ * reload an entity state from a record
+ */
+void dfSprite::loadState(flightRecorder::Entity* r)
+{
+	flightRecorder::DarkForces::Sprite* record = (flightRecorder::DarkForces::Sprite*)r;
+	dfObject::loadState((flightRecorder::Entity * )&record->object);
 }
 
 dfSprite::~dfSprite()

@@ -43,6 +43,7 @@ dfObject::dfObject(flightRecorder::DarkForces::dfObject* record) :
 	gaEntity(&record->entity)
 {
 	m_class_name = g_className;
+	loadState((flightRecorder::Entity*)record);
 }
 
 /**
@@ -328,7 +329,16 @@ uint32_t dfObject::recordState(void* r)
 	record->entity.classID = flightRecorder::TYPE::DF_ENTITY_OBJECT;
 	record->entity.size = sizeof(flightRecorder::DarkForces::dfObject);
 
+	record->is = m_is;
+	record->logics = m_logics;
+	record->difficulty = m_difficulty;
+	record->ambient = m_ambient;
+	record->radius = m_radius;
+	record->height = m_height;
+
 	record->position_level = m_position_lvl;
+	strncpy_s(record->model, m_source->name().c_str(), sizeof(record->model));
+	strncpy_s(record->sector, m_sector->name().c_str(), sizeof(record->sector));
 
 	return record->entity.size;
 }
@@ -340,6 +350,17 @@ void dfObject::loadState(flightRecorder::Entity* r)
 {
 	gaEntity::loadState(r);
 	flightRecorder::DarkForces::dfObject* record = (flightRecorder::DarkForces::dfObject*)r;
+
+	m_is = record->is;
+	m_logics = record->logics;
+	m_difficulty = record->difficulty;
+	m_ambient = record->ambient;
+	m_radius = record->radius;
+	m_height = record->height;
+
+	m_source = static_cast<dfModel*>(g_gaWorld.getModel(record->model));
+	m_sector = static_cast<dfSector*>(g_gaWorld.getEntity(record->sector));
+
 	m_position_lvl = record->position_level;
 }
 

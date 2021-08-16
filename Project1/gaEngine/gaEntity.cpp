@@ -54,6 +54,11 @@ gaEntity::gaEntity(flightRecorder::Entity* record):
 	m_class_name(g_className)
 {
 	loadState(record);
+
+	g_gaBoundingBoxes.add(&m_worldBounding);
+	m_collider.set(&m_modelAABB, &m_worldMatrix, &m_inverseWorldMatrix);
+
+	m_transforms.m_flag = gaMessage::Flag::WANT_TO_MOVE_FALL;	// accept falling down
 }
 
 /**
@@ -393,7 +398,6 @@ void gaEntity::debugGUI(bool* close)
  */
 gaEntity::~gaEntity()
 {
-	g_gaWorld.removeClient(this);
 	g_gaBoundingBoxes.remove(&m_worldBounding);
 
 	if (m_mesh) {

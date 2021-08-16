@@ -29,6 +29,8 @@ public:
 	inline int recordSize(void) override {
 		return sizeof(flightRecorder::DarkForces::Sprite);
 	}													// size of one record
+	uint32_t recordState(void* record) override;			// return a record of the entity state (for debug)
+	void loadState(flightRecorder::Entity* record) override;// reload an entity state from a record
 
 	~dfSprite();
 };

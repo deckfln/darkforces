@@ -357,14 +357,17 @@ void flightRecorder::Blackbox::setFrame(int frame)
 	}
 
 	//remove entities from the world that are not in the save
-	std::list<std::string> to_delete;
+	std::list<gaEntity*> to_delete;
 	for (auto &entity : g_gaWorld.m_entities) {
 		if (entities.count(entity.first) == 0) {
-			to_delete.push_back(entity.first);
+			for (auto e : entity.second) {
+				to_delete.push_back(e);
+			}
 		}
 	}
 	for (auto entity : to_delete) {
-		g_gaWorld.m_entities.erase(entity);
+		g_gaWorld.removeClient(entity);
+		delete entity;
 	}
 
 	// add entities to the world that are not in the save
@@ -377,7 +380,7 @@ void flightRecorder::Blackbox::setFrame(int frame)
 				void* (*create)(void*) = m_callbacks[record->className];
 
 				child = (gaEntity *)create(entity.second);
-				g_gaWorld.m_entities[entity.first].push_back(child);
+				g_gaWorld.addClient(child);
 			}
 			else {
 				__debugbreak();
