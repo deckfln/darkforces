@@ -359,8 +359,10 @@ void gaEntity::loadComponents(void* p)
 /**
  * reload an entity state from a record
  */
-void gaEntity::loadState(flightRecorder::Entity* record)
+void gaEntity::loadState(void* r)
 {
+	flightRecorder::Entity* record = static_cast<flightRecorder::Entity *>(r);
+
 	m_name = record->name;
 	fwObject3D::loadState(&record->object3D);
 

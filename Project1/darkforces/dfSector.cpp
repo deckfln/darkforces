@@ -989,10 +989,10 @@ uint32_t dfSector::recordState(void* r)
 /**
  * reload an entity state from a record
  */
-void dfSector::loadState(flightRecorder::Entity* r)
+void dfSector::loadState(void* r)
 {
-	gaEntity::loadState(r);
 	flightRecorder::DarkForces::Sector* record = (flightRecorder::DarkForces::Sector*)r;
+	gaEntity::loadState(&record->entity);
 	changeAmbient(record->ambient);
 }
 

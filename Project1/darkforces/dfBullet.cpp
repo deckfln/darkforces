@@ -173,7 +173,7 @@ uint32_t dfBullet::recordState(void* r)
 /**
  * reload an actor state from a record
  */
-void dfBullet::loadState(flightRecorder::Entity* r)
+void dfBullet::loadState(void* r)
 {
 	flightRecorder::dfBullet* record = (flightRecorder::dfBullet*)r;
 	gaEntity::loadState(&record->entity);

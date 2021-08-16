@@ -53,10 +53,10 @@ uint32_t DarkForces::Actor::recordState(void* record)
 /**
  * reload an actor state from a record
  */
-void DarkForces::Actor::loadState(flightRecorder::Entity* record)
+void DarkForces::Actor::loadState(void* record)
 {
 	flightRecorder::DarkForces::Actor* r = (flightRecorder::DarkForces::Actor*)record;
-	gaActor::loadState((flightRecorder::Entity * )&r->actor);
+	gaActor::loadState(&r->actor);
 	if (r->currentSector[0] != 0) {
 		m_defaultAI.currentSector(m_level->findSector(r->currentSector));
 	}

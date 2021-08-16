@@ -150,7 +150,7 @@ public:
 		return sizeof(flightRecorder::DarkForces::Elevator);
 	};														// size of one record
 	uint32_t recordState(void* record) override;				// return a record of an actor state (for debug)
-	void loadState(flightRecorder::Entity* record) override;// reload an actor state from a record
+	void loadState(void* record) override;// reload an actor state from a record
 	void debugGUIChildClass(void) override;					// Add dedicated component debug the entity
 	~dfElevator(void);
 };

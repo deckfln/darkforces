@@ -346,10 +346,10 @@ uint32_t dfObject::recordState(void* r)
 /**
  * reload an entity state from a record
  */
-void dfObject::loadState(flightRecorder::Entity* r)
+void dfObject::loadState(void* r)
 {
-	gaEntity::loadState(r);
 	flightRecorder::DarkForces::dfObject* record = (flightRecorder::DarkForces::dfObject*)r;
+	gaEntity::loadState(&record->entity);
 
 	m_is = record->is;
 	m_logics = record->logics;

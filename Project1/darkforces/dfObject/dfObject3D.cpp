@@ -165,10 +165,10 @@ uint32_t dfObject3D::recordState(void* r)
 /**
  * reload an entity state from a record
  */
-void dfObject3D::loadState(flightRecorder::Entity* r)
+void dfObject3D::loadState(void* r)
 {
-	dfObject::loadState(r);
 	flightRecorder::DarkForces::Object3D* record = (flightRecorder::DarkForces::Object3D*)r;
+	dfObject::loadState(&record->object);
 	m_lastFrame= record->lastFrame;
 
 	if (record->vue) {

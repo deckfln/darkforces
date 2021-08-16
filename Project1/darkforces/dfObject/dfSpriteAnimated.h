@@ -45,7 +45,7 @@ public:
 		return sizeof(flightRecorder::DarkForces::SpriteAnimated);
 	}													// size of one record
 	uint32_t recordState(void* record) override;			// return a record of the entity state (for debug)
-	void loadState(flightRecorder::Entity* record) override;// reload an entity state from a record
+	void loadState(void* record) override;// reload an entity state from a record
 
 	void debugGUIChildClass(void) override;			// Add dedicated component debug the entity
 	~dfSpriteAnimated();

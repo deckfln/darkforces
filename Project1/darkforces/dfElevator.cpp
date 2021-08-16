@@ -856,10 +856,10 @@ uint32_t dfElevator::recordState(void* r)
 /**
  * reload an actor state from a record
  */
-void dfElevator::loadState(flightRecorder::Entity* r)
+void dfElevator::loadState(void* r)
 {
-	gaEntity::loadState(r);
 	flightRecorder::DarkForces::Elevator* record = (flightRecorder::DarkForces::Elevator*)r;
+	gaEntity::loadState(&record->entity);
 
 	m_status = (dfElevator::Status)record->m_status;	// status of the elevator
 	m_tick = record->m_tick;			// current timer

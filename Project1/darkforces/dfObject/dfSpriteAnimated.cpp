@@ -188,7 +188,7 @@ uint32_t dfSpriteAnimated::recordState(void* r)
 /**
  * reload an entity state from a record
  */
-void dfSpriteAnimated::loadState(flightRecorder::Entity* r)
+void dfSpriteAnimated::loadState(void* r)
 {
 	dfSprite::loadState(r);
 	flightRecorder::DarkForces::SpriteAnimated* record = static_cast<flightRecorder::DarkForces::SpriteAnimated*>((void *)r);

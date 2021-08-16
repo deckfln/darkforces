@@ -188,10 +188,10 @@ uint32_t gaActor::recordState(void* r)
 /**
  * reload an actor state from a record
  */
-void gaActor::loadState(flightRecorder::Entity* r)
+void gaActor::loadState(void* r)
 {
-	gaEntity::loadState(r);
 	flightRecorder::Actor* record = (flightRecorder::Actor*)r;
+	gaEntity::loadState(&record->entity);
 	m_speed = record->speed;				// normal speed
 	m_ankle = record->ankle;				// maximum step the actor can walk up
 	m_eyes = record->eyes;					// position of the eyes (from the feet)

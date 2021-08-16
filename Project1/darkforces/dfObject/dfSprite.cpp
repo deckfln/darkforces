@@ -111,7 +111,7 @@ uint32_t dfSprite::recordState(void* r)
 /**
  * reload an entity state from a record
  */
-void dfSprite::loadState(flightRecorder::Entity* r)
+void dfSprite::loadState(void* r)
 {
 	flightRecorder::DarkForces::Sprite* record = (flightRecorder::DarkForces::Sprite*)r;
 	dfObject::loadState((flightRecorder::Entity * )&record->object);
