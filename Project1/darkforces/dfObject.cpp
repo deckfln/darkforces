@@ -338,7 +338,13 @@ uint32_t dfObject::recordState(void* r)
 
 	record->position_level = m_position_lvl;
 	strncpy_s(record->model, m_source->name().c_str(), sizeof(record->model));
-	strncpy_s(record->sector, m_sector->name().c_str(), sizeof(record->sector));
+
+	if (m_sector) {
+		strncpy_s(record->sector, m_sector->name().c_str(), sizeof(record->sector));
+	}
+	else {
+		record->sector[0];
+	}
 
 	return record->entity.size;
 }

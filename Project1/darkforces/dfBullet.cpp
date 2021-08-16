@@ -85,6 +85,8 @@ dfBullet::dfBullet(flightRecorder::dfBullet* record):
 	gaEntity(&record->entity)
 {
 	m_direction = record->m_direction;
+	m_componentMesh.set(g_blaster, &g_basic);
+	addComponent(&m_componentMesh);
 }
 
 /**
