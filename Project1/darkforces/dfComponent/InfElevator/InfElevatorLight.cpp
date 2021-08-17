@@ -1,4 +1,4 @@
-#include "dfComponentElevatorLight.h"
+#include "InfElevatorLight.h"
 
 #include "../../dfElevator.h"
 #include "../../../gaEngine/World.h"
@@ -7,15 +7,15 @@
 /**
  * set the ambient color of the sector
  */
-void DarkForces::Component::ElevatorLight::moveTo(float ambient)
+void DarkForces::Component::InfElevatorLight::moveTo(float ambient)
 {
 	if (m_pSector && m_pSector->visible()) {
 		m_pSector->changeAmbient(ambient);
 	}
 }
 
-DarkForces::Component::ElevatorLight::ElevatorLight(dfSector* sector) :
-	DarkForces::Component::Elevator(sector)
+DarkForces::Component::InfElevatorLight::InfElevatorLight(dfSector* sector) :
+	DarkForces::Component::InfElevator(sector)
 {
 	m_type = dfElevator::Type::CHANGE_LIGHT;
 

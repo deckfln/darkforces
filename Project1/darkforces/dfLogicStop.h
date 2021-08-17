@@ -13,7 +13,7 @@ class dfSector;
 
 namespace DarkForces {
 	namespace Component {
-		class Elevator;
+		class InfElevator;
 	}
 }
 

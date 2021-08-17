@@ -15,7 +15,7 @@ namespace DarkForces {
 		 * Generic elevator class: move between stops at the giving speed
 		 * sub-classes will deal with what kind of move it is (morph, spin, light, floor ...)
 		 */
-		class Elevator : public gaComponent {
+		class InfElevator : public gaComponent {
 		protected:
 			enum class Status {
 				HOLD,		// elevator is not animated
@@ -62,8 +62,8 @@ namespace DarkForces {
 				END = 2		// arriving at stop
 			};
 
-			Elevator(const std::string& sector);
-			Elevator(dfSector* sector);
+			InfElevator(const std::string& sector);
+			InfElevator(dfSector* sector);
 
 			// getter/setter
 			inline void speed(float speed) { m_speed = speed; };

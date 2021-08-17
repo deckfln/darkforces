@@ -1,17 +1,17 @@
 #pragma once
 
-#include "../dfComponentElevator.h"
+#include "../InfElevator.h"
 
 class dfSector;
 
 namespace DarkForces {
 	namespace Component {
-		class ElevatorLight : public DarkForces::Component::Elevator 
+		class InfElevatorLight : public InfElevator 
 		{
 			void moveTo(float ambient) override;				// move the given position (depend on the elevator type)
 		public:
-			ElevatorLight(const std::string& sector);
-			ElevatorLight(dfSector* sector);
+			InfElevatorLight(const std::string& sector);
+			InfElevatorLight(dfSector* sector);
 		};
 	}
 }

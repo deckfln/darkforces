@@ -106,10 +106,10 @@
     <Filter Include="Fichiers d%27en-tête\DarkForces\flightRecorder">
       <UniqueIdentifier>{914054cd-b39c-4a48-b8ed-f0f8aaaf46ef}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Fichiers d%27en-tête\DarkForces\dfComponent\dfComponentElevator">
+    <Filter Include="Fichiers d%27en-tête\DarkForces\dfComponent\InfElevator">
       <UniqueIdentifier>{4405f5da-3328-42a3-883e-20f96081965c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Fichiers sources\Dark Forces\dfComponent\dfComponentElevator">
+    <Filter Include="Fichiers sources\Dark Forces\dfComponent\InfElevator">
       <UniqueIdentifier>{228379d2-a016-4e8f-8ab7-d79c36af7040}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -567,14 +567,14 @@
     <ClCompile Include="darkforces\dfActor.cpp">
       <Filter>Fichiers sources\Dark Forces</Filter>
     </ClCompile>
-    <ClCompile Include="darkforces\dfComponent\InfProgram.cpp">
+    <ClCompile Include="darkforces\dfComponent\InfStandardTrigger.cpp">
       <Filter>Fichiers sources\Dark Forces\dfComponent</Filter>
     </ClCompile>
-    <ClCompile Include="darkforces\dfComponent\dfComponentElevator.cpp">
+    <ClCompile Include="darkforces\dfComponent\InfElevator.cpp">
       <Filter>Fichiers sources\Dark Forces\dfComponent</Filter>
     </ClCompile>
-    <ClCompile Include="darkforces\dfComponent\dfComponentElevator\dfComponentElevatorLight.cpp">
-      <Filter>Fichiers sources\Dark Forces\dfComponent\dfComponentElevator</Filter>
+    <ClCompile Include="darkforces\dfComponent\InfElevator\InfElevatorLight.cpp">
+      <Filter>Fichiers sources\Dark Forces\dfComponent\InfElevator</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1085,14 +1085,11 @@
     <ClInclude Include="darkforces\flightRecorder\frElevator.h">
       <Filter>Fichiers d%27en-tête\DarkForces\flightRecorder</Filter>
     </ClInclude>
-    <ClInclude Include="darkforces\dfComponent\InfProgram.h">
+    <ClInclude Include="darkforces\dfComponent\InfStandardTrigger.h">
       <Filter>Fichiers d%27en-tête\DarkForces\dfComponent</Filter>
     </ClInclude>
-    <ClInclude Include="darkforces\dfComponent\dfComponentElevator.h">
+    <ClInclude Include="darkforces\dfComponent\InfElevator.h">
       <Filter>Fichiers d%27en-tête\DarkForces\dfComponent</Filter>
-    </ClInclude>
-    <ClInclude Include="darkforces\dfComponent\dfComponentElevator\dfComponentElevatorLight.h">
-      <Filter>Fichiers d%27en-tête\DarkForces\dfComponent\dfComponentElevator</Filter>
     </ClInclude>
     <ClInclude Include="darkforces\flightRecorder\frSector.h">
       <Filter>Fichiers d%27en-tête\DarkForces\flightRecorder</Filter>
@@ -1102,6 +1099,9 @@
     </ClInclude>
     <ClInclude Include="darkforces\flightRecorder\frCompActor.h">
       <Filter>Fichiers d%27en-tête\DarkForces\flightRecorder</Filter>
+    </ClInclude>
+    <ClInclude Include="darkforces\dfComponent\InfElevator\InfElevatorLight.h">
+      <Filter>Fichiers d%27en-tête\DarkForces\dfComponent\InfElevator</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

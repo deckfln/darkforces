@@ -21,7 +21,7 @@
 #include "dfParseINF.h"
 #include "dfSign.h"
 #include "dfLevel.h"
-#include "dfComponent/dfComponentElevator.h"
+#include "dfComponent/InfElevator.h"
 
 static const char* g_className = "dfSector";
 
@@ -932,7 +932,7 @@ void dfSector::addTrigger(dfLogicTrigger* trigger)
 /**
  * register a program for the sector
  */
-void dfSector::addProgram(DarkForces::InfProgram* program)
+void dfSector::addProgram(DarkForces::Component::InfStandardTrigger* program)
 {
 	program->compile();
 	addComponent(program);
@@ -942,7 +942,7 @@ void dfSector::addProgram(DarkForces::InfProgram* program)
 /**
  * register a INF elevator on the sector
  */
-void dfSector::addElevator(DarkForces::Component::Elevator* elevator)
+void dfSector::addElevator(DarkForces::Component::InfElevator* elevator)
 {
 	addComponent(elevator);
 	m_elevators.push_back(elevator);	// keep track to delete the program when needed

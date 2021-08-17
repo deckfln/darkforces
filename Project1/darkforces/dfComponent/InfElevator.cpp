@@ -1,4 +1,4 @@
-#include "dfComponentElevator.h"
+#include "InfElevator.h"
 
 #include "../../config.h"
 
@@ -15,7 +15,7 @@
 /**
  * move to the given position (virtual function) => every elevator has its own
  */
-void DarkForces::Component::Elevator::moveTo(float z)
+void DarkForces::Component::InfElevator::moveTo(float z)
 {
 	gaDebugLog(1, "DarkForces::Component::Elevator::moveTo", "m_type==" + std::to_string((uint32_t)m_type) + " not implemented");
 }
@@ -23,7 +23,7 @@ void DarkForces::Component::Elevator::moveTo(float z)
 /**
  * move directly to the given stop
  */
-void DarkForces::Component::Elevator::moveTo(dfLogicStop* stop)
+void DarkForces::Component::InfElevator::moveTo(dfLogicStop* stop)
 {
 	float p = stop->z_position(m_type);
 	moveTo(p);
@@ -32,7 +32,7 @@ void DarkForces::Component::Elevator::moveTo(dfLogicStop* stop)
 /**
  * start moving to the next stop
  */
-void DarkForces::Component::Elevator::moveToNextStop(void)
+void DarkForces::Component::InfElevator::moveToNextStop(void)
 {
 	if (m_speed > 0) {
 		m_current = m_stops[m_currentStop]->z_position(m_type);
@@ -87,7 +87,7 @@ void DarkForces::Component::Elevator::moveToNextStop(void)
 /**
  * move between stops
  */
-bool DarkForces::Component::Elevator::animate(time_t delta)
+bool DarkForces::Component::InfElevator::animate(time_t delta)
 {
 	m_tick += delta;
 
@@ -200,13 +200,13 @@ bool DarkForces::Component::Elevator::animate(time_t delta)
 /**
  * init the object
  */
-DarkForces::Component::Elevator::Elevator(const std::string& sector):
+DarkForces::Component::InfElevator::InfElevator(const std::string& sector):
 	gaComponent(DF_COMPONENT_INF_ELEVATOR),
 	m_sector(sector)
 {
 }
 
-DarkForces::Component::Elevator::Elevator(dfSector* sector):
+DarkForces::Component::InfElevator::InfElevator(dfSector* sector):
 	gaComponent(DF_COMPONENT_INF_ELEVATOR),
 	m_sector(sector->name())
 {
@@ -217,7 +217,7 @@ DarkForces::Component::Elevator::Elevator(dfSector* sector):
 /**
  * Handle messages
  */
-void DarkForces::Component::Elevator::dispatchMessage(gaMessage* message)
+void DarkForces::Component::InfElevator::dispatchMessage(gaMessage* message)
 {
 	switch (message->m_action) {
 	case DF_MESSAGE_TRIGGER:
@@ -283,7 +283,7 @@ void DarkForces::Component::Elevator::dispatchMessage(gaMessage* message)
 /**
  * size of the component
  */
-inline uint32_t DarkForces::Component::Elevator::recordSize(void)
+inline uint32_t DarkForces::Component::InfElevator::recordSize(void)
 {
 	return sizeof(flightRecorder::DarkForces::CompElevator);
 }
@@ -291,7 +291,7 @@ inline uint32_t DarkForces::Component::Elevator::recordSize(void)
 /**
  * save the component state in a record
  */
-uint32_t DarkForces::Component::Elevator::recordState(void* r)
+uint32_t DarkForces::Component::InfElevator::recordState(void* r)
 {
 	flightRecorder::DarkForces::CompElevator* record = static_cast<flightRecorder::DarkForces::CompElevator*>(r);
 	record->size = sizeof(flightRecorder::DarkForces::CompElevator);
@@ -312,7 +312,7 @@ uint32_t DarkForces::Component::Elevator::recordState(void* r)
 /**
  * reload a component state from a record
  */
-uint32_t DarkForces::Component::Elevator::loadState(void* r)
+uint32_t DarkForces::Component::InfElevator::loadState(void* r)
 {
 	flightRecorder::DarkForces::CompElevator* record = (flightRecorder::DarkForces::CompElevator*)r;
 
@@ -332,7 +332,7 @@ uint32_t DarkForces::Component::Elevator::loadState(void* r)
 /**
  * display the component in the debugger
  */
-void DarkForces::Component::Elevator::debugGUIinline(void)
+void DarkForces::Component::InfElevator::debugGUIinline(void)
 {
 	static std::map<Status, const char*> status = {
 		{Status::HOLD, "HOLD"},

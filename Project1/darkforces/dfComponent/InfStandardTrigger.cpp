@@ -1,4 +1,4 @@
-#include "infProgram.h"
+#include "InfStandardTrigger.h"
 #include <map>
 
 #include "../../config.h"
@@ -7,17 +7,17 @@
 
 #include <imgui.h>
 
-using namespace DarkForces;
+using namespace DarkForces::Component;
 
 static std::map<const std::string, Event> _triggers = {
-	{"standard", DarkForces::Event::DF_TRIGGER_STANDARD},
-	{"switch1", DarkForces::Event::DF_TRIGGER_SWITCH1}
+	{"standard", Event::DF_TRIGGER_STANDARD},
+	{"switch1", Event::DF_TRIGGER_SWITCH1}
 };
 
 /**
  * execute the program
  */
-void DarkForces::InfProgram::execute(void)
+void InfStandardTrigger::execute(void)
 {
 	for (unsigned int i = 0; i < m_messages.size(); i++) {
 		g_gaWorld.sendMessage(m_entity->name(), m_messages[i]->m_client, 
@@ -27,7 +27,7 @@ void DarkForces::InfProgram::execute(void)
 	}
 }
 
-DarkForces::InfProgram::InfProgram(const std::string& trigger, const std::string& sector) :
+InfStandardTrigger::InfStandardTrigger(const std::string& trigger, const std::string& sector) :
 	gaComponent(DF_COMPONENT_INF)
 {
 	m_class = _triggers[trigger];
@@ -36,7 +36,7 @@ DarkForces::InfProgram::InfProgram(const std::string& trigger, const std::string
 /**
  * compile all data into the final program
  */
-void DarkForces::InfProgram::compile(void)
+void InfStandardTrigger::compile(void)
 {
 	if (m_messages.size() == 0) {
 		// if there is no defined message
@@ -62,7 +62,7 @@ void DarkForces::InfProgram::compile(void)
 /**
  *
  */
-void DarkForces::InfProgram::dispatchMessage(gaMessage* message)
+void InfStandardTrigger::dispatchMessage(gaMessage* message)
 {
 	switch (message->m_action) {
 	case DF_MSG_EVENT:
@@ -80,7 +80,7 @@ void DarkForces::InfProgram::dispatchMessage(gaMessage* message)
 /**
  * display the component in the debugger
  */
-void DarkForces::InfProgram::debugGUIinline(void)
+void InfStandardTrigger::debugGUIinline(void)
 {
 	if (ImGui::TreeNode("InfProgram")) {
 		std::string events;
@@ -118,7 +118,7 @@ void DarkForces::InfProgram::debugGUIinline(void)
 	}
 }
 
-DarkForces::InfProgram::~InfProgram()
+InfStandardTrigger::~InfStandardTrigger()
 {
 	for (unsigned int i = 0; i < m_messages.size(); i++) {
 		delete m_messages[i];

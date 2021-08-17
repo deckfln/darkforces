@@ -11,8 +11,8 @@
 #include "dfElevator.h"
 #include "dfFileSystem.h"
 #include "dfVOC.h"
-#include "dfComponent/InfProgram.h"
-#include "dfComponent/dfComponentElevator/dfComponentElevatorLight.h"
+#include "dfComponent/InfStandardTrigger.h"
+#include "dfComponent/InfElevator/InfElevatorLight.h"
 
 #include "dfSector.h"
 
@@ -201,8 +201,8 @@ void dfParseINF::parseSector(std::istringstream& infile, const std::string& sect
 	}
 
 	dfElevator* elevator = nullptr;				// for an elevator
-	DarkForces::InfProgram* program = nullptr;	// for a trigger standard
-	DarkForces::Component::ElevatorLight* light = nullptr;	// for elevator change_light
+	DarkForces::Component::InfStandardTrigger* program = nullptr;	// for a trigger standard
+	DarkForces::Component::InfElevatorLight* light = nullptr;	// for elevator change_light
 
 	dfLogicStop* stop = nullptr;
 	std::map<std::string, std::string> tokenMap;
@@ -241,7 +241,7 @@ void dfParseINF::parseSector(std::istringstream& infile, const std::string& sect
 		else if (tokens[0] == "class:") {
 			if (tokens[1] == "elevator") {
 				if (tokens[2] == "change_light") {
-					light = new DarkForces::Component::ElevatorLight(pSector);
+					light = new DarkForces::Component::InfElevatorLight(pSector);
 				}
 				else {
 					elevator = new dfElevator(tokens[2], sector);
@@ -252,7 +252,7 @@ void dfParseINF::parseSector(std::istringstream& infile, const std::string& sect
 					std::cerr << "*class: trigger* not implemented" << std::endl;
 				}
 				else {
-					program = new DarkForces::InfProgram(tokens[2], sector);
+					program = new DarkForces::Component::InfStandardTrigger(tokens[2], sector);
 				}
 			}
 		}
