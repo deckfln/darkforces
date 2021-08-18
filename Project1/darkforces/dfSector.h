@@ -181,6 +181,7 @@ public:
 	float boundingBoxSurface(void);
 	void linkWalls(void);
 	void buildElevator(gaEntity*parent, dfMesh *mesh, float bottom, float top, int what, bool clockwise, dfWallFlag flags);
+	dfMesh* buildElevator_new(float bottom, float top, int what, bool clockwise, dfWallFlag flags, std::list<dfLogicTrigger*>& m_signs);
 
 	bool includedIn(dfSector* sector);
 	dfSector* isIncludedIn(void) { return m_includedIn; };

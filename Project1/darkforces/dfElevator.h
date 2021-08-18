@@ -27,6 +27,10 @@ class dfVOC;
 class dfLogicStop;
 class dfSector;
 
+namespace GameEngine {
+	class ComponentMesh;
+}
+
 class dfElevator: public gaEntity {
 public:
 	enum class Type {
@@ -105,6 +109,9 @@ private:
 
 	dfVOC* m_sounds[3] = { nullptr, nullptr, nullptr };
 
+	GameEngine::ComponentMesh *m_component = nullptr;	//Mesh components
+
+
 	void moveTo(dfLogicStop* stop);
 	void moveTo(float z);
 	void moveToNextStop(void);
@@ -114,7 +121,7 @@ private:
 
 public:
 	dfElevator(std::string& kind, dfSector* sector, dfLevel *parent);
-	dfElevator(std::string& kind, const std::string& name);
+	dfElevator(std::string& kind, dfSector* sector);
 	dfElevator(dfElevator *source);
 
 	static void* create(void* record) {

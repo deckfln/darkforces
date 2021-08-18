@@ -11,6 +11,8 @@
 #include "World.h"
 #include "../gaEngine/gaBoundingBoxes.h"
 
+#include "gaComponent/gaComponentMesh.h"
+
 static int g_ids = 0;
 static const char* g_className = "gaEntity";
 
@@ -68,6 +70,17 @@ void gaEntity::addComponent(gaComponent* component)
 {
 	m_components.push_back(component);
 	component->parent(this);
+
+	if (component->is(gaComponent::MESH)) {
+		GameEngine::ComponentMesh* mesh = static_cast<GameEngine::ComponentMesh*>(component);
+		// build the model AABB
+		m_modelAABB = mesh->modelAABB();
+		glm::vec3 pos = mesh->position();
+		translate(pos);
+
+		// change the default collider (AABB) to Geometry
+		m_collider.set(mesh->get_geometry(), &m_worldMatrix, &m_inverseWorldMatrix);
+	}
 }
 
 /**

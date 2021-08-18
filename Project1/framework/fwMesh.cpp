@@ -35,6 +35,14 @@ fwMesh::fwMesh(fwGeometry *_geometry, fwMaterial *_material):
 	}
 }
 
+fwMesh::fwMesh(fwMaterial* _material):
+	m_material(_material),
+	m_id(g_ids++)
+{
+	classID |= MESH;
+	m_material->reference();
+}
+
 /**
  * Return a shallow clone of the object
  */
@@ -82,14 +90,28 @@ void fwMesh::set(fwGeometry* geometry, fwMaterial* material)
 	}
 }
 
+/**
+ * Build the AABB for the mesh
+ */
+const fwAABBox& fwMesh::modelAABB(void)
+{
+	return m_geometry->aabbox();
+}
+
 fwMesh &fwMesh::set_visible(bool _visible)
 {
 	visible = _visible;
 	return *this;
 }
 
+/**
+ * return the visibility of the object, if the parents are invisible, the object is considered as invisible
+ */
 bool fwMesh::is_visible(void)
 {
+	if (m_parent)
+		return visible && static_cast<fwMesh*>(m_parent)->is_visible();
+
 	return visible;
 }
 
@@ -278,10 +300,10 @@ void fwMesh::debugGUIChildClass(void)
 
 fwMesh::~fwMesh()
 {
-	if (m_geometry->dereference())
+	if (m_geometry && m_geometry->dereference())
 		delete m_geometry;
 
-	if (m_material->dereference())
+	if (m_material && m_material->dereference())
 		delete m_material;
 
 	for (auto vo : m_vao) {

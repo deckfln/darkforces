@@ -121,9 +121,10 @@ dfElevator::dfElevator(std::string& kind, dfSector* sector, dfLevel* parent):
 /**
  *
  */
-dfElevator::dfElevator(std::string& kind, const std::string& sector):
-	gaEntity(DF_ENTITY_ELEVATOR, sector),
-	m_sector(sector)
+dfElevator::dfElevator(std::string& kind, dfSector* sector):
+	gaEntity(DF_ENTITY_ELEVATOR, sector->name()),
+	m_pSector(sector),
+	m_sector(sector->name())
 {
 	init(kind);
 }
@@ -214,6 +215,10 @@ void dfElevator::bindSector(dfSector* pSector)
 void dfElevator::addStop(dfLogicStop* stop)
 {
 	m_stops.push_back(stop);
+
+	float c = stop->z_position(m_type);
+	if (c < m_zmin) m_zmin = c;
+	if (c > m_zmax) m_zmax = c;
 }
 
 /**
@@ -225,24 +230,7 @@ dfMesh *dfElevator::buildGeometry(fwMaterial* material, std::vector<dfBitmap*>& 
 		return nullptr;
 	}
 
-	//
-	// get the maximum extend of the elevator -> will become the height of the object
-	//
-	switch (m_type) {
-	case dfElevator::Type::INV:
-	case dfElevator::Type::DOOR:
-	case dfElevator::Type::BASIC:
-	case dfElevator::Type::MOVE_FLOOR:
-	case dfElevator::Type::MOVE_CEILING:
-		// only vertical moving elevator needs to be tested against the stop
-		float c;
-		for (auto stop : m_stops) {
-			c = stop->z_position(m_type);
-			if (c < m_zmin) m_zmin = c;
-			if (c > m_zmax) m_zmax = c;
-		}
-		break;
-	default:
+	if (m_zmin == 99999) {
 		m_zmin = m_pSector->staticFloorAltitude();
 		m_zmax = m_pSector->staticCeilingAltitude();
 	}
@@ -253,55 +241,33 @@ dfMesh *dfElevator::buildGeometry(fwMaterial* material, std::vector<dfBitmap*>& 
 	switch (m_type) {
 	case dfElevator::Type::INV:
 	case dfElevator::Type::DOOR:
+		m_mesh = new dfMesh(material, bitmaps);
+		// the elevator bottom is actually the ceiling
+		m_pSector->buildElevator(this, m_mesh, 0, m_zmax - m_zmin, DFWALL_TEXTURE_TOP, true, dfWallFlag::ALL);
+		m_pSector->setAABBtop(m_zmax);
+		break;
+
 	case dfElevator::Type::BASIC:
 		m_mesh = new dfMesh(material, bitmaps);
 
 		// the elevator bottom is actually the ceiling
-		if (m_type == dfElevator::Type::INV || m_type == dfElevator::Type::DOOR) {
-			m_pSector->buildElevator(this, m_mesh, 0, m_zmax - m_zmin, DFWALL_TEXTURE_TOP, true, dfWallFlag::ALL);
-			m_pSector->setAABBtop(m_zmax);
-		}
-		else {
-			m_pSector->buildElevator(this, m_mesh, 0, -(m_zmax - m_zmin), DFWALL_TEXTURE_TOP, true, dfWallFlag::ALL);
-			m_pSector->setAABBtop(m_zmax);
-		}
-
-		if (m_mesh->buildMesh()) {
-			m_pSector->addObject(m_mesh);
-		}
-		else {
-			// do not keep the trigger
-			delete m_mesh;
-			m_mesh = nullptr;
-			return nullptr;
-		}
+		m_pSector->buildElevator(this, m_mesh, 0, -(m_zmax - m_zmin), DFWALL_TEXTURE_TOP, true, dfWallFlag::ALL);
+		m_pSector->setAABBtop(m_zmax);
 		break;
 
 	case dfElevator::Type::MOVE_FLOOR:
+		m_mesh = new dfMesh(material, bitmaps);
+		// the elevator top is actually the floor
+		m_pSector->buildElevator(this, m_mesh, -(m_zmax - m_zmin), 0, DFWALL_TEXTURE_BOTTOM, false, dfWallFlag::ALL);
+		m_pSector->setAABBbottom(m_zmin);
+		break;
+
 	case dfElevator::Type::MOVE_CEILING:
 		m_mesh = new dfMesh(material, bitmaps);
 
-		if (m_type == dfElevator::Type::MOVE_FLOOR) {
-			// the elevator top is actually the floor
-			m_pSector->buildElevator(this, m_mesh, -(m_zmax - m_zmin), 0, DFWALL_TEXTURE_BOTTOM, false, dfWallFlag::ALL);
-			m_pSector->setAABBbottom(m_zmin);
-		}
-		else {
-			// move ceiling, only move the top
-			m_pSector->buildElevator(this, m_mesh, 0, (m_zmax - m_zmin), DFWALL_TEXTURE_TOP, false, dfWallFlag::ALL);
-			m_pSector->setAABBtop(m_zmax);
-		}
-
-		if (m_mesh->buildMesh()) {
-			m_mesh->name(m_pSector->name());
-			m_pSector->addObject(m_mesh);
-		}
-		else {
-			// do not keep the trigger
-			delete m_mesh;
-			m_mesh = nullptr;
-			return nullptr;
-		}
+		// move ceiling, only move the top
+		m_pSector->buildElevator(this, m_mesh, 0, (m_zmax - m_zmin), DFWALL_TEXTURE_TOP, false, dfWallFlag::ALL);
+		m_pSector->setAABBtop(m_zmax);
 		break;
 
 	case dfElevator::Type::MORPH_SPIN1:
@@ -313,22 +279,20 @@ dfMesh *dfElevator::buildGeometry(fwMaterial* material, std::vector<dfBitmap*>& 
 		// these elevators are always portal, 
 		// textures to use and the height are based on the difference between the connected sectors floor & ceiling and the current floor & ceiling
 		m_pSector->buildElevator(this, m_mesh, m_zmin, m_zmax, DFWALL_TEXTURE_MID, false, dfWallFlag::MORPHS_WITH_ELEV);
-
-		if (m_mesh->buildMesh()) {
-			m_pSector->addObject(m_mesh);
-
-			// remove the SPIN1 walls vertices from the sector. otherwise they stay in the way of the move engine (move is managed by the dfMesh)
-			m_pSector->removeHollowWalls();
-		}
-		else {
-			// do not keep the trigger
-			delete m_mesh;
-			m_mesh = nullptr;
-			return nullptr;
-		}
 		break;
 
 	default:
+		return nullptr;
+	}
+
+	if (m_mesh->buildMesh()) {
+		m_mesh->name(m_pSector->name());
+		m_pSector->addObject(m_mesh);
+	}
+	else {
+		// do not keep the trigger
+		delete m_mesh;
+		m_mesh = nullptr;
 		return nullptr;
 	}
 
@@ -366,7 +330,9 @@ dfMesh *dfElevator::buildGeometry(fwMaterial* material, std::vector<dfBitmap*>& 
 	m_collider.set(m_mesh->geometry(), &m_worldMatrix, &m_inverseWorldMatrix);
 
 	// record in the entity
-	addComponent(m_mesh->componentMesh());
+	m_component = new GameEngine::ComponentMesh(m_mesh);
+
+	addComponent(m_component);
 
 	return m_mesh;
 }
@@ -912,4 +878,7 @@ dfElevator::~dfElevator(void)
 	for (auto stop : m_stops) {
 		delete stop;
 	}
+
+	if (m_component)
+		delete m_component;
 }

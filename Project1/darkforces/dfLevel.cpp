@@ -203,7 +203,7 @@ dfLevel::dfLevel(dfFileSystem* fs, std::string file)
 		}
 	}
 
-	convertDoors2Elevators();	// for every sector 'DOOR', create an evelator and a trigger
+	convertDoors2Elevators();	// for every sector 'DOOR', create an elevator and a trigger
 
 	m_material = new fwMaterialBasic("data/shaders/vertex.glsl", "", "data/shaders/fragment.glsl");
 

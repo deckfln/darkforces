@@ -22,10 +22,10 @@ dfObject3D::dfObject3D(df3DO* threedo, const glm::vec3& position, float ambient,
 	set_scale(glm::vec3(0.1f));
 
 	addComponent(&m_componentLogic);
-	addComponent(&m_componentMesh);
 
 	threedo->clone(m_componentMesh);
 	m_componentMesh.set_scale(0.10f);
+	addComponent(&m_componentMesh);
 
 	dfObject::moveTo(m_position_lvl);
 }

@@ -1,13 +1,21 @@
 #pragma once
 
+#include <list>
 #include "../../gaEngine/gaComponent.h"
 
 #include "../dfElevator.h"
+#include "../dfBitmap.h"
 
 class dfLogicStop;
 class dfSector;
 class dfLevel;
 class dfVOC;
+class dfMesh;
+class fwMaterial;
+
+namespace GameEngine {
+	class ComponentMesh;
+}
 
 namespace DarkForces {
 	namespace Component {
@@ -33,6 +41,10 @@ namespace DarkForces {
 			const std::string& m_sector;		// sector that is an elevator
 			dfSector* m_pSector = nullptr;
 
+			float m_zmin = INFINITY;			// range of the elevator
+			float m_zmax = -INFINITY;
+			glm::vec3 m_center = glm::vec3(0);	// base point (rotation point for SPIN , origin for MORH...)
+
 			// Dynamic state
 			Status m_status = Status::HOLD;		// status of the elevator
 			float m_tick = 0;					// current timer
@@ -51,7 +63,6 @@ namespace DarkForces {
 			virtual void moveTo(float z);		// move the given position (depend on the elevator type)
 			void moveTo(dfLogicStop* stop);		// move directly to the given stop
 			void moveToNextStop(void);			// start moving to the next stop
-			void init(const std::string& kind);
 			bool animate(time_t delta);			// move between stops
 
 		public:
@@ -68,15 +79,19 @@ namespace DarkForces {
 			// getter/setter
 			inline void speed(float speed) { m_speed = speed; };
 			inline void eventMask(uint32_t eventMask) { m_eventMask = eventMask; };
-			const std::string& sector(void) { return m_sector; };
-			inline void addStop(dfLogicStop* stop) {
-				m_stops.push_back(stop);
-			};
+			inline const std::string& sector(void) { return m_sector; };
+			inline dfSector* psector(void) { return m_pSector; };
+			inline void center(float x, float y) { m_center.x = x; m_center.y = y; };
+
+			void addStop(dfLogicStop* stop);			// add a stop and update the range of the elevator
 			void addSound(uint32_t when, dfVOC* sound) {
 				m_sounds[when] = sound;
 			}
 
 			void dispatchMessage(gaMessage* message) override;
+
+			virtual dfMesh* buildGeometry(fwMaterial* material, std::vector<dfBitmap*>& bitmaps) { return nullptr;	};
+			GameEngine::ComponentMesh* buildComponentMesh(void);
 
 			// flight recorder status
 			inline uint32_t recordSize(void);		// size of the component record
@@ -86,7 +101,6 @@ namespace DarkForces {
 			// debugger
 			void debugGUIinline(void) override;			// display the component in the debugger
 
-			dfSector* psector(void) { return m_pSector; };
 		};
 	}
 }

@@ -3,6 +3,7 @@
 #include <imgui.h>
 
 #include "../../alEngine/alSound.h"
+#include "../../framework/fwMesh.h"
 
 #include "../World.h"
 #include "../gaEntity.h"
@@ -14,10 +15,28 @@ ComponentMesh::ComponentMesh(void):
 {
 }
 
-ComponentMesh::ComponentMesh(fwGeometry* _geometry, fwMaterial* _material):
+ComponentMesh::ComponentMesh(fwMesh* mesh):
 	gaComponent(gaComponent::MESH),
-	fwMesh(_geometry, _material)
+	m_mesh(mesh)
 {
+}
+
+void GameEngine::ComponentMesh::clone(fwMesh* source)
+{
+	if (m_mesh == nullptr) {
+		m_mesh = new fwMesh();
+	}
+
+	m_mesh->clone(source);
+}
+
+void GameEngine::ComponentMesh::set(fwGeometry* geometry, fwMaterial* material)
+{
+	if (m_mesh == nullptr) {
+		m_mesh = new fwMesh();
+	}
+
+	m_mesh->set(geometry, material); 
 }
 
 /**
@@ -29,50 +48,48 @@ void ComponentMesh::dispatchMessage(gaMessage* message)
 	case gaMessage::MOVE: {
 		if (message->m_extra != nullptr) {
 			glm::vec3* position = (glm::vec3*)message->m_extra;
-			translate(position);
+			m_mesh->translate(position);
 		}
 		else {
-			translate(m_entity->position());
-			rotate(m_entity->quaternion());
-			set_scale(m_entity->get_scale());
-			worldMatrix(m_entity->worldMatrix(),
-				m_entity->inverseWorldMatrix()
-			);
+			m_mesh->translate(m_entity->position());
+			m_mesh->rotate(m_entity->quaternion());
+			m_mesh->set_scale(m_entity->get_scale());
+			//worldMatrix(m_entity->worldMatrix(),				m_entity->inverseWorldMatrix()	);
 		}
 		break;
 	}
 	case gaMessage::ROTATE: {
 		switch (message->m_value) {
 		case gaMessage::Flag::ROTATE_VEC3:
-			rotate((glm::vec3*)message->m_extra);
+			m_mesh->rotate((glm::vec3*)message->m_extra);
 			break;
 		case gaMessage::Flag::ROTATE_QUAT:
-			rotate((glm::quat*)message->m_extra);
+			m_mesh->rotate((glm::quat*)message->m_extra);
 			break;
 		case gaMessage::Flag::ROTATE_BY:
-			rotateBy((glm::vec3*)message->m_extra);
+			m_mesh->rotateBy((glm::vec3*)message->m_extra);
 		}
 		break;
 	}
 	case gaMessage::PLAY_SOUND: {
 		 // Start playing a sound or check if it plays
 		alSound* voc = (alSound*)message->m_extra;
-		play(voc);
+		m_mesh->play(voc);
 		break;
 	}
 	case gaMessage::STOP_SOUND: {
 		// Stop playing a sound (or all sound if nullptr)
 		alSound* voc = (alSound*)message->m_extra;
-		stop(voc);
+		m_mesh->stop(voc);
 		break;
 	}
 
 	case gaMessage::WORLD_INSERT:
-		g_gaWorld.add2scene(this);
+		g_gaWorld.add2scene(m_mesh);
 		break;
 
 	case gaMessage::WORLD_REMOVE:
-		g_gaWorld.remove2scene(this);
+		g_gaWorld.remove2scene(m_mesh);
 		break;
 	}
 }
@@ -83,11 +100,12 @@ void ComponentMesh::dispatchMessage(gaMessage* message)
 void ComponentMesh::debugGUIinline(void)
 {
 	if (ImGui::TreeNode("Mesh")) {
-		ImGui::Text("ID %d", id());
+		ImGui::Text("ID %d", m_mesh->id());
 		ImGui::TreePop();
 	}
 }
 
 ComponentMesh::~ComponentMesh()
 {
+	delete m_mesh;
 }

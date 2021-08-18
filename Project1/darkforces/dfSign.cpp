@@ -25,8 +25,7 @@ void dfSign::setStatus(int status)
 	}
 
 	// push the changes
-	m_parent->updateGeometryTextures(m_start, m_size);
-	// printf("void dfSign::setStatus %d\n", status);
+	m_source->updateGeometryTextures(m_start, m_size);
 }
 
 void dfSign::rebuildAABB(void)

@@ -5,10 +5,12 @@
 #include <imgui.h>
 
 #include "../../gaEngine/World.h"
+#include "../../gaEngine/gaComponent/gaComponentMesh.h"
 
 #include "../dfLogicStop.h"
 #include "../dfVOC.h"
 #include "../dfSector.h"
+#include "../dfMesh.h"
 
 #include "../flightRecorder/frCompElevator.h"
 
@@ -206,12 +208,27 @@ DarkForces::Component::InfElevator::InfElevator(const std::string& sector):
 {
 }
 
+/**
+ * create from a record
+ */
 DarkForces::Component::InfElevator::InfElevator(dfSector* sector):
 	gaComponent(DF_COMPONENT_INF_ELEVATOR),
 	m_sector(sector->name())
 {
 	m_entity = sector;
 	m_pSector = sector;
+}
+
+/**
+ * add a stop and update the range of the elevator
+ */
+void DarkForces::Component::InfElevator::addStop(dfLogicStop* stop)
+{
+	m_stops.push_back(stop);
+
+	float c = stop->z_position(m_type);
+	if (c < m_zmin) m_zmin = c;
+	if (c > m_zmax) m_zmax = c;
 }
 
 /**
@@ -278,6 +295,98 @@ void DarkForces::Component::InfElevator::dispatchMessage(gaMessage* message)
 		animate(message->m_delta);
 		break;
 	}
+}
+
+/**
+ * Create a ComponentMesh for the elevator
+ */
+GameEngine::ComponentMesh* DarkForces::Component::InfElevator::buildComponentMesh(void)
+{
+	GameEngine::ComponentMesh* component = nullptr;
+	dfMesh* mesh;
+	std::list<dfLogicTrigger*> signs;				// signs bound to the mesh
+
+	if (!m_pSector) {
+		return nullptr;
+	}
+
+	if (m_zmin == 99999) {
+		m_zmin = m_pSector->staticFloorAltitude();
+		m_zmax = m_pSector->staticCeilingAltitude();
+	}
+
+	//!
+	// Build a mesh depending of the type
+	//
+	switch (m_type) {
+	case dfElevator::Type::INV:
+	case dfElevator::Type::DOOR:
+		// the elevator bottom is actually the ceiling
+		mesh = m_pSector->buildElevator_new(0, m_zmax - m_zmin, DFWALL_TEXTURE_TOP, true, dfWallFlag::ALL, signs);
+		m_pSector->setAABBtop(m_zmax);
+		break;
+
+	case dfElevator::Type::BASIC:
+		// the elevator bottom is actually the ceiling
+		mesh = m_pSector->buildElevator_new(0, -(m_zmax - m_zmin), DFWALL_TEXTURE_TOP, true, dfWallFlag::ALL, signs);
+		m_pSector->setAABBtop(m_zmax);
+		break;
+
+	case dfElevator::Type::MOVE_FLOOR:
+		// the elevator top is actually the floor
+		mesh = m_pSector->buildElevator_new(-(m_zmax - m_zmin), 0, DFWALL_TEXTURE_BOTTOM, false, dfWallFlag::ALL, signs);
+		m_pSector->setAABBbottom(m_zmin);
+		break;
+
+	case dfElevator::Type::MOVE_CEILING:
+		// move ceiling, only move the top
+		mesh = m_pSector->buildElevator_new(0, (m_zmax - m_zmin), DFWALL_TEXTURE_TOP, false, dfWallFlag::ALL, signs);
+		m_pSector->setAABBtop(m_zmax);
+		break;
+
+	case dfElevator::Type::MORPH_SPIN1:
+	case dfElevator::Type::MORPH_MOVE1:
+	case dfElevator::Type::MORPH_SPIN2:
+		// only use the inner polygon (the hole)
+		// these elevators are always portal, 
+		// textures to use and the height are based on the difference between the connected sectors floor & ceiling and the current floor & ceiling
+		mesh = 	m_pSector->buildElevator_new(m_zmin, m_zmax, DFWALL_TEXTURE_MID, false, dfWallFlag::MORPHS_WITH_ELEV, signs);
+		break;
+
+	default:
+		return nullptr;
+	}
+
+	if (mesh == nullptr) {
+		return nullptr;
+	}
+
+	//
+	// translate the vertices to the center of the elevator
+	//
+	switch (m_type) {
+	case dfElevator::Type::INV:
+	case dfElevator::Type::DOOR:
+	case dfElevator::Type::BASIC:
+	case dfElevator::Type::MOVE_FLOOR:
+	case dfElevator::Type::MOVE_CEILING:
+		// for these elevator, Z is defined by the elevator, so center on XY (in level space)
+		mesh->centerOnGeometryXZ(m_center);
+		break;
+	case dfElevator::Type::MORPH_MOVE1:
+		// for this elevator, move along an axes from a center, so center on XYZ (in level space)
+		mesh->centerOnGeometryXYZ(m_center);
+		break;
+	case dfElevator::Type::MORPH_SPIN1:
+	case dfElevator::Type::MORPH_SPIN2:
+		// move the vertices around the center (in level space)
+		m_center.z = m_pSector->referenceFloor();
+		mesh->moveVertices(m_center);
+		break;
+	}
+
+	// record in the entity
+	return mesh->componentMesh();
 }
 
 /**

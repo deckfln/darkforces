@@ -11,11 +11,12 @@
 #include "dfBitmap.h"
 #include "dfLevel.h"
 #include "dfVOC.h"
+#include "dfLevel.h"
 
 #include "../include/earcut.hpp"
 
 dfMesh::dfMesh(fwMaterial* material, std::vector<dfBitmap*>& bitmaps):
-	m_material(material),
+	fwMesh(material),
 	m_pVertices(&m_vertices),
 	m_pUvs(&m_uvs),
 	m_pTextureIDs(&m_textureID),
@@ -25,6 +26,7 @@ dfMesh::dfMesh(fwMaterial* material, std::vector<dfBitmap*>& bitmaps):
 }
 
 dfMesh::dfMesh(dfSuperSector* ssector, std::vector<glm::vec3>* vertices, std::vector<glm::vec2>* uvs, std::vector<float>* textureIDs, std::vector <float>* ambientLights, std::vector<dfBitmap*>& textures):
+	fwMesh(),
 	m_supersector(ssector),
 	m_pVertices(vertices),
 	m_pUvs(uvs),
@@ -37,16 +39,19 @@ dfMesh::dfMesh(dfSuperSector* ssector, std::vector<glm::vec3>* vertices, std::ve
 /**
  * Create a dfMesh sharing the same attributes as the parent
  */
-dfMesh::dfMesh(dfMesh* parent):
-	m_bitmaps(parent->m_bitmaps),
-	m_supersector(parent->m_supersector),
-	m_pVertices(&parent->m_vertices),
-	m_pAmbientLights(&parent->m_ambient),
-	m_pTextureIDs(&parent->m_textureID),
-	m_pUvs(&parent->m_uvs),
-	m_parent(parent)
+dfMesh::dfMesh(dfMesh* source):
+	fwMesh(),
+	m_bitmaps(source->m_bitmaps),
+	m_supersector(source->m_supersector),
+	m_pVertices(&source->m_vertices),
+	m_pAmbientLights(&source->m_ambient),
+	m_pTextureIDs(&source->m_textureID),
+	m_pUvs(&source->m_uvs),
+	m_source(source)
 {
-	parent->addChild(this);
+	// TODO: the object cannot be added as a child of a fwMesh as it is NOT an indepent fwMesh
+	// it is actually added at the end of the Parent mesh
+	// source->addChild(this);
 }
 
 /**
@@ -75,18 +80,18 @@ void dfMesh::addModelAABB(GameEngine::AABBoxTree* child)
 
 void dfMesh::display(fwScene* scene, bool visibility)
 {
-	m_visible = visibility;
+	set_visible(visibility);
 
-	if (!scene->hasChild(m_mesh)) {
+	if (!scene->hasChild(this)) {
 		if (visibility) {
 			// add the mesh on the scene
-			scene->addChild(m_mesh);
-			m_mesh->set_visible(true);
+			scene->addChild(this);
+			set_visible(true);
 		}
 		// no need to add the mesh if the supersector is invisible
 	}
 	else {
-		m_mesh->set_visible(visibility);
+		set_visible(visibility);
 	}
 
 }
@@ -127,17 +132,6 @@ int dfMesh::nbVertices(void)
 std::vector<glm::vec3> *dfMesh::vertice(void)
 {
 	return m_pVertices;
-}
-
-/**
- * set the name of the dfMesh and the associated fwMesh
- */
-void dfMesh::name(const std::string& name)
-{
-	m_name = name;
-	if (m_mesh) {
-		m_mesh->set_name(name);
-	}
 }
 
 /**
@@ -440,22 +434,6 @@ void dfMesh::addPlane(float width, dfBitmapImage* image)
 }
 
 /**
- * Test if the mesh and the parent mesh are visible
- */
-bool dfMesh::visible(void)
-{
-	if (m_parent)
-		return m_visible && m_parent->m_visible;
-
-	return m_visible;
-}
-
-void dfMesh::visible(bool status)
-{
-	m_visible = status;
-}
-
-/**
  * Update the Ambient buffer attribute
  */
 void dfMesh::changeAmbient(float ambient, int start, int len)
@@ -464,30 +442,6 @@ void dfMesh::changeAmbient(float ambient, int start, int len)
 		m_ambient[i] = ambient;
 	}
 	m_geometry->updateAttribute("aAmbient", 0);
-}
-
-/**
- * Add a child dfmesh sharing the same attributes
- */
-void dfMesh::addChild(dfMesh* mesh)
-{
-	m_children.push_back(mesh);
-}
-
-/**
- * Register a sub fwmesh
- */
-void dfMesh::addMesh(fwMesh* mesh)
-{
-	m_mesh->addChild(mesh);
-}
-
-/**
- * Force the Z order of the mesh
- */
-void dfMesh::zOrder(int z)
-{
-	m_mesh->zOrder(z);
 }
 
 /**
@@ -504,14 +458,15 @@ void dfMesh::updateGeometryTextures(int start, int nb)
 void dfMesh::moveVertices(glm::vec3& center)
 {
 	// convert to opengl space
-	dfLevel::level2gl(center, m_position);
+	glm::vec3 pos;
+	dfLevel::level2gl(center, pos);
 
 	for (auto &vertice : m_vertices) {
-		vertice -= m_position;
+		vertice -= pos;
 	}
 
-	m_mesh->translate(m_position);
-	m_mesh->updateVertices();	// re-upload vertices's to GPU
+	translate(pos);
+	updateVertices();	// re-upload vertices's to GPU
 }
 
 /**
@@ -531,11 +486,12 @@ void dfMesh::centerOnGeometryXZ(glm::vec3& target)
 		vertice -= center;
 	}
 
-	m_position.x += center.x;	//take count of the existing position (for SPIN1)
-	m_position.z += center.z;
+	glm::vec3 pos = position();
+	pos.x += center.x;	//take count of the existing position (for SPIN1)
+	pos.z += center.z;
 
-	m_mesh->translate(m_position);
-	m_mesh->updateVertices();	// re-upload vertices's to GPU
+	translate(pos);
+	updateVertices();	// re-upload vertices's to GPU
 
 	// convert to opengl space
 	dfLevel::gl2level(center, target);
@@ -556,11 +512,12 @@ void dfMesh::centerOnGeometryXYZ(glm::vec3& target)
 		vertice -= center;
 	}
 
-	m_position.x += center.x;	//take count of the existing position (for SPIN1)
-	m_position.z += center.z;
+	glm::vec3 pos = position();
+	pos.x += center.x;	//take count of the existing position (for SPIN1)
+	pos.z += center.z;
 
-	m_mesh->translate(m_position);
-	m_mesh->updateVertices();	// re-upload vertices's to GPU
+	translate(pos);
+	updateVertices();	// re-upload vertices's to GPU
 
 	// convert to opengl space
 	dfLevel::gl2level(center, target);
@@ -569,7 +526,7 @@ void dfMesh::centerOnGeometryXYZ(glm::vec3& target)
 /**
  * build the fwMesh
  */
-GameEngine::ComponentMesh* dfMesh::buildMesh(void)
+dfMesh* dfMesh::buildMesh(void)
 {
 	int size = m_vertices.size();
 
@@ -585,16 +542,16 @@ GameEngine::ComponentMesh* dfMesh::buildMesh(void)
 		m_geometry->addAttribute("aAmbient", GL_ARRAY_BUFFER, &m_ambient[0], 1, size * sizeof(float), sizeof(float), false);
 	}
 
-	m_mesh = new GameEngine::ComponentMesh(m_geometry, m_material);
-	m_mesh->set_name(m_name);
-	
 	// record the full size of the geometry
 	m_modelAABB.geometry(&m_vertices, 0, size);
-	return m_mesh;
+	return this;
 }
 
 dfMesh::~dfMesh()
 {
-	delete m_geometry;
-	delete m_mesh;
+	if (m_geometry)
+		delete m_geometry;
+
+	if (m_CompMesh)
+		delete m_CompMesh;
 }

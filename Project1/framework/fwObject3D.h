@@ -64,8 +64,8 @@ public:
 
 	bool is_class(int classID);
 	fwObject3D &set_name(const std::string& _name);
-	const std::string& name(void) { return m_name;	};
-
+	inline const std::string& name(void) { return m_name; };
+	inline fwObject3D& name(const std::string& name) { m_name = name; return *this; }
 	fwObject3D& rotate(const glm::vec3 &rotation);
 	fwObject3D& rotate(const glm::quat& quaternion);
 	fwObject3D& rotateBy(const glm::vec3& delta);		// rotate BY a delta vector

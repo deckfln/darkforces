@@ -244,7 +244,7 @@ void dfParseINF::parseSector(std::istringstream& infile, const std::string& sect
 					light = new DarkForces::Component::InfElevatorLight(pSector);
 				}
 				else {
-					elevator = new dfElevator(tokens[2], sector);
+					elevator = new dfElevator(tokens[2], pSector);
 				}
 			}
 			else if (tokens[1] == "trigger") {

@@ -220,8 +220,8 @@ void dfSuperSector::buildGeometry(std::vector<dfSector*>& sectors)
 	// prepare the collider
 	m_collider.set(
 		(GameEngine::AABBoxTree*)&m_dfmesh->modelAABB(), 
-		m_dfmesh->worldMatrix(), 
-		m_dfmesh->inverseWorldMatrix(),
+		m_dfmesh->pWorldMatrix(), 
+		m_dfmesh->pInverseWorldMatrix(),
 		this, gaCollisionPoint::Source::SECTOR);
 
 	// TODO : fix the camera frustum test to remove that line
@@ -239,9 +239,20 @@ void dfSuperSector::buildGeometry(std::vector<dfSector*>& sectors)
 	}
 }
 
+/**
+ * return the level list of textures
+ */
 std::vector<dfBitmap*>& dfSuperSector::textures(void)
 {
 	return m_parent->textures();
+}
+
+/**
+ * return the level material
+ */
+fwMaterial* dfSuperSector::material(void)
+{
+	return m_parent->material();
 }
 
 /**
@@ -296,7 +307,7 @@ void dfSuperSector::add2scene(fwScene* scene)
  */
 void dfSuperSector::addObject(dfMesh* object)
 {
-	m_dfmesh->addMesh(object->mesh());
+	m_dfmesh->addChild(object);
 }
 
 /**

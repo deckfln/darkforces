@@ -915,6 +915,113 @@ void dfSector::buildElevator(gaEntity* parent, dfMesh* mesh, float bottom, float
 }
 
 /**
+ * Build an outward mesh based on the sector
+ */
+dfMesh* dfSector::buildElevator_new(float bottom, float top, int what, bool clockwise, dfWallFlag flags, std::list<dfLogicTrigger*>& m_signs)
+{
+	if (!m_super) {
+		return nullptr;
+	}
+
+	dfMesh *mesh = new dfMesh(m_super->material(), m_super->textures());
+	std::vector<dfBitmap*>& textures = m_super->textures();
+
+	// create the walls
+	std::vector <dfWall*>& wallss = walls(flags);
+	for (auto wall : wallss) {
+		if (wall->m_adjoint < 0) {
+			// full wall (for spin1 elevators)
+			mesh->addRectangle(this, wall,
+				bottom,
+				top,
+				wall->m_tex[what],
+				m_ambient,
+				true
+			);
+			// PASS
+		}
+		else {
+			// portal
+			dfWall* mirror = wall->m_pMmirror;
+			dfSector* portal = m_sectorsID[wall->m_adjoint];
+
+			if (what == DFWALL_TEXTURE_MID) {
+				// for elevators spin1, spin2 and move1 use the same algorithm than normal walls
+				if (portal->m_referenceCeilingAltitude > m_referenceCeilingAltitude) {
+					// add a wall above the portal
+					mesh->addRectangle(this, wall,
+						portal->m_staticMeshCeilingAltitude,
+						m_staticMeshCeilingAltitude,
+						mirror->m_tex[DFWALL_TEXTURE_TOP],
+						m_ambient,
+						true
+					);
+				}
+				else if (portal->m_referenceFloorAltitude < m_referenceFloorAltitude) {
+					// add a wall below the portal
+					mesh->addRectangle(this, wall,
+						m_staticMeshFloorAltitude,
+						portal->m_staticMeshFloorAltitude,
+						mirror->m_tex[DFWALL_TEXTURE_BOTTOM],
+						m_ambient,
+						true
+					);
+				}
+				else {
+					// add a wall above the portal
+					mesh->addRectangle(this, wall,
+						m_staticMeshFloorAltitude,
+						m_staticMeshCeilingAltitude,
+						mirror->m_tex[DFWALL_TEXTURE_MID],
+						m_ambient,
+						false
+					);
+				}
+			}
+			else {
+				// for any other elevators (basic, inv, floor) force he data provided
+				mesh->addRectangle(this, wall,
+					bottom,
+					top,
+					mirror->m_tex[what],
+					m_ambient,
+					false
+				);
+			}
+		}
+	}
+
+	// only build top and bottom for vertical elevators (sliding ones : spin1 are not needed)
+	if (!((int)flags & (int)dfWallFlag::MORPHS_WITH_ELEV)) {
+		mesh->addFloor(polygons(1), bottom, m_ceilingTexture, m_ambient, clockwise);
+		mesh->addFloor(polygons(1), top, m_floorTexture, m_ambient, clockwise);
+	}
+
+	// add deferred signs on the elevators (the sign is physically on an elevator)
+	// centerVertices the level space into the model space
+	for (auto wall : m_deferedSigns) {
+		dfSector* sector = wall->sector();
+		float translate = m_staticMeshFloorAltitude - sector->m_staticMeshFloorAltitude;
+		float height = sector->m_staticMeshCeilingAltitude - sector->m_staticMeshFloorAltitude;
+		dfLogicTrigger* trigger = addSign(mesh, wall, bottom - translate, bottom - translate + height, DFWALL_TEXTURE_BOTTOM);
+		m_signs.push_back(trigger);
+	}
+
+	mesh->name(m_name);
+
+	// generate the gaComponentMesh
+	if (!mesh->buildMesh()) {
+		delete mesh;
+		return nullptr;
+	}
+
+	// and add the mesh to the super-sector holding the sector mesh
+	m_super->addObject(mesh);
+
+	return mesh;
+}
+
+/**
  * Test if the sector is displayed on screen (the parent super-sector is visible)
  */
 bool dfSector::visible(void)

@@ -91,8 +91,12 @@ public:
 	dfSector* findSectorLVL(const glm::vec3& level_position);	// find sector by level coordinate
 	void testSwitch(fwAABBox& player, gaEntity* source);
 	void draw(fwCamera* camera, fwScene* scene);
-	std::vector<dfSector*>& sectorsID(void) { return m_sectorsID; };
-	std::vector<dfBitmap*>& textures(void) { return m_bitmaps; };
+
+	// getter/setter
+	inline std::vector<dfSector*>& sectorsID(void) { return m_sectorsID; };
+	inline std::vector<dfBitmap*>& textures(void) { return m_bitmaps; };
+	inline fwMaterialBasic* material(void) { return m_material; };
+
 	dfPalette* palette(void) { return m_palette; };
 	static void level2gl(const glm::vec3& source, glm::vec3& target);
 	static void level2gl(glm::vec3& source);

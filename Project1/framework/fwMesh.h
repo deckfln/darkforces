@@ -6,6 +6,8 @@
 #include <map>
 #include "fwGeometry.h"
 #include "fwMaterial.h"
+#include "fwAABBox.h"
+
 #include "../glEngine/glProgram.h"
 #include "../glEngine/glVertexArray.h"
 
@@ -46,6 +48,7 @@ protected:
 public:
 	fwMesh();
 	fwMesh(fwGeometry *_geometry, fwMaterial *_material);
+	fwMesh(fwMaterial* _material);
 
 	inline int id(void) { return m_id; };
 	fwMesh* clone(void);					// create a new clone
@@ -61,7 +64,7 @@ public:
 	fwGeometry *get_geometry(void);
 
 	fwMesh &set_visible(bool _visible = true);
-	bool is_visible(void);
+	bool is_visible(void);					// return the visibility of the object, if the parents are invisible, the object is considered as invisible
 
 	fwMesh &outline(bool _outlined);
 	bool is_outlined(void);
@@ -90,6 +93,8 @@ public:
 	void pointSize(float p) { m_pointSize = p; };
 
 	void centerOnGeometry(void);
+
+	const fwAABBox& modelAABB(void);
 
 	virtual void draw(glProgram *);
 

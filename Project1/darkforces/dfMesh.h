@@ -30,8 +30,7 @@ class dfWall;
 class dfSuperSector;
 class dfVOC;
 
-class dfMesh {
-	std::vector<dfMesh*> m_children;
+class dfMesh : public fwMesh {
 
 	// real buffers
 	std::vector <glm::vec3> m_vertices;		// level vertices (based off m_position_lvl)
@@ -41,15 +40,9 @@ class dfMesh {
 
 	std::vector<dfBitmap*> m_dummy;
 
-	glm::vec3 m_position = glm::vec3(0);	// position of the mesh in GL space, by default (0,0,0)
 	glm::vec3 m_defaultPosition = glm::vec3(0);// default position of the mesh in LEVEL space, (for translation off the position)
 
-	fwMaterial* m_material = nullptr;
-	fwGeometry* m_geometry = nullptr;
-	GameEngine::ComponentMesh* m_mesh = nullptr;
-	fwMesh* m_parentMesh = nullptr;
-
-	bool m_visible = true;
+	GameEngine::ComponentMesh* m_CompMesh = nullptr;
 
 	void setVertice(int p, float x, float y, float z, float xoffset, float yoffset, int textureID, float ambient);
 	void updateRectangleAntiClockwise(int p, 
@@ -61,10 +54,8 @@ class dfMesh {
 		float ambient);
 
 protected:
-	std::string m_name;
-	dfMesh* m_parent = nullptr;							// Parent dfMesh
 	dfSuperSector* m_supersector = nullptr;
-	GameEngine::AABBoxTree m_modelAABB;						// Model Space AABB
+	GameEngine::AABBoxTree m_modelAABB;					// Model Space AABB
 	std::vector<dfBitmap*>& m_bitmaps = m_dummy;		// image map
 
 	// pointers, so we can reference other buffers
@@ -72,6 +63,8 @@ protected:
 	std::vector<glm::vec2>* m_pUvs = nullptr;
 	std::vector<float>* m_pTextureIDs = nullptr;
 	std::vector <float>* m_pAmbientLights = nullptr;    // light intensity of the object
+
+	dfMesh* m_source = nullptr;							// sharing attributes with the source
 
 	void updateRectangle(int p, 
 		glm::vec3& pStart,
@@ -88,15 +81,11 @@ public:
 	dfMesh(dfSuperSector*, std::vector<glm::vec3>* vertices, std::vector<glm::vec2>* uvs, std::vector<float>* textureIDs, std::vector <float>* m_ambientLights, std::vector<dfBitmap*>& textures);
 	dfMesh(dfMesh *parent);
 
-	GameEngine::ComponentMesh* componentMesh(void) { return m_mesh; };
-	fwMesh* mesh(void) { return m_mesh; };
+	GameEngine::ComponentMesh* componentMesh(void) { return m_CompMesh; };
 	fwGeometry* geometry(void) { return m_geometry; };
-	glm::mat4* worldMatrix(void) { return m_mesh->pWorldMatrix(); };
-	glm::mat4* inverseWorldMatrix(void) { return m_mesh->pInverseWorldMatrix(); };
 
 	const GameEngine::AABBoxTree& modelAABB(void);				// build the model AABB
 	void addModelAABB(GameEngine::AABBoxTree* child);			// create a hierarchy of AABB pointing to triangles
-	const glm::vec3& position(void) { return m_position; };
 
 	void display(fwScene*, bool visibility);
 
@@ -106,17 +95,10 @@ public:
 	void addPlane(float width, dfBitmapImage* image);
 	virtual void buildGeometry(dfSector* source, float bottom, float top);
 
-	void parent(fwMesh* parent) { m_parentMesh = parent; };
-	bool visible(void);
-	void visible(bool status);
 	void changeAmbient(float ambient, int start, int len);
-	void addChild(dfMesh* mesh);
-	void addMesh(fwMesh* mesh);
-	void zOrder(int z);
 	void updateGeometryTextures(int start, int nb);
 	int nbVertices(void);									// current vertices on the geometry
 	std::vector<glm::vec3>* vertice(void);					// address of the vertices
-	void name(const std::string& name);
 
 	void moveVertices(glm::vec3& center);
 	void centerOnGeometryXZ(glm::vec3& target);
@@ -124,6 +106,7 @@ public:
 
 	virtual void setStatus(int status) {};
 
-	GameEngine::ComponentMesh* buildMesh(void);
+	dfMesh* buildMesh(void);
+
 	~dfMesh();
 };

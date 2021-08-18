@@ -97,14 +97,16 @@ public:
     bool contains(int sectorID);
     void buildGeometry(std::vector<dfSector*>& sectors);
 
-    int id(void) { return m_id; };
-    void visible(bool v) { m_visible = v; };
-    bool visible(void) { return m_visible; };
-    void remove(void) { m_removed = true; };
-    bool removed(void) { return m_removed; };
-    const std::string& name(void) { return m_name; };
-    const GameEngine::Collider& collider(void) { return m_collider; };
+    // getter/setter
+    inline int id(void) { return m_id; };
+    inline void visible(bool v) { m_visible = v; };
+    inline bool visible(void) { return m_visible; };
+    inline void remove(void) { m_removed = true; };
+    inline bool removed(void) { return m_removed; };
+    inline const std::string& name(void) { return m_name; };
+    inline const GameEngine::Collider& collider(void) { return m_collider; };
     std::vector<dfBitmap*>& textures(void);
+    fwMaterial* material(void);
     std::map<std::string, dfSign*>& hSigns(void) { return m_hSigns; };
 
     void checkPortals(fwCamera* camera, int zOrder);
