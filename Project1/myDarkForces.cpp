@@ -133,6 +133,38 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 	g_Blackbox.registerClass("dfBullet", &dfBullet::create);
 	g_Blackbox.registerClass("dfSpriteAnimated", &dfSpriteAnimated::create);
 	g_Blackbox.registerClass("dfBulletExplode", &dfBulletExplode::create);
+
+	// prepare the debugger
+	static std::map<int32_t, const char*> g_definitions = {
+		{DF_MESSAGE_TRIGGER, "DF_TRIGGER"},
+		{DF_MESSAGE_GOTO_STOP, "DF_GOTO_STOP"},
+		{DF_MESSAGE_DONE, "DF_DONE"},
+		{DF_MESSAGE_ADD_SHIELD, "DF_ADD_SHIELD"},
+		{DF_MESSAGE_ADD_ENERGY, "DF_ADD_ENERGY"},
+		{DF_MESSAGE_HIT_BULLET,	"DF_HIT_BULLET"},
+		{DF_MESSAGE_END_LOOP, "DF_END_LOOP"},
+		{DF_MESSAGE_DIES, "DF_DIES"},
+		{DF_MSG_STATE,	"DF_STATE"},
+		{DF_MSG_PICK_RIFLE_AND_BULLETS, "DF_PICK_RIFLE_AND_BULLETS"},
+		{DF_MSG_ADD_BATTERY, "DF_ADD_BATTERY"},
+		{DF_MSG_EVENT, "DF_EVENT"}
+	};
+
+	static std::map<int32_t, const std::map<int32_t, const char*>> g_def = {
+		{DF_MSG_EVENT, {
+			{DarkForces::CROSSLINE_FRONT, "CROSSLINE_FRONT"},
+			{DarkForces::CROSSLINE_BACK, "CROSSLINE_BACK"},
+			{DarkForces::ENTER_SECTOR, "ENTER_SECTOR"},
+			{DarkForces::LEAVE_SECTOR, "LEAVE_SECTOR"},
+			{DarkForces::NUDGE_FRONT_INSIDE, "NUDGE_FRONT_INSIDE"},
+			{DarkForces::NUDGE_BACK_OUTSIE, "NUDGE_BACK_OUTSIE"},
+			{DarkForces::EXPLOSION, "EXPLOSION"},
+			{DarkForces::SHOOT, "SHOOT"},
+			{DarkForces::LAND, "LAND"}}
+		}
+	};
+
+	gaMessage::declareMessages(g_definitions, g_def);
 }
 
 void myDarkForces::resize(int width, int height)

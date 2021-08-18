@@ -1,6 +1,8 @@
 #include "gaMessage.h"
 
 #include <iostream>
+#include <imgui.h>
+#include <map>
 
 std::queue<gaMessage*> g_MessagesQueue;
 
@@ -92,4 +94,79 @@ void gaMessage::recordState(void* r)
     record->fvalue = m_fvalue;
     record->v3value = m_v3value;
     record->value = m_value;
+}
+
+/**
+ * debugger
+ */
+static std::map<int32_t, const char*> g_definitions = {
+    { gaMessage::Action::COLLIDE, "COLLIDE"},
+    { gaMessage::Action::TIMER, "TIMER"},
+    { gaMessage::Action::DELETE_ENTITY, "DELETE_ENTITY"},
+    { gaMessage::Action::MOVE, "MOVE"},
+    { gaMessage::Action::ROTATE, "ROTATE"},
+    { gaMessage::Action::PLAY_SOUND, "PLAY_SOUND"},
+    { gaMessage::Action::STOP_SOUND, "STOP_SOUND"},
+    { gaMessage::Action::WANT_TO_MOVE, "WANT_TO_MOVE"},
+    { gaMessage::Action::COLLISION, "COLLISION"},
+    { gaMessage::Action::MOVE_TO, "MOVE_TO"},
+    { gaMessage::Action::WORLD_INSERT,"WORLD_INSERT" },
+    { gaMessage::Action::WORLD_REMOVE, "WORLD_REMOVE"},
+    { gaMessage::Action::WOULD_FALL, "WOULD_FALL"},
+    { gaMessage::Action::FALL, "FALL"},
+    { gaMessage::Action::CONTROLLER, "CONTROLLER"},
+    { gaMessage::Action::SAVE_WORLD, "SAVE_WORLD"}
+};
+
+static std::map<int32_t, std::map<int, const char*>> g_definitions_values = {
+};
+
+void gaMessage::debugGUI(void)
+{
+
+    ImGui::TableNextColumn();
+    ImGui::Text(m_server.c_str());
+    ImGui::TableNextColumn();
+    ImGui::Text(m_client.c_str());
+    ImGui::TableNextColumn();
+
+    if (g_definitions.count(m_action) == 0) {
+        ImGui::Text("***%d***", m_action);
+    }
+    else {
+        ImGui::Text(g_definitions[m_action]);
+    }
+    ImGui::TableNextColumn();
+
+    if (g_definitions_values.count(m_action) > 0) {
+        auto values = g_definitions_values[m_action];
+
+        if (values.count(m_value) > 0) {
+            const char* txt = values[m_value];
+            ImGui::Text(txt);
+        }
+        else {
+            ImGui::Text("%d", m_value);
+        }
+    }
+    else {
+        ImGui::Text("%d", m_value);
+    }
+    ImGui::TableNextColumn();
+    ImGui::Text("%.2f", m_fvalue);
+    ImGui::TableNextRow();
+}
+
+/**
+ * Add new messages definition for the debugger
+ */
+void gaMessage::declareMessages(const std::map<int, const char*>& actions, const std::map<int32_t, const std::map<int32_t, const char*>>& values)
+{
+    for (auto& action : actions) {
+        g_definitions[action.first] = action.second;
+    }
+
+    for (auto value : values) {
+        g_definitions_values[value.first] = value.second;
+    }
 }

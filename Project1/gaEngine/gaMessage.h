@@ -3,6 +3,8 @@
 #include <string>
 #include <vector>
 #include <queue>
+#include <list>
+#include <map>
 #include "../framework/fwTransforms.h"
 #include "../flightRecorder/Message.h"
 
@@ -66,6 +68,11 @@ public:
 		ROTATE_BY,
 	};
 
+	struct DeclareAction {
+		int32_t action;
+		const char* title;
+	};
+
 	bool m_used = false;
 
 	gaEntity* m_pServer = nullptr;	// cached value
@@ -99,4 +106,8 @@ public:
 		return sizeof(flightRecorder::Message);
 	}													// size of one record
 	void recordState(void* record);
+
+	// debugger
+	void debugGUI(void);
+	static void declareMessages(const std::map<int, const char*>& actions, const std::map<int32_t, const std::map<int32_t, const char*>>& values);
 };
