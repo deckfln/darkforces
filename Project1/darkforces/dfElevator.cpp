@@ -235,6 +235,17 @@ dfMesh *dfElevator::buildGeometry(fwMaterial* material, std::vector<dfBitmap*>& 
 		m_zmax = m_pSector->staticCeilingAltitude();
 	}
 
+	/* TODO: find a way to remove the hack for SECBASE::elev_block and SECBASE::elev3-1
+	*  hard coded hack for SECBASE::elev_block. Force the height of the elevator
+	*  physically impossible in GameEngine
+	*/
+	if (m_name == "elev_block") {
+		m_zmax = -4.0f;
+	}
+	if (m_name == "elev3-1") {
+		m_zmax = 1.07f;
+	}
+
 	//!
 	// Build a mesh depending of the type
 	//
@@ -625,7 +636,6 @@ void dfElevator::moveTo(float z_lvl)
 	}
 
 	// run the move
-	glm::vec3 p = position();
 	switch (m_type) {
 	case dfElevator::Type::INV:
 	case dfElevator::Type::DOOR:
@@ -638,8 +648,9 @@ void dfElevator::moveTo(float z_lvl)
 		break;
 	case dfElevator::Type::MOVE_CEILING:
 		// move the sector the elevator is based on (for collision detection)
-		p.y = z_lvl / 10.0f;
-		sendInternalMessage(gaMessage::MOVE, 0, &p);
+		m_transforms.m_position = position();
+		m_transforms.m_position.y = z_lvl / 10.0f;
+		sendInternalMessage(gaMessage::MOVE, 0, &m_transforms.m_position);
 		break;
 	case dfElevator::Type::MORPH_SPIN1:
 	case dfElevator::Type::MORPH_SPIN2:
