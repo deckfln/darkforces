@@ -208,7 +208,7 @@ void flightRecorder::Blackbox::recordState(void)
 void flightRecorder::Blackbox::recordMessage(gaMessage* message)
 {
 	bufferMessages* bMessages = m_messages[m_current];
-	if (bMessages->current > bMessages->size) {
+	if (bMessages->current >= bMessages->size) {
 		m_inframe_messages[m_current].push_back(*message);
 	}
 	else {

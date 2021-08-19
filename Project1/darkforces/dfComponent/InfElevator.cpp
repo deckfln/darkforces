@@ -219,6 +219,17 @@ DarkForces::Component::InfElevator::InfElevator(dfSector* sector):
 	m_pSector = sector;
 }
 
+void DarkForces::Component::InfElevator::eventMask(uint32_t eventMask)
+{
+	/* TODO: Hard coded hack for MORPH_SPIN1,
+	 * entering the sector doesn't not trigger the elevator to move back to its original position
+	 */
+	if (m_type == dfElevator::Type::MORPH_SPIN1 && (eventMask & (DarkForces::ENTER_SECTOR | DarkForces::LEAVE_SECTOR))) {
+		eventMask &= ~(DarkForces::ENTER_SECTOR | DarkForces::LEAVE_SECTOR);
+	}
+	m_eventMask = eventMask;
+}
+
 /**
  * add a stop and update the range of the elevator
  */

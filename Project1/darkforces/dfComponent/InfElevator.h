@@ -78,7 +78,7 @@ namespace DarkForces {
 
 			// getter/setter
 			inline void speed(float speed) { m_speed = speed; };
-			inline void eventMask(uint32_t eventMask) { m_eventMask = eventMask; };
+			void eventMask(uint32_t eventMask);
 			inline const std::string& sector(void) { return m_sector; };
 			inline dfSector* psector(void) { return m_pSector; };
 			inline void center(float x, float y) { m_center.x = x; m_center.y = y; };

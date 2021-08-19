@@ -147,6 +147,17 @@ dfElevator::dfElevator(dfElevator* source):
 	m_class_name = g_className;
 }
 
+void dfElevator::eventMask(int eventMask)
+{
+	/* TODO: Hard coded hack for MORPH_SPIN1, 
+	 * entering the sector doesn't not trigger the elevator to move back to its original position
+	 */
+	if (m_type == dfElevator::Type::MORPH_SPIN1 && (eventMask & (DarkForces::ENTER_SECTOR | DarkForces::LEAVE_SECTOR))) {
+		eventMask &= ~(DarkForces::ENTER_SECTOR|DarkForces::LEAVE_SECTOR);
+	}
+	m_eventMask = eventMask;
+}
+
 /**
  * bind the elevator to its sector
  * for any relative stop, record the floor
@@ -692,6 +703,9 @@ void dfElevator::dispatchMessage(gaMessage* message)
 			moveToNextStop();
 			m_status = dfElevator::Status::MOVE;
 			m_tick = 0;
+			if (m_name == "floor3edoor") {
+				__debugbreak();
+			}
 			// no need for animation, there is already one on the message queue
 		}
 		else {

@@ -129,7 +129,7 @@ public:
 	}
 
 	void speed(float speed) { m_speed = speed; };
-	void eventMask(int eventMask) { m_eventMask = eventMask; };
+	void eventMask(int eventMask);
 	std::string& sector(void) { return m_sector; };
 	dfSector* psector(void) { return m_pSector; };
 	void parent(dfLevel* parent) { m_parent = parent; };
