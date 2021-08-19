@@ -889,11 +889,18 @@ void dfElevator::debugGUIChildClass(void)
 
 	if (ImGui::TreeNode("dfElevator")) {
 		ImGui::Text("Status : %s", text);
-		ImGui::Text("Tick: %.2f", m_tick);
-		ImGui::Text("Delay: %.2f", m_delay);
-		ImGui::Text("Stops: current:%d next:%d", m_currentStop, m_nextStop);
-		ImGui::Text("Z: current:%.4f target:%.2f", m_current, m_target);
 		ImGui::Text("Speed: %.2f", m_direction);
+		if (m_status == dfElevator::Status::MOVE) {
+			ImGui::Text("Tick: %.2f", m_tick);
+			ImGui::Text("Delay: %.2f", m_delay);
+			ImGui::Text("Stops: current:%d next:%d", m_currentStop, m_nextStop);
+			ImGui::Text("Z: current:%.4f target:%.2f", m_current, m_target);
+			ImGui::Text("Speed: %.2f", m_direction);
+		}
+		else {
+			ImGui::Text("Stop: %d", m_currentStop);
+			ImGui::Text("Z: %.2f", m_current);
+		}
 		ImGui::TreePop();
 	}
 }
