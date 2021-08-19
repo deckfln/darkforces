@@ -121,7 +121,9 @@ namespace GameEngine
 			const glm::vec3& old_position,
 			std::vector<gaCollisionPoint>& collisions);		// check if the entity moved so fast it went trough another one
 
+		// getter/setter
 		inline const void* parent(void) { return m_parent; };
+		inline bool is(ColliderType type) { return m_type == type; };
 		inline const gaCollisionPoint::Source parent_class(void) { return m_parent_class; };
 	};
 }

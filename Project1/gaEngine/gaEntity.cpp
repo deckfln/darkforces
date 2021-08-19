@@ -71,15 +71,19 @@ void gaEntity::addComponent(gaComponent* component)
 	m_components.push_back(component);
 	component->parent(this);
 
-	if (component->is(gaComponent::MESH)) {
-		GameEngine::ComponentMesh* mesh = static_cast<GameEngine::ComponentMesh*>(component);
-		// build the model AABB
-		m_modelAABB = mesh->modelAABB();
-		glm::vec3 pos = mesh->position();
-		translate(pos);
+	// unless it is a SEGMENT, adapt the collider to the mesh
+	if (!m_collider.is(ColliderType::SEGMENT)) {
 
-		// change the default collider (AABB) to Geometry
-		m_collider.set(mesh->get_geometry(), &m_worldMatrix, &m_inverseWorldMatrix);
+		if (component->is(gaComponent::MESH)) {
+			GameEngine::ComponentMesh* mesh = static_cast<GameEngine::ComponentMesh*>(component);
+			// build the model AABB
+			m_modelAABB = mesh->modelAABB();
+			glm::vec3 pos = mesh->position();
+			translate(pos);
+
+			// change the default collider (AABB) to Geometry
+			m_collider.set(mesh->get_geometry(), &m_worldMatrix, &m_inverseWorldMatrix);
+		}
 	}
 }
 
