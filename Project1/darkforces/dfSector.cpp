@@ -25,9 +25,10 @@
 
 static const char* g_className = "dfSector";
 
-dfSector::dfSector(std::istringstream& infile, std::vector<dfSector*>& sectorsID):
+dfSector::dfSector(std::istringstream& infile, std::vector<dfSector*>& sectorsID, dfLevel *level):
 	gaEntity(DF_ENTITY_SECTOR),
-	m_sectorsID(sectorsID)
+	m_sectorsID(sectorsID),
+	m_level(level)
 {
 	physical(false);	// object is a virtual entity (cannot collide)
 	m_class_name = g_className;
@@ -919,11 +920,11 @@ void dfSector::buildElevator(gaEntity* parent, dfMesh* mesh, float bottom, float
  */
 dfMesh* dfSector::buildElevator_new(float bottom, float top, int what, bool clockwise, dfWallFlag flags, std::list<dfLogicTrigger*>& m_signs)
 {
-	if (!m_super) {
+	if (!m_level) {
 		return nullptr;
 	}
 
-	dfMesh *mesh = new dfMesh(m_super->material(), m_super->textures());
+	dfMesh *mesh = new dfMesh(m_level->material(), m_level->textures());
 	std::vector<dfBitmap*>& textures = m_super->textures();
 
 	// create the walls

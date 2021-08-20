@@ -19,7 +19,7 @@ dfLogicStop::dfLogicStop(dfElevator* parent):
 	m_pSector = parent->psector();
 }
 
-dfLogicStop::dfLogicStop(dfElevator* parent, float altitude, dfSector* sector, std::string& action):
+dfLogicStop::dfLogicStop(dfElevator* parent, float altitude, dfSector* sector, const std::string& action):
 	m_parent(parent),
 	m_flag(2 | 16),
 	m_relatiave(altitude),
@@ -39,7 +39,7 @@ dfLogicStop::dfLogicStop(dfElevator* parent, float altitude, dfSector* sector, f
 	m_name = "STOP:" + m_parent->name();
 }
 
-dfLogicStop::dfLogicStop(dfElevator* parent, float altitude, std::string& action):
+dfLogicStop::dfLogicStop(dfElevator* parent, float altitude, const std::string& action):
 	m_parent(parent),
 	m_flag(1 | 16),
 	m_absolute(altitude)
@@ -47,6 +47,15 @@ dfLogicStop::dfLogicStop(dfElevator* parent, float altitude, std::string& action
 	m_name = "STOP:" + m_parent->name();
 	dfLogicStop::action(action);
 	m_pSector = parent->psector();
+}
+
+dfLogicStop::dfLogicStop(dfSector* sector, float altitude, const std::string& action):
+	m_flag(1 | 16),
+	m_absolute(altitude),
+	m_pSector(sector),
+	m_name ("STOP:" + sector->name())
+{
+	dfLogicStop::action(action);
 }
 
 dfLogicStop::dfLogicStop(dfElevator* parent, float altitude, float time):
@@ -59,13 +68,23 @@ dfLogicStop::dfLogicStop(dfElevator* parent, float altitude, float time):
 	m_pSector = parent->psector();
 }
 
+
+dfLogicStop::dfLogicStop(dfSector* sector, float altitude, float time):
+	m_flag(1 | 8),
+	m_absolute(altitude),
+	m_animation_time(time),
+	m_pSector(sector),
+	m_name("STOP:" + sector->name())
+{
+}
+
 dfLogicStop::dfLogicStop(const std::string& sector)
 {
 	m_name = "STOP:" + sector;
 }
 
 /**
- * coonect the Stop to a sector (for relative altitude, or another sector altitude)
+ * connect the Stop to a sector (for relative altitude, or another sector altitude)
  */
 void dfLogicStop::sector(dfSector* pSector)
 {
@@ -74,7 +93,7 @@ void dfLogicStop::sector(dfSector* pSector)
 	}
 }
 
-void dfLogicStop::action(std::string& action)
+void dfLogicStop::action(const std::string& action)
 {
 	if (_stops.count(action) > 0) {
 		m_flag |= 16;

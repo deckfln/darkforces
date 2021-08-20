@@ -74,7 +74,7 @@ namespace DarkForces {
 			};
 
 			InfElevator(const std::string& sector);
-			InfElevator(dfSector* sector);
+			InfElevator(dfElevator::Type kind, dfSector* sector);
 
 			// getter/setter
 			inline void speed(float speed) { m_speed = speed; };
@@ -83,23 +83,24 @@ namespace DarkForces {
 			inline dfSector* psector(void) { return m_pSector; };
 			inline void center(float x, float y) { m_center.x = x; m_center.y = y; };
 
-			void addStop(dfLogicStop* stop);			// add a stop and update the range of the elevator
+			void addStop(dfLogicStop* stop);				// add a stop and update the range of the elevator
 			void addSound(uint32_t when, dfVOC* sound) {
 				m_sounds[when] = sound;
 			}
 
+			void gotoStop(uint32_t stop);					// Force an elevator to go to a specific Stop
+
 			void dispatchMessage(gaMessage* message) override;
 
-			virtual dfMesh* buildGeometry(fwMaterial* material, std::vector<dfBitmap*>& bitmaps) { return nullptr;	};
-			GameEngine::ComponentMesh* buildComponentMesh(void);
+			dfMesh* buildMesh(void);		// build the dfMesh of the elevator
 
 			// flight recorder status
-			inline uint32_t recordSize(void);		// size of the component record
-			uint32_t recordState(void* record);			// save the component state in a record
-			uint32_t loadState(void* record);			// reload a component state from a record
+			inline uint32_t recordSize(void);				// size of the component record
+			uint32_t recordState(void* record);				// save the component state in a record
+			uint32_t loadState(void* record);				// reload a component state from a record
 
 			// debugger
-			void debugGUIinline(void) override;			// display the component in the debugger
+			void debugGUIinline(void) override;				// display the component in the debugger
 
 		};
 	}

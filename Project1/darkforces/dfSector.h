@@ -25,6 +25,7 @@ class dfMesh;
 class dfSuperSector;
 class dfElevator;
 class dfLogicTrigger;
+class dfLevel;
 
 namespace DarkForces {
 	namespace Component {
@@ -72,6 +73,8 @@ enum dfSectorFlag {
 
 class dfSector : public gaEntity
 {
+	dfLevel* m_level = nullptr;
+
 	float m_staticMeshFloorAltitude = 0;				// floor altitude for the superSector static mesh
 	float m_staticMeshCeilingAltitude = 0;				// ceiling altitude for the superSector static mesh
 
@@ -141,7 +144,7 @@ public:
 	// same data but in the supersector (opengl space)
 	dfSuperSector* m_super = nullptr;
 
-	dfSector(std::istringstream& infile, std::vector<dfSector*>& sectorsID);
+	dfSector(std::istringstream& infile, std::vector<dfSector*>& sectorsID, dfLevel *level);
 	void setTriggerFromWall(dfLogicTrigger* trigger);
 	void setTriggerFromFloor(dfLogicTrigger* trigger);
 	void setTriggerFromSector(dfLogicTrigger* trigger);

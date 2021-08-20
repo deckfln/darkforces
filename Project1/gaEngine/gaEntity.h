@@ -50,7 +50,7 @@ protected:
 	fwScene* m_scene = nullptr;						// if the entity has a mesh added to a scene
 	fwMesh* m_mesh = nullptr;
 
-	std::vector<gaComponent*> m_components;			// all components of the entity
+	std::vector<std::tuple<gaComponent*, uint32_t>> m_components;			// all components of the entity
 	std::map<std::string, void*> m_attributes;		// dictionary of attributes
 
 	dfSuperSector* m_supersector = nullptr;			// cached super_sector hosting the object
@@ -60,7 +60,10 @@ protected:
 	std::map<std::string, gaEntity*> m_sittingOnTop;// cached list of the entities sitting on top of that one
 
 public:
-
+	enum Flag {
+		DONT_DELETE,
+		DELETE_AT_EXIT
+	};
 	gaEntity(int mclass);
 	gaEntity(int mclass, const std::string& name);
 	gaEntity(int mclass, const std::string& name, const glm::vec3& position);
@@ -71,11 +74,11 @@ public:
 		return new gaEntity((flightRecorder::Entity*)record);
 	};
 
+	void addComponent(gaComponent* component, uint32_t flag = Flag::DONT_DELETE);			// extend the components of the entity
+
+	// getter/setter
 	inline int entityID(void) { return m_entityID; };
-	void addComponent(gaComponent* component);			// extend the components of the entity
-
 	inline bool is(int mclass) { return m_class == mclass; };
-
 	inline const std::string& name(void) { return m_name; };
 	inline void name(const std::string& name) { m_name = name; };
 	inline bool physical(void) { return m_physical; };
@@ -84,6 +87,7 @@ public:
 	inline void gravity(bool p) { m_gravity = p; };
 	inline bool canStep(void) { return m_canStep; };
 	inline bool collideSectors(void) { return m_collideSectors; };
+	inline void collideSectors(bool c) { m_collideSectors = c; };
 	inline void hasCollider(bool p) { m_hasCollider = p; };
 	inline bool hasCollider(void) { return m_hasCollider; };
 	inline const fwAABBox& worldAABB(void) { return m_worldBounding; };
@@ -93,6 +97,7 @@ public:
 	inline GameEngine::Transform& transform(void) { return m_transforms; };
 	inline GameEngine::Transform* pTransform(void) { return &m_transforms; };
 	inline int defaultCollision(void) { return m_defaultCollision; };
+	inline void defaultCollision(int b) { m_defaultCollision = b; };
 
 	inline void superSector(dfSuperSector* s) { m_supersector = s; };
 

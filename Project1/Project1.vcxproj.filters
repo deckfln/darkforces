@@ -112,6 +112,12 @@
     <Filter Include="Fichiers sources\Dark Forces\dfComponent\InfElevator">
       <UniqueIdentifier>{228379d2-a016-4e8f-8ab7-d79c36af7040}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Fichiers d%27en-tête\DarkForces\gaEntity">
+      <UniqueIdentifier>{b111c369-2c66-40f5-a732-d483855adec1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers sources\Dark Forces\gaEntity">
+      <UniqueIdentifier>{76c92ba4-2b68-49e5-ac6d-822780f689ee}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source.cpp">
@@ -575,6 +581,12 @@
     </ClCompile>
     <ClCompile Include="darkforces\dfComponent\InfElevator\InfElevatorLight.cpp">
       <Filter>Fichiers sources\Dark Forces\dfComponent\InfElevator</Filter>
+    </ClCompile>
+    <ClCompile Include="darkforces\dfComponent\InfElevator\InfElevatorTranslate.cpp">
+      <Filter>Fichiers sources\Dark Forces\dfComponent\InfElevator</Filter>
+    </ClCompile>
+    <ClCompile Include="darkforces\gaEntity\ElevatorDoor.cpp">
+      <Filter>Fichiers sources\Dark Forces\gaEntity</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1102,6 +1114,12 @@
     </ClInclude>
     <ClInclude Include="darkforces\dfComponent\InfElevator\InfElevatorLight.h">
       <Filter>Fichiers d%27en-tête\DarkForces\dfComponent\InfElevator</Filter>
+    </ClInclude>
+    <ClInclude Include="darkforces\dfComponent\InfElevator\InfElevatorTranslate.h">
+      <Filter>Fichiers d%27en-tête\DarkForces\dfComponent\InfElevator</Filter>
+    </ClInclude>
+    <ClInclude Include="darkforces\gaEntity\ElevatorDoor.h">
+      <Filter>Fichiers d%27en-tête\DarkForces\gaEntity</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

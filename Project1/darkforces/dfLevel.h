@@ -25,6 +25,7 @@ class dfElevator;
 class dfPalette;
 class gaCollisionPoint;
 class dfParseINF;
+class gaEntity;
 
 /**
  *
@@ -39,7 +40,7 @@ class dfLevel
 	std::vector<dfBitmap*> m_bitmaps;			// all textures of the level
 
 	std::map<std::string, dfElevator*> m_elevators;	// all elevators of the sector
-
+	std::list<gaEntity*> m_doors;				// all doors on the level
 	glm::vec3 m_skyTexture;						// Identify texture for sectors FLAGS1 = 1
 	float m_skyAltitude=0;						
 

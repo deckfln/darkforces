@@ -139,6 +139,7 @@
     <ClCompile Include="darkforces\dfComponent\InfElevator.cpp" />
     <ClCompile Include="darkforces\dfComponent\dfComponentLogic.cpp" />
     <ClCompile Include="darkforces\dfComponent\InfElevator\InfElevatorLight.cpp" />
+    <ClCompile Include="darkforces\dfComponent\InfElevator\InfElevatorTranslate.cpp" />
     <ClCompile Include="darkforces\dfComponent\InfStandardTrigger.cpp" />
     <ClCompile Include="darkforces\dfFileGOB.cpp" />
     <ClCompile Include="darkforces\dfFileSystem.cpp" />
@@ -170,6 +171,7 @@
     <ClCompile Include="darkforces\dfVOC.cpp" />
     <ClCompile Include="darkforces\dfVue.cpp" />
     <ClCompile Include="darkforces\dfWall.cpp" />
+    <ClCompile Include="darkforces\gaEntity\ElevatorDoor.cpp" />
     <ClCompile Include="darkforces\PlayerControl.cpp" />
     <ClCompile Include="flightRecorder\Blackbox.cpp" />
     <ClCompile Include="framework\background\fwSkybox.cpp" />
@@ -296,6 +298,7 @@
     <ClInclude Include="darkforces\dfComponent\InfElevator.h" />
     <ClInclude Include="darkforces\dfComponent\dfComponentLogic.h" />
     <ClInclude Include="darkforces\dfComponent\InfElevator\InfElevatorLight.h" />
+    <ClInclude Include="darkforces\dfComponent\InfElevator\InfElevatorTranslate.h" />
     <ClInclude Include="darkforces\dfComponent\InfStandardTrigger.h" />
     <ClInclude Include="darkforces\dfFileGOB.h" />
     <ClInclude Include="darkforces\dfFileSystem.h" />
@@ -336,6 +339,7 @@
     <ClInclude Include="darkforces\flightRecorder\frSprite.h" />
     <ClInclude Include="darkforces\flightRecorder\frSpriteAnimated.h" />
     <ClInclude Include="darkforces\flightRecorder\Object3D.h" />
+    <ClInclude Include="darkforces\gaEntity\ElevatorDoor.h" />
     <ClInclude Include="darkforces\lexer\dfObject.lex.h" />
     <ClInclude Include="darkforces\PlayerControl.h" />
     <ClInclude Include="flightRecorder\AABBox.h" />

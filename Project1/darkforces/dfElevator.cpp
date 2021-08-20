@@ -237,6 +237,10 @@ void dfElevator::addStop(dfLogicStop* stop)
  */
 dfMesh *dfElevator::buildGeometry(fwMaterial* material, std::vector<dfBitmap*>& bitmaps)
 {
+	if (m_name == "19") {
+		__debugbreak();
+	}
+
 	if (!m_pSector) {
 		return nullptr;
 	}
@@ -354,7 +358,7 @@ dfMesh *dfElevator::buildGeometry(fwMaterial* material, std::vector<dfBitmap*>& 
 	// record in the entity
 	m_component = new GameEngine::ComponentMesh(m_mesh);
 
-	addComponent(m_component);
+	addComponent(m_component, gaEntity::Flag::DELETE_AT_EXIT);
 
 	return m_mesh;
 }
@@ -658,7 +662,7 @@ void dfElevator::moveTo(float z_lvl)
 		sendMessage(this->m_name, gaMessage::Action::WANT_TO_MOVE, gaMessage::Flag::PUSH_ENTITIES, &m_transforms);
 		break;
 	case dfElevator::Type::MOVE_CEILING:
-		// move the sector the elevator is based on (for collision detection)
+		// move the sector the elevator is based on (no collision detection)
 		m_transforms.m_position = position();
 		m_transforms.m_position.y = z_lvl / 10.0f;
 		sendInternalMessage(gaMessage::MOVE, 0, &m_transforms.m_position);

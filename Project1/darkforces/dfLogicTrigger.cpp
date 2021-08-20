@@ -37,14 +37,14 @@ static int class2int(std::string kind)
 /**
  *Create a trigger without bounding box
  */
-dfLogicTrigger::dfLogicTrigger(std::string & kind, std::string & sector) :
+dfLogicTrigger::dfLogicTrigger(const std::string & kind, const std::string & sector) :
 	gaEntity(DF_ENTITY_TRIGGER, sector),
 	m_sector(sector)
 {
 	m_class = class2int(kind);
 	m_class_name = g_className;
 
-	// triger standard come with its own messages to send
+	// trigger standard come with its own messages to send
 	if (m_class != DF_TRIGGER_STANDARD)
 		m_messages.push_back(new gaMessage(DF_MESSAGE_TRIGGER, 0, m_name));
 }
@@ -52,7 +52,7 @@ dfLogicTrigger::dfLogicTrigger(std::string & kind, std::string & sector) :
 /**
  * Create a trigger without bounding box
  */
-dfLogicTrigger::dfLogicTrigger(std::string& kind, const std::string& sector, int wallIndex) :
+dfLogicTrigger::dfLogicTrigger(const std::string& kind, const std::string& sector, int wallIndex) :
 	gaEntity(DF_ENTITY_TRIGGER, sector + "(" + std::to_string(wallIndex) + ")"),
 	m_sector(sector),
 	m_wallIndex(wallIndex)
@@ -64,7 +64,7 @@ dfLogicTrigger::dfLogicTrigger(std::string& kind, const std::string& sector, int
 /**
  * Create a trigger based on a wall of a sector, and record the elevator client
  */
-dfLogicTrigger::dfLogicTrigger(std::string& kind, dfSector* sector, int wallIndex,  dfElevator* client) :
+dfLogicTrigger::dfLogicTrigger(const std::string& kind, dfSector* sector, int wallIndex,  dfElevator* client) :
 	gaEntity(DF_ENTITY_TRIGGER, sector->name() + "(" + std::to_string(wallIndex) + ")"),
 	m_wallIndex(wallIndex),
 	m_sector(sector->name()),
@@ -80,7 +80,7 @@ dfLogicTrigger::dfLogicTrigger(std::string& kind, dfSector* sector, int wallInde
 /**
  * Create a trigger based on the floor of a sector, and record the elevator client
  */
-dfLogicTrigger::dfLogicTrigger(std::string& kind, dfSector* sector, dfElevator* client) :
+dfLogicTrigger::dfLogicTrigger(const std::string& kind, dfSector* sector, dfElevator* client) :
 	gaEntity(DF_ENTITY_TRIGGER, sector->name()),
 	m_sector(sector->name()),
 	m_keys(client->keys()),
@@ -94,7 +94,7 @@ dfLogicTrigger::dfLogicTrigger(std::string& kind, dfSector* sector, dfElevator* 
 /**
  * Create a trigger based on ono the sector managed by the elevator
  */
-dfLogicTrigger::dfLogicTrigger(std::string& kind, dfElevator* client):
+dfLogicTrigger::dfLogicTrigger(const std::string& kind, dfElevator* client):
 	gaEntity(DF_ENTITY_TRIGGER, client->sector() + "(0)"),
 	m_keys(client->keys()),
 	m_pElevator(client)

@@ -26,6 +26,7 @@
 #include "dfPalette.h"
 #include "dfLogicStop.h"
 #include "dfParseINF.h"
+#include "gaEntity/ElevatorDoor.h"
 
 dfLevel::dfLevel(dfFileSystem* fs, std::string file)
 {
@@ -74,7 +75,7 @@ dfLevel::dfLevel(dfFileSystem* fs, std::string file)
 		else if (tokens[0] == "SECTOR") {
 			int nSector = std::stoi(tokens[1]);
 
-			dfSector* sector = new dfSector(data, m_sectorsID);
+			dfSector* sector = new dfSector(data, m_sectorsID, this);
 			sector->m_id = nSector;
 			if (sector->name() == "") {
 				sector->name(std::to_string(nSector));
@@ -203,8 +204,6 @@ dfLevel::dfLevel(dfFileSystem* fs, std::string file)
 		}
 	}
 
-	convertDoors2Elevators();	// for every sector 'DOOR', create an elevator and a trigger
-
 	m_material = new fwMaterialBasic("data/shaders/vertex.glsl", "", "data/shaders/fragment.glsl");
 
 	// load textures in a megatexture
@@ -215,8 +214,15 @@ dfLevel::dfLevel(dfFileSystem* fs, std::string file)
 	spacePartitioning();		// partition of space for quick move
 	buildGeometry();			// build the geometry of each super sectors
 
+	convertDoors2Elevators();	// for every sector 'DOOR', create an elevator and a trigger
+
 	createTriggers();			// for elevator_spin1, create triggers
 	initElevators();			// move all elevators to position 0
+
+	// Add doors
+	for (auto door : m_doors) {
+		g_gaWorld.addClient(door);
+	}
 
 	// Add elevators to the world
 	for (auto elevator : m_inf->m_elevators) {
@@ -371,29 +377,11 @@ void dfLevel::initElevators(void)
  */
 void dfLevel::convertDoors2Elevators(void)
 {
-	static std::string door = "door";
-	static std::string hold = "hold";
-	static std::string switch1 = "switch1";
-
 	for (auto sector: m_sectorsID) {
 		if (sector->flag() & dfSectorFlag::DOOR) {
-			dfElevator* elevator = new dfElevator(door, sector, this);
-			dfLogicStop* closed = new dfLogicStop(elevator, sector->referenceFloor(), hold);
-			dfLogicStop* opened = new dfLogicStop(elevator, sector->referenceCeiling(), 5000);
-
-			elevator->addStop(closed);
-			elevator->addStop(opened);
-
-			m_inf->m_elevators.push_back(elevator);
-
-			// create a trigger based on the full sector (already registered in the elevator)
-			dfLogicTrigger* trigger = new dfLogicTrigger(switch1, elevator);
-
-			// once the elevator closes, send a DONE message to the trigger
-			closed->message(new gaMessage(DF_MESSAGE_DONE, 0, trigger->name()));
-
-			trigger->config();
-			m_inf->m_triggers.push_back(trigger);
+			DarkForces::Entity::ElevatorDoor* door = new DarkForces::Entity::ElevatorDoor(sector);
+			m_inf->m_triggers.push_back(door->trigger());
+			m_doors.push_back(door);
 		}
 	}
 }
@@ -685,6 +673,10 @@ dfLevel::~dfLevel()
 	for (auto bitmap : m_bitmaps) {
 		delete bitmap;
 	}
+	for (auto door : m_doors) {
+		delete door;
+	}
+
 	delete m_inf;
 	delete m_objects;
 	delete m_palette;

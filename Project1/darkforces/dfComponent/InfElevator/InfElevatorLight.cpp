@@ -15,10 +15,8 @@ void DarkForces::Component::InfElevatorLight::moveTo(float ambient)
 }
 
 DarkForces::Component::InfElevatorLight::InfElevatorLight(dfSector* sector) :
-	DarkForces::Component::InfElevator(sector)
+	DarkForces::Component::InfElevator(dfElevator::Type::CHANGE_LIGHT, sector)
 {
-	m_type = dfElevator::Type::CHANGE_LIGHT;
-
 	// change_light are auto start
 	g_gaWorld.sendMessageDelayed(m_entity->name(), m_entity->name(), gaMessage::TIMER, 0, nullptr);
 }

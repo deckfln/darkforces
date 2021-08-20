@@ -66,9 +66,9 @@ gaEntity::gaEntity(flightRecorder::Entity* record):
 /**
  * extend the components of the entity
  */
-void gaEntity::addComponent(gaComponent* component)
+void gaEntity::addComponent(gaComponent* component, uint32_t flag)
 {
-	m_components.push_back(component);
+	m_components.push_back(std::make_tuple(component, flag));
 	component->parent(this);
 
 	// unless it is a SEGMENT, adapt the collider to the mesh
@@ -92,9 +92,9 @@ void gaEntity::addComponent(gaComponent* component)
  */
 gaComponent* gaEntity::findComponent(int type)
 {
-	for (auto component : m_components) {
-		if (component->is(type)) {
-			return component;
+	for (auto& component : m_components) {
+		if (std::get<0>(component)->is(type)) {
+			return std::get<0>(component);
 		}
 	}
 
@@ -304,8 +304,8 @@ void gaEntity::dispatchMessage(gaMessage* message)
 		break;
 	}
 
-	for (auto component : m_components) {
-		component->dispatchMessage(message);
+	for (auto& component : m_components) {
+		std::get<0>(component)->dispatchMessage(message);
 	}
 }
 
@@ -324,8 +324,8 @@ bool gaEntity::checkCollision(fwCylinder& bounding, glm::vec3& direction, glm::v
 uint32_t gaEntity::componentsSize(void)
 {
 	uint32_t size = 0;
-	for (auto component : m_components) {
-		size += component->recordSize();
+	for (auto& component : m_components) {
+		size += std::get<0>(component)->recordSize();
 	}
 	return size;
 }
@@ -356,8 +356,8 @@ uint32_t gaEntity::recordState(void *r)
 uint32_t gaEntity::recordComponents(void* p)
 {
 	char* c = (char *)p;
-	for (auto component : m_components) {
-		c += component->recordState(c);
+	for (auto& component : m_components) {
+		c += std::get<0>(component)->recordState(c);
 	}
 	return c - p;
 }
@@ -368,8 +368,8 @@ uint32_t gaEntity::recordComponents(void* p)
 void gaEntity::loadComponents(void* p)
 {
 	char* c = (char*)p;
-	for (auto component : m_components) {
-		c += component->loadState(c);
+	for (auto& component : m_components) {
+		c += std::get<0>(component)->loadState(c);
 	}
 }
 
@@ -403,8 +403,8 @@ void gaEntity::debugGUI(bool* close)
 
 		if (m_components.size() > 0) {
 			if (ImGui::TreeNode("components")) {
-				for (auto component : m_components) {
-					component->debugGUIinline();
+				for (auto& component : m_components) {
+					std::get<0>(component)->debugGUIinline();
 				}
 				ImGui::TreePop();
 			}
@@ -424,5 +424,11 @@ gaEntity::~gaEntity()
 			m_scene->removeChild(m_mesh);
 		}
 		delete m_mesh;
+	}
+
+	for (auto& component : m_components) {
+		if (std::get<1>(component) == Flag::DELETE_AT_EXIT) {
+			delete std::get<0>(component);
+		}
 	}
 }

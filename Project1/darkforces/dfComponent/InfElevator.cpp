@@ -15,10 +15,26 @@
 #include "../flightRecorder/frCompElevator.h"
 
 /**
+ * default elevators speed
+ */
+static std::map<dfElevator::Type, float> _speeds = {
+	{dfElevator::Type::INV, 20.f},
+	{dfElevator::Type::BASIC, 20.0f},
+	{dfElevator::Type::MOVE_FLOOR, 20.0f},
+	{dfElevator::Type::CHANGE_LIGHT, 10.0f},
+	{dfElevator::Type::MOVE_CEILING, 20.0f},
+	{dfElevator::Type::MORPH_SPIN1, 20.0f},
+	{dfElevator::Type::MORPH_SPIN2, 20.0f},
+	{dfElevator::Type::MORPH_MOVE1, 20.0f},
+	{dfElevator::Type::DOOR, 20.0f}
+};
+
+/**
  * move to the given position (virtual function) => every elevator has its own
  */
 void DarkForces::Component::InfElevator::moveTo(float z)
 {
+	__debugbreak();
 	gaDebugLog(1, "DarkForces::Component::Elevator::moveTo", "m_type==" + std::to_string((uint32_t)m_type) + " not implemented");
 }
 
@@ -211,10 +227,12 @@ DarkForces::Component::InfElevator::InfElevator(const std::string& sector):
 /**
  * create from a record
  */
-DarkForces::Component::InfElevator::InfElevator(dfSector* sector):
+DarkForces::Component::InfElevator::InfElevator(dfElevator::Type kind, dfSector* sector):
 	gaComponent(DF_COMPONENT_INF_ELEVATOR),
-	m_sector(sector->name())
+	m_sector(sector->name()),
+	m_type(kind)
 {
+	m_speed = _speeds[m_type];
 	m_entity = sector;
 	m_pSector = sector;
 }
@@ -240,6 +258,15 @@ void DarkForces::Component::InfElevator::addStop(dfLogicStop* stop)
 	float c = stop->z_position(m_type);
 	if (c < m_zmin) m_zmin = c;
 	if (c > m_zmax) m_zmax = c;
+}
+
+/**
+ * Force an elevator to go to a specific Stop
+ */
+void DarkForces::Component::InfElevator::gotoStop(uint32_t stop)
+{
+	m_currentStop = stop;
+	moveTo(m_stops[m_currentStop]);
 }
 
 /**
@@ -311,7 +338,7 @@ void DarkForces::Component::InfElevator::dispatchMessage(gaMessage* message)
 /**
  * Create a ComponentMesh for the elevator
  */
-GameEngine::ComponentMesh* DarkForces::Component::InfElevator::buildComponentMesh(void)
+dfMesh* DarkForces::Component::InfElevator::buildMesh(void)
 {
 	GameEngine::ComponentMesh* component = nullptr;
 	dfMesh* mesh;
@@ -397,7 +424,7 @@ GameEngine::ComponentMesh* DarkForces::Component::InfElevator::buildComponentMes
 	}
 
 	// record in the entity
-	return mesh->componentMesh();
+	return mesh;
 }
 
 /**

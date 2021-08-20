@@ -48,16 +48,16 @@ class dfLogicTrigger: public gaEntity {
 	gaMessage m_trigger;				// trigger message
 
 public:
-	dfLogicTrigger(std::string& kind, std::string& sector);
-	dfLogicTrigger(std::string& kind, const std::string& sector, int wallIndex);
-	dfLogicTrigger(std::string& kind, dfSector* sector, int wallIndex, dfElevator *client);
-	dfLogicTrigger(std::string& kind, dfSector* sector, dfElevator* client);
-	dfLogicTrigger(std::string& kind, dfElevator* client);
+	dfLogicTrigger(const std::string& kind, const std::string& sector);
+	dfLogicTrigger(const std::string& kind, const std::string& sector, int wallIndex);
+	dfLogicTrigger(const std::string& kind, dfSector* sector, int wallIndex, dfElevator *client);
+	dfLogicTrigger(const std::string& kind, dfSector* sector, dfElevator* client);
+	dfLogicTrigger(const std::string& kind, dfElevator* client);
 
 	void eventMask(int eventMask) { m_eventMask = eventMask; };
 	void client(std::string& client) { m_clients.push_back(client); }
 	std::vector<std::string>& clients(void) { return m_clients; };
-	std::string& sector(void) { return m_sector; };
+	const std::string& sector(void) { return m_sector; };
 	int wall(void) { return m_wallIndex; };
 	void sign(dfSign* _sign) { m_pMesh = (dfMesh *)_sign; };
 	void keys(int keys) { m_keys = keys; };

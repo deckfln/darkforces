@@ -55,20 +55,22 @@ private:
 
 public:
 	dfLogicStop(dfElevator *parent);
-	dfLogicStop(dfElevator* parent, float altitude, dfSector* sector, std::string& action);
+	dfLogicStop(dfElevator* parent, float altitude, dfSector* sector, const std::string& action);
 	dfLogicStop(dfElevator* parent, float altitude, dfSector* sector, float time);
-	dfLogicStop(dfElevator* parent, float altitude, std::string& action);
+	dfLogicStop(dfElevator* parent, float altitude, const std::string& action);
 	dfLogicStop(dfElevator* parent, float altitude, float time);
+	dfLogicStop(dfSector* sector, float altitude, const std::string& action);
+	dfLogicStop(dfSector* sector, float altitude, float time);
 	dfLogicStop(const std::string& sector);
 
 	void absolute(float absolute) { m_flag |= 1; m_absolute = absolute; };
 	void relative(float relative) { m_flag |= 2; m_relatiave = relative; };
 	void sector(std::string& sector) { m_flag |= 4; m_sector = sector; };
-	std::string& sector(void) { return m_sector; };
+	const std::string& sector(void) { return m_sector; };
 	void sector(dfSector* pSector);
 	void time(float time) { m_flag |= 8; m_animation_time = time * 1000; };
 	float time(void) { return m_animation_time; };
-	void action(std::string& action);
+	void action(const std::string& action);
 	dfLogicStop::Action action(void) { return m_action; };
 	bool isTimeBased(void);
 	void message(gaMessage* message);
