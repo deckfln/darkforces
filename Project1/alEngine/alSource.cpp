@@ -13,7 +13,7 @@ alSource::alSource(void)
 	m_sources[source] = -1;				// first player, no sound
 }
 
-alSource::alSource(glm::vec3& position) :
+alSource::alSource(const glm::vec3& position) :
 	m_position(position)
 {
 	ALuint source;
@@ -23,14 +23,20 @@ alSource::alSource(glm::vec3& position) :
 	alSource3f(source, AL_POSITION, position.x, position.y, position.z);
 }
 
-void alSource::position(glm::vec3& position)
+void alSource::position(const glm::vec3& position)
 {
 	m_position = position;
 
 	// move all player from the source
-	for (auto source : m_sources) {
+	for (auto& source : m_sources) {
 		alSource3f(source.first, AL_POSITION, position.x, position.y, position.z);
 	}
+}
+
+void alSource::position(const glm::vec3* pos)
+{
+	m_position = *pos;
+	position(m_position);
 }
 
 /**
@@ -42,7 +48,7 @@ bool alSource::play(alSound* buffer)
 
 	// check if a player is playing that sound
 	ALint state;
-	for (auto source : m_sources) {
+	for (auto& source : m_sources) {
 		alGetSourcei(source.first, AL_SOURCE_STATE, &state);
 		if (source.second == id) {
 			if (m_state == AL_PLAYING) {
@@ -57,7 +63,7 @@ bool alSource::play(alSound* buffer)
 
 	// find an available player
 	ALint player = -1;
-	for (auto source : m_sources) {
+	for (auto& source : m_sources) {
 		if (source.second == -1) {
 			player = source.first;
 			break;
@@ -100,7 +106,7 @@ bool alSource::play(void)
 	ALint state;
 
 	// move all player from the source
-	for (auto source : m_sources) {
+	for (auto& source : m_sources) {
 		alGetSourcei(source.first, AL_SOURCE_STATE, &state);
 		if (m_state == AL_PLAYING) {
 			return true;
@@ -119,7 +125,7 @@ void alSource::stop(alSound *sound)
 		id = sound->id();
 	}
 
-	for (auto source : m_sources) {
+	for (auto& source : m_sources) {
 		if (id == -1 || id == source.second) {
 			alSourceStop(source.first);
 		}
@@ -128,7 +134,7 @@ void alSource::stop(alSound *sound)
 
 alSource::~alSource()
 {
-	for (auto source : m_sources) {
+	for (auto& source : m_sources) {
 		alDeleteSources((ALuint)1, (ALuint *)&source.second);
 	}
 }

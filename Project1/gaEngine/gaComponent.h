@@ -15,7 +15,8 @@ public:
 		NONE = 0,
 		MESH,
 		COLLIDER,
-		CONTROLER
+		CONTROLER,
+		SOUND
 	};
 
 	gaComponent(int m_type);

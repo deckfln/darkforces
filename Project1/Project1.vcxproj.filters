@@ -588,6 +588,9 @@
     <ClCompile Include="darkforces\gaEntity\ElevatorDoor.cpp">
       <Filter>Fichiers sources\Dark Forces\gaEntity</Filter>
     </ClCompile>
+    <ClCompile Include="gaEngine\gaComponent\gaSound.cpp">
+      <Filter>Fichiers sources\gaEngine\gaComponent</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="glad\glad.h">
@@ -1120,6 +1123,9 @@
     </ClInclude>
     <ClInclude Include="darkforces\gaEntity\ElevatorDoor.h">
       <Filter>Fichiers d%27en-tête\DarkForces\gaEntity</Filter>
+    </ClInclude>
+    <ClInclude Include="gaEngine\gaComponent\gaSound.h">
+      <Filter>Fichiers d%27en-tête\gaEngine\gaComponent</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -14,8 +14,9 @@ class alSource
 
 public:
 	alSource(void);
-	alSource(glm::vec3& position);
-	void position(glm::vec3& position);
+	alSource(const glm::vec3& position);
+	void position(const glm::vec3& position);
+	void position(const glm::vec3* position);
 	bool play(alSound* buffer);	// play the sound (return false) or says it is already running(true)
 	bool play(void);			// is playing something ?
 	void stop(alSound* buffer = nullptr);

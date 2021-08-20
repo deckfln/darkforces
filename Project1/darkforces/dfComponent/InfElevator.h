@@ -9,7 +9,6 @@
 class dfLogicStop;
 class dfSector;
 class dfLevel;
-class dfVOC;
 class dfMesh;
 class fwMaterial;
 
@@ -58,8 +57,6 @@ namespace DarkForces {
 
 			dfLevel* m_parent = nullptr;		// level the elevator is on
 
-			dfVOC* m_sounds[3] = { nullptr, nullptr, nullptr };
-
 			virtual void moveTo(float z);		// move the given position (depend on the elevator type)
 			void moveTo(dfLogicStop* stop);		// move directly to the given stop
 			void moveToNextStop(void);			// start moving to the next stop
@@ -84,9 +81,7 @@ namespace DarkForces {
 			inline void center(float x, float y) { m_center.x = x; m_center.y = y; };
 
 			void addStop(dfLogicStop* stop);				// add a stop and update the range of the elevator
-			void addSound(uint32_t when, dfVOC* sound) {
-				m_sounds[when] = sound;
-			}
+			void addSound(uint32_t action, dfVOC* sound);	// register a sound for a SART, MOVE, STOP
 
 			void gotoStop(uint32_t stop);					// Force an elevator to go to a specific Stop
 

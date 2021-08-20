@@ -74,13 +74,15 @@ void ComponentMesh::dispatchMessage(gaMessage* message)
 	case gaMessage::PLAY_SOUND: {
 		 // Start playing a sound or check if it plays
 		alSound* voc = (alSound*)message->m_extra;
-		m_mesh->play(voc);
+		if (voc)
+			m_mesh->play(voc);
 		break;
 	}
 	case gaMessage::STOP_SOUND: {
 		// Stop playing a sound (or all sound if nullptr)
 		alSound* voc = (alSound*)message->m_extra;
-		m_mesh->stop(voc);
+		if (voc)
+			m_mesh->stop(voc);
 		break;
 	}
 

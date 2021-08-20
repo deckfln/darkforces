@@ -76,16 +76,9 @@ void DarkForces::Component::InfElevator::moveToNextStop(void)
 		// TODO adapt the speed
 		m_delay = abs(m_direction) * 838 / m_speed;
 
-		// play the starting sound if it exists
-		dfVOC* voc = m_sounds[dfElevator::Sound::START];
-		if (voc != nullptr) {
-			m_entity->sendInternalMessage(gaMessage::PLAY_SOUND, 0, voc->sound());
-		}
-		// play the moving sound if it exists
-		voc = m_sounds[dfElevator::Sound::MOVE];
-		if (voc != nullptr) {
-			m_entity->sendInternalMessage(gaMessage::PLAY_SOUND, 0, voc->sound());
-		}
+		// play the starting sound & the moving sound
+		m_entity->sendInternalMessage(gaMessage::PLAY_SOUND, dfElevator::Sound::START);
+		m_entity->sendInternalMessage(gaMessage::PLAY_SOUND, dfElevator::Sound::MOVE);
 	}
 	else {
 		// instant move
@@ -157,29 +150,15 @@ bool DarkForces::Component::InfElevator::animate(time_t delta)
 
 				// stop the move sound and play the end sound if it exists AND the stop is NOT zero
 				if (stop->time() != 0) {
-					dfVOC* voc = m_sounds[dfElevator::Sound::MOVE];
-					if (voc != nullptr) {
-						m_entity->sendInternalMessage(gaMessage::STOP_SOUND, 0, voc->sound());
-					}
-					voc = m_sounds[dfElevator::Sound::END];
-					if (voc != nullptr) {
-						m_entity->sendInternalMessage(gaMessage::STOP_SOUND, 0, voc->sound());
-					}
+					m_entity->sendInternalMessage(gaMessage::STOP_SOUND, dfElevator::Sound::MOVE);
+					m_entity->sendInternalMessage(gaMessage::STOP_SOUND, dfElevator::Sound::END);
 				}
 			}
 			else {
 				// still moving
-				// 
 				// play the end sound if it exists
-				dfVOC* voc = m_sounds[dfElevator::Sound::MOVE];
-				if (voc != nullptr) {
-					m_entity->sendInternalMessage(gaMessage::STOP_SOUND, 0, voc->sound());
-				}
-
-				voc = m_sounds[dfElevator::Sound::END];
-				if (voc != nullptr) {
-					m_entity->sendInternalMessage(gaMessage::PLAY_SOUND, 0, voc->sound());
-				}
+				m_entity->sendInternalMessage(gaMessage::STOP_SOUND, dfElevator::Sound::MOVE);
+				m_entity->sendInternalMessage(gaMessage::PLAY_SOUND, dfElevator::Sound::END);
 
 				switch (stop->action()) {
 				case dfLogicStop::Action::HOLD:
@@ -258,6 +237,14 @@ void DarkForces::Component::InfElevator::addStop(dfLogicStop* stop)
 	float c = stop->z_position(m_type);
 	if (c < m_zmin) m_zmin = c;
 	if (c > m_zmax) m_zmax = c;
+}
+
+/**
+ * // register a sound for a SART, MOVE, STOP
+ */
+void DarkForces::Component::InfElevator::addSound(uint32_t action, dfVOC* sound)
+{
+	__debugbreak();
 }
 
 /**
