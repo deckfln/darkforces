@@ -21,3 +21,5 @@ public:
 	alSound* sound(void);
 	~dfVOC();
 };
+
+dfVOC* loadVOC(const std::string& name);	// load a cached file

@@ -273,3 +273,17 @@ dfVOC::~dfVOC()
 		delete m_sound;
 	}
 }
+
+/**
+ * load cached file
+ */
+static std::map<std::string, dfVOC*> g_cachedVOC;
+
+dfVOC* loadVOC(const std::string& name)
+{
+	if (g_cachedVOC.count(name) == 0) {
+		g_cachedVOC[name] = new dfVOC(g_dfFiles, name);
+	}
+
+	return g_cachedVOC[name];
+}

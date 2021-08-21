@@ -237,10 +237,6 @@ void dfElevator::addStop(dfLogicStop* stop)
  */
 dfMesh *dfElevator::buildGeometry(fwMaterial* material, std::vector<dfBitmap*>& bitmaps)
 {
-	if (m_name == "19") {
-		__debugbreak();
-	}
-
 	if (!m_pSector) {
 		return nullptr;
 	}

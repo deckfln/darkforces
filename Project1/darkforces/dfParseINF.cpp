@@ -43,6 +43,58 @@ static DarkForces::Component::InfElevatorTranslate* newElevatorInv (dfSector *pS
 }
 
 /**
+ * Create an elevator move_floor
+ * Convert the parent sector to a full interactive entity
+ */
+static DarkForces::Component::InfElevatorTranslate* newElevatorMoveFloor(dfSector* pSector)
+{
+	// change the status of the entity sector to make it a full interactive entity
+	pSector->physical(true);
+	pSector->gravity(false);
+	pSector->collideSectors(false);
+	pSector->hasCollider(true);
+	pSector->defaultCollision(gaMessage::Flag::PUSH_ENTITIES);
+	pSector->displayAABBox();
+
+	return new DarkForces::Component::InfElevatorTranslate(dfElevator::Type::MOVE_FLOOR, pSector);
+}
+
+/**
+ * Create a default sound component
+ */
+static GameEngine::Component::Sound* newElevatorSound(DarkForces::Component::InfElevator *elevator)
+{
+	// default elevators sounds
+	static std::vector<std::vector<std::string>> g_Default_sounds = {
+		{ { "elev2-1.voc", "elev2-2.voc", "elev2-3.voc"} },
+		{ { "door2-1.voc", "door2-2.voc", "door2-3.voc"} },
+	};
+
+	static std::map<dfElevator::Type, int> g_sound_evelators = {
+		{dfElevator::Type::INV, 1},
+		{dfElevator::Type::BASIC, 0},
+		{dfElevator::Type::MOVE_FLOOR, 0},
+		{dfElevator::Type::MOVE_CEILING, 1}
+	};
+
+	if (g_sound_evelators.count(elevator->type())) {
+		// if there is a default sound
+		GameEngine::Component::Sound* sound = new GameEngine::Component::Sound();
+		dfElevator::Type type = elevator->type();
+		int sounds = g_sound_evelators[type];
+
+		for (auto i = 0; i < 3; i++) {
+			const std::string& file = g_Default_sounds[sounds][i];
+			sound->addSound(i, loadVOC(file)->sound());
+		}
+
+		return sound;
+	}
+
+	return nullptr;
+}
+
+/**
  *
  */
 dfParseINF::dfParseINF(dfFileSystem* fs, const std::string& file, dfLevel *level)
@@ -226,7 +278,7 @@ void dfParseINF::parseSector(std::istringstream& infile, const std::string& sect
 	dfElevator* elevator = nullptr;				// for an elevator
 	DarkForces::Component::InfStandardTrigger* program = nullptr;	// for a trigger standard
 	DarkForces::Component::InfElevatorLight* light = nullptr;	// for elevator change_light
-	DarkForces::Component::InfElevatorTranslate* inv = nullptr;	// for elevator INV
+	DarkForces::Component::InfElevatorTranslate* inv = nullptr;	// for elevator INV & MOVE_FLOOR
 	GameEngine::Component::Sound* sound = nullptr;				// for elevator with sound
 
 	dfLogicStop* stop = nullptr;
@@ -272,10 +324,16 @@ void dfParseINF::parseSector(std::istringstream& infile, const std::string& sect
 				pSector->addElevator(inv);
 				pSector->addComponent(m_component, gaEntity::Flag::DELETE_AT_EXIT);
 				inv->gotoStop(0);
-			}
 
-			if (sound && pSector) {
-				pSector->addComponent(sound, gaEntity::Flag::DELETE_AT_EXIT);
+				if (sound) {
+					// if sounds were defined in the INF
+					pSector->addComponent(sound, gaEntity::Flag::DELETE_AT_EXIT);
+				}
+				else {
+					// else activate the default sounds
+					sound = newElevatorSound(inv);
+					pSector->addComponent(sound, gaEntity::Flag::DELETE_AT_EXIT);
+				}
 			}
 
 			break;
@@ -287,6 +345,9 @@ void dfParseINF::parseSector(std::istringstream& infile, const std::string& sect
 				}
 				else if (tokens[2] == "inv") {
 					inv = newElevatorInv(pSector);
+				}
+				else if (tokens[2] == "move_floor") {
+					inv = newElevatorMoveFloor(pSector);
 				}
 				else {
 					elevator = new dfElevator(tokens[2], pSector);

@@ -59,6 +59,7 @@ void InfStandardTrigger::compile(void)
 		}
 	}
 }
+
 /**
  *
  */

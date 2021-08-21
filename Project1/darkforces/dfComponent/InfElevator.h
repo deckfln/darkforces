@@ -24,7 +24,7 @@ namespace DarkForces {
 		 */
 		class InfElevator : public gaComponent {
 		protected:
-			enum class Status {
+			enum class Status : uint32_t {
 				HOLD,		// elevator is not animated
 				MOVE,		// is moving
 				WAIT,		// is waiting at a stop
@@ -74,11 +74,12 @@ namespace DarkForces {
 			InfElevator(dfElevator::Type kind, dfSector* sector);
 
 			// getter/setter
-			inline void speed(float speed) { m_speed = speed; };
 			void eventMask(uint32_t eventMask);
 			inline const std::string& sector(void) { return m_sector; };
 			inline dfSector* psector(void) { return m_pSector; };
 			inline void center(float x, float y) { m_center.x = x; m_center.y = y; };
+			inline dfElevator::Type type(void) { return m_type; };
+			inline void speed(float speed) { m_speed = speed; };
 
 			void addStop(dfLogicStop* stop);				// add a stop and update the range of the elevator
 			void addSound(uint32_t action, dfVOC* sound);	// register a sound for a SART, MOVE, STOP
@@ -87,7 +88,7 @@ namespace DarkForces {
 
 			void dispatchMessage(gaMessage* message) override;
 
-			dfMesh* buildMesh(void);		// build the dfMesh of the elevator
+			virtual dfMesh* buildMesh(void);				// build the dfMesh of the elevator
 
 			// flight recorder status
 			inline uint32_t recordSize(void);				// size of the component record

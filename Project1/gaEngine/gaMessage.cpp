@@ -139,7 +139,7 @@ void gaMessage::debugGUI(void)
     ImGui::TableNextColumn();
 
     if (g_definitions_values.count(m_action) > 0) {
-        auto values = g_definitions_values[m_action];
+        auto& values = g_definitions_values[m_action];
 
         if (values.count(m_value) > 0) {
             const char* txt = values[m_value];
