@@ -1110,6 +1110,8 @@ void dfSector::loadState(void* r)
  */
 void dfSector::debugGUIChildClass(void)
 {
+	gaEntity::debugGUIChildClass();
+
 	static char tmp[64];
 	sprintf_s(tmp, "%s##%d", g_className, m_entityID);
 	if (ImGui::TreeNode(tmp)) {
