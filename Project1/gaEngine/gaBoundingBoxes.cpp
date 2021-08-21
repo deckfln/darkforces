@@ -49,9 +49,11 @@ void gaBoundingBoxes::draw(fwScene* scene)
 
 	if (m_vertices.size() != sz) {
 		m_vertices.resize(m_boxes.size() * 26);
+		m_colors.resize(m_boxes.size() * 26);
 
 		if (m_geometry != nullptr) {
 			m_geometry->resizeAttribute("aPos", &m_vertices[0], m_vertices.size());
+			m_geometry->resizeAttribute("aColor", &m_colors[0], m_colors.size());
 		}
 	}
 
@@ -63,7 +65,8 @@ void gaBoundingBoxes::draw(fwScene* scene)
 	for (unsigned i = 0; i < m_boxes.size(); i++) {
 		box = (fwAABBox *)m_boxes[i];
 
-		if (box && box->updateMeshVertices(&m_vertices[v])) {
+		// update the vertices and the colors
+		if (box && box->updateMeshVertices(&m_vertices[v], &m_colors[v])) {
 			dirty = true;
 		}
 		v += 26;
@@ -76,10 +79,11 @@ void gaBoundingBoxes::draw(fwScene* scene)
 		m_geometry = new fwGeometry();
 
 		m_geometry->addVertices("aPos", &m_vertices[0], 3, m_vertices.size() * sizeof(glm::vec3), sizeof(float), false);
+		m_geometry->addVertices("aColor", &m_colors[0], 3, m_colors.size() * sizeof(glm::vec3), sizeof(float), false);
 
 		// shared geometry
 		static glm::vec4 w(1.0, 1.0, 1.0, 1.0);
-		m_material = new fwMaterialBasic(&w);
+		m_material = new fwMaterialBasic(true);
 		m_mesh = new fwMesh(m_geometry, m_material);
 		m_mesh->rendering(fwMeshRendering::FW_MESH_LINES);
 		m_mesh->always_draw();	// ignore frustum culling

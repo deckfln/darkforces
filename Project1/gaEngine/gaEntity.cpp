@@ -82,7 +82,7 @@ void gaEntity::addComponent(gaComponent* component, uint32_t flag)
 			translate(pos);
 
 			// refresh the world aabb
-			//updateWorldAABB();
+			updateWorldAABB();
 
 			// change the default collider (AABB) to Geometry
 			m_collider.set(mesh->get_geometry(), &m_worldMatrix, &m_inverseWorldMatrix);

@@ -11,11 +11,16 @@ layout (location = 1) out vec4 BrightColor;
 struct Material {
 	vec4 color;
 	#ifdef DIFFUSE_MAP
-    sampler2D diffuse;
+	sampler2D diffuse;
 	#endif
 };
 
-uniform Material material;
+#ifdef COLORS
+	in vec3 vcolor;
+#else
+	uniform Material material;
+#endif
+
 
 #include "bloom/luminance.glsl"
 

@@ -114,6 +114,8 @@ void fwAABBox::set(glBufferAttribute* attribute)
 	}
 	m_p = glm::vec3(minX, minY, minZ);
 	m_p1= glm::vec3(maxX, maxY, maxZ);
+
+	m_dirty = true;
 }
 
 /**
@@ -140,6 +142,8 @@ void fwAABBox::set(glm::vec3 const* pVertices, int nb)
 	}
 	m_p = glm::vec3(minX, minY, minZ);
 	m_p1 = glm::vec3(maxX, maxY, maxZ);
+
+	m_dirty = true;
 }
 
 /**
@@ -149,6 +153,7 @@ void fwAABBox::set(const glm::vec3& p1, const glm::vec3& p2)
 {
 	m_p = glm::min(p1, p2);
 	m_p1 = glm::max(p1, p2);
+	m_dirty = true;
 }
 
 /**
@@ -168,6 +173,7 @@ void fwAABBox::rotateFrom(const fwAABBox& source, const glm::vec3& rotation)
 {
 	glm::quat quaternion = glm::quat(glm::vec3(rotation.x, rotation.y, rotation.z));
 	rotateFrom(source, quaternion);
+	m_dirty = true;
 }
 
 /**
@@ -628,7 +634,7 @@ fwMesh *fwAABBox::draw(void)
 /**
  * pate the vertices of the boundingbox mesh
  */
-bool fwAABBox::updateMeshVertices(glm::vec3* vertices)
+bool fwAABBox::updateMeshVertices(glm::vec3* vertices, glm::vec3 *colors)
 {
 	if (m_dirty) {
 		// back face
@@ -664,6 +670,12 @@ bool fwAABBox::updateMeshVertices(glm::vec3* vertices)
 		vertices[24] = { m_p1.x, m_p1.y, m_p1.z }; // bottom-right
 		vertices[25] = { m_p1.x,m_p1.y, m_p.z }; // top-right     
 
+		if (colors) {
+			// update the color attribute if it exists
+			for (auto i=0; i<26; i++)
+				colors[i] = m_color;
+		}
+
 		m_dirty = false;
 
 		return true;
@@ -679,6 +691,23 @@ bool fwAABBox::updateMeshVertices(glm::vec3* vertices)
 bool fwAABBox::verticalAlign(const glm::vec3& point)
 {
 	return point.x >= m_p.x && point.x <= m_p1.x && point.z >= m_p.z && point.z <= m_p1.z;
+}
+
+/**
+ * return the debug color
+ */
+glm::vec3& fwAABBox::color(void)
+{
+	return m_color;
+}
+
+/**
+ * set the debug color
+ */
+void fwAABBox::color(glm::vec3& color)
+{
+	m_color = color;
+	m_dirty = true;
 }
 
 void fwAABBox::recordState(flightRecorder::AABBox* record)

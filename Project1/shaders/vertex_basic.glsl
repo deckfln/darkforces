@@ -2,6 +2,10 @@
 #define DEFINES
 
 layout (location = 0) in vec3 aPos;
+#ifdef COLORS
+	layout (location = 1) in vec3 aColor;
+	out vec3 vcolor;
+#endif
 
 out vec3 world;
 
@@ -20,6 +24,10 @@ void main()
     TexCoord = aTexCoord;
 #endif
 	world = vec3(model * vec4(aPos, 1.0));
+	
+#ifdef COLORS
+	vcolor = aColor;
+#endif
 
 	gl_Position = projection * view * model * vec4(aPos, 1.0);
 }

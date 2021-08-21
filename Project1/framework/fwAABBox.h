@@ -25,7 +25,10 @@ enum class fwAABBcollision {
 class fwAABBox
 {
 	fwAABBcollision m_collisionSide = fwAABBcollision::NONE;
-	bool m_dirty = true;	// was updated => triggers a vertices update
+
+	// debugger
+	bool m_dirty = true;								// was updated => triggers a vertices update
+	glm::vec3 m_color = glm::vec3(1.0f);				// display color
 
 	// draw the collision box
 	fwMesh* m_mesh=nullptr;	
@@ -84,8 +87,11 @@ public:
 	void collisionSide(fwAABBcollision side) { m_collisionSide = side; };
 	glm::vec3 to(const fwAABBox& to);
 	fwMesh *draw(void);
-	bool updateMeshVertices(glm::vec3* vertices);
+	bool updateMeshVertices(glm::vec3* vertices, glm::vec3* colors=nullptr);
 	bool verticalAlign(const glm::vec3& point);
+	glm::vec3& color(void);								// get the debug color 
+	void color(glm::vec3&);								// set the debug color
+
 	void recordState(flightRecorder::AABBox* record);	// record the state of the AABBox
 	void loadState(flightRecorder::AABBox* record);	// reload the state of the AABBox
 	~fwAABBox();

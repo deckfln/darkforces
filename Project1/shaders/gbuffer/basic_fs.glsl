@@ -22,7 +22,11 @@ struct Material {
 
 #include "../include/camera.glsl"
 
-uniform Material material;
+#ifdef COLORS
+	in vec3 vcolor;
+#else
+	uniform Material material;
+#endif
 
 void main()
 {
@@ -31,7 +35,11 @@ void main()
 #ifdef DIFFUSE_MAP
 	color = texture(material.diffuse, TexCoord);
 #else
-	color = material.color;
+	#ifdef COLORS
+		color = vec4(vcolor, 1.0);
+	#else
+		color = material.color;
+	#endif
 #endif
 
     gFragColor = color.rgb;
