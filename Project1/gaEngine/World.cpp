@@ -589,26 +589,29 @@ void World::suspendTimer(void)
 void GameEngine::World::debugGUI(void)
 {
 	// list entities to pick from
-	ImGui::Begin("Explorer");
-	if (ImGui::CollapsingHeader("gaEntities")) {
-		for (auto entry : m_entities) {
-			for (auto ent : entry.second) {
-				const std::string& name = ent->name();
-				bool old = m_watch[name];
-				ImGui::Checkbox(name.c_str(), &m_watch[name]);
-				if (old != m_watch[name]) {
-					if (m_watch[name]) {
-						ent->worldAABB().color(glm::vec3(1.0f, 0.0f, 0.0f));
-					}
-					else {
-						ent->worldAABB().color(glm::vec3(1.0f, 1.0f, 1.0f));
+	static bool eclose = false;
+
+	if (!eclose && ImGui::Begin("Explorer", &eclose)) {
+		if (ImGui::CollapsingHeader("gaEntities")) {
+			for (auto entry : m_entities) {
+				for (auto ent : entry.second) {
+					const std::string& name = ent->name();
+					bool old = m_watch[name];
+					ImGui::Checkbox(name.c_str(), &m_watch[name]);
+					if (old != m_watch[name]) {
+						if (m_watch[name]) {
+							ent->worldAABB().color(glm::vec3(1.0f, 0.0f, 0.0f));
+						}
+						else {
+							ent->worldAABB().color(glm::vec3(1.0f, 1.0f, 1.0f));
+						}
 					}
 				}
 			}
 		}
-	}
-	ImGui::End();
+		ImGui::End();
 
+	}
 	// display entities monitored
 	ImGui::Begin("Inspector");
 	for (auto &watch : m_watch) {
@@ -622,21 +625,23 @@ void GameEngine::World::debugGUI(void)
 	ImGui::End();
 
 	// display messages
-	ImGui::Begin("Messages");
-	if (ImGui::BeginTable("Messages", 5, ImGuiTableFlags_Resizable)) {
-		ImGui::TableSetupColumn("From");
-		ImGui::TableSetupColumn("To");
-		ImGui::TableSetupColumn("Action");
-		ImGui::TableSetupColumn("iValue");
-		ImGui::TableSetupColumn("fValue");
-		ImGui::TableHeadersRow();
+	static bool mclose = false;
+	if (!mclose && ImGui::Begin("Messages", &mclose)) {
+		if (ImGui::BeginTable("Messages", 5, ImGuiTableFlags_Resizable)) {
+			ImGui::TableSetupColumn("From");
+				ImGui::TableSetupColumn("To");
+				ImGui::TableSetupColumn("Action");
+				ImGui::TableSetupColumn("iValue");
+				ImGui::TableSetupColumn("fValue");
+				ImGui::TableHeadersRow();
 
-		for (auto message : m_queue) {
-			message->debugGUI();
+				for (auto message : m_queue) {
+					message->debugGUI();
+				}
+			ImGui::EndTable();
 		}
-		ImGui::EndTable();
+		ImGui::End();
 	}
-	ImGui::End();
 }
 
 /**

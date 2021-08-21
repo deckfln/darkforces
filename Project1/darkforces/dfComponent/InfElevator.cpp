@@ -486,15 +486,21 @@ void DarkForces::Component::InfElevator::debugGUIinline(void)
 		{dfElevator::Type::DOOR, "door" }
 	};
 
-	if (ImGui::TreeNode("dfElevator")) {
+	if (ImGui::TreeNode("InfElevator")) {
 		ImGui::Text("Type:%s", types[m_type]);
 		ImGui::Text("Stops:%d", m_stops.size());
 		ImGui::Text("Status : %s", status[m_status]);
-		ImGui::Text("Tick: %.2f", m_tick);
-		ImGui::Text("Delay: %.2f", m_delay);
-		ImGui::Text("Stops: current:%d next:%d", m_currentStop, m_nextStop);
-		ImGui::Text("Z: current:%.4f target:%.2f", m_current, m_target);
-		ImGui::Text("Speed: %.2f", m_direction);
+		if (m_status == Status::MOVE) {
+			ImGui::Text("Tick: %.2f", m_tick);
+			ImGui::Text("Delay: %.2f", m_delay);
+			ImGui::Text("Stops: current:%d next:%d", m_currentStop, m_nextStop);
+			ImGui::Text("Z: current:%.4f target:%.2f", m_current, m_target);
+			ImGui::Text("Speed: %.2f", m_direction);
+		}
+		else {
+			ImGui::Text("Stop: %d", m_currentStop);
+			ImGui::Text("Z: %.2f", m_current);
+		}
 		ImGui::TreePop();
 	}
 }

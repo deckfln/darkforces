@@ -19,6 +19,7 @@ class alSound;
 
 class fwObject3D : public Reference
 {
+	uint32_t m_id = 0;
 	float debug = 0;
 	alSource* m_source = nullptr;					// sound source, creation deferred to the first time a sound is played
 

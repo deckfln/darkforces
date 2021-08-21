@@ -360,7 +360,9 @@ void dfLogicTrigger::debugGUIChildClass(void)
 {
 	gaEntity::debugGUIChildClass();
 
-	if (ImGui::TreeNode(g_className)) {
+	static char tmp[64];
+	sprintf_s(tmp, "%s##%d", g_className, m_entityID);
+	if (ImGui::TreeNode(tmp)) {
 		ImGui::Checkbox("Master", &m_master);
 		ImGui::Checkbox("Activated", &m_actived);
 		ImGui::TreePop();

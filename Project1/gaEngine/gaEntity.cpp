@@ -406,14 +406,18 @@ void gaEntity::loadState(void* r)
 void gaEntity::debugGUI(bool* close)
 {
 	if (ImGui::CollapsingHeader(m_name.c_str())) {
-		if (ImGui::TreeNode("gaEntity")) {
+		static char tmp[64];
+
+		sprintf_s(tmp, "gaEntity##%d", m_entityID);
+		if (ImGui::TreeNode(tmp)) {
 			ImGui::Checkbox("Physical", &m_physical);
 			ImGui::TreePop();
 		}
 		debugGUIChildClass();
 
 		if (m_components.size() > 0) {
-			if (ImGui::TreeNode("components")) {
+			sprintf_s(tmp, "components##%d", m_entityID);
+			if (ImGui::TreeNode(tmp)) {
 				for (auto& component : m_components) {
 					std::get<0>(component)->debugGUIinline();
 				}

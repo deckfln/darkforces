@@ -1110,7 +1110,9 @@ void dfSector::loadState(void* r)
  */
 void dfSector::debugGUIChildClass(void)
 {
-	if (ImGui::TreeNode("dfSector")) {
+	static char tmp[64];
+	sprintf_s(tmp, "%s##%d", g_className, m_entityID);
+	if (ImGui::TreeNode(tmp)) {
 		ImGui::Text("ID:%d", m_id);
 		ImGui::Text("Ambient:%.2f", m_ambient);
 		ImGui::TreePop();

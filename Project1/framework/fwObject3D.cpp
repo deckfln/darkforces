@@ -7,12 +7,16 @@
 #include "../alEngine/alSource.h"
 #include "../alEngine/alSound.h"
 
-fwObject3D::fwObject3D()
+static uint32_t g_ids = 0;
+
+fwObject3D::fwObject3D():
+	m_id(g_ids++)
 {
 }
 
 fwObject3D::fwObject3D(const glm::vec3& position):
-	m_position(position)
+	m_position(position),
+	m_id(g_ids++)
 {
 }
 
@@ -409,7 +413,9 @@ void fwObject3D::debugGUI(void)
  */
 void fwObject3D::debugGUIChildClass(void)
 {
-	if (ImGui::TreeNode("fwObject3D")) {
+	static char tmp[64];
+	sprintf_s(tmp, "fwObject3D##%d", m_id);
+	if (ImGui::TreeNode(tmp)) {
 		if (m_name != "") {
 			ImGui::Text(m_name.c_str());
 		}
