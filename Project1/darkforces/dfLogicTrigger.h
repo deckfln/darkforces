@@ -13,6 +13,7 @@
 
 #include "dfComponent/dfComponentActor.h"
 #include "dfElevator.h"
+#include "flightRecorder/frLogicTrigger.h"
 #include "../config.h"
 
 class dfSector;
@@ -29,23 +30,19 @@ enum {
 class dfLogicTrigger: public gaEntity {
 	int m_class;
 	int m_eventMask = 0;
-	bool m_master = true;			// is the trigger operational ?
-	bool m_actived = false;			// trigger was activated and shall not accept any new activation
+	bool m_master = true;					// is the trigger operational ?
+	bool m_actived = false;					// trigger was activated and shall not accept any new activation
 	std::vector<std::string> m_clients;		// name of the target sector 
 	uint32_t m_keys = DarkForces::Keys::NONE;		// keys needed to activate the triggers
 
-	std::string m_sector;			// sector that host the trigger
-	int m_wallIndex = -1;			// index of the wall being a trigger
+	std::string m_sector;					// sector that host the trigger
+	int m_wallIndex = -1;					// index of the wall being a trigger
 
-	dfMesh* m_pMesh= nullptr;		// Mesh being a trigger (has a bounding box)
+	dfMesh* m_pMesh= nullptr;				// Mesh being a trigger (has a bounding box)
 	dfElevator* m_pElevator= nullptr;		// Mesh being a trigger (has a bounding box)
 
-	//fwAABBox m_boundingBox;			// bouding box of the triggers
-	//glm::vec3 m_boundingBoxCenter;	// original position of the bounding box
-	//glm::vec3 m_boundingBoxSize;	// original size of the bounding box
-
 	std::vector<gaMessage *> m_messages;	// messages to pass to the clients
-	gaMessage m_trigger;				// trigger message
+	gaMessage m_trigger;					// trigger message
 
 public:
 	dfLogicTrigger(const std::string& kind, const std::string& sector);
@@ -54,14 +51,16 @@ public:
 	dfLogicTrigger(const std::string& kind, dfSector* sector, dfElevator* client);
 	dfLogicTrigger(const std::string& kind, dfElevator* client);
 
-	void eventMask(int eventMask) { m_eventMask = eventMask; };
-	void client(std::string& client) { m_clients.push_back(client); }
-	std::vector<std::string>& clients(void) { return m_clients; };
-	const std::string& sector(void) { return m_sector; };
-	int wall(void) { return m_wallIndex; };
-	void sign(dfSign* _sign) { m_pMesh = (dfMesh *)_sign; };
-	void keys(int keys) { m_keys = keys; };
+	// getter/setter
+	inline void eventMask(int eventMask) { m_eventMask = eventMask; };
+	inline void client(std::string& client) { m_clients.push_back(client); }
+	inline std::vector<std::string>& clients(void) { return m_clients; };
+	inline const std::string& sector(void) { return m_sector; };
+	inline int wall(void) { return m_wallIndex; };
+	inline void sign(dfSign* _sign) { m_pMesh = (dfMesh *)_sign; };
+	inline void keys(int keys) { m_keys = keys; };
 	void addEvents(dfSector* pSector);
+	inline std::vector<gaMessage*>& messages(void) { return m_messages; };	// return messages
 
 	void boundingBox(glm::vec2& left, glm::vec2& right, float floor, float ceiling);
 	void boundingBox(fwAABBox& box);
@@ -69,15 +68,21 @@ public:
 
 	void message(gaMessage *message);
 	void config(void);
+	void elevator(dfElevator* elevator);
 
 	void moveZ(float z);
 	void moveCeiling(float z);
 	void activate(const std::string& activor);
 	void dispatchMessage(gaMessage* message);
 
-	void elevator(dfElevator* elevator);
+	// flight recorder
+	int recordSize(void) override {
+		return sizeof(flightRecorder::DarkForces::LogicTrigger);
+	};														// size of one record
 
-	std::vector<gaMessage *>& messages(void) { return m_messages; };	// return messages
+	uint32_t recordState(void* record) override;			// return a record of an actor state (for debug)
+	void loadState(void* record) override;					// reload an actor state from a record
+	void debugGUIChildClass(void) override;					// Add dedicated component debug the entity
 
 	~dfLogicTrigger();
 };

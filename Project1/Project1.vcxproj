@@ -335,6 +335,7 @@
     <ClInclude Include="darkforces\flightRecorder\frCompActor.h" />
     <ClInclude Include="darkforces\flightRecorder\frCompElevator.h" />
     <ClInclude Include="darkforces\flightRecorder\frElevator.h" />
+    <ClInclude Include="darkforces\flightRecorder\frLogicTrigger.h" />
     <ClInclude Include="darkforces\flightRecorder\frObject.h" />
     <ClInclude Include="darkforces\flightRecorder\frSector.h" />
     <ClInclude Include="darkforces\flightRecorder\frSprite.h" />

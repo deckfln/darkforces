@@ -1127,6 +1127,9 @@
     <ClInclude Include="gaEngine\gaComponent\gaSound.h">
       <Filter>Fichiers d%27en-tête\gaEngine\gaComponent</Filter>
     </ClInclude>
+    <ClInclude Include="darkforces\flightRecorder\frLogicTrigger.h">
+      <Filter>Fichiers d%27en-tête\DarkForces\flightRecorder</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\fragment.glsl">

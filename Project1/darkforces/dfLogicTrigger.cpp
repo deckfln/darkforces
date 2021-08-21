@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <string>
+#include <imgui.h>
 
 #include "../config.h"
 
@@ -318,6 +319,51 @@ void dfLogicTrigger::activate(const std::string& activator)
 		if (m_class == DF_TRIGGER_SWITCH1) {
 			m_actived = true;
 		}
+	}
+}
+
+/**
+ * return a record of an actor state (for debug)
+ */
+uint32_t dfLogicTrigger::recordState(void* r)
+{
+	flightRecorder::DarkForces::LogicTrigger* record = (flightRecorder::DarkForces::LogicTrigger*)r;
+	gaEntity::recordState(&record->entity);
+	record->entity.classID = flightRecorder::TYPE::DF_ENTITY_LOGIC_TRIGGER;
+	record->entity.size = sizeof(flightRecorder::DarkForces::LogicTrigger);
+	record->master = m_master;
+	record->actived = m_actived;
+
+	return record->entity.size;
+}
+
+/**
+ * reload an actor state from a record
+ */
+void dfLogicTrigger::loadState(void* r)
+{
+	flightRecorder::DarkForces::LogicTrigger* record = (flightRecorder::DarkForces::LogicTrigger*)r;
+	gaEntity::loadState(&record->entity);
+	m_master = record->master;
+	m_actived = record->actived;
+
+	// update the sign if there is one
+	if (m_pMesh) {
+		m_pMesh->setStatus(m_actived);	
+	}
+}
+
+/**
+ * Add dedicated component debug the entity
+ */
+void dfLogicTrigger::debugGUIChildClass(void)
+{
+	gaEntity::debugGUIChildClass();
+
+	if (ImGui::TreeNode(g_className)) {
+		ImGui::Checkbox("Master", &m_master);
+		ImGui::Checkbox("Activated", &m_actived);
+		ImGui::TreePop();
 	}
 }
 
