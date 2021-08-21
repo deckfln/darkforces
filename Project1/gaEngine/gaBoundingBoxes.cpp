@@ -86,7 +86,7 @@ void gaBoundingBoxes::draw(fwScene* scene)
 		m_material = new fwMaterialBasic(true);
 		m_mesh = new fwMesh(m_geometry, m_material);
 		m_mesh->rendering(fwMeshRendering::FW_MESH_LINES);
-		m_mesh->always_draw();	// ignore frustum culling
+		m_mesh->always_draw(true);	// ignore frustum culling
 		m_mesh->set_name("boundingboxes");
 
 		scene->addChild(m_mesh);

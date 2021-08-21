@@ -594,7 +594,16 @@ void GameEngine::World::debugGUI(void)
 		for (auto entry : m_entities) {
 			for (auto ent : entry.second) {
 				const std::string& name = ent->name();
+				bool old = m_watch[name];
 				ImGui::Checkbox(name.c_str(), &m_watch[name]);
+				if (old != m_watch[name]) {
+					if (m_watch[name]) {
+						ent->worldAABB().color(glm::vec3(1.0f, 0.0f, 0.0f));
+					}
+					else {
+						ent->worldAABB().color(glm::vec3(1.0f, 1.0f, 1.0f));
+					}
+				}
 			}
 		}
 	}

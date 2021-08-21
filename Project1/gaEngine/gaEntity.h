@@ -90,7 +90,7 @@ public:
 	inline void collideSectors(bool c) { m_collideSectors = c; };
 	inline void hasCollider(bool p) { m_hasCollider = p; };
 	inline bool hasCollider(void) { return m_hasCollider; };
-	inline const fwAABBox& worldAABB(void) { return m_worldBounding; };
+	inline fwAABBox& worldAABB(void) { return m_worldBounding; };
 	inline void worldAABB(const glm::vec3 p1, glm::vec3 p2) { m_worldBounding.set(p1, p2); };
 	inline const fwAABBox& modelAABB(void) { return m_modelAABB; };
 	inline std::map<std::string, gaEntity*>& sittingOnTop(void) { return m_sittingOnTop; };

@@ -704,10 +704,11 @@ glm::vec3& fwAABBox::color(void)
 /**
  * set the debug color
  */
-void fwAABBox::color(glm::vec3& color)
+fwAABBox& fwAABBox::color(const glm::vec3& color)
 {
 	m_color = color;
 	m_dirty = true;
+	return *this;
 }
 
 void fwAABBox::recordState(flightRecorder::AABBox* record)

@@ -90,9 +90,9 @@ public:
 	bool updateMeshVertices(glm::vec3* vertices, glm::vec3* colors=nullptr);
 	bool verticalAlign(const glm::vec3& point);
 	glm::vec3& color(void);								// get the debug color 
-	void color(glm::vec3&);								// set the debug color
+	fwAABBox& color(const glm::vec3&);			// set the debug color
 
 	void recordState(flightRecorder::AABBox* record);	// record the state of the AABBox
-	void loadState(flightRecorder::AABBox* record);	// reload the state of the AABBox
+	void loadState(flightRecorder::AABBox* record);		// reload the state of the AABBox
 	~fwAABBox();
 };
