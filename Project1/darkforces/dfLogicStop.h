@@ -62,6 +62,7 @@ public:
 	dfLogicStop(dfSector* sector, float altitude, const std::string& action);
 	dfLogicStop(dfSector* sector, float altitude, float time);
 	dfLogicStop(const std::string& sector);
+	dfLogicStop(dfSector* sector);
 
 	void absolute(float absolute) { m_flag |= 1; m_absolute = absolute; };
 	void relative(float relative) { m_flag |= 2; m_relatiave = relative; };

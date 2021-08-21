@@ -31,7 +31,8 @@ Collider::Collider(fwGeometry* geometry, glm::mat4* worldMatrix, glm::mat4* inve
 	m_type(ColliderType::GEOMETRY),
 	m_source(geometry),
 	m_worldMatrix(worldMatrix),
-	m_inverseWorldMatrix(inverseWorldMatrix)
+	m_inverseWorldMatrix(inverseWorldMatrix),
+	m_aabb(&geometry->aabbox())
 {
 }
 
@@ -44,12 +45,14 @@ void Collider::set(fwGeometry* geometry, glm::mat4* worldMatrix, glm::mat4* inve
 	m_source = geometry;
 	m_worldMatrix = worldMatrix;
 	m_inverseWorldMatrix = inverseWorldMatrix;
+	m_aabb = &geometry->aabbox();
 }
 
 void Collider::set(fwAABBox* modelAABB, glm::mat4* worldMatrix, glm::mat4* inverseWorldMatrix)
 {
 	m_type = ColliderType::AABB;
-	m_source = m_aabb = modelAABB;
+	m_source = modelAABB;
+	m_aabb = modelAABB;
 	m_worldMatrix = worldMatrix;
 	m_inverseWorldMatrix = inverseWorldMatrix;
 }
@@ -63,7 +66,8 @@ void Collider::set(AABBoxTree* modelAABB,
 	void* parent, gaCollisionPoint::Source parent_class)
 {
 	m_type = ColliderType::AABB_TREE;
-	m_source = m_aabb = modelAABB;
+	m_source = modelAABB;
+	m_aabb = modelAABB;
 	m_worldMatrix = worldMatrix;
 	m_inverseWorldMatrix = inverseWorldMatrix;
 	m_parent = parent;

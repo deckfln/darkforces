@@ -37,7 +37,7 @@ namespace GameEngine
 		gaCollisionPoint::Source m_parent_class = gaCollisionPoint::Source::NONE;
 
 		void* m_source = nullptr;		// maximum level of collision (AABB, Cylinder, Geometry)
-		fwAABBox* m_aabb = nullptr;		// minimum level of collision => modelAABB
+		const fwAABBox* m_aabb = nullptr;		// minimum level of collision => modelAABB
 
 		static bool collision_fwAABB_geometry(const Collider& aabb, 
 			const Collider& geometry, 

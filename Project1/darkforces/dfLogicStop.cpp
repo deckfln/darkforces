@@ -83,6 +83,12 @@ dfLogicStop::dfLogicStop(const std::string& sector)
 	m_name = "STOP:" + sector;
 }
 
+dfLogicStop::dfLogicStop(dfSector* sector):
+	m_pSector(sector)
+{
+	m_name = "STOP:" + sector->name();
+}
+
 /**
  * connect the Stop to a sector (for relative altitude, or another sector altitude)
  */

@@ -33,13 +33,17 @@ void GameEngine::Component::Sound::dispatchMessage(gaMessage* message)
 	case gaMessage::PLAY_SOUND: {
 		// Start playing a sound or check if it plays
 		alSound* sound = m_sounds[message->m_value];
-		m_source.play(sound);
+		if (sound) {
+			m_source.play(sound);
+		}
 		break;
 	}
 	case gaMessage::STOP_SOUND: {
 		// Stop playing a sound (or all sound if nullptr)
 		alSound* sound = m_sounds[message->m_value];
-		m_source.stop(sound);
+		if (sound) {
+			m_source.stop(sound);
+		}
 		break;
 	}
 	}

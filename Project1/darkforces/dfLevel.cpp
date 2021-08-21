@@ -125,6 +125,14 @@ dfLevel::dfLevel(dfFileSystem* fs, std::string file)
 		}
 	}
 
+	// initialize opengl Stuff
+	m_material = new fwMaterialBasic("data/shaders/vertex.glsl", "", "data/shaders/fragment.glsl");
+
+	// load textures in a megatexture
+	m_atlasTexture = new dfAtlasTexture(m_allTextures);
+	m_atlasTexture->save("D:/dev/Project1/Project1/images/textures.png");
+	m_atlasTexture->bindToMaterial(m_material);
+
 	// load and distribute the INF file
 	m_inf = new dfParseINF(fs, file, this);
 
@@ -203,13 +211,6 @@ dfLevel::dfLevel(dfFileSystem* fs, std::string file)
 			sector->addTrigger(trigger);
 		}
 	}
-
-	m_material = new fwMaterialBasic("data/shaders/vertex.glsl", "", "data/shaders/fragment.glsl");
-
-	// load textures in a megatexture
-	m_atlasTexture = new dfAtlasTexture(m_allTextures);
-	m_atlasTexture->save("D:/dev/Project1/Project1/images/textures.png");
-	m_atlasTexture->bindToMaterial(m_material);
 
 	spacePartitioning();		// partition of space for quick move
 	buildGeometry();			// build the geometry of each super sectors

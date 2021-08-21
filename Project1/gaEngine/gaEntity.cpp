@@ -81,6 +81,9 @@ void gaEntity::addComponent(gaComponent* component, uint32_t flag)
 			glm::vec3 pos = mesh->position();
 			translate(pos);
 
+			// refresh the world aabb
+			//updateWorldAABB();
+
 			// change the default collider (AABB) to Geometry
 			m_collider.set(mesh->get_geometry(), &m_worldMatrix, &m_inverseWorldMatrix);
 		}
@@ -223,6 +226,14 @@ void gaEntity::add2scene(fwScene* scene)
 void gaEntity::moveTo(const glm::vec3& position)
 {
 	sendInternalMessage(gaMessage::MOVE, 0, (void *)&position);
+}
+
+/**
+ * display the world AABBox on screen
+ */
+void gaEntity::displayAABBox(void)
+{
+	g_gaBoundingBoxes.add(&m_worldBounding);
 }
 
 /**

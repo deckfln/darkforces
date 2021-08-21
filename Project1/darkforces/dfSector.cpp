@@ -925,7 +925,7 @@ dfMesh* dfSector::buildElevator_new(float bottom, float top, int what, bool cloc
 	}
 
 	dfMesh *mesh = new dfMesh(m_level->material(), m_level->textures());
-	std::vector<dfBitmap*>& textures = m_super->textures();
+	std::vector<dfBitmap*>& textures = m_level->textures();
 
 	// create the walls
 	std::vector <dfWall*>& wallss = walls(flags);
@@ -1017,7 +1017,8 @@ dfMesh* dfSector::buildElevator_new(float bottom, float top, int what, bool cloc
 	}
 
 	// and add the mesh to the super-sector holding the sector mesh
-	m_super->addObject(mesh);
+	if (m_super)
+		m_super->addObject(mesh);
 
 	return mesh;
 }

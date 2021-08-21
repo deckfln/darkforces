@@ -5,19 +5,42 @@
 #include <string>
 #include <map>
 
+#include "../gaEngine/gaComponent/gaSound.h"
+#include "../gaEngine/gaComponent/gaComponentMesh.h"
+
 #include "../config.h"
 #include "dfParseINF.h"
 #include "dfLogicStop.h"
 #include "dfElevator.h"
 #include "dfFileSystem.h"
 #include "dfVOC.h"
+#include "dfMesh.h"
 #include "dfComponent/InfStandardTrigger.h"
 #include "dfComponent/InfElevator/InfElevatorLight.h"
+#include "dfComponent/InfElevator/InfElevatorTranslate.h"
 
 #include "dfSector.h"
 
 static dfFileSystem* dfFiles = nullptr;
 static std::map<std::string, dfVOC*> g_cachedVOC;
+
+
+/**
+ * Create an elevator inv
+ * Convert the parent sector to a full interactive entity
+ */
+static DarkForces::Component::InfElevatorTranslate* newElevatorInv (dfSector *pSector)
+{
+	// change the status of the entity sector to make it a full interactive entity
+	pSector->physical(true);
+	pSector->gravity(false);
+	pSector->collideSectors(false);
+	pSector->hasCollider(true);
+	pSector->defaultCollision(gaMessage::Flag::PUSH_ENTITIES);
+	pSector->displayAABBox();
+
+	return new DarkForces::Component::InfElevatorTranslate(dfElevator::Type::INV, pSector);
+}
 
 /**
  *
@@ -203,6 +226,8 @@ void dfParseINF::parseSector(std::istringstream& infile, const std::string& sect
 	dfElevator* elevator = nullptr;				// for an elevator
 	DarkForces::Component::InfStandardTrigger* program = nullptr;	// for a trigger standard
 	DarkForces::Component::InfElevatorLight* light = nullptr;	// for elevator change_light
+	DarkForces::Component::InfElevatorTranslate* inv = nullptr;	// for elevator INV
+	GameEngine::Component::Sound* sound = nullptr;				// for elevator with sound
 
 	dfLogicStop* stop = nullptr;
 	std::map<std::string, std::string> tokenMap;
@@ -230,18 +255,38 @@ void dfParseINF::parseSector(std::istringstream& infile, const std::string& sect
 			if (elevator) {
 				m_elevators.push_back(elevator);
 			}
-			else if (program) {
+
+			if (program) {
 				pSector->addProgram(program);
 			}
-			else if (light && pSector) {
+
+			if (light && pSector) {
 				pSector->addElevator(light);
 			}
+
+			if (inv && pSector) {
+				// create a component mesh for the elevator and register on the sector
+				dfMesh* mesh = inv->buildMesh();
+				GameEngine::ComponentMesh* m_component = new GameEngine::ComponentMesh(mesh);
+
+				pSector->addElevator(inv);
+				pSector->addComponent(m_component, gaEntity::Flag::DELETE_AT_EXIT);
+				inv->gotoStop(0);
+			}
+
+			if (sound && pSector) {
+				pSector->addComponent(sound, gaEntity::Flag::DELETE_AT_EXIT);
+			}
+
 			break;
 		}
 		else if (tokens[0] == "class:") {
 			if (tokens[1] == "elevator") {
 				if (tokens[2] == "change_light") {
 					light = new DarkForces::Component::InfElevatorLight(pSector);
+				}
+				else if (tokens[2] == "inv") {
+					inv = newElevatorInv(pSector);
 				}
 				else {
 					elevator = new dfElevator(tokens[2], pSector);
@@ -260,6 +305,9 @@ void dfParseINF::parseSector(std::istringstream& infile, const std::string& sect
 			if (elevator) {
 				elevator->speed(std::stof(tokens[1]));
 			}
+			else if (inv) {
+				inv->speed(std::stof(tokens[1]));
+			}
 			else if (light) {
 				light->speed(std::stof(tokens[1]));
 			}
@@ -267,6 +315,9 @@ void dfParseINF::parseSector(std::istringstream& infile, const std::string& sect
 		else if (tokens[0] == "center:") {
 			if (elevator) {
 				elevator->center(-std::stof(tokens[1]), std::stof(tokens[2]));	//inverse X
+			}
+			else if (inv) {
+				inv->center(-std::stof(tokens[1]), std::stof(tokens[2]));	//inverse X
 			}
 		}
 		else if (tokens[0] == "angle:") {
@@ -284,13 +335,16 @@ void dfParseINF::parseSector(std::istringstream& infile, const std::string& sect
 			else if (light) {
 				light->eventMask(std::stoi(tokens[1]));
 			}
+			else if (inv) {
+				inv->eventMask(std::stoi(tokens[1]));
+			}
 		}
 		else if (tokens[0] == "key:") {
 			if (elevator) {
 				elevator->keys(tokens[1]);
 			}
 			else if (program) {
-				std::cerr << "dfParseINF::parseSector kkey not implmented for  triggers" << std::endl;
+				std::cerr << "dfParseINF::parseSector key not implemented for triggers" << std::endl;
 			}
 		}
 		else if (tokens[0] == "client:") {
@@ -311,15 +365,15 @@ void dfParseINF::parseSector(std::istringstream& infile, const std::string& sect
 			else if (program) {
 				program->message( parseMessage(tokens) );
 			}
-			else if (elevator || light) {
-				gaDebugLog(1, "dfParseINF::parseSector", "message: not implement for elevators");
+			else if (elevator || light || inv) {
+				gaDebugLog(1, "dfParseINF::parseSector", "message: not implement for elevators/light/inv");
 			}
 		}
 		else if (tokens[0] == "stop:") {
 			if (elevator)
 				stop = new dfLogicStop(elevator);
 			else
-				stop = new dfLogicStop(sector);
+				stop = new dfLogicStop(pSector);
 
 			nbStops++;
 			char* p;
@@ -367,9 +421,17 @@ void dfParseINF::parseSector(std::istringstream& infile, const std::string& sect
 			else if (light) {
 				light->addStop(stop);
 			}
+			else if (inv) {
+				inv->addStop(stop);
+			}
 		}
 		else if (tokens[0] == "sound:") {
-			if (elevator || light) {
+			if (inv && sound == nullptr) {
+				// if the is no sound component, create one first
+				sound = new GameEngine::Component::Sound();
+			}
+
+			if (elevator || light || inv) {
 				uint32_t effect = std::stoi(tokens[1]);
 				if (tokens[2] != "0") {
 					if (g_cachedVOC.count(tokens[2]) == 0) {
@@ -378,14 +440,18 @@ void dfParseINF::parseSector(std::istringstream& infile, const std::string& sect
 
 					if (elevator)
 						elevator->sound(effect - 1, g_cachedVOC[tokens[2]]);
-					else
+					else if (light)
 						light->addSound(effect - 1, g_cachedVOC[tokens[2]]);
+					else if (inv)
+						sound->addSound(effect - 1, g_cachedVOC[tokens[2]]->sound());
 				}
 				else {
 					if (elevator)
 						elevator->sound(effect - 1, nullptr);	// silent the default sound
-					else
+					else if (light)
 						light->addSound(effect - 1, g_cachedVOC[tokens[2]]);
+					else if (inv)
+						sound->addSound(effect - 1, g_cachedVOC[tokens[2]]->sound());
 				}
 			}
 			else if (program) {
