@@ -156,7 +156,7 @@ bool Physics::ifCollideWithSectorOrEntity(const glm::vec3& p1, const glm::vec3& 
 	}
 
 	// test again entities
-	for (auto entry : m_world->m_entities) {
+	for (auto& entry : m_world->m_entities) {
 		for (auto ent : entry.second) {
 			// ignore ghosts and itself
 			if (!ent->hasCollider() || ent == entity) {

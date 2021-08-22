@@ -814,7 +814,9 @@ void dfSector::buildGeometry(dfMesh* mesh, dfWallFlag displayPolygon)
 	m_nbVertices= mesh->nbVertices() - m_firstVertex;
 
 	m_worldAABB.geometry(mesh->vertice(), m_firstVertex, m_nbVertices);
-	m_worldAABB.m_extra = &m_name;
+#ifdef _DEBUG
+	m_worldAABB.name(m_name);
+#endif
 
 	// build hierarchy of AABB
 	mesh->addModelAABB(&m_worldAABB);

@@ -25,7 +25,7 @@ DarkForces::Component::InfElevatorBasic::InfElevatorBasic(dfSector* sector):
 		true,
 		dfWallFlag::ALL);
 
-	sector->setAABBbottom(m_zmax);
+	sector->setAABBtop(m_zmax);
 }
 
 /**

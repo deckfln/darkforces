@@ -267,14 +267,14 @@ void fwAABBox::transform(const glm::mat4& matrix)
 	glm::vec3 delta = m_p1 - m_p;
 
 	std::vector<glm::vec3> points = {
-		matrix * glm::vec4(m_p, 1.0),
-		matrix * glm::vec4(m_p + glm::vec3(delta.x, 0, 0), 1.0),
+		matrix * glm::vec4(m_p,									 1.0),
+		matrix * glm::vec4(m_p + glm::vec3(delta.x, 0,		 0), 1.0),
 		matrix * glm::vec4(m_p + glm::vec3(delta.x, delta.y, 0), 1.0),
-		matrix * glm::vec4(m_p + glm::vec3(0, delta.y, 0), 1.0),
-		matrix * glm::vec4(m_p + glm::vec3(0, 0, delta.z), 1.0),
-		matrix * glm::vec4(m_p + glm::vec3(delta.x, 0, delta.z), 1.0),
+		matrix * glm::vec4(m_p + glm::vec3(0,		delta.y, 0), 1.0),
+		matrix * glm::vec4(m_p + glm::vec3(0,		0,		 delta.z), 1.0),
+		matrix * glm::vec4(m_p + glm::vec3(delta.x, 0,		 delta.z), 1.0),
 		matrix * glm::vec4(m_p + glm::vec3(delta.x, delta.y, delta.z), 1.0),
-		matrix * glm::vec4(m_p + glm::vec3(0, delta.y, delta.z), 1.0)
+		matrix * glm::vec4(m_p + glm::vec3(0,		delta.y, delta.z), 1.0)
 	};
 
 	// and extract the min and max
