@@ -139,6 +139,7 @@
     <ClCompile Include="darkforces\dfComponent\InfElevator.cpp" />
     <ClCompile Include="darkforces\dfComponent\dfComponentLogic.cpp" />
     <ClCompile Include="darkforces\dfComponent\InfElevator\InfElevatorLight.cpp" />
+    <ClCompile Include="darkforces\dfComponent\InfElevator\InfElevatorRotate.cpp" />
     <ClCompile Include="darkforces\dfComponent\InfElevator\InfElevatorTranslate.cpp" />
     <ClCompile Include="darkforces\dfComponent\InfStandardTrigger.cpp" />
     <ClCompile Include="darkforces\dfFileGOB.cpp" />
@@ -299,6 +300,7 @@
     <ClInclude Include="darkforces\dfComponent\InfElevator.h" />
     <ClInclude Include="darkforces\dfComponent\dfComponentLogic.h" />
     <ClInclude Include="darkforces\dfComponent\InfElevator\InfElevatorLight.h" />
+    <ClInclude Include="darkforces\dfComponent\InfElevator\InfElevatorRotate.h" />
     <ClInclude Include="darkforces\dfComponent\InfElevator\InfElevatorTranslate.h" />
     <ClInclude Include="darkforces\dfComponent\InfStandardTrigger.h" />
     <ClInclude Include="darkforces\dfFileGOB.h" />

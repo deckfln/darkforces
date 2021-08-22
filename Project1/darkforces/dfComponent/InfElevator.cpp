@@ -342,7 +342,18 @@ dfMesh* DarkForces::Component::InfElevator::buildMesh(void)
 		m_zmax = m_pSector->staticCeilingAltitude();
 	}
 
-	//!
+	/* TODO: find a way to remove the hack for SECBASE::elev_block and SECBASE::elev3-1
+	*  hard coded hack for SECBASE::elev_block. Force the height of the elevator
+	*  physically impossible in GameEngine
+	*/
+	if (m_entity->name() == "elev_block") {
+		m_zmax = -4.0f;
+	}
+	if (m_entity->name() == "elev3-1") {
+		m_zmax = 1.07f;
+	}
+
+	//
 	// Build a mesh depending of the type
 	//
 	switch (m_type) {
@@ -377,7 +388,13 @@ dfMesh* DarkForces::Component::InfElevator::buildMesh(void)
 		// only use the inner polygon (the hole)
 		// these elevators are always portal, 
 		// textures to use and the height are based on the difference between the connected sectors floor & ceiling and the current floor & ceiling
-		mesh = 	m_pSector->buildElevator_new(m_zmin, m_zmax, DFWALL_TEXTURE_MID, false, dfWallFlag::MORPHS_WITH_ELEV, signs);
+		mesh = 	m_pSector->buildElevator_new(
+			m_pSector->staticFloorAltitude(),
+			m_pSector->staticCeilingAltitude(),
+			DFWALL_TEXTURE_MID, 
+			false, 
+			dfWallFlag::MORPHS_WITH_ELEV, 
+			signs);
 		break;
 
 	default:

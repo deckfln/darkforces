@@ -591,6 +591,9 @@
     <ClCompile Include="gaEngine\gaComponent\gaSound.cpp">
       <Filter>Fichiers sources\gaEngine\gaComponent</Filter>
     </ClCompile>
+    <ClCompile Include="darkforces\dfComponent\InfElevator\InfElevatorRotate.cpp">
+      <Filter>Fichiers sources\Dark Forces\dfComponent\InfElevator</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="glad\glad.h">
@@ -1129,6 +1132,9 @@
     </ClInclude>
     <ClInclude Include="darkforces\flightRecorder\frLogicTrigger.h">
       <Filter>Fichiers d%27en-tête\DarkForces\flightRecorder</Filter>
+    </ClInclude>
+    <ClInclude Include="darkforces\dfComponent\InfElevator\InfElevatorRotate.h">
+      <Filter>Fichiers d%27en-tête\DarkForces\dfComponent\InfElevator</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

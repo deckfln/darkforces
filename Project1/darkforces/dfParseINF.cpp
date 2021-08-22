@@ -18,6 +18,7 @@
 #include "dfComponent/InfStandardTrigger.h"
 #include "dfComponent/InfElevator/InfElevatorLight.h"
 #include "dfComponent/InfElevator/InfElevatorTranslate.h"
+#include "dfComponent/InfElevator/InfElevatorRotate.h"
 
 #include "dfSector.h"
 
@@ -94,6 +95,40 @@ static DarkForces::Component::InfElevatorTranslate* newElevatorMoveCeiling(dfSec
 }
 
 /**
+ * Create an elevator morph_spin1
+ * Convert the parent sector to a full interactive entity
+ */
+static DarkForces::Component::InfElevatorRotate* newElevatorMorphSpin1(dfSector* pSector)
+{
+	// change the status of the entity sector to make it a full interactive entity
+	pSector->physical(true);
+	pSector->gravity(false);
+	pSector->collideSectors(false);
+	pSector->hasCollider(true);
+	pSector->defaultCollision(gaMessage::Flag::PUSH_ENTITIES);
+	pSector->displayAABBox();
+
+	return new DarkForces::Component::InfElevatorRotate(dfElevator::Type::MORPH_SPIN1, pSector, false);
+}
+
+/**
+ * Create an elevator morph_spin2
+ * Convert the parent sector to a full interactive entity
+ */
+static DarkForces::Component::InfElevatorRotate* newElevatorMorphSpin2(dfSector* pSector)
+{
+	// change the status of the entity sector to make it a full interactive entity
+	pSector->physical(true);
+	pSector->gravity(false);
+	pSector->collideSectors(false);
+	pSector->hasCollider(true);
+	pSector->defaultCollision(gaMessage::Flag::PUSH_ENTITIES);
+	pSector->displayAABBox();
+
+	return new DarkForces::Component::InfElevatorRotate(dfElevator::Type::MORPH_SPIN2, pSector, false);
+}
+
+/**
  * Create a default sound component
  */
 static GameEngine::Component::Sound* newElevatorSound(DarkForces::Component::InfElevator *elevator)
@@ -105,10 +140,14 @@ static GameEngine::Component::Sound* newElevatorSound(DarkForces::Component::Inf
 	};
 
 	static std::map<dfElevator::Type, int> g_sound_evelators = {
-		{dfElevator::Type::INV, 1},
-		{dfElevator::Type::BASIC, 0},
-		{dfElevator::Type::MOVE_FLOOR, 0},
-		{dfElevator::Type::MOVE_CEILING, 1}
+	{dfElevator::Type::INV, 1},
+	{dfElevator::Type::BASIC, 0},
+	{dfElevator::Type::MOVE_FLOOR, 0},
+	{dfElevator::Type::MOVE_CEILING, 1},
+	{dfElevator::Type::MORPH_SPIN1, 1},
+	{dfElevator::Type::MORPH_MOVE1, 1},
+	{dfElevator::Type::MORPH_SPIN2, 1},
+	{dfElevator::Type::DOOR, 2}
 	};
 
 	if (g_sound_evelators.count(elevator->type())) {
@@ -312,7 +351,7 @@ void dfParseINF::parseSector(std::istringstream& infile, const std::string& sect
 	dfElevator* elevator = nullptr;				// for an elevator
 	DarkForces::Component::InfStandardTrigger* program = nullptr;	// for a trigger standard
 	DarkForces::Component::InfElevatorLight* light = nullptr;	// for elevator change_light
-	DarkForces::Component::InfElevatorTranslate* inv = nullptr;	// for elevator INV & MOVE_FLOOR
+	DarkForces::Component::InfElevator* inv = nullptr;	// for elevator INV & MOVE_FLOOR
 	GameEngine::Component::Sound* sound = nullptr;				// for elevator with sound
 
 	dfLogicStop* stop = nullptr;
@@ -366,7 +405,9 @@ void dfParseINF::parseSector(std::istringstream& infile, const std::string& sect
 				else {
 					// else activate the default sounds
 					sound = newElevatorSound(inv);
-					pSector->addComponent(sound, gaEntity::Flag::DELETE_AT_EXIT);
+					if (sound) {
+						pSector->addComponent(sound, gaEntity::Flag::DELETE_AT_EXIT);
+					}
 				}
 			}
 
@@ -388,6 +429,12 @@ void dfParseINF::parseSector(std::istringstream& infile, const std::string& sect
 				}
 				else if (tokens[2] == "move_ceiling") {
 					inv = newElevatorMoveCeiling(pSector);
+				}
+				else if (tokens[2] == "morph_spin1") {
+					inv = newElevatorMorphSpin1(pSector);
+				}
+				else if (tokens[2] == "morph_spin2") {
+					inv = newElevatorMorphSpin2(pSector);
 				}
 				else {
 					// TODO remove onces all elevators are converted to components
