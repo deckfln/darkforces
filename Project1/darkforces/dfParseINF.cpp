@@ -77,6 +77,23 @@ static DarkForces::Component::InfElevatorTranslate* newElevatorBasic(dfSector* p
 }
 
 /**
+ * Create an elevator move_ceiling
+ * Convert the parent sector to a full interactive entity
+ */
+static DarkForces::Component::InfElevatorTranslate* newElevatorMoveCeiling(dfSector* pSector)
+{
+	// change the status of the entity sector to make it a full interactive entity
+	pSector->physical(true);
+	pSector->gravity(false);
+	pSector->collideSectors(false);
+	pSector->hasCollider(true);
+	pSector->defaultCollision(gaMessage::Flag::PUSH_ENTITIES);
+	pSector->displayAABBox();
+
+	return new DarkForces::Component::InfElevatorTranslate(dfElevator::Type::MOVE_CEILING, pSector, false);
+}
+
+/**
  * Create a default sound component
  */
 static GameEngine::Component::Sound* newElevatorSound(DarkForces::Component::InfElevator *elevator)
@@ -369,6 +386,9 @@ void dfParseINF::parseSector(std::istringstream& infile, const std::string& sect
 				else if (tokens[2] == "basic") {
 					inv = newElevatorBasic(pSector);
 				}
+				else if (tokens[2] == "move_ceiling") {
+					inv = newElevatorMoveCeiling(pSector);
+				}
 				else {
 					// TODO remove onces all elevators are converted to components
 					elevator = new dfElevator(tokens[2], pSector);
@@ -531,9 +551,9 @@ void dfParseINF::parseSector(std::istringstream& infile, const std::string& sect
 					if (elevator)
 						elevator->sound(effect - 1, nullptr);	// silent the default sound
 					else if (light)
-						light->addSound(effect - 1, g_cachedVOC[tokens[2]]);
+						light->addSound(effect - 1, nullptr);
 					else if (inv)
-						sound->addSound(effect - 1, g_cachedVOC[tokens[2]]->sound());
+						sound->addSound(effect - 1, nullptr);
 				}
 			}
 			else if (program) {
