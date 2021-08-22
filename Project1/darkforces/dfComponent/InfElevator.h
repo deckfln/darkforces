@@ -35,6 +35,7 @@ namespace DarkForces {
 			dfElevator::Type m_type = dfElevator::Type::INV;	// class of elevator
 			uint32_t m_eventMask = 0;
 			float m_speed = 20;					// time in millisecond between 2 stops
+			bool m_smart = false;				// TODO react to smart objects
 			std::vector<dfLogicStop*> m_stops;	// all stops of the elevator
 
 			const std::string& m_sector;		// sector that is an elevator
@@ -70,8 +71,8 @@ namespace DarkForces {
 				END = 2		// arriving at stop
 			};
 
-			InfElevator(const std::string& sector);
-			InfElevator(dfElevator::Type kind, dfSector* sector);
+			InfElevator(const std::string& sector, bool smart=false);
+			InfElevator(dfElevator::Type kind, dfSector* sector, bool smart=false);
 
 			// getter/setter
 			void eventMask(uint32_t eventMask);

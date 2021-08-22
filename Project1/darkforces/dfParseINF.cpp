@@ -39,7 +39,7 @@ static DarkForces::Component::InfElevatorTranslate* newElevatorInv (dfSector *pS
 	pSector->defaultCollision(gaMessage::Flag::PUSH_ENTITIES);
 	pSector->displayAABBox();
 
-	return new DarkForces::Component::InfElevatorTranslate(dfElevator::Type::INV, pSector);
+	return new DarkForces::Component::InfElevatorTranslate(dfElevator::Type::INV, pSector, true);
 }
 
 /**
@@ -56,7 +56,24 @@ static DarkForces::Component::InfElevatorTranslate* newElevatorMoveFloor(dfSecto
 	pSector->defaultCollision(gaMessage::Flag::PUSH_ENTITIES);
 	pSector->displayAABBox();
 
-	return new DarkForces::Component::InfElevatorTranslate(dfElevator::Type::MOVE_FLOOR, pSector);
+	return new DarkForces::Component::InfElevatorTranslate(dfElevator::Type::MOVE_FLOOR, pSector, false);
+}
+
+/**
+ * Create an elevator basic
+ * Convert the parent sector to a full interactive entity
+ */
+static DarkForces::Component::InfElevatorTranslate* newElevatorBasic(dfSector* pSector)
+{
+	// change the status of the entity sector to make it a full interactive entity
+	pSector->physical(true);
+	pSector->gravity(false);
+	pSector->collideSectors(false);
+	pSector->hasCollider(true);
+	pSector->defaultCollision(gaMessage::Flag::PUSH_ENTITIES);
+	pSector->displayAABBox();
+
+	return new DarkForces::Component::InfElevatorTranslate(dfElevator::Type::BASIC, pSector, true);
 }
 
 /**
@@ -349,7 +366,11 @@ void dfParseINF::parseSector(std::istringstream& infile, const std::string& sect
 				else if (tokens[2] == "move_floor") {
 					inv = newElevatorMoveFloor(pSector);
 				}
+				else if (tokens[2] == "basic") {
+					inv = newElevatorBasic(pSector);
+				}
 				else {
+					// TODO remove onces all elevators are converted to components
 					elevator = new dfElevator(tokens[2], pSector);
 				}
 			}

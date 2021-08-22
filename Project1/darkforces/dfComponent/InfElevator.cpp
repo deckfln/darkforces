@@ -197,21 +197,23 @@ bool DarkForces::Component::InfElevator::animate(time_t delta)
 /**
  * init the object
  */
-DarkForces::Component::InfElevator::InfElevator(const std::string& sector):
+DarkForces::Component::InfElevator::InfElevator(const std::string& sector, bool smart):
 	gaComponent(DF_COMPONENT_INF_ELEVATOR),
-	m_sector(sector)
+	m_sector(sector),
+	m_smart(smart)
 {
 }
 
 /**
  * create from a record
  */
-DarkForces::Component::InfElevator::InfElevator(dfElevator::Type kind, dfSector* sector):
+DarkForces::Component::InfElevator::InfElevator(dfElevator::Type kind, dfSector* sector, bool smart):
 	gaComponent(DF_COMPONENT_INF_ELEVATOR),
 	m_sector(sector->name()),
-	m_type(kind)
+	m_type(kind),
+	m_smart(smart)
 {
-	m_speed = _speeds[m_type];
+	m_speed = 2.0f;// _speeds[m_type];
 	m_entity = sector;
 	m_pSector = sector;
 }

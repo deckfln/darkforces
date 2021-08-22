@@ -11,8 +11,8 @@ void DarkForces::Component::InfElevatorTranslate::moveTo(float z_lvl)
 	m_entity->sendMessage(m_entity->name(), gaMessage::Action::WANT_TO_MOVE, gaMessage::Flag::PUSH_ENTITIES, tr);
 }
 
-DarkForces::Component::InfElevatorTranslate::InfElevatorTranslate(dfElevator::Type kind, dfSector* sector):
-	InfElevator(kind, sector)
+DarkForces::Component::InfElevatorTranslate::InfElevatorTranslate(dfElevator::Type kind, dfSector* sector, bool smart):
+	InfElevator(kind, sector, smart)
 {
 }
 

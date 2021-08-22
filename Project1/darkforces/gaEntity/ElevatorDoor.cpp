@@ -37,7 +37,7 @@ DarkForces::Entity::ElevatorDoor::ElevatorDoor(dfSector* sector):
 	m_defaultCollision = gaMessage::Flag::PUSH_ENTITIES;
 
 	// prepare the elevator component
-	DarkForces::Component::InfElevatorTranslate* elevator = new DarkForces::Component::InfElevatorTranslate(dfElevator::Type::DOOR, sector);
+	DarkForces::Component::InfElevatorTranslate* elevator = new DarkForces::Component::InfElevatorTranslate(dfElevator::Type::DOOR, sector, true);
 	dfLogicStop* closed = new dfLogicStop(sector, sector->referenceFloor(), hold);
 	dfLogicStop* opened = new dfLogicStop(sector, sector->referenceCeiling(), 5000);
 
