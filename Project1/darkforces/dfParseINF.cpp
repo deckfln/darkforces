@@ -19,6 +19,7 @@
 #include "dfComponent/InfElevator/InfElevatorLight.h"
 #include "dfComponent/InfElevator/InfElevatorTranslate.h"
 #include "dfComponent/InfElevator/InfElevatorRotate.h"
+#include "dfComponent/InfElevator/InfElevatorHorizontal.h"
 
 #include "dfSector.h"
 
@@ -108,7 +109,7 @@ static DarkForces::Component::InfElevatorRotate* newElevatorMorphSpin1(dfSector*
 	pSector->defaultCollision(gaMessage::Flag::PUSH_ENTITIES);
 	pSector->displayAABBox();
 
-	return new DarkForces::Component::InfElevatorRotate(dfElevator::Type::MORPH_SPIN1, pSector, false);
+	return new DarkForces::Component::InfElevatorRotate(dfElevator::Type::MORPH_SPIN1, pSector, true);
 }
 
 /**
@@ -125,7 +126,24 @@ static DarkForces::Component::InfElevatorRotate* newElevatorMorphSpin2(dfSector*
 	pSector->defaultCollision(gaMessage::Flag::PUSH_ENTITIES);
 	pSector->displayAABBox();
 
-	return new DarkForces::Component::InfElevatorRotate(dfElevator::Type::MORPH_SPIN2, pSector, false);
+	return new DarkForces::Component::InfElevatorRotate(dfElevator::Type::MORPH_SPIN2, pSector, true);
+}
+
+/**
+ * Create an elevator morph_spin1
+ * Convert the parent sector to a full interactive entity
+ */
+static DarkForces::Component::InfElevatorHorizontal* newElevatorMorphMove1(dfSector* pSector)
+{
+	// change the status of the entity sector to make it a full interactive entity
+	pSector->physical(true);
+	pSector->gravity(false);
+	pSector->collideSectors(false);
+	pSector->hasCollider(true);
+	pSector->defaultCollision(gaMessage::Flag::PUSH_ENTITIES);
+	pSector->displayAABBox();
+
+	return new DarkForces::Component::InfElevatorHorizontal(dfElevator::Type::MORPH_MOVE1, pSector, true);
 }
 
 /**
@@ -436,6 +454,9 @@ void dfParseINF::parseSector(std::istringstream& infile, const std::string& sect
 				else if (tokens[2] == "morph_spin2") {
 					inv = newElevatorMorphSpin2(pSector);
 				}
+				else if (tokens[2] == "morph_move1") {
+					inv = newElevatorMorphMove1(pSector);
+				}
 				else {
 					// TODO remove onces all elevators are converted to components
 					elevator = new dfElevator(tokens[2], pSector);
@@ -472,6 +493,14 @@ void dfParseINF::parseSector(std::istringstream& infile, const std::string& sect
 		else if (tokens[0] == "angle:") {
 			if (elevator) {
 				elevator->angle(std::stof(tokens[1]));
+			}
+			else if (inv) {
+				if (inv->type() == dfElevator::Type::MORPH_MOVE1) {
+					dynamic_cast<DarkForces::Component::InfElevatorHorizontal*>(inv)->angle(std::stof(tokens[1]));
+				}
+				else {
+					gaDebugLog(1, "dfParseINF", "angle only implemented for morph_move1");
+				}
 			}
 		}
 		else if (tokens[0] == "event_mask:") {

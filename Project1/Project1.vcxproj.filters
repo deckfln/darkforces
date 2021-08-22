@@ -594,6 +594,9 @@
     <ClCompile Include="darkforces\dfComponent\InfElevator\InfElevatorRotate.cpp">
       <Filter>Fichiers sources\Dark Forces\dfComponent\InfElevator</Filter>
     </ClCompile>
+    <ClCompile Include="darkforces\dfComponent\InfElevator\InfElevatorHorizontal.cpp">
+      <Filter>Fichiers sources\Dark Forces\dfComponent\InfElevator</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="glad\glad.h">
@@ -1134,6 +1137,9 @@
       <Filter>Fichiers d%27en-tête\DarkForces\flightRecorder</Filter>
     </ClInclude>
     <ClInclude Include="darkforces\dfComponent\InfElevator\InfElevatorRotate.h">
+      <Filter>Fichiers d%27en-tête\DarkForces\dfComponent\InfElevator</Filter>
+    </ClInclude>
+    <ClInclude Include="darkforces\dfComponent\InfElevator\InfElevatorHorizontal.h">
       <Filter>Fichiers d%27en-tête\DarkForces\dfComponent\InfElevator</Filter>
     </ClInclude>
   </ItemGroup>
