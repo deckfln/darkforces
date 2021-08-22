@@ -21,7 +21,7 @@ dfLogicStop::dfLogicStop(dfElevator* parent):
 
 dfLogicStop::dfLogicStop(dfElevator* parent, float altitude, dfSector* sector, const std::string& action):
 	m_parent(parent),
-	m_flag(2 | 16),
+	m_flag(Flag::Relative | Flag::ActionAtStop),
 	m_relatiave(altitude),
 	m_pSector(sector)
 {
@@ -31,7 +31,7 @@ dfLogicStop::dfLogicStop(dfElevator* parent, float altitude, dfSector* sector, c
 
 dfLogicStop::dfLogicStop(dfElevator* parent, float altitude, dfSector* sector, float time):
 	m_parent(parent),
-	m_flag(2 | 8),
+	m_flag(Flag::Relative | Flag::TimeAtStop),
 	m_relatiave(altitude),
 	m_pSector(sector),
 	m_animation_time(time)
@@ -41,7 +41,7 @@ dfLogicStop::dfLogicStop(dfElevator* parent, float altitude, dfSector* sector, f
 
 dfLogicStop::dfLogicStop(dfElevator* parent, float altitude, const std::string& action):
 	m_parent(parent),
-	m_flag(1 | 16),
+	m_flag(Flag::Absolute | Flag::ActionAtStop),
 	m_absolute(altitude)
 {
 	m_name = "STOP:" + m_parent->name();
@@ -50,7 +50,7 @@ dfLogicStop::dfLogicStop(dfElevator* parent, float altitude, const std::string& 
 }
 
 dfLogicStop::dfLogicStop(dfSector* sector, float altitude, const std::string& action):
-	m_flag(1 | 16),
+	m_flag(Flag::Absolute | Flag::ActionAtStop),
 	m_absolute(altitude),
 	m_pSector(sector),
 	m_name ("STOP:" + sector->name())
@@ -58,19 +58,8 @@ dfLogicStop::dfLogicStop(dfSector* sector, float altitude, const std::string& ac
 	dfLogicStop::action(action);
 }
 
-dfLogicStop::dfLogicStop(dfElevator* parent, float altitude, float time):
-	m_parent(parent),
-	m_flag(1 | 8),
-	m_absolute(altitude),
-	m_animation_time(time)
-{
-	m_name = "STOP:" + m_parent->name();
-	m_pSector = parent->psector();
-}
-
-
 dfLogicStop::dfLogicStop(dfSector* sector, float altitude, float time):
-	m_flag(1 | 8),
+	m_flag(Flag::Absolute | Flag::TimeAtStop),
 	m_absolute(altitude),
 	m_animation_time(time),
 	m_pSector(sector),
@@ -94,7 +83,7 @@ dfLogicStop::dfLogicStop(dfSector* sector):
  */
 void dfLogicStop::sector(dfSector* pSector)
 {
-	if (m_flag & 2) {
+	if (m_flag & Flag::Relative) {
 		m_pSector = pSector;
 	}
 }
@@ -102,7 +91,7 @@ void dfLogicStop::sector(dfSector* pSector)
 void dfLogicStop::action(const std::string& action)
 {
 	if (_stops.count(action) > 0) {
-		m_flag |= 16;
+		m_flag |= Flag::ActionAtStop;
 		m_action = _stops[action];
 	}
 }
@@ -112,7 +101,7 @@ void dfLogicStop::action(const std::string& action)
  */
 bool dfLogicStop::isTimeBased(void)
 {
-	int a = m_flag & 8;  
+	int a = m_flag & Flag::TimeAtStop;  
 	return a == 8;
 }
 
@@ -139,31 +128,31 @@ void dfLogicStop::sendMessages()
 float dfLogicStop::z_position(dfElevator::Type elevatorClass)
 {
 	switch (m_flag) {
-		case 9:
-		case 17:
+	case Flag::Absolute|Flag::TimeAtStop:
+	case Flag::Absolute|Flag::ActionAtStop:
 			return m_absolute;
-		case 10:
-		case 18:
-			/*
-			switch (elevatorClass) {
-			case dfElevatorStatus::MOVE_FLOOR:
-				return m_pSector->m_floorAltitude + m_relatiave;	// relative to the ceiling of the source sector
-			case dfElevatorStatus::MOVE_CEILING:
-				return m_pSector->m_floorAltitude + m_relatiave;	// relative to the ceiling of the source sector
+	case Flag::Relative|Flag::TimeAtStop:
+	case Flag::Relative|Flag::ActionAtStop:
+		/*
+		switch (elevatorClass) {
+		case dfElevatorStatus::MOVE_FLOOR:
+			return m_pSector->m_floorAltitude + m_relatiave;	// relative to the ceiling of the source sector
+		case dfElevatorStatus::MOVE_CEILING:
+			return m_pSector->m_floorAltitude + m_relatiave;	// relative to the ceiling of the source sector
 
-			default:
-				return m_pSector->m_floorAltitude + m_relatiave;	// relative to the ceiling of the source sector
-			}
-			*/
-			return m_pSector->referenceFloor() + m_relatiave;	// relative to the ceiling of the source sector
-		case 12:
-		case 20:
-			switch (elevatorClass) {
-			case dfElevator::Type::MOVE_FLOOR:
-				return m_pSector->referenceCeiling();	// coy the ceiling of another sector
-			default:
-				return m_pSector->referenceFloor();		// coy the floor of another sector
-			}
+		default:
+			return m_pSector->m_floorAltitude + m_relatiave;	// relative to the ceiling of the source sector
+		}
+		*/
+		return m_pSector->referenceFloor() + m_relatiave;	// relative to the ceiling of the source sector
+	case Flag::BasedOnSector|Flag::TimeAtStop:
+	case Flag::BasedOnSector|Flag::ActionAtStop:
+		switch (elevatorClass) {
+		case dfElevator::Type::MOVE_FLOOR:
+			return m_pSector->referenceCeiling();	// coy the ceiling of another sector
+		default:
+			return m_pSector->referenceFloor();		// coy the floor of another sector
+		}
 	}
 	return 0;
 }

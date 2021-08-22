@@ -28,7 +28,15 @@ public:
 private:
 	std::string m_name;
 
-	int m_flag = 0;			// content of the stop
+	enum Flag : uint32_t {
+		Absolute = 1,
+		Relative = 2,
+		BasedOnSector = 4,
+		TimeAtStop = 8,
+		ActionAtStop = 16
+	};
+
+	uint32_t m_flag = 0;			// content of the stop
 		// 1 : absolute
 		// 2 : relative
 		// 4 : based on another sector
