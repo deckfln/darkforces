@@ -15,6 +15,7 @@ namespace DarkForces {
 			InfElevatorHorizontal(dfElevator::Type kind, dfSector* sector, bool smart=false);
 			void angle(float angle);							// convert angle translation to a vector translation
 			dfMesh* buildMesh(void) override;					// build the dfMesh of the elevator
+			void relocateMesh(dfMesh* mesh) override;
 			void dispatchMessage(gaMessage* message) override;	// deal with messages specifically for translation elevators
 		};
 	}

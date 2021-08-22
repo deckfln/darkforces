@@ -45,6 +45,14 @@ namespace DarkForces {
 			float m_zmax = -INFINITY;
 			glm::vec3 m_center = glm::vec3(0);	// base point (rotation point for SPIN , origin for MORH...)
 
+			// data to build a mesh
+			bool m_meshData = false;			// no value was set
+			float m_meshBottom = 0;				// lower z value
+			float m_meshCeiling = 0;			// upper z value
+			uint32_t m_meshTexture = 0;			// texture to use
+			bool m_meshClockwise = false;		// draw walls clockwise or not
+			dfWallFlag m_meshFlag = dfWallFlag::ALL;// what walls to draw
+
 			// Dynamic state
 			Status m_status = Status::HOLD;		// status of the elevator
 			float m_tick = 0;					// current timer
@@ -81,6 +89,9 @@ namespace DarkForces {
 			inline void center(float x, float y) { m_center.x = x; m_center.y = y; };
 			inline dfElevator::Type type(void) { return m_type; };
 			inline void speed(float speed) { m_speed = speed; };
+			inline float zmin(void) { return m_zmin; };
+			inline float zmax(void) { return m_zmax; };
+			void meshData(float bottom, float top, uint32_t texture, bool clockwise, dfWallFlag whatToDraw);	// set the mesh data
 
 			void addStop(dfLogicStop* stop);				// add a stop and update the range of the elevator
 			void addSound(uint32_t action, dfVOC* sound);	// register a sound for a SART, MOVE, STOP
@@ -90,6 +101,7 @@ namespace DarkForces {
 			void dispatchMessage(gaMessage* message) override;
 
 			virtual dfMesh* buildMesh(void);				// build the dfMesh of the elevator
+			virtual void relocateMesh(dfMesh* mesh) {};			// move the mesh vertices into a 0,0,0 position
 
 			// flight recorder status
 			inline uint32_t recordSize(void);				// size of the component record

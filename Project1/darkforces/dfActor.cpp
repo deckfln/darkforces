@@ -70,6 +70,8 @@ void DarkForces::Actor::loadState(void* record)
  */
 void DarkForces::Actor::debugGUIChildClass(void)
 {
+	gaActor::debugGUIChildClass();
+
 	if (ImGui::TreeNode("dfActor")) {
 		ImGui::TreePop();
 	}

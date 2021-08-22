@@ -213,11 +213,14 @@ DarkForces::Component::InfElevator::InfElevator(dfElevator::Type kind, dfSector*
 	m_type(kind),
 	m_smart(smart)
 {
-	m_speed = 2.0f;// _speeds[m_type];
+	m_speed = _speeds[m_type];
 	m_entity = sector;
 	m_pSector = sector;
 }
 
+/**
+ * record the maskEvent
+ */
 void DarkForces::Component::InfElevator::eventMask(uint32_t eventMask)
 {
 	/* TODO: Hard coded hack for MORPH_SPIN1,
@@ -227,6 +230,19 @@ void DarkForces::Component::InfElevator::eventMask(uint32_t eventMask)
 		eventMask &= ~(DarkForces::ENTER_SECTOR | DarkForces::LEAVE_SECTOR);
 	}
 	m_eventMask = eventMask;
+}
+
+/**
+ * Record data needed to build a mesh
+ */
+void DarkForces::Component::InfElevator::meshData(float bottom, float top, uint32_t texture, bool clockwise, dfWallFlag whatToDraw)
+{
+	m_meshData = true;
+	m_meshBottom = bottom;				// lower z value
+	m_meshCeiling = top;				// upper z value
+	m_meshTexture = texture;			// texture to use
+	m_meshClockwise = clockwise;		// draw walls clockwise or not
+	m_meshFlag = whatToDraw;			// what walls to draw
 }
 
 /**
@@ -337,97 +353,16 @@ dfMesh* DarkForces::Component::InfElevator::buildMesh(void)
 		return nullptr;
 	}
 
-	if (m_zmin == 99999) {
-		m_zmin = m_pSector->staticFloorAltitude();
-		m_zmax = m_pSector->staticCeilingAltitude();
-	}
-
-	/* TODO: find a way to remove the hack for SECBASE::elev_block and SECBASE::elev3-1
-	*  hard coded hack for SECBASE::elev_block. Force the height of the elevator
-	*  physically impossible in GameEngine
-	*/
-	if (m_entity->name() == "elev_block") {
-		m_zmax = -4.0f;
-	}
-	if (m_entity->name() == "elev3-1") {
-		m_zmax = 1.07f;
-	}
-
 	//
 	// Build a mesh depending of the type
 	//
-	switch (m_type) {
-	case dfElevator::Type::INV:
-	case dfElevator::Type::DOOR:
-		// the elevator bottom is actually the ceiling
-		mesh = m_pSector->buildElevator_new(0, m_zmax - m_zmin, DFWALL_TEXTURE_TOP, true, dfWallFlag::ALL, signs);
-		m_pSector->setAABBtop(m_zmax);
-		break;
-
-	case dfElevator::Type::BASIC:
-		// the elevator bottom is actually the ceiling
-		mesh = m_pSector->buildElevator_new(0, -(m_zmax - m_zmin), DFWALL_TEXTURE_TOP, true, dfWallFlag::ALL, signs);
-		m_pSector->setAABBtop(m_zmax);
-		break;
-
-	case dfElevator::Type::MOVE_FLOOR:
-		// the elevator top is actually the floor
-		mesh = m_pSector->buildElevator_new(-(m_zmax - m_zmin), 0, DFWALL_TEXTURE_BOTTOM, false, dfWallFlag::ALL, signs);
-		m_pSector->setAABBbottom(m_zmin);
-		break;
-
-	case dfElevator::Type::MOVE_CEILING:
-		// move ceiling, only move the top
-		mesh = m_pSector->buildElevator_new(0, (m_zmax - m_zmin), DFWALL_TEXTURE_TOP, false, dfWallFlag::ALL, signs);
-		m_pSector->setAABBtop(m_zmax);
-		break;
-
-	case dfElevator::Type::MORPH_SPIN1:
-	case dfElevator::Type::MORPH_MOVE1:
-	case dfElevator::Type::MORPH_SPIN2:
-		// only use the inner polygon (the hole)
-		// these elevators are always portal, 
-		// textures to use and the height are based on the difference between the connected sectors floor & ceiling and the current floor & ceiling
-		mesh = 	m_pSector->buildElevator_new(
-			m_pSector->staticFloorAltitude(),
-			m_pSector->staticCeilingAltitude(),
-			DFWALL_TEXTURE_MID, 
-			false, 
-			dfWallFlag::MORPHS_WITH_ELEV, 
-			signs);
-		break;
-
-	default:
+	if (!m_meshData) {
 		return nullptr;
 	}
+	mesh = m_pSector->buildElevator_new(m_meshBottom, m_meshCeiling, m_meshTexture, m_meshClockwise, m_meshFlag, signs);
 
-	if (mesh == nullptr) {
-		return nullptr;
-	}
-
-	//
 	// translate the vertices to the center of the elevator
-	//
-	switch (m_type) {
-	case dfElevator::Type::INV:
-	case dfElevator::Type::DOOR:
-	case dfElevator::Type::BASIC:
-	case dfElevator::Type::MOVE_FLOOR:
-	case dfElevator::Type::MOVE_CEILING:
-		// for these elevator, Z is defined by the elevator, so center on XY (in level space)
-		mesh->centerOnGeometryXZ(m_center);
-		break;
-	case dfElevator::Type::MORPH_MOVE1:
-		// for this elevator, move along an axes from a center, so center on XYZ (in level space)
-		mesh->centerOnGeometryXYZ(m_center);
-		break;
-	case dfElevator::Type::MORPH_SPIN1:
-	case dfElevator::Type::MORPH_SPIN2:
-		// move the vertices around the center (in level space)
-		m_center.z = m_pSector->referenceFloor();
-		mesh->moveVertices(m_center);
-		break;
-	}
+	relocateMesh(mesh);
 
 	// record in the entity
 	return mesh;

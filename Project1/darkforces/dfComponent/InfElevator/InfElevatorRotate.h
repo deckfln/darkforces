@@ -13,6 +13,7 @@ namespace DarkForces {
 		public:
 			InfElevatorRotate(dfElevator::Type kind, dfSector* sector, bool smart=false);
 			dfMesh* buildMesh(void) override;					// build the dfMesh of the elevator
+			void relocateMesh(dfMesh* mesh) override;
 			void dispatchMessage(gaMessage* message) override;	// deal with messages specifically for translation elevators
 		};
 	}

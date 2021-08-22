@@ -1,6 +1,6 @@
 #include "InfElevatorRotate.h"
 
-#include "../../dfFileSystem.h"
+#include "../../dfMesh.h"
 
 void DarkForces::Component::InfElevatorRotate::moveTo(float z_lvl)
 {
@@ -12,6 +12,16 @@ void DarkForces::Component::InfElevatorRotate::moveTo(float z_lvl)
 DarkForces::Component::InfElevatorRotate::InfElevatorRotate(dfElevator::Type kind, dfSector* sector, bool smart):
 	InfElevator(kind, sector, smart)
 {
+}
+
+/**
+ * relocate the dfMesh of the elevator inv
+ */
+void DarkForces::Component::InfElevatorRotate::relocateMesh(dfMesh* mesh)
+{
+	// move the vertices around the center (in level space)
+	m_center.z = m_pSector->referenceFloor();
+	mesh->moveVertices(m_center);
 }
 
 /**

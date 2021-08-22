@@ -20,131 +20,19 @@
 #include "dfComponent/InfElevator/InfElevatorTranslate.h"
 #include "dfComponent/InfElevator/InfElevatorRotate.h"
 #include "dfComponent/InfElevator/InfElevatorHorizontal.h"
+#include "dfComponent/InfElevator/InfElevatorVertical/InfElevatorInv.h"
+#include "dfComponent/InfElevator/InfElevatorVertical/InfElevatorMoveFloor.h"
+#include "dfComponent/InfElevator/InfElevatorVertical/InfElevatorBasic.h"
+#include "dfComponent/InfElevator/InfElevatorVertical/InfElevatorMoveCeiling.h"
+#include "dfComponent/InfElevator/InfElevatorRotate/InfElevatorMorphSpin1.h"
+#include "dfComponent/InfElevator/InfElevatorRotate/InfElevatorMorphSpin2.h"
+#include "dfComponent/InfElevator/InfElevatorRotate/InfElevatorMorphSpin2.h"
+#include "dfComponent/InfElevator/InfElevatorHorizontal/InfElevatorMorphMove1.h"
 
 #include "dfSector.h"
 
 static dfFileSystem* dfFiles = nullptr;
 static std::map<std::string, dfVOC*> g_cachedVOC;
-
-
-/**
- * Create an elevator inv
- * Convert the parent sector to a full interactive entity
- */
-static DarkForces::Component::InfElevatorTranslate* newElevatorInv (dfSector *pSector)
-{
-	// change the status of the entity sector to make it a full interactive entity
-	pSector->physical(true);
-	pSector->gravity(false);
-	pSector->collideSectors(false);
-	pSector->hasCollider(true);
-	pSector->defaultCollision(gaMessage::Flag::PUSH_ENTITIES);
-	pSector->displayAABBox();
-
-	return new DarkForces::Component::InfElevatorTranslate(dfElevator::Type::INV, pSector, true);
-}
-
-/**
- * Create an elevator move_floor
- * Convert the parent sector to a full interactive entity
- */
-static DarkForces::Component::InfElevatorTranslate* newElevatorMoveFloor(dfSector* pSector)
-{
-	// change the status of the entity sector to make it a full interactive entity
-	pSector->physical(true);
-	pSector->gravity(false);
-	pSector->collideSectors(false);
-	pSector->hasCollider(true);
-	pSector->defaultCollision(gaMessage::Flag::PUSH_ENTITIES);
-	pSector->displayAABBox();
-
-	return new DarkForces::Component::InfElevatorTranslate(dfElevator::Type::MOVE_FLOOR, pSector, false);
-}
-
-/**
- * Create an elevator basic
- * Convert the parent sector to a full interactive entity
- */
-static DarkForces::Component::InfElevatorTranslate* newElevatorBasic(dfSector* pSector)
-{
-	// change the status of the entity sector to make it a full interactive entity
-	pSector->physical(true);
-	pSector->gravity(false);
-	pSector->collideSectors(false);
-	pSector->hasCollider(true);
-	pSector->defaultCollision(gaMessage::Flag::PUSH_ENTITIES);
-	pSector->displayAABBox();
-
-	return new DarkForces::Component::InfElevatorTranslate(dfElevator::Type::BASIC, pSector, true);
-}
-
-/**
- * Create an elevator move_ceiling
- * Convert the parent sector to a full interactive entity
- */
-static DarkForces::Component::InfElevatorTranslate* newElevatorMoveCeiling(dfSector* pSector)
-{
-	// change the status of the entity sector to make it a full interactive entity
-	pSector->physical(true);
-	pSector->gravity(false);
-	pSector->collideSectors(false);
-	pSector->hasCollider(true);
-	pSector->defaultCollision(gaMessage::Flag::PUSH_ENTITIES);
-	pSector->displayAABBox();
-
-	return new DarkForces::Component::InfElevatorTranslate(dfElevator::Type::MOVE_CEILING, pSector, false);
-}
-
-/**
- * Create an elevator morph_spin1
- * Convert the parent sector to a full interactive entity
- */
-static DarkForces::Component::InfElevatorRotate* newElevatorMorphSpin1(dfSector* pSector)
-{
-	// change the status of the entity sector to make it a full interactive entity
-	pSector->physical(true);
-	pSector->gravity(false);
-	pSector->collideSectors(false);
-	pSector->hasCollider(true);
-	pSector->defaultCollision(gaMessage::Flag::PUSH_ENTITIES);
-	pSector->displayAABBox();
-
-	return new DarkForces::Component::InfElevatorRotate(dfElevator::Type::MORPH_SPIN1, pSector, true);
-}
-
-/**
- * Create an elevator morph_spin2
- * Convert the parent sector to a full interactive entity
- */
-static DarkForces::Component::InfElevatorRotate* newElevatorMorphSpin2(dfSector* pSector)
-{
-	// change the status of the entity sector to make it a full interactive entity
-	pSector->physical(true);
-	pSector->gravity(false);
-	pSector->collideSectors(false);
-	pSector->hasCollider(true);
-	pSector->defaultCollision(gaMessage::Flag::PUSH_ENTITIES);
-	pSector->displayAABBox();
-
-	return new DarkForces::Component::InfElevatorRotate(dfElevator::Type::MORPH_SPIN2, pSector, true);
-}
-
-/**
- * Create an elevator morph_spin1
- * Convert the parent sector to a full interactive entity
- */
-static DarkForces::Component::InfElevatorHorizontal* newElevatorMorphMove1(dfSector* pSector)
-{
-	// change the status of the entity sector to make it a full interactive entity
-	pSector->physical(true);
-	pSector->gravity(false);
-	pSector->collideSectors(false);
-	pSector->hasCollider(true);
-	pSector->defaultCollision(gaMessage::Flag::PUSH_ENTITIES);
-	pSector->displayAABBox();
-
-	return new DarkForces::Component::InfElevatorHorizontal(dfElevator::Type::MORPH_MOVE1, pSector, true);
-}
 
 /**
  * Create a default sound component
@@ -437,25 +325,25 @@ void dfParseINF::parseSector(std::istringstream& infile, const std::string& sect
 					light = new DarkForces::Component::InfElevatorLight(pSector);
 				}
 				else if (tokens[2] == "inv") {
-					inv = newElevatorInv(pSector);
+					inv = new DarkForces::Component::InfElevatorInv(pSector);
 				}
 				else if (tokens[2] == "move_floor") {
-					inv = newElevatorMoveFloor(pSector);
+					inv = new DarkForces::Component::InfElevatorMoveFloor(pSector);
 				}
 				else if (tokens[2] == "basic") {
-					inv = newElevatorBasic(pSector);
+					inv = new DarkForces::Component::InfElevatorBasic(pSector);
 				}
 				else if (tokens[2] == "move_ceiling") {
-					inv = newElevatorMoveCeiling(pSector);
+					inv = new DarkForces::Component::InfElevatorMoveCeiling(pSector);
 				}
 				else if (tokens[2] == "morph_spin1") {
-					inv = newElevatorMorphSpin1(pSector);
+					inv = new DarkForces::Component::InfElevatorMorphSpin1(pSector);
 				}
 				else if (tokens[2] == "morph_spin2") {
-					inv = newElevatorMorphSpin2(pSector);
+					inv = new DarkForces::Component::InfElevatorMorphSpin2(pSector);
 				}
 				else if (tokens[2] == "morph_move1") {
-					inv = newElevatorMorphMove1(pSector);
+					inv = new DarkForces::Component::InfElevatorMorphMove1(pSector);
 				}
 				else {
 					// TODO remove onces all elevators are converted to components

@@ -118,6 +118,24 @@
     <Filter Include="Fichiers sources\Dark Forces\gaEntity">
       <UniqueIdentifier>{76c92ba4-2b68-49e5-ac6d-822780f689ee}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Fichiers sources\Dark Forces\dfComponent\InfElevator\InfElevatorVertical">
+      <UniqueIdentifier>{6ea4659c-6410-496a-877e-f77ed4f27d39}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers d%27en-tête\DarkForces\dfComponent\InfElevator\InElevatorVertical">
+      <UniqueIdentifier>{90ca1ee8-72da-4ffa-bb6f-749a5bc1bc98}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers d%27en-tête\DarkForces\dfComponent\InfElevator\InfElevatorRotate">
+      <UniqueIdentifier>{c215aedc-130d-419a-9e18-277a59ae9f15}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers sources\Dark Forces\dfComponent\InfElevator\InfElevatorRotate">
+      <UniqueIdentifier>{5a9bf281-b268-4962-82d7-5b706b7e5f2a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers d%27en-tête\DarkForces\dfComponent\InfElevator\InfElevatorHorizontal">
+      <UniqueIdentifier>{d5161e13-5a7a-4a2b-a308-d766c0664dc9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers sources\Dark Forces\dfComponent\InfElevator\InfElevatorHorizontal">
+      <UniqueIdentifier>{ec599590-c51e-46f1-ad8f-cf8caea166ff}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source.cpp">
@@ -596,6 +614,30 @@
     </ClCompile>
     <ClCompile Include="darkforces\dfComponent\InfElevator\InfElevatorHorizontal.cpp">
       <Filter>Fichiers sources\Dark Forces\dfComponent\InfElevator</Filter>
+    </ClCompile>
+    <ClCompile Include="darkforces\dfComponent\InfElevator\InfElevatorVertical\InfElevatorInv.cpp">
+      <Filter>Fichiers sources\Dark Forces\dfComponent\InfElevator\InfElevatorVertical</Filter>
+    </ClCompile>
+    <ClCompile Include="darkforces\dfComponent\InfElevator\InfElevatorVertical\InfElevatorMoveFloor.cpp">
+      <Filter>Fichiers sources\Dark Forces\dfComponent\InfElevator\InfElevatorVertical</Filter>
+    </ClCompile>
+    <ClCompile Include="darkforces\dfComponent\InfElevator\InfElevatorVertical\InfElevatorBasic.cpp">
+      <Filter>Fichiers sources\Dark Forces\dfComponent\InfElevator\InfElevatorVertical</Filter>
+    </ClCompile>
+    <ClCompile Include="darkforces\dfComponent\InfElevator\InfElevatorVertical\InfElevatorMoveCeiling.cpp">
+      <Filter>Fichiers sources\Dark Forces\dfComponent\InfElevator\InfElevatorVertical</Filter>
+    </ClCompile>
+    <ClCompile Include="darkforces\dfComponent\InfElevator\InfElevatorVertical\InfElevatorDoor.cpp">
+      <Filter>Fichiers sources\Dark Forces\dfComponent\InfElevator\InfElevatorVertical</Filter>
+    </ClCompile>
+    <ClCompile Include="darkforces\dfComponent\InfElevator\InfElevatorRotate\InfElevatorMorphSpin1.cpp">
+      <Filter>Fichiers sources\Dark Forces\dfComponent\InfElevator\InfElevatorRotate</Filter>
+    </ClCompile>
+    <ClCompile Include="darkforces\dfComponent\InfElevator\InfElevatorRotate\InfElevatorMorphSpin2.cpp">
+      <Filter>Fichiers sources\Dark Forces\dfComponent\InfElevator\InfElevatorRotate</Filter>
+    </ClCompile>
+    <ClCompile Include="darkforces\dfComponent\InfElevator\infElevatorHorizontal\InfElevatorMorphMove1.cpp">
+      <Filter>Fichiers sources\Dark Forces\dfComponent\InfElevator\InfElevatorHorizontal</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1141,6 +1183,30 @@
     </ClInclude>
     <ClInclude Include="darkforces\dfComponent\InfElevator\InfElevatorHorizontal.h">
       <Filter>Fichiers d%27en-tête\DarkForces\dfComponent\InfElevator</Filter>
+    </ClInclude>
+    <ClInclude Include="darkforces\dfComponent\InfElevator\InfElevatorVertical\InfElevatorInv.h">
+      <Filter>Fichiers d%27en-tête\DarkForces\dfComponent\InfElevator\InElevatorVertical</Filter>
+    </ClInclude>
+    <ClInclude Include="darkforces\dfComponent\InfElevator\InfElevatorVertical\InfElevatorMoveFloor.h">
+      <Filter>Fichiers d%27en-tête\DarkForces\dfComponent\InfElevator\InElevatorVertical</Filter>
+    </ClInclude>
+    <ClInclude Include="darkforces\dfComponent\InfElevator\InfElevatorVertical\InfElevatorBasic.h">
+      <Filter>Fichiers d%27en-tête\DarkForces\dfComponent\InfElevator\InElevatorVertical</Filter>
+    </ClInclude>
+    <ClInclude Include="darkforces\dfComponent\InfElevator\InfElevatorVertical\InfElevatorMoveCeiling.h">
+      <Filter>Fichiers d%27en-tête\DarkForces\dfComponent\InfElevator\InElevatorVertical</Filter>
+    </ClInclude>
+    <ClInclude Include="darkforces\dfComponent\InfElevator\InfElevatorVertical\InfElevatorDoor.h">
+      <Filter>Fichiers d%27en-tête\DarkForces\dfComponent\InfElevator\InElevatorVertical</Filter>
+    </ClInclude>
+    <ClInclude Include="darkforces\dfComponent\InfElevator\InfElevatorRotate\InfElevatorMorphSpin1.h">
+      <Filter>Fichiers d%27en-tête\DarkForces\dfComponent\InfElevator\InfElevatorRotate</Filter>
+    </ClInclude>
+    <ClInclude Include="darkforces\dfComponent\InfElevator\InfElevatorRotate\InfElevatorMorphSpin2.h">
+      <Filter>Fichiers d%27en-tête\DarkForces\dfComponent\InfElevator\InfElevatorRotate</Filter>
+    </ClInclude>
+    <ClInclude Include="darkforces\dfComponent\InfElevator\infElevatorHorizontal\InfElevatorMorphMove1.h">
+      <Filter>Fichiers d%27en-tête\DarkForces\dfComponent\InfElevator\InfElevatorHorizontal</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

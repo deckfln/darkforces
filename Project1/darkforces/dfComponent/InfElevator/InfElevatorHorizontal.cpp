@@ -1,6 +1,6 @@
 #include "InfElevatorHorizontal.h"
 
-#include "../../dfFileSystem.h"
+#include "../../dfMesh.h"
 
 void DarkForces::Component::InfElevatorHorizontal::moveTo(float z_lvl)
 {
@@ -40,6 +40,16 @@ dfMesh* DarkForces::Component::InfElevatorHorizontal::buildMesh(void)
 
 	return DarkForces::Component::InfElevator::buildMesh();
 }
+
+/**
+ * relocate the dfMesh of the elevator inv
+ */
+void DarkForces::Component::InfElevatorHorizontal::relocateMesh(dfMesh* mesh)
+{
+	// for this elevator, move along an axes from a center, so center on XYZ (in level space)
+	mesh->centerOnGeometryXYZ(m_center);
+}
+
 
 /**
  * deal with messages specifically for translation elevators

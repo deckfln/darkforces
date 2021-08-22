@@ -17,35 +17,6 @@ DarkForces::Component::InfElevatorTranslate::InfElevatorTranslate(dfElevator::Ty
 }
 
 /**
- * build the dfMesh of the elevator
- */
-dfMesh* DarkForces::Component::InfElevatorTranslate::buildMesh(void)
-{
-	// fix the parent sector floor and ceiling based on the elevator
-	switch (m_type) {
-	case dfElevator::Type::INV:
-	case dfElevator::Type::DOOR:
-		m_pSector->staticCeilingAltitude(m_zmax);
-		break;
-
-	case dfElevator::Type::MOVE_FLOOR:
-		m_pSector->staticFloorAltitude(m_zmin);
-		break;
-
-	case dfElevator::Type::BASIC:
-		m_pSector->staticCeilingAltitude(m_zmax);
-		break;
-
-	case dfElevator::Type::MOVE_CEILING:
-		m_pSector->staticCeilingAltitude(m_zmax);
-		m_pSector->ceiling(m_pSector->referenceFloor());
-		break;
-	}
-
-	return DarkForces::Component::InfElevator::buildMesh();
-}
-
-/**
  * deal with messages specifically for translation elevators
  */
 void DarkForces::Component::InfElevatorTranslate::dispatchMessage(gaMessage* message)

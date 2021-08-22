@@ -9,7 +9,7 @@
 #include "../dfLogicTrigger.h"
 #include "../dfMesh.h"
 #include "../dfVOC.h"
-#include "../dfComponent/InfElevator/InfElevatorTranslate.h"
+#include "../dfComponent/InfElevator/InfElevatorVertical/InfElevatorDoor.h"
 
 static const std::string hold = "hold";
 static const std::string door = "door";
@@ -37,14 +37,13 @@ DarkForces::Entity::ElevatorDoor::ElevatorDoor(dfSector* sector):
 	m_defaultCollision = gaMessage::Flag::PUSH_ENTITIES;
 
 	// prepare the elevator component
-	DarkForces::Component::InfElevatorTranslate* elevator = new DarkForces::Component::InfElevatorTranslate(dfElevator::Type::DOOR, sector, true);
+	DarkForces::Component::InfElevatorDoor* elevator = new DarkForces::Component::InfElevatorDoor(sector);
 	dfLogicStop* closed = new dfLogicStop(sector, sector->referenceFloor(), hold);
 	dfLogicStop* opened = new dfLogicStop(sector, sector->referenceCeiling(), 5000);
 
 	elevator->addStop(closed);
 	elevator->addStop(opened);
 
-	// prepare the mesh component
 	dfMesh* mesh = elevator->buildMesh();
 	GameEngine::ComponentMesh* m_component = new GameEngine::ComponentMesh(mesh);
 
