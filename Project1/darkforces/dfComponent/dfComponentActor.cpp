@@ -6,6 +6,7 @@
 
 #include "../../gaEngine/World.h"
 
+#include "../weapons.h"
 #include "../dfObject/dfSpriteAnimated.h"
 #include "../dfObject.h"
 #include "../dfBullet.h"
@@ -113,7 +114,7 @@ void dfComponentActor::fire(const glm::vec3& direction)
 	glm::vec3 p = m_entity->position();
 	p.y += actor->height() / 2.0f;
 
-	dfBullet* bullet = new dfBullet(p + direction * actor->radius(), direction);
+	dfBullet* bullet = new dfBullet(DarkForces::Weapons::Rifle, p + direction * actor->radius(), direction);
 
 	g_gaWorld.addClient(bullet);
 

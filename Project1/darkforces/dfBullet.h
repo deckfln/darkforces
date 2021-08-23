@@ -7,6 +7,9 @@
 
 #include "../gaEngine/gaEntity.h"
 #include "../gaEngine/gaComponent/gaComponentMesh.h"
+#include "../gaEngine/gaComponent/gaSound.h"
+
+#include "weapons.h"
 
 #include "../flightRecorder/frBullet.h"
 
@@ -18,12 +21,16 @@ class dfBullet : public gaEntity
 {
 	glm::vec3 m_direction;
 	GameEngine::ComponentMesh m_componentMesh;
+	GameEngine::Component::Sound m_sound;
 	Framework::Segment m_segment;
 
 	void tryToMove(void);
 
+	enum {
+		FIRESHOT
+	};
 public:
-	dfBullet(const glm::vec3& position, const glm::vec3& direction);
+	dfBullet(DarkForces::Weapons weapon, const glm::vec3& position, const glm::vec3& direction);
 	dfBullet(flightRecorder::dfBullet *record);
 
 	static void* create(void* record) {

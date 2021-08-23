@@ -4,6 +4,7 @@
 
 #include "../dfModel.h"
 #include "../dfLevel.h"
+#include "../dfVOC.h"
 
 static const char* g_className = "dfBulletExplode";
 
@@ -13,15 +14,21 @@ dfBulletExplode::dfBulletExplode(const glm::vec3& position, float ambient) :
 	m_class_name = g_className;
 
 	// origin of a bullet explosion is at the center of the sprite
+	m_position_lvl = position;
 	glm::vec3 p;
 	dfLevel::level2gl(position, p);
 	p.y -= m_source->sizeGL().y / 2;
-	dfLevel::gl2level(p, m_position_lvl);
 	moveTo(m_position_lvl);
 
 	m_loopAnimation = false;
 	m_logics |= dfLogic::ANIM;
 	state(dfState::ENEMY_MOVE);
+
+	// prepare the sound component
+	m_sound.addSound(0, loadVOC("ex-tiny1.voc")->sound());
+	m_sound.position(p);
+
+	addComponent(&m_sound);
 }
 
 dfBulletExplode::dfBulletExplode(flightRecorder::DarkForces::SpriteAnimated* record):
@@ -35,6 +42,10 @@ dfBulletExplode::dfBulletExplode(flightRecorder::DarkForces::SpriteAnimated* rec
 void dfBulletExplode::dispatchMessage(gaMessage* message)
 {
 	switch (message->m_action) {
+	case gaMessage::Action::WORLD_INSERT:
+		sendInternalMessage(gaMessage::PLAY_SOUND, 0);
+		break;
+
 	case DF_MESSAGE_END_LOOP:
 		// remove the explosion from the world
 		g_gaWorld.sendMessageDelayed(m_name, "_world", gaMessage::DELETE_ENTITY, 0, nullptr);

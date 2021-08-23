@@ -49,15 +49,6 @@ DarkForces::Entity::ElevatorDoor::ElevatorDoor(dfSector* sector):
 
 	// prepare the sound component
 	GameEngine::Component::Sound* sound = new GameEngine::Component::Sound();
-
-	// load the sound the very first time
-	if (cache[0] == nullptr) {
-		for (auto i = 0; i < 3; i++) {
-			dfVOC* voc = new dfVOC(g_dfFiles, sounds[i]);
-			cache[i] = voc;
-		}
-	}
-
 	sound->addSound(dfElevator::Sound::START, loadVOC("door.voc")->sound());
 	/*
 	for (auto i = 0; i < 3; i++) {

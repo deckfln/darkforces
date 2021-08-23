@@ -6,6 +6,7 @@
 #include <string>
 #include <glm/vec4.hpp>
 #include <glm/gtx/quaternion.hpp>
+#include <map>
 
 #include "../config.h"
 
@@ -18,11 +19,13 @@
 #include "../gaEngine/gaMessage.h"
 #include "../gaEngine/gaCollisionPoint.h"
 
+#include "../darkforces/weapons.h"
 #include "../darkforces/dfSuperSector.h"
 #include "../darkforces/dfModel/dfWAX.h"
 #include "../darkforces/dfSprites.h"
 #include "../darkforces/dfObject/dfSpriteAnimated.h"
 #include "../darkforces/dfObject/dfBulletExplode.h"
+#include "../darkforces/dfVOC.h"
 
 const float bullet_length = 0.5f;
 const float bullet_radius = 0.01f;
@@ -33,9 +36,21 @@ static int g_bulletID = 0;
 static glm::vec4 g_red(1.0, 0.0, 0.0, 1.0);
 static fwMaterialBasic g_basic(&g_red);
 static fwGeometryCylinder *g_blaster=nullptr;
+
 static const char* g_className = "dfBullet";
 
-dfBullet::dfBullet(const glm::vec3& position, const glm::vec3& direction):
+static const std::map<DarkForces::Weapons, const std::string> g_WeaponSounds = {
+	{DarkForces::Weapons::Concussion, "CONCUSS5.VOC"},
+	{DarkForces::Weapons::FusionCutter, "FUSION1.VOC"},
+	{DarkForces::Weapons::Missile, "MISSILE1.VOC"},
+	{DarkForces::Weapons::MortarGun, "MORTAR2.VOC"},
+	{DarkForces::Weapons::Pistol, "PISTOL-1.VOC"},
+	{DarkForces::Weapons::PlasmaCannon, "PLASMA4.VOC"},
+	{DarkForces::Weapons::Repeater, "REPEATER.VOC"},
+	{DarkForces::Weapons::Rifle, "RIFLE-1.VOC"},
+};
+
+dfBullet::dfBullet(DarkForces::Weapons weapon, const glm::vec3& position, const glm::vec3& direction):
 	gaEntity(DF_ENTITY_BULLET, "bullet("+std::to_string(g_bulletID++)+")", position),
 	m_direction(glm::normalize(direction))
 {
@@ -55,9 +70,6 @@ dfBullet::dfBullet(const glm::vec3& position, const glm::vec3& direction):
 
 	// the AABOX is just the direction vector multiplied by a 30fps frame
 	m_modelAABB.set(m_segment.m_start, m_segment.m_end);
-
-	m_componentMesh.set(g_blaster, &g_basic);
-	addComponent(&m_componentMesh);
 
 	// convert the direction vector to a quaternion
 	glm::vec3 _up = glm::vec3(0.0f, 1.0f, 0.0f);
@@ -79,6 +91,18 @@ dfBullet::dfBullet(const glm::vec3& position, const glm::vec3& direction):
 	m_transforms.m_position = position;
 
 	m_gravity = false;	// laser are not affected by gravity
+
+	// add the mesh component to the entity
+	m_componentMesh.set(g_blaster, &g_basic);
+	addComponent(&m_componentMesh);
+
+	// prepare the sound component if there is a sound
+	if (g_WeaponSounds.count(weapon) > 0) {
+		const std::string& file = g_WeaponSounds.at(weapon);
+		m_sound.addSound(FIRESHOT, loadVOC(file)->sound());
+		m_sound.position(position);
+		addComponent(&m_sound);
+	}
 }
 
 dfBullet::dfBullet(flightRecorder::dfBullet* record):
@@ -108,6 +132,7 @@ void dfBullet::dispatchMessage(gaMessage* message)
 {
 	switch (message->m_action) {
 	case gaMessage::Action::WORLD_INSERT:
+		sendInternalMessage(gaMessage::PLAY_SOUND, FIRESHOT);
 		sendDelayedMessage(gaMessage::WANT_TO_MOVE,
 			gaMessage::Flag::WANT_TO_MOVE_LASER,
 			&m_transforms);
@@ -118,7 +143,9 @@ void dfBullet::dispatchMessage(gaMessage* message)
 		// constructor of a sprite expects a level space
 		glm::vec3 p;
 		dfLevel::gl2level(position(), p);
+
 		dfBulletExplode* impact = new dfBulletExplode(p, 1.0f);
+
 		g_gaWorld.addClient(impact);
 
 		// if hit an entity
