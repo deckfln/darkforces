@@ -32,6 +32,7 @@ namespace GameEngine {
 
 		inline glm::vec3* vertices(void) { return &(*m_pVertices)[m_firstVertice]; }
 		inline uint32_t nbVertices(void) { return m_nbVertices; };
+		inline uint32_t firstVertice(void) { return m_firstVertice; };
 		inline void geometry(std::vector<glm::vec3>* pVertices, int start, int nbVertices) {
 			m_pVertices = pVertices;
 			m_firstVertice = start; 

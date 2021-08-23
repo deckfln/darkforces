@@ -677,7 +677,6 @@ bool Collider::collision_cylinder_aabb_tree(const Collider& cylinder,
 		nbVertices = aabb->nbVertices();
 
 		for (unsigned int i = 0; i < nbVertices; i += 3) {
-
 			triangle.set(vertices_gs + i, 3);
 
 			if (!triangle.intersect(cyl_aabb_gs)) {
@@ -1136,7 +1135,7 @@ bool Collider::collision_cylinder_segment(const Collider& cylinder,
 /******************************************************************************
  * run a collision with a segment
  */
-bool Collider::collision(const glm::vec3& start, const glm::vec3& end, fwCollision::Test test)
+float Collider::collision(const glm::vec3& start, const glm::vec3& end, fwCollision::Test test)
 {
 	const glm::mat4& inverseWorldMatrix = *m_inverseWorldMatrix;
 	glm::vec3 p1 = glm::vec3(inverseWorldMatrix * glm::vec4(start, 1.0));
@@ -1167,10 +1166,10 @@ bool Collider::collision(const glm::vec3& start, const glm::vec3& end, fwCollisi
 				test,
 				vertices_gs[i], vertices_gs[i + 1], vertices_gs[i + 2],
 				collision)) {
-				return true;
+				return vertices_gs[i].y;
 			}
 		}
 	}
 
-	return false;
+	return INFINITY;
 }

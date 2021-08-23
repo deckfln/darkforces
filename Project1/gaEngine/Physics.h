@@ -82,22 +82,21 @@ namespace GameEngine
 
 	class Physics {
 		World* m_world = nullptr;
-		std::map<std::string, Ballistic> m_ballistics;	// falling objects
-		std::vector<std::string> m_remove;				// list of objects to remove from the falling
+		std::map<std::string, Ballistic> m_ballistics;					// falling objects
+		std::vector<std::string> m_remove;								// list of objects to remove from the falling
 
 		bool warpThrough(gaEntity* entity,
 			const glm::vec3& old_position,
 			Transform& tranform,
-		std::vector<gaCollisionPoint>& collisions);		// Test if the entity warped through a triangle
+		std::vector<gaCollisionPoint>& collisions);						// Test if the entity warped through a triangle
 		void testEntities(gaEntity* entity, 
 			const Transform& tranform, 
-			std::vector<gaCollisionPoint>& collisions);	// test if the entity collide other entities
+			std::vector<gaCollisionPoint>& collisions);					// test if the entity collide other entities
 		void testSectors(gaEntity* entity,
 			const Transform& tranform,
-			std::vector<gaCollisionPoint>& collisions);	// test if the entity collide sectors
-		bool ifCollideWithSectorOrEntity(
+			std::vector<gaCollisionPoint>& collisions);					// test if the entity collide sectors
+		float ifCollideWithSectorOrEntity(
 			const glm::vec3& p1,
-
 			const glm::vec3& p2,
 			fwCollision::Test test, gaEntity * entity);					// test if a segment collide with a triangle of any sector
 		void moveBullet(gaEntity* entity, gaMessage* message);

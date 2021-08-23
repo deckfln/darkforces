@@ -128,6 +128,24 @@ bool gaEntity::collideAABB(gaEntity const* with)
 }
 
 /**
+ * quick test to find AABB collision and return the collision point
+ */
+float gaEntity::collideAABBz(const fwAABBox& box)
+{
+	if (m_worldBounding.intersect(box)) {
+		
+		if (box.m_p.y > m_worldBounding.m_p.y) {
+			// if box if over entity, return the bottom of box
+			return box.m_p.y;
+		}
+
+		// if box if below the entity, return the top of box
+		box.m_p1.y;
+	}
+	return INFINITY;
+}
+
+/**
  * extended collision using colliders
  */
 bool gaEntity::collide(gaEntity* entity, 

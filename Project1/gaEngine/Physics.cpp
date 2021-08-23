@@ -141,16 +141,17 @@ void Physics::testSectors(gaEntity* entity, const Transform& tranform, std::vect
 /**
  * test if the entity collide sectors
  */
-bool Physics::ifCollideWithSectorOrEntity(const glm::vec3& p1, const glm::vec3& p2, fwCollision::Test test, gaEntity * entity)
+float Physics::ifCollideWithSectorOrEntity(const glm::vec3& p1, const glm::vec3& p2, fwCollision::Test test, gaEntity * entity)
 {
 	fwAABBox aabb(p1, p2);
+	float distance;
 
 	// test against hard sector
 	for (auto sector : m_world->m_sectors) {
 		if (sector->collideAABB(aabb)) {
-			if (sector->collide(p1, p2, test))
-			{
-				return true;
+			distance = sector->collide(p1, p2, test);
+			if (distance != INFINITY) {
+				return distance;
 			}
 		}
 	}
@@ -163,13 +164,14 @@ bool Physics::ifCollideWithSectorOrEntity(const glm::vec3& p1, const glm::vec3& 
 				continue;
 			}
 
-			if (ent->collideAABB(aabb)) {
-				return true;
+			distance = ent->collideAABBz(aabb);
+			if (distance != INFINITY) {
+				return distance;
 			}
 		}
 	}
 
-	return false;
+	return INFINITY;
 }
 
 /**
@@ -463,8 +465,8 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 						// if the collision point is NOT more or less straight above the entity
 						if (abs(new_position.x - collision.m_position.x) > EPSILON || abs(new_position.z - collision.m_position.z) > EPSILON) {
 							// test explicitly there is a triangle above the entity
-							glm::vec3 bottom2collision(new_position.x, collision.m_position.y + EPSILON, new_position.z);
-							if (!ifCollideWithSectorOrEntity(entity->position(), bottom2collision, fwCollision::Test::WITHOUT_BORDERS, entity)) {
+ 							glm::vec3 bottom2collision(new_position.x, collision.m_position.y + EPSILON, new_position.z);
+							if (ifCollideWithSectorOrEntity(entity->position(), bottom2collision, fwCollision::Test::WITHOUT_BORDERS, entity) == INFINITY) {
 								// OK, so we are colliding with a floor that is not exactly above the entity
 								// discard the ground testing
 								// convert to a wall testing
@@ -785,9 +787,10 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 				if (entity->canStep()) {
 					float step = static_cast<gaActor*>(entity)->step();
 	 				glm::vec3 down(new_position.x, new_position.y - step, new_position.z);
-					if (ifCollideWithSectorOrEntity(entity->position(), down, fwCollision::Test::WITHOUT_BORDERS, entity)) {
+					float z = ifCollideWithSectorOrEntity(entity->position(), down, fwCollision::Test::WITHOUT_BORDERS, entity);
+					if (z != INFINITY) {
 						// we found a floor !
-						tranform.m_position.y -= step;
+						tranform.m_position.y = z;
 						actions.push(
 							Action(entity, gaMessage::Flag::PUSH_ENTITIES)
 						);	

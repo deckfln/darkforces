@@ -112,9 +112,9 @@ namespace GameEngine
 			const glm::vec3& forward, 
 			const glm::vec3& down,
 			std::vector<gaCollisionPoint>& collisions);		// run a collision test between 2 colliders
-		bool collision(const glm::vec3& start,
+		float collision(const glm::vec3& start,
 			const glm::vec3& end,
-			fwCollision::Test test);										// run a collision with a segment
+			fwCollision::Test test);						// run a collision with a segment
 
 		bool warpThrough(const Collider& source,
 			const glm::vec3& position,

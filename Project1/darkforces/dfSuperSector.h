@@ -121,9 +121,9 @@ public:
         return m_worldAABB.inside(position); 
     };                                                  // test if vec3 inside the AABB
     bool collideAABB(const fwAABBox& box);				// quick test to find AABB collision
-    bool collide(const glm::vec3& start, 
+    float collide(const glm::vec3& start, 
         const glm::vec3& end, 
-        fwCollision::Test test);                    // if the segment collide with the sector
+        fwCollision::Test test);                        // if the segment collide with the sector, return the Y position of the sector
 
     ~dfSuperSector();
 };
