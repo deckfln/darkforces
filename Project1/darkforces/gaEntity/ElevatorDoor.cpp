@@ -17,9 +17,9 @@ static const std::string switch1 = "switch1";
 
 // predefined sounds for the doors
 static const char* sounds[] = {
-	"door2-1.voc",
-	"door2-2.voc",
-	"door2-3.voc"
+	"door.voc",
+	"",
+	""
 };
 
 static dfVOC* cache[3] = { nullptr, nullptr, nullptr };
@@ -58,9 +58,12 @@ DarkForces::Entity::ElevatorDoor::ElevatorDoor(dfSector* sector):
 		}
 	}
 
+	sound->addSound(dfElevator::Sound::START, loadVOC("door.voc")->sound());
+	/*
 	for (auto i = 0; i < 3; i++) {
 		sound->addSound(i, cache[i]->sound());
 	}
+	*/
 
 	addComponent(m_component, gaEntity::Flag::DELETE_AT_EXIT);
 	addComponent(elevator, gaEntity::Flag::DELETE_AT_EXIT);
