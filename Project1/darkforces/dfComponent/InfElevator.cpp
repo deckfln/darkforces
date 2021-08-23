@@ -322,6 +322,11 @@ void DarkForces::Component::InfElevator::dispatchMessage(gaMessage* message)
 
 			// only trigger a loop if the object is currently still
 			if (m_status == Status::HOLD) {
+
+				// start the sounds
+				m_entity->sendInternalMessage(gaMessage::PLAY_SOUND, dfElevator::Sound::START);
+				m_entity->sendInternalMessage(gaMessage::PLAY_SOUND, dfElevator::Sound::MOVE);
+
 				m_status = Status::MOVE;
 				m_tick = 0;
 				animate(0);

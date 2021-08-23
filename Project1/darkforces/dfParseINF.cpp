@@ -307,6 +307,7 @@ void dfParseINF::parseSector(std::istringstream& infile, const std::string& sect
 				if (sound) {
 					// if sounds were defined in the INF
 					pSector->addComponent(sound, gaEntity::Flag::DELETE_AT_EXIT);
+					sound->position(mesh->position());
 				}
 				else {
 					// else activate the default sounds

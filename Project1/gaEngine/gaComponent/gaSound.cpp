@@ -21,12 +21,10 @@ void GameEngine::Component::Sound::dispatchMessage(gaMessage* message)
 	switch (message->m_action) {
 	case gaMessage::MOVE: {
 		if (message->m_extra != nullptr) {
-			m_position = *(glm::vec3*)message->m_extra;
-			m_source.position(m_position);
+			position(*(glm::vec3*)message->m_extra);
 		}
 		else {
-			m_position = m_entity->position();
-			m_source.position(m_position);
+			position(m_entity->position());
 		}
 		break;
 	}
@@ -67,6 +65,15 @@ void GameEngine::Component::Sound::debugGUIinline(void)
 void GameEngine::Component::Sound::addSound(uint32_t name, alSound* sound)
 {
 	m_sounds[name] = sound;
+}
+
+/**
+ * define the position of the source
+ */
+void GameEngine::Component::Sound::position(const glm::vec3 &position)
+{
+	m_position = position;
+	m_source.position(m_position);
 }
 
 GameEngine::Component::Sound::~Sound()
