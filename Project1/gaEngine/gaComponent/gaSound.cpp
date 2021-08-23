@@ -21,11 +21,12 @@ void GameEngine::Component::Sound::dispatchMessage(gaMessage* message)
 	switch (message->m_action) {
 	case gaMessage::MOVE: {
 		if (message->m_extra != nullptr) {
-			glm::vec3* position = (glm::vec3*)message->m_extra;
-			m_source.position(position);
+			m_position = *(glm::vec3*)message->m_extra;
+			m_source.position(m_position);
 		}
 		else {
-			m_source.position(m_entity->position());
+			m_position = m_entity->position();
+			m_source.position(m_position);
 		}
 		break;
 	}
