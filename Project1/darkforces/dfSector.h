@@ -23,7 +23,6 @@ class fwCylinder;
 class gaCollisionPoint;
 class dfMesh;
 class dfSuperSector;
-class dfElevator;
 class dfLogicTrigger;
 class dfLevel;
 
@@ -107,8 +106,6 @@ class dfSector : public gaEntity
 
 	std::vector<dfSector*> m_includes;					// list of sectors included in the current one
 	dfSector* m_includedIn = nullptr;					// if the sector is included in another one
-
-	dfElevator* m_elevator = nullptr;					// if the sector is managed by an elevator
 
 	float m_currentAmbient;								// current value for an elevator light
 
@@ -209,8 +206,6 @@ public:
 	void addElevator(DarkForces::Component::InfElevator* elevator); // register a INF elevator on the sector
 	void setAABBtop(float z_level);
 	void setAABBbottom(float z_level);
-
-	void elevator(dfElevator* elevator) { m_elevator = elevator; };
 
 	// debugger
 	inline int recordSize(void) override {

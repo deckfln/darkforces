@@ -3,7 +3,7 @@
 #include "../../../dfMesh.h"
 
 DarkForces::Component::InfElevatorMorphSpin2::InfElevatorMorphSpin2(dfSector* sector):
-	InfElevatorRotate(dfElevator::Type::MORPH_SPIN2, sector, true)
+	InfElevatorRotate(DarkForces::Component::InfElevator::Type::MORPH_SPIN2, sector, true)
 {
 	// change the status of the entity sector to make it a full interactive entity
 	sector->physical(true);

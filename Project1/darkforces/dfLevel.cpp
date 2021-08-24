@@ -16,7 +16,6 @@
 #include "../gaEngine/gaBoundingBoxes.h"
 #include "../gaEngine/gaCollisionPoint.h"
 
-#include "dfElevator.h"
 #include "dfBitmap.h"
 #include "dfSign.h"
 #include "dfMesh.h"
@@ -26,6 +25,7 @@
 #include "dfPalette.h"
 #include "dfLogicStop.h"
 #include "dfParseINF.h"
+#include "dfComponent/InfElevator.h"
 #include "gaEntity/ElevatorDoor.h"
 
 dfLevel::dfLevel(dfFileSystem* fs, std::string file)

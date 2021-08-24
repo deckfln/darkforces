@@ -23,6 +23,59 @@ namespace DarkForces {
 		 * sub-classes will deal with what kind of move it is (morph, spin, light, floor ...)
 		 */
 		class InfElevator : public gaComponent {
+		public:
+			/* Sounds to play when elevator move */
+			enum Sound {
+				START = 0,	// leaving a stop
+				MOVE = 1,	// moving between stops
+				END = 2		// arriving at stop
+			};
+			enum class Type {
+				INV,		// moving up
+				BASIC,		// moving down
+				MOVE_FLOOR,
+				CHANGE_LIGHT,
+				MOVE_CEILING,
+				MORPH_SPIN1,
+				MORPH_MOVE1,
+				MORPH_SPIN2,
+				DOOR
+			};
+
+
+			InfElevator(const std::string& sector, bool smart = false);
+			InfElevator(Type kind, dfSector* sector, bool smart = false);
+
+			// getter/setter
+			void eventMask(uint32_t eventMask);
+			inline const std::string& sector(void) { return m_sector; };
+			inline dfSector* psector(void) { return m_pSector; };
+			inline void center(float x, float y) { m_center.x = x; m_center.y = y; };
+			inline Type type(void) { return m_type; };
+			inline void speed(float speed) { m_speed = speed; };
+			inline float zmin(void) { return m_zmin; };
+			inline float zmax(void) { return m_zmax; };
+			void prepareMesh(void);							// set the mesh data before the final build
+			void meshData(float bottom, float top, uint32_t texture, bool clockwise, dfWallFlag whatToDraw);	// set the mesh data
+
+			void addStop(dfLogicStop* stop);				// add a stop and update the range of the elevator
+			void addSound(uint32_t action, dfVOC* sound);	// register a sound for a SART, MOVE, STOP
+
+			void gotoStop(uint32_t stop);					// Force an elevator to go to a specific Stop
+
+			void dispatchMessage(gaMessage* message) override;
+
+			virtual dfMesh* buildMesh(void);				// build the dfMesh of the elevator
+			virtual void relocateMesh(dfMesh* mesh) {};		// move the mesh vertices into a 0,0,0 position
+
+			// flight recorder status
+			inline uint32_t recordSize(void);				// size of the component record
+			uint32_t recordState(void* record);				// save the component state in a record
+			uint32_t loadState(void* record);				// reload a component state from a record
+
+			// debugger
+			void debugGUIinline(void) override;				// display the component in the debugger
+
 		protected:
 			enum class Status : uint32_t {
 				HOLD,		// elevator is not animated
@@ -32,7 +85,7 @@ namespace DarkForces {
 			};
 
 			// static state
-			dfElevator::Type m_type = dfElevator::Type::INV;	// class of elevator
+			Type m_type = Type::INV;			// class of elevator
 			uint32_t m_eventMask = 0;
 			float m_speed = 20;					// time in millisecond between 2 stops
 			bool m_smart = false;				// TODO react to smart objects
@@ -70,48 +123,6 @@ namespace DarkForces {
 			void moveTo(dfLogicStop* stop);		// move directly to the given stop
 			void moveToNextStop(void);			// start moving to the next stop
 			bool animate(time_t delta);			// move between stops
-
-		public:
-			/* Sounds to play when elevator move */
-			enum Sound {
-				START = 0,	// leaving a stop
-				MOVE = 1,	// moving between stops
-				END = 2		// arriving at stop
-			};
-
-			InfElevator(const std::string& sector, bool smart=false);
-			InfElevator(dfElevator::Type kind, dfSector* sector, bool smart=false);
-
-			// getter/setter
-			void eventMask(uint32_t eventMask);
-			inline const std::string& sector(void) { return m_sector; };
-			inline dfSector* psector(void) { return m_pSector; };
-			inline void center(float x, float y) { m_center.x = x; m_center.y = y; };
-			inline dfElevator::Type type(void) { return m_type; };
-			inline void speed(float speed) { m_speed = speed; };
-			inline float zmin(void) { return m_zmin; };
-			inline float zmax(void) { return m_zmax; };
-			void prepareMesh(void);							// set the mesh data before the final build
-			void meshData(float bottom, float top, uint32_t texture, bool clockwise, dfWallFlag whatToDraw);	// set the mesh data
-
-			void addStop(dfLogicStop* stop);				// add a stop and update the range of the elevator
-			void addSound(uint32_t action, dfVOC* sound);	// register a sound for a SART, MOVE, STOP
-
-			void gotoStop(uint32_t stop);					// Force an elevator to go to a specific Stop
-
-			void dispatchMessage(gaMessage* message) override;
-
-			virtual dfMesh* buildMesh(void);				// build the dfMesh of the elevator
-			virtual void relocateMesh(dfMesh* mesh) {};		// move the mesh vertices into a 0,0,0 position
-
-			// flight recorder status
-			inline uint32_t recordSize(void);				// size of the component record
-			uint32_t recordState(void* record);				// save the component state in a record
-			uint32_t loadState(void* record);				// reload a component state from a record
-
-			// debugger
-			void debugGUIinline(void) override;				// display the component in the debugger
-
 		};
 	}
 }

@@ -9,7 +9,7 @@ void DarkForces::Component::InfElevatorHorizontal::moveTo(float z_lvl)
 	m_entity->sendInternalMessage(gaMessage::MOVE, 0, &p);
 }
 
-DarkForces::Component::InfElevatorHorizontal::InfElevatorHorizontal(dfElevator::Type kind, dfSector* sector, bool smart):
+DarkForces::Component::InfElevatorHorizontal::InfElevatorHorizontal(DarkForces::Component::InfElevator::Type kind, dfSector* sector, bool smart):
 	InfElevator(kind, sector, smart)
 {
 }

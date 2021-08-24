@@ -3,7 +3,7 @@
 #include "../../../dfMesh.h"
 
 DarkForces::Component::InfElevatorInv::InfElevatorInv(dfSector* sector):
-	InfElevatorTranslate(dfElevator::Type::INV, sector, true)
+	InfElevatorTranslate(DarkForces::Component::InfElevator::Type::INV, sector, true)
 {
 	sector->physical(true);
 	sector->gravity(false);

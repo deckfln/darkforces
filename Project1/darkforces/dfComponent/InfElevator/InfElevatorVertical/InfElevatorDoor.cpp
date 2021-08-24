@@ -3,7 +3,7 @@
 #include "../../../dfMesh.h"
 
 DarkForces::Component::InfElevatorDoor::InfElevatorDoor(dfSector* sector):
-	InfElevatorTranslate(dfElevator::Type::DOOR, sector, true)
+	InfElevatorTranslate(DarkForces::Component::InfElevator::Type::DOOR, sector, true)
 {
 }
 

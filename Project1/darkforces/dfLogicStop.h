@@ -7,7 +7,7 @@
 #include "../framework/fwAABBox.h"
 #include "../gaEngine/gaMessage.h"
 
-#include "dfElevator.h"
+#include "dfComponent/InfElevator.h"
 
 class dfSector;
 
@@ -84,7 +84,7 @@ public:
 	bool isTimeBased(void);
 	void message(gaMessage* message);
 	void sendMessages();
-	float z_position(dfElevator::Type elevatorClass);
+	float z_position(DarkForces::Component::InfElevator::Type elevatorClass);
 	void getMessagesToSectors(std::list<std::string>& sectors);
 
 	~dfLogicStop();

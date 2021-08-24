@@ -17,16 +17,16 @@
 /**
  * default elevators speed
  */
-static std::map<dfElevator::Type, float> _speeds = {
-	{dfElevator::Type::INV, 20.f},
-	{dfElevator::Type::BASIC, 20.0f},
-	{dfElevator::Type::MOVE_FLOOR, 20.0f},
-	{dfElevator::Type::CHANGE_LIGHT, 10.0f},
-	{dfElevator::Type::MOVE_CEILING, 20.0f},
-	{dfElevator::Type::MORPH_SPIN1, 20.0f},
-	{dfElevator::Type::MORPH_SPIN2, 20.0f},
-	{dfElevator::Type::MORPH_MOVE1, 20.0f},
-	{dfElevator::Type::DOOR, 20.0f}
+static std::map<DarkForces::Component::InfElevator::Type, float> _speeds = {
+	{DarkForces::Component::InfElevator::Type::INV, 20.f},
+	{DarkForces::Component::InfElevator::Type::BASIC, 20.0f},
+	{DarkForces::Component::InfElevator::Type::MOVE_FLOOR, 20.0f},
+	{DarkForces::Component::InfElevator::Type::CHANGE_LIGHT, 10.0f},
+	{DarkForces::Component::InfElevator::Type::MOVE_CEILING, 20.0f},
+	{DarkForces::Component::InfElevator::Type::MORPH_SPIN1, 20.0f},
+	{DarkForces::Component::InfElevator::Type::MORPH_SPIN2, 20.0f},
+	{DarkForces::Component::InfElevator::Type::MORPH_MOVE1, 20.0f},
+	{DarkForces::Component::InfElevator::Type::DOOR, 20.0f}
 };
 
 /**
@@ -207,7 +207,7 @@ DarkForces::Component::InfElevator::InfElevator(const std::string& sector, bool 
 /**
  * create from a record
  */
-DarkForces::Component::InfElevator::InfElevator(dfElevator::Type kind, dfSector* sector, bool smart):
+DarkForces::Component::InfElevator::InfElevator(DarkForces::Component::InfElevator::Type kind, dfSector* sector, bool smart):
 	gaComponent(DF_COMPONENT_INF_ELEVATOR),
 	m_sector(sector->name()),
 	m_type(kind),
@@ -226,7 +226,7 @@ void DarkForces::Component::InfElevator::eventMask(uint32_t eventMask)
 	/* TODO: Hard coded hack for MORPH_SPIN1,
 	 * entering the sector doesn't not trigger the elevator to move back to its original position
 	 */
-	if (m_type == dfElevator::Type::MORPH_SPIN1 && (eventMask & (DarkForces::ENTER_SECTOR | DarkForces::LEAVE_SECTOR))) {
+	if (m_type == DarkForces::Component::InfElevator::Type::MORPH_SPIN1 && (eventMask & (DarkForces::ENTER_SECTOR | DarkForces::LEAVE_SECTOR))) {
 		eventMask &= ~(DarkForces::ENTER_SECTOR | DarkForces::LEAVE_SECTOR);
 	}
 	m_eventMask = eventMask;
@@ -449,16 +449,16 @@ void DarkForces::Component::InfElevator::debugGUIinline(void)
 		{Status::TERMINATED, "TERMINATED"},
 		{Status::WAIT, "WAIT"}
 	};
-	static std::map<dfElevator::Type, const char *>  types = {
-		{dfElevator::Type::INV, "inv"},
-		{dfElevator::Type::BASIC, "basic"},
-		{dfElevator::Type::MOVE_FLOOR, "move_floor"},
-		{dfElevator::Type::CHANGE_LIGHT, "change_light"},
-		{dfElevator::Type::MOVE_CEILING, "move_ceiling"},
-		{dfElevator::Type::MORPH_SPIN1, "morph_spin1"},
-		{dfElevator::Type::MORPH_MOVE1, "morph_move1"},
-		{dfElevator::Type::MORPH_SPIN2, "morph_spin2"},
-		{dfElevator::Type::DOOR, "door" }
+	static std::map<DarkForces::Component::InfElevator::Type, const char *>  types = {
+		{DarkForces::Component::InfElevator::Type::INV, "inv"},
+		{DarkForces::Component::InfElevator::Type::BASIC, "basic"},
+		{DarkForces::Component::InfElevator::Type::MOVE_FLOOR, "move_floor"},
+		{DarkForces::Component::InfElevator::Type::CHANGE_LIGHT, "change_light"},
+		{DarkForces::Component::InfElevator::Type::MOVE_CEILING, "move_ceiling"},
+		{DarkForces::Component::InfElevator::Type::MORPH_SPIN1, "morph_spin1"},
+		{DarkForces::Component::InfElevator::Type::MORPH_MOVE1, "morph_move1"},
+		{DarkForces::Component::InfElevator::Type::MORPH_SPIN2, "morph_spin2"},
+		{DarkForces::Component::InfElevator::Type::DOOR, "door" }
 	};
 
 	if (ImGui::TreeNode("InfElevator")) {

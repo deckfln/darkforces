@@ -9,7 +9,7 @@ void DarkForces::Component::InfElevatorRotate::moveTo(float z_lvl)
 	m_entity->sendInternalMessage(gaMessage::ROTATE, gaMessage::Flag::ROTATE_VEC3, tr);
 }
 
-DarkForces::Component::InfElevatorRotate::InfElevatorRotate(dfElevator::Type kind, dfSector* sector, bool smart):
+DarkForces::Component::InfElevatorRotate::InfElevatorRotate(DarkForces::Component::InfElevator::Type kind, dfSector* sector, bool smart):
 	InfElevator(kind, sector, smart)
 {
 }

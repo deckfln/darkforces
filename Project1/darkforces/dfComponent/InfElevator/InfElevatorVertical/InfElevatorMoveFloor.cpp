@@ -3,7 +3,7 @@
 #include "../../../dfMesh.h"
 
 DarkForces::Component::InfElevatorMoveFloor::InfElevatorMoveFloor(dfSector* sector):
-	InfElevatorTranslate(dfElevator::Type::MOVE_FLOOR, sector, false)
+	InfElevatorTranslate(DarkForces::Component::InfElevator::Type::MOVE_FLOOR, sector, false)
 {
 	// change the status of the entity sector to make it a full interactive entity
 	sector->physical(true);

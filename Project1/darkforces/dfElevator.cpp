@@ -175,12 +175,12 @@ void dfElevator::bindSector(dfSector* pSector)
 	m_pSector->eventMask(m_eventMask);
 
 	// inform the sector it is driven by an elevator
-	m_pSector->elevator(this);
+	//m_pSector->elevator(this);
 
 	// get the maximum extend of the elevator 
 	float amin = 99999, amax = -99999, c;
 	for (auto stop : m_stops) {
-		c = stop->z_position(m_type);
+		c = stop->z_position((DarkForces::Component::InfElevator::Type)m_type);
 		if (c < amin) amin = c;
 		if (c > amax) amax = c;
 	}
@@ -227,7 +227,7 @@ void dfElevator::addStop(dfLogicStop* stop)
 {
 	m_stops.push_back(stop);
 
-	float c = stop->z_position(m_type);
+	float c = stop->z_position((DarkForces::Component::InfElevator::Type)m_type);
 	if (c < m_zmin) m_zmin = c;
 	if (c > m_zmax) m_zmax = c;
 }
@@ -386,7 +386,7 @@ void dfElevator::init(int stopID)
 void dfElevator::moveToNextStop(void)
 {
 	if (m_speed > 0) {
-		m_current = m_stops[m_currentStop]->z_position(m_type);
+		m_current = m_stops[m_currentStop]->z_position((DarkForces::Component::InfElevator::Type)m_type);
 		float t1 = m_stops[m_currentStop]->time();
 		float t2;
 
@@ -399,7 +399,7 @@ void dfElevator::moveToNextStop(void)
 			m_nextStop = m_currentStop + 1;
 		}
 
-		m_target = m_stops[m_nextStop]->z_position(m_type);
+		m_target = m_stops[m_nextStop]->z_position((DarkForces::Component::InfElevator::Type)m_type);
 		t2 = m_stops[m_nextStop]->time();
 
 		float delta = (t2 - t1) * 1000;	// time in millisecond
@@ -613,7 +613,7 @@ bool dfElevator::animate(time_t delta)
  */
 void dfElevator::moveTo(dfLogicStop *stop)
 {
-	float z = stop->z_position(m_type);
+	float z = stop->z_position((DarkForces::Component::InfElevator::Type)m_type);
 	moveTo(z);
 }
 
@@ -731,8 +731,8 @@ void dfElevator::dispatchMessage(gaMessage* message)
 
 		if (m_speed > 0) {
 			// animated move
-			m_current = m_stops[m_currentStop]->z_position(m_type);
-			m_target = m_stops[m_nextStop]->z_position(m_type);
+			m_current = m_stops[m_currentStop]->z_position((DarkForces::Component::InfElevator::Type)m_type);
+			m_target = m_stops[m_nextStop]->z_position((DarkForces::Component::InfElevator::Type)m_type);
 
 			float t1 = m_stops[m_currentStop]->time();
 			float t2 = m_stops[m_nextStop]->time();

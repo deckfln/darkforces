@@ -3,7 +3,7 @@
 #include "../../../dfMesh.h"
 
 DarkForces::Component::InfElevatorMorphMove1::InfElevatorMorphMove1(dfSector* sector):
-	InfElevatorHorizontal(dfElevator::Type::MORPH_MOVE1, sector, true)
+	InfElevatorHorizontal(DarkForces::Component::InfElevator::Type::MORPH_MOVE1, sector, true)
 {
 	// change the status of the entity sector to make it a full interactive entity
 	sector->physical(true);

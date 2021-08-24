@@ -11,7 +11,7 @@ namespace DarkForces {
 		{
 			void moveTo(float ambient) override;				// move the given position (depend on the elevator type)
 		public:
-			InfElevatorRotate(dfElevator::Type kind, dfSector* sector, bool smart=false);
+			InfElevatorRotate(DarkForces::Component::InfElevator::Type kind, dfSector* sector, bool smart=false);
 			dfMesh* buildMesh(void) override;					// build the dfMesh of the elevator
 			void relocateMesh(dfMesh* mesh) override;
 			void dispatchMessage(gaMessage* message) override;	// deal with messages specifically for translation elevators

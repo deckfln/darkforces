@@ -11,15 +11,11 @@
 #include "../config.h"
 #include "dfParseINF.h"
 #include "dfLogicStop.h"
-#include "dfElevator.h"
 #include "dfFileSystem.h"
 #include "dfVOC.h"
 #include "dfMesh.h"
 #include "dfComponent/InfStandardTrigger.h"
 #include "dfComponent/InfElevator/InfElevatorLight.h"
-#include "dfComponent/InfElevator/InfElevatorTranslate.h"
-#include "dfComponent/InfElevator/InfElevatorRotate.h"
-#include "dfComponent/InfElevator/InfElevatorHorizontal.h"
 #include "dfComponent/InfElevator/InfElevatorVertical/InfElevatorInv.h"
 #include "dfComponent/InfElevator/InfElevatorVertical/InfElevatorMoveFloor.h"
 #include "dfComponent/InfElevator/InfElevatorVertical/InfElevatorBasic.h"
@@ -45,21 +41,21 @@ static GameEngine::Component::Sound* newElevatorSound(DarkForces::Component::Inf
 		{ { "door2-1.voc", "door2-2.voc", "door2-3.voc"} },
 	};
 
-	static std::map<dfElevator::Type, int> g_sound_evelators = {
-	{dfElevator::Type::INV, 1},
-	{dfElevator::Type::BASIC, 0},
-	{dfElevator::Type::MOVE_FLOOR, 0},
-	{dfElevator::Type::MOVE_CEILING, 1},
-	{dfElevator::Type::MORPH_SPIN1, 1},
-	{dfElevator::Type::MORPH_MOVE1, 1},
-	{dfElevator::Type::MORPH_SPIN2, 1},
-	{dfElevator::Type::DOOR, 2}
+	static std::map<DarkForces::Component::InfElevator::Type, int> g_sound_evelators = {
+	{DarkForces::Component::InfElevator::Type::INV, 1},
+	{DarkForces::Component::InfElevator::Type::BASIC, 0},
+	{DarkForces::Component::InfElevator::Type::MOVE_FLOOR, 0},
+	{DarkForces::Component::InfElevator::Type::MOVE_CEILING, 1},
+	{DarkForces::Component::InfElevator::Type::MORPH_SPIN1, 1},
+	{DarkForces::Component::InfElevator::Type::MORPH_MOVE1, 1},
+	{DarkForces::Component::InfElevator::Type::MORPH_SPIN2, 1},
+	{DarkForces::Component::InfElevator::Type::DOOR, 2}
 	};
 
 	if (g_sound_evelators.count(elevator->type())) {
 		// if there is a default sound
 		GameEngine::Component::Sound* sound = new GameEngine::Component::Sound();
-		dfElevator::Type type = elevator->type();
+		DarkForces::Component::InfElevator::Type type = elevator->type();
 		int sounds = g_sound_evelators[type];
 
 		for (auto i = 0; i < 3; i++) {
@@ -254,7 +250,6 @@ void dfParseINF::parseSector(std::istringstream& infile, const std::string& sect
 		return;
 	}
 
-	dfElevator* elevator = nullptr;				// for an elevator
 	DarkForces::Component::InfStandardTrigger* program = nullptr;	// for a trigger standard
 	DarkForces::Component::InfElevatorLight* light = nullptr;	// for elevator change_light
 	DarkForces::Component::InfElevator* inv = nullptr;	// for elevator INV & MOVE_FLOOR
@@ -283,10 +278,6 @@ void dfParseINF::parseSector(std::istringstream& infile, const std::string& sect
 			// pass
 		}
 		else if (tokens[0] == "seqend") {
-			if (elevator) {
-				m_elevators.push_back(elevator);
-			}
-
 			if (program) {
 				pSector->addProgram(program);
 			}
@@ -348,7 +339,7 @@ void dfParseINF::parseSector(std::istringstream& infile, const std::string& sect
 				}
 				else {
 					// TODO remove onces all elevators are converted to components
-					elevator = new dfElevator(tokens[2], pSector);
+					gaDebugLog(1, "dfParseINF::parseSector", "class " + tokens[1] + " not implemented");
 				}
 			}
 			else if (tokens[1] == "trigger") {
@@ -361,10 +352,7 @@ void dfParseINF::parseSector(std::istringstream& infile, const std::string& sect
 			}
 		}
 		else if (tokens[0] == "speed:") {
-			if (elevator) {
-				elevator->speed(std::stof(tokens[1]));
-			}
-			else if (inv) {
+			if (inv) {
 				inv->speed(std::stof(tokens[1]));
 			}
 			else if (light) {
@@ -372,19 +360,13 @@ void dfParseINF::parseSector(std::istringstream& infile, const std::string& sect
 			}
 		}
 		else if (tokens[0] == "center:") {
-			if (elevator) {
-				elevator->center(-std::stof(tokens[1]), std::stof(tokens[2]));	//inverse X
-			}
-			else if (inv) {
+			if (inv) {
 				inv->center(-std::stof(tokens[1]), std::stof(tokens[2]));	//inverse X
 			}
 		}
 		else if (tokens[0] == "angle:") {
-			if (elevator) {
-				elevator->angle(std::stof(tokens[1]));
-			}
-			else if (inv) {
-				if (inv->type() == dfElevator::Type::MORPH_MOVE1) {
+			if (inv) {
+				if (inv->type() == DarkForces::Component::InfElevator::Type::MORPH_MOVE1) {
 					dynamic_cast<DarkForces::Component::InfElevatorHorizontal*>(inv)->angle(std::stof(tokens[1]));
 				}
 				else {
@@ -393,10 +375,7 @@ void dfParseINF::parseSector(std::istringstream& infile, const std::string& sect
 			}
 		}
 		else if (tokens[0] == "event_mask:") {
-			if (elevator) {
-				elevator->eventMask(std::stoi(tokens[1]));
-			}
-			else if (program) {
+			if (program) {
 				program->eventMask(std::stoi(tokens[1]));
 			}
 			else if (light) {
@@ -407,10 +386,7 @@ void dfParseINF::parseSector(std::istringstream& infile, const std::string& sect
 			}
 		}
 		else if (tokens[0] == "key:") {
-			if (elevator) {
-				elevator->keys(tokens[1]);
-			}
-			else if (program) {
+			if (program) {
 				std::cerr << "dfParseINF::parseSector key not implemented for triggers" << std::endl;
 			}
 		}
@@ -432,15 +408,12 @@ void dfParseINF::parseSector(std::istringstream& infile, const std::string& sect
 			else if (program) {
 				program->message( parseMessage(tokens) );
 			}
-			else if (elevator || light || inv) {
+			else if (light || inv) {
 				gaDebugLog(1, "dfParseINF::parseSector", "message: not implement for elevators/light/inv");
 			}
 		}
 		else if (tokens[0] == "stop:") {
-			if (elevator)
-				stop = new dfLogicStop(elevator);
-			else
-				stop = new dfLogicStop(pSector);
+			stop = new dfLogicStop(pSector);
 
 			nbStops++;
 			char* p;
@@ -482,10 +455,7 @@ void dfParseINF::parseSector(std::istringstream& infile, const std::string& sect
 				stop->time(converted);
 			}
 
-			if (elevator) {
-				elevator->addStop(stop);
-			}
-			else if (light) {
+			if (light) {
 				light->addStop(stop);
 			}
 			else if (inv) {
@@ -498,24 +468,20 @@ void dfParseINF::parseSector(std::istringstream& infile, const std::string& sect
 				sound = new GameEngine::Component::Sound();
 			}
 
-			if (elevator || light || inv) {
+			if (light || inv) {
 				uint32_t effect = std::stoi(tokens[1]);
 				if (tokens[2] != "0") {
 					if (g_cachedVOC.count(tokens[2]) == 0) {
 						g_cachedVOC[tokens[2]] = new dfVOC(dfFiles, tokens[2]);
 					}
 
-					if (elevator)
-						elevator->sound(effect - 1, g_cachedVOC[tokens[2]]);
-					else if (light)
+					if (light)
 						light->addSound(effect - 1, g_cachedVOC[tokens[2]]);
 					else if (inv)
 						sound->addSound(effect - 1, g_cachedVOC[tokens[2]]->sound());
 				}
 				else {
-					if (elevator)
-						elevator->sound(effect - 1, nullptr);	// silent the default sound
-					else if (light)
+					if (light)
 						light->addSound(effect - 1, nullptr);
 					else if (inv)
 						sound->addSound(effect - 1, nullptr);

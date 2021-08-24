@@ -125,7 +125,7 @@ void dfLogicStop::sendMessages()
 	}
 }
 
-float dfLogicStop::z_position(dfElevator::Type elevatorClass)
+float dfLogicStop::z_position(DarkForces::Component::InfElevator::Type elevatorClass)
 {
 	switch (m_flag) {
 	case Flag::Absolute|Flag::TimeAtStop:
@@ -148,7 +148,7 @@ float dfLogicStop::z_position(dfElevator::Type elevatorClass)
 	case Flag::BasedOnSector|Flag::TimeAtStop:
 	case Flag::BasedOnSector|Flag::ActionAtStop:
 		switch (elevatorClass) {
-		case dfElevator::Type::MOVE_FLOOR:
+		case DarkForces::Component::InfElevator::Type::MOVE_FLOOR:
 			return m_pSector->referenceCeiling();	// coy the ceiling of another sector
 		default:
 			return m_pSector->referenceFloor();		// coy the floor of another sector
