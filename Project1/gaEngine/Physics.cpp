@@ -789,19 +789,22 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 	 				glm::vec3 down(new_position.x, new_position.y - step, new_position.z);
 					float z = ifCollideWithSectorOrEntity(entity->position(), down, fwCollision::Test::WITHOUT_BORDERS, entity);
 					if (z != INFINITY) {
-						// we found a floor !
-						tranform.m_position.y = z;
-						actions.push(
-							Action(entity, gaMessage::Flag::PUSH_ENTITIES)
-						);	
-						
-						// fix the entity altitude and give it another try
-						if (entity->name() == "player")
- 							gaDebugLog(1, "GameEngine::Physics::wantToMove", entity->name() + " step down to ground " + std::to_string(tranform.m_position.x)
-								+ " " + std::to_string(tranform.m_position.y)
-								+ " " + std::to_string(tranform.m_position.z));
 
-						continue;
+						if (z != 0.0f) {
+							// we found a floor !
+							tranform.m_position.y = z;
+							actions.push(
+								Action(entity, gaMessage::Flag::PUSH_ENTITIES)
+							);
+
+							// fix the entity altitude and give it another try
+							if (entity->name() == "player")
+								gaDebugLog(1, "GameEngine::Physics::wantToMove", entity->name() + " step down to ground " + std::to_string(tranform.m_position.x)
+									+ " " + std::to_string(tranform.m_position.y)
+									+ " " + std::to_string(tranform.m_position.z));
+
+							continue;
+						}
 					}
 
 				}

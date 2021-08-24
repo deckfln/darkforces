@@ -1149,7 +1149,7 @@ float Collider::collision(const glm::vec3& start, const glm::vec3& end, fwCollis
 	// for each triangle, extract the AABB in geometry space and check collision with the source AABB in geometry space
 	std::vector<GameEngine::AABBoxTree*> hits;
 	if (!pAabbTree->find(segment_gs, hits)) {
-		return false;
+		return INFINITY;
 	}
 
 	glm::vec3 const* vertices_gs = pAabbTree->vertices();
