@@ -374,6 +374,17 @@ dfMesh* DarkForces::Component::InfElevator::buildMesh(void)
 }
 
 /**
+ * set the mesh data before the final build
+ */
+void DarkForces::Component::InfElevator::prepareMesh(void)
+{
+	if (m_zmin == INFINITY) {
+		m_zmin = m_pSector->staticFloorAltitude();
+		m_zmax = m_pSector->staticCeilingAltitude();
+	}
+}
+
+/**
  * size of the component
  */
 inline uint32_t DarkForces::Component::InfElevator::recordSize(void)

@@ -12,20 +12,6 @@ DarkForces::Component::InfElevatorBasic::InfElevatorBasic(dfSector* sector):
 	sector->hasCollider(true);
 	sector->defaultCollision(gaMessage::Flag::PUSH_ENTITIES);
 	sector->displayAABBox();
-
-	if (m_zmin == INFINITY) {
-		m_zmin = sector->staticFloorAltitude();
-		m_zmax = sector->staticCeilingAltitude();
-	}
-
-	meshData(
-		0,
-		-(m_zmax - m_zmin),
-		DFWALL_TEXTURE_TOP,
-		true,
-		dfWallFlag::ALL);
-
-	sector->setAABBtop(m_zmax);
 }
 
 /**
@@ -33,6 +19,16 @@ DarkForces::Component::InfElevatorBasic::InfElevatorBasic(dfSector* sector):
  */
 dfMesh* DarkForces::Component::InfElevatorBasic::buildMesh(void)
 {
+	prepareMesh();
+	meshData(
+		0,
+		-(m_zmax - m_zmin),
+		DFWALL_TEXTURE_TOP,
+		true,
+		dfWallFlag::ALL);
+
+	m_pSector->setAABBtop(m_zmax);
+
 	m_pSector->staticCeilingAltitude(m_zmax);
 	return DarkForces::Component::InfElevatorTranslate::buildMesh();
 }

@@ -12,7 +12,7 @@ namespace DarkForces {
 		public:
 			InfElevatorMoveFloor(dfSector* sector);
 			dfMesh* buildMesh(void) override;					// build the dfMesh of the elevator
-			void relocateMesh(dfMesh* mesh) override;					// move the mesh vertices into a 0,0,0 position
+			void relocateMesh(dfMesh* mesh) override;			// move the mesh vertices into a 0,0,0 position
 		};
 	}
 }

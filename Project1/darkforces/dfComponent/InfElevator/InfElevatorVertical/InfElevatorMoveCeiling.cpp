@@ -13,11 +13,6 @@ DarkForces::Component::InfElevatorMoveCeiling::InfElevatorMoveCeiling(dfSector* 
 	sector->defaultCollision(gaMessage::Flag::PUSH_ENTITIES);
 	sector->displayAABBox();
 
-	if (m_zmin == INFINITY) {
-		m_zmin = sector->staticFloorAltitude();
-		m_zmax = sector->staticCeilingAltitude();
-	}
-
 	/* TODO: find a way to remove the hack for SECBASE::elev_block and SECBASE::elev3-1
 	*  hard coded hack for SECBASE::elev_block. Force the height of the elevator
 	*  physically impossible in GameEngine
@@ -25,14 +20,6 @@ DarkForces::Component::InfElevatorMoveCeiling::InfElevatorMoveCeiling(dfSector* 
 	if (sector->name() == "elev_block") {
 		m_zmax = -4.0f;
 	}
-
-	meshData(0,
-		(m_zmax - m_zmin),
-		DFWALL_TEXTURE_TOP,
-		false,
-		dfWallFlag::ALL);
-
-	sector->setAABBbottom(m_zmax);
 }
 
 /**
@@ -40,6 +27,16 @@ DarkForces::Component::InfElevatorMoveCeiling::InfElevatorMoveCeiling(dfSector* 
  */
 dfMesh* DarkForces::Component::InfElevatorMoveCeiling::buildMesh(void)
 {
+	prepareMesh();
+
+	meshData(0,
+		(m_zmax - m_zmin),
+		DFWALL_TEXTURE_TOP,
+		false,
+		dfWallFlag::ALL);
+
+	m_pSector->setAABBbottom(m_zmax);
+
 	m_pSector->staticCeilingAltitude(m_zmax);
 	m_pSector->ceiling(m_pSector->referenceFloor());
 	return DarkForces::Component::InfElevatorTranslate::buildMesh();

@@ -91,6 +91,7 @@ namespace DarkForces {
 			inline void speed(float speed) { m_speed = speed; };
 			inline float zmin(void) { return m_zmin; };
 			inline float zmax(void) { return m_zmax; };
+			void prepareMesh(void);							// set the mesh data before the final build
 			void meshData(float bottom, float top, uint32_t texture, bool clockwise, dfWallFlag whatToDraw);	// set the mesh data
 
 			void addStop(dfLogicStop* stop);				// add a stop and update the range of the elevator
@@ -101,7 +102,7 @@ namespace DarkForces {
 			void dispatchMessage(gaMessage* message) override;
 
 			virtual dfMesh* buildMesh(void);				// build the dfMesh of the elevator
-			virtual void relocateMesh(dfMesh* mesh) {};			// move the mesh vertices into a 0,0,0 position
+			virtual void relocateMesh(dfMesh* mesh) {};		// move the mesh vertices into a 0,0,0 position
 
 			// flight recorder status
 			inline uint32_t recordSize(void);				// size of the component record

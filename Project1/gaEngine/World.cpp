@@ -560,7 +560,6 @@ void World::process(time_t delta, bool force)
 			for (auto entity : m_entities[message->m_client]) {
 
 				if (message->m_action == gaMessage::Action::WANT_TO_MOVE) {
-
 					m_physic.moveEntity(entity, message);
 				}
 				else {
