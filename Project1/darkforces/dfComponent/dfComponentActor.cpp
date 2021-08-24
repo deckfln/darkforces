@@ -133,6 +133,9 @@ void dfComponentActor::die(void)
 	// object can now be traversed
 	((dfSpriteAnimated*)m_entity)->hasCollider(false);
 
+	// play a sound if there is one
+	m_entity->sendInternalMessage(gaMessage::PLAY_SOUND, 0);
+
 	gaDebugLog(1, "dfActor::die", "remove " + m_entity->name() + " the entity from the world");
 }
 

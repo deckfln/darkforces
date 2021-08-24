@@ -7,6 +7,7 @@
 #include "../framework/fwScene.h"
 
 #include "../gaEngine/Lexer.h"
+#include "../gaEngine/gaComponent/gaSound.h"
 
 #include "lexer/dfObject.lex.h"
 
@@ -24,6 +25,7 @@
 #include "dfSprites.h"
 #include "dfGame.h"
 #include "dfLevel.h"
+#include "dfVOC.h"
 #include "dfComponent/dfComponentLogic.h"
 
 #include "dfObject/dfObject3D/MouseBot.h"
@@ -378,11 +380,17 @@ void dfParserObjects::parseObject(dfFileSystem* fs, GameEngine::ParserExpression
 			parseObjectComponent(fs, obj, component.m_children[0]);
 		}
 
-		// for enemies add an actor component
+		// for enemies add an actor component and a sound component
 		if (obj->isLogic(DF_LOGIC_ENEMIES)) {
 			dfComponentActor* actor = new dfComponentActor();
 			actor->bind(level);
-			obj-> addComponent(actor);
+			GameEngine::Component::Sound* sound = new GameEngine::Component::Sound();
+			sound->addSound(0, loadVOC("ST-DIE-1.voc")->sound());
+
+			obj->addComponent(actor, gaEntity::Flag::DELETE_AT_EXIT);
+			obj->addComponent(sound, gaEntity::Flag::DELETE_AT_EXIT);
+
+			obj->sendInternalMessage(gaMessage::Action::MOVE);
 		}
 
 		break; 
