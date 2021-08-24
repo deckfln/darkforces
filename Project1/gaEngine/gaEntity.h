@@ -74,7 +74,10 @@ public:
 		return new gaEntity((flightRecorder::Entity*)record);
 	};
 
+	// manage components
 	void addComponent(gaComponent* component, uint32_t flag = Flag::DONT_DELETE);			// extend the components of the entity
+	gaComponent* findComponent(int type);				// check all components to find one with the proper type
+	inline uint32_t components(void) { return m_components.size(); };
 
 	// getter/setter
 	inline int entityID(void) { return m_entityID; };
@@ -107,9 +110,6 @@ public:
 	void transform(GameEngine::Transform* transform);	// apply a transformation and update the worldAABB
 
 	float radius(void);									// maximum radius of the entity
-
-	gaComponent* findComponent(int type);				// check all components to find one with the proper type
-	inline uint32_t components(void) { return m_components.size(); };
 
 	void addChild(gaEntity* entity);					// add an entity inside that one (and increase the AABB if needed)
 

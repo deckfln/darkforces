@@ -9,6 +9,7 @@ class gaComponent
 protected:
 	gaEntity* m_entity = nullptr;
 	uint32_t m_id = 0;
+	int m_type = NONE;
 
 public:
 	enum {
@@ -31,7 +32,4 @@ public:
 
 	virtual inline void debugGUIinline(void) {};			// display the component in the debugger
 	~gaComponent();
-
-private:
-	int m_type = NONE;
 };
