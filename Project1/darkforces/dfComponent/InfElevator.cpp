@@ -300,9 +300,14 @@ void DarkForces::Component::InfElevator::dispatchMessage(gaMessage* message)
 		break;
 
 	case DF_MESSAGE_GOTO_STOP:
-		if (m_currentStop == message->m_value) {
+		if (m_status == Status::HOLD && m_currentStop == message->m_value) {
 			return;				// nothing to do, we're already at the correct stop
 		}
+
+		if (m_status == Status::MOVE && m_nextStop == message->m_value) {
+			return;				// nothing to do, we're already moving toward the requested stop
+		}
+
 		m_nextStop = message->m_value;
 
 		if (m_speed > 0) {
@@ -313,7 +318,7 @@ void DarkForces::Component::InfElevator::dispatchMessage(gaMessage* message)
 			float t1 = m_stops[m_currentStop]->time();
 			float t2 = m_stops[m_nextStop]->time();
 
-			float delta = (t2 - t1) * 1000;	// time in milisecond
+			float delta = (t2 - t1) * 1000;	// time in millisecond
 
 			m_direction = m_target - m_current;
 
