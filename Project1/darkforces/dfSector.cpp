@@ -804,7 +804,7 @@ void dfSector::buildGeometry(dfMesh* mesh, dfWallFlag displayPolygon)
 		// do not add them on the supermesh, they have their own mesh in the elevator
 
 		// unless the other sector has NO mesh (like change_light)
-		if (!findComponent(DF_COMPONENT_INF_ELEVATOR_LIGHT)) {
+		if (findComponent(gaComponent::MESH)) {
 			return;
 		}
 	}
