@@ -143,27 +143,13 @@ dfLevel::dfLevel(dfFileSystem* fs, std::string file)
 		}
 	}
 
-	// bind the sectors to the elevator logic
-	// bind the elevator logic to the level
-	for (auto elevator : m_inf->m_elevators) {
-		m_elevators[elevator->name()] = elevator;
-		elevator->parent(this);
-
-		dfSector* sector = m_sectorsName[elevator->sector()];
-		if (sector) {
-			elevator->bindSector(sector);
-		}
-	}
-
 	// currently, only INF elevators exist in m_inf->triggers
 	// if the trigger is related to an elevator, bind them
 	for (auto trigger : m_inf->m_triggers) {
 		g_gaWorld.addClient(trigger);
 		dfSector* sector = m_sectorsName[trigger->sector()];
-		dfElevator* elevator = m_elevators[sector->name()];
 
 		sector->addTrigger(trigger);
-		trigger->elevator(elevator);
 	}
 
 	// bind the sector walls to the triggers
@@ -189,10 +175,7 @@ dfLevel::dfLevel(dfFileSystem* fs, std::string file)
 			}
 
 			// then the sector is actually an elevator, and the bounding box of the trigger has to be connected to the bounding box of the elevator
-			if (sectorIsElevator) {
-				trigger->boundingBox(m_elevators[sectorname]);
-			}
-			else {
+			if (!sectorIsElevator) {
 				// the trigger is attached to a static wall
 				sector->setTriggerFromWall(trigger);
 			}
@@ -217,17 +200,9 @@ dfLevel::dfLevel(dfFileSystem* fs, std::string file)
 
 	convertDoors2Elevators();	// for every sector 'DOOR', create an elevator and a trigger
 
-	createTriggers();			// for elevator_spin1, create triggers
-	initElevators();			// move all elevators to position 0
-
 	// Add doors
 	for (auto door : m_doors) {
 		g_gaWorld.addClient(door);
-	}
-
-	// Add elevators to the world
-	for (auto elevator : m_inf->m_elevators) {
-		g_gaWorld.addClient(elevator);
 	}
 
 	// Add the missing triggers to the world
@@ -362,18 +337,6 @@ dfSuperSector* dfLevel::findSuperSector(glm::vec3& position)
 }
 
 /**
- * initiate all elevators of the level to their HOLD position
- */
-void dfLevel::initElevators(void)
-{
-	for (auto elevator : m_inf->m_elevators) {
-		// build a mesh and store the mesh in the super-sector holding the sector
-		elevator->buildGeometry(m_material, m_bitmaps);
-		elevator->init(0);
-	}
-}
-
-/**
  * for every sector 'DOOR', create an elevator and it stops PLUS trigger
  */
 void dfLevel::convertDoors2Elevators(void)
@@ -384,64 +347,6 @@ void dfLevel::convertDoors2Elevators(void)
 			m_inf->m_triggers.push_back(door->trigger());
 			m_doors.push_back(door);
 		}
-	}
-}
-
-/**
- * for every elevator that has NO explicit switch, create a trigger
- */
-void dfLevel::createTriggers(void)
-{
-	std::map <std::string, bool> explicits;
-
-	// get of all elevators with an explicit switch
-	for (auto trigger : m_inf->m_triggers) {
-		for (auto& target : trigger->clients()) {
-			explicits[target] = true;
-		}
-	}
-
-	// for all elevators that send messages to other elevator => explicit
-	for (auto elevator : m_inf->m_elevators) {
-		std::list<std::string> sectors;
-		elevator->getMessagesToSectors(sectors);
-		for (auto& target : sectors) {
-			explicits[target] = true;
-		}
-	}
-
-	// create a trigger for any elevator that is not on the explicit list
-	for (auto elevator : m_inf->m_elevators) {
-		if (explicits.count(elevator->name()) == 0) {
-			createTriggerForElevator(elevator);
-		}
-		else if (elevator->is(dfElevator::Type::MORPH_SPIN1) ||
-				elevator->is(dfElevator::Type::MORPH_MOVE1)) {
-			createTriggerForElevator(elevator);
-		}
-	}
-}
-
-/**
- * Create dedicated trigger by elevator class
- */
-void dfLevel::createTriggerForElevator(dfElevator *elevator)
-{
-	static std::string standard = "switch1";
-
-	if (elevator->is(dfElevator::Type::MORPH_SPIN1) || 
-		elevator->is(dfElevator::Type::MORPH_MOVE1) ||
-		elevator->is(dfElevator::Type::MOVE_CEILING) ||
-		elevator->needsKeys()
-		) {
-		dfLogicTrigger* trigger = new dfLogicTrigger(standard, elevator);
-		trigger->config();
-
-		// extract the 'CLOSED' stop = (0)
-		// add a message DONE on the stop
-		elevator->stop(0)->message(new gaMessage(DF_MESSAGE_DONE, 0, trigger->name()));
-
-		m_inf->m_triggers.push_back(trigger);
 	}
 }
 
@@ -503,11 +408,8 @@ dfSector* dfLevel::findSector(const glm::vec3& position)
 #ifdef _DEBUG
 			gaDebugLog(LOW_DEBUG, "dfLevel::findSector", " leave=" + m_lastSector->name() + " enter=" + sector->name());
 #endif
-//			m_lastSector->event(dfElevator::Message::LEAVE_SECTOR);
 
 			m_lastSector = sector;
-
-//			sector->event(dfElevator::Message::ENTER_SECTOR);
 			return sector;
 		}
 	}

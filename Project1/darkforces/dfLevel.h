@@ -39,7 +39,6 @@ class dfLevel
 	std::vector<dfSector*> m_sectorsID;			// all sectors of the level by ID
 	std::vector<dfBitmap*> m_bitmaps;			// all textures of the level
 
-	std::map<std::string, dfElevator*> m_elevators;	// all elevators of the sector
 	std::list<gaEntity*> m_doors;				// all doors on the level
 	glm::vec3 m_skyTexture;						// Identify texture for sectors FLAGS1 = 1
 	float m_skyAltitude=0;						
@@ -52,13 +51,6 @@ class dfLevel
 	// Counters
 	int m_currentBitmap = 0;
 	int m_currentTexture = 0;
-
-	/*
-	unsigned char* m_megatexture = nullptr;		// raw data 64x64, 64x128, 64x256, 64x512
-	fwTexture* m_fwtextures;					// fwTexture for the megatextures
-	std::vector<glm::vec4> m_megatexture_idx;	// rg = texture start  ba = texture size
-	fwUniform* m_shader_idx = nullptr;
-	*/
 
 	dfAtlasTexture* m_atlasTexture = nullptr;	// store all textures.gob used in the level
 	dfAtlasTexture* m_sprites = nullptr;		// store all sprites.gob
@@ -79,10 +71,7 @@ class dfLevel
 	void spacePartitioning(void);
 	void buildGeometry(void);
 	dfSuperSector* findSuperSector(glm::vec3& position);
-	void initElevators(void);
 	void convertDoors2Elevators(void);
-	void createTriggers(void);
-	void createTriggerForElevator(dfElevator *elevator);
 
 public:
 	dfLevel(dfFileSystem* fs, std::string file);
