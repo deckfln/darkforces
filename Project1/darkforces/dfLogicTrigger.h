@@ -44,6 +44,8 @@ class dfLogicTrigger: public gaEntity {
 	std::vector<gaMessage *> m_messages;	// messages to pass to the clients
 	gaMessage m_trigger;					// trigger message
 
+	void init(const std::string& kind);
+
 public:
 	dfLogicTrigger(const std::string& kind, const std::string& sector);
 	dfLogicTrigger(const std::string& kind, const std::string& sector, int wallIndex);

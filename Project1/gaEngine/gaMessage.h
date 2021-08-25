@@ -51,7 +51,8 @@ public:
 		WOULD_FALL,		// the objects would fall off after a WANT_TO_MOVE
 		FALL,			// Object is falling
 		CONTROLLER,		// Controller is requesting a move
-		SAVE_WORLD		// save the status
+		SAVE_WORLD,		// save the status
+		KEY				// key was pressed
 	};
 	// flags stored in messages
 	enum Flag {

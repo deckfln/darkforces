@@ -15,6 +15,7 @@
 #include "dfVOC.h"
 #include "dfMesh.h"
 #include "dfComponent/InfStandardTrigger.h"
+#include "dfComponent/Trigger.h"
 #include "dfComponent/InfElevator/InfElevatorLight.h"
 #include "dfComponent/InfElevator/InfElevatorVertical/InfElevatorInv.h"
 #include "dfComponent/InfElevator/InfElevatorVertical/InfElevatorMoveFloor.h"
@@ -306,6 +307,12 @@ void dfParseINF::parseSector(std::istringstream& infile, const std::string& sect
 					if (sound) {
 						pSector->addComponent(sound, gaEntity::Flag::DELETE_AT_EXIT);
 					}
+				}
+
+				// if the eventMask of the sector is <> add a key manager
+				if (inv->eventMask() != 0) {
+					DarkForces::Component::Trigger* trigger = new DarkForces::Component::Trigger();
+					pSector->addComponent(trigger, gaEntity::Flag::DELETE_AT_EXIT);
 				}
 			}
 

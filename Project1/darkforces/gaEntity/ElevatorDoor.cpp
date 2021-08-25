@@ -9,6 +9,7 @@
 #include "../dfLogicTrigger.h"
 #include "../dfMesh.h"
 #include "../dfVOC.h"
+#include "../dfComponent/Trigger.h"
 #include "../dfComponent/InfElevator/InfElevatorVertical/InfElevatorDoor.h"
 
 static const std::string hold = "hold";
@@ -44,21 +45,21 @@ DarkForces::Entity::ElevatorDoor::ElevatorDoor(dfSector* sector):
 	elevator->addStop(closed);
 	elevator->addStop(opened);
 
+	// prepare the mesh component
 	dfMesh* mesh = elevator->buildMesh();
-	GameEngine::ComponentMesh* m_component = new GameEngine::ComponentMesh(mesh);
+	GameEngine::ComponentMesh* cmesh = new GameEngine::ComponentMesh(mesh);
 
 	// prepare the sound component
 	GameEngine::Component::Sound* sound = new GameEngine::Component::Sound();
 	sound->addSound(dfElevator::Sound::START, loadVOC("door.voc")->sound());
-	/*
-	for (auto i = 0; i < 3; i++) {
-		sound->addSound(i, cache[i]->sound());
-	}
-	*/
 
-	addComponent(m_component, gaEntity::Flag::DELETE_AT_EXIT);
+	// prepare the Trigger component (to handle key press)
+	DarkForces::Component::Trigger* trigger = new DarkForces::Component::Trigger();
+
+	addComponent(cmesh, gaEntity::Flag::DELETE_AT_EXIT);
 	addComponent(elevator, gaEntity::Flag::DELETE_AT_EXIT);
 	addComponent(sound, gaEntity::Flag::DELETE_AT_EXIT);
+	addComponent(trigger, gaEntity::Flag::DELETE_AT_EXIT);
 
 	//only init the elevator at the end, AFTER the entity position is forced by the Mesh 
 	elevator->gotoStop(0);

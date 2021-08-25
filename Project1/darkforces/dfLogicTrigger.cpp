@@ -11,6 +11,7 @@
 #include "../gaEngine/gaActor.h"
 
 #include "dfComponent/dfComponentActor.h"
+#include "dfComponent/Trigger.h"
 #include "dfLogicTrigger.h"
 #include "dfSector.h"
 #include "dfsign.h"
@@ -36,14 +37,25 @@ static int class2int(std::string kind)
 }
 
 /**
+ * common init
+ */
+void dfLogicTrigger::init(const std::string& kind)
+{
+	DarkForces::Component::Trigger* trigger = new DarkForces::Component::Trigger();
+	addComponent(trigger, gaEntity::Flag::DELETE_AT_EXIT);
+
+	m_class = class2int(kind);
+	m_class_name = g_className;
+}
+
+/**
  *Create a trigger without bounding box
  */
 dfLogicTrigger::dfLogicTrigger(const std::string & kind, const std::string & sector) :
 	gaEntity(DF_ENTITY_TRIGGER, sector),
 	m_sector(sector)
 {
-	m_class = class2int(kind);
-	m_class_name = g_className;
+	init(kind);
 
 	// trigger standard come with its own messages to send
 	if (m_class != DF_TRIGGER_STANDARD)
@@ -58,8 +70,7 @@ dfLogicTrigger::dfLogicTrigger(const std::string& kind, const std::string& secto
 	m_sector(sector),
 	m_wallIndex(wallIndex)
 {
-	m_class = class2int(kind);
-	m_class_name = g_className;
+	init(kind);
 }
 
 /**
@@ -72,10 +83,9 @@ dfLogicTrigger::dfLogicTrigger(const std::string& kind, dfSector* sector, int wa
 	m_keys(client->keys()),
 	m_pElevator(client)
 {
+	init(kind);
 	m_clients.push_back(sector->name());
 	sector->setTriggerFromWall(this);
-	m_class = class2int(kind);
-	m_class_name = g_className;
 }
 
 /**
@@ -87,9 +97,8 @@ dfLogicTrigger::dfLogicTrigger(const std::string& kind, dfSector* sector, dfElev
 	m_keys(client->keys()),
 	m_pElevator(client)
 {
+	init(kind);
 	m_clients.push_back(sector->name());
-	m_class = class2int(kind);
-	m_class_name = g_className;
 }
 
 /**
@@ -100,11 +109,10 @@ dfLogicTrigger::dfLogicTrigger(const std::string& kind, dfElevator* client):
 	m_keys(client->keys()),
 	m_pElevator(client)
 {
+	init(kind);
 	client->psector()->setTriggerFromSector(this);
 	m_clients.push_back(client->sector());
-	m_class = class2int(kind);
 	m_sector = client->sector();
-	m_class_name = g_className;
 }
 
 /**
@@ -301,7 +309,7 @@ void dfLogicTrigger::activate(const std::string& activator)
 
 	// verify the activator is an actor
 	gaActor* entity = (gaActor*)g_gaWorld.getEntity(activator);
-	if (entity==nullptr) {
+	if (entity == nullptr) {
 		return;
 	}
 	dfComponentActor* actor = (dfComponentActor*)entity->findComponent(DF_COMPONENT_ACTOR);

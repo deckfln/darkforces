@@ -639,6 +639,9 @@
     <ClCompile Include="darkforces\dfComponent\InfElevator\infElevatorHorizontal\InfElevatorMorphMove1.cpp">
       <Filter>Fichiers sources\Dark Forces\dfComponent\InfElevator\InfElevatorHorizontal</Filter>
     </ClCompile>
+    <ClCompile Include="darkforces\dfComponent\Trigger.cpp">
+      <Filter>Fichiers sources\Dark Forces\dfComponent</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="glad\glad.h">
@@ -1207,6 +1210,9 @@
     </ClInclude>
     <ClInclude Include="darkforces\dfComponent\InfElevator\infElevatorHorizontal\InfElevatorMorphMove1.h">
       <Filter>Fichiers d%27en-tête\DarkForces\dfComponent\InfElevator\InfElevatorHorizontal</Filter>
+    </ClInclude>
+    <ClInclude Include="darkforces\dfComponent\Trigger.h">
+      <Filter>Fichiers d%27en-tête\DarkForces\dfComponent</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

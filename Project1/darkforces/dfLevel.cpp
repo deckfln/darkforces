@@ -15,6 +15,7 @@
 #include "../gaEngine/World.h"
 #include "../gaEngine/gaBoundingBoxes.h"
 #include "../gaEngine/gaCollisionPoint.h"
+#include "../gaEngine/gaMessage.h"
 
 #include "dfBitmap.h"
 #include "dfSign.h"
@@ -372,7 +373,7 @@ void dfLevel::testSwitch(fwAABBox& player, gaEntity* source)
 			//TODO get the keys the player owns
 			// ignore the player
 			if (entity->name() != "player") {
-				g_gaWorld.sendMessage("player", entity->name(), DF_MESSAGE_TRIGGER, 0, nullptr);
+				g_gaWorld.sendMessage("player", entity->name(), gaMessage::Action::KEY, 32, nullptr);
 				first++;
 				if (first == 32) {
 					first = 0;

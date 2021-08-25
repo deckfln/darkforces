@@ -151,6 +151,7 @@
     <ClCompile Include="darkforces\dfComponent\InfElevator\InfElevatorVertical\InfElevatorMoveCeiling.cpp" />
     <ClCompile Include="darkforces\dfComponent\InfElevator\InfElevatorVertical\InfElevatorMoveFloor.cpp" />
     <ClCompile Include="darkforces\dfComponent\InfStandardTrigger.cpp" />
+    <ClCompile Include="darkforces\dfComponent\Trigger.cpp" />
     <ClCompile Include="darkforces\dfFileGOB.cpp" />
     <ClCompile Include="darkforces\dfFileSystem.cpp" />
     <ClCompile Include="darkforces\dfFrame.cpp" />
@@ -321,6 +322,7 @@
     <ClInclude Include="darkforces\dfComponent\InfElevator\InfElevatorVertical\InfElevatorMoveCeiling.h" />
     <ClInclude Include="darkforces\dfComponent\InfElevator\InfElevatorVertical\InfElevatorMoveFloor.h" />
     <ClInclude Include="darkforces\dfComponent\InfStandardTrigger.h" />
+    <ClInclude Include="darkforces\dfComponent\Trigger.h" />
     <ClInclude Include="darkforces\dfFileGOB.h" />
     <ClInclude Include="darkforces\dfFileSystem.h" />
     <ClInclude Include="darkforces\dfFrame.h" />
