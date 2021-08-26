@@ -422,6 +422,18 @@ void fwGeometry::computeTangent(void)
 }
 
 /**
+ * if the geometry intersect with the AABB (based on the geometry model_AABB)
+ */
+ bool fwGeometry::intersect(const fwAABBox& aabox)
+ {
+	 if (m_modelAABB.not_init()) {
+		 m_modelAABB.set(m_vertices);
+	 }
+
+	 return m_modelAABB.intersect(aabox);
+ }
+
+/**
  * destructor
  */
 fwGeometry::~fwGeometry()

@@ -203,7 +203,7 @@ void myDarkForces::keypress(int key)
 			position.z - 0.4, position.z + 0.4
 		);
 
-		m_level->testSwitch(player, m_player);
+		//m_level->testSwitch(player, m_player);
 		break;	}
 	case GLFW_KEY_F5:
 		m_headlight = !m_headlight;

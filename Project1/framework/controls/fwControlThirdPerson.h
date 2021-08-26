@@ -34,12 +34,14 @@ class fwControlThirdPerson : public fwControl
 	bool checkCollision(glm::vec3& target);
 
 protected:
-	bool m_locked = false;		// block movement (like in a free-fall)
+	bool m_locked = false;						// block movement (like in a free-fall)
 
 	glm::vec3 m_direction = glm::vec3(0);
 	glm::vec3 m_position = glm::vec3(0);
 	glm::vec3 m_velocity = glm::vec3(0);
-	glm::vec3 m_lookDirection = glm::vec3(0);
+	glm::vec3 m_lookDirection = glm::vec3(0);	// direction of the look
+	glm::vec3 m_lookAt = glm::vec3(0);			// same but origin the eyes
+	glm::vec3 m_eye = glm::vec3(0);
 
 	virtual bool checkKeys(time_t delta);
 	virtual void updatePlayer(time_t delta);
@@ -50,6 +52,11 @@ public:
 	void lockView(double down, double up) { m_theta_lock_down = down; m_theta_lock_up = up; };
 	void keyEvent(int key, int scancode, int action);
 	void updateCamera(time_t delta);
-	const glm::vec3& direction(void) { return m_direction; };
+
+	// getter/setter
+	inline const glm::vec3& direction(void) { return m_direction; };
+	inline const glm::vec3& lookAt(void) { return m_lookAt; };
+	inline const glm::vec3& position(void) { return m_position; };
+
 	~fwControlThirdPerson();
 };

@@ -7,6 +7,7 @@
 #include "../framework/fwAABBox.h"
 #include "../framework/math/fwCylinder.h"
 
+#include "Collider.h"
 #include "gaCollisionPoint.h"
 #include "gaMessage.h"
 #include "Model.h"
@@ -125,6 +126,14 @@ namespace GameEngine {
 		inline int queueLen(void) { return m_queue.size(); }// number of messages on the queue
 		inline int frame(void) { return m_frame; }			// number of messages on the queue
 		void update(void);									// force an update of the world
+		bool intersectWithEntity(
+			uint32_t componentID,
+			const Framework::Segment& segment,
+			std::vector<gaEntity*>& collision);				// find all entities intersecting with the segment
+
+		void getEntitiesWithComponents(uint32_t componentID,
+			std::vector<gaEntity*>& entities);			// return all entities with a special components
+
 		~World();
 	};
 }

@@ -690,6 +690,45 @@ void GameEngine::World::update(void)
 	}
 }
 
+/**
+ * find the all entities intersecting with the segment
+ */
+bool GameEngine::World::intersectWithEntity(
+	uint32_t componentID, 
+	const Framework::Segment& segment, 
+	std::vector<gaEntity*>& collisions)
+{
+	fwAABBox segment_aabb(segment.m_start, segment.m_end);
+
+	std::vector<gaEntity*> entities;
+	
+	getEntitiesWithComponents(componentID, entities);
+
+	// test again entities
+	for (auto ent: entities) {
+		if (ent->worldAABB().intersect(segment_aabb)) {
+			collisions.push_back(ent);
+		}
+	}
+
+	return false;
+}
+
+/**
+ * return all entities with a special components
+ */
+void GameEngine::World::getEntitiesWithComponents(uint32_t componentID, std::vector<gaEntity*>& entities)
+{
+	// test again entities
+	for (auto& entry : m_entities) {
+		for (auto ent : entry.second) {
+			if (ent->findComponent(componentID) != nullptr) {
+				entities.push_back(ent);
+			}
+		}
+	}
+}
+
 World::~World()
 {
 }

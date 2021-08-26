@@ -642,6 +642,9 @@
     <ClCompile Include="darkforces\dfComponent\Trigger.cpp">
       <Filter>Fichiers sources\Dark Forces\dfComponent</Filter>
     </ClCompile>
+    <ClCompile Include="gaEngine\gaComponent\gaActiveProbe.cpp">
+      <Filter>Fichiers sources\gaEngine\gaComponent</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="glad\glad.h">
@@ -1213,6 +1216,9 @@
     </ClInclude>
     <ClInclude Include="darkforces\dfComponent\Trigger.h">
       <Filter>Fichiers d%27en-tête\DarkForces\dfComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="gaEngine\gaComponent\gaActiveProbe.h">
+      <Filter>Fichiers d%27en-tête\gaEngine\gaComponent</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

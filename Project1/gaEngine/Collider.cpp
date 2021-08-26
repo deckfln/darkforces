@@ -98,6 +98,7 @@ void Collider::set(Framework::Segment* segment, glm::mat4* worldMatrix, glm::mat
 	m_inverseWorldMatrix = inverseWorldMatrix;
 }
 
+
 /**
  * check 2 colliders after a successful worldAABB collision detection
  */
@@ -118,8 +119,7 @@ bool Collider::collision(const Collider& source,
 		case ColliderType::CYLINDER:
 			break;
 		case ColliderType::SEGMENT:
-			printf("Collider::collision GEOMETRY vs SEGMENT not implemented");
-			break;
+			return collision_fwAABB_segment(*this, source, collisions);
 		}
 		break;
 	case ColliderType::AABB_TREE:
@@ -171,7 +171,7 @@ bool Collider::collision(const Collider& source,
 	case ColliderType::SEGMENT:
 		switch (source.m_type) {
 		case ColliderType::AABB:
-			printf("Collider::collision SEGMENT vs GEOMETRY not implemented");
+			return collision_fwAABB_segment(source, *this, collisions);
 			break;
 		case ColliderType::AABB_TREE:
 			return collision_aabbTree_segment(source, *this, collisions);
@@ -998,6 +998,10 @@ bool Collider::collision_geometry_segment(const Collider& geometry,
 
 	fwAABBox segment_gs(p1, p2);
 
+	if (!pGeometry->intersect(segment_gs)) {
+		return false;
+	}
+
 	glm::vec3 const* vertices_gs = pGeometry->vertices();
 	uint32_t nbVertices = pGeometry->nbvertices();
 	glm::vec3 collision;
@@ -1127,6 +1131,30 @@ bool Collider::collision_cylinder_segment(const Collider& cylinder,
 		position1 = glm::vec3(*cylinder.m_worldMatrix * glm::vec4(position1, 1.0));
 
 		collisions.push_back(gaCollisionPoint(fwCollisionLocation::COLLIDE, position1, nullptr));
+	}
+
+	return collisions.size() != 0;
+}
+
+/******************************************************************************
+ * run a collision AABB with a segment
+ */
+bool GameEngine::Collider::collision_fwAABB_segment(const Collider& aabb,
+	const Collider& segment, 
+	std::vector<gaCollisionPoint>& collisions)
+{
+	fwAABBox* pAABB = static_cast<fwAABBox*>(aabb.m_source);
+	Framework::Segment* pSegment = static_cast<Framework::Segment*>(segment.m_source);
+
+	// convert segment space (opengl world space) into the geometry space (model space)
+	glm::mat4 mat = *aabb.m_inverseWorldMatrix * *segment.m_worldMatrix;
+	glm::vec3 p1 = glm::vec3(mat * glm::vec4(pSegment->m_start, 1.0));
+	glm::vec3 p2 = glm::vec3(mat * glm::vec4(pSegment->m_end, 1.0));
+
+	fwAABBox segment_gs(p1, p2);
+
+	if (pAABB->intersect(segment_gs)) {
+		collisions.push_back(gaCollisionPoint(fwCollisionLocation::COLLIDE, pAABB->center(), nullptr));
 	}
 
 	return collisions.size() != 0;

@@ -17,7 +17,8 @@ public:
 		MESH,
 		COLLIDER,
 		CONTROLER,
-		SOUND
+		SOUND,
+		ActiveProbe
 	};
 
 	gaComponent(int m_type);

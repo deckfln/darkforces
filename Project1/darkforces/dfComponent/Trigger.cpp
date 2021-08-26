@@ -19,6 +19,10 @@ void DarkForces::Component::Trigger::dispatchMessage(gaMessage* message)
 		if (message->m_value == 32) {
 			message->m_pServer->sendMessage(message->m_client, DF_MESSAGE_TRIGGER, 0);
 		}
+		break;
+	case gaMessage::Action::ACTIVATE:
+		message->m_pServer->sendMessage(message->m_client, DF_MESSAGE_TRIGGER, 0);
+		break;
 	}
 }
 

@@ -51,16 +51,17 @@ public:
 	int verticesToDisplay(void);
 	void verticesToDisplay(int nb);
 
-	void dirty(void) { m_dirty = true; };	// request all attributes to the uploaded to the GPU
-	void updateIfDirty(void);				// check if something need to be uploaded to the GPU
-	bool resizedAttribute(void);			// check if at least 1 attribute was resized, reset the flag on exit
+	void dirty(void) { m_dirty = true; };				// request all attributes to the uploaded to the GPU
+	void updateIfDirty(void);							// check if something need to be uploaded to the GPU
+	bool resizedAttribute(void);						// check if at least 1 attribute was resized, reset the flag on exit
 
-	fwSphere *boundingsphere(void) { return m_pBoundingsphere; };
+	inline fwSphere *boundingsphere(void) { return m_pBoundingsphere; };
 	fwSphere *computeBoundingsphere(void);
-	const fwAABBox& aabbox(void);			// return or initialize the model space AABB
+	const fwAABBox& aabbox(void);						// return or initialize the model space AABB
 	float sqDistance2boundingSphere(const glm::vec3& position);
 	fwSphere* setBoundingsphere(float radius);
 	void computeTangent(void);
+	bool intersect(const fwAABBox& aabox);				// if the geometry intersect with the AABB (based on the geometry model_AABB)
 
 	int id(void) { return m_id; };
 
