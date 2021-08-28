@@ -4,7 +4,7 @@
 
 #include "../framework/fwApp.h"
 #ifdef _DEBUG
-#include "gaEngine/Debug.h"
+#include "Debug.h"
 #endif
 
 class glTexture;
