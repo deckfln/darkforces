@@ -492,9 +492,6 @@
     <ClCompile Include="framework\math\fwCylinder.cpp">
       <Filter>Fichiers sources\Framework</Filter>
     </ClCompile>
-    <ClCompile Include="gaEngine\gaPlayer.cpp">
-      <Filter>Fichiers sources\gaEngine</Filter>
-    </ClCompile>
     <ClCompile Include="gaEngine\gaBoundingBoxes.cpp">
       <Filter>Fichiers sources\gaEngine</Filter>
     </ClCompile>
@@ -578,9 +575,6 @@
     </ClCompile>
     <ClCompile Include="flightRecorder\Blackbox.cpp">
       <Filter>Fichiers sources\flightRecorder</Filter>
-    </ClCompile>
-    <ClCompile Include="darkforces\PlayerControl.cpp">
-      <Filter>Fichiers sources\Dark Forces</Filter>
     </ClCompile>
     <ClCompile Include="framework\fwDebug.cpp">
       <Filter>Fichiers sources\Framework</Filter>
@@ -1126,9 +1120,6 @@
     </ClInclude>
     <ClInclude Include="flightRecorder\frBullet.h">
       <Filter>Fichiers d%27en-tête\flightRecorder</Filter>
-    </ClInclude>
-    <ClInclude Include="darkforces\PlayerControl.h">
-      <Filter>Fichiers d%27en-tête\DarkForces</Filter>
     </ClInclude>
     <ClInclude Include="darkforces\flightRecorder\frObject.h">
       <Filter>Fichiers d%27en-tête\DarkForces\flightRecorder</Filter>

@@ -18,7 +18,6 @@ class gaEntity;
 #include "gaEngine/Debug.h"
 #endif
 
-#include "darkforces/PlayerControl.h"
 #include "darkforces/dfActor.h"
 
 class myDarkForces : public fwApp
@@ -46,6 +45,5 @@ public:
 	glTexture* draw(time_t delta, fwRenderer* renderer) override;
 
 	void resize(int x, int y);
-	void keypress(int);
 	~myDarkForces();
 };

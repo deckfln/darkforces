@@ -44,6 +44,15 @@ void DarkForces::Actor::dispatchMessage(gaMessage* message)
 		case GLFW_KEY_LEFT_CONTROL:
 			sendInternalMessage(DarkForces::Message::FIRE, 0, &m_direction);
 			break;
+
+		case GLFW_KEY_F5:
+			if (!m_headlight) {
+				m_headlight = true;
+			}
+			else {
+				m_headlight = false;
+			}
+			break;
 		}
 		break;
 	}

@@ -183,7 +183,6 @@
     <ClCompile Include="darkforces\dfVue.cpp" />
     <ClCompile Include="darkforces\dfWall.cpp" />
     <ClCompile Include="darkforces\gaEntity\ElevatorDoor.cpp" />
-    <ClCompile Include="darkforces\PlayerControl.cpp" />
     <ClCompile Include="flightRecorder\Blackbox.cpp" />
     <ClCompile Include="framework\background\fwSkybox.cpp" />
     <ClCompile Include="framework\background\fwSkyline.cpp" />
@@ -260,7 +259,6 @@
     <ClCompile Include="gaEngine\gaEntity.cpp" />
     <ClCompile Include="gaEngine\gaMessage.cpp" />
     <ClCompile Include="gaEngine\Model.cpp" />
-    <ClCompile Include="gaEngine\gaPlayer.cpp" />
     <ClCompile Include="gaEngine\World.cpp" />
     <ClCompile Include="gaEngine\Lexer.cpp" />
     <ClCompile Include="gaEngine\Parser.cpp" />
@@ -367,7 +365,6 @@
     <ClInclude Include="darkforces\flightRecorder\Object3D.h" />
     <ClInclude Include="darkforces\gaEntity\ElevatorDoor.h" />
     <ClInclude Include="darkforces\lexer\dfObject.lex.h" />
-    <ClInclude Include="darkforces\PlayerControl.h" />
     <ClInclude Include="flightRecorder\AABBox.h" />
     <ClInclude Include="flightRecorder\Actor.h" />
     <ClInclude Include="flightRecorder\Ballistic.h" />

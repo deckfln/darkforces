@@ -6,14 +6,16 @@
 #include "../config.h"
 #include "../framework/fwCollision.h"
 
-#include "gaPlayer.h"
 #include "gaBoundingBoxes.h"
 #include "gaCollisionPoint.h"
 #include "gaEntity.h"
 #include "gaComponent/gaController.h"
 #include "gaComponent/gaActiveProbe.h"
+#include "World.h"
 
 #include "../darkforces/dfLevel.h"
+
+#include <GLFW/glfw3.h>
 
 static const char* g_className = "gaActor";
 
@@ -166,12 +168,21 @@ void gaActor::dispatchMessage(gaMessage* message)
 			&m_transforms);
 
 		break; }
+
 	case gaMessage::CONTROLLER:
 		moveTo(message->m_value, *(glm::vec3*)message->m_extra);
 		break;
+
 	case gaMessage::Action::LOOK_AT:
 		m_direction = (*(glm::vec3*)message->m_extra);
 		break;
+
+	case gaMessage::KEY:
+		switch (message->m_value) {
+		case GLFW_KEY_S:
+			g_gaWorld.suspendTimer();
+			break;
+		}
 	}
 
 	gaEntity::dispatchMessage(message);

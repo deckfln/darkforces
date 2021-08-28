@@ -87,7 +87,9 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 	const std::vector<uint32_t> keys = {
 		GLFW_KEY_X,
 		GLFW_KEY_LEFT_CONTROL,
-		GLFW_KEY_SPACE
+		GLFW_KEY_SPACE,
+		GLFW_KEY_S,
+		GLFW_KEY_F5
 	};
 	GameEngine::Component::Controller* controller = new GameEngine::Component::Controller(m_camera, start, c_eyes, c_direction, c_radius, keys);
 	bindControl((fwControl*)controller);
@@ -194,21 +196,12 @@ static int current = 0;
  */
 glTexture* myDarkForces::draw(time_t delta, fwRenderer* renderer)
 {
-	m_renderer->customDefine("HEADLIGHT", m_headlight);
+	m_renderer->customDefine("HEADLIGHT", m_player->headlight());
 
 	m_level->draw(m_camera, m_scene); 	// update visible objects
 	g_gaWorld.process(33);
 
 	return m_renderer->draw(m_camera, m_scene);
-}
-
-void myDarkForces::keypress(int key)
-{
-	switch (key) {
-	case GLFW_KEY_F5:
-		m_headlight = !m_headlight;
-		break;
-	}
 }
 
 myDarkForces::~myDarkForces()

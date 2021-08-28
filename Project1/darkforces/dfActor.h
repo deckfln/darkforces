@@ -17,6 +17,7 @@ namespace DarkForces {
 	class Actor : public gaActor {
 		dfComponentActor m_defaultAI;
 		dfLevel* m_level = nullptr;
+		bool m_headlight = false;
 
 	public:
 		Actor(
@@ -29,6 +30,8 @@ namespace DarkForces {
 		);
 		Actor(flightRecorder::Entity* record);
 
+		// getter/setter
+		inline bool headlight(void) { return m_headlight; };
 		void bind(dfLevel* level);
 
 		void dispatchMessage(gaMessage* message) override;		//
