@@ -39,22 +39,12 @@ const float c_ankle = 0.26f;
 const float c_direction = +pi / 1.0f;
 
 myDarkForces::myDarkForces(std::string name, int width, int height) :
-	fwApp(name, width, height, "shaders/gamma", "#define GAMMA_CORRECTION 1\n")
+	GameEngine::App(name, width, height, "shaders/gamma", "#define GAMMA_CORRECTION 1\n")
 {
 	int Button = 0;
 
 	m_filesystem = new dfFileSystem(ROOT_FOLDER);
 
-	// camera
-	m_camera = new fwCamera(width, height);
-
-	// scene
-	m_scene = new fwScene();
-	g_gaWorld.scene(m_scene);
-
-#ifdef _DEBUG
-	m_debugger = new GameEngine::Debug(this);
-#endif
 
 	// player
 	//glm::vec3 start = glm::vec3(-21.26f, 0.95f, 29.064f);	// stage
@@ -116,19 +106,19 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 
 	// load first level
 	m_level = new dfLevel(m_filesystem, "SECBASE");
-	m_level->addSkymap(m_scene);
-	m_player->bind(m_level);
+	static_cast<dfLevel*>(m_level)->addSkymap(m_scene);
+	static_cast<DarkForces::Actor*>(m_player)->bind(static_cast<dfLevel*>(m_level));
 
 	// hud display
-	dfBitmap* bmStatuslt = new dfBitmap(m_filesystem, "STATUSLF.BM", m_level->palette());
+	dfBitmap* bmStatuslt = new dfBitmap(m_filesystem, "STATUSLF.BM", static_cast<dfLevel*>(m_level)->palette());
 	fwTexture* texStatuslt = bmStatuslt->fwtexture();
 	fwHUDelement* statuslt = new fwHUDelement("statuslt", fwHUDElementPosition::BOTTOM_LEFT, fwHUDelementSizeLock::UNLOCKED, 0.1f, 0.1f, texStatuslt);
 
-	dfBitmap* bmStatusrt = new dfBitmap(m_filesystem, "STATUSRT.BM", m_level->palette());
+	dfBitmap* bmStatusrt = new dfBitmap(m_filesystem, "STATUSRT.BM", static_cast<dfLevel*>(m_level)->palette());
 	fwTexture* texStatusrt = bmStatusrt->fwtexture();
 	fwHUDelement* statusrt = new fwHUDelement("statusrt", fwHUDElementPosition::BOTTOM_RIGHT, fwHUDelementSizeLock::UNLOCKED, 0.1f, 0.1f, texStatusrt);
 
-	dfBitmap* bmRifle = new dfBitmap(m_filesystem, "RIFLE1.BM", m_level->palette());
+	dfBitmap* bmRifle = new dfBitmap(m_filesystem, "RIFLE1.BM", static_cast<dfLevel*>(m_level)->palette());
 	fwTexture* texRifle = bmRifle->fwtexture();
 	fwHUDelement* rifle = new fwHUDelement("rifle", fwHUDElementPosition::BOTTOM_CENTER, fwHUDelementSizeLock::UNLOCKED, 0.2f, 0.2f, texRifle);
 
@@ -183,29 +173,14 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 	gaMessage::declareMessages(g_definitions, g_def);
 }
 
-void myDarkForces::resize(int width, int height)
-{
-	m_camera->set_ratio(width, height);
-}
-
-static int pFrame = 0;
-static int current = 0;
-
 /**
  * Render the world
  */
 glTexture* myDarkForces::draw(time_t delta, fwRenderer* renderer)
 {
-	m_renderer->customDefine("HEADLIGHT", m_player->headlight());
+	m_renderer->customDefine("HEADLIGHT", static_cast<DarkForces::Actor*>(m_player)->headlight());
 
-	m_level->draw(m_player->position(), m_camera); 	// update visible objects
-	
-	//draw the bounding boxes
-	g_gaBoundingBoxes.draw(m_scene);
-
-	g_gaWorld.process(33);
-
-	return m_renderer->draw(m_camera, m_scene);
+	return GameEngine::App::draw(delta, renderer);
 }
 
 myDarkForces::~myDarkForces()

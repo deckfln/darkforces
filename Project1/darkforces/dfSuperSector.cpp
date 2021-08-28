@@ -324,6 +324,9 @@ void dfSuperSector::sortSectors(void)
 	// take the opportunity to create a name for the super sector
 	for (auto sector : m_sectors) {
 		m_name += sector->name() + ";";
+		if (m_name.size() > 48) {
+			m_name = m_name.substr(0, 48);
+		}
 	}
 }
 

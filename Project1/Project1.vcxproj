@@ -246,6 +246,7 @@
     <ClCompile Include="gaEngine\Collider.cpp" />
     <ClCompile Include="gaEngine\Debug.cpp" />
     <ClCompile Include="gaEngine\gaActor.cpp" />
+    <ClCompile Include="gaEngine\gaApp.cpp" />
     <ClCompile Include="gaEngine\gaBoundingBoxes.cpp" />
     <ClCompile Include="gaEngine\gaCollisionPoint.cpp" />
     <ClCompile Include="gaEngine\gaComponent.cpp" />
@@ -256,6 +257,7 @@
     <ClCompile Include="gaEngine\gaComponent\gaSound.cpp" />
     <ClCompile Include="gaEngine\gaDebug.cpp" />
     <ClCompile Include="gaEngine\gaEntity.cpp" />
+    <ClCompile Include="gaEngine\gaLevel.cpp" />
     <ClCompile Include="gaEngine\gaMessage.cpp" />
     <ClCompile Include="gaEngine\Model.cpp" />
     <ClCompile Include="gaEngine\World.cpp" />
@@ -436,6 +438,7 @@
     <ClInclude Include="gaEngine\Collider.h" />
     <ClInclude Include="gaEngine\Debug.h" />
     <ClInclude Include="gaEngine\gaActor.h" />
+    <ClInclude Include="gaEngine\gaApp.h" />
     <ClInclude Include="gaEngine\gaBoundingBoxes.h" />
     <ClInclude Include="gaEngine\gaCollisionPoint.h" />
     <ClInclude Include="gaEngine\gaComponent.h" />
@@ -446,9 +449,9 @@
     <ClInclude Include="gaEngine\gaComponent\gaSound.h" />
     <ClInclude Include="gaEngine\gaDebug.h" />
     <ClInclude Include="gaEngine\gaEntity.h" />
+    <ClInclude Include="gaEngine\gaLevel.h" />
     <ClInclude Include="gaEngine\gaMessage.h" />
     <ClInclude Include="gaEngine\Model.h" />
-    <ClInclude Include="gaEngine\gaPlayer.h" />
     <ClInclude Include="gaEngine\World.h" />
     <ClInclude Include="gaEngine\Lexer.h" />
     <ClInclude Include="gaEngine\Parser.h" />

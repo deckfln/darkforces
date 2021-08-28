@@ -10,6 +10,8 @@
 class myDarkForces;
 
 namespace GameEngine {
+	class App;
+
 	class Debug : public Framework::Debug {
 		bool m_framebyframe = false;
 
@@ -35,7 +37,7 @@ namespace GameEngine {
 		void playRecorderV1(void);
 
 	public:
-		Debug(myDarkForces *app);
+		Debug(App *app);
 		void render(void) override;
 		~Debug();
 	};

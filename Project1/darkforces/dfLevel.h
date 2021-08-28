@@ -10,6 +10,8 @@
 #include "../framework/fwScene.h"
 #include "../framework/fwMaterialBasic.h"
 
+#include "../gaEngine/gaLevel.h"
+
 #include "dfSector.h"
 #include "dfSuperSector.h"
 #include "dfBitmap.h"
@@ -28,7 +30,7 @@ class gaEntity;
 /**
  *
  */
-class dfLevel
+class dfLevel : public GameEngine::Level
 {
 	std::string m_name;
 	std::string m_level;
@@ -44,7 +46,6 @@ class dfLevel
 	fwAABBox m_boundingBox;						// bounding box of the level
 
 	std::vector<dfBitmapImage *> m_allTextures;	// textures of the level based on the index from LEV structure
-	std::list<dfSuperSector *> m_supersectors;	// space partioning of sectors
 
 	// Counters
 	int m_currentBitmap = 0;
@@ -55,11 +56,8 @@ class dfLevel
 	fwMaterialBasic* m_material = nullptr;
 
 	fwSkyline* m_skybox = nullptr;				// sky texture
-	bool m_skyboxAdded = false;
-	bool m_init = false;						// sectors added to the scene
 
 	dfSector* m_lastSector = nullptr;			// cached sector from the last findSector
-	dfSuperSector* m_lastSuperSector = nullptr;	// cached super sector from the last findSector
 
 	dfParseINF* m_inf = nullptr;				// level logic retrieved from the INF file
 	std::list <dfLogicTrigger*> m_triggers;		// all triggers of the level
@@ -69,7 +67,6 @@ class dfLevel
 	void loadBitmaps(dfFileSystem* fs, std::string file);
 	void spacePartitioning(void);
 	void buildGeometry(void);
-	dfSuperSector* findSuperSector(glm::vec3& position);
 	void convertDoors2Elevators(void);
 
 public:
@@ -79,7 +76,6 @@ public:
 	dfSector* findSector(const std::string& name);				// find sector by name
 	dfSector* findSectorLVL(const glm::vec3& level_position);	// find sector by level coordinate
 
-	void draw(const glm::vec3& position, fwCamera* camera);
 	void addSkymap(fwScene* scene);
 
 	// getter/setter

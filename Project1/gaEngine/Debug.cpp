@@ -14,7 +14,7 @@
 /**
  *
  */
-GameEngine::Debug::Debug(myDarkForces *app):
+GameEngine::Debug::Debug(App *app):
 	Framework::Debug::Debug((fwApp *)app)
 {
 	m_control = new fwOrbitControl(nullptr, 20, glm::vec3(0));

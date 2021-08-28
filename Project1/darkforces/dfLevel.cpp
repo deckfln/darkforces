@@ -323,26 +323,6 @@ void dfLevel::spacePartitioning(void)
 }
 
 /**
- * return the SuperSector fitting the opengl position
- */
-dfSuperSector* dfLevel::findSuperSector(glm::vec3& position)
-{
-	// position is in opengl space
-	// TODO should move the opengl <-> level space conversion on a central place
-	glm::vec3 level_space = position;
-	level_space *= 10;
-
-	// std::cout << position.x << ":" << position.y << ":" << position.z << std::endl;
-	for (auto ssector : m_supersectors) {
-		if (ssector->inAABBox(level_space)) {
-			return ssector;
-		}
-	}
-
-	return nullptr;	// not here
-}
-
-/**
  * for every sector 'DOOR', create an elevator and it stops PLUS trigger
  */
 void dfLevel::convertDoors2Elevators(void)
@@ -447,28 +427,6 @@ dfSector* dfLevel::findSectorLVL(const glm::vec3& level_position)
 		}
 	}
 	return nullptr;
-}
-
-/**
- * parse the super sectors to find which one are in the camera frustum
- * use the portals to drill through portals
- */
-void dfLevel::draw(const glm::vec3& position, fwCamera* camera)
-{
-	// mark all super sectors as NO VISBILE
-	for (auto ssector : m_supersectors) {
-		ssector->visible(false);
-	}
-
-	// use the cached values to find the current super sector
-	dfSector *sector = findSector(position);
-	if (sector) {
-		m_lastSuperSector->visible(true);
-
-		// recursively test the portals to make super sectors visible in the camera frustum 
-		m_lastSuperSector->checkPortals(camera, 1);
-	}
-	// ELSE outside of the map
 }
 
 /**
