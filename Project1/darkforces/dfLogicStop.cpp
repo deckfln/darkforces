@@ -5,49 +5,11 @@
 #include "../gaEngine/World.h"
 
 #include "dfSector.h"
-#include "dfElevator.h"
 
 static std::map<std::string, dfLogicStop::Action> _stops = {
 	{ "hold", dfLogicStop::Action::HOLD},
 	{ "terminate", dfLogicStop::Action::TERMINATE}
 };
-
-dfLogicStop::dfLogicStop(dfElevator* parent):
-	m_parent(parent)
-{
-	m_name = "STOP:" + m_parent->name();
-	m_pSector = parent->psector();
-}
-
-dfLogicStop::dfLogicStop(dfElevator* parent, float altitude, dfSector* sector, const std::string& action):
-	m_parent(parent),
-	m_flag(Flag::Relative | Flag::ActionAtStop),
-	m_relatiave(altitude),
-	m_pSector(sector)
-{
-	m_name = "STOP:" + m_parent->name();
-	dfLogicStop::action(action);
-}
-
-dfLogicStop::dfLogicStop(dfElevator* parent, float altitude, dfSector* sector, float time):
-	m_parent(parent),
-	m_flag(Flag::Relative | Flag::TimeAtStop),
-	m_relatiave(altitude),
-	m_pSector(sector),
-	m_animation_time(time)
-{
-	m_name = "STOP:" + m_parent->name();
-}
-
-dfLogicStop::dfLogicStop(dfElevator* parent, float altitude, const std::string& action):
-	m_parent(parent),
-	m_flag(Flag::Absolute | Flag::ActionAtStop),
-	m_absolute(altitude)
-{
-	m_name = "STOP:" + m_parent->name();
-	dfLogicStop::action(action);
-	m_pSector = parent->psector();
-}
 
 dfLogicStop::dfLogicStop(dfSector* sector, float altitude, const std::string& action):
 	m_flag(Flag::Absolute | Flag::ActionAtStop),
@@ -133,17 +95,6 @@ float dfLogicStop::z_position(DarkForces::Component::InfElevator::Type elevatorC
 			return m_absolute;
 	case Flag::Relative|Flag::TimeAtStop:
 	case Flag::Relative|Flag::ActionAtStop:
-		/*
-		switch (elevatorClass) {
-		case dfElevatorStatus::MOVE_FLOOR:
-			return m_pSector->m_floorAltitude + m_relatiave;	// relative to the ceiling of the source sector
-		case dfElevatorStatus::MOVE_CEILING:
-			return m_pSector->m_floorAltitude + m_relatiave;	// relative to the ceiling of the source sector
-
-		default:
-			return m_pSector->m_floorAltitude + m_relatiave;	// relative to the ceiling of the source sector
-		}
-		*/
 		return m_pSector->referenceFloor() + m_relatiave;	// relative to the ceiling of the source sector
 	case Flag::BasedOnSector|Flag::TimeAtStop:
 	case Flag::BasedOnSector|Flag::ActionAtStop:

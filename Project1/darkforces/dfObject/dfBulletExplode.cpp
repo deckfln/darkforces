@@ -5,6 +5,7 @@
 #include "../dfModel.h"
 #include "../dfLevel.h"
 #include "../dfVOC.h"
+#include "../../config.h"
 
 static const char* g_className = "dfBulletExplode";
 

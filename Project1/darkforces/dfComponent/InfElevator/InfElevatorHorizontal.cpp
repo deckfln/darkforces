@@ -1,6 +1,8 @@
 #include "InfElevatorHorizontal.h"
 
 #include "../../dfMesh.h"
+#include "../../dfLevel.h"
+#include "../../../config.h"
 
 void DarkForces::Component::InfElevatorHorizontal::moveTo(float z_lvl)
 {

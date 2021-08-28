@@ -13,7 +13,6 @@
 #include "dfSector.h"
 #include "dfSuperSector.h"
 #include "dfBitmap.h"
-#include "dfElevator.h"
 #include "dfFileGOB.h"
 
 class fwCylinder;
@@ -21,7 +20,6 @@ class fwCylinder;
 class dfMesh;
 class dfParserObjects;
 class dfAtlasTexture;
-class dfElevator;
 class dfPalette;
 class gaCollisionPoint;
 class dfParseINF;

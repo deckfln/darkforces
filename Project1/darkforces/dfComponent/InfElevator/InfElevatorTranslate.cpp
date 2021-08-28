@@ -1,6 +1,7 @@
 #include "InfElevatorTranslate.h"
 
 #include "../../dfFileSystem.h"
+#include "../../../config.h"
 
 void DarkForces::Component::InfElevatorTranslate::moveTo(float z_lvl)
 {

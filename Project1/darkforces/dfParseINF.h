@@ -3,7 +3,6 @@
 #include <string>
 #include <list>
 
-#include "dfElevator.h"
 #include "dfLogicTrigger.h"
 
 class dfFileSystem;
@@ -19,7 +18,6 @@ class dfParseINF
 	void parseLine(std::istringstream& infile, const std::string& sector, int wallIndex);
 
 public:
-	std::list <dfElevator*> m_elevators;
 	std::list <dfLogicTrigger* > m_triggers;
 
 	dfParseINF(dfFileSystem* fs, const std::string& file, dfLevel *level);

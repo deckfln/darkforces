@@ -5,6 +5,7 @@
 
 #include "../dfSector.h"
 #include "../dfLevel.h"
+#include "../../config.h"
 
 class dfComponentActor : public gaComponent
 {

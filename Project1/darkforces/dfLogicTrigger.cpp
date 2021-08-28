@@ -74,48 +74,6 @@ dfLogicTrigger::dfLogicTrigger(const std::string& kind, const std::string& secto
 }
 
 /**
- * Create a trigger based on a wall of a sector, and record the elevator client
- */
-dfLogicTrigger::dfLogicTrigger(const std::string& kind, dfSector* sector, int wallIndex,  dfElevator* client) :
-	gaEntity(DF_ENTITY_TRIGGER, sector->name() + "(" + std::to_string(wallIndex) + ")"),
-	m_wallIndex(wallIndex),
-	m_sector(sector->name()),
-	m_keys(client->keys()),
-	m_pElevator(client)
-{
-	init(kind);
-	m_clients.push_back(sector->name());
-	sector->setTriggerFromWall(this);
-}
-
-/**
- * Create a trigger based on the floor of a sector, and record the elevator client
- */
-dfLogicTrigger::dfLogicTrigger(const std::string& kind, dfSector* sector, dfElevator* client) :
-	gaEntity(DF_ENTITY_TRIGGER, sector->name()),
-	m_sector(sector->name()),
-	m_keys(client->keys()),
-	m_pElevator(client)
-{
-	init(kind);
-	m_clients.push_back(sector->name());
-}
-
-/**
- * Create a trigger based on ono the sector managed by the elevator
- */
-dfLogicTrigger::dfLogicTrigger(const std::string& kind, dfElevator* client):
-	gaEntity(DF_ENTITY_TRIGGER, client->sector() + "(0)"),
-	m_keys(client->keys()),
-	m_pElevator(client)
-{
-	init(kind);
-	client->psector()->setTriggerFromSector(this);
-	m_clients.push_back(client->sector());
-	m_sector = client->sector();
-}
-
-/**
  * Add events to sectors
  */
 void dfLogicTrigger::addEvents(dfSector* pSector)
@@ -181,14 +139,6 @@ void dfLogicTrigger::boundingBox(fwAABBox& box)
 	m_modelAABB = fwAABBox(p_gl, p1_gl);
 
 	sendInternalMessage(gaMessage::MOVE, 0, &p);
-}
-
-/**
- * bind the bounding box to an elevator (the elevator might move)
- */
-void dfLogicTrigger::boundingBox(dfElevator* elevator)
-{
-	m_pElevator = elevator;
 }
 
 /**
@@ -272,21 +222,6 @@ void dfLogicTrigger::dispatchMessage(gaMessage* message)
 	}
 
 	gaEntity::dispatchMessage(message);
-}
-
-/**
- * bind the trigger to it's elevator
- */
-void dfLogicTrigger::elevator(dfElevator* elevator)
-{
-	if (m_pElevator == nullptr) {
-		m_pElevator = elevator;
-	}
-#ifdef _DEBUG
-	else if (m_pElevator != elevator) {
-		gaDebugLog(LOW_DEBUG, "dfLogicTrigger::elevator", "elevators are different");
-	}
-#endif
 }
 
 /**

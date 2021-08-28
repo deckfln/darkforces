@@ -92,11 +92,9 @@ void dfComponentActor::dispatchMessage(gaMessage* message)
 			dfSector* current = m_level->findSector(m_entity->position());
 			if (current != m_currentSector) {
 				if (m_currentSector != nullptr) {
-					m_currentSector->event(dfElevator::Message::LEAVE_SECTOR);
 					m_entity->sendMessage(m_currentSector->name(), DF_MSG_EVENT, DarkForces::MessageEvent::LEAVE_SECTOR);
 
 					if (current != nullptr) {
-						current->event(dfElevator::Message::ENTER_SECTOR);
 						m_entity->sendMessage(current->name(), DF_MSG_EVENT, DarkForces::MessageEvent::ENTER_SECTOR);
 					}
 				}

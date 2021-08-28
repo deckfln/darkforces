@@ -52,8 +52,6 @@ private:
 
 	float m_animation_time = 0;			// time (millisecond) to stop the elevator a position (absolute or relative or sector)
 
-	dfElevator* m_parent = nullptr;
-
 	// [hold elevator] will remain at stop indefinitely 
 	// [terminate] elevator will stay at the stop permanently 
 	// [complete] mission will be complete when elev arrives at stop
@@ -62,11 +60,6 @@ private:
 	std::vector<gaMessage* > m_messages;
 
 public:
-	dfLogicStop(dfElevator *parent);
-	dfLogicStop(dfElevator* parent, float altitude, dfSector* sector, const std::string& action);
-	dfLogicStop(dfElevator* parent, float altitude, dfSector* sector, float time);
-	dfLogicStop(dfElevator* parent, float altitude, const std::string& action);
-	dfLogicStop(dfElevator* parent, float altitude, float time);
 	dfLogicStop(dfSector* sector, float altitude, const std::string& action);
 	dfLogicStop(dfSector* sector, float altitude, float time);
 	dfLogicStop(const std::string& sector);

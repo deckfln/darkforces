@@ -9,6 +9,7 @@
 #include "../dfModel/dfWAX.h"
 #include "../dfLevel.h"
 #include "../dfComponent/dfComponentLogic.h"
+#include "../../config.h"
 
 static uint32_t g_animatedSpriteID = 0;
 static const char* g_className = "dfSpriteAnimated";

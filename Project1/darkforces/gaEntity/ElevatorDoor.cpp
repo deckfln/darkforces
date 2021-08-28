@@ -51,7 +51,7 @@ DarkForces::Entity::ElevatorDoor::ElevatorDoor(dfSector* sector):
 
 	// prepare the sound component
 	GameEngine::Component::Sound* sound = new GameEngine::Component::Sound();
-	sound->addSound(dfElevator::Sound::START, loadVOC("door.voc")->sound());
+	sound->addSound(DarkForces::Component::InfElevator::Sound::START, loadVOC("door.voc")->sound());
 
 	// prepare the Trigger component (to handle key press)
 	DarkForces::Component::Trigger* trigger = new DarkForces::Component::Trigger();

@@ -559,9 +559,6 @@ void dfParseINF::parseLine(std::istringstream& infile, const std::string &sector
 
 dfParseINF::~dfParseINF(void)
 {
-	for (auto elevator : m_elevators) {
-		delete elevator;
-	}
 	for (auto trigger : m_triggers) {
 		delete trigger;
 	}

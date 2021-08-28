@@ -4,7 +4,6 @@
 #include <imgui.h>
 
 #include "dfSector.h"
-#include "dfElevator.h"
 #include "dfLevel.h"
 
 static const char* g_className = "dfActor";

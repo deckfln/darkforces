@@ -1,6 +1,7 @@
 #include "InfElevatorRotate.h"
 
 #include "../../dfMesh.h"
+#include "../../../config.h"
 
 void DarkForces::Component::InfElevatorRotate::moveTo(float z_lvl)
 {

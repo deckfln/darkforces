@@ -12,7 +12,6 @@
 #include "../gaEngine/World.h"
 
 #include "dfComponent/dfComponentActor.h"
-#include "dfElevator.h"
 #include "flightRecorder/frLogicTrigger.h"
 #include "../config.h"
 
@@ -20,7 +19,6 @@ class dfSector;
 class dfWall;
 class dfSign;
 class dfMesh;
-class dfElevator;
 
 enum {
 	DF_TRIGGER_SWITCH1,
@@ -39,7 +37,6 @@ class dfLogicTrigger: public gaEntity {
 	int m_wallIndex = -1;					// index of the wall being a trigger
 
 	dfMesh* m_pMesh= nullptr;				// Mesh being a trigger (has a bounding box)
-	dfElevator* m_pElevator= nullptr;		// Mesh being a trigger (has a bounding box)
 
 	std::vector<gaMessage *> m_messages;	// messages to pass to the clients
 	gaMessage m_trigger;					// trigger message
@@ -49,9 +46,6 @@ class dfLogicTrigger: public gaEntity {
 public:
 	dfLogicTrigger(const std::string& kind, const std::string& sector);
 	dfLogicTrigger(const std::string& kind, const std::string& sector, int wallIndex);
-	dfLogicTrigger(const std::string& kind, dfSector* sector, int wallIndex, dfElevator *client);
-	dfLogicTrigger(const std::string& kind, dfSector* sector, dfElevator* client);
-	dfLogicTrigger(const std::string& kind, dfElevator* client);
 
 	// getter/setter
 	inline void eventMask(int eventMask) { m_eventMask = eventMask; };
@@ -66,11 +60,9 @@ public:
 
 	void boundingBox(glm::vec2& left, glm::vec2& right, float floor, float ceiling);
 	void boundingBox(fwAABBox& box);
-	void boundingBox(dfElevator* elevator);
 
 	void message(gaMessage *message);
 	void config(void);
-	void elevator(dfElevator* elevator);
 
 	void moveZ(float z);
 	void moveCeiling(float z);

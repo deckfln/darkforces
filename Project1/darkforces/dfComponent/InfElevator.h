@@ -3,14 +3,15 @@
 #include <list>
 #include "../../gaEngine/gaComponent.h"
 
-#include "../dfElevator.h"
 #include "../dfBitmap.h"
+#include "../dfSector.h"
 
 class dfLogicStop;
 class dfSector;
 class dfLevel;
 class dfMesh;
 class fwMaterial;
+class dfVOC;
 
 namespace GameEngine {
 	class ComponentMesh;

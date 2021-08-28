@@ -145,7 +145,6 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 	// prepare the flight recorder
 	g_Blackbox.registerClass("gaEntity", &gaEntity::create);
 	g_Blackbox.registerClass("gaActor", &gaActor::create);
-	g_Blackbox.registerClass("dfElevator", &dfElevator::create);
 	g_Blackbox.registerClass("dfBullet", &dfBullet::create);
 	g_Blackbox.registerClass("dfSpriteAnimated", &dfSpriteAnimated::create);
 	g_Blackbox.registerClass("dfBulletExplode", &dfBulletExplode::create);

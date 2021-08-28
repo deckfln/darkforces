@@ -421,7 +421,8 @@ dfSector* dfLevel::findSector(const glm::vec3& position)
 
 		if (sector) {
 			if (m_lastSector) {
-				m_lastSector->event(dfElevator::Message::LEAVE_SECTOR);
+				__debugbreak;
+				//m_lastSector->event(dfElevator::Message::LEAVE_SECTOR);
 			}
 
 #ifdef _DEBUG
@@ -439,7 +440,6 @@ dfSector* dfLevel::findSector(const glm::vec3& position)
 			m_lastSector = sector;
 			m_lastSuperSector = ssector;
 
-//			sector->event(dfElevator::Message::ENTER_SECTOR);
 			return sector;
 		}
 	}
