@@ -29,7 +29,7 @@ void GameEngine::Component::ActiveProbe::dispatchMessage(gaMessage* message)
 		break;
 
 	case gaMessage::Action::LOOK_AT:
-		m_direction = (*(glm::vec3*)message->m_extra);
+		m_direction = glm::normalize(*(glm::vec3*)message->m_extra)/1.5f;
 		m_segment.m_end = m_segment.m_start, m_direction;
 		m_worldAABB.set(m_segment.m_start, m_segment.m_end);
 		break;
