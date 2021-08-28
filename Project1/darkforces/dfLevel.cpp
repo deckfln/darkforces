@@ -453,13 +453,8 @@ dfSector* dfLevel::findSectorLVL(const glm::vec3& level_position)
  * parse the super sectors to find which one are in the camera frustum
  * use the portals to drill through portals
  */
-void dfLevel::draw(fwCamera* camera, fwScene* scene)
+void dfLevel::draw(const glm::vec3& position, fwCamera* camera)
 {
-	glm::vec3 position = camera->get_position();
-
-	//TODO move the position to the feet of the player, but on the controller
-	position.y -= 0.3f;
-
 	// mark all super sectors as NO VISBILE
 	for (auto ssector : m_supersectors) {
 		ssector->visible(false);
@@ -474,15 +469,14 @@ void dfLevel::draw(fwCamera* camera, fwScene* scene)
 		m_lastSuperSector->checkPortals(camera, 1);
 	}
 	// ELSE outside of the map
+}
 
-	// add the sky
-	if (m_skybox != nullptr && !m_skyboxAdded) {
-		scene->background((fwBackground*)m_skybox);
-		m_skyboxAdded = true;
-	}
-
-	// draw the bounding boxes
-	g_gaBoundingBoxes.draw(scene);
+/**
+ * register the skymap on the scene
+ */
+void dfLevel::addSkymap(fwScene* scene)
+{
+	scene->background((fwBackground*)m_skybox);
 }
 
 /**

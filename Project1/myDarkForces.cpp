@@ -19,6 +19,7 @@
 #include "gaEngine/Debug.h"
 #include "gaEngine/gaComponent/gaController.h"
 #include "gaEngine/gaComponent/gaActiveProbe.h"
+#include "gaEngine/gaBoundingBoxes.h"
 
 #include "darkforces/dfLevel.h"
 #include "darkforces/dfCollision.h"
@@ -116,6 +117,7 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 
 	// load first level
 	m_level = new dfLevel(m_filesystem, "SECBASE");
+	m_level->addSkymap(m_scene);
 	m_player->bind(m_level);
 
 	// hud display
@@ -197,7 +199,11 @@ glTexture* myDarkForces::draw(time_t delta, fwRenderer* renderer)
 {
 	m_renderer->customDefine("HEADLIGHT", m_player->headlight());
 
-	m_level->draw(m_camera, m_scene); 	// update visible objects
+	m_level->draw(m_player->position(), m_camera); 	// update visible objects
+	
+	//draw the bounding boxes
+	g_gaBoundingBoxes.draw(m_scene);
+
 	g_gaWorld.process(33);
 
 	return m_renderer->draw(m_camera, m_scene);

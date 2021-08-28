@@ -78,8 +78,9 @@ public:
 	dfSector* findSector(char *name);							// find sector by name
 	dfSector* findSector(const std::string& name);				// find sector by name
 	dfSector* findSectorLVL(const glm::vec3& level_position);	// find sector by level coordinate
-	void testSwitch(fwAABBox& player, gaEntity* source);
-	void draw(fwCamera* camera, fwScene* scene);
+
+	void draw(const glm::vec3& position, fwCamera* camera);
+	void addSkymap(fwScene* scene);
 
 	// getter/setter
 	inline std::vector<dfSector*>& sectorsID(void) { return m_sectorsID; };
