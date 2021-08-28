@@ -22,6 +22,8 @@
 
 using namespace GameEngine;
 
+static std::map<uint32_t, const char*> g_entityClassName;
+
 GameEngine::World g_gaWorld;
 
 /**
@@ -64,6 +66,15 @@ void World::scene(fwScene* scene)
 void World::addClient(gaEntity* client)
 {
 	m_entities[client->name()].push_back(client);
+
+	uint32_t mclass = client->mclass();
+	m_entitiesByClass[mclass].push_back(client);
+
+	// register the class name
+	if (g_entityClassName.count(mclass) == 0) {
+		g_entityClassName[mclass] = client->mclassName();
+	}
+
 	client->OnWorldInsert();
 	sendImmediateMessage("_world", client->name(), gaMessage::WORLD_INSERT, 0, nullptr);
 }
@@ -88,6 +99,8 @@ void World::removeClient(gaEntity* client)
 	if (m_entities[client->name()].size() == 0) {
 		m_entities.erase(client->name());
 	}
+
+	m_entitiesByClass[client->mclass()].remove(client);
 }
 
 /**
@@ -607,22 +620,28 @@ void GameEngine::World::debugGUI(void)
 {
 	// list entities to pick from
 	static bool eclose = false;
+	uint32_t mclass;
+	const char* classname;
 
 	if (!eclose && ImGui::Begin("Explorer", &eclose)) {
 		if (ImGui::CollapsingHeader("gaEntities")) {
-			for (auto& entry : m_entities) {
-				for (auto ent : entry.second) {
-					const std::string& name = ent->name();
-					bool old = m_watch[name];
-					ImGui::Checkbox(name.c_str(), &m_watch[name]);
-					if (old != m_watch[name]) {
-						if (m_watch[name]) {
-							ent->worldAABB().color(glm::vec3(1.0f, 0.0f, 0.0f));
-						}
-						else {
-							ent->worldAABB().color(glm::vec3(1.0f, 1.0f, 1.0f));
+			for (auto& mclass : m_entitiesByClass) {
+				classname = g_entityClassName[mclass.first];
+				if (ImGui::TreeNode(classname)) {
+					for (auto entity : mclass.second) {
+						const std::string& name = entity->name();
+						bool old = m_watch[name];
+						ImGui::Checkbox(name.c_str(), &m_watch[name]);
+						if (old != m_watch[name]) {
+							if (m_watch[name]) {
+								entity->worldAABB().color(glm::vec3(1.0f, 0.0f, 0.0f));
+							}
+							else {
+								entity->worldAABB().color(glm::vec3(1.0f, 1.0f, 1.0f));
+							}
 						}
 					}
+					ImGui::TreePop();
 				}
 			}
 		}

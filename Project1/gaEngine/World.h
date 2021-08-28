@@ -28,7 +28,10 @@ namespace GameEngine {
 		uint32_t m_frame = 0;								// current frame
 		std::deque<gaMessage*> m_queue;
 		std::deque<gaMessage*> m_for_next_frame;
+
 		std::map<std::string, std::list<gaEntity*>> m_entities;
+		std::map<uint32_t, std::list<gaEntity*>> m_entitiesByClass;
+
 		std::vector<dfSuperSector*> m_sectors;
 		dfSprites* m_sprites = nullptr;							// sprites manager
 		std::map<std::string, GameEngine::Model*> m_models;	// list of models (images, 3D objects ...)

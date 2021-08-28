@@ -35,10 +35,10 @@ class gaEntity : public fwObject3D
 {
 protected:
 	const char* m_class_name = nullptr;				// display name of the class
-	int m_class = 0;								// numerical form TODO: get ride of it
+	uint32_t m_class = 0;							// numerical form TODO: get ride of it
 
 	std::string m_name;
-	int m_entityID = 0;
+	uint32_t m_entityID = 0;
 
 	bool m_physical = false;						// if this entity has a body to checkCollision with
 	bool m_gravity = true;							// does gravity effect the entity
@@ -89,6 +89,8 @@ public:
 	// getter/setter
 	inline int entityID(void) { return m_entityID; };
 	inline bool is(int mclass) { return m_class == mclass; };
+	inline uint32_t mclass(void) { return m_class; };
+	inline const char *mclassName(void) { return m_class_name; };
 	inline const std::string& name(void) { return m_name; };
 	inline void name(const std::string& name) { m_name = name; };
 	inline bool physical(void) { return m_physical; };
