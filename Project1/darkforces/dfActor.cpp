@@ -1,10 +1,11 @@
 #include "dfActor.h"
 
+#include <GLFW/glfw3.h>
+#include <imgui.h>
+
 #include "dfSector.h"
 #include "dfElevator.h"
 #include "dfLevel.h"
-
-#include <imgui.h>
 
 static const char* g_className = "dfActor";
 
@@ -28,6 +29,26 @@ void DarkForces::Actor::bind(dfLevel* level)
 {
 	m_level = level;
 	m_defaultAI.bind(level);
+}
+
+
+/**
+ * let an entity deal with a situation
+ */
+void DarkForces::Actor::dispatchMessage(gaMessage* message)
+{
+	switch (message->m_action)
+	{
+	case gaMessage::KEY:
+		switch (message->m_value) {
+		case GLFW_KEY_LEFT_CONTROL:
+			sendInternalMessage(DarkForces::Message::FIRE, 0, &m_direction);
+			break;
+		}
+		break;
+	}
+
+	gaActor::dispatchMessage(message);
 }
 
 /**

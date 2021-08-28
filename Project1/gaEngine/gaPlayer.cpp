@@ -75,7 +75,7 @@ void gaPlayer::updatePlayer(time_t delta)
 	m_position = m_entity->position();
 
 	if (m_eye != m_oldEye || m_lookAt != m_oldLookAt) {
-		m_entity->sendInternalMessage(gaMessage::Action::LOOK_AT, 0, &m_lookAt);
+		m_entity->sendInternalMessage(gaMessage::Action::LOOK_AT, 0, &m_direction);
 		m_entity->sendInternalMessage(gaMessage::Action::MOVE_AT, 0, &m_eye);
 
 		m_oldEye = m_eye;

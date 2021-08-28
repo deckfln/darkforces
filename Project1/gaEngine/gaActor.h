@@ -18,7 +18,9 @@ class gaPlayer;
 
 class gaActor: public gaEntity
 {
+protected:
 	fwCylinder m_cylinder;						// player bounding cylinder
+	glm::vec3 m_direction;						// direction the actor looks at
 
 	float m_speed = 0.0480f;					// normal speed
 

@@ -83,6 +83,9 @@ void dfComponentActor::dispatchMessage(gaMessage* message)
 		//TODO add a weapon to a player
 		//addWeapon(O_RIFLE);
 		break;
+	case DarkForces::Message::FIRE:
+		fire(*(glm::vec3*)message->m_extra);
+		break;
 	case gaMessage::MOVE:
 		// identity the DF sector and trigger enter/leave if changing
 		if (message->m_extra == nullptr) {
@@ -115,7 +118,7 @@ void dfComponentActor::fire(const glm::vec3& direction)
 	glm::vec3 p = m_entity->position();
 	p.y += actor->height() / 2.0f;
 
-	dfBullet* bullet = new dfBullet(DarkForces::Weapons::Rifle, p + direction * actor->radius(), direction);
+	dfBullet* bullet = new dfBullet(DarkForces::Weapons::Rifle, p + direction * actor->radius() * 2.0f, direction);
 
 	g_gaWorld.addClient(bullet);
 

@@ -6,10 +6,12 @@
 #include "../config.h"
 #include "../framework/fwCollision.h"
 
-#include "../gaEngine/gaPlayer.h"
-#include "../gaEngine/gaBoundingBoxes.h"
-#include "../gaEngine/gaCollisionPoint.h"
-#include "../gaEngine/gaEntity.h"
+#include "gaPlayer.h"
+#include "gaBoundingBoxes.h"
+#include "gaCollisionPoint.h"
+#include "gaEntity.h"
+#include "gaComponent/gaController.h"
+#include "gaComponent/gaActiveProbe.h"
 
 #include "../darkforces/dfLevel.h"
 
@@ -42,6 +44,9 @@ gaActor::gaActor(
 	updateWorldAABB();
 	m_hasCollider = true;
 	m_collider.set(&m_cylinder, &m_worldMatrix, &m_inverseWorldMatrix);
+
+	GameEngine::Component::ActiveProbe* probe = new GameEngine::Component::ActiveProbe();
+	addComponent(probe, gaEntity::Flag::DELETE_AT_EXIT);
 }
 
 /**
@@ -136,7 +141,10 @@ void gaActor::dispatchMessage(gaMessage* message)
 		glm::vec3 right;
 		glm::vec3 up;
 
-		glm::vec3 direction = m_parent->direction();
+		GameEngine::Component::Controller* controller = (GameEngine::Component::Controller*)findComponent(gaComponent::Controller);
+		glm::vec3 direction = controller->direction();
+
+		//glm::vec3 direction = m_parent->direction();
 
 		if (direction != glm::vec3(0)) {
 			direction = glm::normalize(direction);
@@ -160,6 +168,9 @@ void gaActor::dispatchMessage(gaMessage* message)
 		break; }
 	case gaMessage::CONTROLLER:
 		moveTo(message->m_value, *(glm::vec3*)message->m_extra);
+		break;
+	case gaMessage::Action::LOOK_AT:
+		m_direction = (*(glm::vec3*)message->m_extra);
 		break;
 	}
 

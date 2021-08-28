@@ -12,6 +12,7 @@ class fwLight;
 
 class dfFileSystem;
 class dfLevel;
+class gaEntity;
 
 #ifdef _DEBUG
 #include "gaEngine/Debug.h"
@@ -28,7 +29,7 @@ class myDarkForces : public fwApp
 	fwMesh* m_fwCamera = nullptr;
 
 	DarkForces::Actor* m_player = nullptr;
-	DarkForces::PlayerControl* m_playerControl = nullptr;
+	//DarkForces::PlayerControl* m_playerControl = nullptr;
 
 	dfFileSystem* m_filesystem = nullptr;
 	dfLevel* m_level = nullptr;

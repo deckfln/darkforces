@@ -72,13 +72,14 @@ namespace DarkForces {
 		DONE,
 		ADD_SHIELD,
 		ADD_ENERGY,
-		HIT_BULLET,		// the object was hit by a bullet
-		END_LOOP,		// the animation loop stopped
-		DIES,			// the object died
+		HIT_BULLET,			// the object was hit by a bullet
+		END_LOOP,			// the animation loop stopped
+		DIES,				// the object died
 		STATE,				// change the state of the object
 		PICK_RIFLE_AND_BULLETS,
 		ADD_BATTERY,
-		EVENT				// send events to sectors
+		EVENT,				// send events to sectors
+		FIRE				// fire a gun
 	};
 
 	enum MessageEvent {

@@ -254,6 +254,7 @@
     <ClCompile Include="gaEngine\gaComponent\ComponentControler.cpp" />
     <ClCompile Include="gaEngine\gaComponent\gaActiveProbe.cpp" />
     <ClCompile Include="gaEngine\gaComponent\gaComponentMesh.cpp" />
+    <ClCompile Include="gaEngine\gaComponent\gaController.cpp" />
     <ClCompile Include="gaEngine\gaComponent\gaSound.cpp" />
     <ClCompile Include="gaEngine\gaDebug.cpp" />
     <ClCompile Include="gaEngine\gaEntity.cpp" />
@@ -446,6 +447,7 @@
     <ClInclude Include="gaEngine\gaComponent\ComponentControler.h" />
     <ClInclude Include="gaEngine\gaComponent\gaActiveProbe.h" />
     <ClInclude Include="gaEngine\gaComponent\gaComponentMesh.h" />
+    <ClInclude Include="gaEngine\gaComponent\gaController.h" />
     <ClInclude Include="gaEngine\gaComponent\gaSound.h" />
     <ClInclude Include="gaEngine\gaDebug.h" />
     <ClInclude Include="gaEngine\gaEntity.h" />

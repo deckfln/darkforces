@@ -31,12 +31,14 @@ namespace DarkForces {
 
 		void bind(dfLevel* level);
 
+		void dispatchMessage(gaMessage* message) override;		//
+
 		int recordSize(void) override {
 			return sizeof(flightRecorder::DarkForces::Actor);
 		};														// size of one record
 
-		uint32_t recordState(void* record) override;				// return a record of an actor state (for debug)
-		void loadState(void* record) override;// reload an actor state from a record
+		uint32_t recordState(void* record) override;			// return a record of an actor state (for debug)
+		void loadState(void* record) override;					// reload an actor state from a record
 		void debugGUIChildClass(void) override;					// Add dedicated component debug the entity
 	};
 }

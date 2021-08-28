@@ -18,7 +18,8 @@ public:
 		COLLIDER,
 		CONTROLER,
 		SOUND,
-		ActiveProbe
+		ActiveProbe,
+		Controller
 	};
 
 	gaComponent(int m_type);

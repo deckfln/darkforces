@@ -17,9 +17,13 @@
 #include "gaEngine/World.h"
 #include "gaEngine/Model.h"
 #include "gaEngine/Debug.h"
+#include "gaEngine/gaComponent/gaController.h"
+#include "gaEngine/gaComponent/gaActiveProbe.h"
+
 #include "darkforces/dfLevel.h"
 #include "darkforces/dfCollision.h"
 #include "darkforces/dfComponent/dfComponentActor.h"
+
 #include "darkforces/dfFileSystem.h"
 #include "darkforces/dfActor.h"
 #include "darkforces/dfLogicTrigger.h"
@@ -61,9 +65,11 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 	glm::vec3 start = glm::vec3(-17.60, -2.0, 27.77);	// projector
 	//glm::vec3 start = glm::vec3(-20, 2.0, 34);	// mousebot(40)
 	//glm::vec3 start = glm::vec3(-28.65f, -2.0, 34.83f);	// spinner
+
 	fwCylinder bounding(glm::vec3(0), c_radius, c_height); // stage
 
 
+/*
 	m_player = new DarkForces::Actor(DF_ENTITY_OBJECT, "player", bounding, start, c_eyes, c_ankle);
 
 	// controls	
@@ -72,17 +78,22 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 
 	g_gaWorld.addClient(m_player);
 
-	// secret area	m_control = new fwControlThirdPerson(m_camera, glm::vec3(-36.4, 2.3, 37.8), 0.55f, -pi / 2, 0.2f);
-	// start m_control = new fwControlThirdPerson(m_camera, glm::vec3(-23.2, 4.3, 29.9), 0.55f, -pi / 2, 0.2f);
-	// main room 	m_control = new fwControlThirdPerson(m_camera, glm::vec3(-21.26f, 0.95f, 29.064f), 0.55f, -pi / 4.0f, 0.2f);
-	// marr 	m_control = new fwControlThirdPerson(m_camera, glm::vec3(-24, 4.2, 36.3), 0.55f, -pi / 2, 0.2f);
-	// super secret		m_control = new fwControlThirdPerson(m_camera, glm::vec3(-46, 0.9, 26.8), 0.55f, -pi / 2, 0.2f);
-	// armory	m_control = new fwControlThirdPerson(m_camera, glm::vec3(-37, -2, 36), 0.55f, -pi / 2, 0.2f);
-
 	// lock the view -45° to +45°
 	m_playerControl->lockView(M_PI / 4, M_PI / 4 + M_PI / 2);
 
 	bindControl((fwControl*)m_playerControl);
+*/
+	m_player = new DarkForces::Actor(DF_ENTITY_OBJECT, "player", bounding, start, c_eyes, c_ankle);
+	const std::vector<uint32_t> keys = {
+		GLFW_KEY_X,
+		GLFW_KEY_LEFT_CONTROL,
+		GLFW_KEY_SPACE
+	};
+	GameEngine::Component::Controller* controller = new GameEngine::Component::Controller(m_camera, start, c_eyes, c_direction, c_radius, keys);
+	bindControl((fwControl*)controller);
+	m_player->addComponent(controller, gaEntity::Flag::DELETE_AT_EXIT);
+	g_gaWorld.addClient(m_player);
+
 
 	m_renderer->customLight("/data/shaders/lightning.glsl");
 
@@ -194,17 +205,6 @@ glTexture* myDarkForces::draw(time_t delta, fwRenderer* renderer)
 void myDarkForces::keypress(int key)
 {
 	switch (key) {
-	case GLFW_KEY_SPACE: {
-		// create a player AA BoundingBox
-		glm::vec3 position = m_camera->get_position();
-		fwAABBox player(
-			position.x - 0.4, position.x + 0.4,
-			position.y - 0.3, position.y + 0.3,
-			position.z - 0.4, position.z + 0.4
-		);
-
-		//m_level->testSwitch(player, m_player);
-		break;	}
 	case GLFW_KEY_F5:
 		m_headlight = !m_headlight;
 		break;
