@@ -136,11 +136,11 @@ float gaEntity::collideAABBz(const fwAABBox& box)
 		
 		if (box.m_p.y > m_worldBounding.m_p.y) {
 			// if box if over entity, return the bottom of box
-			return box.m_p.y;
+			return m_worldBounding.m_p1.y;
 		}
 
 		// if box if below the entity, return the top of box
-		box.m_p1.y;
+		return m_worldBounding.m_p.y;
 	}
 	return INFINITY;
 }
@@ -368,7 +368,7 @@ uint32_t gaEntity::recordState(void *r)
 	record->size = sizeof(flightRecorder::Entity);
 	record->classID = flightRecorder::TYPE::ENTITY;
 	strncpy_s(record->className, m_class_name, sizeof(record->className));
-	strncpy_s(record->name, m_name.c_str(), sizeof(record->name));
+	strncpy_s(record->name, m_name.c_str(), _TRUNCATE);
 	fwObject3D::recordState(&record->object3D);
 	m_transforms.recordState(&record->transforms);		// transforms to move the object
 	m_modelAABB.recordState(&record->modelAABB);		// model space AABB

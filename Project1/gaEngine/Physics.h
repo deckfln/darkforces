@@ -92,9 +92,6 @@ namespace GameEngine
 		void testEntities(gaEntity* entity, 
 			const Transform& tranform, 
 			std::vector<gaCollisionPoint>& collisions);					// test if the entity collide other entities
-		void testSectors(gaEntity* entity,
-			const Transform& tranform,
-			std::vector<gaCollisionPoint>& collisions);					// test if the entity collide sectors
 		float ifCollideWithSectorOrEntity(
 			const glm::vec3& p1,
 			const glm::vec3& p2,

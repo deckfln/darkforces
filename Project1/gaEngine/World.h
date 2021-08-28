@@ -132,7 +132,9 @@ namespace GameEngine {
 			std::vector<gaEntity*>& collision);				// find all entities intersecting with the segment
 
 		void getEntitiesWithComponents(uint32_t componentID,
-			std::vector<gaEntity*>& entities);			// return all entities with a special components
+			std::vector<gaEntity*>& entities);				// return all entities with a special components
+		bool getEntities(uint32_t type,
+			std::vector<gaEntity*>& entities);				// return all entities of that type
 
 		~World();
 	};

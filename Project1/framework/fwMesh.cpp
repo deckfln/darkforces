@@ -290,12 +290,15 @@ void fwMesh::debugGUI(void)
 void fwMesh::debugGUIChildClass(void)
 {
 	fwObject3D::debugGUIChildClass();
-	ImGui::Text("Id: %d", m_id);
-	ImGui::Text("Visible: %s", (visible) ? "Yes": "No");
-	ImGui::Text("Always Draw: %s", (m_always_draw) ? "Yes" : "No");
-	ImGui::Text("Outlined: %s", (outlined) ? "Yes" : "No");
-	ImGui::Text("Transparent: %s", (m_transparent) ? "Yes" : "No");
-	ImGui::Text("zOrder: %d", m_zorder);
+	if (ImGui::TreeNode("fwMesh")) {
+		ImGui::Text("Id: %d", m_id);
+		ImGui::Checkbox("Visible", &visible);
+		ImGui::Checkbox("Always Draw", &m_always_draw);
+		ImGui::Checkbox("Outlined", &outlined);
+		ImGui::Checkbox("Transparent", &m_transparent);
+		ImGui::Text("zOrder: %d", m_zorder);
+		ImGui::TreePop();
+	}
 }
 
 fwMesh::~fwMesh()

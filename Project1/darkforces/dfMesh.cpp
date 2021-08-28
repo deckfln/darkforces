@@ -80,20 +80,12 @@ void dfMesh::addModelAABB(GameEngine::AABBoxTree* child)
 
 void dfMesh::display(fwScene* scene, bool visibility)
 {
-	set_visible(visibility);
-
 	if (!scene->hasChild(this)) {
-		if (visibility) {
 			// add the mesh on the scene
 			scene->addChild(this);
-			set_visible(true);
-		}
 		// no need to add the mesh if the supersector is invisible
 	}
-	else {
-		set_visible(visibility);
-	}
-
+	set_visible(visibility);
 }
 
 /**

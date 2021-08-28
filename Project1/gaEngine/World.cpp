@@ -134,7 +134,7 @@ dfSuperSector* World::findSector(dfSuperSector* cached, const glm::vec3& positio
 
 	// quick check on the last super sector
 	if (cached) {
-		if (cached->isPointInside(position)) {
+		if (cached->inAABBox(position)) {
 			return cached;
 		}
 	}
@@ -407,6 +407,24 @@ gaEntity* World::getEntity(const std::string& name)
 }
 
 /**
+ * Search the entities map
+ */
+bool World::getEntities(uint32_t type, std::vector<gaEntity*>& entities)
+{
+	// search new entities
+	for (auto& entry : m_entities) {
+		// test all entity with the same name
+		for (auto entity : entry.second) {
+			if (entity->is(type)) {
+				entities.push_back(entity);
+			}
+		}
+	}
+
+	return entities.size() != 0;
+}
+
+/**
  * parse entities to check for collision with the given one
  */
 void World::findAABBCollision(const fwAABBox& box, 
@@ -414,7 +432,7 @@ void World::findAABBCollision(const fwAABBox& box,
 	std::list<dfSuperSector*>& sectors, 
 	gaEntity* source)
 {
-	for (auto entry : m_entities) {
+	for (auto& entry : m_entities) {
 		// test all entity with the same name
 		for (auto entity : entry.second) {
 
@@ -592,7 +610,7 @@ void GameEngine::World::debugGUI(void)
 
 	if (!eclose && ImGui::Begin("Explorer", &eclose)) {
 		if (ImGui::CollapsingHeader("gaEntities")) {
-			for (auto entry : m_entities) {
+			for (auto& entry : m_entities) {
 				for (auto ent : entry.second) {
 					const std::string& name = ent->name();
 					bool old = m_watch[name];

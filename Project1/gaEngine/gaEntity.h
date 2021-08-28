@@ -23,6 +23,12 @@ class fwMesh;
 class dfSuperSector;
 struct recordEntity;
 
+namespace GameEngine {
+	enum Entity {
+		SECTOR=128
+	};
+};
+
 using namespace GameEngine;
 
 class gaEntity : public fwObject3D
@@ -39,6 +45,7 @@ protected:
 	bool m_collideSectors = true;					// does the entity collide with sectors
 	bool m_canStep = false;							// can the entity step up or down a stair
 	bool m_hasCollider = false;						// entity needs to be tested with collider
+	bool m_movable = true;							// entity can be pushed
 
 	GameEngine::Transform m_transforms;				// transforms to move the object
 
@@ -93,6 +100,7 @@ public:
 	inline void collideSectors(bool c) { m_collideSectors = c; };
 	inline void hasCollider(bool p) { m_hasCollider = p; };
 	inline bool hasCollider(void) { return m_hasCollider; };
+	inline bool movable(void) { return m_movable; };
 	inline fwAABBox& worldAABB(void) { return m_worldBounding; };
 	inline void worldAABB(const glm::vec3 p1, glm::vec3 p2) { m_worldBounding.set(p1, p2); };
 	inline const fwAABBox& modelAABB(void) { return m_modelAABB; };
@@ -116,6 +124,10 @@ public:
 	bool collideAABB(const fwAABBox& box);				// quick test to find AABB collision
 	bool collideAABB(gaEntity const* with);				// quick test to find AABB collision
 	float collideAABBz(const fwAABBox& box);			// quick test to find AABB collision and return the collision point
+
+	inline bool inAABBox(const glm::vec3& position) {
+		return m_worldBounding.inside(position);
+	};                                                  // test if vec3 inside the AABB
 
 	bool collide(gaEntity* entity, 
 		const glm::vec3& forward, 

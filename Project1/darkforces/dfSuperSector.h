@@ -9,6 +9,7 @@
 #include "../framework/fwScene.h"
 #include "../framework/fwMaterialBasic.h"
 
+#include "../gaEngine/gaEntity.h"
 #include "../gaEngine/gaCollisionPoint.h"
 #include "../gaEngine/Collider.h"
 #include "../gaEngine/AABBoxTree.h"
@@ -47,26 +48,18 @@ public:
  *  super sectors have a list of portals to outside sectors.
  *     the portals can be tested against the camera frustum to detect visibility and draw the visible connecting sectors
  */
-static int nbSuperSectors = 0;
 
 class dfLevel;
 class dfMesh;
 
-class dfSuperSector 
+class dfSuperSector : public gaEntity
 {
     bool m_removed = false;                     // yes we can delete the super sector
-    int m_id = -1;
-    std::string m_name;
     dfLevel* m_parent = nullptr;
-
-    GameEngine::AABBoxTree m_worldAABB;             // GL space world AABB hierarchy
 
     std::list <dfPortal> m_portals;             // lits of portals driving to other SuperSectors
     std::list <dfSector*> m_sectors;            // list of basic sectors in the SuperSector
        
-    //std::vector <glm::vec3> m_vertices;		    // level vertices
-    //std::vector <glm::vec2> m_uvs;			    // UVs inside the source texture
-    //std::vector <float> m_textureID;		    // TextureID inside the mega-texture
     std::vector <float> m_ambientLight;		    // % of ambient light
     std::map <int, glm::ivec3> m_sectorIndex;   // start of the sector vertices in the vertices buffer : x = start of walls, y = start of floors, z = #vertices on the floor. Ceiling vertices = y + z
 
@@ -79,16 +72,11 @@ class dfSuperSector
 
     std::map<std::string, dfSign*> m_hSigns;    // Hash of maps on the super sector
 
-    glm::mat4 m_worldMatrix;
-    glm::mat4 m_inverseWorldMatric;
-    GameEngine::Collider m_collider;            // collider representing the dfSuperSector
-
 public:
     dfSuperSector(dfSector* sector, fwMaterialBasic* material, std::vector<dfBitmap*>& m_bitmaps);
 
     void extend(dfSuperSector*);
     void extendAABB(fwAABBox& box);
-    bool isPointInside(const glm::vec3& position);           // check if point is inside the AABB
     dfSuperSector* smallestAdjoint(void);
     void buildPortals(std::vector<dfSector*>& sectors, std::vector<dfSuperSector*> &vssectors);
     float boundingBoxSurface(void);
@@ -98,8 +86,7 @@ public:
     void buildGeometry(std::vector<dfSector*>& sectors);
 
     // getter/setter
-    inline int id(void) { return m_id; };
-    inline void visible(bool v) { m_visible = v; };
+    void visible(bool v);
     inline bool visible(void) { return m_visible; };
     inline void remove(void) { m_removed = true; };
     inline bool removed(void) { return m_removed; };
@@ -117,13 +104,12 @@ public:
 
     void updateAmbientLight(float ambient, int start, int len);
 
-    bool inAABBox(const glm::vec3& position) { 
-        return m_worldAABB.inside(position); 
-    };                                                  // test if vec3 inside the AABB
-    bool collideAABB(const fwAABBox& box);				// quick test to find AABB collision
     float collide(const glm::vec3& start, 
         const glm::vec3& end, 
-        fwCollision::Test test);                        // if the segment collide with the sector, return the Y position of the sector
+        fwCollision::Test test);                            // if the segment collide with the sector, return the Y position of the sector
+
+    // flight recorder & debugger
+    void debugGUIChildClass(void) override;					// Add dedicated component debug the entity
 
     ~dfSuperSector();
 };

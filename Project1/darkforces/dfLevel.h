@@ -56,6 +56,7 @@ class dfLevel
 
 	fwSkyline* m_skybox = nullptr;				// sky texture
 	bool m_skyboxAdded = false;
+	bool m_init = false;						// sectors added to the scene
 
 	dfSector* m_lastSector = nullptr;			// cached sector from the last findSector
 	dfSuperSector* m_lastSuperSector = nullptr;	// cached super sector from the last findSector

@@ -3,11 +3,14 @@
 #include <algorithm>
 #include <array>
 #include <glm/glm.hpp> 
+#include <imgui.h>
+
 #include "../include/earcut.hpp"
 
 #include "../framework/geometries/fwGeometrySphere.h"
 
 #include "../gaEngine/World.h"
+#include "../gaEngine/gaComponent/gaComponentMesh.h"
 
 #include "dfLevel.h"
 #include "dfSign.h"
@@ -15,13 +18,19 @@
 
 static glm::vec4 white(1.0, 0.0, 1.0, 1.0);
 static fwMaterialBasic* material_portal = new fwMaterialBasic(&white);
+static const char* g_className = "dfSuperSector";
 
 dfSuperSector::dfSuperSector(dfSector* sector, fwMaterialBasic* material, std::vector<dfBitmap*>& bitmaps) :
-	m_id(nbSuperSectors++),
-	m_worldAABB(sector->m_worldAABB),
+	gaEntity(GameEngine::Entity::SECTOR),
 	m_material(material)
 {
 	m_sectors.push_back(sector);
+	m_class_name = g_className;
+	m_worldBounding = sector->m_worldAABB;
+
+	m_hasCollider = true;	// can collide
+	m_physical = true;		// need to be tested for collision
+	m_movable = false;		// cannot be pushed aside
 
 	m_dfmesh = new dfMesh(material, bitmaps);
 }
@@ -31,7 +40,7 @@ dfSuperSector::dfSuperSector(dfSector* sector, fwMaterialBasic* material, std::v
  */
 float dfSuperSector::boundingBoxSurface(void)
 {
-	return m_worldAABB.surface();
+	return m_worldBounding.surface();
 }
 
 /**
@@ -40,7 +49,7 @@ float dfSuperSector::boundingBoxSurface(void)
 void dfSuperSector::extend(dfSuperSector* ssector)
 {
 	// extend the bounding box
-	m_worldAABB.extend(ssector->m_worldAABB);
+	m_worldBounding.extend(ssector->m_worldBounding);
 
 	// extend the list of sectors
 	m_sectors.insert(m_sectors.end(), ssector->m_sectors.begin(), ssector->m_sectors.end());
@@ -68,23 +77,7 @@ void dfSuperSector::extend(dfSuperSector* ssector)
  */
 void dfSuperSector::extendAABB(fwAABBox& box)
 {
-	m_worldAABB.extend(box);
-}
-
-/**
- * check if point is inside the AABB
- */
-bool dfSuperSector::isPointInside(const glm::vec3& position)
-{
-	return m_worldAABB.inside(position);
-}
-
-/**
- * quick AABB check for entities collision
- */
-bool dfSuperSector::collideAABB(const fwAABBox& box)
-{
-	return m_worldAABB.intersect(box);
+	m_worldBounding.extend(box);
 }
 
 /**
@@ -210,23 +203,24 @@ void dfSuperSector::buildGeometry(std::vector<dfSector*>& sectors)
 {
 	for (auto sector : m_sectors) {
 		sector->buildGeometry(m_dfmesh, dfWallFlag::NOT_MORPHS_WITH_ELEV);
-
-		// buildSigns(sector, sectors);
 	}
 
 	m_dfmesh->name(m_name);
 	m_dfmesh->buildMesh();
 
-	// prepare the collider
+	// add the dfMesh as component to the entity
+	GameEngine::ComponentMesh* mesh = new GameEngine::ComponentMesh(m_dfmesh);
+	addComponent(mesh, gaEntity::Flag::DELETE_AT_EXIT);
+
+	// override the mesh::geometry collider
 	m_collider.set(
-		(GameEngine::AABBoxTree*)&m_dfmesh->modelAABB(), 
-		m_dfmesh->pWorldMatrix(), 
+		(GameEngine::AABBoxTree*)&m_dfmesh->modelAABB(),
+		m_dfmesh->pWorldMatrix(),
 		m_dfmesh->pInverseWorldMatrix(),
 		this, gaCollisionPoint::Source::SECTOR);
 
-	// TODO : fix the camera frustum test to remove that line
-	// m_mesh->always_draw(true);
 
+#ifdef _DEBUG
 	if (m_debugPortals) {
 		// add the portals on screen
 		for (auto& portal : m_portals) {
@@ -237,6 +231,16 @@ void dfSuperSector::buildGeometry(std::vector<dfSector*>& sectors)
 			portal.m_debug_portal->translate(position);
 		}
 	}
+#endif
+}
+
+/**
+ *
+ */
+void dfSuperSector::visible(bool v)
+{
+	m_visible = v;
+	m_dfmesh->set_visible(v);
 }
 
 /**
@@ -273,7 +277,7 @@ void dfSuperSector::checkPortals(fwCamera* camera, int zOrder)
 			if (d >= 0) {
 				dfSuperSector* target = portal.m_target;
 				if (!target->m_visible) {
-					target->m_visible = true;
+					target->visible(true);
 					target->checkPortals(camera, zOrder + 1);
 				}
 			}
@@ -331,7 +335,19 @@ void dfSuperSector::updateAmbientLight(float ambient, int start, int len)
 	m_dfmesh->changeAmbient(ambient, start, len);
 }
 
+/**
+ * Add dedicated component debug the entity
+ */
+void dfSuperSector::debugGUIChildClass(void)
+{
+	gaEntity::debugGUIChildClass();
 
+	if (ImGui::TreeNode(g_className)) {
+		ImGui::Checkbox("Visible", &m_visible);
+		ImGui::Text("Ambient: %.02f", m_ambientLight);
+		ImGui::TreePop();
+	}
+}
 dfSuperSector::~dfSuperSector()
 {
 	//delete m_mesh;

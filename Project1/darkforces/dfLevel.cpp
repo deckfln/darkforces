@@ -206,6 +206,11 @@ dfLevel::dfLevel(dfFileSystem* fs, std::string file)
 		g_gaWorld.addClient(door);
 	}
 
+	// Add SuperSectors
+	for (auto ssector : m_supersectors) {
+		g_gaWorld.addClient(ssector);
+	}
+
 	// Add the missing triggers to the world
 	for (auto trigger : m_inf->m_triggers) {
 		if (g_gaWorld.getEntity(trigger->name()) == nullptr) {
@@ -352,38 +357,6 @@ void dfLevel::convertDoors2Elevators(void)
 }
 
 /**
- * Check all triggers to find if one checkCollision with the source box
- */
-void dfLevel::testSwitch(fwAABBox& player, gaEntity* source)
-{
-	static gaMessage messages[32];
-	static int first = 0;
-
-	std::list<gaEntity*> collisions;
-	std::list<dfSuperSector*> sectors;
-
-	g_gaWorld.findAABBCollision(player, collisions, sectors, source);
-
-	if (collisions.size() > 0) {
-		gaMessage* message;
-
-		for (auto entity : collisions) {
-			message = messages + first;
-
-			//TODO get the keys the player owns
-			// ignore the player
-			if (entity->name() != "player") {
-				g_gaWorld.sendMessage("player", entity->name(), gaMessage::Action::KEY, 32, nullptr);
-				first++;
-				if (first == 32) {
-					first = 0;
-				}
-			}
-		}
-	}
-}
-
-/**
  * return the sector fitting the GL position
  */
 dfSector* dfLevel::findSector(const glm::vec3& position)
@@ -421,8 +394,7 @@ dfSector* dfLevel::findSector(const glm::vec3& position)
 
 		if (sector) {
 			if (m_lastSector) {
-				__debugbreak;
-				//m_lastSector->event(dfElevator::Message::LEAVE_SECTOR);
+				m_lastSector->event(DarkForces::MessageEvent::LEAVE_SECTOR);
 			}
 
 #ifdef _DEBUG
@@ -502,11 +474,6 @@ void dfLevel::draw(fwCamera* camera, fwScene* scene)
 		m_lastSuperSector->checkPortals(camera, 1);
 	}
 	// ELSE outside of the map
-
-	// parse the scene to update the super sectors visibility
-	for (auto ssector : m_supersectors) {
-		ssector->add2scene(scene);
-	}
 
 	// add the sky
 	if (m_skybox != nullptr && !m_skyboxAdded) {
