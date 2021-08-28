@@ -1,8 +1,8 @@
 #include "InfElevatorLight.h"
 
-#include "../../dfElevator.h"
 #include "../../../gaEngine/World.h"
 #include "../../dfSector.h"
+#include "../../../config.h"
 
 /**
  * set the ambient color of the sector
