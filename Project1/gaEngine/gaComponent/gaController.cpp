@@ -66,7 +66,7 @@ void GameEngine::Component::Controller::updatePlayer(time_t delta)
 	}
 
 	if (m_eye != m_oldEye || m_lookAt != m_oldLookAt) {
-		m_entity->sendInternalMessage(gaMessage::Action::LOOK_AT, 0, &m_direction);
+		m_entity->sendInternalMessage(gaMessage::Action::LOOK_AT, 0, &m_lookDirection);
 		m_entity->sendInternalMessage(gaMessage::Action::MOVE_AT, 0, &m_eye);
 
 		m_oldEye = m_eye;
