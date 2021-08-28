@@ -6,3 +6,7 @@ GameEngine::ComponentControler::ComponentControler():
 	gaComponent(gaComponent::CONTROLER)
 {
 }
+
+GameEngine::ComponentControler::~ComponentControler()
+{
+}

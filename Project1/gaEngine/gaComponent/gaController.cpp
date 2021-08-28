@@ -19,6 +19,10 @@ GameEngine::Component::Controller::Controller(fwCamera* camera,
 {
 }
 
+GameEngine::Component::Controller::~Controller()
+{
+}
+
 void GameEngine::Component::Controller::dispatchMessage(gaMessage* message)
 {
 	switch (message->m_action) {

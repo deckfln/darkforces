@@ -23,6 +23,7 @@ public:
 	};
 
 	gaComponent(int m_type);
+
 	bool is(int type) { return type == m_type; };
 	void parent(gaEntity* parent) { m_entity = parent; };
 	virtual void dispatchMessage(gaMessage* message) {};	// let a component deal with a situation

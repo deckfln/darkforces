@@ -7,5 +7,6 @@ namespace GameEngine {
 	{
 	public:
 		ComponentControler();
+		~ComponentControler();
 	};
 }

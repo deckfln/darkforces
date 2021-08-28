@@ -3,6 +3,7 @@
 #include <iostream>
 #include "../config.h"
 
+#include "fwScene.h"
 #include "fwRenderer.h"
 #include "render/fwRendererForward.h"
 #include "render/fwRendererDefered.h"
@@ -316,6 +317,9 @@ fwApp::~fwApp()
 	delete m_renderer;
 	delete postProcessing;
 	delete source;
+	//delete m_control;
+	delete m_scene;
+	delete m_camera;
 
 	glfwDestroyWindow(window);
 

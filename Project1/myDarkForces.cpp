@@ -94,9 +94,8 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 	};
 	GameEngine::Component::Controller* controller = new GameEngine::Component::Controller(m_camera, start, c_eyes, c_direction, c_radius, keys);
 	bindControl((fwControl*)controller);
-	m_player->addComponent(controller, gaEntity::Flag::DELETE_AT_EXIT);
+	m_player->addComponent(controller, gaEntity::Flag::DONT_DELETE);
 	g_gaWorld.addClient(m_player);
-
 
 	m_renderer->customLight("/data/shaders/lightning.glsl");
 
@@ -211,9 +210,7 @@ glTexture* myDarkForces::draw(time_t delta, fwRenderer* renderer)
 
 myDarkForces::~myDarkForces()
 {
-	delete m_camera;
+	delete m_player;
 	delete m_light;
-	delete m_control;
-	delete m_scene;
 	delete white;
 }
