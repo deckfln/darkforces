@@ -37,7 +37,7 @@ void fwOrbitControl::_mouseMove(float xdir, float ydir)
 	switch (m_button) {
 	case GLFW_MOUSE_BUTTON_LEFT:
 		m_theta -= ydir;
-		m_phi += xdir;
+		m_phi -= xdir;
 		m_startx = m_currentX;
 		m_starty = m_currentY;
 		break;
