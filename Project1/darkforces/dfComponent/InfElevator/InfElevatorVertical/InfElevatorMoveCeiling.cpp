@@ -27,8 +27,6 @@ dfMesh* DarkForces::Component::InfElevatorMoveCeiling::buildMesh(void)
 		false,
 		dfWallFlag::ALL);
 
-	m_pSector->setAABBbottom(m_zmax);
-
 	m_pSector->staticCeilingAltitude(m_zmax);
 	m_pSector->ceiling(m_pSector->referenceFloor());
 	return DarkForces::Component::InfElevatorTranslate::buildMesh();

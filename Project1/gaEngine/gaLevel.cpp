@@ -64,7 +64,7 @@ void GameEngine::Level::hideSectors(void)
 dfSuperSector* GameEngine::Level::findSector(const glm::vec3& position)
 {
 	// use the cached values to find the current super sector
-	if (m_lastSuperSector && m_lastSuperSector->inAABBox(position)) {
+	if (m_lastSuperSector && m_lastSuperSector->isPointIn(position)) {
 		return m_lastSuperSector;
 	}
 
