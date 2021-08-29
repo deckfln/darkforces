@@ -8,10 +8,12 @@ namespace DarkForces {
 	namespace Component {
 		class InfElevatorLight : public InfElevator 
 		{
+			bool m_animate = false;
 			void moveTo(float ambient) override;				// move the given position (depend on the elevator type)
 		public:
-			InfElevatorLight(const std::string& sector);
 			InfElevatorLight(dfSector* sector);
+
+			void dispatchMessage(gaMessage* message);           // let an entity deal with a situation
 		};
 	}
 }
