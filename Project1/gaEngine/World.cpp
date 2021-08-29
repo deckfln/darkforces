@@ -154,7 +154,7 @@ dfSuperSector* World::findSector(dfSuperSector* cached, const glm::vec3& positio
 
 	// moved out
 	for (auto ssector : m_sectors) {
-		sector = ssector->findSector(position);
+		sector = ssector->findDFSector(position);
 
 		if (sector) {
 			return ssector;

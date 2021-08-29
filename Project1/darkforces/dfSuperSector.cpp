@@ -117,6 +117,31 @@ void dfSuperSector::dispatchMessage(gaMessage* message)
 }
 
 /**
+ * quick test to find AABB collision and return the collision point
+ * test against the included dfSectors
+ */
+float dfSuperSector::collideAABBz(const fwAABBox& box)
+{
+	if (m_worldBounding.intersect(box)) {
+
+		for (auto sector : m_sectors) {
+			fwAABBox& worldAABB = sector->worldAABB();
+			if (worldAABB.intersect(box)) {
+				if (box.m_p.y > worldAABB.m_p.y) {
+					// if box if over entity, return the bottom of box
+					return worldAABB.m_p1.y;
+				}
+
+				// if box if below the entity, return the top of box
+				return worldAABB.m_p.y;
+			}
+		}
+
+	}
+	return INFINITY;
+}
+
+/**
  * parse all portals to find the smalled adjacent
  */
 dfSuperSector* dfSuperSector::smallestAdjoint(void)
@@ -210,7 +235,7 @@ bool dfSuperSector::contains(int sectorID)
 /**
  * return the sector fitting the position
  */
-dfSector* dfSuperSector::findSector(const glm::vec3& position)
+dfSector* dfSuperSector::findDFSector(const glm::vec3& position)
 {
 	// position is in level space
 	if (inAABBox(position)) {
@@ -222,6 +247,14 @@ dfSector* dfSuperSector::findSector(const glm::vec3& position)
 	}
 
 	return nullptr;	// not here
+}
+
+/**
+ * is the point precisely in that sector
+ */
+bool dfSuperSector::isPointIn(const glm::vec3& position)
+{
+	return findDFSector(position) != nullptr;
 }
 
 /**
@@ -263,7 +296,7 @@ void dfSuperSector::buildGeometry(std::vector<dfSector*>& sectors)
 }
 
 /**
- *
+ * change the visibility of the super sector
  */
 void dfSuperSector::visible(bool v)
 {

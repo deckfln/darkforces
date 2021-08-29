@@ -363,7 +363,7 @@ dfSector* dfLevel::findSector(const glm::vec3& position)
 		}
 
 		// nope, so quick check on the last super sector
-		sector = m_lastSuperSector->findSector(position);
+		sector = m_lastSuperSector->findDFSector(position);
 		if (sector) {
 #ifdef _DEBUG
 			gaDebugLog(LOW_DEBUG, "dfLevel::findSector", " leave=" + m_lastSector->name() + " enter=" + sector->name());
@@ -376,7 +376,7 @@ dfSector* dfLevel::findSector(const glm::vec3& position)
 
 	// still nope, full search
 	for (auto ssector: m_supersectors) {
-		sector = ssector->findSector(position);
+		sector = ssector->findDFSector(position);
 
 		if (sector) {
 			if (m_lastSector) {

@@ -118,7 +118,7 @@ class dfSector : public gaEntity
 	void deferedAddSign(dfWall* wall);
 
 public:
-	GameEngine::AABBoxTree m_worldAABB;						// TODO: remove as it is now part of the gaEntity
+	GameEngine::AABBoxTree m_worldAABB;					// AABB node to be inserted in a bigger tree
 
 	int m_id = -1;
 	int m_layer = -1;

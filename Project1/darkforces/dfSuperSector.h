@@ -55,23 +55,23 @@ class dfMesh;
 
 class dfSuperSector : public gaEntity
 {
-    bool m_removed = false;                     // yes we can delete the super sector
+    bool m_removed = false;                                     // yes we can delete the super sector
     dfLevel* m_parent = nullptr;
 
-    std::list <dfPortal> m_portals;             // lits of portals driving to other SuperSectors
-    std::list <dfSector*> m_sectors;            // list of basic sectors in the SuperSector
+    std::list <dfPortal> m_portals;                             // lits of portals driving to other SuperSectors
+    std::list <dfSector*> m_sectors;                            // list of basic sectors in the SuperSector
        
-    std::vector <float> m_ambientLight;		    // % of ambient light
-    std::map <int, glm::ivec3> m_sectorIndex;   // start of the sector vertices in the vertices buffer : x = start of walls, y = start of floors, z = #vertices on the floor. Ceiling vertices = y + z
+    std::vector <float> m_ambientLight;		                    // % of ambient light
+    std::map <int, glm::ivec3> m_sectorIndex;                   // start of the sector vertices in the vertices buffer : x = start of walls, y = start of floors, z = #vertices on the floor. Ceiling vertices = y + z
 
     fwMaterialBasic* m_material = nullptr;
-                                                // moving meshes are children of the super sector (like elevators)
+                                                                // moving meshes are children of the super sector (like elevators)
     dfMesh* m_dfmesh = nullptr;
 
-    bool m_visible = false;                     // super sector is visible on screen
-    bool m_debugPortals = false;                // display the portal bounding sphere on screen
+    bool m_visible = false;                                     // super sector is visible on screen
+    bool m_debugPortals = false;                                // display the portal bounding sphere on screen
 
-    std::map<std::string, dfSign*> m_hSigns;    // Hash of maps on the super sector
+    std::map<std::string, dfSign*> m_hSigns;                    // Hash of maps on the super sector
 
 public:
     dfSuperSector(dfSector* sector, fwMaterialBasic* material, std::vector<dfBitmap*>& m_bitmaps);
@@ -81,8 +81,10 @@ public:
     dfSuperSector* smallestAdjoint(void);
     void buildPortals(std::vector<dfSector*>& sectors, std::vector<dfSuperSector*> &vssectors);
     float boundingBoxSurface(void);
+    virtual bool isPointIn(const glm::vec3& position);			// is the point precisely in that sector
 
-    dfSector* findSector(const glm::vec3& position);        // return the level sector
+    dfSector* findDFSector(const glm::vec3& position);          // return the level sector
+
     bool contains(int sectorID);
     void buildGeometry(std::vector<dfSector*>& sectors);
 
@@ -110,7 +112,10 @@ public:
         const glm::vec3& end, 
         fwCollision::Test test);                            // if the segment collide with the sector, return the Y position of the sector
 
-    void dispatchMessage(gaMessage* message);               // let an entity deal with a situation
+    // override from parent classes
+    void dispatchMessage(gaMessage* message) override;     // let an entity deal with a situation
+
+    float collideAABBz(const fwAABBox& box) override;	   // quick test to find AABB collision and return the collision point
 
     // flight recorder & debugger
     void debugGUIChildClass(void) override;					// Add dedicated component debug the entity

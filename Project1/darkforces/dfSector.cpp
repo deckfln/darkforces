@@ -162,6 +162,7 @@ dfSector::dfSector(std::istringstream& infile, std::vector<dfSector*>& sectorsID
 	dfLevel::level2gl(p);
 	dfLevel::level2gl(p1);
 	m_worldAABB = GameEngine::AABBoxTree(p, p1);
+	m_worldBounding = fwAABBox(p, p1);
 }
 
 /**
@@ -1069,6 +1070,7 @@ void dfSector::addElevator(DarkForces::Component::InfElevator* elevator)
 void dfSector::setAABBtop(float z_level)
 {
 	m_worldAABB.m_p1.y = z_level / 10.0f;	// convert to opengl space
+	m_worldBounding.m_p1.y = m_worldAABB.m_p1.y;
 	if (m_super) {
 		m_super->extendAABB(m_worldAABB);
 	}
@@ -1080,6 +1082,7 @@ void dfSector::setAABBtop(float z_level)
 void dfSector::setAABBbottom(float z_level)
 {
 	m_worldAABB.m_p.y = z_level / 10.0f;	// convert to opengl space
+	m_worldBounding.m_p.y = m_worldAABB.m_p.y;
 	if (m_super) {
 		m_super->extendAABB(m_worldAABB);
 	}

@@ -125,7 +125,7 @@ public:
 
 	bool collideAABB(const fwAABBox& box);				// quick test to find AABB collision
 	bool collideAABB(gaEntity const* with);				// quick test to find AABB collision
-	float collideAABBz(const fwAABBox& box);			// quick test to find AABB collision and return the collision point
+	virtual float collideAABBz(const fwAABBox& box);	// quick test to find AABB collision and return the collision point
 
 	inline bool inAABBox(const glm::vec3& position) {
 		return m_worldBounding.inside(position);

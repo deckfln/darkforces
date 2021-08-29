@@ -333,10 +333,7 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 		pushedEntities.clear();
 
 		for (auto& collision : collisions) {
-			collidedEntity = nullptr;
-			if (collision.m_class == gaCollisionPoint::Source::ENTITY) {
-				collidedEntity = static_cast<gaEntity*>(collision.m_source);
-			}
+			collidedEntity = static_cast<gaEntity*>(collision.m_source);
 
 			switch (collision.m_location) {
 			case fwCollisionLocation::FRONT:

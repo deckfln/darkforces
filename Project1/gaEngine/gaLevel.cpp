@@ -69,7 +69,7 @@ dfSuperSector* GameEngine::Level::findSector(const glm::vec3& position)
 	}
 
 	for (auto sector : m_supersectors) {
-		if (sector->inAABBox(position)) {
+		if (sector->isPointIn(position)) {
 			m_lastSuperSector = sector;
 			return sector;
 		}
