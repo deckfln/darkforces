@@ -55,7 +55,9 @@ public:
 		KEY,			// key was pressed
 		LOOK_AT,		// look into a direction
 		MOVE_AT,
-		ACTIVATE		// an active probe tries to activate an entity
+		ACTIVATE,		// an active probe tries to activate an entity
+		HIDE,			// hide the object on screen
+		UNHIDE			// make the object visible on screen
 	};
 	// flags stored in messages
 	enum Flag {

@@ -17,6 +17,7 @@
 #include "dfSector.h"
 #include "dfBitmap.h"
 
+class fwScene;
 class dfSuperSector;
 class dfSign;
 class fwCylinder;
@@ -103,10 +104,13 @@ public:
     void sortSectors(void);
 
     void updateAmbientLight(float ambient, int start, int len);
+    void rebuildScene(fwScene *scene);                      // move the children sectors to mesh children
 
     float collide(const glm::vec3& start, 
         const glm::vec3& end, 
         fwCollision::Test test);                            // if the segment collide with the sector, return the Y position of the sector
+
+    void dispatchMessage(gaMessage* message);               // let an entity deal with a situation
 
     // flight recorder & debugger
     void debugGUIChildClass(void) override;					// Add dedicated component debug the entity

@@ -16,6 +16,7 @@
 #include "../gaEngine/gaBoundingBoxes.h"
 #include "../gaEngine/gaCollisionPoint.h"
 #include "../gaEngine/gaMessage.h"
+#include "../gaEngine/World.h"
 
 #include "dfBitmap.h"
 #include "dfSign.h"
@@ -206,11 +207,6 @@ dfLevel::dfLevel(dfFileSystem* fs, std::string file)
 		g_gaWorld.addClient(door);
 	}
 
-	// Add SuperSectors
-	for (auto ssector : m_supersectors) {
-		g_gaWorld.addClient(ssector);
-	}
-
 	// Add the missing triggers to the world
 	for (auto trigger : m_inf->m_triggers) {
 		if (g_gaWorld.getEntity(trigger->name()) == nullptr) {
@@ -218,10 +214,21 @@ dfLevel::dfLevel(dfFileSystem* fs, std::string file)
 		}
 	}
 
+	// Add SuperSectors
+	fwScene* scene = static_cast<fwScene*>(g_gaWorld.get("scene"));
+	for (auto ssector : m_supersectors) {
+		g_gaWorld.addClient(ssector);
+
+		ssector->rebuildScene(scene);
+	}
+
 	// load the Object file
 	m_objects = new dfParserObjects(fs, m_palette, file, this);
 	m_sprites = m_objects->buildAtlasTexture();
 	m_sprites->save("D:/dev/Project1/Project1/images/sprites.png");
+
+	// start with all supersectors hidden
+	hideSectors();
 
 	free(sec);
 }
@@ -296,7 +303,6 @@ void dfLevel::spacePartitioning(void)
 			// no adjoint left or empty sector
 		}
 
-		// TODO will need to be deleted
 		//delete smallest;
 		smallest->remove();
 		m_supersectors.pop_back();

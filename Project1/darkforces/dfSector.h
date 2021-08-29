@@ -109,6 +109,8 @@ class dfSector : public gaEntity
 
 	float m_currentAmbient;								// current value for an elevator light
 
+	dfSuperSector* m_super = nullptr;					// link back to the supersector
+
 	void buildWalls(dfMesh* mesh, dfWallFlag displayPolygon);
 	void buildFloorAndCeiling(dfMesh* mesh);
 	void buildSigns(dfMesh* mesh);
@@ -138,16 +140,17 @@ public:
 
 	std::list <int> m_portals;	// sectorID of the portals
 
-	// same data but in the supersector (opengl space)
-	dfSuperSector* m_super = nullptr;
-
 	dfSector(std::istringstream& infile, std::vector<dfSector*>& sectorsID, dfLevel *level);
 	void setTriggerFromWall(dfLogicTrigger* trigger);
 	void setTriggerFromFloor(dfLogicTrigger* trigger);
 	void setTriggerFromSector(dfLogicTrigger* trigger);
 
-	bool inAABBox(const glm::vec3& position);					// quick test point inside AABB
-	bool collideAABB(const fwAABBox& box);				// quick test to find AABB collision
+	bool inAABBox(const glm::vec3& position);						// quick test point inside AABB
+	bool collideAABB(const fwAABBox& box);							// quick test to find AABB collision
+
+	// getter/setter
+	inline dfSuperSector* supersector(void) { return m_super; };
+	inline void supersector(dfSuperSector* s) { m_super = s; };
 
 	void ceiling(float z);
 
@@ -164,9 +167,6 @@ public:
 
 	float referenceFloor(void) { return m_referenceFloorAltitude; };
 	float referenceCeiling(void) { return m_referenceCeilingAltitude; };
-
-	void parent(dfSuperSector* parent) { m_super = parent; };
-	dfSuperSector *parent(void) { return m_super; };
 
 	float height(void) { return m_height; };
 	unsigned flag(void) { return m_flag1; };
@@ -207,13 +207,15 @@ public:
 	void setAABBtop(float z_level);
 	void setAABBbottom(float z_level);
 
+	void dispatchMessage(gaMessage* message);						// let an entity deal with a situation
+
 	// debugger
 	inline int recordSize(void) override {
 		return sizeof(flightRecorder::DarkForces::Sector);
-	}													// size of one record
-	uint32_t recordState(void* record) override;			// return a record of the entity state (for debug)
-	void loadState(void* record) override;// reload an entity state from a record
-	void debugGUIChildClass(void) override;			// Add dedicated component debug the entity
+	}																// size of one record
+	uint32_t recordState(void* record) override;					// return a record of the entity state (for debug)
+	void loadState(void* record) override;							// reload an entity state from a record
+	void debugGUIChildClass(void) override;							// Add dedicated component debug the entity
 
 	~dfSector();
 };

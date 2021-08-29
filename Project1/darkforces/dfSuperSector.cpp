@@ -7,6 +7,7 @@
 
 #include "../include/earcut.hpp"
 
+#include "../framework/fwScene.h"
 #include "../framework/geometries/fwGeometrySphere.h"
 
 #include "../gaEngine/World.h"
@@ -24,9 +25,13 @@ dfSuperSector::dfSuperSector(dfSector* sector, fwMaterialBasic* material, std::v
 	gaEntity(GameEngine::Entity::SECTOR),
 	m_material(material)
 {
+	// link sector and supersector
 	m_sectors.push_back(sector);
+	sector->supersector(this);
+
 	m_class_name = g_className;
 	m_worldBounding = sector->m_worldAABB;
+	m_name = sector->name();
 
 	m_hasCollider = true;	// can collide
 	m_physical = true;		// need to be tested for collision
@@ -52,7 +57,12 @@ void dfSuperSector::extend(dfSuperSector* ssector)
 	m_worldBounding.extend(ssector->m_worldBounding);
 
 	// extend the list of sectors
-	m_sectors.insert(m_sectors.end(), ssector->m_sectors.begin(), ssector->m_sectors.end());
+	for (auto sector : ssector->m_sectors) {
+		m_sectors.push_back(sector);
+		sector->supersector(this);
+	}
+
+	m_name += ";" + ssector->m_name;
 
 	// drop the portals between the 2 super sectors
 	m_portals.remove_if([ssector](dfPortal& portal) { return portal.m_target == ssector;});
@@ -89,13 +99,31 @@ float dfSuperSector::collide(const glm::vec3& start, const glm::vec3& end, fwCol
 }
 
 /**
+ * let an entity deal with a situation
+ */
+void dfSuperSector::dispatchMessage(gaMessage* message)
+{
+	switch (message->m_action)
+	{
+	case gaMessage::Action::HIDE:
+	case gaMessage::Action::UNHIDE:
+		for (auto sector : m_sectors) {
+			sector->sendInternalMessage(message->m_action);
+		}
+		break;
+	}
+
+	gaEntity::dispatchMessage(message);
+}
+
+/**
  * parse all portals to find the smalled adjacent
  */
 dfSuperSector* dfSuperSector::smallestAdjoint(void)
 {
 	float surface, min_surface = 99999;
 	dfSuperSector* smallest = nullptr;
-	for (auto portal : m_portals) {
+	for (auto& portal : m_portals) {
 		surface = portal.m_target->boundingBoxSurface();
 		if (surface < min_surface) {
 			min_surface = surface;
@@ -291,10 +319,6 @@ void dfSuperSector::checkPortals(fwCamera* camera, int zOrder)
 void dfSuperSector::buildHiearchy(dfLevel* parent)
 {
 	m_parent = parent;
-
-	for (auto sector : m_sectors) {
-		sector->parent(this);
-	}
 }
 
 /**
@@ -322,11 +346,8 @@ void dfSuperSector::sortSectors(void)
 	m_sectors.sort([](dfSector* a, dfSector* b) { return a->boundingBoxSurface() < b->boundingBoxSurface(); });
 
 	// take the opportunity to create a name for the super sector
-	for (auto sector : m_sectors) {
-		m_name += sector->name() + ";";
-		if (m_name.size() > 48) {
-			m_name = m_name.substr(0, 48);
-		}
+	if (m_name.size() > 48) {
+		m_name = m_name.substr(0, 48);
 	}
 }
 
@@ -339,6 +360,31 @@ void dfSuperSector::updateAmbientLight(float ambient, int start, int len)
 }
 
 /**
+ * move the children sectors to mesh children
+ */
+void dfSuperSector::rebuildScene(fwScene* scene)
+{
+	// double check there is a mesh component here
+	GameEngine::ComponentMesh* cmesh = static_cast<GameEngine::ComponentMesh *>(findComponent(gaComponent::MESH));
+	if (!cmesh) {
+		return;
+	}
+	
+	fwMesh* ssmesh = cmesh->mesh();
+	fwMesh* mesh = nullptr;
+
+	// check each sub-sector to find a component mesh
+	for (auto sector : m_sectors) {
+		cmesh = static_cast<GameEngine::ComponentMesh*>(sector->findComponent(gaComponent::MESH));
+		if (cmesh) {
+			mesh = cmesh->mesh();
+			ssmesh->addChild(mesh);
+			scene->removeChild(mesh);
+		}
+	}
+}
+
+/**
  * Add dedicated component debug the entity
  */
 void dfSuperSector::debugGUIChildClass(void)
@@ -348,6 +394,12 @@ void dfSuperSector::debugGUIChildClass(void)
 	if (ImGui::TreeNode(g_className)) {
 		ImGui::Checkbox("Visible", &m_visible);
 		ImGui::Text("Ambient: %.02f", m_ambientLight);
+		if (ImGui::TreeNode("Sectors")) {
+			for (auto sector : m_sectors) {
+				ImGui::Text(sector->name().c_str());
+			}
+			ImGui::TreePop();
+		}
 		ImGui::TreePop();
 	}
 }

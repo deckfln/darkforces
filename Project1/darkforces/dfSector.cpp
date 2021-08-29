@@ -1086,6 +1086,29 @@ void dfSector::setAABBbottom(float z_level)
 }
 
 /**
+ *
+ */
+void dfSector::dispatchMessage(gaMessage* message)
+{
+	/* TODO: find a way to remove the hack for SECBASE::elev_block and SECBASE::elev3-1 and SECBASE:elev3-5
+	*  hard coded hack for SECBASE::elev_block. Force the height of the elevator
+	*  physically impossible in GameEngine
+	*/
+	if (m_name == "elev_block" || m_name == "elev3-1" || m_name == "elev3-5") {
+		switch (message->m_action) {
+		case gaMessage::Action::HIDE:
+			m_physical = false;
+			break;
+		case gaMessage::Action::UNHIDE:
+			m_physical = true;
+			break;
+		}
+	}
+
+	gaEntity::dispatchMessage(message);
+}
+
+/**
  * return a record of the entity state (for debug)
  */
 uint32_t dfSector::recordState(void* r)
@@ -1123,6 +1146,7 @@ void dfSector::debugGUIChildClass(void)
 	if (ImGui::TreeNode(tmp)) {
 		ImGui::Text("ID:%d", m_id);
 		ImGui::Text("Ambient:%.2f", m_ambient);
+		ImGui::Text("SuperSector:%s", m_super->name().c_str());
 		ImGui::TreePop();
 	}
 }

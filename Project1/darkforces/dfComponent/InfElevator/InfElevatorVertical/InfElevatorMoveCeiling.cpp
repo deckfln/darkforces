@@ -12,14 +12,6 @@ DarkForces::Component::InfElevatorMoveCeiling::InfElevatorMoveCeiling(dfSector* 
 	sector->hasCollider(true);
 	sector->defaultCollision(gaMessage::Flag::PUSH_ENTITIES);
 	sector->displayAABBox();
-
-	/* TODO: find a way to remove the hack for SECBASE::elev_block and SECBASE::elev3-1
-	*  hard coded hack for SECBASE::elev_block. Force the height of the elevator
-	*  physically impossible in GameEngine
-	*/
-	if (sector->name() == "elev_block") {
-		m_zmax = -4.0f;
-	}
 }
 
 /**

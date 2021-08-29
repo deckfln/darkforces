@@ -1,5 +1,6 @@
 #include "gaLevel.h"
 
+#include <vector>
 #include "../framework/fwCamera.h"
 #include "../darkforces/dfSuperSector.h"
 
@@ -13,8 +14,12 @@ GameEngine::Level::Level()
  */
 void GameEngine::Level::draw(const glm::vec3& position, fwCamera* camera)
 {
+	std::vector<bool> visibilityCache(m_supersectors.size());
+
 	// mark all super sectors as NO VISBILE
+	auto i = 0;
 	for (auto ssector : m_supersectors) {
+		visibilityCache[i++] = ssector->visible();
 		ssector->visible(false);
 	}
 
@@ -26,6 +31,31 @@ void GameEngine::Level::draw(const glm::vec3& position, fwCamera* camera)
 		current->checkPortals(camera, 1);
 	}
 	// ELSE outside of the map
+
+	// inform each sector of the change of visibility
+	i = 0;
+	for (auto ssector : m_supersectors) {
+		if (visibilityCache[i] != ssector->visible()) {
+			if (ssector->visible()) {
+				ssector->sendInternalMessage(gaMessage::Action::HIDE);
+			}
+			else {
+				ssector->sendInternalMessage(gaMessage::Action::UNHIDE);
+			}
+		}
+		i++;
+	}
+}
+
+/**
+ * hide all sectors and inform them
+ */
+void GameEngine::Level::hideSectors(void)
+{
+	for (auto ssector : m_supersectors) {
+		ssector->visible(false);
+		ssector->sendInternalMessage(gaMessage::Action::HIDE);
+	}
 }
 
 /**

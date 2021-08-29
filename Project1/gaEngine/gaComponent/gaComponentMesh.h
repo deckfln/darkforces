@@ -14,6 +14,9 @@ namespace GameEngine
 		ComponentMesh();
 		ComponentMesh(fwMesh *mesh);
 
+		// getter/setter
+		inline fwMesh* mesh(void) { return m_mesh; };
+
 		// proxy to access the fwMesh function
 		inline const fwAABBox& modelAABB(void) { return m_mesh->modelAABB(); };
 		inline const glm::vec3& position(void) { return m_mesh->position(); };
@@ -24,6 +27,7 @@ namespace GameEngine
 		inline void set_scale(float f) { m_mesh->set_scale(f); };
 		inline void worldMatrix(glm::mat4* m) { m_mesh->worldMatrix(m); };
 
+		// debugger
 		void dispatchMessage(gaMessage* message) override;	// let a component deal with a situation
 		void debugGUIinline(void) override;					// display the component in the debugger
 

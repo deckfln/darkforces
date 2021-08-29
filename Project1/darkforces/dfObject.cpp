@@ -195,7 +195,7 @@ void dfObject::updateWorldAABB(void)
 dfSuperSector* dfObject::superSector(void)
 {
 	if (m_supersector == nullptr) {
-		m_supersector = m_sector->parent();
+		m_supersector = m_sector->supersector();
 	}
 
 	return m_supersector;
