@@ -146,8 +146,6 @@ void gaActor::dispatchMessage(gaMessage* message)
 		GameEngine::Component::Controller* controller = (GameEngine::Component::Controller*)findComponent(gaComponent::Controller);
 		glm::vec3 direction = controller->direction();
 
-		//glm::vec3 direction = m_parent->direction();
-
 		if (direction != glm::vec3(0)) {
 			direction = glm::normalize(direction);
 			right = glm::normalize(glm::cross(_up, direction));
@@ -163,7 +161,7 @@ void gaActor::dispatchMessage(gaMessage* message)
 		m_transforms.m_quaternion = glm::quatLookAt(direction, up);
 		m_transforms.m_scale = get_scale();
 
-		sendDelayedMessageToWorld(gaMessage::WANT_TO_MOVE,
+		sendMessage(m_name, gaMessage::WANT_TO_MOVE,
 			gaMessage::Flag::WANT_TO_MOVE_FALL,
 			&m_transforms);
 

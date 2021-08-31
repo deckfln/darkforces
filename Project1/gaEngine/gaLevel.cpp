@@ -12,7 +12,7 @@ GameEngine::Level::Level()
  * parse the super sectors to find which one are in the camera frustum
  * use the portals to drill through portals
  */
-void GameEngine::Level::draw(const glm::vec3& position, fwCamera* camera)
+void GameEngine::Level::draw(dfSuperSector* current, fwCamera* camera)
 {
 	// ignore the whole process if the camera didn't change
 	if (camera->worldMatrix() == m_cachedCameraMatrix)
@@ -31,8 +31,6 @@ void GameEngine::Level::draw(const glm::vec3& position, fwCamera* camera)
 		ssector->visible(false);
 	}
 
-	dfSuperSector* current = findSector(position);
-
 	if (current) {
 		current->visible(true);
 
@@ -40,9 +38,9 @@ void GameEngine::Level::draw(const glm::vec3& position, fwCamera* camera)
 		current->checkPortals(camera, 1);
 	}
 	else {
-		__debugbreak();
+		// ELSE outside of the map => not good
+		return;
 	}
-	// ELSE outside of the map
 
 	// inform each sector of the change of visibility
 	i = 0;

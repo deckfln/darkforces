@@ -19,10 +19,13 @@ GameEngine::App::App(const std::string& name, int width, int height, const std::
 	m_scene = new fwScene();
 	g_gaWorld.scene(m_scene);
 
+	// prepare the flight recorder
+	g_Blackbox.registerClass("gaEntity", &gaEntity::create);
+	g_Blackbox.registerClass("gaActor", &gaActor::create);
+
 #ifdef _DEBUG
 	m_debugger = new GameEngine::Debug(this);
 #endif
-
 }
 
 /**
@@ -34,7 +37,7 @@ glTexture* GameEngine::App::draw(time_t delta, fwRenderer* renderer)
 	g_gaBoundingBoxes.draw(m_scene);
 	g_gaWorld.process(33);
 
-	m_level->draw(m_player->position(), m_camera); 	// update visible objects
+	m_level->draw(m_player->superSector(), m_camera); 	// update visible objects
 
 	return m_renderer->draw(m_camera, m_scene);;
 }

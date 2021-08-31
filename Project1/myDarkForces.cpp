@@ -59,19 +59,6 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 
 	fwCylinder bounding(glm::vec3(0), c_radius, c_height); // stage
 
-	m_player = new DarkForces::Actor(DF_ENTITY_OBJECT, "player", bounding, start, c_eyes, c_ankle);
-	const std::vector<uint32_t> keys = {
-		GLFW_KEY_X,
-		GLFW_KEY_LEFT_CONTROL,
-		GLFW_KEY_SPACE,
-		GLFW_KEY_S,
-		GLFW_KEY_F5
-	};
-	GameEngine::Component::Controller* controller = new GameEngine::Component::Controller(m_camera, start, c_eyes, c_direction, c_radius, keys);
-	bindControl((fwControl*)controller);
-	m_player->addComponent(controller, gaEntity::Flag::DONT_DELETE);
-	g_gaWorld.addClient(m_player);
-
 	m_renderer->customLight("/data/shaders/lightning.glsl");
 
 	// pre-load animations
@@ -92,7 +79,6 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 	// load first level
 	m_level = new dfLevel(m_filesystem, "SECBASE");
 	static_cast<dfLevel*>(m_level)->addSkymap(m_scene);
-	static_cast<DarkForces::Actor*>(m_player)->bind(static_cast<dfLevel*>(m_level));
 
 	// hud display
 	dfBitmap* bmStatuslt = new dfBitmap(m_filesystem, "STATUSLF.BM", static_cast<dfLevel*>(m_level)->palette());
@@ -118,9 +104,21 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 	// mandatory to get all data together
 	resizeEvent(width, height);
 
-	// prepare the flight recorder
-	g_Blackbox.registerClass("gaEntity", &gaEntity::create);
-	g_Blackbox.registerClass("gaActor", &gaActor::create);
+	// and put the player in position
+	m_player = new DarkForces::Actor(DF_ENTITY_OBJECT, "player", bounding, start, c_eyes, c_ankle);
+	const std::vector<uint32_t> keys = {
+		GLFW_KEY_X,
+		GLFW_KEY_LEFT_CONTROL,
+		GLFW_KEY_SPACE,
+		GLFW_KEY_S,
+		GLFW_KEY_F5
+	};
+	GameEngine::Component::Controller* controller = new GameEngine::Component::Controller(m_camera, start, c_eyes, c_direction, c_radius, keys);
+	bindControl((fwControl*)controller);
+	m_player->addComponent(controller, gaEntity::Flag::DONT_DELETE);
+	g_gaWorld.addClient(m_player);
+	static_cast<DarkForces::Actor*>(m_player)->bind(static_cast<dfLevel*>(m_level));
+
 	g_Blackbox.registerClass("dfBullet", &dfBullet::create);
 	g_Blackbox.registerClass("dfSpriteAnimated", &dfSpriteAnimated::create);
 	g_Blackbox.registerClass("dfBulletExplode", &dfBulletExplode::create);

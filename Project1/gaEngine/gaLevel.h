@@ -15,7 +15,7 @@ namespace GameEngine {
 
 	public:
 		Level();
-		void draw(const glm::vec3& position, fwCamera* camera);			// draw recursively the sectors through the portals
+		void draw(dfSuperSector* sector, fwCamera* camera);			// draw recursively the sectors through the portals
 		void hideSectors(void);											// hide all sectors and inform them
 		dfSuperSector* findSector(const glm::vec3& position);			// return the sector the point is in
 		~Level();
