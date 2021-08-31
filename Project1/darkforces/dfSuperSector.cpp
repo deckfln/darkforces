@@ -125,8 +125,9 @@ float dfSuperSector::collideAABBz(const fwAABBox& box)
 	if (m_worldBounding.intersect(box)) {
 
 		for (auto sector : m_sectors) {
-			fwAABBox& worldAABB = sector->worldAABB();
-			if (worldAABB.intersect(box)) {
+			if (sector->collideAABB(box)) {
+				fwAABBox& worldAABB = sector->worldAABB();
+
 				if (box.m_p.y > worldAABB.m_p.y) {
 					// if box if over entity, return the bottom of box
 					return worldAABB.m_p1.y;

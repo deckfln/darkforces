@@ -578,7 +578,11 @@ void dfSector::removeHollowWalls(void)
  */
 bool dfSector::inAABBox(const glm::vec3& position)
 {
-	return m_worldAABB.inside(position);
+	if (m_worldAABB.inside(position)) {
+		return isPointInside(position, true);
+	}
+
+	return false;
 }
 
 /**
@@ -586,7 +590,11 @@ bool dfSector::inAABBox(const glm::vec3& position)
  */
 bool dfSector::collideAABB(const fwAABBox& box)
 {
-	return m_worldAABB.intersect(box);
+	if (m_worldAABB.intersect(box)) {
+		// test each point is inside the sector
+		return (isPointInside(box.m_p, true) && isPointInside(box.m_p1, true));
+	}
+	return false;
 }
 
 /**
