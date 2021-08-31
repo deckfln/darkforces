@@ -11,6 +11,7 @@ class fwCylinder;
 class fwMesh;
 
 #include "../flightRecorder/AABBox.h"
+#include "math/Segment.h"
 
 enum class fwAABBcollision {
 	NONE = 0,
@@ -32,6 +33,11 @@ class fwAABBox
 
 	// draw the collision box
 	fwMesh* m_mesh=nullptr;	
+	bool xAlignedPlan(float x, const Framework::Segment& segment, float& t1, glm::vec3& p);
+	bool yAlignedPlan(float y, const Framework::Segment& segment, float& t1, glm::vec3& p);
+	bool zAlignedPlan(float z, const Framework::Segment& segment, float& t1, glm::vec3& p);
+
+	bool alignedPlan(float t, const Framework::Segment& segment, float& t1, glm::vec3& p);
 
 public:
 	// create an impossible box, so 'extend' can work
@@ -45,6 +51,7 @@ public:
 	fwAABBox(const fwAABBox& source, const glm::mat4& matrix);
 	fwAABBox(const fwAABBox *source, const glm::mat4& matrix);
 	fwAABBox(fwCylinder& cylinder);
+	fwAABBox(const Framework::Segment& segment);
 
 	void set(float, float, float, float, float, float);	// build from points
 	void set(std::vector<glm::vec3>& vertices);			// build from vertices
@@ -65,6 +72,7 @@ public:
 	bool intersect(
 		const glm::vec3& ray_orig, const glm::vec3& ray_dir, 
 		glm::vec3 &point);								// intersect with a ray
+	bool intersect(const Framework::Segment& segment, glm::vec3& p);	// intersect with a segment
 
 	void extend(const fwAABBox& box);
 	void extend(glm::vec3& vertice);

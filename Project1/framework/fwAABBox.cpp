@@ -65,6 +65,14 @@ fwAABBox::fwAABBox(fwCylinder& cylinder)
 }
 
 /**
+ * create from a segment
+ */
+fwAABBox::fwAABBox(const Framework::Segment& segment)
+{
+	set(segment.m_start, segment.m_end);
+}
+
+/**
  * change the content
  */
 void fwAABBox::set(float xmin, float ymin, float zmin, float xmax, float ymax, float zmax)
@@ -386,6 +394,96 @@ bool fwAABBox::intersect(const fwAABBox& box)
 	return (box.m_p1.x < m_p.x || box.m_p.x > m_p1.x ||
 		box.m_p1.y < m_p.y || box.m_p.y > m_p1.y ||
 		box.m_p1.z < m_p.z || box.m_p.z > m_p1.z) ? false : true;
+}
+
+/**
+ * intersect with a segment (ray like)
+ */
+bool fwAABBox::alignedPlan(float t, const Framework::Segment& segment, float& t1, glm::vec3& p)
+{
+	float x, y, z;
+
+	if (t < 0.0f || t > 1.0f) {
+		// the collision is BEFORE or AFTER the 2 end of the segment
+		return false;
+	}
+
+	x = (segment.m_end.x - segment.m_start.x) * t + segment.m_start.x;
+	y = (segment.m_end.y - segment.m_start.y) * t + segment.m_start.y;
+	z = (segment.m_end.z - segment.m_start.z) * t + segment.m_start.z;
+
+	// check if (x,y,z) is on the AABB panel
+	if (x >= m_p.x && x <= m_p1.x && y >= m_p.y && y <= m_p1.y && z >= m_p.z && z <= m_p1.z) {
+		if (t < t1) {
+			p.x = x;
+			p.y = y;
+			p.z = z;
+			t1 = t;
+			return true;
+		}
+	}
+	return false;
+}
+
+bool fwAABBox::xAlignedPlan(float x, const Framework::Segment& segment, float& t1, glm::vec3& p)
+{
+	// test AxisAligned plan on m_p.x
+	// t = (x - x0) / (x1 - x0)
+	float t;
+	float dx = segment.m_end.x - segment.m_start.x;
+
+	if (dx == 0) {
+		return false;
+	}
+
+	t = (x - segment.m_start.x) / dx;
+	return alignedPlan(t, segment, t1, p);
+}
+
+bool fwAABBox::yAlignedPlan(float y, const Framework::Segment& segment, float& t1, glm::vec3& p)
+{
+	float t;
+	float dy = segment.m_end.y - segment.m_start.y;
+	if (dy == 0) {
+		return false;
+	}
+	t = (y - segment.m_start.y) / dy;
+	return alignedPlan(t, segment, t1, p);
+}
+
+bool fwAABBox::zAlignedPlan(float z, const Framework::Segment& segment, float& t1, glm::vec3& p)
+{
+	float t;
+	float dz = segment.m_end.z - segment.m_start.z;
+	if (dz == 0) {
+		return false;
+	}
+	t = (z - segment.m_start.z) / dz;
+	return alignedPlan(t, segment, t1, p);
+}
+
+bool fwAABBox::intersect(const Framework::Segment& segment, glm::vec3& p)
+{
+	fwAABBox aabb(segment);
+	if (!intersect(aabb)) {
+		return false;
+	}
+
+	float t = +INFINITY;
+
+	// equation of the line
+	// P = (p1 - p0) * t + p0
+	//x = (x1 - x0) * t + x0
+	//y = (y1 - y0) * t + y0
+	//z = (z1 - z0) * t + z0
+	xAlignedPlan(m_p.x,  segment, t, p);
+	xAlignedPlan(m_p1.x, segment, t, p);
+	yAlignedPlan(m_p.y,  segment, t, p);
+	yAlignedPlan(m_p1.y, segment, t, p);
+	zAlignedPlan(m_p.z,  segment, t, p);
+	zAlignedPlan(m_p1.z, segment, t, p);
+
+	return t < +INFINITY;
 }
 
 /**

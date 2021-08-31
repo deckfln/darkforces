@@ -735,15 +735,13 @@ bool GameEngine::World::intersectWithEntity(
 	const Framework::Segment& segment, 
 	std::vector<gaEntity*>& collisions)
 {
-	fwAABBox segment_aabb(segment.m_start, segment.m_end);
-
 	std::vector<gaEntity*> entities;
-	
+	glm::vec3 p;
 	getEntitiesWithComponents(componentID, entities);
 
 	// test again entities
 	for (auto ent: entities) {
-		if (ent->worldAABB().intersect(segment_aabb)) {
+		if (ent->worldAABB().intersect(segment, p)) {
 			collisions.push_back(ent);
 		}
 	}
