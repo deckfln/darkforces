@@ -14,6 +14,8 @@ GameEngine::Level::Level()
  */
 void GameEngine::Level::draw(const glm::vec3& position, fwCamera* camera)
 {
+	static glm::vec3 old(0);
+
 	std::vector<bool> visibilityCache(m_supersectors.size());
 
 	// mark all super sectors as NO VISBILE
@@ -23,12 +25,19 @@ void GameEngine::Level::draw(const glm::vec3& position, fwCamera* camera)
 		ssector->visible(false);
 	}
 
+	if (old != position) {
+		old = position;
+	}
 	dfSuperSector* current = findSector(position);
+
 	if (current) {
 		current->visible(true);
 
 		// recursively test the portals to make super sectors visible in the camera frustum 
 		current->checkPortals(camera, 1);
+	}
+	else {
+		__debugbreak();
 	}
 	// ELSE outside of the map
 

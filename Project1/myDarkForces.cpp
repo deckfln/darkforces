@@ -36,7 +36,7 @@ const float c_height = 0.70f;
 const float c_radius = 0.2f;
 const float c_eyes = 0.55f;
 const float c_ankle = 0.26f;
-const float c_direction = +pi / 1.0f;
+const float c_direction = 0.0f;  //+pi / 1.0f;
 
 myDarkForces::myDarkForces(std::string name, int width, int height) :
 	GameEngine::App(name, width, height, "shaders/gamma", "#define GAMMA_CORRECTION 1\n")
@@ -52,27 +52,13 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 	//glm::vec3 start = glm::vec3(-29.5f, 2.0f, 30.808f);	// gen_d
 	//glm::vec3 start = glm::vec3(-20.8f, 0.4f, 29.7f);	// stage
 	//glm::vec3 start = glm::vec3(-21.29, -0.3, 16.6);	// post_e
-	glm::vec3 start = glm::vec3(-17.60, -2.0, 27.77);	// projector
+	//glm::vec3 start = glm::vec3(-17.60, -2.0, 27.77);	// projector
 	//glm::vec3 start = glm::vec3(-20, 2.0, 34);	// mousebot(40)
 	//glm::vec3 start = glm::vec3(-28.65f, -2.0, 34.83f);	// spinner
+	glm::vec3 start = glm::vec3(-28.0287533, -2.0, 27.4463711);	// projector
 
 	fwCylinder bounding(glm::vec3(0), c_radius, c_height); // stage
 
-
-/*
-	m_player = new DarkForces::Actor(DF_ENTITY_OBJECT, "player", bounding, start, c_eyes, c_ankle);
-
-	// controls	
-	m_playerControl = new DarkForces::PlayerControl(m_camera, m_player, c_direction);
-	m_playerControl->setMyDarkForce(this);
-
-	g_gaWorld.addClient(m_player);
-
-	// lock the view -45° to +45°
-	m_playerControl->lockView(M_PI / 4, M_PI / 4 + M_PI / 2);
-
-	bindControl((fwControl*)m_playerControl);
-*/
 	m_player = new DarkForces::Actor(DF_ENTITY_OBJECT, "player", bounding, start, c_eyes, c_ankle);
 	const std::vector<uint32_t> keys = {
 		GLFW_KEY_X,

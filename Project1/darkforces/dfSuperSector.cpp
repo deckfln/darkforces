@@ -329,18 +329,34 @@ void dfSuperSector::checkPortals(fwCamera* camera, int zOrder)
 {
 	m_dfmesh->zOrder(zOrder);
 
+//	printf("dfSuperSector::checkPortals: %s\n", name().c_str());
+
 	for (auto& portal : m_portals) {
+		// ignore already activated portals
+		if (portal.m_target->m_visible) {
+			continue;
+		}
+
+//		printf(">dfSuperSector::checkPortals: %s\n", portal.m_target->name().c_str());
+
 		// WARNING : the camera is using opengl space, but the boundSphere are translated to opengl space
 		if (camera->is_inFrustum(portal.m_boundingSphere)) {
+
+//				printf(">>dfSuperSector::checkPortals: in camera frustrum\n");
+
 			// only if the portal is looking outward
-			glm::vec3 look2portal = glm::normalize(camera->get_position() - portal.m_boundingSphere.center());
+			glm::vec3 look2portal = camera->get_position() - portal.m_boundingSphere.center();
+			float l = glm::length(look2portal);
+			look2portal = glm::normalize(look2portal);
 			float d = glm::dot(look2portal, portal.m_normal);
-			if (d >= 0) {
+			if (d >= 0 || l <= 1.0f) {
+				// if the portal is near the camera, ignore the dot
+				// there can be issues with the camera being slightly out of the current sector
+//					printf(">>dfSuperSector::checkPortals: aligned player\n");
+
 				dfSuperSector* target = portal.m_target;
-				if (!target->m_visible) {
-					target->visible(true);
-					target->checkPortals(camera, zOrder + 1);
-				}
+				target->visible(true);
+				target->checkPortals(camera, zOrder + 1);
 			}
 		}
 	}

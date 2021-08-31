@@ -705,6 +705,8 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 						gaDebugLog(1, "GameEngine::Physics::wantToMove", entity->name() + " falling to ground " + std::to_string(tranform.m_position.x)
 							+ " " + std::to_string(tranform.m_position.y)
 							+ " " + std::to_string(tranform.m_position.z));
+					collidedEntity = static_cast<gaEntity*>(nearest_ground->m_source);
+					entity->superSector(static_cast<dfSuperSector*>(collidedEntity));
 				}
 				else if (entity->canStep()) {
 					if (new_position.y - nearest_ground->m_position.y < static_cast<gaActor*>(entity)->step()) {
@@ -728,6 +730,8 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 				else {
 					// convert the down collision to a nearest
 					nearest_collision = nearest_ground;
+					collidedEntity = static_cast<gaEntity*>(nearest_ground->m_source);
+					entity->superSector(static_cast<dfSuperSector*>(collidedEntity));
 				}
 			}
 			else {
