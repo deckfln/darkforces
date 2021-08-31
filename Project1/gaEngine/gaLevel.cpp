@@ -14,8 +14,14 @@ GameEngine::Level::Level()
  */
 void GameEngine::Level::draw(const glm::vec3& position, fwCamera* camera)
 {
-	static glm::vec3 old(0);
+	// ignore the whole process if the camera didn't change
+	if (camera->worldMatrix() == m_cachedCameraMatrix)
+	{
+		return;
+	}
+	m_cachedCameraMatrix = camera->worldMatrix();
 
+	// find what sector changed visibility
 	std::vector<bool> visibilityCache(m_supersectors.size());
 
 	// mark all super sectors as NO VISBILE
@@ -25,9 +31,6 @@ void GameEngine::Level::draw(const glm::vec3& position, fwCamera* camera)
 		ssector->visible(false);
 	}
 
-	if (old != position) {
-		old = position;
-	}
 	dfSuperSector* current = findSector(position);
 
 	if (current) {

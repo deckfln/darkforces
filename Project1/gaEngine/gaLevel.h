@@ -1,7 +1,7 @@
 #pragma once
 
 #include <list>
-#include <glm/vec3.hpp>
+#include <glm/mat4x4.hpp>
 
 class dfSuperSector;
 class fwCamera;
@@ -10,6 +10,7 @@ namespace GameEngine {
 	class Level {
 	protected:
 		std::list<dfSuperSector*> m_supersectors;
+		glm::mat4 m_cachedCameraMatrix;							// to find if the camera changed between 2 frames
 		dfSuperSector* m_lastSuperSector = nullptr;				// cached sector from the last findSector
 
 	public:
