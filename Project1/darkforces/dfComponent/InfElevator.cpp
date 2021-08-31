@@ -223,10 +223,16 @@ DarkForces::Component::InfElevator::InfElevator(DarkForces::Component::InfElevat
  */
 void DarkForces::Component::InfElevator::eventMask(uint32_t eventMask)
 {
-	/* TODO: Hard coded hack for MORPH_SPIN1,
+	/* TODO: Hard coded hack for MORPH_SPIN1 & MORPH_MOVE1,
 	 * entering the sector doesn't not trigger the elevator to move back to its original position
 	 */
-	if (m_type == DarkForces::Component::InfElevator::Type::MORPH_SPIN1 && (eventMask & (DarkForces::ENTER_SECTOR | DarkForces::LEAVE_SECTOR))) {
+	if ((
+			m_type == DarkForces::Component::InfElevator::Type::MORPH_SPIN1 || 
+			m_type == DarkForces::Component::InfElevator::Type::MORPH_MOVE1
+		)
+		&& (eventMask & (DarkForces::ENTER_SECTOR | DarkForces::LEAVE_SECTOR))) 
+	{
+		//entering the sector doesn't not trigger the elevator to move back to its original position
 		eventMask &= ~(DarkForces::ENTER_SECTOR | DarkForces::LEAVE_SECTOR);
 	}
 	m_eventMask = eventMask;
