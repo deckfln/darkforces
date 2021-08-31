@@ -53,11 +53,12 @@ fwScene& fwScene::hud(fwHUDelement* element)
 void fwScene::debugGUI(void)
 {
 	ImGui::Begin("Explorer");
-	if (ImGui::CollapsingHeader("fwScene")) {
+	if (ImGui::TreeNode("fwScene")) {
 		for (auto child : m_children) {
 			const std::string& name = child->className();
 			ImGui::Checkbox(name.c_str(), &m_inspector[child]);
 		}
+		ImGui::TreePop();
 	}
 	ImGui::End();
 

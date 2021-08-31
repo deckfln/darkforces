@@ -624,7 +624,7 @@ void GameEngine::World::debugGUI(void)
 	const char* classname;
 
 	if (!eclose && ImGui::Begin("Explorer", &eclose)) {
-		if (ImGui::CollapsingHeader("gaEntities")) {
+		if (ImGui::TreeNode("gaEntities")) {
 			for (auto& mclass : m_entitiesByClass) {
 				classname = g_entityClassName[mclass.first];
 				if (ImGui::TreeNode(classname)) {
@@ -644,6 +644,7 @@ void GameEngine::World::debugGUI(void)
 					ImGui::TreePop();
 				}
 			}
+			ImGui::TreePop();
 		}
 		ImGui::End();
 
