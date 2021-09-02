@@ -29,19 +29,21 @@ void fwRenderer::getAllChildren(fwObject3D* root, std::vector<std::list <fwMesh*
 
 	for (auto child : _children) {
 		// only display meshes
-		if (!child->is_class(MESH)) {
+		mesh = dynamic_cast<fwMesh*>(child);
+		if (mesh == nullptr) {
 			continue;
 		}
 
-		mesh = (fwMesh*)child;
 		if (mesh->is_visible()) {
 			// if the parent mesh is not visible, ignore the children
 			getAllChildren(child, meshes);
 
-			if (mesh->is_class(SKINNED_MESH)) {
+			fwMeshSkinned* skinned = dynamic_cast<fwMeshSkinned*>(mesh);
+			fwInstancedMesh* instanced = dynamic_cast<fwInstancedMesh*>(mesh);
+			if (skinned != nullptr) {
 				meshes[FW_MESH_SKINNED].push_front(mesh);
 			}
-			else if (mesh->is_class(INSTANCED_MESH)) {
+			else if (instanced != nullptr) {
 				meshes[FW_MESH_INSTANCED].push_front(mesh);
 			}
 			else {
@@ -65,6 +67,8 @@ void fwRenderer::parseShaders(const std::list <fwMesh *>&meshes,
 	fwMaterial* material;
 	std::string code;
 	GLuint materialID;
+	fwMeshSkinned* skinned;
+	fwInstancedMesh* instanced;
 
 	for (auto mesh : meshes) {
 		local_defines = defines;
@@ -73,12 +77,14 @@ void fwRenderer::parseShaders(const std::list <fwMesh *>&meshes,
 		code = material->hashCode() + codeLights;
 		materialID = material->id();
 
-		if (mesh->is_class(INSTANCED_MESH)) {
+		skinned = dynamic_cast<fwMeshSkinned*>(mesh);
+		if (skinned != nullptr) {
 			local_defines += "#define INSTANCED\n";
 			code += "INSTANCED";
 		}
 
-		if (mesh->is_class(SKINNED_MESH)) {
+		instanced = dynamic_cast<fwInstancedMesh*>(mesh);
+		if (instanced != nullptr) {
 			local_defines += "#define SKINNED\n";
 			code += "SKINNED";
 		}
@@ -110,30 +116,36 @@ void fwRenderer::parseShaders(const std::list <fwMesh *>&meshes,
 void fwRenderer::parseChildren(fwObject3D* root, std::list <fwMesh *> meshes[], fwCamera* camera)
 {
 	fwMesh* mesh;
+	fwSprites* sprites;
+	fwParticles* particles;
 
 	std::list <fwObject3D*> _children = root->get_children();
 
 	for (auto child : _children) {
 		// only display meshes
-		if (!child->is_class(MESH)) {
+		mesh = dynamic_cast<fwMesh*>(child);
+		if (mesh==nullptr) {
 			continue;
 		}
 
-		mesh = (fwMesh*)child;
 		if (mesh->is_visible() && (mesh->always_draw() || camera->is_inFrustum(mesh))) {
 			// if the parent mesh is not visible, ignore the children
 			parseChildren(child, meshes, camera);
 
+
 			if (mesh->is_transparent()) {
 				meshes[FW_RENDER_TRANSPARENT].push_front(mesh);
 			}
-			else if (mesh->is_class(PARTICLES|SPRITE)) {
-				meshes[FW_RENDER_OPAQ_PARTICLES].push_front(mesh);
-			}
 			else {
-				meshes[FW_RENDER_OPAQ].push_front(mesh);
+				sprites = dynamic_cast<fwSprites*>(mesh);
+				particles = dynamic_cast<fwParticles*>(mesh);
+				if (particles || sprites) {
+					meshes[FW_RENDER_OPAQ_PARTICLES].push_front(mesh);
+				}
+				else {
+					meshes[FW_RENDER_OPAQ].push_front(mesh);
+				}
 			}
-
 			mesh->get_geometry()->updateIfDirty();
 		}
 	}

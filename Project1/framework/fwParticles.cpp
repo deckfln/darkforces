@@ -20,7 +20,7 @@ static fwMaterial* particleMaterial = nullptr;
 fwParticles::fwParticles(int nb, const std::string& sprite, float radius) : 
 	fwSprites(nb)
 {
-	classID |= PARTICLES;
+	m_classID |= Framework::ClassID::PARTICLES;
 
 	m_positions = new glm::vec3[nb];
 	m_velocities = new glm::vec3[nb];

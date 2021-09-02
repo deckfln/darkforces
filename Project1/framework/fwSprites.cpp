@@ -7,13 +7,13 @@ static fwMaterial* spriteMaterial = nullptr;
 fwSprites::fwSprites(int size) :
 	m_size(size)
 {
-	classID |= SPRITE;
+	m_classID |= Framework::ClassID::SPRITES;
 }
 
 fwSprites::fwSprites(glm::vec3 *position, int nb, fwTexture *texture, float radius) :
 	m_size(nb)
 {
-	classID |= SPRITE;
+	m_classID |= Framework::ClassID::SPRITES;
 
 	set(position, texture, radius);
 }

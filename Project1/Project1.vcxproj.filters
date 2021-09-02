@@ -1220,6 +1220,9 @@
     <ClInclude Include="gaEngine\gaApp.h">
       <Filter>Fichiers d%27en-tête\gaEngine</Filter>
     </ClInclude>
+    <ClInclude Include="darkforces\dfConfig.h">
+      <Filter>Fichiers d%27en-tête\DarkForces</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\fragment.glsl">

@@ -10,6 +10,7 @@
 #include "../gaEngine/World.h"
 #include "../gaEngine/gaActor.h"
 
+#include "dfConfig.h"
 #include "dfComponent/dfComponentActor.h"
 #include "dfComponent/Trigger.h"
 #include "dfLogicTrigger.h"
@@ -45,14 +46,14 @@ void dfLogicTrigger::init(const std::string& kind)
 	addComponent(trigger, gaEntity::Flag::DELETE_AT_EXIT);
 
 	m_class = class2int(kind);
-	m_class_name = g_className;
+	m_className = g_className;
 }
 
 /**
  *Create a trigger without bounding box
  */
 dfLogicTrigger::dfLogicTrigger(const std::string & kind, const std::string & sector) :
-	gaEntity(DF_ENTITY_TRIGGER, sector),
+	gaEntity(DarkForces::ClassID::Trigger, sector),
 	m_sector(sector)
 {
 	init(kind);
@@ -66,7 +67,7 @@ dfLogicTrigger::dfLogicTrigger(const std::string & kind, const std::string & sec
  * Create a trigger without bounding box
  */
 dfLogicTrigger::dfLogicTrigger(const std::string& kind, const std::string& sector, int wallIndex) :
-	gaEntity(DF_ENTITY_TRIGGER, sector + "(" + std::to_string(wallIndex) + ")"),
+	gaEntity(DarkForces::ClassID::Trigger, sector + "(" + std::to_string(wallIndex) + ")"),
 	m_sector(sector),
 	m_wallIndex(wallIndex)
 {

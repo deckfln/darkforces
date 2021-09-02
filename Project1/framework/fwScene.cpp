@@ -15,8 +15,12 @@
 #include "fwHUD.h"
 #include "fwHUDelement.h"
 
-fwScene::fwScene()
+static const char* g_className = "fwScene";
+
+fwScene::fwScene():
+	fwObject3D()
 {
+	m_className = g_className;
 }
 
 fwScene& fwScene::setOutline(glm::vec3* _color)
@@ -53,19 +57,13 @@ fwScene& fwScene::hud(fwHUDelement* element)
 void fwScene::debugGUI(void)
 {
 	ImGui::Begin("Explorer");
-	if (ImGui::TreeNode("fwScene")) {
-		for (auto child : m_children) {
-			const std::string& name = child->className();
-			ImGui::Checkbox(name.c_str(), &m_inspector[child]);
-		}
-		ImGui::TreePop();
-	}
+	debugGUItree(m_inspector);
 	ImGui::End();
 
 	// display entities monitored
 	ImGui::Begin("Inspector");
 	for (auto& watch : m_inspector) {
-		if (watch.second) {
+		if (watch.second && watch.first != this) {
 			watch.first->debugGUI();
 		}
 	}

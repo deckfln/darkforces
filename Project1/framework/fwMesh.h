@@ -13,8 +13,6 @@
 
 #include "fwObject3D.h"
 
-constexpr auto MESH = 1;
-
 enum class fwMeshRendering {
 	FW_MESH_TRIANGLES,
 	FW_MESH_POINT,
@@ -98,8 +96,6 @@ public:
 
 	virtual void draw(glProgram *);
 
-	const std::string className(void) override;					// return user friendly class name
-	void debugGUI(void) override;
 	void debugGUIChildClass(void) override;
 
 	~fwMesh();

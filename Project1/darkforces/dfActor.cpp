@@ -11,14 +11,14 @@ static const char* g_className = "dfActor";
 DarkForces::Actor::Actor(int mclass, const std::string& name, fwCylinder& cylinder, const glm::vec3& feet, float eyes, float ankle):
 	gaActor(mclass, name, cylinder, feet, eyes, ankle)
 {
-	m_class_name = g_className;
+	m_className = g_className;
 	addComponent(&m_defaultAI);
 }
 
 DarkForces::Actor::Actor(flightRecorder::Entity* record):
 	gaActor(record)
 {
-	m_class_name = g_className;
+	m_className = g_className;
 }
 
 /**

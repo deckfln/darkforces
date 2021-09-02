@@ -4,6 +4,7 @@
 #include "../../gaEngine/gaComponent/gaComponentMesh.h"
 #include "../../gaEngine/gaComponent/gaSound.h"
 
+#include "../dfConfig.h"
 #include "../dfFileSystem.h"
 #include "../dfLogicStop.h"
 #include "../dfLogicTrigger.h"
@@ -29,7 +30,7 @@ static dfVOC* cache[3] = { nullptr, nullptr, nullptr };
  *
  */
 DarkForces::Entity::ElevatorDoor::ElevatorDoor(dfSector* sector):
-	gaEntity(DF_ENTITY_ELEVATOR, sector->name())
+	gaEntity(DarkForces::ClassID::Elevator, sector->name())
 {
 	m_physical = true;
 	m_gravity = false;

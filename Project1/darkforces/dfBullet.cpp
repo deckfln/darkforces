@@ -19,13 +19,14 @@
 #include "../gaEngine/gaMessage.h"
 #include "../gaEngine/gaCollisionPoint.h"
 
-#include "../darkforces/weapons.h"
-#include "../darkforces/dfSuperSector.h"
-#include "../darkforces/dfModel/dfWAX.h"
-#include "../darkforces/dfSprites.h"
-#include "../darkforces/dfObject/dfSpriteAnimated.h"
-#include "../darkforces/dfObject/dfBulletExplode.h"
-#include "../darkforces/dfVOC.h"
+#include "dfConfig.h"
+#include "weapons.h"
+#include "dfSuperSector.h"
+#include "dfModel/dfWAX.h"
+#include "dfSprites.h"
+#include "dfObject/dfSpriteAnimated.h"
+#include "dfObject/dfBulletExplode.h"
+#include "dfVOC.h"
 
 const float bullet_length = 0.5f;
 const float bullet_radius = 0.01f;
@@ -51,10 +52,10 @@ static const std::map<DarkForces::Weapons, const std::string> g_WeaponSounds = {
 };
 
 dfBullet::dfBullet(DarkForces::Weapons weapon, const glm::vec3& position, const glm::vec3& direction):
-	gaEntity(DF_ENTITY_BULLET, "bullet("+std::to_string(g_bulletID++)+")", position),
+	gaEntity(DarkForces::ClassID::Bullet, "bullet("+std::to_string(g_bulletID++)+")", position),
 	m_direction(glm::normalize(direction))
 {
-	m_class_name = g_className;
+	m_className = g_className;
 
 	// create a mesh for the blaster
 	if (g_blaster == nullptr) {

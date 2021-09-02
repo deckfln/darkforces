@@ -7,7 +7,7 @@ static const char* g_className = "dfMouseBot";
 MouseBot::MouseBot(df3DO* threedo, const glm::vec3& position, float ambient, uint32_t objectID) :
 	dfObject3D(threedo, position, ambient, objectID)
 {
-	m_class_name = g_className;
+	m_className = g_className;
 
 	physical(true);
 	addComponent(&m_ia);

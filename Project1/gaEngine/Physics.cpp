@@ -13,8 +13,10 @@
 
 #include "../config.h"
 
+#include "../darkforces/dfConfig.h"
 #include "../darkforces/dfSuperSector.h"
 #include "../flightRecorder/Ballistic.h"
+#include "../darkforces/dfBullet.h"
 
 using namespace GameEngine;
 
@@ -249,7 +251,7 @@ void Physics::moveBullet(gaEntity* entity, gaMessage* message)
 void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 {
 	// bullets are special case
-	if (entity->is(DF_ENTITY_BULLET)) {
+	if (dynamic_cast<dfBullet*>(entity) != nullptr) {
 		moveBullet(entity, message);
 		return;
 	}
@@ -813,12 +815,18 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 
 			// register the sector the entity walks on
 			if (nearest_ground) {
+				dfSuperSector* ss;
+
 				collidedEntity = static_cast<gaEntity*>(nearest_ground->m_source);
-				if (collidedEntity->is(GameEngine::Entity::SECTOR)) {
-					entity->superSector(static_cast<dfSuperSector*>(collidedEntity));
+				ss = dynamic_cast<dfSuperSector*>(collidedEntity);
+				if (ss != nullptr) {
+					entity->superSector(ss);
 				}
-				else if (collidedEntity->is(DF_ENTITY_SECTOR)) {
-					entity->superSector(static_cast<dfSector*>(collidedEntity)->supersector());
+				else {
+					dfSector* s = dynamic_cast<dfSector*>(collidedEntity);
+					if (s != nullptr) {
+						entity->superSector(s->supersector());
+					}
 				}
 			}
 		}

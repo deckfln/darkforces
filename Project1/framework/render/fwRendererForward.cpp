@@ -63,7 +63,7 @@ void fwRendererForward::drawMesh(fwCamera* camera, fwMesh* mesh, glProgram* prog
 		glProgram* previous = program;
 		glProgram* current = nullptr;
 
-		if (mesh->is_class(INSTANCED_MESH)) {
+		if (dynamic_cast<fwInstancedMesh*>(mesh)) {
 			if (outline_instanced_program == nullptr) {
 				outline_instanced_program = new glProgram(outline_material->get_vertexShader(), outline_material->get_fragmentShader(), "", "#define INSTANCED");
 			}

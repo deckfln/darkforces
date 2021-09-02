@@ -16,6 +16,7 @@
 #include "../gaEngine/gaCollisionPoint.h"
 #include "../gaEngine/World.h"
 
+#include "dfConfig.h"
 #include "dfSuperSector.h"
 #include "dfMesh.h"
 #include "dfParseINF.h"
@@ -26,12 +27,12 @@
 static const char* g_className = "dfSector";
 
 dfSector::dfSector(std::istringstream& infile, std::vector<dfSector*>& sectorsID, dfLevel *level):
-	gaEntity(DF_ENTITY_SECTOR),
+	gaEntity(DarkForces::ClassID::Sector),
 	m_sectorsID(sectorsID),
 	m_level(level)
 {
 	physical(false);	// object is a virtual entity (cannot collide)
-	m_class_name = g_className;
+	m_className = g_className;
 
 	int nbVertices;
 	int currentVertice = 0;

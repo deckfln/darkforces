@@ -8,15 +8,20 @@
 #include "../alEngine/alSound.h"
 
 static uint32_t g_ids = 0;
+static const char* g_className = "fwObject3D";
 
-fwObject3D::fwObject3D():
-	m_id(g_ids++)
+fwObject3D::fwObject3D() :
+	m_id(g_ids++),
+	m_className(g_className),
+	m_classID(Framework::ClassID::Object3D)
 {
 }
 
 fwObject3D::fwObject3D(const glm::vec3& position):
 	m_position(position),
-	m_id(g_ids++)
+	m_id(g_ids++),
+	m_className(g_className),
+	m_classID(Framework::ClassID::Object3D)
 {
 }
 
@@ -60,10 +65,9 @@ fwObject3D &fwObject3D::set_name(const std::string& _name)
 	return *this;
 }
 
-bool fwObject3D::is_class(int _classID)
+bool fwObject3D::is_class(uint32_t classID)
 {
-	int a= (classID & _classID) != 0;
-	return a;
+	return classID == m_classID;
 }
 
 fwObject3D &fwObject3D::rotate(const glm::vec3 &_rotation)
@@ -73,6 +77,7 @@ fwObject3D &fwObject3D::rotate(const glm::vec3 &_rotation)
 	m_updated = true;
 	return *this;
 }
+
 fwObject3D& fwObject3D::rotate(glm::vec3 *_rotation)
 {
 	m_rotation = *_rotation;
@@ -80,12 +85,14 @@ fwObject3D& fwObject3D::rotate(glm::vec3 *_rotation)
 	m_updated = true;
 	return *this;
 }
+
 fwObject3D& fwObject3D::rotate(glm::quat const* quaternion)
 {
 	m_quaternion = *quaternion;
 	m_updated = true;
 	return *this;
 }
+
 fwObject3D& fwObject3D::rotate(const glm::quat& quaternion)
 {
 	m_quaternion = quaternion;
@@ -393,17 +400,26 @@ void fwObject3D::loadState(flightRecorder::Object3D* record)
 /**
  * return user friendly class name
  */
-const std::string fwObject3D::className(void)
+const char *fwObject3D::className(void)
 {
-	return "fwObject3D";
+	return m_className;
 }
+
+static char tmp[64];
 
 /**
  * Display the object alone in the debugger
  */
 void fwObject3D::debugGUI(void)
 {
-	if (ImGui::CollapsingHeader("fwObject3D")) {
+	if (m_name != "") {
+		_snprintf_s(tmp, sizeof(tmp), _TRUNCATE, "%s (%d) \"%s\"", m_className, m_id, m_name.c_str());
+	}
+	else {
+		_snprintf_s(tmp, sizeof(tmp), _TRUNCATE, "%s (%d)", m_className, m_id);
+	}
+
+	if (ImGui::CollapsingHeader(tmp)) {
 		debugGUIChildClass();
 	}
 }
@@ -413,9 +429,7 @@ void fwObject3D::debugGUI(void)
  */
 void fwObject3D::debugGUIChildClass(void)
 {
-	static char tmp[64];
-	sprintf_s(tmp, "fwObject3D##%d", m_id);
-	if (ImGui::TreeNode(tmp)) {
+	if (ImGui::TreeNode(g_className)) {
 		if (m_name != "") {
 			ImGui::Text(m_name.c_str());
 		}
@@ -423,6 +437,34 @@ void fwObject3D::debugGUIChildClass(void)
 		ImGui::Text("Rotation %.2f %.2f %.2f", m_rotation.x, m_rotation.y, m_rotation.z);
 		ImGui::Text("Scale    %.2f %.2f %.2f", m_scale.x, m_scale.y, m_scale.z);
 		ImGui::TreePop();
+	}
+}
+
+/**
+ *
+ */
+void fwObject3D::debugGUItree(std::map<fwObject3D*, bool>& inspector)
+{
+	static char tmp[64];
+
+	if (m_name != "") {
+		_snprintf_s(tmp, sizeof(tmp), _TRUNCATE, "%s (%d) \"%s\"", m_className, m_id, m_name.c_str());
+	}
+	else {
+		_snprintf_s(tmp, sizeof(tmp), _TRUNCATE, "%s (%d)", m_className, m_id);
+	}
+
+	if (m_children.size() > 0) {
+		if (ImGui::TreeNode(tmp)) {
+			ImGui::Checkbox(tmp, &inspector[this]);
+			for (auto child : m_children) {
+				child->debugGUItree(inspector);
+			}
+			ImGui::TreePop();
+		}
+	}
+	else {
+		ImGui::Checkbox(tmp, &inspector[this]);
 	}
 }
 

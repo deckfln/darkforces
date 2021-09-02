@@ -6,8 +6,6 @@
 #include "../fwBoneInfo.h"
 #include "../fwAnimation.h"
 
-constexpr auto SKINNED_MESH = 2;
-
 class fwMeshSkinned : public fwMesh
 {
 	glm::mat4* m_bonesOffset = nullptr;	// local transform of each bone : per bone

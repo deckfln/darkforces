@@ -22,14 +22,14 @@ static fwMaterialBasic* material_portal = new fwMaterialBasic(&white);
 static const char* g_className = "dfSuperSector";
 
 dfSuperSector::dfSuperSector(dfSector* sector, fwMaterialBasic* material, std::vector<dfBitmap*>& bitmaps) :
-	gaEntity(GameEngine::Entity::SECTOR),
+	gaEntity(GameEngine::ClassID::Sector),
 	m_material(material)
 {
 	// link sector and supersector
 	m_sectors.push_back(sector);
 	sector->supersector(this);
 
-	m_class_name = g_className;
+	m_className = g_className;
 	m_worldBounding = sector->m_worldAABB;
 	m_name = sector->name();
 

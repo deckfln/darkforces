@@ -7,7 +7,7 @@ fwMeshSkinned::fwMeshSkinned(fwGeometry* _geometry, fwMaterial* _material, fwBon
 	m_skeleton(root),
 	m_GlobalInverseTransform(globalInverseTransform)
 {
-	classID |= SKINNED_MESH;
+	m_classID |= Framework::ClassID::SKINNED_MESH;
 	m_bonesTransform = new glm::mat4[64]();
 
 	stop();

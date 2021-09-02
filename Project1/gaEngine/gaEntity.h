@@ -24,8 +24,10 @@ class dfSuperSector;
 struct recordEntity;
 
 namespace GameEngine {
-	enum Entity {
-		SECTOR=128
+	enum ClassID {
+		Entity = Framework::ClassID::Object3D | (1 << 1),
+		Sector = Entity | (1 << 5),
+		Actor = Entity | (1 << 6)
 	};
 };
 
@@ -34,10 +36,6 @@ using namespace GameEngine;
 class gaEntity : public fwObject3D
 {
 protected:
-	const char* m_class_name = nullptr;				// display name of the class
-	uint32_t m_class = 0;							// numerical form TODO: get ride of it
-
-	std::string m_name;
 	uint32_t m_entityID = 0;
 
 	bool m_physical = false;						// if this entity has a body to checkCollision with
@@ -71,9 +69,9 @@ public:
 		DONT_DELETE,
 		DELETE_AT_EXIT
 	};
-	gaEntity(int mclass);
-	gaEntity(int mclass, const std::string& name);
-	gaEntity(int mclass, const std::string& name, const glm::vec3& position);
+	gaEntity(uint32_t mclass);
+	gaEntity(uint32_t mclass, const std::string& name);
+	gaEntity(uint32_t mclass, const std::string& name, const glm::vec3& position);
 	gaEntity(flightRecorder::Entity* record);
 
 	// external creator
@@ -88,9 +86,6 @@ public:
 
 	// getter/setter
 	inline int entityID(void) { return m_entityID; };
-	inline bool is(int mclass) { return m_class == mclass; };
-	inline uint32_t mclass(void) { return m_class; };
-	inline const char *mclassName(void) { return m_class_name; };
 	inline const std::string& name(void) { return m_name; };
 	inline void name(const std::string& name) { m_name = name; };
 	inline bool physical(void) { return m_physical; };

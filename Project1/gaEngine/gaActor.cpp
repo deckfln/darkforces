@@ -23,18 +23,18 @@ static const char* g_className = "gaActor";
  *
  */
 gaActor::gaActor(
-	int mclass, 
+	uint32_t mclass, 
 	const std::string& name, 
 	fwCylinder& cylinder,		// collision cylinder
 	const glm::vec3& feet,			// position of the feet 
 	float eyes, 
 	float ankle) :
-	gaEntity(mclass, name),
+	gaEntity(GameEngine::ClassID::Actor | mclass, name),
 	m_cylinder(cylinder),
 	m_ankle(ankle),
 	m_eyes(eyes)
 {
-	m_class_name = g_className;
+	m_className = g_className;
 
 	translate(feet);
 
@@ -57,7 +57,7 @@ gaActor::gaActor(
 gaActor::gaActor(flightRecorder::Entity* record) :
 	gaEntity(record)
 {
-	m_class_name = g_className;
+	m_className = g_className;
 }
 
 /**

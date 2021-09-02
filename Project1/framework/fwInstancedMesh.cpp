@@ -9,7 +9,7 @@ fwInstancedMesh::fwInstancedMesh(fwGeometry *_geometry, fwMaterial *_material, i
 {
 	// glm::vec3 = 3 * sizeof(float)
 	positions = new glInstancedBufferAttribute("_positions", 1, GL_ARRAY_BUFFER, _positions, 16, max_instances * sizeof(glm::mat4), sizeof(float), false);
-	classID |= INSTANCED_MESH;
+	m_classID |= Framework::ClassID::INSTANCED_MESH;
 }
 
 void fwInstancedMesh::set_instances_2_draw(int _instances)

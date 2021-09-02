@@ -324,6 +324,7 @@
     <ClInclude Include="darkforces\dfComponent\InfElevator\InfElevatorVertical\InfElevatorMoveFloor.h" />
     <ClInclude Include="darkforces\dfComponent\InfStandardTrigger.h" />
     <ClInclude Include="darkforces\dfComponent\Trigger.h" />
+    <ClInclude Include="darkforces\dfConfig.h" />
     <ClInclude Include="darkforces\dfFileGOB.h" />
     <ClInclude Include="darkforces\dfFileSystem.h" />
     <ClInclude Include="darkforces\dfFrame.h" />

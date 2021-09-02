@@ -16,32 +16,36 @@
 static int g_ids = 0;
 static const char* g_className = "gaEntity";
 
-gaEntity::gaEntity(int mclass):
-	m_entityID(g_ids++),
-	m_class(mclass),
-	m_class_name(g_className)
+gaEntity::gaEntity(uint32_t mclass):
+	fwObject3D(),
+	m_entityID(g_ids++)
 {
+	m_classID = GameEngine::ClassID::Entity | mclass;
+	m_className = g_className;
 }
 
-gaEntity::gaEntity(int mclass, const std::string& name) :
-	m_entityID(g_ids++),
-	m_name(name),
-	m_class(mclass),
-	m_class_name(g_className)
+gaEntity::gaEntity(uint32_t mclass, const std::string& name) :
+	fwObject3D(),
+	m_entityID(g_ids++)
 {
+	m_name = name;
+	m_classID = GameEngine::ClassID::Entity | mclass;
+	m_className = g_className;
+
 	g_gaBoundingBoxes.add(&m_worldBounding);
 	m_collider.set(&m_modelAABB, &m_worldMatrix, &m_inverseWorldMatrix);
 
 	m_transforms.m_flag = gaMessage::Flag::WANT_TO_MOVE_FALL;	// accept falling down
 }
 
-gaEntity::gaEntity(int mclass, const std::string& name, const glm::vec3& position):
+gaEntity::gaEntity(uint32_t mclass, const std::string& name, const glm::vec3& position):
 	fwObject3D(position),
-	m_entityID(g_ids++),
-	m_name(name),
-	m_class(mclass),
-	m_class_name(g_className)
+	m_entityID(g_ids++)
 {
+	m_name = name;
+	m_classID = GameEngine::ClassID::Entity | mclass;
+	m_className = g_className;
+
 	g_gaBoundingBoxes.add(&m_worldBounding);
 	m_collider.set(&m_modelAABB, &m_worldMatrix, &m_inverseWorldMatrix);
 
@@ -52,9 +56,10 @@ gaEntity::gaEntity(int mclass, const std::string& name, const glm::vec3& positio
  * create an entity from flight recorder info
  */
 gaEntity::gaEntity(flightRecorder::Entity* record):
-	m_entityID(g_ids++),
-	m_class_name(g_className)
+	fwObject3D(),
+	m_entityID(g_ids++)
 {
+	m_className = g_className;
 	loadState(record);
 
 	g_gaBoundingBoxes.add(&m_worldBounding);
@@ -367,7 +372,7 @@ uint32_t gaEntity::recordState(void *r)
 	flightRecorder::Entity *record = (flightRecorder::Entity *)r;
 	record->size = sizeof(flightRecorder::Entity);
 	record->classID = flightRecorder::TYPE::ENTITY;
-	strncpy_s(record->className, m_class_name, sizeof(record->className));
+	strncpy_s(record->className, m_className, sizeof(record->className));
 	strncpy_s(record->name, m_name.c_str(), _TRUNCATE);
 	fwObject3D::recordState(&record->object3D);
 	m_transforms.recordState(&record->transforms);		// transforms to move the object

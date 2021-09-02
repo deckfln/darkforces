@@ -2,8 +2,6 @@
 
 #include "fwMesh.h"
 
-#define SPRITE 4
-
 class fwSprites : public fwMesh
 {
 protected:

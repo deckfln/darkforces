@@ -21,6 +21,7 @@
 #include "gaEngine/gaComponent/gaActiveProbe.h"
 #include "gaEngine/gaBoundingBoxes.h"
 
+#include "darkforces/dfConfig.h"
 #include "darkforces/dfLevel.h"
 #include "darkforces/dfCollision.h"
 #include "darkforces/dfComponent/dfComponentActor.h"
@@ -105,7 +106,7 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 	resizeEvent(width, height);
 
 	// and put the player in position
-	m_player = new DarkForces::Actor(DF_ENTITY_OBJECT, "player", bounding, start, c_eyes, c_ankle);
+	m_player = new DarkForces::Actor(DarkForces::ClassID::Object, "player", bounding, start, c_eyes, c_ankle);
 	const std::vector<uint32_t> keys = {
 		GLFW_KEY_X,
 		GLFW_KEY_LEFT_CONTROL,

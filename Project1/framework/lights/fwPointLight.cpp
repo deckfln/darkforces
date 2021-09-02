@@ -10,7 +10,7 @@ static glProgram* depth_program[3] = { nullptr, nullptr, nullptr };
 
 fwPointLight::fwPointLight()
 {
-	classID |= FW_POINT_LIGHT;
+	m_classID |= Framework::ClassID::POINT_LIGHT;
 }
 
 fwPointLight::fwPointLight(glm::vec3 _position, glm::vec3 _color, glm::vec3 _diffuse, glm::vec3 _specular, float _constant, float _linear, float _quadatric):
@@ -22,7 +22,7 @@ fwPointLight::fwPointLight(glm::vec3 _position, glm::vec3 _color, glm::vec3 _dif
 	m_quadratic(_quadatric)
 
 {
-	classID |= FW_POINT_LIGHT;
+	m_classID |= Framework::ClassID::POINT_LIGHT;
 	translate(_position);
 	uniform_prefix = "pointlights";
 	type = 2;

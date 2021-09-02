@@ -13,6 +13,7 @@
 #include "../mesh/fwMeshSkinned.h"
 #include "../fwParticles.h"
 #include "../lights/fwDirectionLight.h"
+#include "../lights/fwPointLight.h"
 #include "../materials/fwNormalHelperMaterial.h"
 #include "../materials/fwBloomMaterial.h"
 #include "../materials/fwMaterialDeferedLights.h"
@@ -66,6 +67,8 @@ void fwRendererDefered::buildDeferedShader(const std::list <fwMesh*>& meshes,
 	std::string code;
 	int materialID;
 	std::string local_defines;
+	fwInstancedMesh* instanced;
+	fwMeshSkinned* skinned;
 
 	for (auto mesh: meshes) {
 		local_defines = "";
@@ -74,12 +77,14 @@ void fwRendererDefered::buildDeferedShader(const std::list <fwMesh*>& meshes,
 		code = material->hashCode();
 		materialID = material->id();
 
-		if (mesh->is_class(INSTANCED_MESH)) {
+		instanced = dynamic_cast<fwInstancedMesh*>(mesh);
+		if (instanced) {
 			local_defines += "#define INSTANCED\n";
 			code += "INSTANCED";
 		}
 
-		if (mesh->is_class(SKINNED_MESH)) {
+		skinned = dynamic_cast<fwMeshSkinned*>(mesh);
+		if (skinned) {
 			local_defines += "#define SKINNED\n";
 			code += "SKINNED";
 		}
@@ -110,10 +115,10 @@ void fwRendererDefered::mergeMTR(fwScene *scene)
 	int point_lights = 0;
 
 	for (auto light : lights) {
-		if (light->is_class(FW_DIRECTIONAL_LIGHT)) {
+		if (dynamic_cast<fwDirectionLight*>(light)) {
 			directional_lights++;
 		}
-		if (light->is_class(FW_POINT_LIGHT)) {
+		if (dynamic_cast<fwPointLight*>(light)) {
 			point_lights++;
 		}
 		if (((fwObject3D *)light)->castShadow()) {

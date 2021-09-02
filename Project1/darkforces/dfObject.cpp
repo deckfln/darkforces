@@ -9,6 +9,7 @@
 #include "../gaEngine/gaDebug.h"
 #include "../gaEngine/World.h"
 
+#include "dfConfig.h"
 #include "dfModel.h"
 #include "dfSprites.h"
 #include "dfLevel.h"
@@ -24,7 +25,7 @@ static const char* g_className = "dfObject";
  *
  */
 dfObject::dfObject(dfModel *source, const glm::vec3& position, float ambient, int type, uint32_t objectID):
-	gaEntity(DF_ENTITY_OBJECT, source->name() + "(" + std::to_string(objectID) + ")"),
+	gaEntity(DarkForces::ClassID::Object, source->name() + "(" + std::to_string(objectID) + ")"),
 	m_source(source),
 	m_position_lvl(position),
 	m_ambient(ambient),
@@ -33,7 +34,7 @@ dfObject::dfObject(dfModel *source, const glm::vec3& position, float ambient, in
 {
 	modelAABB(m_source->modelAABB());
 	moveTo(position);
-	m_class_name = g_className;
+	m_className = g_className;
 }
 
 /**
@@ -42,7 +43,7 @@ dfObject::dfObject(dfModel *source, const glm::vec3& position, float ambient, in
 dfObject::dfObject(flightRecorder::DarkForces::dfObject* record) :
 	gaEntity(&record->entity)
 {
-	m_class_name = g_className;
+	m_className = g_className;
 	loadState((flightRecorder::Entity*)record);
 }
 

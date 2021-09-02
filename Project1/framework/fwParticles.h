@@ -2,8 +2,6 @@
 
 #include "fwSprites.h"
 
-#define PARTICLES 8
-
 class fwParticles : public fwSprites
 {
 protected:

@@ -1,6 +1,7 @@
 #pragma once
 #include <iostream>
 #include <list>
+#include <map>
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -13,6 +14,20 @@
 #include "../flightRecorder/Object3D.h"
 
 using namespace Framework;
+
+namespace Framework {
+	enum ClassID {
+		Object3D = 1 << 0,
+			LIGHT1 = Object3D | (1<<5),
+				DIRECTIONAL_LIGHT = LIGHT1 | (1 << 6),
+				POINT_LIGHT = LIGHT1 | (1 << 7),
+			MESH = Object3D | (1<<6),
+				SKINNED_MESH = MESH | (1<<7),
+				INSTANCED_MESH = MESH | (1 << 8),
+			PARTICLES = Object3D | (1<<7),
+			SPRITES = Object3D | (1<<8),
+	};
+}
 
 class alSource;
 class alSound;
@@ -42,7 +57,8 @@ class fwObject3D : public Reference
 
 protected:
 	std::string m_name;
-	int classID = 0;
+	uint32_t m_classID = 0;
+	const char* m_className = nullptr;
 
 	glm::mat4 m_worldMatrix = glm::mat4(0);			// world space matrix (including children)
 	glm::mat4 m_inverseWorldMatrix = glm::mat4(0);	// world space matrix (including children)
@@ -63,7 +79,8 @@ public:
 	void pushTransformations(void);						// push the current transformations
 	void popTransformations(void);						// pop the transformations
 
-	bool is_class(int classID);
+	bool is_class(uint32_t classID);
+	uint32_t mclass(void) { return m_classID; };
 	fwObject3D &set_name(const std::string& _name);
 	inline const std::string& name(void) { return m_name; };
 	inline fwObject3D& name(const std::string& name) { m_name = name; return *this; }
@@ -139,9 +156,12 @@ public:
 	// state API
 	uint32_t recordState(flightRecorder::Object3D* record);
 	void loadState(flightRecorder::Object3D* record);
-	virtual const std::string className(void);					// return user friendly class name
+	const char *className(void);					// return user friendly class name
+
+	// debugger
 	virtual void debugGUI(void);					// display an object
 	virtual void debugGUIChildClass(void);			// Add dedicated component debug the entity
+	void debugGUItree(std::map<fwObject3D*,bool>& inspector);
 
 	// delete
 	~fwObject3D();

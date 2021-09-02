@@ -72,7 +72,7 @@ void World::addClient(gaEntity* client)
 
 	// register the class name
 	if (g_entityClassName.count(mclass) == 0) {
-		g_entityClassName[mclass] = client->mclassName();
+		g_entityClassName[mclass] = client->className();
 	}
 
 	client->OnWorldInsert();
@@ -428,7 +428,7 @@ bool World::getEntities(uint32_t type, std::vector<gaEntity*>& entities)
 	for (auto& entry : m_entities) {
 		// test all entity with the same name
 		for (auto entity : entry.second) {
-			if (entity->is(type)) {
+			if (entity->is_class(type)) {
 				entities.push_back(entity);
 			}
 		}

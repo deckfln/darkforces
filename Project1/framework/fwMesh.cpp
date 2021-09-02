@@ -7,14 +7,17 @@
 #include <string>
 
 static int g_ids = 0;
+static const char* g_className = "fwMesh";
 
 /**
  *
  */
 fwMesh::fwMesh():
+	fwObject3D(),
 	m_id(g_ids++)
 {
-	classID |= MESH;
+	m_classID |= Framework::ClassID::MESH;
+	m_className = g_className;
 }
 
 fwMesh::fwMesh(fwGeometry *_geometry, fwMaterial *_material):
@@ -24,7 +27,8 @@ fwMesh::fwMesh(fwGeometry *_geometry, fwMaterial *_material):
 	outlined(false),
 	m_id(g_ids++)
 {
-	classID |= MESH;
+	m_classID |= Framework::ClassID::MESH;
+	m_className = g_className;
 
 	m_geometry->reference();
 	m_material->reference();
@@ -39,7 +43,8 @@ fwMesh::fwMesh(fwMaterial* _material):
 	m_material(_material),
 	m_id(g_ids++)
 {
-	classID |= MESH;
+	m_classID |= Framework::ClassID::MESH;
+	m_className = g_className;
 	m_material->reference();
 }
 
@@ -259,29 +264,6 @@ float fwMesh::sqDistance2boundingSphere(glm::vec3 position)
 void fwMesh::rendering(fwMeshRendering render)
 {
 	m_rendering = render;
-}
-
-/**
- * return user friendly class name
- */
-const std::string fwMesh::className(void)
-{
-	const std::string n = "fwMesh";
-	if (m_name != "") {
-		return n + std::to_string(m_id) + " (" + m_name + ")";
-
-	}
-	return n + std::to_string(m_id);
-}
-
-/**
- * display the object in the debugger 
- */
-void fwMesh::debugGUI(void)
-{
-	if (ImGui::CollapsingHeader(className().c_str())) {
-		debugGUIChildClass();
-	}
 }
 
 /**

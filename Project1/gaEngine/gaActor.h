@@ -35,7 +35,7 @@ protected:
 
 public:
 	gaActor(
-		int mclass,
+		uint32_t mclass,
 		const std::string& name,		// name of the actor
 		fwCylinder& cylinder,			// collision cylinder
 		const glm::vec3& feet,			// position of the feet in world space
