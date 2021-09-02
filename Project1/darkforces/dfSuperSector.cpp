@@ -122,7 +122,7 @@ void dfSuperSector::dispatchMessage(gaMessage* message)
  */
 bool dfSuperSector::intersect(const Framework::Segment& s, glm::vec3& p)
 {
-	if (m_worldBounding.intersect(s, p)) {
+	if (gaEntity::intersect(s, p)) {
 
 		for (auto sector : m_sectors) {
 			if (sector->intersect(s, p)) {

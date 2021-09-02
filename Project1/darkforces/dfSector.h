@@ -148,6 +148,10 @@ public:
 	bool inAABBox(const glm::vec3& position);						// quick test point inside AABB
 	bool collideAABB(const fwAABBox& box);							// quick test to find AABB collision
 
+	// overriden function
+	bool intersect(const Framework::Segment& s, glm::vec3& p) override;	// quick test to find AABB collision and return the collision point
+
+
 	// getter/setter
 	inline dfSuperSector* supersector(void) { return m_super; };
 	inline void supersector(dfSuperSector* s) { m_super = s; };

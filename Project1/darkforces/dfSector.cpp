@@ -595,6 +595,19 @@ bool dfSector::collideAABB(const fwAABBox& box)
 }
 
 /**
+ * quick test to find AABB collision and return the collision point
+ */
+bool dfSector::intersect(const Framework::Segment& s, glm::vec3& p)
+{
+	// first check the AABB intersection
+	if (gaEntity::intersect(s, p)) {
+		// then ensure the collision point is inside the surface of the dfSector
+		return isPointInside(p, true);
+	}
+	return false;
+}
+
+/**
  * Change the lightning of the sector in the super-sector mesh
  */
 void dfSector::changeAmbient(float ambient)
