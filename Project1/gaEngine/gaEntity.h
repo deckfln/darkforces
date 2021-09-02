@@ -106,7 +106,7 @@ public:
 	inline GameEngine::Transform* pTransform(void) { return &m_transforms; };
 	inline int defaultCollision(void) { return m_defaultCollision; };
 	inline void defaultCollision(int b) { m_defaultCollision = b; };
-	inline void superSector(dfSuperSector* s) { m_supersector = s; };
+	inline void superSector(dfSuperSector* s) { 		m_supersector = s; };
 	void displayAABBox(void);							// display the world AABBox on screen
 
 	void set(const std::string& v, void* ptr) { m_attributes[v] = ptr; };

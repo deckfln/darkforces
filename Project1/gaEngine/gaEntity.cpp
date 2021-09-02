@@ -300,9 +300,6 @@ void gaEntity::dispatchMessage(gaMessage* message)
 			translate((glm::vec3*)message->m_extra);
 			updateWorldAABB();
 		}
-
-		// detect if the entity moved to a new sector
-		m_supersector = g_gaWorld.findSector(m_supersector, position());
 		break;
 
 	case gaMessage::Action::ROTATE:
