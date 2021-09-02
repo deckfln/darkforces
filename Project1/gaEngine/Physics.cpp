@@ -276,6 +276,7 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 		Action(entity, entity->defaultCollision())
 	);
 
+	bool first = true;
 	while (actions.size() != 0) {
 		collisions.clear();
 
@@ -285,17 +286,13 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 		entity = action.m_entity;
 
 		GameEngine::Transform& tranform = entity->transform();
+
 		glm::vec3 old_position = entity->position();
 
 		entity->pushTransformations();
 		entity->transform(&tranform);
 		glm::vec3 new_position = entity->position();
 		glm::vec3 direction = glm::normalize(old_position - new_position);
-
-		if (entity->name() == "player")
-			gaDebugLog(1, "GameEngine::Physics::wantToMove", entity->name() + " to " + std::to_string(tranform.m_position.x)
-				+ " " + std::to_string(tranform.m_position.y)
-				+ " " + std::to_string(tranform.m_position.z));
 
 		// check if we warp through a triangle
 		if (entity->collideSectors()) {
@@ -312,6 +309,11 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 
 		// collide against the entities
 		testEntities(entity, tranform, collisions);
+
+		if (entity->name() == "player")
+			gaDebugLog(1, "GameEngine::Physics::wantToMove", entity->name() + " to " + std::to_string(tranform.m_position.x)
+				+ " " + std::to_string(tranform.m_position.y)
+				+ " " + std::to_string(tranform.m_position.z));
 
 		// find the nearest collisions
 		gaCollisionPoint* nearest_collision = nullptr;
@@ -712,8 +714,8 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 					if (new_position.y - nearest_ground->m_position.y < static_cast<gaActor*>(entity)->step()) {
 						// if there is a step and the entity can step over
 						if (abs(nearest_ground->m_position.y - new_position.y) > EPSILON) {
-							// if more than epsilon, fix the position
-							tranform.m_position.y = nearest_ground->m_position.y;
+							// if more than epsilon, fix the position to the ground triangle, not the intersection point (rounding errors)
+							tranform.m_position.y = nearest_ground->m_triangle[0].y;
 
 							actions.push(
 								Action(entity, gaMessage::Flag::PUSH_ENTITIES)
