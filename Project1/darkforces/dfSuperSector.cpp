@@ -120,26 +120,18 @@ void dfSuperSector::dispatchMessage(gaMessage* message)
  * quick test to find AABB collision and return the collision point
  * test against the included dfSectors
  */
-float dfSuperSector::collideAABBz(const fwAABBox& box)
+bool dfSuperSector::intersect(const Framework::Segment& s, glm::vec3& p)
 {
-	if (m_worldBounding.intersect(box)) {
+	if (m_worldBounding.intersect(s, p)) {
 
 		for (auto sector : m_sectors) {
-			if (sector->collideAABB(box)) {
-				fwAABBox& worldAABB = sector->worldAABB();
-
-				if (box.m_p.y > worldAABB.m_p.y) {
-					// if box if over entity, return the bottom of box
-					return worldAABB.m_p1.y;
-				}
-
-				// if box if below the entity, return the top of box
-				return worldAABB.m_p.y;
+			if (sector->intersect(s, p)) {
+				return true;
 			}
 		}
 
 	}
-	return INFINITY;
+	return false;
 }
 
 /**

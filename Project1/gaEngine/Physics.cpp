@@ -122,8 +122,9 @@ void Physics::testEntities(gaEntity* entity, const Transform& tranform, std::vec
  */
 float Physics::ifCollideWithSectorOrEntity(const glm::vec3& p1, const glm::vec3& p2, fwCollision::Test test, gaEntity * entity)
 {
-	fwAABBox aabb(p1, p2);
+	Framework::Segment s(p1, p2);
 	float distance;
+	glm::vec3 p;
 
 	// test again entities
 	for (auto& entry : m_world->m_entities) {
@@ -133,9 +134,8 @@ float Physics::ifCollideWithSectorOrEntity(const glm::vec3& p1, const glm::vec3&
 				continue;
 			}
 
-			distance = ent->collideAABBz(aabb);
-			if (distance != INFINITY) {
-				return distance;
+			if (ent->intersect(s, p)) {
+				return p.y;
 			}
 		}
 	}
