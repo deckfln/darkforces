@@ -102,7 +102,7 @@ void ComponentMesh::dispatchMessage(gaMessage* message)
 void ComponentMesh::debugGUIinline(void)
 {
 	if (ImGui::TreeNode("Mesh")) {
-		ImGui::Text("ID %d", m_mesh->id());
+		m_mesh->debugGUIChildClass();
 		ImGui::TreePop();
 	}
 }
