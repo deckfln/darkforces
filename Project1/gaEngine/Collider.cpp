@@ -1021,9 +1021,17 @@ bool Collider::collision_geometry_segment(const Collider& geometry,
 	glm::vec3 p1 = glm::vec3(mat * glm::vec4(pSegment->m_start, 1.0));
 	glm::vec3 p2 = glm::vec3(mat * glm::vec4(pSegment->m_end, 1.0));
 
+	// run a second quick test segment/aabb
+	Framework::Segment segment_gs(p1, p2);
+	glm::vec3 collision;
+	fwAABBox aabb = pGeometry->aabbox();
+	if (!aabb.intersect(segment_gs, collision)) {
+		return false;
+	}
+
+	// and finaly run a full test
 	glm::vec3 const* vertices_gs = pGeometry->vertices();
 	uint32_t nbVertices = pGeometry->nbvertices();
-	glm::vec3 collision;
 
 	for (unsigned int i = 0; i < nbVertices; i += 3) {
 		if (testSensor(*geometry.m_inverseWorldMatrix,
@@ -1153,8 +1161,11 @@ bool GameEngine::Collider::collision_fwAABB_segment(const Collider& aabb,
 	glm::vec3 p2 = glm::vec3(mat * glm::vec4(pSegment->m_end, 1.0));
 
 	glm::vec3 p;
+	Framework::Segment segment_gs(p1, p2);
 
-	if (pAABB->intersect(*pSegment, p)) {
+	if (pAABB->intersect(segment_gs, p)) {
+		// convert back the collision point to world
+		p = glm::vec3(*aabb.m_worldMatrix * glm::vec4(p, 1.0));
 		collisions.push_back(gaCollisionPoint(fwCollisionLocation::COLLIDE, p, nullptr));
 	}
 
