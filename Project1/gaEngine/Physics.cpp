@@ -123,7 +123,6 @@ void Physics::testEntities(gaEntity* entity, const Transform& tranform, std::vec
 float Physics::ifCollideWithSectorOrEntity(const glm::vec3& p1, const glm::vec3& p2, fwCollision::Test test, gaEntity * entity)
 {
 	Framework::Segment s(p1, p2);
-	float distance;
 	glm::vec3 p;
 
 	// test again entities
@@ -214,7 +213,6 @@ void Physics::moveBullet(gaEntity* entity, gaMessage* message)
 	std::vector<gaCollisionPoint> collisions;
 
 	// test again entities
-	glm::vec3 p;
 	float len;
 
 	for (auto& entry : m_world->m_entities) {
@@ -224,7 +222,7 @@ void Physics::moveBullet(gaEntity* entity, gaMessage* message)
 				continue;
 			}
 
-			collisions.empty();
+			collisions.clear();
 			if (ent->collide(collider, forward, down, collisions)) {
 				for (auto& c : collisions) {
 					len = glm::distance2(old_position, c.m_position);
@@ -306,11 +304,19 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 		GameEngine::Transform& tranform = entity->transform();
 
 		glm::vec3 old_position = entity->position();
-
+		/*
+		static bool first = true;
+		if (entity->name() == "player" && first) {
+			first = false;
+			old_position = glm::vec3(-23.474562, 0.100000, 30.173679);
+			tranform.m_position = glm::vec3(-23.522406, 0.100000, 30.177546);
+		}
+		*/
 		entity->pushTransformations();
 		entity->transform(&tranform);
 		glm::vec3 new_position = entity->position();
 		glm::vec3 direction = glm::normalize(old_position - new_position);
+
 
 		// check if we warp through a triangle
 		if (entity->collideSectors()) {

@@ -369,9 +369,9 @@ fwAABBox& fwAABBox::multiplyBy(float v)
  */
 bool fwAABBox::inside(const glm::vec3& position)
 {
-	return (position.x >= m_p.x && position.x <= m_p1.x &&
-		position.y >= m_p.y && position.y <= m_p1.y &&
-		position.z >= m_p.z && position.z <= m_p1.z);
+	return (position.x >= (m_p.x - FLT_EPSILON) && position.x <= (m_p1.x + FLT_EPSILON) &&
+		position.y >= (m_p.y - FLT_EPSILON) && position.y <= (m_p1.y + FLT_EPSILON) &&
+		position.z >= (m_p.z - FLT_EPSILON) && position.z <= (m_p1.z + FLT_EPSILON));
 }
 
 /**
@@ -421,7 +421,9 @@ bool fwAABBox::alignedPlan(float t, const Framework::Segment& segment, float& t1
 	z = (segment.m_end.z - segment.m_start.z) * t + segment.m_start.z;
 
 	// check if (x,y,z) is on the AABB panel
-	if (x >= m_p.x && x <= m_p1.x && y >= m_p.y && y <= m_p1.y && z >= m_p.z && z <= m_p1.z) {
+	if (x >= (m_p.x - FLT_EPSILON) && x <= (m_p1.x + FLT_EPSILON) && 
+		y >= (m_p.y - FLT_EPSILON) && y <= (m_p1.y + FLT_EPSILON) &&
+		z >= (m_p.z - FLT_EPSILON) && z <= (m_p1.z + FLT_EPSILON)) {
 		if (t < t1) {
 			p.x = x;
 			p.y = y;

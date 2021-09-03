@@ -232,7 +232,7 @@ const glm::vec3& fwGeometry::centerVertices(void)
 
 	const glm::vec3& center = m_pBoundingsphere->center();
 
-	for (auto i = 0; i < m_vertices->count(); i++) {
+	for (uint32_t i = 0; i < m_vertices->count(); i++) {
 		*(_vertices++) -= center;
 	}
 
@@ -388,7 +388,7 @@ void fwGeometry::computeTangent(void)
 	else {
 		GLint *_index = (GLint *)index->data();
 		int k0, k1, k2;
-		for (int i = 0; i < index->count(); i += 3) {
+		for (uint32_t i = 0; i < index->count(); i += 3) {
 			k0 = _index[i];
 			k1 = _index[i + 1];
 			k2 = _index[i + 2];
