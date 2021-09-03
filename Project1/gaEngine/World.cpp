@@ -742,7 +742,7 @@ bool GameEngine::World::intersectWithEntity(
 
 	// test again entities
 	for (auto ent: entities) {
-		if (ent->worldAABB().intersect(segment, p)) {
+		if (ent->intersect(segment, p)) {
 			collisions.push_back(ent);
 		}
 	}

@@ -5,6 +5,7 @@
 #include <glm/gtx/quaternion.hpp>
 #include <imgui.h>
 
+#include "../framework/fwAABBox.h"
 #include "../framework/fwScene.h"
 #include "../framework/fwMesh.h"
 
@@ -148,6 +149,12 @@ bool gaEntity::collide(gaEntity* entity,
 	const glm::vec3& down,
 	std::vector<gaCollisionPoint>& collisions)
 {
+	// quick test through the AABB
+	if (!m_worldBounding.intersect(entity->m_worldBounding)) {
+		return false;
+	}
+
+	// more in depth test
 	return m_collider.collision(entity->m_collider, forward, down, collisions);
 }
 

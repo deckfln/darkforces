@@ -69,6 +69,7 @@ public:
 	bool not_init(void);
 
 	bool intersect(const fwAABBox& box);				// intersect with another AABB
+	bool intersect(fwAABBox* box);				// intersect with another AABB
 	bool intersect(
 		const glm::vec3& ray_orig, const glm::vec3& ray_dir, 
 		glm::vec3 &point);								// intersect with a ray

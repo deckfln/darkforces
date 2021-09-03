@@ -67,7 +67,7 @@ dfBullet::dfBullet(DarkForces::Weapons weapon, const glm::vec3& position, const 
 	// change the collider to a geometry
 	m_segment.m_start = glm::vec3(0);
 	m_segment.m_end = glm::vec3(0.0, 0.0, 1.0) * 33.0f / bullet_speed;
-	m_collider.set(&m_segment, &m_worldMatrix, &m_inverseWorldMatrix);
+	m_collider.set(&m_segment, &m_worldMatrix, &m_inverseWorldMatrix, &m_modelAABB);
 
 	// the AABOX is just the direction vector multiplied by a 30fps frame
 	m_modelAABB.set(m_segment.m_start, m_segment.m_end);

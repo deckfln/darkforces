@@ -32,7 +32,17 @@ Collider::Collider(fwGeometry* geometry, glm::mat4* worldMatrix, glm::mat4* inve
 	m_source(geometry),
 	m_worldMatrix(worldMatrix),
 	m_inverseWorldMatrix(inverseWorldMatrix),
-	m_aabb(&geometry->aabbox())
+	m_aabb(geometry->pAabbox())
+{
+}
+
+GameEngine::Collider::Collider(Framework::Segment* s, glm::mat4* worldMatrix, glm::mat4* inverseWorldMatrix, fwAABBox* aabb):
+	m_type(ColliderType::SEGMENT),
+	m_source(s),
+	m_aabb(aabb),
+	m_worldMatrix(worldMatrix),
+	m_inverseWorldMatrix(inverseWorldMatrix)
+
 {
 }
 
@@ -45,7 +55,7 @@ void Collider::set(fwGeometry* geometry, glm::mat4* worldMatrix, glm::mat4* inve
 	m_source = geometry;
 	m_worldMatrix = worldMatrix;
 	m_inverseWorldMatrix = inverseWorldMatrix;
-	m_aabb = &geometry->aabbox();
+	m_aabb = geometry->pAabbox();
 }
 
 void Collider::set(fwAABBox* modelAABB, glm::mat4* worldMatrix, glm::mat4* inverseWorldMatrix)
@@ -77,11 +87,12 @@ void Collider::set(AABBoxTree* modelAABB,
 /**
  * collider based on a cylinder
  */
-void Collider::set(fwCylinder* cylinder, glm::mat4* worldMatrix, glm::mat4* inverseWorldMatrix)
+void Collider::set(fwCylinder* cylinder, glm::mat4* worldMatrix, glm::mat4* inverseWorldMatrix,
+	fwAABBox* aabb)
 {
 	m_type = ColliderType::CYLINDER;
 	m_source = cylinder;
-	m_aabb = nullptr;
+	m_aabb = aabb;
 	m_worldMatrix = worldMatrix;
 	m_inverseWorldMatrix = inverseWorldMatrix;
 }
@@ -89,11 +100,12 @@ void Collider::set(fwCylinder* cylinder, glm::mat4* worldMatrix, glm::mat4* inve
 /**
  * Collider based on a segment
  */
-void Collider::set(Framework::Segment* segment, glm::mat4* worldMatrix, glm::mat4* inverseWorldMatrix)
+void Collider::set(Framework::Segment* segment, glm::mat4* worldMatrix, glm::mat4* inverseWorldMatrix,
+	fwAABBox* aabb)
 {
 	m_type = ColliderType::SEGMENT;
 	m_source = segment;
-	m_aabb = nullptr;
+	m_aabb = aabb;
 	m_worldMatrix = worldMatrix;
 	m_inverseWorldMatrix = inverseWorldMatrix;
 }
@@ -107,6 +119,19 @@ bool Collider::collision(const Collider& source,
 	const glm::vec3& down,
 	std::vector<gaCollisionPoint>& collisions)
 {
+	// if there are AABB for the 2 colliders, run a quick test
+	if (m_aabb && source.m_aabb) {
+
+		// move the AABB from model space to worldSpace and then to geometry model space
+		fwAABBox aabb_ms;
+		glm::mat4 mat = *m_inverseWorldMatrix * *source.m_worldMatrix;
+		aabb_ms.apply(source.m_aabb, mat);
+
+		if (!m_aabb->intersect(aabb_ms)) {
+			return false;
+		}
+	}
+
 	switch (m_type) {
 	case ColliderType::AABB:
 		switch (source.m_type) {
@@ -996,12 +1021,6 @@ bool Collider::collision_geometry_segment(const Collider& geometry,
 	glm::vec3 p1 = glm::vec3(mat * glm::vec4(pSegment->m_start, 1.0));
 	glm::vec3 p2 = glm::vec3(mat * glm::vec4(pSegment->m_end, 1.0));
 
-	fwAABBox segment_gs(p1, p2);
-
-	if (!pGeometry->intersect(segment_gs)) {
-		return false;
-	}
-
 	glm::vec3 const* vertices_gs = pGeometry->vertices();
 	uint32_t nbVertices = pGeometry->nbvertices();
 	glm::vec3 collision;
@@ -1098,24 +1117,6 @@ bool Collider::collision_cylinder_segment(const Collider& cylinder,
 	p2.y--;
 	p1.y--;	// move the center down
 
-	/*
-	float d1 = glm::length2(p1);
-	float d2 = glm::length2(p2);
-	if (d1 <= 1.0f || d2 <= 1.0f) {
-		// if either start or end is inside the sphere
-
-	}
-	else {
-		// project the center (0,0) of the ellipsoid on the line
-		glm::vec3 ap = p1;
-		glm::vec3 ab = p2 - p1;
-		glm::vec3 p = p1 + glm::dot(ap, ab) / glm::dot(ab, ab) * ab;
-
-		if (glm::length2(p) < 1.0f) {
-
-		}
-	}
-	*/
 	glm::vec3 position1, position2;
 	glm::vec3 normal1, normal2;
 	glm::vec3 center(0);
@@ -1151,10 +1152,10 @@ bool GameEngine::Collider::collision_fwAABB_segment(const Collider& aabb,
 	glm::vec3 p1 = glm::vec3(mat * glm::vec4(pSegment->m_start, 1.0));
 	glm::vec3 p2 = glm::vec3(mat * glm::vec4(pSegment->m_end, 1.0));
 
-	fwAABBox segment_gs(p1, p2);
+	glm::vec3 p;
 
-	if (pAABB->intersect(segment_gs)) {
-		collisions.push_back(gaCollisionPoint(fwCollisionLocation::COLLIDE, pAABB->center(), nullptr));
+	if (pAABB->intersect(*pSegment, p)) {
+		collisions.push_back(gaCollisionPoint(fwCollisionLocation::COLLIDE, p, nullptr));
 	}
 
 	return collisions.size() != 0;

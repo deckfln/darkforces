@@ -297,6 +297,14 @@ const fwAABBox& fwGeometry::aabbox(void)
 
 	return m_modelAABB;
 }
+fwAABBox* fwGeometry::pAabbox(void)
+{
+	if (m_modelAABB.not_init()) {
+		m_modelAABB.set(m_vertices);
+	}
+
+	return &m_modelAABB;
+}
 
 float fwGeometry::sqDistance2boundingSphere(const glm::vec3& position)
 {
@@ -446,7 +454,7 @@ fwGeometry::~fwGeometry()
 		delete index;
 	}
 
-	for (auto attribute: m_attributes) {
+	for (auto& attribute: m_attributes) {
 		delete attribute.second;
 	}
 }

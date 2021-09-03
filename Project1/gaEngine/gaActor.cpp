@@ -45,7 +45,7 @@ gaActor::gaActor(
 	m_modelAABB = fwAABBox(cylinder);
 	updateWorldAABB();
 	m_hasCollider = true;
-	m_collider.set(&m_cylinder, &m_worldMatrix, &m_inverseWorldMatrix);
+	m_collider.set(&m_cylinder, &m_worldMatrix, &m_inverseWorldMatrix, &m_modelAABB);
 
 	GameEngine::Component::ActiveProbe* probe = new GameEngine::Component::ActiveProbe();
 	addComponent(probe, gaEntity::Flag::DELETE_AT_EXIT);

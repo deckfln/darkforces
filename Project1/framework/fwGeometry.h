@@ -58,6 +58,7 @@ public:
 	inline fwSphere *boundingsphere(void) { return m_pBoundingsphere; };
 	fwSphere *computeBoundingsphere(void);
 	const fwAABBox& aabbox(void);						// return or initialize the model space AABB
+	fwAABBox* pAabbox(void);							// return or initialize the model space AABB
 	float sqDistance2boundingSphere(const glm::vec3& position);
 	fwSphere* setBoundingsphere(float radius);
 	void computeTangent(void);

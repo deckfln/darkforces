@@ -396,6 +396,14 @@ bool fwAABBox::intersect(const fwAABBox& box)
 		box.m_p1.z < m_p.z || box.m_p.z > m_p1.z) ? false : true;
 }
 
+bool fwAABBox::intersect(fwAABBox* box)
+{
+	// using 6 splitting planes to rule out intersections.
+	return (box->m_p1.x < m_p.x || box->m_p.x > m_p1.x ||
+		box->m_p1.y < m_p.y || box->m_p.y > m_p1.y ||
+		box->m_p1.z < m_p.z || box->m_p.z > m_p1.z) ? false : true;
+}
+
 /**
  * intersect with a segment (ray like)
  */
@@ -467,6 +475,12 @@ bool fwAABBox::intersect(const Framework::Segment& segment, glm::vec3& p)
 	fwAABBox aabb(segment);
 	if (!intersect(aabb)) {
 		return false;
+	}
+
+	// if both points of the segment are inside the AABB, return the center of the AABB
+	if (inside(segment.m_start) && inside(segment.m_end)) {
+		p = center();
+		return true;
 	}
 
 	float t = +INFINITY;

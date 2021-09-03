@@ -192,7 +192,9 @@ void Physics::informCollision(gaEntity* from, gaEntity* to, int flag)
  */
 void Physics::moveBullet(gaEntity* entity, gaMessage* message)
 {
-	std::vector<gaCollisionPoint> collisions;
+	gaEntity* collidedEntity = nullptr;
+	glm::vec3 collision;
+	float min_len = +INFINITY;
 
 	GameEngine::Transform& tranform = entity->transform();
 	glm::vec3 old_position = entity->position();
@@ -202,37 +204,53 @@ void Physics::moveBullet(gaEntity* entity, gaMessage* message)
 	glm::vec3 new_position = entity->position();
 	glm::vec3 direction = glm::normalize(old_position - new_position);
 
-	// force the worldAABB based by the bullet movement
-	entity->worldAABB(new_position, old_position);
+	Framework::Segment s(old_position, new_position);
+	fwAABBox aabb(s);
+	glm::mat4 worldMatrix(1);
+	glm::mat4 inverse = glm::inverse(worldMatrix);
+	GameEngine::Collider collider(&s, &worldMatrix, &inverse, &aabb);
 
-	// collide against the entities
-	testEntities(entity, tranform, collisions);
+	glm::vec3 forward(0), down(0);
+	std::vector<gaCollisionPoint> collisions;
 
-	for (auto& collision : collisions) {
+	// test again entities
+	glm::vec3 p;
+	float len;
+
+	for (auto& entry : m_world->m_entities) {
+		for (auto ent : entry.second) {
+			// ignore ghosts and itself
+			if (!ent->physical() || ent == entity) {
+				continue;
+			}
+
+			collisions.empty();
+			if (ent->collide(collider, forward, down, collisions)) {
+				for (auto& c : collisions) {
+					len = glm::distance2(old_position, c.m_position);
+					if (len < min_len) {
+						collision = c.m_position;
+						min_len = len;
+						collidedEntity = ent;
+					}
+				}
+			}
+		}
+	}
+
+	if (collidedEntity != nullptr) {
 		// and we do not force the move
 		// refuse the move and inform both element from the collision
 		entity->popTransformations();				// restore previous position
 
-		if (collision.m_class == gaCollisionPoint::Source::ENTITY) {
-			m_world->sendMessage(
-				static_cast<gaEntity*>(collision.m_source)->name(),
-				entity->name(),
-				gaMessage::Action::COLLIDE,
-				gaMessage::Flag::COLLIDE_ENTITY,
-				nullptr
-			);
-			return;
-		}
-		else {
-			m_world->sendMessage(
-				static_cast<dfSuperSector*>(collision.m_source)->name(),
-				entity->name(),
-				gaMessage::Action::COLLIDE,
-				gaMessage::Flag::COLLIDE_WALL,
-				nullptr
-			);
-			return;
-		}
+		m_world->sendMessage(
+			collidedEntity->name(),
+			entity->name(),
+			gaMessage::Action::COLLIDE,
+			gaMessage::Flag::COLLIDE_ENTITY,
+			nullptr
+		);
+		return;
 	}
 
 	// acknowledge the move

@@ -10,7 +10,7 @@ GameEngine::Component::ActiveProbe::ActiveProbe(void):
 	m_worldMatrix(glm::mat4x4(1)),
 	m_inverseWorldMatrix(glm::inverse(m_worldMatrix))
 {
-	m_collider.set(&m_segment, &m_worldMatrix, &m_inverseWorldMatrix);
+	m_collider.set(&m_segment, &m_worldMatrix, &m_inverseWorldMatrix, nullptr);
 	g_gaBoundingBoxes.add(&m_worldAABB);
 }
 

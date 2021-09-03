@@ -36,8 +36,8 @@ namespace GameEngine
 		void* m_parent = nullptr;
 		gaCollisionPoint::Source m_parent_class = gaCollisionPoint::Source::NONE;
 
-		void* m_source = nullptr;		// maximum level of collision (AABB, Cylinder, Geometry)
-		const fwAABBox* m_aabb = nullptr;		// minimum level of collision => modelAABB
+		void* m_source = nullptr;				// maximum level of collision (AABB, Cylinder, Geometry)
+		fwAABBox* m_aabb = nullptr;				// minimum level of collision => modelAABB
 
 		static bool collision_fwAABB_geometry(const Collider& aabb, 
 			const Collider& geometry, 
@@ -96,6 +96,10 @@ namespace GameEngine
 		Collider(fwGeometry* geometry, 
 			glm::mat4* worldMatrix, 
 			glm::mat4* inverseWorldMatrix);
+		Collider(Framework::Segment* s,
+			glm::mat4* worldMatrix,
+			glm::mat4* inverseWorldMatrix,
+			fwAABBox *aabb);
 		void set(fwGeometry* geometry,
 			glm::mat4* worldMatrix,
 			glm::mat4* inverseWorldMatrix);
@@ -108,10 +112,12 @@ namespace GameEngine
 			void *parent, gaCollisionPoint::Source source);	// collider based on a a tree of AABB (split triangles by AABB)
 		void set(fwCylinder* modelAABB,
 			glm::mat4* worldMatrix,
-			glm::mat4* inverseWorldMatrix);					// collider based on a cylinder
+			glm::mat4* inverseWorldMatrix,
+			fwAABBox* aabb);					// collider based on a cylinder
 		void set(Framework::Segment* segment,
 			glm::mat4* worldMatrix,
-			glm::mat4* inverseWorldMatrix);					// collider based on a segment
+			glm::mat4* inverseWorldMatrix,
+			fwAABBox* aabb);					// collider based on a segment
 		bool collision(const Collider& source,
 			const glm::vec3& forward, 
 			const glm::vec3& down,
