@@ -104,7 +104,7 @@ void Physics::testEntities(gaEntity* entity, const Transform& tranform, std::vec
 				continue;
 			}
 
-			if (ent->name() != entity->name() && entity->collideAABB(ent->worldAABB())) {
+			if (ent->name() != entity->name()) {
 				size = collisions.size();
 				if (entity->collide(ent, tranform.m_forward, tranform.m_downward, collisions)) {
 					for (auto i = size; i < collisions.size(); i++) {
@@ -303,15 +303,17 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 		GameEngine::Transform& tranform = entity->transform();
 
 		glm::vec3 old_position = entity->position();
-		/*
+/*
 		static bool first = true;
 		if (entity->name() == "player" && first) {
 			first = false;
-			old_position = glm::vec3(-26.184738, 0.100000, 29.133715);
-			tranform.m_position = glm::vec3(-26.232697, 0.100000, 29.135702);
-			g_gaWorld.m_entities["red_door"].front()->physical(false);
+			old_position = glm::vec3(-27.464817, 0.100000, 29.174891);
+			tranform.m_position = glm::vec3(-27.464817, 0.178759, 29.174891);
+			g_gaWorld.m_entities["elev3-5"].front()->translate(glm::vec3(-28.0000057, 0.178759009, 29.2000008));
+			g_gaWorld.m_entities["elev3-5"].front()->updateWorldAABB();
+			g_gaWorld.m_entities["elev3-5"].front()->physical(true);
 		}
-		*/
+*/		
 		entity->pushTransformations();
 		entity->transform(&tranform);
 		glm::vec3 new_position = entity->position();
@@ -334,10 +336,21 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 		// collide against the entities
 		testEntities(entity, tranform, collisions);
 
-		if (entity->name() == "player")
+		if (entity->name() == "player") {
 			gaDebugLog(1, "GameEngine::Physics::wantToMove", entity->name() + " to " + std::to_string(tranform.m_position.x)
 				+ " " + std::to_string(tranform.m_position.y)
 				+ " " + std::to_string(tranform.m_position.z));
+			/*
+			if (collisions.size() == 0) {
+				gaEntity* ent = g_gaWorld.m_entities["elev3-5"].front();
+
+					if (entity->collide(ent, tranform.m_forward, tranform.m_downward, collisions)) {
+						__debugbreak();
+					}
+
+			}
+			*/
+		}
 
 		// find the nearest collisions
 		gaCollisionPoint* nearest_collision = nullptr;
@@ -550,9 +563,9 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 			if (action.m_flag == gaMessage::Flag::PUSH_ENTITIES) {
 				// inform being lifted or pushed aside
 				if (pushed_aside != glm::vec3(0)) {
-					if (nearest_collision->m_class == gaCollisionPoint::Source::ENTITY) {
-						// push another entity aside
-						gaEntity* pushed = static_cast<gaEntity*>(nearest_collision->m_source);
+					gaEntity* pushed = static_cast<gaEntity*>(nearest_collision->m_source);
+					if (pushed->movable()) {
+						// push another entity aside (movable)
 						if (pushed->movable()) {
 							actions.push(
 								Action(pushed, gaMessage::Flag::PUSH_ENTITIES)
@@ -567,7 +580,7 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 						}
 					}
 					else {
-						// being pushed by a sector
+						// being pushed by a sector (not movable)
 						tranform.m_position.x += pushed_aside.x;
 						tranform.m_position.z += pushed_aside.z;
 

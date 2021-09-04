@@ -364,14 +364,16 @@ fwAABBox& fwAABBox::multiplyBy(float v)
 	return *this;
 }
 
+constexpr float MY_EPSILON = 2 * FLT_EPSILON;
+
 /**
  * If point is inside the AABB
  */
 bool fwAABBox::inside(const glm::vec3& position)
 {
-	return (position.x >= (m_p.x - FLT_EPSILON) && position.x <= (m_p1.x + FLT_EPSILON) &&
-		position.y >= (m_p.y - FLT_EPSILON) && position.y <= (m_p1.y + FLT_EPSILON) &&
-		position.z >= (m_p.z - FLT_EPSILON) && position.z <= (m_p1.z + FLT_EPSILON));
+	return (position.x >= (m_p.x - MY_EPSILON) && position.x <= (m_p1.x + MY_EPSILON) &&
+		position.y >= (m_p.y - MY_EPSILON) && position.y <= (m_p1.y + MY_EPSILON) &&
+		position.z >= (m_p.z - MY_EPSILON) && position.z <= (m_p1.z + MY_EPSILON));
 }
 
 /**
@@ -391,17 +393,17 @@ bool fwAABBox::inside(fwAABBox& box)
 bool fwAABBox::intersect(const fwAABBox& box)
 {
 	// using 6 splitting planes to rule out intersections.
-	return (box.m_p1.x < m_p.x || box.m_p.x > m_p1.x ||
-		box.m_p1.y < m_p.y || box.m_p.y > m_p1.y ||
-		box.m_p1.z < m_p.z || box.m_p.z > m_p1.z) ? false : true;
+	return (box.m_p1.x < (m_p.x - MY_EPSILON) || box.m_p.x > (m_p1.x + MY_EPSILON) ||
+		box.m_p1.y < (m_p.y - MY_EPSILON) || box.m_p.y > (m_p1.y + MY_EPSILON) ||
+		box.m_p1.z < (m_p.z - MY_EPSILON) || box.m_p.z > (m_p1.z + MY_EPSILON)) ? false : true;
 }
 
 bool fwAABBox::intersect(fwAABBox* box)
 {
 	// using 6 splitting planes to rule out intersections.
-	return (box->m_p1.x < m_p.x || box->m_p.x > m_p1.x ||
-		box->m_p1.y < m_p.y || box->m_p.y > m_p1.y ||
-		box->m_p1.z < m_p.z || box->m_p.z > m_p1.z) ? false : true;
+	return (box->m_p1.x < (m_p.x - MY_EPSILON) || box->m_p.x >(m_p1.x + MY_EPSILON) ||
+		box->m_p1.y < (m_p.y - MY_EPSILON) || box->m_p.y >(m_p1.y + MY_EPSILON) ||
+		box->m_p1.z < (m_p.z - MY_EPSILON) || box->m_p.z >(m_p1.z + MY_EPSILON)) ? false : true;
 }
 
 /**
@@ -421,9 +423,9 @@ bool fwAABBox::alignedPlan(float t, const Framework::Segment& segment, float& t1
 	z = (segment.m_end.z - segment.m_start.z) * t + segment.m_start.z;
 
 	// check if (x,y,z) is on the AABB panel
-	if (x >= (m_p.x - FLT_EPSILON) && x <= (m_p1.x + FLT_EPSILON) && 
-		y >= (m_p.y - FLT_EPSILON) && y <= (m_p1.y + FLT_EPSILON) &&
-		z >= (m_p.z - FLT_EPSILON) && z <= (m_p1.z + FLT_EPSILON)) {
+	if (x >= (m_p.x - MY_EPSILON) && x <= (m_p1.x + MY_EPSILON) && 
+		y >= (m_p.y - MY_EPSILON) && y <= (m_p1.y + MY_EPSILON) &&
+		z >= (m_p.z - MY_EPSILON) && z <= (m_p1.z + MY_EPSILON)) {
 		if (t < t1) {
 			p.x = x;
 			p.y = y;
