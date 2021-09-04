@@ -481,7 +481,7 @@ bool fwAABBox::intersect(const Framework::Segment& segment, glm::vec3& p)
 
 	// if both points of the segment are inside the AABB, return the center of the AABB
 	if (inside(segment.m_start) && inside(segment.m_end)) {
-		p = center();
+		p = segment.m_end;
 		return true;
 	}
 

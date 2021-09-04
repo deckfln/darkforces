@@ -132,7 +132,6 @@ float Physics::ifCollideWithSectorOrEntity(const glm::vec3& p1, const glm::vec3&
 			if (!ent->hasCollider() || ent == entity) {
 				continue;
 			}
-
 			if (ent->intersect(s, p)) {
 				return p.y;
 			}
@@ -308,8 +307,9 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 		static bool first = true;
 		if (entity->name() == "player" && first) {
 			first = false;
-			old_position = glm::vec3(-23.474562, 0.100000, 30.173679);
-			tranform.m_position = glm::vec3(-23.522406, 0.100000, 30.177546);
+			old_position = glm::vec3(-26.184738, 0.100000, 29.133715);
+			tranform.m_position = glm::vec3(-26.232697, 0.100000, 29.135702);
+			g_gaWorld.m_entities["red_door"].front()->physical(false);
 		}
 		*/
 		entity->pushTransformations();
@@ -358,7 +358,6 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 		std::map<std::string, gaEntity*>& sittingOnTop = entity->sittingOnTop();
 
 		gaEntity* collidedEntity;
-		pushedEntities.clear();
 
 		for (auto& collision : collisions) {
 			collidedEntity = static_cast<gaEntity*>(collision.m_source);
