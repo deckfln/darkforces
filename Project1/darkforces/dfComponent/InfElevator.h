@@ -3,6 +3,7 @@
 #include <list>
 #include "../../gaEngine/gaComponent.h"
 
+#include "../../config.h"
 #include "../dfBitmap.h"
 #include "../dfSector.h"
 
@@ -57,6 +58,9 @@ namespace DarkForces {
 			inline void speed(float speed) { m_speed = speed; };
 			inline float zmin(void) { return m_zmin; };
 			inline float zmax(void) { return m_zmax; };
+			void key(const std::string& key);				// register the needed key
+			inline DarkForces::Keys key(void) { return m_key; };
+
 			void prepareMesh(void);							// set the mesh data before the final build
 			void meshData(float bottom, float top, uint32_t texture, bool clockwise, dfWallFlag whatToDraw);	// set the mesh data
 
@@ -92,6 +96,7 @@ namespace DarkForces {
 			float m_speed = 20;					// time in millisecond between 2 stops
 			bool m_smart = false;				// TODO react to smart objects
 			std::vector<dfLogicStop*> m_stops;	// all stops of the elevator
+			Keys m_key = Keys::NONE;	// needed key to activate the elevator
 
 			const std::string& m_sector;		// sector that is an elevator
 			dfSector* m_pSector = nullptr;

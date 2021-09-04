@@ -164,7 +164,7 @@ uint32_t dfComponentActor::recordState(void* r)
 	record->maxEnergy = m_maxEnergy;
 	record->battery = m_battery;
 	record->life = m_life;
-	record->keys = m_keys;
+	record->keys = static_cast<uint32_t>(m_keys);
 
 	return record->size;
 }
@@ -182,7 +182,7 @@ uint32_t dfComponentActor::loadState(void* r)
 	m_maxEnergy = record->maxEnergy;
 	m_battery = record->battery;
 	m_life = record->life;
-	m_keys = record->keys;
+	m_keys = static_cast<DarkForces::Keys>(record->keys);
 
 	return record->size;
 }

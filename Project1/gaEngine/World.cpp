@@ -620,7 +620,6 @@ void GameEngine::World::debugGUI(void)
 {
 	// list entities to pick from
 	static bool eclose = false;
-	uint32_t mclass;
 	const char* classname;
 
 	if (!eclose && ImGui::Begin("Explorer", &eclose)) {

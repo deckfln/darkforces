@@ -83,9 +83,11 @@ namespace DarkForces {
 		LAND = 512				// Land on floor of sector
 	};
 
-	enum Keys {
+	enum class Keys {
 		NONE = 0,
-		RED = 1
+		RED = 1,
+		BLUE = 2,
+		YELLOW = 4
 	};
 }
 

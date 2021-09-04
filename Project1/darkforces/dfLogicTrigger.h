@@ -31,7 +31,7 @@ class dfLogicTrigger: public gaEntity {
 	bool m_master = true;					// is the trigger operational ?
 	bool m_actived = false;					// trigger was activated and shall not accept any new activation
 	std::vector<std::string> m_clients;		// name of the target sector 
-	uint32_t m_keys = DarkForces::Keys::NONE;		// keys needed to activate the triggers
+	DarkForces::Keys m_keys = DarkForces::Keys::NONE;		// keys needed to activate the triggers
 
 	std::string m_sector;					// sector that host the trigger
 	int m_wallIndex = -1;					// index of the wall being a trigger
@@ -54,7 +54,7 @@ public:
 	inline const std::string& sector(void) { return m_sector; };
 	inline int wall(void) { return m_wallIndex; };
 	inline void sign(dfSign* _sign) { m_pMesh = (dfMesh *)_sign; };
-	inline void keys(int keys) { m_keys = keys; };
+	inline void keys(DarkForces::Keys keys) { m_keys = keys; };
 	void addEvents(dfSector* pSector);
 	inline std::vector<gaMessage*>& messages(void) { return m_messages; };	// return messages
 

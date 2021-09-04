@@ -29,6 +29,12 @@ static std::map<DarkForces::Component::InfElevator::Type, float> _speeds = {
 	{DarkForces::Component::InfElevator::Type::DOOR, 20.0f}
 };
 
+static const std::map<std::string, DarkForces::Keys> g_keys = {
+	{ "red", DarkForces::Keys::RED},
+	{ "blue", DarkForces::Keys::BLUE},
+	{ "yellow", DarkForces::Keys::YELLOW}
+};
+
 /**
  * move to the given position (virtual function) => every elevator has its own
  */
@@ -385,8 +391,21 @@ dfMesh* DarkForces::Component::InfElevator::buildMesh(void)
 }
 
 /**
+ * register the needed key
+ */
+void DarkForces::Component::InfElevator::key(const std::string& key)
+{
+	for (auto& k : g_keys) {
+		if (k.first == key) {
+			m_key = k.second;
+		}
+	}
+}
+
+/**
  * set the mesh data before the final build
  */
+
 void DarkForces::Component::InfElevator::prepareMesh(void)
 {
 	if (m_zmin == INFINITY) {

@@ -41,7 +41,7 @@ void GameEngine::Component::ActiveProbe::dispatchMessage(gaMessage* message)
 			// check if entities with component TRIGGER intersect with the segment m_start-m_direction
 			std::vector<gaEntity *> collisions;
 
-			g_gaWorld.intersectWithEntity(DF_COMPONENT_TRIGGER, m_segment, collisions);
+ 			g_gaWorld.intersectWithEntity(DF_COMPONENT_TRIGGER, m_segment, collisions);
 			for (auto entity: collisions) {
 				// activate the entity intersecting with the probe
 				m_entity->sendMessage(entity->name(), gaMessage::Action::ACTIVATE);

@@ -254,7 +254,7 @@ void dfLogicTrigger::activate(const std::string& activator)
 	}
 
 	// check if there is no key needed or if the actor has the mandatory keys for the trigger
-	if (m_keys == 0 || (m_keys & actor->keys()) != 0) {
+	if (m_keys == DarkForces::Keys::NONE || ((uint32_t)m_keys & (uint32_t)actor->keys()) != 0) {
 		for (unsigned int i = 0; i < m_messages.size(); i++) {
 			g_gaWorld.sendMessage(m_name, m_messages[i]->m_client, m_messages[i]->m_action, m_messages[i]->m_value, nullptr);
 		}

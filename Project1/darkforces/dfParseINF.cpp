@@ -173,7 +173,7 @@ std::vector<std::string>& dfParseTokens(std::string& line, std::map<std::string,
 	}
 
 	if (tokens.size() > 0) {
-		for (auto i = 0; i < tokens.size() - 1; i++) {
+		for (uint32_t i = 0; i < tokens.size() - 1; i++) {
 			if (tokens[i].find(':') != std::string::npos) {
 				tokenMap[tokens[i]] = tokens[i + 1];
 			}
@@ -310,7 +310,7 @@ void dfParseINF::parseSector(std::istringstream& infile, const std::string& sect
 				}
 
 				// if the eventMask of the sector is <> add a key manager
-				if (inv->eventMask() != 0) {
+				if (inv->eventMask() != 0 || inv->key() != DarkForces::Keys::NONE) {
 					DarkForces::Component::Trigger* trigger = new DarkForces::Component::Trigger();
 					pSector->addComponent(trigger, gaEntity::Flag::DELETE_AT_EXIT);
 				}
@@ -394,7 +394,10 @@ void dfParseINF::parseSector(std::istringstream& infile, const std::string& sect
 		}
 		else if (tokens[0] == "key:") {
 			if (program) {
-				std::cerr << "dfParseINF::parseSector key not implemented for triggers" << std::endl;
+				gaDebugLog(1, "dfParseINF", "key not implemented for standard trigger");
+			}
+			else if (inv) {
+				inv->key(tokens[1]);
 			}
 		}
 		else if (tokens[0] == "client:") {

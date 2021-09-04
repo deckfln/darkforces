@@ -380,8 +380,8 @@ bool dfSector::isPointInside(const glm::vec3 &p, bool fullTest)
 	std::vector<Point>& outline = m_polygons_vertices[0];
 	for (unsigned int i = 0, j = outline.size() - 1; i < outline.size(); j = i++)
 	{
-		if ((outline[i][1] > level_p.y) != (outline[j][1] > level_p.y) &&
-			level_p.x < (outline[j][0] - outline[i][0]) * (level_p.y - outline[i][1]) / (outline[j][1] - outline[i][1]) + outline[i][0])
+		if ((outline[i][1] > level_p.y) != (outline[j][1] >= level_p.y) &&
+			level_p.x <= (outline[j][0] - outline[i][0]) * (level_p.y - outline[i][1]) / (outline[j][1] - outline[i][1]) + outline[i][0])
 		{
 			inside = !inside;
 		}
