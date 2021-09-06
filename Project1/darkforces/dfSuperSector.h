@@ -81,7 +81,7 @@ public:
     dfSuperSector* smallestAdjoint(void);
     void buildPortals(std::vector<dfSector*>& sectors, std::vector<dfSuperSector*> &vssectors);
     float boundingBoxSurface(void);
-    virtual bool isPointIn(const glm::vec3& position);			// is the point precisely in that sector
+    bool isPointInside(const glm::vec3& position) override;			// is the point precisely in that sector
 
     dfSector* findDFSector(const glm::vec3& position);          // return the level sector
 
@@ -115,7 +115,9 @@ public:
     // override from parent classes
     void dispatchMessage(gaMessage* message) override;     // let an entity deal with a situation
 
-    bool intersect(const Framework::Segment& s, glm::vec3& p) override;	   // quick test to find AABB collision and return the collision point
+    fwAABBox::Intersection intersect(
+        const Framework::Segment& s, 
+        glm::vec3& p) override;	                            // quick test to find AABB collision and return the collision point
 
     // flight recorder & debugger
     void debugGUIChildClass(void) override;					// Add dedicated component debug the entity

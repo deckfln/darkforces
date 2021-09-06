@@ -149,7 +149,11 @@ public:
 	bool collideAABB(const fwAABBox& box);							// quick test to find AABB collision
 
 	// overriden function
-	bool intersect(const Framework::Segment& s, glm::vec3& p) override;	// quick test to find AABB collision and return the collision point
+	fwAABBox::Intersection intersect(
+		const Framework::Segment& s, 
+		glm::vec3& p) override;										// quick test to find AABB collision and return the collision point
+	bool isPointInside(const glm::vec3& position) override;
+	bool isPointInside(const glm::vec3& position, bool fullTest);
 
 
 	// getter/setter
@@ -181,7 +185,6 @@ public:
 	std::vector<std::vector<Point>>& polygons(int displayPolygon);
 
 	void addObject(dfMesh* object);
-	bool isPointInside(const glm::vec3& position, bool fullTest);
 	float boundingBoxSurface(void);
 	void linkWalls(void);
 	void buildElevator(gaEntity*parent, dfMesh *mesh, float bottom, float top, int what, bool clockwise, dfWallFlag flags);

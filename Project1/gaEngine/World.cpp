@@ -741,7 +741,9 @@ bool GameEngine::World::intersectWithEntity(
 
 	// test again entities
 	for (auto ent: entities) {
-		if (ent->intersect(segment, p)) {
+		fwAABBox::Intersection r = ent->intersect(segment, p);
+		if (r != fwAABBox::Intersection::NONE) {
+			// if segment intersect or is included in the entity
 			collisions.push_back(ent);
 		}
 	}

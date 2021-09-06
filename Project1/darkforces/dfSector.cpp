@@ -340,6 +340,11 @@ void dfSector::addObject(dfMesh* object)
 /**
  * check if point is inside the openGL bounding box and inside the 2D surface : external polylines
  */
+bool dfSector::isPointInside(const glm::vec3& p)
+{
+	return isPointInside(p, true);
+}
+
 bool dfSector::isPointInside(const glm::vec3 &p, bool fullTest)
 {
 	// quick check against the 3D bounding box
@@ -597,14 +602,17 @@ bool dfSector::collideAABB(const fwAABBox& box)
 /**
  * quick test to find AABB collision and return the collision point
  */
-bool dfSector::intersect(const Framework::Segment& s, glm::vec3& p)
+fwAABBox::Intersection dfSector::intersect(const Framework::Segment& s, glm::vec3& p)
 {
 	// first check the AABB intersection
-	if (gaEntity::intersect(s, p)) {
+	fwAABBox::Intersection r = gaEntity::intersect(s, p);
+	if (r == fwAABBox::Intersection::INTERSECT || r == fwAABBox::Intersection::INCLUDED) {
 		// then ensure the collision point is inside the surface of the dfSector
-		return isPointInside(p, true);
+		if (isPointInside(p, true)) {
+			return r;
+		}
 	}
-	return false;
+	return fwAABBox::Intersection::NONE;
 }
 
 /**

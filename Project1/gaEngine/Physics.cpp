@@ -124,6 +124,7 @@ float Physics::ifCollideWithSectorOrEntity(const glm::vec3& p1, const glm::vec3&
 {
 	Framework::Segment s(p1, p2);
 	glm::vec3 p;
+	fwAABBox::Intersection r;
 
 	// test again entities
 	for (auto& entry : m_world->m_entities) {
@@ -132,7 +133,8 @@ float Physics::ifCollideWithSectorOrEntity(const glm::vec3& p1, const glm::vec3&
 			if (!ent->hasCollider() || ent == entity) {
 				continue;
 			}
-			if (ent->intersect(s, p)) {
+			r = ent->intersect(s, p);
+			if (r == fwAABBox::Intersection::INTERSECT) {
 				return p.y;
 			}
 		}
@@ -303,17 +305,18 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 		GameEngine::Transform& tranform = entity->transform();
 
 		glm::vec3 old_position = entity->position();
-/*
+
+		/*
 		static bool first = true;
 		if (entity->name() == "player" && first) {
 			first = false;
-			old_position = glm::vec3(-27.464817, 0.100000, 29.174891);
-			tranform.m_position = glm::vec3(-27.464817, 0.178759, 29.174891);
+			old_position = glm::vec3(-25.806360, 2.000000, 33.526096);
+			tranform.m_position = glm::vec3(-25.758360, 2.000000, 33.525864);
 			g_gaWorld.m_entities["elev3-5"].front()->translate(glm::vec3(-28.0000057, 0.178759009, 29.2000008));
 			g_gaWorld.m_entities["elev3-5"].front()->updateWorldAABB();
 			g_gaWorld.m_entities["elev3-5"].front()->physical(true);
 		}
-*/		
+		*/
 		entity->pushTransformations();
 		entity->transform(&tranform);
 		glm::vec3 new_position = entity->position();
@@ -607,8 +610,11 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 				coll.y = 0;		// keep the entity on the same plane
 				float dot = glm::dot(glm::normalize(coll), direction);
 
-				if (dot > 0 && nearest_collision->m_class == gaCollisionPoint::Source::SECTOR) {
-					// being pushed by a sector
+				// all collision are with entities
+				gaEntity* collisionWith = static_cast<gaEntity*>(nearest_collision->m_source);
+
+				if (dot > 0 && !collisionWith->movable()) {
+					// being pushed by a unmovable entity (a sector, an elevator)
 
 					tranform.m_position -= coll;
 
@@ -621,7 +627,7 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 					);
 
 					if (entity->name() == "player")
-						gaDebugLog(1, "GameEngine::Physics::wantToMove", entity->name() + " pushed by sector");
+						gaDebugLog(1, "GameEngine::Physics::wantToMove", entity->name() + " pushed by an entity");
 
 					continue; // ignore the floor, will be extracted on next run
 				}
@@ -629,9 +635,7 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 					// and we do not force the move
 					// refuse the move and inform both element from the collision
 
-					if (nearest_collision->m_class == gaCollisionPoint::Source::ENTITY) {
-						gaEntity* collisionWith = static_cast<gaEntity*>(nearest_collision->m_source);
-
+					if (collisionWith->movable()) {
 						// ONLY refuse the move if the entity is a physical one
 						if (collisionWith->physical()) {
 							if (entity->name() == "player")
@@ -653,7 +657,7 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 						informCollision(collisionWith, entity, gaMessage::Flag::COLLIDE_ENTITY);
 					}
 					else {
-						// sectors always block the movement
+						// unmovable entities always block the movement
 						entity->popTransformations();				// restore previous position
 						block_move = true;
 						m_world->sendMessage(
@@ -835,7 +839,6 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 
 						if (entity->name() == "player")
 							gaDebugLog(1, "GameEngine::Physics::wantToMove", entity->name() + " falling");
-						continue;
 					}
 				}
 			}
@@ -851,8 +854,8 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 				nullptr
 			);
 
-			// register the sector the entity walks on
 			if (nearest_ground) {
+				// register the sector the entity walks on
 				dfSuperSector* ss;
 
 				collidedEntity = static_cast<gaEntity*>(nearest_ground->m_source);
@@ -864,6 +867,16 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 					dfSector* s = dynamic_cast<dfSector*>(collidedEntity);
 					if (s != nullptr) {
 						entity->superSector(s->supersector());
+					}
+				}
+			}
+			else {
+				// if not walking on a supersector, run a full search
+				std::vector<gaEntity*> ss;
+				g_gaWorld.getEntities(GameEngine::ClassID::Sector, ss);
+				for (auto sector : ss) {
+					if (sector->isPointInside(new_position)) {
+						entity->superSector(static_cast<dfSuperSector*>(sector));
 					}
 				}
 			}
@@ -898,6 +911,9 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
  */
 void Physics::update(time_t delta)
 {
+	for (auto& name : m_remove) {
+		m_ballistics.erase(name);
+	}
 	m_remove.clear();
 
 	for (auto& en : m_ballistics) {
@@ -907,13 +923,13 @@ void Physics::update(time_t delta)
 			gaDebugLog(1, "GameEngine::Physics::update", entity->name());
 			b.apply(delta, entity->pTransform());
 
-			moveEntity(entity, nullptr);
+			entity->sendMessage(entity->name(), 
+				gaMessage::Action::WANT_TO_MOVE, 
+				gaMessage::Flag::WANT_TO_MOVE_FALL, 
+				entity->pTransform());
 		}
 	}
 
-	for (auto& name : m_remove) {
-		m_ballistics.erase(name);
-	}
 }
 
 /**

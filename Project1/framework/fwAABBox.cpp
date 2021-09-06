@@ -474,17 +474,17 @@ bool fwAABBox::zAlignedPlan(float z, const Framework::Segment& segment, float& t
 	return alignedPlan(t, segment, t1, p);
 }
 
-bool fwAABBox::intersect(const Framework::Segment& segment, glm::vec3& p)
+fwAABBox::Intersection fwAABBox::intersect(const Framework::Segment& segment, glm::vec3& p)
 {
 	fwAABBox aabb(segment);
 	if (!intersect(aabb)) {
-		return false;
+		return Intersection::NONE;
 	}
 
 	// if both points of the segment are inside the AABB, return the center of the AABB
 	if (inside(segment.m_start) && inside(segment.m_end)) {
 		p = segment.m_end;
-		return true;
+		return Intersection::INCLUDED;
 	}
 
 	float t = +INFINITY;
@@ -501,7 +501,7 @@ bool fwAABBox::intersect(const Framework::Segment& segment, glm::vec3& p)
 	zAlignedPlan(m_p.z,  segment, t, p);
 	zAlignedPlan(m_p1.z, segment, t, p);
 
-	return t < +INFINITY;
+	return (t < +INFINITY) ? Intersection::INTERSECT : Intersection::NONE;
 }
 
 /**

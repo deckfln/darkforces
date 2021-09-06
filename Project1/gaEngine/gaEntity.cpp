@@ -136,15 +136,25 @@ bool gaEntity::collideAABB(gaEntity const* with)
 /**
  * quick test to find AABB collision and return the collision point
  */
-bool gaEntity::intersect(const Framework::Segment& s, glm::vec3& p)
+fwAABBox::Intersection gaEntity::intersect(const Framework::Segment& s, glm::vec3& p)
 {
 	return m_worldBounding.intersect(s, p);
 }
 
 /**
+ * is the point inside the entity(free form)
+ */
+bool gaEntity::isPointInside(const glm::vec3& position)
+{
+	// minimum test against the worldAABB
+	// superclass can deliver better test
+	return m_worldBounding.inside(position);
+}
+
+/**
  * extended collision using colliders
  */
-bool gaEntity::collide(gaEntity* entity, 
+bool gaEntity::collide(gaEntity* entity,
 	const glm::vec3& forward,
 	const glm::vec3& down,
 	std::vector<gaCollisionPoint>& collisions)

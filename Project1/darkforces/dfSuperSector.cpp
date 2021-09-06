@@ -120,18 +120,20 @@ void dfSuperSector::dispatchMessage(gaMessage* message)
  * quick test to find AABB collision and return the collision point
  * test against the included dfSectors
  */
-bool dfSuperSector::intersect(const Framework::Segment& s, glm::vec3& p)
+fwAABBox::Intersection dfSuperSector::intersect(const Framework::Segment& s, glm::vec3& p)
 {
-	if (gaEntity::intersect(s, p)) {
+	fwAABBox::Intersection r = gaEntity::intersect(s, p);
+	if (r != fwAABBox::Intersection::NONE) {
 
 		for (auto sector : m_sectors) {
-			if (sector->intersect(s, p)) {
-				return true;
+			r = sector->intersect(s, p);
+			if (r != fwAABBox::Intersection::NONE) {
+				return r;
 			}
 		}
 
 	}
-	return false;
+	return fwAABBox::Intersection::NONE;
 }
 
 /**
@@ -245,7 +247,7 @@ dfSector* dfSuperSector::findDFSector(const glm::vec3& position)
 /**
  * is the point precisely in that sector
  */
-bool dfSuperSector::isPointIn(const glm::vec3& position)
+bool dfSuperSector::isPointInside(const glm::vec3& position)
 {
 	return findDFSector(position) != nullptr;
 }

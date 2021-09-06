@@ -84,6 +84,7 @@ namespace GameEngine
 		World* m_world = nullptr;
 		std::map<std::string, Ballistic> m_ballistics;					// falling objects
 		std::vector<std::string> m_remove;								// list of objects to remove from the falling
+		gaEntity* m_lastEntityTested = nullptr;							// to pass information between functions
 
 		bool warpThrough(gaEntity* entity,
 			const glm::vec3& old_position,
@@ -96,7 +97,7 @@ namespace GameEngine
 			const glm::vec3& p1,
 			const glm::vec3& p2,
 			fwCollision::Test test, gaEntity * entity);					// test if a segment collide with a triangle of any sector
-		void moveBullet(gaEntity* entity, gaMessage* message);
+		void moveBullet(gaEntity* entity, gaMessage* message);			// simple test for bullets
 		void informCollision(gaEntity* from, gaEntity* to, int flag);
 
 		friend flightRecorder::Blackbox;

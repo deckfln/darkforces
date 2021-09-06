@@ -1025,7 +1025,7 @@ bool Collider::collision_geometry_segment(const Collider& geometry,
 	Framework::Segment segment_gs(p1, p2);
 	glm::vec3 collision;
 	fwAABBox aabb = pGeometry->aabbox();
-	if (!aabb.intersect(segment_gs, collision)) {
+	if (aabb.intersect(segment_gs, collision) == fwAABBox::Intersection::NONE) {
 		return false;
 	}
 
@@ -1163,7 +1163,7 @@ bool GameEngine::Collider::collision_fwAABB_segment(const Collider& aabb,
 	glm::vec3 p;
 	Framework::Segment segment_gs(p1, p2);
 
-	if (pAABB->intersect(segment_gs, p)) {
+	if (pAABB->intersect(segment_gs, p) != fwAABBox::Intersection::NONE) {
 		// convert back the collision point to world
 		p = glm::vec3(*aabb.m_worldMatrix * glm::vec4(p, 1.0));
 		collisions.push_back(gaCollisionPoint(fwCollisionLocation::COLLIDE, p, nullptr));

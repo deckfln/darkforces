@@ -40,6 +40,12 @@ class fwAABBox
 	bool alignedPlan(float t, const Framework::Segment& segment, float& t1, glm::vec3& p);
 
 public:
+	enum class Intersection {
+		NONE = 0,
+		INTERSECT,
+		INCLUDED
+	};
+
 	// create an impossible box, so 'extend' can work
 	glm::vec3 m_p = glm::vec3(999999, 999999, 999999);
 	glm::vec3 m_p1 = glm::vec3(-999999, -999999, -999999);
@@ -73,7 +79,7 @@ public:
 	bool intersect(
 		const glm::vec3& ray_orig, const glm::vec3& ray_dir, 
 		glm::vec3 &point);								// intersect with a ray
-	bool intersect(const Framework::Segment& segment, glm::vec3& p);	// intersect with a segment
+	Intersection intersect(const Framework::Segment& segment, glm::vec3& p);	// intersect with a segment
 
 	void extend(const fwAABBox& box);
 	void extend(glm::vec3& vertice);

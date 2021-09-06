@@ -120,11 +120,15 @@ public:
 
 	bool collideAABB(const fwAABBox& box);				// quick test to find AABB collision
 	bool collideAABB(gaEntity const* with);				// quick test to find AABB collision
-	virtual bool intersect(const Framework::Segment& s, glm::vec3& p);	// quick test to find AABB collision and return the collision point
+	virtual fwAABBox::Intersection intersect(
+		const Framework::Segment& s, 
+		glm::vec3& p);									// quick test to find AABB collision and return the collision point
 
 	inline bool inAABBox(const glm::vec3& position) {
 		return m_worldBounding.inside(position);
 	};                                                  // test if vec3 inside the AABB
+
+	virtual bool isPointInside(const glm::vec3& position);	// is the point inside the entity (free form)
 
 	bool collide(gaEntity* entity, 
 		const glm::vec3& forward, 
