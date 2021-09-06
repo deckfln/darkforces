@@ -645,6 +645,9 @@
     <ClCompile Include="gaEngine\gaApp.cpp">
       <Filter>Fichiers sources\gaEngine</Filter>
     </ClCompile>
+    <ClCompile Include="darkforces\dfFileLFD.cpp">
+      <Filter>Fichiers sources\Dark Forces</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="glad\glad.h">
@@ -1221,6 +1224,9 @@
       <Filter>Fichiers d%27en-tête\gaEngine</Filter>
     </ClInclude>
     <ClInclude Include="darkforces\dfConfig.h">
+      <Filter>Fichiers d%27en-tête\DarkForces</Filter>
+    </ClInclude>
+    <ClInclude Include="darkforces\dfFileLFD.h">
       <Filter>Fichiers d%27en-tête\DarkForces</Filter>
     </ClInclude>
   </ItemGroup>

@@ -26,6 +26,7 @@
 #include "darkforces/dfCollision.h"
 #include "darkforces/dfComponent/dfComponentActor.h"
 
+#include "darkforces/dfFileLFD.h"
 #include "darkforces/dfFileSystem.h"
 #include "darkforces/dfActor.h"
 #include "darkforces/dfLogicTrigger.h"
@@ -43,7 +44,7 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 	GameEngine::App(name, width, height, "shaders/gamma", "#define GAMMA_CORRECTION 1\n")
 {
 	int Button = 0;
-
+	DarkForces::FileLFD briefind(ROOT_FOLDER + "/lfd/DFBRIEF.LFD");
 	m_filesystem = new dfFileSystem(ROOT_FOLDER);
 
 	// player

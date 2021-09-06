@@ -153,6 +153,7 @@
     <ClCompile Include="darkforces\dfComponent\InfStandardTrigger.cpp" />
     <ClCompile Include="darkforces\dfComponent\Trigger.cpp" />
     <ClCompile Include="darkforces\dfFileGOB.cpp" />
+    <ClCompile Include="darkforces\dfFileLFD.cpp" />
     <ClCompile Include="darkforces\dfFileSystem.cpp" />
     <ClCompile Include="darkforces\dfFrame.cpp" />
     <ClCompile Include="darkforces\dfGame.cpp" />
@@ -326,6 +327,7 @@
     <ClInclude Include="darkforces\dfComponent\Trigger.h" />
     <ClInclude Include="darkforces\dfConfig.h" />
     <ClInclude Include="darkforces\dfFileGOB.h" />
+    <ClInclude Include="darkforces\dfFileLFD.h" />
     <ClInclude Include="darkforces\dfFileSystem.h" />
     <ClInclude Include="darkforces\dfFrame.h" />
     <ClInclude Include="darkforces\dfGame.h" />
