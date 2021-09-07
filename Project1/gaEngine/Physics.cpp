@@ -52,17 +52,11 @@ bool Physics::warpThrough(gaEntity *entity,
 		float nearest = 9999999;
 		glm::vec3 near_c = glm::vec3(0);
 
-		dfSuperSector* collidedEntity = nullptr;
-
 		if (entity->name() == "player")
 			gaDebugLog(1, "GameEngine::Physics::wantToMove", entity->name() + " warp detected");
 
 		// find the nearest point
 		for (auto& collision : collisions) {
-			if (collision.m_class == gaCollisionPoint::Source::SECTOR) {
-				collidedEntity = static_cast<dfSuperSector*>(collision.m_source);
-			}
-
 			if (glm::distance2(old_position, collision.m_position) < nearest) {
 				nearest = glm::distance2(old_position, collision.m_position);
 				near_c = collision.m_position;
@@ -109,7 +103,6 @@ void Physics::testEntities(gaEntity* entity, const Transform& tranform, std::vec
 				if (entity->collide(ent, tranform.m_forward, tranform.m_downward, collisions)) {
 					for (auto i = size; i < collisions.size(); i++) {
 						collisions[i].m_source = ent;
-						collisions[i].m_class = gaCollisionPoint::Source::ENTITY;
 					}
 				}
 			}
@@ -150,12 +143,7 @@ static void debugCollision(const gaCollisionPoint& collision, gaEntity* entity, 
 {
 	std::string collider;
 
-	if (collision.m_class == gaCollisionPoint::Source::ENTITY) {
-		collider = static_cast<gaEntity*>(collision.m_source)->name();
-	}
-	else {
-		collider = static_cast<dfSuperSector*>(collision.m_source)->name();
-	}
+	collider = static_cast<gaEntity*>(collision.m_source)->name();
 
 	gaDebugLog(1, "GameEngine::Physics::wantToMove",
 		entity->name() + " found collision " + msg

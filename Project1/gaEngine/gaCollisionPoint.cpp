@@ -14,8 +14,7 @@ gaCollisionPoint::gaCollisionPoint(fwCollisionLocation location, const glm::vec3
 }
 
 gaCollisionPoint::gaCollisionPoint(fwCollisionLocation location, const glm::vec3& position, glm::vec3 const* triangle, int index,
-	void* parent,
-	gaCollisionPoint::Source parent_class):
+	void* parent):
 
 	fwCollisionPoint(location, position),
 	m_triangleID(index)
@@ -27,7 +26,6 @@ gaCollisionPoint::gaCollisionPoint(fwCollisionLocation location, const glm::vec3
 		m_triangle[2] = triangle[2];
 	}
 	m_source = parent;
-	m_class = parent_class;
 }
 
 gaCollisionPoint::~gaCollisionPoint()

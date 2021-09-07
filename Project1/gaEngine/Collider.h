@@ -34,7 +34,6 @@ namespace GameEngine
 		glm::mat4 const *m_inverseWorldMatrix = nullptr;
 
 		void* m_parent = nullptr;
-		gaCollisionPoint::Source m_parent_class = gaCollisionPoint::Source::NONE;
 
 		void* m_source = nullptr;				// maximum level of collision (AABB, Cylinder, Geometry)
 		fwAABBox* m_aabb = nullptr;				// minimum level of collision => modelAABB
@@ -109,7 +108,7 @@ namespace GameEngine
 		void set(AABBoxTree* modelAABB,
 			glm::mat4* worldMatrix,
 			glm::mat4* inverseWorldMatrix,
-			void *parent, gaCollisionPoint::Source source);	// collider based on a a tree of AABB (split triangles by AABB)
+			void *parent);						// collider based on a a tree of AABB (split triangles by AABB)
 		void set(fwCylinder* modelAABB,
 			glm::mat4* worldMatrix,
 			glm::mat4* inverseWorldMatrix,
@@ -134,7 +133,6 @@ namespace GameEngine
 		// getter/setter
 		inline const void* parent(void) { return m_parent; };
 		inline bool is(ColliderType type) { return m_type == type; };
-		inline const gaCollisionPoint::Source parent_class(void) { return m_parent_class; };
 	};
 }
 

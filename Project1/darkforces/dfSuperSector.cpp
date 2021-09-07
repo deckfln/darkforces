@@ -273,7 +273,7 @@ void dfSuperSector::buildGeometry(std::vector<dfSector*>& sectors)
 		(GameEngine::AABBoxTree*)&m_dfmesh->modelAABB(),
 		m_dfmesh->pWorldMatrix(),
 		m_dfmesh->pInverseWorldMatrix(),
-		this, gaCollisionPoint::Source::SECTOR);
+		this);
 
 
 #ifdef _DEBUG
