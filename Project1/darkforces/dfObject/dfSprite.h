@@ -22,6 +22,7 @@ public:
 	virtual bool updateSprite(glm::vec3* position, 
 		glm::vec4* texture, 
 		glm::vec3* direction);
+	void dispatchMessage(gaMessage* message) override;	// deal with messages
 	void OnWorldInsert(void) override;					// trigger when inserted in a gaWorld
 	void OnWorldRemove(void) override;					// trigger when from the gaWorld
 

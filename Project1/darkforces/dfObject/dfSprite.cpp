@@ -95,6 +95,19 @@ void dfSprite::OnWorldRemove(void)
 }
 
 /**
+ * Deal with animation messages
+ */
+void dfSprite::dispatchMessage(gaMessage* message)
+{
+	switch (message->m_action) {
+	case gaMessage::MOVE:
+		m_dirtyPosition = true;
+		break;
+	}
+	dfObject::dispatchMessage(message);
+}
+
+/**
  * return a record of the entity state (for debug)
  */
 uint32_t dfSprite::recordState(void* r)

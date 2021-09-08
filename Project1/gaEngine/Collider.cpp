@@ -993,10 +993,10 @@ bool Collider::collision_cylinder_cylinder(const Collider& cylinder1,
 			intersection_gs = intersection_es / ellipsoid1_space;
 
 			// convert from cylinder-space => world-space
-			//intersection_ws = glm::vec3(*aabb.m_worldMatrix * glm::vec4(intersection_gs, 1.0));
+			intersection_ws = glm::vec3(*cylinder1.m_worldMatrix * glm::vec4(intersection_gs, 1.0));
 
 			// inform if the collision point in world space(let the entity decide what to do with the collision)
-			collisions.push_back(gaCollisionPoint(fwCollisionLocation::COLLIDE, intersection_gs, _triangles[j]));
+			collisions.push_back(gaCollisionPoint(fwCollisionLocation::COLLIDE, intersection_ws, _triangles[j]));
 		}
 	}
 
