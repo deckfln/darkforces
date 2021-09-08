@@ -28,7 +28,8 @@ Physics::Physics(World* world) :
 }
 
 /**
- * Test if the entity warped through a triangle
+ *
+ Test if the entity warped through a triangle
  */
 bool Physics::warpThrough(gaEntity *entity, 
 	const glm::vec3& old_position,
@@ -49,8 +50,13 @@ bool Physics::warpThrough(gaEntity *entity,
 	}
 
 	if (collisions.size() > 0) {
+		if (entity->name() == "MOUSEBOT.3DO(158)") {
+			__debugbreak();
+		}
+
 		float nearest = 9999999;
 		glm::vec3 near_c = glm::vec3(0);
+		gaEntity* collided=nullptr;
 
 		if (entity->name() == "player")
 			gaDebugLog(1, "GameEngine::Physics::wantToMove", entity->name() + " warp detected");
@@ -60,18 +66,15 @@ bool Physics::warpThrough(gaEntity *entity,
 			if (glm::distance2(old_position, collision.m_position) < nearest) {
 				nearest = glm::distance2(old_position, collision.m_position);
 				near_c = collision.m_position;
+				collided = static_cast<gaEntity*>(collision.m_source);
 			}
 		}
+
 		// and force the object there
 		tranform.m_position = near_c;
-		// entity->transform(&tranform);
-		m_world->sendMessage(
-			entity->name(),
-			entity->name(),
-			gaMessage::Action::COLLIDE,
-			0,
-			nullptr
-		);
+
+		// always inform the source entity
+		informCollision(collided, entity, gaMessage::Flag::COLLIDE_ENTITY);
 
 		if (entity->name() == "player")
 			gaDebugLog(1, "GameEngine::Physics::wantToMove", entity->name() + " warp fixed at " + std::to_string(tranform.m_position.x)
@@ -264,57 +267,43 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 	std::vector<gaCollisionPoint> collisions;
 	std::map<std::string, bool> collidedEntities;
 
-	struct Action {
-		gaEntity* m_entity;
-		int m_flag;
-
-		Action(gaEntity* entity, int flag) :
-			m_entity(entity),
-			m_flag(flag) {};
-	};
-
-	std::queue<Action> actions;
+	std::queue<gaEntity *> actions;
 	std::map<std::string, bool> pushedEntities;	// list of entities we are pushing, only push an entity once per run
 
 	// kick start actions
-	actions.push(
-		Action(entity, entity->defaultCollision())
-	);
+	actions.push(entity);
 
 	bool first = true;
 	while (actions.size() != 0) {
 		collisions.clear();
 
-		Action action = actions.front();
+		entity = actions.front();
 		actions.pop();
-
-		entity = action.m_entity;
 
 		GameEngine::Transform& tranform = entity->transform();
 
 		glm::vec3 old_position = entity->position();
 
-		/*
+/*
 		static bool first = true;
-		if (entity->name() == "player" && first) {
+		if (entity->name() == "MOUSEBOT.3DO(158)" && first) {
 			first = false;
-			old_position = glm::vec3(-25.806360, 2.000000, 33.526096);
-			tranform.m_position = glm::vec3(-25.758360, 2.000000, 33.525864);
+			old_position = glm::vec3(-55.7743416, -0.899999976, 18.9836617);
+			tranform.m_position = glm::vec3(-55.8261986, -0.899999976, 19.0138416);
 			g_gaWorld.m_entities["elev3-5"].front()->translate(glm::vec3(-28.0000057, 0.178759009, 29.2000008));
 			g_gaWorld.m_entities["elev3-5"].front()->updateWorldAABB();
 			g_gaWorld.m_entities["elev3-5"].front()->physical(true);
 		}
-		*/
+*/		
+
 		entity->pushTransformations();
 		entity->transform(&tranform);
 		glm::vec3 new_position = entity->position();
 		glm::vec3 direction = glm::normalize(old_position - new_position);
 
-
 		// check if we warp through a triangle
 		if (entity->collideSectors()) {
 			if (warpThrough(entity, old_position, tranform, collisions)) {
-
 				// if the entity was driving by physics, remove from the list
 				if (m_ballistics.count(entity->name()) > 0) {
 					m_remove.push_back(entity->name());
@@ -467,9 +456,8 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 								debugCollision(collision, entity, "on bottom");
 
 							// for pushing objects (like elevators)
-							// push the other entity (but do it only once
-							if (action.m_flag == gaMessage::Flag::PUSH_ENTITIES && 
-								collidedEntity->movable() &&
+							// push the other entity (but do it only once)
+							if (collidedEntity->movable() &&
 								pushedEntities.count(collidedEntity->name()) == 0)
 							{
 								pushedEntities[collidedEntity->name()] = true;
@@ -478,9 +466,7 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 								t.m_position = collidedEntity->position();
 								t.m_position.y = tranform.m_position.y; // += (tranform.m_position.y - old_position.y);
 
-								actions.push(
-									Action(collidedEntity, gaMessage::Flag::PUSH_ENTITIES)
-								);
+								actions.push(collidedEntity);
 							}
 						}
 
@@ -547,113 +533,66 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 		// take actions
 		if (nearest_collision) {
 			// if there is a collision
+			gaEntity* pushed = static_cast<gaEntity*>(nearest_collision->m_source);
 
 			if (entity->name() == "player")
 				gaDebugLog(1, "GameEngine::Physics::wantToMove", entity->name() + " trying to pushe");
 
-			if (action.m_flag == gaMessage::Flag::PUSH_ENTITIES) {
-				// inform being lifted or pushed aside
-				if (pushed_aside != glm::vec3(0)) {
-					gaEntity* pushed = static_cast<gaEntity*>(nearest_collision->m_source);
-					if (pushed->movable()) {
-						actions.push(
-							Action(pushed, gaMessage::Flag::PUSH_ENTITIES)
-						);
+			if (pushed_aside != glm::vec3(0) && pushed->movable()) {
+				// if the entity can push the collided
+				actions.push(pushed);
 
-						if (entity->name() == "player")
-							gaDebugLog(1, "GameEngine::Physics::wantToMove", entity->name() + " pushes " + pushed->name());
+				if (entity->name() == "player")
+					gaDebugLog(1, "GameEngine::Physics::wantToMove", entity->name() + " pushes " + pushed->name());
 
-						GameEngine::Transform& t = pushed->transform();
-						t.m_position = pushed->position();
-						t.m_position += pushed_aside;
-					}
-					else {
-						// being pushed by a sector (not movable)
-						tranform.m_position.x += pushed_aside.x;
-						tranform.m_position.z += pushed_aside.z;
-
-						if (m_ballistics.count(entity->name()) > 0 && m_ballistics[entity->name()].m_inUse) {
-							m_ballistics[entity->name()].reset(tranform.m_position, new_position);
-						}
-
-						actions.push(
-							Action(entity, gaMessage::Flag::PUSH_ENTITIES)
-						);
-
-						if (entity->name() == "player")
-							gaDebugLog(1, "GameEngine::Physics::wantToMove", entity->name() + " pushed by sector");
-
-						continue; // ignore the floor, will be extracted on next run
-					}
-				}
+				GameEngine::Transform& t = pushed->transform();
+				t.m_position = pushed->position();
+				t.m_position += pushed_aside;
 			}
 
-			if (action.m_flag != gaMessage::Flag::PUSH_ENTITIES) {
+			if (pushed_aside != glm::vec3(0) && !pushed->movable()) {
 
 				// if the collision is 'behind' the entity, push the entity forward
 				glm::vec3 coll = nearest_collision->m_position - new_position;
 				coll.y = 0;		// keep the entity on the same plane
 				float dot = glm::dot(glm::normalize(coll), direction);
 
-				// all collision are with entities
-				gaEntity* collisionWith = static_cast<gaEntity*>(nearest_collision->m_source);
+				if (dot <= 0) {
+					// ONLY refuse the move if the entity is a physical one
+					if (pushed->physical()) {
+						if (entity->name() == "player")
+							gaDebugLog(1, "GameEngine::Physics::wantToMove", entity->name() + " deny move " + std::to_string(tranform.m_position.x)
+								+ " " + std::to_string(tranform.m_position.y)
+								+ " " + std::to_string(tranform.m_position.z));
 
-				if (dot > 0 && !collisionWith->movable()) {
-					// being pushed by a unmovable entity (a sector, an elevator)
+						entity->popTransformations();				// restore previous position
+						block_move = true;
+					}
+					else {
+						if (entity->name() == "player")
+							gaDebugLog(1, "GameEngine::Physics::wantToMove", entity->name() + " collide " + std::to_string(tranform.m_position.x)
+								+ " " + std::to_string(tranform.m_position.y)
+								+ " " + std::to_string(tranform.m_position.z));
+					}
 
-					tranform.m_position -= coll;
+					// always inform the source entity
+					informCollision(pushed, entity, gaMessage::Flag::COLLIDE_ENTITY);
+				}
+				else {
+					// being pushed by a sector (not movable)
+					tranform.m_position.x += pushed_aside.x;
+					tranform.m_position.z += pushed_aside.z;
 
 					if (m_ballistics.count(entity->name()) > 0 && m_ballistics[entity->name()].m_inUse) {
 						m_ballistics[entity->name()].reset(tranform.m_position, new_position);
 					}
 
-					actions.push(
-						Action(entity, gaMessage::Flag::PUSH_ENTITIES)
-					);
+					actions.push(entity);
 
 					if (entity->name() == "player")
-						gaDebugLog(1, "GameEngine::Physics::wantToMove", entity->name() + " pushed by an entity");
+						gaDebugLog(1, "GameEngine::Physics::wantToMove", entity->name() + " pushed by sector");
 
 					continue; // ignore the floor, will be extracted on next run
-				}
-				else {
-					// and we do not force the move
-					// refuse the move and inform both element from the collision
-
-					if (collisionWith->movable()) {
-						// ONLY refuse the move if the entity is a physical one
-						if (collisionWith->physical()) {
-							if (entity->name() == "player")
-								gaDebugLog(1, "GameEngine::Physics::wantToMove", entity->name() + " deny move " + std::to_string(tranform.m_position.x)
-									+ " " + std::to_string(tranform.m_position.y)
-									+ " " + std::to_string(tranform.m_position.z));
-
-							entity->popTransformations();				// restore previous position
-							block_move = true;
-						}
-						else {
-							if (entity->name() == "player")
-								gaDebugLog(1, "GameEngine::Physics::wantToMove", entity->name() + " collide " + std::to_string(tranform.m_position.x)
-									+ " " + std::to_string(tranform.m_position.y)
-									+ " " + std::to_string(tranform.m_position.z));
-						}
-
-						// always inform the source entity 
-						informCollision(collisionWith, entity, gaMessage::Flag::COLLIDE_ENTITY);
-					}
-					else {
-						// unmovable entities always block the movement
-						entity->popTransformations();				// restore previous position
-						block_move = true;
-						m_world->sendMessage(
-							static_cast<dfSuperSector*>(nearest_collision->m_source)->name(),
-							entity->name(),
-							gaMessage::Action::COLLIDE,
-							gaMessage::Flag::COLLIDE_WALL,
-							nullptr
-						);
-					}
-					continue;									// block the move
 				}
 			}
 		}
@@ -693,9 +632,7 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 					tranform.m_position.y = nearest_ceiling_y;
 					m_ballistics[entity->name()] = Ballistic(tranform.m_position, old_position);
 
-					actions.push(
-						Action(entity, gaMessage::Flag::PUSH_ENTITIES)
-					);	// fix the entity altitude
+					actions.push(entity);	// fix the entity altitude
 					fix_y = true;
 
 					if (entity->name() == "player")
@@ -742,9 +679,7 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 							// if more than epsilon, fix the position to the ground triangle, not the intersection point (rounding errors)
 							tranform.m_position.y = nearest_ground->m_triangle[0].y;
 
-							actions.push(
-								Action(entity, gaMessage::Flag::PUSH_ENTITIES)
-							);	// fix the entity altitude
+							actions.push(entity);	// fix the entity altitude
 							fix_y = true;
 
 							if (entity->name() == "player")
@@ -775,9 +710,7 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 						if (tranform.m_position.y != z) {
 							tranform.m_position.y = z;
 
-							actions.push(
-								Action(entity, gaMessage::Flag::PUSH_ENTITIES)
-							);
+							actions.push(entity);
 
 							// fix the entity altitude and give it another try
 							if (entity->name() == "player")
@@ -878,9 +811,7 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 
 				gaEntity* pushed = entry.second;
 				if (pushed->movable()) {
-					actions.push(
-						Action(pushed, gaMessage::Flag::PUSH_ENTITIES)
-					);
+					actions.push(pushed);
 					GameEngine::Transform& t = pushed->transform();
 					t.m_position = pushed->position();
 					t.m_position.y += lifted;

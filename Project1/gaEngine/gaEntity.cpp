@@ -190,7 +190,7 @@ bool gaEntity::warpThrough(const GameEngine::Collider& collider,
 	glm::vec3 d = center - position();
 	glm::vec3 old_center = old_position + d;
 
-	return m_collider.warpThrough(collider, center, old_center, collisions);
+	return m_collider.warpThrough(collider, position(), old_position, collisions);
 }
 
 /**
