@@ -31,7 +31,9 @@ dfSector::dfSector(std::istringstream& infile, std::vector<dfSector*>& sectorsID
 	m_sectorsID(sectorsID),
 	m_level(level)
 {
-	physical(false);	// object is a virtual entity (cannot collide)
+	m_physical = false;	// object is a virtual entity (cannot collide)
+	m_movable = false;  
+
 	m_className = g_className;
 
 	int nbVertices;

@@ -98,6 +98,7 @@ public:
 	inline void hasCollider(bool p) { m_hasCollider = p; };
 	inline bool hasCollider(void) { return m_hasCollider; };
 	inline bool movable(void) { return m_movable; };
+	inline void movable(bool b) { m_movable = b; };
 	inline fwAABBox& worldAABB(void) { return m_worldBounding; };
 	inline void worldAABB(const glm::vec3 p1, glm::vec3 p2) { m_worldBounding.set(p1, p2); };
 	inline const fwAABBox& modelAABB(void) { return m_modelAABB; };
