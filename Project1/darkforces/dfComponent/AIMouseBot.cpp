@@ -48,10 +48,6 @@ void AIMouseBot::tryToMove(void)
 	m_transforms->m_scale = m_entity->get_scale();
 	m_transforms->m_flag = gaMessage::Flag::WANT_TO_MOVE_BREAK_IF_FALL;
 
-	if (m_entity->name() == "MOUSEBOT.3DO(158)" && m_frame>=107) {
-		__debugbreak();
-	}
-
 	m_entity->sendDelayedMessage(gaMessage::WANT_TO_MOVE, 
 		gaMessage::Flag::WANT_TO_MOVE_BREAK_IF_FALL, 
 		m_transforms);

@@ -3,7 +3,6 @@
 #include <glm/gtx/intersect.hpp>
 #include <glm/gtx/norm.hpp>
 
-#include "../framework/fwAABBox.h"
 #include "../framework/fwGeometry.h"
 #include "../framework/fwCollision.h"
 #include "../framework/math/fwCylinder.h"
@@ -121,12 +120,11 @@ bool Collider::collision(const Collider& source,
 	// if there are AABB for the 2 colliders, run a quick test
 	if (m_aabb && source.m_aabb) {
 
-		// move the AABB from model space to worldSpace and then to geometry model space
-		fwAABBox aabb_ms;
-		glm::mat4 mat = *m_inverseWorldMatrix * *source.m_worldMatrix;
-		aabb_ms.apply(source.m_aabb, mat);
+		// move the AABB from model space to worldSpace for both
+		fwAABBox this_aabb_ws(m_aabb, *m_worldMatrix),
+			source_aabb_ws(source.m_aabb, *source.m_worldMatrix);
 
-		if (!m_aabb->intersect(aabb_ms)) {
+		if (!this_aabb_ws.intersect(source_aabb_ws)) {
 			return false;
 		}
 	}

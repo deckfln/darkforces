@@ -50,9 +50,11 @@ bool Physics::warpThrough(gaEntity *entity,
 	}
 
 	if (collisions.size() > 0) {
-		if (entity->name() == "MOUSEBOT.3DO(158)") {
+		/*
+		if (entity->name() == "MOUSEBOT.3DO(157)") {
 			__debugbreak();
 		}
+		*/
 
 		float nearest = 9999999;
 		glm::vec3 near_c = glm::vec3(0);
@@ -71,7 +73,20 @@ bool Physics::warpThrough(gaEntity *entity,
 		}
 
 		// and force the object there
-		tranform.m_position = near_c;
+		if (old_position.y != tranform.m_position.y) {
+			// vertical warp through
+			entity->translate(near_c);
+		}
+		else {
+			// block move and move to previous position
+			entity->popTransformations();
+
+			// or move away from the bad position
+//			glm::vec3 d = glm::normalize(near_c - old_position);
+//			d.y = 0;
+//			tranform.m_position += d * entity->radius();
+//			
+		}
 
 		// always inform the source entity
 		informCollision(collided, entity, gaMessage::Flag::COLLIDE_ENTITY);

@@ -12,8 +12,11 @@ MouseBot::MouseBot(df3DO* threedo, const glm::vec3& position, float ambient, uin
 	physical(true);
 	addComponent(&m_ia);
 
-	m_cylinder.height(m_modelAABB.height());
-	m_cylinder.radius((m_modelAABB.m_p1.x - m_modelAABB.m_p.x) / 2.0f);
+	// cylinders run in world space, so adapt from the model space scale
+	const glm::vec3& scale = get_scale();
+
+	m_cylinder.height(m_modelAABB.height() * scale.y);
+	m_cylinder.radius(((m_modelAABB.m_p1.x - m_modelAABB.m_p.x) / 2.0f) * scale.x);
 	m_collider.set(&m_cylinder, &m_worldMatrix, &m_inverseWorldMatrix, &m_modelAABB);
 }
 
