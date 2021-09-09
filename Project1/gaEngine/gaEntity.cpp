@@ -280,11 +280,15 @@ void gaEntity::transform(GameEngine::Transform* transform)
  */
 float gaEntity::radius(void)
 {
-	float r1 = m_modelAABB.m_p1.x - m_modelAABB.m_p.x;
-	float r2 = m_modelAABB.m_p1.z - m_modelAABB.m_p.z;
-	float r = std::min(r1, r2);
+	if (m_radius < 0) {
+		float r1 = m_modelAABB.m_p1.x - m_modelAABB.m_p.x;
+		float r2 = m_modelAABB.m_p1.z - m_modelAABB.m_p.z;
+		float r = std::min(r1, r2);
 
-	return r / 2.0f;
+		m_radius = (r / 2.0f) * get_scale().x;
+	}
+
+	return m_radius;
 }
 
 /**

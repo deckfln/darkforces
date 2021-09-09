@@ -60,6 +60,7 @@ protected:
 
 	dfSuperSector* m_supersector = nullptr;			// cached super_sector hosting the object
 	Collider m_collider;							// if there is a collider
+	float m_radius = -1;							// radius of the collision box
 
 	int m_defaultCollision = gaMessage::Flag::COLLIDE_ENTITY;
 	std::map<std::string, gaEntity*> m_sittingOnTop;// cached list of the entities sitting on top of that one
