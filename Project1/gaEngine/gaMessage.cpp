@@ -42,6 +42,16 @@ gaMessage::gaMessage(const std::string& server, const std::string& client, int a
 {
 }
 
+gaMessage::gaMessage(const std::string& server, const std::string& client, int action, const glm::vec3& value, void* extra):
+    m_server(server),
+    m_client(client),
+    m_action(action),
+    m_value(0),
+    m_v3value(value),
+    m_extra(extra)
+{
+}
+
 /**
  * duplicate a message
  */

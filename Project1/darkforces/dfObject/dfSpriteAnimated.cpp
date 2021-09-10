@@ -142,6 +142,7 @@ void dfSpriteAnimated::dispatchMessage(gaMessage* message)
 	case DF_MSG_STATE:
 		state((dfState)message->m_value);
 		break;
+
 	case gaMessage::TIMER:
 		if (update(message->m_delta)) {
 			// continue the animation loop
@@ -151,6 +152,7 @@ void dfSpriteAnimated::dispatchMessage(gaMessage* message)
 			sendInternalMessage(DF_MESSAGE_END_LOOP, (int)m_state);
 		}
 		break;
+
 	case DF_MESSAGE_END_LOOP:
 		// go for next animation if the animation loop ?
 		if (m_loopAnimation && m_source->nbFrames(m_state) > 1) {
@@ -162,6 +164,22 @@ void dfSpriteAnimated::dispatchMessage(gaMessage* message)
 			g_gaWorld.sendMessageDelayed(m_name, m_name, gaMessage::TIMER, 0, nullptr);
 		}
 		break;
+
+	case gaMessage::LOOK_AT:
+		if (message->m_extra == nullptr) {
+			m_direction = glm::normalize(message->m_v3value);
+			m_dirtyPosition = true;
+		}
+		break;
+
+	case gaMessage::START_MOVE:
+		state(dfState::ENEMY_MOVE);
+		break;
+
+	case gaMessage::END_MOVE:
+		state(dfState::ENEMY_STAY_STILL);
+		break;
+
 	}
 	dfSprite::dispatchMessage(message);
 }

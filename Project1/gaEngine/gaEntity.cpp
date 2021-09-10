@@ -232,6 +232,12 @@ void gaEntity::sendInternalMessage(int action, int value, void* extra)
 	dispatchMessage(&message);
 }
 
+void gaEntity::sendInternalMessage(int action, const glm::vec3& value)
+{
+	gaMessage message("_component", "_component", action, value);
+	dispatchMessage(&message);
+}
+
 /**
  * Send a delayed message to myself
  */

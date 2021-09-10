@@ -313,23 +313,25 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 		GameEngine::Transform& tranform = entity->transform();
 
 		glm::vec3 old_position = entity->position();
-		/*/
+
+		/*
 		static bool first = true;
-		if (entity->name() == "player" && first) {
+		if (entity->name() == "OFFCFIN.WAX(21)" && first) {
 			first = false;
-			old_position = glm::vec3(-22.255230, 0.400000, 30.095173);
-			tranform.m_position = glm::vec3(-22.303144, 0.400000, 30.098022);
+			old_position = glm::vec3(-22.500357, 0.400000, 29.281124);
+			tranform.m_position = glm::vec3(-22.521852, 0.400000, 29.292812);
 			g_gaWorld.m_entities["elev3-5"].front()->translate(glm::vec3(-28.0000057, 0.178759009, 29.2000008));
 			g_gaWorld.m_entities["elev3-5"].front()->updateWorldAABB();
 			g_gaWorld.m_entities["elev3-5"].front()->physical(true);
 		}
 		*/
+
 		entity->pushTransformations();
 		entity->transform(&tranform);
 		glm::vec3 new_position = entity->position();
 		glm::vec3 direction = glm::normalize(old_position - new_position);
 
-		if (entity->name() == "player") {
+		if (entity->name() == "OFFCFIN.WAX(21)") {
 			gaDebugLog(1, "GameEngine::Physics::wantToMove", entity->name() + " to " + std::to_string(tranform.m_position.x)
 				+ " " + std::to_string(tranform.m_position.y)
 				+ " " + std::to_string(tranform.m_position.z));

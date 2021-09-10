@@ -52,6 +52,8 @@ protected:
 	time_t m_animation_time = 0;					// elapsed time when running animation
 	std::list<gaEntity*> m_children;				// included entities
 
+	float m_step = 0;								// how up/down can the actor step over
+
 	fwScene* m_scene = nullptr;						// if the entity has a mesh added to a scene
 	fwMesh* m_mesh = nullptr;
 
@@ -108,7 +110,9 @@ public:
 	inline GameEngine::Transform* pTransform(void) { return &m_transforms; };
 	inline int defaultCollision(void) { return m_defaultCollision; };
 	inline void defaultCollision(int b) { m_defaultCollision = b; };
-	inline void superSector(dfSuperSector* s) { 		m_supersector = s; };
+	inline void superSector(dfSuperSector* s) { m_supersector = s; };
+	inline float step(void) { return m_step; };
+
 	void displayAABBox(void);							// display the world AABBox on screen
 
 	void set(const std::string& v, void* ptr) { m_attributes[v] = ptr; };
@@ -158,6 +162,8 @@ public:
 	void sendInternalMessage(int action,
 		int value = 0,
 		void* extra = nullptr);							// send internal message to all components of the current entity
+	void sendInternalMessage(int action,
+		const glm::vec3& value);						// send internal message to all components of the current entity
 	void sendDelayedMessage(int action,
 		int value = 0,
 		void* extra = nullptr);							// send a delayed message to myself

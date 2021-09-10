@@ -26,7 +26,6 @@ protected:
 
 	float m_ankle = 0;							// maximum step the actor can walk up
 	float m_eyes = 0;							// position of the eyes (from the feet)
-	float m_step = 0;							// how up/down can the actor step over
 
 	glm::mat3x3 m_physic=glm::mat3x3(0);
 	time_t m_animation_time = 0;				// start of the physic driven movement
@@ -53,7 +52,6 @@ public:
 	float height(void);
 	float radius(void);
 	inline float eyes(void) { return m_eyes; };
-	inline float step(void) { return m_step; };
 	inline const fwCylinder& cylinder(void) { return m_cylinder; };
 	void jump(const glm::vec3& velocity);
 	void parent(gaPlayer* parent) { m_parent = parent; };

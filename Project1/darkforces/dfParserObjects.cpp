@@ -8,6 +8,7 @@
 
 #include "../gaEngine/Lexer.h"
 #include "../gaEngine/gaComponent/gaSound.h"
+#include "../gaEngine/gaComponent/gaPathFinding.h"
 
 #include "lexer/dfObject.lex.h"
 
@@ -384,11 +385,15 @@ void dfParserObjects::parseObject(dfFileSystem* fs, GameEngine::ParserExpression
 		if (obj->isLogic(DF_LOGIC_ENEMIES)) {
 			dfComponentActor* actor = new dfComponentActor();
 			actor->bind(level);
+
 			GameEngine::Component::Sound* sound = new GameEngine::Component::Sound();
 			sound->addSound(0, loadVOC("ST-DIE-1.voc")->sound());
 
+			GameEngine::Component::PathFinding* path = new GameEngine::Component::PathFinding(1.0f);
+
 			obj->addComponent(actor, gaEntity::Flag::DELETE_AT_EXIT);
 			obj->addComponent(sound, gaEntity::Flag::DELETE_AT_EXIT);
+			obj->addComponent(path, gaEntity::Flag::DELETE_AT_EXIT);
 
 			obj->sendInternalMessage(gaMessage::Action::MOVE);
 		}

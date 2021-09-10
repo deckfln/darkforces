@@ -38,7 +38,7 @@ const float c_height = 0.70f;
 const float c_radius = 0.2f;
 const float c_eyes = 0.55f;
 const float c_ankle = 0.26f;
-const float c_direction = 0.0f;  //+pi / 1.0f;
+const float c_direction = -pi/2.0f; // 1.0f;
 
 myDarkForces::myDarkForces(std::string name, int width, int height) :
 	GameEngine::App(name, width, height, "shaders/gamma", "#define GAMMA_CORRECTION 1\n")
@@ -55,10 +55,11 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 	//glm::vec3 start = glm::vec3(-20.8f, 0.4f, 29.7f);	// stage
 	//glm::vec3 start = glm::vec3(-21.29, -0.3, 16.6);	// post_e
 	//glm::vec3 start = glm::vec3(-17.60, -2.0, 27.77);	// projector
-	glm::vec3 start = glm::vec3(-20, 2.0, 34);	// mousebot(40)
+	//glm::vec3 start = glm::vec3(-20, 2.0, 34);	// mousebot(40)
 	//glm::vec3 start = glm::vec3(-28.65f, -2.0, 34.83f);	// spinner
 	//glm::vec3 start = glm::vec3(-28.0287533, -2.0, 27.4463711);	// projector
 	//glm::vec3 start = glm::vec3(-56.25, -0.9, 21.65);	// super secret 2
+	glm::vec3 start = glm::vec3(-24.52, 0.07, 31.75);	// enthall
 
 	fwCylinder bounding(glm::vec3(0), c_radius, c_height); // stage
 

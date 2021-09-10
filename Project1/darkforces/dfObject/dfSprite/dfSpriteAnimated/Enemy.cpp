@@ -6,7 +6,9 @@ DarkForces::Enemy::Enemy(dfWAX* model, const glm::vec3& position, float ambient,
 	dfSpriteAnimated(model, position, ambient, objectID)
 {
 	m_className = g_className;
-	physical(true);
+	m_physical = true;
+	m_canStep = true;
+	m_step = 0.2061f;
 
 	m_cylinder.height(m_modelAABB.height());
 	m_cylinder.radius((m_modelAABB.m_p1.x - m_modelAABB.m_p.x) / 2.0f);

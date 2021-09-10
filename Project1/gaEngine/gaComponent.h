@@ -19,7 +19,8 @@ public:
 		CONTROLER,
 		SOUND,
 		ActiveProbe,
-		Controller
+		Controller,
+		PathFinding
 	};
 
 	gaComponent(int m_type);

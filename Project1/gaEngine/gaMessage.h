@@ -57,7 +57,9 @@ public:
 		MOVE_AT,
 		ACTIVATE,		// an active probe tries to activate an entity
 		HIDE,			// hide the object on screen
-		UNHIDE			// make the object visible on screen
+		UNHIDE,			// make the object visible on screen
+		START_MOVE,		// the entity starts to move on a path finding
+		END_MOVE		// the entity stops to move on a path finding
 	};
 	// flags stored in messages
 	enum Flag {
@@ -101,6 +103,7 @@ public:
 	gaMessage(int action, int value, const std::string& client);
 	gaMessage(const std::string& server, const std::string& client);
 	gaMessage(const std::string& server, const std::string& client, int action, int value, void* extra);
+	gaMessage(const std::string& server, const std::string& client, int action, const glm::vec3& value, void* extra=nullptr);
 	gaMessage(void *record);
 	gaMessage(gaMessage* source);
 
