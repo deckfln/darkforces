@@ -72,9 +72,6 @@ void dfComponentLogic::dispatchMessage(gaMessage* message)
 		if (m_logics & dfLogic::SCENERY) {
 			m_entity->sendInternalMessage(DF_MSG_STATE, (int)dfState::SCENERY_ATTACK);
 		}
-		else if (m_logics & dfLogic::MOUSEBOT) {
-			m_entity->sendInternalMessage(DF_MESSAGE_DIES);
-		}
 		break;
 	case DF_MESSAGE_END_LOOP:
 		// animation loop for an object reached it's end
@@ -109,13 +106,6 @@ void dfComponentLogic::dispatchMessage(gaMessage* message)
 			else if (m_logics & dfLogic::INTDROID) {
 				((dfObject*)m_entity)->drop(dfLogic::ITEM_POWER);
 			}
-		}
-		else if (m_logics & dfLogic::MOUSEBOT) {
-			((dfObject*)m_entity)->drop(dfLogic::DEAD_MOUSE);
-			((dfObject*)m_entity)->drop(dfLogic::ITEM_BATTERY);
-			// 3D objects being registered in dfParserObject cannot be deleted, so move away
-			m_entity->moveTo(glm::vec3(0));
-			break;
 		}
 		break;
 	}

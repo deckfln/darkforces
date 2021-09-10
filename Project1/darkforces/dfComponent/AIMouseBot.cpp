@@ -9,6 +9,8 @@
 #include "../../gaEngine/World.h"
 #include "../../gaEngine/gaEntity.h"
 
+#include "../dfObject.h"
+
 using namespace DarkForces;
 
 AIMouseBot::AIMouseBot():
@@ -69,6 +71,19 @@ void AIMouseBot::dispatchMessage(gaMessage* message)
 		tryToMove();
 		break;
 
+	case DF_MESSAGE_HIT_BULLET:
+		m_entity->sendInternalMessage(DF_MESSAGE_DIES);
+		break;
+
+	case DF_MESSAGE_DIES:
+		static_cast<dfObject*>(m_entity)->drop(dfLogic::DEAD_MOUSE);
+		static_cast<dfObject*>(m_entity)->drop(dfLogic::ITEM_BATTERY);
+		
+		// 3D objects being registered in dfParserObject cannot be deleted, so move away
+		m_entity->moveTo(glm::vec3(0));
+		m_active = false;
+		break;
+
 	case gaMessage::Action::COLLIDE:
 		if (message->m_value == gaMessage::Flag::TRAVERSE_ENTITY) {
 			break;	// ignore non-physical objects
@@ -102,10 +117,6 @@ void AIMouseBot::dispatchMessage(gaMessage* message)
 		}
 
 		tryToMove();
-		break;
-
-	case DF_MESSAGE_DIES:
-		m_active = false;
 		break;
 	}
 }
