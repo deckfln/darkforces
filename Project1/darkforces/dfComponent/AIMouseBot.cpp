@@ -64,7 +64,7 @@ void AIMouseBot::dispatchMessage(gaMessage* message)
 		// kick start the AI
 		m_center = m_entity->position();
 		m_alpha = (rand() / (float)RAND_MAX - 0.f) / 10.0f; // rotation angle to apply to the direction vector
-		m_animation_time = rand() % (5 * 30);				// move 5s maximum using the same rotation angle
+		m_animation_time = rand() % (10 * 30);				// move 5s maximum using the same rotation angle
 
 		tryToMove();
 		break;
@@ -75,19 +75,19 @@ void AIMouseBot::dispatchMessage(gaMessage* message)
 		}
 		// PASS THROUGH
 	case gaMessage::Action::WOULD_FALL:
-		m_direction = -m_direction;
-		// PASS THROUGH
-	case gaMessage::Action::MOVE:
-#ifdef _DEBUG
-		if (m_frame == message->m_frame) {
-			// second time we receive the same message inside the same frame
-			// => we collided with a second (or third) object
-//			__debugbreak();
+
+		// second time we receive the same message inside the same frame
+		// => we collided with a second (or third) object
+		if (m_frame != message->m_frame) {
+			m_frame = message->m_frame;
+			m_direction = -m_direction;
 		}
 		else {
-			m_frame = message->m_frame;
+			return;
 		}
-#endif
+		// PASS THROUGH
+
+	case gaMessage::Action::MOVE:
 		// move request was accepted, so trigger a new one
 		if (!m_active) {
 			break;

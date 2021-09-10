@@ -3,6 +3,7 @@
 #include <memory>
 #include <map>
 #include <glm/gtx/normal.hpp>
+#include <glm/gtx/intersect.hpp>
 
 #include "World.h"
 #include "gaMessage.h"
@@ -13,10 +14,10 @@
 
 #include "../config.h"
 
+#include "../flightRecorder/Ballistic.h"
+
 #include "../darkforces/dfConfig.h"
 #include "../darkforces/dfSuperSector.h"
-#include "../flightRecorder/Ballistic.h"
-#include "../darkforces/dfBullet.h"
 
 using namespace GameEngine;
 
@@ -208,13 +209,17 @@ void Physics::moveBullet(gaEntity* entity, gaMessage* message)
 	entity->pushTransformations();
 	entity->transform(&tranform);
 	glm::vec3 new_position = entity->position();
-	glm::vec3 direction = glm::normalize(old_position - new_position);
+
+	gaDebugLog(1, "GameEngine::Physics::wantToMove", entity->name() + " to " + std::to_string(tranform.m_position.x)
+		+ " " + std::to_string(tranform.m_position.y)
+		+ " " + std::to_string(tranform.m_position.z));
 
 	Framework::Segment s(old_position, new_position);
 	fwAABBox aabb(s);
 	glm::mat4 worldMatrix(1);
 	glm::mat4 inverse = glm::inverse(worldMatrix);
 	GameEngine::Collider collider(&s, &worldMatrix, &inverse, &aabb);
+	glm::vec3 p;
 
 	glm::vec3 forward(0), down(0);
 	std::vector<gaCollisionPoint> collisions;
@@ -229,6 +234,16 @@ void Physics::moveBullet(gaEntity* entity, gaMessage* message)
 				continue;
 			}
 
+			// quick tests 
+			if (!aabb.intersect(ent->worldAABB())) {
+				continue;
+			}
+
+			if (ent->worldAABB().intersect(s, p) == fwAABBox::Intersection::NONE) {
+				continue;
+			}
+
+			// extended test
 			collisions.clear();
 			if (ent->collide(collider, forward, down, collisions)) {
 				for (auto& c : collisions) {
@@ -274,7 +289,7 @@ void Physics::moveBullet(gaEntity* entity, gaMessage* message)
 void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 {
 	// bullets are special case
-	if (dynamic_cast<dfBullet*>(entity) != nullptr) {
+	if (message->m_value == gaMessage::Flag::WANT_TO_MOVE_LASER) {
 		moveBullet(entity, message);
 		return;
 	}
@@ -567,20 +582,22 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 			else if (entity->movable() && !pushed->movable()) {
 
 				// the entity (movable) is being pushed by collided (non movable)
-
+				float radius = entity->radius();
 				glm::vec3 p1(nearest_collision->m_position.x, new_position.y, nearest_collision->m_position.z);
 
 				// push by an average radius
-				pushed_aside = glm::normalize(new_position - p1) * entity->radius();;
+				pushed_aside = glm::normalize(new_position - p1) * radius;
 
 				tranform.m_position = p1 + pushed_aside;
 
+				float dot = glm::dot(direction, pushed_aside);
+
 				// if the moved back position is nearly the same as the original position, block the movement
-				if (glm::length(tranform.m_position - old_position) < EPSILON) {
+				if (dot > 0 ) {
 					// ONLY refuse the move if the entity is a physical one
 					if (pushed->physical()) {
 						if (entity->name() == "player")
-							gaDebugLog(1, "GameEngine::Physics::wantToMove", entity->name() + " deny move " + std::to_string(tranform.m_position.x)
+  							gaDebugLog(1, "GameEngine::Physics::wantToMove", entity->name() + " deny move " + std::to_string(tranform.m_position.x)
 								+ " " + std::to_string(tranform.m_position.y)
 								+ " " + std::to_string(tranform.m_position.z));
 
@@ -602,10 +619,12 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 						m_ballistics[entity->name()].reset(tranform.m_position, new_position);
 					}
 
-					actions.push(entity);
+					if (glm::length(tranform.m_position - old_position) > EPSILON) {
+						entity->transform(&tranform);
 
-					if (entity->name() == "player")
-						gaDebugLog(1, "GameEngine::Physics::wantToMove", entity->name() + " pushed by sector");
+						if (entity->name() == "player")
+							gaDebugLog(1, "GameEngine::Physics::wantToMove", entity->name() + " pushed by sector");
+					}
 				}
 			}
 			else if (entity->movable() && pushed->movable()) {
@@ -625,7 +644,7 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 				// only moves the source a little bit
 				pushed_aside = p - p1;
 				tranform.m_position = new_position + pushed_aside;
-				actions.push(pushed);
+				entity->transform(&tranform);
 			}
 			else {
 				// both objects are non movable, deny move

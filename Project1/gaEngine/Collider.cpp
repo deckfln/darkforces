@@ -1,5 +1,7 @@
 #include "Collider.h"
 
+#include <glm/vec3.hpp>
+#include <glm/gtx/matrix_decompose.hpp>
 #include <glm/gtx/intersect.hpp>
 #include <glm/gtx/norm.hpp>
 
@@ -577,7 +579,18 @@ static void init_elipsoide(
 	)
 {
 	// extract the ellipsoid from the cylinder
-	glm::vec3 ellipsoid(cylinder->radius(), cylinder->height() / 2.0f, cylinder->radius());
+	// adjust scale to the aabbtree scale
+	glm::vec3 scale_cylinder, translation, skew;
+	glm::vec4 perspective;
+	glm::quat orientation;
+	glm::decompose(cylinder_worldMatrix, scale_cylinder, orientation, translation, skew, perspective);
+
+	glm::vec3 scale_aabbtree;
+	glm::decompose(aabbtree_inverseWorldMatrix, scale_aabbtree, orientation, translation, skew, perspective);
+
+	glm::vec3 scale = scale_cylinder * scale_aabbtree;
+
+	glm::vec3 ellipsoid(cylinder->radius() * scale.x, cylinder->height() / 2.0f * scale.y, cylinder->radius() * scale.z);
 
 	// deform the model_space to make the ellipsoid  sphere
 	ellipsoid_space = glm::vec3(1.0 / ellipsoid.x, 1.0 / ellipsoid.y, 1.0 / ellipsoid.z);
@@ -1104,12 +1117,14 @@ bool Collider::collision_cylinder_segment(const Collider& cylinder,
 	fwCylinder* pCylinder = static_cast<fwCylinder*>(cylinder.m_source);
 	Framework::Segment* pSegment = static_cast<Framework::Segment*>(segment.m_source);
 
+	glm::vec3 position1, position2;
+	glm::vec3 normal1, normal2;
+	glm::vec3 center(0, pCylinder->height() / 2.0f, 0);;
+
 	// convert segment space (opengl world space) into the cylinder space (model space)
 	glm::mat4 mat = *cylinder.m_inverseWorldMatrix * *segment.m_worldMatrix;
 	glm::vec3 p1 = glm::vec3(mat * glm::vec4(pSegment->m_start, 1.0));
 	glm::vec3 p2 = glm::vec3(mat * glm::vec4(pSegment->m_end, 1.0));
-
-	fwAABBox segment_gs(p1, p2);
 
 	glm::vec3 ellipsoid(pCylinder->radius(), pCylinder->height() / 2.0f, pCylinder->radius());
 
@@ -1119,24 +1134,22 @@ bool Collider::collision_cylinder_segment(const Collider& cylinder,
 	// and move the segment accordingly
 	p1 *= ellipsoid_space;
 	p2 *= ellipsoid_space;
-	p2.y--;
-	p1.y--;	// move the center down
+	center *= ellipsoid_space;
 
-	glm::vec3 position1, position2;
-	glm::vec3 normal1, normal2;
-	glm::vec3 center(0);
 	if (glm::intersectLineSphere(p1, p2,
 		center,
 		1.0f,
 		position1, normal1,
 		position2, normal2)) 
 	{
-		position1++;	// move the center up
 		position1 /= ellipsoid_space;
-
 		position1 = glm::vec3(*cylinder.m_worldMatrix * glm::vec4(position1, 1.0));
 
+		position2 /= ellipsoid_space;
+		position2 = glm::vec3(*cylinder.m_worldMatrix * glm::vec4(position2, 1.0));
+
 		collisions.push_back(gaCollisionPoint(fwCollisionLocation::COLLIDE, position1, nullptr));
+		collisions.push_back(gaCollisionPoint(fwCollisionLocation::COLLIDE, position2, nullptr));
 	}
 
 	return collisions.size() != 0;

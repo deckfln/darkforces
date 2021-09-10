@@ -28,8 +28,8 @@
 #include "dfObject/dfBulletExplode.h"
 #include "dfVOC.h"
 
-const float bullet_length = 0.5f;
-const float bullet_radius = 0.01f;
+const float bullet_length = -5.0f;
+const float bullet_radius = 0.005f;
 const float bullet_speed = 100.0f;
 const int bullet_life = 2000;
 

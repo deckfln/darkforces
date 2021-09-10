@@ -169,7 +169,8 @@ bool gaEntity::collide(gaEntity* entity,
 }
 
 /**
- * extended collision using colliders
+ * extended collision using colliders.
+ * worldAABB has to be tested BEFORE
  */
 bool gaEntity::collide(const GameEngine::Collider& collider, 
 	const glm::vec3& forward,
@@ -283,7 +284,7 @@ float gaEntity::radius(void)
 	if (m_radius < 0) {
 		float r1 = m_modelAABB.m_p1.x - m_modelAABB.m_p.x;
 		float r2 = m_modelAABB.m_p1.z - m_modelAABB.m_p.z;
-		float r = std::min(r1, r2);
+		float r = std::max(r1, r2);
 
 		m_radius = (r / 2.0f) * get_scale().x;
 	}

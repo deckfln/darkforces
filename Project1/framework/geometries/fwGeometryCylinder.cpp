@@ -81,6 +81,7 @@ fwGeometryCylinder::fwGeometryCylinder(float radius, float height, float widthSe
 
     int p = m_vertices.size();
 
+    // mark position (0,0,0)
     m_vertices.push_back(glm::vec3(0.025, 0.025, 0.025));
     m_vertices.push_back(glm::vec3(0.025, 0.025, -0.025));
     m_vertices.push_back(glm::vec3(-0.025, 0.025, -0.025));
