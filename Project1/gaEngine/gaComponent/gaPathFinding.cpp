@@ -31,7 +31,7 @@ void GameEngine::Component::PathFinding::dispatchMessage(gaMessage* message)
 				// there is a path
 				m_currentNavPoint = m_navpoints.size() - 1;
 
-				m_speed = 0.15f;
+				m_speed = 0.035f;
 				m_transforms->m_position = m_navpoints[m_currentNavPoint];
 				m_entity->sendDelayedMessage(
 					gaMessage::WANT_TO_MOVE,
@@ -72,8 +72,14 @@ void GameEngine::Component::PathFinding::dispatchMessage(gaMessage* message)
 				if (d > m_speed) {
 					direction = glm::normalize(direction) * m_speed;
 				}
-
-				direction *= m_speed;
+				else if (m_currentNavPoint > 0) {
+					// move to the next waypoint directly
+					m_currentNavPoint--;
+					p = m_navpoints[m_currentNavPoint];
+					direction = p - m_entity->position();
+					direction.y = 0;	// move forward, physics will take care of problems
+					direction = glm::normalize(direction) * m_speed;
+				}
 
 				m_transforms->m_position = m_entity->position() + direction;
 				m_transforms->m_flag = gaMessage::Flag::WANT_TO_MOVE_BREAK_IF_FALL;
