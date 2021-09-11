@@ -17,6 +17,7 @@
 #include "../gaEngine/gaCollisionPoint.h"
 #include "../gaEngine/gaMessage.h"
 #include "../gaEngine/World.h"
+#include "../gaEngine/gaNavMesh.h"
 
 #include "dfBitmap.h"
 #include "dfSign.h"
@@ -265,6 +266,9 @@ void dfLevel::buildGeometry(void)
 		dfBitmapImage* image = m_bitmaps[(int)m_skyTexture.r]->getImage();
 		m_skybox = image->convert2skyline();
 	}
+
+	// and last of the last build the navMesh
+	g_navMesh.buildMesh();
 }
 
 /**

@@ -15,6 +15,7 @@
 
 #include "../gaEngine/gaCollisionPoint.h"
 #include "../gaEngine/World.h"
+#include "../gaEngine/gaNavMesh.h"
 
 #include "dfConfig.h"
 #include "dfSuperSector.h"
@@ -821,6 +822,8 @@ void dfSector::buildFloorAndCeiling(dfMesh* mesh)
 		mesh->addFloor(polygon, m_staticMeshCeilingAltitude, m_ceilingTexture, m_ambient, true);
 	}
 	m_floorVerticesLen = mesh->nbVertices() - m_floorVerticesStart;
+
+	g_navMesh.addFloor(polygon, m_staticMeshFloorAltitude);
 }
 
 /**

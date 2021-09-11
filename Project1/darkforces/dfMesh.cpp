@@ -316,8 +316,8 @@ void dfMesh::addFloor(std::vector<std::vector<Point>>& polygons, float z, glm::v
 	// index the indexes IN the poly-lines of polygon 
 	std::vector<Point> vertices;
 
-	for (auto poly : polygons) {
-		for (auto p : poly) {
+	for (auto& poly : polygons) {
+		for (auto& p : poly) {
 			vertices.push_back(p);
 		}
 	}
