@@ -159,11 +159,13 @@ void GameEngine::NavMesh::buildMesh(void)
 						) {
 						len = glm::distance(first->m_center, second->m_center);
 
-						p = first->addPortal(s);
-						first->m_dist[p] = len;
+						first->m_portals[i] = s;
+						first->m_dist[i] = len;
+						first->m_portals_p[i] = (first->m_edges[i] + first->m_edges[iplus])/2.0f;
 
-						p = second->addPortal(f);
-						second->m_dist[p] = len;
+						second->m_portals[jminus] = f;
+						second->m_dist[jminus] = len;
+						second->m_portals_p[jminus] = (first->m_edges[i] + first->m_edges[iplus]) / 2.0f;
 					}
 				}
 
@@ -227,15 +229,16 @@ bool GameEngine::NavMesh::findPath(const glm::vec3& from, const glm::vec3& to, s
 	frontier.push(Node(start, 0));
 
 	std::map<uint32_t, int32_t> came_from;
+	std::map<uint32_t, glm::vec2> came_from_portal;
 	std::map<uint32_t, float> cost_so_far;
 
-	came_from[start] = -1;
 	cost_so_far[start] = 0;
 
 	int32_t current, next;
 	Node c;
 	float new_cost;
 	float priority;
+	glm::vec2 p, p1;
 
 	while (!frontier.empty()) {
 		c = frontier.top();
@@ -250,7 +253,7 @@ bool GameEngine::NavMesh::findPath(const glm::vec3& from, const glm::vec3& to, s
 		for (int32_t i = 0; i < 3; i++) {
 			next = m_triangles[current].m_portals[i];
 			if (next < 0) {
-				break;
+				continue;
 			}
 
 			new_cost = cost_so_far[current] + m_triangles[current].m_dist[i];
@@ -259,6 +262,8 @@ bool GameEngine::NavMesh::findPath(const glm::vec3& from, const glm::vec3& to, s
 				priority = new_cost + glm::distance(m_triangles[end].m_center, m_triangles[next].m_center);
 				frontier.push(Node(next, priority));
 				came_from[next] = current;
+
+				came_from_portal[next] = m_triangles[current].m_portals_p[i];;
 			}
 		}
 	}
@@ -269,13 +274,23 @@ bool GameEngine::NavMesh::findPath(const glm::vec3& from, const glm::vec3& to, s
 
 	// back track from end to start
 	path.push_back(to);
-	while (current != start) {
-		path.push_back(m_triangles[current].m_center / 10.0f);
+	glm::vec2 portal;
 
-		printf("%.0f,%.0f\n", m_triangles[current].m_center.x, m_triangles[current].m_center.z);
+	while (current != start) {
 		current = came_from[current];
-	}
+		portal = came_from_portal[current];
+
+		if (current != start) {
+			path.push_back(glm::vec3(portal.x, m_triangles[current].m_center.y, portal.y) / 10.0f);
+		}
+	};
+
 	path.push_back(from);
+
+	/*
+	for (auto& p : path)
+		printf("(%.0f,%.0f),\n", p.x * 10.0f, p.z * 10.0f);
+	*/
 	return true;
 }
 

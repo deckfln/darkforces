@@ -15,6 +15,7 @@ namespace GameEngine {
 		glm::vec2 m_edges[3];
 		glm::vec3 m_center;
 		int32_t m_portals[3] = { -1, -1, -1 };
+		glm::vec2 m_portals_p[6];
 		float m_dist[3] = { -1, -1, -1 };
 
 		friend class NavMesh;
