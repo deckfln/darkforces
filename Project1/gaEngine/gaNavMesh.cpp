@@ -2,6 +2,7 @@
 
 #include <glm/vec2.hpp>
 #include <glm/glm.hpp>
+#include <poly2tri/poly2tri.h>
 
 #include <map>
 #include <iostream>
@@ -40,6 +41,59 @@ uint32_t GameEngine::NavMesh::findTriangle(const glm::vec3& p)
  */
 void GameEngine::NavMesh::addFloor(std::vector<std::vector<Point>>& polygons, float z)
 {
+	// poly2tri creates a nicer layout for a navmesh
+	std::vector<p2t::Point> _polyline(polygons[0].size());
+	std::vector<p2t::Point*> polyline(polygons[0].size());
+
+	uint32_t i = 0;
+
+	for (auto& p : polygons[0]) {
+		_polyline[i] = p2t::Point(p[0], p[1]);
+		polyline[i] = &_polyline[i];
+		i++;
+	}
+
+	p2t::CDT cdt(polyline);
+
+	std::vector<p2t::Point> _hole(0);
+	std::vector<p2t::Point*> hole(0);
+
+	if (polygons.size() > 1) {
+		_hole.resize(polygons[1].size());
+		hole.resize(polygons[1].size());
+
+		i = 0;
+		for (auto& p : polygons[1]) {
+			_hole[i] = p2t::Point(p[0], p[1]);
+			hole[i] = &_hole[i];
+			i++;
+		}
+		cdt.AddHole(hole);
+	}
+
+	cdt.Triangulate();
+	std::vector<p2t::Triangle*> triangles = cdt.GetTriangles();
+
+	uint32_t start = m_triangles.size();
+	m_triangles.resize(m_triangles.size() + triangles.size());
+
+	for (uint32_t i = 0; i < triangles.size(); i ++) {
+		p2t::Point* t1 = triangles[i]->GetPoint(0);
+		p2t::Point* t2 = triangles[i]->GetPoint(1);
+		p2t::Point* t3 = triangles[i]->GetPoint(2);
+
+		m_triangles[start] = Triangle(
+			glm::vec2(t1->x, t1->y),
+			glm::vec2(t2->x, t2->y),
+			glm::vec2(t3->x, t3->y),
+			z
+		);
+
+		start++;
+	}
+
+	// keep earcut for reference
+	/*
 	// Run tessellation
 	// Returns array of indices that refer to the vertices of the input polygon.
 	// e.g: the index 6 would refer to {25, 75} in this example.
@@ -55,7 +109,7 @@ void GameEngine::NavMesh::addFloor(std::vector<std::vector<Point>>& polygons, fl
 		}
 	}
 
-	uint32_t start = m_triangles.size();
+	start = m_triangles.size();
 	m_triangles.resize(m_triangles.size() + indices.size() / 3);
 
 	for (uint32_t i = 0; i < indices.size(); i+=3) {
@@ -72,6 +126,7 @@ void GameEngine::NavMesh::addFloor(std::vector<std::vector<Point>>& polygons, fl
 
 		start++;
 	}
+	*/
 }
 
 /**
@@ -118,7 +173,7 @@ void GameEngine::NavMesh::buildMesh(void)
 	}
 
 	/*
-	for (auto i = 0; i < m_triangles.size(); i++) {
+	for (uint32_t i = 0; i < m_triangles.size(); i++) {
 		printf("%d,%.02f, %.0f,%.0f,%.0f,%.0f,%.0f,%.0f,%d,%d,%d\n",
 			i,
 			m_triangles[i].m_center.y,
@@ -217,7 +272,7 @@ bool GameEngine::NavMesh::findPath(const glm::vec3& from, const glm::vec3& to, s
 	while (current != start) {
 		path.push_back(m_triangles[current].m_center / 10.0f);
 
-		//printf("%.0f,%.0f\n", m_triangles[current].m_center.x, m_triangles[current].m_center.z);
+		printf("%.0f,%.0f\n", m_triangles[current].m_center.x, m_triangles[current].m_center.z);
 		current = came_from[current];
 	}
 	path.push_back(from);
