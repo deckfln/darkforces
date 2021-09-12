@@ -83,7 +83,14 @@ void fwOrbitControl::setFromCamera(void)
 //	m_center -= direction;
 	m_radius = 1.0f;
 	m_theta = acos(direction.y);
-	m_phi = acos(direction.z / sin(m_theta));
+
+	if (sin(m_theta) != 0.0) {
+		float p = direction.z / sin(m_theta);
+		m_phi = acos(p);
+	}
+	else {
+		m_phi = 0;
+	}
 
 	updateCamera(0);
 }
