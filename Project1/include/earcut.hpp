@@ -1,7 +1,5 @@
 #pragma once
 
-// https://github.com/mapbox/earcut.hpp
-
 #include <algorithm>
 #include <cassert>
 #include <cmath>
@@ -65,7 +63,7 @@ namespace mapbox {
             Node* cureLocalIntersections(Node* start);
             void splitEarcut(Node* start);
             template <typename Polygon> Node* eliminateHoles(const Polygon& points, Node* outerNode);
-            void eliminateHole(Node* hole, Node* outerNode);
+            Node* eliminateHole(Node* hole, Node* outerNode);
             Node* findHoleBridge(Node* hole, Node* outerNode);
             bool sectorContainsSector(const Node* m, const Node* p);
             void indexCurve(Node* start);
@@ -440,11 +438,11 @@ namespace mapbox {
             }
             std::sort(queue.begin(), queue.end(), [](const Node* a, const Node* b) {
                 return a->x < b->x;
-            });
+                });
 
             // process holes from left to right
             for (size_t i = 0; i < queue.size(); i++) {
-                eliminateHole(queue[i], outerNode);
+                outerNode = eliminateHole(queue[i], outerNode);
                 outerNode = filterPoints(outerNode, outerNode->next);
             }
 
@@ -453,12 +451,21 @@ namespace mapbox {
 
         // find a bridge between vertices that connects hole with an outer ring and and link it
         template <typename N>
-        void Earcut<N>::eliminateHole(Node* hole, Node* outerNode) {
-            outerNode = findHoleBridge(hole, outerNode);
-            if (outerNode) {
-                Node* b = splitPolygon(outerNode, hole);
-                filterPoints(b, b->next);
+        typename Earcut<N>::Node*
+            Earcut<N>::eliminateHole(Node* hole, Node* outerNode) {
+            Node* bridge = findHoleBridge(hole, outerNode);
+            if (!bridge) {
+                return outerNode;
             }
+
+            Node* bridgeReverse = splitPolygon(bridge, hole);
+
+            // filter collinear points around the cuts
+            Node* filteredBridge = filterPoints(bridge, bridge->next);
+            filterPoints(bridgeReverse, bridgeReverse->next);
+
+            // Check if input node was removed by the filtering
+            return outerNode == bridge ? filteredBridge : outerNode;
         }
 
         // David Eberly's algorithm for finding a bridge between hole and outer polygon
@@ -668,7 +675,7 @@ namespace mapbox {
         bool Earcut<N>::isValidDiagonal(Node* a, Node* b) {
             return a->next->i != b->i && a->prev->i != b->i && !intersectsPolygon(a, b) && // dones't intersect other edges
                 ((locallyInside(a, b) && locallyInside(b, a) && middleInside(a, b) && // locally visible
-                (area(a->prev, a, b->prev) != 0.0 || area(a, b->prev, b) != 0.0)) || // does not create opposite-facing sectors
+                    (area(a->prev, a, b->prev) != 0.0 || area(a, b->prev, b) != 0.0)) || // does not create opposite-facing sectors
                     (equals(a, b) && area(a->prev, a, a->next) > 0 && area(b->prev, b, b->next) > 0)); // special zero-length case
         }
 
