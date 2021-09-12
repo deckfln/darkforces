@@ -80,7 +80,7 @@ void fwOrbitControl::setFromCamera(void)
 
 	glm::vec3 direction = glm::normalize(m_lookAt - m_center);
 	m_lookAt = m_center;
-	m_center -= direction;
+//	m_center -= direction;
 	m_radius = 1.0f;
 	m_theta = acos(direction.y);
 	m_phi = acos(direction.z / sin(m_theta));

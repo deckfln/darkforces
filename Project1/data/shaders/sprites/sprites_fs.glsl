@@ -9,8 +9,10 @@ in vec3 ourColor;
 in vec2 TexCoord;
 in vec3 normal;
 in vec3 world;
+
 flat in uint textureID;	// index start in megatexture
 flat in float ambient;
+flat in float angle;
 
 #define DEFINES
 #include "../../../shaders/include/camera.glsl"
@@ -36,6 +38,14 @@ void main()
 	}
 
 	gFragColor = color * ambient;
+	/*
+	if (angle > 0) {
+		gFragColor = vec4(angle, 0, 0, 1);
+	}
+	else {
+		gFragColor = vec4(0, -angle, 0, 1);
+	}
+	*/
 	gWorld = world;
 	gNormal = vec3(0);
 

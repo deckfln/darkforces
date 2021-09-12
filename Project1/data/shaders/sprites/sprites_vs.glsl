@@ -29,6 +29,7 @@ out SpriteModel sm;
 
 flat out uint vTextureID;	// index start in megatexture
 flat out float vAmbient;
+flat out float vAngle;
 
 #include "../../../shaders/include/camera.glsl"
 
@@ -53,6 +54,11 @@ void main()
 			// animated sprite
 			vec3 viewer2object = normalize(aPos - viewPos);
 			float viewAngle = (dot(aDirection, viewer2object) + 1) * 8.0;
+
+			vec2 ad = vec2(aDirection.x, aDirection.z);
+			vec2 vp = vec2(viewer2object.x, viewer2object.z);
+			vAngle = dot(ad, vp);
+
 			//https://stackoverflow.com/questions/1560492/how-to-tell-whether-a-point-is-to-the-right-or-left-side-of-a-line
 			//Use the sign of the determinant of vectors (AB,AM), where M(X,Y) is the query point:
 			float det = sign(aDirection.x * viewer2object.z - aDirection.z * viewer2object.x);

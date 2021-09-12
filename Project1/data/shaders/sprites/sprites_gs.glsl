@@ -21,6 +21,9 @@ flat out uint textureID;	// index start in megatexture
 flat in float vAmbient[];	// index start in megatexture
 flat out float ambient;	// index start in megatexture
 
+flat in float vAngle[];	// index start in megatexture
+flat out float angle;	// index start in megatexture
+
 out vec2 TexCoord;
 out vec3 world;
 
@@ -32,6 +35,7 @@ void main()
     }
 
     ambient = vAmbient[0];      // Point has only one vertex
+    angle = vAngle[0];      // Point has only one vertex
 
     world = vWorld[0];         // gl_in[0].gl_Position;
 

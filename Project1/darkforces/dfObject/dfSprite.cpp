@@ -1,5 +1,6 @@
 #include "dfSprite.h"
 
+#include <imgui.h>
 #include "../../gaEngine/World.h"
 
 #include "../dfSprites.h"
@@ -128,6 +129,17 @@ void dfSprite::loadState(void* r)
 {
 	flightRecorder::DarkForces::Sprite* record = (flightRecorder::DarkForces::Sprite*)r;
 	dfObject::loadState((flightRecorder::Entity * )&record->object);
+}
+
+/**
+ * Add dedicated component debug the entity
+ */
+void dfSprite::debugGUIChildClass(void)
+{
+	if (ImGui::TreeNode("dfSprite")) {
+		ImGui::Text("slot: %d", m_slot);
+		ImGui::TreePop();
+	}
 }
 
 dfSprite::~dfSprite()

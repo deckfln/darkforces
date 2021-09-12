@@ -95,9 +95,7 @@ void dfSpriteAnimated::state(dfState state)
 bool dfSpriteAnimated::updateSprite(glm::vec3* position, glm::vec4* texture, glm::vec3* direction)
 {
 	if (m_dirtyPosition) {
-		direction->x = m_direction.x;
-		direction->y = m_direction.z;
-		direction->z = m_direction.y;
+		*direction = m_direction;
 	}
 
 	if (m_dirtyAnimation) {
@@ -293,6 +291,7 @@ void dfSpriteAnimated::debugGUIChildClass(void)
 		else {
 			ImGui::Text("State: %d", static_cast<uint32_t>(m_state));
 		}
+
 		ImGui::Text("Frame: %d", static_cast<uint32_t>(m_frame));
 		ImGui::Text("time last frame: %d", m_lastFrame);
 		ImGui::Text("time current frame: %d", m_currentFrame);

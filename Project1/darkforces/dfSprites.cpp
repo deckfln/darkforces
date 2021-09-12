@@ -99,6 +99,8 @@ void dfSprites::add(dfSprite *object)
 	float g = (float)m_modelsIndex[object->model()];
 	m_textureIndex[slot].g = g;
 
+	object->slot(slot);
+
 	object->updateSprite(
 		&m_positions[slot],
 		&m_textureIndex[slot],
