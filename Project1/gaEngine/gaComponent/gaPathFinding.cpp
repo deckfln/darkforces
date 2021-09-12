@@ -8,6 +8,50 @@
 
 const char* g_className = "PathFinding";
 
+/**
+ * return the direction to the next way point
+ */
+glm::vec3 GameEngine::Component::PathFinding::nextWayPoint(bool normalize)
+{
+	m_currentNavPoint--;
+	glm::vec3 p = m_navpoints[m_currentNavPoint];
+	glm::vec3 direction = p - m_entity->position();
+	direction.y = 0;	// move forward, physics will take care of problems
+
+	if (normalize) {
+		direction = glm::normalize(direction) * m_speed;
+	}
+
+	m_status = Status::MOVE_TO_NEXT_WAYPOINT;
+
+	return direction;
+}
+
+/**
+ * send the move messages
+ */
+void GameEngine::Component::PathFinding::triggerMove(void)
+{
+	m_transforms->m_flag = gaMessage::Flag::WANT_TO_MOVE_BREAK_IF_FALL;
+	m_entity->sendDelayedMessage(
+		gaMessage::WANT_TO_MOVE,
+		gaMessage::Flag::WANT_TO_MOVE_BREAK_IF_FALL,
+		m_transforms);
+}
+
+void GameEngine::Component::PathFinding::triggerMove(const glm::vec3& direction)
+{
+	triggerMove();
+
+	// turn the entity in the direction of the move
+	m_entity->sendInternalMessage(
+		gaMessage::LOOK_AT,
+		-direction);
+}
+
+/**
+ * create the component
+ */
 GameEngine::Component::PathFinding::PathFinding(float speed) :
 	gaComponent(gaComponent::PathFinding),
 	m_speed(speed)
@@ -72,17 +116,11 @@ void GameEngine::Component::PathFinding::dispatchMessage(gaMessage* message)
 			case Status::NEARLY_REACHED_NEXT_WAYPOINT:
 				if (m_currentNavPoint > 0) {
 					// move to the next waypoint directly
-					m_currentNavPoint--;
-					p = m_navpoints[m_currentNavPoint];
-					direction = p - m_entity->position();
-					direction.y = 0;	// move forward, physics will take care of problems
-					direction = glm::normalize(direction) * m_speed;
+					direction = nextWayPoint(true);
 				}
 				else {
 					// do the last step
 				}
-
-				m_status = Status::MOVE_TO_NEXT_WAYPOINT;
 				break;
 
 			case Status::REACHED_NEXT_WAYPOINT:
@@ -94,13 +132,7 @@ void GameEngine::Component::PathFinding::dispatchMessage(gaMessage* message)
 				}
 				else {
 					// if we reached the next navpoint, move to the next one
-					m_currentNavPoint--;
-					p = m_navpoints[m_currentNavPoint];
-					direction = p - m_entity->position();
-					direction.y = 0;	// move forward, physics will take care of problems
-					direction = glm::normalize(direction) * m_speed;
-
-					m_status = Status::MOVE_TO_NEXT_WAYPOINT;
+					direction = nextWayPoint(true);
 				}
 				break;
 			}
@@ -108,17 +140,7 @@ void GameEngine::Component::PathFinding::dispatchMessage(gaMessage* message)
 			// and take action
 			if (m_status == Status::MOVE_TO_NEXT_WAYPOINT) {
 				m_transforms->m_position = m_entity->position() + direction;
-				m_transforms->m_flag = gaMessage::Flag::WANT_TO_MOVE_BREAK_IF_FALL;
-
-				m_entity->sendDelayedMessage(
-					gaMessage::WANT_TO_MOVE,
-					gaMessage::Flag::WANT_TO_MOVE_BREAK_IF_FALL,
-					m_transforms);
-
-				// turn the entity in the direction of the move
-				m_entity->sendInternalMessage(
-					gaMessage::LOOK_AT,
-					-direction);
+				triggerMove(direction);
 			}
 		}
 		break;
@@ -134,25 +156,13 @@ void GameEngine::Component::PathFinding::dispatchMessage(gaMessage* message)
 				glm::vec3 direction;
 
 				m_transforms->m_position = m_previous.back();
+				m_entity->translate(m_transforms->m_position);
 				m_previous.pop_back();
 
-				m_currentNavPoint--;
-				p = m_navpoints[m_currentNavPoint];
-				direction = p - m_entity->position();
-				direction.y = 0;	// move forward, physics will take care of problems
-				direction = glm::normalize(direction) * m_speed;
+				direction = nextWayPoint(true);
 
 				m_transforms->m_position += direction;
-				m_transforms->m_flag = gaMessage::Flag::WANT_TO_MOVE_BREAK_IF_FALL;
-				m_entity->sendDelayedMessage(
-					gaMessage::WANT_TO_MOVE,
-					gaMessage::Flag::WANT_TO_MOVE_BREAK_IF_FALL,
-					m_transforms);
-
-				// turn the entity in the direction of the move
-				m_entity->sendInternalMessage(
-					gaMessage::LOOK_AT,
-					-direction);
+				triggerMove(direction);
 			}
 			else {
 				// broadcast the end of the move
@@ -164,12 +174,7 @@ void GameEngine::Component::PathFinding::dispatchMessage(gaMessage* message)
 			// Move back one step and wait for next turn to retry
 			m_transforms->m_position = m_previous.back();
 			m_previous.pop_back();
-			m_transforms->m_flag = gaMessage::Flag::WANT_TO_MOVE_BREAK_IF_FALL;
-
-			m_entity->sendDelayedMessage(
-				gaMessage::WANT_TO_MOVE,
-				gaMessage::Flag::WANT_TO_MOVE_BREAK_IF_FALL,
-				m_transforms);
+			triggerMove();
 		}
 
 		/*
@@ -211,6 +216,16 @@ void GameEngine::Component::PathFinding::debugGUIinline(void)
 		ImGui::Text("Status:%s", g_display[m_status]);
 		ImGui::Text("Target: %.2f %.2f %.2f", m_destination.x, m_destination.y, m_destination.z);
 		ImGui::Text("Speed: %.2f", m_speed);
+		if (ImGui::TreeNode("Way Points")) {
+			for (int32_t i = m_navpoints.size() - 1; i >= 0; i--) {
+				ImGui::Text("%s%.2f %.2f %.2f", 
+					(i==m_currentNavPoint) ? ">" : " ",
+					m_navpoints[i].x, 
+					m_navpoints[i].y,
+					m_navpoints[i].z);
+			}
+			ImGui::TreePop();
+		}
 		ImGui::TreePop();
 	}
 }

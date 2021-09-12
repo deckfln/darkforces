@@ -22,6 +22,9 @@ namespace GameEngine {
 			std::vector<glm::vec3> m_navpoints;					// nav points for the move
 			uint32_t m_currentNavPoint=0;						// beware, backtrack as navpoints a	re in reverse order
 			std::vector<glm::vec3> m_previous;					// previous position
+			glm::vec3 nextWayPoint(bool normalize);				// return the direction to the next way point
+			void triggerMove(void);								// send the move messages
+			void triggerMove(const glm::vec3& direction);		// send the move messages
 
 		public:
 			PathFinding(float speed);
