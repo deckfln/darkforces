@@ -116,7 +116,7 @@ void flightRecorder::Blackbox::recordEntities(void)
 	// save each entity at the end of the previous
 	char *p = &bEntities->data[0];
 	char* c = nullptr;
-	for (auto entry : g_gaWorld.m_entities) {
+	for (auto& entry : g_gaWorld.m_entities) {
 		for (auto entity : entry.second) {
 			entity->recordState(p);
 			p += entity->recordSize();

@@ -5,6 +5,7 @@
 
 #include "../gaEntity.h"
 #include "../gaNavMesh.h"
+#include "../flightRecorder/frPathFinding.h"
 
 const char* g_className = "PathFinding";
 
@@ -89,10 +90,10 @@ void GameEngine::Component::PathFinding::dispatchMessage(gaMessage* message)
 		break;
 
 	case gaMessage::Action::MOVE:
-		// record the current position (to be able to backtrack)
-		m_previous.push_back(m_entity->position());
-
 		if (m_status == Status::MOVE_TO_NEXT_WAYPOINT) {
+			// record the current position (to be able to backtrack)
+			m_previous.push_back(m_entity->position());
+
 			glm::vec3 p = m_navpoints[m_currentNavPoint];
 
 			glm::vec3 direction = p - m_entity->position();
@@ -201,7 +202,60 @@ void GameEngine::Component::PathFinding::dispatchMessage(gaMessage* message)
 }
 
 /**
- *
+ * size of the component record
+ */
+inline uint32_t GameEngine::Component::PathFinding::recordSize(void)
+{
+	return sizeof(GameEngine::flightRecorder::PathFinding);
+}
+
+/**
+ * save the component state in a record
+ */
+uint32_t GameEngine::Component::PathFinding::recordState(void* record)
+{
+	GameEngine::flightRecorder::PathFinding* r = static_cast<GameEngine::flightRecorder::PathFinding*>(record);
+
+	r->size = sizeof(GameEngine::flightRecorder::PathFinding);
+	r->m_status = static_cast<uint32_t>(m_status);
+	r->m_destination = m_destination;
+	r->m_speed = m_speed;
+	r->m_currentNavPoint = m_currentNavPoint;					// beware, backtrack as navpoints a	re in reverse order
+	r->c_navpoints = m_navpoints.size();
+	for (uint32_t i = 0; i < m_navpoints.size(); i++) {
+		r->m_navpoints[i] = m_navpoints[i];
+	}
+	r->c_previous = m_previous.size();
+	for (uint32_t i = 0; i < m_previous.size(); i++) {
+		r->m_previous[i] = m_previous[i];
+	}
+	return r->size;
+}
+
+/**
+ * reload a component state from a record
+ */
+uint32_t GameEngine::Component::PathFinding::loadState(void* record)
+{
+	GameEngine::flightRecorder::PathFinding* r = static_cast<GameEngine::flightRecorder::PathFinding*>(record);
+
+	m_status = static_cast<PathFinding::Status>(r->m_status);
+	m_destination = r->m_destination;
+	m_speed = r->m_speed;
+	m_currentNavPoint = r->m_currentNavPoint;					// beware, backtrack as navpoints a	re in reverse order
+	m_navpoints.resize(r->c_navpoints);
+	for (uint32_t i = 0; i < m_navpoints.size(); i++) {
+		m_navpoints[i] = r->m_navpoints[i];
+	}
+	m_previous.resize(r->c_previous);
+	for (uint32_t i = 0; i < m_previous.size(); i++) {
+		m_previous[i] = r->m_previous[i];
+	}
+	return sizeof(GameEngine::flightRecorder::PathFinding);
+}
+
+/**
+ * debugger
  */
 void GameEngine::Component::PathFinding::debugGUIinline(void)
 {

@@ -28,6 +28,13 @@ namespace GameEngine {
 
 		public:
 			PathFinding(float speed);
+
+			// flight recorder status
+			inline uint32_t recordSize(void);					// size of the component record
+			uint32_t recordState(void* record);					// save the component state in a record
+			uint32_t loadState(void* record);					// reload a component state from a record
+
+			// debugger
 			void dispatchMessage(gaMessage* message) override;	// let a component deal with a situation
 			void debugGUIinline(void) override;					// display the component in the debugger
 		};

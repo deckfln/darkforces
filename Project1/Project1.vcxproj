@@ -442,6 +442,7 @@
     <ClInclude Include="gaEngine\AABBoxTree.h" />
     <ClInclude Include="gaEngine\Collider.h" />
     <ClInclude Include="gaEngine\Debug.h" />
+    <ClInclude Include="gaEngine\flightRecorder\frPathFinding.h" />
     <ClInclude Include="gaEngine\gaActor.h" />
     <ClInclude Include="gaEngine\gaApp.h" />
     <ClInclude Include="gaEngine\gaBoundingBoxes.h" />
