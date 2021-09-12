@@ -1,18 +1,27 @@
 #include "dfSpriteAnimated.h"
 
 #include <glm/trigonometric.hpp>
+#define _USE_MATH_DEFINES
+#include <math.h>
 
 #include <imgui.h>
+
+#include "../../config.h"
+
+#include "../../framework/geometries/fwGeometryCylinder.h"
 
 #include "../../gaEngine/World.h"
 
 #include "../dfModel/dfWAX.h"
 #include "../dfLevel.h"
 #include "../dfComponent/dfComponentLogic.h"
-#include "../../config.h"
 
 static uint32_t g_animatedSpriteID = 0;
 static const char* g_className = "dfSpriteAnimated";
+
+static glm::vec4 g_red(1.0, 1.0, 0.0, 1.0);
+static fwMaterialBasic g_basic(&g_red);
+static fwGeometryCylinder* g_view = nullptr;
 
 /**
  * create a sprite from a pointer to a model
@@ -20,6 +29,19 @@ static const char* g_className = "dfSpriteAnimated";
 dfSpriteAnimated::dfSpriteAnimated(dfWAX* wax, const glm::vec3& position, float ambient, uint32_t objectID):
 	dfSprite(wax, position, ambient, OBJECT_WAX, objectID)
 {
+	if (g_view == nullptr) {
+		g_basic.makeStatic();
+		g_view = new fwGeometryCylinder(0.01f, 0.15f, 4, 1);
+		g_view->makeStatic();
+	}
+
+#ifdef _DEBUG
+	// add the mesh component to the entity
+	m_view = new fwMesh(g_view, &g_basic);
+ 	m_view->translate(get_position() + glm::vec3(0.0f, 0.5f, 0.0f));
+	g_gaWorld.add2scene(m_view);
+#endif
+
 	gaEntity::updateWorldAABB();
 	m_className = g_className;
 }
@@ -74,7 +96,7 @@ bool dfSpriteAnimated::updateSprite(glm::vec3* position, glm::vec4* texture, glm
 {
 	if (m_dirtyPosition) {
 		direction->x = m_direction.x;
-		direction->y = m_direction.z;	// level space to gl space
+		direction->y = m_direction.z;
 		direction->z = m_direction.y;
 	}
 
@@ -94,8 +116,14 @@ void dfSpriteAnimated::rotation(const glm::vec3& rotation)
 	// YAW = value in degrees where 0 is at the "top of the screen when you look at the map". The value increases clockwise
 	float yaw = glm::radians(rotation.y);
 	m_direction.x = sin(yaw);	// in level space
-	m_direction.y = -cos(yaw);
-	m_direction.z = 0;
+	m_direction.y = 0;
+	m_direction.z = -cos(yaw);
+
+#ifdef _DEBUG
+	float a = atan2(m_direction.x, m_direction.z);// +M_PI / 2.0f;
+	glm::vec3 xr(0, a, 0);
+	m_view->rotate(xr);
+#endif
 }
 
 /**
@@ -169,6 +197,12 @@ void dfSpriteAnimated::dispatchMessage(gaMessage* message)
 		if (message->m_extra == nullptr) {
 			m_direction = glm::normalize(message->m_v3value);
 			m_dirtyPosition = true;
+#ifdef _DEBUG
+			float a = atan2(m_direction.x, m_direction.z);// +M_PI / 2.0f;
+			glm::vec3 xr(0, a, 0);
+
+			m_view->rotate(xr);
+#endif
 		}
 		break;
 
@@ -180,6 +214,9 @@ void dfSpriteAnimated::dispatchMessage(gaMessage* message)
 		state(dfState::ENEMY_STAY_STILL);
 		break;
 
+	case gaMessage::MOVE:
+		m_view->translate(get_position() + glm::vec3(0.0f, 0.5f, 0.0f));
+		break;
 	}
 	dfSprite::dispatchMessage(message);
 }

@@ -4,6 +4,7 @@
 #include <glm/vec4.hpp>
 #include <glm/vec3.hpp>
 
+#include "../../framework/fwMesh.h"
 #include "../flightRecorder/frSpriteAnimated.h"
 
 class dfWAX;
@@ -15,6 +16,7 @@ class dfSpriteAnimated: public dfSprite
 	glm::vec3 m_direction = glm::vec3(0);	// direction the object is looking to
 	time_t m_lastFrame = 0;					// time of the last animation frame
 	time_t m_currentFrame = 0;				// time of the current animation frame
+	fwMesh *m_view=nullptr;
 
 protected:
 	bool m_loopAnimation = true;			// animations are looping (default)
