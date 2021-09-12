@@ -155,7 +155,7 @@ void GameEngine::NavMesh::buildMesh(void)
 					if (
 						first->m_edges[i] == second->m_edges[j] &&
 						first->m_edges[iplus] == second->m_edges[jminus] &&
-						abs(first->m_center.y - second->m_center.y) < 2.0f
+						abs(first->m_center.y - second->m_center.y) <= 2.06f
 						) {
 						len = glm::distance(first->m_center, second->m_center);
 

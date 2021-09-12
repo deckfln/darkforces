@@ -136,6 +136,9 @@
     <Filter Include="Fichiers sources\Dark Forces\dfComponent\InfElevator\InfElevatorHorizontal">
       <UniqueIdentifier>{ec599590-c51e-46f1-ad8f-cf8caea166ff}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Fichiers d%27en-tête\include">
+      <UniqueIdentifier>{fcaaca7f-e114-4699-9d8e-06eb47c30129}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source.cpp">
@@ -668,9 +671,6 @@
     <ClInclude Include="Element.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="include\stb_image.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
     <ClInclude Include="Reference.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
@@ -681,9 +681,6 @@
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
     <ClInclude Include="framework\Loader.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="include\earcut.hpp">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
     <ClInclude Include="myDarkForces.h">
@@ -1240,6 +1237,12 @@
     </ClInclude>
     <ClInclude Include="gaEngine\gaNavMesh.h">
       <Filter>Fichiers d%27en-tête\gaEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="include\earcut.hpp">
+      <Filter>Fichiers d%27en-tête\include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\stb_image.h">
+      <Filter>Fichiers d%27en-tête\include</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

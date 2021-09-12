@@ -8,17 +8,20 @@
 namespace GameEngine {
 	namespace Component {
 		class PathFinding : public gaComponent {
-			enum class Status
-			{
+			enum class Status {
 				STILL,
-				MOVE
+				MOVE_TO_NEXT_WAYPOINT,
+				NEARLY_REACHED_NEXT_WAYPOINT,
+				REACHED_NEXT_WAYPOINT,
 			};
+
 			Status m_status = Status::STILL;
 			glm::vec3 m_destination = glm::vec3(0);	
 			float m_speed=0;
 			GameEngine::Transform* m_transforms = nullptr;		// transforms to move the object
 			std::vector<glm::vec3> m_navpoints;					// nav points for the move
 			uint32_t m_currentNavPoint=0;						// beware, backtrack as navpoints a	re in reverse order
+			std::vector<glm::vec3> m_previous;					// previous position
 
 		public:
 			PathFinding(float speed);
