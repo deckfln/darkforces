@@ -43,7 +43,12 @@ namespace DarkForces {
 				MORPH_SPIN2,
 				DOOR
 			};
-
+			enum class Status : uint32_t {
+				HOLD,		// elevator is not animated
+				MOVE,		// is moving
+				WAIT,		// is waiting at a stop
+				TERMINATED	// the elevator cannot be activated anymore
+			};
 
 			InfElevator(const std::string& sector, bool smart = false);
 			InfElevator(Type kind, dfSector* sector, bool smart = false);
@@ -60,6 +65,7 @@ namespace DarkForces {
 			inline float zmax(void) { return m_zmax; };
 			void key(const std::string& key);				// register the needed key
 			inline DarkForces::Keys key(void) { return m_key; };
+			inline Status status(void) { return m_status; };
 
 			void prepareMesh(void);							// set the mesh data before the final build
 			void meshData(float bottom, float top, uint32_t texture, bool clockwise, dfWallFlag whatToDraw);	// set the mesh data
@@ -83,12 +89,6 @@ namespace DarkForces {
 			void debugGUIinline(void) override;				// display the component in the debugger
 
 		protected:
-			enum class Status : uint32_t {
-				HOLD,		// elevator is not animated
-				MOVE,		// is moving
-				WAIT,		// is waiting at a stop
-				TERMINATED	// the elevator cannot be activated anymore
-			};
 
 			// static state
 			Type m_type = Type::INV;			// class of elevator

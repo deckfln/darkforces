@@ -216,7 +216,7 @@ bool operator> (const Node& node1, const Node& node2)
 }
 
 
-bool GameEngine::NavMesh::findPath(const glm::vec3& from, const glm::vec3& to, std::vector<glm::vec3>& path)
+float GameEngine::NavMesh::findPath(const glm::vec3& from, const glm::vec3& to, std::vector<glm::vec3>& path)
 {
 	uint32_t start = findTriangle(from * 10.0f);
 	uint32_t end = findTriangle(to * 10.0f);
@@ -269,29 +269,41 @@ bool GameEngine::NavMesh::findPath(const glm::vec3& from, const glm::vec3& to, s
 	}
 
 	if (current != end) {
-		return false;
+		return -1;
 	}
 
 	// back track from end to start
 	path.push_back(to);
 	glm::vec2 portal;
+	float len = 0;
+	glm::vec3 from1 = to, to1;
 
 	while (current != start) {
 		current = came_from[current];
 		portal = came_from_portal[current];
 
 		if (current != start) {
-			path.push_back(glm::vec3(portal.x, m_triangles[current].m_center.y, portal.y) / 10.0f);
+			to1 = glm::vec3(portal.x, m_triangles[current].m_center.y, portal.y);
+			//to1 = m_triangles[current].m_center;
+
+			//path.push_back(glm::vec3(portal.x, m_triangles[current].m_center.y, portal.y) / 10.0f);
+			path.push_back( to1 / 10.0f);
+
+			len += glm::distance(from1, to1);
+
+			from1 = to1;
 		}
 	};
 
+	len += glm::distance(from1, from);
 	path.push_back(from);
-
-	/*
+/*
 	for (auto& p : path)
 		printf("(%.0f,%.0f),\n", p.x * 10.0f, p.z * 10.0f);
-	*/
-	return true;
+
+	printf("*\n");
+*/
+	return len;
 }
 
 /**

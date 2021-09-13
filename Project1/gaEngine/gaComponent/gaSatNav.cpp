@@ -79,7 +79,7 @@ void GameEngine::Component::SatNav::dispatchMessage(gaMessage* message)
 			m_destination = *(static_cast<glm::vec3*>(message->m_extra));
 		}
 
-		if (g_navMesh.findPath(m_entity->position(), m_destination, m_navpoints)) {
+		if (g_navMesh.findPath(m_entity->position(), m_destination, m_navpoints) > 0) {
 			// there is a path
 			m_currentNavPoint = m_navpoints.size() - 1;
 
@@ -143,6 +143,7 @@ void GameEngine::Component::SatNav::dispatchMessage(gaMessage* message)
 				else {
 					// do the last step
 				}
+				m_status = Status::MOVE_TO_NEXT_WAYPOINT;
 				break;
 
 			case Status::REACHED_NEXT_WAYPOINT:

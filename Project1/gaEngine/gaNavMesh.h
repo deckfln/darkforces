@@ -32,7 +32,7 @@ namespace GameEngine {
 	public:
 		void addFloor(std::vector<std::vector<Point>>& polygons, float z);
 		void buildMesh(void);
-		bool findPath(const glm::vec3& from, 
+		float findPath(const glm::vec3& from, 
 			const glm::vec3& to,
 			std::vector<glm::vec3>& path);							// build a path from/to
 	};

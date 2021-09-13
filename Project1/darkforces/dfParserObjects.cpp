@@ -8,7 +8,6 @@
 
 #include "../gaEngine/Lexer.h"
 #include "../gaEngine/gaComponent/gaSound.h"
-#include "../gaEngine/gaComponent/gaSatNav.h"
 
 #include "lexer/dfObject.lex.h"
 
@@ -28,6 +27,7 @@
 #include "dfLevel.h"
 #include "dfVOC.h"
 #include "dfComponent/dfComponentLogic.h"
+#include "dfComponent/dfSatNav.h"
 
 #include "dfObject/dfObject3D/MouseBot.h"
 #include "dfObject/dfSprite/dfSpriteAnimated/Enemy.h"
@@ -389,7 +389,7 @@ void dfParserObjects::parseObject(dfFileSystem* fs, GameEngine::ParserExpression
 			GameEngine::Component::Sound* sound = new GameEngine::Component::Sound();
 			sound->addSound(0, loadVOC("ST-DIE-1.voc")->sound());
 
-			GameEngine::Component::SatNav* path = new GameEngine::Component::SatNav(1.0f);
+			GameEngine::Component::SatNav* path = new DarkForces::Component::SatNav(1.0f);
 
 			obj->addComponent(actor, gaEntity::Flag::DELETE_AT_EXIT);
 			obj->addComponent(sound, gaEntity::Flag::DELETE_AT_EXIT);

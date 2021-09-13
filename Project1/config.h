@@ -68,7 +68,8 @@ namespace DarkForces {
 		PICK_RIFLE_AND_BULLETS,
 		ADD_BATTERY,
 		EVENT,				// send events to sectors
-		FIRE				// fire a gun
+		FIRE,				// fire a gun
+		SatNav_Wait			// ticks for the DF satnav
 	};
 
 	enum MessageEvent {

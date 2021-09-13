@@ -209,6 +209,7 @@ public:
 
 	bool visible(void);
 	void addTrigger(dfLogicTrigger*);
+	inline const std::list<dfLogicTrigger*>& triggers(void) { return m_triggers; };
 	void addProgram(DarkForces::Component::InfStandardTrigger*);	// register a INF trigger standard on the sector
 	void addElevator(DarkForces::Component::InfElevator* elevator); // register a INF elevator on the sector
 	void setAABBtop(float z_level);
