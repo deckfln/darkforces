@@ -8,7 +8,7 @@
 
 #include "../gaEngine/Lexer.h"
 #include "../gaEngine/gaComponent/gaSound.h"
-#include "../gaEngine/gaComponent/gaPathFinding.h"
+#include "../gaEngine/gaComponent/gaSatNav.h"
 
 #include "lexer/dfObject.lex.h"
 
@@ -389,7 +389,7 @@ void dfParserObjects::parseObject(dfFileSystem* fs, GameEngine::ParserExpression
 			GameEngine::Component::Sound* sound = new GameEngine::Component::Sound();
 			sound->addSound(0, loadVOC("ST-DIE-1.voc")->sound());
 
-			GameEngine::Component::PathFinding* path = new GameEngine::Component::PathFinding(1.0f);
+			GameEngine::Component::SatNav* path = new GameEngine::Component::SatNav(1.0f);
 
 			obj->addComponent(actor, gaEntity::Flag::DELETE_AT_EXIT);
 			obj->addComponent(sound, gaEntity::Flag::DELETE_AT_EXIT);
@@ -568,6 +568,11 @@ void dfParserObjects::buildSprites(void)
 		if (object != nullptr) {
 			g_gaWorld.addClient(object);
 		}
+
+		if (object->name() == "OFFCFIN.WAX(21)") {
+			object->sendInternalMessage(gaMessage::Action::SatNav_GOTO, glm::vec3(-20.16, -3.0, 18.84));
+		}
+
 	}
 
 	time_t timer = GetTickCount64();

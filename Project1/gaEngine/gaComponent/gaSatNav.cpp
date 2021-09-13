@@ -1,4 +1,4 @@
-#include "gaPathFinding.h"
+#include "gaSatNav.h"
 
 #include <map>
 #include <imgui.h>
@@ -7,12 +7,12 @@
 #include "../gaNavMesh.h"
 #include "../flightRecorder/frPathFinding.h"
 
-const char* g_className = "PathFinding";
+const char* g_className = "SatNav";
 
 /**
  * return the direction to the next way point
  */
-glm::vec3 GameEngine::Component::PathFinding::nextWayPoint(bool normalize)
+glm::vec3 GameEngine::Component::SatNav::nextWayPoint(bool normalize)
 {
 	m_currentNavPoint--;
 	glm::vec3 p = m_navpoints[m_currentNavPoint];
@@ -31,7 +31,7 @@ glm::vec3 GameEngine::Component::PathFinding::nextWayPoint(bool normalize)
 /**
  * send the move messages
  */
-void GameEngine::Component::PathFinding::triggerMove(void)
+void GameEngine::Component::SatNav::triggerMove(void)
 {
 	m_transforms->m_flag = gaMessage::Flag::WANT_TO_MOVE_BREAK_IF_FALL;
 	m_entity->sendDelayedMessage(
@@ -40,7 +40,7 @@ void GameEngine::Component::PathFinding::triggerMove(void)
 		m_transforms);
 }
 
-void GameEngine::Component::PathFinding::triggerMove(const glm::vec3& direction)
+void GameEngine::Component::SatNav::triggerMove(const glm::vec3& direction)
 {
 	triggerMove();
 
@@ -53,7 +53,7 @@ void GameEngine::Component::PathFinding::triggerMove(const glm::vec3& direction)
 /**
  * create the component
  */
-GameEngine::Component::PathFinding::PathFinding(float speed) :
+GameEngine::Component::SatNav::SatNav(float speed) :
 	gaComponent(gaComponent::PathFinding),
 	m_speed(speed)
 {
@@ -62,31 +62,52 @@ GameEngine::Component::PathFinding::PathFinding(float speed) :
 /**
  * let a component deal with a situation
  */
-void GameEngine::Component::PathFinding::dispatchMessage(gaMessage* message)
+void GameEngine::Component::SatNav::dispatchMessage(gaMessage* message)
 {
 	switch (message->m_action) {
 	case gaMessage::Action::WORLD_INSERT:
 		m_transforms = m_entity->pTransform();
+		break;
 
-		if (m_entity->name() == "OFFCFIN.WAX(21)") {
-			m_status = Status::MOVE_TO_NEXT_WAYPOINT;
-			m_destination = glm::vec3(-20.16, -3.0, 18.84);
+	case gaMessage::Action::SatNav_GOTO:
+		m_navpoints.clear();
 
-			if (g_navMesh.findPath(m_entity->position(), m_destination, m_navpoints)) {
-				// there is a path
-				m_currentNavPoint = m_navpoints.size() - 1;
-
-				m_speed = 0.035f;
-				m_transforms->m_position = m_navpoints[m_currentNavPoint];
-				m_entity->sendDelayedMessage(
-					gaMessage::WANT_TO_MOVE,
-					gaMessage::Flag::WANT_TO_MOVE_BREAK_IF_FALL,
-					m_transforms);
-
-				// broadcast the beginning of the move
-				m_entity->sendInternalMessage(gaMessage::START_MOVE);
-			}
+		if (message->m_extra == nullptr) {
+			m_destination = message->m_v3value;
 		}
+		else {
+			m_destination = *(static_cast<glm::vec3*>(message->m_extra));
+		}
+
+		if (g_navMesh.findPath(m_entity->position(), m_destination, m_navpoints)) {
+			// there is a path
+			m_currentNavPoint = m_navpoints.size() - 1;
+
+			// trigger the move
+			m_speed = 0.035f;
+			m_transforms->m_position = m_navpoints[m_currentNavPoint];
+			m_entity->sendDelayedMessage(
+				gaMessage::WANT_TO_MOVE,
+				gaMessage::Flag::WANT_TO_MOVE_BREAK_IF_FALL,
+				m_transforms);
+
+			m_status = Status::MOVE_TO_NEXT_WAYPOINT;
+
+			// broadcast the beginning of the move (for animation)
+			m_entity->sendInternalMessage(gaMessage::START_MOVE);
+		}
+		else {
+			// inform everyone of the failure
+			m_entity->sendInternalMessage(gaMessage::SatNav_NOGO);
+		}
+		break;
+
+	case gaMessage::Action::SatNav_CANCEL:
+		m_navpoints.clear();
+		m_status = Status::STILL;
+
+		// broadcast the end of the move (for animation)
+		m_entity->sendInternalMessage(gaMessage::END_MOVE);
 		break;
 
 	case gaMessage::Action::MOVE:
@@ -128,8 +149,11 @@ void GameEngine::Component::PathFinding::dispatchMessage(gaMessage* message)
 				if (m_currentNavPoint == 0) {
 					m_status = Status::STILL;
 
-					// broadcast the end of the move
+					// broadcast the end of the move (for animation)
 					m_entity->sendInternalMessage(gaMessage::END_MOVE);
+
+					// broadcast the point reached
+					m_entity->sendInternalMessage(gaMessage::SatNav_REACHED);
 				}
 				else {
 					// if we reached the next navpoint, move to the next one
@@ -177,21 +201,6 @@ void GameEngine::Component::PathFinding::dispatchMessage(gaMessage* message)
 			m_previous.pop_back();
 			triggerMove();
 		}
-
-		/*
-				// and rebuild a path
-				if (g_navMesh.findPath(m_previous, m_destination, m_navpoints)) {
-					// there is a path
-					m_currentNavPoint = m_navpoints.size() - 1;
-
-					m_speed = 0.035f;
-					m_transforms->m_position = m_navpoints[m_currentNavPoint];
-					m_entity->sendDelayedMessage(
-						gaMessage::WANT_TO_MOVE,
-						gaMessage::Flag::WANT_TO_MOVE_BREAK_IF_FALL,
-						m_transforms);
-				}
-		*/
 		break; }
 
 	case gaMessage::Action::WOULD_FALL:
@@ -204,7 +213,7 @@ void GameEngine::Component::PathFinding::dispatchMessage(gaMessage* message)
 /**
  * size of the component record
  */
-inline uint32_t GameEngine::Component::PathFinding::recordSize(void)
+inline uint32_t GameEngine::Component::SatNav::recordSize(void)
 {
 	return sizeof(GameEngine::flightRecorder::PathFinding);
 }
@@ -212,7 +221,7 @@ inline uint32_t GameEngine::Component::PathFinding::recordSize(void)
 /**
  * save the component state in a record
  */
-uint32_t GameEngine::Component::PathFinding::recordState(void* record)
+uint32_t GameEngine::Component::SatNav::recordState(void* record)
 {
 	GameEngine::flightRecorder::PathFinding* r = static_cast<GameEngine::flightRecorder::PathFinding*>(record);
 
@@ -235,11 +244,11 @@ uint32_t GameEngine::Component::PathFinding::recordState(void* record)
 /**
  * reload a component state from a record
  */
-uint32_t GameEngine::Component::PathFinding::loadState(void* record)
+uint32_t GameEngine::Component::SatNav::loadState(void* record)
 {
 	GameEngine::flightRecorder::PathFinding* r = static_cast<GameEngine::flightRecorder::PathFinding*>(record);
 
-	m_status = static_cast<PathFinding::Status>(r->m_status);
+	m_status = static_cast<SatNav::Status>(r->m_status);
 	m_destination = r->m_destination;
 	m_speed = r->m_speed;
 	m_currentNavPoint = r->m_currentNavPoint;					// beware, backtrack as navpoints a	re in reverse order
@@ -257,7 +266,7 @@ uint32_t GameEngine::Component::PathFinding::loadState(void* record)
 /**
  * debugger
  */
-void GameEngine::Component::PathFinding::debugGUIinline(void)
+void GameEngine::Component::SatNav::debugGUIinline(void)
 {
 	static std::map<Status, const char*> g_display = {
 		{ Status::STILL, "Still"},

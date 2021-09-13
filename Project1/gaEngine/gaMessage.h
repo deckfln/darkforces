@@ -59,8 +59,13 @@ public:
 		HIDE,			// hide the object on screen
 		UNHIDE,			// make the object visible on screen
 		START_MOVE,		// the entity starts to move on a path finding
-		END_MOVE		// the entity stops to move on a path finding
+		END_MOVE,		// the entity stops to move on a path finding
+		SatNav_GOTO,	// gives a destination to the satnav and start to move
+		SatNav_NOGO,	// satnav answers back with no path to reach the destination
+		SatNav_CANCEL,	// Cancel the satnav
+		SatNav_REACHED	// satnav reached the destination
 	};
+
 	// flags stored in messages
 	enum Flag {
 		WANT_TO_MOVE_BREAK_IF_FALL,	// Object doesn't want to fall off and want to be informed

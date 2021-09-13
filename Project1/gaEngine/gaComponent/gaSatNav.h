@@ -7,7 +7,7 @@
 
 namespace GameEngine {
 	namespace Component {
-		class PathFinding : public gaComponent {
+		class SatNav : public gaComponent {
 			enum class Status {
 				STILL,
 				MOVE_TO_NEXT_WAYPOINT,
@@ -27,7 +27,7 @@ namespace GameEngine {
 			void triggerMove(const glm::vec3& direction);		// send the move messages
 
 		public:
-			PathFinding(float speed);
+			SatNav(float speed);
 
 			// flight recorder status
 			inline uint32_t recordSize(void);					// size of the component record
