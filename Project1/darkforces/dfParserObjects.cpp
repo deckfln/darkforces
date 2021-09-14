@@ -570,7 +570,7 @@ void dfParserObjects::buildSprites(void)
 		}
 
 		if (object->name() == "OFFCFIN.WAX(21)") {
-			object->sendInternalMessage(gaMessage::Action::SatNav_GOTO, glm::vec3(-20.16, -3.0, 18.84));
+			object->sendInternalMessage(gaMessage::Action::SatNav_GOTO, glm::vec3(-21.29, -0.3, 16.6));
 		}
 
 	}

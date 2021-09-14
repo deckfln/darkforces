@@ -39,9 +39,15 @@ static dfLogicTrigger* findTrigger(const glm::vec3& from, gaEntity* entity)
 /**
  * Set the destination to the next trigger that can activate an elevator
  */
-void DarkForces::Component::SatNav::goto_next_trigger(bool first)
+void DarkForces::Component::SatNav::goto_next_trigger(void)
 {
-	m_status = Status::SEARCH_TRIGGER;
+	switch (m_status) {
+	case Status::GOTO_FIRST_TRIGGER:
+		m_status = Status::GOTO_NEXT_TRIGGER;
+		break;
+	default:
+		m_status = Status::GOTO_FIRST_TRIGGER;
+	}
 
 	if (m_triggers.size() > 0) {
 		m_targetTrigger = m_triggers.front();
@@ -76,79 +82,69 @@ void DarkForces::Component::SatNav::activate_trigger(void)
 }
 
 /**
- *
+ * init a move to a destination
  */
-DarkForces::Component::SatNav::SatNav(float speed) :
-	GameEngine::Component::SatNav(speed)
+bool DarkForces::Component::SatNav::onSatNav_goto(gaMessage* message)
 {
+	switch (m_status) {
+	case Status::NOGO:
+	case Status::STILL:
+	case Status::REACHED_DESTINATION:
+		m_status = Status::MOVE_TO_DESTINATION;
+		break;
+	case Status::MOVE_TO_DESTINATION:
+		break;
+	case Status::GOTO_FIRST_TRIGGER:
+		m_destinations.push_back(m_currentDestination);
+		break;
+	case Status::GOTO_NEXT_TRIGGER:
+		break;
+	}
 
+	glm::vec3 p;
+	if (message->m_extra == nullptr) {
+		p = message->m_v3value;
+	}
+	else {
+		p = *(static_cast<glm::vec3*>(message->m_extra));
+	}
+
+	m_currentDestination = p;
+
+	return false;
 }
 
 /**
- *
+ * deal with collide message
  */
-void DarkForces::Component::SatNav::dispatchMessage(gaMessage* message)
+bool DarkForces::Component::SatNav::onCollide(gaMessage* message)
 {
-	switch (message->m_action) {
-	case gaMessage::Action::SatNav_GOTO:
-		glm::vec3 p;
-		if (message->m_extra == nullptr) {
-			p = message->m_v3value;
+	gaEntity* entity = message->m_pServer;
+	DarkForces::Component::InfElevator* elevator = static_cast<DarkForces::Component::InfElevator*>(entity->findComponent(DF_COMPONENT_INF_ELEVATOR));
+	dfLogicTrigger* trigger = dynamic_cast<dfLogicTrigger*>(entity);
+
+	// are we reaching a trigger we were looking for
+	switch (m_status) {
+	case Status::GOTO_FIRST_TRIGGER:
+	case Status::GOTO_NEXT_TRIGGER:
+		if (m_targetTrigger == trigger) {
+			activate_trigger();
 		}
 		else {
-			p = *(static_cast<glm::vec3*>(message->m_extra));
-		}
-		if (m_currentDestination.x != +INFINITY) {
-			m_destinations.push_back(m_currentDestination);
-		}
+			// we hit "something" let's test the distance from here to the trigger. if we are near, let's pretend everything is OK
+			float d = glm::distance(m_entity->position(), m_targetTrigger->position());
 
-		m_currentDestination = p;
-		break;
-
-	case gaMessage::Action::SatNav_NOGO:
-		m_status = Status::NOGO;
-		m_currentDestination.x = +INFINITY;
-		m_destinations.clear();
-		break;
-
-	case gaMessage::Action::SatNav_REACHED: {
-		if (!m_destinations.empty()) {
-			m_currentDestination = m_destinations.back();
-			m_destinations.pop_back();
-
-			m_entity->sendInternalMessage(gaMessage::Action::SatNav_GOTO, p);
-		}
-		else {
-			m_status = Status::REACHED_DESTINATION;
-			m_currentDestination.x = +INFINITY;
-		}
-		break; }
-
-	case gaMessage::Action::COLLIDE: {
-		gaEntity* entity = message->m_pServer;
-		DarkForces::Component::InfElevator* elevator = static_cast<DarkForces::Component::InfElevator*>(entity->findComponent(DF_COMPONENT_INF_ELEVATOR));
-		dfLogicTrigger* trigger = dynamic_cast<dfLogicTrigger*>(entity);
-
-		// are we reaching a trigger we were looking for
-		if (m_status == Status::SEARCH_TRIGGER) {
-			if (m_targetTrigger == trigger) {
+			if (d < 0.5f) {
 				activate_trigger();
 			}
 			else {
-				// we hit "something" let's test the distance from here to the trigger. if we are near, let's pretend everything is OK
-				float d = glm::distance(m_entity->position(), m_targetTrigger->position());
-
-				if (d < 0.5f) {
-					activate_trigger();
-				}
-				else {
-					m_currentDestination.x = +INFINITY;
-					goto_next_trigger(false);
-				}
+				goto_next_trigger();
 			}
-			return;	// do not pass the message to GameEngine::SatNav
 		}
-		else if (elevator) {
+		return true;	// do not pass the message to GameEngine::SatNav
+
+	default:
+		if (elevator) {
 			// so we are colliding with an elevator, check the status of the elevator
 			switch (elevator->status()) {
 			case InfElevator::Status::MOVE:
@@ -159,11 +155,9 @@ void DarkForces::Component::SatNav::dispatchMessage(gaMessage* message)
 				break;
 
 			case InfElevator::Status::HOLD: {
-
-				if (m_status == Status::SEARCH_TRIGGER) {
+				if (m_status == Status::GOTO_NEXT_TRIGGER) {
 					// if we are looking for a trigger, this means we cant reach the trigger, so we need to test the next one
-					m_currentDestination.x = +INFINITY;
-					goto_next_trigger(false);
+					goto_next_trigger();
 				}
 				else {
 					// we are on a natural move, to the elevator can be activated
@@ -171,7 +165,7 @@ void DarkForces::Component::SatNav::dispatchMessage(gaMessage* message)
 					dfSector* sector = dynamic_cast<dfSector*>(entity);
 					m_triggers = sector->triggers();
 
-					goto_next_trigger(true);
+					goto_next_trigger();
 
 					// register the elevator we want to open
 					m_nextElevator.push_back(elevator);
@@ -183,32 +177,86 @@ void DarkForces::Component::SatNav::dispatchMessage(gaMessage* message)
 				// whoever asked me to move will notice this is the end
 				m_entity->sendInternalMessage(gaMessage::Action::SatNav_CANCEL);
 				m_entity->sendInternalMessage(gaMessage::Action::SatNav_NOGO);
-				return; // and stop here
 				break;
 			}
-			return;	// do not pass the message to GameEngine::SatNav
+			return true;	// do not pass the message to GameEngine::SatNav
 		}
-		// pass the message to GameEngine::SatNav
-		break; }
+	}
 
-	case DarkForces::Message::SatNav_Wait:
-		DarkForces::Component::InfElevator* elevator = m_nextElevator.back();
+	// pass the message to GameEngine::SatNav
+	return false;
+}
 
-		switch (elevator->status()) {
-		case InfElevator::Status::MOVE:
-			// wait for the elevator to finish its move, maybe it is opening
-			m_entity->sendDelayedMessage(DarkForces::Message::SatNav_Wait);
-			break;
+/**
+ * wait for a door to open
+ */
+bool DarkForces::Component::SatNav::onSatNav_wait(gaMessage* message)
+{
+	DarkForces::Component::InfElevator* elevator = m_nextElevator.back();
 
-		case InfElevator::Status::WAIT:
-		case InfElevator::Status::HOLD:
-			m_currentDestination = m_destinations.back();
-			m_destinations.pop_back();
+	switch (elevator->status()) {
+	case InfElevator::Status::MOVE:
+		// wait for the elevator to finish its move, maybe it is opening
+		m_entity->sendDelayedMessage(DarkForces::Message::SatNav_Wait);
+		break;
 
-			// the door is open, go to the destination
-			m_entity->sendInternalMessage(gaMessage::Action::SatNav_GOTO, m_currentDestination);
-			m_status = Status::MOVE_TO_DESTINATION;
-			break;
+	case InfElevator::Status::WAIT:
+	case InfElevator::Status::HOLD:
+		m_currentDestination = m_destinations.back();
+		m_destinations.pop_back();
+
+		// the door is open, go to the destination
+		m_status = Status::MOVE_TO_DESTINATION;
+		m_entity->sendInternalMessage(gaMessage::Action::SatNav_GOTO, m_currentDestination);
+		break;
+	}
+
+	return false;
+}
+
+/**
+ * satnav reached its destination
+ */
+bool DarkForces::Component::SatNav::onSatNav_Reached(gaMessage* message)
+{
+	if (!m_destinations.empty()) {
+		glm::vec3 p = m_destinations.back();
+		m_destinations.pop_back();
+
+		m_entity->sendInternalMessage(gaMessage::Action::SatNav_GOTO, p);
+	}
+	else {
+		m_status = Status::REACHED_DESTINATION;
+	}
+
+	return false;
+}
+
+/**
+ * create the callback function
+ */
+DarkForces::Component::SatNav::SatNav(float speed) :
+	GameEngine::Component::SatNav(speed)
+{
+	m_messages = {
+		{gaMessage::Action::SatNav_GOTO, &DarkForces::Component::SatNav::onSatNav_goto},
+		{gaMessage::Action::SatNav_GOTO, &DarkForces::Component::SatNav::onSatNav_goto},
+		{gaMessage::Action::SatNav_REACHED, &DarkForces::Component::SatNav::onSatNav_Reached},
+		{gaMessage::Action::COLLIDE, &DarkForces::Component::SatNav::onCollide},
+		{DarkForces::Message::SatNav_Wait, &DarkForces::Component::SatNav::onSatNav_wait}
+	};
+}
+
+/**
+ *
+ */
+void DarkForces::Component::SatNav::dispatchMessage(gaMessage* message)
+{
+	auto callback = m_messages[message->m_action];
+
+	if (callback) {
+		if ((this->*callback)(message)) {
+			return;	// do not pass the message down
 		}
 	}
 
