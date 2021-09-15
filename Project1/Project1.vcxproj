@@ -136,6 +136,7 @@
     <ClCompile Include="darkforces\dfCollision.cpp" />
     <ClCompile Include="darkforces\dfComponent\dfComponentActor.cpp" />
     <ClCompile Include="darkforces\dfComponent\AIMouseBot.cpp" />
+    <ClCompile Include="darkforces\dfComponent\dfMoveEnemy.cpp" />
     <ClCompile Include="darkforces\dfComponent\dfSatNav.cpp" />
     <ClCompile Include="darkforces\dfComponent\InfElevator.cpp" />
     <ClCompile Include="darkforces\dfComponent\dfComponentLogic.cpp" />
@@ -249,11 +250,14 @@
     <ClCompile Include="gaEngine\Debug.cpp" />
     <ClCompile Include="gaEngine\gaActor.cpp" />
     <ClCompile Include="gaEngine\gaApp.cpp" />
+    <ClCompile Include="gaEngine\gaBehaviorNode.cpp" />
+    <ClCompile Include="gaEngine\gaBehaviorNode\gaBNSatNav.cpp" />
     <ClCompile Include="gaEngine\gaBoundingBoxes.cpp" />
     <ClCompile Include="gaEngine\gaCollisionPoint.cpp" />
     <ClCompile Include="gaEngine\gaComponent.cpp" />
     <ClCompile Include="gaEngine\gaComponent\ComponentControler.cpp" />
     <ClCompile Include="gaEngine\gaComponent\gaActiveProbe.cpp" />
+    <ClCompile Include="gaEngine\gaComponent\gaBehaviorTree.cpp" />
     <ClCompile Include="gaEngine\gaComponent\gaComponentMesh.cpp" />
     <ClCompile Include="gaEngine\gaComponent\gaController.cpp" />
     <ClCompile Include="gaEngine\gaComponent\gaSatNav.cpp" />
@@ -312,6 +316,7 @@
     <ClInclude Include="darkforces\dfCollision.h" />
     <ClInclude Include="darkforces\dfComponent\dfComponentActor.h" />
     <ClInclude Include="darkforces\dfComponent\AIMouseBot.h" />
+    <ClInclude Include="darkforces\dfComponent\dfMoveEnemy.h" />
     <ClInclude Include="darkforces\dfComponent\dfSatNav.h" />
     <ClInclude Include="darkforces\dfComponent\InfElevator.h" />
     <ClInclude Include="darkforces\dfComponent\dfComponentLogic.h" />
@@ -447,11 +452,14 @@
     <ClInclude Include="gaEngine\flightRecorder\frPathFinding.h" />
     <ClInclude Include="gaEngine\gaActor.h" />
     <ClInclude Include="gaEngine\gaApp.h" />
+    <ClInclude Include="gaEngine\gaBehaviorNode.h" />
+    <ClInclude Include="gaEngine\gaBehaviorNode\gaBNSatNav.h" />
     <ClInclude Include="gaEngine\gaBoundingBoxes.h" />
     <ClInclude Include="gaEngine\gaCollisionPoint.h" />
     <ClInclude Include="gaEngine\gaComponent.h" />
     <ClInclude Include="gaEngine\gaComponent\ComponentControler.h" />
     <ClInclude Include="gaEngine\gaComponent\gaActiveProbe.h" />
+    <ClInclude Include="gaEngine\gaComponent\gaBehaviorTree.h" />
     <ClInclude Include="gaEngine\gaComponent\gaComponentMesh.h" />
     <ClInclude Include="gaEngine\gaComponent\gaController.h" />
     <ClInclude Include="gaEngine\gaComponent\gaSatNav.h" />

@@ -142,6 +142,12 @@
     <Filter Include="Fichiers d%27en-tête\gaEngine\flightRecorder">
       <UniqueIdentifier>{1c61678b-019d-4fed-9b5b-dd6de2de1229}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Fichiers d%27en-tête\gaEngine\gaBehaviorNode">
+      <UniqueIdentifier>{38fbe161-0bb6-4d39-bf9a-e5419a61aeb1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers sources\gaEngine\gaBehaviorNode">
+      <UniqueIdentifier>{4c0489cd-f89b-49f0-9489-92bb065bb717}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source.cpp">
@@ -661,6 +667,18 @@
       <Filter>Fichiers sources\gaEngine</Filter>
     </ClCompile>
     <ClCompile Include="darkforces\dfComponent\dfSatNav.cpp">
+      <Filter>Fichiers sources\Dark Forces\dfComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="gaEngine\gaBehaviorNode.cpp">
+      <Filter>Fichiers sources\gaEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="gaEngine\gaBehaviorNode\gaBNSatNav.cpp">
+      <Filter>Fichiers sources\gaEngine\gaBehaviorNode</Filter>
+    </ClCompile>
+    <ClCompile Include="gaEngine\gaComponent\gaBehaviorTree.cpp">
+      <Filter>Fichiers sources\gaEngine\gaComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="darkforces\dfComponent\dfMoveEnemy.cpp">
       <Filter>Fichiers sources\Dark Forces\dfComponent</Filter>
     </ClCompile>
   </ItemGroup>
@@ -1254,6 +1272,18 @@
       <Filter>Fichiers d%27en-tête\gaEngine\flightRecorder</Filter>
     </ClInclude>
     <ClInclude Include="darkforces\dfComponent\dfSatNav.h">
+      <Filter>Fichiers d%27en-tête\DarkForces\dfComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="gaEngine\gaBehaviorNode.h">
+      <Filter>Fichiers d%27en-tête\gaEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="gaEngine\gaBehaviorNode\gaBNSatNav.h">
+      <Filter>Fichiers d%27en-tête\gaEngine\gaBehaviorNode</Filter>
+    </ClInclude>
+    <ClInclude Include="gaEngine\gaComponent\gaBehaviorTree.h">
+      <Filter>Fichiers d%27en-tête\gaEngine\gaComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="darkforces\dfComponent\dfMoveEnemy.h">
       <Filter>Fichiers d%27en-tête\DarkForces\dfComponent</Filter>
     </ClInclude>
   </ItemGroup>

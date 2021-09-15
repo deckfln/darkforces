@@ -27,7 +27,7 @@
 #include "dfLevel.h"
 #include "dfVOC.h"
 #include "dfComponent/dfComponentLogic.h"
-#include "dfComponent/dfSatNav.h"
+#include "dfComponent/dfMoveEnemy.h"
 
 #include "dfObject/dfObject3D/MouseBot.h"
 #include "dfObject/dfSprite/dfSpriteAnimated/Enemy.h"
@@ -389,7 +389,8 @@ void dfParserObjects::parseObject(dfFileSystem* fs, GameEngine::ParserExpression
 			GameEngine::Component::Sound* sound = new GameEngine::Component::Sound();
 			sound->addSound(0, loadVOC("ST-DIE-1.voc")->sound());
 
-			GameEngine::Component::SatNav* path = new DarkForces::Component::SatNav(1.0f);
+			//GameEngine::Component::SatNav* path = new DarkForces::Component::SatNav(1.0f);
+			DarkForces::Component::MoveEnemy* path = new DarkForces::Component::MoveEnemy();
 
 			obj->addComponent(actor, gaEntity::Flag::DELETE_AT_EXIT);
 			obj->addComponent(sound, gaEntity::Flag::DELETE_AT_EXIT);
@@ -475,7 +476,7 @@ void dfParserObjects::parse(GameEngine::Parser& parser, dfFileSystem* fs, dfPale
 
 		default: {
 			// unexpected code
-			gaDebugLog(0, "dfParserObjects::parse", "unexpeted code " + std::to_string(expression->m_expression));
+			gaDebugLog(0, "dfParserObjects::parse", "unexpected code " + std::to_string(expression->m_expression));
 		}
 		}
 	}

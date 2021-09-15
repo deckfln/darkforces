@@ -178,7 +178,6 @@ void GameEngine::Component::SatNav::dispatchMessage(gaMessage* message)
 			if (m_currentNavPoint > 0) {
 				// maybe the next waypoint is next to a wall and we are nearly there, 
 				// so backtrack to the previous position and switch to the next waypoint
-				glm::vec3 p;
 				glm::vec3 direction;
 
 				m_transforms->m_position = m_previous.back();

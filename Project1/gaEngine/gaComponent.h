@@ -20,7 +20,8 @@ public:
 		SOUND,
 		ActiveProbe,
 		Controller,
-		PathFinding
+		PathFinding,
+		BehaviorTree
 	};
 
 	gaComponent(int m_type);
