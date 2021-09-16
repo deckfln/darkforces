@@ -32,7 +32,8 @@ namespace GameEngine {
 			void onCancel(gaMessage* message);
 		public:
 			SatNav(void);
-			SatNav(float speed);
+			SatNav(const char* name);
+			SatNav(const char* name, float speed);
 
 			// getter/setter
 			inline void speed(float speed) { m_speed = speed; };

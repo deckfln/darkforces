@@ -6,7 +6,8 @@
 #include "../dfLogicTrigger.h"
 #include "../dfComponent/InfElevator.h"
 
-DarkForces::Behavior::MoveEnemyTo::MoveEnemyTo(void)
+DarkForces::Behavior::MoveEnemyTo::MoveEnemyTo(const char* name):
+	GameEngine::BehaviorNode(name)
 {
 }
 

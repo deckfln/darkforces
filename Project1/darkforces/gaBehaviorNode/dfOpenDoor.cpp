@@ -8,7 +8,8 @@
 #include "../dfSector.h"
 #include "../dfLogicTrigger.h"
 
-DarkForces::Behavior::OpenDoor::OpenDoor(void)
+DarkForces::Behavior::OpenDoor::OpenDoor(const char* name):
+	GameEngine::BehaviorNode(name)
 {
 }
 

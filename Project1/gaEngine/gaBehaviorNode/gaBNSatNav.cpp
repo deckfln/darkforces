@@ -9,6 +9,26 @@
 
 #include "../flightRecorder/frPathFinding.h"
 
+GameEngine::Behavior::SatNav::SatNav(void) :
+	GameEngine::BehaviorNode("SatNave")
+{
+}
+
+/**
+ * create the component
+ */
+GameEngine::Behavior::SatNav::SatNav(const char *name) :
+	GameEngine::BehaviorNode(name)
+{
+}
+
+GameEngine::Behavior::SatNav::SatNav(const char *name, float speed) :
+	GameEngine::BehaviorNode(name),
+	m_speed(speed)
+{
+}
+
+
 /**
  *
  */
@@ -234,20 +254,6 @@ void GameEngine::Behavior::SatNav::onCancel(gaMessage* message)
 	m_entity->sendInternalMessage(gaMessage::END_MOVE);
 
 	BehaviorNode::m_status = BehaviorNode::Status::FAILED;
-}
-
-/**
- * create the component
- */
-GameEngine::Behavior::SatNav::SatNav(void) :
-	GameEngine::BehaviorNode()
-{
-}
-
-GameEngine::Behavior::SatNav::SatNav(float speed) :
-	GameEngine::BehaviorNode(),
-	m_speed(speed)
-{
 }
 
 /**

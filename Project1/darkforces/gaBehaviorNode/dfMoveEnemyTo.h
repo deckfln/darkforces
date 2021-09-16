@@ -8,7 +8,7 @@ namespace DarkForces {
 		{
 			glm::vec3 m_destination;
 		public:
-			MoveEnemyTo(void);
+			MoveEnemyTo(const char* name);
 			BehaviorNode* dispatchMessage(gaMessage* message) override;	// let a component deal with a situation
 			GameEngine::BehaviorNode* nextNode(void) override;	// let a parent take a decision with it's current running child
 		};

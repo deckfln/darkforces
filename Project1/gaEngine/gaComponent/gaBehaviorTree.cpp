@@ -1,6 +1,10 @@
 #include "gaBehaviorTree.h"
 
+#include <imgui.h>
+
 #include "../gaBehaviorNode.h"
+
+static const char* g_className = "BehaviorTree";
 
 GameEngine::Component::BehaviorTree::BehaviorTree(BehaviorNode* root):
 	gaComponent(gaComponent::BehaviorTree),
@@ -38,5 +42,16 @@ void GameEngine::Component::BehaviorTree::dispatchMessage(gaMessage* message)
 	m_current = m_current->dispatchMessage(message);
 	if (m_current == nullptr) {
 		m_current = m_root;
+	}
+}
+
+/**
+ * display the component in the debugger
+ */
+void GameEngine::Component::BehaviorTree::debugGUIinline(void)
+{
+	if (ImGui::TreeNode(g_className)) {
+		m_root->debugGUIinline(m_current);
+		ImGui::TreePop();
 	}
 }

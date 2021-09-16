@@ -1,8 +1,11 @@
 #include "gaBehaviorNode.h"
 
+#include <imgui.h>
+
 #include "gaEntity.h"
 
-GameEngine::BehaviorNode::BehaviorNode(void)
+GameEngine::BehaviorNode::BehaviorNode(const char* name):
+	m_name(name)
 {
 }
 
@@ -42,6 +45,9 @@ GameEngine::BehaviorNode* GameEngine::BehaviorNode::addNode(BehaviorNode* node)
 	return this;
 }
 
+/**
+ *
+ */
 BehaviorNode* GameEngine::BehaviorNode::startChild(int32_t child, void* data)
 {
 	m_runningChild = child;
@@ -49,6 +55,9 @@ BehaviorNode* GameEngine::BehaviorNode::startChild(int32_t child, void* data)
 	return m_children[m_runningChild]->nextNode();
 }
 
+/**
+ *
+ */
 BehaviorNode* GameEngine::BehaviorNode::exitChild(Status s)
 {
 	m_status = s;
@@ -72,9 +81,32 @@ GameEngine::BehaviorNode* GameEngine::BehaviorNode::nextNode(void)
 	return m_parent->nextNode();
 }
 
+/**
+ *
+ */
 BehaviorNode* GameEngine::BehaviorNode::dispatchMessage(gaMessage*message)
 {
 	return nextNode();
+}
+
+/**
+ *
+ */
+void GameEngine::BehaviorNode::debugGUIinline(BehaviorNode* current)
+{
+	static char tmp[64];
+	const char* p = m_name;
+
+	if (this == current) {
+		snprintf(tmp, sizeof(tmp), ">%s", m_name);
+		p = tmp;
+	}
+
+	if (ImGui::TreeNode(p)) {
+		for (auto n: m_children)
+			n->debugGUIinline(current);
+		ImGui::TreePop();
+	}
 }
 
 void GameEngine::BehaviorNode::sendInternalMessage(int action, const glm::vec3& value)

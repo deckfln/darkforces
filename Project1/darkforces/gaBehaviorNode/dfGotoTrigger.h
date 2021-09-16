@@ -17,7 +17,7 @@ namespace DarkForces {
 			void goto_next_trigger(void);
 
 		public:
-			GotoTrigger(void);
+			GotoTrigger(const char* name);
 			void init(void *) override;							// init the node before running
 			GameEngine::BehaviorNode* nextNode(void) override;	// let a parent take a decision with it's current running child
 		};

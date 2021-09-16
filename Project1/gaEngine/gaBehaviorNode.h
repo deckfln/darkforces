@@ -22,13 +22,15 @@ namespace GameEngine {
 			FAILED,
 			SUCCESSED
 		};
-		BehaviorNode(void);
+		BehaviorNode(const char *name);
 
 		// getter/setter
 		inline BehaviorNode* parent(void) { return m_parent; };
 		inline Status status(void) { return m_status; };
 		inline bool isSequence(void) { return m_sequence; };
 		inline void tree(Component::BehaviorTree* tree) { m_tree = tree; };
+		inline const char* name(void) { return m_name; };
+
 		void instanciate(gaEntity* entity);
 
 		BehaviorNode* addNode(BehaviorNode*);
@@ -40,10 +42,14 @@ namespace GameEngine {
 		virtual BehaviorNode* dispatchMessage(gaMessage* message);	// let a component deal with a situation
 		virtual void init(void *);									// init the node before running
 
+			// debugger
+		virtual void debugGUIinline(BehaviorNode* current);			// display the component in the debugger
+
 		void sendInternalMessage(int action,
 			const glm::vec3& value);								// send internal message to all components of the current entity
 
 	protected:
+		const char* m_name = nullptr;
 		Status m_status = Status::WAIT;
 		BehaviorNode* m_parent = nullptr;
 		gaEntity* m_entity = nullptr;								// entity this node belongs to

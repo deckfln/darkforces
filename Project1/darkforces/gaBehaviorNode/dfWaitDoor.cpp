@@ -5,7 +5,8 @@
 
 #include "../dfComponent/InfElevator.h"
 
-DarkForces::Behavior::WaitDoor::WaitDoor(void)
+DarkForces::Behavior::WaitDoor::WaitDoor(const char* name):
+	GameEngine::BehaviorNode(name)
 {
 }
 

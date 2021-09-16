@@ -20,6 +20,9 @@ namespace GameEngine {
 			void blackboard(const std::string key, void *value);
 
 			void dispatchMessage(gaMessage* message) override;		// let a component deal with a situation
+
+			// debugger
+			void debugGUIinline(void) override;					// display the component in the debugger
 		};
 	}
 }

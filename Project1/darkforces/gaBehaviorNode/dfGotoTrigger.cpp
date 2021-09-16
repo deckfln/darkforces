@@ -8,7 +8,8 @@
 #include "../dfSector.h"
 #include "../dfLogicTrigger.h"
 
-DarkForces::Behavior::GotoTrigger::GotoTrigger(void)
+DarkForces::Behavior::GotoTrigger::GotoTrigger(const char *name):
+	GameEngine::BehaviorNode(name)
 {
 	m_sequence = true;
 }
