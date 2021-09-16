@@ -340,7 +340,7 @@ void dfLevel::convertDoors2Elevators(void)
 	for (auto sector: m_sectorsID) {
 		if (sector->flag() & dfSectorFlag::DOOR) {
 			DarkForces::Entity::ElevatorDoor* door = new DarkForces::Entity::ElevatorDoor(sector);
-			m_inf->m_triggers.push_back(door->trigger());
+			//m_inf->m_triggers.push_back(door->trigger());
 			m_doors.push_back(door);
 		}
 	}

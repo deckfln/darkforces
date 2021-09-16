@@ -65,17 +65,8 @@ DarkForces::Entity::ElevatorDoor::ElevatorDoor(dfSector* sector):
 
 	//only init the elevator at the end, AFTER the entity position is forced by the Mesh 
 	elevator->gotoStop(0);
-
-	// create a trigger based on the full sector (already registered in the elevator)
-	m_trigger = new dfLogicTrigger(switch1, sector->name(), 0);
-
-	// once the elevator closes, send a DONE message to the trigger
-	closed->message(new gaMessage(DF_MESSAGE_DONE, 0, m_trigger->name()));
-
-	m_trigger->config();
 }
 
 DarkForces::Entity::ElevatorDoor::~ElevatorDoor()
 {
-	delete m_trigger;
 }
