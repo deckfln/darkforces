@@ -148,6 +148,12 @@
     <Filter Include="Fichiers sources\gaEngine\gaBehaviorNode">
       <UniqueIdentifier>{4c0489cd-f89b-49f0-9489-92bb065bb717}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Fichiers d%27en-tête\DarkForces\gaBehaviorNode">
+      <UniqueIdentifier>{f83fe856-39fd-4b95-bc1f-18c5883f99fa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers sources\Dark Forces\gaBehaviorNode">
+      <UniqueIdentifier>{67550554-80e1-4313-8f44-4c0a93e53a79}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source.cpp">
@@ -680,6 +686,18 @@
     </ClCompile>
     <ClCompile Include="darkforces\dfComponent\dfMoveEnemy.cpp">
       <Filter>Fichiers sources\Dark Forces\dfComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="darkforces\gaBehaviorNode\dfMoveEnemyTo.cpp">
+      <Filter>Fichiers sources\Dark Forces\gaBehaviorNode</Filter>
+    </ClCompile>
+    <ClCompile Include="darkforces\gaBehaviorNode\dfWaitDoor.cpp">
+      <Filter>Fichiers sources\Dark Forces\gaBehaviorNode</Filter>
+    </ClCompile>
+    <ClCompile Include="darkforces\gaBehaviorNode\dfOpenDoor.cpp">
+      <Filter>Fichiers sources\Dark Forces\gaBehaviorNode</Filter>
+    </ClCompile>
+    <ClCompile Include="darkforces\gaBehaviorNode\dfGotoTrigger.cpp">
+      <Filter>Fichiers sources\Dark Forces\gaBehaviorNode</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1285,6 +1303,18 @@
     </ClInclude>
     <ClInclude Include="darkforces\dfComponent\dfMoveEnemy.h">
       <Filter>Fichiers d%27en-tête\DarkForces\dfComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="darkforces\gaBehaviorNode\dfMoveEnemyTo.h">
+      <Filter>Fichiers d%27en-tête\DarkForces\gaBehaviorNode</Filter>
+    </ClInclude>
+    <ClInclude Include="darkforces\gaBehaviorNode\dfWaitDoor.h">
+      <Filter>Fichiers d%27en-tête\DarkForces\gaBehaviorNode</Filter>
+    </ClInclude>
+    <ClInclude Include="darkforces\gaBehaviorNode\dfOpenDoor.h">
+      <Filter>Fichiers d%27en-tête\DarkForces\gaBehaviorNode</Filter>
+    </ClInclude>
+    <ClInclude Include="darkforces\gaBehaviorNode\dfGotoTrigger.h">
+      <Filter>Fichiers d%27en-tête\DarkForces\gaBehaviorNode</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

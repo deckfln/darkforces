@@ -5,7 +5,49 @@
 
 #include "../gaEntity.h"
 #include "../gaNavMesh.h"
+#include "../gaComponent/gaBehaviorTree.h"
+
 #include "../flightRecorder/frPathFinding.h"
+
+/**
+ *
+ */
+void GameEngine::Behavior::SatNav::init(void *data)
+{
+	glm::vec3* destination = static_cast<glm::vec3*>(data);
+
+	if (m_transforms == nullptr) {
+		m_transforms = m_entity->pTransform();
+	}
+
+	m_destination = *destination;
+
+	m_navpoints.clear();
+
+	if (g_navMesh.findPath(m_entity->position(), m_destination, m_navpoints) > 0) {
+		// there is a path
+		m_currentNavPoint = m_navpoints.size() - 1;
+
+		// trigger the move
+		m_speed = 0.035f;
+		m_transforms->m_position = m_navpoints[m_currentNavPoint];
+		m_entity->sendDelayedMessage(
+			gaMessage::WANT_TO_MOVE,
+			gaMessage::Flag::WANT_TO_MOVE_BREAK_IF_FALL,
+			m_transforms);
+
+		m_status = Status::MOVE_TO_NEXT_WAYPOINT;
+		BehaviorNode::m_status = BehaviorNode::Status::RUNNING;
+
+		// broadcast the beginning of the move (for animation)
+		m_entity->sendDelayedMessage(gaMessage::START_MOVE);
+	}
+	else {
+		// inform everyone of the failure
+		BehaviorNode::m_status = BehaviorNode::Status::FAILED;
+		m_entity->sendMessage(gaMessage::SatNav_NOGO);
+	}
+}
 
 /**
  * return the direction to the next way point
@@ -53,8 +95,6 @@ void GameEngine::Behavior::SatNav::triggerMove(const glm::vec3& direction)
  */
 void GameEngine::Behavior::SatNav::onGoto(gaMessage* message)
 {
-	m_navpoints.clear();
-
 	if (message->m_extra == nullptr) {
 		m_destination = message->m_v3value;
 	}
@@ -62,28 +102,9 @@ void GameEngine::Behavior::SatNav::onGoto(gaMessage* message)
 		m_destination = *(static_cast<glm::vec3*>(message->m_extra));
 	}
 
-	if (g_navMesh.findPath(m_entity->position(), m_destination, m_navpoints) > 0) {
-		// there is a path
-		m_currentNavPoint = m_navpoints.size() - 1;
+	m_tree->blackboard("final_target", &m_destination);
 
-		// trigger the move
-		m_speed = 0.035f;
-		m_transforms->m_position = m_navpoints[m_currentNavPoint];
-		m_entity->sendDelayedMessage(
-			gaMessage::WANT_TO_MOVE,
-			gaMessage::Flag::WANT_TO_MOVE_BREAK_IF_FALL,
-			m_transforms);
-
-		m_status = Status::MOVE_TO_NEXT_WAYPOINT;
-
-		// broadcast the beginning of the move (for animation)
-		m_entity->sendInternalMessage(gaMessage::START_MOVE);
-	}
-	else {
-		// inform everyone of the failure
-		m_entity->sendInternalMessage(gaMessage::SatNav_NOGO);
-	}
-	BehaviorNode::m_status = BehaviorNode::Status::RUNNING;
+	init(&m_destination);
 }
 
 /**
@@ -135,6 +156,8 @@ void GameEngine::Behavior::SatNav::onMove(gaMessage* message)
 
 				// broadcast the point reached
 				m_entity->sendInternalMessage(gaMessage::SatNav_REACHED);
+
+				BehaviorNode::m_status = BehaviorNode::Status::SUCCESSED;
 			}
 			else {
 				// if we reached the next navpoint, move to the next one
@@ -159,7 +182,7 @@ void GameEngine::Behavior::SatNav::onCollide(gaMessage* message)
 	float distance = glm::length(m_entity->position() - m_transforms->m_position);
 
 	if (distance < m_entity->radius() * 1.5f) {
-		if (m_currentNavPoint > 0) {
+		if (m_currentNavPoint > 0 && m_previous.size() > 1) {
 			// maybe the next waypoint is next to a wall and we are nearly there, 
 			// so backtrack to the previous position and switch to the next waypoint
 			glm::vec3 direction;
@@ -177,7 +200,18 @@ void GameEngine::Behavior::SatNav::onCollide(gaMessage* message)
 			// broadcast the end of the move
 			m_status = Status::STILL;
 			m_entity->sendInternalMessage(gaMessage::END_MOVE);
-			BehaviorNode::m_status = BehaviorNode::Status::SUCCESSED;
+
+			distance = glm::distance(m_entity->position(), m_destination);
+
+			// check how far we are from the destination
+			if (distance < m_entity->radius() * 1.5f) {
+				BehaviorNode::m_status = BehaviorNode::Status::SUCCESSED;
+			}
+			else {
+				// we are blocked and jumped over all waypoints
+				m_tree->blackboard("lastCollision", message->m_pServer);
+				BehaviorNode::m_status = BehaviorNode::Status::FAILED;
+			}
 		}
 	}
 	else {
@@ -219,12 +253,8 @@ GameEngine::Behavior::SatNav::SatNav(float speed) :
 /**
  * let a component deal with a situation
  */
-void GameEngine::Behavior::SatNav::dispatchMessage(gaMessage* message)
+BehaviorNode* GameEngine::Behavior::SatNav::dispatchMessage(gaMessage* message)
 {
-	if (m_transforms == nullptr) {
-		m_transforms = m_entity->pTransform();
-	}
-
 	switch (message->m_action) {
 	case gaMessage::Action::SatNav_GOTO:
 		onGoto(message);
@@ -247,4 +277,7 @@ void GameEngine::Behavior::SatNav::dispatchMessage(gaMessage* message)
 		__debugbreak();
 		break;
 	}
+
+	return nextNode();
 }
+

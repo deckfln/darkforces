@@ -9,6 +9,16 @@ GameEngine::Component::BehaviorTree::BehaviorTree(BehaviorNode* root):
 {
 }
 
+void* GameEngine::Component::BehaviorTree::blackboard(const std::string key)
+{
+	return m_blackboard[key];
+}
+
+void GameEngine::Component::BehaviorTree::blackboard(const std::string key, void* value)
+{
+	m_blackboard[key] = value;
+}
+
 /**
  * let a component deal with a situation
  */
@@ -25,19 +35,8 @@ void GameEngine::Component::BehaviorTree::dispatchMessage(gaMessage* message)
 	}
 
 	// execute the current node
-	m_current->dispatchMessage(message);
-
-	if (m_current->status() != GameEngine::BehaviorNode::Status::RUNNING) {
-
-		// the root node is the minimum active node
-		if (m_current != m_root) {
-			// go back to parent
-			m_current = m_current->parent();
-
-			if (m_current) {
-				// get the node to pick the next one
-				m_current = m_current->nextNode();
-			}
-		}
+	m_current = m_current->dispatchMessage(message);
+	if (m_current == nullptr) {
+		m_current = m_root;
 	}
 }

@@ -37,7 +37,8 @@ namespace GameEngine {
 			// getter/setter
 			inline void speed(float speed) { m_speed = speed; };
 
-			void dispatchMessage(gaMessage* message) override;	// let a component deal with a situation
+			BehaviorNode* dispatchMessage(gaMessage* message) override;	// let a component deal with a situation
+			void init(void *) override;
 		};
 	}
 }

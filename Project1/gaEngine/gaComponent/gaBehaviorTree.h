@@ -1,7 +1,7 @@
 #pragma once
 
+#include <map>
 #include "../gaComponent.h"
-
 
 namespace GameEngine {
 	class BehaviorNode;
@@ -12,8 +12,12 @@ namespace GameEngine {
 			BehaviorNode* m_current = nullptr;
 			bool m_instanciated = false;
 
+			std::map<std::string, void*> m_blackboard;
+
 		public:
 			BehaviorTree(BehaviorNode* root);
+			void* blackboard(const std::string key);
+			void blackboard(const std::string key, void *value);
 
 			void dispatchMessage(gaMessage* message) override;		// let a component deal with a situation
 		};

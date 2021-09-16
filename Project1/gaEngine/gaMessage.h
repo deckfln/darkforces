@@ -63,7 +63,8 @@ public:
 		SatNav_GOTO,	// gives a destination to the satnav and start to move
 		SatNav_NOGO,	// satnav answers back with no path to reach the destination
 		SatNav_CANCEL,	// Cancel the satnav
-		SatNav_REACHED	// satnav reached the destination
+		SatNav_REACHED,	// satnav reached the destination
+		TICK,			// Behavior nodes tick
 	};
 
 	// flags stored in messages

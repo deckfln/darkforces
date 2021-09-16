@@ -210,6 +210,16 @@ void gaEntity::sendMessage(const std::string& target, int action, int value, voi
 	g_gaWorld.sendMessage(m_name, target, action, value, extra);
 }
 
+void gaEntity::sendMessage(int action, int value, void* extra)
+{
+	g_gaWorld.sendMessage(m_name, m_name, action, value, nullptr);
+}
+
+void gaEntity::sendMessage(int action, const glm::vec3& value)
+{
+	g_gaWorld.sendMessage(m_name, m_name, action, value, nullptr);
+}
+
 /**
  * Send message to the world
  */
