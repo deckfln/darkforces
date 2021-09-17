@@ -7,6 +7,8 @@
 
 #include "../dfSector.h"
 #include "../dfLogicTrigger.h"
+#include "../dfComponent/Trigger.h"
+#include "../dfComponent/InfElevator.h"
 
 DarkForces::Behavior::GotoTrigger::GotoTrigger(const char *name):
 	GameEngine::BehaviorNode(name)
@@ -20,43 +22,24 @@ void DarkForces::Behavior::GotoTrigger::init(void *)
 	// test all triggers of the object
 
 	gaEntity* entity = static_cast<gaEntity*>(m_tree->blackboard("lastCollision"));
-	dfSector* sector = dynamic_cast<dfSector*>(entity);
 
-	if (sector == nullptr) {
+	// find the trigger bound to the dfLogicTriger
+	Component::InfElevator* elevator = dynamic_cast<Component::InfElevator*>(entity->findComponent(DF_COMPONENT_INF_ELEVATOR));
+
+	if (elevator == nullptr) {
 		m_status = Status::FAILED;
 		return;
 	}
 
-	m_triggers = sector->triggers();
+	// convert the Trigger elevator to the parent entity
+	const std::vector<Component::Trigger*>& cTriggers = elevator->getTriggers();
 
-	m_status = Status::RUNNING;
-}
-
-/**
- * parse the DF sector and sort the triggers
- * the nearest is more likely to be the correct one
- */
-static dfLogicTrigger* findTrigger(const glm::vec3& from, gaEntity* entity)
-{
-	dfSector* sector = dynamic_cast<dfSector*>(entity);
-
-	const std::list<dfLogicTrigger*>& triggers = sector->triggers();
-
-	float l, len = 9999999999.0f;
-	dfLogicTrigger* target = nullptr;
-
-	std::vector<glm::vec3> m_navpoints;
-
-	for (auto trigger : triggers) {
-		m_navpoints.clear();
-		l = g_navMesh.findPath(from, trigger->position(), m_navpoints);
-		if (l < len) {
-			len = l;
-			target = trigger;
-		}
+	for (auto cTrigger : cTriggers) {
+		m_triggers.push_back(cTrigger->entity());
 	}
 
-	return target;
+
+	m_status = Status::RUNNING;
 }
 
 /**
@@ -65,7 +48,7 @@ static dfLogicTrigger* findTrigger(const glm::vec3& from, gaEntity* entity)
 void DarkForces::Behavior::GotoTrigger::activate_trigger(void)
 {
 	// activate the trigger
-	m_targetTrigger->activate(m_entity->name());
+	m_entity->sendMessage(m_targetTrigger->name(), DF_MESSAGE_TRIGGER);
 
 	// broadcast the end of the move (for animation)
 	m_entity->sendMessage(gaMessage::END_MOVE);

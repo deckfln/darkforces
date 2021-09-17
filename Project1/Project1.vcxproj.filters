@@ -672,9 +672,6 @@
     <ClCompile Include="gaEngine\gaNavMesh.cpp">
       <Filter>Fichiers sources\gaEngine</Filter>
     </ClCompile>
-    <ClCompile Include="darkforces\dfComponent\dfSatNav.cpp">
-      <Filter>Fichiers sources\Dark Forces\dfComponent</Filter>
-    </ClCompile>
     <ClCompile Include="gaEngine\gaBehaviorNode.cpp">
       <Filter>Fichiers sources\gaEngine</Filter>
     </ClCompile>
@@ -1288,9 +1285,6 @@
     </ClInclude>
     <ClInclude Include="gaEngine\flightRecorder\frPathFinding.h">
       <Filter>Fichiers d%27en-tête\gaEngine\flightRecorder</Filter>
-    </ClInclude>
-    <ClInclude Include="darkforces\dfComponent\dfSatNav.h">
-      <Filter>Fichiers d%27en-tête\DarkForces\dfComponent</Filter>
     </ClInclude>
     <ClInclude Include="gaEngine\gaBehaviorNode.h">
       <Filter>Fichiers d%27en-tête\gaEngine</Filter>

@@ -1070,13 +1070,6 @@ bool dfSector::visible(void)
 }
 
 /**
- * Register a trigger to the sector for backward parsing
- */
-void dfSector::addTrigger(dfLogicTrigger* trigger)
-{
-	m_triggers.push_back(trigger);
-}
-/**
  * register a program for the sector
  */
 void dfSector::addProgram(DarkForces::Component::InfStandardTrigger* program)

@@ -57,6 +57,7 @@ DarkForces::Entity::ElevatorDoor::ElevatorDoor(dfSector* sector):
 
 	// prepare the Trigger component (to handle key press)
 	DarkForces::Component::Trigger* trigger = new DarkForces::Component::Trigger();
+	elevator->addTrigger(trigger);
 
 	addComponent(cmesh, gaEntity::Flag::DELETE_AT_EXIT);
 	addComponent(elevator, gaEntity::Flag::DELETE_AT_EXIT);

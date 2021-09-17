@@ -83,7 +83,6 @@ class dfSector : public gaEntity
 	float m_floorAltitude = 0;							// current floor altitude from the INF file
 	float m_ceilingAltitude = 0;						// current ceiling altitude from the INF file
 
-	std::list <dfLogicTrigger*> m_triggers;				// list of all triggers on the sector.
 	std::list <dfLogicTrigger*> m_remoteTriggers;		// list of triggers on other sector with impact on that one
 	std::list <DarkForces::Component::InfStandardTrigger*> m_programs;		// triggers standard bound to the sector
 	std::list <DarkForces::Component::InfElevator*> m_elevators;	// elevator(s) bound to the sector
@@ -208,8 +207,6 @@ public:
 	void buildGeometry(dfMesh *mesh, dfWallFlag);
 
 	bool visible(void);
-	void addTrigger(dfLogicTrigger*);
-	inline const std::list<dfLogicTrigger*>& triggers(void) { return m_triggers; };
 	void addProgram(DarkForces::Component::InfStandardTrigger*);	// register a INF trigger standard on the sector
 	void addElevator(DarkForces::Component::InfElevator* elevator); // register a INF elevator on the sector
 	void setAABBtop(float z_level);

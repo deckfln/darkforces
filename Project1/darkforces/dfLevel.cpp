@@ -28,7 +28,10 @@
 #include "dfPalette.h"
 #include "dfLogicStop.h"
 #include "dfParseINF.h"
+
 #include "dfComponent/InfElevator.h"
+#include "dfComponent/Trigger.h"
+
 #include "gaEntity/ElevatorDoor.h"
 
 dfLevel::dfLevel(dfFileSystem* fs, std::string file)
@@ -146,15 +149,6 @@ dfLevel::dfLevel(dfFileSystem* fs, std::string file)
 		}
 	}
 
-	// currently, only INF elevators exist in m_inf->triggers
-	// if the trigger is related to an elevator, bind them
-	for (auto trigger : m_inf->m_triggers) {
-		g_gaWorld.addClient(trigger);
-		dfSector* sector = m_sectorsName[trigger->sector()];
-
-		sector->addTrigger(trigger);
-	}
-
 	// bind the sector walls to the triggers
 	// build the bounding box of the trigger from the wall of the sector
 	std::string sectorname;
@@ -183,19 +177,24 @@ dfLevel::dfLevel(dfFileSystem* fs, std::string file)
 				sector->setTriggerFromWall(trigger);
 			}
 
+			//sector->addTrigger(trigger);
 
-			sector->addTrigger(trigger);
-		}
-	}
+			for (auto& message : messages) {
+				const std::string& client = message->client();
+				dfSector* sector = m_sectorsName[client];
 
-	// bind the trigger to it's client
-	for (auto trigger : m_inf->m_triggers) {
-		std::vector<gaMessage *>& messages = trigger->messages();
-		for (auto& message : messages) {
-			const std::string& client = message->client();
-			dfSector* sector = m_sectorsName[client];
-			sector->addTrigger(trigger);
+				// find the elevator bound to the sector
+				DarkForces::Component::InfElevator* elevator = dynamic_cast<DarkForces::Component::InfElevator*>(sector->findComponent(DF_COMPONENT_INF_ELEVATOR));
+
+				// find the trigger bound to the dfLogicTriger
+				DarkForces::Component::Trigger* cTrigger = dynamic_cast<DarkForces::Component::Trigger*>(trigger->findComponent(DF_COMPONENT_TRIGGER));
+
+				// and bind the elevator and the trigger
+				elevator->addTrigger(cTrigger);
+			}
 		}
+
+		g_gaWorld.addClient(trigger);
 	}
 
 	spacePartitioning();		// partition of space for quick move

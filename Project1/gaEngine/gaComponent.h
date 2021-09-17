@@ -26,8 +26,11 @@ public:
 
 	gaComponent(int m_type);
 
-	bool is(int type) { return type == m_type; };
-	void parent(gaEntity* parent) { m_entity = parent; };
+	// getter/setter
+	inline bool is(int type) { return type == m_type; };
+	inline void parent(gaEntity* parent) { m_entity = parent; };
+	inline gaEntity* entity(void) { return m_entity; };
+
 	virtual void dispatchMessage(gaMessage* message) {};	// let a component deal with a situation
 
 	// flight recorder status

@@ -5,14 +5,18 @@
 #include <list>
 #include "../../gaEngine/gaBehaviorNode.h"
 
-class dfLogicTrigger;
 
 namespace DarkForces {
+	namespace Component {
+		class Trigger;
+	};
+
+	class Compo;
 	namespace Behavior {
 		class GotoTrigger : public GameEngine::BehaviorNode
 		{
-			std::list<dfLogicTrigger*> m_triggers;
-			dfLogicTrigger* m_targetTrigger = nullptr;
+			std::list<gaEntity*> m_triggers;
+			gaEntity* m_targetTrigger = nullptr;
 			void activate_trigger(void);
 			void goto_next_trigger(void);
 
