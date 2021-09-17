@@ -146,6 +146,14 @@ void dfObject::drop(uint32_t logic)
 	// constructor of a sprite expects a level space
 	glm::vec3 p;
 	dfLevel::gl2level(position(), p);
+
+	// randomly drop around the object
+	float x = m_radius / (rand() % 10);
+	float y = m_radius / (rand() % 10);
+
+	p.x += x;
+	p.y += y;
+
 	switch (logic) {
 	case dfLogic::DEAD_MOUSE:
 		obj = new dfSprite("DEDMOUSE.FME", p, 1.0f, OBJECT_FME);
