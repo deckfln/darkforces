@@ -213,7 +213,9 @@ void dfSpriteAnimated::dispatchMessage(gaMessage* message)
 		break;
 
 	case gaMessage::END_MOVE:
-		state(dfState::ENEMY_STAY_STILL);
+		if (m_state == dfState::ENEMY_MOVE) {
+			state(dfState::ENEMY_STAY_STILL);
+		}
 		break;
 
 	case gaMessage::MOVE:

@@ -23,6 +23,9 @@ void DarkForces::Behavior::OpenDoor::init(void *)
 {
 	m_runningChild = Child::init;
 	m_status = Status::RUNNING;
+
+	m_collision = m_tree->blackboard("lastCollision");
+	m_tree->blackboard("lastCollision", nullptr);
 }
 
 /**
@@ -36,7 +39,7 @@ GameEngine::BehaviorNode* DarkForces::Behavior::OpenDoor::nextNode(void)
 
 	switch (m_runningChild) {
 	case Child::init:
-		return startChild(Child::goto_trigger, nullptr);
+		return startChild(Child::goto_trigger, m_collision);
 
 	case Child::goto_trigger:
 		if (m_children[m_runningChild]->status() == Status::SUCCESSED) {

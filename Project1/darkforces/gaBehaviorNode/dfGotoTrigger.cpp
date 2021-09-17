@@ -16,14 +16,13 @@ DarkForces::Behavior::GotoTrigger::GotoTrigger(const char *name):
 	m_sequence = true;
 }
 
-void DarkForces::Behavior::GotoTrigger::init(void *)
+void DarkForces::Behavior::GotoTrigger::init(void *data)
 {
 	// we are on a natural move, to the elevator can be activated
 	// test all triggers of the object
 
-	gaEntity* entity = static_cast<gaEntity*>(m_tree->blackboard("lastCollision"));
-
 	// find the trigger bound to the dfLogicTriger
+	gaEntity* entity = static_cast<gaEntity*>(data);
 	Component::InfElevator* elevator = dynamic_cast<Component::InfElevator*>(entity->findComponent(DF_COMPONENT_INF_ELEVATOR));
 
 	if (elevator == nullptr) {
@@ -37,7 +36,6 @@ void DarkForces::Behavior::GotoTrigger::init(void *)
 	for (auto cTrigger : cTriggers) {
 		m_triggers.push_back(cTrigger->entity());
 	}
-
 
 	m_status = Status::RUNNING;
 }
@@ -87,9 +85,7 @@ GameEngine::BehaviorNode* DarkForces::Behavior::GotoTrigger::nextNode(void)
 		return exitChild(m_status);
 	}
 
-
 	gaEntity* entity = static_cast<gaEntity*>(m_tree->blackboard("lastCollision"));
-	dfLogicTrigger* trigger = dynamic_cast<dfLogicTrigger*>(entity);
 
 	if (m_targetTrigger == nullptr) {
 		goto_next_trigger();
@@ -100,7 +96,7 @@ GameEngine::BehaviorNode* DarkForces::Behavior::GotoTrigger::nextNode(void)
 		return startChild(0, &p);
 	}
 	else {
-		if (m_targetTrigger == trigger) {
+		if (m_targetTrigger == entity) {
 			activate_trigger();
 			return exitChild(Status::SUCCESSED);
 		}

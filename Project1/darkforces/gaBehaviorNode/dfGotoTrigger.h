@@ -22,7 +22,7 @@ namespace DarkForces {
 
 		public:
 			GotoTrigger(const char* name);
-			void init(void *) override;							// init the node before running
+			void init(void *data) override;						// init the node before running
 			GameEngine::BehaviorNode* nextNode(void) override;	// let a parent take a decision with it's current running child
 		};
 	}

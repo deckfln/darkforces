@@ -67,6 +67,9 @@ GameEngine::BehaviorNode* DarkForces::Behavior::MoveEnemyTo::nextNode(void)
 
 		// the move_to node failed, it probably collided with something
 		gaEntity* collided = static_cast<gaEntity*>(m_tree->blackboard("lastCollision"));
+		if (collided == nullptr) {
+			return exitChild(Status::FAILED);
+		}
 		DarkForces::Component::InfElevator* elevator = static_cast<DarkForces::Component::InfElevator*>(collided->findComponent(DF_COMPONENT_INF_ELEVATOR));
 
 		if (elevator) {

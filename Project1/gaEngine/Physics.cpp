@@ -350,8 +350,12 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 			}
 		}
 		*/
+
+		// non collider object do not trigger collisions
 		// collide against the entities
-		testEntities(entity, tranform, collisions);
+		if (entity->hasCollider()) {
+			testEntities(entity, tranform, collisions);
+		}
 
 		/*
 		if (collisions.size() == 0) {

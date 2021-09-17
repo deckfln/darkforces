@@ -129,14 +129,17 @@ void dfComponentActor::fire(const glm::vec3& direction)
 void dfComponentActor::die(void)
 {
 	// inform the world it can remove the entity from its list
-	//g_gaWorld.sendMessage(m_parent->name(), "_world", gaMessage::DELETE_ENTITY, 0, nullptr);
 	((dfSpriteAnimated*)m_entity)->state(dfState::ENEMY_DIE_FROM_SHOT);
 
 	// object can now be traversed
-	((dfSpriteAnimated*)m_entity)->hasCollider(false);
+	m_entity->hasCollider(false);
+	m_entity->physical(false);
 
 	// play a sound if there is one
 	m_entity->sendInternalMessage(gaMessage::PLAY_SOUND, 0);
+
+	// cancel any move the actor was doing, for the next frame (gives a bit of latency)
+	m_entity->sendDelayedMessage(gaMessage::Action::SatNav_CANCEL);
 
 	gaDebugLog(1, "dfActor::die", "remove " + m_entity->name() + " the entity from the world");
 }
