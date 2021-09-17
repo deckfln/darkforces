@@ -136,6 +136,7 @@ void dfSprite::loadState(void* r)
  */
 void dfSprite::debugGUIChildClass(void)
 {
+	dfObject::debugGUIChildClass();
 	if (ImGui::TreeNode("dfSprite")) {
 		ImGui::Text("slot: %d", m_slot);
 		ImGui::TreePop();
