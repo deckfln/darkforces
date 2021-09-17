@@ -36,7 +36,7 @@ dfSpriteAnimated::dfSpriteAnimated(dfWAX* wax, const glm::vec3& position, float 
 	}
 
 #ifdef _DEBUG
-	// add the mesh component to the entity
+	// add a point of view vector
 	m_view = new fwMesh(g_view, &g_basic);
  	m_view->translate(get_position() + glm::vec3(0.0f, 0.5f, 0.0f));
 	g_gaWorld.add2scene(m_view);
@@ -118,9 +118,11 @@ void dfSpriteAnimated::rotation(const glm::vec3& rotation)
 	m_direction.z = -cos(yaw);
 
 #ifdef _DEBUG
-	float a = atan2(m_direction.x, m_direction.z);// +M_PI / 2.0f;
-	glm::vec3 xr(0, a, 0);
-	m_view->rotate(xr);
+	if (m_view) {
+		float a = atan2(m_direction.x, m_direction.z);// +M_PI / 2.0f;
+		glm::vec3 xr(0, a, 0);
+		m_view->rotate(xr);
+	}
 #endif
 }
 
@@ -196,10 +198,12 @@ void dfSpriteAnimated::dispatchMessage(gaMessage* message)
 			m_direction = glm::normalize(message->m_v3value);
 			m_dirtyPosition = true;
 #ifdef _DEBUG
-			float a = atan2(m_direction.x, m_direction.z);// +M_PI / 2.0f;
-			glm::vec3 xr(0, a, 0);
+			if (m_view) {
+				float a = atan2(m_direction.x, m_direction.z);// +M_PI / 2.0f;
+				glm::vec3 xr(0, a, 0);
 
-			m_view->rotate(xr);
+				m_view->rotate(xr);
+			}
 #endif
 		}
 		break;
@@ -213,7 +217,9 @@ void dfSpriteAnimated::dispatchMessage(gaMessage* message)
 		break;
 
 	case gaMessage::MOVE:
-		m_view->translate(get_position() + glm::vec3(0.0f, 0.5f, 0.0f));
+		if (m_view) {
+			m_view->translate(get_position() + glm::vec3(0.0f, 0.5f, 0.0f));
+		}
 		break;
 	}
 	dfSprite::dispatchMessage(message);
@@ -304,4 +310,10 @@ void dfSpriteAnimated::debugGUIChildClass(void)
 
 dfSpriteAnimated::~dfSpriteAnimated()
 {
+#ifdef _DEBUG
+	if (m_view) {
+		g_gaWorld.remove2scene(m_view);
+		delete m_view;
+	}
+#endif
 }
