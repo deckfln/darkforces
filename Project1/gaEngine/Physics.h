@@ -81,7 +81,6 @@ namespace GameEngine
 	};
 
 	class Physics {
-		World* m_world = nullptr;
 		std::map<std::string, Ballistic> m_ballistics;					// falling objects
 		std::vector<std::string> m_remove;								// list of objects to remove from the falling
 		gaEntity* m_lastEntityTested = nullptr;							// to pass information between functions
@@ -103,10 +102,12 @@ namespace GameEngine
 		friend flightRecorder::Blackbox;
 
 	public:
-		Physics(World *world);
+		Physics(void);
 		void moveEntity(gaEntity *entity, gaMessage* message);
 		void update(time_t delta);
 		void recordState(const std::string& name, flightRecorder::Ballistic* object);
 		void loadState(flightRecorder::Ballistic* object);
 	};
 }
+
+extern GameEngine::Physics g_gaPhysics;

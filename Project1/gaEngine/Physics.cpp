@@ -21,10 +21,11 @@
 
 using namespace GameEngine;
 
+Physics g_gaPhysics;							// physic/collision engine
+
 const float EPSILON = 0.001f;
 
-Physics::Physics(World* world) :
-	m_world(world)
+Physics::Physics(void)
 {
 }
 
@@ -43,7 +44,7 @@ bool Physics::warpThrough(gaEntity *entity,
 	fwAABBox aabb_ws(entity->position() + center, old_position + center);
 	std::vector<glm::vec3> warps;
 
-	for (auto sector : m_world->m_sectors) {
+	for (auto sector : g_gaWorld.m_sectors) {
 		if (sector->collideAABB(aabb_ws)) {
 			// do a warpTrough full test
 			entity->warpThrough(sector->collider(), old_position, collisions);
@@ -110,7 +111,7 @@ void Physics::testEntities(gaEntity* entity, const Transform& tranform, std::vec
 {
 	uint32_t size;
 
-	for (auto& entry : m_world->m_entities) {
+	for (auto& entry : g_gaWorld.m_entities) {
 		for (auto ent : entry.second) {
 			// ignore ghosts
 			if (!ent->hasCollider()) {
@@ -139,7 +140,7 @@ float Physics::ifCollideWithSectorOrEntity(const glm::vec3& p1, const glm::vec3&
 	fwAABBox::Intersection r;
 
 	// test again entities
-	for (auto& entry : m_world->m_entities) {
+	for (auto& entry : g_gaWorld.m_entities) {
 		for (auto ent : entry.second) {
 			// ignore ghosts and itself
 			if (!ent->hasCollider() || ent == entity) {
@@ -177,7 +178,7 @@ static void debugCollision(const gaCollisionPoint& collision, gaEntity* entity, 
 void Physics::informCollision(gaEntity* from, gaEntity* to, int flag)
 {
 	// always inform the source entity 
-	m_world->sendMessage(
+	g_gaWorld.sendMessage(
 		from->name(),
 		to->name(),
 		gaMessage::Action::COLLIDE,
@@ -185,7 +186,7 @@ void Physics::informCollision(gaEntity* from, gaEntity* to, int flag)
 		nullptr
 	);
 	// always inform the colliding entity 
-	m_world->sendMessage(
+	g_gaWorld.sendMessage(
 		to->name(),
 		from->name(),
 		gaMessage::Action::COLLIDE,
@@ -227,7 +228,7 @@ void Physics::moveBullet(gaEntity* entity, gaMessage* message)
 	// test again entities
 	float len;
 
-	for (auto& entry : m_world->m_entities) {
+	for (auto& entry : g_gaWorld.m_entities) {
 		for (auto ent : entry.second) {
 			// ignore ghosts and itself
 			if (!ent->physical() || ent == entity) {
@@ -263,7 +264,7 @@ void Physics::moveBullet(gaEntity* entity, gaMessage* message)
 		// refuse the move and inform both element from the collision
 		entity->popTransformations();				// restore previous position
 
-		m_world->sendMessage(
+		g_gaWorld.sendMessage(
 			collidedEntity->name(),
 			entity->name(),
 			gaMessage::Action::COLLIDE,
@@ -274,7 +275,7 @@ void Physics::moveBullet(gaEntity* entity, gaMessage* message)
 	}
 
 	// acknowledge the move
-	m_world->sendMessage(
+	g_gaWorld.sendMessage(
 		entity->name(),
 		entity->name(),
 		gaMessage::Action::MOVE,
@@ -708,7 +709,7 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 					+ " " + std::to_string(tranform.m_position.y)
 					+ " " + std::to_string(tranform.m_position.z));
 
-				m_world->sendMessage(
+				g_gaWorld.sendMessage(
 					static_cast<dfSuperSector*>(nearest_ceiling->m_source)->name(),
 					entity->name(),
 					gaMessage::Action::COLLIDE,
@@ -794,7 +795,7 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 					case gaMessage::Flag::WANT_TO_MOVE_BREAK_IF_FALL:
 						// if the entity wants to be informed of falling
 						entity->popTransformations();			// restore previous position
-						m_world->sendMessage(
+						g_gaWorld.sendMessage(
 							entity->name(),
 							entity->name(),
 							gaMessage::Action::WOULD_FALL,
@@ -805,7 +806,7 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 					default:
 						if (m_ballistics.count(entity->name()) == 0) {
 							// if the entity wants to be informed of falling
-							m_world->sendMessage(
+							g_gaWorld.sendMessage(
 								entity->name(),
 								entity->name(),
 								gaMessage::Action::FALL,
@@ -826,7 +827,7 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 
 		// accept the move if we do not fix the position
 		if (!fix_y && !block_move) {
-			m_world->sendMessage(
+			g_gaWorld.sendMessage(
 				entity->name(),
 				entity->name(),
 				gaMessage::Action::MOVE,
@@ -897,7 +898,7 @@ void Physics::update(time_t delta)
 	for (auto& en : m_ballistics) {
 		Ballistic& b = en.second;
 
-		for (auto entity : m_world->m_entities[en.first]) {
+		for (auto entity : g_gaWorld.m_entities[en.first]) {
 			gaDebugLog(1, "GameEngine::Physics::update", entity->name());
 			b.apply(delta, entity->pTransform());
 

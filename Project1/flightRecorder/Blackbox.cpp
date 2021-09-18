@@ -140,7 +140,7 @@ void flightRecorder::Blackbox::recordPhysics(void)
 	 * get a buffer for messages
 	 */
 	bufferPhysics* bPhysics = nullptr;
-	uint32_t objects = g_gaWorld.m_physic.m_ballistics.size();
+	uint32_t objects = g_gaPhysics.m_ballistics.size();
 	uint32_t data_size = sizeof(bufferPhysics) + objects * sizeof(flightRecorder::Ballistic);
 
 	// we may need more memory than the previous allocated buffer
@@ -166,8 +166,8 @@ void flightRecorder::Blackbox::recordPhysics(void)
 	 */
 	GameEngine::Ballistic* object;
 	int i = 0;
-	for (auto& object: g_gaWorld.m_physic.m_ballistics) {
-		g_gaWorld.m_physic.recordState(object.first, &bPhysics->objects[i]);
+	for (auto& object: g_gaPhysics.m_ballistics) {
+		g_gaPhysics.recordState(object.first, &bPhysics->objects[i]);
 		i++;
 	}
 }
@@ -402,10 +402,10 @@ void flightRecorder::Blackbox::setFrame(int frame)
 	}
 
 	// reload the ballistic engine
-	g_gaWorld.m_physic.m_ballistics.clear();
+	g_gaPhysics.m_ballistics.clear();
 	bufferPhysics* bPhysics= m_ballistics[frame];
 	for (uint32_t i = 0; i < bPhysics->size; i++) {
-		g_gaWorld.m_physic.loadState(&bPhysics->objects[i]);
+		g_gaPhysics.loadState(&bPhysics->objects[i]);
 	}
 
 	// and update the world

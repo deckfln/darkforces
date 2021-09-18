@@ -62,7 +62,7 @@ void DarkForces::Behavior::GotoTrigger::activate_trigger(void)
  */
 void DarkForces::Behavior::GotoTrigger::goto_next_trigger(void)
 {
-	if (m_next < m_triggers.size()) {
+	if (m_next < (int32_t)m_triggers.size()) {
 		m_targetTrigger = m_triggers[m_next];
 		m_next++;
 	}

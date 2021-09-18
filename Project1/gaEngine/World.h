@@ -39,7 +39,6 @@ namespace GameEngine {
 
 		bool m_timer = true;								// pass DF_MESSAGE_TIMER event
 		fwScene* m_scene;									// current scene on screen;
-		GameEngine::Physics m_physic;						// physic/collision engine
 
 		friend GameEngine::Physics;							// physic engine has direct access to world data
 		friend flightRecorder::Blackbox;					// flight recorder has direct access to everything

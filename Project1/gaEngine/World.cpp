@@ -30,8 +30,7 @@ GameEngine::World g_gaWorld;
  * Create and initialize the world
  */
 World::World():
-	m_scene(nullptr),
-	m_physic(this)
+	m_scene(nullptr)
 {
 }
 
@@ -527,7 +526,7 @@ void World::process(time_t delta, bool force)
 	std::map<std::string, bool> loopDetector;
 
 	// first deal with falling objects
-	m_physic.update(delta);
+	g_gaPhysics.update(delta);
 
 	// now deal with messages
 	while (m_queue.size() > 0) {
@@ -591,7 +590,7 @@ void World::process(time_t delta, bool force)
 			for (auto entity : m_entities[message->m_client]) {
 
 				if (message->m_action == gaMessage::Action::WANT_TO_MOVE) {
-					m_physic.moveEntity(entity, message);
+					g_gaPhysics.moveEntity(entity, message);
 				}
 				else {
 					message->m_frame = m_frame;
