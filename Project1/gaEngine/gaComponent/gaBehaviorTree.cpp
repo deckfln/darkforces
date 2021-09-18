@@ -79,7 +79,8 @@ uint32_t GameEngine::Component::BehaviorTree::recordState(void* record)
 		m_root->record(m_nodes);
 	}
 
-	r->size = sizeof(GameEngine::flightRecorder::BehaviorTree);
+	uint32_t len = sizeof(GameEngine::flightRecorder::BehaviorTree);
+	r->size = len;
 	r->nbNodes = m_nbnodes;
 	r->m_current = m_current->id();
 
@@ -92,11 +93,15 @@ uint32_t GameEngine::Component::BehaviorTree::recordState(void* record)
 		l = node->recordState(p);
 		p += l;
 		s -= l;
+		len += l;
 
 		if (s <= 0) {
 			__debugbreak();
 		}
 	}
+
+	uint32_t l1 = p - (char *)r;
+	r->size = l1;
 
 	return r->size;
 }

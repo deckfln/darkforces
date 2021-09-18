@@ -123,6 +123,11 @@ void flightRecorder::Blackbox::recordEntities(void)
 			p += entity->recordComponents(p);
 		}
 	}
+
+	uint32_t f = p - (char*)bEntities->data;
+	if (f != bEntities->data_size) {
+		;
+	}
 }
 
 /**
