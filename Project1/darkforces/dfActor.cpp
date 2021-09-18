@@ -54,6 +54,7 @@ void DarkForces::Actor::dispatchMessage(gaMessage* message)
 			break;
 		}
 		break;
+
 	}
 
 	gaActor::dispatchMessage(message);

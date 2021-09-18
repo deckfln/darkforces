@@ -908,7 +908,17 @@ void Physics::update(time_t delta)
 				entity->pTransform());
 		}
 	}
+}
 
+/**
+ * add an object to the ballistic
+ */
+void GameEngine::Physics::addBallistic(gaEntity* entity, const glm::vec3& v0)
+{
+	const glm::vec3& pold = entity->position();
+	glm::vec3 pnew = pold + v0;
+
+	m_ballistics[entity->name()] = Ballistic(pnew, pold);
 }
 
 /**

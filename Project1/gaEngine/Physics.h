@@ -105,6 +105,8 @@ namespace GameEngine
 		Physics(void);
 		void moveEntity(gaEntity *entity, gaMessage* message);
 		void update(time_t delta);
+		void addBallistic(gaEntity* entity, const glm::vec3& v0);
+
 		void recordState(const std::string& name, flightRecorder::Ballistic* object);
 		void loadState(flightRecorder::Ballistic* object);
 	};

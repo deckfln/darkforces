@@ -180,6 +180,12 @@ void gaActor::dispatchMessage(gaMessage* message)
 		case GLFW_KEY_S:
 			g_gaWorld.suspendTimer();
 			break;
+
+		case GLFW_KEY_X: {
+			glm::vec3* velocity = (glm::vec3 *)message->m_extra;
+			glm::vec3 v0(velocity->x/3.0f, 0.2f, velocity->z/3.0f);
+			g_gaPhysics.addBallistic(this, v0);
+			break; }
 		}
 	}
 

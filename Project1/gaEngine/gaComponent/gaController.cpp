@@ -56,7 +56,7 @@ bool GameEngine::Component::Controller::checkKeys(time_t delta)
 
 	for (auto key : m_keys) {
 		if (m_currentKeys[key] && !m_prevKeys[key]) {
-			m_entity->sendInternalMessage(gaMessage::Action::KEY, key);
+			m_entity->sendInternalMessage(gaMessage::Action::KEY, key, &m_velocity);
 		}
 	}
 
