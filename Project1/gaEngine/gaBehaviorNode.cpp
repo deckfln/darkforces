@@ -46,7 +46,51 @@ GameEngine::BehaviorNode* GameEngine::BehaviorNode::addNode(BehaviorNode* node)
 }
 
 /**
- *
+ * count nodes in a tree a register ID
+ */
+uint32_t GameEngine::BehaviorNode::count(uint32_t count)
+{
+	m_id = count++;
+
+	for (auto node : m_children) {
+		count = node->count(count);
+	}
+	return count;
+}
+
+/**
+ * find the node with ID
+ */
+BehaviorNode* GameEngine::BehaviorNode::find(uint32_t id)
+{
+	if (m_id == id) {
+		return this;
+	}
+
+	for (auto node : m_children) {
+		BehaviorNode* r = node->find(id);
+		if (r) {
+			return r;
+		}
+	}
+
+	return nullptr;
+}
+
+/**
+ * record the node in a list
+ */
+void GameEngine::BehaviorNode::record(std::vector<BehaviorNode*>& nodes)
+{
+	nodes[m_id] = this;
+
+	for (auto node : m_children) {
+		node->record(nodes);
+	}
+}
+
+/**
+ * move to a sub-node
  */
 BehaviorNode* GameEngine::BehaviorNode::startChild(int32_t child, void* data)
 {
@@ -107,6 +151,31 @@ void GameEngine::BehaviorNode::debugGUIinline(BehaviorNode* current)
 			n->debugGUIinline(current);
 		ImGui::TreePop();
 	}
+}
+
+/**
+ * flight recorder
+ */
+uint32_t GameEngine::BehaviorNode::recordState(void* record)
+{
+	FlightRecorder::BehaviorNode* r = static_cast<FlightRecorder::BehaviorNode*>(record);
+
+	r->size = sizeof(FlightRecorder::BehaviorNode);
+	r->id = m_id;
+	r->status = static_cast<uint32_t>(m_status);
+	r->runningChild = m_runningChild;
+
+	return r->size;
+}
+
+uint32_t GameEngine::BehaviorNode::loadState(void* record)
+{
+	FlightRecorder::BehaviorNode* r = static_cast<FlightRecorder::BehaviorNode*>(record);
+
+	m_status = static_cast<Status>(r->status);
+	m_runningChild = r->runningChild;
+
+	return r->size;
 }
 
 void GameEngine::BehaviorNode::sendInternalMessage(int action, const glm::vec3& value)

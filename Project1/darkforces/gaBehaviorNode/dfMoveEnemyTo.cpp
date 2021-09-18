@@ -114,3 +114,45 @@ GameEngine::BehaviorNode* DarkForces::Behavior::MoveEnemyTo::nextNode(void)
 
 	return this;
 }
+
+/**
+ * flight recorder status
+ */
+uint32_t DarkForces::Behavior::MoveEnemyTo::recordState(void* record)
+{
+	FlightRecorder::MoveEnemyTo* r = static_cast<FlightRecorder::MoveEnemyTo*>(record);
+
+	BehaviorNode::recordState(record);
+
+	uint32_t len = sizeof(FlightRecorder::MoveEnemyTo);
+	r->destination = m_destination;
+
+	DarkForces::Component::InfElevator* elevator = static_cast<DarkForces::Component::InfElevator* >(m_tree->blackboard("wait_elevator"));
+	if (elevator) {
+		gaEntity* entity = elevator->entity();
+		strcpy_s(&r->wait_elevator[0], 1024, entity->name().c_str());
+		len += entity->name().size() + 1;
+	}
+	else {
+		r->wait_elevator[0] = 0;
+	}
+
+	r->node.size = len;
+	return r->node.size;
+}
+
+uint32_t DarkForces::Behavior::MoveEnemyTo::loadState(void* record)
+{
+	BehaviorNode::loadState(record);
+
+	FlightRecorder::MoveEnemyTo* r = static_cast<FlightRecorder::MoveEnemyTo*>(record);
+
+	m_destination = r->destination;
+
+	if (r->wait_elevator[0] != 0) {
+		gaEntity* entity = g_gaWorld.getEntity(r->wait_elevator);
+		DarkForces::Component::InfElevator* elevator = dynamic_cast<DarkForces::Component::InfElevator*>(entity->findComponent(DF_COMPONENT_INF_ELEVATOR));
+		m_tree->blackboard("wait_elevator", elevator);
+	}
+	return r->node.size;
+}

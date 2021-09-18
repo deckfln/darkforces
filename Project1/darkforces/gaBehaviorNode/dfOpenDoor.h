@@ -10,8 +10,6 @@ namespace DarkForces {
 		class OpenDoor : public GameEngine::BehaviorNode
 		{
 			void* m_collision = nullptr;
-			std::list<dfLogicTrigger*> m_triggers;
-			dfLogicTrigger* m_targetTrigger = nullptr;
 
 		public:
 			OpenDoor(const char* name);

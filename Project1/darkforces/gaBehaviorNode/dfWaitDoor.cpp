@@ -36,6 +36,7 @@ BehaviorNode* DarkForces::Behavior::WaitDoor::dispatchMessage(gaMessage* message
 		case Component::InfElevator::Status::WAIT:
 		case Component::InfElevator::Status::HOLD:
 			m_status = Status::SUCCESSED;
+			m_tree->blackboard("wait_elevator", nullptr);
 			break;
 		}
 	}

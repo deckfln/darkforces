@@ -40,6 +40,23 @@ namespace GameEngine {
 
 			BehaviorNode* dispatchMessage(gaMessage* message) override;	// let a component deal with a situation
 			void init(void *) override;
+
+			// flight recorder status
+			uint32_t recordState(void* record) override;				// save the component state in a record
+			uint32_t loadState(void* record) override;					// reload a component state from a record
+		};
+	}
+
+	namespace FlightRecorder {
+		struct SatNav {
+			BehaviorNode node;
+			uint32_t status;
+			glm::vec3 destination;
+			uint32_t nbNavPoints;
+			uint32_t nbPrevious;
+			uint32_t current;
+			char lastCollision[64];
+			glm::vec3 points[1];
 		};
 	}
 }

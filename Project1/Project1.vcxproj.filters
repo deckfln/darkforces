@@ -1310,6 +1310,9 @@
     <ClInclude Include="darkforces\gaBehaviorNode\dfGotoTrigger.h">
       <Filter>Fichiers d%27en-tête\DarkForces\gaBehaviorNode</Filter>
     </ClInclude>
+    <ClInclude Include="gaEngine\flightRecorder\frBehaviorTree.h">
+      <Filter>Fichiers d%27en-tête\gaEngine\flightRecorder</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\fragment.glsl">

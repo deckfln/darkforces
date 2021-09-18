@@ -5,6 +5,7 @@
 
 #include "../gaEntity.h"
 #include "../gaNavMesh.h"
+#include "../World.h"
 #include "../gaComponent/gaBehaviorTree.h"
 
 #include "../flightRecorder/frPathFinding.h"
@@ -27,7 +28,6 @@ GameEngine::Behavior::SatNav::SatNav(const char *name, float speed) :
 	m_speed(speed)
 {
 }
-
 
 /**
  *
@@ -287,3 +287,73 @@ BehaviorNode* GameEngine::Behavior::SatNav::dispatchMessage(gaMessage* message)
 	return nextNode();
 }
 
+/**
+ * flight recorder
+ */
+uint32_t GameEngine::Behavior::SatNav::recordState(void* record)
+{
+	FlightRecorder::SatNav* r = static_cast<FlightRecorder::SatNav*>(record);
+
+	BehaviorNode::recordState(record);
+
+	uint32_t len = sizeof(FlightRecorder::SatNav);
+	r->status = static_cast<uint32_t>(m_status);
+	r->destination = m_destination;
+	r->nbNavPoints = m_navpoints.size();
+	r->nbPrevious = m_previous.size();
+	r->current = m_currentNavPoint;
+
+	gaEntity* collided = static_cast<gaEntity*>(m_tree->blackboard("lastCollision"));
+	if (collided) {
+		strncpy_s(r->lastCollision, sizeof(r->lastCollision), collided->name().c_str(), _TRUNCATE);
+	}
+	else {
+		r->lastCollision[0] = 0;
+	}
+
+	if (r->nbNavPoints + r->nbPrevious > 1023) {
+		__debugbreak();
+	}
+
+	uint32_t i = 0;
+	for (uint32_t j = i; j < m_navpoints.size(); j++) {
+		r->points[i++] = m_navpoints[j];
+		len += sizeof(glm::vec3);
+	}
+	for (uint32_t j = i; j < m_previous.size(); j++) {
+		r->points[i++] = m_previous[j];
+		len += sizeof(glm::vec3);
+	}
+
+	r->node.size = len;
+	return len;
+}
+
+uint32_t GameEngine::Behavior::SatNav::loadState(void* record)
+{
+	BehaviorNode::loadState(record);
+
+	FlightRecorder::SatNav* r = static_cast<FlightRecorder::SatNav*>(record);
+
+	m_status = static_cast<Status>(r->status);
+	m_destination = r->destination;
+	m_currentNavPoint = r->current;
+
+	if (r->lastCollision[0] != 0) {
+		gaEntity* collided = g_gaWorld.getEntity(r->lastCollision);
+		m_tree->blackboard("lastCollision", collided);
+	}
+
+	m_navpoints.resize(r->nbNavPoints);
+	m_previous.resize(r->nbPrevious);
+
+	uint32_t i = 0;
+	for (uint32_t j = 0; j < r->nbNavPoints; j++) {
+		m_navpoints[j] = r->points[i++];
+	}
+	for (uint32_t j = 0; j < r->nbPrevious; j++) {
+		m_previous[j] = r->points[i++];
+	}
+
+	return r->node.size;
+}
