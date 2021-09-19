@@ -38,7 +38,7 @@ const float c_height = 0.70f;
 const float c_radius = 0.2f;
 const float c_eyes = 0.55f;
 const float c_ankle = 0.26f;
-const float c_direction = -pi/2.0f; // 1.0f;
+const float c_direction = pi/2.0f; // 1.0f;
 
 myDarkForces::myDarkForces(std::string name, int width, int height) :
 	GameEngine::App(name, width, height, "shaders/gamma", "#define GAMMA_CORRECTION 1\n")

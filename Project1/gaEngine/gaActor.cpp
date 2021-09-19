@@ -99,7 +99,7 @@ bool gaActor::moveTo(time_t delta, glm::vec3& velocity)
 	m_transforms.m_forward = velocity * m_cylinder.radius();
 	m_transforms.m_downward = glm::vec3(0, -m_ankle, 0);
 	m_transforms.m_position = position() + direction;
-	m_transforms.m_quaternion = glm::quatLookAt(velocity, up);
+	m_transforms.m_quaternion = glm::quatLookAt(glm::normalize(velocity), up);
 	m_transforms.m_scale = get_scale();
 
 	sendMessage(

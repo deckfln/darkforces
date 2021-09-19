@@ -327,16 +327,16 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 		}
 		*/
 
-		entity->pushTransformations();
-		entity->transform(&tranform);
-		glm::vec3 new_position = entity->position();
-		glm::vec3 direction = glm::normalize(old_position - new_position);
-
 		if (entity->name() == "player") {
 			gaDebugLog(1, "GameEngine::Physics::wantToMove", entity->name() + " to " + std::to_string(tranform.m_position.x)
 				+ " " + std::to_string(tranform.m_position.y)
 				+ " " + std::to_string(tranform.m_position.z));
 		}
+
+		entity->pushTransformations();
+		entity->transform(&tranform);
+		glm::vec3 new_position = entity->position();
+		glm::vec3 direction = glm::normalize(old_position - new_position);
 
 		// check if we warp through a triangle
 			/*
