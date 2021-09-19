@@ -289,6 +289,7 @@ void gaEntity::displayAABBox(void)
 void gaEntity::transform(GameEngine::Transform* transform)
 {
 	fwObject3D::transform(transform);
+	updateWorldAABB();
 }
 
 /**
@@ -335,15 +336,11 @@ void gaEntity::dispatchMessage(gaMessage* message)
 		// if the there is no position, this is just a notification
 		if (message->m_extra != nullptr) {
 			translate((glm::vec3*)message->m_extra);
+			updateWorldAABB();
 		}
-		updateWorldAABB();
 		break;
 
 	case gaMessage::Action::ROTATE:
-		if (m_name == "player") {
-			printf("*");
-		}
-
 		// take the opportunity to update the world bounding box
 		switch (message->m_value) {
 		case gaMessage::Flag::ROTATE_VEC3:

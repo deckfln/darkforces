@@ -650,9 +650,9 @@ const glm::vec3 fwAABBox::center(void) const
 }
 
 /**
- * return the height og the AABB
+ * return the height of the AABB
  */
-float fwAABBox::height(void)
+float fwAABBox::height(void) const
 {
 	return m_p1.y - m_p.y;
 }

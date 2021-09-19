@@ -87,7 +87,7 @@ public:
 	float volume(void);
 	void reset(void);
 	const glm::vec3 center(void) const;
-	float height(void);
+	float height(void) const;
 	void translateFrom(const fwAABBox& source, glm::vec3& translation);
 	void rotateFrom(const fwAABBox& source, const glm::vec3& rotation);
 	void rotateFrom(const fwAABBox& source, const glm::quat& quaternion);

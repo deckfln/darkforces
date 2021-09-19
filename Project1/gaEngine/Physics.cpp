@@ -590,12 +590,17 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 
 				// the entity (movable) is being pushed by collided (non movable)
 				float radius = entity->radius();
+
+				glm::vec2 p_collision(nearest_collision->m_position.x, nearest_collision->m_position.z);
+				glm::vec2 p_old(old_position.x, old_position.z);
+				glm::vec2 delta = glm::normalize(p_collision - p_old) * (radius + EPSILON);
+
 				glm::vec3 p1(nearest_collision->m_position.x, new_position.y, nearest_collision->m_position.z);
 
 				// push by an average radius
-				pushed_aside = glm::normalize(new_position - p1) * radius;
+				pushed_aside = glm::normalize(new_position - old_position) ;
 
-				tranform.m_position = p1 + pushed_aside;
+				tranform.m_position = p1 - glm::vec3(delta.x, 0, delta.y);
 
 				float dot = glm::dot(direction, pushed_aside);
 
@@ -622,14 +627,18 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 					informCollision(pushed, entity, gaMessage::Flag::COLLIDE_ENTITY);
 				}
 				else {
-					if (m_ballistics.count(entity->name()) > 0 && m_ballistics[entity->name()].m_inUse) {
-						m_ballistics[entity->name()].reset(tranform.m_position, new_position);
+					const std::string& name = entity->name();
+
+					if (m_ballistics.count(name) > 0 && m_ballistics[name].m_inUse) {
+						glm::vec3 v0(0, new_position.y - old_position.y, 0);
+
+						m_ballistics[name].reset(tranform.m_position, v0);
 					}
 
 					if (glm::length(tranform.m_position - old_position) > EPSILON) {
 						entity->transform(&tranform);
 
-						if (entity->name() == "player")
+						if (name == "player")
 							gaDebugLog(1, "GameEngine::Physics::wantToMove", entity->name() + " pushed by sector");
 					}
 				}
@@ -692,8 +701,13 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 				// stop ballistic move
 				if (m_ballistics.count(entity->name()) > 0 && m_ballistics[entity->name()].m_inUse) {
 					// if the object was going upward, force the position
-					tranform.m_position.y = nearest_ceiling_y;
-					m_ballistics[entity->name()] = Ballistic(tranform.m_position, old_position);
+					const fwAABBox &aabb = entity->modelAABB();
+					
+					tranform.m_position.y = nearest_ceiling->m_position.y - aabb.height();
+					glm::vec3 v0(nearest_ceiling->m_position.x - old_position.x, 
+						old_position.y - nearest_ceiling->m_position.y,
+						nearest_ceiling->m_position.z - old_position.z);
+					m_ballistics[entity->name()].reset(tranform.m_position, v0);
 
 					actions.push(entity);	// fix the entity altitude
 					fix_y = true;
@@ -722,6 +736,7 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 
 		// manage ground collision and accept to jump up if over a step
 		if (entity->gravity()) {
+
 			if (nearest_ground) {
 				if (m_ballistics.count(entity->name()) > 0 && m_ballistics[entity->name()].m_inUse) {
 					// if the object was falling, remove from the list and force the position

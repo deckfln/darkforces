@@ -569,11 +569,6 @@ void dfParserObjects::buildSprites(void)
 		if (object != nullptr) {
 			g_gaWorld.addClient(object);
 		}
-
-		if (object->name() == "OFFCFIN.WAX(21)") {
-			object->sendInternalMessage(gaMessage::Action::SatNav_GOTO, glm::vec3(-21.29, -0.3, 16.6));
-		}
-
 	}
 
 	time_t timer = GetTickCount64();

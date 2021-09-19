@@ -66,15 +66,13 @@ namespace GameEngine
 		/**
 		 * Re-design the engine
 		 */
-		void reset(const glm::vec3& pos, const glm::vec3& old_pos)
+		void reset(const glm::vec3& pos, const glm::vec3& v0)
 		{
-			glm::vec3 direction = pos - old_pos;
+			m_physic[0][0] = 0;			m_physic[1][0] = v0.x / 100.0f;		m_physic[2][0] = pos.x;
+			m_physic[0][1] = c_gravity; m_physic[1][1] = v0.y / 100.0f;		m_physic[2][1] = pos.y;
+			m_physic[0][2] = 0;			m_physic[1][2] = v0.z / 100.0f;		m_physic[2][2] = pos.z;
 
-			m_physic[0][0] = 0;			m_physic[1][0] = direction.x / 100.0f;		m_physic[2][0] = pos.x;
-			m_physic[0][1] = c_gravity; m_physic[1][1] = direction.y / 100.0f;		m_physic[2][1] = pos.y;
-			m_physic[0][2] = 0;			m_physic[1][2] = direction.z / 100.0f;		m_physic[2][2] = pos.z;
-
-			m_physic_time_elpased = 33;
+			m_physic_time_elpased = 0;
 		}
 
 

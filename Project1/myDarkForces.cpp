@@ -38,7 +38,7 @@ const float c_height = 0.70f;
 const float c_radius = 0.2f;
 const float c_eyes = 0.55f;
 const float c_ankle = 0.26f;
-const float c_direction = pi/2.0f; // 1.0f;
+const float c_direction = pi; // 1.0f;
 
 myDarkForces::myDarkForces(std::string name, int width, int height) :
 	GameEngine::App(name, width, height, "shaders/gamma", "#define GAMMA_CORRECTION 1\n")
@@ -52,7 +52,7 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 	//glm::vec3 start = glm::vec3(-20.82f, 0.07f, 33.43f);	// westwing
 	//glm::vec3 start = glm::vec3(-46, 0.9, 26.8); // super secret
 	//glm::vec3 start = glm::vec3(-29.5f, 2.0f, 30.808f);	// gen_d
-	glm::vec3 start = glm::vec3(-22.65f, 2.0f, 22.0);	// gen_d
+	glm::vec3 start = glm::vec3(-22.65f, 2.0f, 21.3);	// gen_d
 	//glm::vec3 start = glm::vec3(-20.8f, 0.4f, 29.7f);	// stage
 	//glm::vec3 start = glm::vec3(-21.29, -0.3, 16.6);	// post_e
 	//glm::vec3 start = glm::vec3(-17.60, -2.0, 27.77);	// projector
@@ -127,6 +127,9 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 	g_Blackbox.registerClass("dfBullet", &dfBullet::create);
 	g_Blackbox.registerClass("dfSpriteAnimated", &dfSpriteAnimated::create);
 	g_Blackbox.registerClass("dfBulletExplode", &dfBulletExplode::create);
+
+	gaEntity* officer = g_gaWorld.getEntity("OFFCFIN.WAX(21)");
+	//officer->sendMessage(gaMessage::Action::SatNav_GOTO, glm::vec3(-21.29, -0.3, 16.6));
 
 	// prepare the debugger
 	static std::map<int32_t, const char*> g_definitions = {
