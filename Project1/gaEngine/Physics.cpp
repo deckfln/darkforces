@@ -936,4 +936,3 @@ void GameEngine::Physics::loadState(flightRecorder::Ballistic* object)
 {
 	m_ballistics[object->name] = Ballistic(object);
 }
-

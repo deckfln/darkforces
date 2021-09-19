@@ -9,8 +9,7 @@ namespace GameEngine {
 			uint32_t size;
 			uint32_t nbNodes;
 			uint32_t m_current;
-			char m_blockboard[1024];
-			char nodes[1024 * 10];
+			char nodes[1024 * 5];
 		};
 	}
 }

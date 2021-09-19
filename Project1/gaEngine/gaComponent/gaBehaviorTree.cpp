@@ -2,6 +2,7 @@
 
 #include <imgui.h>
 
+#include "../gaEntity.h"
 #include "../gaBehaviorNode.h"
 #include "../flightRecorder/frBehaviorTree.h"
 

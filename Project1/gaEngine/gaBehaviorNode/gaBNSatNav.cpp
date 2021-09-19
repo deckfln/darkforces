@@ -21,6 +21,7 @@ GameEngine::Behavior::SatNav::SatNav(void) :
 GameEngine::Behavior::SatNav::SatNav(const char *name) :
 	GameEngine::BehaviorNode(name)
 {
+	m_previous.resize(16);
 }
 
 GameEngine::Behavior::SatNav::SatNav(const char *name, float speed) :
@@ -134,7 +135,16 @@ void GameEngine::Behavior::SatNav::onMove(gaMessage* message)
 {
 	if (m_status == Status::MOVE_TO_NEXT_WAYPOINT) {
 		// record the current position (to be able to backtrack)
-		m_previous.push_back(m_entity->position());
+		m_previous[m_previous_current] = m_entity->position();
+		m_previous_current++;
+
+		if (m_previous_size < m_previous.size()) {
+			m_previous_size++;
+		}
+
+		if (m_previous_current >= m_previous.size()) {
+			m_previous_current = 0;
+		}
 
 		glm::vec3 p = m_navpoints[m_currentNavPoint];
 
@@ -202,14 +212,21 @@ void GameEngine::Behavior::SatNav::onCollide(gaMessage* message)
 	float distance = glm::length(m_entity->position() - m_transforms->m_position);
 
 	if (distance < m_entity->radius() * 1.5f) {
-		if (m_currentNavPoint > 0 && m_previous.size() > 1) {
+		if (m_currentNavPoint > 0 && m_previous_size > 0) {
 			// maybe the next waypoint is next to a wall and we are nearly there, 
 			// so backtrack to the previous position and switch to the next waypoint
 			glm::vec3 direction;
 
-			m_transforms->m_position = m_previous.back();
+			if (m_previous_current > 0) {
+				m_previous_current--;
+			}
+			else {
+				m_previous_current = m_previous.size() - 1;
+			}
+			m_previous_size--;
+
+			m_transforms->m_position = m_previous[m_previous_current];
 			m_entity->translate(m_transforms->m_position);
-			m_previous.pop_back();
 
 			direction = nextWayPoint(true);
 
@@ -236,8 +253,17 @@ void GameEngine::Behavior::SatNav::onCollide(gaMessage* message)
 	}
 	else {
 		// Move back one step and wait for next turn to retry
-		m_transforms->m_position = m_previous.back();
-		m_previous.pop_back();
+		if (m_previous_current > 0) {
+			m_previous_current--;
+		}
+		else {
+			m_previous_current = m_previous.size() - 1;
+		}
+
+		m_previous_size--;
+
+		m_transforms->m_position = m_previous[m_previous_current];
+
 		triggerMove();
 	}
 }

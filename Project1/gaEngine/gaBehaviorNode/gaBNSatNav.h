@@ -20,7 +20,9 @@ namespace GameEngine {
 			GameEngine::Transform* m_transforms = nullptr;		// transforms to move the object
 			std::vector<glm::vec3> m_navpoints;					// nav points for the move
 			uint32_t m_currentNavPoint = 0;						// beware, backtrack as navpoints a	re in reverse order
-			std::vector<glm::vec3> m_previous;					// previous position
+			std::vector<glm::vec3> m_previous;					// previous positions (circular buffer)
+			uint32_t m_previous_current = 0;
+			uint32_t m_previous_size = 0;
 
 			glm::vec3 nextWayPoint(bool normalize);				// return the direction to the next way point
 			void triggerMove(void);								// send the move messages
