@@ -135,7 +135,16 @@ void Physics::testEntities(gaEntity* entity, const Transform& tranform, std::vec
  */
 float Physics::ifCollideWithSectorOrEntity(const glm::vec3& p1, const glm::vec3& p2, fwCollision::Test test, gaEntity * entity)
 {
-	Framework::Segment s(p1, p2);
+	static glm::mat4 worldMatrix(1.0);
+	static glm::mat4 inverseWorldMatrix = glm::inverse(worldMatrix);
+	static fwAABBox aabb;
+	static Collider c;
+	static Framework::Segment s;
+
+	aabb.set(p1, p2);
+	s.set(p1, p2);
+	c.set(&s, & worldMatrix, & inverseWorldMatrix, & aabb);
+
 	glm::vec3 p;
 	fwAABBox::Intersection r;
 
@@ -146,7 +155,7 @@ float Physics::ifCollideWithSectorOrEntity(const glm::vec3& p1, const glm::vec3&
 			if (!ent->hasCollider() || ent == entity) {
 				continue;
 			}
-			r = ent->intersect(s, p);
+			r = ent->intersect(c, p);
 			if (r == fwAABBox::Intersection::INTERSECT) {
 				return p.y;
 			}

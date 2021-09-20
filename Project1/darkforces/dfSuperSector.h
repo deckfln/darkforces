@@ -115,10 +115,6 @@ public:
     // override from parent classes
     void dispatchMessage(gaMessage* message) override;     // let an entity deal with a situation
 
-    fwAABBox::Intersection intersect(
-        Framework::Segment& s, 
-        glm::vec3& p) override;	                            // quick test to find AABB collision and return the collision point
-
     // flight recorder & debugger
     void debugGUIChildClass(void) override;					// Add dedicated component debug the entity
 

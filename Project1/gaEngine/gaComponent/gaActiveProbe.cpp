@@ -10,7 +10,7 @@ GameEngine::Component::ActiveProbe::ActiveProbe(void):
 	m_worldMatrix(glm::mat4x4(1)),
 	m_inverseWorldMatrix(glm::inverse(m_worldMatrix))
 {
-	m_collider.set(&m_segment, &m_worldMatrix, &m_inverseWorldMatrix, nullptr);
+	m_collider.set(&m_segment, &m_worldMatrix, &m_inverseWorldMatrix, &m_worldAABB);
 	g_gaBoundingBoxes.add(&m_worldAABB);
 }
 
@@ -41,7 +41,7 @@ void GameEngine::Component::ActiveProbe::dispatchMessage(gaMessage* message)
 			// check if entities with component TRIGGER intersect with the segment m_start-m_direction
 			std::vector<gaEntity *> collisions;
 
- 			g_gaWorld.intersectWithEntity(DF_COMPONENT_TRIGGER, m_segment, collisions);
+ 			g_gaWorld.intersectWithEntity(DF_COMPONENT_TRIGGER, m_collider, collisions);
 			for (auto entity: collisions) {
 				// activate the entity intersecting with the probe
 				m_entity->sendMessage(entity->name(), gaMessage::Action::ACTIVATE);

@@ -136,9 +136,27 @@ bool gaEntity::collideAABB(gaEntity const* with)
 /**
  * quick test to find AABB collision and return the collision point
  */
-fwAABBox::Intersection gaEntity::intersect(Framework::Segment& s, glm::vec3& p)
+fwAABBox::Intersection gaEntity::intersect(const GameEngine::Collider& c, glm::vec3& p)
 {
-	return m_worldBounding.intersect(s, p);
+	static glm::vec3 up;
+	static glm::vec3 down;
+	std::vector<gaCollisionPoint> collisions;
+
+	if (m_collider.collision(c, up, down, collisions)) {
+		float l, nearest = +INFINITY;
+		const glm::vec3& my_p = position();
+
+		for (auto& collision : collisions) {
+			l = glm::distance(p, collision.m_position);
+			if (l < nearest) {
+				p = collision.m_position;
+			}
+		}
+
+		return fwAABBox::Intersection::INTERSECT;
+	}
+
+	return fwAABBox::Intersection::NONE;
 }
 
 /**

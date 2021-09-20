@@ -148,9 +148,6 @@ public:
 	bool collideAABB(const fwAABBox& box);							// quick test to find AABB collision
 
 	// overriden function
-	fwAABBox::Intersection intersect(
-		Framework::Segment& s, 
-		glm::vec3& p) override;										// quick test to find AABB collision and return the collision point
 	bool isPointInside(const glm::vec3& position) override;
 	bool isPointInside(const glm::vec3& position, bool fullTest);
 

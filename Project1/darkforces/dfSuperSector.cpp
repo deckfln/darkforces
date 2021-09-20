@@ -117,26 +117,6 @@ void dfSuperSector::dispatchMessage(gaMessage* message)
 }
 
 /**
- * quick test to find AABB collision and return the collision point
- * test against the included dfSectors
- */
-fwAABBox::Intersection dfSuperSector::intersect(Framework::Segment& s, glm::vec3& p)
-{
-	fwAABBox::Intersection r = gaEntity::intersect(s, p);
-	if (r != fwAABBox::Intersection::NONE) {
-
-		for (auto sector : m_sectors) {
-			r = sector->intersect(s, p);
-			if (r != fwAABBox::Intersection::NONE) {
-				return r;
-			}
-		}
-
-	}
-	return fwAABBox::Intersection::NONE;
-}
-
-/**
  * parse all portals to find the smalled adjacent
  */
 dfSuperSector* dfSuperSector::smallestAdjoint(void)

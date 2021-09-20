@@ -606,30 +606,6 @@ bool dfSector::collideAABB(const fwAABBox& box)
 }
 
 /**
- * quick test to find AABB collision and return the collision point
- */
-fwAABBox::Intersection dfSector::intersect(Framework::Segment& s, glm::vec3& p)
-{
-	// first check the AABB intersection
-	fwAABBox::Intersection r = gaEntity::intersect(s, p);
-	if (r == fwAABBox::Intersection::INTERSECT || r == fwAABBox::Intersection::INCLUDED) {
-		// then run a full segment/geometry check
-		glm::mat4 worldMatrix(1.0);
-		glm::mat4 inverseWorldMatrix = glm::inverse(worldMatrix);
-		fwAABBox aabb(s);
-		Collider c(&s, &worldMatrix, &inverseWorldMatrix, &aabb);
-		std::vector<gaCollisionPoint> collision;
-		glm::vec3 up, dow;
-
-		if (m_collider.collision(c, up, dow, collision)) {
-//		if (isPointInside(p, true)) {
-			return r;
-		}
-	}
-	return fwAABBox::Intersection::NONE;
-}
-
-/**
  * Change the lightning of the sector in the super-sector mesh
  */
 void dfSector::changeAmbient(float ambient)

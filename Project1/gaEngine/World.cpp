@@ -731,7 +731,7 @@ void GameEngine::World::update(void)
  */
 bool GameEngine::World::intersectWithEntity(
 	uint32_t componentID, 
-	Framework::Segment& segment, 
+	GameEngine::Collider& segment, 
 	std::vector<gaEntity*>& collisions)
 {
 	std::vector<gaEntity*> entities;

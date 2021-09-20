@@ -14,6 +14,7 @@ namespace Framework
 		Segment(const glm::vec3& start, const glm::vec3& end);
 		Segment(glm::vec3 *start, glm::vec3 *end);
 
+		void set(const glm::vec3& start, const glm::vec3& end);
 		float length(void);
 	};
 }

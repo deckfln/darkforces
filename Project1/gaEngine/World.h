@@ -130,7 +130,7 @@ namespace GameEngine {
 		void update(void);									// force an update of the world
 		bool intersectWithEntity(
 			uint32_t componentID,
-			Framework::Segment& segment,
+			GameEngine::Collider& segment,
 			std::vector<gaEntity*>& collision);				// find all entities intersecting with the segment
 
 		void getEntitiesWithComponents(uint32_t componentID,
