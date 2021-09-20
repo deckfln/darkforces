@@ -818,10 +818,14 @@ void dfSector::buildFloorAndCeiling(dfMesh* mesh)
  */
 void dfSector::buildGeometry(dfMesh* mesh, dfWallFlag displayPolygon)
 {
-	// ignore sector that already have a mesh component
-	// these sectors are actually elevators
-	if (findComponent(gaComponent::MESH)) {
-		return;
+	if (m_includedIn != nullptr) {
+		// for sectors that are included in other sector as elevator
+		// do not add them on the supermesh, they have their own mesh in the elevator
+
+		// unless the other sector has NO mesh (like change_light)
+		if (findComponent(gaComponent::MESH)) {
+			return;
+		}
 	}
 
 	m_firstVertex = mesh->nbVertices();
@@ -840,13 +844,16 @@ void dfSector::buildGeometry(dfMesh* mesh, dfWallFlag displayPolygon)
 	// build hierarchy of AABB
 	mesh->addModelAABB(&m_worldAABB);
 
-	// create the collider
-	// beware, the worldAABB is in world space, so we can use a single unity matrix
-	m_collider.set(
-		(GameEngine::AABBoxTree*)&m_worldAABB,
-		&worldM,
-		&invworldM,
-		this);
+	// if there is no mesh already on the sector, register the sector as collider. Otherwise keep the mesh collider
+	if (!findComponent(gaComponent::MESH)) {
+		// create the collider
+		// beware, the worldAABB is in world space, so we can use a single unity matrix
+		m_collider.set(
+			(GameEngine::AABBoxTree*)&m_worldAABB,
+			&worldM,
+			&invworldM,
+			this);
+	}
 }
 
 /**
