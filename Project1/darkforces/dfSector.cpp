@@ -16,6 +16,7 @@
 #include "../gaEngine/gaCollisionPoint.h"
 #include "../gaEngine/World.h"
 #include "../gaEngine/gaNavMesh.h"
+#include "../gaEngine/gaComponent.h"
 
 #include "dfConfig.h"
 #include "dfSuperSector.h"
@@ -26,6 +27,8 @@
 #include "dfComponent/InfElevator.h"
 
 static const char* g_className = "dfSector";
+static glm::mat4 worldM(1);
+static glm::mat4 invworldM = glm::inverse(worldM);
 
 dfSector::dfSector(std::istringstream& infile, std::vector<dfSector*>& sectorsID, dfLevel *level):
 	gaEntity(DarkForces::ClassID::Sector),
@@ -605,13 +608,21 @@ bool dfSector::collideAABB(const fwAABBox& box)
 /**
  * quick test to find AABB collision and return the collision point
  */
-fwAABBox::Intersection dfSector::intersect(const Framework::Segment& s, glm::vec3& p)
+fwAABBox::Intersection dfSector::intersect(Framework::Segment& s, glm::vec3& p)
 {
 	// first check the AABB intersection
 	fwAABBox::Intersection r = gaEntity::intersect(s, p);
 	if (r == fwAABBox::Intersection::INTERSECT || r == fwAABBox::Intersection::INCLUDED) {
-		// then ensure the collision point is inside the surface of the dfSector
-		if (isPointInside(p, true)) {
+		// then run a full segment/geometry check
+		glm::mat4 worldMatrix(1.0);
+		glm::mat4 inverseWorldMatrix = glm::inverse(worldMatrix);
+		fwAABBox aabb(s);
+		Collider c(&s, &worldMatrix, &inverseWorldMatrix, &aabb);
+		std::vector<gaCollisionPoint> collision;
+		glm::vec3 up, dow;
+
+		if (m_collider.collision(c, up, dow, collision)) {
+//		if (isPointInside(p, true)) {
 			return r;
 		}
 	}
@@ -830,15 +841,11 @@ void dfSector::buildFloorAndCeiling(dfMesh* mesh)
  * Add the geometry of the sector in the given dfMesh
  */
 void dfSector::buildGeometry(dfMesh* mesh, dfWallFlag displayPolygon)
-{	
-	if (m_includedIn != nullptr) {
-		// for sectors that are included in other sector as elevator
-		// do not add them on the supermesh, they have their own mesh in the elevator
-
-		// unless the other sector has NO mesh (like change_light)
-		if (findComponent(gaComponent::MESH)) {
-			return;
-		}
+{
+	// ignore sector that already have a mesh component
+	// these sectors are actually elevators
+	if (findComponent(gaComponent::MESH)) {
+		return;
 	}
 
 	m_firstVertex = mesh->nbVertices();
@@ -856,6 +863,14 @@ void dfSector::buildGeometry(dfMesh* mesh, dfWallFlag displayPolygon)
 
 	// build hierarchy of AABB
 	mesh->addModelAABB(&m_worldAABB);
+
+	// create the collider
+	// beware, the worldAABB is in world space, so we can use a single unity matrix
+	m_collider.set(
+		(GameEngine::AABBoxTree*)&m_worldAABB,
+		&worldM,
+		&invworldM,
+		this);
 }
 
 /**

@@ -60,8 +60,8 @@ protected:
 	uint32_t m_classID = 0;
 	const char* m_className = nullptr;
 
-	glm::mat4 m_worldMatrix = glm::mat4(0);			// world space matrix (including children)
-	glm::mat4 m_inverseWorldMatrix = glm::mat4(0);	// world space matrix (including children)
+	glm::mat4 m_worldMatrix = glm::mat4(1);			// world space matrix (including children)
+	glm::mat4 m_inverseWorldMatrix = glm::mat4(1);	// world space matrix (including children)
 
 	fwObject3D* m_parent = nullptr;
 	std::list <fwObject3D *> m_children;

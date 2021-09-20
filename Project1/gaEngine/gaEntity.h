@@ -127,7 +127,7 @@ public:
 	bool collideAABB(const fwAABBox& box);				// quick test to find AABB collision
 	bool collideAABB(gaEntity const* with);				// quick test to find AABB collision
 	virtual fwAABBox::Intersection intersect(
-		const Framework::Segment& s, 
+		Framework::Segment& s, 
 		glm::vec3& p);									// quick test to find AABB collision and return the collision point
 
 	inline bool inAABBox(const glm::vec3& position) {

@@ -120,7 +120,7 @@ void dfSuperSector::dispatchMessage(gaMessage* message)
  * quick test to find AABB collision and return the collision point
  * test against the included dfSectors
  */
-fwAABBox::Intersection dfSuperSector::intersect(const Framework::Segment& s, glm::vec3& p)
+fwAABBox::Intersection dfSuperSector::intersect(Framework::Segment& s, glm::vec3& p)
 {
 	fwAABBox::Intersection r = gaEntity::intersect(s, p);
 	if (r != fwAABBox::Intersection::NONE) {
@@ -255,14 +255,16 @@ bool dfSuperSector::isPointInside(const glm::vec3& position)
 /**
  * Create the geometry
  */
-void dfSuperSector::buildGeometry(std::vector<dfSector*>& sectors)
+dfSuperSector* dfSuperSector::buildGeometry(std::vector<dfSector*>& sectors)
 {
 	for (auto sector : m_sectors) {
 		sector->buildGeometry(m_dfmesh, dfWallFlag::NOT_MORPHS_WITH_ELEV);
 	}
 
 	m_dfmesh->name(m_name);
-	m_dfmesh->buildMesh();
+	if (m_dfmesh->buildMesh() == nullptr) {
+		return nullptr;
+	}
 
 	// add the dfMesh as component to the entity
 	GameEngine::ComponentMesh* mesh = new GameEngine::ComponentMesh(m_dfmesh);
@@ -274,7 +276,6 @@ void dfSuperSector::buildGeometry(std::vector<dfSector*>& sectors)
 		m_dfmesh->pWorldMatrix(),
 		m_dfmesh->pInverseWorldMatrix(),
 		this);
-
 
 #ifdef _DEBUG
 	if (m_debugPortals) {
@@ -288,6 +289,8 @@ void dfSuperSector::buildGeometry(std::vector<dfSector*>& sectors)
 		}
 	}
 #endif
+
+	return this;
 }
 
 /**

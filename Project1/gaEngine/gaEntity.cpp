@@ -136,7 +136,7 @@ bool gaEntity::collideAABB(gaEntity const* with)
 /**
  * quick test to find AABB collision and return the collision point
  */
-fwAABBox::Intersection gaEntity::intersect(const Framework::Segment& s, glm::vec3& p)
+fwAABBox::Intersection gaEntity::intersect(Framework::Segment& s, glm::vec3& p)
 {
 	return m_worldBounding.intersect(s, p);
 }

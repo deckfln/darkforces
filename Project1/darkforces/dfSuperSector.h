@@ -86,7 +86,7 @@ public:
     dfSector* findDFSector(const glm::vec3& position);          // return the level sector
 
     bool contains(int sectorID);
-    void buildGeometry(std::vector<dfSector*>& sectors);
+    dfSuperSector* buildGeometry(std::vector<dfSector*>& sectors);
 
     // getter/setter
     void visible(bool v);
@@ -116,7 +116,7 @@ public:
     void dispatchMessage(gaMessage* message) override;     // let an entity deal with a situation
 
     fwAABBox::Intersection intersect(
-        const Framework::Segment& s, 
+        Framework::Segment& s, 
         glm::vec3& p) override;	                            // quick test to find AABB collision and return the collision point
 
     // flight recorder & debugger

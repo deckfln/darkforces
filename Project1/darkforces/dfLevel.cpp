@@ -256,8 +256,17 @@ void dfLevel::loadBitmaps(dfFileSystem *fs, std::string file)
  */
 void dfLevel::buildGeometry(void)
 {
+	std::vector<dfSuperSector*> to_remove;
+
 	for (auto ssector : m_supersectors) {
-		ssector->buildGeometry(m_sectorsID);
+		if (ssector->buildGeometry(m_sectorsID) == nullptr) {
+			// some supersector are replaced by elevators, so they have no geometry
+			to_remove.push_back(ssector);
+		}
+	}
+
+	for (auto ssector : to_remove) {
+		m_supersectors.remove(ssector);
 	}
 
 	// finally create the sky as a sky box
