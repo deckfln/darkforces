@@ -17,6 +17,12 @@ class dfSpriteAnimated: public dfSprite
 	time_t m_lastFrame = 0;					// time of the last animation frame
 	time_t m_currentFrame = 0;				// time of the current animation frame
 	fwMesh *m_view=nullptr;
+#ifdef _DEBUG
+	bool m_directionVector = false;			// add a vector to show the direction the sprite is facing
+	bool m_debug = false;
+
+	void directionVector(void);				// add/remove a vector mesh
+#endif
 
 protected:
 	bool m_loopAnimation = true;			// animations are looping (default)

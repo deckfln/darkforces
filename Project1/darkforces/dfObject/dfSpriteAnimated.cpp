@@ -23,6 +23,31 @@ static glm::vec4 g_red(1.0, 1.0, 0.0, 1.0);
 static fwMaterialBasic g_basic(&g_red);
 static fwGeometryCylinder* g_view = nullptr;
 
+#ifdef _DEBUG
+/**
+ * add/remove a vector mesh
+ */
+void dfSpriteAnimated::directionVector(void)
+{
+	if (m_debug) {
+		// add a point of view vector
+		if (m_view == nullptr) {
+			m_view = new fwMesh(g_view, &g_basic);
+		}
+
+		float a = atan2(m_direction.x, m_direction.z);// +M_PI / 2.0f;
+		glm::vec3 xr(0, a, 0);
+		m_view->rotate(xr);
+		m_view->translate(get_position() + glm::vec3(0.0f, 0.5f, 0.0f));
+
+		g_gaWorld.add2scene(m_view);
+	}
+	else {
+		g_gaWorld.remove2scene(m_view);
+	}
+}
+#endif
+
 /**
  * create a sprite from a pointer to a model
  */
@@ -34,13 +59,6 @@ dfSpriteAnimated::dfSpriteAnimated(dfWAX* wax, const glm::vec3& position, float 
 		g_view = new fwGeometryCylinder(0.01f, 0.15f, 4, 1);
 		g_view->makeStatic();
 	}
-
-#ifdef _DEBUG
-	// add a point of view vector
-	m_view = new fwMesh(g_view, &g_basic);
- 	m_view->translate(get_position() + glm::vec3(0.0f, 0.5f, 0.0f));
-	g_gaWorld.add2scene(m_view);
-#endif
 
 	gaEntity::updateWorldAABB();
 	m_className = g_className;
@@ -92,6 +110,9 @@ void dfSpriteAnimated::state(dfState state)
 	}
 }
 
+/**
+ *
+ */
 bool dfSpriteAnimated::updateSprite(glm::vec3* position, glm::vec4* texture, glm::vec3* direction)
 {
 	if (m_dirtyPosition) {
@@ -290,6 +311,14 @@ void dfSpriteAnimated::debugGUIChildClass(void)
 	dfSprite::debugGUIChildClass();
 
 	if (ImGui::TreeNode("dfSpriteAnimated")) {
+#ifdef _DEBUG
+		// display/hide the direction vector of the sprite
+		bool b = m_debug;
+		ImGui::Checkbox("Debug direction", &m_debug);
+		if (b != m_debug) {
+			directionVector();
+		}
+#endif
 		if (m_logics & DF_LOGIC_ENEMIES) {
 			ImGui::Text("State: %s", debugStatesEnemies[static_cast<uint32_t>(m_state)]);
 		}
