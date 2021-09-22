@@ -187,6 +187,14 @@ void dfMesh::updateRectangle(int p,
 }
 
 /**
+ * update the texture attribute at position i
+ */
+void dfMesh::updateTexture(uint32_t i, float id)
+{
+	(*m_pTextureIDs)[i] = id;
+}
+
+/**
  * Update the vertices of a rectangle
  */
 void dfMesh::updateRectangleAntiClockwise(int p, 

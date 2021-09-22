@@ -15,7 +15,6 @@
 #include "dfComponent/Trigger.h"
 #include "dfLogicTrigger.h"
 #include "dfSector.h"
-#include "dfsign.h"
 #include "dfMesh.h"
 #include "dfLevel.h"
 
@@ -211,9 +210,6 @@ void dfLogicTrigger::dispatchMessage(gaMessage* message)
 		activate(message->m_server);
 		break;
 	case DF_MESSAGE_DONE:
-		if (m_pMesh) {
-			m_pMesh->setStatus(0);	// turn the switch off
-		}
 		m_actived = false;
 		break;
 	default:
@@ -238,10 +234,6 @@ void dfLogicTrigger::activate(const std::string& activator)
 #ifdef _DEBUG
 	gaDebugLog(REDUCED_DEBUG, "dfLogicTrigger::activate", m_name);
 #endif
-
-	if (m_pMesh) {
-		m_pMesh->setStatus(1);	// turn the switch on
-	}
 
 	// verify the activator is an actor
 	gaActor* entity = (gaActor*)g_gaWorld.getEntity(activator);
@@ -290,11 +282,6 @@ void dfLogicTrigger::loadState(void* r)
 	gaEntity::loadState(&record->entity);
 	m_master = record->master;
 	m_actived = record->actived;
-
-	// update the sign if there is one
-	if (m_pMesh) {
-		m_pMesh->setStatus(m_actived);	
-	}
 }
 
 /**

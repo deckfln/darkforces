@@ -36,8 +36,6 @@ class dfLogicTrigger: public gaEntity {
 	std::string m_sector;					// sector that host the trigger
 	int m_wallIndex = -1;					// index of the wall being a trigger
 
-	dfMesh* m_pMesh= nullptr;				// Mesh being a trigger (has a bounding box)
-
 	std::vector<gaMessage *> m_messages;	// messages to pass to the clients
 	gaMessage m_trigger;					// trigger message
 
@@ -53,7 +51,6 @@ public:
 	inline std::vector<std::string>& clients(void) { return m_clients; };
 	inline const std::string& sector(void) { return m_sector; };
 	inline int wall(void) { return m_wallIndex; };
-	inline void sign(dfSign* _sign) { m_pMesh = (dfMesh *)_sign; };
 	inline void keys(DarkForces::Keys keys) { m_keys = keys; };
 	void addEvents(dfSector* pSector);
 	inline std::vector<gaMessage*>& messages(void) { return m_messages; };	// return messages

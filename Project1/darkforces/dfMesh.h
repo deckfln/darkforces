@@ -66,17 +66,6 @@ protected:
 
 	dfMesh* m_source = nullptr;							// sharing attributes with the source
 
-	void updateRectangle(int p, 
-		glm::vec3& pStart,
-		glm::vec3& pEnd,
-		glm::vec2& offset,
-		glm::vec2& size,
-		int textureID,
-		float ambient
-	);
-	int resize(int i);									// resize the target vectors
-	void resizeGeometry(void);							// resize the geometry attributes if needed
-
 public:
 	dfMesh(fwMaterial* material, std::vector<dfBitmap*>& bitmaps);
 	dfMesh(dfSuperSector*, std::vector<glm::vec3>* vertices, std::vector<glm::vec2>* uvs, std::vector<float>* textureIDs, std::vector <float>* m_ambientLights, std::vector<dfBitmap*>& textures);
@@ -105,11 +94,24 @@ public:
 	void centerOnGeometryXZ(glm::vec3& target);
 	void centerOnGeometryXYZ(glm::vec3& target);
 
+	inline std::vector<dfBitmap*>& bitmaps(void) { return m_bitmaps; };
+
 	const glm::vec3& position(void);						// override the default position function
 
-	virtual void setStatus(int status) {};
-
 	dfMesh* buildMesh(void);
+
+	int resize(int i);									// resize the target vectors
+	void resizeGeometry(void);							// resize the geometry attributes if needed
+	void updateRectangle(int p,
+		glm::vec3& pStart,
+		glm::vec3& pEnd,
+		glm::vec2& offset,
+		glm::vec2& size,
+		int textureID,
+		float ambient
+	);													// update the rectangle at position p
+	void updateTexture(uint32_t i, float id);			// update the texture attribute at position i
+
 
 	~dfMesh();
 };

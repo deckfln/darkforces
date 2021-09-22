@@ -20,7 +20,6 @@
 #include "../gaEngine/gaNavMesh.h"
 
 #include "dfBitmap.h"
-#include "dfSign.h"
 #include "dfMesh.h"
 #include "dfParserObjects.h"
 #include "dfFileSystem.h"
@@ -117,9 +116,9 @@ dfLevel::dfLevel(dfFileSystem* fs, std::string file)
 	}
 
 	// For every subSector, find the sector it is included in
-	for (auto i = 0; i < m_sectorsID.size(); i++) {
+	for (uint32_t i = 0; i < m_sectorsID.size(); i++) {
 		if (m_sectorsID[i]->flag(dfSectorFlag::SUBSECTOR)) {
-			for (auto j = 0; j < m_sectorsID.size(); j++) {
+			for (uint32_t j = 0; j < m_sectorsID.size(); j++) {
 				// ignore self
 				if (i == j) {
 					continue;

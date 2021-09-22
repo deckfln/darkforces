@@ -14,7 +14,6 @@
 #include "../gaEngine/gaComponent/gaComponentMesh.h"
 
 #include "dfLevel.h"
-#include "dfSign.h"
 #include "dfMesh.h"
 
 static glm::vec4 white(1.0, 0.0, 1.0, 1.0);
@@ -432,9 +431,4 @@ void dfSuperSector::debugGUIChildClass(void)
 }
 dfSuperSector::~dfSuperSector()
 {
-	//delete m_mesh;
-
-	for (auto sign : m_hSigns) {
-		delete sign.second;
-	}
 }

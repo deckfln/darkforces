@@ -22,9 +22,9 @@
 #include "dfSuperSector.h"
 #include "dfMesh.h"
 #include "dfParseINF.h"
-#include "dfSign.h"
 #include "dfLevel.h"
 #include "dfComponent/InfElevator.h"
+#include "dfComponent/dfSign.h"
 
 static const char* g_className = "dfSector";
 static glm::mat4 worldM(1);
@@ -633,8 +633,8 @@ dfLogicTrigger* dfSector::addSign(dfMesh *mesh, dfWall* wall, float z, float z1,
 
 	dfLogicTrigger* trigger = (dfLogicTrigger*)g_gaWorld.getEntity(name);
 	if (trigger) {
-		dfSign* sign = new dfSign(mesh, wall->sector(), wall, z, z1);
-		trigger->sign(sign);
+		DarkForces::Component::Sign* sign = new DarkForces::Component::Sign(mesh, wall->sector(), wall, z, z1);
+		trigger->addComponent(sign, gaEntity::Flag::DELETE_AT_EXIT);
 	}
 
 	return trigger;

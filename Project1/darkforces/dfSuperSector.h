@@ -19,7 +19,6 @@
 
 class fwScene;
 class dfSuperSector;
-class dfSign;
 class fwCylinder;
 
 /**
@@ -71,8 +70,6 @@ class dfSuperSector : public gaEntity
     bool m_visible = false;                                     // super sector is visible on screen
     bool m_debugPortals = false;                                // display the portal bounding sphere on screen
 
-    std::map<std::string, dfSign*> m_hSigns;                    // Hash of maps on the super sector
-
 public:
     dfSuperSector(dfSector* sector, fwMaterialBasic* material, std::vector<dfBitmap*>& m_bitmaps);
 
@@ -97,7 +94,6 @@ public:
     inline const GameEngine::Collider& collider(void) { return m_collider; };
     std::vector<dfBitmap*>& textures(void);
     fwMaterial* material(void);
-    std::map<std::string, dfSign*>& hSigns(void) { return m_hSigns; };
 
     void checkPortals(fwCamera* camera, int zOrder);
     void buildHiearchy(dfLevel* parent);
