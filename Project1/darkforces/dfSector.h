@@ -114,7 +114,6 @@ class dfSector : public gaEntity
 	void buildFloorAndCeiling(dfMesh* mesh);
 	void buildSigns(dfMesh* mesh);
 	dfLogicTrigger* addSign(dfMesh *mesh, dfWall* wall, float z, float z1, int texture);
-	void deferedAddSign(dfWall* wall);
 
 public:
 	GameEngine::AABBoxTree m_worldAABB;					// AABB node to be inserted in a bigger tree

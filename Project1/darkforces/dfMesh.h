@@ -74,7 +74,8 @@ protected:
 		int textureID,
 		float ambient
 	);
-	int resize(int i);
+	int resize(int i);									// resize the target vectors
+	void resizeGeometry(void);							// resize the geometry attributes if needed
 
 public:
 	dfMesh(fwMaterial* material, std::vector<dfBitmap*>& bitmaps);
@@ -103,6 +104,8 @@ public:
 	void moveVertices(glm::vec3& center);
 	void centerOnGeometryXZ(glm::vec3& target);
 	void centerOnGeometryXYZ(glm::vec3& target);
+
+	const glm::vec3& position(void);						// override the default position function
 
 	virtual void setStatus(int status) {};
 

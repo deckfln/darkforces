@@ -62,6 +62,15 @@ void dfSign::buildGeometry(dfSector* sector, dfWall* wall, float z, float z1)
 	glm::vec2 start = sector->m_vertices[wall->m_left] + segment * (wall->m_tex[DFWALL_TEXTURE_SIGN].g - wall->m_tex[DFWALL_TEXTURE_MID].g);
 	glm::vec2 end = sector->m_vertices[wall->m_left] + segment * (wall->m_tex[DFWALL_TEXTURE_SIGN].g - wall->m_tex[DFWALL_TEXTURE_MID].g + xpixel / 8.0f);
 
+	// translate by the mesh position
+	const glm::vec3& translate = position() * 10.0f;
+
+	start.x -= translate.x;
+	start.y -= translate.z;
+
+	end.x -= translate.x;
+	end.y -= translate.z;
+
 	// wall normals
 	glm::vec3 normal = glm::normalize(glm::vec3(-segment.y, segment.x, 0));	//  and (dy, -dx).
 
@@ -97,4 +106,7 @@ void dfSign::buildGeometry(dfSector* sector, dfWall* wall, float z, float z1)
 		size, 
 		image->m_textureID, 
 		sector->m_ambient);
+
+	// check if it is needed to resize the geometry
+	resizeGeometry();
 }

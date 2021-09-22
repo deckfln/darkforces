@@ -641,14 +641,6 @@ dfLogicTrigger* dfSector::addSign(dfMesh *mesh, dfWall* wall, float z, float z1,
 }
 
 /**
- * list of signs to add later (likely when the sector is an elevator)
- */
-void dfSector::deferedAddSign(dfWall* wall)
-{
-	m_deferedSigns.push_back(wall);
-}
-
-/**
  * Create the signs at the end of the vertice's buffer
  */
 void dfSector::buildSigns(dfMesh *mesh)
@@ -692,8 +684,26 @@ void dfSector::buildSigns(dfMesh *mesh)
 				}
 
 				if (nbSigns == 0) {
-					// force a sign on the wall because the portal is not visible
-					portal->deferedAddSign(wall);
+					// add deferred signs on the elevators (the sign is physically on an elevator)
+					// centerVertices the level space into the model space
+					ComponentMesh* cmesh = dynamic_cast<ComponentMesh*>(portal->findComponent(gaComponent::MESH));
+					if (cmesh) {
+						float translate = m_staticMeshFloorAltitude - portal->m_staticMeshFloorAltitude;
+						float height = portal->m_staticMeshCeilingAltitude - portal->m_staticMeshFloorAltitude;
+						float bottom = portal->m_staticMeshFloorAltitude;
+
+						dfMesh* pmesh = dynamic_cast<dfMesh*>(cmesh->mesh());
+						if (pmesh) {
+
+							// map the sign on the mesh linked to the elevator
+							const fwAABBox& portalAABB = pmesh->modelAABB();
+
+							float portalMeshBottom = portalAABB.m_p.y * 10.0f;	// convert to level_space
+							float h = portalMeshBottom + translate;
+
+							portal->addSign(pmesh, wall, h, translate + height, DFWALL_TEXTURE_BOTTOM);
+						}
+					}
 				}
 			}
 		}
@@ -1032,16 +1042,6 @@ dfMesh* dfSector::buildElevator_new(float bottom, float top, int what, bool cloc
 	if (!((int)flags & (int)dfWallFlag::MORPHS_WITH_ELEV)) {
 		mesh->addFloor(polygons(1), bottom, m_ceilingTexture, m_ambient, clockwise);
 		mesh->addFloor(polygons(1), top, m_floorTexture, m_ambient, clockwise);
-	}
-
-	// add deferred signs on the elevators (the sign is physically on an elevator)
-	// centerVertices the level space into the model space
-	for (auto wall : m_deferedSigns) {
-		dfSector* sector = wall->sector();
-		float translate = m_staticMeshFloorAltitude - sector->m_staticMeshFloorAltitude;
-		float height = sector->m_staticMeshCeilingAltitude - sector->m_staticMeshFloorAltitude;
-		dfLogicTrigger* trigger = addSign(mesh, wall, bottom - translate, bottom - translate + height, DFWALL_TEXTURE_BOTTOM);
-		m_signs.push_back(trigger);
 	}
 
 	mesh->name(m_name);

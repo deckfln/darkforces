@@ -106,8 +106,31 @@ int dfMesh::resize(int i)
 	m_pUvs->resize(p + i);
 	m_pTextureIDs->resize(p + i);
 	m_pAmbientLights->resize(p + i);
-
 	return p;
+}
+
+/**
+ *
+ */
+void dfMesh::resizeGeometry(void)
+{
+	// if this is an original geometry, test the local geometry
+	// if this is a shadow mesh, use the source geometry
+	fwGeometry* mygeometry = m_geometry;
+	if (m_source != nullptr) {
+		mygeometry = m_source->m_geometry;
+	}
+
+	if (mygeometry != nullptr) {
+		// oh dear, we are resizing an existing geometry, so resize each attribute
+		mygeometry->resizeAttribute("aPos", &m_pVertices->at(0), m_pVertices->size());
+		mygeometry->resizeAttribute("aTexCoord", &m_pUvs->at(0), m_pUvs->size());
+		mygeometry->resizeAttribute("aTextureID", &m_pTextureIDs->at(0), m_pTextureIDs->size());
+		if (m_pAmbientLights->size() > 0) {
+			mygeometry->resizeAttribute("aAmbient", &m_pAmbientLights->at(0), m_pAmbientLights->size());
+		}
+	}
+
 }
 
 /**
@@ -513,6 +536,18 @@ void dfMesh::centerOnGeometryXYZ(glm::vec3& target)
 
 	// convert to opengl space
 	dfLevel::gl2level(center, target);
+}
+
+/**
+ * override the default position function : return the real position for a copy mesh
+ */
+const glm::vec3& dfMesh::position(void)
+{
+	if (m_source) {
+		return m_source->fwObject3D::position();
+	}
+
+	return fwObject3D::position();
 }
 
 /**
