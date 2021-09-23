@@ -45,6 +45,10 @@ void DarkForces::Component::Sign::debugGUIinline(void)
  */
 void DarkForces::Component::Sign::setStatus(int status)
 {
+	if (status == m_status) {
+		return;
+	}
+
 	m_status = status;
 
 	dfBitmapImage* image = m_bitmap->getImage(status);	// extract the target image

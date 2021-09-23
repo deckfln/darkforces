@@ -11,6 +11,7 @@
 #include "../dfVOC.h"
 #include "../dfSector.h"
 #include "../dfMesh.h"
+#include "Trigger.h"
 
 #include "../flightRecorder/frCompElevator.h"
 
@@ -309,6 +310,12 @@ void DarkForces::Component::InfElevator::dispatchMessage(gaMessage* message)
 				animate(0);
 			}
 		}
+
+		// synchronize all triggers to the status of the elevator
+		for (auto trigger : m_triggers) {
+			m_entity->sendMessage(trigger->entity()->name(), DF_MESSAGE_TRIGGER);
+		}
+
 		break;
 
 	case DF_MESSAGE_GOTO_STOP:
