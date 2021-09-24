@@ -22,10 +22,15 @@ fwAABBox::fwAABBox()
 {
 }
 
-fwAABBox::fwAABBox(float x, float x1, float y, float y1, float z, float z1) :
-	m_p(x, y, z),
-	m_p1(x1, y1, z1)
+fwAABBox::fwAABBox(float x, float x1, float y, float y1, float z, float z1)
 {
+	m_p.x = std::min(x, x1);
+	m_p.y = std::min(y, y1);
+	m_p.z = std::min(z, z1);
+
+	m_p1.x = std::max(x, x1);
+	m_p1.y = std::max(y, y1);
+	m_p1.z = std::max(z, z1);
 }
 
 fwAABBox::fwAABBox(fwSphere& sphere)
@@ -77,8 +82,14 @@ fwAABBox::fwAABBox(const Framework::Segment& segment)
  */
 void fwAABBox::set(float xmin, float ymin, float zmin, float xmax, float ymax, float zmax)
 {
-	m_p.x = xmin;	m_p.y = ymin;	m_p.z = zmin;
-	m_p1.x = xmax;	m_p1.y = ymax;	m_p1.z = zmax;
+	m_p.x = std::min(xmin, xmax);
+	m_p.y = std::min(ymin, ymax);
+	m_p.z = std::min(zmin, zmax);
+
+	m_p1.x = std::max(xmin, xmax);
+	m_p1.y = std::max(ymin, ymax);
+	m_p1.z = std::max(zmin, zmax);
+
 	m_dirty = true;
 }
 

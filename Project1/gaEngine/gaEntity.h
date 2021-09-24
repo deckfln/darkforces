@@ -50,7 +50,6 @@ protected:
 	fwAABBox m_modelAABB;							// model space AABB
 	fwAABBox m_worldBounding;						// AABB bounding box in world opengl space
 	time_t m_animation_time = 0;					// elapsed time when running animation
-	std::list<gaEntity*> m_children;				// included entities
 
 	float m_step = 0;								// how up/down can the actor step over
 

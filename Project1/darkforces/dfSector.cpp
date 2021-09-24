@@ -635,7 +635,15 @@ dfLogicTrigger* dfSector::addSign(dfMesh *mesh, dfWall* wall, float z, float z1,
 	if (trigger) {
 		DarkForces::Component::Sign* sign = new DarkForces::Component::Sign(mesh, wall->sector(), wall, z, z1);
 		trigger->addComponent(sign, gaEntity::Flag::DELETE_AT_EXIT);
+
+		// resize an relocate the trigger (modelAABB & position)
+		trigger->modelAABB(sign->localAABB());
+		trigger->moveTo(sign->position());
 	}
+
+	// add the sign as a sub-entity of the current object
+	// if the current object moves, the sign will move along
+	addChild(trigger);
 
 	return trigger;
 }

@@ -115,7 +115,7 @@ gaComponent* gaEntity::findComponent(int type)
  */
 void gaEntity::addChild(gaEntity* entity)
 {
-	m_children.push_back(entity);
+	fwObject3D::addChild(entity);
 	m_modelAABB.extend(entity->m_modelAABB);
 	updateWorldAABB();
 }

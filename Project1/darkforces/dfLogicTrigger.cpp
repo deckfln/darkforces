@@ -212,10 +212,6 @@ void dfLogicTrigger::dispatchMessage(gaMessage* message)
 	case DF_MESSAGE_DONE:
 		m_actived = false;
 		break;
-	default:
-#ifdef _DEBUG
-		gaDebugLog(REDUCED_DEBUG, "dfLogicTrigger::dispatchMessage",  "action " + std::to_string(message->m_action) + " not implemented");
-#endif
 	}
 
 	gaEntity::dispatchMessage(message);
