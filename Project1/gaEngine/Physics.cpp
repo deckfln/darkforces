@@ -598,23 +598,20 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 			else if (entity->movable() && !pushed->movable()) {
 
 				// the entity (movable) is being pushed by collided (non movable)
+				// push by an average radius
 				float radius = entity->radius();
 
 				glm::vec2 p_collision(nearest_collision->m_position.x, nearest_collision->m_position.z);
 				glm::vec2 p_old(old_position.x, old_position.z);
-				glm::vec2 delta = glm::normalize(p_collision - p_old) * (radius + EPSILON);
 
-				glm::vec3 p1(nearest_collision->m_position.x, new_position.y, nearest_collision->m_position.z);
+				glm::vec2 delta2d = glm::normalize(p_collision - p_old);
+				glm::vec2 direction2d(direction.x, direction.y);
 
-				// push by an average radius
-				pushed_aside = glm::normalize(new_position - old_position) ;
-
-				tranform.m_position = p1 - glm::vec3(delta.x, 0, delta.y);
-
-				float dot = glm::dot(direction, pushed_aside);
+				float dot = glm::dot(direction2d, delta2d);
+				delta2d *= (radius + EPSILON);
 
 				// if the moved back position is nearly the same as the original position, block the movement
-				if (dot > 0 ) {
+				if (dot < 0 || glm::length(delta2d) < EPSILON) {
 					// ONLY refuse the move if the entity is a physical one
 					if (pushed->physical()) {
 						if (entity->name() == "player")
@@ -636,6 +633,9 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 					informCollision(pushed, entity, nearest_collision->m_position);
 				}
 				else {
+					glm::vec3 p1(nearest_collision->m_position.x, new_position.y, nearest_collision->m_position.z);
+					tranform.m_position = p1 - glm::vec3(delta2d.x, 0, delta2d.y);
+
 					const std::string& name = entity->name();
 
 					if (m_ballistics.count(name) > 0 && m_ballistics[name].m_inUse) {
