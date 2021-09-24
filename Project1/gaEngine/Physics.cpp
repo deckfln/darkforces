@@ -91,7 +91,7 @@ bool Physics::warpThrough(gaEntity *entity,
 		}
 
 		// always inform the source entity
-		informCollision(collided, entity, gaMessage::Flag::COLLIDE_ENTITY);
+		informCollision(collided, entity, near_c);
 
 		if (entity->name() == "player")
 			gaDebugLog(1, "GameEngine::Physics::wantToMove", entity->name() + " warp fixed at " + std::to_string(tranform.m_position.x)
@@ -184,14 +184,14 @@ static void debugCollision(const gaCollisionPoint& collision, gaEntity* entity, 
 /**
  * Send a collision message between 2 entities
  */
-void Physics::informCollision(gaEntity* from, gaEntity* to, int flag)
+void Physics::informCollision(gaEntity* from, gaEntity* to, const glm::vec3& collision)
 {
 	// always inform the source entity 
 	g_gaWorld.sendMessage(
 		from->name(),
 		to->name(),
 		gaMessage::Action::COLLIDE,
-		flag,
+		collision,
 		nullptr
 	);
 	// always inform the colliding entity 
@@ -199,7 +199,7 @@ void Physics::informCollision(gaEntity* from, gaEntity* to, int flag)
 		to->name(),
 		from->name(),
 		gaMessage::Action::COLLIDE,
-		flag,
+		collision,
 		nullptr
 	);
 }
@@ -277,7 +277,7 @@ void Physics::moveBullet(gaEntity* entity, gaMessage* message)
 			collidedEntity->name(),
 			entity->name(),
 			gaMessage::Action::COLLIDE,
-			gaMessage::Flag::COLLIDE_ENTITY,
+			0,
 			nullptr
 		);
 		return;
@@ -435,7 +435,7 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 						// always inform the source entity 
 						collidedEntities[collidedEntity->name()] = true;
 
-						informCollision(collidedEntity, entity, gaMessage::Flag::TRAVERSE_ENTITY);
+						informCollision(collidedEntity, entity, collision.m_position);
 
 						// accept the move at that stage
 						continue;	// check next collision
@@ -633,7 +633,7 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 					}
 
 					// always inform the source entity
-					informCollision(pushed, entity, gaMessage::Flag::COLLIDE_ENTITY);
+					informCollision(pushed, entity, nearest_collision->m_position);
 				}
 				else {
 					const std::string& name = entity->name();
@@ -701,7 +701,7 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 				}
 
 				// always inform the source entity 
-				informCollision(collisionWith, entity, gaMessage::Flag::COLLIDE_ENTITY);
+				informCollision(collisionWith, entity, nearest_ceiling->m_position);
 			}
 			else {
 				//non-movable entities always block the movement
@@ -736,7 +736,7 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 					static_cast<dfSuperSector*>(nearest_ceiling->m_source)->name(),
 					entity->name(),
 					gaMessage::Action::COLLIDE,
-					gaMessage::Flag::COLLIDE_WALL,
+					0,
 					nullptr
 				);
 			}

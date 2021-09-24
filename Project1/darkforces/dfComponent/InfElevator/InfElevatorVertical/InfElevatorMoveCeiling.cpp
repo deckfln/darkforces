@@ -10,7 +10,6 @@ DarkForces::Component::InfElevatorMoveCeiling::InfElevatorMoveCeiling(dfSector* 
 	sector->gravity(false);
 	sector->collideSectors(false);
 	sector->hasCollider(true);
-	sector->defaultCollision(gaMessage::Flag::PUSH_ENTITIES);
 	sector->displayAABBox();
 }
 

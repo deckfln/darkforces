@@ -10,7 +10,6 @@ DarkForces::Component::InfElevatorMorphMove1::InfElevatorMorphMove1(dfSector* se
 	sector->gravity(false);
 	sector->collideSectors(false);
 	sector->hasCollider(true);
-	sector->defaultCollision(gaMessage::Flag::PUSH_ENTITIES);
 	sector->displayAABBox();
 
 	meshData(

@@ -63,7 +63,6 @@ protected:
 	Collider m_collider;							// if there is a collider
 	float m_radius = -1;							// radius of the collision box
 
-	int m_defaultCollision = gaMessage::Flag::COLLIDE_ENTITY;
 	std::map<std::string, gaEntity*> m_sittingOnTop;// cached list of the entities sitting on top of that one
 
 public:
@@ -107,8 +106,6 @@ public:
 	inline std::map<std::string, gaEntity*>& sittingOnTop(void) { return m_sittingOnTop; };
 	inline GameEngine::Transform& transform(void) { return m_transforms; };
 	inline GameEngine::Transform* pTransform(void) { return &m_transforms; };
-	inline int defaultCollision(void) { return m_defaultCollision; };
-	inline void defaultCollision(int b) { m_defaultCollision = b; };
 	inline void superSector(dfSuperSector* s) { m_supersector = s; };
 	inline float step(void) { return m_step; };
 

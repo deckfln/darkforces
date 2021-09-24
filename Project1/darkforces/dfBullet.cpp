@@ -149,15 +149,10 @@ void dfBullet::dispatchMessage(gaMessage* message)
 
 		g_gaWorld.addClient(impact);
 
-		// if hit an entity
-		if (message->m_value == gaMessage::Flag::COLLIDE_ENTITY) {
-			// on collision, inform the target it was hit with the energy of the bullet
-			sendMessage(message->m_server, DF_MESSAGE_HIT_BULLET, 10, nullptr);
-			gaDebugLog(REDUCED_DEBUG, "dfBullet::dispatchMessage", "hit");
-		}
-		else {
-			gaDebugLog(LOW_DEBUG, "dfBullet::dispatchMessage", "hit wall");
-		}
+		// on collision, inform the target it was hit with the energy of the bullet
+		sendMessage(message->m_server, DF_MESSAGE_HIT_BULLET, 10, nullptr);
+		gaDebugLog(REDUCED_DEBUG, "dfBullet::dispatchMessage", "hit");
+
 		// drop the bullet
 		sendMessageToWorld(gaMessage::DELETE_ENTITY, 0, nullptr);
 		break;

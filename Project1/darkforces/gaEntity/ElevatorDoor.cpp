@@ -37,7 +37,6 @@ DarkForces::Entity::ElevatorDoor::ElevatorDoor(dfSector* sector):
 	m_collideSectors = false;
 	m_hasCollider = true;
 	m_movable = false;
-	m_defaultCollision = gaMessage::Flag::PUSH_ENTITIES;
 
 	// prepare the elevator component
 	DarkForces::Component::InfElevatorDoor* elevator = new DarkForces::Component::InfElevatorDoor(sector);
