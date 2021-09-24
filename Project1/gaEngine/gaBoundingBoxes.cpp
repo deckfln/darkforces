@@ -31,8 +31,10 @@ void gaBoundingBoxes::remove(const fwAABBox* box)
 
 			// clear the vertices
 			int k = i * 26;
-			for (int j = 0; j < 26; j++) {
-				m_vertices[k + j] = glm::vec3(0);
+			if (m_vertices.size() > k) {
+				for (int j = 0; j < 26; j++) {
+					m_vertices[k + j] = glm::vec3(0);
+				}
 			}
 			break;
 		}

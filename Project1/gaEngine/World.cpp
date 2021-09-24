@@ -613,96 +613,6 @@ void World::suspendTimer(void)
 }
 
 /**
- * Render the list of entities on the debug imGUI
- */
-void GameEngine::World::debugGUI(void)
-{
-	// list entities to pick from
-	static bool eclose = false;
-	const char* classname;
-
-	if (!eclose && ImGui::Begin("Explorer", &eclose)) {
-		if (ImGui::TreeNode("gaEntities")) {
-			for (auto& mclass : m_entitiesByClass) {
-				classname = g_entityClassName[mclass.first];
-				if (ImGui::TreeNode(classname)) {
-					for (auto entity : mclass.second) {
-						const std::string& name = entity->name();
-						bool old = m_watch[name];
-						ImGui::Checkbox(name.c_str(), &m_watch[name]);
-						if (old != m_watch[name]) {
-							if (m_watch[name]) {
-								entity->worldAABB().color(glm::vec3(1.0f, 0.0f, 0.0f));
-							}
-							else {
-								entity->worldAABB().color(glm::vec3(1.0f, 1.0f, 1.0f));
-							}
-						}
-					}
-					ImGui::TreePop();
-				}
-			}
-			ImGui::TreePop();
-		}
-		ImGui::End();
-
-	}
-	// display entities monitored
-	ImGui::Begin("Inspector");
-	for (auto &watch : m_watch) {
-		if (watch.second) {
-			auto &entities = m_entities[watch.first];
-			for (auto entity : entities) {
-				entity->debugGUI(&m_watch[watch.first]);
-			}
-		}
-	}
-	ImGui::End();
-
-	// display messages
-	static bool mclose = false;
-	if (!mclose && ImGui::Begin("Messages", &mclose)) {
-		if (ImGui::BeginTable("Messages", 5, ImGuiTableFlags_Resizable)) {
-			ImGui::TableSetupColumn("From");
-				ImGui::TableSetupColumn("To");
-				ImGui::TableSetupColumn("Action");
-				ImGui::TableSetupColumn("iValue");
-				ImGui::TableSetupColumn("fValue");
-				ImGui::TableHeadersRow();
-
-				for (auto message : m_queue) {
-					message->debugGUI();
-				}
-			ImGui::EndTable();
-		}
-		ImGui::End();
-	}
-}
-
-/**
- * render the imGUI debug messages
- */
-void GameEngine::World::debugGUImessages(std::list<gaMessage>& l)
-{
-	// display messages
-	ImGui::Begin("Messages");
-	if (ImGui::BeginTable("inframe Messages", 5, ImGuiTableFlags_Resizable)) {
-		ImGui::TableSetupColumn("From");
-		ImGui::TableSetupColumn("To");
-		ImGui::TableSetupColumn("Action");
-		ImGui::TableSetupColumn("iValue");
-		ImGui::TableSetupColumn("fValue");
-		ImGui::TableHeadersRow();
-
-		for (auto& message : l) {
-			message.debugGUI();
-		}
-		ImGui::EndTable();
-	}
-	ImGui::End();
-}
-
-/**
  * Clear the message queue
  */
 void GameEngine::World::clearQueue(void)
@@ -763,6 +673,99 @@ void GameEngine::World::getEntitiesWithComponents(uint32_t componentID, std::vec
 			}
 		}
 	}
+}
+
+/**
+ * Render the list of entities on the debug imGUI
+ */
+void GameEngine::World::debugGUI(void)
+{
+	// list entities to pick from
+	static bool eclose = false;
+	const char* classname;
+
+	if (!eclose && ImGui::Begin("Explorer", &eclose)) {
+		if (ImGui::TreeNode("gaEntities")) {
+			for (auto& mclass : m_entitiesByClass) {
+				classname = g_entityClassName[mclass.first];
+				if (ImGui::TreeNode(classname)) {
+					mclass.second.sort(
+						[](gaEntity* a, gaEntity* b) { return a->name() < b->name(); }
+					);
+					for (auto entity : mclass.second) {
+						const std::string& name = entity->name();
+						bool old = m_watch[name];
+						ImGui::Checkbox(name.c_str(), &m_watch[name]);
+						if (old != m_watch[name]) {
+							if (m_watch[name]) {
+								entity->worldAABB().color(glm::vec3(1.0f, 0.0f, 0.0f));
+							}
+							else {
+								entity->worldAABB().color(glm::vec3(1.0f, 1.0f, 1.0f));
+							}
+						}
+					}
+					ImGui::TreePop();
+				}
+			}
+			ImGui::TreePop();
+		}
+		ImGui::End();
+
+	}
+	// display entities monitored
+	ImGui::Begin("Inspector");
+	for (auto& watch : m_watch) {
+		if (watch.second) {
+			auto& entities = m_entities[watch.first];
+			for (auto entity : entities) {
+				entity->debugGUI(&m_watch[watch.first]);
+			}
+		}
+	}
+	ImGui::End();
+
+	// display messages
+	static bool mclose = false;
+	if (!mclose && ImGui::Begin("Messages", &mclose)) {
+		if (ImGui::BeginTable("Messages", 5, ImGuiTableFlags_Resizable)) {
+			ImGui::TableSetupColumn("From");
+			ImGui::TableSetupColumn("To");
+			ImGui::TableSetupColumn("Action");
+			ImGui::TableSetupColumn("iValue");
+			ImGui::TableSetupColumn("fValue");
+			ImGui::TableHeadersRow();
+
+			for (auto message : m_queue) {
+				message->debugGUI();
+			}
+			ImGui::EndTable();
+		}
+		ImGui::End();
+	}
+}
+
+/**
+ * render the imGUI debug messages
+ */
+void GameEngine::World::debugGUImessages(std::list<gaMessage>& l)
+{
+	// display messages
+	ImGui::Begin("Messages");
+	if (ImGui::BeginTable("inframe Messages", 5, ImGuiTableFlags_Resizable)) {
+		ImGui::TableSetupColumn("From");
+		ImGui::TableSetupColumn("To");
+		ImGui::TableSetupColumn("Action");
+		ImGui::TableSetupColumn("iValue");
+		ImGui::TableSetupColumn("fValue");
+		ImGui::TableHeadersRow();
+
+		for (auto& message : l) {
+			message.debugGUI();
+		}
+		ImGui::EndTable();
+	}
+	ImGui::End();
 }
 
 World::~World()

@@ -152,6 +152,8 @@ dfLevel::dfLevel(dfFileSystem* fs, std::string file)
 	// build the bounding box of the trigger from the wall of the sector
 	std::string sectorname;
 	bool sectorIsElevator;
+	std::vector<dfLogicTrigger*> to_delete;
+
 	for (auto trigger : m_inf->m_triggers) {
 		sectorname = trigger->sector();
 		dfSector* sector = m_sectorsName[sectorname];
@@ -170,10 +172,24 @@ dfLevel::dfLevel(dfFileSystem* fs, std::string file)
 				}
 			}
 
-			// then the sector is actually an elevator, and the bounding box of the trigger has to be connected to the bounding box of the elevator
 			if (!sectorIsElevator) {
 				// the trigger is attached to a static wall
 				sector->setTriggerFromWall(trigger);
+			}
+			else {
+				// then the sector is actually an elevator, and the bounding box of the trigger has to be connected to the bounding box of the elevator
+				gaComponent* trig = sector->findComponent(DF_COMPONENT_TRIGGER);
+				if (trig == nullptr) {
+					// no trigger, so convert the elevator to a trigger
+					DarkForces::Component::InfElevator* celevator = static_cast<DarkForces::Component::InfElevator *>(sector->findComponent(DF_COMPONENT_INF_ELEVATOR));
+					DarkForces::Component::Trigger* ctrigger = new DarkForces::Component::Trigger();
+					celevator->addTrigger(ctrigger);
+
+					sector->addComponent(ctrigger, gaEntity::Flag::DELETE_AT_EXIT);
+				}
+
+				to_delete.push_back(trigger);
+				continue;
 			}
 
 			//sector->addTrigger(trigger);
@@ -196,10 +212,21 @@ dfLevel::dfLevel(dfFileSystem* fs, std::string file)
 		g_gaWorld.addClient(trigger);
 	}
 
-	spacePartitioning();		// partition of space for quick move
-	buildGeometry();			// build the geometry of each super sectors
+	// delete dfLogicTrigger's that are managed by elevators
+	for (auto trigger : to_delete) {
+		g_gaWorld.removeClient(trigger);
+		m_inf->m_triggers.remove(trigger);
+		delete(trigger);
+	}
 
-	convertDoors2Elevators();	// for every sector 'DOOR', create an elevator and a trigger
+	// partition of space for quick move
+	spacePartitioning();		
+
+	// build the geometry of each super sectors
+	buildGeometry();			
+
+	// for every sector 'DOOR', create an elevator and a trigger
+	convertDoors2Elevators();	
 
 	// Add doors
 	for (auto door : m_doors) {
