@@ -28,6 +28,9 @@ namespace GameEngine {
 			void triggerMove(void);								// send the move messages
 			void triggerMove(const glm::vec3& direction);		// send the move messages
 
+			void onReachedNextWayPoint(gaMessage* message);		// select the next waypoint or end the movement
+			void onBlockedWay(gaMessage* message);				// cancel the satnav because there is a obstable in front
+
 			void onGoto(gaMessage* message);
 			void onMove(gaMessage* message);
 			void onCollide(gaMessage* message);

@@ -112,6 +112,57 @@ void GameEngine::Behavior::SatNav::triggerMove(const glm::vec3& direction)
 }
 
 /**
+ * select the next waypoint or end the movement
+ */
+void GameEngine::Behavior::SatNav::onReachedNextWayPoint(gaMessage *message)
+{
+	glm::vec3 direction;
+
+	if (m_currentNavPoint == 0) {
+		m_status = Status::STILL;
+
+		// broadcast the end of the move (for animation)
+		m_entity->sendInternalMessage(gaMessage::END_MOVE);
+
+		// broadcast the point reached
+		m_entity->sendInternalMessage(gaMessage::SatNav_REACHED);
+
+		BehaviorNode::m_status = BehaviorNode::Status::SUCCESSED;
+	}
+	else {
+		// if we reached the next navpoint, move to the next one
+		direction = nextWayPoint(true);
+	}
+
+	if (m_status == Status::MOVE_TO_NEXT_WAYPOINT) {
+		m_transforms->m_position = m_entity->position() + direction;
+		triggerMove(direction);
+	}
+}
+
+/**
+ * cancel the satnav because there is a obstable in front
+ */
+void GameEngine::Behavior::SatNav::onBlockedWay(gaMessage *message)
+{
+	// broadcast the end of the move
+	m_status = Status::STILL;
+	m_entity->sendInternalMessage(gaMessage::END_MOVE);
+
+	float distance = glm::distance(m_entity->position(), m_destination);
+
+	// check how far we are from the destination
+	if (distance < m_entity->radius() * 1.5f) {
+		BehaviorNode::m_status = BehaviorNode::Status::SUCCESSED;
+	}
+	else {
+		// we are blocked and jumped over all waypoints
+		m_tree->blackboard("lastCollision", message->m_pServer);
+		BehaviorNode::m_status = BehaviorNode::Status::FAILED;
+	}
+}
+
+/**
  *
  */
 void GameEngine::Behavior::SatNav::onGoto(gaMessage* message)
@@ -129,7 +180,7 @@ void GameEngine::Behavior::SatNav::onGoto(gaMessage* message)
 }
 
 /**
- *
+ * monitor the entity moving
  */
 void GameEngine::Behavior::SatNav::onMove(gaMessage* message)
 {
@@ -150,6 +201,8 @@ void GameEngine::Behavior::SatNav::onMove(gaMessage* message)
 
 		glm::vec3 direction = p - m_entity->position();
 		direction.y = 0;	// move forward, physics will take care of problems
+
+		//printf("%.2f, %.2f, %.2f,\n", m_entity->position().x, m_entity->position().y, m_entity->position().z);
 
 		// did we reach the next navpoint ?
 		float d = glm::length(direction);
@@ -178,22 +231,7 @@ void GameEngine::Behavior::SatNav::onMove(gaMessage* message)
 			break;
 
 		case Status::REACHED_NEXT_WAYPOINT:
-			if (m_currentNavPoint == 0) {
-				m_status = Status::STILL;
-
-				// broadcast the end of the move (for animation)
-				m_entity->sendInternalMessage(gaMessage::END_MOVE);
-
-				// broadcast the point reached
-				m_entity->sendInternalMessage(gaMessage::SatNav_REACHED);
-
-				BehaviorNode::m_status = BehaviorNode::Status::SUCCESSED;
-			}
-			else {
-				// if we reached the next navpoint, move to the next one
-				direction = nextWayPoint(true);
-			}
-			break;
+			return onReachedNextWayPoint(message);
 		}
 
 		// and take action
@@ -209,46 +247,96 @@ void GameEngine::Behavior::SatNav::onMove(gaMessage* message)
  */
 void GameEngine::Behavior::SatNav::onCollide(gaMessage* message)
 {
-	float distance = glm::length(m_entity->position() - m_transforms->m_position);
+	float radius = m_entity->radius();
+	glm::vec3 position = m_entity->position();
+	glm::vec3 failedPosition = m_transforms->m_position;
+	float distance = glm::length(position - failedPosition);
 
-	if (distance < m_entity->radius() * 1.5f) {
+	//printf("%.2f:%.2f:%.2f - %.2f:%.2f:%.2f\n", position.x, position.y, position.z, failedPosition.x, failedPosition.y, failedPosition.z);
+
+	// check if we are not stuck, check the last 3 positions
+	if (m_previous.size() > 0) {
+		int32_t j;
+		uint32_t count = 0;
+		glm::vec3 barycenter = position;
+
+		for (uint32_t i = 0; i < 3; i++) {
+			j = m_previous_current - i;
+
+			// Move back one step and wait for next turn to retry
+			if (j < 0) {
+				j = m_previous.size() + j;
+			}
+
+			barycenter += m_previous[j];
+		}
+		barycenter /= 4.0f;
+		float move_radius = glm::distance(barycenter, position);
+		for (uint32_t i = 0; i < 3; i++) {
+			j = m_previous_current - i;
+
+			// Move back one step and wait for next turn to retry
+			if (j < 0) {
+				j = m_previous.size() + j;
+			}
+
+			move_radius += glm::distance(m_previous[j], barycenter);
+		}
+		move_radius /= 4.0f;
+
+		if (move_radius < radius/2.0f) {
+			// give up, we are facing a not planned object that refuses to move
+			return onBlockedWay(message);
+		}
+	}
+
+	// are we far from the next point ?
+	if (distance < radius * 1.5f) {
 		if (m_currentNavPoint > 0 && m_previous_size > 0) {
 			// maybe the next waypoint is next to a wall and we are nearly there, 
-			// so backtrack to the previous position and switch to the next waypoint
-			glm::vec3 direction;
+			// so backtrack to the previous position, move to the opposite direction of the collision and continue
+			glm::vec3 collision = message->m_v3value;
+			glm::vec3 target = m_navpoints[m_currentNavPoint];
 
-			if (m_previous_current > 0) {
-				m_previous_current--;
+			// distance between the failed position and the navpoint
+			glm::vec2 t(target.x, target.z);
+			glm::vec2 f(failedPosition.x, failedPosition.z);
+			float d = glm::length(t - f);
+			if (d < radius) {
+				// the waypoint is unreachable, so jump over and move to the next one
+				m_status = Status::REACHED_NEXT_WAYPOINT;
+				return onReachedNextWayPoint(message);
 			}
-			else {
-				m_previous_current = m_previous.size() - 1;
-			}
-			m_previous_size--;
 
-			m_transforms->m_position = m_previous[m_previous_current];
+			/*
+			glm::vec3 cX = (glm::vec3(-23.1, 0, 28.4) - collision)* glm::vec3(256, 0, 384) / glm::vec3(0.4, 0, 0.6) + glm::vec3(838, 0, 793);
+			glm::vec3 AX = (glm::vec3(-23.1, 0, 28.4) - position) * glm::vec3(256, 0, 384) / glm::vec3(0.4, 0, 0.6) + glm::vec3(838, 0, 793);
+			glm::vec3 BX = (glm::vec3(-23.1, 0, 28.4) - failedPosition) * glm::vec3(256, 0, 384) / glm::vec3(0.4, 0, 0.6) + glm::vec3(838, 0, 793);
+			*/
+
+			glm::vec3 ab(failedPosition - position);
+			glm::vec3 ac(collision - position);
+
+			d = glm::dot(ac, ab) / glm::length2(ab);
+			glm::vec3 p = position + ab * d;		// project collision on (position, target)
+			glm::vec3 o = p + (p - collision);			// project collision on the other side of (position, target)
+			glm::vec3 new_target = position + glm::normalize(o - position) * glm::length(ab);
+
+			m_transforms->m_position = new_target;
 			m_entity->translate(m_transforms->m_position);
+			triggerMove(new_target - position);
 
-			direction = nextWayPoint(true);
+			//printf("      -> % .2f: % .2f : % .2f\n", new_target.x, new_target.y, new_target.z);
 
-			m_transforms->m_position += direction;
-			triggerMove(direction);
+			/*
+			glm::vec3 pX = (glm::vec3(-23.1, 0, 28.4) - p) * glm::vec3(256, 0, 384) / glm::vec3(0.4, 0, 0.6) + glm::vec3(838, 0, 793);
+			glm::vec3 oX = (glm::vec3(-23.1, 0, 28.4) - o) * glm::vec3(256, 0, 384) / glm::vec3(0.4, 0, 0.6) + glm::vec3(838, 0, 793);
+			glm::vec3 nX = (glm::vec3(-23.1, 0, 28.4) - new_target) * glm::vec3(256, 0, 384) / glm::vec3(0.4, 0, 0.6) + glm::vec3(838, 0, 793);
+			*/
 		}
 		else {
 			// broadcast the end of the move
-			m_status = Status::STILL;
-			m_entity->sendInternalMessage(gaMessage::END_MOVE);
-
-			distance = glm::distance(m_entity->position(), m_destination);
-
-			// check how far we are from the destination
-			if (distance < m_entity->radius() * 1.5f) {
-				BehaviorNode::m_status = BehaviorNode::Status::SUCCESSED;
-			}
-			else {
-				// we are blocked and jumped over all waypoints
-				m_tree->blackboard("lastCollision", message->m_pServer);
-				BehaviorNode::m_status = BehaviorNode::Status::FAILED;
-			}
+			return onBlockedWay(message);
 		}
 	}
 	else {

@@ -297,12 +297,13 @@ float GameEngine::NavMesh::findPath(const glm::vec3& from, const glm::vec3& to, 
 
 	len += glm::distance(from1, from);
 	path.push_back(from);
-/*
+
+	/*
 	for (auto& p : path)
 		printf("(%.0f,%.0f),\n", p.x * 10.0f, p.z * 10.0f);
-
+	*/
 	printf("*\n");
-*/
+
 	return len;
 }
 

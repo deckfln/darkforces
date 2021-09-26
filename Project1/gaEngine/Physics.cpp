@@ -576,7 +576,7 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 			// if there is a collision
 			gaEntity* pushed = static_cast<gaEntity*>(nearest_collision->m_source);
 
-			if (entity->name() == "player")
+			if (entity->name() == "OFFCFIN.WAX(21)")
 				gaDebugLog(1, "GameEngine::Physics::wantToMove", entity->name() + " trying to pushe");
 
 			if (!entity->movable() && pushed->movable()) {
@@ -602,13 +602,14 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 				float radius = entity->radius();
 
 				glm::vec2 p_collision(nearest_collision->m_position.x, nearest_collision->m_position.z);
-				glm::vec2 p_old(old_position.x, old_position.z);
+				glm::vec2 p_old(new_position.x, new_position.z);
 
 				glm::vec2 delta2d = glm::normalize(p_collision - p_old);
-				glm::vec2 direction2d(direction.x, direction.y);
+				glm::vec2 direction2d(direction.x, direction.z);
 
 				float dot = glm::dot(direction2d, delta2d);
 				delta2d *= (radius + EPSILON);
+				float d = glm::length(delta2d);
 
 				// if the moved back position is nearly the same as the original position, block the movement
 				if (dot < 0 || glm::length(delta2d) < EPSILON) {
