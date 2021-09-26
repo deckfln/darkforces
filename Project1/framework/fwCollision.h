@@ -82,7 +82,7 @@ namespace Framework
         glm::vec3& point);
 
     /**
-     * Sphere/Triangle intersection (other version)
+     * Sphere/satNavTriangle intersection (other version)
      */
     bool intersectSphereTriangle(
         const glm::vec3& center_es,

@@ -14,32 +14,39 @@ using Coord = float;
 using Point = std::array<Coord, 2>;
 
 namespace GameEngine {
-	class Triangle {
+	class satNavPortal {
+		int32_t m_triangle = -1;								// index of the neighbor triangles
+		glm::vec2 m_center;										// center of the edge
+		glm::vec2 m_normal;										// normal of the portal
+		int32_t m_edges[2] = { -1,-1 };							// index of the vertices making the portal (portal p, vertices p*2 and p*2+1)
+		float m_dist = -1;										// distance from the 2 centers through the portal
+		friend class NavMesh;
+		friend class satNavTriangle;
+	};
+
+	class satNavTriangle {
 		uint32_t m_index;										// index of the triangle in the list
 		glm::vec2 m_vertices[3];
 		glm::vec3 m_center;
-		int32_t m_portals[3] = { -1, -1, -1 };					// index of the neighbor triangles
-		glm::vec2 m_portals_p[3];								// center of the edge
-		glm::vec2 m_normal[3];									// normal of the portal
-		int32_t m_edges[6] = {-1,-1,-1,-1,-1,-1};				// index of the vertices making the portal (portal p, vertices p*2 and p*2+1)
-		float m_dist[3] = { -1, -1, -1 };						// distance from the 2 centers through the portal
+		satNavPortal m_portals[3];
+
 		Framework::AABBox2D m_aabb;
 
 		friend class NavMesh;
 	public:
-		Triangle(const glm::vec2& t1, const glm::vec2& t2, const glm::vec2& t3, float z);
-		Triangle();
+		satNavTriangle(const glm::vec2& t1, const glm::vec2& t2, const glm::vec2& t3, float z);
+		satNavTriangle();
 		int32_t addPortal(uint32_t t);
 		int32_t findPortal(const Framework::Segment2D& line);	// return a portal crossed by line
 		bool inside(const glm::vec2& p);						// is point in triangle
 	};
 
 	class NavMesh {
-		std::vector<Triangle> m_triangles;
+		std::vector<satNavTriangle> m_triangles;
 		int32_t findTriangle(const glm::vec3& p);				// find the nearest triangle to the position
 		bool lineOfSight(
 			const Framework::Segment2D& line,
-			Triangle* from, Triangle* to);						// is there a direct line of sight (x,y) -> (x1,y1) over the triangles
+			satNavTriangle* from, satNavTriangle* to);						// is there a direct line of sight (x,y) -> (x1,y1) over the triangles
 		bool findDirectPath(uint32_t from, 
 			uint32_t to,
 			std::vector<glm::vec3>& graphPath,

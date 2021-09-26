@@ -133,7 +133,7 @@ bool Framework::lineSegIntersectTri(
 }
 
 /**
- * Sphere/Triangle intersection (other version)
+ * Sphere/satNavTriangle intersection (other version)
  */
 bool Framework::intersectSphereTriangle(
 	const glm::vec3& center_es, 

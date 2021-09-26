@@ -33,9 +33,9 @@ int32_t GameEngine::NavMesh::findTriangle(const glm::vec3& p)
 /**
  * is there a direct line of sight (x,y) -> (x1,y1) over the triangles
  */
-bool GameEngine::NavMesh::lineOfSight(const Framework::Segment2D& line, Triangle* from, Triangle* to)
+bool GameEngine::NavMesh::lineOfSight(const Framework::Segment2D& line, satNavTriangle* from, satNavTriangle* to)
 {
-	Triangle* current = from;
+	satNavTriangle* current = from;
 	int32_t portal;
 	std::vector<uint32_t> previousTriangles;
 
@@ -148,7 +148,7 @@ void GameEngine::NavMesh::addFloor(std::vector<std::vector<Point>>& polygons, fl
 		p2t::Point* t2 = triangles[i]->GetPoint(1);
 		p2t::Point* t3 = triangles[i]->GetPoint(2);
 
-		m_triangles[start] = Triangle(
+		m_triangles[start] = satNavTriangle(
 			glm::vec2(t1->x, t1->y),
 			glm::vec2(t2->x, t2->y),
 			glm::vec2(t3->x, t3->y),
@@ -158,42 +158,6 @@ void GameEngine::NavMesh::addFloor(std::vector<std::vector<Point>>& polygons, fl
 
 		start++;
 	}
-
-	// keep earcut for reference
-	/*
-	// Run tessellation
-	// Returns array of indices that refer to the vertices of the input polygon.
-	// e.g: the index 6 would refer to {25, 75} in this example.
-	// Three subsequent indices form a triangle. Output triangles are clockwise.
-	std::vector<N> indices = mapbox::earcut<N>(polygons);
-
-	// index the indexes IN the poly-lines of polygon 
-	std::vector<Point> vertices;
-
-	for (auto& poly : polygons) {
-		for (auto& p : poly) {
-			vertices.push_back(p);
-		}
-	}
-
-	start = m_triangles.size();
-	m_triangles.resize(m_triangles.size() + indices.size() / 3);
-
-	for (uint32_t i = 0; i < indices.size(); i+=3) {
-		int t1 = indices[i];
-		int t2 = indices[i + 1];
-		int t3 = indices[i + 2];
-
-		m_triangles[start] = Triangle(
-			glm::vec2(vertices[t1][0], vertices[t1][1]),
-			glm::vec2(vertices[t2][0], vertices[t2][1]),
-			glm::vec2(vertices[t3][0], vertices[t3][1]),
-			z
-		);
-
-		start++;
-	}
-	*/
 }
 
 /**
@@ -202,8 +166,8 @@ void GameEngine::NavMesh::addFloor(std::vector<std::vector<Point>>& polygons, fl
 void GameEngine::NavMesh::buildMesh(void)
 {
 	// connect the triangles by shared edges
-	Triangle* first;
-	Triangle* second;
+	satNavTriangle* first;
+	satNavTriangle* second;
 	float len;
 	glm::vec2 edge_center;
 	glm::vec2 normal;
@@ -232,19 +196,19 @@ void GameEngine::NavMesh::buildMesh(void)
 						normal.x = -first->m_vertices[i].y + first->m_vertices[iplus].y;
 						normal.y = first->m_vertices[i].x - first->m_vertices[iplus].x;
 
-						first->m_portals[i] = s;
-						first->m_dist[i] = len;
-						first->m_portals_p[i] = edge_center;
-						first->m_edges[i * 2] = i;
-						first->m_edges[i * 2 + 1] = iplus;
-						first->m_normal[i] = normal;
+						first->m_portals[i].m_triangle = s;
+						first->m_portals[i].m_dist = len;
+						first->m_portals[i].m_center = edge_center;
+						first->m_portals[i].m_edges[0] = i;
+						first->m_portals[i].m_edges[1] = iplus;
+						first->m_portals[i].m_normal = normal;
 
-						second->m_portals[jminus] = f;
-						second->m_dist[jminus] = len;
-						second->m_portals_p[jminus] = edge_center;
-						second->m_edges[jminus * 2] = j;
-						second->m_edges[jminus * 2 + 1] = jminus;
-						second->m_normal[jminus] = -normal;
+						second->m_portals[jminus].m_triangle = f;
+						second->m_portals[jminus].m_dist = len;
+						second->m_portals[jminus].m_center = edge_center;
+						second->m_portals[jminus].m_edges[0] = j;
+						second->m_portals[jminus].m_edges[1] = jminus;
+						second->m_portals[jminus].m_normal = -normal;
 					}
 				}
 			}
@@ -330,19 +294,19 @@ float GameEngine::NavMesh::findPath(const glm::vec3& from, const glm::vec3& to, 
 		}
 
 		for (int32_t i = 0; i < 3; i++) {
-			next = m_triangles[current].m_portals[i];
+			next = m_triangles[current].m_portals[i].m_triangle;
 			if (next < 0) {
 				continue;
 			}
 
-			new_cost = cost_so_far[current] + m_triangles[current].m_dist[i];
+			new_cost = cost_so_far[current] + m_triangles[current].m_portals[i].m_dist;
 			if (cost_so_far.count(next) == 0 || new_cost < cost_so_far[next]) {
 				cost_so_far[next] = new_cost;
 				priority = new_cost + glm::distance(m_triangles[end].m_center, m_triangles[next].m_center);
 				frontier.push(Node(next, priority));
 				came_from[next] = current;
 
-				came_from_portal[next] = m_triangles[current].m_portals_p[i];;
+				came_from_portal[next] = m_triangles[current].m_portals[i].m_center;
 			}
 		}
 	}
@@ -395,7 +359,7 @@ float GameEngine::NavMesh::findPath(const glm::vec3& from, const glm::vec3& to, 
 
 static uint32_t g_index = 0;
 
-GameEngine::Triangle::Triangle(const glm::vec2& t1, const glm::vec2& t2, const glm::vec2& t3, float z)
+GameEngine::satNavTriangle::satNavTriangle(const glm::vec2& t1, const glm::vec2& t2, const glm::vec2& t3, float z)
 {
 	m_vertices[0] = t1;
 	m_vertices[1] = t2;
@@ -407,16 +371,16 @@ GameEngine::Triangle::Triangle(const glm::vec2& t1, const glm::vec2& t2, const g
 	m_aabb.set(&m_vertices[0], 3);
 }
 
-GameEngine::Triangle::Triangle()
+GameEngine::satNavTriangle::satNavTriangle()
 {
 }
 
-int32_t GameEngine::Triangle::addPortal(uint32_t t)
+int32_t GameEngine::satNavTriangle::addPortal(uint32_t t)
 {
 	int32_t f = -1;
 	for (int32_t i = 0; i < 3; i++) {
-		if (m_portals[i] == -1) {
-			m_portals[i] = t;
+		if (m_portals[i].m_triangle == -1) {
+			m_portals[i].m_triangle = t;
 			f = i;
 			break;
 		}
@@ -432,7 +396,7 @@ int32_t GameEngine::Triangle::addPortal(uint32_t t)
 /**
  * return a portal crossed by line
  */
-int32_t GameEngine::Triangle::findPortal(const Framework::Segment2D& line)
+int32_t GameEngine::satNavTriangle::findPortal(const Framework::Segment2D& line)
 {
 	Framework::Segment2D edge;
 	uint32_t v, v1;	// vertices
@@ -451,17 +415,17 @@ int32_t GameEngine::Triangle::findPortal(const Framework::Segment2D& line)
 
 	// test each edge
 	for (uint32_t i = 0; i < 3; i++) {
-		nextTriangle = m_portals[i];
+		nextTriangle = m_portals[i].m_triangle;
 		// there is actually a portal on that edge
 		if (nextTriangle >= 0) {
 
 			// do not test portal looking backward
-			if (glm::dot(line.direction(), m_normal[i]) <= 0) {
+			if (glm::dot(line.direction(), m_portals[i].m_normal) <= 0) {
 				continue;
 			}
 
-			v = m_edges[i * 2];
-			v1 = m_edges[i * 2 + 1];
+			v = m_portals[i].m_edges[0];
+			v1 = m_portals[i].m_edges[1];
 			edge.set(m_vertices[v], m_vertices[v1]);
 
 			if (edge.intersect(line, intersection)) {
@@ -476,7 +440,7 @@ int32_t GameEngine::Triangle::findPortal(const Framework::Segment2D& line)
 /**
  * is point in triangle
  */
-bool GameEngine::Triangle::inside(const glm::vec2& p)
+bool GameEngine::satNavTriangle::inside(const glm::vec2& p)
 {
 	// broadtest against AABB
 	if (!m_aabb.inside(p)) {
