@@ -696,6 +696,12 @@
     <ClCompile Include="darkforces\dfComponent\dfSign.cpp">
       <Filter>Fichiers sources\Dark Forces\dfComponent</Filter>
     </ClCompile>
+    <ClCompile Include="framework\math\fwSegment2D.cpp">
+      <Filter>Fichiers sources\Framework\math</Filter>
+    </ClCompile>
+    <ClCompile Include="framework\math\fwAABBox2D.cpp">
+      <Filter>Fichiers sources\Framework\math</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="glad\glad.h">
@@ -1312,6 +1318,12 @@
     </ClInclude>
     <ClInclude Include="darkforces\dfComponent\dfSign.h">
       <Filter>Fichiers d%27en-tête\DarkForces\dfComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="framework\math\fwSegment2D.h">
+      <Filter>Fichiers d%27en-tête\Framework\math</Filter>
+    </ClInclude>
+    <ClInclude Include="framework\math\fwAABBox2D.h">
+      <Filter>Fichiers d%27en-tête\Framework\math</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

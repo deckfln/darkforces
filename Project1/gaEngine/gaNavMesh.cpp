@@ -18,22 +18,88 @@ GameEngine::NavMesh g_navMesh;
 /**
  * // find the nearest triangle to the position
  */
-uint32_t GameEngine::NavMesh::findTriangle(const glm::vec3& p)
+int32_t GameEngine::NavMesh::findTriangle(const glm::vec3& p)
 {
-	int32_t nearest_i = 0;
-	glm::vec3 nearest = m_triangles[0].m_center;
-	float l = glm::distance(nearest, p);
-	float l1;
-
-	for (uint32_t i = 1; i < m_triangles.size(); i++) {
-		l1 = glm::distance(m_triangles[i].m_center, p);
-		if (l1 < l) {
-			nearest_i = i;
-			l = l1;
+	glm::vec2 p2D(p.x, p.z);
+	for (uint32_t i = 0; i < m_triangles.size(); i++) {
+		if (p.y == m_triangles[i].m_center.y && m_triangles[i].inside(p2D)) {
+			return i;
 		}
 	}
 
-	return nearest_i;
+	return -1;
+}
+
+/**
+ * is there a direct line of sight (x,y) -> (x1,y1) over the triangles
+ */
+bool GameEngine::NavMesh::lineOfSight(const Framework::Segment2D& line, Triangle* from, Triangle* to)
+{
+	Triangle* current = from;
+	int32_t portal;
+	std::vector<uint32_t> previousTriangles;
+
+	while (current != to) {
+		/*
+		for (uint32_t i = 0; i < 3; i++) {
+			printf("triangle:%.0f,%.0f, ",
+				current->m_vertices[i].x,
+				current->m_vertices[i].y);
+		}
+		printf("\n");
+		*/
+
+		portal = current->findPortal(line);
+		if (portal < 0) {
+			return false;
+		}
+		current = &m_triangles[portal];
+	}
+
+	return true;
+}
+
+/**
+ * build a new direct path from->to using the graph path
+ */
+bool GameEngine::NavMesh::findDirectPath(uint32_t from, uint32_t to, 
+	std::vector<glm::vec3>& graphPath, 
+	std::vector<glm::vec3>& directPath)
+{
+	// try to find a direct path from,to [ converted to 2D ]
+	glm::vec3 from3D = graphPath[from] * 10.0f;
+	glm::vec3 to3D = graphPath[to] * 10.0f;
+
+	glm::vec2 from2D(from3D.x, from3D.z);
+	glm::vec2 to2D(to3D.x, to3D.z);
+	Framework::Segment2D line(from2D, to2D);
+
+	/*
+	printf("LOS: %f,%f,%f,%f\n",
+		from2D.x, from2D.y,
+		to2D.x, to2D.y);
+	*/
+	int32_t trFrom = findTriangle(from3D);
+	int32_t trTo = findTriangle(to3D);
+
+	if (lineOfSight(line, &m_triangles[trFrom], &m_triangles[trTo])) {
+		directPath.push_back(graphPath[to]);
+		return true;
+	}
+
+	// else split the graph in half and try to build 2 direct paths
+
+	uint32_t mid = from + (to - from) / 2;
+
+	if (mid - from == 1) {
+		directPath.push_back(from3D);
+		directPath.push_back(to3D);
+	}
+	else {
+		findDirectPath(from, mid, graphPath, directPath);
+		findDirectPath(mid, to, graphPath, directPath);
+	}
+	return false;
 }
 
 /**
@@ -88,6 +154,7 @@ void GameEngine::NavMesh::addFloor(std::vector<std::vector<Point>>& polygons, fl
 			glm::vec2(t3->x, t3->y),
 			z
 		);
+		m_triangles[start].m_index = start;
 
 		start++;
 	}
@@ -137,8 +204,9 @@ void GameEngine::NavMesh::buildMesh(void)
 	// connect the triangles by shared edges
 	Triangle* first;
 	Triangle* second;
-	int32_t p;
 	float len;
+	glm::vec2 edge_center;
+	glm::vec2 normal;
 
 	for (uint32_t f = 0; f < m_triangles.size(); f++) {
 		for (uint32_t s = f + 1; s < m_triangles.size(); s++) {
@@ -153,22 +221,32 @@ void GameEngine::NavMesh::buildMesh(void)
 					uint32_t jminus = (j == 0) ? 2 : j - 1;
 
 					if (
-						first->m_edges[i] == second->m_edges[j] &&
-						first->m_edges[iplus] == second->m_edges[jminus] &&
+						first->m_vertices[i] == second->m_vertices[j] &&
+						first->m_vertices[iplus] == second->m_vertices[jminus] &&
 						abs(first->m_center.y - second->m_center.y) <= 2.06f
 						) {
 						len = glm::distance(first->m_center, second->m_center);
 
+						edge_center = (first->m_vertices[i] + first->m_vertices[iplus]) / 2.0f;
+
+						normal.x = -first->m_vertices[i].y + first->m_vertices[iplus].y;
+						normal.y = first->m_vertices[i].x - first->m_vertices[iplus].x;
+
 						first->m_portals[i] = s;
 						first->m_dist[i] = len;
-						first->m_portals_p[i] = (first->m_edges[i] + first->m_edges[iplus])/2.0f;
+						first->m_portals_p[i] = edge_center;
+						first->m_edges[i * 2] = i;
+						first->m_edges[i * 2 + 1] = iplus;
+						first->m_normal[i] = normal;
 
 						second->m_portals[jminus] = f;
 						second->m_dist[jminus] = len;
-						second->m_portals_p[jminus] = (first->m_edges[i] + first->m_edges[iplus]) / 2.0f;
+						second->m_portals_p[jminus] = edge_center;
+						second->m_edges[jminus * 2] = j;
+						second->m_edges[jminus * 2 + 1] = jminus;
+						second->m_normal[jminus] = -normal;
 					}
 				}
-
 			}
 
 		}
@@ -179,12 +257,12 @@ void GameEngine::NavMesh::buildMesh(void)
 		printf("%d,%.02f, %.0f,%.0f,%.0f,%.0f,%.0f,%.0f,%d,%d,%d\n",
 			i,
 			m_triangles[i].m_center.y,
-			m_triangles[i].m_edges[0].x,
-			m_triangles[i].m_edges[0].y,
-			m_triangles[i].m_edges[1].x,
-			m_triangles[i].m_edges[1].y,
-			m_triangles[i].m_edges[2].x,
-			m_triangles[i].m_edges[2].y,
+			m_triangles[i].m_vertices[0].x,
+			m_triangles[i].m_vertices[0].y,
+			m_triangles[i].m_vertices[1].x,
+			m_triangles[i].m_vertices[1].y,
+			m_triangles[i].m_vertices[2].x,
+			m_triangles[i].m_vertices[2].y,
 			m_triangles[i].m_portals[0],
 			m_triangles[i].m_portals[1],
 			m_triangles[i].m_portals[2]
@@ -216,8 +294,10 @@ bool operator> (const Node& node1, const Node& node2)
 }
 
 
-float GameEngine::NavMesh::findPath(const glm::vec3& from, const glm::vec3& to, std::vector<glm::vec3>& path)
+float GameEngine::NavMesh::findPath(const glm::vec3& from, const glm::vec3& to, std::vector<glm::vec3>& directPath)
 {
+	std::vector<glm::vec3> graphPath;		// path computed from the navmesh graph
+
 	uint32_t start = findTriangle(from * 10.0f);
 	uint32_t end = findTriangle(to * 10.0f);
 
@@ -238,7 +318,6 @@ float GameEngine::NavMesh::findPath(const glm::vec3& from, const glm::vec3& to, 
 	Node c;
 	float new_cost;
 	float priority;
-	glm::vec2 p, p1;
 
 	while (!frontier.empty()) {
 		c = frontier.top();
@@ -273,7 +352,7 @@ float GameEngine::NavMesh::findPath(const glm::vec3& from, const glm::vec3& to, 
 	}
 
 	// back track from end to start
-	path.push_back(to);
+	graphPath.push_back(to);
 	glm::vec2 portal;
 	float len = 0;
 	glm::vec3 from1 = to, to1;
@@ -287,7 +366,7 @@ float GameEngine::NavMesh::findPath(const glm::vec3& from, const glm::vec3& to, 
 			//to1 = m_triangles[current].m_center;
 
 			//path.push_back(glm::vec3(portal.x, m_triangles[current].m_center.y, portal.y) / 10.0f);
-			path.push_back( to1 / 10.0f);
+			graphPath.push_back( to1 / 10.0f);
 
 			len += glm::distance(from1, to1);
 
@@ -296,31 +375,36 @@ float GameEngine::NavMesh::findPath(const glm::vec3& from, const glm::vec3& to, 
 	};
 
 	len += glm::distance(from1, from);
-	path.push_back(from);
+	graphPath.push_back(from);
+
+	// and now optimize the path using direct paths
+	directPath.push_back(to);
+	findDirectPath(0, graphPath.size() - 1, graphPath, directPath);
 
 	/*
-	for (auto& p : path)
-		printf("(%.0f,%.0f),\n", p.x * 10.0f, p.z * 10.0f);
+	for (auto& p : directPath) {
+		printf("%f,%f,\n", p.x, p.z);
+	}
 	*/
-	printf("*\n");
-
 	return len;
 }
 
 /**
- *
+ * manage nav triangles
  */
 
 static uint32_t g_index = 0;
 
 GameEngine::Triangle::Triangle(const glm::vec2& t1, const glm::vec2& t2, const glm::vec2& t3, float z)
 {
-	m_edges[0] = t1;
-	m_edges[1] = t2;
-	m_edges[2] = t3;
+	m_vertices[0] = t1;
+	m_vertices[1] = t2;
+	m_vertices[2] = t3;
 
 	glm::vec2 c = (t1 + t2 + t3) / 3.0f;
 	m_center = glm::vec3(c.x, z, c.y);
+
+	m_aabb.set(&m_vertices[0], 3);
 }
 
 GameEngine::Triangle::Triangle()
@@ -342,5 +426,83 @@ int32_t GameEngine::Triangle::addPortal(uint32_t t)
 		__debugbreak();
 	}
 
-	return f;
+ 	return f;
+}
+
+/**
+ * return a portal crossed by line
+ */
+int32_t GameEngine::Triangle::findPortal(const Framework::Segment2D& line)
+{
+	Framework::Segment2D edge;
+	uint32_t v, v1;	// vertices
+	int32_t nextTriangle;
+	glm::vec2 intersection;
+	const glm::vec2& start = line.start();
+	const glm::vec2& end = line.end();
+
+	/*
+	for (uint32_t i = 0; i < 3; i++) {
+		printf("normal:%f,%f,%f,%f\n",
+			m_portals_p[i].x, m_portals_p[i].y,
+			m_portals_p[i].x + m_normal[i].x, m_portals_p[i].y + m_normal[i].y);
+	}
+	*/
+
+	// test each edge
+	for (uint32_t i = 0; i < 3; i++) {
+		nextTriangle = m_portals[i];
+		// there is actually a portal on that edge
+		if (nextTriangle >= 0) {
+
+			// do not test portal looking backward
+			if (glm::dot(line.direction(), m_normal[i]) <= 0) {
+				continue;
+			}
+
+			v = m_edges[i * 2];
+			v1 = m_edges[i * 2 + 1];
+			edge.set(m_vertices[v], m_vertices[v1]);
+
+			if (edge.intersect(line, intersection)) {
+				//printf(">%f,%f\n", m_portals_p[i].x, m_portals_p[i].y);
+				return nextTriangle;
+			}
+		}
+	}
+	return -1;
+}
+
+/**
+ * is point in triangle
+ */
+bool GameEngine::Triangle::inside(const glm::vec2& p)
+{
+	// broadtest against AABB
+	if (!m_aabb.inside(p)) {
+		return false;
+	}
+
+	//http://koozdra.wordpress.com/2012/06/27/javascript-is-point-in-triangle/
+	//credit: http://www.blackpawn.com/texts/pointinpoly/default.html
+	glm::vec2& a = m_vertices[0];
+	glm::vec2& b = m_vertices[1];
+	glm::vec2&  c = m_vertices[2];
+
+	glm::vec2 v0 = c - a;;
+	glm::vec2 v1 = b - a;
+	glm::vec2 v2 = p - a;
+
+	float dot00 = (v0[0] * v0[0]) + (v0[1] * v0[1]);
+	float dot01 = (v0[0] * v1[0]) + (v0[1] * v1[1]);
+	float dot02 = (v0[0] * v2[0]) + (v0[1] * v2[1]);
+	float dot11 = (v1[0] * v1[0]) + (v1[1] * v1[1]);
+	float dot12 = (v1[0] * v2[0]) + (v1[1] * v2[1]);
+
+	float invDenom = 1 / (dot00 * dot11 - dot01 * dot01);
+
+	float u = (dot11 * dot02 - dot01 * dot12) * invDenom;
+	float v = (dot00 * dot12 - dot01 * dot02) * invDenom;
+
+	return ((u >= 0) && (v >= 0) && (u + v <= 1));
 }

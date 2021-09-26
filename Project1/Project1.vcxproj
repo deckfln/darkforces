@@ -236,9 +236,11 @@
     <ClCompile Include="framework\materials\fwOutlineMaterial.cpp" />
     <ClCompile Include="framework\fwObject3D.cpp" />
     <ClCompile Include="framework\fwScene.cpp" />
+    <ClCompile Include="framework\math\fwAABBox2D.cpp" />
     <ClCompile Include="framework\math\fwBox3.cpp" />
     <ClCompile Include="framework\math\fwCylinder.cpp" />
     <ClCompile Include="framework\math\fwPlane.cpp" />
+    <ClCompile Include="framework\math\fwSegment2D.cpp" />
     <ClCompile Include="framework\math\fwSphere.cpp" />
     <ClCompile Include="framework\math\Segment.cpp" />
     <ClCompile Include="framework\mesh\fwMeshSkinned.cpp" />
@@ -441,9 +443,11 @@
     <ClInclude Include="framework\materials\fwOutlineMaterial.h" />
     <ClInclude Include="framework\fwObject3D.h" />
     <ClInclude Include="framework\fwScene.h" />
+    <ClInclude Include="framework\math\fwAABBox2D.h" />
     <ClInclude Include="framework\math\fwBox3.h" />
     <ClInclude Include="framework\math\fwCylinder.h" />
     <ClInclude Include="framework\math\fwPlane.h" />
+    <ClInclude Include="framework\math\fwSegment2D.h" />
     <ClInclude Include="framework\math\fwSphere.h" />
     <ClInclude Include="framework\math\Segment.h" />
     <ClInclude Include="framework\mesh\fwMeshSkinned.h" />
