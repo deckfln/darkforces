@@ -22,7 +22,9 @@ int32_t GameEngine::NavMesh::findTriangle(const glm::vec3& p)
 {
 	glm::vec2 p2D(p.x, p.z);
 	for (uint32_t i = 0; i < m_triangles.size(); i++) {
-		if (p.y == m_triangles[i].m_center.y && m_triangles[i].inside(p2D)) {
+		float d = p.y - m_triangles[i].m_center.y;
+
+		if ((d >= -FLT_EPSILON && d <= 8.0f) && m_triangles[i].inside(p2D)) {
 			return i;
 		}
 	}
@@ -215,10 +217,9 @@ void GameEngine::NavMesh::buildMesh(void)
 
 		}
 	}
-
 	/*
 	for (uint32_t i = 0; i < m_triangles.size(); i++) {
-		printf("%d,%.02f, %.0f,%.0f,%.0f,%.0f,%.0f,%.0f,%d,%d,%d\n",
+		printf("%d,%.02f, %.0f,%.0f,%.0f,%.0f,%.0f,%.0f\n",
 			i,
 			m_triangles[i].m_center.y,
 			m_triangles[i].m_vertices[0].x,
@@ -226,10 +227,7 @@ void GameEngine::NavMesh::buildMesh(void)
 			m_triangles[i].m_vertices[1].x,
 			m_triangles[i].m_vertices[1].y,
 			m_triangles[i].m_vertices[2].x,
-			m_triangles[i].m_vertices[2].y,
-			m_triangles[i].m_portals[0],
-			m_triangles[i].m_portals[1],
-			m_triangles[i].m_portals[2]
+			m_triangles[i].m_vertices[2].y		
 		);
 	}
 	*/
@@ -262,8 +260,12 @@ float GameEngine::NavMesh::findPath(const glm::vec3& from, const glm::vec3& to, 
 {
 	std::vector<glm::vec3> graphPath;		// path computed from the navmesh graph
 
-	uint32_t start = findTriangle(from * 10.0f);
-	uint32_t end = findTriangle(to * 10.0f);
+	int32_t start = findTriangle(from * 10.0f);
+	int32_t end = findTriangle(to * 10.0f);
+
+	if (start < 0 || end < 0) {
+		return -1;
+	}
 
 	// A* algorithm
 	// https://www.redblobgames.com/pathfinding/a-star/introduction.html
@@ -344,12 +346,13 @@ float GameEngine::NavMesh::findPath(const glm::vec3& from, const glm::vec3& to, 
 	// and now optimize the path using direct paths
 	directPath.push_back(to);
 	findDirectPath(0, graphPath.size() - 1, graphPath, directPath);
-
-	/*
+	
+	printf(">\n");
 	for (auto& p : directPath) {
 		printf("%f,%f,\n", p.x, p.z);
 	}
-	*/
+	printf("<\n");
+	
 	return len;
 }
 

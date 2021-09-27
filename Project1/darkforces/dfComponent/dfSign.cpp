@@ -137,8 +137,14 @@ void DarkForces::Component::Sign::buildGeometry(dfSector* sector, dfWall* wall, 
 		image->m_textureID,
 		sector->m_ambient);
 
-	m_position = glm::vec3(sign_p.x, sign_p.z, sign_p.y) / 10.0f;
-	m_localAABB.set(0, 0, 0, (sign_p1.x - sign_p.x)/10.0f, (sign_p1.z - sign_p.z) / 10.0f, (sign_p1.y - sign_p.y) / 10.0f);
+	// position of the sign is the center of the sign. move to gl space
+	m_position = (glm::vec3(sign_p.x, sign_p.z, sign_p.y) + glm::vec3(sign_p1.x, sign_p1.z, sign_p1.y)) / 20.0f;
+
+	float dx = (sign_p1.x - sign_p.x) / 20.0f;
+	float dy = (sign_p1.z - sign_p.z) / 20.0f;
+	float dz = (sign_p1.y - sign_p.y) / 20.0f;
+
+	m_localAABB.set(-dx, -dy, -dz, dx, dy, dz);
 
 	// check if it is needed to resize the geometry
 	m_mesh->resizeGeometry();

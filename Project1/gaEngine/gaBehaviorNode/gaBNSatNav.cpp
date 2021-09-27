@@ -184,6 +184,8 @@ void GameEngine::Behavior::SatNav::onGoto(gaMessage* message)
  */
 void GameEngine::Behavior::SatNav::onMove(gaMessage* message)
 {
+	//printf("%.04f,%.04f,\n", m_entity->position().x, m_entity->position().z);
+
 	if (m_status == Status::MOVE_TO_NEXT_WAYPOINT) {
 		// record the current position (to be able to backtrack)
 		m_previous[m_previous_current] = m_entity->position();
@@ -201,8 +203,6 @@ void GameEngine::Behavior::SatNav::onMove(gaMessage* message)
 
 		glm::vec3 direction = p - m_entity->position();
 		direction.y = 0;	// move forward, physics will take care of problems
-
-		//printf("%.2f, %.2f, %.2f,\n", m_entity->position().x, m_entity->position().y, m_entity->position().z);
 
 		// did we reach the next navpoint ?
 		float d = glm::length(direction);
@@ -254,11 +254,11 @@ void GameEngine::Behavior::SatNav::onCollide(gaMessage* message)
 
 	//printf("%.2f:%.2f:%.2f - %.2f:%.2f:%.2f\n", position.x, position.y, position.z, failedPosition.x, failedPosition.y, failedPosition.z);
 
-	// check if we are not stuck, check the last 3 positions
+	// check if we are not stuck, test the last 3 positions
 	if (m_previous.size() > 0) {
 		int32_t j;
 		uint32_t count = 0;
-		glm::vec3 barycenter = position;
+		glm::vec3 barycenter(0);
 
 		for (uint32_t i = 0; i < 3; i++) {
 			j = m_previous_current - i;
@@ -270,8 +270,8 @@ void GameEngine::Behavior::SatNav::onCollide(gaMessage* message)
 
 			barycenter += m_previous[j];
 		}
-		barycenter /= 4.0f;
-		float move_radius = glm::distance(barycenter, position);
+		barycenter /= 3.0f;
+		float move_radius = 0;
 		for (uint32_t i = 0; i < 3; i++) {
 			j = m_previous_current - i;
 
@@ -282,7 +282,7 @@ void GameEngine::Behavior::SatNav::onCollide(gaMessage* message)
 
 			move_radius += glm::distance(m_previous[j], barycenter);
 		}
-		move_radius /= 4.0f;
+		move_radius /= 3.0f;
 
 		if (move_radius < radius/2.0f) {
 			// give up, we are facing a not planned object that refuses to move
@@ -290,70 +290,47 @@ void GameEngine::Behavior::SatNav::onCollide(gaMessage* message)
 		}
 	}
 
-	// are we far from the next point ?
-	if (distance < radius * 1.5f) {
-		if (m_currentNavPoint > 0 && m_previous_size > 0) {
-			// maybe the next waypoint is next to a wall and we are nearly there, 
-			// so backtrack to the previous position, move to the opposite direction of the collision and continue
-			glm::vec3 collision = message->m_v3value;
-			glm::vec3 target = m_navpoints[m_currentNavPoint];
+	// maybe the next waypoint is next to a wall and we are nearly there, 
+	// so backtrack to the previous position, move to the opposite direction of the collision and continue
+	glm::vec3 collision = message->m_v3value;
+	glm::vec3 target = m_navpoints[m_currentNavPoint];
 
-			// distance between the failed position and the navpoint
-			glm::vec2 t(target.x, target.z);
-			glm::vec2 f(failedPosition.x, failedPosition.z);
-			float d = glm::length(t - f);
-			if (d < radius) {
-				// the waypoint is unreachable, so jump over and move to the next one
-				m_status = Status::REACHED_NEXT_WAYPOINT;
-				return onReachedNextWayPoint(message);
-			}
-
-			/*
-			glm::vec3 cX = (glm::vec3(-23.1, 0, 28.4) - collision)* glm::vec3(256, 0, 384) / glm::vec3(0.4, 0, 0.6) + glm::vec3(838, 0, 793);
-			glm::vec3 AX = (glm::vec3(-23.1, 0, 28.4) - position) * glm::vec3(256, 0, 384) / glm::vec3(0.4, 0, 0.6) + glm::vec3(838, 0, 793);
-			glm::vec3 BX = (glm::vec3(-23.1, 0, 28.4) - failedPosition) * glm::vec3(256, 0, 384) / glm::vec3(0.4, 0, 0.6) + glm::vec3(838, 0, 793);
-			*/
-
-			glm::vec3 ab(failedPosition - position);
-			glm::vec3 ac(collision - position);
-
-			d = glm::dot(ac, ab) / glm::length2(ab);
-			glm::vec3 p = position + ab * d;		// project collision on (position, target)
-			glm::vec3 o = p + (p - collision);			// project collision on the other side of (position, target)
-			glm::vec3 new_target = position + glm::normalize(o - position) * glm::length(ab);
-
-			m_transforms->m_position = new_target;
-			m_entity->translate(m_transforms->m_position);
-			triggerMove(new_target - position);
-
-			//printf("      -> % .2f: % .2f : % .2f\n", new_target.x, new_target.y, new_target.z);
-
-			/*
-			glm::vec3 pX = (glm::vec3(-23.1, 0, 28.4) - p) * glm::vec3(256, 0, 384) / glm::vec3(0.4, 0, 0.6) + glm::vec3(838, 0, 793);
-			glm::vec3 oX = (glm::vec3(-23.1, 0, 28.4) - o) * glm::vec3(256, 0, 384) / glm::vec3(0.4, 0, 0.6) + glm::vec3(838, 0, 793);
-			glm::vec3 nX = (glm::vec3(-23.1, 0, 28.4) - new_target) * glm::vec3(256, 0, 384) / glm::vec3(0.4, 0, 0.6) + glm::vec3(838, 0, 793);
-			*/
-		}
-		else {
-			// broadcast the end of the move
-			return onBlockedWay(message);
-		}
+	// distance between the failed position and the navpoint
+	glm::vec2 t(target.x, target.z);
+	glm::vec2 f(failedPosition.x, failedPosition.z);
+	float d = glm::length(t - f);
+	if (d < radius) {
+		// the waypoint is unreachable, so jump over and move to the next one
+		m_status = Status::REACHED_NEXT_WAYPOINT;
+		return onReachedNextWayPoint(message);
 	}
-	else {
-		// Move back one step and wait for next turn to retry
-		if (m_previous_current > 0) {
-			m_previous_current--;
-		}
-		else {
-			m_previous_current = m_previous.size() - 1;
-		}
 
-		m_previous_size--;
+	/*
+	glm::vec3 cX = (glm::vec3(-23.1, 0, 28.4) - collision)* glm::vec3(256, 0, 384) / glm::vec3(0.4, 0, 0.6) + glm::vec3(838, 0, 793);
+	glm::vec3 AX = (glm::vec3(-23.1, 0, 28.4) - position) * glm::vec3(256, 0, 384) / glm::vec3(0.4, 0, 0.6) + glm::vec3(838, 0, 793);
+	glm::vec3 BX = (glm::vec3(-23.1, 0, 28.4) - failedPosition) * glm::vec3(256, 0, 384) / glm::vec3(0.4, 0, 0.6) + glm::vec3(838, 0, 793);
+	*/
 
-		m_transforms->m_position = m_previous[m_previous_current];
+	glm::vec3 ab(failedPosition - position);
+	glm::vec3 ac(collision - position);
 
-		triggerMove();
-	}
+	d = glm::dot(ac, ab) / glm::length2(ab);
+	glm::vec3 p = position + ab * d;			// project collision on (position, target)
+	glm::vec3 o = p + (p - collision);			// project collision on the other side of (position, target)
+	glm::vec3 ao = glm::normalize(o - position) * glm::length(ab);
+	glm::vec3 new_target = position + ao * 2.0f;
+
+	m_transforms->m_position = new_target;
+	m_entity->translate(m_transforms->m_position);
+	triggerMove(new_target - position);
+
+	printf("%.04f,%.04f,%.04f,%.04f,%.04f,%.04f,%.04f,%.04f,\n", position.x, position.z, failedPosition.x, failedPosition.z, new_target.x, new_target.z, collision.x, collision.z);
+
+	/*
+	glm::vec3 pX = (glm::vec3(-23.1, 0, 28.4) - p) * glm::vec3(256, 0, 384) / glm::vec3(0.4, 0, 0.6) + glm::vec3(838, 0, 793);
+	glm::vec3 oX = (glm::vec3(-23.1, 0, 28.4) - o) * glm::vec3(256, 0, 384) / glm::vec3(0.4, 0, 0.6) + glm::vec3(838, 0, 793);
+	glm::vec3 nX = (glm::vec3(-23.1, 0, 28.4) - new_target) * glm::vec3(256, 0, 384) / glm::vec3(0.4, 0, 0.6) + glm::vec3(838, 0, 793);
+	*/
 }
 
 /**

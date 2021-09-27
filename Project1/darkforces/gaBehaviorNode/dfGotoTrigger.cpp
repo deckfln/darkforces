@@ -103,7 +103,10 @@ GameEngine::BehaviorNode* DarkForces::Behavior::GotoTrigger::nextNode(void)
 		}
 		else {
 			// we hit "something" let's test the distance from here to the trigger. if we are near, let's pretend everything is OK
-			float d = glm::distance(m_entity->position(), m_targetTrigger->position());
+			// and do it in 2D, the trigger can be upward
+			glm::vec2 e(m_entity->position().x, m_entity->position().z);
+			glm::vec2 t(m_targetTrigger->position().x, m_targetTrigger->position().z);
+			float d = glm::distance(e, t);
 
 			if (d < 0.5f) {
 				activate_trigger();

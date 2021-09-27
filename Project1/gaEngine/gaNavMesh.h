@@ -14,6 +14,9 @@ using Coord = float;
 using Point = std::array<Coord, 2>;
 
 namespace GameEngine {
+	/**
+	 * portals connect triangles together through edges
+	 */
 	class satNavPortal {
 		int32_t m_triangle = -1;								// index of the neighbor triangles
 		glm::vec2 m_center;										// center of the edge
@@ -24,6 +27,9 @@ namespace GameEngine {
 		friend class satNavTriangle;
 	};
 
+	/**
+	 * extend a triangle with portals and normals
+	 */
 	class satNavTriangle {
 		uint32_t m_index;										// index of the triangle in the list
 		glm::vec2 m_vertices[3];
@@ -41,12 +47,17 @@ namespace GameEngine {
 		bool inside(const glm::vec2& p);						// is point in triangle
 	};
 
+	/**
+	 *
+	 */
 	class NavMesh {
 		std::vector<satNavTriangle> m_triangles;
+		bool m_debug = false;
+
 		int32_t findTriangle(const glm::vec3& p);				// find the nearest triangle to the position
 		bool lineOfSight(
 			const Framework::Segment2D& line,
-			satNavTriangle* from, satNavTriangle* to);						// is there a direct line of sight (x,y) -> (x1,y1) over the triangles
+			satNavTriangle* from, satNavTriangle* to);			// is there a direct line of sight (x,y) -> (x1,y1) over the triangles
 		bool findDirectPath(uint32_t from, 
 			uint32_t to,
 			std::vector<glm::vec3>& graphPath,
