@@ -258,7 +258,7 @@ void GameEngine::Behavior::SatNav::onCollide(gaMessage* message)
 	if (m_previous.size() > 0) {
 		int32_t j;
 		uint32_t count = 0;
-		glm::vec3 barycenter(0);
+		glm::vec2 barycenter(0);
 
 		for (uint32_t i = 0; i < 3; i++) {
 			j = m_previous_current - i;
@@ -268,7 +268,8 @@ void GameEngine::Behavior::SatNav::onCollide(gaMessage* message)
 				j = m_previous.size() + j;
 			}
 
-			barycenter += m_previous[j];
+			barycenter.x += m_previous[j].x;
+			barycenter.y += m_previous[j].z;
 		}
 		barycenter /= 3.0f;
 		float move_radius = 0;
@@ -280,7 +281,8 @@ void GameEngine::Behavior::SatNav::onCollide(gaMessage* message)
 				j = m_previous.size() + j;
 			}
 
-			move_radius += glm::distance(m_previous[j], barycenter);
+			glm::vec2 p(m_previous[j].x, m_previous[j].z);
+			move_radius += glm::distance(p, barycenter);
 		}
 		move_radius /= 3.0f;
 
@@ -311,20 +313,26 @@ void GameEngine::Behavior::SatNav::onCollide(gaMessage* message)
 	glm::vec3 BX = (glm::vec3(-23.1, 0, 28.4) - failedPosition) * glm::vec3(256, 0, 384) / glm::vec3(0.4, 0, 0.6) + glm::vec3(838, 0, 793);
 	*/
 
-	glm::vec3 ab(failedPosition - position);
-	glm::vec3 ac(collision - position);
+	glm::vec2 a(position.x, position.z);
+	glm::vec2 b(failedPosition.x, failedPosition.z);
+	glm::vec2 c(collision.x, collision.z);
+
+	glm::vec2 ab(b - a);
+	glm::vec2 ac(c - a);
 
 	d = glm::dot(ac, ab) / glm::length2(ab);
-	glm::vec3 p = position + ab * d;			// project collision on (position, target)
-	glm::vec3 o = p + (p - collision);			// project collision on the other side of (position, target)
-	glm::vec3 ao = glm::normalize(o - position) * glm::length(ab);
-	glm::vec3 new_target = position + ao * 2.0f;
+	glm::vec2 p = a + ab * d;			// project collision on (position, target)
+	glm::vec2 o = p + (p - c);			// project collision on the other side of (position, target)
+	glm::vec2 ao = glm::normalize(o - a) * glm::length(ab);
+	float i1 = glm::length(ab);
+	float i2 = glm::length(ao);
+	glm::vec2 new_target = a + ao;
 
-	m_transforms->m_position = new_target;
+	m_transforms->m_position = glm::vec3(new_target.x, position.y, new_target.y);
 	m_entity->translate(m_transforms->m_position);
-	triggerMove(new_target - position);
+	triggerMove(m_transforms->m_position - position);
 
-	printf("%.04f,%.04f,%.04f,%.04f,%.04f,%.04f,%.04f,%.04f,\n", position.x, position.z, failedPosition.x, failedPosition.z, new_target.x, new_target.z, collision.x, collision.z);
+	printf("%.04f,%.04f,%.04f,%.04f,%.04f,%.04f,%.04f,%.04f,\n", a.x, a.y, b.x, b.y, new_target.x, new_target.y, c.x, c.y);
 
 	/*
 	glm::vec3 pX = (glm::vec3(-23.1, 0, 28.4) - p) * glm::vec3(256, 0, 384) / glm::vec3(0.4, 0, 0.6) + glm::vec3(838, 0, 793);
