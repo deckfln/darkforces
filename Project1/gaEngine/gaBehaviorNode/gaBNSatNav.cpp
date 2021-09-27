@@ -252,8 +252,6 @@ void GameEngine::Behavior::SatNav::onCollide(gaMessage* message)
 	glm::vec3 failedPosition = m_transforms->m_position;
 	float distance = glm::length(position - failedPosition);
 
-	//printf("%.2f:%.2f:%.2f - %.2f:%.2f:%.2f\n", position.x, position.y, position.z, failedPosition.x, failedPosition.y, failedPosition.z);
-
 	// check if we are not stuck, test the last 3 positions
 	if (m_previous.size() > 0) {
 		int32_t j;
@@ -307,12 +305,6 @@ void GameEngine::Behavior::SatNav::onCollide(gaMessage* message)
 		return onReachedNextWayPoint(message);
 	}
 
-	/*
-	glm::vec3 cX = (glm::vec3(-23.1, 0, 28.4) - collision)* glm::vec3(256, 0, 384) / glm::vec3(0.4, 0, 0.6) + glm::vec3(838, 0, 793);
-	glm::vec3 AX = (glm::vec3(-23.1, 0, 28.4) - position) * glm::vec3(256, 0, 384) / glm::vec3(0.4, 0, 0.6) + glm::vec3(838, 0, 793);
-	glm::vec3 BX = (glm::vec3(-23.1, 0, 28.4) - failedPosition) * glm::vec3(256, 0, 384) / glm::vec3(0.4, 0, 0.6) + glm::vec3(838, 0, 793);
-	*/
-
 	glm::vec2 a(position.x, position.z);
 	glm::vec2 b(failedPosition.x, failedPosition.z);
 	glm::vec2 c(collision.x, collision.z);
@@ -324,21 +316,18 @@ void GameEngine::Behavior::SatNav::onCollide(gaMessage* message)
 	glm::vec2 p = a + ab * d;			// project collision on (position, target)
 	glm::vec2 o = p + (p - c);			// project collision on the other side of (position, target)
 	glm::vec2 ao = glm::normalize(o - a) * glm::length(ab);
-	float i1 = glm::length(ab);
-	float i2 = glm::length(ao);
 	glm::vec2 new_target = a + ao;
 
+	// ensure we are at least radius from the original collision
+	if (glm::distance(new_target, c) < radius) {
+		glm::vec2 nc(glm::normalize(new_target - c) * (radius + FLT_EPSILON));
+		new_target = c + nc;
+	}
+
 	m_transforms->m_position = glm::vec3(new_target.x, position.y, new_target.y);
-	m_entity->translate(m_transforms->m_position);
 	triggerMove(m_transforms->m_position - position);
 
-	printf("%.04f,%.04f,%.04f,%.04f,%.04f,%.04f,%.04f,%.04f,\n", a.x, a.y, b.x, b.y, new_target.x, new_target.y, c.x, c.y);
-
-	/*
-	glm::vec3 pX = (glm::vec3(-23.1, 0, 28.4) - p) * glm::vec3(256, 0, 384) / glm::vec3(0.4, 0, 0.6) + glm::vec3(838, 0, 793);
-	glm::vec3 oX = (glm::vec3(-23.1, 0, 28.4) - o) * glm::vec3(256, 0, 384) / glm::vec3(0.4, 0, 0.6) + glm::vec3(838, 0, 793);
-	glm::vec3 nX = (glm::vec3(-23.1, 0, 28.4) - new_target) * glm::vec3(256, 0, 384) / glm::vec3(0.4, 0, 0.6) + glm::vec3(838, 0, 793);
-	*/
+	//printf("%.04f,%.04f,%.04f,%.04f,%.04f,%.04f,%.04f,%.04f,\n", a.x, a.y, b.x, b.y, new_target.x, new_target.y, c.x, c.y);
 }
 
 /**
