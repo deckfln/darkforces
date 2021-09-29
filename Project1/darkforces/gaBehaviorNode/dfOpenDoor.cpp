@@ -19,12 +19,12 @@ enum Child {
 	wait_door
 };
 
-void DarkForces::Behavior::OpenDoor::init(void *)
+void DarkForces::Behavior::OpenDoor::init(void *data)
 {
 	m_runningChild = Child::init;
 	m_status = Status::RUNNING;
 
-	m_collision = m_tree->blackboard("lastCollision");
+	m_collision = data;
 	m_tree->blackboard("lastCollision", nullptr);
 }
 
@@ -43,7 +43,7 @@ GameEngine::BehaviorNode* DarkForces::Behavior::OpenDoor::nextNode(void)
 
 	case Child::goto_trigger:
 		if (m_children[m_runningChild]->status() == Status::SUCCESSED) {
-			return startChild(Child::wait_door, nullptr);
+			return startChild(Child::wait_door, m_collision);
 		}
 
 		return exitChild(Status::FAILED);

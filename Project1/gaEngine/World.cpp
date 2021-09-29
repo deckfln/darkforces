@@ -266,6 +266,7 @@ static gaMessage* allocateMessage(void)
 		}
 	} while (ptr->m_used);
 
+	ptr->m_used = true;
 	return ptr;
 }
 
@@ -275,7 +276,6 @@ static gaMessage* allocateMessage(void)
 gaMessage* World::sendMessage(const std::string& from, const std::string& to, int action, int value, void* extra)
 {
 	gaMessage* ptr = allocateMessage();
-	ptr->m_used = true;
 
 	ptr->m_server = from;
 	ptr->m_client = to;
@@ -294,7 +294,6 @@ gaMessage* World::sendMessage(const std::string& from, const std::string& to, in
 gaMessage* World::sendMessage(const std::string& from, const std::string& to, int action, float value, void* extra)
 {
 	gaMessage* ptr = allocateMessage();
-	ptr->m_used = true;
 
 	ptr->m_server = from;
 	ptr->m_client = to;
@@ -313,7 +312,6 @@ gaMessage* World::sendMessage(const std::string& from, const std::string& to, in
 gaMessage* World::sendMessage(const std::string& from, const std::string& to, int action, const glm::vec3& value, void* extra)
 {
 	gaMessage* ptr = allocateMessage();
-	ptr->m_used = true;
 
 	ptr->m_server = from;
 	ptr->m_client = to;
@@ -332,7 +330,6 @@ gaMessage* World::sendMessage(const std::string& from, const std::string& to, in
 gaMessage* GameEngine::World::sendMessage(flightRecorder::Message* record)
 {
 	gaMessage* ptr = allocateMessage();
-	ptr->m_used = true;
 
 	ptr->m_client = record->client;
 	ptr->m_server = record->server;
@@ -358,7 +355,6 @@ void World::push(gaMessage* message)
 gaMessage* World::sendMessageDelayed(const std::string& from, const std::string& to, int action, int value, void* extra)
 {
 	gaMessage* ptr = allocateMessage();
-	ptr->m_used = true;
 
 	ptr->m_server = from;
 	ptr->m_client = to;
@@ -377,7 +373,6 @@ gaMessage* World::sendMessageDelayed(const std::string& from, const std::string&
 gaMessage* World::sendImmediateMessage(const std::string& from, const std::string& to, int action, int value, void* extra)
 {
 	gaMessage* ptr = allocateMessage();
-	ptr->m_used = true;
 
 	ptr->m_server = from;
 	ptr->m_client = to;

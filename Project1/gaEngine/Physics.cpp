@@ -91,7 +91,7 @@ bool Physics::warpThrough(gaEntity *entity,
 		}
 
 		// always inform the source entity
-		informCollision(collided, entity, near_c);
+		//informCollision(collided, entity, near_c);
 
 		if (entity->name() == "player")
 			gaDebugLog(1, "GameEngine::Physics::wantToMove", entity->name() + " warp fixed at " + std::to_string(tranform.m_position.x)
@@ -184,24 +184,38 @@ static void debugCollision(const gaCollisionPoint& collision, gaEntity* entity, 
 /**
  * Send a collision message between 2 entities
  */
-void Physics::informCollision(gaEntity* from, gaEntity* to, const glm::vec3& collision)
+void Physics::informCollision(gaEntity* from, gaEntity* to, const glm::vec3& collision, const std::vector<gaEntity*>& verticalCollision)
 {
 	// always inform the source entity 
-	g_gaWorld.sendMessage(
+	gaMessage* message  = g_gaWorld.sendMessage(
 		from->name(),
 		to->name(),
 		gaMessage::Action::COLLIDE,
 		collision,
 		nullptr
 	);
-	// always inform the colliding entity 
-	g_gaWorld.sendMessage(
-		to->name(),
-		from->name(),
-		gaMessage::Action::COLLIDE,
-		collision,
-		nullptr
-	);
+
+	// complete the onboard data
+	struct CollisionList* data = (struct CollisionList*)&message->m_data[0];
+	data->size = verticalCollision.size();
+
+	if (sizeof(struct Physics::CollisionList) + sizeof(gaEntity*) * data->size >= sizeof(message->m_data)) {
+		data->size = (sizeof(message->m_data) - sizeof(uint32_t)) / sizeof(gaEntity*);
+		__debugbreak();
+	}
+
+	for (uint32_t i = 0; i < data->size; i++) {
+		data->entities[i] = verticalCollision[i];
+
+		// always inform the colliding entity 
+		g_gaWorld.sendMessage(
+			to->name(),
+			verticalCollision[i]->name(),
+			gaMessage::Action::COLLIDE,
+			collision,
+			nullptr
+		);
+	}
 }
 
 /**
@@ -212,7 +226,7 @@ void Physics::moveBullet(gaEntity* entity, gaMessage* message)
 	gaEntity* collidedEntity = nullptr;
 	glm::vec3 collision;
 	float min_len = +INFINITY;
-
+ 
 	GameEngine::Transform& tranform = entity->transform();
 	glm::vec3 old_position = entity->position();
 
@@ -309,6 +323,8 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 
 	std::queue<gaEntity *> actions;
 	std::map<std::string, bool> pushedEntities;	// list of entities we are pushing, only push an entity once per run
+	std::map<std::string, gaEntity*>& sittingOnTop = entity->sittingOnTop();
+	std::vector<gaEntity*> verticalCollision;
 
 	// kick start actions
 	actions.push(entity);
@@ -394,7 +410,8 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 		bool fix_y = false;						// do we enter the ground and need Y to be fixed
 		bool block_move = false;				// we found a collision that needs to block the request
 
-		std::map<std::string, gaEntity*>& sittingOnTop = entity->sittingOnTop();
+		sittingOnTop.clear();
+		verticalCollision.clear();
 
 		gaEntity* collidedEntity;
 
@@ -402,14 +419,25 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 			collidedEntity = static_cast<gaEntity*>(collision.m_source);
 		
 			switch (collision.m_location) {
-			case fwCollisionLocation::FRONT:
+			case fwCollisionLocation::FRONT: {
 				d = entity->distanceTo(collision.m_position);
 				if (d < distance) {
 					nearest_collision = &collision;
 					distance = d;
 				}
 				fall = false;
-				break;
+
+				bool b = false;
+				for (auto k : verticalCollision) {
+					if (k == collidedEntity) {
+						b = true;
+						break;
+					}
+				}
+				if (!b) {
+					verticalCollision.push_back(collidedEntity);
+				}
+				break;	}
 
 			case fwCollisionLocation::BOTTOM:
 				fall = false;
@@ -435,7 +463,7 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 						// always inform the source entity 
 						collidedEntities[collidedEntity->name()] = true;
 
-						informCollision(collidedEntity, entity, collision.m_position);
+						informCollision(collidedEntity, entity, collision.m_position, verticalCollision);
 
 						// accept the move at that stage
 						continue;	// check next collision
@@ -558,6 +586,17 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 						}
 					}
 
+					bool b = false;
+					for (auto k : verticalCollision) {
+						if (k == collidedEntity) {
+							b = true;
+							break;
+						}
+					}
+					if (!b) {
+						verticalCollision.push_back(collidedEntity);
+					}
+
 					if (entity->name() == "player")
 						debugCollision(collision, entity, " on edge " + std::to_string(facing) + " ");
 
@@ -631,7 +670,7 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 					}
 
 					// always inform the source entity
-					informCollision(pushed, entity, nearest_collision->m_position);
+					informCollision(pushed, entity, nearest_collision->m_position, verticalCollision);
 				}
 				else {
 					glm::vec3 p1(nearest_collision->m_position.x, new_position.y, nearest_collision->m_position.z);
@@ -702,7 +741,7 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 				}
 
 				// always inform the source entity 
-				informCollision(collisionWith, entity, nearest_ceiling->m_position);
+				informCollision(collisionWith, entity, nearest_ceiling->m_position, verticalCollision);
 			}
 			else {
 				//non-movable entities always block the movement

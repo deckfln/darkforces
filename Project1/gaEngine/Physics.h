@@ -79,6 +79,21 @@ namespace GameEngine
 	};
 
 	class Physics {
+	public:
+		Physics(void);
+		void moveEntity(gaEntity* entity, gaMessage* message);
+		void update(time_t delta);
+		void addBallistic(gaEntity* entity, const glm::vec3& v0);
+
+		void recordState(const std::string& name, flightRecorder::Ballistic* object);
+		void loadState(flightRecorder::Ballistic* object);
+
+		struct CollisionList {
+			uint32_t size;
+			gaEntity* entities[1];
+		};
+
+	protected:
 		std::map<std::string, Ballistic> m_ballistics;					// falling objects
 		std::vector<std::string> m_remove;								// list of objects to remove from the falling
 		gaEntity* m_lastEntityTested = nullptr;							// to pass information between functions
@@ -95,18 +110,12 @@ namespace GameEngine
 			const glm::vec3& p2,
 			fwCollision::Test test, gaEntity * entity);					// test if a segment collide with a triangle of any sector
 		void moveBullet(gaEntity* entity, gaMessage* message);			// simple test for bullets
-		void informCollision(gaEntity* from, gaEntity* to, const glm::vec3& collision);
+		void informCollision(gaEntity* from, 
+			gaEntity* to, 
+			const glm::vec3& collision,
+			const std::vector<gaEntity*>& verticalCollision);
 
 		friend flightRecorder::Blackbox;
-
-	public:
-		Physics(void);
-		void moveEntity(gaEntity *entity, gaMessage* message);
-		void update(time_t delta);
-		void addBallistic(gaEntity* entity, const glm::vec3& v0);
-
-		void recordState(const std::string& name, flightRecorder::Ballistic* object);
-		void loadState(flightRecorder::Ballistic* object);
 	};
 }
 

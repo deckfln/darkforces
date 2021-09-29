@@ -2,6 +2,7 @@
 
 #include "../../gaEngine/gaEntity.h"
 #include "../../gaEngine/gaComponent/gaBehaviorTree.h"
+#include "../../gaEngine/Physics.h"
 
 #include "../dfLogicTrigger.h"
 #include "../dfComponent/InfElevator.h"
@@ -66,11 +67,23 @@ GameEngine::BehaviorNode* DarkForces::Behavior::MoveEnemyTo::nextNode(void)
 		}
 
 		// the move_to node failed, it probably collided with something
-		gaEntity* collided = static_cast<gaEntity*>(m_tree->blackboard("lastCollision"));
-		if (collided == nullptr) {
+		struct GameEngine::Physics::CollisionList* collidedList = static_cast<struct GameEngine::Physics::CollisionList*>(m_tree->blackboard("lastCollision"));
+		if (collidedList != nullptr && collidedList->size == 0) {
 			return exitChild(Status::FAILED);
 		}
-		DarkForces::Component::InfElevator* elevator = static_cast<DarkForces::Component::InfElevator*>(collided->findComponent(DF_COMPONENT_INF_ELEVATOR));
+
+		DarkForces::Component::InfElevator* elevator = nullptr;
+		if (collidedList != nullptr) {
+			gaEntity* collided;
+			for (auto i = 0; i < collidedList->size; i++) {
+				collided = collidedList->entities[i];
+				elevator = static_cast<DarkForces::Component::InfElevator*>(collided->findComponent(DF_COMPONENT_INF_ELEVATOR));
+
+				if (elevator != nullptr) {
+					break;
+				}
+			}
+		}
 
 		if (elevator) {
 			m_tree->blackboard("wait_elevator", elevator);
@@ -80,10 +93,10 @@ GameEngine::BehaviorNode* DarkForces::Behavior::MoveEnemyTo::nextNode(void)
 			case Component::InfElevator::Status::MOVE:
 			case Component::InfElevator::Status::WAIT:
 				// wait for the elevator to finish its move, maybe it is opening
-				return startChild(Child::wait_door, nullptr);
+				return startChild(Child::wait_door, elevator);
 
 			case Component::InfElevator::Status::HOLD:
-				return startChild(Child::open_door, nullptr);
+				return startChild(Child::open_door, elevator);
 
 			case Component::InfElevator::Status::TERMINATED:
 				// the elevator will not move any more, so we have to cancel the move

@@ -16,6 +16,7 @@ DarkForces::Behavior::WaitDoor::WaitDoor(const char* name):
 void DarkForces::Behavior::WaitDoor::init(void* data)
 {
 	m_status = Status::RUNNING;
+	m_elevator = static_cast<Component::InfElevator*>(data);
 	m_entity->sendDelayedMessage(gaMessage::Action::TICK);
 }
 
@@ -25,9 +26,7 @@ void DarkForces::Behavior::WaitDoor::init(void* data)
 BehaviorNode* DarkForces::Behavior::WaitDoor::dispatchMessage(gaMessage* message)
 {
 	if (message->m_action == gaMessage::Action::TICK) {
-		DarkForces::Component::InfElevator* elevator = static_cast<DarkForces::Component::InfElevator*>(m_tree->blackboard("wait_elevator"));
-
-		switch (elevator->status()) {
+		switch (m_elevator->status()) {
 		case Component::InfElevator::Status::MOVE:
 			// wait for the elevator to finish its move, maybe it is opening
 			m_entity->sendDelayedMessage(gaMessage::Action::TICK);

@@ -157,7 +157,7 @@ void GameEngine::Behavior::SatNav::onBlockedWay(gaMessage *message)
 	}
 	else {
 		// we are blocked and jumped over all waypoints
-		m_tree->blackboard("lastCollision", message->m_pServer);
+		m_tree->blackboard("lastCollision", &message->m_data);
 		BehaviorNode::m_status = BehaviorNode::Status::FAILED;
 	}
 }
@@ -258,7 +258,7 @@ void GameEngine::Behavior::SatNav::onCollide(gaMessage* message)
 		uint32_t count = 0;
 		glm::vec2 barycenter(0);
 
-		for (uint32_t i = 0; i < 3; i++) {
+		for (uint32_t i = 0; i < 4; i++) {
 			j = m_previous_current - i;
 
 			// Move back one step and wait for next turn to retry
@@ -269,9 +269,9 @@ void GameEngine::Behavior::SatNav::onCollide(gaMessage* message)
 			barycenter.x += m_previous[j].x;
 			barycenter.y += m_previous[j].z;
 		}
-		barycenter /= 3.0f;
+		barycenter /= 4.0f;
 		float move_radius = 0;
-		for (uint32_t i = 0; i < 3; i++) {
+		for (uint32_t i = 0; i < 4; i++) {
 			j = m_previous_current - i;
 
 			// Move back one step and wait for next turn to retry
@@ -282,9 +282,9 @@ void GameEngine::Behavior::SatNav::onCollide(gaMessage* message)
 			glm::vec2 p(m_previous[j].x, m_previous[j].z);
 			move_radius += glm::distance(p, barycenter);
 		}
-		move_radius /= 3.0f;
+		move_radius /= 4.0f;
 
-		if (move_radius < radius/2.0f) {
+		if (move_radius < radius / 2.0f) {
 			// give up, we are facing a not planned object that refuses to move
 			return onBlockedWay(message);
 		}
@@ -320,7 +320,7 @@ void GameEngine::Behavior::SatNav::onCollide(gaMessage* message)
 
 	// ensure we are at least radius from the original collision
 	if (glm::distance(new_target, c) < radius) {
-		glm::vec2 nc(glm::normalize(new_target - c) * (radius + FLT_EPSILON));
+		glm::vec2 nc(glm::normalize(new_target - c) * radius);
 		new_target = c + nc;
 	}
 

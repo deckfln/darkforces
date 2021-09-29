@@ -21,9 +21,7 @@ void DarkForces::Behavior::GotoTrigger::init(void *data)
 	// we are on a natural move, to the elevator can be activated
 	// test all triggers of the object
 
-	// find the trigger bound to the dfLogicTriger
-	gaEntity* entity = static_cast<gaEntity*>(data);
-	Component::InfElevator* elevator = dynamic_cast<Component::InfElevator*>(entity->findComponent(DF_COMPONENT_INF_ELEVATOR));
+	Component::InfElevator* elevator = static_cast<Component::InfElevator*>(data);
 
 	if (elevator == nullptr) {
 		m_status = Status::FAILED;
@@ -86,8 +84,13 @@ GameEngine::BehaviorNode* DarkForces::Behavior::GotoTrigger::nextNode(void)
 		return exitChild(m_status);
 	}
 
-	gaEntity* entity = static_cast<gaEntity*>(m_tree->blackboard("lastCollision"));
+	struct GameEngine::Physics::CollisionList* collidedList = static_cast<struct GameEngine::Physics::CollisionList*>(m_tree->blackboard("lastCollision"));
 
+	if (collidedList != nullptr && collidedList->size == 0) {
+		return exitChild(Status::FAILED);
+	}
+
+	// first execution
 	if (m_targetTrigger == nullptr) {
 		goto_next_trigger();
 
@@ -96,34 +99,40 @@ GameEngine::BehaviorNode* DarkForces::Behavior::GotoTrigger::nextNode(void)
 		glm::vec3 p = m_targetTrigger->position();
 		return startChild(0, &p);
 	}
-	else {
-		if (m_targetTrigger == entity) {
-			activate_trigger();
-			return exitChild(Status::SUCCESSED);
-		}
-		else {
-			// we hit "something" let's test the distance from here to the trigger. if we are near, let's pretend everything is OK
-			// and do it in 2D, the trigger can be upward
-			glm::vec2 e(m_entity->position().x, m_entity->position().z);
-			glm::vec2 t(m_targetTrigger->position().x, m_targetTrigger->position().z);
-			float d = glm::distance(e, t);
 
-			if (d < 0.5f) {
+	// check if we are colliding with the destination
+	if (collidedList != nullptr) {
+		gaEntity* entity;
+		for (auto i = 0; i < collidedList->size; i++) {
+			entity = collidedList->entities[i];
+
+			if (m_targetTrigger == entity) {
 				activate_trigger();
 				return exitChild(Status::SUCCESSED);
 			}
-			else {
-				goto_next_trigger();
-				if (m_status == Status::RUNNING) {
-					// and go to the first trigger
-					//m_entity->sendMessage(gaMessage::Action::SatNav_GOTO, m_targetTrigger->position());
-					glm::vec3 p = m_targetTrigger->position();
-					return startChild(0, &p);
-				}
-				else {
-					return exitChild(Status::FAILED);
-				}
-			}
+		}
+	}
+
+	// we hit "something" let's test the distance from here to the trigger. if we are near, let's pretend everything is OK
+	// and do it in 2D, the trigger can be upward
+	glm::vec2 e(m_entity->position().x, m_entity->position().z);
+	glm::vec2 t(m_targetTrigger->position().x, m_targetTrigger->position().z);
+	float d = glm::distance(e, t);
+
+	if (d < 0.5f) {
+		activate_trigger();
+		return exitChild(Status::SUCCESSED);
+	}
+	else {
+		goto_next_trigger();
+		if (m_status == Status::RUNNING) {
+			// and go to the first trigger
+			//m_entity->sendMessage(gaMessage::Action::SatNav_GOTO, m_targetTrigger->position());
+			glm::vec3 p = m_targetTrigger->position();
+			return startChild(0, &p);
+		}
+		else {
+			return exitChild(Status::FAILED);
 		}
 	}
 

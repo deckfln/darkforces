@@ -88,17 +88,18 @@ public:
 
 	gaEntity* m_pServer = nullptr;	// cached value
 
-	std::string m_server;	// from
-	std::string m_client;	// to
+	std::string m_server;			// from
+	std::string m_client;			// to
 	
 	int m_action = -1;
-	int m_value = 0;
-	float m_fvalue = 0.0f;
-	glm::vec3 m_v3value = glm::vec3(0.0f);
-	void* m_extra = nullptr;
+	int m_value = 0;			// int value
+	float m_fvalue = 0.0f;			// float value
+	glm::vec3 m_v3value = glm::vec3(0.0f); // vec3 value
+	void* m_extra = nullptr;		// pointer to extra data
+	uint64_t m_data[16];			// store some basic data
 
-	time_t m_delta = 0;	// time since the last frame
-	uint32_t m_frame=0;	// current frame the message runs in
+	time_t m_delta = 0;				// time since the last frame
+	uint32_t m_frame=0;				// current frame the message runs in
 
 	gaMessage(void);
 	gaMessage(int action);
