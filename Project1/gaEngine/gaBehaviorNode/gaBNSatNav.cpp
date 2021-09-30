@@ -347,7 +347,7 @@ void GameEngine::Behavior::SatNav::onCancel(gaMessage* message)
 /**
  * let a component deal with a situation
  */
-BehaviorNode* GameEngine::Behavior::SatNav::dispatchMessage(gaMessage* message)
+void GameEngine::Behavior::SatNav::dispatchMessage(gaMessage* message, Action *r)
 {
 	switch (message->m_action) {
 	case gaMessage::Action::SatNav_GOTO:
@@ -372,7 +372,7 @@ BehaviorNode* GameEngine::Behavior::SatNav::dispatchMessage(gaMessage* message)
 		break;
 	}
 
-	return nextNode();
+	return nextNode(r);
 }
 
 /**

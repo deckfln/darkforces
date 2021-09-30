@@ -43,7 +43,7 @@ namespace GameEngine {
 			// getter/setter
 			inline void speed(float speed) { m_speed = speed; };
 
-			BehaviorNode* dispatchMessage(gaMessage* message) override;	// let a component deal with a situation
+			void dispatchMessage(gaMessage* message, Action *r) override;	// let a component deal with a situation
 			void init(void *) override;
 
 			// flight recorder status

@@ -40,7 +40,39 @@ void GameEngine::Component::BehaviorTree::blackboard(const std::string key, void
 	}
 
 	// execute the current node
-	m_current = m_current->dispatchMessage(message);
+	BehaviorNode::Action r;
+	m_current->dispatchMessage(message, &r);
+
+	// Navigate the tree
+	while (r.action != BehaviorNode::sAction::RUNNING) {
+		switch (r.action) {
+		case BehaviorNode::sAction::START_CHILD:
+			m_current->m_runningChild = r.child;
+			m_current = m_current->m_children[m_current->m_runningChild];
+			m_current->init(r.data);
+
+			r.action = BehaviorNode::sAction::NEXT_NODE;
+			break;
+
+		case BehaviorNode::sAction::EXIT:
+			m_current->m_status = r.status;
+
+			if (m_current->m_parent) {
+				m_current = m_current->m_parent;
+				r.action = BehaviorNode::sAction::NEXT_NODE;
+			}
+			else {
+				r.action = BehaviorNode::sAction::RUNNING;
+			}
+			break;;
+
+		case BehaviorNode::sAction::NEXT_NODE:
+			m_current->nextNode(&r);
+			break;
+		}
+
+	}
+
 	if (m_current == nullptr) {
 		m_current = m_root;
 	}

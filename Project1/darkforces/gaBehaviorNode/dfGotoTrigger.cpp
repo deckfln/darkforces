@@ -74,20 +74,25 @@ void DarkForces::Behavior::GotoTrigger::goto_next_trigger(void)
 /**
  * move to the next trigger
  */
-GameEngine::BehaviorNode* DarkForces::Behavior::GotoTrigger::nextNode(void)
+void DarkForces::Behavior::GotoTrigger::nextNode(Action *r)
 {
 	if (m_status == Status::WAIT) {
-		return this;
+		r->action = sAction::RUNNING;
+		return;
 	}
 
 	if (m_status == Status::FAILED) {
-		return exitChild(m_status);
+		r->action = sAction::EXIT;
+		r->status = m_status;
+		return;
 	}
 
 	struct GameEngine::Physics::CollisionList* collidedList = static_cast<struct GameEngine::Physics::CollisionList*>(m_tree->blackboard("lastCollision"));
 
 	if (collidedList != nullptr && collidedList->size == 0) {
-		return exitChild(Status::FAILED);
+		r->action = sAction::EXIT;
+		r->status = Status::FAILED;
+		return;
 	}
 
 	// first execution
@@ -97,7 +102,10 @@ GameEngine::BehaviorNode* DarkForces::Behavior::GotoTrigger::nextNode(void)
 		// and go to the first trigger
 		//m_entity->sendMessage(gaMessage::Action::SatNav_GOTO, m_targetTrigger->position());
 		glm::vec3 p = m_targetTrigger->position();
-		return startChild(0, &p);
+		r->action = sAction::START_CHILD;
+		r->child = 0;
+		r->data = &p;
+		return;
 	}
 
 	// check if we are colliding with the destination
@@ -108,7 +116,9 @@ GameEngine::BehaviorNode* DarkForces::Behavior::GotoTrigger::nextNode(void)
 
 			if (m_targetTrigger == entity) {
 				activate_trigger();
-				return exitChild(Status::SUCCESSED);
+				r->action = sAction::EXIT;
+				r->status = Status::SUCCESSED;
+				return;
 			}
 		}
 	}
@@ -121,7 +131,9 @@ GameEngine::BehaviorNode* DarkForces::Behavior::GotoTrigger::nextNode(void)
 
 	if (d < 0.5f) {
 		activate_trigger();
-		return exitChild(Status::SUCCESSED);
+		r->action = sAction::EXIT;
+		r->status = Status::SUCCESSED;
+		return;
 	}
 	else {
 		goto_next_trigger();
@@ -129,14 +141,19 @@ GameEngine::BehaviorNode* DarkForces::Behavior::GotoTrigger::nextNode(void)
 			// and go to the first trigger
 			//m_entity->sendMessage(gaMessage::Action::SatNav_GOTO, m_targetTrigger->position());
 			glm::vec3 p = m_targetTrigger->position();
-			return startChild(0, &p);
+			r->action = sAction::START_CHILD;
+			r->child = 0;
+			r->data = &p;
+			return;
 		}
 		else {
-			return exitChild(Status::FAILED);
+			r->action = sAction::EXIT;
+			r->status = Status::FAILED;
+			return;
 		}
 	}
 
-	return nextNode();
+	return BehaviorNode::nextNode(r);
 }
 
 /**

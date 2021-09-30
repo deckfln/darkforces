@@ -90,47 +90,32 @@ void GameEngine::BehaviorNode::record(std::vector<BehaviorNode*>& nodes)
 }
 
 /**
- * move to a sub-node
- */
-BehaviorNode* GameEngine::BehaviorNode::startChild(int32_t child, void* data)
-{
-	m_runningChild = child;
-	m_children[m_runningChild]->init(data);
-	return m_children[m_runningChild]->nextNode();
-}
-
-/**
- *
- */
-BehaviorNode* GameEngine::BehaviorNode::exitChild(Status s)
-{
-	m_status = s;
-
-	if (m_parent)
-		return m_parent->nextNode();
-
-	return nullptr;
-}
-
-/**
  * let a parent take a decision with it's current running child result
  */
-GameEngine::BehaviorNode* GameEngine::BehaviorNode::nextNode(void)
+void GameEngine::BehaviorNode::nextNode(BehaviorNode::Action *r)
 {
-	if (m_status == Status::RUNNING) {
-		return this;
-	}
+	switch (m_status) {
+	case Status::RUNNING:
+		r->action = BehaviorNode::sAction::RUNNING;
+		break;
 
-	// by default return a success to move up the tree
-	return m_parent->nextNode();
+	case Status::FAILED:
+	case Status::SUCCESSED:
+		r->action = BehaviorNode::sAction::EXIT;
+		r->status = m_status;
+		break;
+
+	default:
+		r->action = BehaviorNode::sAction::NEXT_NODE;
+	}
 }
 
 /**
  *
  */
-BehaviorNode* GameEngine::BehaviorNode::dispatchMessage(gaMessage*message)
+void GameEngine::BehaviorNode::dispatchMessage(gaMessage*message, BehaviorNode::Action* r)
 {
-	return nextNode();
+	r->action = BehaviorNode::sAction::RUNNING;
 }
 
 /**
@@ -176,10 +161,4 @@ uint32_t GameEngine::BehaviorNode::loadState(void* record)
 	m_runningChild = r->runningChild;
 
 	return r->size;
-}
-
-void GameEngine::BehaviorNode::sendInternalMessage(int action, const glm::vec3& value)
-{
-	gaMessage message("_component", "_component", action, value);
-	dispatchMessage(&message);
 }

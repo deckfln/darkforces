@@ -23,7 +23,7 @@ void DarkForces::Behavior::WaitDoor::init(void* data)
 /**
  *
  */
-BehaviorNode* DarkForces::Behavior::WaitDoor::dispatchMessage(gaMessage* message)
+void DarkForces::Behavior::WaitDoor::dispatchMessage(gaMessage* message, Action* r)
 {
 	if (message->m_action == gaMessage::Action::TICK) {
 		switch (m_elevator->status()) {
@@ -40,6 +40,6 @@ BehaviorNode* DarkForces::Behavior::WaitDoor::dispatchMessage(gaMessage* message
 		}
 	}
 
-	return nextNode();
+	nextNode(r);
 }
 

@@ -24,11 +24,11 @@ namespace DarkForces {
 		public:
 			GotoTrigger(const char* name);
 			void init(void *data) override;						// init the node before running
-			GameEngine::BehaviorNode* nextNode(void) override;	// let a parent take a decision with it's current running child
+			void nextNode(Action* r) override;					// let a parent take a decision with it's current running child
 
 			// flight recorder status
-			uint32_t recordState(void* record) override;				// save the component state in a record
-			uint32_t loadState(void* record) override;					// reload a component state from a record
+			uint32_t recordState(void* record) override;		// save the component state in a record
+			uint32_t loadState(void* record) override;			// reload a component state from a record
 		};
 	}
 

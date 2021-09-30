@@ -14,7 +14,7 @@ namespace DarkForces {
 
 		public:
 			WaitDoor(const char* name);
-			BehaviorNode* dispatchMessage(gaMessage* message) override;	// let a component deal with a situation
+			void dispatchMessage(gaMessage* message, Action* r) override;	// let a component deal with a situation
 			void init(void* data) override;
 		};
 	}

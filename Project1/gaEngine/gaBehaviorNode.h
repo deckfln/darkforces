@@ -22,6 +22,22 @@ namespace GameEngine {
 			FAILED,
 			SUCCESSED
 		};
+		enum class sAction {
+			NONE,
+			RUNNING,
+			START_CHILD,
+			NEXT_NODE,
+			EXIT
+		};
+		struct Action {
+			sAction action;
+			uint32_t child;
+			void* data;
+			Status status;
+
+			inline Action(sAction a, uint32_t c, void* d, Status s) { action = a; child = c; data = d; status = s; }
+			inline Action(void) { action = sAction::NONE; }
+		};
 		BehaviorNode(const char *name);
 
 		// getter/setter
@@ -39,12 +55,9 @@ namespace GameEngine {
 		BehaviorNode* find(uint32_t id);							// find the node with ID
 		void record(std::vector<BehaviorNode*>& nodes);				// record the node in a list
 
-		BehaviorNode* startChild(int32_t child, void* data);		// move to a sub-node
-		BehaviorNode* exitChild(Status s);							// return to parent node
-
-		virtual BehaviorNode *nextNode(void);						// let a parent take a decision with it's current running child
-		virtual BehaviorNode* dispatchMessage(gaMessage* message);	// let a component deal with a situation
+		virtual void nextNode(Action* r);							// let a parent take a decision with it's current running child
 		virtual void init(void *);									// init the node before running
+		virtual void dispatchMessage(gaMessage* message, BehaviorNode::Action* r);
 
 			// debugger
 		virtual void debugGUIinline(BehaviorNode* current);			// display the component in the debugger
@@ -53,9 +66,6 @@ namespace GameEngine {
 			// flight recorder status
 		virtual uint32_t recordState(void* record);					// save the component state in a record
 		virtual uint32_t loadState(void* record);					// reload a component state from a record
-
-		void sendInternalMessage(int action,
-			const glm::vec3& value);								// send internal message to all components of the current entity
 
 	protected:
 		uint32_t m_id = 0;											// uniq ID of the node in the tree
@@ -68,6 +78,8 @@ namespace GameEngine {
 
 		int32_t m_runningChild = -1;								// currently running child (-1 = the current node is running)
 		std::vector<BehaviorNode*> m_children;
+
+		friend GameEngine::Component::BehaviorTree;
 	};
 
 	namespace FlightRecorder {
