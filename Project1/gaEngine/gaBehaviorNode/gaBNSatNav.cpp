@@ -372,7 +372,7 @@ void GameEngine::Behavior::SatNav::dispatchMessage(gaMessage* message, Action *r
 		break;
 	}
 
-	return nextNode(r);
+	return execute(r);
 }
 
 /**

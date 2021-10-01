@@ -10,7 +10,7 @@ namespace DarkForces {
 		public:
 			MoveEnemyTo(const char* name);
 			void dispatchMessage(gaMessage* message, Action* r) override;	// let a component deal with a situation
-			void nextNode(Action* r) override;							// let a parent take a decision with it's current running child
+			void execute(Action* r) override;							// let a parent take a decision with it's current running child
 
 			// flight recorder status
 			uint32_t recordState(void* record) override;				// save the component state in a record

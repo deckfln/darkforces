@@ -20,23 +20,20 @@ namespace GameEngine {
 			WAIT,
 			RUNNING,
 			FAILED,
-			SUCCESSED
-		};
-		enum class sAction {
+			SUCCESSED,
 			NONE,
-			RUNNING,
 			START_CHILD,
-			NEXT_NODE,
+			EXECUTE,
 			EXIT
 		};
 		struct Action {
-			sAction action;
-			uint32_t child;
-			void* data;
-			Status status;
+			Status action=Status::NONE;
+			uint32_t child=0;
+			void* data=nullptr;
+			Status status = Status::WAIT;
 
-			inline Action(sAction a, uint32_t c, void* d, Status s) { action = a; child = c; data = d; status = s; }
-			inline Action(void) { action = sAction::NONE; }
+			inline Action(Status a, uint32_t c, void* d, Status s) { action = a; child = c; data = d; status = s; }
+			inline Action(void) {}
 		};
 		BehaviorNode(const char *name);
 
@@ -55,7 +52,7 @@ namespace GameEngine {
 		BehaviorNode* find(uint32_t id);							// find the node with ID
 		void record(std::vector<BehaviorNode*>& nodes);				// record the node in a list
 
-		virtual void nextNode(Action* r);							// let a parent take a decision with it's current running child
+		virtual void execute(Action* r);							// let a parent take a decision with it's current running child
 		virtual void init(void *);									// init the node before running
 		virtual void dispatchMessage(gaMessage* message, BehaviorNode::Action* r);
 
@@ -79,6 +76,10 @@ namespace GameEngine {
 		int32_t m_runningChild = -1;								// currently running child (-1 = the current node is running)
 		std::vector<BehaviorNode*> m_children;
 
+		void failed(Action* r);
+		void succeeded(Action* r);
+		void startChild(Action* r,uint32_t child, void* data);
+		
 		friend GameEngine::Component::BehaviorTree;
 	};
 

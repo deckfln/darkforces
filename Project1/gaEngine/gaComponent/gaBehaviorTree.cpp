@@ -39,35 +39,33 @@ void GameEngine::Component::BehaviorTree::blackboard(const std::string key, void
 		return;
 	}
 
-	// execute the current node
+	// pass the message to the current node
 	BehaviorNode::Action r;
 	m_current->dispatchMessage(message, &r);
 
 	// Navigate the tree
-	while (r.action != BehaviorNode::sAction::RUNNING) {
+	while (r.action != BehaviorNode::Status::RUNNING) {
 		switch (r.action) {
-		case BehaviorNode::sAction::START_CHILD:
+		case BehaviorNode::Status::START_CHILD:
 			m_current->m_runningChild = r.child;
 			m_current = m_current->m_children[m_current->m_runningChild];
 			m_current->init(r.data);
 
-			r.action = BehaviorNode::sAction::NEXT_NODE;
+			r.action = BehaviorNode::Status::EXECUTE;
 			break;
 
-		case BehaviorNode::sAction::EXIT:
-			m_current->m_status = r.status;
-
+		case BehaviorNode::Status::EXIT:
 			if (m_current->m_parent) {
 				m_current = m_current->m_parent;
-				r.action = BehaviorNode::sAction::NEXT_NODE;
+				r.action = BehaviorNode::Status::EXECUTE;
 			}
 			else {
-				r.action = BehaviorNode::sAction::RUNNING;
+				r.action = BehaviorNode::Status::RUNNING;
 			}
 			break;;
 
-		case BehaviorNode::sAction::NEXT_NODE:
-			m_current->nextNode(&r);
+		case BehaviorNode::Status::EXECUTE:
+			m_current->execute(&r);
 			break;
 		}
 

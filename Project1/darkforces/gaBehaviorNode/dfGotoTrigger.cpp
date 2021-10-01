@@ -42,7 +42,7 @@ void DarkForces::Behavior::GotoTrigger::init(void *data)
 /**
  * activate the current targeted trigger
  */
-void DarkForces::Behavior::GotoTrigger::activate_trigger(void)
+void DarkForces::Behavior::GotoTrigger::activate_trigger(Action* r)
 {
 	// activate the trigger
 	m_entity->sendMessage(m_targetTrigger->name(), DF_MESSAGE_TRIGGER);
@@ -52,60 +52,44 @@ void DarkForces::Behavior::GotoTrigger::activate_trigger(void)
 
 	m_triggers.clear();
 	m_targetTrigger = nullptr;
-	m_status = Status::SUCCESSED;
+
+	return succeeded(r);
 }
 
 /**
  * Set the destination to the next trigger that can activate an elevator
  */
-void DarkForces::Behavior::GotoTrigger::goto_next_trigger(void)
+void DarkForces::Behavior::GotoTrigger::goto_next_trigger(Action* r)
 {
 	if (m_next < (int32_t)m_triggers.size()) {
 		m_targetTrigger = m_triggers[m_next];
 		m_next++;
+
+		glm::vec3 p = m_targetTrigger->position();
+		return startChild(r, 0, &p);
 	}
-	else {
-		// so we tried all triggers and still cant open the door => give up
-		m_status = Status::FAILED;
-		m_targetTrigger = nullptr;
-	}
+
+	// so we tried all triggers and still cant open the door => give up
+	m_targetTrigger = nullptr;
+	return failed(r);
 }
 
 /**
  * move to the next trigger
  */
-void DarkForces::Behavior::GotoTrigger::nextNode(Action *r)
+void DarkForces::Behavior::GotoTrigger::execute(Action *r)
 {
-	if (m_status == Status::WAIT) {
-		r->action = sAction::RUNNING;
-		return;
-	}
-
-	if (m_status == Status::FAILED) {
-		r->action = sAction::EXIT;
-		r->status = m_status;
-		return;
-	}
+	r->action = Status::RUNNING;
 
 	struct GameEngine::Physics::CollisionList* collidedList = static_cast<struct GameEngine::Physics::CollisionList*>(m_tree->blackboard("lastCollision"));
 
 	if (collidedList != nullptr && collidedList->size == 0) {
-		r->action = sAction::EXIT;
-		r->status = Status::FAILED;
-		return;
+		return failed(r);
 	}
 
-	// first execution
+	// first execution => go to the first trigger
 	if (m_targetTrigger == nullptr) {
-		goto_next_trigger();
-
-		// and go to the first trigger
-		//m_entity->sendMessage(gaMessage::Action::SatNav_GOTO, m_targetTrigger->position());
-		glm::vec3 p = m_targetTrigger->position();
-		r->action = sAction::START_CHILD;
-		r->child = 0;
-		r->data = &p;
-		return;
+		return goto_next_trigger(r);
 	}
 
 	// check if we are colliding with the destination
@@ -115,10 +99,7 @@ void DarkForces::Behavior::GotoTrigger::nextNode(Action *r)
 			entity = collidedList->entities[i];
 
 			if (m_targetTrigger == entity) {
-				activate_trigger();
-				r->action = sAction::EXIT;
-				r->status = Status::SUCCESSED;
-				return;
+				return activate_trigger(r);
 			}
 		}
 	}
@@ -130,30 +111,11 @@ void DarkForces::Behavior::GotoTrigger::nextNode(Action *r)
 	float d = glm::distance(e, t);
 
 	if (d < 0.5f) {
-		activate_trigger();
-		r->action = sAction::EXIT;
-		r->status = Status::SUCCESSED;
-		return;
-	}
-	else {
-		goto_next_trigger();
-		if (m_status == Status::RUNNING) {
-			// and go to the first trigger
-			//m_entity->sendMessage(gaMessage::Action::SatNav_GOTO, m_targetTrigger->position());
-			glm::vec3 p = m_targetTrigger->position();
-			r->action = sAction::START_CHILD;
-			r->child = 0;
-			r->data = &p;
-			return;
-		}
-		else {
-			r->action = sAction::EXIT;
-			r->status = Status::FAILED;
-			return;
-		}
+		return activate_trigger(r);
 	}
 
-	return BehaviorNode::nextNode(r);
+	// otherwise try th next trigger
+	return goto_next_trigger(r);
 }
 
 /**

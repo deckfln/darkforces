@@ -40,6 +40,5 @@ void DarkForces::Behavior::WaitDoor::dispatchMessage(gaMessage* message, Action*
 		}
 	}
 
-	nextNode(r);
+	execute(r);
 }
-

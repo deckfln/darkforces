@@ -31,38 +31,27 @@ void DarkForces::Behavior::OpenDoor::init(void *data)
 /**
  * move to the next trigger
  */
-void DarkForces::Behavior::OpenDoor::nextNode(Action *r)
+void DarkForces::Behavior::OpenDoor::execute(Action *r)
 {
-	if (m_status != Status::RUNNING) {
-		r->action = sAction::RUNNING;
-	}
+	r->action = Status::RUNNING;
 
 	switch (m_runningChild) {
 	case Child::init:
-		r->action = sAction::START_CHILD;
-		r->child = Child::goto_trigger;
-		r->data = m_collision;
-		return;
+		return startChild(r, Child::goto_trigger, m_collision);
 
 	case Child::goto_trigger:
 		if (m_children[m_runningChild]->status() == Status::SUCCESSED) {
-			r->action = sAction::START_CHILD;
-			r->child = Child::wait_door;
-			r->data = m_collision;
-			return;
+			return startChild(r, Child::wait_door, m_collision);
 		}
-		r->action = sAction::EXIT;
-		r->status = Status::FAILED;
-		return;
+		m_status = Status::FAILED;
 		break;
 
 	case Child::wait_door:
 		if (m_children[m_runningChild]->status() == Status::SUCCESSED) {
-			r->action = sAction::EXIT;
-			r->status = Status::SUCCESSED;
-			return;
+			m_status = Status::SUCCESSED;
 		}
+		break;
 	}
 
-	r->action = sAction::RUNNING;
+	BehaviorNode::execute(r);
 }

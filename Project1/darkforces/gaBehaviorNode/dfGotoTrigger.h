@@ -18,13 +18,13 @@ namespace DarkForces {
 			std::vector<gaEntity*> m_triggers;
 			int32_t m_next;
 			gaEntity* m_targetTrigger = nullptr;
-			void activate_trigger(void);
-			void goto_next_trigger(void);
+			void activate_trigger(Action* r);
+			void goto_next_trigger(Action *r);
 
 		public:
 			GotoTrigger(const char* name);
 			void init(void *data) override;						// init the node before running
-			void nextNode(Action* r) override;					// let a parent take a decision with it's current running child
+			void execute(Action* r) override;					// let a parent take a decision with it's current running child
 
 			// flight recorder status
 			uint32_t recordState(void* record) override;		// save the component state in a record

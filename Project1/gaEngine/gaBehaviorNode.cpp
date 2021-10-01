@@ -90,23 +90,47 @@ void GameEngine::BehaviorNode::record(std::vector<BehaviorNode*>& nodes)
 }
 
 /**
+ * Node failed
+ */
+void GameEngine::BehaviorNode::failed(Action* r)
+{
+	r->action = Status::EXIT;
+	r->status = Status::FAILED;
+	m_status = Status::FAILED;
+}
+
+void GameEngine::BehaviorNode::succeeded(Action* r)
+{
+	r->action = Status::EXIT;
+	r->status = Status::SUCCESSED;
+	m_status = Status::SUCCESSED;
+}
+
+void GameEngine::BehaviorNode::startChild(Action* r, uint32_t child, void* data)
+{
+	r->action = Status::START_CHILD;
+	r->child = child;
+	r->data = data;
+}
+
+/**
  * let a parent take a decision with it's current running child result
  */
-void GameEngine::BehaviorNode::nextNode(BehaviorNode::Action *r)
+void GameEngine::BehaviorNode::execute(BehaviorNode::Action *r)
 {
 	switch (m_status) {
 	case Status::RUNNING:
-		r->action = BehaviorNode::sAction::RUNNING;
+		r->action = BehaviorNode::Status::RUNNING;
 		break;
 
 	case Status::FAILED:
 	case Status::SUCCESSED:
-		r->action = BehaviorNode::sAction::EXIT;
+		r->action = BehaviorNode::Status::EXIT;
 		r->status = m_status;
 		break;
 
 	default:
-		r->action = BehaviorNode::sAction::NEXT_NODE;
+		__debugbreak();
 	}
 }
 
@@ -115,7 +139,7 @@ void GameEngine::BehaviorNode::nextNode(BehaviorNode::Action *r)
  */
 void GameEngine::BehaviorNode::dispatchMessage(gaMessage*message, BehaviorNode::Action* r)
 {
-	r->action = BehaviorNode::sAction::RUNNING;
+	r->action = BehaviorNode::Status::RUNNING;
 }
 
 /**
@@ -162,3 +186,4 @@ uint32_t GameEngine::BehaviorNode::loadState(void* record)
 
 	return r->size;
 }
+

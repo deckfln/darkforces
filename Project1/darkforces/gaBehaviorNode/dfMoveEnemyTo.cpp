@@ -40,18 +40,15 @@ void DarkForces::Behavior::MoveEnemyTo::dispatchMessage(gaMessage* message, Acti
 		m_status = Status::RUNNING;
 	}
 
-	r->action = sAction::NEXT_NODE;
+	r->action = Status::EXECUTE;
 }
 
 
-void DarkForces::Behavior::MoveEnemyTo::nextNode(Action* r)
+void DarkForces::Behavior::MoveEnemyTo::execute(Action* r)
 {
 	GameEngine::BehaviorNode::Status childStatus;
 	
-	if (m_status != Status::RUNNING) {
-		r->action = sAction::RUNNING;
-		return;
-	}
+	r->action = Status::RUNNING;
 
 	if (m_runningChild >= 0) {
 		childStatus = m_children[m_runningChild]->status();
@@ -59,25 +56,18 @@ void DarkForces::Behavior::MoveEnemyTo::nextNode(Action* r)
 
 	switch (m_runningChild) {
 	case Child::init:
-		r->action = sAction::START_CHILD;
-		r->child = Child::move_to;
-		r->data = &m_destination;
-		return;
+		return startChild(r, Child::move_to, &m_destination);
 
 	case Child::move_to: {
 		if (childStatus == GameEngine::BehaviorNode::Status::SUCCESSED) {
 			// we reached the destination
-			r->action = sAction::EXIT;
-			r->status = Status::SUCCESSED;
-			return;
+			return succeeded(r);
 		}
 
 		// the move_to node failed, it probably collided with something
 		struct GameEngine::Physics::CollisionList* collidedList = static_cast<struct GameEngine::Physics::CollisionList*>(m_tree->blackboard("lastCollision"));
 		if (collidedList != nullptr && collidedList->size == 0) {
-			r->action = sAction::EXIT;
-			r->status = Status::FAILED;
-			return;
+			return failed(r);
 		}
 
 		DarkForces::Component::InfElevator* elevator = nullptr;
@@ -101,60 +91,41 @@ void DarkForces::Behavior::MoveEnemyTo::nextNode(Action* r)
 			case Component::InfElevator::Status::MOVE:
 			case Component::InfElevator::Status::WAIT:
 				// wait for the elevator to finish its move, maybe it is opening
-				r->action = sAction::START_CHILD;
-				r->child = Child::wait_door;
-				r->data = elevator;
-				return;
+				return startChild(r, Child::wait_door, elevator);
 
 			case Component::InfElevator::Status::HOLD:
-				r->action = sAction::START_CHILD;
-				r->child = Child::open_door;
-				r->data = elevator;
-				return;
+				return startChild(r, Child::open_door, elevator);
 
 			case Component::InfElevator::Status::TERMINATED:
 				// the elevator will not move any more, so we have to cancel the move
 				// whoever asked me to move will notice this is the end
-				r->action = sAction::EXIT;
-				r->status = Status::FAILED;
-				return;
+				m_status = Status::FAILED;
 			}
 		}
 		else {
 			// we collided with a wall 
-			r->action = sAction::EXIT;
-			r->status = Status::FAILED;
-			return;
+			m_status = Status::FAILED;
 		}
 		break; }
 
 	case wait_door:
 		if (childStatus == Status::SUCCESSED) {
 			// now that the door finished moving, restart the move
-			r->action = sAction::START_CHILD;
-			r->child = Child::move_to;
-			r->data = &m_destination;
-			return;
+			return startChild(r, Child::move_to, &m_destination);
 		}
-
-		r->action = sAction::EXIT;
-		r->status = Status::FAILED;
-		return;
+		m_status = Status::FAILED;
+		break;
 
 	case open_door:
 		if (childStatus == Status::SUCCESSED) {
 			// now that the door is open, restart the move
-			r->action = sAction::START_CHILD;
-			r->child = Child::move_to;
-			r->data = &m_destination;
-			return;
+			return startChild(r, Child::move_to, &m_destination);
 		}
-		r->action = sAction::EXIT;
-		r->status = Status::FAILED;
-		return;
+		m_status = Status::FAILED;
+		break;
 	}
 
-	r->action = sAction::RUNNING;
+	BehaviorNode::execute(r);
 }
 
 /**
