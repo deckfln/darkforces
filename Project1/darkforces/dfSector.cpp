@@ -378,12 +378,10 @@ bool dfSector::isPointInside(const glm::vec3 &p, bool fullTest)
 				{
 					inside = !inside;
 				}
-
-				if (inside) {
-					return false;	// if we are in the hole, we are not on the sector
-				}
 			}
-
+			if (inside) {
+				return false;	// if we are in the hole, we are not on the sector
+			}
 		}
 	}
 
