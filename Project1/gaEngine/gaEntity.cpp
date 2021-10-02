@@ -471,9 +471,9 @@ void gaEntity::loadState(void* r)
 
 void gaEntity::debugGUI(bool* close)
 {
-	if (ImGui::CollapsingHeader(m_name.c_str())) {
-		static char tmp[64];
+	static char tmp[64];
 
+	if (ImGui::CollapsingHeader(m_name.c_str())) {
 		sprintf_s(tmp, "gaEntity##%d", m_entityID);
 		if (ImGui::TreeNode(tmp)) {
 			ImGui::Checkbox("Physical", &m_physical);

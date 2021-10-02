@@ -429,7 +429,8 @@ void fwObject3D::debugGUI(void)
  */
 void fwObject3D::debugGUIChildClass(void)
 {
-	if (ImGui::TreeNode(g_className)) {
+	_snprintf_s(tmp, sizeof(tmp), _TRUNCATE, "%s##%d", m_className, m_id);
+	if (ImGui::TreeNode(tmp)) {
 		if (m_name != "") {
 			ImGui::Text(m_name.c_str());
 		}
@@ -445,8 +446,6 @@ void fwObject3D::debugGUIChildClass(void)
  */
 void fwObject3D::debugGUItree(std::map<fwObject3D*, bool>& inspector)
 {
-	static char tmp[64];
-
 	if (m_name != "") {
 		_snprintf_s(tmp, sizeof(tmp), _TRUNCATE, "%s (%d) \"%s\"", m_className, m_id, m_name.c_str());
 	}

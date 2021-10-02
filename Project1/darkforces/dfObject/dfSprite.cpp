@@ -131,13 +131,18 @@ void dfSprite::loadState(void* r)
 	dfObject::loadState((flightRecorder::Entity * )&record->object);
 }
 
+static char tmp[64];
+
 /**
  * Add dedicated component debug the entity
  */
 void dfSprite::debugGUIChildClass(void)
 {
 	dfObject::debugGUIChildClass();
-	if (ImGui::TreeNode("dfSprite")) {
+
+	_snprintf_s(tmp, sizeof(tmp), _TRUNCATE, "%s##%d", g_className, m_entityID);
+
+	if (ImGui::TreeNode(tmp)) {
 		ImGui::Text("slot: %d", m_slot);
 		ImGui::TreePop();
 	}

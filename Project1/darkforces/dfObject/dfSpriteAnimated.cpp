@@ -303,6 +303,8 @@ static std::map<uint32_t, const char*> debugStatesScenery = {
 	{1, "SCENERY_ATTACK"},
 };
 
+static char tmp[64];
+
 /**
  * Add dedicated component debug the entity
  */
@@ -310,7 +312,9 @@ void dfSpriteAnimated::debugGUIChildClass(void)
 {
 	dfSprite::debugGUIChildClass();
 
-	if (ImGui::TreeNode("dfSpriteAnimated")) {
+	_snprintf_s(tmp, sizeof(tmp), _TRUNCATE, "%s##%d", g_className, m_entityID);
+
+	if (ImGui::TreeNode(tmp)) {
 #ifdef _DEBUG
 		// display/hide the direction vector of the sprite
 		bool b = m_debug;

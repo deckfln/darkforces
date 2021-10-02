@@ -405,8 +405,10 @@ static std::map<uint32_t, const char*> debugLogic = {
 void dfObject::debugGUIChildClass(void)
 {
 	gaEntity::debugGUIChildClass();
+	static char tmp[64];
+	sprintf_s(tmp, "%s##%d", g_className, m_entityID);
 
-	if (ImGui::TreeNode("dfObject")) {
+	if (ImGui::TreeNode(tmp)) {
 		std::string sLogic = "";
 		for (auto& logic : debugLogic) {
 			if (m_logics & logic.first) {
@@ -415,6 +417,8 @@ void dfObject::debugGUIChildClass(void)
 			}
 		}
 		ImGui::Text("Logic: %s", sLogic.c_str());
+		ImGui::Text("Ambient: %f", m_ambient);
+		ImGui::Text("Radius: %f", m_radius);
 		ImGui::Text("LevelPos %.2f %.2f %.2f", m_position_lvl.x, m_position_lvl.y, m_position_lvl.z);
 		ImGui::TreePop();
 	}
