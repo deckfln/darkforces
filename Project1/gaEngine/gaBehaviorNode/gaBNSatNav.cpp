@@ -180,68 +180,87 @@ void GameEngine::Behavior::SatNav::onGoto(gaMessage* message)
  */
 void GameEngine::Behavior::SatNav::onMove(gaMessage* message)
 {
-	glm::vec3 sum = glm::normalize(m_transforms->m_position - m_navpoints[m_currentNavPoint]);
+	if (m_status != Status::MOVE_TO_NEXT_WAYPOINT) {
+		// ignore the message if there is no navpoint programmed
+		return;
+	}
+
+	// record the current position (to be able to backtrack)
+	m_previous[m_previous_current] = m_entity->position();
+	m_previous_current++;
+
+	if (m_previous_size < m_previous.size()) {
+		m_previous_size++;
+	}
+
+	if (m_previous_current >= m_previous.size()) {
+		m_previous_current = 0;
+	}
+
+	// how far from the navpoint
+	glm::vec3 p = m_navpoints[m_currentNavPoint];
+	glm::vec3 direction = p - m_entity->position();
+	direction.y = 0;	// move forward, physics will take care of problems
+
+	float d = glm::length(direction);
 
 	// turn the entity in the direction of the move
+	glm::vec3 lookAt = glm::normalize(direction);
+	if (d < m_entity->radius() * 2.0f && m_currentNavPoint > 1) {
+		// interpolate the direction with the next waypoint if we are near the current waypoint and it is not the last one
+		glm::vec3 next_direction = glm::normalize(m_navpoints[m_currentNavPoint - 1] - m_navpoints[m_currentNavPoint]);
+		glm::vec3 current_direction = lookAt;
+
+		float inter = d / (m_entity->radius() * 2.0f);
+		lookAt = current_direction * inter + next_direction * (1.0f-inter);
+	}
+
+	lookAt = glm::normalize(lookAt);
 	m_entity->sendInternalMessage(
-		gaMessage::LOOK_AT,
-		sum);
+			gaMessage::LOOK_AT,
+			-lookAt);
 
-	//printf("%.04f,%.04f,%.04f,%.04f,\n", m_entity->position().x, m_entity->position().z, sum.x, sum.z);
+	/*
+	printf("%.04f,%.04f,%.04f,%.04f,%.04f,%.04f,%.04f,%.04f,\n", 
+		m_entity->position().x, m_entity->position().z, 
+		current_direction.x, current_direction.z,
+		next_direction.x, next_direction.z,
+		lookAt.x, lookAt.z);
+	*/
 
-	if (m_status == Status::MOVE_TO_NEXT_WAYPOINT) {
-		// record the current position (to be able to backtrack)
-		m_previous[m_previous_current] = m_entity->position();
-		m_previous_current++;
+	// did we reach the next navpoint ?
+	if (d < 0.01f) {
+		m_status = Status::REACHED_NEXT_WAYPOINT;
+	}
+	else if (d < m_speed) {
+		m_status = Status::NEARLY_REACHED_NEXT_WAYPOINT;
+	}
+	else {
+		// and continue to move forward
+		direction = glm::normalize(direction) * m_speed;
+	}
 
-		if (m_previous_size < m_previous.size()) {
-			m_previous_size++;
-		}
-
-		if (m_previous_current >= m_previous.size()) {
-			m_previous_current = 0;
-		}
-
-		glm::vec3 p = m_navpoints[m_currentNavPoint];
-
-		glm::vec3 direction = p - m_entity->position();
-		direction.y = 0;	// move forward, physics will take care of problems
-
-		// did we reach the next navpoint ?
-		float d = glm::length(direction);
-		if (d < 0.01f) {
-			m_status = Status::REACHED_NEXT_WAYPOINT;
-		}
-		else if (d < m_speed) {
-			m_status = Status::NEARLY_REACHED_NEXT_WAYPOINT;
+	// test the result of the move
+	switch (m_status) {
+	case Status::NEARLY_REACHED_NEXT_WAYPOINT:
+		if (m_currentNavPoint > 0) {
+			// move to the next waypoint directly
+			direction = nextWayPoint(true);
 		}
 		else {
-			// and continue to move forward
-			direction = glm::normalize(direction) * m_speed;
+			// do the last step
 		}
+		m_status = Status::MOVE_TO_NEXT_WAYPOINT;
+		break;
 
-		// test the result of the move
-		switch (m_status) {
-		case Status::NEARLY_REACHED_NEXT_WAYPOINT:
-			if (m_currentNavPoint > 0) {
-				// move to the next waypoint directly
-				direction = nextWayPoint(true);
-			}
-			else {
-				// do the last step
-			}
-			m_status = Status::MOVE_TO_NEXT_WAYPOINT;
-			break;
+	case Status::REACHED_NEXT_WAYPOINT:
+		return onReachedNextWayPoint(message);
+	}
 
-		case Status::REACHED_NEXT_WAYPOINT:
-			return onReachedNextWayPoint(message);
-		}
-
-		// and take action
-		if (m_status == Status::MOVE_TO_NEXT_WAYPOINT) {
-			m_transforms->m_position = m_entity->position() + direction;
-			triggerMove(direction);
-		}
+	// and take action
+	if (m_status == Status::MOVE_TO_NEXT_WAYPOINT) {
+		m_transforms->m_position = m_entity->position() + direction;
+		triggerMove(direction);
 	}
 }
 
