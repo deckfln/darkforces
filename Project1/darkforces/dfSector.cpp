@@ -815,15 +815,33 @@ void dfSector::buildFloorAndCeiling(dfMesh* mesh)
 	// Fill polygon structure with actual data. Any winding order works.
 	// The first polyline defines the main polygon.
 	// Following polylines define holes.
+
 	std::vector<std::vector<Point>>& polygon = polygons(-1);	// default polygons
+
+	//it included another sector with the same floor
+	// draw both sectors (outline polygon)
+	if (m_includes.size() == 1 && m_staticMeshFloorAltitude == m_includes[0]->m_staticMeshFloorAltitude) {
+		polygon = polygons(1);
+	}
 
 	m_floorVerticesStart = mesh->nbVertices();
 	mesh->addFloor(polygon, m_staticMeshFloorAltitude, m_floorTexture, m_ambient, false);
 
-	// Create the ceiling, unless there is a sky
-	if (!(m_flag1 & dfSectorFlag::EXTERIOR_NO_CEIL)) {
+	//it included another sector with the same ceiling
+	// draw both sectors (outline polygon)
+	if (m_includes.size() == 1 && m_staticMeshCeilingAltitude == m_includes[0]->m_staticMeshCeilingAltitude) {
+		polygon = polygons(1);
+	}
+
+	if (m_includedIn && m_staticMeshCeilingAltitude == m_includedIn->m_staticMeshCeilingAltitude) {
+		//nop : it is included in another sector with the same ceiline
+		// the other sector will draw the ceiling
+	}
+	else if (!(m_flag1 & dfSectorFlag::EXTERIOR_NO_CEIL)) {
+		// Create the ceiling, unless there is a sky
 		mesh->addFloor(polygon, m_staticMeshCeilingAltitude, m_ceilingTexture, m_ambient, true);
 	}
+
 	m_floorVerticesLen = mesh->nbVertices() - m_floorVerticesStart;
 
 	g_navMesh.addFloor(polygon, m_staticMeshFloorAltitude);
