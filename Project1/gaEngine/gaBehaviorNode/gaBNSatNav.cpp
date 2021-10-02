@@ -105,10 +105,6 @@ void GameEngine::Behavior::SatNav::triggerMove(const glm::vec3& direction)
 {
 	triggerMove();
 
-	// turn the entity in the direction of the move
-	m_entity->sendInternalMessage(
-		gaMessage::LOOK_AT,
-		-direction);
 }
 
 /**
@@ -184,7 +180,14 @@ void GameEngine::Behavior::SatNav::onGoto(gaMessage* message)
  */
 void GameEngine::Behavior::SatNav::onMove(gaMessage* message)
 {
-	//printf("%.04f,%.04f,\n", m_entity->position().x, m_entity->position().z);
+	glm::vec3 sum = glm::normalize(m_transforms->m_position - m_navpoints[m_currentNavPoint]);
+
+	// turn the entity in the direction of the move
+	m_entity->sendInternalMessage(
+		gaMessage::LOOK_AT,
+		sum);
+
+	//printf("%.04f,%.04f,%.04f,%.04f,\n", m_entity->position().x, m_entity->position().z, sum.x, sum.z);
 
 	if (m_status == Status::MOVE_TO_NEXT_WAYPOINT) {
 		// record the current position (to be able to backtrack)
