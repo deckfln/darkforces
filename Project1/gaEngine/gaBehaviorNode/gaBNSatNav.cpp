@@ -43,6 +43,8 @@ void GameEngine::Behavior::SatNav::init(void *data)
 
 	m_destination = *destination;
 
+	printf("%.04f,%.04f,\n", destination->x, destination->z);
+
 	m_navpoints.clear();
 
 	if (g_navMesh.findPath(m_entity->position(), m_destination, m_navpoints) > 0) {

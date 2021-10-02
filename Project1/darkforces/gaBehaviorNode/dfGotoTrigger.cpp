@@ -9,6 +9,7 @@
 #include "../dfLogicTrigger.h"
 #include "../dfComponent/Trigger.h"
 #include "../dfComponent/InfElevator.h"
+#include "../dfComponent/dfSign.h"
 
 DarkForces::Behavior::GotoTrigger::GotoTrigger(const char *name):
 	GameEngine::BehaviorNode(name)
@@ -66,6 +67,13 @@ void DarkForces::Behavior::GotoTrigger::goto_next_trigger(Action* r)
 		m_next++;
 
 		glm::vec3 p = m_targetTrigger->position();
+
+		// if the trigger is a dfSign, move in front of the object, on ON the object
+		Component::Sign* sign = dynamic_cast<Component::Sign*>(m_targetTrigger->findComponent(DF_COMPONENT_SIGN));
+		if (sign) {
+			p += sign->normal();
+		}
+
 		return startChild(r, 0, &p);
 	}
 

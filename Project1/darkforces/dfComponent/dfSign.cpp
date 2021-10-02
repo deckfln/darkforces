@@ -9,7 +9,9 @@
 
 DarkForces::Component::Sign::Sign(dfMesh* mesh, dfSector* sector, dfWall* wall, float z, float z1):
 	gaComponent(DF_COMPONENT_SIGN),
-	m_mesh(mesh)
+	m_mesh(mesh),
+	m_position(0),
+	m_normal(0)
 {
 	buildGeometry(sector, wall, z, z1);
 }
@@ -102,7 +104,7 @@ void DarkForces::Component::Sign::buildGeometry(dfSector* sector, dfWall* wall, 
 	end.y -= translate.z;
 
 	// wall normals
-	glm::vec3 normal = glm::normalize(glm::vec3(-segment.y, segment.x, 0));	//  and (dy, -dx).
+	m_normal = glm::normalize(glm::vec3(-segment.y, segment.x, 0));	//  and (dy, -dx).
 
 	// create a copy of the wall and shrink to the size and position of the sign
 	// ratio of texture pixel vs world position = 64 pixels for 8 clicks => 8x1
@@ -120,8 +122,8 @@ void DarkForces::Component::Sign::buildGeometry(dfSector* sector, dfWall* wall, 
 	);
 
 	// move the the wall along the normal
-	sign_p += normal / 10.0f;
-	sign_p1 += normal / 10.0f;
+	sign_p += m_normal / 10.0f;
+	sign_p1 += m_normal / 10.0f;
 
 	// Handle request to flip the texture
 	bool flipTexture = wall->flag1(dfWallFlag::FLIP_TEXTURE_HORIZONTALLY);
@@ -139,6 +141,7 @@ void DarkForces::Component::Sign::buildGeometry(dfSector* sector, dfWall* wall, 
 
 	// position of the sign is the center of the sign. move to gl space
 	m_position = (glm::vec3(sign_p.x, sign_p.z, sign_p.y) + glm::vec3(sign_p1.x, sign_p1.z, sign_p1.y)) / 20.0f;
+	m_normal = glm::vec3(m_normal.x, m_normal.z, m_normal.y) / 10.0f;
 
 	float dx = (sign_p1.x - sign_p.x) / 20.0f;
 	float dy = (sign_p1.z - sign_p.z) / 20.0f;
