@@ -1,5 +1,7 @@
 #pragma once
 
+#include <queue>
+
 #include "dfSprite.h"
 #include <glm/vec4.hpp>
 #include <glm/vec3.hpp>
@@ -17,6 +19,8 @@ class dfSpriteAnimated: public dfSprite
 	time_t m_lastFrame = 0;					// time of the last animation frame
 	time_t m_currentFrame = 0;				// time of the current animation frame
 	fwMesh *m_view=nullptr;
+	std::queue<dfState> m_previousStates;	// push/pop status for loops
+
 #ifdef _DEBUG
 	bool m_directionVector = false;			// add a vector to show the direction the sprite is facing
 	bool m_debug = false;
@@ -37,6 +41,9 @@ public:
 	}
 
 	void state(dfState state);
+	void pushState(dfState state);			// save and restore status
+	dfState popState(void);
+
 	void rotation(const glm::vec3& rotation);
 
 	void loop(bool l) { m_loopAnimation = l; };

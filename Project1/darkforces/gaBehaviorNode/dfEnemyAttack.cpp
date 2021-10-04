@@ -23,6 +23,10 @@ void DarkForces::Behavior::EnemyAttack::init(void* data)
 	// get the player position
 	m_position = glm::normalize(m_player->position() - m_entity->position());
 
+	// turn toward the player
+	m_entity->sendMessage(gaMessage::LOOK_AT, -m_position);
+
+	// and fire
 	m_entity->sendMessage(DarkForces::Message::FIRE, 0, (void*)&m_position);
 }
 

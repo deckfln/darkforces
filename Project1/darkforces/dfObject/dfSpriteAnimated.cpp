@@ -23,6 +23,10 @@ static glm::vec4 g_red(1.0, 1.0, 0.0, 1.0);
 static fwMaterialBasic g_basic(&g_red);
 static fwGeometryCylinder* g_view = nullptr;
 
+static std::map<dfState, bool> g_loopStates{
+	{ dfState::ENEMY_ATTACK, false}
+};
+
 #ifdef _DEBUG
 /**
  * add/remove a vector mesh
@@ -93,6 +97,13 @@ void dfSpriteAnimated::state(dfState state)
 	m_frame = 0;
 	m_dirtyAnimation = true;
 
+	if (g_loopStates.find(state) != g_loopStates.end()) {
+		m_loopAnimation = g_loopStates[state];
+	}
+	else {
+		m_loopAnimation = true;
+	}
+
 	if (m_logics & DF_LOGIC_ENEMIES) {
 		// trigger the animation, unless the object is static or has no animation
 		if (m_state != dfState::ENEMY_LIE_DEAD &&
@@ -108,6 +119,23 @@ void dfSpriteAnimated::state(dfState state)
 			g_gaWorld.sendMessageDelayed(m_name, m_name, gaMessage::TIMER, 0, nullptr);
 		}
 	}
+}
+
+/**
+ * save and restore status
+ */
+void dfSpriteAnimated::pushState(dfState _state)
+{
+	m_previousStates.push(m_state);
+	state(_state);
+}
+
+dfState dfSpriteAnimated::popState(void)
+{
+	dfState _state = m_previousStates.front();
+	m_previousStates.pop();
+	state(_state);
+	return _state;
 }
 
 /**
@@ -212,6 +240,9 @@ void dfSpriteAnimated::dispatchMessage(gaMessage* message)
 			// and reboot the timer for the next frame
 			g_gaWorld.sendMessageDelayed(m_name, m_name, gaMessage::TIMER, 0, nullptr);
 		}
+		else if (m_previousStates.size() > 0) {
+			popState();
+		}
 		break;
 
 	case gaMessage::LOOK_AT:
@@ -230,7 +261,7 @@ void dfSpriteAnimated::dispatchMessage(gaMessage* message)
 		break;
 
 	case DarkForces::Message::FIRE:
-		state(dfState::ENEMY_ATTACK);
+		pushState(dfState::ENEMY_ATTACK);
 		break;
 
 	case gaMessage::START_MOVE:
