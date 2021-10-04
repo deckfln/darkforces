@@ -1,6 +1,5 @@
 #pragma once
 
-#include <list>
 #include "../../gaEngine/gaBehaviorNode.h"
 
 class dfLogicTrigger;

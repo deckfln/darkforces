@@ -32,6 +32,7 @@ dfObject::dfObject(dfModel *source, const glm::vec3& position, float ambient, in
 	m_is(type),
 	m_objectID(g_ids++)
 {
+	gaEntity::
 	modelAABB(m_source->modelAABB());
 	moveTo(position);
 	m_className = g_className;

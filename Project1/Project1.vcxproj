@@ -183,10 +183,12 @@
     <ClCompile Include="darkforces\dfVOC.cpp" />
     <ClCompile Include="darkforces\dfVue.cpp" />
     <ClCompile Include="darkforces\dfWall.cpp" />
+    <ClCompile Include="darkforces\gaBehaviorNode\dfEnemyAttack.cpp" />
     <ClCompile Include="darkforces\gaBehaviorNode\dfGotoTrigger.cpp" />
     <ClCompile Include="darkforces\gaBehaviorNode\dfMoveEnemyTo.cpp" />
     <ClCompile Include="darkforces\gaBehaviorNode\dfOpenDoor.cpp" />
     <ClCompile Include="darkforces\gaBehaviorNode\dfWaitDoor.cpp" />
+    <ClCompile Include="darkforces\gaBehaviorNode\dfWaitIdle.cpp" />
     <ClCompile Include="darkforces\gaEntity\ElevatorDoor.cpp" />
     <ClCompile Include="flightRecorder\Blackbox.cpp" />
     <ClCompile Include="framework\background\fwSkybox.cpp" />
@@ -379,10 +381,12 @@
     <ClInclude Include="darkforces\flightRecorder\frSprite.h" />
     <ClInclude Include="darkforces\flightRecorder\frSpriteAnimated.h" />
     <ClInclude Include="darkforces\flightRecorder\Object3D.h" />
+    <ClInclude Include="darkforces\gaBehaviorNode\dfEnemyAttack.h" />
     <ClInclude Include="darkforces\gaBehaviorNode\dfGotoTrigger.h" />
     <ClInclude Include="darkforces\gaBehaviorNode\dfMoveEnemyTo.h" />
     <ClInclude Include="darkforces\gaBehaviorNode\dfOpenDoor.h" />
     <ClInclude Include="darkforces\gaBehaviorNode\dfWaitDoor.h" />
+    <ClInclude Include="darkforces\gaBehaviorNode\dfWaitIdle.h" />
     <ClInclude Include="darkforces\gaEntity\ElevatorDoor.h" />
     <ClInclude Include="darkforces\lexer\dfObject.lex.h" />
     <ClInclude Include="flightRecorder\AABBox.h" />

@@ -229,6 +229,10 @@ void dfSpriteAnimated::dispatchMessage(gaMessage* message)
 		}
 		break;
 
+	case DarkForces::Message::FIRE:
+		state(dfState::ENEMY_ATTACK);
+		break;
+
 	case gaMessage::START_MOVE:
 		state(dfState::ENEMY_MOVE);
 		break;

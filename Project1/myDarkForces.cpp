@@ -58,9 +58,9 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 	//glm::vec3 start = glm::vec3(-17.60, -2.0, 27.77);	// projector
 	//glm::vec3 start = glm::vec3(-20, 2.0, 34);	// mousebot(40)
 	//glm::vec3 start = glm::vec3(-28.65f, -2.0, 34.83f);	// spinner
-	glm::vec3 start = glm::vec3(-28.0287533, -2.0, 27.4463711);	// projector
+	//glm::vec3 start = glm::vec3(-28.0287533, -2.0, 27.4463711);	// projector
 	//glm::vec3 start = glm::vec3(-56.25, -0.9, 21.65);	// super secret 2
-	//glm::vec3 start = glm::vec3(-24.52, 0.07, 31.75);	// enthall
+	glm::vec3 start = glm::vec3(-24.52, 0.07, 31.75);	// enthall
 	//glm::vec3 start = glm::vec3(-38.80, 2.41, 39.7);	// switch_cover
 
 	fwCylinder bounding(glm::vec3(0), c_radius, c_height); // stage
@@ -128,9 +128,6 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 	g_Blackbox.registerClass("dfBullet", &dfBullet::create);
 	g_Blackbox.registerClass("dfSpriteAnimated", &dfSpriteAnimated::create);
 	g_Blackbox.registerClass("dfBulletExplode", &dfBulletExplode::create);
-
-	gaEntity* officer = g_gaWorld.getEntity("OFFCFIN.WAX(21)");
-	officer->sendMessage(gaMessage::Action::SatNav_GOTO, glm::vec3(-21.29, -0.3, 16.6));
 
 	// prepare the debugger
 	static std::map<int32_t, const char*> g_definitions = {

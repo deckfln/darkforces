@@ -43,7 +43,7 @@ void GameEngine::Behavior::SatNav::init(void *data)
 
 	m_destination = *destination;
 
-	printf("%.04f,%.04f,\n", destination->x, destination->z);
+	//printf("%.04f,%.04f,\n", destination->x, destination->z);
 
 	m_navpoints.clear();
 

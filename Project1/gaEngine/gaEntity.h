@@ -61,7 +61,8 @@ protected:
 
 	dfSuperSector* m_supersector = nullptr;			// cached super_sector hosting the object
 	Collider m_collider;							// if there is a collider
-	float m_radius = -1;							// radius of the collision box
+	float m_radius = -1;							// radius of the collision box (can be different from the AABB)
+	float m_height = -1;							// height of the collision box (can be different from the AABB)
 
 	std::map<std::string, gaEntity*> m_sittingOnTop;// cached list of the entities sitting on top of that one
 
@@ -116,7 +117,8 @@ public:
 
 	void transform(GameEngine::Transform* transform);	// apply a transformation and update the worldAABB
 
-	float radius(void);									// maximum radius of the entity
+	float radius(void);									// maximum radius of the entity (radius of the AABB if not initialized)
+	float height(void);									// maximum height of the entity (height of the AABB if not initialized)
 
 	void addChild(gaEntity* entity);					// add an entity inside that one (and increase the AABB if needed)
 

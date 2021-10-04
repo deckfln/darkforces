@@ -9,14 +9,14 @@
 
 class dfComponentActor : public gaComponent
 {
-	int32_t m_shield = 0;
+	int32_t m_shield = 100;
 	int32_t m_maxShield = 300;
 
 	int32_t m_energy = 0;
 	int32_t m_maxEnergy = 200;
 
 	int32_t m_battery = 0;
-	int32_t m_life = 0;
+	int32_t m_life = 100;
 
 	DarkForces::Keys m_keys = DarkForces::Keys::RED;
 

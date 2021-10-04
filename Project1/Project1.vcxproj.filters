@@ -702,6 +702,12 @@
     <ClCompile Include="framework\math\fwAABBox2D.cpp">
       <Filter>Fichiers sources\Framework\math</Filter>
     </ClCompile>
+    <ClCompile Include="darkforces\gaBehaviorNode\dfWaitIdle.cpp">
+      <Filter>Fichiers sources\Dark Forces\gaBehaviorNode</Filter>
+    </ClCompile>
+    <ClCompile Include="darkforces\gaBehaviorNode\dfEnemyAttack.cpp">
+      <Filter>Fichiers sources\Dark Forces\gaBehaviorNode</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="glad\glad.h">
@@ -1324,6 +1330,12 @@
     </ClInclude>
     <ClInclude Include="framework\math\fwAABBox2D.h">
       <Filter>Fichiers d%27en-tête\Framework\math</Filter>
+    </ClInclude>
+    <ClInclude Include="darkforces\gaBehaviorNode\dfWaitIdle.h">
+      <Filter>Fichiers d%27en-tête\DarkForces\gaBehaviorNode</Filter>
+    </ClInclude>
+    <ClInclude Include="darkforces\gaBehaviorNode\dfEnemyAttack.h">
+      <Filter>Fichiers d%27en-tête\DarkForces\gaBehaviorNode</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

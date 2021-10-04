@@ -22,25 +22,10 @@ enum Child {
 	open_door
 };
 
-/**
- * run the node actions
- */
-void DarkForces::Behavior::MoveEnemyTo::dispatchMessage(gaMessage* message, Action*r)
+void DarkForces::Behavior::MoveEnemyTo::init(void* data)
 {
-	if (message->m_action == gaMessage::Action::SatNav_GOTO) {
-		if (message->m_extra == nullptr) {
-			m_destination = message->m_v3value;
-		}
-		else {
-			m_destination = *(static_cast<glm::vec3*>(message->m_extra));
-		}
-
-		m_runningChild = Child::init;
-
-		m_status = Status::RUNNING;
-	}
-
-	r->action = Status::EXECUTE;
+	m_destination = *(static_cast<glm::vec3*>(data));
+	m_runningChild = Child::init;
 }
 
 

@@ -230,7 +230,7 @@ void gaEntity::sendMessage(const std::string& target, int action, int value, voi
 
 void gaEntity::sendMessage(int action, int value, void* extra)
 {
-	g_gaWorld.sendMessage(m_name, m_name, action, value, nullptr);
+	g_gaWorld.sendMessage(m_name, m_name, action, value, extra);
 }
 
 void gaEntity::sendMessage(int action, const glm::vec3& value)
@@ -311,11 +311,12 @@ void gaEntity::transform(GameEngine::Transform* transform)
 }
 
 /**
- * maximum radius of the entity
+ * maximum radius of the entity (radius of the AABB if not initialized)
  */
 float gaEntity::radius(void)
 {
 	if (m_radius < 0) {
+		// lazy init if no one forced the radius
 		float r1 = m_modelAABB.m_p1.x - m_modelAABB.m_p.x;
 		float r2 = m_modelAABB.m_p1.z - m_modelAABB.m_p.z;
 		float r = std::max(r1, r2);
@@ -324,6 +325,18 @@ float gaEntity::radius(void)
 	}
 
 	return m_radius;
+}
+
+/**
+ * maximum height of the entity (height of the AABB if not initialized)
+ */
+float gaEntity::height(void)
+{
+	if (m_height < 0) {
+		m_height = m_modelAABB.height();
+	}
+
+	return m_height;
 }
 
 /**
