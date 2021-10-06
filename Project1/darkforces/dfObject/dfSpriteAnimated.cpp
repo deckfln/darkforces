@@ -226,7 +226,7 @@ void dfSpriteAnimated::dispatchMessage(gaMessage* message)
 			g_gaWorld.sendMessageDelayed(m_name, m_name, gaMessage::TIMER, 0, nullptr);
 		}
 		else {
-			sendInternalMessage(DF_MESSAGE_END_LOOP, (int)m_state);
+			sendMessage(DF_MESSAGE_END_LOOP, (int)m_state);
 		}
 		break;
 
