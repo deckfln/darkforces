@@ -44,6 +44,7 @@ protected:
 	bool m_canStep = false;							// can the entity step up or down a stair
 	bool m_hasCollider = false;						// entity needs to be tested with collider
 	bool m_movable = true;							// entity can be pushed
+	uint32_t m_timer = 0;							// number of components waiting for a gaMessage::TIMER every frame
 
 	GameEngine::Transform m_transforms;				// transforms to move the object
 
@@ -109,6 +110,8 @@ public:
 	inline GameEngine::Transform* pTransform(void) { return &m_transforms; };
 	inline void superSector(dfSuperSector* s) { m_supersector = s; };
 	inline float step(void) { return m_step; };
+	void timer(bool onOff);						// manage number of components needing timer events
+	inline bool timer(void) { return m_timer > 0; };
 
 	void displayAABBox(void);							// display the world AABBox on screen
 

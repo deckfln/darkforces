@@ -21,6 +21,7 @@ namespace flightRecorder {
 		AABBox modelAABB;					// model space AABB
 		AABBox worldBounding;				// AABB bounding box in world opengl space
 		time_t animation_time;				// elapsed time when running animation
+		bool timer;
 		uint32_t nbComponents;				// number of components at the end of the record
 	};
 }

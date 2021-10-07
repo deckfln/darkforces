@@ -112,7 +112,7 @@ bool DarkForces::Component::InfElevator::animate(time_t delta)
 	switch (m_status) {
 	case Status::TERMINATED:
 		// the elevator cannot be moved
-		return true;
+		return false;
 
 	case Status::HOLD:
 		m_status = Status::MOVE;
@@ -171,11 +171,11 @@ bool DarkForces::Component::InfElevator::animate(time_t delta)
 				case dfLogicStop::Action::HOLD:
 					m_status = Status::HOLD;
 					// stop the animation
-					return true;
+					return false;
 				case dfLogicStop::Action::TERMINATE:
 					m_status = Status::TERMINATED;
 					// stop the animation
-					return true;
+					return false;
 				default:
 					gaDebugLog(1, "DarkForces::Component::Elevator::animate", "action " + std::to_string(static_cast<uint32_t>(stop->action())));
 				}
@@ -195,10 +195,23 @@ bool DarkForces::Component::InfElevator::animate(time_t delta)
 	default:
 		gaDebugLog(1, "DarkForces::Component::Elevator::animate", "action " + std::to_string(static_cast<uint32_t>(m_status)));
 	}
+	return true;
+}
 
-	// next animation
-	g_gaWorld.sendMessageDelayed(m_entity->name(), m_entity->name(), gaMessage::TIMER, 0, nullptr);
-	return false;
+/**
+ * Manage the timer
+ */
+void DarkForces::Component::InfElevator::startTimer(void)
+{
+	m_tick = 0;
+	m_animated = true;
+	m_entity->timer(true);
+}
+
+void DarkForces::Component::InfElevator::stopTimer(void)
+{
+	m_animated = false;
+	m_entity->timer(false);
 }
 
 /**
@@ -298,7 +311,6 @@ void DarkForces::Component::InfElevator::dispatchMessage(gaMessage* message)
 			// break the animation and move directly to the next stop
 			moveToNextStop();
 			m_status = Status::MOVE;
-			m_tick = 0;
 			// no need for animation, there is already one on the message queue
 		}
 		else {
@@ -307,7 +319,10 @@ void DarkForces::Component::InfElevator::dispatchMessage(gaMessage* message)
 				gaDebugLog(1, "DarkForces::Component::Elevator::dispatchMessage", "speed==0 not implemented");
 			}
 			else {
-				animate(0);
+				startTimer();
+				if (!animate(0)) {
+					stopTimer();
+				}
 			}
 		}
 
@@ -352,8 +367,10 @@ void DarkForces::Component::InfElevator::dispatchMessage(gaMessage* message)
 				m_entity->sendInternalMessage(gaMessage::PLAY_SOUND, DarkForces::Component::InfElevator::Sound::MOVE);
 
 				m_status = Status::MOVE;
-				m_tick = 0;
-				animate(0);
+				startTimer();
+				if (!animate(0)) {
+					stopTimer();
+				}
 			}
 		}
 		else {
@@ -364,7 +381,9 @@ void DarkForces::Component::InfElevator::dispatchMessage(gaMessage* message)
 		break;
 
 	case gaMessage::TIMER:
-		animate(message->m_delta);
+		if (!animate(message->m_delta)) {
+			stopTimer();
+		}
 		break;
 	}
 }

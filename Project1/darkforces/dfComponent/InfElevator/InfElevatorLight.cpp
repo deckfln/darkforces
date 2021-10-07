@@ -34,7 +34,7 @@ void DarkForces::Component::InfElevatorLight::dispatchMessage(gaMessage* message
 		m_animate = true;
 
 		// change_light are auto start
-		g_gaWorld.sendMessageDelayed(m_entity->name(), m_entity->name(), gaMessage::TIMER, 0, nullptr);
+		m_entity->timer(true);
 		break;
 	}
 }

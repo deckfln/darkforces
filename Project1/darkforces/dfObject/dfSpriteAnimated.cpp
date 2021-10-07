@@ -110,13 +110,19 @@ void dfSpriteAnimated::state(dfState state)
 			m_state != dfState::ENEMY_STAY_STILL &&
 			m_source->nbFrames(m_state) > 1)
 		{
-			g_gaWorld.sendMessageDelayed(m_name, m_name, gaMessage::TIMER, 0, nullptr);
+			m_animated = true;
+			timer(true);	// register to timer events
 		}
 	}
 	else {
 		// trigger an animation loop if there is actually an animation loop
 		if ((m_logics & dfLogic::ANIM) && m_source->nbFrames(m_state) > 1) {
-			g_gaWorld.sendMessageDelayed(m_name, m_name, gaMessage::TIMER, 0, nullptr);
+			m_animated = true;
+			timer(true);
+		}
+		else {
+			m_animated = false;
+			timer(false);	// de-register from timer events
 		}
 	}
 }
@@ -132,7 +138,7 @@ void dfSpriteAnimated::pushState(dfState _state)
 
 dfState dfSpriteAnimated::popState(void)
 {
-	dfState _state = m_previousStates.front();
+	dfState _state = m_previousStates.top();
 	m_previousStates.pop();
 	state(_state);
 	return _state;
@@ -216,16 +222,21 @@ bool dfSpriteAnimated::update(time_t t)
 void dfSpriteAnimated::dispatchMessage(gaMessage* message)
 {
 	switch (message->m_action) {
+	case gaMessage::WORLD_INSERT:
+		state(m_state);
+		break;
+
 	case DF_MSG_STATE:
 		state((dfState)message->m_value);
 		break;
 
 	case gaMessage::TIMER:
-		if (update(message->m_delta)) {
-			// continue the animation loop
-			g_gaWorld.sendMessageDelayed(m_name, m_name, gaMessage::TIMER, 0, nullptr);
+		if (!m_animated) {
+			// ignore timer ticks when there is no ongoing animation
+			return;
 		}
-		else {
+
+		if (!update(message->m_delta)) {
 			sendMessage(DF_MESSAGE_END_LOOP, (int)m_state);
 		}
 		break;
@@ -237,10 +248,10 @@ void dfSpriteAnimated::dispatchMessage(gaMessage* message)
 			m_lastFrame = m_currentFrame = 0;
 			m_frame = 0;
 			m_dirtyAnimation = true;
-			// and reboot the timer for the next frame
-			g_gaWorld.sendMessageDelayed(m_name, m_name, gaMessage::TIMER, 0, nullptr);
 		}
 		else if (m_previousStates.size() > 0) {
+			m_animated = false;
+			timer(false);
 			popState();
 		}
 		break;

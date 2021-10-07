@@ -83,11 +83,6 @@ void World::addClient(gaEntity* client)
  */
 void World::removeClient(gaEntity* client)
 {
-	if (m_entities.count(client->name()) == 0) {
-		// no such client on the map
-		return;
-	}
-
 	client->OnWorldRemove();
 	sendImmediateMessage("_world", client->name(), gaMessage::WORLD_REMOVE, 0, nullptr);
 
@@ -100,6 +95,8 @@ void World::removeClient(gaEntity* client)
 	}
 
 	m_entitiesByClass[client->mclass()].remove(client);
+
+	registerTimerEvents(client, false);
 }
 
 /**
@@ -504,6 +501,12 @@ void World::process(time_t delta, bool force)
 
 	m_frame++;
 
+	// inject timer messages if the entity request so
+	// only way to ensure there is not multiple timer message coming from different components of the entity
+	for (auto entity : m_timers) {
+		sendMessage(entity->name(), entity->name(), gaMessage::TIMER, 0, nullptr);
+	}
+
 #ifdef _DEBUG
 	// record start at start of frame
 	g_Blackbox.recordState();
@@ -561,12 +564,15 @@ void World::process(time_t delta, bool force)
 			case gaMessage::DELETE_ENTITY:
 				// delete all instances of the given entity
 				if (m_entities.count(message->m_server) > 0) {
+					std::vector<gaEntity*>p;
+
 					for (auto entity : m_entities[message->m_server]) {
-						sendImmediateMessage("_world", entity->name(), gaMessage::WORLD_REMOVE, 0, nullptr);
-						entity->OnWorldRemove();
+						p.push_back(entity);
+					}
+
+					for (auto entity: p) {
+						removeClient(entity);
 						delete entity;
-						m_entities.erase(message->m_server);
-						break;
 					}
 				}
 				break;
@@ -667,6 +673,25 @@ void GameEngine::World::getEntitiesWithComponents(uint32_t componentID, std::vec
 				entities.push_back(ent);
 			}
 		}
+	}
+}
+
+/**
+ * (de)register an entity to receive timer events
+ */
+void GameEngine::World::registerTimerEvents(gaEntity* entity, bool b) 
+{
+	if (b) {
+		// register
+		if (std::find(m_timers.begin(), m_timers.end(), entity) != m_timers.end()) {
+			// already registered
+			return;
+		}
+
+		m_timers.push_back(entity);
+	}
+	else {
+		m_timers.remove(entity);
 	}
 }
 

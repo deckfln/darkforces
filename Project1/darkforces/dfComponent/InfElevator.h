@@ -128,6 +128,7 @@ namespace DarkForces {
 			dfWallFlag m_meshFlag = dfWallFlag::ALL;		// what walls to draw
 
 			// Dynamic state
+			bool m_animated = false;						// is the elevator being animated ?
 			Status m_status = Status::HOLD;					// status of the elevator
 			float m_tick = 0;								// current timer
 			float m_delay = 0;								// time to run the elevator
@@ -144,6 +145,8 @@ namespace DarkForces {
 			void moveTo(dfLogicStop* stop);					// move directly to the given stop
 			void moveToNextStop(void);						// start moving to the next stop
 			bool animate(time_t delta);						// move between stops
+			void startTimer(void);
+			void stopTimer(void);
 		};
 	}
 }

@@ -294,6 +294,22 @@ void gaEntity::moveTo(const glm::vec3& position)
 }
 
 /**
+ * manage number of components needing timer events
+ */
+void gaEntity::timer(bool onOff)
+{
+	if (onOff) {
+		m_timer++;
+		g_gaWorld.registerTimerEvents(this, true);
+	}
+	else if (m_timer > 0) {
+		m_timer--;
+		g_gaWorld.registerTimerEvents(this, false);
+	}
+}
+
+
+/**
  * display the world AABBox on screen
  */
 void gaEntity::displayAABBox(void)
@@ -434,9 +450,9 @@ uint32_t gaEntity::recordState(void *r)
 	m_transforms.recordState(&record->transforms);		// transforms to move the object
 	m_modelAABB.recordState(&record->modelAABB);		// model space AABB
 	m_worldBounding.recordState(&record->worldBounding);// AABB bounding box in world opengl space
+	record->timer = m_timer;
 	record->animation_time = m_animation_time;			// elapsed time when running animation
 	record->nbComponents = m_components.size();			// number of components to be found at the end of the record
-
 	return record->size;
 }
 
@@ -480,6 +496,7 @@ void gaEntity::loadState(void* r)
 	m_modelAABB.loadState(&record->modelAABB);
 	m_worldBounding.loadState(&record->worldBounding);
 	m_animation_time = record->animation_time;
+	m_timer = record->timer;
 }
 
 void gaEntity::debugGUI(bool* close)
@@ -490,6 +507,7 @@ void gaEntity::debugGUI(bool* close)
 		sprintf_s(tmp, "gaEntity##%d", m_entityID);
 		if (ImGui::TreeNode(tmp)) {
 			ImGui::Checkbox("Physical", &m_physical);
+			ImGui::Text("Timers : %d", m_timer);
 			ImGui::TreePop();
 		}
 		debugGUIChildClass();

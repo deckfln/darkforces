@@ -32,8 +32,10 @@ namespace GameEngine {
 		std::map<std::string, std::list<gaEntity*>> m_entities;
 		std::map<uint32_t, std::list<gaEntity*>> m_entitiesByClass;
 
+		std::list<gaEntity*> m_timers;						// entities that registered to receive timer events
+
 		std::vector<dfSuperSector*> m_sectors;
-		dfSprites* m_sprites = nullptr;							// sprites manager
+		dfSprites* m_sprites = nullptr;						// sprites manager
 		std::map<std::string, GameEngine::Model*> m_models;	// list of models (images, 3D objects ...)
 		std::map<std::string, void*> m_registry;				// list of objects
 
@@ -137,6 +139,8 @@ namespace GameEngine {
 			std::vector<gaEntity*>& entities);				// return all entities with a special components
 		bool getEntities(uint32_t type,
 			std::vector<gaEntity*>& entities);				// return all entities of that type
+
+		void registerTimerEvents(gaEntity*, bool b);		// (de)register an entity to receive timer events
 
 		~World();
 	};
