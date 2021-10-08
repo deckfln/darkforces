@@ -22,6 +22,8 @@ void DarkForces::Behavior::EnemyAttack::locatePlayer(void)
 
 	// and fire
 	m_entity->sendMessage(DarkForces::Message::FIRE, 0, (void*)&m_direction);
+
+	m_state = 2;	// firing
 }
 
 /**
@@ -45,7 +47,6 @@ void DarkForces::Behavior::EnemyAttack::onMove(gaMessage* message, Action* r)
 	m_steps--;
 	if (m_steps < 0) {
 		locatePlayer();
-		triggerMove();
 		m_steps=30;
 	}
 	else {
@@ -67,8 +68,9 @@ void DarkForces::Behavior::EnemyAttack::init(void* data)
 	m_steps = -1;
 
 	// broadcast the beginning of the move (for animation)
-	m_entity->sendDelayedMessage(gaMessage::START_MOVE);
+	m_entity->sendMessage(gaMessage::START_MOVE);		// start the entity animation
 
+	m_state = 1;	// move
 	onMove(nullptr, nullptr);
 }
 
@@ -80,7 +82,14 @@ void DarkForces::Behavior::EnemyAttack::dispatchMessage(gaMessage* message, Acti
 		break;
 
 	case gaMessage::Action::COLLIDE:
+		m_entity->sendMessage(gaMessage::Action::END_MOVE);	// stop the entity animation
 		return failed(r);
+		break;
+
+	case DarkForces::Message::ANIM_END:
+		// Fire animation ended, so reboot the move
+		m_state = 1; // move
+		onMove(message, r);
 		break;
 	}
 	BehaviorNode::dispatchMessage(message, r);

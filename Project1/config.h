@@ -70,7 +70,9 @@ namespace DarkForces {
 		ADD_BATTERY,
 		EVENT,				// send events to sectors
 		FIRE,				// fire a gun
-		SatNav_Wait			// ticks for the DF satnav
+		SatNav_Wait,		// ticks for the DF satnav
+		ANIM_START,			// WAX animation is starting
+		ANIM_END			// WAX animation reached the end and is stopping
 	};
 
 	enum MessageEvent {

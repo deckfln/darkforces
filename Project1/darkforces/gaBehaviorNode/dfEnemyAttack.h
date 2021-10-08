@@ -12,6 +12,7 @@ namespace DarkForces {
 			glm::vec3 m_position;											// player position
 			glm::vec3 m_direction;											// direction to the last player position
 			float m_steps = 0;												// number of steps since last check
+			uint32_t m_state = 0;
 
 			void locatePlayer(void);										// locate the player
 			void triggerMove(void);											// trigger a move toward the player

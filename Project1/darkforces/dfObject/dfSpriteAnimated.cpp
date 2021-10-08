@@ -110,6 +110,7 @@ void dfSpriteAnimated::state(dfState state)
 			m_state != dfState::ENEMY_STAY_STILL &&
 			m_source->nbFrames(m_state) > 1)
 		{
+			sendMessage(DarkForces::Message::ANIM_START, 0);
 			m_animated = true;
 			timer(true);	// register to timer events
 		}
@@ -117,6 +118,7 @@ void dfSpriteAnimated::state(dfState state)
 	else {
 		// trigger an animation loop if there is actually an animation loop
 		if ((m_logics & dfLogic::ANIM) && m_source->nbFrames(m_state) > 1) {
+			sendMessage(DarkForces::Message::ANIM_START, 0);
 			m_animated = true;
 			timer(true);
 		}
@@ -226,7 +228,7 @@ void dfSpriteAnimated::dispatchMessage(gaMessage* message)
 		state(m_state);
 		break;
 
-	case DF_MSG_STATE:
+	case DarkForces::Message::STATE:
 		state((dfState)message->m_value);
 		break;
 
@@ -237,11 +239,11 @@ void dfSpriteAnimated::dispatchMessage(gaMessage* message)
 		}
 
 		if (!update(message->m_delta)) {
-			sendMessage(DF_MESSAGE_END_LOOP, (int)m_state);
+			sendMessage(DarkForces::Message::END_LOOP, (int)m_state);
 		}
 		break;
 
-	case DF_MESSAGE_END_LOOP:
+	case DarkForces::Message::END_LOOP:
 		// go for next animation if the animation loop ?
 		if (m_loopAnimation && m_source->nbFrames(m_state) > 1) {
 			// restart the counters
@@ -250,6 +252,7 @@ void dfSpriteAnimated::dispatchMessage(gaMessage* message)
 			m_dirtyAnimation = true;
 		}
 		else if (m_previousStates.size() > 0) {
+			sendMessage(DarkForces::Message::ANIM_END, 0);
 			m_animated = false;
 			timer(false);
 			popState();
