@@ -184,8 +184,6 @@ public:
 		glm::vec3& direction, 
 		glm::vec3& intersection, 
 		std::list<gaCollisionPoint>& collisions);		// extended collision test after a sucessfull AABB collision
-	virtual void OnWorldInsert(void) {};				// trigger when inserted in a gaWorld
-	virtual void OnWorldRemove(void) {};				// trigger when from the gaWorld
 	virtual dfSuperSector* superSector(void) {			// return the supersector the entity is in
 		return m_supersector; 
 	};

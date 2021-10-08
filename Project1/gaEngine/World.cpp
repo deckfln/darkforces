@@ -74,8 +74,7 @@ void World::addClient(gaEntity* client)
 		g_entityClassName[mclass] = client->className();
 	}
 
-	client->OnWorldInsert();
-	sendImmediateMessage("_world", client->name(), gaMessage::WORLD_INSERT, 0, nullptr);
+	sendMessage("_world", client->name(), gaMessage::WORLD_INSERT, 0, nullptr);
 }
 
 /**
@@ -83,8 +82,7 @@ void World::addClient(gaEntity* client)
  */
 void World::removeClient(gaEntity* client)
 {
-	client->OnWorldRemove();
-	sendImmediateMessage("_world", client->name(), gaMessage::WORLD_REMOVE, 0, nullptr);
+	sendMessage("_world", client->name(), gaMessage::WORLD_REMOVE, 0, nullptr);
 
 	// remove from the list
 	m_entities[client->name()].remove(client);

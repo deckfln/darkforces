@@ -14,6 +14,9 @@ class dfSprite : public dfObject
 	dfComponentLogic m_componentLogic;		// dealing with the logic of the object
 	uint32_t m_slot;						// position of the sprite in the Sprites Managers list
 
+	void onWorldInsert(void);
+	void onWorldRemove(void);
+
 public:
 	dfSprite(dfFME* fme, const glm::vec3& position, float ambient, uint32_t objectID);
 	dfSprite(dfModel* model, const glm::vec3& position, float ambient, int type, uint32_t objectID);
@@ -27,8 +30,6 @@ public:
 		glm::vec4* texture, 
 		glm::vec3* direction);
 	void dispatchMessage(gaMessage* message) override;	// deal with messages
-	void OnWorldInsert(void) override;					// trigger when inserted in a gaWorld
-	void OnWorldRemove(void) override;					// trigger when from the gaWorld
 
 	// flight recorder and debugger
 	inline int recordSize(void) override {

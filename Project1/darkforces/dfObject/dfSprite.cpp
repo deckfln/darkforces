@@ -75,24 +75,20 @@ bool dfSprite::updateSprite(glm::vec3* position, glm::vec4* texture, glm::vec3* 
  * trigger when inserted in a gaWorld
  *  add to the sprite manager
  */
-void dfSprite::OnWorldInsert(void)
+void dfSprite::onWorldInsert(void)
 {
 	dfSprites* manager = g_gaWorld.spritesManager();
 	manager->add(this);
-
-	dfObject::OnWorldInsert();
 }
 
 /**
  * trigger when from the gaWorld
  *  remove from the sprite manager
  */
-void dfSprite::OnWorldRemove(void)
+void dfSprite::onWorldRemove(void)
 {
 	dfSprites* manager = g_gaWorld.spritesManager();
 	manager->remove(this);
-
-	dfObject::OnWorldRemove();
 }
 
 /**
@@ -101,6 +97,14 @@ void dfSprite::OnWorldRemove(void)
 void dfSprite::dispatchMessage(gaMessage* message)
 {
 	switch (message->m_action) {
+	case gaMessage::WORLD_INSERT:
+		onWorldInsert();
+		break;
+
+	case gaMessage::WORLD_REMOVE:
+		onWorldRemove();
+		break;
+
 	case gaMessage::MOVE:
 		m_dirtyPosition = true;
 		break;
