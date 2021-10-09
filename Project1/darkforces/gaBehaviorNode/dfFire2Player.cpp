@@ -13,13 +13,27 @@ DarkForces::Behavior::Fire2Player::Fire2Player(const char* name):
 /**
  * locate the player
  */
-void DarkForces::Behavior::Fire2Player::locatePlayer(void)
+bool DarkForces::Behavior::Fire2Player::locatePlayer(void)
 {
-	// get the player position
+	// can we reach the player ?
 	m_direction = glm::normalize(m_player->position() - m_entity->position());
+
+	// test line of sight from await of the entity to away from the player (to not catch the entity nor the player)
+	glm::vec3 start = m_entity->position() + m_direction * (m_entity->radius() * 1.5f);
+	start.y += m_entity->height() / 2.0f;
+	glm::vec3 end = m_player->position() - m_direction * (m_entity->radius() * 1.5f);
+	end.y += m_player->height() / 2.0f;
+	Framework::Segment segment(start, end);
+
+	gaEntity* entity = g_gaWorld.intersectWithEntity(segment);
+	if (entity != nullptr && entity != m_entity && entity != m_player) {
+		return false;
+	}
 
 	// turn toward the player
 	m_entity->sendMessage(gaMessage::LOOK_AT, -m_direction);
+
+	return true;
 }
 
 /**
@@ -33,9 +47,14 @@ void DarkForces::Behavior::Fire2Player::init(void* data)
 		m_player = g_gaWorld.getEntity("player");
 	}
 
-	m_state = 2;	// firing animation
-	locatePlayer();
-	m_entity->sendMessage(DarkForces::Message::STATE, (uint32_t)dfState::ENEMY_ATTACK);
+	if (!locatePlayer()) {
+		// can't reach the player, drop out
+		m_status = Status::SUCCESSED;
+	}
+	else {
+		m_state = 2;	// firing animation
+		m_entity->sendMessage(DarkForces::Message::STATE, (uint32_t)dfState::ENEMY_ATTACK);
+	}
 }
 
 void DarkForces::Behavior::Fire2Player::dispatchMessage(gaMessage* message, Action* r)

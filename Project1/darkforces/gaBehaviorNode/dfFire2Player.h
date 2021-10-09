@@ -15,7 +15,7 @@ namespace DarkForces {
 			uint32_t m_firingFrames = 0;
 			uint32_t m_firingFrame = 0;
 
-			void locatePlayer(void);										// locate the player
+			bool locatePlayer(void);										// locate the player
 
 		public:
 			Fire2Player(const char* name);
