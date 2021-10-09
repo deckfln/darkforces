@@ -568,7 +568,7 @@ void dfSector::event(int event_mask)
 #ifdef _DEBUG
 		gaDebugLog(LOW_DEBUG, "dfSector::event", "sector=" + m_name + " event=" + std::to_string(event_mask));
 #endif
-		g_gaWorld.sendMessage("player", m_name, DF_MESSAGE_TRIGGER, 0, nullptr);
+		g_gaWorld.sendMessage("player", m_name, DarkForces::Message::TRIGGER, 0, nullptr);
 	}
 }
 

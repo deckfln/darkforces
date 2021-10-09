@@ -1,7 +1,8 @@
 #pragma once
 
-#include "../../gaEngine/gaComponent.h"
 #include "../../framework/fwAABBox.h"
+#include "../../gaEngine/gaComponent.h"
+#include "../dfConfig.h"
 
 class dfSector;
 class dfWall;

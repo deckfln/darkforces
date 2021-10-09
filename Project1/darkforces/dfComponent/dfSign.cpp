@@ -22,10 +22,10 @@ DarkForces::Component::Sign::Sign(dfMesh* mesh, dfSector* sector, dfWall* wall, 
 void DarkForces::Component::Sign::dispatchMessage(gaMessage* message)
 {
 	switch (message->m_action) {
-	case DF_MESSAGE_TRIGGER:
+	case DarkForces::Message::TRIGGER:
 		setStatus(1);
 		break;
-	case DF_MESSAGE_DONE:
+	case DarkForces::Message::DONE:
 		setStatus(0);
 		break;
 	}

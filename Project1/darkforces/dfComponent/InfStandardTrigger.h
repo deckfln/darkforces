@@ -1,9 +1,10 @@
 #pragma once
+#include <vector>
+#include <string>
 
 #include "../../gaEngine/gaComponent.h"
 #include "../../gaEngine/gaMessage.h"
-#include <vector>
-#include <string>
+#include "../dfConfig.h"
 
 namespace DarkForces {
 	namespace Component {

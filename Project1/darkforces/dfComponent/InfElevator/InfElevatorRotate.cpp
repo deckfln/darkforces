@@ -49,13 +49,13 @@ dfMesh* DarkForces::Component::InfElevatorRotate::buildMesh(void)
 void DarkForces::Component::InfElevatorRotate::dispatchMessage(gaMessage* message)
 {
 	switch (message->m_action) {
-	case DF_MSG_EVENT:
+	case DarkForces::Message::EVENT:
 		// m_action => event from DF
 		uint32_t event = message->m_value;
 
 		if ((m_eventMask & event) != 0) {
 			// trigger the program if it fits the eventMask
-			m_entity->sendInternalMessage(DF_MESSAGE_TRIGGER);
+			m_entity->sendInternalMessage(DarkForces::Message::TRIGGER);
 		}
 		break;
 	}

@@ -2,6 +2,8 @@
 
 #include <glm/vec3.hpp>
 
+#include "../dfConfig.h"
+
 #include "../../gaEngine/gaComponent.h"
 
 namespace DarkForces {

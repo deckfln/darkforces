@@ -306,7 +306,7 @@ void DarkForces::Component::InfElevator::gotoStop(uint32_t stop)
 void DarkForces::Component::InfElevator::dispatchMessage(gaMessage* message)
 {
 	switch (message->m_action) {
-	case DF_MESSAGE_TRIGGER:
+	case DarkForces::Message::TRIGGER:
 		if (m_status != Status::HOLD) {
 			// break the animation and move directly to the next stop
 			moveToNextStop();
@@ -328,12 +328,12 @@ void DarkForces::Component::InfElevator::dispatchMessage(gaMessage* message)
 
 		// synchronize all triggers to the status of the elevator
 		for (auto trigger : m_triggers) {
-			m_entity->sendMessage(trigger->entity()->name(), DF_MESSAGE_TRIGGER);
+			m_entity->sendMessage(trigger->entity()->name(), DarkForces::Message::TRIGGER);
 		}
 
 		break;
 
-	case DF_MESSAGE_GOTO_STOP:
+	case DarkForces::Message::GOTO_STOP:
 		if (m_status == Status::HOLD && m_currentStop == message->m_value) {
 			return;				// nothing to do, we're already at the correct stop
 		}

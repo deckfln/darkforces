@@ -46,7 +46,7 @@ void DarkForces::Behavior::GotoTrigger::init(void *data)
 void DarkForces::Behavior::GotoTrigger::activate_trigger(Action* r)
 {
 	// activate the trigger
-	m_entity->sendMessage(m_targetTrigger->name(), DF_MESSAGE_TRIGGER);
+	m_entity->sendMessage(m_targetTrigger->name(), DarkForces::Message::TRIGGER);
 
 	// broadcast the end of the move (for animation)
 	m_entity->sendMessage(gaMessage::END_MOVE);

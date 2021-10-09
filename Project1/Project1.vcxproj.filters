@@ -1337,6 +1337,9 @@
     <ClInclude Include="darkforces\gaBehaviorNode\dfEnemyAttack.h">
       <Filter>Fichiers d%27en-tête\DarkForces\gaBehaviorNode</Filter>
     </ClInclude>
+    <ClInclude Include="darkforces\dfMessage.h">
+      <Filter>Fichiers d%27en-tête\DarkForces</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\fragment.glsl">

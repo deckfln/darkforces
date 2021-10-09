@@ -27,7 +27,7 @@ void dfComponentLogic::dispatchMessage(gaMessage* message)
 			if (message->m_pServer->findComponent(DF_COMPONENT_ACTOR)) {
 				// if the collider is a DF_ACTOR
 				// send shield from me to the actor
-				m_entity->sendMessage(message->m_server, DF_MESSAGE_ADD_SHIELD, DF_SHIELD_ENERGY, nullptr);
+				m_entity->sendMessage(message->m_server, DarkForces::Message::ADD_SHIELD, DF_SHIELD_ENERGY, nullptr);
 
 				// and remove the object from the scene
 				m_entity->sendMessageToWorld(gaMessage::DELETE_ENTITY, 0, nullptr);
@@ -38,7 +38,7 @@ void dfComponentLogic::dispatchMessage(gaMessage* message)
 			if (message->m_pServer->findComponent(DF_COMPONENT_ACTOR)) {
 				// if the collider is a DF_ACTOR
 				// send energy from me to the actor
-				m_entity->sendMessage(message->m_server, DF_MESSAGE_ADD_ENERGY, DF_ENERGY_ENERGY, nullptr);
+				m_entity->sendMessage(message->m_server, DarkForces::Message::ADD_ENERGY, DF_ENERGY_ENERGY, nullptr);
 
 				// and remove the object from the scene
 				m_entity->sendMessageToWorld(gaMessage::DELETE_ENTITY, 0, nullptr);
@@ -49,7 +49,7 @@ void dfComponentLogic::dispatchMessage(gaMessage* message)
 			if (message->m_pServer->findComponent(DF_COMPONENT_ACTOR)) {
 				// if the collider is a DF_ACTOR
 				// send shield from me to the actor
-				m_entity->sendMessage(message->m_server, DF_MSG_PICK_RIFLE_AND_BULLETS, DF_SHIELD_ENERGY, nullptr);
+				m_entity->sendMessage(message->m_server, DarkForces::Message::PICK_RIFLE_AND_BULLETS, DF_SHIELD_ENERGY, nullptr);
 
 				// and remove the object from the scene
 				m_entity->sendMessageToWorld(gaMessage::DELETE_ENTITY, 0, nullptr);
@@ -60,7 +60,7 @@ void dfComponentLogic::dispatchMessage(gaMessage* message)
 			if (message->m_pServer->findComponent(DF_COMPONENT_ACTOR)) {
 				// if the collider is a DF_ACTOR
 				// send shield from me to the actor
-				m_entity->sendMessage(message->m_server, DF_MSG_ADD_BATTERY, DF_BATTERY_ENERGY, nullptr);
+				m_entity->sendMessage(message->m_server, DarkForces::Message::ADD_BATTERY, DF_BATTERY_ENERGY, nullptr);
 
 				// and remove the object from the scene
 				m_entity->sendMessageToWorld(gaMessage::DELETE_ENTITY, 0, nullptr);
@@ -68,30 +68,30 @@ void dfComponentLogic::dispatchMessage(gaMessage* message)
 		}
 		
 		break;
-	case DF_MESSAGE_HIT_BULLET:
+	case DarkForces::Message::HIT_BULLET:
 		if (m_logics & dfLogic::SCENERY) {
-			m_entity->sendInternalMessage(DF_MSG_STATE, (int)dfState::SCENERY_ATTACK);
+			m_entity->sendInternalMessage(DarkForces::Message::STATE, (int)dfState::SCENERY_ATTACK);
 		}
 		break;
-	case DF_MESSAGE_END_LOOP:
+	case DarkForces::Message::END_LOOP:
 		// animation loop for an object reached it's end
 		if (m_logics & DF_LOGIC_ENEMIES) {
 			switch ((dfState)message->m_value) {
 			case dfState::ENEMY_DIE_FROM_PUNCH:
 			case dfState::ENEMY_DIE_FROM_SHOT:
-				m_entity->sendInternalMessage(DF_MSG_STATE, (int)dfState::ENEMY_LIE_DEAD);
+				m_entity->sendInternalMessage(DarkForces::Message::STATE, (int)dfState::ENEMY_LIE_DEAD);
 			}
 		}
 		break;
-	case DF_MSG_STATE:
+	case DarkForces::Message::STATE:
 		// trigger animation for enemy, unless the object is static or has no animation
 		if (m_logics & DF_LOGIC_ENEMIES) {
 			if ((dfState)message->m_value == dfState::ENEMY_LIE_DEAD) {
-				m_entity->sendInternalMessage(DF_MESSAGE_DIES);
+				m_entity->sendInternalMessage(DarkForces::Message::DIES);
 			}
 		}		
 		break;
-	case DF_MESSAGE_DIES:
+	case DarkForces::Message::DIES:
 		//drop the bag of the object when an enemy dies
 		if (m_logics & DF_LOGIC_ENEMIES) {
 			if (m_logics & (dfLogic::COMMANDO | dfLogic::TROOP)) {

@@ -69,16 +69,16 @@ void dfComponentActor::hitBullet(int32_t value)
 void dfComponentActor::dispatchMessage(gaMessage* message)
 {
 	switch (message->m_action) {
-	case DF_MESSAGE_ADD_SHIELD:
+	case DarkForces::Message::ADD_SHIELD:
 		addShield(message->m_value);
 		break;
-	case DF_MESSAGE_ADD_ENERGY:
+	case DarkForces::Message::ADD_ENERGY:
 		addEnergy(message->m_value);
 		break;
-	case DF_MESSAGE_HIT_BULLET:
+	case DarkForces::Message::HIT_BULLET:
 		hitBullet(message->m_value);
 		break;
-	case DF_MSG_PICK_RIFLE_AND_BULLETS:
+	case DarkForces::Message::PICK_RIFLE_AND_BULLETS:
 		addEnergy(message->m_value);
 		//TODO add a weapon to a player
 		//addWeapon(O_RIFLE);
@@ -92,10 +92,10 @@ void dfComponentActor::dispatchMessage(gaMessage* message)
 			dfSector* current = m_level->findSector(m_entity->position());
 			if (current != m_currentSector) {
 				if (m_currentSector != nullptr) {
-					m_entity->sendMessage(m_currentSector->name(), DF_MSG_EVENT, DarkForces::MessageEvent::LEAVE_SECTOR);
+					m_entity->sendMessage(m_currentSector->name(), DarkForces::Message::EVENT, DarkForces::MessageEvent::LEAVE_SECTOR);
 
 					if (current != nullptr) {
-						m_entity->sendMessage(current->name(), DF_MSG_EVENT, DarkForces::MessageEvent::ENTER_SECTOR);
+						m_entity->sendMessage(current->name(), DarkForces::Message::EVENT, DarkForces::MessageEvent::ENTER_SECTOR);
 					}
 				}
 				m_currentSector = current;

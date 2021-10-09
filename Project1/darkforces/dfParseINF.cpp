@@ -200,7 +200,7 @@ static gaMessage* parseMessage(std::vector<std::string>& tokens)
 	case 5:
 		// message: 1 elev3-5 goto_stop 0
 		if (tokens[3] == gotostop) {
-			action = DF_MESSAGE_GOTO_STOP;
+			action = DarkForces::Message::GOTO_STOP;
 			value = std::stoi(tokens[4]);
 			client = tokens[2];
 		}
@@ -209,12 +209,12 @@ static gaMessage* parseMessage(std::vector<std::string>& tokens)
 		// message: 0 ext(6) done
 		if (tokens[3] == done) {
 			// split sector / wall on tokens[2];
-			action = DF_MESSAGE_DONE;
+			action = DarkForces::Message::DONE;
 			value = std::stoi(tokens[1]);
 			client = tokens[2];
 		}
 		else if (tokens[3] == "m_trigger") {
-			action = DF_MESSAGE_TRIGGER;
+			action = DarkForces::Message::TRIGGER;
 			value = std::stoi(tokens[1]);
 			client = tokens[2];
 		}
@@ -222,7 +222,7 @@ static gaMessage* parseMessage(std::vector<std::string>& tokens)
 	case 3:
 		// message: goto_stop 1
 		if (tokens[1] == gotostop) {
-			action = DF_MESSAGE_GOTO_STOP;
+			action = DarkForces::Message::GOTO_STOP;
 			value = std::stoi(tokens[2]);
 		}
 	}

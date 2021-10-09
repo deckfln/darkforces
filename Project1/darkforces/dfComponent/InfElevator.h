@@ -5,9 +5,11 @@
 
 #include "../../gaEngine/gaComponent.h"
 
-#include "../../config.h"
+#include "../dfConfig.h"
 #include "../dfBitmap.h"
 #include "../dfSector.h"
+
+#include "../../config.h"
 
 class dfLogicStop;
 class dfSector;

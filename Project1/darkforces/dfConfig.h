@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../gaEngine/gaEntity.h"
+#include "dfMessage.h"
 
 namespace DarkForces {
 	enum ClassID {

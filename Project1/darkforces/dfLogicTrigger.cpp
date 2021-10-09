@@ -59,7 +59,7 @@ dfLogicTrigger::dfLogicTrigger(const std::string & kind, const std::string & sec
 
 	// trigger standard come with its own messages to send
 	if (m_class != DF_TRIGGER_STANDARD)
-		m_messages.push_back(new gaMessage(DF_MESSAGE_TRIGGER, 0, m_name));
+		m_messages.push_back(new gaMessage(DarkForces::Message::TRIGGER, 0, m_name));
 }
 
 /**
@@ -160,7 +160,7 @@ void dfLogicTrigger::config(void)
 		if (m_clients.size() >= 0) {
 			// inform all clients
 			for (auto & client: m_clients) {
-				m_messages.push_back(new gaMessage(DF_MESSAGE_TRIGGER, 0, client));
+				m_messages.push_back(new gaMessage(DarkForces::Message::TRIGGER, 0, client));
 			}
 		}
 	}
@@ -206,10 +206,10 @@ void dfLogicTrigger::moveCeiling(float z)
 void dfLogicTrigger::dispatchMessage(gaMessage* message)
 {
 	switch (message->m_action) {
-	case DF_MESSAGE_TRIGGER:
+	case DarkForces::Message::TRIGGER:
 		activate(message->m_server);
 		break;
-	case DF_MESSAGE_DONE:
+	case DarkForces::Message::DONE:
 		m_actived = false;
 		break;
 	}

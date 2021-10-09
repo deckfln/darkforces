@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../../gaEngine/gaComponent.h"
+#include "../dfConfig.h"
 
 class gaMessage;
 class dfComponentAI;

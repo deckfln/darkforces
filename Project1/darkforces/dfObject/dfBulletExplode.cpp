@@ -47,7 +47,7 @@ void dfBulletExplode::dispatchMessage(gaMessage* message)
 		sendInternalMessage(gaMessage::PLAY_SOUND, 0);
 		break;
 
-	case DF_MESSAGE_END_LOOP:
+	case DarkForces::Message::END_LOOP:
 		// remove the explosion from the world
 		g_gaWorld.sendMessageDelayed(m_name, "_world", gaMessage::DELETE_ENTITY, 0, nullptr);
 		break;

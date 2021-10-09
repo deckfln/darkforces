@@ -131,18 +131,18 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 
 	// prepare the debugger
 	static std::map<int32_t, const char*> g_definitions = {
-		{DF_MESSAGE_TRIGGER, "DF_TRIGGER"},
-		{DF_MESSAGE_GOTO_STOP, "DF_GOTO_STOP"},
-		{DF_MESSAGE_DONE, "DF_DONE"},
-		{DF_MESSAGE_ADD_SHIELD, "DF_ADD_SHIELD"},
-		{DF_MESSAGE_ADD_ENERGY, "DF_ADD_ENERGY"},
-		{DF_MESSAGE_HIT_BULLET,	"DF_HIT_BULLET"},
-		{DF_MESSAGE_END_LOOP, "DF_END_LOOP"},
-		{DF_MESSAGE_DIES, "DF_DIES"},
-		{DF_MSG_STATE,	"DF_STATE"},
-		{DF_MSG_PICK_RIFLE_AND_BULLETS, "DF_PICK_RIFLE_AND_BULLETS"},
-		{DF_MSG_ADD_BATTERY, "DF_ADD_BATTERY"},
-		{DF_MSG_EVENT, "DF_EVENT"},
+		{DarkForces::Message::TRIGGER, "DF_TRIGGER"},
+		{DarkForces::Message::GOTO_STOP, "DF_GOTO_STOP"},
+		{DarkForces::Message::DONE, "DF_DONE"},
+		{DarkForces::Message::ADD_SHIELD, "DF_ADD_SHIELD"},
+		{DarkForces::Message::ADD_ENERGY, "DF_ADD_ENERGY"},
+		{DarkForces::Message::HIT_BULLET,	"DF_HIT_BULLET"},
+		{DarkForces::Message::END_LOOP, "DF_END_LOOP"},
+		{DarkForces::Message::DIES, "DF_DIES"},
+		{DarkForces::Message::STATE,	"DF_STATE"},
+		{DarkForces::Message::PICK_RIFLE_AND_BULLETS, "DF_PICK_RIFLE_AND_BULLETS"},
+		{DarkForces::Message::ADD_BATTERY, "DF_ADD_BATTERY"},
+		{DarkForces::Message::EVENT, "DF_EVENT"},
 		{DarkForces::Message::FIRE, "df_FIRE"},
 		{DarkForces::Message::ANIM_START, "df_AnimStart"},
 		{DarkForces::Message::ANIM_NEXT_FRAME, "df_AnimNextFrame"},
@@ -150,7 +150,7 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 	};
 
 	static std::map<int32_t, const std::map<int32_t, const char*>> g_def = {
-		{DF_MSG_EVENT, {
+		{DarkForces::Message::EVENT, {
 			{DarkForces::CROSSLINE_FRONT, "CROSSLINE_FRONT"},
 			{DarkForces::CROSSLINE_BACK, "CROSSLINE_BACK"},
 			{DarkForces::ENTER_SECTOR, "ENTER_SECTOR"},

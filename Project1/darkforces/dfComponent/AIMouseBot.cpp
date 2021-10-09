@@ -71,11 +71,11 @@ void AIMouseBot::dispatchMessage(gaMessage* message)
 		tryToMove();
 		break;
 
-	case DF_MESSAGE_HIT_BULLET:
-		m_entity->sendInternalMessage(DF_MESSAGE_DIES);
+	case DarkForces::Message::HIT_BULLET:
+		m_entity->sendInternalMessage(DarkForces::Message::DIES);
 		break;
 
-	case DF_MESSAGE_DIES:
+	case DarkForces::Message::DIES:
 		static_cast<dfObject*>(m_entity)->drop(dfLogic::DEAD_MOUSE);
 		static_cast<dfObject*>(m_entity)->drop(dfLogic::ITEM_BATTERY);
 		

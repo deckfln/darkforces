@@ -10,6 +10,7 @@
 #include "../gaEngine/gaCollisionPoint.h"
 
 #include "dfCollision.h"
+#include "dfConfig.h"
 
 #include "flightRecorder/frObject.h"
 

@@ -1,6 +1,6 @@
 #include "dfWaitIdle.h"
 
-#include "../../config.h"
+#include "../dfConfig.h"
 
 DarkForces::Behavior::WaitIdle::WaitIdle(const char* name):
 	BehaviorNode(name)

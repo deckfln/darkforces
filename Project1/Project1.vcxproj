@@ -350,6 +350,7 @@
     <ClInclude Include="darkforces\dfLogicStop.h" />
     <ClInclude Include="darkforces\dfLogicTrigger.h" />
     <ClInclude Include="darkforces\dfMesh.h" />
+    <ClInclude Include="darkforces\dfMessage.h" />
     <ClInclude Include="darkforces\dfModel.h" />
     <ClInclude Include="darkforces\dfModel\df3DO.h" />
     <ClInclude Include="darkforces\dfModel\dfFME.h" />

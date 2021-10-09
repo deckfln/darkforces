@@ -66,7 +66,7 @@ void InfStandardTrigger::compile(void)
 void InfStandardTrigger::dispatchMessage(gaMessage* message)
 {
 	switch (message->m_action) {
-	case DF_MSG_EVENT:
+	case DarkForces::Message::EVENT:
 		// m_action => event from DF
 		uint32_t event = message->m_value;
 
