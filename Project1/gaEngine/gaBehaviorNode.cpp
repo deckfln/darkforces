@@ -12,9 +12,11 @@ GameEngine::BehaviorNode::BehaviorNode(const char* name):
 /**
  *
  */
-void GameEngine::BehaviorNode::init(void*)
+void GameEngine::BehaviorNode::init(void* data)
 {
 	m_status = Status::RUNNING;
+	m_runningChild = -1;
+	m_data = data;
 }
 
 /**

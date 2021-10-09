@@ -72,6 +72,7 @@ namespace GameEngine {
 		gaEntity* m_entity = nullptr;								// entity this node belongs to
 		Component::BehaviorTree* m_tree = nullptr;					// tree this node belongs to
 		bool m_sequence = false;
+		void* m_data = nullptr;
 
 		int32_t m_runningChild = -1;								// currently running child (-1 = the current node is running)
 		std::vector<BehaviorNode*> m_children;
