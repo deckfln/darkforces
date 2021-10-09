@@ -142,7 +142,11 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 		{DF_MSG_STATE,	"DF_STATE"},
 		{DF_MSG_PICK_RIFLE_AND_BULLETS, "DF_PICK_RIFLE_AND_BULLETS"},
 		{DF_MSG_ADD_BATTERY, "DF_ADD_BATTERY"},
-		{DF_MSG_EVENT, "DF_EVENT"}
+		{DF_MSG_EVENT, "DF_EVENT"},
+		{DarkForces::Message::FIRE, "df_FIRE"},
+		{DarkForces::Message::ANIM_START, "df_AnimStart"},
+		{DarkForces::Message::ANIM_NEXT_FRAME, "df_AnimNextFrame"},
+		{DarkForces::Message::ANIM_END, "df_AnimEnd"}
 	};
 
 	static std::map<int32_t, const std::map<int32_t, const char*>> g_def = {

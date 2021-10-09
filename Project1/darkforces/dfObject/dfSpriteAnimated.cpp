@@ -90,6 +90,11 @@ dfSpriteAnimated::dfSpriteAnimated(flightRecorder::DarkForces::SpriteAnimated* r
  */
 void dfSpriteAnimated::state(dfState state)
 {
+	if (state == m_state) {
+		// already on that state
+		return;
+	}
+
 	m_state = state;
 	modelAABB(((dfWAX*)m_source)->bounding(m_state));
 	dfSprite::updateWorldAABB();
@@ -110,7 +115,7 @@ void dfSpriteAnimated::state(dfState state)
 			m_state != dfState::ENEMY_STAY_STILL &&
 			m_source->nbFrames(m_state) > 1)
 		{
-			sendMessage(DarkForces::Message::ANIM_START, 0);
+			sendMessage(DarkForces::Message::ANIM_START, m_source->nbFrames(m_state));
 			m_animated = true;
 			timer(true);	// register to timer events
 		}
@@ -118,7 +123,7 @@ void dfSpriteAnimated::state(dfState state)
 	else {
 		// trigger an animation loop if there is actually an animation loop
 		if ((m_logics & dfLogic::ANIM) && m_source->nbFrames(m_state) > 1) {
-			sendMessage(DarkForces::Message::ANIM_START, 0);
+			sendMessage(DarkForces::Message::ANIM_START, m_source->nbFrames(m_state));
 			m_animated = true;
 			timer(true);
 		}
@@ -211,6 +216,8 @@ bool dfSpriteAnimated::update(time_t t)
 			return false;	// reached end of animation loop
 		}
 
+		sendMessage(DarkForces::Message::ANIM_NEXT_FRAME, m_frame);
+
 		m_lastFrame = (m_currentFrame / frameTime) * frameTime;
 		m_dirtyAnimation = true;
 	}
@@ -239,23 +246,19 @@ void dfSpriteAnimated::dispatchMessage(gaMessage* message)
 		}
 
 		if (!update(message->m_delta)) {
-			sendMessage(DarkForces::Message::END_LOOP, (int)m_state);
-		}
-		break;
-
-	case DarkForces::Message::END_LOOP:
-		// go for next animation if the animation loop ?
-		if (m_loopAnimation && m_source->nbFrames(m_state) > 1) {
-			// restart the counters
-			m_lastFrame = m_currentFrame = 0;
-			m_frame = 0;
-			m_dirtyAnimation = true;
-		}
-		else if (m_previousStates.size() > 0) {
-			sendMessage(DarkForces::Message::ANIM_END, 0);
-			m_animated = false;
-			timer(false);
-			popState();
+			// go for next animation if the animation loop ?
+			if (m_loopAnimation && m_source->nbFrames(m_state) > 1) {
+				// restart the counters
+				m_lastFrame = m_currentFrame = 0;
+				m_frame = 0;
+				m_dirtyAnimation = true;
+				sendMessage(DarkForces::Message::END_LOOP, (int)m_state);
+			}
+			else {
+				sendMessage(DarkForces::Message::ANIM_END, 0);
+				m_animated = false;
+				timer(false);
+			}
 		}
 		break;
 
@@ -275,7 +278,7 @@ void dfSpriteAnimated::dispatchMessage(gaMessage* message)
 		break;
 
 	case DarkForces::Message::FIRE:
-		pushState(dfState::ENEMY_ATTACK);
+		state(dfState::ENEMY_ATTACK);
 		break;
 
 	case gaMessage::START_MOVE:

@@ -72,6 +72,7 @@ namespace DarkForces {
 		FIRE,				// fire a gun
 		SatNav_Wait,		// ticks for the DF satnav
 		ANIM_START,			// WAX animation is starting
+		ANIM_NEXT_FRAME,	// WAX animation start the next frame
 		ANIM_END			// WAX animation reached the end and is stopping
 	};
 

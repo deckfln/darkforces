@@ -48,7 +48,7 @@ enum dfLogic {
  * State of every object
  */
 enum class dfState {
-	NONE = 0,
+	NONE = -1,
 
 	// state of i_officer, commando ...
 	ENEMY_MOVE = 0,
