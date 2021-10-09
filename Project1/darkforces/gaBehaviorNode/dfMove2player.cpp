@@ -1,6 +1,8 @@
 #include "dfMove2player.h"
 
 #include "../../darkforces/dfObject.h"
+
+#include "../../gaEngine/gaComponent/gaBehaviorTree.h"
 #include "../../gaEngine/gaEntity.h"
 #include "../../gaEngine/World.h"
 #include "../../config.h"
@@ -13,13 +15,41 @@ DarkForces::Behavior::Move2Player::Move2Player(const char* name):
 /**
  * locate the player
  */
-void DarkForces::Behavior::Move2Player::locatePlayer(void)
+bool DarkForces::Behavior::Move2Player::locatePlayer(void)
 {
-	// get the player position
-	m_direction = glm::normalize(m_player->position() - m_entity->position());
+	m_position = m_player->position();
+
+	// can we reach the player ?
+	glm::vec3 direction = glm::normalize(m_position - m_entity->position());
+
+	// test line of sight from await of the entity to away from the player (to not catch the entity nor the player)
+	glm::vec3 start = m_entity->position() + direction * (m_entity->radius() * 1.5f);
+	start.y += m_entity->height() / 2.0f;
+	glm::vec3 end = m_position - direction * (m_entity->radius() * 1.5f);
+	end.y += m_player->height() / 2.0f;
+	Framework::Segment segment(start, end);
+
+	gaEntity* entity = g_gaWorld.intersectWithEntity(segment);
+	if (entity != nullptr && entity != m_entity && entity != m_player) {
+		// continue moving to the last known good position
+		glm::vec3* lastKnown = static_cast<glm::vec3*>(m_tree->blackboard("player_last_known_position"));
+		m_position = *lastKnown;
+
+		// if we are reaching the last known position and still can't see the player, give up
+		if (glm::distance(m_position, m_entity->position()) < m_entity->radius()) {
+			return false;
+		}
+	}
+	else {
+		// record last known position
+		m_tree->blackboard("player_last_known_position", &m_position);
+		m_direction = direction;
+	}
 
 	// turn toward the player
 	m_entity->sendMessage(gaMessage::LOOK_AT, -m_direction);
+
+	return true;
 }
 
 /**
@@ -65,7 +95,12 @@ void DarkForces::Behavior::Move2Player::init(void* data)
 	// broadcast the beginning of the move (for animation)
 	m_entity->sendMessage(gaMessage::START_MOVE);		// start the entity animation
 
-	locatePlayer();
+	if (!locatePlayer()) {
+		// drop out if can't see the player
+		m_status = Status::FAILED;
+		return;
+	}
+
 	m_steps = 30;
 	triggerMove();
 }

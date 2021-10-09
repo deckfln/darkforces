@@ -116,6 +116,13 @@ void GameEngine::BehaviorNode::startChild(Action* r, uint32_t child, void* data)
 }
 
 /**
+ * a node get re-activated after a child exit
+ */
+void GameEngine::BehaviorNode::activated(void)
+{
+}
+
+/**
  * let a parent take a decision with it's current running child result
  */
 void GameEngine::BehaviorNode::execute(BehaviorNode::Action *r)

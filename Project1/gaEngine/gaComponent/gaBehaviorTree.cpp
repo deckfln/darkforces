@@ -57,6 +57,7 @@ void GameEngine::Component::BehaviorTree::blackboard(const std::string key, void
 		case BehaviorNode::Status::EXIT:
 			if (m_current->m_parent) {
 				m_current = m_current->m_parent;
+				m_current->activated();
 				r.action = BehaviorNode::Status::EXECUTE;
 			}
 			else {

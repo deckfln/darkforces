@@ -52,6 +52,7 @@ namespace GameEngine {
 		BehaviorNode* find(uint32_t id);							// find the node with ID
 		void record(std::vector<BehaviorNode*>& nodes);				// record the node in a list
 
+		virtual void activated(void);								// a node get re-activated after a child exits
 		virtual void execute(Action* r);							// let a parent take a decision with it's current running child
 		virtual void init(void *);									// init the node before running
 		virtual void dispatchMessage(gaMessage* message, BehaviorNode::Action* r);

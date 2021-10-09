@@ -1,6 +1,8 @@
 #include "dfFire2Player.h"
 
 #include "../../darkforces/dfObject.h"
+
+#include "../../gaEngine/gaComponent/gaBehaviorTree.h"
 #include "../../gaEngine/gaEntity.h"
 #include "../../gaEngine/World.h"
 #include "../../config.h"
@@ -15,13 +17,15 @@ DarkForces::Behavior::Fire2Player::Fire2Player(const char* name):
  */
 bool DarkForces::Behavior::Fire2Player::locatePlayer(void)
 {
+	m_position = m_player->position();
+
 	// can we reach the player ?
-	m_direction = glm::normalize(m_player->position() - m_entity->position());
+	m_direction = glm::normalize(m_position - m_entity->position());
 
 	// test line of sight from await of the entity to away from the player (to not catch the entity nor the player)
 	glm::vec3 start = m_entity->position() + m_direction * (m_entity->radius() * 1.5f);
 	start.y += m_entity->height() / 2.0f;
-	glm::vec3 end = m_player->position() - m_direction * (m_entity->radius() * 1.5f);
+	glm::vec3 end = m_position - m_direction * (m_entity->radius() * 1.5f);
 	end.y += m_player->height() / 2.0f;
 	Framework::Segment segment(start, end);
 
@@ -32,6 +36,9 @@ bool DarkForces::Behavior::Fire2Player::locatePlayer(void)
 
 	// turn toward the player
 	m_entity->sendMessage(gaMessage::LOOK_AT, -m_direction);
+
+	// record last known position
+	m_tree->blackboard("player_last_known_position", &m_position);
 
 	return true;
 }
