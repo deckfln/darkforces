@@ -65,6 +65,7 @@ public:
 		SatNav_CANCEL,	// Cancel the satnav
 		SatNav_REACHED,	// satnav reached the destination
 		TICK,			// Behavior nodes tick
+		ALARM,			// trigger an alarm after Xs
 	};
 
 	// flags stored in messages

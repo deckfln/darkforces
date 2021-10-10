@@ -64,6 +64,12 @@ bool DarkForces::Behavior::Move2Player::locatePlayer(void)
 
 	m_tree->blackboard("player_last_known_position", &m_position);
 
+	// walk for 2s
+	GameEngine::Alarm alarm;
+	alarm.m_entity = m_entity;
+	alarm.m_delay = 2000;
+
+	g_gaWorld.registerAlarmEvent(alarm);
 	return true;
 }
 
@@ -85,13 +91,7 @@ void DarkForces::Behavior::Move2Player::triggerMove(void)
  */
 void DarkForces::Behavior::Move2Player::onMove(gaMessage* message, Action* r)
 {
-	m_steps--;
-	if (m_steps < 0) {
-		m_status = Status::SUCCESSED;
-	}
-	else {
-		triggerMove();
-	}
+	triggerMove();
 }
 
 /**
@@ -126,6 +126,10 @@ void DarkForces::Behavior::Move2Player::dispatchMessage(gaMessage* message, Acti
 	switch (message->m_action) {
 	case gaMessage::Action::MOVE:
 		onMove(message, r);
+		break;
+
+	case gaMessage::Action::ALARM:
+		m_status = Status::SUCCESSED;
 		break;
 
 	case gaMessage::Action::COLLIDE:

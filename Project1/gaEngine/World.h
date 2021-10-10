@@ -22,6 +22,17 @@ class dfSuperSector;
 class dfSprites;
 
 namespace GameEngine {
+	struct Alarm {
+		uint32_t m_id;
+		gaEntity* m_entity;
+		time_t m_delay;
+
+		bool operator==(const struct Alarm& a) const
+		{
+			return (a.m_id == this->m_id);
+		}
+	};
+
 	class World
 	{
 		bool m_run=true;									// run or suspend the engine
@@ -33,6 +44,7 @@ namespace GameEngine {
 		std::map<uint32_t, std::list<gaEntity*>> m_entitiesByClass;
 
 		std::list<gaEntity*> m_timers;						// entities that registered to receive timer events
+		std::list<GameEngine::Alarm> m_alarms;				// entities that registered to receive alarm events
 
 		std::vector<dfSuperSector*> m_sectors;
 		dfSprites* m_sprites = nullptr;						// sprites manager
@@ -145,6 +157,7 @@ namespace GameEngine {
 			std::vector<gaEntity*>& entities);				// return all entities of that type
 
 		void registerTimerEvents(gaEntity*, bool b);		// (de)register an entity to receive timer events
+		void registerAlarmEvent(GameEngine::Alarm& alarm);		// register an entity to receive alarm event
 
 		~World();
 	};

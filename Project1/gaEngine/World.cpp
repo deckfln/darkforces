@@ -499,6 +499,20 @@ void World::process(time_t delta, bool force)
 
 	m_frame++;
 
+	// inject alarm event if needed
+	std::vector<Alarm*> removeAlarm;
+
+	for (auto& alarm : m_alarms) {
+		alarm.m_delay -= delta;
+		if (alarm.m_delay < 0) {
+			sendMessage(alarm.m_entity->name(), alarm.m_entity->name(), gaMessage::Action::ALARM, 0, nullptr);
+			removeAlarm.push_back(&alarm);
+		}
+	}
+	for (auto alarm : removeAlarm) {
+		m_alarms.remove(*alarm);
+	}
+
 	// inject timer messages if the entity request so
 	// only way to ensure there is not multiple timer message coming from different components of the entity
 	for (auto entity : m_timers) {
@@ -723,6 +737,17 @@ void GameEngine::World::registerTimerEvents(gaEntity* entity, bool b)
 	else {
 		m_timers.remove(entity);
 	}
+}
+
+/**
+ * register an entity to receive alarm event
+ */
+void GameEngine::World::registerAlarmEvent(Alarm& alarm)
+{
+	static uint32_t g_id = 0;
+
+	alarm.m_id = g_id++;
+	m_alarms.push_back(alarm);
 }
 
 /**
