@@ -29,25 +29,40 @@ bool DarkForces::Behavior::Move2Player::locatePlayer(void)
 	end.y += m_player->height() / 2.0f;
 	Framework::Segment segment(start, end);
 
-	gaEntity* entity = g_gaWorld.intersectWithEntity(segment);
-	if (entity != nullptr && entity != m_entity && entity != m_player) {
-		// continue moving to the last known good position
-		glm::vec3* lastKnown = static_cast<glm::vec3*>(m_tree->blackboard("player_last_known_position"));
-		m_position = *lastKnown;
-
-		// if we are reaching the last known position and still can't see the player, give up
-		if (glm::distance(m_position, m_entity->position()) < m_entity->radius()) {
-			return false;
+	std::vector<gaEntity*> collisions;
+	if (g_gaWorld.intersectWithEntity(segment, collisions)) {
+		// check if there is a collision with something different than player and shooter
+		bool real = false;
+		for (auto entity : collisions) {
+			if (entity != m_entity && entity != m_player) {
+				real = true;
+				break;
+			}
 		}
-	}
-	else {
-		// record last known position
-		m_tree->blackboard("player_last_known_position", &m_position);
-		m_direction = direction;
+
+		if (real) {
+			// continue moving to the last known good position
+			glm::vec3* lastKnown = static_cast<glm::vec3*>(m_tree->blackboard("player_last_known_position"));
+			if (lastKnown == nullptr) {
+				return false;
+			}
+
+			m_position = *lastKnown;
+
+			// if we are reaching the last known position and still can't see the player, give up
+			float l = glm::distance(m_position, m_entity->position());
+			if (l < m_entity->radius()) {
+				return false;
+			}
+			return true;
+		}
 	}
 
 	// turn toward the player
+	m_direction = direction;
 	m_entity->sendMessage(gaMessage::LOOK_AT, -m_direction);
+
+	m_tree->blackboard("player_last_known_position", &m_position);
 
 	return true;
 }
@@ -98,6 +113,7 @@ void DarkForces::Behavior::Move2Player::init(void* data)
 	if (!locatePlayer()) {
 		// drop out if can't see the player
 		m_status = Status::FAILED;
+		m_tree->blackboard("player_last_known_position", nullptr);
 		return;
 	}
 

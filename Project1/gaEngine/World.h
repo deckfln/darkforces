@@ -134,8 +134,9 @@ namespace GameEngine {
 			uint32_t componentID,
 			GameEngine::Collider& segment,
 			std::vector<gaEntity*>& collision);				// find all entities intersecting with the segment
-		gaEntity* intersectWithEntity(
-			Framework::Segment& segment);
+		bool intersectWithEntity(
+			Framework::Segment& segment,
+			std::vector<gaEntity*>& entCollisions);
 
 
 		void getEntitiesWithComponents(uint32_t componentID,

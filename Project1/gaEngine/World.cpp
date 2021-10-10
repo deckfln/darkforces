@@ -253,7 +253,7 @@ static gaMessage* allocateMessage(void)
 	gaMessage* ptr = nullptr;
 	do {
 		--count;
-		assert(count > 0, "not enough messages in gaWorld::getMessage");
+		assert(count > 0);
 
 		ptr = &g_messages[g_lastMessage++];
 		if (g_lastMessage == MAXIMUM_MESSAGES) {
@@ -659,24 +659,20 @@ bool GameEngine::World::intersectWithEntity(
 	return false;
 }
 
-gaEntity* GameEngine::World::intersectWithEntity(Framework::Segment& segment) 
+bool GameEngine::World::intersectWithEntity(Framework::Segment& segment,
+	std::vector<gaEntity*>& entCollisions)
 {
 	fwAABBox aabb(segment);
 	glm::mat4 worldMatrix(1);
 	glm::mat4 inverse = glm::inverse(worldMatrix);
 	GameEngine::Collider collider(&segment, &worldMatrix, &inverse, &aabb);
-	glm::vec3 p;
 
 	glm::vec3 forward(0), down(0);
 	std::vector<gaCollisionPoint> collisions;
 
 	gaEntity* collidedEntity = nullptr;
-	glm::vec3 collision;
 
 	// test again entities
-	float len;
-	float min_len = +INFINITY;
-
 	for (auto& entry : m_entities) {
 		for (auto ent : entry.second) {
 			// ignore ghosts and itself
@@ -687,19 +683,12 @@ gaEntity* GameEngine::World::intersectWithEntity(Framework::Segment& segment)
 			// extended test
 			collisions.clear();
 			if (ent->collide(collider, forward, down, collisions)) {
-				for (auto& c : collisions) {
-					len = glm::distance2(segment.m_start, c.m_position);
-					if (len > FLT_EPSILON && len < min_len) {
-						collision = c.m_position;
-						min_len = len;
-						collidedEntity = ent;
-					}
-				}
+				entCollisions.push_back(ent);
 			}
 		}
 	}
 
-	return collidedEntity;
+	return entCollisions.size() > 0;
 }
 
 /**

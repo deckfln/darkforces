@@ -57,11 +57,10 @@ namespace GameEngine {
 		virtual void init(void *);									// init the node before running
 		virtual void dispatchMessage(gaMessage* message, BehaviorNode::Action* r);
 
-			// debugger
+		// debugger
 		virtual void debugGUIinline(BehaviorNode* current);			// display the component in the debugger
 
-
-			// flight recorder status
+		// flight recorder status
 		virtual uint32_t recordState(void* record);					// save the component state in a record
 		virtual uint32_t loadState(void* record);					// reload a component state from a record
 

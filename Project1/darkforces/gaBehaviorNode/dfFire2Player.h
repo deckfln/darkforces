@@ -15,12 +15,23 @@ namespace DarkForces {
 			uint32_t m_firingFrames = 0;
 			uint32_t m_firingFrame = 0;
 
+			glm::vec3 m_from;											// player position
+			glm::vec3 m_to;											// player position
+			bool m_visibility;
+
 			bool locatePlayer(void);										// locate the player
 
 		public:
 			Fire2Player(const char* name);
 			void init(void* data) override;									// init the node before running
 			void dispatchMessage(gaMessage* message, Action* r) override;	// let a component deal with a situation
+
+			//debugger
+			void debugGUIinline(BehaviorNode* current) override;			// display the component in the debugger
+
+			// flight recorder status
+			uint32_t recordState(void* record) override;				// save the component state in a record
+			uint32_t loadState(void* record) override;					// reload a component state from a record
 		};
 	}
 }
