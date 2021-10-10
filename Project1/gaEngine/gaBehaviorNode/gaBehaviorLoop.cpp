@@ -1,5 +1,6 @@
-#include "../gaBehaviorNode.h"
 #include "gaBehaviorLoop.h"
+
+#include <imgui.h>
 
 GameEngine::Behavior::Loop::Loop(const char *name) : 
 	BehaviorNode(name)
@@ -33,4 +34,12 @@ void GameEngine::Behavior::Loop::execute(Action* r)
 		r->action = BehaviorNode::Status::RUNNING;
 		break;
 	}
+}
+
+/**
+ * display the node data in the debugger
+ */
+void GameEngine::Behavior::Loop::debugGUInode(void)
+{
+	ImGui::Text("Loop");
 }

@@ -59,6 +59,7 @@ namespace GameEngine {
 
 		// debugger
 		virtual void debugGUIinline(BehaviorNode* current);			// display the component in the debugger
+		virtual void debugGUInode(void);							// display the component in the debugger
 
 		// flight recorder status
 		virtual uint32_t recordState(void* record);					// save the component state in a record

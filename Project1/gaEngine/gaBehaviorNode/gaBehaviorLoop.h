@@ -8,6 +8,9 @@ namespace GameEngine {
 		public:
 			Loop(const char* name);
 			void execute(Action* r) override;						// let a parent take a decision with it's current running child
+
+			//debugger
+			void debugGUInode(void) override;						// display the component in the debugger
 		};
 	}
 }

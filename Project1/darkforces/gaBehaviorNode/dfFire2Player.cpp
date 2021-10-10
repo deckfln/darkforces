@@ -119,24 +119,11 @@ void DarkForces::Behavior::Fire2Player::dispatchMessage(gaMessage* message, Acti
 /**
  * debugger
  */
-void DarkForces::Behavior::Fire2Player::debugGUIinline(BehaviorNode* current)
+void DarkForces::Behavior::Fire2Player::debugGUInode(void)
 {
-	static char tmp[64];
-	const char* p = m_name;
-
-	if (this == current) {
-		snprintf(tmp, sizeof(tmp), ">%s", m_name);
-		p = tmp;
-	}
-
-	if (ImGui::TreeNode(p)) {
-		ImGui::Text("visibility:%s", (m_visibility) ? "True" : "False");
-		ImGui::Text("from:%.2f %.2f %.2f", m_from.x, m_from.y, m_from.z);
-		ImGui::Text("to:%.2f %.2f %.2f", m_to.x, m_to.y, m_to.z);
-		for (auto n : m_children)
-			n->debugGUIinline(current);
-		ImGui::TreePop();
-	}
+	ImGui::Text("visibility:%s", (m_visibility) ? "True" : "False");
+	ImGui::Text("from:%.2f %.2f %.2f", m_from.x, m_from.y, m_from.z);
+	ImGui::Text("to:%.2f %.2f %.2f", m_to.x, m_to.y, m_to.z);
 }
 
 namespace DarkForces {

@@ -27,7 +27,7 @@ namespace DarkForces {
 			void dispatchMessage(gaMessage* message, Action* r) override;	// let a component deal with a situation
 
 			//debugger
-			void debugGUIinline(BehaviorNode* current) override;			// display the component in the debugger
+			void debugGUInode(void) override;							// display the component in the debugger
 
 			// flight recorder status
 			uint32_t recordState(void* record) override;				// save the component state in a record

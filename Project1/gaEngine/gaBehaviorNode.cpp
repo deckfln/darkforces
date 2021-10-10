@@ -165,10 +165,18 @@ void GameEngine::BehaviorNode::debugGUIinline(BehaviorNode* current)
 	}
 
 	if (ImGui::TreeNode(p)) {
+		debugGUInode();
 		for (auto n: m_children)
 			n->debugGUIinline(current);
 		ImGui::TreePop();
 	}
+}
+
+/**
+ *
+ */
+void GameEngine::BehaviorNode::debugGUInode(void)
+{
 }
 
 /**
