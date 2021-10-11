@@ -60,7 +60,8 @@ bool DarkForces::Behavior::Fire2Player::locatePlayer(void)
 	m_entity->sendMessage(gaMessage::LOOK_AT, -m_direction);
 
 	// record last known position
-	m_tree->blackboard("player_last_known_position", &m_position);
+	glm::vec3* p = static_cast<glm::vec3*>(m_tree->blackboard("player_last_known_position"));
+	*p = m_position;
 
 	return true;
 }
@@ -78,10 +79,9 @@ void DarkForces::Behavior::Fire2Player::init(void* data)
 
 	if (!locatePlayer()) {
 		// can't reach the player, drop out
-		m_status = Status::SUCCESSED;
+		m_status = Status::FAILED;
 	}
 	else {
-		m_state = 2;	// firing animation
 		m_entity->sendMessage(DarkForces::Message::STATE, (uint32_t)dfState::ENEMY_ATTACK);
 	}
 }
@@ -90,24 +90,22 @@ void DarkForces::Behavior::Fire2Player::dispatchMessage(gaMessage* message, Acti
 {
 	switch (message->m_action) {
 	case DarkForces::Message::ANIM_START:
-		if (m_state == 2) {
-			m_firingFrames = message->m_value;
-			m_firingFrame = 0;
+		if (message->m_value == (uint32_t)dfState::ENEMY_ATTACK) {
+			m_firingFrames = *(uint32_t*)message->m_extra;
 		}
 		break;
 
 	case DarkForces::Message::ANIM_NEXT_FRAME:
-		if (m_state == 2) {
-			if (message->m_value == m_firingFrames-1) {
+		if (message->m_value == (uint32_t)dfState::ENEMY_ATTACK) {
+			if (message->m_value == m_firingFrames - 1) {
 				// and fire
 				m_entity->sendMessage(DarkForces::Message::FIRE, 0, (void*)&m_direction);
-				m_state = 3;
 			}
 		}
 		break;
 
 	case DarkForces::Message::ANIM_END:
-		if (m_state == 3) {
+		if (message->m_value == (uint32_t)dfState::ENEMY_ATTACK) {
 			// Fire animation ended, so reboot the move
 			m_status = Status::SUCCESSED;
 		}

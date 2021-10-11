@@ -714,6 +714,9 @@
     <ClCompile Include="darkforces\gaBehaviorNode\dfFire2Player.cpp">
       <Filter>Fichiers sources\Dark Forces\gaBehaviorNode</Filter>
     </ClCompile>
+    <ClCompile Include="gaEngine\gaBehaviorNode\gaMoveTo.cpp">
+      <Filter>Fichiers sources\gaEngine\gaBehaviorNode</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="glad\glad.h">
@@ -1351,6 +1354,9 @@
     </ClInclude>
     <ClInclude Include="darkforces\gaBehaviorNode\dfFire2Player.h">
       <Filter>Fichiers d%27en-tête\DarkForces\gaBehaviorNode</Filter>
+    </ClInclude>
+    <ClInclude Include="gaEngine\gaBehaviorNode\gaMoveTo.h">
+      <Filter>Fichiers d%27en-tête\gaEngine\gaBehaviorNode</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

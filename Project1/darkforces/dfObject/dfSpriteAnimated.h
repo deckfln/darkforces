@@ -14,7 +14,8 @@ class dfWAX;
 class dfSpriteAnimated: public dfSprite
 {
 	dfState m_state = dfState::NONE;		// state of the object for WAX, unused for others
-	int m_frame = 0;						// current frame to display based on frameSpeed
+	int32_t m_frame = 0;					// current frame to display based on frameSpeed
+	uint32_t m_nbframes = 0;				// number of frames in the loop
 	glm::vec3 m_direction = glm::vec3(0);	// direction the object is looking to
 	time_t m_lastFrame = 0;					// time of the last animation frame
 	time_t m_currentFrame = 0;				// time of the current animation frame

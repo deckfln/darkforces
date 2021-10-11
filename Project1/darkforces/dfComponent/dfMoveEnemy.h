@@ -17,9 +17,10 @@ namespace DarkForces {
 		class MoveEnemy : public GameEngine::Component::BehaviorTree
 		{
 			Behavior::WaitIdle m_waitIdle = Behavior::WaitIdle("wait_idle");
-			GameEngine::Behavior::Loop m_attack = GameEngine::Behavior::Loop("attack");
-			Behavior::Move2Player m_move2player = Behavior::Move2Player("move toward player");
-			Behavior::Fire2Player m_shootPlayer = Behavior::Fire2Player("shoot player");
+				GameEngine::Behavior::Loop m_attack = GameEngine::Behavior::Loop("attack");
+					Behavior::Move2Player m_move2player = Behavior::Move2Player("move toward player");
+						GameEngine::Behavior::MoveTo m_move2 = GameEngine::Behavior::MoveTo("move to waypoints");
+					Behavior::Fire2Player m_shootPlayer = Behavior::Fire2Player("shoot player");
 
 			GameEngine::Behavior::SatNav m_satnav = GameEngine::Behavior::SatNav("go to destination");
 			Behavior::MoveEnemyTo m_move_to = Behavior::MoveEnemyTo("move to destination");

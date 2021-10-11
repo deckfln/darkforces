@@ -109,21 +109,23 @@ void dfSpriteAnimated::state(dfState state)
 		m_loopAnimation = true;
 	}
 
+	m_nbframes = m_source->nbFrames(m_state);
+
 	if (m_logics & DF_LOGIC_ENEMIES) {
 		// trigger the animation, unless the object is static or has no animation
 		if (m_state != dfState::ENEMY_LIE_DEAD &&
 			m_state != dfState::ENEMY_STAY_STILL &&
-			m_source->nbFrames(m_state) > 1)
+			m_nbframes > 1)
 		{
-			sendMessage(DarkForces::Message::ANIM_START, m_source->nbFrames(m_state));
+			sendMessage(DarkForces::Message::ANIM_START, (uint32_t)m_state, &m_nbframes);
 			m_animated = true;
 			timer(true);	// register to timer events
 		}
 	}
 	else {
 		// trigger an animation loop if there is actually an animation loop
-		if ((m_logics & dfLogic::ANIM) && m_source->nbFrames(m_state) > 1) {
-			sendMessage(DarkForces::Message::ANIM_START, m_source->nbFrames(m_state));
+		if ((m_logics & dfLogic::ANIM) && m_nbframes > 1) {
+			sendMessage(DarkForces::Message::ANIM_START, (uint32_t)m_state, &m_nbframes);
 			m_animated = true;
 			timer(true);
 		}
@@ -199,8 +201,7 @@ bool dfSpriteAnimated::update(time_t t)
 
 	m_currentFrame += t;
 
-	uint32_t nbFrames = m_source->nbFrames(m_state);
-	if (nbFrames <= 1) {
+	if (m_nbframes <= 1) {
 		return false;	// static objects like FME are not updated, 
 						// objects with only 1 frame in the animation loop are also not updated
 	}
@@ -252,10 +253,10 @@ void dfSpriteAnimated::dispatchMessage(gaMessage* message)
 				m_lastFrame = m_currentFrame = 0;
 				m_frame = 0;
 				m_dirtyAnimation = true;
-				sendMessage(DarkForces::Message::END_LOOP, (int)m_state);
+				sendMessage(DarkForces::Message::END_LOOP, (uint32_t)m_state);
 			}
 			else {
-				sendMessage(DarkForces::Message::ANIM_END, 0);
+				sendMessage(DarkForces::Message::ANIM_END, (uint32_t)m_state);
 				m_animated = false;
 				timer(false);
 			}

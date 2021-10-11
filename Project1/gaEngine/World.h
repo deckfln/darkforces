@@ -23,13 +23,21 @@ class dfSprites;
 
 namespace GameEngine {
 	struct Alarm {
-		uint32_t m_id;
+		uint32_t m_id=0;
 		gaEntity* m_entity;
+		uint32_t m_message;
 		time_t m_delay;
 
 		bool operator==(const struct Alarm& a) const
 		{
 			return (a.m_id == this->m_id);
+		}
+
+		inline Alarm(gaEntity* entity, time_t delay, uint32_t message = gaMessage::Action::ALARM):
+			m_entity(entity),
+			m_delay(delay),
+			m_message(message)
+		{
 		}
 	};
 

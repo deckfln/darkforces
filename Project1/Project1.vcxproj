@@ -261,6 +261,7 @@
     <ClCompile Include="gaEngine\gaBehaviorNode.cpp" />
     <ClCompile Include="gaEngine\gaBehaviorNode\gaBehaviorLoop.cpp" />
     <ClCompile Include="gaEngine\gaBehaviorNode\gaBNSatNav.cpp" />
+    <ClCompile Include="gaEngine\gaBehaviorNode\gaMoveTo.cpp" />
     <ClCompile Include="gaEngine\gaBoundingBoxes.cpp" />
     <ClCompile Include="gaEngine\gaCollisionPoint.cpp" />
     <ClCompile Include="gaEngine\gaComponent.cpp" />
@@ -474,6 +475,7 @@
     <ClInclude Include="gaEngine\gaBehaviorNode.h" />
     <ClInclude Include="gaEngine\gaBehaviorNode\gaBehaviorLoop.h" />
     <ClInclude Include="gaEngine\gaBehaviorNode\gaBNSatNav.h" />
+    <ClInclude Include="gaEngine\gaBehaviorNode\gaMoveTo.h" />
     <ClInclude Include="gaEngine\gaBoundingBoxes.h" />
     <ClInclude Include="gaEngine\gaCollisionPoint.h" />
     <ClInclude Include="gaEngine\gaComponent.h" />

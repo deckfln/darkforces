@@ -17,81 +17,59 @@ DarkForces::Behavior::Move2Player::Move2Player(const char* name):
  */
 bool DarkForces::Behavior::Move2Player::locatePlayer(void)
 {
-	m_position = m_player->position();
+	glm::vec3 position = m_player->position();
 
 	// can we reach the player ?
-	glm::vec3 direction = glm::normalize(m_position - m_entity->position());
+	glm::vec3 direction = glm::normalize(position - m_entity->position());
 
 	// test line of sight from await of the entity to away from the player (to not catch the entity nor the player)
 	glm::vec3 start = m_entity->position() + direction * (m_entity->radius() * 1.5f);
 	start.y += m_entity->height() / 2.0f;
-	glm::vec3 end = m_position - direction * (m_entity->radius() * 1.5f);
+	glm::vec3 end = position - direction * (m_entity->radius() * 1.5f);
 	end.y += m_player->height() / 2.0f;
 	Framework::Segment segment(start, end);
 
+	if (segment.length() < m_entity->radius() * 8.0f) {
+		// stay away of the target
+		m_status = Status::SUCCESSED;
+		return true;
+	}
+
+	bool canSee = true;
 	std::vector<gaEntity*> collisions;
 	if (g_gaWorld.intersectWithEntity(segment, collisions)) {
 		// check if there is a collision with something different than player and shooter
-		bool real = false;
 		for (auto entity : collisions) {
 			if (entity != m_entity && entity != m_player) {
-				real = true;
+				canSee = false;
 				break;
 			}
 		}
-
-		if (real) {
-			// continue moving to the last known good position
-			glm::vec3* lastKnown = static_cast<glm::vec3*>(m_tree->blackboard("player_last_known_position"));
-			if (lastKnown == nullptr) {
-				return false;
-			}
-
-			m_position = *lastKnown;
-
-			// if we are reaching the last known position and still can't see the player, give up
-			float l = glm::distance(m_position, m_entity->position());
-			if (l < m_entity->radius()) {
-				return false;
-			}
-			return true;
-		}
 	}
 
-	// turn toward the player
-	m_direction = direction;
-	m_entity->sendMessage(gaMessage::LOOK_AT, -m_direction);
+	if (canSee) {
+		m_lastKnwonPosition = position;
+		m_tree->blackboard("player_last_known_position", &m_lastKnwonPosition);
+	}
+	else {
+		// continue moving to the last known good position
+		position = m_lastKnwonPosition;
 
-	m_tree->blackboard("player_last_known_position", &m_position);
+		// if we are reaching the last known position and still can't see the player, give up
+		float l = glm::distance(position, m_entity->position());
+		if (l < m_entity->radius()) {
+			return false;
+		}
+ 	}
+
+	// turn toward the player
+	m_navpoints.clear();
+	m_navpoints.push_back(position);
 
 	// walk for 2s
-	GameEngine::Alarm alarm;
-	alarm.m_entity = m_entity;
-	alarm.m_delay = 2000;
-
+	GameEngine::Alarm alarm(m_entity, 2000, gaMessage::Action::SatNav_CANCEL);
 	g_gaWorld.registerAlarmEvent(alarm);
 	return true;
-}
-
-/**
- *
- */
-void DarkForces::Behavior::Move2Player::triggerMove(void)
-{
-	// and start moving toward the player
-	m_entity->pTransform()->m_position = m_entity->position() + m_direction*0.01f;
-	m_entity->sendDelayedMessage(
-		gaMessage::WANT_TO_MOVE,
-		gaMessage::Flag::WANT_TO_MOVE_BREAK_IF_FALL,
-		m_entity->pTransform());
-}
-
-/**
- * manage move actions
- */
-void DarkForces::Behavior::Move2Player::onMove(gaMessage* message, Action* r)
-{
-	triggerMove();
 }
 
 /**
@@ -100,12 +78,11 @@ void DarkForces::Behavior::Move2Player::onMove(gaMessage* message, Action* r)
 void DarkForces::Behavior::Move2Player::init(void* data)
 {
 	m_status = Status::RUNNING;
+	m_runningChild = -1;
 
 	if (m_player == nullptr) {
 		m_player = g_gaWorld.getEntity("player");
 	}
-
-	m_steps = -1;
 
 	// broadcast the beginning of the move (for animation)
 	m_entity->sendMessage(gaMessage::START_MOVE);		// start the entity animation
@@ -116,26 +93,34 @@ void DarkForces::Behavior::Move2Player::init(void* data)
 		m_tree->blackboard("player_last_known_position", nullptr);
 		return;
 	}
-
-	m_steps = 30;
-	triggerMove();
 }
 
-void DarkForces::Behavior::Move2Player::dispatchMessage(gaMessage* message, Action* r)
+/**
+ * let a parent take a decision with it's current running child
+ */
+void DarkForces::Behavior::Move2Player::execute(Action* r)
 {
-	switch (message->m_action) {
-	case gaMessage::Action::MOVE:
-		onMove(message, r);
+	if (m_status != Status::RUNNING) {
+		return BehaviorNode::execute(r);
+	}
+
+	if (m_runningChild < 0) {
+		m_runningChild = 0;
+		return startChild(r, m_runningChild, &m_navpoints);
+	}
+
+	switch (m_children[m_runningChild]->status()) {
+	case Status::SUCCESSED:
+	case Status::FAILED:
+		// drop out of the loop
+		m_status = m_children[m_runningChild]->status();
+		r->action = BehaviorNode::Status::EXIT;
+		r->status = m_status;
 		break;
 
-	case gaMessage::Action::ALARM:
-		m_status = Status::SUCCESSED;
-		break;
-
-	case gaMessage::Action::COLLIDE:
-		m_entity->sendMessage(gaMessage::Action::END_MOVE);	// stop the entity animation
-		return failed(r);
+	default:
+		r->action = BehaviorNode::Status::RUNNING;
 		break;
 	}
-	BehaviorNode::execute(r);
 }
+

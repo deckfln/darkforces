@@ -505,7 +505,7 @@ void World::process(time_t delta, bool force)
 	for (auto& alarm : m_alarms) {
 		alarm.m_delay -= delta;
 		if (alarm.m_delay < 0) {
-			sendMessage(alarm.m_entity->name(), alarm.m_entity->name(), gaMessage::Action::ALARM, 0, nullptr);
+			sendMessage(alarm.m_entity->name(), alarm.m_entity->name(), alarm.m_message, 0, nullptr);
 			removeAlarm.push_back(&alarm);
 		}
 	}

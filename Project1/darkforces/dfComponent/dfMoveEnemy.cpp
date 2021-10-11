@@ -10,6 +10,7 @@ DarkForces::Component::MoveEnemy::MoveEnemy():
 
 	m_waitIdle.addNode(&m_attack);
 		m_attack.addNode(&m_move2player);
+			m_move2player.addNode(&m_move2);
 		m_attack.addNode(&m_shootPlayer);
 
 	m_waitIdle.addNode(&m_move_to);
