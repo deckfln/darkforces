@@ -49,7 +49,7 @@ bool DarkForces::Behavior::Move2Player::locatePlayer(void)
 
 	if (canSee) {
 		m_lastKnwonPosition = position;
-		m_tree->blackboard("player_last_known_position", &m_lastKnwonPosition);
+		m_tree->blackboard<glm::vec3>("player_last_known_position", m_lastKnwonPosition);
 	}
 	else {
 		// continue moving to the last known good position

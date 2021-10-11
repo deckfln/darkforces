@@ -378,7 +378,7 @@ uint32_t GameEngine::Behavior::MoveTo::recordState(void* record)
 	r->nbPrevious = m_previous.size();
 	r->current = m_currentNavPoint;
 
-	gaEntity* collided = static_cast<gaEntity*>(m_tree->blackboard("lastCollision"));
+	gaEntity* collided = m_tree->blackboard<gaEntity>("lastCollision");
 	if (collided) {
 		strncpy_s(r->lastCollision, sizeof(r->lastCollision), collided->name().c_str(), _TRUNCATE);
 	}
@@ -413,7 +413,7 @@ uint32_t GameEngine::Behavior::MoveTo::loadState(void* record)
 
 	if (r->lastCollision[0] != 0) {
 		gaEntity* collided = g_gaWorld.getEntity(r->lastCollision);
-		m_tree->blackboard("lastCollision", collided);
+		m_tree->blackboard<gaEntity>("lastCollision", collided);
 	}
 
 	m_previous.resize(r->nbPrevious);

@@ -89,7 +89,7 @@ void DarkForces::Behavior::GotoTrigger::execute(Action *r)
 {
 	r->action = Status::RUNNING;
 
-	struct GameEngine::Physics::CollisionList* collidedList = static_cast<struct GameEngine::Physics::CollisionList*>(m_tree->blackboard("lastCollision"));
+	struct GameEngine::Physics::CollisionList* collidedList = m_tree->blackboard<struct GameEngine::Physics::CollisionList>("lastCollision");
 
 	if (collidedList != nullptr && collidedList->size == 0) {
 		return failed(r);

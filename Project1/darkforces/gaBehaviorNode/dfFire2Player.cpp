@@ -60,7 +60,7 @@ bool DarkForces::Behavior::Fire2Player::locatePlayer(void)
 	m_entity->sendMessage(gaMessage::LOOK_AT, -m_direction);
 
 	// record last known position
-	glm::vec3* p = static_cast<glm::vec3*>(m_tree->blackboard("player_last_known_position"));
+	glm::vec3* p = m_tree->blackboard<glm::vec3>("player_last_known_position");
 	*p = m_position;
 
 	return true;

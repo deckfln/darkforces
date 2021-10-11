@@ -15,11 +15,6 @@ GameEngine::Component::BehaviorTree::BehaviorTree(BehaviorNode* root):
 {
 }
 
-void* GameEngine::Component::BehaviorTree::blackboard(const std::string key)
-{
-	return m_blackboard[key];
-}
-
 void GameEngine::Component::BehaviorTree::blackboard(const std::string key, void* value)
 {
 	m_blackboard[key] = value;

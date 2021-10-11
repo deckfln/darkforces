@@ -18,8 +18,16 @@ namespace GameEngine {
 
 		public:
 			BehaviorTree(BehaviorNode* root);
-			void* blackboard(const std::string key);
 			void blackboard(const std::string key, void *value);
+
+			template <typename T>
+			void blackboard(const std::string key, const T& value);
+
+			template <typename T>
+			void blackboard(const std::string key, const T* value);
+
+			template <typename T>
+			T* blackboard(const std::string key);
 
 			void dispatchMessage(gaMessage* message) override;	// let a component deal with a situation
 
@@ -31,5 +39,27 @@ namespace GameEngine {
 			// debugger
 			void debugGUIinline(void) override;					// display the component in the debugger
 		};
+
+		template<typename T>
+		inline void BehaviorTree::blackboard(const std::string key, const T& value)
+		{
+			if (m_blackboard[key] == nullptr) {
+				m_blackboard[key] = new T;
+			}
+
+			*(static_cast<T*>(m_blackboard[key])) = value;
+		}
+
+		template<typename T>
+		inline void BehaviorTree::blackboard(const std::string key, const T* value)
+		{
+			m_blackboard[key] = (void*)value;
+		}
+
+		template<typename T>
+		inline T* BehaviorTree::blackboard(const std::string key)
+		{
+			return static_cast<T*>(m_blackboard[key]);
+		}
 	}
 }

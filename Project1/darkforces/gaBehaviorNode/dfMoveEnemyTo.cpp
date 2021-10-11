@@ -50,7 +50,7 @@ void DarkForces::Behavior::MoveEnemyTo::execute(Action* r)
 		}
 
 		// the move_to node failed, it probably collided with something
-		struct GameEngine::Physics::CollisionList* collidedList = static_cast<struct GameEngine::Physics::CollisionList*>(m_tree->blackboard("lastCollision"));
+		struct GameEngine::Physics::CollisionList* collidedList = m_tree->blackboard<struct GameEngine::Physics::CollisionList>("lastCollision");
 		if (collidedList != nullptr && collidedList->size == 0) {
 			return failed(r);
 		}
@@ -125,7 +125,7 @@ uint32_t DarkForces::Behavior::MoveEnemyTo::recordState(void* record)
 	uint32_t len = sizeof(FlightRecorder::MoveEnemyTo);
 	r->destination = m_destination;
 
-	DarkForces::Component::InfElevator* elevator = static_cast<DarkForces::Component::InfElevator* >(m_tree->blackboard("wait_elevator"));
+	DarkForces::Component::InfElevator* elevator = m_tree->blackboard<DarkForces::Component::InfElevator>("wait_elevator");
 	if (elevator) {
 		gaEntity* entity = elevator->entity();
 		strcpy_s(&r->wait_elevator[0], 1024, entity->name().c_str());
