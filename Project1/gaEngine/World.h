@@ -165,7 +165,8 @@ namespace GameEngine {
 			std::vector<gaEntity*>& entities);				// return all entities of that type
 
 		void registerTimerEvents(gaEntity*, bool b);		// (de)register an entity to receive timer events
-		void registerAlarmEvent(GameEngine::Alarm& alarm);		// register an entity to receive alarm event
+		uint32_t registerAlarmEvent(Alarm& alarm);			// register an entity to receive alarm event
+		bool cancelAlarmEvent(uint32_t id);					// cancel a programmed alarm
 
 		~World();
 	};

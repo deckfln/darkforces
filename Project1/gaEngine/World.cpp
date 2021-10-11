@@ -742,12 +742,35 @@ void GameEngine::World::registerTimerEvents(gaEntity* entity, bool b)
 /**
  * register an entity to receive alarm event
  */
-void GameEngine::World::registerAlarmEvent(Alarm& alarm)
+uint32_t GameEngine::World::registerAlarmEvent(Alarm& alarm)
 {
 	static uint32_t g_id = 0;
 
 	alarm.m_id = g_id++;
 	m_alarms.push_back(alarm);
+
+	return alarm.m_id;
+}
+
+/**
+ * cancel a programmed alarm
+ */
+bool GameEngine::World::cancelAlarmEvent(uint32_t id)
+{
+	Alarm* a = nullptr;
+	for (auto& alarm : m_alarms) {
+		if (alarm.m_id == id) {
+			a = &alarm;
+			break;
+		}
+	}
+
+	if (a != nullptr) {
+		m_alarms.remove(*a);
+		return true;
+	}
+
+	return false;
 }
 
 /**

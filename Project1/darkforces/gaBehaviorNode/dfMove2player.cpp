@@ -68,7 +68,7 @@ bool DarkForces::Behavior::Move2Player::locatePlayer(void)
 
 	// walk for 2s
 	GameEngine::Alarm alarm(m_entity, 2000, gaMessage::Action::SatNav_CANCEL);
-	g_gaWorld.registerAlarmEvent(alarm);
+	m_alarmID = g_gaWorld.registerAlarmEvent(alarm);
 	return true;
 }
 
@@ -112,6 +112,9 @@ void DarkForces::Behavior::Move2Player::execute(Action* r)
 	switch (m_children[m_runningChild]->status()) {
 	case Status::SUCCESSED:
 	case Status::FAILED:
+		// remove programmed alarm
+		g_gaWorld.cancelAlarmEvent(m_alarmID);
+
 		// drop out of the loop
 		m_status = m_children[m_runningChild]->status();
 		r->action = BehaviorNode::Status::EXIT;
