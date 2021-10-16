@@ -1,50 +1,47 @@
-#include "dfMove2player.h"
-
-#include "../../darkforces/dfObject.h"
+#include "dfTrackPlayer.h"
 
 #include "../../gaEngine/gaComponent/gaBehaviorTree.h"
 #include "../../gaEngine/gaEntity.h"
 #include "../../gaEngine/World.h"
-#include "../../config.h"
 
-DarkForces::Behavior::Move2Player::Move2Player(const char* name):
-	BehaviorNode(name)
+DarkForces::Behavior::TrackPlayer::TrackPlayer(const char* name):
+	GameEngine::BehaviorNode(name)
 {
 }
 
-/**
- * on init, look for the player and fire on him
- */
-void DarkForces::Behavior::Move2Player::init(void* data)
+void DarkForces::Behavior::TrackPlayer::init(void* data)
 {
-	m_status = Status::RUNNING;
-	m_runningChild = -1;
-
-	// this could be the real position (player is visible)
-	// or the last known position (player is hidden)
+	// Pick the last 2 known positions and run the entity along the axe up to a wall
 	std::vector<glm::vec3>* playerLastPositions = m_tree->blackboard<std::vector<glm::vec3>>("player_last_positions");
-	glm::vec3 move2 = playerLastPositions->back();
 
-	if (glm::distance(move2, m_entity->position()) < m_entity->radius()) {
+	uint32_t size = playerLastPositions->size();
+	if (size < 2) {
 		m_status = Status::FAILED;
 		return;
 	}
 
-	m_navpoints.clear();
-	m_navpoints.push_back(playerLastPositions->back());
+	glm::vec3 p1 = playerLastPositions->at(size - 1);
+	glm::vec3 p2 = playerLastPositions->at(size - 2);
 
-	// broadcast the beginning of the move (for animation)
-	m_entity->sendMessage(gaMessage::START_MOVE);		// start the entity animation
+	glm::vec3 direction = glm::normalize(p1 - p2);
+	if (glm::length(direction) < m_entity->radius()) {
+		m_status = Status::FAILED;
+		return;
+	}
+
+	direction *= m_entity->radius() * 10.0f;
+
+	m_navpoints.clear();
+	m_navpoints.push_back(direction);
 
 	// walk only for 2s
 	GameEngine::Alarm alarm(m_entity, 2000, gaMessage::Action::SatNav_CANCEL);
 	m_alarmID = g_gaWorld.registerAlarmEvent(alarm);
+
+	GameEngine::BehaviorNode::init(data);
 }
 
-/**
- * let a parent take a decision with it's current running child
- */
-void DarkForces::Behavior::Move2Player::execute(Action* r)
+void DarkForces::Behavior::TrackPlayer::execute(Action* r)
 {
 	if (m_status != Status::RUNNING) {
 		return BehaviorNode::execute(r);
@@ -72,4 +69,3 @@ void DarkForces::Behavior::Move2Player::execute(Action* r)
 		break;
 	}
 }
-

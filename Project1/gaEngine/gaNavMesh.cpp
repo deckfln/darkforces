@@ -349,12 +349,13 @@ float GameEngine::NavMesh::findPath(const glm::vec3& from, const glm::vec3& to, 
 	directPath.push_back(to);
 	findDirectPath(0, graphPath.size() - 1, graphPath, directPath);
 	
-	printf(">\n");
+	/*
+	printf("gaNavMesh::findPath\n");
 	for (auto& p : directPath) {
 		printf("%f,%f,\n", p.x, p.z);
 	}
 	printf("<\n");
-	
+	*/
 	return len;
 }
 

@@ -8,7 +8,6 @@ namespace DarkForces {
 	namespace Behavior {
 		class Fire2Player : public GameEngine::BehaviorNode
 		{
-			gaEntity* m_player=nullptr;										// player entity
 			glm::vec3 m_position;											// player position
 			glm::vec3 m_direction;											// direction to the last player position
 			uint32_t m_state = 0;
@@ -18,8 +17,6 @@ namespace DarkForces {
 			glm::vec3 m_from;											// player position
 			glm::vec3 m_to;											// player position
 			bool m_visibility;
-
-			bool locatePlayer(void);										// locate the player
 
 		public:
 			Fire2Player(const char* name);

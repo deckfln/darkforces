@@ -90,7 +90,7 @@ namespace GameEngine
 
 		struct CollisionList {
 			uint32_t size;
-			gaEntity* entities[1];
+			gaEntity* entities[8];
 		};
 
 	protected:

@@ -37,7 +37,7 @@ void GameEngine::Behavior::Loop::execute(Action* r)
 
 		// drop out of the loop if all failed
 		r->action = BehaviorNode::Status::EXIT;
-		r->status = m_status;
+		m_status  = r->status = BehaviorNode::Status::FAILED;
 		break;}
 
 	case Condition::UNTIL_ONE_FAIL: {
@@ -54,7 +54,7 @@ void GameEngine::Behavior::Loop::execute(Action* r)
 		case Status::FAILED:
 			// drop out of the loop
 			r->action = BehaviorNode::Status::EXIT;
-			r->status = m_status;
+			m_status = r->status = BehaviorNode::Status::FAILED;
 			break;
 
 		default:

@@ -7,6 +7,7 @@
 #include "../gaNavMesh.h"
 #include "../World.h"
 #include "../gaComponent/gaBehaviorTree.h"
+#include "../Physics.h"
 
 #include "../flightRecorder/frPathFinding.h"
 
@@ -55,8 +56,18 @@ void GameEngine::Behavior::MoveTo::init(void *data)
 	m_status = Status::MOVE_TO_NEXT_WAYPOINT;
 	BehaviorNode::m_status = BehaviorNode::Status::RUNNING;
 
+	printf("GameEngine::Behavior::MoveTo::init\n");
+	printf("%f,%f,\n", m_transforms->m_position.x, m_transforms->m_position.z);
+	for (auto& p : *m_navpoints) {
+		printf("%f,%f,\n", p.x, p.z);
+	}
+	printf("<\n");
+
 	// broadcast the beginning of the move (for animation)
 	m_entity->sendDelayedMessage(gaMessage::START_MOVE);
+
+	m_previous_current = 0;
+	m_previous_size = 0;
 }
 
 /**
@@ -142,7 +153,8 @@ void GameEngine::Behavior::MoveTo::onBlockedWay(gaMessage *message)
 	}
 	else {
 		// we are blocked and jumped over all waypoints
-		m_tree->blackboard("lastCollision", &message->m_data);
+		struct GameEngine::Physics::CollisionList* collisions = (struct GameEngine::Physics::CollisionList *)&message->m_data;
+		m_tree->blackboard<struct GameEngine::Physics::CollisionList>("lastCollision", *collisions);
 		BehaviorNode::m_status = BehaviorNode::Status::FAILED;
 	}
 }
@@ -185,20 +197,18 @@ void GameEngine::Behavior::MoveTo::onMove(gaMessage* message)
 
 		float inter = d / (m_entity->radius() * 2.0f);
 		lookAt = current_direction * inter + next_direction * (1.0f-inter);
+
+		printf("%.04f,%.04f,%.04f,%.04f,%.04f,%.04f,%.04f,%.04f,\n",
+			m_entity->position().x, m_entity->position().z,
+			current_direction.x, current_direction.z,
+			next_direction.x, next_direction.z,
+			lookAt.x, lookAt.z);
 	}
 
 	lookAt = glm::normalize(lookAt);
 	m_entity->sendInternalMessage(
 			gaMessage::LOOK_AT,
 			-lookAt);
-
-	/*
-	printf("%.04f,%.04f,%.04f,%.04f,%.04f,%.04f,%.04f,%.04f,\n", 
-		m_entity->position().x, m_entity->position().z, 
-		current_direction.x, current_direction.z,
-		next_direction.x, next_direction.z,
-		lookAt.x, lookAt.z);
-	*/
 
 	// did we reach the next navpoint ?
 	if (d < 0.01f) {
@@ -247,7 +257,7 @@ void GameEngine::Behavior::MoveTo::onCollide(gaMessage* message)
 	float distance = glm::length(position - failedPosition);
 
 	// check if we are not stuck, test the last 3 positions
-	if (m_previous.size() > 0) {
+	if (m_previous_size > 3) {
 		int32_t j;
 		uint32_t count = 0;
 		glm::vec2 barycenter(0);
@@ -321,7 +331,7 @@ void GameEngine::Behavior::MoveTo::onCollide(gaMessage* message)
 	m_transforms->m_position = glm::vec3(new_target.x, position.y, new_target.y);
 	triggerMove(m_transforms->m_position - position);
 
-	//printf("%.04f,%.04f,%.04f,%.04f,%.04f,%.04f,%.04f,%.04f,\n", a.x, a.y, b.x, b.y, new_target.x, new_target.y, c.x, c.y);
+	printf("%.04f,%.04f,%.04f,%.04f,%.04f,%.04f,%.04f,%.04f,\n", a.x, a.y, b.x, b.y, new_target.x, new_target.y, c.x, c.y);
 }
 
 /**
@@ -378,13 +388,13 @@ uint32_t GameEngine::Behavior::MoveTo::recordState(void* record)
 	r->nbPrevious = m_previous.size();
 	r->current = m_currentNavPoint;
 
-	gaEntity* collided = m_tree->blackboard<gaEntity>("lastCollision");
-	if (collided) {
-		strncpy_s(r->lastCollision, sizeof(r->lastCollision), collided->name().c_str(), _TRUNCATE);
-	}
-	else {
+	//struct Physics::CollisionList* data = m_tree->blackboard<struct Physics::CollisionList>("lastCollision");
+	//if (data) {
+	//	strncpy_s(r->lastCollision, sizeof(r->lastCollision), data->entities[0]->name().c_str(), _TRUNCATE);
+	//}
+	//lse {
 		r->lastCollision[0] = 0;
-	}
+	//}
 
 	if (r->nbPrevious > 1023) {
 		__debugbreak();
@@ -412,8 +422,9 @@ uint32_t GameEngine::Behavior::MoveTo::loadState(void* record)
 	m_currentNavPoint = r->current;
 
 	if (r->lastCollision[0] != 0) {
+		struct Physics::CollisionList* data = m_tree->blackboard<struct Physics::CollisionList>("lastCollision");
 		gaEntity* collided = g_gaWorld.getEntity(r->lastCollision);
-		m_tree->blackboard<gaEntity>("lastCollision", collided);
+		//m_tree->blackboard<gaEntity>("lastCollision", collided);
 	}
 
 	m_previous.resize(r->nbPrevious);

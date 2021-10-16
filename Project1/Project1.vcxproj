@@ -183,11 +183,14 @@
     <ClCompile Include="darkforces\dfVOC.cpp" />
     <ClCompile Include="darkforces\dfVue.cpp" />
     <ClCompile Include="darkforces\dfWall.cpp" />
+    <ClCompile Include="darkforces\gaBehaviorNode\dfAttackPlayer.cpp" />
     <ClCompile Include="darkforces\gaBehaviorNode\dfFire2Player.cpp" />
     <ClCompile Include="darkforces\gaBehaviorNode\dfGotoTrigger.cpp" />
     <ClCompile Include="darkforces\gaBehaviorNode\dfMove2player.cpp" />
     <ClCompile Include="darkforces\gaBehaviorNode\dfMoveEnemyTo.cpp" />
+    <ClCompile Include="darkforces\gaBehaviorNode\dfMoveToAndAttack.cpp" />
     <ClCompile Include="darkforces\gaBehaviorNode\dfOpenDoor.cpp" />
+    <ClCompile Include="darkforces\gaBehaviorNode\dfTrackPlayer.cpp" />
     <ClCompile Include="darkforces\gaBehaviorNode\dfWaitDoor.cpp" />
     <ClCompile Include="darkforces\gaBehaviorNode\dfWaitIdle.cpp" />
     <ClCompile Include="darkforces\gaEntity\ElevatorDoor.cpp" />
@@ -260,6 +263,7 @@
     <ClCompile Include="gaEngine\gaApp.cpp" />
     <ClCompile Include="gaEngine\gaBehaviorNode.cpp" />
     <ClCompile Include="gaEngine\gaBehaviorNode\gaBehaviorLoop.cpp" />
+    <ClCompile Include="gaEngine\gaBehaviorNode\gaBehaviorSequence.cpp" />
     <ClCompile Include="gaEngine\gaBehaviorNode\gaBNSatNav.cpp" />
     <ClCompile Include="gaEngine\gaBehaviorNode\gaMoveTo.cpp" />
     <ClCompile Include="gaEngine\gaBoundingBoxes.cpp" />
@@ -385,11 +389,14 @@
     <ClInclude Include="darkforces\flightRecorder\frSprite.h" />
     <ClInclude Include="darkforces\flightRecorder\frSpriteAnimated.h" />
     <ClInclude Include="darkforces\flightRecorder\Object3D.h" />
+    <ClInclude Include="darkforces\gaBehaviorNode\dfAttackPlayer.h" />
     <ClInclude Include="darkforces\gaBehaviorNode\dfFire2Player.h" />
     <ClInclude Include="darkforces\gaBehaviorNode\dfGotoTrigger.h" />
     <ClInclude Include="darkforces\gaBehaviorNode\dfMove2player.h" />
     <ClInclude Include="darkforces\gaBehaviorNode\dfMoveEnemyTo.h" />
+    <ClInclude Include="darkforces\gaBehaviorNode\dfMoveToAndAttack.h" />
     <ClInclude Include="darkforces\gaBehaviorNode\dfOpenDoor.h" />
+    <ClInclude Include="darkforces\gaBehaviorNode\dfTrackPlayer.h" />
     <ClInclude Include="darkforces\gaBehaviorNode\dfWaitDoor.h" />
     <ClInclude Include="darkforces\gaBehaviorNode\dfWaitIdle.h" />
     <ClInclude Include="darkforces\gaEntity\ElevatorDoor.h" />
@@ -474,6 +481,7 @@
     <ClInclude Include="gaEngine\gaApp.h" />
     <ClInclude Include="gaEngine\gaBehaviorNode.h" />
     <ClInclude Include="gaEngine\gaBehaviorNode\gaBehaviorLoop.h" />
+    <ClInclude Include="gaEngine\gaBehaviorNode\gaBehaviorSequence.h" />
     <ClInclude Include="gaEngine\gaBehaviorNode\gaBNSatNav.h" />
     <ClInclude Include="gaEngine\gaBehaviorNode\gaMoveTo.h" />
     <ClInclude Include="gaEngine\gaBoundingBoxes.h" />
