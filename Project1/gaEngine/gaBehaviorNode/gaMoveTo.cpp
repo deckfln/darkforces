@@ -204,7 +204,6 @@ void GameEngine::Behavior::MoveTo::onMove(gaMessage* message)
 			next_direction.x, next_direction.z,
 			lookAt.x, lookAt.z);
 	}
-
 	lookAt = glm::normalize(lookAt);
 	m_entity->sendInternalMessage(
 			gaMessage::LOOK_AT,
@@ -243,6 +242,8 @@ void GameEngine::Behavior::MoveTo::onMove(gaMessage* message)
 	if (m_status == Status::MOVE_TO_NEXT_WAYPOINT) {
 		m_transforms->m_position = m_entity->position() + direction;
 		triggerMove(direction);
+
+		//printf("%.04f,%.04f,%.4f,%.4f,\n", m_entity->position().x, m_entity->position().z, direction.x, direction.z);
 	}
 }
 
@@ -331,7 +332,7 @@ void GameEngine::Behavior::MoveTo::onCollide(gaMessage* message)
 	m_transforms->m_position = glm::vec3(new_target.x, position.y, new_target.y);
 	triggerMove(m_transforms->m_position - position);
 
-	printf("%.04f,%.04f,%.04f,%.04f,%.04f,%.04f,%.04f,%.04f,\n", a.x, a.y, b.x, b.y, new_target.x, new_target.y, c.x, c.y);
+	//printf("%.04f,%.04f,%.04f,%.04f,%.04f,%.04f,%.04f,%.04f,\n", a.x, a.y, b.x, b.y, new_target.x, new_target.y, c.x, c.y);
 }
 
 /**

@@ -623,7 +623,7 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 				// the entity (non movable) pushes the collided (movable)
 				actions.push(pushed);
 
-				if (entity->name() == "player")
+				if (entity->name() == "OFFCFIN.WAX(21)")
 					gaDebugLog(1, "GameEngine::Physics::wantToMove", entity->name() + " pushes " + pushed->name());
 
 				GameEngine::Transform& t = pushed->transform();
@@ -643,6 +643,7 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 				glm::vec2 p_collision(nearest_collision->m_position.x, nearest_collision->m_position.z);
 				glm::vec2 p_old(new_position.x, new_position.z);
 
+				float l1 = glm::distance(p_collision, p_old);
 				glm::vec2 delta2d = glm::normalize(p_collision - p_old);
 				glm::vec2 direction2d(direction.x, direction.z);
 
@@ -654,7 +655,7 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 				if (dot < 0 || glm::length(delta2d) < EPSILON) {
 					// ONLY refuse the move if the entity is a physical one
 					if (pushed->physical()) {
-						if (entity->name() == "player")
+						if (entity->name() == "OFFCFIN.WAX(21)")
   							gaDebugLog(1, "GameEngine::Physics::wantToMove", entity->name() + " deny move " + std::to_string(tranform.m_position.x)
 								+ " " + std::to_string(tranform.m_position.y)
 								+ " " + std::to_string(tranform.m_position.z));
@@ -663,7 +664,7 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 						block_move = true;
 					}
 					else {
-						if (entity->name() == "player")
+						if (entity->name() == "OFFCFIN.WAX(21)")
 							gaDebugLog(1, "GameEngine::Physics::wantToMove", entity->name() + " collide " + std::to_string(tranform.m_position.x)
 								+ " " + std::to_string(tranform.m_position.y)
 								+ " " + std::to_string(tranform.m_position.z));
@@ -687,8 +688,13 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 					if (glm::length(tranform.m_position - old_position) > EPSILON) {
 						entity->transform(&tranform);
 
-						if (name == "player")
+						if (name == "OFFCFIN.WAX(21)") {
 							gaDebugLog(1, "GameEngine::Physics::wantToMove", entity->name() + " pushed by sector");
+							printf("%.4f,%.4f,%.4f,%.4f,%.4f,%.4f\n",
+								new_position.x, new_position.z,
+								nearest_collision->m_position.x, nearest_collision->m_position.z,
+								delta2d.x, delta2d.y);
+						}
 					}
 				}
 			}
