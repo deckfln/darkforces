@@ -150,19 +150,19 @@ public:
 		std::vector<gaCollisionPoint>& collisions);		// check if the entity moved so fast it went trough another one
 	void modelAABB(const fwAABBox& box);				// set the model space AABB
 
-	void sendMessage(const std::string& target,
+	gaMessage* sendMessage(const std::string& target,
 		int action,
 		int value = 0,
 		void* extra = nullptr);							// send a message to an other entity
-	void sendMessage(int action,
+	gaMessage* sendMessage(int action,
 		int value = 0,
 		void* extra = nullptr);							// send a message to an other entity
-	void sendMessage(int action,
+	gaMessage* sendMessage(int action,
 		const glm::vec3& value);						// send internal message to all components of the current entity
-	void sendMessageToWorld(int action,
+	gaMessage* sendMessageToWorld(int action,
 		int value = 0,
 		void* extra = nullptr);							// send a message to the world
-	void sendDelayedMessageToWorld(int action,
+	gaMessage* sendDelayedMessageToWorld(int action,
 		int value = 0,
 		void* extra = nullptr);							// send a message to the world
 	void sendInternalMessage(int action,
@@ -170,7 +170,7 @@ public:
 		void* extra = nullptr);							// send internal message to all components of the current entity
 	void sendInternalMessage(int action,
 		const glm::vec3& value);						// send internal message to all components of the current entity
-	void sendDelayedMessage(int action,
+	gaMessage* sendDelayedMessage(int action,
 		int value = 0,
 		void* extra = nullptr);							// send a delayed message to myself
 

@@ -126,7 +126,21 @@ static std::map<int32_t, const char*> g_definitions = {
     { gaMessage::Action::FALL, "FALL"},
     { gaMessage::Action::CONTROLLER, "CONTROLLER"},
     { gaMessage::Action::SAVE_WORLD, "SAVE_WORLD"},
-    { gaMessage::Action::KEY, "KEY"}
+    { gaMessage::Action::KEY, "KEY"},
+    { gaMessage::Action::LOOK_AT, "LOOK_AT"},
+    { gaMessage::Action::MOVE_AT, "MOVE_AT"},
+    { gaMessage::Action::ACTIVATE, "ACTIVATE"},
+    { gaMessage::Action::HIDE, "HIDE"},
+    { gaMessage::Action::UNHIDE, "UNHIDE"},
+    { gaMessage::Action::START_MOVE, "START_MOVE"},
+    { gaMessage::Action::END_MOVE, "END_MOVE"},
+    { gaMessage::Action::SatNav_GOTO, "SatNav_GOTO"},
+    { gaMessage::Action::SatNav_NOGO, "SatNav_NOGO"},
+    { gaMessage::Action::SatNav_CANCEL, "SatNav_CANCEL"},
+    { gaMessage::Action::SatNav_REACHED, "SatNAV_REACHED"},
+    { gaMessage::Action::TICK, "TICK"},
+    { gaMessage::Action::ALARM, "ALARM"}
+
 };
 
 static std::map<int32_t, std::map<int, const char*>> g_definitions_values = {

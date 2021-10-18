@@ -36,8 +36,11 @@ namespace DarkForces {
 						GameEngine::Behavior::SatNav m_satnav_door = GameEngine::Behavior::SatNav("go to trigger");
 						Behavior::WaitDoor m_wait_door_2 = Behavior::WaitDoor("wait for door to open");
 
+			gaEntity* m_player = nullptr;									// player entity
+
 		public:
 			MoveEnemy();
+			bool locatePlayer(void);
 		};
 	}
 }

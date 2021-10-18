@@ -184,7 +184,12 @@ static void debugCollision(const gaCollisionPoint& collision, gaEntity* entity, 
 /**
  * Send a collision message between 2 entities
  */
-void Physics::informCollision(gaEntity* from, gaEntity* to, const glm::vec3& collision, const std::vector<gaEntity*>& verticalCollision)
+void Physics::informCollision(
+	gaMessage* msg, 
+	gaEntity* from, 
+	gaEntity* to, 
+	const glm::vec3& collision, 
+	const std::vector<gaEntity*>& verticalCollision)
 {
 	// always inform the source entity 
 	gaMessage* message  = g_gaWorld.sendMessage(
@@ -194,6 +199,9 @@ void Physics::informCollision(gaEntity* from, gaEntity* to, const glm::vec3& col
 		collision,
 		nullptr
 	);
+
+	// record the original want_to_move id
+	message->m_value = msg->m_id;
 
 	// complete the onboard data
 	struct CollisionList* data = (struct CollisionList*)&message->m_data[0];
@@ -208,13 +216,16 @@ void Physics::informCollision(gaEntity* from, gaEntity* to, const glm::vec3& col
 		data->entities[i] = verticalCollision[i];
 
 		// always inform the colliding entity 
-		g_gaWorld.sendMessage(
+		message = g_gaWorld.sendMessage(
 			to->name(),
 			verticalCollision[i]->name(),
 			gaMessage::Action::COLLIDE,
 			collision,
 			nullptr
 		);
+
+		// record the original want_to_move id
+		message->m_value = msg->m_id;
 	}
 }
 
@@ -302,7 +313,7 @@ void Physics::moveBullet(gaEntity* entity, gaMessage* message)
 		entity->name(),
 		entity->name(),
 		gaMessage::Action::MOVE,
-		0,
+		(int)message->m_id,				// WANT_TO_MOVE that triggered the event
 		nullptr
 	);
 }
@@ -463,7 +474,7 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 						// always inform the source entity 
 						collidedEntities[collidedEntity->name()] = true;
 
-						informCollision(collidedEntity, entity, collision.m_position, verticalCollision);
+						informCollision(message, collidedEntity, entity, collision.m_position, verticalCollision);
 
 						// accept the move at that stage
 						continue;	// check next collision
@@ -615,7 +626,7 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 			// if there is a collision
 			gaEntity* pushed = static_cast<gaEntity*>(nearest_collision->m_source);
 
-			if (entity->name() == "OFFCFIN.WAX(21)")
+			if (entity->name() == "player")
 				gaDebugLog(1, "GameEngine::Physics::wantToMove", entity->name() + " trying to pushe");
 
 			if (!entity->movable() && pushed->movable()) {
@@ -623,7 +634,7 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 				// the entity (non movable) pushes the collided (movable)
 				actions.push(pushed);
 
-				if (entity->name() == "OFFCFIN.WAX(21)")
+				if (entity->name() == "player")
 					gaDebugLog(1, "GameEngine::Physics::wantToMove", entity->name() + " pushes " + pushed->name());
 
 				GameEngine::Transform& t = pushed->transform();
@@ -655,7 +666,7 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 				if (dot < 0 || glm::length(delta2d) < EPSILON) {
 					// ONLY refuse the move if the entity is a physical one
 					if (pushed->physical()) {
-						if (entity->name() == "OFFCFIN.WAX(21)")
+						if (entity->name() == "player")
   							gaDebugLog(1, "GameEngine::Physics::wantToMove", entity->name() + " deny move " + std::to_string(tranform.m_position.x)
 								+ " " + std::to_string(tranform.m_position.y)
 								+ " " + std::to_string(tranform.m_position.z));
@@ -664,14 +675,14 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 						block_move = true;
 					}
 					else {
-						if (entity->name() == "OFFCFIN.WAX(21)")
+						if (entity->name() == "player")
 							gaDebugLog(1, "GameEngine::Physics::wantToMove", entity->name() + " collide " + std::to_string(tranform.m_position.x)
 								+ " " + std::to_string(tranform.m_position.y)
 								+ " " + std::to_string(tranform.m_position.z));
 					}
 
 					// always inform the source entity
-					informCollision(pushed, entity, nearest_collision->m_position, verticalCollision);
+					informCollision(message, pushed, entity, nearest_collision->m_position, verticalCollision);
 				}
 				else {
 					glm::vec3 p1(nearest_collision->m_position.x, new_position.y, nearest_collision->m_position.z);
@@ -688,7 +699,7 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 					if (glm::length(tranform.m_position - old_position) > EPSILON) {
 						entity->transform(&tranform);
 
-						if (name == "OFFCFIN.WAX(21)") {
+						if (name == "player") {
 							gaDebugLog(1, "GameEngine::Physics::wantToMove", entity->name() + " pushed by sector");
 							printf("%.4f,%.4f,%.4f,%.4f,%.4f,%.4f\n",
 								new_position.x, new_position.z,
@@ -747,7 +758,7 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 				}
 
 				// always inform the source entity 
-				informCollision(collisionWith, entity, nearest_ceiling->m_position, verticalCollision);
+				informCollision(message, collisionWith, entity, nearest_ceiling->m_position, verticalCollision);
 			}
 			else {
 				//non-movable entities always block the movement
@@ -863,13 +874,19 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 					// OK we definitely need to fall
 					switch (tranform.m_flag) {
 					case gaMessage::Flag::WANT_TO_MOVE_BREAK_IF_FALL:
+
+						if (entity->name() == "OFFCFIN.WAX(21)")
+							gaDebugLog(1, "GameEngine::Physics::wantToMove", entity->name() + " would fall " + std::to_string(tranform.m_position.x)
+								+ " " + std::to_string(tranform.m_position.y)
+								+ " " + std::to_string(tranform.m_position.z));
+
 						// if the entity wants to be informed of falling
 						entity->popTransformations();			// restore previous position
 						g_gaWorld.sendMessage(
 							entity->name(),
 							entity->name(),
 							gaMessage::Action::WOULD_FALL,
-							0,
+							(int)message->m_id,
 							nullptr
 						);
 						continue;
@@ -880,7 +897,7 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 								entity->name(),
 								entity->name(),
 								gaMessage::Action::FALL,
-								0,
+								(int)message->m_id,
 								nullptr
 							);
 
@@ -901,7 +918,7 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 				entity->name(),
 				entity->name(),
 				gaMessage::Action::MOVE,
-				0,
+				(int)message->m_id,				// WANT_TO_MOVE that triggered the event
 				nullptr
 			);
 

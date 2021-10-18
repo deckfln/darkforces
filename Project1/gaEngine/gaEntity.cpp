@@ -223,32 +223,32 @@ void gaEntity::modelAABB(const fwAABBox& box)
 /**
  * Send message to another entity
  */
-void gaEntity::sendMessage(const std::string& target, int action, int value, void* extra)
+gaMessage* gaEntity::sendMessage(const std::string& target, int action, int value, void* extra)
 {
-	g_gaWorld.sendMessage(m_name, target, action, value, extra);
+	return g_gaWorld.sendMessage(m_name, target, action, value, extra);
 }
 
-void gaEntity::sendMessage(int action, int value, void* extra)
+gaMessage* gaEntity::sendMessage(int action, int value, void* extra)
 {
-	g_gaWorld.sendMessage(m_name, m_name, action, value, extra);
+	return g_gaWorld.sendMessage(m_name, m_name, action, value, extra);
 }
 
-void gaEntity::sendMessage(int action, const glm::vec3& value)
+gaMessage* gaEntity::sendMessage(int action, const glm::vec3& value)
 {
-	g_gaWorld.sendMessage(m_name, m_name, action, value, nullptr);
+	return g_gaWorld.sendMessage(m_name, m_name, action, value, nullptr);
 }
 
 /**
  * Send message to the world
  */
-void gaEntity::sendMessageToWorld(int action, int value, void* extra)
+gaMessage* gaEntity::sendMessageToWorld(int action, int value, void* extra)
 {
-	g_gaWorld.sendMessage(m_name, "_world", action, value, extra);
+	return g_gaWorld.sendMessage(m_name, "_world", action, value, extra);
 }
 
-void gaEntity::sendDelayedMessageToWorld(int action, int value, void* extra)
+gaMessage* gaEntity::sendDelayedMessageToWorld(int action, int value, void* extra)
 {
-	g_gaWorld.sendMessageDelayed(m_name, "_world", action, value, extra);
+	return g_gaWorld.sendMessageDelayed(m_name, "_world", action, value, extra);
 }
 
 /**
@@ -269,9 +269,9 @@ void gaEntity::sendInternalMessage(int action, const glm::vec3& value)
 /**
  * Send a delayed message to myself
  */
-void gaEntity::sendDelayedMessage(int action, int value, void* extra)
+gaMessage* gaEntity::sendDelayedMessage(int action, int value, void* extra)
 {
-	g_gaWorld.sendMessageDelayed(m_name, m_name, action, value, extra);
+	return g_gaWorld.sendMessageDelayed(m_name, m_name, action, value, extra);
 }
 
 /**

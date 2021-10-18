@@ -23,6 +23,7 @@ namespace GameEngine {
 			std::vector<glm::vec3> m_previous;					// previous positions (circular buffer)
 			uint32_t m_previous_current = 0;
 			uint32_t m_previous_size = 0;
+			uint32_t m_moveID;									// ID of the last raised WANT_TO_MOVE message
 
 			glm::vec3 nextWayPoint(bool normalize);				// return the direction to the next way point
 			void triggerMove(void);								// send the move messages

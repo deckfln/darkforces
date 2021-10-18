@@ -240,6 +240,7 @@ void World::spritesManager(dfSprites* sprites)
 
 #define MAXIMUM_MESSAGES 2048
 static int g_lastMessage = 0;
+static uint32_t g_MsgID = 0;
 static gaMessage g_messages[MAXIMUM_MESSAGES];
 
 /**
@@ -262,6 +263,9 @@ static gaMessage* allocateMessage(void)
 	} while (ptr->m_used);
 
 	ptr->m_used = true;
+	ptr->m_id = g_MsgID++;
+	ptr->m_canceled = false;
+
 	return ptr;
 }
 
@@ -394,6 +398,42 @@ void World::pushForNextFrame(gaMessage* message)
 	m_for_next_frame.push_back(message);
 }
 
+/**
+ * delete a previously submitted message
+ */
+bool World::deleteMessage(uint32_t id)
+{
+	// find and delete direct message
+	for(auto &message: m_queue) {
+		if (message->m_id == id) {
+			message->m_canceled = true;
+			return true;
+		}
+	}
+
+	for (auto& message : m_for_next_frame) {
+		if (message->m_id == id) {
+			message->m_canceled = true;
+			return true;
+		}
+	}
+
+	//Action::MOVE,COLLIDE and WOULD_FALL are triggered by an WANT_TO_MOVE, so check indirectly
+	for (auto& message : m_queue) {
+		if ((
+			message->m_action == gaMessage::Action::MOVE || 
+			message->m_action == gaMessage::Action::WOULD_FALL ||
+			message->m_action == gaMessage::Action::COLLIDE)
+			&& 
+			message->m_value == id) 
+		{
+			message->m_canceled = true;
+			return true;
+		}
+	}
+
+	return false;
+}
 
 /**
  * Search the entities map
@@ -548,6 +588,12 @@ void World::process(time_t delta, bool force)
 #endif
 
 		m_queue.pop_front();
+
+		// someone canceled the message
+		if (message->m_canceled) {
+			message->m_used = false;
+			continue;
+		}
 
 		// manage loops inside one run
 		if (message->m_action >= 512) {

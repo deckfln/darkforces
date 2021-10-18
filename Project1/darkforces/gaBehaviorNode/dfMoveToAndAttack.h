@@ -9,11 +9,6 @@ namespace DarkForces {
 	namespace Behavior {
 		class MoveToAndAttack : public GameEngine::Behavior::Loop
 		{
-			gaEntity* m_player=nullptr;										// player entity
-			std::vector<glm::vec3> m_navpoints;								// navigation for satnav
-
-			bool locatePlayer(void);										// locate the player
-
 		public:
 			MoveToAndAttack(const char* name);
 			void init(void* data) override;									// init the node before running

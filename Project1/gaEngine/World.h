@@ -125,6 +125,8 @@ namespace GameEngine {
 			int value,
 			void* extra);									// send message for immediate dispatch
 
+		bool deleteMessage(uint32_t id);					// delete a previously submitted message
+
 		gaEntity* getEntity(const std::string& name);
 		dfSprites* spritesManager(void) {
 			return m_sprites;

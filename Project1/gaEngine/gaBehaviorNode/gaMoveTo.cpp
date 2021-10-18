@@ -48,10 +48,11 @@ void GameEngine::Behavior::MoveTo::init(void *data)
 	// trigger the move
 	m_speed = 0.035f;
 	m_transforms->m_position = m_entity->position(); //m_navpoints->at(m_currentNavPoint);
-	m_entity->sendDelayedMessage(
+	gaMessage *msg = m_entity->sendDelayedMessage(
 		gaMessage::WANT_TO_MOVE,
 		gaMessage::Flag::WANT_TO_MOVE_BREAK_IF_FALL,
 		m_transforms);
+	m_moveID = msg->m_id;
 
 	m_status = Status::MOVE_TO_NEXT_WAYPOINT;
 	BehaviorNode::m_status = BehaviorNode::Status::RUNNING;
@@ -95,10 +96,11 @@ glm::vec3 GameEngine::Behavior::MoveTo::nextWayPoint(bool normalize)
 void GameEngine::Behavior::MoveTo::triggerMove(void)
 {
 	m_transforms->m_flag = gaMessage::Flag::WANT_TO_MOVE_BREAK_IF_FALL;
-	m_entity->sendDelayedMessage(
+	gaMessage* msg = m_entity->sendDelayedMessage(
 		gaMessage::WANT_TO_MOVE,
 		gaMessage::Flag::WANT_TO_MOVE_BREAK_IF_FALL,
 		m_transforms);
+	m_moveID = msg->m_id;
 }
 
 void GameEngine::Behavior::MoveTo::triggerMove(const glm::vec3& direction)
@@ -198,11 +200,13 @@ void GameEngine::Behavior::MoveTo::onMove(gaMessage* message)
 		float inter = d / (m_entity->radius() * 2.0f);
 		lookAt = current_direction * inter + next_direction * (1.0f-inter);
 
+		/*
 		printf("%.04f,%.04f,%.04f,%.04f,%.04f,%.04f,%.04f,%.04f,\n",
 			m_entity->position().x, m_entity->position().z,
 			current_direction.x, current_direction.z,
 			next_direction.x, next_direction.z,
 			lookAt.x, lookAt.z);
+		*/
 	}
 	lookAt = glm::normalize(lookAt);
 	m_entity->sendInternalMessage(
@@ -242,7 +246,6 @@ void GameEngine::Behavior::MoveTo::onMove(gaMessage* message)
 	if (m_status == Status::MOVE_TO_NEXT_WAYPOINT) {
 		m_transforms->m_position = m_entity->position() + direction;
 		triggerMove(direction);
-
 		//printf("%.04f,%.04f,%.4f,%.4f,\n", m_entity->position().x, m_entity->position().z, direction.x, direction.z);
 	}
 }
@@ -317,19 +320,26 @@ void GameEngine::Behavior::MoveTo::onCollide(gaMessage* message)
 	glm::vec2 ab(b - a);
 	glm::vec2 ac(c - a);
 
-	d = glm::dot(ac, ab) / glm::length2(ab);
-	glm::vec2 p = a + ab * d;			// project collision on (position, target)
-	glm::vec2 o = p + (p - c);			// project collision on the other side of (position, target)
-	glm::vec2 ao = glm::normalize(o - a) * glm::length(ab);
-	glm::vec2 new_target = a + ao;
+	d = glm::length2(ab);
+	if (d > 0) {
+		d = glm::dot(ac, ab) / d;
+		glm::vec2 p = a + ab * d;			// project collision on (position, target)
+		glm::vec2 o = p + (p - c);			// project collision on the other side of (position, target)
+		glm::vec2 ao = glm::normalize(o - a) * glm::length(ab);
+		glm::vec2 new_target = a + ao;
 
-	// ensure we are at least radius from the original collision
-	if (glm::distance(new_target, c) < radius) {
-		glm::vec2 nc(glm::normalize(new_target - c) * radius);
-		new_target = c + nc;
+		// ensure we are at least radius from the original collision
+		if (glm::distance(new_target, c) < radius) {
+			glm::vec2 nc(glm::normalize(new_target - c) * radius);
+			new_target = c + nc;
+		}
+		m_transforms->m_position = glm::vec3(new_target.x, position.y, new_target.y);
+	}
+	else {
+		m_transforms->m_position = position;
 	}
 
-	m_transforms->m_position = glm::vec3(new_target.x, position.y, new_target.y);
+
 	triggerMove(m_transforms->m_position - position);
 
 	//printf("%.04f,%.04f,%.04f,%.04f,%.04f,%.04f,%.04f,%.04f,\n", a.x, a.y, b.x, b.y, new_target.x, new_target.y, c.x, c.y);
@@ -345,6 +355,7 @@ void GameEngine::Behavior::MoveTo::onCancel(gaMessage* message)
 	// broadcast the end of the move (for animation)
 	m_entity->sendInternalMessage(gaMessage::END_MOVE);
 
+	g_gaWorld.deleteMessage(m_moveID);
 	BehaviorNode::m_status = BehaviorNode::Status::SUCCESSED;
 }
 

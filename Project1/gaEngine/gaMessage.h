@@ -85,7 +85,9 @@ public:
 		const char* title;
 	};
 
+	uint32_t m_id=0;				// unique id for the message
 	bool m_used = false;
+	bool m_canceled = false;
 
 	gaEntity* m_pServer = nullptr;	// cached value
 
