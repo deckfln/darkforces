@@ -419,6 +419,7 @@ bool World::deleteMessage(uint32_t id)
 	}
 
 	//Action::MOVE,COLLIDE and WOULD_FALL are triggered by an WANT_TO_MOVE, so check indirectly
+	bool moveAction = false;
 	for (auto& message : m_queue) {
 		if ((
 			message->m_action == gaMessage::Action::MOVE || 
@@ -428,11 +429,11 @@ bool World::deleteMessage(uint32_t id)
 			message->m_value == id) 
 		{
 			message->m_canceled = true;
-			return true;
+			moveAction=true;
 		}
 	}
 
-	return false;
+	return moveAction;
 }
 
 /**

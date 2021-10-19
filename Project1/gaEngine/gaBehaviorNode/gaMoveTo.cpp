@@ -58,7 +58,7 @@ void GameEngine::Behavior::MoveTo::init(void *data)
 	BehaviorNode::m_status = BehaviorNode::Status::RUNNING;
 
 	printf("GameEngine::Behavior::MoveTo::init\n");
-	printf("%f,%f,\n", m_transforms->m_position.x, m_transforms->m_position.z);
+	//printf("%f,%f,\n", m_transforms->m_position.x, m_transforms->m_position.z);
 	for (auto& p : *m_navpoints) {
 		printf("%f,%f,\n", p.x, p.z);
 	}
@@ -334,15 +334,15 @@ void GameEngine::Behavior::MoveTo::onCollide(gaMessage* message)
 			new_target = c + nc;
 		}
 		m_transforms->m_position = glm::vec3(new_target.x, position.y, new_target.y);
+
+		printf("%.04f,%.04f,%.04f,%.04f,%.04f,%.04f,%.04f,%.04f,\n", a.x, a.y, b.x, b.y, new_target.x, new_target.y, c.x, c.y);
 	}
 	else {
 		m_transforms->m_position = position;
 	}
 
-
 	triggerMove(m_transforms->m_position - position);
 
-	//printf("%.04f,%.04f,%.04f,%.04f,%.04f,%.04f,%.04f,%.04f,\n", a.x, a.y, b.x, b.y, new_target.x, new_target.y, c.x, c.y);
 }
 
 /**

@@ -349,7 +349,7 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 
 		GameEngine::Transform& tranform = entity->transform();
 
-		glm::vec3 old_position = entity->position();
+ 		glm::vec3 old_position = entity->position();
 
 		/*
 		static bool first = true;
@@ -622,6 +622,127 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 		}
 
 		// take actions
+
+		// manage ground collision and accept to jump up if over a step
+		if (entity->gravity()) {
+
+			if (nearest_ground) {
+				if (m_ballistics.count(entity->name()) > 0 && m_ballistics[entity->name()].m_inUse) {
+					// if the object was falling, remove from the list and force the position
+					m_remove.push_back(entity->name());
+					m_ballistics[entity->name()].m_inUse = false;
+
+					tranform.m_position.y = nearest_ground->m_triangle[0].y;
+					fix_y = true;
+					if (entity->name() == "player")
+						gaDebugLog(1, "GameEngine::Physics::wantToMove", entity->name() + " falling to ground " + std::to_string(tranform.m_position.x)
+							+ " " + std::to_string(tranform.m_position.y)
+							+ " " + std::to_string(tranform.m_position.z));
+
+					// give it an other try
+					continue;
+				}
+				else if (entity->canStep()) {
+					if (new_position.y - nearest_ground->m_position.y < static_cast<gaActor*>(entity)->step()) {
+						// if there is a step and the entity can step over
+						if (abs(nearest_ground->m_position.y - new_position.y) > EPSILON) {
+							// if more than epsilon, fix the position to the ground triangle, not the intersection point (rounding errors)
+							tranform.m_position.y = nearest_ground->m_triangle[0].y;
+
+							actions.push(entity);	// fix the entity altitude
+							fix_y = true;
+
+							if (entity->name() == "player")
+								gaDebugLog(1, "GameEngine::Physics::wantToMove", entity->name() + " fixed ground " + std::to_string(tranform.m_position.x)
+									+ " " + std::to_string(tranform.m_position.y)
+									+ " " + std::to_string(tranform.m_position.z));
+
+							// give it an other try
+							continue;
+						}
+					}
+				}
+				else {
+					// convert the down collision to a nearest
+					nearest_collision = nearest_ground;
+					collidedEntity = static_cast<gaEntity*>(nearest_ground->m_source);
+					entity->superSector(static_cast<dfSuperSector*>(collidedEntity));
+				}
+			}
+			else {
+				// if there is no floor
+				bool falling = true;
+
+				// check if there is a at STEP distance below the entity
+				if (entity->canStep()) {
+					float step = static_cast<gaActor*>(entity)->step();
+					glm::vec3 down(new_position.x, new_position.y - step, new_position.z);
+					float z = ifCollideWithSectorOrEntity(entity->position(), down, fwCollision::Test::WITHOUT_BORDERS, entity);
+					if (z != INFINITY) {
+						// we found a floor !
+						if (tranform.m_position.y != z) {
+							tranform.m_position.y = z;
+
+							actions.push(entity);
+
+							// fix the entity altitude and give it another try
+							if (entity->name() == "player")
+								gaDebugLog(1, "GameEngine::Physics::wantToMove", entity->name() + " step down to ground " + std::to_string(tranform.m_position.x)
+									+ " " + std::to_string(tranform.m_position.y)
+									+ " " + std::to_string(tranform.m_position.z));
+
+							// give it an other try
+							continue;
+						}
+						else {
+							falling = false;
+						}
+					}
+				}
+
+				if (falling) {
+					// OK we definitely need to fall
+					switch (tranform.m_flag) {
+					case gaMessage::Flag::WANT_TO_MOVE_BREAK_IF_FALL:
+
+						if (entity->name() == "OFFCFIN.WAX(21)")
+							gaDebugLog(1, "GameEngine::Physics::wantToMove", entity->name() + " would fall " + std::to_string(tranform.m_position.x)
+								+ " " + std::to_string(tranform.m_position.y)
+								+ " " + std::to_string(tranform.m_position.z));
+
+						// if the entity wants to be informed of falling
+						entity->popTransformations();			// restore previous position
+						g_gaWorld.sendMessage(
+							entity->name(),
+							entity->name(),
+							gaMessage::Action::WOULD_FALL,
+							(int)message->m_id,
+							nullptr
+						);
+						continue;
+					default:
+						if (m_ballistics.count(entity->name()) == 0) {
+							// if the entity wants to be informed of falling
+							g_gaWorld.sendMessage(
+								entity->name(),
+								entity->name(),
+								gaMessage::Action::FALL,
+								(int)message->m_id,
+								nullptr
+							);
+
+							// engage ballistic
+							m_ballistics[entity->name()] = Ballistic(tranform.m_position, old_position);
+						}
+
+						if (entity->name() == "player")
+							gaDebugLog(1, "GameEngine::Physics::wantToMove", entity->name() + " falling");
+					}
+				}
+			}
+		}
+
+		// manage vertical collision
 		if (nearest_collision) {
 			// if there is a collision
 			gaEntity* pushed = static_cast<gaEntity*>(nearest_collision->m_source);
@@ -666,7 +787,7 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 				if (dot < 0 || glm::length(delta2d) < EPSILON) {
 					// ONLY refuse the move if the entity is a physical one
 					if (pushed->physical()) {
-						if (entity->name() == "player")
+						if (entity->name() == "OFFCFIN.WAX(21)")
   							gaDebugLog(1, "GameEngine::Physics::wantToMove", entity->name() + " deny move " + std::to_string(tranform.m_position.x)
 								+ " " + std::to_string(tranform.m_position.y)
 								+ " " + std::to_string(tranform.m_position.z));
@@ -675,7 +796,7 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 						block_move = true;
 					}
 					else {
-						if (entity->name() == "player")
+						if (entity->name() == "OFFCFIN.WAX(21)")
 							gaDebugLog(1, "GameEngine::Physics::wantToMove", entity->name() + " collide " + std::to_string(tranform.m_position.x)
 								+ " " + std::to_string(tranform.m_position.y)
 								+ " " + std::to_string(tranform.m_position.z));
@@ -699,7 +820,7 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 					if (glm::length(tranform.m_position - old_position) > EPSILON) {
 						entity->transform(&tranform);
 
-						if (name == "player") {
+						if (name == "OFFCFIN.WAX(21)") {
 							gaDebugLog(1, "GameEngine::Physics::wantToMove", entity->name() + " pushed by sector");
 							printf("%.4f,%.4f,%.4f,%.4f,%.4f,%.4f\n",
 								new_position.x, new_position.z,
@@ -798,118 +919,6 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 				);
 			}
 			continue;									// block the move
-		}
-
-		// manage ground collision and accept to jump up if over a step
-		if (entity->gravity()) {
-
-			if (nearest_ground) {
-				if (m_ballistics.count(entity->name()) > 0 && m_ballistics[entity->name()].m_inUse) {
-					// if the object was falling, remove from the list and force the position
-					m_remove.push_back(entity->name());
-					m_ballistics[entity->name()].m_inUse = false;
-
-					tranform.m_position.y = nearest_ground->m_triangle[0].y;
-					fix_y = true;
-					if (entity->name() == "player")
-						gaDebugLog(1, "GameEngine::Physics::wantToMove", entity->name() + " falling to ground " + std::to_string(tranform.m_position.x)
-							+ " " + std::to_string(tranform.m_position.y)
-							+ " " + std::to_string(tranform.m_position.z));
-				}
-				else if (entity->canStep()) {
-					if (new_position.y - nearest_ground->m_position.y < static_cast<gaActor*>(entity)->step()) {
-						// if there is a step and the entity can step over
-						if (abs(nearest_ground->m_position.y - new_position.y) > EPSILON) {
-							// if more than epsilon, fix the position to the ground triangle, not the intersection point (rounding errors)
-							tranform.m_position.y = nearest_ground->m_triangle[0].y;
-
-							actions.push(entity);	// fix the entity altitude
-							fix_y = true;
-
-							if (entity->name() == "player")
-  								gaDebugLog(1, "GameEngine::Physics::wantToMove", entity->name() + " fixed ground " + std::to_string(tranform.m_position.x)
-									+ " " + std::to_string(tranform.m_position.y)
-									+ " " + std::to_string(tranform.m_position.z));
-						}
-					}
-				}
-				else {
-					// convert the down collision to a nearest
-					nearest_collision = nearest_ground;
-					collidedEntity = static_cast<gaEntity*>(nearest_ground->m_source);
-					entity->superSector(static_cast<dfSuperSector*>(collidedEntity));
-				}
-			}
-			else {
-				// if there is no floor
-				bool falling = true;
-
-				// check if there is a at STEP distance below the entity
-				if (entity->canStep()) {
-					float step = static_cast<gaActor*>(entity)->step();
-	 				glm::vec3 down(new_position.x, new_position.y - step, new_position.z);
-					float z = ifCollideWithSectorOrEntity(entity->position(), down, fwCollision::Test::WITHOUT_BORDERS, entity);
-					if (z != INFINITY) {
-						// we found a floor !
-						if (tranform.m_position.y != z) {
-							tranform.m_position.y = z;
-
-							actions.push(entity);
-
-							// fix the entity altitude and give it another try
-							if (entity->name() == "player")
-								gaDebugLog(1, "GameEngine::Physics::wantToMove", entity->name() + " step down to ground " + std::to_string(tranform.m_position.x)
-									+ " " + std::to_string(tranform.m_position.y)
-									+ " " + std::to_string(tranform.m_position.z));
-
-							continue;
-						}
-						else {
-							falling = false;
-						}
-					}
-				}
-
-				if (falling) {
-					// OK we definitely need to fall
-					switch (tranform.m_flag) {
-					case gaMessage::Flag::WANT_TO_MOVE_BREAK_IF_FALL:
-
-						if (entity->name() == "OFFCFIN.WAX(21)")
-							gaDebugLog(1, "GameEngine::Physics::wantToMove", entity->name() + " would fall " + std::to_string(tranform.m_position.x)
-								+ " " + std::to_string(tranform.m_position.y)
-								+ " " + std::to_string(tranform.m_position.z));
-
-						// if the entity wants to be informed of falling
-						entity->popTransformations();			// restore previous position
-						g_gaWorld.sendMessage(
-							entity->name(),
-							entity->name(),
-							gaMessage::Action::WOULD_FALL,
-							(int)message->m_id,
-							nullptr
-						);
-						continue;
-					default:
-						if (m_ballistics.count(entity->name()) == 0) {
-							// if the entity wants to be informed of falling
-							g_gaWorld.sendMessage(
-								entity->name(),
-								entity->name(),
-								gaMessage::Action::FALL,
-								(int)message->m_id,
-								nullptr
-							);
-
-							// engage ballistic
-							m_ballistics[entity->name()] = Ballistic(tranform.m_position, old_position);
-						}
-
-						if (entity->name() == "player")
-							gaDebugLog(1, "GameEngine::Physics::wantToMove", entity->name() + " falling");
-					}
-				}
-			}
 		}
 
 		// accept the move if we do not fix the position
