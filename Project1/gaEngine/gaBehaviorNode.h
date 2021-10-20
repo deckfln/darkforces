@@ -39,11 +39,12 @@ namespace GameEngine {
 
 		// getter/setter
 		inline BehaviorNode* parent(void) { return m_parent; };
-		inline Status status(void) { return m_status; };
 		inline bool isSequence(void) { return m_sequence; };
 		inline void tree(Component::BehaviorTree* tree) { m_tree = tree; };
 		inline const char* name(void) { return m_name; };
 		inline uint32_t id(void) { return m_id; };
+		inline Status status(void) { return m_status; };
+		inline void status(Status s) { m_status = s; };
 
 		void instanciate(gaEntity* entity);
 
@@ -81,7 +82,7 @@ namespace GameEngine {
 		void failed(Action* r);
 		void succeeded(Action* r);
 		void startChild(Action* r,uint32_t child, void* data);
-		
+
 		friend GameEngine::Component::BehaviorTree;
 	};
 

@@ -7,8 +7,14 @@
 #include "../../gaEngine/World.h"
 #include "../../config.h"
 
+void DarkForces::Behavior::Move2Player::onChildExit(Status status)
+{
+	// remove programmed alarm
+	g_gaWorld.cancelAlarmEvent(m_alarmID);
+}
+
 DarkForces::Behavior::Move2Player::Move2Player(const char* name):
-	BehaviorNode(name)
+	GameEngine::Behavior::Decorator(name)
 {
 }
 
@@ -17,9 +23,6 @@ DarkForces::Behavior::Move2Player::Move2Player(const char* name):
  */
 void DarkForces::Behavior::Move2Player::init(void* data)
 {
-	m_status = Status::RUNNING;
-	m_runningChild = -1;
-
 	// this could be the real position (player is visible)
 	// or the last known position (player is hidden)
 	std::vector<glm::vec3>* playerLastPositions = m_tree->blackboard<std::vector<glm::vec3>>("player_last_positions");
@@ -39,37 +42,6 @@ void DarkForces::Behavior::Move2Player::init(void* data)
 	// walk only for 2s
 	GameEngine::Alarm alarm(m_entity, 2000, gaMessage::Action::SatNav_CANCEL);
 	m_alarmID = g_gaWorld.registerAlarmEvent(alarm);
+
+	GameEngine::BehaviorNode::init(&m_navpoints);
 }
-
-/**
- * let a parent take a decision with it's current running child
- */
-void DarkForces::Behavior::Move2Player::execute(Action* r)
-{
-	if (m_status != Status::RUNNING) {
-		return BehaviorNode::execute(r);
-	}
-
-	if (m_runningChild < 0) {
-		m_runningChild = 0;
-		return startChild(r, m_runningChild, &m_navpoints);
-	}
-
-	switch (m_children[m_runningChild]->status()) {
-	case Status::SUCCESSED:
-	case Status::FAILED:
-		// remove programmed alarm
-		g_gaWorld.cancelAlarmEvent(m_alarmID);
-
-		// drop out of the loop
-		m_status = m_children[m_runningChild]->status();
-		r->action = BehaviorNode::Status::EXIT;
-		r->status = m_status;
-		break;
-
-	default:
-		r->action = BehaviorNode::Status::RUNNING;
-		break;
-	}
-}
-

@@ -1,13 +1,13 @@
 #pragma once
 
 #include <vector>
-#include "../../gaEngine/gaBehaviorNode.h"
+#include "../../gaEngine/gaBehaviorNode/gaBehaviorDecorator.h"
 
 class gaEntity;
 
 namespace DarkForces {
 	namespace Behavior {
-		class Move2Player : public GameEngine::BehaviorNode
+		class Move2Player : public GameEngine::Behavior::Decorator
 		{
 			gaEntity* m_player=nullptr;										// player entity
 			glm::vec3 m_lastKnwonPosition;									// player position
@@ -16,10 +16,12 @@ namespace DarkForces {
 
 			std::vector<glm::vec3> m_navpoints;								// navigation for satnav
 
+		protected:
+			void onChildExit(Status status) override;
+
 		public:
 			Move2Player(const char* name);
 			void init(void* data) override;									// init the node before running
-			void execute(Action* r) override;								// let a parent take a decision with it's current running child
 		};
 	}
 }

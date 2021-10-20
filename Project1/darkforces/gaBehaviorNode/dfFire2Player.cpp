@@ -19,8 +19,6 @@ DarkForces::Behavior::Fire2Player::Fire2Player(const char* name):
  */
 void DarkForces::Behavior::Fire2Player::init(void* data)
 {
-	m_status = Status::RUNNING;
-
 	bool* visible = m_tree->blackboard<bool>("player_visible");
 	if (*visible == false) {
 		m_status = Status::FAILED;
@@ -28,6 +26,8 @@ void DarkForces::Behavior::Fire2Player::init(void* data)
 	}
 
 	m_entity->sendMessage(DarkForces::Message::STATE, (uint32_t)dfState::ENEMY_ATTACK);
+
+	GameEngine::BehaviorNode::init(data);
 }
 
 void DarkForces::Behavior::Fire2Player::dispatchMessage(gaMessage* message, Action* r)

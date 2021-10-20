@@ -28,8 +28,8 @@ namespace DarkForces {
 						Behavior::TrackPlayer m_track = Behavior::TrackPlayer("track the player after losing him");
 							GameEngine::Behavior::MoveTo m_move3 = GameEngine::Behavior::MoveTo("move to waypoints");
 
-			GameEngine::Behavior::SatNav m_satnav = GameEngine::Behavior::SatNav("go to destination");
-				Behavior::MoveEnemyTo m_move_to = Behavior::MoveEnemyTo("move to destination");
+			Behavior::MoveEnemyTo m_move_to = Behavior::MoveEnemyTo("move to destination");
+				GameEngine::Behavior::SatNav m_satnav = GameEngine::Behavior::SatNav("go to destination");
 				Behavior::WaitDoor m_wait_door = Behavior::WaitDoor("wait for door to open");
 				Behavior::OpenDoor m_open_door = Behavior::OpenDoor("go to, open and wait door to open");
 					Behavior::GotoTrigger m_goto_trigger = Behavior::GotoTrigger("try to reach each trigger");

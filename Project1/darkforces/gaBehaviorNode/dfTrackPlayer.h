@@ -1,18 +1,20 @@
 #pragma once
 
 #include <vector>
-#include "../../gaEngine/gaBehaviorNode.h"
+#include "../../gaEngine/gaBehaviorNode/gaBehaviorDecorator.h"
 
 namespace DarkForces {
 	namespace Behavior {
-		class TrackPlayer : public GameEngine::BehaviorNode {
+		class TrackPlayer : public GameEngine::Behavior::Decorator {
 			std::vector<glm::vec3> m_navpoints;								// navigation for satnav
 			uint32_t m_alarmID;
+
+		protected:
+			void onChildExit(Status status) override;
 
 		public:
 			TrackPlayer(const char* name);
 			void init(void* data) override;									// init the node before running
-			void execute(Action* r) override;								// let a parent take a decision with it's current running child
 		};
 	}
 }

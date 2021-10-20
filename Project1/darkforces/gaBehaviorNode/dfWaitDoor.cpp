@@ -15,9 +15,10 @@ DarkForces::Behavior::WaitDoor::WaitDoor(const char* name):
  */
 void DarkForces::Behavior::WaitDoor::init(void* data)
 {
-	m_status = Status::RUNNING;
 	m_elevator = static_cast<Component::InfElevator*>(data);
 	m_entity->sendDelayedMessage(gaMessage::Action::TICK);
+
+	BehaviorNode::init(data);
 }
 
 /**

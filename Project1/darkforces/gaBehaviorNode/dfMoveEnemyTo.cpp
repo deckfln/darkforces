@@ -7,11 +7,6 @@
 #include "../dfLogicTrigger.h"
 #include "../dfComponent/InfElevator.h"
 
-DarkForces::Behavior::MoveEnemyTo::MoveEnemyTo(const char* name):
-	GameEngine::BehaviorNode(name)
-{
-}
-
 /**
  * run the node logic
  */
@@ -22,16 +17,21 @@ enum Child {
 	open_door
 };
 
+DarkForces::Behavior::MoveEnemyTo::MoveEnemyTo(const char* name):
+	GameEngine::BehaviorNode(name)
+{
+}
+
 void DarkForces::Behavior::MoveEnemyTo::init(void* data)
 {
 	m_destination = *(static_cast<glm::vec3*>(data));
-	m_runningChild = Child::init;
+	BehaviorNode::init(data);
 }
 
 
 void DarkForces::Behavior::MoveEnemyTo::execute(Action* r)
 {
-	GameEngine::BehaviorNode::Status childStatus;
+	BehaviorNode::Status childStatus;
 	
 	r->action = Status::RUNNING;
 

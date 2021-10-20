@@ -9,7 +9,7 @@
 #include "../dfLogicTrigger.h"
 
 DarkForces::Behavior::OpenDoor::OpenDoor(const char* name):
-	GameEngine::BehaviorNode(name)
+	GameEngine::Behavior::Sequence(name)
 {
 }
 
@@ -21,37 +21,7 @@ enum Child {
 
 void DarkForces::Behavior::OpenDoor::init(void *data)
 {
-	m_runningChild = Child::init;
-	m_status = Status::RUNNING;
-
 	m_collision = data;
 	m_tree->blackboard("lastCollision", nullptr);
-}
-
-/**
- * move to the next trigger
- */
-void DarkForces::Behavior::OpenDoor::execute(Action *r)
-{
-	r->action = Status::RUNNING;
-
-	switch (m_runningChild) {
-	case Child::init:
-		return startChild(r, Child::goto_trigger, m_collision);
-
-	case Child::goto_trigger:
-		if (m_children[m_runningChild]->status() == Status::SUCCESSED) {
-			return startChild(r, Child::wait_door, m_collision);
-		}
-		m_status = Status::FAILED;
-		break;
-
-	case Child::wait_door:
-		if (m_children[m_runningChild]->status() == Status::SUCCESSED) {
-			m_status = Status::SUCCESSED;
-		}
-		break;
-	}
-
-	BehaviorNode::execute(r);
+	GameEngine::Behavior::Sequence::init(data);
 }

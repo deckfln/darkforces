@@ -9,11 +9,24 @@ GameEngine::Behavior::Loop::Loop(const char *name) :
 
 void GameEngine::Behavior::Loop::execute(Action* r)
 {
+	// exit if init changed the status
+	switch (m_status) {
+	case Status::FAILED:
+		return failed(r);
+	case Status::SUCCESSED:
+		return succeeded(r);
+	}
+
+	// if this is the first run, stat child 0
 	if (m_runningChild == -1) {
 		m_runningChild = 0;
+		onChildStart(m_runningChild);
 		return startChild(r, m_runningChild, m_data);
 	}
 
+	onChildExit(m_runningChild, m_children[m_runningChild]->status());
+
+	// we are in the default loop
 	switch (m_condition) {
 	case Condition::UNTIL_ALL_FAIL: {
 		// check if all children failed
@@ -32,6 +45,7 @@ void GameEngine::Behavior::Loop::execute(Action* r)
 			if (m_runningChild >= m_children.size()) {
 				m_runningChild = 0;
 			}
+			onChildStart(m_runningChild);
 			return startChild(r, m_runningChild, m_data);
 		}
 
@@ -48,6 +62,7 @@ void GameEngine::Behavior::Loop::execute(Action* r)
 			if (m_runningChild >= m_children.size()) {
 				m_runningChild = 0;
 			}
+			onChildStart(m_runningChild);
 			return startChild(r, m_runningChild, m_data);
 			break;
 

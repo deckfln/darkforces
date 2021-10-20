@@ -9,38 +9,52 @@ GameEngine::Behavior::Sequence::Sequence(const char *name) :
 
 void GameEngine::Behavior::Sequence::init(void* data)
 {
-	m_runningChild = -1;
+	m_failed = 0;
 	BehaviorNode::init(data);
 }
 
 void GameEngine::Behavior::Sequence::execute(Action* r)
 {
+	// exit if init changed the status
+	switch (m_status) {
+	case Status::FAILED:
+		return failed(r);
+	case Status::SUCCESSED:
+		return succeeded(r);
+	}
+
+	// when run at first
 	if (m_runningChild == -1) {
 		m_runningChild = 0;
+		onChildStart(m_runningChild);
 		return startChild(r, m_runningChild, m_data);
 	}
 
-	switch (m_children[m_runningChild]->status()) {
-	case Status::SUCCESSED:
-		// Move to the next node in the sequence
-		m_runningChild++;
-		if (m_runningChild >= m_children.size()) {
-			// until the last node in the sequence
-			return succeeded(r);
+	Status status = m_children[m_runningChild]->status();
+	onChildExit(m_runningChild, status);
+
+	// if the current node fails, it depends on the exit condition
+	if (status == Status::FAILED) {
+		if (m_condition == Condition::EXIT_WHEN_ONE_FAIL) {
+			// drop out of the loop
+			r->action = BehaviorNode::Status::EXIT;
+			r->status = Status::FAILED;
+			return;
 		}
-		return startChild(r, m_runningChild, m_data);
-		break;
-
-	case Status::FAILED:
-		// drop out of the loop
-		r->action = BehaviorNode::Status::EXIT;
-		r->status = m_status;
-		break;
-
-	default:
-		r->action = BehaviorNode::Status::RUNNING;
-		break;
+		else {
+			m_failed++;
+		}
 	}
+
+	// Move to the next node in the sequence
+	m_runningChild++;
+	if (m_runningChild >= m_children.size()) {
+		// until the last node in the sequence
+		return m_failed == 0 ? succeeded(r) : failed(r);
+	}
+
+	onChildStart(m_runningChild);
+	return startChild(r, m_runningChild, m_data);
 }
 
 /**

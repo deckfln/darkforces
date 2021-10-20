@@ -6,8 +6,25 @@
 #include "../../gaEngine/gaEntity.h"
 #include "../../gaEngine/World.h"
 
+void DarkForces::Behavior::TrackPlayer::onChildExit(Status status)
+{
+	// remove programmed alarm
+	g_gaWorld.cancelAlarmEvent(m_alarmID);
+
+	// check the player location, but only react to visibility, not to distance from last knwon position because we are away
+	static_cast<DarkForces::Component::MoveEnemy*>(m_tree)->locatePlayer();
+	bool* b = m_tree->blackboard<bool>("player_visible");
+	if (*b == false) {
+		// we still can' see the player, so the tracking failed
+		m_children[m_runningChild]->status(Status::FAILED);
+	}
+	else {
+		m_children[m_runningChild]->status(Status::SUCCESSED);
+	}
+}
+
 DarkForces::Behavior::TrackPlayer::TrackPlayer(const char* name):
-	GameEngine::BehaviorNode(name)
+	GameEngine::Behavior::Decorator(name)
 {
 }
 
@@ -53,45 +70,5 @@ void DarkForces::Behavior::TrackPlayer::init(void* data)
 	GameEngine::Alarm alarm(m_entity, 2000, gaMessage::Action::SatNav_CANCEL);
 	m_alarmID = g_gaWorld.registerAlarmEvent(alarm);
 
-	GameEngine::BehaviorNode::init(data);
-}
-
-void DarkForces::Behavior::TrackPlayer::execute(Action* r)
-{
-	if (m_status != Status::RUNNING) {
-		return BehaviorNode::execute(r);
-	}
-
-	if (m_runningChild < 0) {
-		m_runningChild = 0;
-		return startChild(r, m_runningChild, &m_navpoints);
-	}
-
-	switch (m_children[m_runningChild]->status()) {
-	case Status::SUCCESSED:
-	case Status::FAILED:
-		// remove programmed alarm
-		g_gaWorld.cancelAlarmEvent(m_alarmID);
-
-		r->action = BehaviorNode::Status::EXIT;
-
-		// check the player location, but only react to visibility, not to distance from last knwon position because we are away
-		static_cast<DarkForces::Component::MoveEnemy*>(m_tree)->locatePlayer();
-
-		{
-			bool* b = m_tree->blackboard<bool>("player_visible");
-			if (*b == false) {
-				// we still can' see the player, so the tracking failed
-				m_status = r->status = Status::FAILED;
-			}
-			else {
-				m_status = r->status = Status::SUCCESSED;
-			}
-		}
-		break;
-
-	default:
-		r->action = BehaviorNode::Status::RUNNING;
-		break;
-	}
+	GameEngine::BehaviorNode::init(&m_navpoints);
 }

@@ -262,6 +262,7 @@
     <ClCompile Include="gaEngine\gaActor.cpp" />
     <ClCompile Include="gaEngine\gaApp.cpp" />
     <ClCompile Include="gaEngine\gaBehaviorNode.cpp" />
+    <ClCompile Include="gaEngine\gaBehaviorNode\gaBehaviorDecorator.cpp" />
     <ClCompile Include="gaEngine\gaBehaviorNode\gaBehaviorLoop.cpp" />
     <ClCompile Include="gaEngine\gaBehaviorNode\gaBehaviorSequence.cpp" />
     <ClCompile Include="gaEngine\gaBehaviorNode\gaBNSatNav.cpp" />
@@ -480,6 +481,7 @@
     <ClInclude Include="gaEngine\gaActor.h" />
     <ClInclude Include="gaEngine\gaApp.h" />
     <ClInclude Include="gaEngine\gaBehaviorNode.h" />
+    <ClInclude Include="gaEngine\gaBehaviorNode\gaBehaviorDecorator.h" />
     <ClInclude Include="gaEngine\gaBehaviorNode\gaBehaviorLoop.h" />
     <ClInclude Include="gaEngine\gaBehaviorNode\gaBehaviorSequence.h" />
     <ClInclude Include="gaEngine\gaBehaviorNode\gaBNSatNav.h" />

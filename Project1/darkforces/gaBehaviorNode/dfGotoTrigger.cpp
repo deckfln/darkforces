@@ -36,8 +36,9 @@ void DarkForces::Behavior::GotoTrigger::init(void *data)
 		m_triggers.push_back(cTrigger->entity());
 	}
 
-	m_status = Status::RUNNING;
 	m_next = 0;
+
+	GameEngine::BehaviorNode::init(data);
 }
 
 /**
@@ -87,7 +88,13 @@ void DarkForces::Behavior::GotoTrigger::goto_next_trigger(Action* r)
  */
 void DarkForces::Behavior::GotoTrigger::execute(Action *r)
 {
-	r->action = Status::RUNNING;
+	// exit if init changed the status
+	switch (m_status) {
+	case Status::FAILED:
+		return failed(r);
+	case Status::SUCCESSED:
+		return succeeded(r);
+	}
 
 	struct GameEngine::Physics::CollisionList* collidedList = m_tree->blackboard<struct GameEngine::Physics::CollisionList>("lastCollision");
 

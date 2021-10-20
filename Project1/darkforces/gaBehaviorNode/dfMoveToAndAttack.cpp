@@ -16,15 +16,6 @@ DarkForces::Behavior::MoveToAndAttack::MoveToAndAttack(const char* name):
 }
 
 /**
- * on init, look for the player and fire on him
- */
-void DarkForces::Behavior::MoveToAndAttack::init(void* data)
-{
-	m_status = Status::RUNNING;
-	m_runningChild = -1;
-}
-
-/**
  * let a parent take a decision with it's current running child
  */
 void DarkForces::Behavior::MoveToAndAttack::execute(Action* r)
