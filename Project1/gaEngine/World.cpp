@@ -13,6 +13,8 @@
 
 #include "gaEntity.h"
 #include "Physics.h"
+#include "gaComponent/gaAIPerception.h"
+#include "gaComponent/gaCActor.h"
 
 #include "../darkforces/dfLevel.h"
 #include "../darkforces/dfSuperSector.h"
@@ -560,6 +562,9 @@ void World::process(time_t delta, bool force)
 		sendMessage(entity->name(), entity->name(), gaMessage::TIMER, 0, nullptr);
 	}
 
+	// inject view perception events
+	checkPerceptions();
+
 #ifdef _DEBUG
 	// record start at start of frame
 	g_Blackbox.recordState();
@@ -697,6 +702,36 @@ void GameEngine::World::update(void)
 }
 
 /**
+ * test the line of the sight between 2 entities
+ */
+bool GameEngine::World::lineOfSight(gaEntity* source, gaEntity* target)
+{
+	// can we reach the player ?
+	glm::vec3 direction = glm::normalize(source->position() - target->position());
+
+	// test line of sight from await of the entity to away from the player (to not catch the entity nor the player)
+	glm::vec3 start = target->position() + direction * (target->radius() * 1.5f);
+	start.y += target->height() / 2.0f;
+	glm::vec3 end = source->position() - direction * (target->radius() * 1.5f);
+	end.y += source->height() / 2.0f;
+	Framework::Segment segment(start, end);
+
+	bool canSee = true;
+	std::vector<gaEntity*> collisions;
+	if (g_gaWorld.intersectWithEntity(segment, collisions)) {
+		// check if there is a collision with something different than player and shooter
+		for (auto entity : collisions) {
+			if (entity != source && entity != target) {
+				canSee = false;
+				break;
+			}
+		}
+	}
+
+	return canSee;
+}
+
+/**
  * find the all entities intersecting with the segment
  */
 bool GameEngine::World::intersectWithEntity(
@@ -818,6 +853,58 @@ bool GameEngine::World::cancelAlarmEvent(uint32_t id)
 	}
 
 	return false;
+}
+
+/**
+ *  (de)register entities for visual perceptions
+ */
+void GameEngine::World::registerViewEvents(gaEntity* entity)
+{
+	uint32_t id = entity->entityID();
+	if (m_views.count(id) == 0) {
+		m_views[id] = entity;
+	}
+}
+
+void GameEngine::World::deRegisterViewEvents(gaEntity* entity)
+{
+	uint32_t id = entity->entityID();
+	if (m_views.count(id) != 0) {
+		m_views.erase(id);
+	}
+}
+
+void GameEngine::World::checkPerceptions(void)
+{
+	gaEntity* player = getEntity("player");
+	gaEntity* entity;
+	Component::AIPerception* perception;
+	Component::Actor* actor;
+
+	for(auto& pair: m_views) {
+		entity = pair.second;
+		perception = dynamic_cast<Component::AIPerception*>(entity->findComponent(gaComponent::AIPerception));
+
+		// the player is in the entity distance perception
+		if (player->distanceTo(entity) < perception->distance()) {
+			actor = dynamic_cast<Component::Actor*>(entity->findComponent(gaComponent::Actor));
+
+			glm::vec3 d = player->position() - entity->position();
+			glm::vec3 v = actor->direction();
+
+			//printf("%.2f,%.2f,%.2f,%.2f,%.2f,%.2f\n", player->position().x, player->position().z, entity->position().x, entity->position().z, actor->direction().x, actor->direction().z);
+			// the player is in front of the entity
+			if (glm::dot(d, v) > 0) {
+
+				// TODO the player is in the entity cone of vision
+				
+				// the player is in the line of sight of the entity
+				if (lineOfSight(player, entity)) {
+					sendMessage(player->name(), entity->name(), gaMessage::Action::VIEW, player->position(), nullptr);
+				}
+			}
+		}
+	}
 }
 
 /**

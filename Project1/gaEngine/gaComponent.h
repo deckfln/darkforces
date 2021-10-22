@@ -21,7 +21,9 @@ public:
 		ActiveProbe,
 		Controller,
 		PathFinding,
-		BehaviorTree
+		BehaviorTree,
+		AIPerception,
+		Actor
 	};
 
 	gaComponent(int m_type);
@@ -30,6 +32,7 @@ public:
 	inline bool is(int type) { return type == m_type; };
 	inline void parent(gaEntity* parent) { m_entity = parent; };
 	inline gaEntity* entity(void) { return m_entity; };
+	inline uint32_t entityID(void);
 
 	virtual void dispatchMessage(gaMessage* message) {};	// let a component deal with a situation
 

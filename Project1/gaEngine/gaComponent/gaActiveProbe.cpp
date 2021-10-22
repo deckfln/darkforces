@@ -1,5 +1,7 @@
 #include "gaActiveProbe.h"
 
+#include <imgui.h>
+
 #include "../../config.h"
 #include "../gaEntity.h"
 #include "../World.h"
@@ -52,4 +54,7 @@ void GameEngine::Component::ActiveProbe::dispatchMessage(gaMessage* message)
 
 void GameEngine::Component::ActiveProbe::debugGUIinline(void)
 {
+	if (ImGui::TreeNode("Mesh")) {
+		ImGui::TreePop();
+	}
 }

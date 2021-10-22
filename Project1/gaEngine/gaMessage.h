@@ -66,6 +66,7 @@ public:
 		SatNav_REACHED,	// satnav reached the destination
 		TICK,			// Behavior nodes tick
 		ALARM,			// trigger an alarm after Xs
+		VIEW,			// an entity entered the cone of vision of an other entity
 	};
 
 	// flags stored in messages

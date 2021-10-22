@@ -52,16 +52,17 @@ void main()
 	
 		if (sm.statesIndex.r < 65535) {
 			// animated sprite
-			vec3 viewer2object = normalize(aPos - viewPos);
-			float viewAngle = (dot(aDirection, viewer2object) + 1) * 8.0;
+			vec2 ad = -vec2(aDirection.x, aDirection.z);
+			vec2 obj = vec2(aPos.x, aPos.z);
 
-			vec2 ad = vec2(aDirection.x, aDirection.z);
-			vec2 vp = vec2(viewer2object.x, viewer2object.z);
-			vAngle = dot(ad, vp);
+			vec2 viewer2object = normalize(aPos - viewPos).xz;
+			float viewAngle = (dot(ad, viewer2object) + 1) * 8.0;
+
+			vAngle = dot(ad, viewer2object);
 
 			//https://stackoverflow.com/questions/1560492/how-to-tell-whether-a-point-is-to-the-right-or-left-side-of-a-line
 			//Use the sign of the determinant of vectors (AB,AM), where M(X,Y) is the query point:
-			float det = sign(aDirection.x * viewer2object.z - aDirection.z * viewer2object.x);
+			float det = sign(ad.x * viewer2object.y - ad.y * viewer2object.x);
 			det = 1.0-clamp(det, 0, 1);
 
 			uint angles = indexes[uint(stateID)+uint(sm.statesIndex.r)].x;

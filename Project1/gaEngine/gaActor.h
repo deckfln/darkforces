@@ -16,7 +16,7 @@ const float c_jump = -c_gravity * 300.0f;
 class dfLevel;
 class gaPlayer;
 
-class gaActor: public gaEntity
+class gaActor : public gaEntity
 {
 protected:
 	fwCylinder m_cylinder;						// player bounding cylinder
@@ -27,7 +27,7 @@ protected:
 	float m_ankle = 0;							// maximum step the actor can walk up
 	float m_eyes = 0;							// position of the eyes (from the feet)
 
-	glm::mat3x3 m_physic=glm::mat3x3(0);
+	glm::mat3x3 m_physic = glm::mat3x3(0);
 	time_t m_animation_time = 0;				// start of the physic driven movement
 
 	gaPlayer* m_parent = nullptr;				// parent player
@@ -40,10 +40,10 @@ public:
 		const glm::vec3& feet,			// position of the feet in world space
 		float eyes,						// distance from the feet to the eyes (camera view)
 		float ankle						// distance from the feet to the ankles (can step over)
-		);
+	);
 	gaActor(flightRecorder::Entity* record);
 
-	static void *create(void* record) {
+	static void* create(void* record) {
 		return new gaActor((flightRecorder::Entity*)record);
 	}
 
@@ -51,8 +51,12 @@ public:
 	void rotate(const glm::vec3& direction);
 	float height(void);
 	float radius(void);
+
+	//getter/setter
 	inline float eyes(void) { return m_eyes; };
 	inline const fwCylinder& cylinder(void) { return m_cylinder; };
+	inline const glm::vec3& direction(void) { return m_direction; };
+
 	void jump(const glm::vec3& velocity);
 	void parent(gaPlayer* parent) { m_parent = parent; };
 

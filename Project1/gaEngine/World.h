@@ -53,6 +53,7 @@ namespace GameEngine {
 
 		std::list<gaEntity*> m_timers;						// entities that registered to receive timer events
 		std::list<GameEngine::Alarm> m_alarms;				// entities that registered to receive alarm events
+		std::map<uint32_t, gaEntity*> m_views;		// entities that registered to receive view events
 
 		std::vector<dfSuperSector*> m_sectors;
 		dfSprites* m_sprites = nullptr;						// sprites manager
@@ -152,6 +153,9 @@ namespace GameEngine {
 		inline int queueLen(void) { return m_queue.size(); }// number of messages on the queue
 		inline int frame(void) { return m_frame; }			// number of messages on the queue
 		void update(void);									// force an update of the world
+
+		bool lineOfSight(gaEntity* source, gaEntity* target); // test the line of the sight between 2 entities
+
 		bool intersectWithEntity(
 			uint32_t componentID,
 			GameEngine::Collider& segment,
@@ -166,9 +170,17 @@ namespace GameEngine {
 		bool getEntities(uint32_t type,
 			std::vector<gaEntity*>& entities);				// return all entities of that type
 
+		// Register entities for Timer events
 		void registerTimerEvents(gaEntity*, bool b);		// (de)register an entity to receive timer events
+
+		// (de)register entities for Alarm events
 		uint32_t registerAlarmEvent(Alarm& alarm);			// register an entity to receive alarm event
 		bool cancelAlarmEvent(uint32_t id);					// cancel a programmed alarm
+
+		// (de)register entities for visual perceptions
+		void registerViewEvents(gaEntity* entity);
+		void deRegisterViewEvents(gaEntity* entity);
+		void checkPerceptions(void);
 
 		~World();
 	};

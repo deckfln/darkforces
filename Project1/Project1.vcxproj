@@ -272,6 +272,8 @@
     <ClCompile Include="gaEngine\gaComponent.cpp" />
     <ClCompile Include="gaEngine\gaComponent\ComponentControler.cpp" />
     <ClCompile Include="gaEngine\gaComponent\gaActiveProbe.cpp" />
+    <ClCompile Include="gaEngine\gaComponent\gaCActor.cpp" />
+    <ClCompile Include="gaEngine\gaComponent\gaAIPerception.cpp" />
     <ClCompile Include="gaEngine\gaComponent\gaBehaviorTree.cpp" />
     <ClCompile Include="gaEngine\gaComponent\gaComponentMesh.cpp" />
     <ClCompile Include="gaEngine\gaComponent\gaController.cpp" />
@@ -491,6 +493,8 @@
     <ClInclude Include="gaEngine\gaComponent.h" />
     <ClInclude Include="gaEngine\gaComponent\ComponentControler.h" />
     <ClInclude Include="gaEngine\gaComponent\gaActiveProbe.h" />
+    <ClInclude Include="gaEngine\gaComponent\gaCActor.h" />
+    <ClInclude Include="gaEngine\gaComponent\gaAIPerception.h" />
     <ClInclude Include="gaEngine\gaComponent\gaBehaviorTree.h" />
     <ClInclude Include="gaEngine\gaComponent\gaComponentMesh.h" />
     <ClInclude Include="gaEngine\gaComponent\gaController.h" />

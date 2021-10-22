@@ -9,6 +9,11 @@ gaComponent::gaComponent(int type) :
 {
 }
 
+inline uint32_t gaComponent::entityID(void)
+{
+	return m_entity->entityID();
+}
+
 /**
  * save the component state in a record
  */

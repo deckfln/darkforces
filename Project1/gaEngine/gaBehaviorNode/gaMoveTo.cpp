@@ -211,7 +211,7 @@ void GameEngine::Behavior::MoveTo::onMove(gaMessage* message)
 	lookAt = glm::normalize(lookAt);
 	m_entity->sendInternalMessage(
 			gaMessage::LOOK_AT,
-			-lookAt);
+			lookAt);
 
 	// did we reach the next navpoint ?
 	if (d < 0.01f) {

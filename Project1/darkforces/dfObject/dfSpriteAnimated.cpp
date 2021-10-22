@@ -11,6 +11,7 @@
 #include "../../framework/geometries/fwGeometryCylinder.h"
 
 #include "../../gaEngine/World.h"
+#include "../../gaEngine/gaComponent/gaCActor.h"
 
 #include "../dfModel/dfWAX.h"
 #include "../dfLevel.h"
@@ -177,9 +178,9 @@ void dfSpriteAnimated::rotation(const glm::vec3& rotation)
 {
 	// YAW = value in degrees where 0 is at the "top of the screen when you look at the map". The value increases clockwise
 	float yaw = glm::radians(rotation.y);
-	m_direction.x = sin(yaw);	// in level space
+	m_direction.x = -sin(yaw);	// in level space
 	m_direction.y = 0;
-	m_direction.z = -cos(yaw);
+	m_direction.z = cos(yaw);
 
 #ifdef _DEBUG
 	if (m_view) {
@@ -188,6 +189,11 @@ void dfSpriteAnimated::rotation(const glm::vec3& rotation)
 		m_view->rotate(xr);
 	}
 #endif
+
+	GameEngine::Component::Actor* actor = dynamic_cast<Component::Actor*>(findComponent(gaComponent::Actor));
+	if (actor) {
+		actor->direction(m_direction);
+	}
 }
 
 /**

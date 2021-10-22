@@ -732,6 +732,12 @@
     <ClCompile Include="gaEngine\gaBehaviorNode\gaBehaviorDecorator.cpp">
       <Filter>Fichiers sources\gaEngine\gaBehaviorNode</Filter>
     </ClCompile>
+    <ClCompile Include="gaEngine\gaComponent\gaAIPerception.cpp">
+      <Filter>Fichiers sources\gaEngine\gaComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="gaEngine\gaComponent\gaCActor.cpp">
+      <Filter>Fichiers sources\gaEngine\gaComponent</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="glad\glad.h">
@@ -1387,6 +1393,12 @@
     </ClInclude>
     <ClInclude Include="gaEngine\gaBehaviorNode\gaBehaviorDecorator.h">
       <Filter>Fichiers d%27en-tête\gaEngine\gaBehaviorNode</Filter>
+    </ClInclude>
+    <ClInclude Include="gaEngine\gaComponent\gaAIPerception.h">
+      <Filter>Fichiers d%27en-tête\gaEngine\gaComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="gaEngine\gaComponent\gaCActor.h">
+      <Filter>Fichiers d%27en-tête\gaEngine\gaComponent</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
