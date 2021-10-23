@@ -18,7 +18,7 @@ DarkForces::Enemy::Enemy(dfWAX* model, const glm::vec3& position, float ambient,
 	addComponent(&m_actor);
 
 	addComponent(&m_aiPerception);
-	m_aiPerception.distance(m_radius * 10.0f);
+	m_aiPerception.distance(m_radius * 30.0f);
 	m_aiPerception.registerEvents();
 }
 

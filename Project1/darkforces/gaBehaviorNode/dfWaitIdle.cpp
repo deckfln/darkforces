@@ -20,7 +20,14 @@ void DarkForces::Behavior::WaitIdle::activated(void)
 
 void DarkForces::Behavior::WaitIdle::dispatchMessage(gaMessage* message, Action* r)
 {
-	if (message->m_action == DarkForces::Message::HIT_BULLET) {
+	switch (message->m_action) {
+	case DarkForces::Message::HIT_BULLET:
+		m_original = m_entity->position();
+		m_data = &m_original;
+		m_runningChild = 0;
+		return startChild(r, 0, m_data);
+
+	case gaMessage::Action::VIEW:
 		m_original = m_entity->position();
 		m_data = &m_original;
 		m_runningChild = 0;

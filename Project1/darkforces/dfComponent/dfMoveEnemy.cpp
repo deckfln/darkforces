@@ -33,36 +33,13 @@ DarkForces::Component::MoveEnemy::MoveEnemy():
 /**
  * locate the player
  */
-static glm::vec3 debug[] = {
-	{-24.52,0.01,31.75},
-	{-24.50,0.01,30.02},
-	{-24.44,0.01,28.97},
-	{-27.24,-0.20,26.50},
-	{-27.24,-0.20,31.50},
-	{-27.24,-0.20,31.50},
-	{-27.24,-0.20,31.50},
-	{-27.24,-0.20,31.50},
-	{-27.24,-0.20,31.50},
-	{-27.24,-0.20,31.50},
-	{-27.24,-0.20,31.50},
-	{-27.24,-0.20,31.50},
-	{-27.24,-0.20,31.50},
-	{-27.24,-0.20,31.50},
-	{-27.24,-0.20,31.50},
-	{-27.24,-0.20,31.50},
-	{-27.24,-0.20,31.50},
-	{-27.24,-0.20,31.50}
-};
-static uint32_t debug_i = 0;
-
 bool DarkForces::Component::MoveEnemy::locatePlayer(void)
 {
 	if (m_player == nullptr) {
 		m_player = g_gaWorld.getEntity("player");
 	}
 
-	glm::vec3 po = debug[debug_i++];
-	//glm::vec3 position = m_player->position();
+	glm::vec3 po = m_player->position();
 	//printf("DarkForces::Behavior::MoveToAndAttack::locatePlayer::%.4f,%.4f;%.4f\n", position.x, position.y, position.z);
 
 	// can we reach the player ?

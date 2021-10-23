@@ -17,7 +17,6 @@ namespace GameEngine {
 			void registerEvents(void);
 
 			~AIPerception();
-			void dispatchMessage(gaMessage* message) override;	// let a component deal with a situation
 			void debugGUIinline(void) override;					// display the component in the debugger
 		};
 	}

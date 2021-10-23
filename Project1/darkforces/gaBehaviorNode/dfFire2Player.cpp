@@ -9,6 +9,18 @@
 #include "../../gaEngine/World.h"
 #include "../../config.h"
 
+void DarkForces::Behavior::Fire2Player::fireNow(void)
+{
+	// and fire
+	std::vector<glm::vec3>* playerLastPositions = m_tree->blackboard<std::vector<glm::vec3>>("player_last_positions");
+	const glm::vec3& p = playerLastPositions->back();
+	m_direction = glm::normalize(p - m_entity->position());
+
+	//printf("%.2f,%.2f,%.2f,%.2f,%.2f,%.2f\n", p.x, p.z, m_entity->position().x, m_entity->position().z, m_direction.x, m_direction.z);
+
+	m_entity->sendMessage(DarkForces::Message::FIRE, 0, (void*)&m_direction);
+}
+
 DarkForces::Behavior::Fire2Player::Fire2Player(const char* name):
 	BehaviorNode(name)
 {
@@ -36,17 +48,18 @@ void DarkForces::Behavior::Fire2Player::dispatchMessage(gaMessage* message, Acti
 	case DarkForces::Message::ANIM_START:
 		if (message->m_value == (uint32_t)dfState::ENEMY_ATTACK) {
 			m_firingFrames = *(uint32_t*)message->m_extra;
+
+			// if the attack_enemy state has only 1 frame, fire immediately
+			if (m_firingFrames == 1) {
+				fireNow();
+			}
 		}
 		break;
 
 	case DarkForces::Message::ANIM_NEXT_FRAME:
 		if (message->m_value == (uint32_t)dfState::ENEMY_ATTACK) {
 			if (message->m_value == m_firingFrames - 1) {
-				// and fire
-				std::vector<glm::vec3>* playerLastPositions = m_tree->blackboard<std::vector<glm::vec3>>("player_last_positions");
-				glm::vec3 p = playerLastPositions->back();
-				m_direction = glm::normalize(p - m_entity->position());
-				m_entity->sendMessage(DarkForces::Message::FIRE, 0, (void*)&m_direction);
+				fireNow();
 			}
 		}
 		break;

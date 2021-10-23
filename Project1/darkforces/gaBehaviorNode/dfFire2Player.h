@@ -18,6 +18,8 @@ namespace DarkForces {
 			glm::vec3 m_to;											// player position
 			bool m_visibility;
 
+			void fireNow(void);
+
 		public:
 			Fire2Player(const char* name);
 			void init(void* data) override;									// init the node before running

@@ -896,7 +896,7 @@ void GameEngine::World::checkPerceptions(void)
 			// the player is in front of the entity
 			if (glm::dot(d, v) > 0) {
 
-				// TODO the player is in the entity cone of vision
+				//TODO: the player is in the entity cone of vision
 				
 				// the player is in the line of sight of the entity
 				if (lineOfSight(player, entity)) {
