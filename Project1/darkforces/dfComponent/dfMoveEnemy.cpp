@@ -28,10 +28,71 @@ DarkForces::Component::MoveEnemy::MoveEnemy():
 			m_open_door.addNode(&m_goto_trigger);
 				m_goto_trigger.addNode(&m_satnav_door);
 			m_open_door.addNode(&m_wait_door_2);
+
+	blackboard("player_last_positions", (void*)&m_playerLastPositions);
 }
 
 /**
- * locate the player
+ * Record player position
+ */
+void DarkForces::Component::MoveEnemy::dispatchMessage(gaMessage* message)
+{
+	if (message->m_frame > 0) {
+		m_currentFrame = message->m_frame;
+	}
+
+	switch (message->m_action) {
+	case gaMessage::Action::VIEW:
+		m_lastPlayerView = message->m_v3value;
+		m_lastPlayerViewFrame = message->m_frame;
+		break;
+	}
+
+	GameEngine::Component::BehaviorTree::dispatchMessage(message);
+}
+
+/**
+ * check if see the player in the cone of vision
+ */
+bool DarkForces::Component::MoveEnemy::viewPlayer(void)
+{
+	std::vector<glm::vec3>* playerLastPositions = blackboard<std::vector<glm::vec3>>("player_last_positions");
+
+	if (m_currentFrame == m_lastPlayerViewFrame || m_currentFrame == m_lastPlayerViewFrame+1) {
+		if (glm::distance(m_lastPlayerView, m_entity->position()) < m_entity->radius() * 8.0f) {
+			// stay away of the target
+			return true;
+		}
+
+		// player is visible, because we just received a notification
+		playerLastPositions->push_back(m_lastPlayerView);
+		blackboard<bool>("player_visible", true);
+
+	}
+	else {
+		// player is not visible, the last time we saw it is in the past
+
+		blackboard<bool>("player_visible", false);
+		if (playerLastPositions->size() == 0) {
+			// the player was never seen, so drop out
+			return false;
+		}
+
+		// continue moving to the last known good position
+		const glm::vec3& po = playerLastPositions->back();
+
+		// if we are reaching the last known position and still can't see the player, give up
+		float l = glm::distance(po, m_entity->position());
+		if (l < m_entity->radius()) {
+			return false;
+		}
+	}
+
+	return true;
+}
+
+/**
+ * locate the player fully around the player
  */
 bool DarkForces::Component::MoveEnemy::locatePlayer(void)
 {

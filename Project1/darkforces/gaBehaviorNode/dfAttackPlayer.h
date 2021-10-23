@@ -11,7 +11,6 @@ namespace DarkForces {
 		class AttackPlayer : public GameEngine::Behavior::Loop
 		{
 			gaEntity* m_player=nullptr;										// player entity
-			std::vector<glm::vec3> m_playerLastPositions;
 
 		public:
 			AttackPlayer(const char* name);

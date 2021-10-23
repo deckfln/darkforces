@@ -12,7 +12,7 @@ void DarkForces::Behavior::TrackPlayer::onChildExit(Status status)
 	g_gaWorld.cancelAlarmEvent(m_alarmID);
 
 	// check the player location, but only react to visibility, not to distance from last knwon position because we are away
-	static_cast<DarkForces::Component::MoveEnemy*>(m_tree)->locatePlayer();
+	static_cast<DarkForces::Component::MoveEnemy*>(m_tree)->viewPlayer();
 	bool* b = m_tree->blackboard<bool>("player_visible");
 	if (*b == false) {
 		// we still can' see the player, so the tracking failed

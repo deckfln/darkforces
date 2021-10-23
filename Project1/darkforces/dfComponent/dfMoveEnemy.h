@@ -36,11 +36,20 @@ namespace DarkForces {
 						GameEngine::Behavior::SatNav m_satnav_door = GameEngine::Behavior::SatNav("go to trigger");
 						Behavior::WaitDoor m_wait_door_2 = Behavior::WaitDoor("wait for door to open");
 
-			gaEntity* m_player = nullptr;									// player entity
+			gaEntity* m_player = nullptr;						// player entity
+			glm::vec3 m_lastPlayerView;
+			uint32_t m_lastPlayerViewFrame=0;					// frame ID when the player was seen
+			uint32_t m_currentFrame=0;
+
+			std::vector<glm::vec3> m_playerLastPositions;
 
 		public:
 			MoveEnemy();
-			bool locatePlayer(void);
+
+			void dispatchMessage(gaMessage* message) override;
+
+			bool viewPlayer(void);								// check if see the player in the cone of vision
+			bool locatePlayer(void);							// locate the player fully around the player
 		};
 	}
 }

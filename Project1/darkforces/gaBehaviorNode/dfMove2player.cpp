@@ -26,6 +26,11 @@ void DarkForces::Behavior::Move2Player::init(void* data)
 	// this could be the real position (player is visible)
 	// or the last known position (player is hidden)
 	std::vector<glm::vec3>* playerLastPositions = m_tree->blackboard<std::vector<glm::vec3>>("player_last_positions");
+	if (playerLastPositions->size() == 0) {
+		m_status = Status::FAILED;
+		return;
+	}
+
 	glm::vec3 move2 = playerLastPositions->back();
 
 	if (glm::distance(move2, m_entity->position()) < m_entity->radius()) {

@@ -3,6 +3,8 @@
 #include "../dfConfig.h"
 #include "../dfObject.h"
 
+#include "../dfComponent/dfMoveEnemy.h"
+
 DarkForces::Behavior::WaitIdle::WaitIdle(const char* name):
 	GameEngine::Behavior::Sequence(name)
 {
@@ -21,11 +23,17 @@ void DarkForces::Behavior::WaitIdle::activated(void)
 void DarkForces::Behavior::WaitIdle::dispatchMessage(gaMessage* message, Action* r)
 {
 	switch (message->m_action) {
-	case DarkForces::Message::HIT_BULLET:
+	case DarkForces::Message::HIT_BULLET: {
 		m_original = m_entity->position();
 		m_data = &m_original;
 		m_runningChild = 0;
-		return startChild(r, 0, m_data);
+
+		// reset the list of player positions
+		std::vector<glm::vec3>* playerLastPositions = m_tree->blackboard<std::vector<glm::vec3>>("player_last_positions");
+		playerLastPositions->clear();
+
+		dynamic_cast<DarkForces::Component::MoveEnemy*>(m_tree)->locatePlayer();
+		return startChild(r, 0, m_data); }
 
 	case gaMessage::Action::VIEW:
 		m_original = m_entity->position();
