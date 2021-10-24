@@ -6,6 +6,9 @@
 #include "../../gaEngine/gaEntity.h"
 #include "../../gaEngine/World.h"
 
+/**
+ *
+ */
 void DarkForces::Behavior::TrackPlayer::onChildExit(Status status)
 {
 	// remove programmed alarm
@@ -23,11 +26,17 @@ void DarkForces::Behavior::TrackPlayer::onChildExit(Status status)
 	}
 }
 
+/**
+ *
+ */
 DarkForces::Behavior::TrackPlayer::TrackPlayer(const char* name):
 	GameEngine::Behavior::Decorator(name)
 {
 }
 
+/**
+ *
+ */
 void DarkForces::Behavior::TrackPlayer::init(void* data)
 {
 	// Pick the last 2 known positions and run the entity along the axe up to a wall

@@ -91,8 +91,8 @@ dfSpriteAnimated::dfSpriteAnimated(flightRecorder::DarkForces::SpriteAnimated* r
  */
 void dfSpriteAnimated::state(dfState state)
 {
-	if (state == m_state) {
-		// already on that state
+	// already on that state in a running loop
+	if (state == dfState::NONE || (state == m_state && m_animated == true)) {
 		return;
 	}
 

@@ -33,13 +33,23 @@ void DarkForces::Behavior::Move2Player::init(void* data)
 
 	glm::vec3 move2 = playerLastPositions->back();
 
-	if (glm::distance(move2, m_entity->position()) < m_entity->radius()) {
-		m_status = Status::FAILED;
+	// stop 8 clicks away from the player
+	glm::vec3 p = playerLastPositions->back() - m_entity->position();
+	float l = glm::length(p) - m_entity->radius() * 8.0f;
+	if (l < 0) {
+		m_status = Status::SUCCESSED;
 		return;
 	}
 
+	p = glm::normalize(p) * l;
+	if (glm::length(p) < m_entity->radius()) {
+		m_status = Status::SUCCESSED;
+		return;
+	}
+	p += m_entity->position();
+
 	m_navpoints.clear();
-	m_navpoints.push_back(playerLastPositions->back());
+	m_navpoints.push_back(p);
 
 	// broadcast the beginning of the move (for animation)
 	m_entity->sendMessage(gaMessage::START_MOVE);		// start the entity animation

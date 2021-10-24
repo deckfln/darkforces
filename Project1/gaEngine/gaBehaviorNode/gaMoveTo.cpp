@@ -190,39 +190,41 @@ void GameEngine::Behavior::MoveTo::onMove(gaMessage* message)
 
 	float d = glm::length(direction);
 
-	// turn the entity in the direction of the move
-	glm::vec3 lookAt = glm::normalize(direction);
-	if (d < m_entity->radius() * 2.0f && m_currentNavPoint > 1) {
-		// interpolate the direction with the next waypoint if we are near the current waypoint and it is not the last one
-		glm::vec3 next_direction = glm::normalize(m_navpoints->at(m_currentNavPoint - 1) - m_navpoints->at(m_currentNavPoint));
-		glm::vec3 current_direction = lookAt;
-
-		float inter = d / (m_entity->radius() * 2.0f);
-		lookAt = current_direction * inter + next_direction * (1.0f-inter);
-
-		/*
-		printf("%.04f,%.04f,%.04f,%.04f,%.04f,%.04f,%.04f,%.04f,\n",
-			m_entity->position().x, m_entity->position().z,
-			current_direction.x, current_direction.z,
-			next_direction.x, next_direction.z,
-			lookAt.x, lookAt.z);
-		*/
-	}
-	lookAt = glm::normalize(lookAt);
-	m_entity->sendInternalMessage(
-			gaMessage::LOOK_AT,
-			lookAt);
-
 	// did we reach the next navpoint ?
 	if (d < 0.01f) {
 		m_status = Status::REACHED_NEXT_WAYPOINT;
 	}
-	else if (d < m_speed) {
-		m_status = Status::NEARLY_REACHED_NEXT_WAYPOINT;
-	}
 	else {
-		// and continue to move forward
-		direction = glm::normalize(direction) * m_speed;
+		// turn the entity in the direction of the move, if we are actually moving
+		glm::vec3 lookAt = glm::normalize(direction);
+		if (d < m_entity->radius() * 2.0f && m_currentNavPoint > 1) {
+			// interpolate the direction with the next waypoint if we are near the current waypoint and it is not the last one
+			glm::vec3 next_direction = glm::normalize(m_navpoints->at(m_currentNavPoint - 1) - m_navpoints->at(m_currentNavPoint));
+			glm::vec3 current_direction = lookAt;
+
+			float inter = d / (m_entity->radius() * 2.0f);
+			lookAt = current_direction * inter + next_direction * (1.0f - inter);
+
+			/*
+			printf("%.04f,%.04f,%.04f,%.04f,%.04f,%.04f,%.04f,%.04f,\n",
+				m_entity->position().x, m_entity->position().z,
+				current_direction.x, current_direction.z,
+				next_direction.x, next_direction.z,
+				lookAt.x, lookAt.z);
+			*/
+		}
+		lookAt = glm::normalize(lookAt);
+		m_entity->sendInternalMessage(
+			gaMessage::LOOK_AT,
+			lookAt);
+
+		if (d < m_speed) {
+			m_status = Status::NEARLY_REACHED_NEXT_WAYPOINT;
+		}
+		else {
+			// and continue to move forward
+			direction = glm::normalize(direction) * m_speed;
+		}
 	}
 
 	// test the result of the move
@@ -334,8 +336,7 @@ void GameEngine::Behavior::MoveTo::onCollide(gaMessage* message)
 			new_target = c + nc;
 		}
 		m_transforms->m_position = glm::vec3(new_target.x, position.y, new_target.y);
-
-		printf("%.04f,%.04f,%.04f,%.04f,%.04f,%.04f,%.04f,%.04f,\n", a.x, a.y, b.x, b.y, new_target.x, new_target.y, c.x, c.y);
+		//printf("%.04f,%.04f,%.04f,%.04f,%.04f,%.04f,%.04f,%.04f,\n", a.x, a.y, b.x, b.y, new_target.x, new_target.y, c.x, c.y);
 	}
 	else {
 		m_transforms->m_position = position;

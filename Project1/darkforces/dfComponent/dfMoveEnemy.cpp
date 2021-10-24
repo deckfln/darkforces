@@ -59,11 +59,6 @@ bool DarkForces::Component::MoveEnemy::viewPlayer(void)
 	std::vector<glm::vec3>* playerLastPositions = blackboard<std::vector<glm::vec3>>("player_last_positions");
 
 	if (m_currentFrame == m_lastPlayerViewFrame || m_currentFrame == m_lastPlayerViewFrame+1) {
-		if (glm::distance(m_lastPlayerView, m_entity->position()) < m_entity->radius() * 8.0f) {
-			// stay away of the target
-			return true;
-		}
-
 		// player is visible, because we just received a notification
 		playerLastPositions->push_back(m_lastPlayerView);
 		blackboard<bool>("player_visible", true);
@@ -81,7 +76,7 @@ bool DarkForces::Component::MoveEnemy::viewPlayer(void)
 
 		// check if the last view is from last time we ran viewPlayer, or from the last time we actually saw the player
 		const glm::vec3& po = playerLastPositions->back();
-		if (po != m_lastPlayerView) {
+		if (m_lastPlayerViewFrame > 0 && po != m_lastPlayerView) {
 			playerLastPositions->push_back(m_lastPlayerView);
 		}
 

@@ -50,7 +50,7 @@ GameEngine::Component::Actor::Actor(void) :
 void GameEngine::Component::Actor::dispatchMessage(gaMessage* message)
 {
 	switch (message->m_action) {
-	case gaMessage::LOOK_AT:
+	case gaMessage::Action::LOOK_AT:
 		if (message->m_extra == nullptr) {
 			m_direction = glm::normalize(message->m_v3value);
 		}
