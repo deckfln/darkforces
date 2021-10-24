@@ -118,8 +118,9 @@ void dfComponentActor::fire(const glm::vec3& direction)
 	dfBullet* bullet = new dfBullet(DarkForces::Weapons::Rifle, p + direction * m_entity->radius() * 2.0f, direction);
 
 	g_gaWorld.addClient(bullet);
-
+#ifdef _DEBUG
 	gaDebugLog(1, "dfActor::fire", "bullet");
+#endif
 }
 
 /**

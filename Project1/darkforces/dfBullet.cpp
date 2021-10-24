@@ -2,11 +2,11 @@
 
 #define _USE_MATH_DEFINES
 #include <math.h>
-
 #include <string>
+#include <map>
+#include <random>
 #include <glm/vec4.hpp>
 #include <glm/gtx/quaternion.hpp>
-#include <map>
 
 #include "../config.h"
 
@@ -85,6 +85,12 @@ dfBullet::dfBullet(DarkForces::Weapons weapon, const glm::vec3& position, const 
 		up = _up;
 	}
 
+	// apply a recoil effect
+	float x = ((float)rand()) / (float)RAND_MAX - 0.5f;
+	float y = ((float)rand()) / (float)RAND_MAX - 0.5f;
+	m_direction += up * x / 10.0f;
+	m_direction += right * y / 10.0f;
+	
 	m_transforms.m_forward = glm::vec3(0);
 	m_transforms.m_downward = glm::vec3(0);
 	m_transforms.m_quaternion = glm::quatLookAt(m_direction, up);
