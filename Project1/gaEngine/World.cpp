@@ -969,7 +969,10 @@ void GameEngine::World::debugGUI(void)
 			ImGui::TableHeadersRow();
 
 			for (auto message : m_queue) {
-				message->debugGUI();
+				// only show messages for the monitored entities
+				if (m_watch[message->m_server] || m_watch[message->m_client]) {
+					message->debugGUI();
+				}
 			}
 			ImGui::EndTable();
 		}
@@ -993,7 +996,10 @@ void GameEngine::World::debugGUImessages(std::list<gaMessage>& l)
 		ImGui::TableHeadersRow();
 
 		for (auto& message : l) {
-			message.debugGUI();
+			// only show messages for the monitored entities
+			if (m_watch[message.m_server] || m_watch[message.m_client]) {
+				message.debugGUI();
+			}
 		}
 		ImGui::EndTable();
 	}
