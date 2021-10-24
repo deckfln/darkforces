@@ -75,11 +75,15 @@ bool DarkForces::Component::MoveEnemy::viewPlayer(void)
 		blackboard<bool>("player_visible", false);
 		if (playerLastPositions->size() == 0) {
 			// the player was never seen, so drop out
+			playerLastPositions->push_back(m_lastPlayerView);
 			return false;
 		}
 
-		// continue moving to the last known good position
+		// check if the last view is from last time we ran viewPlayer, or from the last time we actually saw the player
 		const glm::vec3& po = playerLastPositions->back();
+		if (po != m_lastPlayerView) {
+			playerLastPositions->push_back(m_lastPlayerView);
+		}
 
 		// if we are reaching the last known position and still can't see the player, give up
 		float l = glm::distance(po, m_entity->position());

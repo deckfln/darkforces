@@ -139,8 +139,8 @@ static std::map<int32_t, const char*> g_definitions = {
     { gaMessage::Action::SatNav_CANCEL, "SatNav_CANCEL"},
     { gaMessage::Action::SatNav_REACHED, "SatNAV_REACHED"},
     { gaMessage::Action::TICK, "TICK"},
-    { gaMessage::Action::ALARM, "ALARM"}
-
+    { gaMessage::Action::ALARM, "ALARM"},
+    { gaMessage::Action::VIEW, "VIEW"},
 };
 
 static std::map<int32_t, std::map<int, const char*>> g_definitions_values = {
