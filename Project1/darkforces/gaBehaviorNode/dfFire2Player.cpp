@@ -42,6 +42,9 @@ void DarkForces::Behavior::Fire2Player::init(void* data)
 	GameEngine::BehaviorNode::init(data);
 }
 
+/**
+ *
+ */
 void DarkForces::Behavior::Fire2Player::dispatchMessage(gaMessage* message, Action* r)
 {
 	switch (message->m_action) {

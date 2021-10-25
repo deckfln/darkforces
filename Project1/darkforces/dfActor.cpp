@@ -12,7 +12,11 @@ DarkForces::Actor::Actor(int mclass, const std::string& name, fwCylinder& cylind
 	gaActor(mclass, name, cylinder, feet, eyes, ankle)
 {
 	m_className = g_className;
+
 	addComponent(&m_defaultAI);
+	addComponent(&m_sound);
+	addComponent(&m_weapon);
+	m_weapon.set(DarkForces::Component::Weapon::Kind::Rifle);
 }
 
 DarkForces::Actor::Actor(flightRecorder::Entity* record):
@@ -23,7 +27,7 @@ DarkForces::Actor::Actor(flightRecorder::Entity* record):
 
 /**
  * bind the level
- */
+ */ 
 void DarkForces::Actor::bind(dfLevel* level)
 {
 	m_level = level;

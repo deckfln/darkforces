@@ -29,6 +29,10 @@ void GameEngine::Component::Sound::dispatchMessage(gaMessage* message)
 		break;
 	}
 
+	case gaMessage::Action::REGISTER_SOUND:
+		addSound(message->m_value, static_cast<alSound*>(message->m_extra));
+		break;
+
 	case gaMessage::PLAY_SOUND: {
 		// Start playing a sound or check if it plays
 		alSound* sound = m_sounds[message->m_value];

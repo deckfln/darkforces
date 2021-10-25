@@ -2,8 +2,10 @@
 
 #include "../gaEngine/gaActor.h"
 #include "dfComponent/dfComponentActor.h"
+#include "../gaEngine/gaComponent/gaSound.h"
 
 #include "dfLevel.h"
+#include "dfComponent/dfWeapon.h"
 
 #include "flightRecorder/frActor.h"
 
@@ -16,6 +18,9 @@ namespace DarkForces {
 	 */
 	class Actor : public gaActor {
 		dfComponentActor m_defaultAI;
+		GameEngine::Component::Sound m_sound;
+		DarkForces::Component::Weapon m_weapon;
+
 		dfLevel* m_level = nullptr;
 		bool m_headlight = false;
 

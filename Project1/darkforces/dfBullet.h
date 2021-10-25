@@ -23,14 +23,16 @@ class dfBullet : public gaEntity
 	GameEngine::ComponentMesh m_componentMesh;
 	GameEngine::Component::Sound m_sound;
 	Framework::Segment m_segment;
+	uint32_t m_damage;
 
 	void tryToMove(void);
 
+public:
 	enum {
 		FIRESHOT
 	};
-public:
-	dfBullet(DarkForces::Weapons weapon, const glm::vec3& position, const glm::vec3& direction);
+
+	dfBullet(uint32_t damage, const glm::vec3& position, const glm::vec3& direction);
 	dfBullet(flightRecorder::dfBullet *record);
 
 	static void* create(void* record) {

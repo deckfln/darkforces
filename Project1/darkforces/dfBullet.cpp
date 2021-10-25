@@ -40,20 +40,13 @@ static fwGeometryCylinder *g_blaster=nullptr;
 
 static const char* g_className = "dfBullet";
 
-static const std::map<DarkForces::Weapons, const std::string> g_WeaponSounds = {
-	{DarkForces::Weapons::Concussion, "CONCUSS5.VOC"},
-	{DarkForces::Weapons::FusionCutter, "FUSION1.VOC"},
-	{DarkForces::Weapons::Missile, "MISSILE1.VOC"},
-	{DarkForces::Weapons::MortarGun, "MORTAR2.VOC"},
-	{DarkForces::Weapons::Pistol, "PISTOL-1.VOC"},
-	{DarkForces::Weapons::PlasmaCannon, "PLASMA4.VOC"},
-	{DarkForces::Weapons::Repeater, "REPEATER.VOC"},
-	{DarkForces::Weapons::Rifle, "RIFLE-1.VOC"},
-};
-
-dfBullet::dfBullet(DarkForces::Weapons weapon, const glm::vec3& position, const glm::vec3& direction):
+/**
+ *
+ */
+dfBullet::dfBullet(uint32_t damage , const glm::vec3& position, const glm::vec3& direction):
 	gaEntity(DarkForces::ClassID::Bullet, "bullet("+std::to_string(g_bulletID++)+")", position),
-	m_direction(glm::normalize(direction))
+	m_direction(glm::normalize(direction)),
+	m_damage(damage)
 {
 	m_className = g_className;
 
@@ -85,12 +78,6 @@ dfBullet::dfBullet(DarkForces::Weapons weapon, const glm::vec3& position, const 
 		up = _up;
 	}
 
-	// apply a recoil effect
-	float x = ((float)rand()) / (float)RAND_MAX - 0.5f;
-	float y = ((float)rand()) / (float)RAND_MAX - 0.5f;
-	m_direction += up * x / 10.0f;
-	m_direction += right * y / 10.0f;
-	
 	m_transforms.m_forward = glm::vec3(0);
 	m_transforms.m_downward = glm::vec3(0);
 	m_transforms.m_quaternion = glm::quatLookAt(m_direction, up);
@@ -102,16 +89,11 @@ dfBullet::dfBullet(DarkForces::Weapons weapon, const glm::vec3& position, const 
 	// add the mesh component to the entity
 	m_componentMesh.set(g_blaster, &g_basic);
 	addComponent(&m_componentMesh);
-
-	// prepare the sound component if there is a sound
-	if (g_WeaponSounds.count(weapon) > 0) {
-		const std::string& file = g_WeaponSounds.at(weapon);
-		m_sound.addSound(FIRESHOT, loadVOC(file)->sound());
-		m_sound.position(position);
-		addComponent(&m_sound);
-	}
 }
 
+/**
+ *
+ */
 dfBullet::dfBullet(flightRecorder::dfBullet* record):
 	gaEntity(&record->entity)
 {
@@ -139,7 +121,6 @@ void dfBullet::dispatchMessage(gaMessage* message)
 {
 	switch (message->m_action) {
 	case gaMessage::Action::WORLD_INSERT:
-		sendInternalMessage(gaMessage::PLAY_SOUND, FIRESHOT);
 		sendDelayedMessage(gaMessage::WANT_TO_MOVE,
 			gaMessage::Flag::WANT_TO_MOVE_LASER,
 			&m_transforms);
@@ -156,7 +137,7 @@ void dfBullet::dispatchMessage(gaMessage* message)
 		g_gaWorld.addClient(impact);
 
 		// on collision, inform the target it was hit with the energy of the bullet
-		sendMessage(message->m_server, DarkForces::Message::HIT_BULLET, 10, nullptr);
+		sendMessage(message->m_server, DarkForces::Message::HIT_BULLET, m_damage, nullptr);
 		gaDebugLog(REDUCED_DEBUG, "dfBullet::dispatchMessage", "hit");
 
 		// drop the bullet

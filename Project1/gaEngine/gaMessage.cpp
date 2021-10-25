@@ -115,6 +115,7 @@ static std::map<int32_t, const char*> g_definitions = {
     { gaMessage::Action::DELETE_ENTITY, "DELETE_ENTITY"},
     { gaMessage::Action::MOVE, "MOVE"},
     { gaMessage::Action::ROTATE, "ROTATE"},
+    { gaMessage::Action::REGISTER_SOUND, "REGISTER_SOUND"},
     { gaMessage::Action::PLAY_SOUND, "PLAY_SOUND"},
     { gaMessage::Action::STOP_SOUND, "STOP_SOUND"},
     { gaMessage::Action::WANT_TO_MOVE, "WANT_TO_MOVE"},

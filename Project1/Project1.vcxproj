@@ -138,6 +138,7 @@
     <ClCompile Include="darkforces\dfComponent\AIMouseBot.cpp" />
     <ClCompile Include="darkforces\dfComponent\dfMoveEnemy.cpp" />
     <ClCompile Include="darkforces\dfComponent\dfSign.cpp" />
+    <ClCompile Include="darkforces\dfComponent\dfWeapon.cpp" />
     <ClCompile Include="darkforces\dfComponent\InfElevator.cpp" />
     <ClCompile Include="darkforces\dfComponent\dfComponentLogic.cpp" />
     <ClCompile Include="darkforces\dfComponent\InfElevator\InfElevatorHorizontal.cpp" />
@@ -335,6 +336,7 @@
     <ClInclude Include="darkforces\dfComponent\AIMouseBot.h" />
     <ClInclude Include="darkforces\dfComponent\dfMoveEnemy.h" />
     <ClInclude Include="darkforces\dfComponent\dfSign.h" />
+    <ClInclude Include="darkforces\dfComponent\dfWeapon.h" />
     <ClInclude Include="darkforces\dfComponent\InfElevator.h" />
     <ClInclude Include="darkforces\dfComponent\dfComponentLogic.h" />
     <ClInclude Include="darkforces\dfComponent\InfElevator\InfElevatorHorizontal.h" />

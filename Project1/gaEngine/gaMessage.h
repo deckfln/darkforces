@@ -41,8 +41,9 @@ public:
 		DELETE_ENTITY,	// delete the given entity
 		MOVE,			// move the entity to an absolution position
 		ROTATE,			// rotate the entity
-		PLAY_SOUND,
-		STOP_SOUND,
+		REGISTER_SOUND,	// bind a sound to an ID
+		PLAY_SOUND,		// play sound bound to ID
+		STOP_SOUND,		// stop sound bound to ID
 		WANT_TO_MOVE,	// the entity want to move in a direction (sent to the world)
 		COLLISION,		// the entity cannot move, it would collide with ...
 		MOVE_TO,		// Move the entity in a direction (m_extra)

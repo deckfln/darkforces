@@ -1,5 +1,7 @@
 #include "Enemy.h"
 
+#include "../../../dfModel/dfWAX.h"
+
 static const char* g_className = "dfEnemy";
 
 DarkForces::Enemy::Enemy(dfWAX* model, const glm::vec3& position, float ambient, uint32_t objectID):
@@ -20,6 +22,15 @@ DarkForces::Enemy::Enemy(dfWAX* model, const glm::vec3& position, float ambient,
 	addComponent(&m_aiPerception);
 	m_aiPerception.distance(m_radius * 30.0f);
 	m_aiPerception.registerEvents();
+
+	addComponent(&m_weapon);
+
+	if (model->name() == "OFFCFIN.WAX") {
+		m_weapon.set(DarkForces::Component::Weapon::Kind::Pistol);
+	}
+	else {
+		m_weapon.set(DarkForces::Component::Weapon::Kind::Rifle);
+	}
 }
 
 DarkForces::Enemy::~Enemy()
