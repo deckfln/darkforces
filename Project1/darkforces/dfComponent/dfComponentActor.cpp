@@ -14,7 +14,7 @@
 
 #include "../flightRecorder/frCompActor.h"
 
-dfComponentActor::dfComponentActor(void):
+DarkForces::Component::Actor::Actor(void):
 	GameEngine::Component::Actor()
 {
 }
@@ -22,7 +22,7 @@ dfComponentActor::dfComponentActor(void):
 /**
  * Increase or decrease the shield and update the HUD
  */
-void dfComponentActor::addShield(int32_t value)
+void DarkForces::Component::Actor::addShield(int32_t value)
 {
 	m_shield += value;
 	if (m_shield > m_maxShield) {
@@ -36,7 +36,7 @@ void dfComponentActor::addShield(int32_t value)
 /**
  * Increase or decrease the energy and update the HUD
  */
-void dfComponentActor::addEnergy(int32_t value)
+void DarkForces::Component::Actor::addEnergy(int32_t value)
 {
 	m_energy += value;
 	if (m_energy > m_maxEnergy) {
@@ -50,7 +50,7 @@ void dfComponentActor::addEnergy(int32_t value)
 /**
  * hit by a bullet, reduce shield and life
  */
-void dfComponentActor::hitBullet(int32_t value)
+void DarkForces::Component::Actor::hitBullet(int32_t value)
 {
 	if (m_shield > 0) {
 		m_shield -= value;
@@ -66,7 +66,7 @@ void dfComponentActor::hitBullet(int32_t value)
 /**
  * Deal with messages
  */
-void dfComponentActor::dispatchMessage(gaMessage* message)
+void DarkForces::Component::Actor::dispatchMessage(gaMessage* message)
 {
 	switch (message->m_action) {
 	case DarkForces::Message::ADD_SHIELD:
@@ -107,7 +107,7 @@ void dfComponentActor::dispatchMessage(gaMessage* message)
 /**
  * kill the actor
  */
-void dfComponentActor::die(void)
+void DarkForces::Component::Actor::die(void)
 {
 	// inform the world it can remove the entity from its list
 	((dfSpriteAnimated*)m_entity)->state(dfState::ENEMY_DIE_FROM_SHOT);
@@ -128,7 +128,7 @@ void dfComponentActor::die(void)
 /**
  * size of the component
  */
-inline uint32_t dfComponentActor::recordSize(void)
+inline uint32_t DarkForces::Component::Actor::recordSize(void)
 {
 	return sizeof(flightRecorder::DarkForces::CompActor);
 }
@@ -136,7 +136,7 @@ inline uint32_t dfComponentActor::recordSize(void)
 /**
  * save the component state in a record
  */
-uint32_t dfComponentActor::recordState(void* r)
+uint32_t DarkForces::Component::Actor::recordState(void* r)
 {
 	flightRecorder::DarkForces::CompActor* record = static_cast<flightRecorder::DarkForces::CompActor*>(r);
 	record->size = sizeof(flightRecorder::DarkForces::CompActor);
@@ -156,7 +156,7 @@ uint32_t dfComponentActor::recordState(void* r)
 /**
  * reload a component state from a record
  */
-uint32_t dfComponentActor::loadState(void* r)
+uint32_t DarkForces::Component::Actor::loadState(void* r)
 {
 	flightRecorder::DarkForces::CompActor* record = (flightRecorder::DarkForces::CompActor*)r;
 
@@ -174,7 +174,7 @@ uint32_t dfComponentActor::loadState(void* r)
 /**
  * display the component in the debugger
  */
-void dfComponentActor::debugGUIinline(void)
+void DarkForces::Component::Actor::debugGUIinline(void)
 {
 	if (ImGui::TreeNode("dfComponentActor")) {
 		if (m_currentSector) {
@@ -189,8 +189,4 @@ void dfComponentActor::debugGUIinline(void)
 		ImGui::TreePop();
 	}
 	GameEngine::Component::Actor::debugGUIinline();
-}
-
-dfComponentActor::~dfComponentActor()
-{
 }

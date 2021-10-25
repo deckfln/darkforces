@@ -17,7 +17,7 @@ namespace DarkForces {
 	class Enemy : public dfSpriteAnimated
 	{
 		fwCylinder m_cylinder;						// player bounding cylinder
-		dfComponentActor m_df_actor;
+		DarkForces::Component::Actor m_actor;
 		DarkForces::Component::MoveEnemy m_ai;
 		DarkForces::Component::Weapon m_weapon;
 		GameEngine::Component::AIPerception m_aiPerception;

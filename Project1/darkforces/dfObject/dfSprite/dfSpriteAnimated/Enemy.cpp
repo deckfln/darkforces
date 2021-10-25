@@ -33,14 +33,14 @@ DarkForces::Enemy::Enemy(dfWAX* model, const glm::vec3& position, float ambient,
 
 	m_sound.addSound(Sound::DIE, loadVOC("ST-DIE-1.voc")->sound());
 
-	addComponent(&m_df_actor);
+	addComponent(&m_actor);
 	addComponent(&m_sound);
 	addComponent(&m_ai);
 }
 
 void DarkForces::Enemy::setLevel(dfLevel* level)
 {
-	m_df_actor.bind(level);
+	m_actor.bind(level);
 }
 
 DarkForces::Enemy::~Enemy()

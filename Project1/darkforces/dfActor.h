@@ -17,7 +17,7 @@ namespace DarkForces {
 	 * Actor for dark forces with the dfSector the actor is
 	 */
 	class Actor : public gaActor {
-		dfComponentActor m_defaultAI;
+		DarkForces::Component::Actor m_defaultAI;
 		GameEngine::Component::Sound m_sound;
 		DarkForces::Component::Weapon m_weapon;
 

@@ -236,7 +236,7 @@ void dfLogicTrigger::activate(const std::string& activator)
 	if (entity == nullptr) {
 		return;
 	}
-	dfComponentActor* actor = (dfComponentActor*)entity->findComponent(DF_COMPONENT_ACTOR);
+	DarkForces::Component::Actor* actor = dynamic_cast<DarkForces::Component::Actor*>(entity->findComponent(gaComponent::Actor));
 	if (actor == nullptr) {
 		return;
 	}
