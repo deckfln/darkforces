@@ -17,12 +17,11 @@ namespace DarkForces {
 	class Enemy : public dfSpriteAnimated
 	{
 		fwCylinder m_cylinder;						// player bounding cylinder
-		GameEngine::Component::AIPerception m_aiPerception;
-		GameEngine::Component::Actor m_actor;
-		DarkForces::Component::Weapon m_weapon;
-		GameEngine::Component::Sound m_sound;
 		dfComponentActor m_df_actor;
 		DarkForces::Component::MoveEnemy m_ai;
+		DarkForces::Component::Weapon m_weapon;
+		GameEngine::Component::AIPerception m_aiPerception;
+		GameEngine::Component::Sound m_sound;
 
 	public:
 		enum Sound {

@@ -15,7 +15,7 @@
 #include "../flightRecorder/frCompActor.h"
 
 dfComponentActor::dfComponentActor(void):
-	gaComponent(DF_COMPONENT_ACTOR)
+	GameEngine::Component::Actor()
 {
 }
 
@@ -83,9 +83,6 @@ void dfComponentActor::dispatchMessage(gaMessage* message)
 		//TODO add a weapon to a player
 		//addWeapon(O_RIFLE);
 		break;
-	case DarkForces::Message::FIRE:
-		fire(*(glm::vec3*)message->m_extra);
-		break;
 	case gaMessage::MOVE:
 		// identity the DF sector and trigger enter/leave if changing
 		if (message->m_extra == nullptr) {
@@ -103,16 +100,8 @@ void dfComponentActor::dispatchMessage(gaMessage* message)
 		}
 		break;
 	}
-}
 
-/**
- * fire the current weapon
- */
-void dfComponentActor::fire(const glm::vec3& direction)
-{
-#ifdef _DEBUG
-	gaDebugLog(1, "dfActor::fire", "bullet");
-#endif
+	GameEngine::Component::Actor::dispatchMessage(message);
 }
 
 /**
@@ -199,6 +188,7 @@ void dfComponentActor::debugGUIinline(void)
 		ImGui::Text("Keys: %d", m_keys);
 		ImGui::TreePop();
 	}
+	GameEngine::Component::Actor::debugGUIinline();
 }
 
 dfComponentActor::~dfComponentActor()

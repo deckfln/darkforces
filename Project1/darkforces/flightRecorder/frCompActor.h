@@ -1,7 +1,5 @@
 #pragma once
 
-#include "../../flightRecorder/Actor.h"
-
 namespace flightRecorder {
 	namespace DarkForces {
 		struct CompActor {

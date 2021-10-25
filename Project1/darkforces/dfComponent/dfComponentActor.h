@@ -1,7 +1,7 @@
 #pragma once
 
 #include <glm/vec3.hpp>
-#include "../../gaEngine/gaComponent.h"
+#include "../../gaEngine/gaComponent/gaCActor.h"
 
 #include "../dfSector.h"
 #include "../dfLevel.h"
@@ -9,7 +9,7 @@
 
 #include "../../config.h"
 
-class dfComponentActor : public gaComponent
+class dfComponentActor : public GameEngine::Component::Actor
 {
 	int32_t m_shield = 100;
 	int32_t m_maxShield = 300;
@@ -39,9 +39,9 @@ public:
 	void dispatchMessage(gaMessage* message) override;	// let an entity deal with a situation
 
 	// flight recorder status
-	inline uint32_t recordSize(void);					// size of the component record
-	uint32_t recordState(void* record);					// save the component state in a record
-	uint32_t loadState(void* record);					// reload a component state from a record
+	inline uint32_t recordSize(void) override;			// size of the component record
+	uint32_t recordState(void* record) override;		// save the component state in a record
+	uint32_t loadState(void* record)override;			// reload a component state from a record
 
 	//debugger
 	void debugGUIinline(void) override;					// display the component in the debugger
