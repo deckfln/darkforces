@@ -383,20 +383,9 @@ void dfParserObjects::parseObject(dfFileSystem* fs, GameEngine::ParserExpression
 
 		// for enemies add an actor component and a sound component
 		if (obj->isLogic(DF_LOGIC_ENEMIES)) {
-			dfComponentActor* actor = new dfComponentActor();
-			actor->bind(level);
-
-			GameEngine::Component::Sound* sound = new GameEngine::Component::Sound();
-			sound->addSound(0, loadVOC("ST-DIE-1.voc")->sound());
-
-			//GameEngine::Component::SatNav* path = new DarkForces::Component::SatNav(1.0f);
-			DarkForces::Component::MoveEnemy* path = new DarkForces::Component::MoveEnemy();
-
-			obj->addComponent(actor, gaEntity::Flag::DELETE_AT_EXIT);
-			obj->addComponent(sound, gaEntity::Flag::DELETE_AT_EXIT);
-			obj->addComponent(path, gaEntity::Flag::DELETE_AT_EXIT);
-
-			obj->sendInternalMessage(gaMessage::Action::MOVE);
+			DarkForces::Enemy* enemy = dynamic_cast<DarkForces::Enemy*>(obj);
+			enemy->setLevel(level);
+			enemy->sendInternalMessage(gaMessage::Action::MOVE);
 		}
 
 		break; 

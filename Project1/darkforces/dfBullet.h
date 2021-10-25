@@ -28,10 +28,6 @@ class dfBullet : public gaEntity
 	void tryToMove(void);
 
 public:
-	enum {
-		FIRESHOT
-	};
-
 	dfBullet(uint32_t damage, const glm::vec3& position, const glm::vec3& direction);
 	dfBullet(flightRecorder::dfBullet *record);
 

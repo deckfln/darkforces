@@ -3,12 +3,13 @@
 #include <imgui.h>
 
 #include "../../gaEngine/gaEntity.h"
+#include "../../gaEngine/World.h"
 
 #include "../../config.h"
 #include "../dfMessage.h"
 #include "../dfVOC.h"
 #include "../dfBullet.h"
-#include "../../gaEngine/World.h"
+#include "../dfObject/dfSprite/dfSpriteAnimated/Enemy.h"
 
 struct WeaponD {
 	DarkForces::Component::Weapon::Kind m_kind;
@@ -83,7 +84,7 @@ DarkForces::Component::Weapon::Weapon(Kind weapon):
 	// prepare the sound component if there is a sound
 	if (g_WeaponSounds.count(m_kind) > 0) {
 		const WeaponD& w = g_WeaponSounds.at(m_kind);
-		m_entity->sendMessage(gaMessage::Action::REGISTER_SOUND, dfBullet::FIRESHOT, loadVOC(w.m_fireSound)->sound());
+		m_entity->sendMessage(gaMessage::Action::REGISTER_SOUND, DarkForces::Enemy::Enemy::Sound::FIRE, loadVOC(w.m_fireSound)->sound());
 	}
 }
 
@@ -92,7 +93,7 @@ void DarkForces::Component::Weapon::set(Kind k)
 	m_kind = k;
 	if (g_WeaponSounds.count(m_kind) > 0) {
 		const WeaponD& w = g_WeaponSounds.at(m_kind);
-		m_entity->sendMessage(gaMessage::Action::REGISTER_SOUND, dfBullet::FIRESHOT, loadVOC(w.m_fireSound)->sound());
+		m_entity->sendMessage(gaMessage::Action::REGISTER_SOUND, DarkForces::Enemy::Enemy::Sound::FIRE, loadVOC(w.m_fireSound)->sound());
 	}
 }
 
@@ -129,7 +130,7 @@ void DarkForces::Component::Weapon::onFire(const glm::vec3& direction)
 
 	g_gaWorld.addClient(bullet);
 
-	m_entity->sendMessage(gaMessage::Action::PLAY_SOUND, dfBullet::FIRESHOT);
+	m_entity->sendMessage(gaMessage::Action::PLAY_SOUND, DarkForces::Enemy::Enemy::Sound::FIRE);
 }
 
 /**
