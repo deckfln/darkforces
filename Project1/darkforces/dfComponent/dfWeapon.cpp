@@ -14,8 +14,9 @@
 struct WeaponD {
 	DarkForces::Component::Weapon::Kind m_kind;
 	const char* m_fireSound;
-	uint32_t m_damage;
-	float m_recoil;
+	uint32_t m_damage;		// damage per bullet
+	float m_recoil;			// bullet dispersion based on recoil strength
+	float m_rate;			// how many bullets per seconds
 };
 
 static const std::map<DarkForces::Component::Weapon::Kind, WeaponD> g_WeaponSounds = {
@@ -23,49 +24,57 @@ static const std::map<DarkForces::Component::Weapon::Kind, WeaponD> g_WeaponSoun
 		DarkForces::Component::Weapon::Kind::Concussion,
 		"CONCUSS5.VOC",
 		100,
-		0.1}
+		0.1,
+		0.5}
 	},
 	{DarkForces::Component::Weapon::Kind::FusionCutter, {
 		DarkForces::Component::Weapon::Kind::FusionCutter,
 		"FUSION1.VOC",
 		100,
-		0.1}
+		0.1,
+		0.5}
 	},
 	{DarkForces::Component::Weapon::Kind::Missile, {
 		DarkForces::Component::Weapon::Kind::Missile,
 		"MISSILE1.VOC",
 		100,
-		0.1}
+		0.1,
+		0.5}
 	},
 	{DarkForces::Component::Weapon::Kind::MortarGun, {
 		DarkForces::Component::Weapon::Kind::MortarGun,
 		"MORTAR2.VOC",
 		100,
-		0.1}
+		0.1,
+		0.5}
 	},
 	{DarkForces::Component::Weapon::Kind::Pistol, {
 		DarkForces::Component::Weapon::Kind::Pistol,
 		"PISTOL-1.VOC",
 		10,
-		0.1}
+		0.05,
+		0.5}
 	},
 	{DarkForces::Component::Weapon::Kind::PlasmaCannon, {
 		DarkForces::Component::Weapon::Kind::PlasmaCannon,
 		"PLASMA4.VOC",
 		10,
-		0.1}
+		0.1,
+		0.5}
 	},
 	{DarkForces::Component::Weapon::Kind::Repeater, {
 		DarkForces::Component::Weapon::Kind::Repeater,
 		"REPEATER.VOC",
 		10,
-		0.1}
+		0.1,
+		0.5}
 	},
 	{DarkForces::Component::Weapon::Kind::Rifle, {
 		DarkForces::Component::Weapon::Kind::Rifle,
 		"RIFLE-1.VOC",
 		15,
-		0.2}
+		0.1,
+		0.5}
 	},
 };
 
