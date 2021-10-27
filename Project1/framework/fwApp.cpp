@@ -3,6 +3,8 @@
 #include <iostream>
 #include "../config.h"
 
+#include <include/imnodes.h>
+
 #include "fwScene.h"
 #include "fwRenderer.h"
 #include "render/fwRendererForward.h"
@@ -82,6 +84,8 @@ fwApp::fwApp(std::string name, int _width, int _height, std::string post_process
 	const char* glsl_version = "#version 130";
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
+	ImNodes::CreateContext();
+
 	ImGuiIO& io = ImGui::GetIO();
 	//io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
 	//io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
@@ -302,6 +306,8 @@ void fwApp::run(void)
 #ifdef _DEBUG
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplGlfw_Shutdown();
+
+	ImNodes::DestroyContext();
 	ImGui::DestroyContext();
 #endif
 

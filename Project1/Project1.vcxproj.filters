@@ -154,6 +154,9 @@
     <Filter Include="Fichiers sources\Dark Forces\gaBehaviorNode">
       <UniqueIdentifier>{67550554-80e1-4313-8f44-4c0a93e53a79}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Fichiers sources\include">
+      <UniqueIdentifier>{c8391840-c786-4e0b-b9a2-b07d12d2d006}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source.cpp">
@@ -740,6 +743,9 @@
     </ClCompile>
     <ClCompile Include="darkforces\dfComponent\dfWeapon.cpp">
       <Filter>Fichiers sources\Dark Forces\dfComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="include\imnodes.cpp">
+      <Filter>Fichiers sources\include</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1405,6 +1411,12 @@
     </ClInclude>
     <ClInclude Include="darkforces\dfComponent\dfWeapon.h">
       <Filter>Fichiers d%27en-tête\DarkForces\dfComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="include\imnodes.h">
+      <Filter>Fichiers d%27en-tête\include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\imnodes_internal.h">
+      <Filter>Fichiers d%27en-tête\include</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

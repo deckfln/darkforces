@@ -16,6 +16,9 @@ namespace GameEngine {
 			std::map<std::string, void*> m_blackboard;
 			std::vector<BehaviorNode*> m_nodes;					// index of all nodes
 
+			static uint32_t m_lastId;
+			static uint32_t m_lastNode;
+
 		public:
 			BehaviorTree(BehaviorNode* root);
 			void blackboard(const std::string key, void *value);
@@ -31,6 +34,8 @@ namespace GameEngine {
 
 			void dispatchMessage(gaMessage* message) override;	// let a component deal with a situation
 
+			inline uint32_t lastAttrId(void) { return m_lastId++; };
+			inline uint32_t lastNode(void) { return m_lastNode; };
 			// flight recorder status
 			inline uint32_t recordSize(void);					// size of the component record
 			uint32_t recordState(void* record);					// save the component state in a record

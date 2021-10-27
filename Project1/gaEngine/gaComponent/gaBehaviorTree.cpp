@@ -1,5 +1,6 @@
 #include "gaBehaviorTree.h"
 
+#include <include/imnodes.h>
 #include <imgui.h>
 
 #include "../gaEntity.h"
@@ -7,6 +8,9 @@
 #include "../flightRecorder/frBehaviorTree.h"
 
 static const char* g_className = "BehaviorTree";
+
+uint32_t GameEngine::Component::BehaviorTree::m_lastId = 0;
+uint32_t GameEngine::Component::BehaviorTree::m_lastNode = 0;
 
 GameEngine::Component::BehaviorTree::BehaviorTree(BehaviorNode* root):
 	gaComponent(gaComponent::BehaviorTree),
@@ -78,13 +82,23 @@ void GameEngine::Component::BehaviorTree::blackboard(const std::string key, void
 void GameEngine::Component::BehaviorTree::debugGUIinline(void)
 {
 	if (ImGui::TreeNode(g_className)) {
+		/*
 			const ImVec2 p = ImGui::GetCursorScreenPos();
 			ImDrawList* draw_list = ImGui::GetWindowDrawList();
 			const ImU32 col32 = ImColor(1.0f, 1.0f, 1.0f, 1.0f);
 			draw_list->AddCircle(ImVec2(p.x+4, p.y+4), 8.0, col32, 6, 2.0);
 			draw_list->AddRect(ImVec2(p.x, p.y), ImVec2(p.x + 100, p.y + 40), col32);
 			ImGui::Dummy(ImVec2(100.0, 40.0));
-		m_root->debugGUIinline(m_current);
+		*/
+		ImGui::Begin(m_entity->name().c_str());
+
+		ImNodes::BeginNodeEditor();
+		float y = 0;
+		m_root->debugGUIinline(m_current, 0, y);
+		ImNodes::EndNodeEditor();
+
+		ImGui::End();
+
 		ImGui::TreePop();
 	}
 }

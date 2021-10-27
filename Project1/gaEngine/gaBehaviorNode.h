@@ -59,7 +59,7 @@ namespace GameEngine {
 		virtual void dispatchMessage(gaMessage* message, BehaviorNode::Action* r);
 
 		// debugger
-		virtual void debugGUIinline(BehaviorNode* current);			// display the component in the debugger
+		virtual void debugGUIinline(BehaviorNode* current, float x, float& y);	// display the component in the debugger
 		virtual void debugGUInode(void);							// display the component in the debugger
 
 		// flight recorder status
@@ -78,6 +78,13 @@ namespace GameEngine {
 
 		int32_t m_runningChild = -1;								// currently running child (-1 = the current node is running)
 		std::vector<BehaviorNode*> m_children;
+
+#if defined _DEBUG
+		std::vector<uint32_t> m_childrenID;
+		uint32_t m_entryAttr;
+		float m_x, m_y;
+		bool m_pined = false;
+#endif
 
 		void failed(Action* r);
 		void succeeded(Action* r);

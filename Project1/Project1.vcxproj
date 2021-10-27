@@ -315,6 +315,7 @@
     <ClCompile Include="glEngine\glProgram.cpp" />
     <ClCompile Include="glEngine\textures\glCubeTextureDepth.cpp" />
     <ClCompile Include="glEngine\textures\glDepthTexture.cpp" />
+    <ClCompile Include="include\imnodes.cpp" />
     <ClCompile Include="List.cpp" />
     <ClCompile Include="myApp.cpp" />
     <ClCompile Include="Reference.cpp" />
@@ -537,6 +538,8 @@
     <ClInclude Include="glEngine\glProgram.h" />
     <ClInclude Include="glEngine\textures\glCubeTextureDepth.h" />
     <ClInclude Include="glEngine\textures\glDepthTexture.h" />
+    <ClInclude Include="include\imnodes.h" />
+    <ClInclude Include="include\imnodes_internal.h" />
     <ClInclude Include="myDarkForces.h" />
     <ClInclude Include="include\earcut.hpp" />
     <ClInclude Include="include\stb_image.h" />
