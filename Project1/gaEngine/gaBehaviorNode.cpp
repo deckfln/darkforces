@@ -193,17 +193,19 @@ void GameEngine::BehaviorNode::debugGUIinline(BehaviorNode* current, float x, fl
 	ImNodes::EndNodeTitleBar();
 
 	ImNodes::BeginInputAttribute(m_entryAttr);
-	ImGui::Text("Start");
+	debugGUInode();
 	ImNodes::EndInputAttribute();
 
 	uint32_t i=0;
 	for (auto n : m_children) {
 		ImNodes::BeginOutputAttribute(m_childrenID[i]);
 
-		snprintf(tmp, sizeof(tmp), "%d", i);
-		const float label_width = ImGui::CalcTextSize(tmp).x;
-		ImGui::Indent(200.0f - label_width);
-		ImGui::TextUnformatted(tmp);
+		if (m_children.size() > 1) {
+			snprintf(tmp, sizeof(tmp), "%d", i);
+			const float label_width = ImGui::CalcTextSize(tmp).x;
+			ImGui::Indent(200.0f - label_width);
+			ImGui::TextUnformatted(tmp);
+		}
 		ImNodes::EndOutputAttribute();
 		i++;
 	}

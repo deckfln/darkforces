@@ -1,6 +1,8 @@
 #pragma once
 
 #include <map>
+#include <include/imnodes.h>
+
 #include "../gaComponent.h"
 
 namespace GameEngine {
@@ -18,6 +20,10 @@ namespace GameEngine {
 
 			static uint32_t m_lastId;
 			static uint32_t m_lastNode;
+
+#ifdef _DEBUG
+			ImNodesEditorContext* m_context=nullptr;
+#endif // _DEBUG
 
 		public:
 			BehaviorTree(BehaviorNode* root);

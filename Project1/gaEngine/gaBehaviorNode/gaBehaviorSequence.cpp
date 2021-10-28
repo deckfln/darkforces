@@ -62,5 +62,10 @@ void GameEngine::Behavior::Sequence::execute(Action* r)
  */
 void GameEngine::Behavior::Sequence::debugGUInode(void)
 {
-	ImGui::Text("Sequence");
+	if (m_condition == Condition::EXIT_WHEN_ONE_FAIL) {
+		ImGui::Text("Sequence unless one fail");
+	}
+	else {
+		ImGui::Text("Sequence even if one fail");
+	}
 }

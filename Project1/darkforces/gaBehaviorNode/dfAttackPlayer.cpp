@@ -35,20 +35,6 @@ namespace DarkForces {
 }
 
 /**
- * debugger
- */
-void DarkForces::Behavior::AttackPlayer::debugGUInode(void)
-{
-	if (ImGui::TreeNode("player last positions")) {
-		std::vector<glm::vec3>* playerLastPositions = m_tree->blackboard<std::vector<glm::vec3>>("player_last_positions");
-		for (auto& p : *playerLastPositions) {
-			ImGui::Text("%.2f %.2f %.2f", p.x, p.y, p.z);
-		}
-		ImGui::TreePop();
-	}
-}
-
-/**
  * flight recorder
  */
 uint32_t DarkForces::Behavior::AttackPlayer::recordState(void* record)

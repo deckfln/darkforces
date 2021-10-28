@@ -90,6 +90,11 @@ void GameEngine::Component::BehaviorTree::debugGUIinline(void)
 			draw_list->AddRect(ImVec2(p.x, p.y), ImVec2(p.x + 100, p.y + 40), col32);
 			ImGui::Dummy(ImVec2(100.0, 40.0));
 		*/
+		if (m_context == nullptr) {
+			m_context = ImNodes::EditorContextCreate();
+		}
+
+		ImNodes::EditorContextSet(m_context);
 		ImGui::Begin(m_entity->name().c_str());
 
 		ImNodes::BeginNodeEditor();
@@ -100,6 +105,18 @@ void GameEngine::Component::BehaviorTree::debugGUIinline(void)
 		ImGui::End();
 
 		ImGui::TreePop();
+	}
+	else {
+		if (m_context != nullptr) {
+			// destroy the whole editor
+			ImNodes::EditorContextFree(m_context);
+			m_context = nullptr;
+
+			for (auto node : m_nodes) {
+				node->m_pined = false;
+			}
+		}
+
 	}
 }
 

@@ -84,5 +84,13 @@ void GameEngine::Behavior::Loop::execute(Action* r)
  */
 void GameEngine::Behavior::Loop::debugGUInode(void)
 {
-	ImGui::Text("Loop");
+	switch (m_condition) {
+	case Condition::UNTIL_ALL_FAIL:
+		ImGui::Text("Loop until all fail");
+		break;
+
+	case Condition::UNTIL_ONE_FAIL:
+		ImGui::Text("Loop until one fail");
+		break;
+	}
 }

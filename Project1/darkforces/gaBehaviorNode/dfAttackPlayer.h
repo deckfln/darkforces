@@ -15,7 +15,6 @@ namespace DarkForces {
 		public:
 			AttackPlayer(const char* name);
 			void init(void* data) override;									// init the node before running
-			void debugGUInode(void) override;
 			uint32_t recordState(void* record) override;
 			uint32_t loadState(void* record) override;
 		};
