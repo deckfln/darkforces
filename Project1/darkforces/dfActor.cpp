@@ -45,7 +45,7 @@ void DarkForces::Actor::dispatchMessage(gaMessage* message)
 	case gaMessage::KEY:
 		switch (message->m_value) {
 		case GLFW_KEY_LEFT_CONTROL:
-			sendInternalMessage(DarkForces::Message::FIRE, 0, &m_direction);
+			sendMessage(DarkForces::Message::FIRE, 0, &m_direction);
 			break;
 
 		case GLFW_KEY_F5:

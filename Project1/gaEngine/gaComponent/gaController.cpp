@@ -12,7 +12,7 @@ GameEngine::Component::Controller::Controller(fwCamera* camera,
 	float height,
 	float phi,
 	float radius,
-	const std::vector<uint32_t>& keys):
+	const std::vector<KeyInfo>& keys):
 	gaComponent(gaComponent::Controller),
 	fwControlThirdPerson(camera, position, height, phi, radius),
 	m_keys(keys)
@@ -54,9 +54,23 @@ bool GameEngine::Component::Controller::checkKeys(time_t delta)
 	}
 #endif
 
-	for (auto key : m_keys) {
-		if (m_currentKeys[key] && !m_prevKeys[key]) {
-			m_entity->sendInternalMessage(gaMessage::Action::KEY, key, &m_velocity);
+	for (auto& key : m_keys) {
+		switch (key.m_msh) {
+		case KeyInfo::Msg::onPressDown:
+			if (m_currentKeys[key.m_key] && !m_prevKeys[key.m_key]) {
+					m_entity->sendMessage(gaMessage::Action::KEY, key.m_key, &m_velocity);
+				}
+			break;
+		case KeyInfo::Msg::onPress:
+			if (m_currentKeys[key.m_key]) {
+				m_entity->sendMessage(gaMessage::Action::KEY, key.m_key, &m_velocity);
+			}
+			break;
+		case KeyInfo::Msg::onPressUp:
+			if (!m_currentKeys[key.m_key] && m_prevKeys[key.m_key]) {
+				m_entity->sendMessage(gaMessage::Action::KEY, key.m_key, &m_velocity);
+			}
+			break;
 		}
 	}
 

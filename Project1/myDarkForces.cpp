@@ -112,13 +112,14 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 
 	// and put the player in position
 	m_player = new DarkForces::Actor(DarkForces::ClassID::Object, "player", bounding, start, c_eyes, c_ankle);
-	const std::vector<uint32_t> keys = {
-		GLFW_KEY_X,
-		GLFW_KEY_LEFT_CONTROL,
-		GLFW_KEY_SPACE,
-		GLFW_KEY_S,
-		GLFW_KEY_F5
+	const std::vector<GameEngine::Component::Controller::KeyInfo> keys = {
+		{GLFW_KEY_X, GameEngine::Component::Controller::KeyInfo::Msg::onPressDown},
+		{GLFW_KEY_LEFT_CONTROL, GameEngine::Component::Controller::KeyInfo::Msg::onPress},
+		{GLFW_KEY_SPACE, GameEngine::Component::Controller::KeyInfo::Msg::onPressDown}, 
+		{GLFW_KEY_S, GameEngine::Component::Controller::KeyInfo::Msg::onPressDown},
+		{GLFW_KEY_F5, GameEngine::Component::Controller::KeyInfo::Msg::onPressDown}
 	};
+
 	GameEngine::Component::Controller* controller = new GameEngine::Component::Controller(m_camera, start, c_eyes, c_direction, c_radius, keys);
 	bindControl((fwControl*)controller);
 	m_player->addComponent(controller, gaEntity::Flag::DONT_DELETE);

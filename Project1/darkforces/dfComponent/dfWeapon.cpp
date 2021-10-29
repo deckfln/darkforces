@@ -16,7 +16,7 @@ struct WeaponD {
 	const char* m_fireSound;
 	uint32_t m_damage;		// damage per bullet
 	float m_recoil;			// bullet dispersion based on recoil strength
-	float m_rate;			// how many bullets per seconds
+	time_t m_rate;			// how many bullets per seconds
 };
 
 static const std::map<DarkForces::Component::Weapon::Kind, WeaponD> g_WeaponSounds = {
@@ -24,57 +24,57 @@ static const std::map<DarkForces::Component::Weapon::Kind, WeaponD> g_WeaponSoun
 		DarkForces::Component::Weapon::Kind::Concussion,
 		"CONCUSS5.VOC",
 		100,
-		0.1,
-		0.5}
+		0.1f,
+		5}
 	},
 	{DarkForces::Component::Weapon::Kind::FusionCutter, {
 		DarkForces::Component::Weapon::Kind::FusionCutter,
 		"FUSION1.VOC",
 		100,
-		0.1,
-		0.5}
+		0.1f,
+		5}
 	},
 	{DarkForces::Component::Weapon::Kind::Missile, {
 		DarkForces::Component::Weapon::Kind::Missile,
 		"MISSILE1.VOC",
 		100,
-		0.1,
-		0.5}
+		0.1f,
+		5}
 	},
 	{DarkForces::Component::Weapon::Kind::MortarGun, {
 		DarkForces::Component::Weapon::Kind::MortarGun,
 		"MORTAR2.VOC",
 		100,
-		0.1,
-		0.5}
+		0.1f,
+		5}
 	},
 	{DarkForces::Component::Weapon::Kind::Pistol, {
 		DarkForces::Component::Weapon::Kind::Pistol,
 		"PISTOL-1.VOC",
 		10,
-		0.05,
-		0.5}
+		0.05f,
+		1000}
 	},
 	{DarkForces::Component::Weapon::Kind::PlasmaCannon, {
 		DarkForces::Component::Weapon::Kind::PlasmaCannon,
 		"PLASMA4.VOC",
 		10,
-		0.1,
-		0.5}
+		0.1f,
+		5}
 	},
 	{DarkForces::Component::Weapon::Kind::Repeater, {
 		DarkForces::Component::Weapon::Kind::Repeater,
 		"REPEATER.VOC",
 		10,
-		0.1,
-		0.5}
+		0.1f,
+		5}
 	},
 	{DarkForces::Component::Weapon::Kind::Rifle, {
 		DarkForces::Component::Weapon::Kind::Rifle,
 		"RIFLE-1.VOC",
 		15,
-		0.1,
-		0.5}
+		0.2f,
+		500}
 	},
 };
 
@@ -109,11 +109,17 @@ void DarkForces::Component::Weapon::set(Kind k)
 /**
  * fire a bullet
  */
-void DarkForces::Component::Weapon::onFire(const glm::vec3& direction)
+void DarkForces::Component::Weapon::onFire(const glm::vec3& direction, time_t time)
 {
 	const WeaponD& w = g_WeaponSounds.at(m_kind);
 
-	// create a bullet base don the kind of weapon
+	// count time since the last fire, and auto-fire at the weapon rate
+	if (time - m_time < w.m_rate) {
+		return;
+	}
+	m_time = time;
+
+	// create a bullet based on the kind of weapon
 	// and add to the world to live its life
 	glm::vec3 p = m_entity->position();
 	p.y += m_entity->height() / 2.0f;
@@ -149,7 +155,7 @@ void DarkForces::Component::Weapon::dispatchMessage(gaMessage* message)
 {
 	switch (message->m_action) {
 	case DarkForces::Message::FIRE:
-		onFire(*(glm::vec3*)message->m_extra);
+		onFire(*(glm::vec3*)message->m_extra, message->m_time);
 		break;
 	}
 }

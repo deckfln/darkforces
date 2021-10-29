@@ -95,7 +95,7 @@ void fwControl::keyEvent(int key, int scancode, int action, int mods)
 
 	// trigger auto-update if there is at least 1 key pressed
 	m_autoupdate = false;
-	for (auto key : m_currentKeys) {
+	for (auto& key : m_currentKeys) {
 		if (key.second) {
 			m_autoupdate = true;
 			break;

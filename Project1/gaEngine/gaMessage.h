@@ -105,6 +105,7 @@ public:
 
 	time_t m_delta = 0;				// time since the last frame
 	uint32_t m_frame=0;				// current frame the message runs in
+	time_t m_time;					// world time
 
 	gaMessage(void);
 	gaMessage(int action);

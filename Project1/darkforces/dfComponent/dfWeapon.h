@@ -27,9 +27,10 @@ namespace DarkForces {
 			void debugGUIinline(void) override;
 
 		protected:
-			Kind m_kind;
+			Kind m_kind;	
+			time_t m_time=0;			// world time of the last fire (when the player keep the fire button down)
 
-			void onFire(const glm::vec3& direction);
+			void onFire(const glm::vec3& direction, time_t time);
 		};
 	}
 }

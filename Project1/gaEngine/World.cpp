@@ -541,6 +541,7 @@ void World::process(time_t delta, bool force)
 	}
 
 	m_frame++;
+	time_t t = GetTickCount64();
 
 	// inject alarm event if needed
 	std::vector<Alarm*> removeAlarm;
@@ -649,6 +650,8 @@ void World::process(time_t delta, bool force)
 			// dispatch messages to client
 
 			message->m_delta = delta;
+			message->m_time = t;
+
 			if (m_entities.count(message->m_server) > 0) {
 				message->m_pServer = m_entities[message->m_server].front();
 			}
