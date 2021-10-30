@@ -33,6 +33,7 @@
 #include "darkforces/dfObject/dfSpriteAnimated.h"
 #include "darkforces/dfBullet.h"
 #include "darkforces/dfObject/dfBulletExplode.h"
+#include "darkforces/dfHUD.h"
 
 const float c_height = 0.70f;
 const float c_radius = 0.2f;
@@ -83,32 +84,15 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 	}
 
 	// load first level
-	m_level = new dfLevel(m_filesystem, "SECBASE");
+	m_level = new dfLevel(g_dfFiles, "SECBASE");
 	static_cast<dfLevel*>(m_level)->addSkymap(m_scene);
-
-	// hud display
-	dfBitmap* bmStatuslt = new dfBitmap(m_filesystem, "STATUSLF.BM", static_cast<dfLevel*>(m_level)->palette());
-	fwTexture* texStatuslt = bmStatuslt->fwtexture();
-	fwHUDelement* statuslt = new fwHUDelement("statuslt", fwHUDElementPosition::BOTTOM_LEFT, fwHUDelementSizeLock::UNLOCKED, 0.1f, 0.1f, texStatuslt);
-
-	dfBitmap* bmStatusrt = new dfBitmap(m_filesystem, "STATUSRT.BM", static_cast<dfLevel*>(m_level)->palette());
-	fwTexture* texStatusrt = bmStatusrt->fwtexture();
-	fwHUDelement* statusrt = new fwHUDelement("statusrt", fwHUDElementPosition::BOTTOM_RIGHT, fwHUDelementSizeLock::UNLOCKED, 0.1f, 0.1f, texStatusrt);
-
-	dfBitmap* bmRifle = new dfBitmap(m_filesystem, "RIFLE1.BM", static_cast<dfLevel*>(m_level)->palette());
-	fwTexture* texRifle = bmRifle->fwtexture();
-	fwHUDelement* rifle = new fwHUDelement("rifle", fwHUDElementPosition::BOTTOM_CENTER, fwHUDelementSizeLock::UNLOCKED, 0.2f, 0.2f, texRifle);
-
-	// init the m_scene
-	glm::vec3* yellow = new glm::vec3(255, 255, 0);
-
-	// add the HUD
-	m_scene->hud(statuslt);
-	m_scene->hud(statusrt);
-	m_scene->hud(rifle);
 
 	// mandatory to get all data together
 	resizeEvent(width, height);
+
+	// hud display
+	m_hud = new DarkForces::HUD(m_level);
+	m_hud->display(m_scene);
 
 	// and put the player in position
 	m_player = new DarkForces::Actor(DarkForces::ClassID::Object, "player", bounding, start, c_eyes, c_ankle);
@@ -117,7 +101,9 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 		{GLFW_KEY_LEFT_CONTROL, GameEngine::Component::Controller::KeyInfo::Msg::onPress},
 		{GLFW_KEY_SPACE, GameEngine::Component::Controller::KeyInfo::Msg::onPressDown}, 
 		{GLFW_KEY_S, GameEngine::Component::Controller::KeyInfo::Msg::onPressDown},
-		{GLFW_KEY_F5, GameEngine::Component::Controller::KeyInfo::Msg::onPressDown}
+		{GLFW_KEY_F5, GameEngine::Component::Controller::KeyInfo::Msg::onPressDown},
+		{GLFW_KEY_1, GameEngine::Component::Controller::KeyInfo::Msg::onPressDown},
+		{GLFW_KEY_2, GameEngine::Component::Controller::KeyInfo::Msg::onPressDown},
 	};
 
 	GameEngine::Component::Controller* controller = new GameEngine::Component::Controller(m_camera, start, c_eyes, c_direction, c_radius, keys);
@@ -125,6 +111,10 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 	m_player->addComponent(controller, gaEntity::Flag::DONT_DELETE);
 	g_gaWorld.addClient(m_player);
 	static_cast<DarkForces::Actor*>(m_player)->bind(static_cast<dfLevel*>(m_level));
+	static_cast<DarkForces::Actor*>(m_player)->setWeapon(DarkForces::Component::Weapon::Kind::Pistol);
+
+	// init the m_scene
+	glm::vec3* yellow = new glm::vec3(255, 255, 0);
 
 	g_Blackbox.registerClass("dfBullet", &dfBullet::create);
 	g_Blackbox.registerClass("dfSpriteAnimated", &dfSpriteAnimated::create);

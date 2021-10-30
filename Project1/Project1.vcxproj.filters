@@ -747,6 +747,9 @@
     <ClCompile Include="include\imnodes.cpp">
       <Filter>Fichiers sources\include</Filter>
     </ClCompile>
+    <ClCompile Include="darkforces\dfHUD.cpp">
+      <Filter>Fichiers sources\Dark Forces</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="glad\glad.h">
@@ -1417,6 +1420,9 @@
     </ClInclude>
     <ClInclude Include="include\imnodes_internal.h">
       <Filter>Fichiers d%27en-tête\include</Filter>
+    </ClInclude>
+    <ClInclude Include="darkforces\dfHUD.h">
+      <Filter>Fichiers d%27en-tête\DarkForces</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

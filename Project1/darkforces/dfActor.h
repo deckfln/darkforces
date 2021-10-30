@@ -24,6 +24,8 @@ namespace DarkForces {
 		dfLevel* m_level = nullptr;
 		bool m_headlight = false;
 
+		void onChangeWeapon(int kweapon);	// Change the current weapon
+
 	public:
 		Actor(
 			int mclass,
@@ -40,6 +42,8 @@ namespace DarkForces {
 		void bind(dfLevel* level);
 
 		void dispatchMessage(gaMessage* message) override;		//
+
+		void setWeapon(DarkForces::Component::Weapon::Kind);	// Change the current weapon
 
 		int recordSize(void) override {
 			return sizeof(flightRecorder::DarkForces::Actor);

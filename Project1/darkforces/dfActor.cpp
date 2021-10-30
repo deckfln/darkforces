@@ -3,12 +3,21 @@
 #include <GLFW/glfw3.h>
 #include <imgui.h>
 
+#include "dfFileSystem.h"
 #include "dfSector.h"
 #include "dfLevel.h"
+#include "dfHUD.h"
 
 static const char* g_className = "dfActor";
 
-DarkForces::Actor::Actor(int mclass, const std::string& name, fwCylinder& cylinder, const glm::vec3& feet, float eyes, float ankle):
+static std::map<DarkForces::Component::Weapon::Kind, fwTexture*> g_hud;
+
+static std::map<uint32_t, DarkForces::Component::Weapon::Kind> g_WeaponKeys = {
+	{GLFW_KEY_1, DarkForces::Component::Weapon::Kind::Pistol},
+	{GLFW_KEY_2, DarkForces::Component::Weapon::Kind::Rifle}
+};
+
+DarkForces::Actor::Actor(int mclass, const std::string& name, fwCylinder& cylinder, const glm::vec3& feet, float eyes, float ankle) :
 	gaActor(mclass, name, cylinder, feet, eyes, ankle)
 {
 	m_className = g_className;
@@ -19,7 +28,7 @@ DarkForces::Actor::Actor(int mclass, const std::string& name, fwCylinder& cylind
 	m_weapon.set(DarkForces::Component::Weapon::Kind::Rifle);
 }
 
-DarkForces::Actor::Actor(flightRecorder::Entity* record):
+DarkForces::Actor::Actor(flightRecorder::Entity* record) :
 	gaActor(record)
 {
 	m_className = g_className;
@@ -27,11 +36,39 @@ DarkForces::Actor::Actor(flightRecorder::Entity* record):
 
 /**
  * bind the level
- */ 
+ */
 void DarkForces::Actor::bind(dfLevel* level)
 {
 	m_level = level;
 	m_defaultAI.bind(level);
+}
+
+/**
+ * Change the current weapon
+ */
+void DarkForces::Actor::onChangeWeapon(int kweapon)
+{
+	if (g_WeaponKeys.count(kweapon) == 0) {
+		return;
+	}
+
+	DarkForces::Component::Weapon::Kind weapon = g_WeaponKeys[kweapon];
+	setWeapon(weapon);
+}
+
+/**
+ * Change the current weapon
+ */
+void DarkForces::Actor::setWeapon(DarkForces::Component::Weapon::Kind weapon)
+{
+	const char* hud = m_weapon.set(weapon);
+
+	if (hud && g_hud.count(weapon) == 0) {
+		dfBitmap* bmp = new dfBitmap(g_dfFiles, hud, static_cast<dfLevel*>(m_level)->palette());
+		g_hud[weapon] = bmp->fwtexture();
+	}
+
+	g_dfHUD->setWeapon(g_hud[weapon]);
 }
 
 
@@ -56,9 +93,12 @@ void DarkForces::Actor::dispatchMessage(gaMessage* message)
 				m_headlight = false;
 			}
 			break;
-		}
-		break;
 
+		default:
+			if (g_WeaponKeys.count(message->m_value) > 0) {
+				onChangeWeapon(message->m_value);
+			}
+		}
 	}
 
 	gaActor::dispatchMessage(message);

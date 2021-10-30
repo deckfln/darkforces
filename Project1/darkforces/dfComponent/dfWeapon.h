@@ -19,7 +19,7 @@ namespace DarkForces {
 
 			Weapon(void);
 			Weapon(Kind weapon);
-			void set(Kind k);			// set the kind of weapon
+			const char* set(Kind k);			// set the kind of weapon and return filename of HUD
 
 			void dispatchMessage(gaMessage* message) override;
 

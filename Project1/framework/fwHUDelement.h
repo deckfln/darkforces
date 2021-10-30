@@ -34,6 +34,7 @@ class fwHUDelement
 
 public:
 	fwHUDelement(const std::string& name, fwHUDElementPosition position, fwHUDelementSizeLock lock, float width, float height, fwTexture *texture);
+	void texture(fwTexture* texture);	// change the current texture
 	void draw(fwFlatPanel* panel);
 	~fwHUDelement();
 };

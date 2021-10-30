@@ -17,64 +17,91 @@ struct WeaponD {
 	uint32_t m_damage;		// damage per bullet
 	float m_recoil;			// bullet dispersion based on recoil strength
 	time_t m_rate;			// how many bullets per seconds
+	const char* HUDfile;	// name of the HUD image
+	dfBitmap* HUDbmp;		
+	fwTexture* HUDtexture;
 };
 
-static const std::map<DarkForces::Component::Weapon::Kind, WeaponD> g_WeaponSounds = {
+static std::map<DarkForces::Component::Weapon::Kind, WeaponD> g_WeaponSounds = {
 	{DarkForces::Component::Weapon::Kind::Concussion, {
 		DarkForces::Component::Weapon::Kind::Concussion,
 		"CONCUSS5.VOC",
 		100,
 		0.1f,
-		5}
+		5,
+		"concuss1.bm",
+		nullptr,
+		nullptr}
 	},
 	{DarkForces::Component::Weapon::Kind::FusionCutter, {
 		DarkForces::Component::Weapon::Kind::FusionCutter,
 		"FUSION1.VOC",
 		100,
 		0.1f,
-		5}
+		5,
+		"fusion1.bm",
+		nullptr,
+		nullptr}
 	},
 	{DarkForces::Component::Weapon::Kind::Missile, {
 		DarkForces::Component::Weapon::Kind::Missile,
 		"MISSILE1.VOC",
 		100,
 		0.1f,
-		5}
+		5,
+		"assault1.bm",
+		nullptr,
+		nullptr}
 	},
 	{DarkForces::Component::Weapon::Kind::MortarGun, {
 		DarkForces::Component::Weapon::Kind::MortarGun,
 		"MORTAR2.VOC",
 		100,
 		0.1f,
-		5}
+		5,
+		"mortar1.bm",
+		nullptr,
+		nullptr}
 	},
 	{DarkForces::Component::Weapon::Kind::Pistol, {
 		DarkForces::Component::Weapon::Kind::Pistol,
 		"PISTOL-1.VOC",
 		10,
 		0.05f,
-		1000}
+		1000,
+		"pistol1.bm",
+		nullptr,
+		nullptr}
 	},
 	{DarkForces::Component::Weapon::Kind::PlasmaCannon, {
 		DarkForces::Component::Weapon::Kind::PlasmaCannon,
 		"PLASMA4.VOC",
 		10,
 		0.1f,
-		5}
+		5,
+		"assault1.bm",
+		nullptr,
+		nullptr}
 	},
 	{DarkForces::Component::Weapon::Kind::Repeater, {
 		DarkForces::Component::Weapon::Kind::Repeater,
 		"REPEATER.VOC",
 		10,
 		0.1f,
-		5}
+		5,
+		"autogun1",
+		nullptr,
+		nullptr}
 	},
 	{DarkForces::Component::Weapon::Kind::Rifle, {
 		DarkForces::Component::Weapon::Kind::Rifle,
 		"RIFLE-1.VOC",
 		15,
 		0.2f,
-		500}
+		500,
+		"rifle1.bm",
+		nullptr,
+		nullptr}
 	},
 };
 
@@ -92,18 +119,22 @@ DarkForces::Component::Weapon::Weapon(Kind weapon):
 {
 	// prepare the sound component if there is a sound
 	if (g_WeaponSounds.count(m_kind) > 0) {
-		const WeaponD& w = g_WeaponSounds.at(m_kind);
+		WeaponD& w = g_WeaponSounds.at(m_kind);
 		m_entity->sendMessage(gaMessage::Action::REGISTER_SOUND, DarkForces::Enemy::Enemy::Sound::FIRE, loadVOC(w.m_fireSound)->sound());
 	}
 }
 
-void DarkForces::Component::Weapon::set(Kind k)
+const char*DarkForces::Component::Weapon::set(Kind k)
 {
 	m_kind = k;
 	if (g_WeaponSounds.count(m_kind) > 0) {
-		const WeaponD& w = g_WeaponSounds.at(m_kind);
+		WeaponD& w = g_WeaponSounds.at(m_kind);
 		m_entity->sendMessage(gaMessage::Action::REGISTER_SOUND, DarkForces::Enemy::Enemy::Sound::FIRE, loadVOC(w.m_fireSound)->sound());
+
+		return w.HUDfile;
 	}
+
+	return nullptr;
 }
 
 /**

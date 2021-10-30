@@ -36,6 +36,14 @@ fwHUDelement::fwHUDelement(const std::string& name, fwHUDElementPosition positio
 	}
 }
 
+/**
+ * change the current texture
+ */
+void fwHUDelement::texture(fwTexture* texture)
+{
+	m_texture = texture;
+}
+
 void fwHUDelement::draw(fwFlatPanel *panel)
 {
 	panel->set("image", m_texture);

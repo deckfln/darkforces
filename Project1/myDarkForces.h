@@ -16,6 +16,10 @@ class gaEntity;
 
 #include "darkforces/dfActor.h"
 
+namespace DarkForces {
+	class HUD;
+}
+
 class myDarkForces : public GameEngine::App
 {
 	fwLight* m_light = nullptr;
@@ -23,6 +27,8 @@ class myDarkForces : public GameEngine::App
 	glm::vec4* white = nullptr;
 
 	dfFileSystem* m_filesystem = nullptr;
+	DarkForces::HUD* m_hud= nullptr;
+
 	bool m_keySpace = false;	// SPACE is pressed
 	bool m_headlight = false;
 	bool m_f5 = false;
