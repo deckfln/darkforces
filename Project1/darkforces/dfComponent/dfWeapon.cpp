@@ -11,97 +11,102 @@
 #include "../dfBullet.h"
 #include "../dfObject/dfSprite/dfSpriteAnimated/Enemy.h"
 
-struct WeaponD {
-	DarkForces::Component::Weapon::Kind m_kind;
-	const char* m_fireSound;
-	uint32_t m_damage;		// damage per bullet
-	float m_recoil;			// bullet dispersion based on recoil strength
-	time_t m_rate;			// how many bullets per seconds
-	const char* HUDfile;	// name of the HUD image
-	dfBitmap* HUDbmp;		
-	fwTexture* HUDtexture;
-};
-
-static std::map<DarkForces::Component::Weapon::Kind, WeaponD> g_WeaponSounds = {
-	{DarkForces::Component::Weapon::Kind::Concussion, {
-		DarkForces::Component::Weapon::Kind::Concussion,
+static std::map<DarkForces::Weapon::Kind, DarkForces::Weapon> g_WeaponSounds = {
+	{DarkForces::Weapon::Kind::Concussion, {
+		DarkForces::Weapon::Kind::Concussion,
 		"CONCUSS5.VOC",
 		100,
 		0.1f,
 		5,
 		"concuss1.bm",
 		nullptr,
-		nullptr}
+		nullptr,
+		glm::vec2(0.0, 0.0)
+		}
 	},
-	{DarkForces::Component::Weapon::Kind::FusionCutter, {
-		DarkForces::Component::Weapon::Kind::FusionCutter,
+	{DarkForces::Weapon::Kind::FusionCutter, {
+		DarkForces::Weapon::Kind::FusionCutter,
 		"FUSION1.VOC",
 		100,
 		0.1f,
 		5,
 		"fusion1.bm",
 		nullptr,
-		nullptr}
+		nullptr,
+		glm::vec2(0.0, 0.0)
+		}
 	},
-	{DarkForces::Component::Weapon::Kind::Missile, {
-		DarkForces::Component::Weapon::Kind::Missile,
+	{DarkForces::Weapon::Kind::Missile, {
+		DarkForces::Weapon::Kind::Missile,
 		"MISSILE1.VOC",
 		100,
 		0.1f,
 		5,
 		"assault1.bm",
 		nullptr,
-		nullptr}
+		nullptr,
+		glm::vec2(0.0, 0.0)
+		}
 	},
-	{DarkForces::Component::Weapon::Kind::MortarGun, {
-		DarkForces::Component::Weapon::Kind::MortarGun,
+	{DarkForces::Weapon::Kind::MortarGun, {
+		DarkForces::Weapon::Kind::MortarGun,
 		"MORTAR2.VOC",
 		100,
 		0.1f,
 		5,
 		"mortar1.bm",
 		nullptr,
-		nullptr}
+		nullptr,
+		glm::vec2(0.0, 0.0)
+		}
 	},
-	{DarkForces::Component::Weapon::Kind::Pistol, {
-		DarkForces::Component::Weapon::Kind::Pistol,
+	{DarkForces::Weapon::Kind::Pistol, {
+		DarkForces::Weapon::Kind::Pistol,
 		"PISTOL-1.VOC",
 		10,
 		0.05f,
 		1000,
 		"pistol1.bm",
 		nullptr,
-		nullptr}
+		nullptr,
+		glm::vec2(0.3, -0.9)
+		}
 	},
-	{DarkForces::Component::Weapon::Kind::PlasmaCannon, {
-		DarkForces::Component::Weapon::Kind::PlasmaCannon,
+	{DarkForces::Weapon::Kind::PlasmaCannon, {
+		DarkForces::Weapon::Kind::PlasmaCannon,
 		"PLASMA4.VOC",
 		10,
 		0.1f,
 		5,
 		"assault1.bm",
 		nullptr,
-		nullptr}
+		nullptr,
+		glm::vec2(0.0, 0.0)
+		}
 	},
-	{DarkForces::Component::Weapon::Kind::Repeater, {
-		DarkForces::Component::Weapon::Kind::Repeater,
+	{DarkForces::Weapon::Kind::Repeater, {
+		DarkForces::Weapon::Kind::Repeater,
 		"REPEATER.VOC",
 		10,
 		0.1f,
 		5,
 		"autogun1",
 		nullptr,
-		nullptr}
+		nullptr,
+		glm::vec2(0.2, 0.8)
+		}
 	},
-	{DarkForces::Component::Weapon::Kind::Rifle, {
-		DarkForces::Component::Weapon::Kind::Rifle,
+	{DarkForces::Weapon::Kind::Rifle, {
+		DarkForces::Weapon::Kind::Rifle,
 		"RIFLE-1.VOC",
 		15,
 		0.2f,
 		500,
 		"rifle1.bm",
 		nullptr,
-		nullptr}
+		nullptr,
+		glm::vec2(0.17, -0.83)
+		}
 	},
 };
 
@@ -113,25 +118,25 @@ DarkForces::Component::Weapon::Weapon(void) :
 /**
  *
  */
-DarkForces::Component::Weapon::Weapon(Kind weapon):
+DarkForces::Component::Weapon::Weapon(DarkForces::Weapon::Kind weapon):
 	gaComponent(DF_COMPONENT_WEAPON),
 	m_kind(weapon)
 {
 	// prepare the sound component if there is a sound
 	if (g_WeaponSounds.count(m_kind) > 0) {
-		WeaponD& w = g_WeaponSounds.at(m_kind);
+		DarkForces::Weapon& w = g_WeaponSounds.at(m_kind);
 		m_entity->sendMessage(gaMessage::Action::REGISTER_SOUND, DarkForces::Enemy::Enemy::Sound::FIRE, loadVOC(w.m_fireSound)->sound());
 	}
 }
 
-const char*DarkForces::Component::Weapon::set(Kind k)
+const DarkForces::Weapon* DarkForces::Component::Weapon::set(DarkForces::Weapon::Kind k)
 {
 	m_kind = k;
 	if (g_WeaponSounds.count(m_kind) > 0) {
-		WeaponD& w = g_WeaponSounds.at(m_kind);
+		DarkForces::Weapon& w = g_WeaponSounds.at(m_kind);
 		m_entity->sendMessage(gaMessage::Action::REGISTER_SOUND, DarkForces::Enemy::Enemy::Sound::FIRE, loadVOC(w.m_fireSound)->sound());
 
-		return w.HUDfile;
+		return &w;
 	}
 
 	return nullptr;
@@ -142,7 +147,7 @@ const char*DarkForces::Component::Weapon::set(Kind k)
  */
 void DarkForces::Component::Weapon::onFire(const glm::vec3& direction, time_t time)
 {
-	const WeaponD& w = g_WeaponSounds.at(m_kind);
+	const DarkForces::Weapon& w = g_WeaponSounds.at(m_kind);
 
 	// count time since the last fire, and auto-fire at the weapon rate
 	if (time - m_time < w.m_rate) {

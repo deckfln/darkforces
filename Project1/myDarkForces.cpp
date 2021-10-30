@@ -111,7 +111,7 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 	m_player->addComponent(controller, gaEntity::Flag::DONT_DELETE);
 	g_gaWorld.addClient(m_player);
 	static_cast<DarkForces::Actor*>(m_player)->bind(static_cast<dfLevel*>(m_level));
-	static_cast<DarkForces::Actor*>(m_player)->setWeapon(DarkForces::Component::Weapon::Kind::Pistol);
+	static_cast<DarkForces::Actor*>(m_player)->setWeapon(DarkForces::Weapon::Kind::Pistol);
 
 	// init the m_scene
 	glm::vec3* yellow = new glm::vec3(255, 255, 0);

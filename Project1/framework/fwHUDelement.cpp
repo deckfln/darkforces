@@ -11,7 +11,7 @@
  * if LOCKED_X, height is computed based on width
  * if UNLOCKED, width & height are mandaotry
  */
-fwHUDelement::fwHUDelement(const std::string& name, fwHUDElementPosition position, fwHUDelementSizeLock lock, float width, float height, fwTexture *texture):
+fwHUDelement::fwHUDelement(const std::string& name, Position position, fwHUDelementSizeLock lock, float width, float height, fwTexture *texture):
 	m_name(name),
 	m_position(position),
 	m_sizeLock(lock),
@@ -21,19 +21,37 @@ fwHUDelement::fwHUDelement(const std::string& name, fwHUDElementPosition positio
 	m_onscreen.y = height;
 
 	switch(position) {
-	case fwHUDElementPosition::BOTTOM_LEFT:
+	case Position::BOTTOM_LEFT:
 		m_onscreen.z = (2.0f * width) / 2.0f - 1.0f;
 		m_onscreen.w = (2.0f * height) / 2.0f - 1.0f;
 		break;
-	case fwHUDElementPosition::BOTTOM_RIGHT:
+	case Position::BOTTOM_RIGHT:
 		m_onscreen.z = 1.0f - (2.0f * width) / 2.0f;
 		m_onscreen.w = (2.0f * height) / 2.0f - 1.0f;
 		break;
-	case fwHUDElementPosition::BOTTOM_CENTER:
+	case Position::BOTTOM_CENTER:
 		m_onscreen.z = 0;
 		m_onscreen.w = (2.0f * height) / 2.0f - 1.0f;
 		break;
 	}
+}
+
+/**
+ * force the X position (between -1. and 1.0)
+ */
+void fwHUDelement::position(float x, float y)
+{
+	m_onscreen.z = x;
+	m_onscreen.w = y;
+}
+
+/**
+ * force the size in glspace (between -1. and 1.0)
+ */
+void fwHUDelement::size(float w, float h)
+{
+	m_onscreen.x = w;
+	m_onscreen.y = h;
 }
 
 /**

@@ -11,17 +11,19 @@ DarkForces::HUD::HUD(GameEngine::Level *level)
 
 	// hud display
 	m_health_bmp = new dfBitmap(g_dfFiles, "STATUSLF.BM", static_cast<dfLevel*>(level)->palette());
-	m_health = new fwHUDelement("statuslt", fwHUDElementPosition::BOTTOM_LEFT, fwHUDelementSizeLock::UNLOCKED, 0.1f, 0.1f, m_health_bmp->fwtexture());
+	m_health = new fwHUDelement("statuslt", fwHUDelement::Position::BOTTOM_LEFT, fwHUDelementSizeLock::UNLOCKED, 0.2f, 0.2f, m_health_bmp->fwtexture());
 
 	m_ammo_bmp = new dfBitmap(g_dfFiles, "STATUSRT.BM", static_cast<dfLevel*>(level)->palette());
-	m_ammo = new fwHUDelement("statusrt", fwHUDElementPosition::BOTTOM_RIGHT, fwHUDelementSizeLock::UNLOCKED, 0.1f, 0.1f, m_ammo_bmp->fwtexture());
+	m_ammo = new fwHUDelement("statusrt", fwHUDelement::Position::BOTTOM_RIGHT, fwHUDelementSizeLock::UNLOCKED, 0.2f, 0.2f, m_ammo_bmp->fwtexture());
 
-	m_weapon = new fwHUDelement("rifle", fwHUDElementPosition::BOTTOM_CENTER, fwHUDelementSizeLock::UNLOCKED, 0.2f, 0.2f, nullptr);
+	m_weapon = new fwHUDelement("rifle", fwHUDelement::Position::BOTTOM_CENTER, fwHUDelementSizeLock::UNLOCKED, 0.4f, 0.4f, nullptr);
 }
 
-void DarkForces::HUD::setWeapon(fwTexture* texture)
+void DarkForces::HUD::setWeapon(fwTexture* texture, float x, float y, float w, float h)
 {
 	m_weapon->texture(texture);
+	m_weapon->position(x, y);
+	m_weapon->size(w, h);
 }
 
 void DarkForces::HUD::display(fwScene* scene)

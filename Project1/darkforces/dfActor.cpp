@@ -10,11 +10,11 @@
 
 static const char* g_className = "dfActor";
 
-static std::map<DarkForces::Component::Weapon::Kind, fwTexture*> g_hud;
+static std::map<DarkForces::Weapon::Kind, fwTexture*> g_hud;
 
-static std::map<uint32_t, DarkForces::Component::Weapon::Kind> g_WeaponKeys = {
-	{GLFW_KEY_1, DarkForces::Component::Weapon::Kind::Pistol},
-	{GLFW_KEY_2, DarkForces::Component::Weapon::Kind::Rifle}
+static std::map<uint32_t, DarkForces::Weapon::Kind> g_WeaponKeys = {
+	{GLFW_KEY_1, DarkForces::Weapon::Kind::Pistol},
+	{GLFW_KEY_2, DarkForces::Weapon::Kind::Rifle}
 };
 
 DarkForces::Actor::Actor(int mclass, const std::string& name, fwCylinder& cylinder, const glm::vec3& feet, float eyes, float ankle) :
@@ -25,7 +25,7 @@ DarkForces::Actor::Actor(int mclass, const std::string& name, fwCylinder& cylind
 	addComponent(&m_defaultAI);
 	addComponent(&m_sound);
 	addComponent(&m_weapon);
-	m_weapon.set(DarkForces::Component::Weapon::Kind::Rifle);
+	m_weapon.set(DarkForces::Weapon::Kind::Rifle);
 }
 
 DarkForces::Actor::Actor(flightRecorder::Entity* record) :
@@ -52,23 +52,33 @@ void DarkForces::Actor::onChangeWeapon(int kweapon)
 		return;
 	}
 
-	DarkForces::Component::Weapon::Kind weapon = g_WeaponKeys[kweapon];
+	DarkForces::Weapon::Kind weapon = g_WeaponKeys[kweapon];
 	setWeapon(weapon);
 }
 
 /**
  * Change the current weapon
  */
-void DarkForces::Actor::setWeapon(DarkForces::Component::Weapon::Kind weapon)
+void DarkForces::Actor::setWeapon(DarkForces::Weapon::Kind weapon)
 {
-	const char* hud = m_weapon.set(weapon);
+	const DarkForces::Weapon* hud = m_weapon.set(weapon);
 
 	if (hud && g_hud.count(weapon) == 0) {
-		dfBitmap* bmp = new dfBitmap(g_dfFiles, hud, static_cast<dfLevel*>(m_level)->palette());
+		dfBitmap* bmp = new dfBitmap(g_dfFiles, hud->HUDfile, static_cast<dfLevel*>(m_level)->palette());
 		g_hud[weapon] = bmp->fwtexture();
 	}
 
-	g_dfHUD->setWeapon(g_hud[weapon]);
+	float x = 0.5f;
+	// compute the size of the texture in glspace
+	fwTexture* texture = g_hud[weapon];
+	int w, h, ch;
+	texture->get_info(&w, &h, &ch);
+
+	// darkforces draws in 320x200 but divide by 2
+	float width = 2.0f * w / 640.0f;
+	float height = 2.0f * h / 400.0f;
+
+	g_dfHUD->setWeapon(g_hud[weapon], hud->HUDposition.x, hud->HUDposition.y, width, height);
 }
 
 

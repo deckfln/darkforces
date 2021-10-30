@@ -21,7 +21,7 @@ namespace DarkForces {
 		fwHUDelement* m_weapon = nullptr;
 	public:
 		HUD(GameEngine::Level*);
-		void setWeapon(fwTexture* texture);	// change the weapon texture
+		void setWeapon(fwTexture* texture, float x, float y, float w, float h);	// change the weapon texture and X position (-1::1)
 		void display(fwScene*);
 		~HUD();
 	};
