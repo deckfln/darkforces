@@ -142,6 +142,17 @@ const DarkForces::Weapon* DarkForces::Component::Weapon::set(DarkForces::Weapon:
 	return nullptr;
 }
 
+const DarkForces::Weapon* DarkForces::Component::Weapon::get(DarkForces::Weapon::Kind k)
+{
+	m_kind = k;
+	if (g_WeaponSounds.count(m_kind) > 0) {
+		DarkForces::Weapon& w = g_WeaponSounds.at(m_kind);
+		return &w;
+	}
+
+	return nullptr;
+}
+
 /**
  * fire a bullet
  */

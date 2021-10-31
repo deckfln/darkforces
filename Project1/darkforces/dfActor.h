@@ -24,16 +24,27 @@ namespace DarkForces {
 		dfLevel* m_level = nullptr;
 		bool m_headlight = false;
 
-		void onChangeWeapon(int kweapon);	// Change the current weapon
+		DarkForces::Weapon::Kind m_currentWeapon;		// current weapon
+		bool m_inMove = false;							// currently moving
+		uint32_t m_frameStartMove = 0;					// when did the move start
+		float m_wobblingT=0;							// time of wobbling
+		float m_wobblingDirection = 1;
+		glm::vec2 m_wobbling = glm::vec2(0);			// wobbling the weapon when moving
+
+		void placeWeapon(DarkForces::Weapon::Kind weapon,
+			const glm::vec2& delta);			// place the weapon on screen
+
+		void onChangeWeapon(int kweapon);		// Change the current weapon
+		void onMove(gaMessage* message);		// when the player moves
 
 	public:
 		Actor(
 			int mclass,
-			const std::string& name,		// name of the actor
-			fwCylinder& cylinder,			// collision cylinder
-			const glm::vec3& feet,			// position of the feet in world space
-			float eyes,						// distance from the feet to the eyes (camera view)
-			float ankle						// distance from the feet to the ankles (can step over)
+			const std::string& name,			// name of the actor
+			fwCylinder& cylinder,				// collision cylinder
+			const glm::vec3& feet,				// position of the feet in world space
+			float eyes,							// distance from the feet to the eyes (camera view)
+			float ankle							// distance from the feet to the ankles (can step over)
 		);
 		Actor(flightRecorder::Entity* record);
 

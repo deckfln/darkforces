@@ -35,6 +35,7 @@ namespace DarkForces {
 			Weapon(void);
 			Weapon(DarkForces::Weapon::Kind weapon);
 			const DarkForces::Weapon* set(DarkForces::Weapon::Kind k);			// set the kind of weapon and return filename of HUD
+			const DarkForces::Weapon* get(DarkForces::Weapon::Kind k);			// return data on weapons
 
 			void dispatchMessage(gaMessage* message) override;
 

@@ -44,6 +44,43 @@ void DarkForces::Actor::bind(dfLevel* level)
 }
 
 /**
+ * place the weapon on screen
+ */
+void DarkForces::Actor::placeWeapon(DarkForces::Weapon::Kind weapon,
+	const glm::vec2& delta)
+{
+	fwTexture* texture = g_hud[weapon];
+	const DarkForces::Weapon* hud = m_weapon.get(weapon);
+
+	int w, h, ch;
+	texture->get_info(&w, &h, &ch);
+
+	// darkforces draws in 320x200 but divide by 2
+	float width = 2.0f * w / 640.0f;
+	float height = 2.0f * h / 400.0f;
+
+	g_dfHUD->setWeapon(texture, hud->HUDposition.x + delta.x, hud->HUDposition.y + delta.y, width, height);
+}
+
+/**
+ * Change the current weapon
+ */
+void DarkForces::Actor::setWeapon(DarkForces::Weapon::Kind weapon)
+{
+	m_currentWeapon = weapon;
+
+	const DarkForces::Weapon* hud = m_weapon.set(weapon);
+
+	if (hud && g_hud.count(weapon) == 0) {
+		dfBitmap* bmp = new dfBitmap(g_dfFiles, hud->HUDfile, static_cast<dfLevel*>(m_level)->palette());
+		g_hud[weapon] = bmp->fwtexture();
+	}
+
+	// compute the size of the texture in glspace
+	placeWeapon(weapon, glm::vec2(0, 0));
+}
+
+/**
  * Change the current weapon
  */
 void DarkForces::Actor::onChangeWeapon(int kweapon)
@@ -53,34 +90,39 @@ void DarkForces::Actor::onChangeWeapon(int kweapon)
 	}
 
 	DarkForces::Weapon::Kind weapon = g_WeaponKeys[kweapon];
+	if (m_currentWeapon == weapon) {
+		return;
+	}
+
 	setWeapon(weapon);
 }
 
 /**
- * Change the current weapon
+ * when the player moves
  */
-void DarkForces::Actor::setWeapon(DarkForces::Weapon::Kind weapon)
+void DarkForces::Actor::onMove(gaMessage* message)
 {
-	const DarkForces::Weapon* hud = m_weapon.set(weapon);
-
-	if (hud && g_hud.count(weapon) == 0) {
-		dfBitmap* bmp = new dfBitmap(g_dfFiles, hud->HUDfile, static_cast<dfLevel*>(m_level)->palette());
-		g_hud[weapon] = bmp->fwtexture();
+	// detect when we start moving
+	if (message->m_frame > m_frameStartMove + 2) {
+		m_inMove = true;
+		m_wobblingT = 0.0f;
+		m_wobblingDirection = +0.0872665f;
 	}
+	m_frameStartMove = message->m_frame;
 
-	float x = 0.5f;
-	// compute the size of the texture in glspace
-	fwTexture* texture = g_hud[weapon];
-	int w, h, ch;
-	texture->get_info(&w, &h, &ch);
+	float x = sin(m_wobblingT)/8.0f;
+	float y = cos(m_wobblingT)/8.0f;
 
-	// darkforces draws in 320x200 but divide by 2
-	float width = 2.0f * w / 640.0f;
-	float height = 2.0f * h / 400.0f;
+	m_wobblingT += m_wobblingDirection;
 
-	g_dfHUD->setWeapon(g_hud[weapon], hud->HUDposition.x, hud->HUDposition.y, width, height);
+	if (m_wobblingT > 0.959931f) {
+		m_wobblingDirection = -0.0872665f;
+	}
+	else if (m_wobblingT < -0.959931f) {
+		m_wobblingDirection = +0.0872665f;
+	}
+	placeWeapon(m_currentWeapon, glm::vec2(x, y));
 }
-
 
 /**
  * let an entity deal with a situation
@@ -109,6 +151,11 @@ void DarkForces::Actor::dispatchMessage(gaMessage* message)
 				onChangeWeapon(message->m_value);
 			}
 		}
+		break;
+
+	case gaMessage::Action::MOVE:
+		onMove(message);
+		break;
 	}
 
 	gaActor::dispatchMessage(message);
