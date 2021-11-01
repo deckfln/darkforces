@@ -1,6 +1,10 @@
 #include "fwapp.h"
 
 #include <iostream>
+#include <chrono>
+#include <thread>
+using namespace std::literals::chrono_literals;
+
 #include "../config.h"
 
 #include <include/imnodes.h>
@@ -194,6 +198,14 @@ void fwApp::run(void)
 
 	glEnable(GL_DEPTH_TEST);
 
+	std::chrono::steady_clock::time_point start_time = std::chrono::steady_clock::now();
+	std::chrono::steady_clock::time_point current_time;
+	std::chrono::steady_clock::time_point now_time;
+	std::chrono::steady_clock::duration elapsed_time;
+	std::chrono::steady_clock::duration time_budget_time = 33ms;
+	std::chrono::steady_clock::duration wait_time;
+	std::chrono::steady_clock::time_point next_time;
+
 	time_t current = GetTickCount64();
 	time_t start = GetTickCount64();
 	time_t next = current + 33;
@@ -211,6 +223,7 @@ void fwApp::run(void)
 	while (!glfwWindowShouldClose(window))
 	{
 		current = GetTickCount64();
+		current_time = std::chrono::steady_clock::now();
 
 #ifdef BENCHMARK
 		if (current - start > 300000) {
@@ -273,32 +286,55 @@ void fwApp::run(void)
 			glfwMakeContextCurrent(backup_current_context);
 		}
 #endif
-		glfwSwapBuffers(window);
-
 		// render the game
+		glfwSwapBuffers(window);
 
 		if (caped_fps) {
 			now = GetTickCount64();
-			elapsed = now - current;
+			now_time = std::chrono::steady_clock::now();
 
-			if (elapsed < time_budget) {
+			elapsed = now - current;
+			elapsed_time = now_time - current_time;
+
+			if (elapsed_time < time_budget_time) {
+			// if (elapsed < time_budget) {
 				wait = time_budget - elapsed;
-				Sleep(wait);
+				wait_time = time_budget_time - elapsed_time;
+
+				std::chrono::steady_clock::time_point n;
+				std::chrono::steady_clock::duration w(0);
+
+				//Sleep(wait_time.count() / 1000000);
+				//std::this_thread::sleep_for(wait_time);
+
+				do { 
+					n = std::chrono::steady_clock::now();
+					w = n - now_time;
+				} while (w < wait_time );
+
+
+				//Sleep(wait);
 				last_frame_time = time_budget;
 				time_budget = 33;
+				time_budget_time = 33ms;
 				next = current + time_budget;
+				next_time = current_time + time_budget_time;
 				// s += "short " + std::to_string(elapsed) + " " + std::to_string(wait) + " " + std::to_string(current)  +">>"+ std::to_string(now) +">>"+ std::to_string(next) + "\n";
 			}
 			else {
 				time_budget = 33 * ((elapsed / 33) + 1);
+				time_budget_time = 33 * ((elapsed_time / 33) + 1ms);
 				next = current + time_budget;
+				next_time = current_time + time_budget_time;
 				time_budget = next - now;
+				time_budget_time = next_time - now_time;
 				last_frame_time = elapsed;
 				//s += "long " + std::to_string(elapsed) + " " + std::to_string(time_budget) + " " + std::to_string(current) + ">>" + std::to_string(now) + ">>" + std::to_string(next) + "\n";
 			}
 		}
 		else {
 			now = GetTickCount64();
+			now_time = std::chrono::steady_clock::now();
 			last_frame_time = now - current;
 		}
 	}

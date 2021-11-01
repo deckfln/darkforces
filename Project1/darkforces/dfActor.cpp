@@ -110,8 +110,8 @@ void DarkForces::Actor::onMove(gaMessage* message)
 	}
 	m_frameStartMove = message->m_frame;
 
-	float x = sin(m_wobblingT)/8.0f;
-	float y = cos(m_wobblingT)/8.0f;
+	m_wobbling.x = sin(m_wobblingT)/8.0f;
+	m_wobbling.y = cos(m_wobblingT)/8.0f;
 
 	m_wobblingT += m_wobblingDirection;
 
@@ -121,7 +121,7 @@ void DarkForces::Actor::onMove(gaMessage* message)
 	else if (m_wobblingT < -0.959931f) {
 		m_wobblingDirection = +0.0872665f;
 	}
-	placeWeapon(m_currentWeapon, glm::vec2(x, y));
+	placeWeapon(m_currentWeapon, glm::vec2(m_wobbling.x, m_wobbling.y - m_wobbling.z));
 }
 
 /**
@@ -155,6 +155,25 @@ void DarkForces::Actor::dispatchMessage(gaMessage* message)
 
 	case gaMessage::Action::MOVE:
 		onMove(message);
+		break;
+
+	case gaMessage::Action::LOOK_AT:
+		// show more or less of the weapon based on the player look
+		float y = (*(glm::vec3*)message->m_extra).y;
+		const DarkForces::Weapon* hud = m_weapon.get(m_currentWeapon);
+
+		float y1 = hud->HUDposition.y + m_wobbling.y - y;
+
+		if (y1 > -0.51f) {
+			m_wobbling.z = 0.51f + hud->HUDposition.y + m_wobbling.y;
+		}
+		else if (y1 < -1.1) {
+			m_wobbling.z = 1.1f + hud->HUDposition.y + m_wobbling.y;
+		}
+		else {
+			m_wobbling.z = y;
+		}
+		placeWeapon(m_currentWeapon, glm::vec2(m_wobbling.x, m_wobbling.y - m_wobbling.z));
 		break;
 	}
 

@@ -29,13 +29,14 @@ namespace DarkForces {
 		uint32_t m_frameStartMove = 0;					// when did the move start
 		float m_wobblingT=0;							// time of wobbling
 		float m_wobblingDirection = 1;
-		glm::vec2 m_wobbling = glm::vec2(0);			// wobbling the weapon when moving
+		glm::vec3 m_wobbling = glm::vec3(0);			// wobbling the weapon when moving
 
 		void placeWeapon(DarkForces::Weapon::Kind weapon,
 			const glm::vec2& delta);			// place the weapon on screen
 
 		void onChangeWeapon(int kweapon);		// Change the current weapon
 		void onMove(gaMessage* message);		// when the player moves
+		void onLookAt(gaMessage* message);		// when the player moves
 
 	public:
 		Actor(
