@@ -22,20 +22,19 @@ DarkForces::Enemy::Enemy(dfWAX* model, const glm::vec3& position, float ambient,
 	m_aiPerception.distance(m_radius * 30.0f);
 	m_aiPerception.registerEvents();
 
+	addComponent(&m_actor);
+	addComponent(&m_sound);
+	addComponent(&m_ai);
 	addComponent(&m_weapon);
 
+	m_actor.setClass(model->name());
 	if (model->name() == "OFFCFIN.WAX") {
 		m_weapon.set(DarkForces::Weapon::Kind::Pistol);
 	}
 	else {
 		m_weapon.set(DarkForces::Weapon::Kind::Rifle);
 	}
-
 	m_sound.addSound(Sound::DIE, loadVOC("ST-DIE-1.voc")->sound());
-
-	addComponent(&m_actor);
-	addComponent(&m_sound);
-	addComponent(&m_ai);
 }
 
 void DarkForces::Enemy::setLevel(dfLevel* level)

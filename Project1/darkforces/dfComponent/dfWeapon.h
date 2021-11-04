@@ -37,6 +37,9 @@ namespace DarkForces {
 			const DarkForces::Weapon* set(DarkForces::Weapon::Kind k);			// set the kind of weapon and return filename of HUD
 			const DarkForces::Weapon* get(DarkForces::Weapon::Kind k);			// return data on weapons
 
+			inline void setActorPosition(const glm::vec2& v) {
+				m_ActorPosition = v;
+			};																	// force the position of the weapon the player
 			void dispatchMessage(gaMessage* message) override;
 
 			// debugger
@@ -44,7 +47,9 @@ namespace DarkForces {
 
 		protected:
 			DarkForces::Weapon::Kind m_kind;
-			time_t m_time=0;			// world time of the last fire (when the player keep the fire button down)
+			glm::vec2 m_ActorPosition=glm::vec2(0);				// position of the weapon on the actor
+
+			time_t m_time=0;						// world time of the last fire (when the player keep the fire button down)
 
 			void onFire(const glm::vec3& direction, time_t time);
 		};

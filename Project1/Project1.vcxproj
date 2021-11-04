@@ -129,7 +129,6 @@
     <ClCompile Include="alEngine\alListener.cpp" />
     <ClCompile Include="alEngine\alSound.cpp" />
     <ClCompile Include="alEngine\alSource.cpp" />
-    <ClCompile Include="darkforces\dfActor.cpp" />
     <ClCompile Include="darkforces\dfAtlasTexture.cpp" />
     <ClCompile Include="darkforces\dfBitmap.cpp" />
     <ClCompile Include="darkforces\dfBullet.cpp" />
@@ -179,6 +178,7 @@
     <ClCompile Include="darkforces\dfParseINF.cpp" />
     <ClCompile Include="darkforces\dfLevel.cpp" />
     <ClCompile Include="darkforces\dfParserObjects.cpp" />
+    <ClCompile Include="darkforces\dfPlayer.cpp" />
     <ClCompile Include="darkforces\dfSector.cpp" />
     <ClCompile Include="darkforces\dfSprites.cpp" />
     <ClCompile Include="darkforces\dfSuperSector.cpp" />
@@ -329,7 +329,6 @@
     <ClInclude Include="alEngine\alSound.h" />
     <ClInclude Include="alEngine\alSource.h" />
     <ClInclude Include="config.h" />
-    <ClInclude Include="darkforces\dfActor.h" />
     <ClInclude Include="darkforces\dfAtlasTexture.h" />
     <ClInclude Include="darkforces\dfBitmap.h" />
     <ClInclude Include="darkforces\dfBullet.h" />
@@ -381,6 +380,7 @@
     <ClInclude Include="darkforces\dfParseINF.h" />
     <ClInclude Include="darkforces\dfLevel.h" />
     <ClInclude Include="darkforces\dfParserObjects.h" />
+    <ClInclude Include="darkforces\dfPlayer.h" />
     <ClInclude Include="darkforces\dfSector.h" />
     <ClInclude Include="darkforces\dfSprites.h" />
     <ClInclude Include="darkforces\dfSuperSector.h" />

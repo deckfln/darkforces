@@ -28,7 +28,7 @@
 
 #include "darkforces/dfFileLFD.h"
 #include "darkforces/dfFileSystem.h"
-#include "darkforces/dfActor.h"
+#include "darkforces/dfPlayer.h"
 #include "darkforces/dfLogicTrigger.h"
 #include "darkforces/dfObject/dfSpriteAnimated.h"
 #include "darkforces/dfBullet.h"
@@ -39,7 +39,7 @@ const float c_height = 0.70f;
 const float c_radius = 0.2f;
 const float c_eyes = 0.55f;
 const float c_ankle = 0.26f;
-const float c_direction = pi/2.0f; // 1.0f;
+const float c_direction = pi/2.0f ; // 1.0f;
 
 myDarkForces::myDarkForces(std::string name, int width, int height) :
 	GameEngine::App(name, width, height, "shaders/gamma", "#define GAMMA_CORRECTION 1\n")
@@ -95,7 +95,7 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 	m_hud->display(m_scene);
 
 	// and put the player in position
-	m_player = new DarkForces::Actor(DarkForces::ClassID::Object, "player", bounding, start, c_eyes, c_ankle);
+	m_player = new DarkForces::Player(DarkForces::ClassID::Object, "player", bounding, start, c_eyes, c_ankle);
 	const std::vector<GameEngine::Component::Controller::KeyInfo> keys = {
 		{GLFW_KEY_X, GameEngine::Component::Controller::KeyInfo::Msg::onPressDown},
 		{GLFW_KEY_LEFT_CONTROL, GameEngine::Component::Controller::KeyInfo::Msg::onPress},
@@ -110,8 +110,8 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 	bindControl((fwControl*)controller);
 	m_player->addComponent(controller, gaEntity::Flag::DONT_DELETE);
 	g_gaWorld.addClient(m_player);
-	static_cast<DarkForces::Actor*>(m_player)->bind(static_cast<dfLevel*>(m_level));
-	static_cast<DarkForces::Actor*>(m_player)->setWeapon(DarkForces::Weapon::Kind::Pistol);
+	static_cast<DarkForces::Player*>(m_player)->bind(static_cast<dfLevel*>(m_level));
+	static_cast<DarkForces::Player*>(m_player)->setWeapon(DarkForces::Weapon::Kind::Pistol);
 
 	// init the m_scene
 	glm::vec3* yellow = new glm::vec3(255, 255, 0);
@@ -162,7 +162,7 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
  */
 glTexture* myDarkForces::draw(time_t delta, fwRenderer* renderer)
 {
-	m_renderer->customDefine("HEADLIGHT", static_cast<DarkForces::Actor*>(m_player)->headlight());
+	m_renderer->customDefine("HEADLIGHT", static_cast<DarkForces::Player*>(m_player)->headlight());
 
 	return GameEngine::App::draw(delta, renderer);
 }

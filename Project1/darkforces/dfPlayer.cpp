@@ -1,4 +1,4 @@
-#include "dfActor.h"
+#include "dfPlayer.h"
 
 #include <GLFW/glfw3.h>
 #include <imgui.h>
@@ -8,7 +8,7 @@
 #include "dfLevel.h"
 #include "dfHUD.h"
 
-static const char* g_className = "dfActor";
+static const char* g_className = "dfPlayer";
 
 static std::map<DarkForces::Weapon::Kind, fwTexture*> g_hud;
 
@@ -17,7 +17,7 @@ static std::map<uint32_t, DarkForces::Weapon::Kind> g_WeaponKeys = {
 	{GLFW_KEY_2, DarkForces::Weapon::Kind::Rifle}
 };
 
-DarkForces::Actor::Actor(int mclass, const std::string& name, fwCylinder& cylinder, const glm::vec3& feet, float eyes, float ankle) :
+DarkForces::Player::Player(int mclass, const std::string& name, fwCylinder& cylinder, const glm::vec3& feet, float eyes, float ankle) :
 	gaActor(mclass, name, cylinder, feet, eyes, ankle)
 {
 	m_className = g_className;
@@ -25,10 +25,12 @@ DarkForces::Actor::Actor(int mclass, const std::string& name, fwCylinder& cylind
 	addComponent(&m_defaultAI);
 	addComponent(&m_sound);
 	addComponent(&m_weapon);
+
+	m_defaultAI.setClass("player");
 	m_weapon.set(DarkForces::Weapon::Kind::Rifle);
 }
 
-DarkForces::Actor::Actor(flightRecorder::Entity* record) :
+DarkForces::Player::Player(flightRecorder::Entity* record) :
 	gaActor(record)
 {
 	m_className = g_className;
@@ -37,7 +39,7 @@ DarkForces::Actor::Actor(flightRecorder::Entity* record) :
 /**
  * bind the level
  */
-void DarkForces::Actor::bind(dfLevel* level)
+void DarkForces::Player::bind(dfLevel* level)
 {
 	m_level = level;
 	m_defaultAI.bind(level);
@@ -46,7 +48,7 @@ void DarkForces::Actor::bind(dfLevel* level)
 /**
  * place the weapon on screen
  */
-void DarkForces::Actor::placeWeapon(DarkForces::Weapon::Kind weapon,
+void DarkForces::Player::placeWeapon(DarkForces::Weapon::Kind weapon,
 	const glm::vec2& delta)
 {
 	fwTexture* texture = g_hud[weapon];
@@ -65,7 +67,7 @@ void DarkForces::Actor::placeWeapon(DarkForces::Weapon::Kind weapon,
 /**
  * Change the current weapon
  */
-void DarkForces::Actor::setWeapon(DarkForces::Weapon::Kind weapon)
+void DarkForces::Player::setWeapon(DarkForces::Weapon::Kind weapon)
 {
 	m_currentWeapon = weapon;
 
@@ -83,7 +85,7 @@ void DarkForces::Actor::setWeapon(DarkForces::Weapon::Kind weapon)
 /**
  * Change the current weapon
  */
-void DarkForces::Actor::onChangeWeapon(int kweapon)
+void DarkForces::Player::onChangeWeapon(int kweapon)
 {
 	if (g_WeaponKeys.count(kweapon) == 0) {
 		return;
@@ -100,7 +102,7 @@ void DarkForces::Actor::onChangeWeapon(int kweapon)
 /**
  * when the player moves
  */
-void DarkForces::Actor::onMove(gaMessage* message)
+void DarkForces::Player::onMove(gaMessage* message)
 {
 	// detect when we start moving
 	if (message->m_frame > m_frameStartMove + 2) {
@@ -127,7 +129,7 @@ void DarkForces::Actor::onMove(gaMessage* message)
 /**
  * let an entity deal with a situation
  */
-void DarkForces::Actor::dispatchMessage(gaMessage* message)
+void DarkForces::Player::dispatchMessage(gaMessage* message)
 {
 	switch (message->m_action)
 	{
@@ -183,7 +185,7 @@ void DarkForces::Actor::dispatchMessage(gaMessage* message)
 /**
  * return a record of the entity state (for debug)
  */
-uint32_t DarkForces::Actor::recordState(void* record)
+uint32_t DarkForces::Player::recordState(void* record)
 {
 	flightRecorder::DarkForces::Actor* r = static_cast<flightRecorder::DarkForces::Actor*>(record);
 	gaActor::recordState(&r->actor);
@@ -203,7 +205,7 @@ uint32_t DarkForces::Actor::recordState(void* record)
 /**
  * reload an actor state from a record
  */
-void DarkForces::Actor::loadState(void* record)
+void DarkForces::Player::loadState(void* record)
 {
 	flightRecorder::DarkForces::Actor* r = (flightRecorder::DarkForces::Actor*)record;
 	gaActor::loadState(&r->actor);
@@ -218,7 +220,7 @@ void DarkForces::Actor::loadState(void* record)
 /**
  * Add dedicated component debug the entity
  */
-void DarkForces::Actor::debugGUIChildClass(void)
+void DarkForces::Player::debugGUIChildClass(void)
 {
 	gaActor::debugGUIChildClass();
 

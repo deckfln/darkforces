@@ -10,9 +10,17 @@
 #include "../../config.h"
 
 namespace DarkForces {
+
+	struct ActorClass {
+		uint32_t life;
+		uint32_t shield;
+		glm::vec2 weapon;
+	};
+
 	namespace Component {
 		class Actor : public GameEngine::Component::Actor
 		{
+			std::string m_class;	// class of the actor: player, officer, commando ...
 			int32_t m_shield = 100;
 			int32_t m_maxShield = 300;
 
@@ -27,17 +35,26 @@ namespace DarkForces {
 			dfSector* m_currentSector = nullptr;	// in what sector is the sector located
 			dfLevel* m_level = nullptr;				// fast access to the loaded level
 
+			void setDataFromClass(void);			// extract data from the class
+
 		public:
+			Actor(const std::string& xclass);
 			Actor(void);
 			void addShield(int32_t value);
 			void addEnergy(int32_t value);
 			void hitBullet(int32_t value);							// hit by a bullet, reduce shield and life
-			DarkForces::Keys keys(void) { return m_keys; };
-			void fire(const glm::vec3& direction);				// handle the fire option
-			void die(void);										// kill the actor
+			void die(void);											// kill the actor
+
 			inline dfSector* currentSector(void) { return m_currentSector; };
 			inline void currentSector(dfSector* sector) { m_currentSector = sector; };
 			inline void bind(dfLevel* level) { m_level = level; };
+			inline DarkForces::Keys keys(void) { return m_keys; };
+			inline void setClass(const std::string& xclass) { 
+				m_class = xclass;
+				setDataFromClass();
+			};
+			const struct ActorClass* getActorClass(void);			// return data on the class the actor is from (commando, officer ...)
+
 			void dispatchMessage(gaMessage* message) override;	// let an entity deal with a situation
 
 			// flight recorder status

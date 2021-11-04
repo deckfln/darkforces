@@ -6,6 +6,7 @@
 
 #include "../../gaEngine/World.h"
 
+#include "dfWeapon.h"
 #include "../weapons.h"
 #include "../dfObject/dfSpriteAnimated.h"
 #include "../dfObject.h"
@@ -14,9 +15,44 @@
 
 #include "../flightRecorder/frCompActor.h"
 
-DarkForces::Component::Actor::Actor(void):
+static std::map<std::string, struct DarkForces::ActorClass> m_actors = {
+	{ "player", { 1000, 100, glm::vec2(-0.5, 0.5)}},
+	{ "COMMANDO.WAX", { 100, 100, glm::vec2(0.2, 0.80)}},
+	{ "INTDROID.WAX", { 100, 100, glm::vec2(0.5, 0.75)}},
+	{ "OFFCFIN.WAX", { 100, 100, glm::vec2(0.5, 0.85)}},
+	{ "STORMFIN.WAX", { 100, 100, glm::vec2(0.5, 0.75)}},
+};
+
+DarkForces::Component::Actor::Actor(void) :
 	GameEngine::Component::Actor()
 {
+}
+
+/**
+ * extract data from the class
+ */
+void DarkForces::Component::Actor::setDataFromClass(void)
+{
+	if (m_actors.count(m_class) > 0) {
+		m_life = m_actors[m_class].life;
+		m_shield = m_actors[m_class].shield;
+
+		// move the starting position of the bullet around the weapon position (based on the class of the actor)
+		DarkForces::Component::Weapon* weapon = dynamic_cast<DarkForces::Component::Weapon*>(m_entity->findComponent(DF_COMPONENT_WEAPON));
+		if (weapon) {
+			weapon->setActorPosition(m_actors[m_class].weapon);
+		}
+	}
+	else {
+		gaDebugLog(0, "DarkForces::Component::Actor::setDataFromClass", m_class + " unknown");
+	}
+}
+
+DarkForces::Component::Actor::Actor(const std::string& xclass):
+	GameEngine::Component::Actor(),
+	m_class(xclass)
+{
+	setDataFromClass();
 }
 
 /**
@@ -60,6 +96,20 @@ void DarkForces::Component::Actor::hitBullet(int32_t value)
 		if (m_life < 0) {
 			die();
 		}
+	}
+}
+
+/**
+ * return data on the class of the actor
+ */
+const DarkForces::ActorClass* DarkForces::Component::Actor::getActorClass(void)
+{
+	if (m_actors.count(m_class) > 0) {
+		return &m_actors[m_class];
+	}
+	else {
+		gaDebugLog(0, "DarkForces::Component::Actor::setDataFromClass", m_class + " unknown");
+		return nullptr;
 	}
 }
 
@@ -122,7 +172,7 @@ void DarkForces::Component::Actor::die(void)
 	// cancel any move the actor was doing, for the next frame (gives a bit of latency)
 	m_entity->sendDelayedMessage(gaMessage::Action::SatNav_CANCEL);
 
-	gaDebugLog(1, "dfActor::die", "remove " + m_entity->name() + " the entity from the world");
+	gaDebugLog(1, "ActorClass::die", "remove " + m_entity->name() + " the entity from the world");
 }
 
 /**

@@ -169,7 +169,6 @@ void DarkForces::Component::Weapon::onFire(const glm::vec3& direction, time_t ti
 	// create a bullet based on the kind of weapon
 	// and add to the world to live its life
 	glm::vec3 p = m_entity->position();
-	p.y += m_entity->height() / 2.0f;
 
 	// apply a recoil effect
 	glm::vec3 _up = glm::vec3(0.0f, 1.0f, 0.0f);
@@ -184,11 +183,14 @@ void DarkForces::Component::Weapon::onFire(const glm::vec3& direction, time_t ti
 		up = _up;
 	}
 
+	p.y += m_entity->height() * m_ActorPosition.y;
+	p += right * m_entity->radius() * m_ActorPosition.x;
+
 	float x = ((float)rand()) / (float)RAND_MAX - 0.5f;
 	float y = ((float)rand()) / (float)RAND_MAX - 0.5f;
 	glm::vec3 d = direction + up * x * w.m_recoil + right * y * w.m_recoil;
 
-	dfBullet* bullet = new dfBullet(w.m_damage, p + d* m_entity->radius() * 2.0f, d);
+	dfBullet* bullet = new dfBullet(w.m_damage, p + direction * m_entity->radius() * 2.0f, d);
 
 	g_gaWorld.addClient(bullet);
 

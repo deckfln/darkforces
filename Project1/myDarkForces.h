@@ -14,7 +14,7 @@ class dfFileSystem;
 class dfLevel;
 class gaEntity;
 
-#include "darkforces/dfActor.h"
+#include "darkforces/dfPlayer.h"
 
 namespace DarkForces {
 	class HUD;

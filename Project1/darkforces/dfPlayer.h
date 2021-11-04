@@ -16,7 +16,7 @@ namespace DarkForces {
 	/**
 	 * Actor for dark forces with the dfSector the actor is
 	 */
-	class Actor : public gaActor {
+	class Player : public gaActor {
 		DarkForces::Component::Actor m_defaultAI;
 		GameEngine::Component::Sound m_sound;
 		DarkForces::Component::Weapon m_weapon;
@@ -39,7 +39,7 @@ namespace DarkForces {
 		void onLookAt(gaMessage* message);		// when the player moves
 
 	public:
-		Actor(
+		Player(
 			int mclass,
 			const std::string& name,			// name of the actor
 			fwCylinder& cylinder,				// collision cylinder
@@ -47,7 +47,7 @@ namespace DarkForces {
 			float eyes,							// distance from the feet to the eyes (camera view)
 			float ankle							// distance from the feet to the ankles (can step over)
 		);
-		Actor(flightRecorder::Entity* record);
+		Player(flightRecorder::Entity* record);
 
 		// getter/setter
 		inline bool headlight(void) { return m_headlight; };
