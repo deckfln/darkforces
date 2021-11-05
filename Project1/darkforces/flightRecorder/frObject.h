@@ -8,7 +8,7 @@
 
 namespace flightRecorder {
 	namespace DarkForces {
-		struct dfObject {
+		struct Object {
 			struct flightRecorder::Entity entity;
 			int is;
 			uint32_t logics;

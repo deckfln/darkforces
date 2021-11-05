@@ -121,7 +121,7 @@ static uint32_t objectType(const GameEngine::ParserExpression& body)
 /**
  * Parse all component of an object
  */
-void dfParserObjects::parseObjectComponent(dfFileSystem* fs, dfObject* object, GameEngine::ParserExpression& component)
+void dfParserObjects::parseObjectComponent(dfFileSystem* fs, DarkForces::Object* object, GameEngine::ParserExpression& component)
 {
 	switch (component.m_expression) {
 	case E_TYPE:
@@ -324,7 +324,7 @@ void dfParserObjects::parseObject(dfFileSystem* fs, GameEngine::ParserExpression
 		}
 
 		// create the object
-		dfObject* obj=nullptr;
+		DarkForces::Object* obj=nullptr;
 		uint32_t type = objectType(body);
 
 		switch (mclass.m_expression) {

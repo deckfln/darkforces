@@ -44,7 +44,7 @@ static const char* g_className = "dfBullet";
  *
  */
 dfBullet::dfBullet(uint32_t damage , const glm::vec3& position, const glm::vec3& direction):
-	gaEntity(DarkForces::ClassID::Bullet, "bullet("+std::to_string(g_bulletID++)+")", position),
+	gaEntity(DarkForces::ClassID::_Bullet, "bullet("+std::to_string(g_bulletID++)+")", position),
 	m_direction(glm::normalize(direction)),
 	m_damage(damage)
 {

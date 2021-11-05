@@ -11,9 +11,7 @@
 
 #include "../dfObject.h"
 
-using namespace DarkForces;
-
-AIMouseBot::AIMouseBot():
+DarkForces::AIMouseBot::AIMouseBot():
 	gaComponent(DF_COMPONENT_AI)
 {
 	// find the sector the mousebot is running into
@@ -24,7 +22,7 @@ AIMouseBot::AIMouseBot():
 /**
  *
  */
-void AIMouseBot::tryToMove(void)
+void DarkForces::AIMouseBot::tryToMove(void)
 {
 	m_direction = glm::rotateY(m_direction, m_alpha);
 
@@ -58,7 +56,7 @@ void AIMouseBot::tryToMove(void)
 /**
  *
  */
-void AIMouseBot::dispatchMessage(gaMessage* message)
+void DarkForces::AIMouseBot::dispatchMessage(gaMessage* message)
 {
 	switch (message->m_action) {
 	case gaMessage::Action::WORLD_INSERT:
@@ -76,8 +74,8 @@ void AIMouseBot::dispatchMessage(gaMessage* message)
 		break;
 
 	case DarkForces::Message::DEAD:
-		static_cast<dfObject*>(m_entity)->drop(dfLogic::DEAD_MOUSE);
-		static_cast<dfObject*>(m_entity)->drop(dfLogic::ITEM_BATTERY);
+		static_cast<DarkForces::Object *>(m_entity)->drop(dfLogic::DEAD_MOUSE);
+		static_cast<DarkForces::Object *>(m_entity)->drop(dfLogic::ITEM_BATTERY);
 		
 		// 3D objects being registered in dfParserObject cannot be deleted, so move away
 		m_entity->moveTo(glm::vec3(0));
@@ -121,6 +119,6 @@ void AIMouseBot::dispatchMessage(gaMessage* message)
 	}
 }
 
-AIMouseBot::~AIMouseBot()
+DarkForces::AIMouseBot::~AIMouseBot()
 {
 }

@@ -15,7 +15,7 @@
 static const char* g_className = "dfObject3D";
 
 dfObject3D::dfObject3D(df3DO* threedo, const glm::vec3& position, float ambient, uint32_t objectID):
-	dfObject(threedo, position, ambient, OBJECT_3DO, objectID)
+	Object(threedo, position, ambient, OBJECT_3DO, objectID)
 {
 	m_className = g_className;
 	physical(false);	// in dark forces, 3D objects can be traversed
@@ -27,11 +27,11 @@ dfObject3D::dfObject3D(df3DO* threedo, const glm::vec3& position, float ambient,
 	m_componentMesh.set_scale(0.10f);
 	addComponent(&m_componentMesh);
 
-	dfObject::moveTo(m_position_lvl);
+	Object::moveTo(m_position_lvl);
 }
 
 dfObject3D::dfObject3D(flightRecorder::DarkForces::Object3D* record) :
-	dfObject(&record->object)
+	Object(&record->object)
 {
 	m_className = g_className;
 }
@@ -52,7 +52,7 @@ void dfObject3D::animRotationAxe(int axe)
 		m_animRotationAxe = glm::vec3(0, 0, 1);
 		break;
 	default:
-		std::cerr << "dfObject::animRotationAxe unknown rotation flag " << axe << std::endl;
+		std::cerr << "Object::animRotationAxe unknown rotation flag " << axe << std::endl;
 	}
 }
 
@@ -131,7 +131,7 @@ void dfObject3D::dispatchMessage(gaMessage* message)
 		timer(true);
 		break;
 	}
-	dfObject::dispatchMessage(message);
+	Object::dispatchMessage(message);
 }
 
 /**
@@ -146,7 +146,7 @@ void* frCreate_df_Object3D(void* record) {
  */
 uint32_t dfObject3D::recordState(void* r)
 {
-	dfObject::recordState(r);
+	Object::recordState(r);
 	flightRecorder::DarkForces::Object3D* record = (flightRecorder::DarkForces::Object3D*)r;
 
 	record->object.entity.classID = flightRecorder::TYPE::DF_ENTITY_OBJECT;
@@ -168,7 +168,7 @@ uint32_t dfObject3D::recordState(void* r)
 void dfObject3D::loadState(void* r)
 {
 	flightRecorder::DarkForces::Object3D* record = (flightRecorder::DarkForces::Object3D*)r;
-	dfObject::loadState(&record->object);
+	Object::loadState(&record->object);
 	m_lastFrame= record->lastFrame;
 
 	if (record->vue) {
@@ -182,7 +182,7 @@ void dfObject3D::loadState(void* r)
  */
 void dfObject3D::debugGUIChildClass(void)
 {
-	dfObject::debugGUIChildClass();
+	Object::debugGUIChildClass();
 
 	if (ImGui::TreeNode("dfObject3D")) {
 		ImGui::Text("frame: %d", m_lastFrame);

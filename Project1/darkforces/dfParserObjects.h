@@ -5,13 +5,14 @@
 #include <vector>
 #include <list>
 
+#include "dfObject.h"
+
 #include "../gaEngine/Parser.h"
 
 class dfFileSystem;
 class dfSpriteAnimated;
 class dfWAX;
 class dfFME;
-class dfObject;
 class dfPalette;
 class dfAtlasTexture;
 class dfSprites;
@@ -24,7 +25,9 @@ class gaCollisionPoint;
 
 class dfParserObjects
 {
-	std::vector<dfObject *> m_objects;
+	DarkForces::Object* p;
+
+	std::vector<DarkForces::Object *> m_objects;
 	int m_currentObject = 0;
 	bool m_added = false;
 	dfLevel* m_level = nullptr;
@@ -35,7 +38,7 @@ class dfParserObjects
 
 	dfAtlasTexture* m_textures;
 	void parseObject(dfFileSystem* fs, GameEngine::ParserExpression& object, dfLevel* level, uint32_t objectID);
-	void parseObjectComponent(dfFileSystem* fs, dfObject* object, GameEngine::ParserExpression& component);
+	void parseObjectComponent(dfFileSystem* fs, DarkForces::Object* object, GameEngine::ParserExpression& component);
 
 public:
 	dfParserObjects(dfFileSystem* fs, dfPalette* palette, std::string file, dfLevel* level);

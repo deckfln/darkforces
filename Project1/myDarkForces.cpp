@@ -95,7 +95,7 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 	m_hud->display(m_scene);
 
 	// and put the player in position
-	m_player = new DarkForces::Player(DarkForces::ClassID::Object, "player", bounding, start, c_eyes, c_ankle);
+	m_player = new DarkForces::Player(DarkForces::ClassID::_Object, "player", bounding, start, c_eyes, c_ankle);
 	const std::vector<GameEngine::Component::Controller::KeyInfo> keys = {
 		{GLFW_KEY_X, GameEngine::Component::Controller::KeyInfo::Msg::onPressDown},
 		{GLFW_KEY_LEFT_CONTROL, GameEngine::Component::Controller::KeyInfo::Msg::onPress},

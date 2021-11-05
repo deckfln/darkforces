@@ -95,16 +95,16 @@ void dfComponentLogic::dispatchMessage(gaMessage* message)
 		//drop the bag of the object when an enemy dies
 		if (m_logics & DF_LOGIC_ENEMIES) {
 			if (m_logics & (dfLogic::COMMANDO | dfLogic::TROOP)) {
-				((dfObject*)m_entity)->drop(dfLogic::ITEM_RIFLE);
+				((DarkForces::Object*)m_entity)->drop(dfLogic::ITEM_RIFLE);
 			}
 			else if (m_logics & dfLogic::OFFICER) {
 				if (m_logics & dfLogic::RED_KEY) {
-					((dfObject*)m_entity)->drop(dfLogic::RED_KEY);
+					((DarkForces::Object*)m_entity)->drop(dfLogic::RED_KEY);
 				}
-				((dfObject*)m_entity)->drop(dfLogic::ITEM_ENERGY);
+				((DarkForces::Object*)m_entity)->drop(dfLogic::ITEM_ENERGY);
 			}
 			else if (m_logics & dfLogic::INTDROID) {
-				((dfObject*)m_entity)->drop(dfLogic::ITEM_POWER);
+				((DarkForces::Object*)m_entity)->drop(dfLogic::ITEM_POWER);
 			}
 		}
 		break;

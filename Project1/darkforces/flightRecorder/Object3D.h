@@ -9,7 +9,7 @@
 namespace flightRecorder {
 	namespace DarkForces {
 		struct Object3D {
-			struct flightRecorder::DarkForces::dfObject object;
+			struct flightRecorder::DarkForces::Object object;
 			glm::vec3 position_level;
 			time_t lastFrame;			// timestamps of the last frame
 			bool vue;

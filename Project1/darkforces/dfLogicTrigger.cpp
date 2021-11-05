@@ -52,7 +52,7 @@ void dfLogicTrigger::init(const std::string& kind)
  *Create a trigger without bounding box
  */
 dfLogicTrigger::dfLogicTrigger(const std::string & kind, const std::string & sector) :
-	gaEntity(DarkForces::ClassID::Trigger, sector),
+	gaEntity(DarkForces::ClassID::_Trigger, sector),
 	m_sector(sector)
 {
 	init(kind);
@@ -66,7 +66,7 @@ dfLogicTrigger::dfLogicTrigger(const std::string & kind, const std::string & sec
  * Create a trigger without bounding box
  */
 dfLogicTrigger::dfLogicTrigger(const std::string& kind, const std::string& sector, int wallIndex) :
-	gaEntity(DarkForces::ClassID::Trigger, sector + "(" + std::to_string(wallIndex) + ")"),
+	gaEntity(DarkForces::ClassID::_Trigger, sector + "(" + std::to_string(wallIndex) + ")"),
 	m_sector(sector),
 	m_wallIndex(wallIndex)
 {

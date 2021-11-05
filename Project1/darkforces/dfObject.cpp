@@ -19,13 +19,13 @@
 #include "dfObject/dfSprite.h"
 
 static int g_ids = 0;
-static const char* g_className = "dfObject";
+static const char* g_className = "Object";
 
 /**
  *
  */
-dfObject::dfObject(dfModel *source, const glm::vec3& position, float ambient, int type, uint32_t objectID):
-	gaEntity(DarkForces::ClassID::Object, source->name() + "(" + std::to_string(objectID) + ")"),
+DarkForces::Object::Object(dfModel *source, const glm::vec3& position, float ambient, int type, uint32_t objectID):
+	gaEntity(DarkForces::ClassID::_Object, source->name() + "(" + std::to_string(objectID) + ")"),
 	m_source(source),
 	m_position_lvl(position),
 	m_ambient(ambient),
@@ -41,7 +41,7 @@ dfObject::dfObject(dfModel *source, const glm::vec3& position, float ambient, in
 /**
  * create a full object from a saved state
  */
-dfObject::dfObject(flightRecorder::DarkForces::dfObject* record) :
+DarkForces::Object::Object(flightRecorder::DarkForces::Object* record) :
 	gaEntity(&record->entity)
 {
 	m_className = g_className;
@@ -51,7 +51,7 @@ dfObject::dfObject(flightRecorder::DarkForces::dfObject* record) :
 /**
  * Check the name of th associated WAX
  */
-bool dfObject::named(std::string name)
+bool DarkForces::Object::named(std::string name)
 {
 	return m_source->named(name);
 }
@@ -59,7 +59,7 @@ bool dfObject::named(std::string name)
 /**
  * Stack up logics
  */
-void dfObject::logic(uint32_t logic)
+void DarkForces::Object::logic(uint32_t logic)
 {
 	m_logics |= logic;
 
@@ -78,7 +78,7 @@ void dfObject::logic(uint32_t logic)
 /**
  * Do we check collision ?
  */
-bool dfObject::collision(void)
+bool DarkForces::Object::collision(void)
 {
 	return m_source->collision();
 }
@@ -86,7 +86,7 @@ bool dfObject::collision(void)
 /**
  * test the nature of the object
  */
-bool dfObject::is(int type)
+bool DarkForces::Object::is(int type)
 {
 	return m_is == type;
 }
@@ -94,12 +94,12 @@ bool dfObject::is(int type)
 /**
  * test the logic
  */
-bool dfObject::isLogic(uint32_t logic)
+bool DarkForces::Object::isLogic(uint32_t logic)
 {
 	return (m_logics & logic) != 0;
 }
 
-int dfObject::difficulty(void)
+int DarkForces::Object::difficulty(void)
 {
 	return m_difficulty + 3;
 }
@@ -107,7 +107,7 @@ int dfObject::difficulty(void)
 /**
  * get the name of the model the object is based on
  */
-const std::string& dfObject::model(void)
+const std::string& DarkForces::Object::model(void)
 {
 	return m_source->name();
 }
@@ -115,7 +115,7 @@ const std::string& dfObject::model(void)
 /**
  * Update the object position (given in level space) and update the worldboundingBox(in gl space)
  */
-void dfObject::moveTo(const glm::vec3& pposition)
+void DarkForces::Object::moveTo(const glm::vec3& pposition)
 {
 	m_position_lvl = pposition;
 
@@ -128,7 +128,7 @@ void dfObject::moveTo(const glm::vec3& pposition)
 /**
  * Animate the object frame
  */
-bool dfObject::update(time_t t)
+bool DarkForces::Object::update(time_t t)
 {
 	return false;
 }
@@ -136,7 +136,7 @@ bool dfObject::update(time_t t)
 /**
  * object to drop in the scene at the current position
  */
-void dfObject::drop(uint32_t logic)
+void DarkForces::Object::drop(uint32_t logic)
 {
 	dfSprite* obj=nullptr;
 
@@ -187,7 +187,7 @@ void dfObject::drop(uint32_t logic)
 /**
  * update the world AABB based on position
  */
-void dfObject::updateWorldAABB(void)
+void DarkForces::Object::updateWorldAABB(void)
 {
 	// extract the radius from the AABB
 	m_radius = std::max(abs(m_worldBounding.m_p1.x - m_worldBounding.m_p.x), abs(m_worldBounding.m_p1.z - m_worldBounding.m_p.z)) / 2.0f;
@@ -198,7 +198,7 @@ void dfObject::updateWorldAABB(void)
 /**
  * populate the super sector if it is not there
  */
-dfSuperSector* dfObject::superSector(void)
+dfSuperSector* DarkForces::Object::superSector(void)
 {
 	if (m_supersector == nullptr) {
 		m_supersector = m_sector->supersector();
@@ -211,7 +211,7 @@ dfSuperSector* dfObject::superSector(void)
  * extended collision test after a successful AABB collision
  * consider the object is a cylinder
  */
-bool dfObject::checkCollision(fwCylinder& bounding, glm::vec3& direction, glm::vec3& intersection, std::list<gaCollisionPoint>& collisions)
+bool DarkForces::Object::checkCollision(fwCylinder& bounding, glm::vec3& direction, glm::vec3& intersection, std::list<gaCollisionPoint>& collisions)
 {
 	// for object with radius 0, ignore any collision
 	if (m_radius == 0) {
@@ -255,7 +255,7 @@ bool dfObject::checkCollision(fwCylinder& bounding, glm::vec3& direction, glm::v
 
 #ifdef _DEBUG
 			std::string message = " BOTTOM z=" + std::to_string(intersection.y);
-			gaDebugLog(FULL_DEBUG, "dfObject::checkCollision", message);
+			gaDebugLog(FULL_DEBUG, "Object::checkCollision", message);
 #endif
 		}
 		if (aabb.m_p1.y > m_worldBounding.m_p.y && aabb.m_p1.y < m_worldBounding.m_p1.y) {
@@ -263,7 +263,7 @@ bool dfObject::checkCollision(fwCylinder& bounding, glm::vec3& direction, glm::v
 			collisions.push_back(gaCollisionPoint(fwCollisionLocation::TOP, intersection, nullptr));
 #ifdef _DEBUG
 			std::string message = " TOP z=" + std::to_string(intersection.y);
-			gaDebugLog(LOW_DEBUG, "dfObject::checkCollision", message);
+			gaDebugLog(LOW_DEBUG, "Object::checkCollision", message);
 #endif
 		}
 	}
@@ -318,7 +318,7 @@ bool dfObject::checkCollision(fwCylinder& bounding, glm::vec3& direction, glm::v
 
 #ifdef _DEBUG
 		std::string message = " " + p + " z=" + std::to_string(intersection.y);
-		gaDebugLog(LOW_DEBUG, "dfObject::checkCollision", message);
+		gaDebugLog(LOW_DEBUG, "Object::checkCollision", message);
 #endif
 	}
 	return true;
@@ -327,13 +327,13 @@ bool dfObject::checkCollision(fwCylinder& bounding, glm::vec3& direction, glm::v
 /**
  * return a record of the entity state (for debug)
  */
-uint32_t dfObject::recordState(void* r)
+uint32_t DarkForces::Object::recordState(void* r)
 {
 	gaEntity::recordState(r);
-	flightRecorder::DarkForces::dfObject* record = (flightRecorder::DarkForces::dfObject*)r;
+	flightRecorder::DarkForces::Object* record = (flightRecorder::DarkForces::Object*)r;
 
 	record->entity.classID = flightRecorder::TYPE::DF_ENTITY_OBJECT;
-	record->entity.size = sizeof(flightRecorder::DarkForces::dfObject);
+	record->entity.size = sizeof(flightRecorder::DarkForces::Object);
 
 	record->is = m_is;
 	record->logics = m_logics;
@@ -358,9 +358,9 @@ uint32_t dfObject::recordState(void* r)
 /**
  * reload an entity state from a record
  */
-void dfObject::loadState(void* r)
+void DarkForces::Object::loadState(void* r)
 {
-	flightRecorder::DarkForces::dfObject* record = (flightRecorder::DarkForces::dfObject*)r;
+	flightRecorder::DarkForces::Object* record = (flightRecorder::DarkForces::Object*)r;
 	gaEntity::loadState(&record->entity);
 
 	m_is = record->is;
@@ -399,7 +399,7 @@ static std::map<uint32_t, const char*> debugLogic = {
 /**
  * Add dedicated component debug the entity
  */
-void dfObject::debugGUIChildClass(void)
+void DarkForces::Object::debugGUIChildClass(void)
 {
 	gaEntity::debugGUIChildClass();
 	static char tmp[64];
@@ -421,6 +421,6 @@ void dfObject::debugGUIChildClass(void)
 	}
 }
 
-dfObject::~dfObject()
+DarkForces::Object::~Object()
 {
 }

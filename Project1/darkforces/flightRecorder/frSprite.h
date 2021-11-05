@@ -6,7 +6,7 @@
 namespace flightRecorder {
 	namespace DarkForces {
 		struct Sprite {
-			struct flightRecorder::DarkForces::dfObject object;
+			struct flightRecorder::DarkForces::Object object;
 		};
 	}
 }

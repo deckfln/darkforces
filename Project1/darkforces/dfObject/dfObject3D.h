@@ -15,7 +15,7 @@ class df3DO;
 class dfVue;
 class dfFileSystem;
 
-class dfObject3D : public dfObject
+class dfObject3D : public DarkForces::Object
 {
 	dfComponentLogic m_componentLogic;
 	GameEngine::ComponentMesh m_componentMesh;

@@ -5,11 +5,11 @@
 
 namespace DarkForces {
 	enum ClassID {
-		Root = GameEngine::ClassID::Entity | (1<<2),
-		Sector = Root | (1<<5),
-		Bullet = Root | (1<<6),
-		Elevator = Root | (1<<7),
-		Trigger = Root | (1<<8),
-		Object = Root | (1<<9)
+		_Root = GameEngine::ClassID::Entity | (1<<2),
+		_Sector = _Root | (1<<5),
+		_Bullet = _Root | (1<<6),
+		_Elevator = _Root | (1<<7),
+		_Trigger = _Root | (1<<8),
+		_Object = _Root | (1<<9)
 	};
 }

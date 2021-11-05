@@ -9,7 +9,7 @@ class dfFME;
 class fwAABBox;
 class fwMesh;
 
-class dfSprite : public dfObject
+class dfSprite : public DarkForces::Object
 {
 	dfComponentLogic m_componentLogic;		// dealing with the logic of the object
 	uint32_t m_slot;						// position of the sprite in the Sprites Managers list

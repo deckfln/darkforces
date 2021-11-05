@@ -30,7 +30,7 @@ static dfVOC* cache[3] = { nullptr, nullptr, nullptr };
  *
  */
 DarkForces::Entity::ElevatorDoor::ElevatorDoor(dfSector* sector):
-	gaEntity(DarkForces::ClassID::Elevator, sector->name())
+	gaEntity(DarkForces::ClassID::_Elevator, sector->name())
 {
 	m_physical = true;
 	m_gravity = false;

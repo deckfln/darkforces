@@ -31,7 +31,7 @@ static glm::mat4 worldM(1);
 static glm::mat4 invworldM = glm::inverse(worldM);
 
 dfSector::dfSector(std::istringstream& infile, std::vector<dfSector*>& sectorsID, dfLevel *level):
-	gaEntity(DarkForces::ClassID::Sector),
+	gaEntity(DarkForces::ClassID::_Sector),
 	m_sectorsID(sectorsID),
 	m_level(level)
 {
