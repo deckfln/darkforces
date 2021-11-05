@@ -85,6 +85,7 @@ dfBullet::dfBullet(uint32_t damage , const glm::vec3& position, const glm::vec3&
 	m_transforms.m_position = position;
 
 	m_gravity = false;	// laser are not affected by gravity
+	rotate(m_transforms.m_quaternion);
 
 	// add the mesh component to the entity
 	m_componentMesh.set(g_blaster, &g_basic);
