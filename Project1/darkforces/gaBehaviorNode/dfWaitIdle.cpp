@@ -3,7 +3,7 @@
 #include "../dfConfig.h"
 #include "../dfObject.h"
 
-#include "../dfComponent/dfMoveEnemy.h"
+#include "../dfComponent/dfEnemyAI.h"
 
 DarkForces::Behavior::WaitIdle::WaitIdle(const char* name):
 	GameEngine::Behavior::Sequence(name)
@@ -32,7 +32,7 @@ void DarkForces::Behavior::WaitIdle::dispatchMessage(gaMessage* message, Action*
 		std::vector<glm::vec3>* playerLastPositions = m_tree->blackboard<std::vector<glm::vec3>>("player_last_positions");
 		playerLastPositions->clear();
 
-		dynamic_cast<DarkForces::Component::MoveEnemy*>(m_tree)->locatePlayer();
+		dynamic_cast<DarkForces::Component::EnemyAI*>(m_tree)->locatePlayer();
 		return startChild(r, 0, m_data); }
 
 	case gaMessage::Action::VIEW:

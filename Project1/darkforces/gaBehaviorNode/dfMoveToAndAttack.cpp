@@ -3,7 +3,7 @@
 #include <imgui.h>
 
 #include "../../darkforces/dfObject.h"
-#include "../dfComponent/dfMoveEnemy.h"
+#include "../dfComponent/dfEnemyAI.h"
 
 #include "../../gaEngine/gaComponent/gaBehaviorTree.h"
 #include "../../gaEngine/gaEntity.h"
@@ -20,7 +20,7 @@ DarkForces::Behavior::MoveToAndAttack::MoveToAndAttack(const char* name):
  */
 void DarkForces::Behavior::MoveToAndAttack::execute(Action* r)
 {
-	if (!static_cast<DarkForces::Component::MoveEnemy*>(m_tree)->viewPlayer()) {
+	if (!static_cast<DarkForces::Component::EnemyAI*>(m_tree)->viewPlayer()) {
 		return failed(r);
 	}
 

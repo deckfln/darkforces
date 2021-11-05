@@ -678,7 +678,7 @@
     <ClCompile Include="gaEngine\gaComponent\gaBehaviorTree.cpp">
       <Filter>Fichiers sources\gaEngine\gaComponent</Filter>
     </ClCompile>
-    <ClCompile Include="darkforces\dfComponent\dfMoveEnemy.cpp">
+    <ClCompile Include="darkforces\dfComponent\dfEnemyAI.cpp">
       <Filter>Fichiers sources\Dark Forces\dfComponent</Filter>
     </ClCompile>
     <ClCompile Include="darkforces\gaBehaviorNode\dfMoveEnemyTo.cpp">
@@ -1343,7 +1343,7 @@
     <ClInclude Include="gaEngine\gaComponent\gaBehaviorTree.h">
       <Filter>Fichiers d%27en-tête\gaEngine\gaComponent</Filter>
     </ClInclude>
-    <ClInclude Include="darkforces\dfComponent\dfMoveEnemy.h">
+    <ClInclude Include="darkforces\dfComponent\dfEnemyAI.h">
       <Filter>Fichiers d%27en-tête\DarkForces\dfComponent</Filter>
     </ClInclude>
     <ClInclude Include="darkforces\gaBehaviorNode\dfMoveEnemyTo.h">

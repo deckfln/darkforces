@@ -27,7 +27,7 @@
 #include "dfLevel.h"
 #include "dfVOC.h"
 #include "dfComponent/dfComponentLogic.h"
-#include "dfComponent/dfMoveEnemy.h"
+#include "dfComponent/dfEnemyAI.h"
 
 #include "dfObject/dfObject3D/MouseBot.h"
 #include "dfObject/dfSprite/dfSpriteAnimated/Enemy.h"

@@ -9,7 +9,7 @@
 
 #include "../../../dfComponent/dfWeapon.h"
 #include "../../../dfComponent/dfComponentActor.h"
-#include "../../../dfComponent/dfMoveEnemy.h"
+#include "../../../dfComponent/dfEnemyAI.h"
 
 class dfLevel;
 
@@ -18,7 +18,7 @@ namespace DarkForces {
 	{
 		fwCylinder m_cylinder;						// player bounding cylinder
 		DarkForces::Component::Actor m_actor;
-		DarkForces::Component::MoveEnemy m_ai;
+		DarkForces::Component::EnemyAI m_ai;
 		DarkForces::Component::Weapon m_weapon;
 		GameEngine::Component::AIPerception m_aiPerception;
 		GameEngine::Component::Sound m_sound;

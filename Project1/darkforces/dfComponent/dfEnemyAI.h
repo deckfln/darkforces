@@ -17,7 +17,7 @@
 
 namespace DarkForces {
 	namespace Component {
-		class MoveEnemy : public GameEngine::Component::BehaviorTree
+		class EnemyAI : public GameEngine::Component::BehaviorTree
 		{
 			Behavior::WaitIdle m_waitIdle = Behavior::WaitIdle("wait_idle");
 				Behavior::AttackPlayer m_attack = Behavior::AttackPlayer("attack and track");
@@ -45,7 +45,7 @@ namespace DarkForces {
 			std::vector<glm::vec3> m_playerLastPositions;
 
 		public:
-			MoveEnemy();
+			EnemyAI();
 
 			void dispatchMessage(gaMessage* message) override;
 

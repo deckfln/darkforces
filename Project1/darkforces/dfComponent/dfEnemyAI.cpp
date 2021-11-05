@@ -1,4 +1,4 @@
-#include "dfMoveEnemy.h"
+#include "dfEnemyAI.h"
 
 #include <glm/vec3.hpp>
 
@@ -7,7 +7,7 @@
 #include "../../gaEngine/gaEntity.h"
 #include "../../gaEngine/World.h"
 
-DarkForces::Component::MoveEnemy::MoveEnemy():
+DarkForces::Component::EnemyAI::EnemyAI():
 	GameEngine::Component::BehaviorTree(&m_waitIdle)
 {
 	m_satnav.speed(1.0f);
@@ -37,7 +37,7 @@ DarkForces::Component::MoveEnemy::MoveEnemy():
 /**
  * Record player position
  */
-void DarkForces::Component::MoveEnemy::dispatchMessage(gaMessage* message)
+void DarkForces::Component::EnemyAI::dispatchMessage(gaMessage* message)
 {
 	if (m_discardMessages) {
 		// player is dying, ignore messages
@@ -66,7 +66,7 @@ void DarkForces::Component::MoveEnemy::dispatchMessage(gaMessage* message)
 /**
  * check if see the player in the cone of vision
  */
-bool DarkForces::Component::MoveEnemy::viewPlayer(void)
+bool DarkForces::Component::EnemyAI::viewPlayer(void)
 {
 	std::vector<glm::vec3>* playerLastPositions = blackboard<std::vector<glm::vec3>>("player_last_positions");
 
@@ -105,7 +105,7 @@ bool DarkForces::Component::MoveEnemy::viewPlayer(void)
 /**
  * locate the player fully around the player
  */
-bool DarkForces::Component::MoveEnemy::locatePlayer(void)
+bool DarkForces::Component::EnemyAI::locatePlayer(void)
 {
 	if (m_player == nullptr) {
 		m_player = g_gaWorld.getEntity("player");
