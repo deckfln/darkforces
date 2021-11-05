@@ -25,6 +25,7 @@ namespace DarkForces {
 		bool m_headlight = false;
 
 		DarkForces::Weapon::Kind m_currentWeapon;		// current weapon
+		bool m_weaponFiring = false;					// weapon is on fire position
 		bool m_inMove = false;							// currently moving
 		uint32_t m_frameStartMove = 0;					// when did the move start
 		float m_wobblingT=0;							// time of wobbling
@@ -36,7 +37,9 @@ namespace DarkForces {
 
 		void onChangeWeapon(int kweapon);		// Change the current weapon
 		void onMove(gaMessage* message);		// when the player moves
-		void onLookAt(gaMessage* message);		// when the player moves
+		void onFire(gaMessage* message);		// when the player fires
+		void onAlarm(gaMessage* message);		// time to display the fire texture is over
+		void onLookAt(gaMessage* message);		// when the player looks somewhere
 
 	public:
 		Player(

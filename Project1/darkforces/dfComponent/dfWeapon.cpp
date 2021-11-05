@@ -18,9 +18,8 @@ static std::map<DarkForces::Weapon::Kind, DarkForces::Weapon> g_WeaponSounds = {
 		100,
 		0.1f,
 		5,
-		"concuss1.bm",
-		nullptr,
-		nullptr,
+		{"concuss1.bm"},
+		{nullptr},
 		glm::vec2(0.0, 0.0)
 		}
 	},
@@ -30,9 +29,8 @@ static std::map<DarkForces::Weapon::Kind, DarkForces::Weapon> g_WeaponSounds = {
 		100,
 		0.1f,
 		5,
-		"fusion1.bm",
-		nullptr,
-		nullptr,
+		{"fusion1.bm"},
+		{nullptr},
 		glm::vec2(0.0, 0.0)
 		}
 	},
@@ -42,9 +40,8 @@ static std::map<DarkForces::Weapon::Kind, DarkForces::Weapon> g_WeaponSounds = {
 		100,
 		0.1f,
 		5,
-		"assault1.bm",
-		nullptr,
-		nullptr,
+		{"assault1.bm"},
+		{nullptr},
 		glm::vec2(0.0, 0.0)
 		}
 	},
@@ -54,9 +51,8 @@ static std::map<DarkForces::Weapon::Kind, DarkForces::Weapon> g_WeaponSounds = {
 		100,
 		0.1f,
 		5,
-		"mortar1.bm",
-		nullptr,
-		nullptr,
+		{"mortar1.bm"},
+		{nullptr},
 		glm::vec2(0.0, 0.0)
 		}
 	},
@@ -66,9 +62,8 @@ static std::map<DarkForces::Weapon::Kind, DarkForces::Weapon> g_WeaponSounds = {
 		10,
 		0.05f,
 		1000,
-		"pistol1.bm",
-		nullptr,
-		nullptr,
+		{"pistol1.bm", "pistol2.bm", "pistol3.bm"},
+		{nullptr, nullptr, nullptr},
 		glm::vec2(0.3, -0.9)
 		}
 	},
@@ -78,9 +73,8 @@ static std::map<DarkForces::Weapon::Kind, DarkForces::Weapon> g_WeaponSounds = {
 		10,
 		0.1f,
 		5,
-		"assault1.bm",
-		nullptr,
-		nullptr,
+		{"assault1.bm"},
+		{nullptr},
 		glm::vec2(0.0, 0.0)
 		}
 	},
@@ -90,9 +84,8 @@ static std::map<DarkForces::Weapon::Kind, DarkForces::Weapon> g_WeaponSounds = {
 		10,
 		0.1f,
 		5,
-		"autogun1",
-		nullptr,
-		nullptr,
+		{"autogun1"},
+		{nullptr},
 		glm::vec2(0.2, 0.8)
 		}
 	},
@@ -102,9 +95,8 @@ static std::map<DarkForces::Weapon::Kind, DarkForces::Weapon> g_WeaponSounds = {
 		15,
 		0.2f,
 		200,
-		"rifle1.bm",
-		nullptr,
-		nullptr,
+		{"rifle1.bm", "rifle2.bm"},
+		{nullptr, nullptr},
 		glm::vec2(0.17, -0.83)
 		}
 	},
@@ -129,7 +121,7 @@ DarkForces::Component::Weapon::Weapon(DarkForces::Weapon::Kind weapon):
 	}
 }
 
-const DarkForces::Weapon* DarkForces::Component::Weapon::set(DarkForces::Weapon::Kind k)
+DarkForces::Weapon* DarkForces::Component::Weapon::set(DarkForces::Weapon::Kind k)
 {
 	m_kind = k;
 	if (g_WeaponSounds.count(m_kind) > 0) {
@@ -142,7 +134,7 @@ const DarkForces::Weapon* DarkForces::Component::Weapon::set(DarkForces::Weapon:
 	return nullptr;
 }
 
-const DarkForces::Weapon* DarkForces::Component::Weapon::get(DarkForces::Weapon::Kind k)
+DarkForces::Weapon* DarkForces::Component::Weapon::get(DarkForces::Weapon::Kind k)
 {
 	m_kind = k;
 	if (g_WeaponSounds.count(m_kind) > 0) {
@@ -195,6 +187,15 @@ void DarkForces::Component::Weapon::onFire(const glm::vec3& direction, time_t ti
 	g_gaWorld.addClient(bullet);
 
 	m_entity->sendMessage(gaMessage::Action::PLAY_SOUND, DarkForces::Enemy::Enemy::Sound::FIRE);
+	m_entity->sendMessage(DarkForces::Message::FIRE);
+}
+
+/**
+ * keep the finger on the trigger
+ */
+void DarkForces::Component::Weapon::onStopFire(gaMessage* message)
+{
+	m_time = 0;
 }
 
 /**
@@ -203,8 +204,12 @@ void DarkForces::Component::Weapon::onFire(const glm::vec3& direction, time_t ti
 void DarkForces::Component::Weapon::dispatchMessage(gaMessage* message)
 {
 	switch (message->m_action) {
-	case DarkForces::Message::FIRE:
+	case DarkForces::Message::START_FIRE:
 		onFire(*(glm::vec3*)message->m_extra, message->m_time);
+		break;
+
+	case DarkForces::Message::STOP_FIRE:
+		onStopFire(message);
 		break;
 	}
 }

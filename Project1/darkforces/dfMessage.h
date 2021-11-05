@@ -18,7 +18,9 @@ namespace DarkForces {
 		PICK_RIFLE_AND_BULLETS,
 		ADD_BATTERY,
 		EVENT,				// send events to sectors
-		FIRE,				// fire a gun
+		FIRE,				// fire a bullet from a gun
+		START_FIRE,			// pull the trigger
+		STOP_FIRE,			// stop firing
 		SatNav_Wait,		// ticks for the DF satnav
 		ANIM_START,			// WAX animation is starting
 		ANIM_NEXT_FRAME,	// WAX animation start the next frame

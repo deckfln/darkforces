@@ -3,6 +3,8 @@
 #include <GLFW/glfw3.h>
 #include <imgui.h>
 
+#include "../gaEngine/World.h"
+
 #include "dfFileSystem.h"
 #include "dfSector.h"
 #include "dfLevel.h"
@@ -10,7 +12,14 @@
 
 static const char* g_className = "dfPlayer";
 
-static std::map<DarkForces::Weapon::Kind, fwTexture*> g_hud;
+namespace DarkForces {
+	struct weaponTexture {
+		fwTexture* m_still = nullptr;
+		fwTexture* m_fire = nullptr;
+	};
+}
+
+static std::map<DarkForces::Weapon::Kind, DarkForces::weaponTexture> g_hud;
 
 static std::map<uint32_t, DarkForces::Weapon::Kind> g_WeaponKeys = {
 	{GLFW_KEY_1, DarkForces::Weapon::Kind::Pistol},
@@ -51,7 +60,17 @@ void DarkForces::Player::bind(dfLevel* level)
 void DarkForces::Player::placeWeapon(DarkForces::Weapon::Kind weapon,
 	const glm::vec2& delta)
 {
-	fwTexture* texture = g_hud[weapon];
+	fwTexture* texture;
+	float fire_y;				// move the weapon up if the weapon is firing
+
+	if (m_weaponFiring) {
+		texture = g_hud[weapon].m_fire;
+		fire_y = 0.1;
+	}
+	else {
+		texture = g_hud[weapon].m_still;
+		fire_y = 0;
+	}
 	const DarkForces::Weapon* hud = m_weapon.get(weapon);
 
 	int w, h, ch;
@@ -71,11 +90,11 @@ void DarkForces::Player::setWeapon(DarkForces::Weapon::Kind weapon)
 {
 	m_currentWeapon = weapon;
 
-	const DarkForces::Weapon* hud = m_weapon.set(weapon);
+	DarkForces::Weapon* hud = m_weapon.set(weapon);
 
 	if (hud && g_hud.count(weapon) == 0) {
-		dfBitmap* bmp = new dfBitmap(g_dfFiles, hud->HUDfile, static_cast<dfLevel*>(m_level)->palette());
-		g_hud[weapon] = bmp->fwtexture();
+		g_hud[weapon].m_still = hud->getStillTexture(static_cast<dfLevel*>(m_level)->palette());
+		g_hud[weapon].m_fire = hud->getFireTexture(static_cast<dfLevel*>(m_level)->palette());
 	}
 
 	// compute the size of the texture in glspace
@@ -127,16 +146,69 @@ void DarkForces::Player::onMove(gaMessage* message)
 }
 
 /**
+ * when the player fires
+ */
+void DarkForces::Player::onFire(gaMessage* message)
+{
+	m_weaponFiring = true;
+	placeWeapon(m_currentWeapon, glm::vec2(m_wobbling.x, m_wobbling.y - m_wobbling.z));
+
+	// reset the fire position after 10 frames
+	GameEngine::Alarm alarm(this, 10, gaMessage::Action::ALARM);
+	g_gaWorld.registerAlarmEvent(alarm);
+}
+
+/**
+ * time to display the fire texture is over
+ */
+void DarkForces::Player::onAlarm(gaMessage* message)
+{
+	m_weaponFiring = false;
+	placeWeapon(m_currentWeapon, glm::vec2(m_wobbling.x, m_wobbling.y - m_wobbling.z));
+}
+
+/**
+ * when the player looks somewhere
+ */
+void DarkForces::Player::onLookAt(gaMessage* message)
+{
+	// show more or less of the weapon based on the player look
+	float y = (*(glm::vec3*)message->m_extra).y;
+	const DarkForces::Weapon* hud = m_weapon.get(m_currentWeapon);
+
+	float y1 = hud->HUDposition.y + m_wobbling.y - y;
+
+	if (y1 > -0.51f) {
+		m_wobbling.z = 0.51f + hud->HUDposition.y + m_wobbling.y;
+	}
+	else if (y1 < -1.1) {
+		m_wobbling.z = 1.1f + hud->HUDposition.y + m_wobbling.y;
+	}
+	else {
+		m_wobbling.z = y;
+	}
+	placeWeapon(m_currentWeapon, glm::vec2(m_wobbling.x, m_wobbling.y - m_wobbling.z));
+}
+
+/**
  * let an entity deal with a situation
  */
 void DarkForces::Player::dispatchMessage(gaMessage* message)
 {
 	switch (message->m_action)
 	{
+	case gaMessage::KEY_UP:
+		if (message->m_value == GLFW_KEY_LEFT_CONTROL) {
+			// single shot
+			sendMessage(DarkForces::Message::STOP_FIRE, 0, &m_direction);
+		}
+		break;
+
 	case gaMessage::KEY:
 		switch (message->m_value) {
 		case GLFW_KEY_LEFT_CONTROL:
-			sendMessage(DarkForces::Message::FIRE, 0, &m_direction);
+			// auto fire
+			sendMessage(DarkForces::Message::START_FIRE, 0, &m_direction);
 			break;
 
 		case GLFW_KEY_F5:
@@ -155,27 +227,20 @@ void DarkForces::Player::dispatchMessage(gaMessage* message)
 		}
 		break;
 
+	case DarkForces::Message::FIRE:
+		onFire(message);
+		break;
+
 	case gaMessage::Action::MOVE:
 		onMove(message);
 		break;
 
+	case gaMessage::Action::ALARM:
+		onAlarm(message);
+		break;
+
 	case gaMessage::Action::LOOK_AT:
-		// show more or less of the weapon based on the player look
-		float y = (*(glm::vec3*)message->m_extra).y;
-		const DarkForces::Weapon* hud = m_weapon.get(m_currentWeapon);
-
-		float y1 = hud->HUDposition.y + m_wobbling.y - y;
-
-		if (y1 > -0.51f) {
-			m_wobbling.z = 0.51f + hud->HUDposition.y + m_wobbling.y;
-		}
-		else if (y1 < -1.1) {
-			m_wobbling.z = 1.1f + hud->HUDposition.y + m_wobbling.y;
-		}
-		else {
-			m_wobbling.z = y;
-		}
-		placeWeapon(m_currentWeapon, glm::vec2(m_wobbling.x, m_wobbling.y - m_wobbling.z));
+		onLookAt(message);
 		break;
 	}
 

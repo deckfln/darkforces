@@ -53,7 +53,9 @@ public:
 		FALL,			// Object is falling
 		CONTROLLER,		// Controller is requesting a move
 		SAVE_WORLD,		// save the status
-		KEY,			// key was pressed
+		KEY,			// key is pressed
+		KEY_UP,			// key was released
+		KEY_DOWN,		// key was pressed
 		LOOK_AT,		// look into a direction
 		MOVE_AT,
 		ACTIVATE,		// an active probe tries to activate an entity

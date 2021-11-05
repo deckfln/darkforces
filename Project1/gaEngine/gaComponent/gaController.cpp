@@ -63,7 +63,15 @@ bool GameEngine::Component::Controller::checkKeys(time_t delta)
 			break;
 		case KeyInfo::Msg::onPress:
 			if (m_currentKeys[key.m_key]) {
-				m_entity->sendMessage(gaMessage::Action::KEY, key.m_key, &m_velocity);
+				if (!m_prevKeys[key.m_key]) {
+					m_entity->sendMessage(gaMessage::Action::KEY_DOWN, key.m_key, &m_velocity);
+				}
+				else {
+					m_entity->sendMessage(gaMessage::Action::KEY, key.m_key, &m_velocity);
+				}
+			}
+			if (!m_currentKeys[key.m_key] && m_prevKeys[key.m_key]) {
+				m_entity->sendMessage(gaMessage::Action::KEY_UP, key.m_key, &m_velocity);
 			}
 			break;
 		case KeyInfo::Msg::onPressUp:

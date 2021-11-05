@@ -18,7 +18,7 @@ void DarkForces::Behavior::Fire2Player::fireNow(void)
 
 	//printf("%.2f,%.2f,%.2f,%.2f,%.2f,%.2f\n", p.x, p.z, m_entity->position().x, m_entity->position().z, m_direction.x, m_direction.z);
 
-	m_entity->sendMessage(DarkForces::Message::FIRE, 0, (void*)&m_direction);
+	m_entity->sendMessage(DarkForces::Message::START_FIRE, 0, (void*)&m_direction);
 }
 
 DarkForces::Behavior::Fire2Player::Fire2Player(const char* name):

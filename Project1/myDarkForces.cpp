@@ -136,6 +136,8 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 		{DarkForces::Message::ADD_BATTERY, "DF_ADD_BATTERY"},
 		{DarkForces::Message::EVENT, "DF_EVENT"},
 		{DarkForces::Message::FIRE, "df_FIRE"},
+		{DarkForces::Message::START_FIRE, "df_START_FIRE"},
+		{DarkForces::Message::STOP_FIRE, "df_STOP_FIRE"},
 		{DarkForces::Message::ANIM_START, "df_AnimStart"},
 		{DarkForces::Message::ANIM_NEXT_FRAME, "df_AnimNextFrame"},
 		{DarkForces::Message::ANIM_END, "df_AnimEnd"}
