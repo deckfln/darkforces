@@ -101,7 +101,7 @@ static std::map<DarkForces::Weapon::Kind, DarkForces::Weapon> g_WeaponSounds = {
 		"RIFLE-1.VOC",
 		15,
 		0.2f,
-		500,
+		200,
 		"rifle1.bm",
 		nullptr,
 		nullptr,
