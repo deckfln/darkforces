@@ -118,6 +118,10 @@ void Physics::testEntities(gaEntity* entity, const Transform& tranform, std::vec
 				continue;
 			}
 
+			if (!entity->collideAABB(ent->worldAABB())) {
+				continue;
+			}
+
 			if (ent->name() != entity->name()) {
 				size = collisions.size();
 				if (entity->collide(ent, tranform.m_forward, tranform.m_downward, collisions)) {

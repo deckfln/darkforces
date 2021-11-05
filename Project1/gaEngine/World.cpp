@@ -797,10 +797,13 @@ bool GameEngine::World::intersectWithEntity(Framework::Segment& segment,
 				continue;
 			}
 
-			// extended test
-			collisions.clear();
-			if (ent->collide(collider, forward, down, collisions)) {
-				entCollisions.push_back(ent);
+			// quick test
+			if (ent->collideAABB(aabb)) {
+				// extended test
+				collisions.clear();
+				if (ent->collide(collider, forward, down, collisions)) {
+					entCollisions.push_back(ent);
+				}
 			}
 		}
 	}

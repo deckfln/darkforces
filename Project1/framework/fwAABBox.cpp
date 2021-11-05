@@ -49,12 +49,30 @@ fwAABBox::fwAABBox(const glm::vec3& p1, const glm::vec3& p2)
 
 fwAABBox::fwAABBox(const fwAABBox& source, const glm::mat4& matrix)
 {
-	apply(source, matrix);
+	// go quick if the matrix is unity
+	if (matrix == glm::mat4(1)) {
+		m_p = source.m_p;
+		m_p1 = source.m_p1;
+		m_dirty = true;
+	}
+	else {
+
+		apply(source, matrix);
+	}
 }
 
 fwAABBox::fwAABBox(const fwAABBox* source, const glm::mat4& matrix)
 {
-	apply(source, matrix);
+	// go quick if the matrix is unity
+	if (matrix == glm::mat4(1)) {
+		m_p = source->m_p;
+		m_p1 = source->m_p1;
+		m_dirty = true;
+	}
+	else {
+
+		apply(source, matrix);
+	}
 }
 
 /**
