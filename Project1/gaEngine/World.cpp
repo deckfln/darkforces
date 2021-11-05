@@ -439,6 +439,23 @@ bool World::deleteMessage(uint32_t id)
 }
 
 /**
+ * delete all messages for that entity
+ */
+void World::deleteMessages(gaEntity* entity)
+{
+	for (auto& message : m_queue) {
+		if (message->m_client == entity->name()) {
+			message->m_canceled = true;
+		}
+	}
+	for (auto& message : m_for_next_frame) {
+		if (message->m_client == entity->name()) {
+			message->m_canceled = true;
+		}
+	}
+}
+
+/**
  * Search the entities map
  */
 gaEntity* World::getEntity(const std::string& name)
@@ -660,7 +677,8 @@ void World::process(time_t delta, bool force)
 				if (message->m_action == gaMessage::Action::WANT_TO_MOVE) {
 					g_gaPhysics.moveEntity(entity, message);
 				}
-				else {
+				else if (entity->processMessages()) {
+					// only pass messages to entity that request so
 					message->m_frame = m_frame;
 					entity->dispatchMessage(message);
 				}

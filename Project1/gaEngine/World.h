@@ -127,6 +127,7 @@ namespace GameEngine {
 			void* extra);									// send message for immediate dispatch
 
 		bool deleteMessage(uint32_t id);					// delete a previously submitted message
+		void deleteMessages(gaEntity*);						// delete all messages for that entity
 
 		gaEntity* getEntity(const std::string& name);
 		dfSprites* spritesManager(void) {
@@ -147,8 +148,6 @@ namespace GameEngine {
 		void pushForNextFrame(gaMessage* message);
 		void process(time_t delta, bool force=false);		// process messages on the queue
 		void suspendTimer(void);							// stop the engine
-		void debugGUI(void);								// render the imGUI debug
-		void debugGUImessages(std::list<gaMessage>&l);		// render the imGUI debug messages
 		void clearQueue(void);								// clear the message queue
 		inline int queueLen(void) { return m_queue.size(); }// number of messages on the queue
 		inline int frame(void) { return m_frame; }			// number of messages on the queue
@@ -181,6 +180,10 @@ namespace GameEngine {
 		void registerViewEvents(gaEntity* entity);
 		void deRegisterViewEvents(gaEntity* entity);
 		void checkPerceptions(void);
+
+		// debugger
+		void debugGUI(void);								// render the imGUI debug
+		void debugGUImessages(std::list<gaMessage>& l);		// render the imGUI debug messages
 
 		~World();
 	};

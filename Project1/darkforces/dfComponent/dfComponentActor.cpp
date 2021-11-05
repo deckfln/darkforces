@@ -17,10 +17,10 @@
 
 static std::map<std::string, struct DarkForces::ActorClass> m_actors = {
 	{ "player", { 1000, 100, glm::vec2(-0.5, 0.5)}},
-	{ "COMMANDO.WAX", { 100, 100, glm::vec2(0.2, 0.80)}},
-	{ "INTDROID.WAX", { 100, 100, glm::vec2(0.5, 0.75)}},
-	{ "OFFCFIN.WAX", { 100, 100, glm::vec2(0.5, 0.85)}},
-	{ "STORMFIN.WAX", { 100, 100, glm::vec2(0.5, 0.75)}},
+	{ "COMMANDO.WAX", { 10, 100, glm::vec2(0.2, 0.80)}},
+	{ "INTDROID.WAX", { 10, 100, glm::vec2(0.5, 0.75)}},
+	{ "OFFCFIN.WAX", { 10, 100, glm::vec2(0.5, 0.85)}},
+	{ "STORMFIN.WAX", { 10, 100, glm::vec2(0.5, 0.75)}},
 };
 
 DarkForces::Component::Actor::Actor(void) :
@@ -149,6 +149,9 @@ void DarkForces::Component::Actor::dispatchMessage(gaMessage* message)
 			}
 		}
 		break;
+	case DarkForces::Message::DEAD:
+		m_entity->discardMessages();
+		break;
 	}
 
 	GameEngine::Component::Actor::dispatchMessage(message);
@@ -159,7 +162,10 @@ void DarkForces::Component::Actor::dispatchMessage(gaMessage* message)
  */
 void DarkForces::Component::Actor::die(void)
 {
-	// inform the world it can remove the entity from its list
+	// cancel any message the entity was expecting
+	g_gaWorld.deleteMessages(m_entity);
+
+	// activate the entity last animation
 	((dfSpriteAnimated*)m_entity)->state(dfState::ENEMY_DIE_FROM_SHOT);
 
 	// object can now be traversed
@@ -167,12 +173,12 @@ void DarkForces::Component::Actor::die(void)
 	m_entity->physical(false);
 
 	// play a sound if there is one
-	m_entity->sendInternalMessage(gaMessage::PLAY_SOUND, 0);
+	m_entity->sendMessage(gaMessage::PLAY_SOUND, 0);
 
-	// cancel any move the actor was doing, for the next frame (gives a bit of latency)
-	m_entity->sendDelayedMessage(gaMessage::Action::SatNav_CANCEL);
+	// let everyone this is the last stage
+	m_entity->sendMessage(DarkForces::Message::DYING, 0);
 
-	gaDebugLog(1, "ActorClass::die", "remove " + m_entity->name() + " the entity from the world");
+	gaDebugLog(1, "DarkForces::Component::Actor::die", "kill the entity " + m_entity->name() + " and block from the world");
 }
 
 /**

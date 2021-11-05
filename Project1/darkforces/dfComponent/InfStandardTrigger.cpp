@@ -100,7 +100,7 @@ void InfStandardTrigger::debugGUIinline(void)
 			{DarkForces::Message::ADD_ENERGY, "dfAddEnergy"},
 			{DarkForces::Message::HIT_BULLET, "dfHitBullet"},		// the object was hit by a bullet
 			{DarkForces::Message::END_LOOP, "dfEndLoop"},		// the animation loop stopped
-			{DarkForces::Message::DIES, "dfDies"},			// the object died
+			{DarkForces::Message::DEAD, "dfDies"},			// the object died
 			{DarkForces::Message::STATE, "dfState"},				// change the state of the object
 			{DarkForces::Message::PICK_RIFLE_AND_BULLETS, "dfPickRifleAndBullets"},
 			{DarkForces::Message::ADD_BATTERY, "dfAddBattery"},

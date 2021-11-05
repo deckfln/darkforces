@@ -137,6 +137,9 @@ void dfBullet::dispatchMessage(gaMessage* message)
 		g_gaWorld.addClient(impact);
 
 		// on collision, inform the target it was hit with the energy of the bullet
+		if (message->m_server == "OFFCFIN.WAX(20)") {
+			printf("hit\n");
+		}
 		sendMessage(message->m_server, DarkForces::Message::HIT_BULLET, m_damage, nullptr);
 		gaDebugLog(REDUCED_DEBUG, "dfBullet::dispatchMessage", "hit");
 

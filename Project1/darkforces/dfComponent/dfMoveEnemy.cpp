@@ -2,6 +2,8 @@
 
 #include <glm/vec3.hpp>
 
+#include "../dfMessage.h"
+
 #include "../../gaEngine/gaEntity.h"
 #include "../../gaEngine/World.h"
 
@@ -37,6 +39,11 @@ DarkForces::Component::MoveEnemy::MoveEnemy():
  */
 void DarkForces::Component::MoveEnemy::dispatchMessage(gaMessage* message)
 {
+	if (m_discardMessages) {
+		// player is dying, ignore messages
+		return;
+	}
+
 	if (message->m_frame > 0) {
 		m_currentFrame = message->m_frame;
 	}
@@ -46,6 +53,11 @@ void DarkForces::Component::MoveEnemy::dispatchMessage(gaMessage* message)
 		m_lastPlayerView = message->m_v3value;
 		m_lastPlayerViewFrame = message->m_frame;
 		break;
+	case DarkForces::Message::DYING:
+		// when the player starts dying, ignore any incoming messages
+		m_discardMessages = true;
+		break;
+
 	}
 
 	GameEngine::Component::BehaviorTree::dispatchMessage(message);

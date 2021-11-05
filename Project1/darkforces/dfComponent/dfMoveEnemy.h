@@ -40,6 +40,7 @@ namespace DarkForces {
 			glm::vec3 m_lastPlayerView;
 			uint32_t m_lastPlayerViewFrame=0;					// frame ID when the player was seen
 			uint32_t m_currentFrame=0;
+			bool m_discardMessages = false;						// shall we handle the incoming messages
 
 			std::vector<glm::vec3> m_playerLastPositions;
 

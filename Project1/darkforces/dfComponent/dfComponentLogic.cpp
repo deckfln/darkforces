@@ -70,7 +70,7 @@ void dfComponentLogic::dispatchMessage(gaMessage* message)
 		break;
 	case DarkForces::Message::HIT_BULLET:
 		if (m_logics & dfLogic::SCENERY) {
-			m_entity->sendInternalMessage(DarkForces::Message::STATE, (int)dfState::SCENERY_ATTACK);
+			m_entity->sendMessage(DarkForces::Message::STATE, (int)dfState::SCENERY_ATTACK);
 		}
 		break;
 	case DarkForces::Message::END_LOOP:
@@ -79,7 +79,7 @@ void dfComponentLogic::dispatchMessage(gaMessage* message)
 			switch ((dfState)message->m_value) {
 			case dfState::ENEMY_DIE_FROM_PUNCH:
 			case dfState::ENEMY_DIE_FROM_SHOT:
-				m_entity->sendInternalMessage(DarkForces::Message::STATE, (int)dfState::ENEMY_LIE_DEAD);
+				m_entity->sendMessage(DarkForces::Message::STATE, (int)dfState::ENEMY_LIE_DEAD);
 			}
 		}
 		break;
@@ -87,11 +87,11 @@ void dfComponentLogic::dispatchMessage(gaMessage* message)
 		// trigger animation for enemy, unless the object is static or has no animation
 		if (m_logics & DF_LOGIC_ENEMIES) {
 			if ((dfState)message->m_value == dfState::ENEMY_LIE_DEAD) {
-				m_entity->sendInternalMessage(DarkForces::Message::DIES);
+				m_entity->sendMessage(DarkForces::Message::DEAD);
 			}
 		}		
 		break;
-	case DarkForces::Message::DIES:
+	case DarkForces::Message::DEAD:
 		//drop the bag of the object when an enemy dies
 		if (m_logics & DF_LOGIC_ENEMIES) {
 			if (m_logics & (dfLogic::COMMANDO | dfLogic::TROOP)) {

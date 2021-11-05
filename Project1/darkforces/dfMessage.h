@@ -12,7 +12,8 @@ namespace DarkForces {
 		ADD_ENERGY,
 		HIT_BULLET,			// the object was hit by a bullet
 		END_LOOP,			// the animation loop stopped
-		DIES,				// the object died
+		DYING,				// the object is dying but not yet dead
+		DEAD,				// the object is dead
 		STATE,				// change the state of the object
 		PICK_RIFLE_AND_BULLETS,
 		ADD_BATTERY,
