@@ -175,6 +175,7 @@
     <ClCompile Include="darkforces\dfObject\dfSprite.cpp" />
     <ClCompile Include="darkforces\dfObject\dfSpriteAnimated.cpp" />
     <ClCompile Include="darkforces\dfObject\dfSprite\dfSpriteAnimated\Enemy.cpp" />
+    <ClCompile Include="darkforces\dfObject\dfSprite\ienergy.cpp" />
     <ClCompile Include="darkforces\dfPalette.cpp" />
     <ClCompile Include="darkforces\dfParseINF.cpp" />
     <ClCompile Include="darkforces\dfLevel.cpp" />
@@ -377,6 +378,7 @@
     <ClInclude Include="darkforces\dfObject\dfSprite.h" />
     <ClInclude Include="darkforces\dfObject\dfSpriteAnimated.h" />
     <ClInclude Include="darkforces\dfObject\dfSprite\dfSpriteAnimated\Enemy.h" />
+    <ClInclude Include="darkforces\dfObject\dfSprite\ienergy.h" />
     <ClInclude Include="darkforces\dfPalette.h" />
     <ClInclude Include="darkforces\dfParseINF.h" />
     <ClInclude Include="darkforces\dfLevel.h" />

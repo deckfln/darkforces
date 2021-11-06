@@ -12,6 +12,7 @@
 #include "dfConfig.h"
 #include "dfModel.h"
 #include "dfSprites.h"
+#include "dfObject/dfSprite/ienergy.h"
 #include "dfLevel.h"
 #include "dfCollision.h"
 #include "dfComponent/dfComponentActor.h"
@@ -136,7 +137,7 @@ bool DarkForces::Object::update(time_t t)
 /**
  * object to drop in the scene at the current position
  */
-void DarkForces::Object::drop(uint32_t logic)
+void DarkForces::Object::drop(uint32_t logic, uint32_t value)
 {
 	dfSprite* obj=nullptr;
 
@@ -169,7 +170,7 @@ void DarkForces::Object::drop(uint32_t logic)
 		obj->hasCollider(true);
 		break;
 	case dfLogic::ITEM_ENERGY:
-		obj = new dfSprite("IENERGY.FME", p, 1.0f, OBJECT_FME);
+		obj = new IEnergy(p, 1.0f, value);
 		obj->hasCollider(true);
 		break;
 	case dfLogic::RED_KEY:

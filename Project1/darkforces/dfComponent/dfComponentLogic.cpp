@@ -38,7 +38,7 @@ void dfComponentLogic::dispatchMessage(gaMessage* message)
 			if (message->m_pServer->findComponent(gaComponent::Actor)) {
 				// if the collider is a DF_ACTOR
 				// send energy from me to the actor
-				m_entity->sendMessage(message->m_server, DarkForces::Message::ADD_ENERGY, DF_ENERGY_ENERGY, nullptr);
+				m_entity->sendMessage(message->m_server, DarkForces::Message::ADD_ENERGY, m_value, nullptr);
 
 				// and remove the object from the scene
 				m_entity->sendMessageToWorld(gaMessage::DELETE_ENTITY, 0, nullptr);
@@ -101,7 +101,6 @@ void dfComponentLogic::dispatchMessage(gaMessage* message)
 				if (m_logics & dfLogic::RED_KEY) {
 					((DarkForces::Object*)m_entity)->drop(dfLogic::RED_KEY);
 				}
-				((DarkForces::Object*)m_entity)->drop(dfLogic::ITEM_ENERGY);
 			}
 			else if (m_logics & dfLogic::INTDROID) {
 				((DarkForces::Object*)m_entity)->drop(dfLogic::ITEM_POWER);

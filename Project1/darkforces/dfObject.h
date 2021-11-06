@@ -103,14 +103,14 @@ namespace DarkForces {
 		int m_objectID = 0;
 
 	protected:
-		int m_dirtyAnimation = true;			// animation of the object was updated
-		int m_dirtyPosition = true;				// position of the object was updated
+		int m_dirtyAnimation = true;							// animation of the object was updated
+		int m_dirtyPosition = true;								// position of the object was updated
 
-		glm::vec3 m_position_lvl = glm::vec3(0);// position in level space
+		glm::vec3 m_position_lvl = glm::vec3(0);				// position in level space
 
-		uint32_t m_logics = dfLogic::NONE;		// logic of the object
-		int m_difficulty = 0;					// difficulty to be displayed
-		float m_ambient = 32.0f;				// ambient light inherited from the sector
+		uint32_t m_logics = dfLogic::NONE;						// logic of the object
+		int m_difficulty = 0;									// difficulty to be displayed
+		float m_ambient = 32.0f;								// ambient light inherited from the sector
 
 		// inherited from gaEntity
 		//float m_radius = 0;			// This defines the size of an invisible circle around the object where the PLAYER cannot enter or shoot through.
@@ -122,7 +122,7 @@ namespace DarkForces {
 
 
 		dfModel* m_source = nullptr;
-		dfSector* m_sector = nullptr;						// cached pointer to the sector hosting the object
+		dfSector* m_sector = nullptr;							// cached pointer to the sector hosting the object
 
 	public:
 		Object(dfModel* source, const glm::vec3& position, float ambient, int type, uint32_t objectID);
@@ -144,7 +144,7 @@ namespace DarkForces {
 		bool isLogic(uint32_t logic);
 		const std::string& model(void);
 		void logic(uint32_t logic);
-		void drop(uint32_t logic);				// object to drop in the scene at the current position
+		void drop(uint32_t logic, uint32_t value=0);			// object to drop in the scene at the current position
 		dfSector* sector(void) { return m_sector; };
 		void sector(dfSector* s) { m_sector = s; };
 		dfSuperSector* superSector(void) override;
@@ -153,18 +153,18 @@ namespace DarkForces {
 			glm::vec3& direction,
 			glm::vec3& intersection,
 			std::list<gaCollisionPoint>& collisions) override;	// extended collision test after a sucessfull AABB collision
-		void moveTo(const glm::vec3& position) override;	// update the object position
-		void updateWorldAABB(void) override;				// update the world AABB based on position
-		bool update(time_t t) override;						// update based on timer
+		void moveTo(const glm::vec3& position) override;		// update the object position
+		void updateWorldAABB(void) override;					// update the world AABB based on position
+		bool update(time_t t) override;							// update based on timer
 
 		// flight recorder and debugger
 		inline int recordSize(void) override {
 			return sizeof(flightRecorder::DarkForces::Object);
-		}													// size of one record
+		}														// size of one record
 		uint32_t recordState(void* record) override;			// return a record of the entity state (for debug)
-		void loadState(void* record) override;// reload an entity state from a record
+		void loadState(void* record) override;					// reload an entity state from a record
 
-		void debugGUIChildClass(void) override;			// Add dedicated component debug the entity
+		void debugGUIChildClass(void) override;					// Add dedicated component debug the entity
 
 		~Object();
 	};

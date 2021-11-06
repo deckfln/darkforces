@@ -205,6 +205,14 @@ void DarkForces::Component::Weapon::onStopFire(gaMessage* message)
 }
 
 /**
+ * Drop ammo when dying
+ */
+void DarkForces::Component::Weapon::onDead(gaMessage* message)
+{
+	((DarkForces::Object*)m_entity)->drop(dfLogic::ITEM_ENERGY, m_energy);
+}
+
+/**
  * Increase or decrease the energy and update the HUD
  */
 void DarkForces::Component::Weapon::addEnergy(int32_t value)
@@ -234,6 +242,10 @@ void DarkForces::Component::Weapon::dispatchMessage(gaMessage* message)
 
 	case DarkForces::Message::ADD_ENERGY:
 		addEnergy(message->m_value);
+		break;
+
+	case DarkForces::Message::DEAD:
+		onDead(message);
 		break;
 	}
 }
