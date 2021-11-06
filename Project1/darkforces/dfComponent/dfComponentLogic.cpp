@@ -10,12 +10,28 @@ dfComponentLogic::dfComponentLogic() :
 {
 }
 
+namespace DarkForces {
+	struct Item {
+		uint32_t kind;
+		uint32_t value;
+	};
+}
+
+static std::map<uint32_t, DarkForces::Item> g_items = {
+	{dfLogic::ITEM_ENERGY, {dfLogic::ITEM_ENERGY, 15}},
+	{dfLogic::ITEM_SHIELD, {dfLogic::ITEM_SHIELD, 100}}
+};
+
 /**
  * add a logic
  */
 void dfComponentLogic::logic(uint32_t logic)
 {
 	m_logics |= logic;
+
+	if (g_items.count(logic) > 0) {
+		m_value = g_items[logic].value;
+	}
 }
 
 void dfComponentLogic::dispatchMessage(gaMessage* message)
@@ -27,7 +43,7 @@ void dfComponentLogic::dispatchMessage(gaMessage* message)
 			if (message->m_pServer->findComponent(gaComponent::Actor)) {
 				// if the collider is a DF_ACTOR
 				// send shield from me to the actor
-				m_entity->sendMessage(message->m_server, DarkForces::Message::ADD_SHIELD, DF_SHIELD_ENERGY, nullptr);
+				m_entity->sendMessage(message->m_server, DarkForces::Message::ADD_SHIELD, m_value, nullptr);
 
 				// and remove the object from the scene
 				m_entity->sendMessageToWorld(gaMessage::DELETE_ENTITY, 0, nullptr);
@@ -49,7 +65,7 @@ void dfComponentLogic::dispatchMessage(gaMessage* message)
 			if (message->m_pServer->findComponent(gaComponent::Actor)) {
 				// if the collider is a DF_ACTOR
 				// send shield from me to the actor
-				m_entity->sendMessage(message->m_server, DarkForces::Message::PICK_RIFLE_AND_BULLETS, DF_SHIELD_ENERGY, nullptr);
+				m_entity->sendMessage(message->m_server, DarkForces::Message::PICK_RIFLE_AND_BULLETS, m_value, nullptr);
 
 				// and remove the object from the scene
 				m_entity->sendMessageToWorld(gaMessage::DELETE_ENTITY, 0, nullptr);
@@ -144,6 +160,7 @@ void dfComponentLogic::debugGUIinline(void)
 			}
 		}
 		ImGui::Text("Logic: %s", sLogic.c_str());
+		ImGui::Text("Value: %d", m_value);
 		ImGui::TreePop();
 	}
 }

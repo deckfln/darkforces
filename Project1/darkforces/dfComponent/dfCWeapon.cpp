@@ -14,6 +14,7 @@
 static std::map<DarkForces::Weapon::Kind, DarkForces::Weapon> g_WeaponSounds = {
 	{DarkForces::Weapon::Kind::Concussion, {
 		DarkForces::Weapon::Kind::Concussion,
+		"Concussion",
 		"CONCUSS5.VOC",
 		100,
 		0.1f,
@@ -25,6 +26,7 @@ static std::map<DarkForces::Weapon::Kind, DarkForces::Weapon> g_WeaponSounds = {
 	},
 	{DarkForces::Weapon::Kind::FusionCutter, {
 		DarkForces::Weapon::Kind::FusionCutter,
+		"FusionCutter",
 		"FUSION1.VOC",
 		100,
 		0.1f,
@@ -36,6 +38,7 @@ static std::map<DarkForces::Weapon::Kind, DarkForces::Weapon> g_WeaponSounds = {
 	},
 	{DarkForces::Weapon::Kind::Missile, {
 		DarkForces::Weapon::Kind::Missile,
+		"Missile",
 		"MISSILE1.VOC",
 		100,
 		0.1f,
@@ -47,6 +50,7 @@ static std::map<DarkForces::Weapon::Kind, DarkForces::Weapon> g_WeaponSounds = {
 	},
 	{DarkForces::Weapon::Kind::MortarGun, {
 		DarkForces::Weapon::Kind::MortarGun,
+		"MortarGun",
 		"MORTAR2.VOC",
 		100,
 		0.1f,
@@ -58,6 +62,7 @@ static std::map<DarkForces::Weapon::Kind, DarkForces::Weapon> g_WeaponSounds = {
 	},
 	{DarkForces::Weapon::Kind::Pistol, {
 		DarkForces::Weapon::Kind::Pistol,
+		"Pistol",
 		"PISTOL-1.VOC",
 		10,
 		0.05f,
@@ -69,6 +74,7 @@ static std::map<DarkForces::Weapon::Kind, DarkForces::Weapon> g_WeaponSounds = {
 	},
 	{DarkForces::Weapon::Kind::PlasmaCannon, {
 		DarkForces::Weapon::Kind::PlasmaCannon,
+		"PlasmaCannon",
 		"PLASMA4.VOC",
 		10,
 		0.1f,
@@ -80,6 +86,7 @@ static std::map<DarkForces::Weapon::Kind, DarkForces::Weapon> g_WeaponSounds = {
 	},
 	{DarkForces::Weapon::Kind::Repeater, {
 		DarkForces::Weapon::Kind::Repeater,
+		"Repeater",
 		"REPEATER.VOC",
 		10,
 		0.1f,
@@ -91,6 +98,7 @@ static std::map<DarkForces::Weapon::Kind, DarkForces::Weapon> g_WeaponSounds = {
 	},
 	{DarkForces::Weapon::Kind::Rifle, {
 		DarkForces::Weapon::Kind::Rifle,
+		"Rifle",
 		"RIFLE-1.VOC",
 		15,
 		0.2f,
@@ -253,6 +261,8 @@ void DarkForces::Component::Weapon::dispatchMessage(gaMessage* message)
 void DarkForces::Component::Weapon::debugGUIinline(void)
 {
 	if (ImGui::TreeNode("Weapon")) {
+		ImGui::Text("Type: %s", g_WeaponSounds[m_kind].debug);
+		ImGui::Text("Energy: %d", m_energy);
 		ImGui::TreePop();
 	}
 }

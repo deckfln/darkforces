@@ -24,6 +24,7 @@ namespace DarkForces {
 		};
 
 		Kind m_kind;
+		const char* debug;
 		const char* m_fireSound;
 		uint32_t m_damage;		// damage per bullet
 		float m_recoil;			// bullet dispersion based on recoil strength
