@@ -1,4 +1,4 @@
-#include "dfWeapon.h"
+#include "dfCWeapon.h"
 
 #include <imgui.h>
 
@@ -152,6 +152,12 @@ void DarkForces::Component::Weapon::onFire(const glm::vec3& direction, time_t ti
 {
 	const DarkForces::Weapon& w = g_WeaponSounds.at(m_kind);
 
+	// is there energy available for the weapon
+	if (m_energy == 0) {
+		return;
+	}
+	m_energy--;
+
 	// count time since the last fire, and auto-fire at the weapon rate
 	if (time - m_time < w.m_rate) {
 		return;
@@ -199,6 +205,20 @@ void DarkForces::Component::Weapon::onStopFire(gaMessage* message)
 }
 
 /**
+ * Increase or decrease the energy and update the HUD
+ */
+void DarkForces::Component::Weapon::addEnergy(int32_t value)
+{
+	m_energy += value;
+	if (m_energy > m_maxEnergy) {
+		m_energy = m_maxEnergy;
+	}
+	else if (m_energy < 0) {
+		m_energy = 0;
+	}
+}
+
+/**
  *
  */
 void DarkForces::Component::Weapon::dispatchMessage(gaMessage* message)
@@ -210,6 +230,10 @@ void DarkForces::Component::Weapon::dispatchMessage(gaMessage* message)
 
 	case DarkForces::Message::STOP_FIRE:
 		onStopFire(message);
+		break;
+
+	case DarkForces::Message::ADD_ENERGY:
+		addEnergy(message->m_value);
 		break;
 	}
 }

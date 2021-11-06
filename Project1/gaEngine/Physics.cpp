@@ -207,29 +207,40 @@ void Physics::informCollision(
 	// record the original want_to_move id
 	message->m_value = msg->m_id;
 
-	// complete the onboard data
-	struct CollisionList* data = (struct CollisionList*)&message->m_data[0];
-	data->size = verticalCollision.size();
+	if (verticalCollision.size() > 0) {
+		// complete the onboard data
+		struct CollisionList* data = (struct CollisionList*)&message->m_data[0];
+		data->size = verticalCollision.size();
 
-	if (sizeof(struct Physics::CollisionList) + sizeof(gaEntity*) * data->size >= sizeof(message->m_data)) {
-		data->size = (sizeof(message->m_data) - sizeof(uint32_t)) / sizeof(gaEntity*);
-		__debugbreak();
+		if (sizeof(struct Physics::CollisionList) + sizeof(gaEntity*) * data->size >= sizeof(message->m_data)) {
+			data->size = (sizeof(message->m_data) - sizeof(uint32_t)) / sizeof(gaEntity*);
+			__debugbreak();
+		}
+
+		for (uint32_t i = 0; i < data->size; i++) {
+			data->entities[i] = verticalCollision[i];
+
+			// always inform the colliding entity 
+			message = g_gaWorld.sendMessage(
+				to->name(),
+				verticalCollision[i]->name(),
+				gaMessage::Action::COLLIDE,
+				collision,
+				nullptr
+			);
+
+			// record the original want_to_move id
+			message->m_value = msg->m_id;
+		}
 	}
-
-	for (uint32_t i = 0; i < data->size; i++) {
-		data->entities[i] = verticalCollision[i];
-
-		// always inform the colliding entity 
-		message = g_gaWorld.sendMessage(
+	else {
+		gaMessage* message = g_gaWorld.sendMessage(
 			to->name(),
-			verticalCollision[i]->name(),
+			from->name(),
 			gaMessage::Action::COLLIDE,
 			collision,
 			nullptr
 		);
-
-		// record the original want_to_move id
-		message->m_value = msg->m_id;
 	}
 }
 

@@ -7,7 +7,7 @@
 #include "../../../../gaEngine/gaComponent/gaCActor.h"
 #include "../../../../gaEngine/gaComponent/gaSound.h"
 
-#include "../../../dfComponent/dfWeapon.h"
+#include "../../../dfComponent/dfCWeapon.h"
 #include "../../../dfComponent/dfComponentActor.h"
 #include "../../../dfComponent/dfEnemyAI.h"
 

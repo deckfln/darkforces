@@ -6,7 +6,7 @@
 
 #include "../../gaEngine/World.h"
 
-#include "dfWeapon.h"
+#include "dfCWeapon.h"
 #include "../weapons.h"
 #include "../dfObject/dfSpriteAnimated.h"
 #include "../dfObject.h"
@@ -70,20 +70,6 @@ void DarkForces::Component::Actor::addShield(int32_t value)
 }
 
 /**
- * Increase or decrease the energy and update the HUD
- */
-void DarkForces::Component::Actor::addEnergy(int32_t value)
-{
-	m_energy += value;
-	if (m_energy > m_maxEnergy) {
-		m_energy = m_maxEnergy;
-	}
-	else if (m_energy < 0) {
-		m_energy = 0;
-	}
-}
-
-/**
  * hit by a bullet, reduce shield and life
  */
 void DarkForces::Component::Actor::hitBullet(int32_t value)
@@ -122,14 +108,12 @@ void DarkForces::Component::Actor::dispatchMessage(gaMessage* message)
 	case DarkForces::Message::ADD_SHIELD:
 		addShield(message->m_value);
 		break;
-	case DarkForces::Message::ADD_ENERGY:
-		addEnergy(message->m_value);
-		break;
 	case DarkForces::Message::HIT_BULLET:
 		hitBullet(message->m_value);
 		break;
 	case DarkForces::Message::PICK_RIFLE_AND_BULLETS:
-		addEnergy(message->m_value);
+		m_entity->sendMessage(DarkForces::Message::ADD_ENERGY, 100);
+		//addEnergy(message->m_value);
 		//TODO add a weapon to a player
 		//addWeapon(O_RIFLE);
 		break;
@@ -200,8 +184,6 @@ uint32_t DarkForces::Component::Actor::recordState(void* r)
 
 	record->shield = m_shield;
 	record->maxShield = m_maxShield;
-	record->energy = m_energy;
-	record->maxEnergy = m_maxEnergy;
 	record->battery = m_battery;
 	record->life = m_life;
 	record->keys = static_cast<uint32_t>(m_keys);
@@ -218,8 +200,6 @@ uint32_t DarkForces::Component::Actor::loadState(void* r)
 
 	m_shield = record->shield;
 	m_maxShield = record->maxShield;
-	m_energy = record->energy;
-	m_maxEnergy = record->maxEnergy;
 	m_battery = record->battery;
 	m_life = record->life;
 	m_keys = static_cast<DarkForces::Keys>(record->keys);
@@ -238,7 +218,6 @@ void DarkForces::Component::Actor::debugGUIinline(void)
 		}
 
 		ImGui::Text("Shield: %d / %d", m_shield, m_maxShield);
-		ImGui::Text("Energy: %d / %d", m_energy, m_maxEnergy);
 		ImGui::Text("Battery: %d", m_battery);
 		ImGui::Text("Life: %d", m_life);
 		ImGui::Text("Keys: %d", m_keys);

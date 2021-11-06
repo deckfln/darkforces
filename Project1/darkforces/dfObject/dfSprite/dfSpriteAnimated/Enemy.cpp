@@ -34,6 +34,8 @@ DarkForces::Enemy::Enemy(dfWAX* model, const glm::vec3& position, float ambient,
 	else {
 		m_weapon.set(DarkForces::Weapon::Kind::Rifle);
 	}
+	m_weapon.addEnergy(200);
+
 	m_sound.addSound(Sound::DIE, loadVOC("ST-DIE-1.voc")->sound());
 }
 

@@ -5,7 +5,8 @@
 #include "../gaEngine/gaComponent/gaSound.h"
 
 #include "dfLevel.h"
-#include "dfComponent/dfWeapon.h"
+#include "dfComponent/dfCWeapon.h"
+#include "dfComponent/dfComponentLogic.h"
 
 #include "flightRecorder/frActor.h"
 

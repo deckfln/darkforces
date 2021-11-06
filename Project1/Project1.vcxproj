@@ -82,7 +82,6 @@
     <Link />
     <Link>
       <AdditionalDependencies>opengl32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <Profile>true</Profile>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -139,7 +138,7 @@
     <ClCompile Include="darkforces\dfComponent\AIMouseBot.cpp" />
     <ClCompile Include="darkforces\dfComponent\dfEnemyAI.cpp" />
     <ClCompile Include="darkforces\dfComponent\dfSign.cpp" />
-    <ClCompile Include="darkforces\dfComponent\dfWeapon.cpp" />
+    <ClCompile Include="darkforces\dfComponent\dfCWeapon.cpp" />
     <ClCompile Include="darkforces\dfComponent\InfElevator.cpp" />
     <ClCompile Include="darkforces\dfComponent\dfComponentLogic.cpp" />
     <ClCompile Include="darkforces\dfComponent\InfElevator\InfElevatorHorizontal.cpp" />
@@ -339,7 +338,7 @@
     <ClInclude Include="darkforces\dfComponent\AIMouseBot.h" />
     <ClInclude Include="darkforces\dfComponent\dfEnemyAI.h" />
     <ClInclude Include="darkforces\dfComponent\dfSign.h" />
-    <ClInclude Include="darkforces\dfComponent\dfWeapon.h" />
+    <ClInclude Include="darkforces\dfComponent\dfCWeapon.h" />
     <ClInclude Include="darkforces\dfComponent\InfElevator.h" />
     <ClInclude Include="darkforces\dfComponent\dfComponentLogic.h" />
     <ClInclude Include="darkforces\dfComponent\InfElevator\InfElevatorHorizontal.h" />

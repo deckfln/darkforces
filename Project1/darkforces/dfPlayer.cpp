@@ -37,6 +37,7 @@ DarkForces::Player::Player(int mclass, const std::string& name, fwCylinder& cyli
 
 	m_defaultAI.setClass("player");
 	m_weapon.set(DarkForces::Weapon::Kind::Rifle);
+	m_weapon.addEnergy(100);
 }
 
 DarkForces::Player::Player(flightRecorder::Entity* record) :

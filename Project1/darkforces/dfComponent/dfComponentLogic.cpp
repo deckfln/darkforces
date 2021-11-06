@@ -24,7 +24,7 @@ void dfComponentLogic::dispatchMessage(gaMessage* message)
 	case gaMessage::Action::COLLIDE:
 		if (m_logics & dfLogic::ITEM_SHIELD) {
 			// ADD ARMOR
-			if (message->m_pServer->findComponent(DF_COMPONENT_ACTOR)) {
+			if (message->m_pServer->findComponent(gaComponent::Actor)) {
 				// if the collider is a DF_ACTOR
 				// send shield from me to the actor
 				m_entity->sendMessage(message->m_server, DarkForces::Message::ADD_SHIELD, DF_SHIELD_ENERGY, nullptr);
@@ -35,7 +35,7 @@ void dfComponentLogic::dispatchMessage(gaMessage* message)
 		}
 		else if (m_logics & dfLogic::ITEM_ENERGY) {
 			// ADD ENERGY
-			if (message->m_pServer->findComponent(DF_COMPONENT_ACTOR)) {
+			if (message->m_pServer->findComponent(gaComponent::Actor)) {
 				// if the collider is a DF_ACTOR
 				// send energy from me to the actor
 				m_entity->sendMessage(message->m_server, DarkForces::Message::ADD_ENERGY, DF_ENERGY_ENERGY, nullptr);
@@ -46,7 +46,7 @@ void dfComponentLogic::dispatchMessage(gaMessage* message)
 		}
 		else if (m_logics & dfLogic::ITEM_RIFLE) {
 			// pick a rifle and bullets
-			if (message->m_pServer->findComponent(DF_COMPONENT_ACTOR)) {
+			if (message->m_pServer->findComponent(gaComponent::Actor)) {
 				// if the collider is a DF_ACTOR
 				// send shield from me to the actor
 				m_entity->sendMessage(message->m_server, DarkForces::Message::PICK_RIFLE_AND_BULLETS, DF_SHIELD_ENERGY, nullptr);
@@ -57,7 +57,7 @@ void dfComponentLogic::dispatchMessage(gaMessage* message)
 		}
 		else if (m_logics & dfLogic::ITEM_BATTERY) {
 			// pick a rifle and bullets
-			if (message->m_pServer->findComponent(DF_COMPONENT_ACTOR)) {
+			if (message->m_pServer->findComponent(gaComponent::Actor)) {
 				// if the collider is a DF_ACTOR
 				// send shield from me to the actor
 				m_entity->sendMessage(message->m_server, DarkForces::Message::ADD_BATTERY, DF_BATTERY_ENERGY, nullptr);
