@@ -275,6 +275,10 @@ void dfWAX::spriteModel(GLmodel &model, int id)
  */
 int dfWAX::framerate(dfState state)
 {
+	if (state == dfState::NONE) {
+		return 0;
+	}
+
 	return m_states[static_cast<uint32_t>(state)]->m_FrameRate;
 }
 

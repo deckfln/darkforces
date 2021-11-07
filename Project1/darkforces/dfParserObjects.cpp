@@ -30,6 +30,7 @@
 #include "dfComponent/dfComponentLogic.h"
 #include "dfComponent/dfEnemyAI.h"
 #include "dfComponent/dfCSprite.h"
+#include "dfComponent/dfCSprite/dfCSpriteAnimated.h"
 
 #include "dfObject/dfObject3D/MouseBot.h"
 #include "dfObject/Enemy.h"
@@ -346,9 +347,12 @@ void dfParserObjects::parseObject(dfFileSystem* fs, GameEngine::ParserExpression
 				obj->sendMessage(DarkForces::Message::ROTATE, rotation);
 				break;
 			default:
-				obj = new dfSpriteAnimated(wax, position, ambient, objectID);
-				((dfSpriteAnimated*)obj)->rotation(rotation);
+				obj = new DarkForces::Object(wax, position, ambient, OBJECT_WAX, objectID);
+				obj->sendMessage(DarkForces::Message::STATE, (uint32_t)dfState::SCENERY_NORMAL);
+				DarkForces::Component::SpriteAnimated* sprite = new DarkForces::Component::SpriteAnimated(wax, ambient);
+				obj->addComponent(sprite);
 			}
+			obj->sendMessage(DarkForces::Message::ROTATE, rotation);
 			break;
 		}
 		case O_3D: {
