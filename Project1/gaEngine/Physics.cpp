@@ -309,15 +309,13 @@ void Physics::moveBullet(gaEntity* entity, gaMessage* message)
 	}
 
 	if (collidedEntity != nullptr) {
-		// and we do not force the move
-		// refuse the move and inform both element from the collision
+		// refuse the move and inform ONLY the bullet of the collision
 		entity->popTransformations();				// restore previous position
 
-		g_gaWorld.sendMessage(
-			collidedEntity->name(),
+		collidedEntity->sendMessage(
 			entity->name(),
 			gaMessage::Action::COLLIDE,
-			0,
+			collision,
 			nullptr
 		);
 		return;

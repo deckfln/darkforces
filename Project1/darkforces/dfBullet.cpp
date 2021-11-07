@@ -128,10 +128,10 @@ void dfBullet::dispatchMessage(gaMessage* message)
 		break;
 
 	case gaMessage::Action::COLLIDE: {
-		// add an impact sprite
+		// add an impact sprite at the collision point
 		// constructor of a sprite expects a level space
 		glm::vec3 p;
-		dfLevel::gl2level(position(), p);
+		dfLevel::gl2level(message->m_v3value, p);
 
 		dfBulletExplode* impact = new dfBulletExplode(p, 1.0f);
 
