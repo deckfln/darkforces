@@ -141,7 +141,8 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 		{DarkForces::Message::STOP_FIRE, "df_STOP_FIRE"},
 		{DarkForces::Message::ANIM_START, "df_AnimStart"},
 		{DarkForces::Message::ANIM_NEXT_FRAME, "df_AnimNextFrame"},
-		{DarkForces::Message::ANIM_END, "df_AnimEnd"}
+		{DarkForces::Message::ANIM_END, "df_AnimEnd"},
+		{DarkForces::Message::ROTATE, "df_ROTATE"}
 	};
 
 	static std::map<int32_t, const std::map<int32_t, const char*>> g_def = {

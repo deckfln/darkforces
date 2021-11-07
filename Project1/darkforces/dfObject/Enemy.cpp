@@ -1,12 +1,15 @@
 #include "Enemy.h"
 
-#include "../../../dfModel/dfWAX.h"
-#include "../../../dfVOC.h"
+#include "../dfComponent/dfCSprite/dfCSpriteAnimated.h"
+
+#include "../dfWeapon.h"
+#include "../dfModel/dfWAX.h"
+#include "../dfVOC.h"
 
 static const char* g_className = "dfEnemy";
 
 DarkForces::Enemy::Enemy(dfWAX* model, const glm::vec3& position, float ambient, uint32_t objectID):
-	dfSpriteAnimated(model, position, ambient, objectID)
+	DarkForces::Object(model, position, ambient, OBJECT_WAX, objectID)
 {
 	m_className = g_className;
 	m_physical = true;
@@ -37,6 +40,9 @@ DarkForces::Enemy::Enemy(dfWAX* model, const glm::vec3& position, float ambient,
 	m_weapon.addEnergy(200);
 
 	m_sound.addSound(Sound::DIE, loadVOC("ST-DIE-1.voc")->sound());
+
+	DarkForces::Component::SpriteAnimated* sprite = new DarkForces::Component::SpriteAnimated(model, ambient);
+	addComponent(sprite);
 }
 
 void DarkForces::Enemy::setLevel(dfLevel* level)

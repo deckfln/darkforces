@@ -1,20 +1,21 @@
 #pragma once
 
-#include "../../dfSpriteAnimated.h"
-#include "../../../../framework/math/fwCylinder.h"
+#include "../../framework/math/fwCylinder.h"
 
-#include "../../../../gaEngine/gaComponent/gaAIPerception.h"
-#include "../../../../gaEngine/gaComponent/gaCActor.h"
-#include "../../../../gaEngine/gaComponent/gaSound.h"
+#include "../../gaEngine/gaComponent/gaAIPerception.h"
+#include "../../gaEngine/gaComponent/gaCActor.h"
+#include "../../gaEngine/gaComponent/gaSound.h"
 
-#include "../../../dfComponent/dfCWeapon.h"
-#include "../../../dfComponent/dfComponentActor.h"
-#include "../../../dfComponent/dfEnemyAI.h"
+#include "../dfObject.h"
+#include "../dfComponent/dfCWeapon.h"
+#include "../dfComponent/dfComponentActor.h"
+#include "../dfComponent/dfEnemyAI.h"
 
 class dfLevel;
+class dfWAX;
 
 namespace DarkForces {
-	class Enemy : public dfSpriteAnimated
+	class Enemy : public DarkForces::Object
 	{
 		fwCylinder m_cylinder;						// player bounding cylinder
 		DarkForces::Component::Actor m_actor;

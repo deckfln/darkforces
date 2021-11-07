@@ -9,7 +9,7 @@
 #include "../dfMessage.h"
 #include "../dfVOC.h"
 #include "../dfBullet.h"
-#include "../dfObject/dfSprite/dfSpriteAnimated/Enemy.h"
+#include "../dfObject/Enemy.h"
 #include "../dfComponent.h"
 
 static std::map<DarkForces::Weapon::Kind, DarkForces::Weapon> g_WeaponSounds = {

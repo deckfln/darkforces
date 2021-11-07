@@ -152,7 +152,7 @@ void DarkForces::Component::Actor::die(void)
 	g_gaWorld.deleteMessages(m_entity);
 
 	// activate the entity last animation
-	((dfSpriteAnimated*)m_entity)->state(dfState::ENEMY_DIE_FROM_SHOT);
+	m_entity->sendMessage(DarkForces::Message::STATE, (uint32_t)dfState::ENEMY_DIE_FROM_SHOT);
 
 	// object can now be traversed
 	m_entity->hasCollider(false);

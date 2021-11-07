@@ -157,6 +157,12 @@
     <Filter Include="Fichiers sources\include">
       <UniqueIdentifier>{c8391840-c786-4e0b-b9a2-b07d12d2d006}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Fichiers d%27en-tête\DarkForces\dfComponent\dfCSprite">
+      <UniqueIdentifier>{6d42cc4d-0c12-4f2a-855f-ffcfe7d54f23}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers sources\Dark Forces\dfComponent\dfCSprite">
+      <UniqueIdentifier>{6779f5da-0b57-47a6-b201-caa653b784e2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source.cpp">
@@ -570,9 +576,6 @@
     <ClCompile Include="darkforces\dfObject\dfObject3D\MouseBot.cpp">
       <Filter>Fichiers sources\Dark Forces\dfObject\dfObject3D</Filter>
     </ClCompile>
-    <ClCompile Include="darkforces\dfObject\dfSprite\dfSpriteAnimated\Enemy.cpp">
-      <Filter>Fichiers sources\Dark Forces\dfObject\dfSprite\dfSpriteAnimated</Filter>
-    </ClCompile>
     <ClCompile Include="darkforces\dfComponent\AIMouseBot.cpp">
       <Filter>Fichiers sources\Dark Forces\dfComponent</Filter>
     </ClCompile>
@@ -758,6 +761,12 @@
     </ClCompile>
     <ClCompile Include="darkforces\dfComponent\dfCSprite.cpp">
       <Filter>Fichiers sources\Dark Forces\dfComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="darkforces\dfComponent\dfCSprite\dfCSpriteAnimated.cpp">
+      <Filter>Fichiers sources\Dark Forces\dfComponent\dfCSprite</Filter>
+    </ClCompile>
+    <ClCompile Include="darkforces\dfObject\Enemy.cpp">
+      <Filter>Fichiers sources\Dark Forces\dfObject</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1181,9 +1190,6 @@
     <ClInclude Include="darkforces\dfObject\dfObject3D\MouseBot.h">
       <Filter>Fichiers d%27en-tête\DarkForces\dfObject\dfObject3D</Filter>
     </ClInclude>
-    <ClInclude Include="darkforces\dfObject\dfSprite\dfSpriteAnimated\Enemy.h">
-      <Filter>Fichiers d%27en-tête\DarkForces\dfObject\dfSprite\dfSpriteAnimated</Filter>
-    </ClInclude>
     <ClInclude Include="darkforces\dfComponent\AIMouseBot.h">
       <Filter>Fichiers d%27en-tête\DarkForces\dfComponent</Filter>
     </ClInclude>
@@ -1447,6 +1453,12 @@
     </ClInclude>
     <ClInclude Include="darkforces\dfComponent.h">
       <Filter>Fichiers d%27en-tête\DarkForces</Filter>
+    </ClInclude>
+    <ClInclude Include="darkforces\dfComponent\dfCSprite\dfCSpriteAnimated.h">
+      <Filter>Fichiers d%27en-tête\DarkForces\dfComponent\dfCSprite</Filter>
+    </ClInclude>
+    <ClInclude Include="darkforces\dfObject\Enemy.h">
+      <Filter>Fichiers d%27en-tête\DarkForces\dfObject</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

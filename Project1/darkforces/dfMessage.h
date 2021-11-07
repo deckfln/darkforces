@@ -25,7 +25,8 @@ namespace DarkForces {
 		SatNav_Wait,		// ticks for the DF satnav
 		ANIM_START,			// WAX animation is starting
 		ANIM_NEXT_FRAME,	// WAX animation start the next frame
-		ANIM_END			// WAX animation reached the end and is stopping
+		ANIM_END,			// WAX animation reached the end and is stopping
+		ROTATE				// rotate objects in degrees
 	};
 
 	enum MessageEvent {

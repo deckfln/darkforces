@@ -32,7 +32,7 @@
 #include "dfComponent/dfCSprite.h"
 
 #include "dfObject/dfObject3D/MouseBot.h"
-#include "dfObject/dfSprite/dfSpriteAnimated/Enemy.h"
+#include "dfObject/Enemy.h"
 
 /*
 DIFF	EASY	MED	HARD
@@ -159,16 +159,17 @@ void dfParserObjects::parseObjectComponent(dfFileSystem* fs, DarkForces::Object*
 			break;
 		case O_SCENERY:
 			object->logic(dfLogic::SCENERY);
-			((dfSpriteAnimated*)object)->state(dfState::SCENERY_NORMAL);
+			object->sendMessage(DarkForces::Message::STATE, (uint32_t)dfState::SCENERY_NORMAL);
 			break;
 		case O_BATTERY:
+			object->logic(dfLogic::ITEM_BATTERY);
 			object->physical(false);	// objects can be traversed and are not subject to gravity
 			object->gravity(false);
 			object->hasCollider(true);
 			break;
 		case O_STORM1:
 			object->logic(dfLogic::TROOP | dfLogic::ANIM);
-			((dfSpriteAnimated*)object)->state(dfState::ENEMY_STAY_STILL);
+			object->sendMessage(DarkForces::Message::STATE, (uint32_t)dfState::ENEMY_STAY_STILL);
 			object->hasCollider(true);
 			break;
 		case O_OFFICERR:
@@ -176,12 +177,12 @@ void dfParserObjects::parseObjectComponent(dfFileSystem* fs, DarkForces::Object*
 			// pass through
 		case I_OFFICER:
 			object->logic(dfLogic::OFFICER | dfLogic::ANIM);
-			((dfSpriteAnimated*)object)->state(dfState::ENEMY_STAY_STILL);
+			object->sendMessage(DarkForces::Message::STATE, (uint32_t)dfState::ENEMY_STAY_STILL);
 			object->hasCollider(true);
 			break;
 		case O_INT_DROID:
 			object->logic(dfLogic::INTDROID | dfLogic::ANIM);
-			((dfSpriteAnimated*)object)->state(dfState::ENEMY_STAY_STILL);
+			object->sendMessage(DarkForces::Message::STATE, (uint32_t)dfState::ENEMY_STAY_STILL);
 			object->hasCollider(true);
 			break;
 		case O_MEDKIT:
@@ -191,7 +192,7 @@ void dfParserObjects::parseObjectComponent(dfFileSystem* fs, DarkForces::Object*
 			break;
 		case O_COMMANDO:
 			object->logic(dfLogic::COMMANDO | dfLogic::ANIM);
-			((dfSpriteAnimated*)object)->state(dfState::ENEMY_STAY_STILL);
+			object->sendMessage(DarkForces::Message::STATE, (uint32_t)dfState::ENEMY_STAY_STILL);
 			object->hasCollider(true);
 			break;
 		case O_SHIELD:
@@ -201,27 +202,28 @@ void dfParserObjects::parseObjectComponent(dfFileSystem* fs, DarkForces::Object*
 			break;
 		case O_TROOP:
 			object->logic(dfLogic::TROOP | dfLogic::ANIM);
-			((dfSpriteAnimated*)object)->state(dfState::ENEMY_STAY_STILL);
+			object->sendMessage(DarkForces::Message::STATE, (uint32_t)dfState::ENEMY_STAY_STILL);
 			object->hasCollider(true);
 			break;
 		case O_SUPERCHARGE:
+			object->logic(dfLogic::ITEM_POWER);
 			object->physical(false);	// objects can be traversed and are not subject to gravity
 			object->gravity(false);
 			object->hasCollider(true);
 			break;
 		case O_LIFE:
+			object->logic(dfLogic::LIFE);
 			object->physical(false);	// objects can be traversed and are not subject to gravity
 			object->gravity(false);
 			object->hasCollider(true);
-			object->logic(dfLogic::LIFE);
 			break;
 		case O_KEY:
+			object->logic(dfLogic::ANIM);
 			object->physical(false);	// objects can be traversed and are not subject to gravity
 			object->hasCollider(true);
 			object->gravity(false);
 			object->logic(dfLogic::KEY_TRIGGER);
 			//TODO : remove the hack
-			object->logic(dfLogic::ANIM);
 			break;
 		case O_GOGGLES:
 			object->physical(false);	// objects can be traversed and are not subject to gravity
@@ -229,6 +231,7 @@ void dfParserObjects::parseObjectComponent(dfFileSystem* fs, DarkForces::Object*
 			object->hasCollider(true);
 			break;
 		case O_RIFLE:
+			object->logic(dfLogic::ITEM_RIFLE);
 			object->physical(false);	// objects can be traversed and are not subject to gravity
 			object->gravity(false);
 			object->hasCollider(true);
@@ -237,7 +240,6 @@ void dfParserObjects::parseObjectComponent(dfFileSystem* fs, DarkForces::Object*
 			object->physical(false);	// objects can be traversed and are not subject to gravity
 			object->gravity(false);
 			object->hasCollider(true);
-
 			object->logic(dfLogic::REVIVE);
 			break;
 		case O_MOUSEBOT:
@@ -341,11 +343,12 @@ void dfParserObjects::parseObject(dfFileSystem* fs, GameEngine::ParserExpression
 			case O_COMMANDO:
 			case O_TROOP:
 				obj = new DarkForces::Enemy(wax, position, ambient, objectID);
+				obj->sendMessage(DarkForces::Message::ROTATE, rotation);
 				break;
 			default:
 				obj = new dfSpriteAnimated(wax, position, ambient, objectID);
+				((dfSpriteAnimated*)obj)->rotation(rotation);
 			}
-			((dfSpriteAnimated*)obj)->rotation(rotation);
 			break;
 		}
 		case O_3D: {

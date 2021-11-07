@@ -137,6 +137,7 @@
     <ClCompile Include="darkforces\dfComponent\dfComponentActor.cpp" />
     <ClCompile Include="darkforces\dfComponent\AIMouseBot.cpp" />
     <ClCompile Include="darkforces\dfComponent\dfCSprite.cpp" />
+    <ClCompile Include="darkforces\dfComponent\dfCSprite\dfCSpriteAnimated.cpp" />
     <ClCompile Include="darkforces\dfComponent\dfEnemyAI.cpp" />
     <ClCompile Include="darkforces\dfComponent\dfSign.cpp" />
     <ClCompile Include="darkforces\dfComponent\dfCWeapon.cpp" />
@@ -176,8 +177,8 @@
     <ClCompile Include="darkforces\dfObject\dfSprite.cpp" />
     <ClCompile Include="darkforces\dfObject\dfSpriteAnimated.cpp" />
     <ClCompile Include="darkforces\dfObject\dfSprite\dfRifle.cpp" />
-    <ClCompile Include="darkforces\dfObject\dfSprite\dfSpriteAnimated\Enemy.cpp" />
     <ClCompile Include="darkforces\dfObject\dfSprite\ienergy.cpp" />
+    <ClCompile Include="darkforces\dfObject\Enemy.cpp" />
     <ClCompile Include="darkforces\dfPalette.cpp" />
     <ClCompile Include="darkforces\dfParseINF.cpp" />
     <ClCompile Include="darkforces\dfLevel.cpp" />
@@ -341,6 +342,7 @@
     <ClInclude Include="darkforces\dfComponent\dfComponentActor.h" />
     <ClInclude Include="darkforces\dfComponent\AIMouseBot.h" />
     <ClInclude Include="darkforces\dfComponent\dfCSprite.h" />
+    <ClInclude Include="darkforces\dfComponent\dfCSprite\dfCSpriteAnimated.h" />
     <ClInclude Include="darkforces\dfComponent\dfEnemyAI.h" />
     <ClInclude Include="darkforces\dfComponent\dfSign.h" />
     <ClInclude Include="darkforces\dfComponent\dfCWeapon.h" />
@@ -382,8 +384,8 @@
     <ClInclude Include="darkforces\dfObject\dfSprite.h" />
     <ClInclude Include="darkforces\dfObject\dfSpriteAnimated.h" />
     <ClInclude Include="darkforces\dfObject\dfSprite\dfRifle.h" />
-    <ClInclude Include="darkforces\dfObject\dfSprite\dfSpriteAnimated\Enemy.h" />
     <ClInclude Include="darkforces\dfObject\dfSprite\ienergy.h" />
+    <ClInclude Include="darkforces\dfObject\Enemy.h" />
     <ClInclude Include="darkforces\dfPalette.h" />
     <ClInclude Include="darkforces\dfParseINF.h" />
     <ClInclude Include="darkforces\dfLevel.h" />

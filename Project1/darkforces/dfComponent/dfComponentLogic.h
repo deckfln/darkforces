@@ -15,7 +15,9 @@ class dfComponentLogic : public gaComponent
 public:
 	dfComponentLogic();
 	void logic(uint32_t logic);								// add a logic
+	inline uint32_t logic(void) {return m_logics;};			// retrieve the logic
 	inline void setValue(uint32_t value) {	m_value = value; };
+
 	void dispatchMessage(gaMessage* message) override;	// deal with messages
 
 	void debugGUIinline(void) override;					// display the component in the debugger
