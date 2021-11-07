@@ -10,7 +10,6 @@
 
 #include "dfCWeapon.h"
 #include "../weapons.h"
-#include "../dfObject/dfSpriteAnimated.h"
 #include "../dfObject.h"
 #include "../dfBullet.h"
 #include "../../gaEngine/gaActor.h"

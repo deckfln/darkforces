@@ -10,9 +10,16 @@
 static const char* g_className = "dfBulletExplode";
 
 dfBulletExplode::dfBulletExplode(const glm::vec3& position, float ambient) :
-	dfSpriteAnimated("BULLEXP.WAX", position, ambient)
+	DarkForces::Object("BULLEXP.WAX", position)
 {
 	m_className = g_className;
+
+	m_logic.logic(dfLogic::ANIM);
+
+	m_sprite = new DarkForces::Component::SpriteAnimated("BULLEXP.WAX", ambient);
+	addComponent(m_sprite);
+	m_sprite->state(dfState::ENEMY_MOVE);
+	m_sprite->loop(false);
 
 	// origin of a bullet explosion is at the center of the sprite
 	m_position_lvl = position;
@@ -21,20 +28,10 @@ dfBulletExplode::dfBulletExplode(const glm::vec3& position, float ambient) :
 	p.y -= m_source->sizeGL().y / 2;
 	moveTo(m_position_lvl);
 
-	m_loopAnimation = false;
-	m_logics |= dfLogic::ANIM;
-	state(dfState::ENEMY_MOVE);
-
 	// prepare the sound component
 	m_sound.addSound(0, loadVOC("ex-tiny1.voc")->sound());
 	m_sound.position(p);
-
 	addComponent(&m_sound);
-}
-
-dfBulletExplode::dfBulletExplode(flightRecorder::DarkForces::SpriteAnimated* record):
-	dfSpriteAnimated((flightRecorder::DarkForces::SpriteAnimated*)record)
-{
 }
 
 /**
@@ -47,15 +44,16 @@ void dfBulletExplode::dispatchMessage(gaMessage* message)
 		sendInternalMessage(gaMessage::PLAY_SOUND, 0);
 		break;
 
-	case DarkForces::Message::END_LOOP:
+	case DarkForces::Message::ANIM_END:
 		// remove the explosion from the world
 		g_gaWorld.sendMessageDelayed(m_name, "_world", gaMessage::DELETE_ENTITY, 0, nullptr);
 		break;
 	}
 
-	dfSpriteAnimated::dispatchMessage(message);
+	DarkForces::Object::dispatchMessage(message);
 }
 
 dfBulletExplode::~dfBulletExplode()
 {
+	delete m_sprite;
 }

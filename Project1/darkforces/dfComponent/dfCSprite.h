@@ -25,6 +25,7 @@ namespace DarkForces {
 		public:
 			Sprite(dfFME* fme, float ambient);
 			Sprite(dfModel* model, float ambient);
+			Sprite(const std::string& model, float ambient);
 
 			// getter/setter
 			inline const std::string& model(void) {

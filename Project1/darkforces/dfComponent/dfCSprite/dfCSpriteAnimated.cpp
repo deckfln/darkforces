@@ -245,6 +245,7 @@ void DarkForces::Component::SpriteAnimated::dispatchMessage(gaMessage* message)
 		}
 
 		if (!update(message->m_delta)) {
+
 			// go for next animation if the animation loop ?
 			if (m_loopAnimation && m_source->nbFrames(m_state) > 1) {
 				// restart the counters

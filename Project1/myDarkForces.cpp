@@ -30,7 +30,6 @@
 #include "darkforces/dfFileSystem.h"
 #include "darkforces/dfPlayer.h"
 #include "darkforces/dfLogicTrigger.h"
-#include "darkforces/dfObject/dfSpriteAnimated.h"
 #include "darkforces/dfBullet.h"
 #include "darkforces/dfObject/dfBulletExplode.h"
 #include "darkforces/dfHUD.h"
@@ -117,8 +116,6 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 	glm::vec3* yellow = new glm::vec3(255, 255, 0);
 
 	g_Blackbox.registerClass("dfBullet", &dfBullet::create);
-	g_Blackbox.registerClass("dfSpriteAnimated", &dfSpriteAnimated::create);
-	g_Blackbox.registerClass("dfBulletExplode", &dfBulletExplode::create);
 
 	// prepare the debugger
 	static std::map<int32_t, const char*> g_definitions = {

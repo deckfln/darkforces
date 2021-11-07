@@ -13,6 +13,7 @@
 #include "dfConfig.h"
 #include "dfModel.h"
 #include "dfSprites.h"
+#include "dfObject/dfSpriteFME.h"
 #include "dfObject/dfSprite/ienergy.h"
 #include "dfObject/dfSprite/dfRifle.h"
 #include "dfLevel.h"
@@ -38,6 +39,18 @@ DarkForces::Object::Object(dfModel *source, const glm::vec3& position, float amb
 	moveTo(position);
 	m_className = g_className;
 	addComponent(&m_logic);
+}
+
+DarkForces::Object::Object(const std::string& model, const glm::vec3& position) :
+	gaEntity(DarkForces::ClassID::_Object, model + "(" + std::to_string(g_ids++) + ")"),
+	m_position_lvl(position),
+	m_objectID(g_ids)
+{
+	m_source = static_cast<dfModel*>(g_gaWorld.getModel(model));
+	m_className = g_className;
+	addComponent(&m_logic);
+	modelAABB(m_source->modelAABB());
+	moveTo(position);
 }
 
 /**
@@ -140,7 +153,7 @@ bool DarkForces::Object::update(time_t t)
  */
 void DarkForces::Object::drop(uint32_t logic, uint32_t value)
 {
-	dfSprite* obj=nullptr;
+	DarkForces::Object* obj=nullptr;
 
 	// constructor of a sprite expects a level space
 	glm::vec3 p;
@@ -155,25 +168,25 @@ void DarkForces::Object::drop(uint32_t logic, uint32_t value)
 
 	switch (logic) {
 	case dfLogic::DEAD_MOUSE:
-		obj = new dfSprite("DEDMOUSE.FME", p, 1.0f, OBJECT_FME);
+		obj = new DarkForces::Sprite::FME("DEDMOUSE.FME", p, 1.0f);
 		obj->hasCollider(false);
 		break;
 	case dfLogic::ITEM_BATTERY:
-		obj = new dfSprite("IBATTERY.FME", p, 1.0f, OBJECT_FME);
+		obj = new DarkForces::Sprite::FME("IBATTERY.FME", p, 1.0f);
 		obj->hasCollider(true);
 		break;
 	case dfLogic::ITEM_RIFLE:
 		obj = new DarkForces::Sprite::Rifle(p, 1.0f, value);
 		break;
 	case dfLogic::ITEM_POWER:
-		obj = new dfSprite("IPOWER.FME", p, 1.0f, OBJECT_FME);
+		obj = new DarkForces::Sprite::FME("IPOWER.FME", p, 1.0f);
 		obj->hasCollider(true);
 		break;
 	case dfLogic::ITEM_ENERGY:
 		obj = new IEnergy(p, 1.0f, value);
 		break;
 	case dfLogic::RED_KEY:
-		obj = new dfSprite("IKEYR.FME", p, 1.0f, OBJECT_FME);
+		obj = new DarkForces::Sprite::FME("IKEYR.FME", p, 1.0f);
 		obj->hasCollider(true);
 		break;
 	}

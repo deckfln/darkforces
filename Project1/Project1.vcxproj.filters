@@ -249,9 +249,6 @@
     <ClCompile Include="darkforces\dfSector.cpp">
       <Filter>Fichiers sources\Dark Forces</Filter>
     </ClCompile>
-    <ClCompile Include="darkforces\dfObject\dfSpriteAnimated.cpp">
-      <Filter>Fichiers sources\Dark Forces</Filter>
-    </ClCompile>
     <ClCompile Include="darkforces\dfSprites.cpp">
       <Filter>Fichiers sources\Dark Forces</Filter>
     </ClCompile>
@@ -582,9 +579,6 @@
     <ClCompile Include="framework\math\Segment.cpp">
       <Filter>Fichiers sources\Framework\math</Filter>
     </ClCompile>
-    <ClCompile Include="darkforces\dfObject\dfSprite.cpp">
-      <Filter>Fichiers sources\Dark Forces\dfObject</Filter>
-    </ClCompile>
     <ClCompile Include="gaEngine\Model.cpp">
       <Filter>Fichiers sources\gaEngine</Filter>
     </ClCompile>
@@ -753,12 +747,6 @@
     <ClCompile Include="darkforces\dfPlayer.cpp">
       <Filter>Fichiers sources\Dark Forces</Filter>
     </ClCompile>
-    <ClCompile Include="darkforces\dfObject\dfSprite\ienergy.cpp">
-      <Filter>Fichiers sources\Dark Forces\dfObject\dfSprite</Filter>
-    </ClCompile>
-    <ClCompile Include="darkforces\dfObject\dfSprite\dfRifle.cpp">
-      <Filter>Fichiers sources\Dark Forces\dfObject\dfSprite</Filter>
-    </ClCompile>
     <ClCompile Include="darkforces\dfComponent\dfCSprite.cpp">
       <Filter>Fichiers sources\Dark Forces\dfComponent</Filter>
     </ClCompile>
@@ -766,6 +754,15 @@
       <Filter>Fichiers sources\Dark Forces\dfComponent\dfCSprite</Filter>
     </ClCompile>
     <ClCompile Include="darkforces\dfObject\Enemy.cpp">
+      <Filter>Fichiers sources\Dark Forces\dfObject</Filter>
+    </ClCompile>
+    <ClCompile Include="darkforces\dfObject\dfSpriteFME.cpp">
+      <Filter>Fichiers sources\Dark Forces\dfObject</Filter>
+    </ClCompile>
+    <ClCompile Include="darkforces\dfObject\dfSprite\dfRifle.cpp">
+      <Filter>Fichiers sources\Dark Forces\dfObject</Filter>
+    </ClCompile>
+    <ClCompile Include="darkforces\dfObject\dfSprite\ienergy.cpp">
       <Filter>Fichiers sources\Dark Forces\dfObject</Filter>
     </ClCompile>
   </ItemGroup>
@@ -855,12 +852,6 @@
       <Filter>Fichiers d%27en-tête\DarkForces</Filter>
     </ClInclude>
     <ClInclude Include="darkforces\dfSector.h">
-      <Filter>Fichiers d%27en-tête\DarkForces</Filter>
-    </ClInclude>
-    <ClInclude Include="darkforces\dfObject\dfSprite.h">
-      <Filter>Fichiers d%27en-tête\DarkForces</Filter>
-    </ClInclude>
-    <ClInclude Include="darkforces\dfObject\dfSpriteAnimated.h">
       <Filter>Fichiers d%27en-tête\DarkForces</Filter>
     </ClInclude>
     <ClInclude Include="darkforces\dfSprites.h">
@@ -1439,14 +1430,8 @@
     <ClInclude Include="darkforces\dfPlayer.h">
       <Filter>Fichiers d%27en-tête\DarkForces</Filter>
     </ClInclude>
-    <ClInclude Include="darkforces\dfObject\dfSprite\ienergy.h">
-      <Filter>Fichiers d%27en-tête\DarkForces\dfObject\dfSprite</Filter>
-    </ClInclude>
     <ClInclude Include="darkforces\dfWeapon.h">
       <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="darkforces\dfObject\dfSprite\dfRifle.h">
-      <Filter>Fichiers d%27en-tête\DarkForces\dfObject\dfSprite</Filter>
     </ClInclude>
     <ClInclude Include="darkforces\dfComponent\dfCSprite.h">
       <Filter>Fichiers d%27en-tête\DarkForces\dfComponent</Filter>
@@ -1458,6 +1443,15 @@
       <Filter>Fichiers d%27en-tête\DarkForces\dfComponent\dfCSprite</Filter>
     </ClInclude>
     <ClInclude Include="darkforces\dfObject\Enemy.h">
+      <Filter>Fichiers d%27en-tête\DarkForces\dfObject</Filter>
+    </ClInclude>
+    <ClInclude Include="darkforces\dfObject\dfSpriteFME.h">
+      <Filter>Fichiers d%27en-tête\DarkForces\dfObject</Filter>
+    </ClInclude>
+    <ClInclude Include="darkforces\dfObject\dfSprite\dfRifle.h">
+      <Filter>Fichiers d%27en-tête\DarkForces\dfObject</Filter>
+    </ClInclude>
+    <ClInclude Include="darkforces\dfObject\dfSprite\ienergy.h">
       <Filter>Fichiers d%27en-tête\DarkForces\dfObject</Filter>
     </ClInclude>
   </ItemGroup>

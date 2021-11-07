@@ -19,7 +19,6 @@
 #include "dfModel/df3DO.h"
 #include "dfObject.h"
 #include "dfObject/dfSprite.h"
-#include "dfObject/dfSpriteAnimated.h"
 #include "dfObject/dfObject3D.h"
 #include "dfPalette.h"
 #include "dfAtlasTexture.h"

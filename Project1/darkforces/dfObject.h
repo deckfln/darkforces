@@ -127,6 +127,7 @@ namespace DarkForces {
 
 	public:
 		Object(dfModel* source, const glm::vec3& position, float ambient, int type, uint32_t objectID);
+		Object(const std::string& model, const glm::vec3& position);
 		Object(flightRecorder::DarkForces::Object* record);
 
 		Object* create(void* record) {

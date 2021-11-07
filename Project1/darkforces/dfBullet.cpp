@@ -24,7 +24,6 @@
 #include "dfSuperSector.h"
 #include "dfModel/dfWAX.h"
 #include "dfSprites.h"
-#include "dfObject/dfSpriteAnimated.h"
 #include "dfObject/dfBulletExplode.h"
 #include "dfVOC.h"
 

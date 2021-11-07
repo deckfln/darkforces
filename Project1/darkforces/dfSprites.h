@@ -43,10 +43,6 @@ public:
 	void update(void);										// push changes to the GPU
 	void remove(DarkForces::Component::Sprite* object);		// remove a sprite
 
-	void add(dfSprite* object);								// add a n object
-	void updateSprite(void);								// push changes to the GPU
-	void remove(dfSprite* object);							// remove an object
-
 	void OnWorldInsert(void);								// trigger when inserted in a gaWorld
 	void OnWorldRemove(void);								// trigger when from the gaWorld
 
