@@ -4,6 +4,8 @@
 #include "../../config.h"
 #include "../../gaEngine/gaEntity.h"
 
+#include "../dfComponent.h"
+
 DarkForces::Component::Trigger::Trigger(void):
 	gaComponent(DF_COMPONENT_TRIGGER)
 {

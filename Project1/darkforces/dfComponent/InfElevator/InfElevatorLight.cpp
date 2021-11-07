@@ -1,6 +1,8 @@
 #include "InfElevatorLight.h"
 
 #include "../../../gaEngine/World.h"
+
+#include "../../dfComponent.h"
 #include "../../dfSector.h"
 #include "../../../config.h"
 

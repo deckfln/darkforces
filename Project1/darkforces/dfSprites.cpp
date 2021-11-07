@@ -18,6 +18,7 @@ dfSprites::dfSprites(int nbSprites, dfAtlasTexture* atlas):
 	set_name("dfSprites");
 
 	m_objects.resize(nbSprites);
+	m_newSprite.resize(nbSprites);
 	m_positions.resize(nbSprites);
 	m_directions.resize(nbSprites);
 	m_textureIndex.resize(nbSprites);
@@ -67,7 +68,7 @@ void dfSprites::addModel(dfModel* model)
 /**
  * Add a static sprite
  */
-void dfSprites::add(dfSprite *object)
+void dfSprites::add(DarkForces::Component::Sprite* sprite)
 {
 	// find an empty slot
 	size_t slot;
@@ -76,9 +77,10 @@ void dfSprites::add(dfSprite *object)
 		slot = m_objects.size();
 
 		m_objects.resize(slot + 16);
-		m_positions.resize(slot + 16);
-		m_directions.resize(slot + 16);
-		m_textureIndex.resize(slot + 16);
+		m_newSprite.resize(slot + 16);
+		m_positions.resize(m_positions.size() + 16);
+		m_directions.resize(m_positions.size() + 16);
+		m_textureIndex.resize(m_positions.size() + 16);
 
 		m_geometry->resizeAttribute("aPos", &m_positions[0], slot + 1);
 		m_geometry->resizeAttribute("aDirection", &m_directions[0], slot + 1);
@@ -95,13 +97,14 @@ void dfSprites::add(dfSprite *object)
 		m_toDisplay = slot + 1;
 	}
 
-	m_objects[slot] = object;
-	float g = (float)m_modelsIndex[object->model()];
+	m_objects[slot] = sprite;
+	m_newSprite[slot] = true;
+	float g = (float)m_modelsIndex[sprite->model()];
 	m_textureIndex[slot].g = g;
 
-	object->slot(slot);
+	sprite->slot(slot);
 
-	object->updateSprite(
+	sprite->update(
 		&m_positions[slot],
 		&m_textureIndex[slot],
 		&m_directions[slot]
@@ -116,15 +119,24 @@ void dfSprites::add(dfSprite *object)
 void dfSprites::update(void)
 {
 	int i = 0;
-	for (auto object : m_objects) {
+	bool b;
+	for (auto obj : m_objects) {
 
-		if (object) {
+		if (obj) {
+			if (m_newSprite[i]) {
+				b = static_cast<DarkForces::Component::Sprite*>(obj)->update(
+					&m_positions[i],
+					&m_textureIndex[i],
+					&m_directions[i]);
+			}
+			else {
+				b = static_cast<dfSprite*>(obj)->updateSprite(
+					&m_positions[i],
+					&m_textureIndex[i],
+					&m_directions[i]);
+			}
 			// if the animation got updated, update the sprite buffers
-			if (object->updateSprite(
-				&m_positions[i],
-				&m_textureIndex[i],
-				&m_directions[i]
-			)) {
+			if (b) {
 				m_updated = true;
 			}
 		}
@@ -147,6 +159,70 @@ void dfSprites::update(void)
 		models->unbind();
 		m_dirtyModels = false;
 	}
+}
+
+/**
+ * Remove a sprite from the list
+ */
+void dfSprites::remove(DarkForces::Component::Sprite* sprite)
+{
+	for (size_t i = 0; i < m_objects.size(); i++) {
+		if (m_objects[i] == sprite) {
+			m_objects[i] = nullptr;
+			m_updated = true;
+
+			m_freeList.push(i);	// register the empty slot
+			break;
+		}
+	}
+}
+
+/**
+ * Add a static sprite
+ */
+void dfSprites::add(dfSprite* object)
+{
+	// find an empty slot
+	size_t slot;
+
+	if (m_freeList.size() == 0) {
+		slot = m_objects.size();
+
+		m_objects.resize(slot + 16);
+		m_newSprite.resize(slot + 16);
+		m_positions.resize(slot + 16);
+		m_directions.resize(slot + 16);
+		m_textureIndex.resize(slot + 16);
+
+		m_geometry->resizeAttribute("aPos", &m_positions[0], slot + 1);
+		m_geometry->resizeAttribute("aDirection", &m_directions[0], slot + 1);
+		m_geometry->resizeAttribute("aData", &m_textureIndex[0], slot + 1);
+
+		m_nbObjects++;
+	}
+	else {
+		slot = m_freeList.front();
+		m_freeList.pop();
+	}
+
+	if (slot >= m_toDisplay) {
+		m_toDisplay = slot + 1;
+	}
+
+	m_objects[slot] = object;
+	m_newSprite[slot] = false;
+	float g = (float)m_modelsIndex[object->model()];
+	m_textureIndex[slot].g = g;
+
+	object->slot(slot);
+
+	object->updateSprite(
+		&m_positions[slot],
+		&m_textureIndex[slot],
+		&m_directions[slot]
+	);
+
+	m_updated = true;
 }
 
 /**

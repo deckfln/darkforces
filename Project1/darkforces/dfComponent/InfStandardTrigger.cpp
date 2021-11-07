@@ -5,6 +5,8 @@
 #include "../../gaEngine/World.h"
 #include "../../gaEngine/gaEntity.h"
 
+#include "../dfComponent.h"
+
 #include <imgui.h>
 
 using namespace DarkForces::Component;

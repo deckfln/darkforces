@@ -11,7 +11,7 @@
 
 #include "dfCollision.h"
 #include "dfConfig.h"
-
+#include "dfComponent/dfComponentLogic.h"
 #include "flightRecorder/frObject.h"
 
 class fwScene;
@@ -108,6 +108,7 @@ namespace DarkForces {
 
 		glm::vec3 m_position_lvl = glm::vec3(0);				// position in level space
 
+		dfComponentLogic m_logic;								// dealing with the logic of the object
 		uint32_t m_logics = dfLogic::NONE;						// logic of the object
 		int m_difficulty = 0;									// difficulty to be displayed
 		float m_ambient = 32.0f;								// ambient light inherited from the sector

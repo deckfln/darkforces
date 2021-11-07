@@ -10,6 +10,7 @@
 #include "../dfVOC.h"
 #include "../dfBullet.h"
 #include "../dfObject/dfSprite/dfSpriteAnimated/Enemy.h"
+#include "../dfComponent.h"
 
 static std::map<DarkForces::Weapon::Kind, DarkForces::Weapon> g_WeaponSounds = {
 	{DarkForces::Weapon::Kind::Concussion, {

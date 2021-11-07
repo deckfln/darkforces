@@ -756,6 +756,9 @@
     <ClCompile Include="darkforces\dfObject\dfSprite\dfRifle.cpp">
       <Filter>Fichiers sources\Dark Forces\dfObject\dfSprite</Filter>
     </ClCompile>
+    <ClCompile Include="darkforces\dfComponent\dfCSprite.cpp">
+      <Filter>Fichiers sources\Dark Forces\dfComponent</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="glad\glad.h">
@@ -1438,6 +1441,12 @@
     </ClInclude>
     <ClInclude Include="darkforces\dfObject\dfSprite\dfRifle.h">
       <Filter>Fichiers d%27en-tête\DarkForces\dfObject\dfSprite</Filter>
+    </ClInclude>
+    <ClInclude Include="darkforces\dfComponent\dfCSprite.h">
+      <Filter>Fichiers d%27en-tête\DarkForces\dfComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="darkforces\dfComponent.h">
+      <Filter>Fichiers d%27en-tête\DarkForces</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

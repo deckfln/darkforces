@@ -5,6 +5,7 @@
 #include "../../gaEngine/World.h"
 #include "../../gaEngine/gaNavMesh.h"
 
+#include "../dfComponent.h"
 #include "../dfSector.h"
 #include "../dfLogicTrigger.h"
 #include "../dfComponent/Trigger.h"

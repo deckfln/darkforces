@@ -6,6 +6,8 @@
 
 #include "../../gaEngine/World.h"
 
+#include "../dfComponent.h"
+
 #include "dfCWeapon.h"
 #include "../weapons.h"
 #include "../dfObject/dfSpriteAnimated.h"

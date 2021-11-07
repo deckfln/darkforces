@@ -18,7 +18,6 @@ dfSprite::dfSprite(dfFME* fme, const glm::vec3& position, float ambient, uint32_
 	Object(fme, position, ambient, OBJECT_FME, objectID)
 {
 	m_className = g_className;
-	addComponent(&m_componentLogic);
 }
 
 /**
@@ -28,7 +27,6 @@ dfSprite::dfSprite(dfModel* model, const glm::vec3& position, float ambient, int
 	Object(model, position, ambient, type, objectID)
 {
 	m_className = g_className;
-	addComponent(&m_componentLogic);
 }
 
 /**
@@ -38,7 +36,6 @@ dfSprite::dfSprite(const std::string& name, const glm::vec3& position, float amb
 	Object((dfFME*)g_gaWorld.getModel(name), position, ambient, type, g_spriteID++)
 {
 	m_className = g_className;
-	addComponent(&m_componentLogic);
 }
 
 dfSprite::dfSprite(flightRecorder::DarkForces::Sprite* record):

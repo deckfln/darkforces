@@ -7,6 +7,7 @@
 #include "../../gaEngine/World.h"
 #include "../../gaEngine/gaComponent/gaComponentMesh.h"
 
+#include "../dfComponent.h"
 #include "../dfLogicStop.h"
 #include "../dfVOC.h"
 #include "../dfSector.h"

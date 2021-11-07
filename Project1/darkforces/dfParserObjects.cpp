@@ -13,6 +13,7 @@
 
 #include "dfFileSystem.h"
 #include "dfParseINF.h"
+#include "dfObject.h"
 #include "dfModel/dfWAX.h"
 #include "dfModel/dfFME.h"
 #include "dfModel/df3DO.h"
@@ -28,6 +29,7 @@
 #include "dfVOC.h"
 #include "dfComponent/dfComponentLogic.h"
 #include "dfComponent/dfEnemyAI.h"
+#include "dfComponent/dfCSprite.h"
 
 #include "dfObject/dfObject3D/MouseBot.h"
 #include "dfObject/dfSprite/dfSpriteAnimated/Enemy.h"
@@ -360,7 +362,9 @@ void dfParserObjects::parseObject(dfFileSystem* fs, GameEngine::ParserExpression
 		}
 		case O_FRAME: {
 			dfFME* fme = (dfFME*)g_gaWorld.getModel(m_fmes[data]);
-			obj = new dfSprite(fme, position, ambient, objectID);
+			obj = new DarkForces::Object(fme, position, ambient, OBJECT_FME, objectID);
+			DarkForces::Component::Sprite* sprite = new DarkForces::Component::Sprite(fme, ambient);
+			obj->addComponent(sprite);
 			break;
 		}
 		default:

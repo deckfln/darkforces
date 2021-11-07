@@ -6,6 +6,7 @@
 #include "../dfMesh.h"
 #include "../dfSector.h"
 #include "../../config.h"
+#include "../dfComponent.h"
 
 DarkForces::Component::Sign::Sign(dfMesh* mesh, dfSector* sector, dfWall* wall, float z, float z1):
 	gaComponent(DF_COMPONENT_SIGN),

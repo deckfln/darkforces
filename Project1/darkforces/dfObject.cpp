@@ -9,6 +9,7 @@
 #include "../gaEngine/gaDebug.h"
 #include "../gaEngine/World.h"
 
+#include "dfComponent.h"
 #include "dfConfig.h"
 #include "dfModel.h"
 #include "dfSprites.h"
@@ -33,10 +34,10 @@ DarkForces::Object::Object(dfModel *source, const glm::vec3& position, float amb
 	m_is(type),
 	m_objectID(g_ids++)
 {
-	gaEntity::
 	modelAABB(m_source->modelAABB());
 	moveTo(position);
 	m_className = g_className;
+	addComponent(&m_logic);
 }
 
 /**

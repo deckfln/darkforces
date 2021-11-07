@@ -7,6 +7,8 @@
 #include "../World.h"
 #include "../../gaEngine/gaBoundingBoxes.h"
 
+#include "../../darkforces/dfComponent.h"
+
 GameEngine::Component::ActiveProbe::ActiveProbe(void):
 	gaComponent(gaComponent::ActiveProbe),
 	m_worldMatrix(glm::mat4x4(1)),

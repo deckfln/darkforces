@@ -10,6 +10,7 @@
 #include "../../gaEngine/gaEntity.h"
 
 #include "../dfObject.h"
+#include "../dfComponent.h"
 
 DarkForces::AIMouseBot::AIMouseBot():
 	gaComponent(DF_COMPONENT_AI)

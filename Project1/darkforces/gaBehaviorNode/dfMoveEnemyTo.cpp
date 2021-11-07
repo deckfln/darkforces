@@ -4,6 +4,7 @@
 #include "../../gaEngine/gaComponent/gaBehaviorTree.h"
 #include "../../gaEngine/Physics.h"
 
+#include "../dfComponent.h"
 #include "../dfLogicTrigger.h"
 #include "../dfComponent/InfElevator.h"
 

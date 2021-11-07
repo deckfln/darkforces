@@ -3,6 +3,8 @@
 #include "../../config.h"
 #include "../dfObject.h"
 #include "../dfWeapon.h"
+#include "../dfComponent.h"
+
 #include <imgui.h>
 
 dfComponentLogic::dfComponentLogic() :

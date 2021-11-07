@@ -28,6 +28,7 @@
 #include "dfLogicStop.h"
 #include "dfParseINF.h"
 
+#include "dfComponent.h"
 #include "dfComponent/InfElevator.h"
 #include "dfComponent/Trigger.h"
 
