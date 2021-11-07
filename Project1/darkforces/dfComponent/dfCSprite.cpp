@@ -39,6 +39,20 @@ DarkForces::Component::Sprite::Sprite(const std::string& model, float ambient):
 {
 }
 
+DarkForces::Component::Sprite::Sprite(void) :
+	gaComponent(DF_COMPONENT_SPRITE)
+{
+}
+
+/**
+ * set parameters after creation
+ */
+void DarkForces::Component::Sprite::set(const std::string& model, float ambient)
+{
+	m_source = static_cast<dfModel*>(g_gaWorld.getModel(model));
+	m_ambient = ambient;
+}
+
 /**
  * Update the sprite buffers if the object is different
  */

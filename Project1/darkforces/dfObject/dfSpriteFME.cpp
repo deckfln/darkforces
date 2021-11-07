@@ -3,6 +3,6 @@
 DarkForces::Sprite::FME::FME(const std::string& model, const glm::vec3& p, float ambient):
 	DarkForces::Object(model, p)
 {
-	m_sprite = new DarkForces::Component::Sprite(model, ambient);
-	addComponent(m_sprite);
+	m_sprite.set(model, ambient);
+	addComponent(&m_sprite);
 }

@@ -11,21 +11,24 @@ namespace DarkForces {
 		class Sprite : public gaComponent
 		{
 		protected:
-			int m_dirtyAnimation = true;							// animation of the object was updated
-			int m_dirtyPosition = true;								// position of the object was updated
-			float m_ambient = 32.0f;								// ambient light inherited from the sector
+			int m_dirtyAnimation = true;						// animation of the object was updated
+			int m_dirtyPosition = true;							// position of the object was updated
+			float m_ambient = 32.0f;							// ambient light inherited from the sector
 
 			dfModel* m_source = nullptr;
 
-			uint32_t m_slot;						// position of the sprite in the Sprites Managers list
+			uint32_t m_slot;									// position of the sprite in the Sprites Managers list
 
 			void onWorldInsert(void);
 			void onWorldRemove(void);
 
 		public:
+			Sprite(void);
 			Sprite(dfFME* fme, float ambient);
 			Sprite(dfModel* model, float ambient);
 			Sprite(const std::string& model, float ambient);
+
+			void set(const std::string& model, float ambient);		// set parameters after creation
 
 			// getter/setter
 			inline const std::string& model(void) {

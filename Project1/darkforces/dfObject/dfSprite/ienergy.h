@@ -1,12 +1,9 @@
 #pragma once
 
-#include "../../dfObject.h"
-#include "../../dfComponent/dfCSprite.h"
+#include "../../dfObject/dfSpriteWAX.h"
 
 namespace DarkForces {
-	class IEnergy : public Object {
-		DarkForces::Component::Sprite* m_sprite;
-
+	class IEnergy : public Sprite::WAX {
 	public:
 		IEnergy(const glm::vec3& p, float ambient, uint32_t content);
 	};

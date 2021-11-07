@@ -175,6 +175,7 @@
     <ClCompile Include="darkforces\dfObject\dfObject3D.cpp" />
     <ClCompile Include="darkforces\dfObject\dfObject3D\MouseBot.cpp" />
     <ClCompile Include="darkforces\dfObject\dfSpriteFME.cpp" />
+    <ClCompile Include="darkforces\dfObject\dfSpriteWAX.cpp" />
     <ClCompile Include="darkforces\dfObject\dfSprite\dfRifle.cpp" />
     <ClCompile Include="darkforces\dfObject\dfSprite\ienergy.cpp" />
     <ClCompile Include="darkforces\dfObject\Enemy.cpp" />
@@ -381,6 +382,7 @@
     <ClInclude Include="darkforces\dfObject\dfObject3D.h" />
     <ClInclude Include="darkforces\dfObject\dfObject3D\MouseBot.h" />
     <ClInclude Include="darkforces\dfObject\dfSpriteFME.h" />
+    <ClInclude Include="darkforces\dfObject\dfSpriteWAX.h" />
     <ClInclude Include="darkforces\dfObject\dfSprite\dfRifle.h" />
     <ClInclude Include="darkforces\dfObject\dfSprite\ienergy.h" />
     <ClInclude Include="darkforces\dfObject\Enemy.h" />

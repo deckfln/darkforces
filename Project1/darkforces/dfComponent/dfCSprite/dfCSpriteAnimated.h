@@ -36,6 +36,7 @@ namespace DarkForces {
 			bool m_loopAnimation = true;			// animations are looping (default)
 
 		public:
+			SpriteAnimated();
 			SpriteAnimated(dfWAX* wax, float ambient);
 			SpriteAnimated(const std::string& model, float ambient);
 

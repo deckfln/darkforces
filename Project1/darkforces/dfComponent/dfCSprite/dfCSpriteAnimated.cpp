@@ -51,6 +51,11 @@ void DarkForces::Component::SpriteAnimated::directionVector(void)
 }
 #endif
 
+DarkForces::Component::SpriteAnimated::SpriteAnimated():
+	DarkForces::Component::Sprite()
+{
+}
+
 /**
  * create a sprite from a pointer to a model
  */
