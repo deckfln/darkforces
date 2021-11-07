@@ -154,6 +154,14 @@ DarkForces::Weapon* DarkForces::Component::Weapon::get(DarkForces::Weapon::Kind 
 }
 
 /**
+ * change the current weapon
+ */
+void DarkForces::Component::Weapon::onChangeWeapon(gaMessage* message)
+{
+	set((DarkForces::Weapon::Kind)message->m_value);
+}
+
+/**
  * fire a bullet
  */
 void DarkForces::Component::Weapon::onFire(const glm::vec3& direction, time_t time)
@@ -213,11 +221,20 @@ void DarkForces::Component::Weapon::onStopFire(gaMessage* message)
 }
 
 /**
- * Drop ammo when dying
+ * Drop ammo or rifle when the entity is dying
+ *  if the entity holds a rifle, drop it with the ammo
+ *  if it holds a rifle, drop the ammo
  */
 void DarkForces::Component::Weapon::onDead(gaMessage* message)
 {
-	((DarkForces::Object*)m_entity)->drop(dfLogic::ITEM_ENERGY, m_energy);
+	switch (m_kind) {
+	case DarkForces::Weapon::Kind::Rifle:
+		((DarkForces::Object*)m_entity)->drop(dfLogic::ITEM_RIFLE, m_energy);
+		break;
+	case DarkForces::Weapon::Kind::Pistol:
+		((DarkForces::Object*)m_entity)->drop(dfLogic::ITEM_ENERGY, m_energy);
+		break;
+	}
 }
 
 /**
@@ -240,6 +257,10 @@ void DarkForces::Component::Weapon::addEnergy(int32_t value)
 void DarkForces::Component::Weapon::dispatchMessage(gaMessage* message)
 {
 	switch (message->m_action) {
+	case DarkForces::Message::CHANGE_WEAPON:
+		onChangeWeapon(message);
+		break;
+
 	case DarkForces::Message::START_FIRE:
 		onFire(*(glm::vec3*)message->m_extra, message->m_time);
 		break;

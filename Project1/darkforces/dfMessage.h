@@ -18,6 +18,7 @@ namespace DarkForces {
 		PICK_RIFLE_AND_BULLETS,
 		ADD_BATTERY,
 		EVENT,				// send events to sectors
+		CHANGE_WEAPON,		// activate a new weapon
 		FIRE,				// fire a bullet from a gun
 		START_FIRE,			// pull the trigger
 		STOP_FIRE,			// stop firing

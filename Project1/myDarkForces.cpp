@@ -135,6 +135,7 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 		{DarkForces::Message::PICK_RIFLE_AND_BULLETS, "DF_PICK_RIFLE_AND_BULLETS"},
 		{DarkForces::Message::ADD_BATTERY, "DF_ADD_BATTERY"},
 		{DarkForces::Message::EVENT, "DF_EVENT"},
+		{DarkForces::Message::CHANGE_WEAPON, "CHANGE_WEAPON"},
 		{DarkForces::Message::FIRE, "df_FIRE"},
 		{DarkForces::Message::START_FIRE, "df_START_FIRE"},
 		{DarkForces::Message::STOP_FIRE, "df_STOP_FIRE"},

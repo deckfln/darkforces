@@ -4,49 +4,11 @@
 
 #include "../../gaEngine/gaComponent.h"
 
-#include "../dfBitmap.h"
-#include "../dfFileSystem.h"
+#include "../dfWeapon.h"
 
 class fwTexture;
 
 namespace DarkForces {
-	class Weapon {
-	public:
-		enum class Kind {
-			Concussion,
-			FusionCutter,
-			Missile,
-			MortarGun,
-			Pistol,
-			PlasmaCannon,
-			Repeater,
-			Rifle
-		};
-
-		Kind m_kind;
-		const char* debug;
-		const char* m_fireSound;
-		uint32_t m_damage;		// damage per bullet
-		float m_recoil;			// bullet dispersion based on recoil strength
-		time_t m_rate;			// how many bullets per seconds
-		std::vector<const char*> HUDfiles;	// name of the HUD images
-		std::vector<dfBitmap*> HUDbmps;
-		glm::vec2 HUDposition;
-
-		fwTexture* getStillTexture(dfPalette* palette) {
-			if (HUDbmps[0] == nullptr) {
-				HUDbmps[0] = new dfBitmap(g_dfFiles, HUDfiles[0], palette);
-			}
-			return HUDbmps[0]->fwtexture();
-		}
-		fwTexture* getFireTexture(dfPalette* palette) {
-			if (HUDbmps[1] == nullptr) {
-				HUDbmps[1] = new dfBitmap(g_dfFiles, HUDfiles[1], palette);
-			}
-			return HUDbmps[1]->fwtexture();
-		}
-	};
-
 	namespace Component {
 		class Weapon : public gaComponent {
 		public:
@@ -73,6 +35,7 @@ namespace DarkForces {
 			uint32_t m_energy = 0;								// energy available for the weapon
 			uint32_t m_maxEnergy = 200;
 
+			void onChangeWeapon(gaMessage* message);			// change the current weapon
 			void onFire(const glm::vec3& direction, time_t time);	// single shot
 			void onStopFire(gaMessage* message);				// keep the finger on the trigger
 			void onDead(gaMessage* message);					// drop ammo when dying

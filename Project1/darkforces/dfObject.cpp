@@ -13,11 +13,11 @@
 #include "dfModel.h"
 #include "dfSprites.h"
 #include "dfObject/dfSprite/ienergy.h"
+#include "dfObject/dfSprite/dfRifle.h"
 #include "dfLevel.h"
 #include "dfCollision.h"
 #include "dfComponent/dfComponentActor.h"
 #include "dfComponent/dfComponentLogic.h"
-#include "dfObject/dfSprite.h"
 
 static int g_ids = 0;
 static const char* g_className = "Object";
@@ -162,8 +162,7 @@ void DarkForces::Object::drop(uint32_t logic, uint32_t value)
 		obj->hasCollider(true);
 		break;
 	case dfLogic::ITEM_RIFLE:
-		obj = new dfSprite("IST-GUNI.FME", p, 1.0f, OBJECT_FME);
-		obj->hasCollider(true);
+		obj = new DarkForces::Sprite::Rifle(p, 1.0f, value);
 		break;
 	case dfLogic::ITEM_POWER:
 		obj = new dfSprite("IPOWER.FME", p, 1.0f, OBJECT_FME);
@@ -171,7 +170,6 @@ void DarkForces::Object::drop(uint32_t logic, uint32_t value)
 		break;
 	case dfLogic::ITEM_ENERGY:
 		obj = new IEnergy(p, 1.0f, value);
-		obj->hasCollider(true);
 		break;
 	case dfLogic::RED_KEY:
 		obj = new dfSprite("IKEYR.FME", p, 1.0f, OBJECT_FME);

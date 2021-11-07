@@ -112,7 +112,7 @@ void DarkForces::Component::Actor::dispatchMessage(gaMessage* message)
 		hitBullet(message->m_value);
 		break;
 	case DarkForces::Message::PICK_RIFLE_AND_BULLETS:
-		m_entity->sendMessage(DarkForces::Message::ADD_ENERGY, 100);
+		m_entity->sendMessage(DarkForces::Message::ADD_ENERGY, message->m_value);
 		//addEnergy(message->m_value);
 		//TODO add a weapon to a player
 		//addWeapon(O_RIFLE);

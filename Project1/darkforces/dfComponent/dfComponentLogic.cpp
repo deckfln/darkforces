@@ -2,6 +2,7 @@
 
 #include "../../config.h"
 #include "../dfObject.h"
+#include "../dfWeapon.h"
 #include <imgui.h>
 
 dfComponentLogic::dfComponentLogic() :
@@ -107,13 +108,11 @@ void dfComponentLogic::dispatchMessage(gaMessage* message)
 			}
 		}		
 		break;
+
 	case DarkForces::Message::DEAD:
 		//drop the bag of the object when an enemy dies
 		if (m_logics & DF_LOGIC_ENEMIES) {
-			if (m_logics & (dfLogic::COMMANDO | dfLogic::TROOP)) {
-				((DarkForces::Object*)m_entity)->drop(dfLogic::ITEM_RIFLE);
-			}
-			else if (m_logics & dfLogic::OFFICER) {
+			if (m_logics & dfLogic::OFFICER) {
 				if (m_logics & dfLogic::RED_KEY) {
 					((DarkForces::Object*)m_entity)->drop(dfLogic::RED_KEY);
 				}
