@@ -18,8 +18,7 @@ dfBulletExplode::dfBulletExplode(const glm::vec3& position, float ambient) :
 
 	m_sprite = new DarkForces::Component::SpriteAnimated("BULLEXP.WAX", ambient);
 	addComponent(m_sprite);
-	m_sprite->state(dfState::ENEMY_MOVE);
-	m_sprite->loop(false);
+	sendMessage(DarkForces::Message::STATE, (uint32_t)dfState::ENEMY_MOVE, 1.0f);	// deactivate the loop of the animation
 
 	// origin of a bullet explosion is at the center of the sprite
 	m_position_lvl = position;

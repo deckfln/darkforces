@@ -11,7 +11,6 @@ namespace DarkForces {
 		ADD_SHIELD,
 		ADD_ENERGY,
 		HIT_BULLET,			// the object was hit by a bullet
-		END_LOOP,			// the animation loop stopped
 		DYING,				// the object is dying but not yet dead
 		DEAD,				// the object is dead
 		STATE,				// change the state of the object
@@ -23,8 +22,10 @@ namespace DarkForces {
 		START_FIRE,			// pull the trigger
 		STOP_FIRE,			// stop firing
 		SatNav_Wait,		// ticks for the DF satnav
+		SET_ANIM,			// define the display of an object
 		ANIM_START,			// WAX animation is starting
 		ANIM_NEXT_FRAME,	// WAX animation start the next frame
+		ANIM_LASTFRAME,		// the animation loop reached the end
 		ANIM_END,			// WAX animation reached the end and is stopping
 		ROTATE				// rotate objects in degrees
 	};

@@ -282,6 +282,23 @@ gaMessage* World::sendMessage(const std::string& from, const std::string& to, in
 	ptr->m_client = to;
 	ptr->m_action = action;
 	ptr->m_value = value;
+	ptr->m_fvalue = 0;
+	ptr->m_extra = extra;
+
+	m_queue.push_back(ptr);
+
+	return ptr;
+}
+
+gaMessage* World::sendMessage(const std::string& from, const std::string& to, int action, int value, float fvalue, void* extra)
+{
+	gaMessage* ptr = allocateMessage();
+
+	ptr->m_server = from;
+	ptr->m_client = to;
+	ptr->m_action = action;
+	ptr->m_value = value;
+	ptr->m_fvalue = fvalue;
 	ptr->m_extra = extra;
 
 	m_queue.push_back(ptr);
@@ -299,6 +316,7 @@ gaMessage* World::sendMessage(const std::string& from, const std::string& to, in
 	ptr->m_server = from;
 	ptr->m_client = to;
 	ptr->m_action = action;
+	ptr->m_value = 0;
 	ptr->m_fvalue = value;
 	ptr->m_extra = extra;
 
@@ -317,6 +335,8 @@ gaMessage* World::sendMessage(const std::string& from, const std::string& to, in
 	ptr->m_server = from;
 	ptr->m_client = to;
 	ptr->m_action = action;
+	ptr->m_value = 0;
+	ptr->m_fvalue = 0;
 	ptr->m_v3value = value;
 	ptr->m_extra = extra;
 

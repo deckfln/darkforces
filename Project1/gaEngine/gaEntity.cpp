@@ -238,6 +238,11 @@ gaMessage* gaEntity::sendMessage(int action, int value, void* extra)
 	return g_gaWorld.sendMessage(m_name, m_name, action, value, extra);
 }
 
+gaMessage* gaEntity::sendMessage(int action, int value, float fvalue, void* extra)
+{
+	return g_gaWorld.sendMessage(m_name, m_name, action, value, fvalue, extra);
+}
+
 gaMessage* gaEntity::sendMessage(int action, const glm::vec3& value)
 {
 	return g_gaWorld.sendMessage(m_name, m_name, action, value, nullptr);

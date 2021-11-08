@@ -149,6 +149,39 @@ bool DarkForces::Object::update(time_t t)
 }
 
 /**
+ * Change the state of an object
+ */
+void DarkForces::Object::onStateChange(dfState state, bool loop)
+{
+	// already on that state in a running loop
+	if (state == dfState::NONE || (state == m_state )) {
+		return;
+	}
+	m_state = state;
+
+	sendMessage(DarkForces::Message::SET_ANIM, (uint32_t)state, (float)loop);
+}
+
+/**
+ * save and restore status
+ */
+ /*
+ void DarkForces::Object::pushState(dfState _state)
+{
+	m_previousStates.push(m_state);
+	state(_state);
+}
+
+dfState DarkForces::Object::popState(void)
+{
+	dfState _state = m_previousStates.top();
+	m_previousStates.pop();
+	state(_state);
+	return _state;
+}
+*/
+
+/**
  * object to drop in the scene at the current position
  */
 void DarkForces::Object::drop(uint32_t logic, uint32_t value)
@@ -335,6 +368,37 @@ bool DarkForces::Object::checkCollision(fwCylinder& bounding, glm::vec3& directi
 #endif
 	}
 	return true;
+}
+
+/**
+ * Deal with animation messages
+ */
+void DarkForces::Object::dispatchMessage(gaMessage* message)
+{
+	switch (message->m_action) {
+	case gaMessage::WORLD_INSERT:
+		onStateChange(m_state, false);
+		break;
+
+	case DarkForces::Message::STATE:
+		onStateChange((dfState)message->m_value, (bool)message->m_fvalue);
+		break;
+
+	case DarkForces::Message::START_FIRE:
+		onStateChange(dfState::ENEMY_ATTACK, true);
+		break;
+
+	case gaMessage::START_MOVE:
+		onStateChange(dfState::ENEMY_MOVE, false);
+		break;
+
+	case gaMessage::END_MOVE:
+		if (m_state == dfState::ENEMY_MOVE) {
+			onStateChange(dfState::ENEMY_STAY_STILL, true);
+		}
+		break;
+	}
+	gaEntity::dispatchMessage(message);
 }
 
 /**

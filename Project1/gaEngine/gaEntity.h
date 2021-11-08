@@ -166,6 +166,10 @@ public:
 		int value = 0,
 		void* extra = nullptr);							// send a message to an other entity
 	gaMessage* sendMessage(int action,
+		int value,
+		float fvalue,
+		void* extra = nullptr);							// send a message to an other entity
+	gaMessage* sendMessage(int action,
 		const glm::vec3& value);						// send internal message to all components of the current entity
 	gaMessage* sendMessageToWorld(int action,
 		int value = 0,

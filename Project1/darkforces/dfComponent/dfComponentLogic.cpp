@@ -92,7 +92,7 @@ void dfComponentLogic::dispatchMessage(gaMessage* message)
 			m_entity->sendMessage(DarkForces::Message::STATE, (int)dfState::SCENERY_ATTACK);
 		}
 		break;
-	case DarkForces::Message::END_LOOP:
+	case DarkForces::Message::ANIM_LASTFRAME:
 		// animation loop for an object reached it's end
 		if (m_logics & DF_LOGIC_ENEMIES) {
 			switch ((dfState)message->m_value) {

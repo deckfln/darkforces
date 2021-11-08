@@ -80,71 +80,33 @@ DarkForces::Component::SpriteAnimated::SpriteAnimated(const std::string& model, 
 /**
  * Change the state of an object
  */
-void DarkForces::Component::SpriteAnimated::state(dfState state)
+void DarkForces::Component::SpriteAnimated::onSetAnimation(gaMessage *message)
 {
-	// already on that state in a running loop
-	if (state == dfState::NONE || (state == m_state && m_animated == true)) {
-		return;
-	}
+	m_state = (dfState)message->m_value;
 
-	m_state = state;
 	m_entity->modelAABB(((dfWAX*)m_source)->bounding(m_state));
 	m_entity->updateWorldAABB();
 	m_lastFrame = m_currentFrame = 0;
 	m_frame = 0;
 	m_dirtyAnimation = true;
 
-	if (g_loopStates.find(state) != g_loopStates.end()) {
-		m_loopAnimation = g_loopStates[state];
-	}
-	else {
-		m_loopAnimation = true;
-	}
+	// if fvalue==0 => the animation loops
+	m_loopAnimation = (message->m_fvalue == 0.0f);
 
 	m_nbframes = m_source->nbFrames(m_state);
 	uint32_t frameRate = m_source->framerate(m_state);
 
 	dfComponentLogic* logic = dynamic_cast<dfComponentLogic*>(m_entity->findComponent(DF_COMPONENT_LOGIC));
 
-	if (logic->logic() & DF_LOGIC_ENEMIES) {
-		// trigger the animation, unless the object is static or has no animation
-		if (m_state != dfState::ENEMY_LIE_DEAD &&
-			m_state != dfState::ENEMY_STAY_STILL)
-		{
-			m_entity->sendMessage(DarkForces::Message::ANIM_START, (uint32_t)m_state, &m_nbframes);
-			m_animated = true;
-			m_entity->timer(true);	// register to timer events
-		}
+	if (m_nbframes > 1) {
+		m_entity->sendMessage(DarkForces::Message::ANIM_START, (uint32_t)m_state, &m_nbframes);
+		m_animated = true;
+		m_entity->timer(true);	// register to timer events
 	}
 	else {
-		// trigger an animation loop if there is actually an animation loop
-		if ((logic->logic() & dfLogic::ANIM)) {
-			m_entity->sendMessage(DarkForces::Message::ANIM_START, (uint32_t)m_state, &m_nbframes);
-			m_animated = true;
-			m_entity->timer(true);
-		}
-		else {
-			m_animated = false;
-			m_entity->timer(false);	// de-register from timer events
-		}
+		m_animated = false;
+		m_entity->timer(false);	// de-register from timer events
 	}
-}
-
-/**
- * save and restore status
- */
-void DarkForces::Component::SpriteAnimated::pushState(dfState _state)
-{
-	m_previousStates.push(m_state);
-	state(_state);
-}
-
-dfState DarkForces::Component::SpriteAnimated::popState(void)
-{
-	dfState _state = m_previousStates.top();
-	m_previousStates.pop();
-	state(_state);
-	return _state;
 }
 
 /**
@@ -195,19 +157,7 @@ void DarkForces::Component::SpriteAnimated::rotation(const glm::vec3& rotation)
  */
 bool DarkForces::Component::SpriteAnimated::update(time_t t)
 {
-	dfComponentLogic* logic = dynamic_cast<dfComponentLogic*>(m_entity->findComponent(DF_COMPONENT_LOGIC));
-	if (!(logic->logic() & dfLogic::ANIM)) {
-		return false;
-	}
-
 	m_currentFrame += t;
-
-	/*
-	if (m_nbframes <= 1) {
-		return false;	// static objects like FME are not updated,
-						// objects with only 1 frame in the animation loop are also not updated
-	}
-	*/
 
 	uint32_t frameRate = m_source->framerate(m_state);
 	time_t frameTime = 1000 / frameRate; // time of one frame in milliseconds
@@ -235,12 +185,8 @@ bool DarkForces::Component::SpriteAnimated::update(time_t t)
 void DarkForces::Component::SpriteAnimated::dispatchMessage(gaMessage* message)
 {
 	switch (message->m_action) {
-	case gaMessage::WORLD_INSERT:
-		state(m_state);
-		break;
-
-	case DarkForces::Message::STATE:
-		state((dfState)message->m_value);
+	case DarkForces::Message::SET_ANIM:
+		onSetAnimation(message);
 		break;
 
 	case gaMessage::TIMER:
@@ -250,14 +196,13 @@ void DarkForces::Component::SpriteAnimated::dispatchMessage(gaMessage* message)
 		}
 
 		if (!update(message->m_delta)) {
-
 			// go for next animation if the animation loop ?
 			if (m_loopAnimation && m_source->nbFrames(m_state) > 1) {
 				// restart the counters
 				m_lastFrame = m_currentFrame = 0;
 				m_frame = 0;
 				m_dirtyAnimation = true;
-				m_entity->sendMessage(DarkForces::Message::END_LOOP, (uint32_t)m_state);
+				m_entity->sendMessage(DarkForces::Message::ANIM_LASTFRAME, (uint32_t)m_state);
 			}
 			else {
 				m_entity->sendMessage(DarkForces::Message::ANIM_END, (uint32_t)m_state);
@@ -283,20 +228,6 @@ void DarkForces::Component::SpriteAnimated::dispatchMessage(gaMessage* message)
 				m_view->rotate(xr);
 			}
 #endif
-		}
-		break;
-
-	case DarkForces::Message::START_FIRE:
-		state(dfState::ENEMY_ATTACK);
-		break;
-
-	case gaMessage::START_MOVE:
-		state(dfState::ENEMY_MOVE);
-		break;
-
-	case gaMessage::END_MOVE:
-		if (m_state == dfState::ENEMY_MOVE) {
-			state(dfState::ENEMY_STAY_STILL);
 		}
 		break;
 

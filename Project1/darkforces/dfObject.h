@@ -4,6 +4,7 @@
 #include <stdint.h>
 #include <glm/vec3.hpp>
 #include <glm/vec4.hpp>
+#include <stack>
 
 #include "../framework/fwAABBox.h"
 #include "../gaEngine/gaEntity.h"
@@ -101,6 +102,8 @@ namespace DarkForces {
 	{
 		int m_is = OBJECT_OBJ;
 		int m_objectID = 0;
+		dfState m_state = dfState::NONE;						// state of the object
+		std::stack<dfState> m_previousStates;					// push/pop status for loops
 
 	protected:
 		int m_dirtyAnimation = true;							// animation of the object was updated
@@ -151,6 +154,12 @@ namespace DarkForces {
 		void sector(dfSector* s) { m_sector = s; };
 		dfSuperSector* superSector(void) override;
 
+		void onStateChange(dfState state, bool loop);					// direct change of state
+		/*
+		void pushState(dfState state);							// save and restore status
+		dfState popState(void);
+		*/
+
 		bool checkCollision(fwCylinder& bounding,
 			glm::vec3& direction,
 			glm::vec3& intersection,
@@ -158,6 +167,8 @@ namespace DarkForces {
 		void moveTo(const glm::vec3& position) override;		// update the object position
 		void updateWorldAABB(void) override;					// update the world AABB based on position
 		bool update(time_t t) override;							// update based on timer
+
+		void dispatchMessage(gaMessage* message) override;		// let an entity deal with a situation
 
 		// flight recorder and debugger
 		inline int recordSize(void) override {

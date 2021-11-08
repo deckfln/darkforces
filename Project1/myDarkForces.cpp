@@ -125,7 +125,6 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 		{DarkForces::Message::ADD_SHIELD, "DF_ADD_SHIELD"},
 		{DarkForces::Message::ADD_ENERGY, "DF_ADD_ENERGY"},
 		{DarkForces::Message::HIT_BULLET,	"DF_HIT_BULLET"},
-		{DarkForces::Message::END_LOOP, "DF_END_LOOP"},
 		{DarkForces::Message::DYING, "DF_DYING"},
 		{DarkForces::Message::DEAD, "DF_DEAD"},
 		{DarkForces::Message::STATE,	"DF_STATE"},
@@ -136,8 +135,10 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 		{DarkForces::Message::FIRE, "df_FIRE"},
 		{DarkForces::Message::START_FIRE, "df_START_FIRE"},
 		{DarkForces::Message::STOP_FIRE, "df_STOP_FIRE"},
+		{DarkForces::Message::SET_ANIM, "df_setAnim"},
 		{DarkForces::Message::ANIM_START, "df_AnimStart"},
 		{DarkForces::Message::ANIM_NEXT_FRAME, "df_AnimNextFrame"},
+		{DarkForces::Message::ANIM_LASTFRAME, "DF_AnimEndLoop"},
 		{DarkForces::Message::ANIM_END, "df_AnimEnd"},
 		{DarkForces::Message::ROTATE, "df_ROTATE"}
 	};
