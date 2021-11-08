@@ -384,6 +384,11 @@ void DarkForces::Object::dispatchMessage(gaMessage* message)
 		onStateChange((dfState)message->m_value, (bool)message->m_fvalue);
 		break;
 
+	case DarkForces::Message::FORCE_STATE:
+		m_state = dfState::NONE;
+		onStateChange((dfState)message->m_value, (bool)message->m_fvalue);
+		break;
+
 	case DarkForces::Message::START_FIRE:
 		onStateChange(dfState::ENEMY_ATTACK, true);
 		break;
@@ -392,11 +397,13 @@ void DarkForces::Object::dispatchMessage(gaMessage* message)
 		onStateChange(dfState::ENEMY_MOVE, false);
 		break;
 
+/*
 	case gaMessage::END_MOVE:
 		if (m_state == dfState::ENEMY_MOVE) {
 			onStateChange(dfState::ENEMY_STAY_STILL, true);
 		}
 		break;
+*/
 	}
 	gaEntity::dispatchMessage(message);
 }

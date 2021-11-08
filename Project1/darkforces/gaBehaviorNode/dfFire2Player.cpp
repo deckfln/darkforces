@@ -37,7 +37,7 @@ void DarkForces::Behavior::Fire2Player::init(void* data)
 		return;
 	}
 
-	m_entity->sendMessage(DarkForces::Message::STATE, (uint32_t)dfState::ENEMY_ATTACK);
+	m_entity->sendMessage(DarkForces::Message::FORCE_STATE, (uint32_t)dfState::ENEMY_ATTACK, 1.0f);
 
 	GameEngine::BehaviorNode::init(data);
 }

@@ -13,7 +13,8 @@ namespace DarkForces {
 		HIT_BULLET,			// the object was hit by a bullet
 		DYING,				// the object is dying but not yet dead
 		DEAD,				// the object is dead
-		STATE,				// change the state of the object
+		STATE,				// change the state of the object unless it is already on that state
+		FORCE_STATE,		// change the state of the object
 		PICK_RIFLE_AND_BULLETS,
 		ADD_BATTERY,
 		EVENT,				// send events to sectors
