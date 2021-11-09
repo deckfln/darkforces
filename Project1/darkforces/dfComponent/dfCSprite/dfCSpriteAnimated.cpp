@@ -96,17 +96,10 @@ void DarkForces::Component::SpriteAnimated::onSetAnimation(gaMessage *message)
 	m_nbframes = m_source->nbFrames(m_state);
 	uint32_t frameRate = m_source->framerate(m_state);
 
-	dfComponentLogic* logic = dynamic_cast<dfComponentLogic*>(m_entity->findComponent(DF_COMPONENT_LOGIC));
+	m_entity->sendMessage(DarkForces::Message::ANIM_START, (uint32_t)m_state, &m_nbframes);
 
-	if (m_nbframes > 1) {
-		m_entity->sendMessage(DarkForces::Message::ANIM_START, (uint32_t)m_state, &m_nbframes);
-		m_animated = true;
-		m_entity->timer(true);	// register to timer events
-	}
-	else {
-		m_animated = false;
-		m_entity->timer(false);	// de-register from timer events
-	}
+	m_animated = true;
+	m_entity->timer(true);	// register to timer events
 }
 
 /**
