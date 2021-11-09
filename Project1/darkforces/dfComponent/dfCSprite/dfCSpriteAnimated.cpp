@@ -103,7 +103,7 @@ void DarkForces::Component::SpriteAnimated::onSetAnimation(gaMessage *message)
 }
 
 /**
- *
+ * update the sprite entry in the sprites manager
  */
 bool DarkForces::Component::SpriteAnimated::update(glm::vec3* position, glm::vec4* texture, glm::vec3* direction)
 {
@@ -122,8 +122,10 @@ bool DarkForces::Component::SpriteAnimated::update(glm::vec3* position, glm::vec
 /**
  * Create a direction vector ased on pch, yaw, rol
  */
-void DarkForces::Component::SpriteAnimated::rotation(const glm::vec3& rotation)
+void DarkForces::Component::SpriteAnimated::onRotate(gaMessage* message)
 {
+	const glm::vec3& rotation = message->m_v3value;
+
 	// YAW = value in degrees where 0 is at the "top of the screen when you look at the map". The value increases clockwise
 	float yaw = glm::radians(rotation.y);
 	m_direction.x = -sin(yaw);	// in level space
@@ -148,28 +150,84 @@ void DarkForces::Component::SpriteAnimated::rotation(const glm::vec3& rotation)
 /**
  * Animate the object frame
  */
-bool DarkForces::Component::SpriteAnimated::update(time_t t)
+void DarkForces::Component::SpriteAnimated::onTimer(gaMessage* message)
 {
-	m_currentFrame += t;
+	if (!m_animated) {
+		// ignore timer ticks when there is no ongoing animation
+		return;
+	}
+
+	m_currentFrame += message->m_delta;
 
 	uint32_t frameRate = m_source->framerate(m_state);
 	time_t frameTime = 1000 / frameRate; // time of one frame in milliseconds
 
+	bool endAnims = false;
+
+	// did we rech the delay of the frame
 	time_t delta = m_currentFrame - m_lastFrame;
 	if (delta >= frameTime) {
 		m_frame = m_source->nextFrame(m_state, m_frame);
 
 		if (m_frame == -1) {
-			return false;	// reached end of animation loop
+			endAnims = true;	// reached end of animation loop
 		}
+		else {
 
-		m_entity->sendMessage(DarkForces::Message::ANIM_NEXT_FRAME, m_frame);
+			m_entity->sendMessage(DarkForces::Message::ANIM_NEXT_FRAME, m_frame);
 
-		m_lastFrame = (m_currentFrame / frameTime) * frameTime;
-		m_dirtyAnimation = true;
+			m_lastFrame = (m_currentFrame / frameTime) * frameTime;
+			m_dirtyAnimation = true;
+			endAnims = false;	// animation still going
+		}
 	}
 
-	return true;	// continue animation loop
+	if (endAnims) {
+		// go for next animation if the animation loop ?
+		if (m_loopAnimation && m_source->nbFrames(m_state) > 1) {
+			// restart the counters
+			m_lastFrame = m_currentFrame = 0;
+			m_frame = 0;
+			m_dirtyAnimation = true;
+			m_entity->sendMessage(DarkForces::Message::ANIM_LASTFRAME, (uint32_t)m_state);
+		}
+		else {
+			m_entity->sendMessage(DarkForces::Message::ANIM_END, (uint32_t)m_state);
+			m_animated = false;
+			m_entity->timer(false);
+		}
+	}
+}
+
+/**
+ * change the sprite direction
+ */
+void DarkForces::Component::SpriteAnimated::onLookAt(gaMessage* message)
+{
+	if (message->m_extra == nullptr) {
+		m_direction = glm::normalize(message->m_v3value);
+		m_dirtyPosition = true;
+#ifdef _DEBUG
+		if (m_view) {
+			float a = atan2(m_direction.x, m_direction.z);// +M_PI / 2.0f;
+			glm::vec3 xr(0, a, 0);
+
+			m_view->rotate(xr);
+		}
+#endif
+	}
+}
+
+/**
+ * change the sprite directionVector
+ */
+void DarkForces::Component::SpriteAnimated::onMove(gaMessage* message)
+{
+#ifdef _DEBUG
+	if (m_view) {
+		m_view->translate(m_entity->position() + glm::vec3(0.0f, 0.5f, 0.0f));
+	}
+#endif
 }
 
 /**
@@ -183,51 +241,19 @@ void DarkForces::Component::SpriteAnimated::dispatchMessage(gaMessage* message)
 		break;
 
 	case gaMessage::TIMER:
-		if (!m_animated) {
-			// ignore timer ticks when there is no ongoing animation
-			return;
-		}
-
-		if (!update(message->m_delta)) {
-			// go for next animation if the animation loop ?
-			if (m_loopAnimation && m_source->nbFrames(m_state) > 1) {
-				// restart the counters
-				m_lastFrame = m_currentFrame = 0;
-				m_frame = 0;
-				m_dirtyAnimation = true;
-				m_entity->sendMessage(DarkForces::Message::ANIM_LASTFRAME, (uint32_t)m_state);
-			}
-			else {
-				m_entity->sendMessage(DarkForces::Message::ANIM_END, (uint32_t)m_state);
-				m_animated = false;
-				m_entity->timer(false);
-			}
-		}
+		onTimer(message);
 		break;
 
 	case DarkForces::Message::ROTATE:
-		rotation(message->m_v3value);
+		onRotate(message);
 		break;
 
 	case gaMessage::LOOK_AT:
-		if (message->m_extra == nullptr) {
-			m_direction = glm::normalize(message->m_v3value);
-			m_dirtyPosition = true;
-#ifdef _DEBUG
-			if (m_view) {
-				float a = atan2(m_direction.x, m_direction.z);// +M_PI / 2.0f;
-				glm::vec3 xr(0, a, 0);
-
-				m_view->rotate(xr);
-			}
-#endif
-		}
+		onLookAt(message);
 		break;
 
 	case gaMessage::MOVE:
-		if (m_view) {
-			m_view->translate(m_entity->position() + glm::vec3(0.0f, 0.5f, 0.0f));
-		}
+		onMove(message);
 		break;
 	}
 	DarkForces::Component::Sprite::dispatchMessage(message);

@@ -23,14 +23,17 @@ namespace DarkForces {
 			bool m_animated = false;				// is the object running an animation loop ?
 			fwMesh* m_view = nullptr;
 
+			void onTimer(gaMessage* message);		// animate the sprite
+			void onLookAt(gaMessage* message);		// change the sprite direction
+			void onRotate(gaMessage* message);		// Create a direction vector ased on pch, yaw, rol
+			void onMove(gaMessage* message);		// change the sprite directionVector
+
 #ifdef _DEBUG
 			bool m_directionVector = false;			// add a vector to show the direction the sprite is facing
 			bool m_debug = false;
 
 			void directionVector(void);				// add/remove a vector mesh
 #endif
-			bool update(time_t t);					// update based on timer
-
 			void onSetAnimation(gaMessage* message);		// activate the animation of a given state
 
 		protected:
@@ -41,14 +44,13 @@ namespace DarkForces {
 			SpriteAnimated(dfWAX* wax, float ambient);
 			SpriteAnimated(const std::string& model, float ambient);
 
-			void rotation(const glm::vec3& rotation);
-
+			// getter/setter
 			void loop(bool l) { m_loopAnimation = l; };
 			bool loop(void) { return m_loopAnimation; };
 
 			bool update(glm::vec3* position,
 				glm::vec4* texture,
-				glm::vec3* direction) override;
+				glm::vec3* direction) override;					// update the sprite entry in the sprites manager
 
 			void dispatchMessage(gaMessage* message) override;	// let an entity deal with a situation
 
