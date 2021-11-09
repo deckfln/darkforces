@@ -70,6 +70,7 @@ void DarkForces::Behavior::Fire2Player::dispatchMessage(gaMessage* message, Acti
 	case DarkForces::Message::ANIM_END:
 		if (message->m_value == (uint32_t)dfState::ENEMY_ATTACK) {
 			// Fire animation ended, so reboot the move
+			m_entity->sendMessage(DarkForces::Message::STOP_FIRE);
 			m_status = Status::SUCCESSED;
 		}
 		break;
