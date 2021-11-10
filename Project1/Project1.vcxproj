@@ -403,6 +403,7 @@
     <ClInclude Include="darkforces\dfWall.h" />
     <ClInclude Include="darkforces\dfWeapon.h" />
     <ClInclude Include="darkforces\flightRecorder\frActor.h" />
+    <ClInclude Include="darkforces\flightRecorder\frAnim3D.h" />
     <ClInclude Include="darkforces\flightRecorder\frCompActor.h" />
     <ClInclude Include="darkforces\flightRecorder\frCompElevator.h" />
     <ClInclude Include="darkforces\flightRecorder\frElevator.h" />

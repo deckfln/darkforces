@@ -13,7 +13,7 @@
 #include "../dfVue.h"
 #include "../dfComponent.h"
 
-#include "../flightRecorder/Object3D.h"
+#include "../flightRecorder/frAnim3D.h"
 
 static const char* g_className = "dfObject3D";
 
@@ -118,17 +118,19 @@ void DarkForces::Component::Anim3D::dispatchMessage(gaMessage* message)
 	gaComponent::dispatchMessage(message);
 }
 
-/**
- * return a record of the entity state (for debug)
- */
-/*
-uint32_t DarkForces::Component::c3Do::recordState(void* r)
-{
-	Object::recordState(r);
-	flightRecorder::DarkForces::Object3D* record = (flightRecorder::DarkForces::Object3D*)r;
+//*************************** Flight recorder ******************************
 
-	record->object.entity.classID = flightRecorder::TYPE::DF_ENTITY_OBJECT;
-	record->object.entity.size = sizeof(flightRecorder::DarkForces::Object3D);
+inline uint32_t DarkForces::Component::Anim3D::recordSize(void)
+{
+	return sizeof(flightRecorder::DarkForces::Anim3D);
+}
+
+uint32_t DarkForces::Component::Anim3D::recordState(void* r)
+{
+	flightRecorder::DarkForces::Anim3D* record = (flightRecorder::DarkForces::Anim3D*)r;
+
+	record->id = m_id;
+	record->size = sizeof(flightRecorder::DarkForces::Anim3D);
 
 	record->lastFrame = m_lastFrame;
 	record->vue = false;
@@ -137,25 +139,23 @@ uint32_t DarkForces::Component::c3Do::recordState(void* r)
 		record->vue = true;
 		record->currentVueFrame = m_vue->currentFrame();
 	}
-	return record->object.entity.size;
+	return record->size;
 }
-*/
-/**
- * reload an entity state from a record
- */
-/*
-void dfObject3D::loadState(void* r)
+
+uint32_t DarkForces::Component::Anim3D::loadState(void* r)
 {
-	flightRecorder::DarkForces::Object3D* record = (flightRecorder::DarkForces::Object3D*)r;
-	Object::loadState(&record->object);
-	m_lastFrame= record->lastFrame;
+	flightRecorder::DarkForces::Anim3D* record = (flightRecorder::DarkForces::Anim3D*)r;
+	m_lastFrame = record->lastFrame;
 
 	if (record->vue) {
 		m_vue->currentFrame(record->currentVueFrame);
-		update(0);
+		onTimer(0);
 	}
+	return record->size;
 }
-*/
+
+//*************************** Debugger ******************************
+
 /**
  * Add dedicated component debug the entity
  */

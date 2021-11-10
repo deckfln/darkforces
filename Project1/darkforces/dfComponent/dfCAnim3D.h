@@ -29,13 +29,10 @@ namespace DarkForces {
 			void dispatchMessage(gaMessage* message) override;
 
 			// flight recorder and debugger
-			/*
-			inline int recordSize(void) override {
-				return sizeof(flightRecorder::DarkForces::Object3D);
-			}													// size of one record
-			uint32_t recordState(void* record) override;		// return a record of the entity state (for debug)
-			void loadState(void* record) override;				// reload an entity state from a record
-			*/
+			// flight recorder
+			inline uint32_t recordSize(void);
+			uint32_t recordState(void* r);
+			uint32_t loadState(void* r);
 
 			// debugger
 			void debugGUIinline(void);							// Add dedicated component debug the entity
