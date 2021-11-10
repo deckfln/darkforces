@@ -243,9 +243,14 @@ gaMessage* gaEntity::sendMessage(int action, int value, float fvalue, void* extr
 	return g_gaWorld.sendMessage(m_name, m_name, action, value, fvalue, extra);
 }
 
-gaMessage* gaEntity::sendMessage(int action, const glm::vec3& value)
+gaMessage* gaEntity::sendMessage(int action, int value, const glm::vec3& v3alue, void* extra)
 {
-	return g_gaWorld.sendMessage(m_name, m_name, action, value, nullptr);
+	return g_gaWorld.sendMessage(m_name, m_name, action, value, 0.0f, v3alue, extra);
+}
+
+gaMessage* gaEntity::sendMessage(int action, const glm::vec3& value, void* extra)
+{
+	return g_gaWorld.sendMessage(m_name, m_name, action, value, extra);
 }
 
 /**
@@ -399,16 +404,31 @@ void gaEntity::dispatchMessage(gaMessage* message)
 
 	case gaMessage::Action::ROTATE:
 		// take the opportunity to update the world bounding box
-		switch (message->m_value) {
-		case gaMessage::Flag::ROTATE_VEC3:
+		if (message->m_extra == nullptr) {
+			switch (message->m_value) {
+			case gaMessage::Flag::ROTATE_VEC3:
+				rotate(message->m_v3value);
+				break;
+			case gaMessage::Flag::ROTATE_QUAT:
+				rotate(message->m_v3value);
+				break;
+			case gaMessage::Flag::ROTATE_BY:
+				rotateBy(message->m_v3value);
+				break;
+			}
+		}
+		else {
+			switch (message->m_value) {
+			case gaMessage::Flag::ROTATE_VEC3:
 				rotate((glm::vec3*)message->m_extra);
 				break;
-		case gaMessage::Flag::ROTATE_QUAT:
+			case gaMessage::Flag::ROTATE_QUAT:
 				rotate((glm::quat*)message->m_extra);
 				break;
-		case gaMessage::Flag::ROTATE_BY:
+			case gaMessage::Flag::ROTATE_BY:
 				rotateBy((glm::vec3*)message->m_extra);
 				break;
+			}
 		}
 		updateWorldAABB();
 		break;

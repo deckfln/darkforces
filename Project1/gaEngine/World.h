@@ -105,13 +105,28 @@ namespace GameEngine {
 			int action,
 			int value,
 			float fvalue,
-			void* extra);									// send message an the queue
+			void* extra);									
+
+		gaMessage* sendMessage(const std::string& from,
+			const std::string& to,
+			int action,
+			int value,
+			const glm::vec3& v3value,
+			void* extra);
+
+		gaMessage* sendMessage(const std::string& from,
+			const std::string& to,
+			int action,
+			int value,
+			float fvalue,
+			const glm::vec3& v3value,
+			void* extra);
 
 		gaMessage* sendMessage(const std::string& from,
 			const std::string& to,
 			int action,
 			float value,
-			void* extra);									// send message an the queue
+			void* extra);									
 
 		gaMessage* sendMessage(const std::string& from,
 			const std::string& to,

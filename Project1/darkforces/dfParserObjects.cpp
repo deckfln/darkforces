@@ -32,6 +32,7 @@
 
 #include "dfObject/dfObject3D/MouseBot.h"
 #include "dfObject/Enemy.h"
+#include "dfObject/df3DObject.h"
 
 /*
 DIFF	EASY	MED	HARD
@@ -252,10 +253,10 @@ void dfParserObjects::parseObjectComponent(dfFileSystem* fs, DarkForces::Object*
 	case E_EYE:
 		break;
 	case E_FLAGS:
-		((dfObject3D*)object)->animRotationAxe((int)component.m_children[2].m_token->m_vvalue);
+		object->sendMessage(gaMessage::Action::ROTATE, gaMessage::Flag::ROTATE_AXE, component.m_children[2].m_token->m_vvalue);
 		break;
 	case E_D_YAW:
-		((dfObject3D*)object)->animRotationSpeed(component.m_children[2].m_token->m_vvalue);
+		object->sendMessage(gaMessage::Action::ROTATE, gaMessage::Flag::ROTATE_SPEED, component.m_children[2].m_token->m_vvalue);
 		break;
 	case E_RADIUS:
 		object->radius(component.m_children[2].m_token->m_vvalue);
@@ -361,7 +362,8 @@ void dfParserObjects::parseObject(dfFileSystem* fs, GameEngine::ParserExpression
 				obj = new DarkForces::MouseBot(tdo, position, ambient, objectID);
 				break;
 			default:
-				obj = new dfObject3D(tdo, position, ambient, objectID);
+				//obj = new dfObject3D(tdo, position, ambient, objectID);
+				obj = new DarkForces::Anim::ThreeD(m_t3DOs[data], position, ambient, objectID);
 			}
 			break;
 		}

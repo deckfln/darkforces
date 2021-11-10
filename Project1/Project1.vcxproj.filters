@@ -234,9 +234,6 @@
     <ClCompile Include="darkforces\dfObject.cpp">
       <Filter>Fichiers sources\Dark Forces</Filter>
     </ClCompile>
-    <ClCompile Include="darkforces\dfObject\dfObject3D.cpp">
-      <Filter>Fichiers sources\Dark Forces</Filter>
-    </ClCompile>
     <ClCompile Include="darkforces\dfPalette.cpp">
       <Filter>Fichiers sources\Dark Forces</Filter>
     </ClCompile>
@@ -768,6 +765,15 @@
     <ClCompile Include="darkforces\dfObject\dfSpriteWAX.cpp">
       <Filter>Fichiers sources\Dark Forces\dfObject</Filter>
     </ClCompile>
+    <ClCompile Include="darkforces\dfObject\dfObject3D.cpp">
+      <Filter>Fichiers sources\Dark Forces\dfObject</Filter>
+    </ClCompile>
+    <ClCompile Include="darkforces\dfComponent\dfCAnim3D.cpp">
+      <Filter>Fichiers sources\Dark Forces\dfComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="darkforces\dfObject\df3DObject.cpp">
+      <Filter>Fichiers sources\Dark Forces\dfObject</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="glad\glad.h">
@@ -840,9 +846,6 @@
       <Filter>Fichiers d%27en-tête\DarkForces</Filter>
     </ClInclude>
     <ClInclude Include="darkforces\dfObject.h">
-      <Filter>Fichiers d%27en-tête\DarkForces</Filter>
-    </ClInclude>
-    <ClInclude Include="darkforces\dfObject\dfObject3D.h">
       <Filter>Fichiers d%27en-tête\DarkForces</Filter>
     </ClInclude>
     <ClInclude Include="darkforces\dfPalette.h">
@@ -1458,6 +1461,15 @@
       <Filter>Fichiers d%27en-tête\DarkForces\dfObject</Filter>
     </ClInclude>
     <ClInclude Include="darkforces\dfObject\dfSpriteWAX.h">
+      <Filter>Fichiers d%27en-tête\DarkForces\dfObject</Filter>
+    </ClInclude>
+    <ClInclude Include="darkforces\dfObject\dfObject3D.h">
+      <Filter>Fichiers d%27en-tête\DarkForces\dfObject</Filter>
+    </ClInclude>
+    <ClInclude Include="darkforces\dfComponent\dfCAnim3D.h">
+      <Filter>Fichiers d%27en-tête\DarkForces\dfComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="darkforces\dfObject\df3DObject.h">
       <Filter>Fichiers d%27en-tête\DarkForces\dfObject</Filter>
     </ClInclude>
   </ItemGroup>

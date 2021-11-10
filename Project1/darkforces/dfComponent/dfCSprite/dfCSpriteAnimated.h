@@ -54,6 +54,11 @@ namespace DarkForces {
 
 			void dispatchMessage(gaMessage* message) override;	// let an entity deal with a situation
 
+			// flight recorder
+			inline uint32_t recordSize(void);
+			uint32_t recordState(void* r);
+			uint32_t loadState(void* r);
+
 			// debugger
 			void debugGUIinline(void) override;					// display the component in the debugger
 

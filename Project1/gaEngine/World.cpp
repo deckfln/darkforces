@@ -306,6 +306,40 @@ gaMessage* World::sendMessage(const std::string& from, const std::string& to, in
 	return ptr;
 }
 
+gaMessage* GameEngine::World::sendMessage(const std::string& from, const std::string& to, int action, int value, const glm::vec3& v3value, void* extra)
+{
+	gaMessage* ptr = allocateMessage();
+
+	ptr->m_server = from;
+	ptr->m_client = to;
+	ptr->m_action = action;
+	ptr->m_value = value;
+	ptr->m_fvalue = 0.0f;
+	ptr->m_v3value = v3value;
+	ptr->m_extra = extra;
+
+	m_queue.push_back(ptr);
+
+	return ptr;
+}
+
+gaMessage* GameEngine::World::sendMessage(const std::string& from, const std::string& to, int action, int value, float fvalue, const glm::vec3& v3value, void* extra)
+{
+	gaMessage* ptr = allocateMessage();
+
+	ptr->m_server = from;
+	ptr->m_client = to;
+	ptr->m_action = action;
+	ptr->m_value = value;
+	ptr->m_fvalue = fvalue;
+	ptr->m_v3value = v3value;
+	ptr->m_extra = extra;
+
+	m_queue.push_back(ptr);
+
+	return ptr;
+}
+
 /**
  * send a message for immediate action
  */

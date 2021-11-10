@@ -6,7 +6,8 @@
 namespace flightRecorder {
 	namespace DarkForces {
 		struct Sprite {
-			struct flightRecorder::DarkForces::Object object;
+			uint32_t size;
+			uint32_t id;
 		};
 	}
 }

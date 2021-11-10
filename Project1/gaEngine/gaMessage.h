@@ -40,6 +40,7 @@ public:
 		TIMER,			// animation message
 		DELETE_ENTITY,	// delete the given entity
 		MOVE,			// move the entity to an absolution position
+		MOVE_ROTATE,	// move and rotatet the entity using a mat4x4
 		ROTATE,			// rotate the entity
 		REGISTER_SOUND,	// bind a sound to an ID
 		PLAY_SOUND,		// play sound bound to ID
@@ -82,6 +83,8 @@ public:
 		ROTATE_VEC3,
 		ROTATE_QUAT,
 		ROTATE_BY,
+		ROTATE_AXE,
+		ROTATE_SPEED
 	};
 
 	struct DeclareAction {

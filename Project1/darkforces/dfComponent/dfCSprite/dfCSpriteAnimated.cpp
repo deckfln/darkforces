@@ -18,6 +18,8 @@
 #include "../../dfComponent.h"
 #include "../../dfComponent/dfComponentLogic.h"
 
+#include "../../flightRecorder/frSpriteAnimated.h"
+
 static glm::vec4 g_red(1.0, 1.0, 0.0, 1.0);
 static fwMaterialBasic g_basic(&g_red);
 static fwGeometryCylinder* g_view = nullptr;
@@ -258,6 +260,52 @@ void DarkForces::Component::SpriteAnimated::dispatchMessage(gaMessage* message)
 	}
 	DarkForces::Component::Sprite::dispatchMessage(message);
 }
+
+//*************************** Flight recorder ******************************
+
+/**
+ * size of the component
+ */
+inline uint32_t DarkForces::Component::SpriteAnimated::recordSize(void)
+{
+	return sizeof(flightRecorder::DarkForces::SpriteAnimated);
+}
+
+/**
+ * save the component state in a record
+ */
+uint32_t DarkForces::Component::SpriteAnimated::recordState(void* r)
+{
+	flightRecorder::DarkForces::SpriteAnimated* record = static_cast<flightRecorder::DarkForces::SpriteAnimated*>(r);
+	record->sprite.size = sizeof(flightRecorder::DarkForces::SpriteAnimated);
+	record->sprite.id = m_id;
+
+	record->state = (uint32_t)m_state;
+	record->frame = m_frame;
+	record->direction = m_direction;
+	record->lastFrame = m_lastFrame;
+	record->currentFrame = m_currentFrame;
+
+	return record->sprite.size;
+}
+
+/**
+ * reload a component state from a record
+ */
+uint32_t DarkForces::Component::SpriteAnimated::loadState(void* r)
+{
+	flightRecorder::DarkForces::SpriteAnimated* record = (flightRecorder::DarkForces::SpriteAnimated*)r;
+
+	m_state = (dfState)record->state;
+	m_frame = record->frame;
+	m_direction = record->direction;
+	m_lastFrame = record->lastFrame;
+	m_currentFrame = record->currentFrame;
+
+	return record->sprite.size;
+}
+
+//*************************** Debugger ******************************
 
 /**
  * Add dedicated component debug the entity

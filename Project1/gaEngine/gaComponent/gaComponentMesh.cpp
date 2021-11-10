@@ -58,16 +58,37 @@ void ComponentMesh::dispatchMessage(gaMessage* message)
 		}
 		break;
 	}
+
+	case gaMessage::Action::MOVE_ROTATE:
+		m_mesh->worldMatrix((glm::mat4*)message->m_extra);
+		break;
+
 	case gaMessage::ROTATE: {
-		switch (message->m_value) {
-		case gaMessage::Flag::ROTATE_VEC3:
-			m_mesh->rotate((glm::vec3*)message->m_extra);
-			break;
-		case gaMessage::Flag::ROTATE_QUAT:
-			m_mesh->rotate((glm::quat*)message->m_extra);
-			break;
-		case gaMessage::Flag::ROTATE_BY:
-			m_mesh->rotateBy((glm::vec3*)message->m_extra);
+		if (message->m_extra == nullptr) {
+			switch (message->m_value) {
+			case gaMessage::Flag::ROTATE_VEC3:
+				m_mesh->rotate(message->m_v3value);
+				break;
+			case gaMessage::Flag::ROTATE_QUAT:
+				m_mesh->rotate(message->m_v3value);
+				break;
+			case gaMessage::Flag::ROTATE_BY:
+				m_mesh->rotateBy(message->m_v3value);
+				break;
+			}
+		}
+		else {
+			switch (message->m_value) {
+			case gaMessage::Flag::ROTATE_VEC3:
+				m_mesh->rotate((glm::vec3*)message->m_extra);
+				break;
+			case gaMessage::Flag::ROTATE_QUAT:
+				m_mesh->rotate((glm::quat*)message->m_extra);
+				break;
+			case gaMessage::Flag::ROTATE_BY:
+				m_mesh->rotateBy((glm::vec3*)message->m_extra);
+				break;
+			}
 		}
 		break;
 	}

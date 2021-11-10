@@ -126,6 +126,21 @@ void dfObject3D::dispatchMessage(gaMessage* message)
 		}
 		break;
 
+	case gaMessage::Action::ROTATE:
+		switch (message->m_value) {
+		case gaMessage::Flag::ROTATE_SPEED:
+			// Speed is the speed at which the 3D object rotates from -999 (max anti-clockwise) to 999 (max clockwise)
+			// measured from the death mesh rotation: 7260ms for 1 turn => 7260ms for 2000 rotations => 0.27r/ms
+			//		death star speed = 50. so 50 / 180 => 0.27r/ms
+			animRotationSpeed(message->m_fvalue);
+			break;
+
+		case gaMessage::Flag::ROTATE_AXE:
+			animRotationAxe((uint32_t)message->m_fvalue);
+			break;
+		}
+		break;
+
 	case gaMessage::WORLD_INSERT:
 		// trigger the animation
 		timer(true);

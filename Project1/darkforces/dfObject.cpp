@@ -53,6 +53,20 @@ DarkForces::Object::Object(const std::string& model, const glm::vec3& position) 
 	moveTo(position);
 }
 
+DarkForces::Object::Object(const std::string& model, const glm::vec3& position, uint32_t objectID) :
+	gaEntity(DarkForces::ClassID::_Object, model + "(" + std::to_string(objectID) + ")"),
+	m_position_lvl(position),
+	m_objectID(g_ids)
+{
+	m_source = static_cast<dfModel*>(g_gaWorld.getModel(model));
+	m_className = g_className;
+	addComponent(&m_logic);
+	modelAABB(m_source->modelAABB());
+	moveTo(position);
+
+	g_ids++;
+}
+
 /**
  * create a full object from a saved state
  */
@@ -395,6 +409,10 @@ void DarkForces::Object::dispatchMessage(gaMessage* message)
 
 	case gaMessage::START_MOVE:
 		onStateChange(dfState::ENEMY_MOVE, false);
+		break;
+
+	case gaMessage::Action::MOVE_ROTATE:
+		m_worldBounding.apply(m_source->modelAABB(), *(glm::mat4*)message->m_extra);
 		break;
 
 /*
