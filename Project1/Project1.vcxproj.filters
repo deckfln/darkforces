@@ -1463,9 +1463,6 @@
     <ClInclude Include="darkforces\dfObject\dfSpriteWAX.h">
       <Filter>Fichiers d%27en-tête\DarkForces\dfObject</Filter>
     </ClInclude>
-    <ClInclude Include="darkforces\dfObject\dfObject3D.h">
-      <Filter>Fichiers d%27en-tête\DarkForces\dfObject</Filter>
-    </ClInclude>
     <ClInclude Include="darkforces\dfComponent\dfCAnim3D.h">
       <Filter>Fichiers d%27en-tête\DarkForces\dfComponent</Filter>
     </ClInclude>

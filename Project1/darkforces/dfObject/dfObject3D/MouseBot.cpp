@@ -1,15 +1,12 @@
 #include "MouseBot.h"
 
-using namespace DarkForces;
-
 static const char* g_className = "dfMouseBot";
 
-MouseBot::MouseBot(df3DO* threedo, const glm::vec3& position, float ambient, uint32_t objectID) :
-	dfObject3D(threedo, position, ambient, objectID)
+DarkForces::Anim::MouseBot::MouseBot(const std::string& model, const glm::vec3& p, float ambient, uint32_t objectID) :
+	DarkForces::Anim::ThreeD(model, p, ambient, objectID)
 {
 	m_className = g_className;
 
-	physical(true);
 	addComponent(&m_ia);
 
 	// cylinders run in world space, so adapt from the model space scale
@@ -20,8 +17,4 @@ MouseBot::MouseBot(df3DO* threedo, const glm::vec3& position, float ambient, uin
 	m_cylinder.height(m_modelAABB.height());
 	m_cylinder.radius(m_modelAABB.height() / 2.0f);
 	m_collider.set(&m_cylinder, &m_worldMatrix, &m_inverseWorldMatrix, &m_modelAABB);
-}
-
-MouseBot::~MouseBot()
-{
 }

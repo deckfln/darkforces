@@ -3,8 +3,12 @@
 #include "../../gaEngine/World.h"
 #include "../dfModel/df3DO.h"
 
+static const char* g_className = "df3D";
+
 void DarkForces::Anim::ThreeD::init(const std::string& model)
 {
+	m_className = g_className;
+
 	df3DO* tdo = (df3DO*)g_gaWorld.getModel(model);
 
 	physical(false);	// in dark forces, 3D objects can be traversed

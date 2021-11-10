@@ -359,7 +359,7 @@ void dfParserObjects::parseObject(dfFileSystem* fs, GameEngine::ParserExpression
 
 			switch (type) {
 			case O_MOUSEBOT:
-				obj = new DarkForces::MouseBot(tdo, position, ambient, objectID);
+				obj = new DarkForces::Anim::MouseBot(m_t3DOs[data], position, ambient, objectID);
 				break;
 			default:
 				//obj = new dfObject3D(tdo, position, ambient, objectID);

@@ -383,7 +383,6 @@
     <ClInclude Include="darkforces\dfObject.h" />
     <ClInclude Include="darkforces\dfObject\df3DObject.h" />
     <ClInclude Include="darkforces\dfObject\dfBulletExplode.h" />
-    <ClInclude Include="darkforces\dfObject\dfObject3D.h" />
     <ClInclude Include="darkforces\dfObject\dfObject3D\MouseBot.h" />
     <ClInclude Include="darkforces\dfObject\dfSpriteFME.h" />
     <ClInclude Include="darkforces\dfObject\dfSpriteWAX.h" />
