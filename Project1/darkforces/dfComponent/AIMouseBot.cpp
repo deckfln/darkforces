@@ -5,6 +5,8 @@
 #include <glm/gtx/transform.hpp>
 #include <glm/gtx/norm.hpp>
 
+#include <imgui.h>
+
 #include "../../config.h"
 #include "../../gaEngine/World.h"
 #include "../../gaEngine/gaEntity.h"
@@ -12,12 +14,13 @@
 #include "../dfObject.h"
 #include "../dfComponent.h"
 
+#include "../flightRecorder/frMouseBot.h"
+
 DarkForces::AIMouseBot::AIMouseBot():
 	gaComponent(DF_COMPONENT_AI)
 {
 	// find the sector the mousebot is running into
 	m_direction = glm::normalize(m_direction);
-	m_movement = m_direction * 0.01f;
 }
 
 /**
@@ -42,7 +45,7 @@ void DarkForces::AIMouseBot::tryToMove(void)
 		up = _up;
 	}
 
-	m_transforms->m_forward = m_direction * 0.06f;
+	m_transforms->m_forward = m_direction * 0.0006f;
 	m_transforms->m_downward = glm::vec3(0, -1, 0);
 	m_transforms->m_position = m_entity->position() + m_transforms->m_forward;
 	m_transforms->m_quaternion = glm::quatLookAt(m_direction, up);
@@ -63,7 +66,6 @@ void DarkForces::AIMouseBot::dispatchMessage(gaMessage* message)
 	case gaMessage::Action::WORLD_INSERT:
 		m_transforms = m_entity->pTransform();
 		// kick start the AI
-		m_center = m_entity->position();
 		m_alpha = (rand() / (float)RAND_MAX - 0.f) / 10.0f; // rotation angle to apply to the direction vector
 		m_animation_time = rand() % (10 * 30);				// move 5s maximum using the same rotation angle
 
@@ -120,6 +122,47 @@ void DarkForces::AIMouseBot::dispatchMessage(gaMessage* message)
 	}
 }
 
-DarkForces::AIMouseBot::~AIMouseBot()
+//*************************** Debugger ******************************
+
+void DarkForces::AIMouseBot::debugGUIinline(void)
 {
+	if (ImGui::TreeNode("AIMouseBot")) {
+		ImGui::Checkbox("Active:", &m_active);
+		ImGui::Text("Time:%d", m_animation_time);
+		ImGui::TreePop();
+	}
+}
+
+//*************************** Flight recorder ******************************
+
+inline uint32_t DarkForces::AIMouseBot::recordSize(void)
+{
+	return sizeof(flightRecorder::DarkForces::MouseBot);
+}
+
+uint32_t DarkForces::AIMouseBot::recordState(void* r)
+{
+	flightRecorder::DarkForces::MouseBot* record = static_cast<flightRecorder::DarkForces::MouseBot*>(r);
+	record->size = sizeof(flightRecorder::DarkForces::MouseBot);
+	record->id = m_id;
+
+	record->direction = m_direction;
+	record->alpha = m_alpha;
+	record->animation_time = m_animation_time;
+	record->active = m_active;
+	record->frame = m_frame;
+
+	return record->size;
+}
+
+uint32_t DarkForces::AIMouseBot::loadState(void* r)
+{
+	flightRecorder::DarkForces::MouseBot* record = static_cast<flightRecorder::DarkForces::MouseBot*>(r);
+	m_direction = record->direction;
+	m_alpha = record->alpha;
+	m_animation_time = record->animation_time;
+	m_active = record->active;
+	m_frame = record->frame;
+
+	return record->size;
 }
