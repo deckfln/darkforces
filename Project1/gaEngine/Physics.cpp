@@ -376,7 +376,7 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 		}
 		*/
 
-		if (entity->name() == "player") {
+		if (entity->name() == "MOUSEBOT.3DO(41)") {
 			gaDebugLog(1, "GameEngine::Physics::wantToMove", entity->name() + " to " + std::to_string(tranform.m_position.x)
 				+ " " + std::to_string(tranform.m_position.y)
 				+ " " + std::to_string(tranform.m_position.z));
@@ -655,8 +655,8 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 					// give it an other try
 					continue;
 				}
-				else if (entity->canStep()) {
-					if (new_position.y - nearest_ground->m_position.y < static_cast<gaActor*>(entity)->step()) {
+				else if (new_position.y - nearest_ground->m_position.y < static_cast<gaActor*>(entity)->step()) {
+					if (entity->canStep()) {
 						// if there is a step and the entity can step over
 						if (abs(nearest_ground->m_position.y - new_position.y) > EPSILON) {
 							// if more than epsilon, fix the position to the ground triangle, not the intersection point (rounding errors)
@@ -674,12 +674,27 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 							continue;
 						}
 					}
-				}
-				else {
-					// convert the down collision to a nearest
-					nearest_collision = nearest_ground;
-					collidedEntity = static_cast<gaEntity*>(nearest_ground->m_source);
-					entity->superSector(static_cast<dfSuperSector*>(collidedEntity));
+					else {
+						// convert the down collision to a nearest
+						gaEntity* pushed = static_cast<gaEntity*>(nearest_ground->m_source);
+						if (pushed->physical()) {
+							if (entity->name() == "MOUSEBOT.3DO(41)")
+								gaDebugLog(1, "GameEngine::Physics::wantToMove", entity->name() + " deny move " + std::to_string(tranform.m_position.x)
+									+ " " + std::to_string(tranform.m_position.y)
+									+ " " + std::to_string(tranform.m_position.z));
+
+							entity->popTransformations();				// restore previous position
+							block_move = true;
+						}
+						else {
+							if (entity->name() == "MOUSEBOT.3DO(41)")
+								gaDebugLog(1, "GameEngine::Physics::wantToMove", entity->name() + " collide " + std::to_string(tranform.m_position.x)
+									+ " " + std::to_string(tranform.m_position.y)
+									+ " " + std::to_string(tranform.m_position.z));
+						}
+						// always inform the source entity
+						informCollision(message, pushed, entity, nearest_ground->m_position, verticalCollision);
+					}
 				}
 			}
 			else {
@@ -800,7 +815,7 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 				if (dot < 0 || glm::length(delta2d) < EPSILON) {
 					// ONLY refuse the move if the entity is a physical one
 					if (pushed->physical()) {
-						if (entity->name() == "OFFCFIN.WAX(21)")
+						if (entity->name() == "MOUSEBOT.3DO(41)")
   							gaDebugLog(1, "GameEngine::Physics::wantToMove", entity->name() + " deny move " + std::to_string(tranform.m_position.x)
 								+ " " + std::to_string(tranform.m_position.y)
 								+ " " + std::to_string(tranform.m_position.z));
@@ -809,7 +824,7 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 						block_move = true;
 					}
 					else {
-						if (entity->name() == "OFFCFIN.WAX(21)")
+						if (entity->name() == "MOUSEBOT.3DO(41)")
 							gaDebugLog(1, "GameEngine::Physics::wantToMove", entity->name() + " collide " + std::to_string(tranform.m_position.x)
 								+ " " + std::to_string(tranform.m_position.y)
 								+ " " + std::to_string(tranform.m_position.z));
@@ -943,6 +958,17 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 				(int)message->m_id,				// WANT_TO_MOVE that triggered the event
 				nullptr
 			);
+
+			// also send a rotation if requested
+			if (tranform.m_rotate) {
+				g_gaWorld.sendMessage(
+					entity->name(),
+					entity->name(),
+					gaMessage::Action::ROTATE,
+					gaMessage::Flag::ROTATE_QUAT,					// WANT_TO_MOVE that triggered the event
+					&tranform.m_quaternion
+				);
+			}
 
 			if (nearest_ground) {
 				// register the sector the entity walks on

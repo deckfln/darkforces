@@ -15,6 +15,7 @@ namespace GameEngine {
 		glm::vec3 m_forward;
 		glm::vec3 m_downward;
 		int m_flag;
+		bool m_rotate=false;
 
 		void recordState(Transform* record) {
 			Framework::fwTransforms::recordState((Framework::fwTransforms*)record);

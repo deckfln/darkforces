@@ -69,12 +69,6 @@ void ComponentMesh::dispatchMessage(gaMessage* message)
 			case gaMessage::Flag::ROTATE_VEC3:
 				m_mesh->rotate(message->m_v3value);
 				break;
-			case gaMessage::Flag::ROTATE_QUAT:
-				m_mesh->rotate(message->m_v3value);
-				break;
-			case gaMessage::Flag::ROTATE_BY:
-				m_mesh->rotateBy(message->m_v3value);
-				break;
 			}
 		}
 		else {

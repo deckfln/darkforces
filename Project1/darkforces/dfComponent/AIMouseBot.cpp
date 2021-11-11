@@ -45,12 +45,14 @@ void DarkForces::AIMouseBot::tryToMove(void)
 		up = _up;
 	}
 
-	m_transforms->m_forward = m_direction * 0.0006f;
+	m_transforms->m_forward = m_direction * 0.03f;
+	m_transforms->m_rotate = true;	// move AND rotate
 	m_transforms->m_downward = glm::vec3(0, -1, 0);
 	m_transforms->m_position = m_entity->position() + m_transforms->m_forward;
 	m_transforms->m_quaternion = glm::quatLookAt(m_direction, up);
 	m_transforms->m_scale = m_entity->get_scale();
 	m_transforms->m_flag = gaMessage::Flag::WANT_TO_MOVE_BREAK_IF_FALL;
+	m_transforms->m_rotate = true;
 
 	m_entity->sendDelayedMessage(gaMessage::WANT_TO_MOVE, 
 		gaMessage::Flag::WANT_TO_MOVE_BREAK_IF_FALL, 

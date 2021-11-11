@@ -409,12 +409,6 @@ void gaEntity::dispatchMessage(gaMessage* message)
 			case gaMessage::Flag::ROTATE_VEC3:
 				rotate(message->m_v3value);
 				break;
-			case gaMessage::Flag::ROTATE_QUAT:
-				rotate(message->m_v3value);
-				break;
-			case gaMessage::Flag::ROTATE_BY:
-				rotateBy(message->m_v3value);
-				break;
 			}
 		}
 		else {
