@@ -1146,10 +1146,10 @@ void dfSector::dispatchMessage(gaMessage* message)
 	if (m_name == "elev_block" || m_name == "elev3-1" || m_name == "elev3-5") {
 		switch (message->m_action) {
 		case gaMessage::Action::HIDE:
-			m_physical = false;
+			m_hasCollider = false;
 			break;
 		case gaMessage::Action::UNHIDE:
-			m_physical = true;
+			m_hasCollider = true;
 			break;
 		}
 	}
