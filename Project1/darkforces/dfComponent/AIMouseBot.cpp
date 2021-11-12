@@ -16,6 +16,8 @@
 
 #include "../flightRecorder/frMouseBot.h"
 
+static const uint32_t MouseEeek = 1024;
+
 DarkForces::AIMouseBot::AIMouseBot():
 	gaComponent(DF_COMPONENT_AI)
 {
@@ -118,6 +120,11 @@ void DarkForces::AIMouseBot::dispatchMessage(gaMessage* message)
 			// after the default delay, change the rotation angle
 			m_alpha = (rand() / (float)RAND_MAX - 0.5f) / 10.0f;
 			m_animation_time = rand() % (5 * 30);
+		}
+
+		if (--m_eekDelay == 0) {
+			m_entity->sendMessage(gaMessage::Action::PLAY_SOUND, MouseEeek);
+			m_eekDelay = rand() % (10 * 30) + 30;
 		}
 
 		tryToMove();

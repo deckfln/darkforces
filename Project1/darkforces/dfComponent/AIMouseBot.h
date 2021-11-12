@@ -12,6 +12,7 @@ namespace DarkForces {
 		glm::vec3 m_direction = glm::vec3(1.0, 0, 1.0);
 		float m_alpha = 0;								// rotation angle for the direction
 		int m_animation_time = 0;						// time left to move in the direction
+		uint32_t m_eekDelay = 100;						// frame left until next 'eeeek'
 		bool m_active = true;							// is AI active
 		GameEngine::Transform* m_transforms = nullptr;	// transforms to move the object
 		uint32_t m_frame=0;								// reference to the last frame we received a message from

@@ -24,9 +24,6 @@ void GameEngine::Component::Sound::dispatchMessage(gaMessage* message)
 		break;
 
 	case gaMessage::PLAY_SOUND: {
-		if (message->m_value != 0) {
-			return;
-		}
 		// Start playing a sound or check if it plays
 		alSound* sound = m_sounds[message->m_value];
 		if (sound) {
