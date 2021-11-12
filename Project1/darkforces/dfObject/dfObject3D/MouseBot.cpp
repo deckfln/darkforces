@@ -6,6 +6,7 @@ DarkForces::Anim::MouseBot::MouseBot(const std::string& model, const glm::vec3& 
 	DarkForces::Anim::ThreeD(model, p, ambient, objectID)
 {
 	m_className = g_className;
+	m_physical = true;
 
 	addComponent(&m_ia);
 

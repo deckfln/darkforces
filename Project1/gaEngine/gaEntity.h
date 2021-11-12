@@ -38,9 +38,9 @@ class gaEntity : public fwObject3D
 protected:
 	uint32_t m_entityID = 0;
 
-	bool m_physical = false;						// if this entity has a body to checkCollision with
+	bool m_physical = false;						// will interact physicaly with other object (like block move or be blocked)
 	bool m_gravity = true;							// does gravity effect the entity
-	bool m_collideSectors = true;					// does the entity collide with sectors
+	bool m_collideSectors = true;					// entity has no intercation, will not be tested during collision test
 	bool m_canStep = false;							// can the entity step up or down a stair
 	bool m_hasCollider = false;						// entity needs to be tested with collider
 	bool m_movable = true;							// entity can be pushed
