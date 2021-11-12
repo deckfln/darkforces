@@ -74,7 +74,8 @@ void DarkForces::AIMouseBot::dispatchMessage(gaMessage* message)
 		tryToMove();
 		break;
 
-	case DarkForces::Message::HIT_BULLET:
+	case DarkForces::Message::DYING:
+		// there is no animation between dying and dead
 		m_entity->sendMessage(DarkForces::Message::DEAD);
 		break;
 

@@ -19,24 +19,18 @@ GameEngine::Component::Sound::Sound(void):
 void GameEngine::Component::Sound::dispatchMessage(gaMessage* message)
 {
 	switch (message->m_action) {
-	case gaMessage::MOVE: {
-		if (message->m_extra != nullptr) {
-			position(*(glm::vec3*)message->m_extra);
-		}
-		else {
-			position(m_entity->position());
-		}
-		break;
-	}
-
 	case gaMessage::Action::REGISTER_SOUND:
 		addSound(message->m_value, static_cast<alSound*>(message->m_extra));
 		break;
 
 	case gaMessage::PLAY_SOUND: {
+		if (message->m_value != 0) {
+			return;
+		}
 		// Start playing a sound or check if it plays
 		alSound* sound = m_sounds[message->m_value];
 		if (sound) {
+			position(m_entity->position());
 			m_source.play(sound);
 		}
 		break;

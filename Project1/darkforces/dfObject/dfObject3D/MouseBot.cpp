@@ -1,5 +1,7 @@
 #include "MouseBot.h"
 
+#include "../../dfVOC.h"
+
 static const char* g_className = "dfMouseBot";
 
 DarkForces::Anim::MouseBot::MouseBot(const std::string& model, const glm::vec3& p, float ambient, uint32_t objectID) :
@@ -9,6 +11,11 @@ DarkForces::Anim::MouseBot::MouseBot(const std::string& model, const glm::vec3& 
 	m_physical = true;
 
 	addComponent(&m_ia);
+	addComponent(&m_actor);
+	addComponent(&m_sound);
+
+	m_actor.setClass("MOUSEBOT.3DO");
+	sendMessage(gaMessage::Action::REGISTER_SOUND, DarkForces::Component::Actor::Sound::DIE, loadVOC("EEEK-3.VOC")->sound());
 
 	// cylinders run in world space, so adapt from the model space scale
 	const glm::vec3& scale = get_scale();

@@ -22,6 +22,7 @@ static std::map<std::string, struct DarkForces::ActorClass> m_actors = {
 	{ "INTDROID.WAX", { 10, 100, glm::vec2(0.5, 0.75)}},
 	{ "OFFCFIN.WAX", { 10, 100, glm::vec2(0.5, 0.85)}},
 	{ "STORMFIN.WAX", { 10, 100, glm::vec2(0.5, 0.75)}},
+	{ "MOUSEBOT.3DO", { 1, 0, glm::vec2(0)}},
 };
 
 DarkForces::Component::Actor::Actor(void) :
@@ -113,16 +114,23 @@ void DarkForces::Component::Actor::dispatchMessage(gaMessage* message)
 	case DarkForces::Message::ADD_SHIELD:
 		addShield(message->m_value);
 		break;
+
 	case DarkForces::Message::HIT_BULLET:
 		onHitBullet(message->m_value);
 		break;
+
 	case DarkForces::Message::PICK_RIFLE_AND_BULLETS:
 		m_entity->sendMessage(DarkForces::Message::ADD_ENERGY, message->m_value);
 		//addEnergy(message->m_value);
 		//TODO add a weapon to a player
 		//addWeapon(O_RIFLE);
 		break;
+
 	case gaMessage::MOVE:
+		if (m_level == nullptr) {
+			break;
+		}
+
 		// identity the DF sector and trigger enter/leave if changing
 		if (message->m_extra == nullptr) {
 			dfSector* current = m_level->findSector(m_entity->position());
@@ -138,6 +146,7 @@ void DarkForces::Component::Actor::dispatchMessage(gaMessage* message)
 			}
 		}
 		break;
+
 	case DarkForces::Message::DEAD:
 		m_entity->discardMessages();
 		break;
