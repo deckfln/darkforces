@@ -15,8 +15,6 @@
 
 #include "../flightRecorder/frAnim3D.h"
 
-static const char* g_className = "dfObject3D";
-
 DarkForces::Component::Anim3D::Anim3D(void) :
 	gaComponent(DF_COMPONENT_3DO)
 {
@@ -97,6 +95,35 @@ void DarkForces::Component::Anim3D::onRotationChange(gaMessage* message)
 }
 
 /**
+ * change the pause status end of end of a loop
+ */
+void DarkForces::Component::Anim3D::onAnimPause(gaMessage* message)
+{
+	// change the status of the looping animation
+	m_pause = (message->m_value != 0);
+}
+
+/**
+ * load an new animation VUE file
+ */
+void DarkForces::Component::Anim3D::onAnimVue(gaMessage* message)
+{
+	const char* file = (const char*)&message->m_data;
+	char* vue = (char *)strchr(file, '/');
+	if (vue == nullptr) {
+		return;
+	}
+	*vue = 0;
+	vue++;
+
+	if (m_vue) {
+		delete m_vue;
+	}
+
+	m_vue = new dfVue(g_dfFiles, file, vue);
+}
+
+/**
  * Deal with animation messages
  */
 void DarkForces::Component::Anim3D::dispatchMessage(gaMessage* message)
@@ -113,6 +140,14 @@ void DarkForces::Component::Anim3D::dispatchMessage(gaMessage* message)
 	case gaMessage::WORLD_INSERT:
 		// trigger the animation
 		m_entity->timer(true);
+		break;
+
+	case DarkForces::Message::ANIM_PAUSE:
+		onAnimPause(message);
+		break;
+
+	case DarkForces::Message::ANIM_VUE:
+		onAnimVue(message);
 		break;
 	}
 	gaComponent::dispatchMessage(message);
@@ -170,7 +205,12 @@ void DarkForces::Component::Anim3D::debugGUIinline(void)
 	}
 }
 
+/**
+ *
+ */
 DarkForces::Component::Anim3D::~Anim3D(void)
 {
-	delete m_vue;
+	if (m_vue) {
+		delete m_vue;
+	}
 }

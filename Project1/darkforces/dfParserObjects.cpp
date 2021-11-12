@@ -2,6 +2,9 @@
 #include <sstream>
 #include <fstream>
 #include <iostream>
+#include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 #include "../config.h"
 #include "../framework/fwScene.h"
@@ -18,7 +21,6 @@
 #include "dfModel/dfFME.h"
 #include "dfModel/df3DO.h"
 #include "dfObject.h"
-#include "dfObject/dfObject3D.h"
 #include "dfPalette.h"
 #include "dfAtlasTexture.h"
 #include "dfSprites.h"
@@ -266,15 +268,18 @@ void dfParserObjects::parseObjectComponent(dfFileSystem* fs, DarkForces::Object*
 		break;
 	case E_PAUSE: {
 		GameEngine::ParserExpression& truefalse = component.m_children[2].m_children[0];
-		((dfObject3D*)object)->pause(component.m_expression == O_TRUE);
+		object->sendMessage(DarkForces::Message::ANIM_PAUSE, component.m_expression == O_TRUE);
 		break;
 	}
-	case E_VUE:
-		((dfObject3D*)object)->vue(fs,
-			component.m_children[2].m_token->m_tvalue,
-			'"'+component.m_children[3].m_children[1].m_token->m_tvalue+'"'
-		);
-		break;
+	case E_VUE: {
+		gaMessage* msg = object->sendMessage(DarkForces::Message::ANIM_VUE);
+		const std::string n = component.m_children[2].m_token->m_tvalue + "/" + '"' + component.m_children[3].m_children[1].m_token->m_tvalue + '"';
+		strncpy_s(
+			(char*)&msg->m_data,
+			sizeof(msg->m_data),
+			n.c_str(),
+			_TRUNCATE);
+		break; }
 	}
 }
 
@@ -362,7 +367,6 @@ void dfParserObjects::parseObject(dfFileSystem* fs, GameEngine::ParserExpression
 				obj = new DarkForces::Anim::MouseBot(m_t3DOs[data], position, ambient, objectID);
 				break;
 			default:
-				//obj = new dfObject3D(tdo, position, ambient, objectID);
 				obj = new DarkForces::Anim::ThreeD(m_t3DOs[data], position, ambient, objectID);
 			}
 			break;

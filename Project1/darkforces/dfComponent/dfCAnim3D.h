@@ -17,6 +17,9 @@ namespace DarkForces {
 
 			void onTimer(gaMessage* message);					// update based on timer
 			void onRotationChange(gaMessage* message);
+			void onAnimPause(gaMessage* message);				// change the pause status end of end of a loop
+			void onAnimVue(gaMessage* message);					// load an new animation VUE file
+
 
 		public:
 			Anim3D(void);

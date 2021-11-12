@@ -28,7 +28,9 @@ namespace DarkForces {
 		ANIM_NEXT_FRAME,	// WAX animation start the next frame
 		ANIM_LASTFRAME,		// the animation loop reached the end
 		ANIM_END,			// WAX animation reached the end and is stopping
-		ROTATE				// rotate objects in degrees
+		ROTATE,				// rotate objects in degrees
+		ANIM_PAUSE,			// let the animation loop or not
+		ANIM_VUE			// load an animation VUE for 3D objects
 	};
 
 	enum MessageEvent {

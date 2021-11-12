@@ -142,7 +142,9 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 		{DarkForces::Message::ANIM_NEXT_FRAME, "df_AnimNextFrame"},
 		{DarkForces::Message::ANIM_LASTFRAME, "DF_AnimEndLoop"},
 		{DarkForces::Message::ANIM_END, "df_AnimEnd"},
-		{DarkForces::Message::ROTATE, "df_ROTATE"}
+		{DarkForces::Message::ROTATE, "df_ROTATE"},
+		{DarkForces::Message::ANIM_PAUSE, "df_AnimPause"},
+		{DarkForces::Message::ANIM_VUE, "df_AnimVUE"},
 	};
 
 	static std::map<int32_t, const std::map<int32_t, const char*>> g_def = {
