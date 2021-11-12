@@ -784,11 +784,13 @@ bool GameEngine::World::lineOfSight(gaEntity* source, gaEntity* target)
 	// can we reach the player ?
 	glm::vec3 direction = glm::normalize(source->position() - target->position());
 
-	// test line of sight from await of the entity to away from the player (to not catch the entity nor the player)
+	// test line of sight from away of the entity to away from the player (to not catch the entity nor the player)
+	// check from top of the entity (lets say this is where the eyes are) to 3/4 of entity (around the chest)
+
 	glm::vec3 start = target->position() + direction * (target->radius() * 1.5f);
-	start.y += target->height() / 2.0f;
+	start.y += target->height();
 	glm::vec3 end = source->position() - direction * (target->radius() * 1.5f);
-	end.y += source->height() / 2.0f;
+	end.y += source->height() * 0.75f;
 	Framework::Segment segment(start, end);
 
 	bool canSee = true;
