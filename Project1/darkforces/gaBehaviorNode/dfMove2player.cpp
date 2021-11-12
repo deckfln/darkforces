@@ -5,6 +5,7 @@
 #include "../../gaEngine/gaComponent/gaBehaviorTree.h"
 #include "../../gaEngine/gaEntity.h"
 #include "../../gaEngine/World.h"
+#include "../../gaEngine/gaNavMesh.h"
 #include "../../config.h"
 
 void DarkForces::Behavior::Move2Player::onChildExit(Status status)
@@ -49,7 +50,15 @@ void DarkForces::Behavior::Move2Player::init(void* data)
 	p += m_entity->position();
 
 	m_navpoints.clear();
-	m_navpoints.push_back(p);
+
+	// find a path up to the player
+	if (g_navMesh.findPath(m_entity->position(), p, m_navpoints) == 0) {
+		// inform everyone of the failure if there is none
+		m_status = BehaviorNode::Status::FAILED;
+		return;
+	}
+
+//	m_navpoints.push_back(p);
 
 	// broadcast the beginning of the move (for animation)
 	m_entity->sendMessage(gaMessage::START_MOVE);		// start the entity animation

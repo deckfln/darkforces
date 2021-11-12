@@ -148,6 +148,9 @@ void GameEngine::Parser::applyRules(std::vector<ParserRule*>& rules)
 						case PARSER_AND:
 							// all elements need to be accounted for
 							for (size_t i = 0; i < rule->m_expressions.size(); i++) {
+								if (indexA + i >= m_pListA->size()) {
+									__debugbreak();
+								}
 								m_pListB->at(indexB).m_children.push_back(m_pListA->at(indexA + i));
 							}
 							indexA += (rule->m_expressions.size() - 1);

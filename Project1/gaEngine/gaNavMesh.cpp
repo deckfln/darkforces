@@ -96,8 +96,8 @@ bool GameEngine::NavMesh::findDirectPath(uint32_t from, uint32_t to,
 	uint32_t mid = from + (to - from) / 2;
 
 	if (mid - from == 1) {
-		directPath.push_back(from3D);
-		directPath.push_back(to3D);
+		directPath.push_back(graphPath[from]);
+		directPath.push_back(graphPath[to]);
 	}
 	else {
 		findDirectPath(from, mid, graphPath, directPath);
@@ -258,7 +258,7 @@ bool operator> (const Node& node1, const Node& node2)
 }
 
 
-float GameEngine::NavMesh::findPath(const glm::vec3& from, const glm::vec3& to, std::vector<glm::vec3>& directPath)
+uint32_t GameEngine::NavMesh::findPath(const glm::vec3& from, const glm::vec3& to, std::vector<glm::vec3>& directPath)
 {
 	std::vector<glm::vec3> graphPath;		// path computed from the navmesh graph
 
@@ -266,7 +266,7 @@ float GameEngine::NavMesh::findPath(const glm::vec3& from, const glm::vec3& to, 
 	int32_t end = findTriangle(to * 10.0f);
 
 	if (start < 0 || end < 0) {
-		return -1;
+		return 0;
 	}
 
 	// A* algorithm
@@ -316,7 +316,7 @@ float GameEngine::NavMesh::findPath(const glm::vec3& from, const glm::vec3& to, 
 	}
 
 	if (current != end) {
-		return -1;
+		return 0;
 	}
 
 	// back track from end to start

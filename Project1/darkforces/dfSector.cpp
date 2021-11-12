@@ -827,6 +827,8 @@ void dfSector::buildFloorAndCeiling(dfMesh* mesh)
 	m_floorVerticesStart = mesh->nbVertices();
 	mesh->addFloor(polygon, m_staticMeshFloorAltitude, m_floorTexture, m_ambient, false);
 
+	g_navMesh.addFloor(polygon, m_staticMeshFloorAltitude);
+
 	//it included another sector with the same ceiling
 	// draw both sectors (outline polygon)
 	if (m_includes.size() == 1 && m_staticMeshCeilingAltitude == m_includes[0]->m_staticMeshCeilingAltitude) {
@@ -843,8 +845,6 @@ void dfSector::buildFloorAndCeiling(dfMesh* mesh)
 	}
 
 	m_floorVerticesLen = mesh->nbVertices() - m_floorVerticesStart;
-
-	g_navMesh.addFloor(polygon, m_staticMeshFloorAltitude);
 }
 
 /**
