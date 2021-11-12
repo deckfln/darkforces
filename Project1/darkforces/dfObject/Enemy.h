@@ -25,10 +25,6 @@ namespace DarkForces {
 		GameEngine::Component::Sound m_sound;
 
 	public:
-		enum Sound {
-			DIE,
-			FIRE
-		};
 		Enemy(dfWAX* model, const glm::vec3& position, float ambient, uint32_t objectID);
 		void setLevel(dfLevel* level);
 		~Enemy();

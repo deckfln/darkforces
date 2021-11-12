@@ -85,12 +85,6 @@
     <Filter Include="Fichiers d%27en-tête\DarkForces\dfObject\dfSprite\dfSpriteAnimated">
       <UniqueIdentifier>{b050ea31-02aa-4fbe-8e2a-8fc7b7fa9bad}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Fichiers sources\Dark Forces\dfObject\dfSprite">
-      <UniqueIdentifier>{8565c20d-021e-4ac4-a9ba-080a0d29ef70}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Fichiers sources\Dark Forces\dfObject\dfSprite\dfSpriteAnimated">
-      <UniqueIdentifier>{bb1cb4b1-400e-405e-884a-00cfbe387732}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Fichiers d%27en-tête\Framework\math">
       <UniqueIdentifier>{463a39e8-292e-4dfd-ae5a-7a17e03e4802}</UniqueIdentifier>
     </Filter>

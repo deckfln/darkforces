@@ -73,7 +73,7 @@ void DarkForces::Component::Actor::addShield(int32_t value)
 /**
  * hit by a bullet, reduce shield and life
  */
-void DarkForces::Component::Actor::hitBullet(int32_t value)
+void DarkForces::Component::Actor::onHitBullet(int32_t value)
 {
 	if (m_shield > 0) {
 		m_shield -= value;
@@ -82,8 +82,12 @@ void DarkForces::Component::Actor::hitBullet(int32_t value)
 		m_life -= value;
 		if (m_life < 0) {
 			die();
+			return;
 		}
 	}
+
+	// play a sound if there is one
+	m_entity->sendMessage(gaMessage::PLAY_SOUND, DarkForces::Component::Actor::Sound::HURT);
 }
 
 /**
@@ -110,7 +114,7 @@ void DarkForces::Component::Actor::dispatchMessage(gaMessage* message)
 		addShield(message->m_value);
 		break;
 	case DarkForces::Message::HIT_BULLET:
-		hitBullet(message->m_value);
+		onHitBullet(message->m_value);
 		break;
 	case DarkForces::Message::PICK_RIFLE_AND_BULLETS:
 		m_entity->sendMessage(DarkForces::Message::ADD_ENERGY, message->m_value);
@@ -158,13 +162,15 @@ void DarkForces::Component::Actor::die(void)
 	m_entity->physical(false);
 
 	// play a sound if there is one
-	m_entity->sendMessage(gaMessage::PLAY_SOUND, 0);
+	m_entity->sendMessage(gaMessage::PLAY_SOUND, DarkForces::Component::Actor::Sound::DIE);
 
 	// let everyone this is the last stage
 	m_entity->sendMessage(DarkForces::Message::DYING, 0);
 
 	gaDebugLog(1, "DarkForces::Component::Actor::die", "kill the entity " + m_entity->name() + " and block from the world");
 }
+
+//*****************************************************
 
 /**
  * size of the component
@@ -207,6 +213,8 @@ uint32_t DarkForces::Component::Actor::loadState(void* r)
 
 	return record->size;
 }
+
+//*****************************************************
 
 /**
  * display the component in the debugger

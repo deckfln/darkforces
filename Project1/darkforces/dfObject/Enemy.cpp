@@ -39,7 +39,8 @@ DarkForces::Enemy::Enemy(dfWAX* model, const glm::vec3& position, float ambient,
 	}
 	m_weapon.addEnergy(200);
 
-	m_sound.addSound(Sound::DIE, loadVOC("ST-DIE-1.voc")->sound());
+	m_sound.addSound(DarkForces::Component::Actor::Sound::DIE, loadVOC("ST-DIE-1.voc")->sound());
+	m_sound.addSound(DarkForces::Component::Actor::Sound::HURT, loadVOC("ST-HRT-1.voc")->sound());
 
 	DarkForces::Component::SpriteAnimated* sprite = new DarkForces::Component::SpriteAnimated(model, ambient);
 	addComponent(sprite);

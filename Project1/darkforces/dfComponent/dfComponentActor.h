@@ -33,12 +33,18 @@ namespace DarkForces {
 			dfLevel* m_level = nullptr;				// fast access to the loaded level
 
 			void setDataFromClass(void);			// extract data from the class
+			void onHitBullet(int32_t value);							// hit by a bullet, reduce shield and life
 
 		public:
+			enum Sound {
+				DIE,
+				FIRE,
+				HURT
+			};
+
 			Actor(const std::string& xclass);
 			Actor(void);
 			void addShield(int32_t value);
-			void hitBullet(int32_t value);							// hit by a bullet, reduce shield and life
 			void die(void);											// kill the actor
 
 			inline dfSector* currentSector(void) { return m_currentSector; };

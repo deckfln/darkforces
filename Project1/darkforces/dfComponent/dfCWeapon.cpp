@@ -126,7 +126,7 @@ DarkForces::Component::Weapon::Weapon(DarkForces::Weapon::Kind weapon):
 	// prepare the sound component if there is a sound
 	if (g_WeaponSounds.count(m_kind) > 0) {
 		DarkForces::Weapon& w = g_WeaponSounds.at(m_kind);
-		m_entity->sendMessage(gaMessage::Action::REGISTER_SOUND, DarkForces::Enemy::Enemy::Sound::FIRE, loadVOC(w.m_fireSound)->sound());
+		m_entity->sendMessage(gaMessage::Action::REGISTER_SOUND, DarkForces::Component::Actor::Sound::FIRE, loadVOC(w.m_fireSound)->sound());
 	}
 }
 
@@ -135,7 +135,7 @@ DarkForces::Weapon* DarkForces::Component::Weapon::set(DarkForces::Weapon::Kind 
 	m_kind = k;
 	if (g_WeaponSounds.count(m_kind) > 0) {
 		DarkForces::Weapon& w = g_WeaponSounds.at(m_kind);
-		m_entity->sendMessage(gaMessage::Action::REGISTER_SOUND, DarkForces::Enemy::Enemy::Sound::FIRE, loadVOC(w.m_fireSound)->sound());
+		m_entity->sendMessage(gaMessage::Action::REGISTER_SOUND, DarkForces::Component::Actor::Sound::FIRE, loadVOC(w.m_fireSound)->sound());
 
 		return &w;
 	}
@@ -209,7 +209,7 @@ void DarkForces::Component::Weapon::onFire(const glm::vec3& direction, time_t ti
 
 	g_gaWorld.addClient(bullet);
 
-	m_entity->sendMessage(gaMessage::Action::PLAY_SOUND, DarkForces::Enemy::Enemy::Sound::FIRE);
+	m_entity->sendMessage(gaMessage::Action::PLAY_SOUND, DarkForces::Component::Actor::Sound::FIRE);
 	m_entity->sendMessage(DarkForces::Message::FIRE);
 }
 
