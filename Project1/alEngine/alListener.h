@@ -12,7 +12,7 @@ public:
 	alListener();
 
 	// setter/getter
-	void maxdistance(float m);									// set attenuation model
+	inline void maxdistance(float m) { m_maxdistance = m; };	// set attenuation model
 	inline float maxdistance(void) { return m_maxdistance; };
 	inline void mindistance(float m) { m_mindistance = m; };	// set attenuation model
 	inline float mindistance(void) { return m_mindistance; };

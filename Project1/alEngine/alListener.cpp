@@ -22,6 +22,8 @@ alListener::alListener()
 	if (!alcMakeContextCurrent(g_Context)) {
 		std::cerr << "alListener::orientation error" << std::endl;
 	}
+
+	alDistanceModel(AL_LINEAR_DISTANCE);
 }
 
 /**
@@ -29,7 +31,6 @@ alListener::alListener()
  */
 void alListener::maxdistance(float m)
 {
-	alDistanceModel(AL_LINEAR_DISTANCE);
 	m_maxdistance = m;
 }
 

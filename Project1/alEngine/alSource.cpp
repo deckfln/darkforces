@@ -39,7 +39,7 @@ bool alSource::play(alSound* buffer, const glm::vec3& position)
 		alGenSources((ALuint)1, (ALuint *)&player);
 
 		// set attenuation
-		alSourcef((ALuint)player, AL_ROLLOFF_FACTOR, 1.0f);
+		alSourcef((ALuint)player, AL_ROLLOFF_FACTOR, 1.1f);
 		alSourcef((ALuint)player, AL_REFERENCE_DISTANCE, g_Listener.mindistance());
 		alSourcef((ALuint)player, AL_MAX_DISTANCE, g_Listener.maxdistance());
 
