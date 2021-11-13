@@ -3,6 +3,7 @@
 #include "../../gaEngine/gaComponent/gaBehaviorTree.h"
 #include "../../gaEngine/gaBehaviorNode/gaBNSatNav.h"
 #include "../../gaEngine/gaBehaviorNode/gaBehaviorLoop.h"
+#include "../../gaEngine/gaBehaviorNode/gaBehaviorSound.h"
 
 #include "../gaBehaviorNode/dfMoveEnemyTo.h"
 #include "../gaBehaviorNode/dfWaitDoor.h"
@@ -22,6 +23,7 @@ namespace DarkForces {
 			Behavior::WaitIdle m_waitIdle = Behavior::WaitIdle("wait_idle");
 				Behavior::AttackPlayer m_attack = Behavior::AttackPlayer("attack and track");
 					Behavior::MoveToAndAttack m_moveAndAttack = Behavior::MoveToAndAttack("find the player, move toward him and shoot at him");
+						GameEngine::Behavior::Sound m_teasePlayer = GameEngine::Behavior::Sound("tease the player");
 						Behavior::Move2Player m_move2player = Behavior::Move2Player("move toward player");
 							GameEngine::Behavior::MoveTo m_move2 = GameEngine::Behavior::MoveTo("move to waypoints");
 						Behavior::Fire2Player m_shootPlayer = Behavior::Fire2Player("shoot player");
@@ -51,6 +53,8 @@ namespace DarkForces {
 
 			bool viewPlayer(void);								// check if see the player in the cone of vision
 			bool locatePlayer(void);							// locate the player fully around the player
+
+			void addSound(const std::string& file, uint32_t);	// add sounds to 'tease the player'
 		};
 	}
 }

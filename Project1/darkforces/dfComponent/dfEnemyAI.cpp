@@ -4,19 +4,19 @@
 
 #include "../dfMessage.h"
 
+#include "../dfVOC.h"
 #include "../../gaEngine/gaEntity.h"
 #include "../../gaEngine/World.h"
 
 DarkForces::Component::EnemyAI::EnemyAI():
 	GameEngine::Component::BehaviorTree(&m_waitIdle)
 {
-	m_satnav.speed(1.0f);
-
 	m_waitIdle.tree(this);
 	m_waitIdle.init(nullptr);
 
 	m_waitIdle.addNode(&m_attack);
 		m_attack.addNode(&m_moveAndAttack);
+			m_moveAndAttack.addNode(&m_teasePlayer);
 			m_moveAndAttack.addNode(&m_move2player);
 				m_move2player.addNode(&m_move2);
 			m_moveAndAttack.addNode(&m_shootPlayer);
@@ -32,6 +32,8 @@ DarkForces::Component::EnemyAI::EnemyAI():
 			m_open_door.addNode(&m_wait_door_2);
 
 	blackboard("player_last_positions", (void*)&m_playerLastPositions);
+
+	m_satnav.speed(1.0f);
 }
 
 /**
@@ -164,4 +166,12 @@ bool DarkForces::Component::EnemyAI::locatePlayer(void)
 	}
 
 	return true;
+}
+
+/**
+ *
+ */
+void DarkForces::Component::EnemyAI::addSound(const std::string& file, uint32_t id)
+{
+	m_teasePlayer.addSound(loadVOC(file)->sound(), id);
 }

@@ -33,9 +33,25 @@ DarkForces::Enemy::Enemy(dfWAX* model, const glm::vec3& position, float ambient,
 	m_actor.setClass(model->name());
 	if (model->name() == "OFFCFIN.WAX") {
 		m_weapon.set(DarkForces::Weapon::Kind::Pistol);
+
+		// load sounds
+		m_ai.addSound("RANOFC02.voc", 2048);
+		m_ai.addSound("RANOFC04.voc", 2050);
+		m_ai.addSound("RANOFC05.voc", 2051);
+		m_ai.addSound("RANOFC06.voc", 2052);
 	}
 	else {
 		m_weapon.set(DarkForces::Weapon::Kind::Rifle);
+
+		// load sounds
+		m_ai.addSound("Ransto01.voc", 2048);
+		m_ai.addSound("Ransto02.voc", 2049);
+		m_ai.addSound("Ransto03.voc", 2050);
+		m_ai.addSound("Ransto04.voc", 2051);
+		m_ai.addSound("Ransto05.voc", 2052);
+		m_ai.addSound("Ransto06.voc", 2053);
+		m_ai.addSound("Ransto07.voc", 2054);
+		m_ai.addSound("Ransto08.voc", 2055);
 	}
 	m_weapon.addEnergy(200);
 
