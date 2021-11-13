@@ -28,9 +28,6 @@ dfBulletExplode::dfBulletExplode(const glm::vec3& position, float ambient) :
 	moveTo(m_position_lvl);
 
 	// prepare the sound component
-	//m_sound.addSound(0, loadVOC("ex-tiny1.voc")->sound());
-	m_sound.position(p);
-	addComponent(&m_sound);
 }
 
 /**
@@ -39,10 +36,6 @@ dfBulletExplode::dfBulletExplode(const glm::vec3& position, float ambient) :
 void dfBulletExplode::dispatchMessage(gaMessage* message)
 {
 	switch (message->m_action) {
-	case gaMessage::Action::WORLD_INSERT:
-		sendInternalMessage(gaMessage::PLAY_SOUND, 0);
-		break;
-
 	case DarkForces::Message::ANIM_END:
 		// remove the explosion from the world
 		g_gaWorld.sendMessageDelayed(m_name, "_world", gaMessage::DELETE_ENTITY, 0, nullptr);

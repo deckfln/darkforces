@@ -13,50 +13,18 @@ alSource::alSource(void)
 	m_sources[source] = -1;				// first player, no sound
 }
 
-alSource::alSource(const glm::vec3& position) :
-	m_position(position)
-{
-	ALuint source;
-	alGenSources((ALuint)1, &source);
-	m_sources[source] = -1;				// first player, no sound
-
-	alSource3f(source, AL_POSITION, position.x, position.y, position.z);
-}
-
-void alSource::position(const glm::vec3& position)
-{
-	m_position = position;
-
-	// move all player from the source
-	for (auto& source : m_sources) {
-		alSource3f(source.first, AL_POSITION, position.x, position.y, position.z);
-	}
-}
-
-void alSource::position(const glm::vec3* pos)
-{
-	m_position = *pos;
-	position(m_position);
-}
-
 /**
  * bind the given buffer and play it
  */
-bool alSource::play(alSound* buffer)
+bool alSource::play(alSound* buffer, const glm::vec3& position)
 {
 	ALint id = buffer->id();
 
-	// check if a player is playing that sound
+	// clean running sources
 	ALint state;
 	for (auto& source : m_sources) {
 		alGetSourcei(source.first, AL_SOURCE_STATE, &state);
-		if (source.second == id) {
-			if (m_state == AL_PLAYING) {
-				return true;		// already playing that sound
-			}
-		}
-
-		if (m_state == AL_STOPPED) {
+		if (state == AL_STOPPED) {
 			m_sources[source.first] = -1;
 		}
 	}
@@ -74,8 +42,9 @@ bool alSource::play(alSound* buffer)
 	if (player < 0) {
 		alGenSources((ALuint)1, (ALuint *)&player);
 		m_sources[player] = -1;				// first player, no sound
-		alSource3f((ALuint)player, AL_POSITION, m_position.x, m_position.y, m_position.z);
 	}
+
+	alSource3f((ALuint)player, AL_POSITION, position.x, position.y, position.z);
 
 	ALCenum error = alGetError();
 

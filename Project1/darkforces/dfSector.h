@@ -14,6 +14,7 @@ using Point = std::array<Coord, 2>;
 #include "../gaEngine/AABBoxTree.h"
 #include "../gaEngine/gaMessage.h"
 #include "../gaEngine/gaEntity.h"
+#include "../gaEngine/gaComponent/gaSound.h"
 
 #include "dfComponent/InfStandardTrigger.h"
 
@@ -109,6 +110,8 @@ class dfSector : public gaEntity
 	float m_currentAmbient;								// current value for an elevator light
 
 	dfSuperSector* m_super = nullptr;					// link back to the supersector
+
+	GameEngine::Component::Sound m_sound;               // to play sound when a laser hit the wall
 
 	void buildWalls(dfMesh* mesh, dfWallFlag displayPolygon);
 	void buildFloorAndCeiling(dfMesh* mesh);

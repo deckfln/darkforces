@@ -283,6 +283,7 @@ gaMessage* World::sendMessage(const std::string& from, const std::string& to, in
 	ptr->m_action = action;
 	ptr->m_value = value;
 	ptr->m_fvalue = 0;
+	ptr->m_v3value = glm::vec3(0);
 	ptr->m_extra = extra;
 
 	m_queue.push_back(ptr);
@@ -299,6 +300,7 @@ gaMessage* World::sendMessage(const std::string& from, const std::string& to, in
 	ptr->m_action = action;
 	ptr->m_value = value;
 	ptr->m_fvalue = fvalue;
+	ptr->m_v3value = glm::vec3(0);
 	ptr->m_extra = extra;
 
 	m_queue.push_back(ptr);
@@ -352,6 +354,7 @@ gaMessage* World::sendMessage(const std::string& from, const std::string& to, in
 	ptr->m_action = action;
 	ptr->m_value = 0;
 	ptr->m_fvalue = value;
+	ptr->m_v3value = glm::vec3(0);
 	ptr->m_extra = extra;
 
 	m_queue.push_back(ptr);

@@ -210,7 +210,7 @@ void DarkForces::Component::Weapon::onFire(const glm::vec3& direction, time_t ti
 
 	g_gaWorld.addClient(bullet);
 
-	m_entity->sendMessage(gaMessage::Action::PLAY_SOUND, DarkForces::Component::Actor::Sound::FIRE);
+	//m_entity->sendMessage(gaMessage::Action::PLAY_SOUND, DarkForces::Component::Actor::Sound::FIRE);
 	m_entity->sendMessage(DarkForces::Message::FIRE);
 }
 

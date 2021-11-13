@@ -7,7 +7,6 @@
 
 class dfBulletExplode : public DarkForces::Object
 {
-	GameEngine::Component::Sound m_sound;
 	DarkForces::Component::SpriteAnimated* m_sprite=nullptr;
 public:
 	dfBulletExplode(const glm::vec3& position, float ambient);

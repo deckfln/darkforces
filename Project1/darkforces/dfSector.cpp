@@ -23,6 +23,7 @@
 #include "dfMesh.h"
 #include "dfParseINF.h"
 #include "dfLevel.h"
+#include "dfVOC.h"
 #include "dfComponent/InfElevator.h"
 #include "dfComponent/dfSign.h"
 
@@ -37,6 +38,9 @@ dfSector::dfSector(std::istringstream& infile, std::vector<dfSector*>& sectorsID
 {
 	m_physical = false;	// object is a virtual entity (cannot collide)
 	m_movable = false;  
+
+	addComponent(&m_sound);
+	m_sound.addSound(1024, loadVOC("ex-tiny1.voc")->sound());
 
 	m_className = g_className;
 
@@ -1152,6 +1156,12 @@ void dfSector::dispatchMessage(gaMessage* message)
 			m_hasCollider = true;
 			break;
 		}
+	}
+
+	switch (message->m_action) {
+	case DarkForces::Message::HIT_BULLET:
+		sendMessage(gaMessage::Action::PLAY_SOUND, 1024, message->m_v3value);
+		break;
 	}
 
 	gaEntity::dispatchMessage(message);

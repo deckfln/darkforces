@@ -13,6 +13,7 @@
 #include "../gaEngine/gaCollisionPoint.h"
 #include "../gaEngine/Collider.h"
 #include "../gaEngine/AABBoxTree.h"
+#include "../gaEngine/gaComponent/gaSound.h"
 
 #include "dfSector.h"
 #include "dfBitmap.h"
@@ -69,6 +70,8 @@ class dfSuperSector : public gaEntity
 
     bool m_visible = false;                                     // super sector is visible on screen
     bool m_debugPortals = false;                                // display the portal bounding sphere on screen
+
+    GameEngine::Component::Sound m_sound;                       // to play sound when a laser hit the wall
 
 public:
     dfSuperSector(dfSector* sector, fwMaterialBasic* material, std::vector<dfBitmap*>& m_bitmaps);

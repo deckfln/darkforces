@@ -126,9 +126,6 @@ fwObject3D &fwObject3D::translate(const glm::vec3 &vector)
 {
 	m_position = vector;
 	m_updated = true;
-	if (m_source) {
-		m_source->position(m_position);
-	}
 	return *this;
 }
 
@@ -355,10 +352,10 @@ bool fwObject3D::play(alSound* sound)
 {
 	if (m_source == nullptr) {
 		// create a sound source the first time
-		m_source = new alSource(m_position);
+		m_source = new alSource();
 	}
 
-	return m_source->play(sound);
+	return m_source->play(sound, m_position);
 }
 
 /**

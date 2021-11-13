@@ -4,12 +4,13 @@
 
 #include <imgui.h>
 
+alSource GameEngine::Component::Sound::m_source;
+
 /**
  *
  */
 GameEngine::Component::Sound::Sound(void):
-	gaComponent(gaComponent::SOUND),
-	m_source(m_position)
+	gaComponent(gaComponent::SOUND)
 {
 }
 
@@ -27,8 +28,14 @@ void GameEngine::Component::Sound::dispatchMessage(gaMessage* message)
 		// Start playing a sound or check if it plays
 		alSound* sound = m_sounds[message->m_value];
 		if (sound) {
-			position(m_entity->position());
-			m_source.play(sound);
+			glm::vec3 p;
+			if (message->m_v3value != glm::vec3(0)) {
+				p = message->m_v3value;
+			}
+			else {
+				p = m_entity->position();
+			}
+			m_source.play(sound, p);
 		}
 		break;
 	}
@@ -62,13 +69,9 @@ void GameEngine::Component::Sound::addSound(uint32_t name, alSound* sound)
 	m_sounds[name] = sound;
 }
 
-/**
- * define the position of the source
- */
-void GameEngine::Component::Sound::position(const glm::vec3 &position)
+void GameEngine::Component::Sound::position(const glm::vec3& position)
 {
 	m_position = position;
-	m_source.position(m_position);
 }
 
 GameEngine::Component::Sound::~Sound()

@@ -15,6 +15,7 @@
 
 #include "dfLevel.h"
 #include "dfMesh.h"
+#include "dfVOC.h"
 
 static glm::vec4 white(1.0, 0.0, 1.0, 1.0);
 static fwMaterialBasic* material_portal = new fwMaterialBasic(&white);
@@ -37,6 +38,9 @@ dfSuperSector::dfSuperSector(dfSector* sector, fwMaterialBasic* material, std::v
 	m_movable = false;		// cannot be pushed aside
 
 	m_dfmesh = new dfMesh(material, bitmaps);
+
+	addComponent(&m_sound);
+	m_sound.addSound(1024, loadVOC("ex-tiny1.voc")->sound());
 }
 
 /**
@@ -109,6 +113,10 @@ void dfSuperSector::dispatchMessage(gaMessage* message)
 		for (auto sector : m_sectors) {
 			sector->sendInternalMessage(message->m_action);
 		}
+		break;
+
+	case DarkForces::Message::HIT_BULLET:
+		sendMessage(gaMessage::Action::PLAY_SOUND, 1024, message->m_v3value);
 		break;
 	}
 
