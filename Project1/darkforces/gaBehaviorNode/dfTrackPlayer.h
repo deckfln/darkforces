@@ -10,7 +10,7 @@ namespace DarkForces {
 			uint32_t m_alarmID;
 
 		protected:
-			void onChildExit(Status status) override;
+			void onChildExit(uint32_t child, Status status) override;
 
 		public:
 			TrackPlayer(const char* name);

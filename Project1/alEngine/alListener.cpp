@@ -26,14 +26,6 @@ alListener::alListener()
 	alDistanceModel(AL_LINEAR_DISTANCE);
 }
 
-/**
- * set attenuation model
- */
-void alListener::maxdistance(float m)
-{
-	m_maxdistance = m;
-}
-
 void alListener::position(const glm::vec3& position)
 {
 	m_position = position;

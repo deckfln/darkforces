@@ -8,7 +8,7 @@
 #include "../../gaEngine/gaNavMesh.h"
 #include "../../config.h"
 
-void DarkForces::Behavior::Move2Player::onChildExit(Status status)
+void DarkForces::Behavior::Move2Player::onChildExit(uint32_t child, Status status)
 {
 	// remove programmed alarm
 	g_gaWorld.cancelAlarmEvent(m_alarmID);

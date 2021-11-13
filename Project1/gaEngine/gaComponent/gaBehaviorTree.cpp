@@ -42,6 +42,8 @@ void GameEngine::Component::BehaviorTree::blackboard(const std::string key, void
 	BehaviorNode::Action r;
 	m_current->dispatchMessage(message, &r);
 
+	uint32_t count = 0;	// security counter
+
 	// Navigate the tree
 	while (r.action != BehaviorNode::Status::RUNNING) {
 		switch (r.action) {
@@ -68,7 +70,9 @@ void GameEngine::Component::BehaviorTree::blackboard(const std::string key, void
 			m_current->execute(&r);
 			break;
 		}
-
+		if (count++ > 50) {
+			__debugbreak();
+		}
 	}
 
 	if (m_current == nullptr) {

@@ -9,7 +9,7 @@
 /**
  *
  */
-void DarkForces::Behavior::TrackPlayer::onChildExit(Status status)
+void DarkForces::Behavior::TrackPlayer::onChildExit(uint32_t child, Status status)
 {
 	// remove programmed alarm
 	g_gaWorld.cancelAlarmEvent(m_alarmID);

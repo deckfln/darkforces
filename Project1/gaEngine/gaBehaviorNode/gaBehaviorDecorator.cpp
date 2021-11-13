@@ -24,11 +24,23 @@ void GameEngine::Behavior::Decorator::execute(Action* r)
 	switch (childStatus) {
 	case Status::SUCCESSED:
 	case Status::FAILED:
-		onChildExit(childStatus);
+		onChildExit(m_runningChild, childStatus);
 
 		// drop out of the loop
-		m_status = m_children[m_runningChild]->status();
 		r->action = BehaviorNode::Status::EXIT;
+		switch (m_condition) {
+		case Condition::STRAIGHT:
+			m_status = childStatus;
+			break;
+		case Condition::INVERT:
+			m_status = (childStatus == Status::SUCCESSED) ? Status::FAILED : Status::SUCCESSED;
+			break;
+		case Condition::FAILURE:
+			m_status = Status::FAILED;
+			break;
+		default:
+			m_status = Status::SUCCESSED;
+		}
 		r->status = m_status;
 		break;
 
@@ -43,5 +55,11 @@ void GameEngine::Behavior::Decorator::execute(Action* r)
  */
 void GameEngine::Behavior::Decorator::debugGUInode(void)
 {
-	ImGui::Text("Decorator");
+	static const char* conditions[] = {
+		"Straight",
+		"Inverse",
+		"Failure",
+		"Sucess"
+	};
+	ImGui::Text("Decorator:%s", conditions[(uint32_t)m_condition]);
 }

@@ -23,7 +23,8 @@ namespace DarkForces {
 			Behavior::WaitIdle m_waitIdle = Behavior::WaitIdle("wait_idle");
 				Behavior::AttackPlayer m_attack = Behavior::AttackPlayer("attack and track");
 					Behavior::MoveToAndAttack m_moveAndAttack = Behavior::MoveToAndAttack("find the player, move toward him and shoot at him");
-						GameEngine::Behavior::Sound m_teasePlayer = GameEngine::Behavior::Sound("tease the player");
+						GameEngine::Behavior::Decorator m_InverseTeasePlayer = GameEngine::Behavior::Decorator("Invert");
+							GameEngine::Behavior::Sound m_teasePlayer = GameEngine::Behavior::Sound("tease the player");
 						Behavior::Move2Player m_move2player = Behavior::Move2Player("move toward player");
 							GameEngine::Behavior::MoveTo m_move2 = GameEngine::Behavior::MoveTo("move to waypoints");
 						Behavior::Fire2Player m_shootPlayer = Behavior::Fire2Player("shoot player");

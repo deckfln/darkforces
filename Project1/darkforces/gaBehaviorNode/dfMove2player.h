@@ -17,7 +17,7 @@ namespace DarkForces {
 			std::vector<glm::vec3> m_navpoints;								// navigation for satnav
 
 		protected:
-			void onChildExit(Status status) override;
+			void onChildExit(uint32_t child, Status status) override;
 
 		public:
 			Move2Player(const char* name);

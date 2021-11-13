@@ -16,7 +16,8 @@ DarkForces::Component::EnemyAI::EnemyAI():
 
 	m_waitIdle.addNode(&m_attack);
 		m_attack.addNode(&m_moveAndAttack);
-			m_moveAndAttack.addNode(&m_teasePlayer);
+			m_moveAndAttack.addNode(&m_InverseTeasePlayer);
+				m_InverseTeasePlayer.addNode(&m_teasePlayer);
 			m_moveAndAttack.addNode(&m_move2player);
 				m_move2player.addNode(&m_move2);
 			m_moveAndAttack.addNode(&m_shootPlayer);
@@ -34,6 +35,7 @@ DarkForces::Component::EnemyAI::EnemyAI():
 	blackboard("player_last_positions", (void*)&m_playerLastPositions);
 
 	m_satnav.speed(1.0f);
+	m_InverseTeasePlayer.condition(GameEngine::Behavior::Decorator::Condition::FAILURE);
 }
 
 /**

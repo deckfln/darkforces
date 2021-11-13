@@ -19,8 +19,7 @@ namespace GameEngine {
 
 		protected:
 			Condition m_condition = Condition::EXIT_WHEN_ONE_FAIL;
-			inline virtual void onChildStart(uint32_t child) {};
-			inline virtual void onChildExit(uint32_t child, Status status) {};
+
 		private:
 			uint32_t m_failed = 0;
 		};

@@ -90,6 +90,9 @@ namespace GameEngine {
 		void succeeded(Action* r);
 		void startChild(Action* r,uint32_t child, void* data);
 
+		inline virtual void onChildExit(uint32_t child, Status status) {};
+		inline virtual void onChildStart(uint32_t child) {};
+
 		friend GameEngine::Component::BehaviorTree;
 	};
 
