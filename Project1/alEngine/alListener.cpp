@@ -1,5 +1,6 @@
 #include "alListener.h"
 
+#include <glm/glm.hpp>
 #include <iostream>
 #include <AL/al.h>
 #include <AL/alc.h>
@@ -23,8 +24,18 @@ alListener::alListener()
 	}
 }
 
+/**
+ * set attenuation model
+ */
+void alListener::maxdistance(float m)
+{
+	alDistanceModel(AL_LINEAR_DISTANCE);
+	m_maxdistance = m;
+}
+
 void alListener::position(const glm::vec3& position)
 {
+	m_position = position;
 	alListener3f(AL_POSITION, position.x, position.y, position.z);
 }
 
@@ -40,6 +51,14 @@ void alListener::orientation(const glm::vec3& at, const glm::vec3& up)
 	if (error != AL_NO_ERROR) {
 		std::cerr << "alListener::orientation error" << std::endl;
 	}
+}
+
+/**
+ * sound gets clamped after the max distance
+ */
+bool alListener::clamp(const glm::vec3& p)
+{
+	return glm::distance(m_position, p) > m_maxdistance;
 }
 
 alListener::~alListener()

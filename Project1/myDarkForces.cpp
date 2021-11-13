@@ -14,6 +14,8 @@
 #include "framework/fwAABBox.h"
 #include "framework/fwHUDelement.h"
 
+#include "alEngine/alListener.h"
+
 #include "gaEngine/World.h"
 #include "gaEngine/Model.h"
 #include "gaEngine/Debug.h"
@@ -65,6 +67,9 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 	glm::vec3 start = glm::vec3(-29.06, -2.0, 24.75);	// cage
 
 	fwCylinder bounding(glm::vec3(0), c_radius, c_height); // stage
+
+	// set the sound environement
+	g_Listener.maxdistance(15.0f);
 
 	m_renderer->customLight("/data/shaders/lightning.glsl");
 

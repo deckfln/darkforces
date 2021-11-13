@@ -3,14 +3,11 @@
 #include <AL/alc.h>
 #include <iostream>
 
+#include "alListener.h"
 #include "alSound.h"
 
 alSource::alSource(void)
 {
-	ALuint source;
-
-	alGenSources((ALuint)1, &source);
-	m_sources[source] = -1;				// first player, no sound
 }
 
 /**
@@ -18,21 +15,20 @@ alSource::alSource(void)
  */
 bool alSource::play(alSound* buffer, const glm::vec3& position)
 {
+	// drop the sound if it is too far from the listener
+	if (g_Listener.clamp(position)) {
+		return false;
+	}
+
 	ALint id = buffer->id();
 
 	// clean running sources
 	ALint state;
+	ALint player = -1;
 	for (auto& source : m_sources) {
 		alGetSourcei(source.first, AL_SOURCE_STATE, &state);
 		if (state == AL_STOPPED) {
 			m_sources[source.first] = -1;
-		}
-	}
-
-	// find an available player
-	ALint player = -1;
-	for (auto& source : m_sources) {
-		if (source.second == -1) {
 			player = source.first;
 			break;
 		}
@@ -41,9 +37,16 @@ bool alSource::play(alSound* buffer, const glm::vec3& position)
 	// if none are available spawn a new one at the same location
 	if (player < 0) {
 		alGenSources((ALuint)1, (ALuint *)&player);
+
+		// set attenuation
+		alSourcef((ALuint)player, AL_ROLLOFF_FACTOR, 1.0f);
+		alSourcef((ALuint)player, AL_REFERENCE_DISTANCE, g_Listener.mindistance());
+		alSourcef((ALuint)player, AL_MAX_DISTANCE, g_Listener.maxdistance());
+
 		m_sources[player] = -1;				// first player, no sound
 	}
 
+	// set position
 	alSource3f((ALuint)player, AL_POSITION, position.x, position.y, position.z);
 
 	ALCenum error = alGetError();
@@ -64,7 +67,7 @@ bool alSource::play(alSound* buffer, const glm::vec3& position)
 		std::cerr << "alSource::play error" << std::endl;
 	}
 
-	return false;	// was not playing that 
+	return true;	// trigger the sound
 }
 
 /**
