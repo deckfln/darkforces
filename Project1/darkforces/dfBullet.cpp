@@ -140,7 +140,7 @@ void dfBullet::dispatchMessage(gaMessage* message)
 		if (message->m_server == "OFFCFIN.WAX(20)") {
 			printf("hit\n");
 		}
-		sendMessage(message->m_server, DarkForces::Message::HIT_BULLET, m_damage, nullptr);
+		sendMessage(message->m_server, DarkForces::Message::HIT_BULLET, m_damage, m_shooter);
 		gaDebugLog(REDUCED_DEBUG, "dfBullet::dispatchMessage", "hit");
 
 		// drop the bullet

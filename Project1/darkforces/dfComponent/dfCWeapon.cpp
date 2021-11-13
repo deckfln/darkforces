@@ -206,6 +206,7 @@ void DarkForces::Component::Weapon::onFire(const glm::vec3& direction, time_t ti
 	glm::vec3 d = direction + up * x * w.m_recoil + right * y * w.m_recoil;
 
 	dfBullet* bullet = new dfBullet(w.m_damage, p + direction * m_entity->radius() * 2.0f, d);
+	bullet->shooter(m_entity);
 
 	g_gaWorld.addClient(bullet);
 

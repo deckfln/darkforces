@@ -9,6 +9,7 @@
 #include "dfSector.h"
 #include "dfLevel.h"
 #include "dfHUD.h"
+#include "dfVOC.h"
 
 static const char* g_className = "dfPlayer";
 
@@ -34,6 +35,9 @@ DarkForces::Player::Player(int mclass, const std::string& name, fwCylinder& cyli
 	addComponent(&m_defaultAI);
 	addComponent(&m_sound);
 	addComponent(&m_weapon);
+
+	// prepare the sound component
+	m_sound.addSound(1024, loadVOC("BOLTREF1.VOC")->sound());
 
 	m_defaultAI.setClass("player");
 	m_weapon.set(DarkForces::Weapon::Kind::Rifle);
@@ -192,6 +196,24 @@ void DarkForces::Player::onLookAt(gaMessage* message)
 }
 
 /**
+ * when the player gets hit by a laser
+ */
+void DarkForces::Player::onHitBullet(gaMessage* message)
+{
+	// if the player gets hit by laser from storm/commando/officer
+	gaEntity* shooter = static_cast<gaEntity*>(message->m_extra);
+	const std::string& name = shooter->name();
+
+	if (name.find("OFFCFIN") != std::string::npos ||
+		name.find("COMMANDO") != std::string::npos ||
+		name.find("STORMFIN") != std::string::npos) 
+	{
+		sendMessage(gaMessage::Action::PLAY_SOUND, 1024);
+
+	}
+}
+
+/**
  * let an entity deal with a situation
  */
 void DarkForces::Player::dispatchMessage(gaMessage* message)
@@ -243,10 +265,16 @@ void DarkForces::Player::dispatchMessage(gaMessage* message)
 	case gaMessage::Action::LOOK_AT:
 		onLookAt(message);
 		break;
+
+	case DarkForces::Message::HIT_BULLET:
+		onHitBullet(message);
+		break;
 	}
 
 	gaActor::dispatchMessage(message);
 }
+
+//***********************************
 
 /**
  * return a record of the entity state (for debug)
@@ -282,6 +310,8 @@ void DarkForces::Player::loadState(void* record)
 		m_defaultAI.currentSector(nullptr);
 	}
 }
+
+//***********************************
 
 /**
  * Add dedicated component debug the entity

@@ -28,7 +28,7 @@ dfBulletExplode::dfBulletExplode(const glm::vec3& position, float ambient) :
 	moveTo(m_position_lvl);
 
 	// prepare the sound component
-	m_sound.addSound(0, loadVOC("ex-tiny1.voc")->sound());
+	//m_sound.addSound(0, loadVOC("ex-tiny1.voc")->sound());
 	m_sound.position(p);
 	addComponent(&m_sound);
 }

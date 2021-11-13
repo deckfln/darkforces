@@ -19,17 +19,22 @@ class gaMessage;
 
 class dfBullet : public gaEntity
 {
-	glm::vec3 m_direction;
+	glm::vec3 m_direction;				// direction of the bullet
+	gaEntity* m_shooter;				// entity that shoot the bullet
+	uint32_t m_damage;					// damage the bullet will do
+
 	GameEngine::ComponentMesh m_componentMesh;
 	GameEngine::Component::Sound m_sound;
 	Framework::Segment m_segment;
-	uint32_t m_damage;
 
 	void tryToMove(void);
 
 public:
 	dfBullet(uint32_t damage, const glm::vec3& position, const glm::vec3& direction);
 	dfBullet(flightRecorder::dfBullet *record);
+
+	// getter/setter
+	inline void shooter(gaEntity* entity) { m_shooter = entity; };
 
 	static void* create(void* record) {
 		return new dfBullet((flightRecorder::dfBullet*)record);
