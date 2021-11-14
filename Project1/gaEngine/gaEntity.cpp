@@ -439,8 +439,11 @@ void gaEntity::dispatchMessage(gaMessage* message)
 		break;
 	}
 
+	// dispatch messages to active components
 	for (auto& component : m_components) {
-		std::get<0>(component)->dispatchMessage(message);
+		if (std::get<0>(component)->active()) {
+			std::get<0>(component)->dispatchMessage(message);
+		}
 	}
 }
 

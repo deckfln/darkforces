@@ -7,8 +7,9 @@ class gaEntity;
 class gaComponent
 {
 protected:
-	gaEntity* m_entity = nullptr;
-	uint32_t m_id = 0;
+	bool m_active = true;								// does the component handle requests ?
+	gaEntity* m_entity = nullptr;						// parent entity
+	uint32_t m_id = 0;									// position of the component in the entity components list
 	int m_type = NONE;
 
 public:
@@ -33,6 +34,8 @@ public:
 	inline void parent(gaEntity* parent) { m_entity = parent; };
 	inline gaEntity* entity(void) { return m_entity; };
 	inline uint32_t entityID(void);
+	inline bool active(void) { return m_active; };
+	inline void active(bool b) { m_active = b; };
 
 	virtual void dispatchMessage(gaMessage* message) {};	// let a component deal with a situation
 

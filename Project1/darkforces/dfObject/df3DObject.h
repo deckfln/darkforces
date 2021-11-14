@@ -7,6 +7,7 @@
 namespace DarkForces {
 	namespace Anim {
 		class ThreeD : public Object {
+		protected:
 			GameEngine::ComponentMesh m_componentMesh;
 			DarkForces::Component::Anim3D m_anim;
 

@@ -18,6 +18,7 @@ DarkForces::Anim::MouseBot::MouseBot(const std::string& model, const glm::vec3& 
 	m_actor.setClass("MOUSEBOT.3DO");
 	m_sound.addSound(DarkForces::Component::Actor::Sound::DIE, loadVOC("EEEK-3.VOC")->sound());
 	m_sound.addSound(MouseEeek, loadVOC("EEEK-1.VOC")->sound());
+	m_anim.active(false);	// deactivate the animation component
 
 	// cylinders run in world space, so adapt from the model space scale
 	const glm::vec3& scale = get_scale();
