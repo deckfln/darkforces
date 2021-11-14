@@ -173,13 +173,14 @@ void DarkForces::Component::Weapon::onFire(const glm::vec3& direction, time_t ti
 	if (m_energy == 0) {
 		return;
 	}
-	m_energy--;
 
 	// count time since the last fire, and auto-fire at the weapon rate
 	if (time - m_time < w.m_rate) {
 		return;
 	}
 	m_time = time;
+
+	m_energy--;
 
 	// create a bullet based on the kind of weapon
 	// and add to the world to live its life
@@ -219,7 +220,7 @@ void DarkForces::Component::Weapon::onFire(const glm::vec3& direction, time_t ti
  */
 void DarkForces::Component::Weapon::onStopFire(gaMessage* message)
 {
-	m_time = 0;
+//	m_time = 0;
 }
 
 /**
