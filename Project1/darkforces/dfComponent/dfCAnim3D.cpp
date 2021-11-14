@@ -47,7 +47,16 @@ void DarkForces::Component::Anim3D::set(const std::string& vue, const std::strin
  */
 void DarkForces::Component::Anim3D::onTimer(gaMessage* message)
 {
-	time_t t = message->m_delta;
+	time_t t;
+
+	if (message) {
+		t = message->m_delta;
+	}
+	else {
+		// called from the loadState
+		t = 0;
+	}
+
 	if (m_vue != nullptr) {
 		// follow a path
 		glm::mat4* mat4x4 = m_vue->nextFrame(t);
