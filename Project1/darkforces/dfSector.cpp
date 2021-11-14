@@ -19,6 +19,7 @@
 #include "../gaEngine/gaComponent.h"
 
 #include "dfConfig.h"
+#include "dfSounds.h"
 #include "dfSuperSector.h"
 #include "dfMesh.h"
 #include "dfParseINF.h"
@@ -40,7 +41,7 @@ dfSector::dfSector(std::istringstream& infile, std::vector<dfSector*>& sectorsID
 	m_movable = false;  
 
 	addComponent(&m_sound);
-	m_sound.addSound(1024, loadVOC("ex-tiny1.voc")->sound());
+	m_sound.addSound(DarkForces::Sounds::WALL_HIT_LASER, DarkForces::loadSound(DarkForces::Sounds::WALL_HIT_LASER)->sound());
 
 	m_className = g_className;
 
@@ -1159,8 +1160,8 @@ void dfSector::dispatchMessage(gaMessage* message)
 	}
 
 	switch (message->m_action) {
-	case DarkForces::Message::HIT_BULLET:
-		sendMessage(gaMessage::Action::PLAY_SOUND, 1024, message->m_v3value);
+	case gaMessage::Action::BULLET_HIT:
+		sendMessage(gaMessage::Action::PLAY_SOUND, DarkForces::Sounds::WALL_HIT_LASER, message->m_v3value);
 		break;
 	}
 

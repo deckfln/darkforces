@@ -5,6 +5,7 @@
 
 #include "../gaEngine/World.h"
 
+#include "dfSounds.h"
 #include "dfFileSystem.h"
 #include "dfSector.h"
 #include "dfLevel.h"
@@ -37,7 +38,8 @@ DarkForces::Player::Player(int mclass, const std::string& name, fwCylinder& cyli
 	addComponent(&m_weapon);
 
 	// prepare the sound component
-	m_sound.addSound(1024, loadVOC("BOLTREF1.VOC")->sound());
+	m_sound.addSound(DarkForces::Sounds::PLAYER_HIT_BY_STORM_COMMANDO_OFFICER, DarkForces::loadSound(DarkForces::Sounds::PLAYER_HIT_BY_STORM_COMMANDO_OFFICER)->sound());
+	m_sound.addSound(DarkForces::Sounds::PLAYER_NEARLY_HIT, DarkForces::loadSound(PLAYER_NEARLY_HIT)->sound());
 
 	m_defaultAI.setClass("player");
 	m_weapon.set(DarkForces::Weapon::Kind::Rifle);
@@ -208,9 +210,16 @@ void DarkForces::Player::onHitBullet(gaMessage* message)
 		name.find("COMMANDO") != std::string::npos ||
 		name.find("STORMFIN") != std::string::npos) 
 	{
-		sendMessage(gaMessage::Action::PLAY_SOUND, 1024);
-
+		//sendMessage(gaMessage::Action::PLAY_SOUND, DarkForces::Sounds::PLAYER_HIT_BY_STORM_COMMANDO_OFFICER);
 	}
+}
+
+/**
+ * a bullet passed by the player
+ */
+void DarkForces::Player::onBulletMiss(gaMessage* mmessage)
+{
+	sendMessage(gaMessage::Action::PLAY_SOUND, DarkForces::Sounds::PLAYER_NEARLY_HIT);
 }
 
 /**
@@ -266,9 +275,14 @@ void DarkForces::Player::dispatchMessage(gaMessage* message)
 		onLookAt(message);
 		break;
 
-	case DarkForces::Message::HIT_BULLET:
+	case gaMessage::Action::BULLET_HIT:
 		onHitBullet(message);
 		break;
+
+	case gaMessage::Action::BULLET_MISS:
+		onBulletMiss(message);
+		break;
+
 	}
 
 	gaActor::dispatchMessage(message);

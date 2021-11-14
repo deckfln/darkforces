@@ -137,7 +137,7 @@ void dfBullet::dispatchMessage(gaMessage* message)
 		g_gaWorld.addClient(impact);
 
 		// on collision, inform the target it was hit with the energy of the bullet
-		sendMessage(message->m_server, DarkForces::Message::HIT_BULLET, m_damage, message->m_v3value, m_shooter);
+		sendMessage(message->m_server, gaMessage::Action::BULLET_HIT, m_damage, message->m_v3value, m_shooter);
 		gaDebugLog(REDUCED_DEBUG, "dfBullet::dispatchMessage", "hit");
 
 		// drop the bullet

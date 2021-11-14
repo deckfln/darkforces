@@ -130,7 +130,6 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 		{DarkForces::Message::DONE, "DF_DONE"},
 		{DarkForces::Message::ADD_SHIELD, "DF_ADD_SHIELD"},
 		{DarkForces::Message::ADD_ENERGY, "DF_ADD_ENERGY"},
-		{DarkForces::Message::HIT_BULLET,	"DF_HIT_BULLET"},
 		{DarkForces::Message::DYING, "DF_DYING"},
 		{DarkForces::Message::DEAD, "DF_DEAD"},
 		{DarkForces::Message::FORCE_STATE,		"DF_FORCE_STATE"},

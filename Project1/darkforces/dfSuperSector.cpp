@@ -13,6 +13,7 @@
 #include "../gaEngine/World.h"
 #include "../gaEngine/gaComponent/gaComponentMesh.h"
 
+#include "dfSounds.h"
 #include "dfLevel.h"
 #include "dfMesh.h"
 #include "dfVOC.h"
@@ -40,7 +41,7 @@ dfSuperSector::dfSuperSector(dfSector* sector, fwMaterialBasic* material, std::v
 	m_dfmesh = new dfMesh(material, bitmaps);
 
 	addComponent(&m_sound);
-	m_sound.addSound(1024, loadVOC("ex-tiny1.voc")->sound());
+	m_sound.addSound(DarkForces::Sounds::WALL_HIT_LASER, DarkForces::loadSound(DarkForces::Sounds::WALL_HIT_LASER)->sound());
 }
 
 /**
@@ -115,8 +116,8 @@ void dfSuperSector::dispatchMessage(gaMessage* message)
 		}
 		break;
 
-	case DarkForces::Message::HIT_BULLET:
-		sendMessage(gaMessage::Action::PLAY_SOUND, 1024, message->m_v3value);
+	case gaMessage::Action::BULLET_HIT:
+		sendMessage(gaMessage::Action::PLAY_SOUND, DarkForces::Sounds::WALL_HIT_LASER, message->m_v3value);
 		break;
 	}
 

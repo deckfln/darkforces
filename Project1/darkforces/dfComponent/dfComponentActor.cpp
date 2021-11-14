@@ -115,7 +115,7 @@ void DarkForces::Component::Actor::dispatchMessage(gaMessage* message)
 		addShield(message->m_value);
 		break;
 
-	case DarkForces::Message::HIT_BULLET:
+	case gaMessage::Action::BULLET_HIT:
 		onHitBullet(message->m_value);
 		break;
 

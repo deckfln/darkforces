@@ -87,7 +87,7 @@ void dfComponentLogic::dispatchMessage(gaMessage* message)
 		}
 		
 		break;
-	case DarkForces::Message::HIT_BULLET:
+	case gaMessage::Action::BULLET_HIT:
 		if (m_logics & dfLogic::SCENERY) {
 			m_entity->sendMessage(DarkForces::Message::STATE, (int)dfState::SCENERY_ATTACK);
 		}

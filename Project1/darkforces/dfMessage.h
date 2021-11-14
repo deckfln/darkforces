@@ -10,7 +10,6 @@ namespace DarkForces {
 		DONE,
 		ADD_SHIELD,
 		ADD_ENERGY,
-		HIT_BULLET,			// the object was hit by a bullet
 		DYING,				// the object is dying but not yet dead
 		DEAD,				// the object is dead
 		STATE,				// change the state of the object unless it is already on that state

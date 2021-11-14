@@ -278,7 +278,6 @@ void Physics::moveBullet(gaEntity* entity, gaMessage* message)
 
 	// test again entities
 	float len;
-
 	for (auto& entry : g_gaWorld.m_entities) {
 		for (auto ent : entry.second) {
 			// ignore ghosts and itself
@@ -292,6 +291,8 @@ void Physics::moveBullet(gaEntity* entity, gaMessage* message)
 			}
 
 			if (ent->worldAABB().intersect(s, p) == fwAABBox::Intersection::NONE) {
+				// send a near hit
+				ent->sendMessage(gaMessage::Action::BULLET_MISS);
 				continue;
 			}
 
@@ -301,9 +302,14 @@ void Physics::moveBullet(gaEntity* entity, gaMessage* message)
 				for (auto& c : collisions) {
 					len = glm::distance2(old_position, c.m_position);
 					if (len < min_len) {
+						// record a hit, but keep only the nearest to the bullet
 						collision = c.m_position;
 						min_len = len;
 						collidedEntity = ent;
+					}
+					else if (collidedEntity == nullptr || collidedEntity != ent) {
+						// send a near hit
+						ent->sendMessage(gaMessage::Action::BULLET_MISS);
 					}
 				}
 			}
