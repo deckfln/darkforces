@@ -337,6 +337,14 @@ void flightRecorder::Blackbox::setFrame(int frame)
 		record++;
 	}
 
+	// and don't forget messages created during the run
+	/*
+	std::list<gaMessage>& inframe = m_inframe_messages[frame];
+	for (auto& message : inframe) {
+		g_gaWorld.sendMessage(&message);
+	}
+	*/
+
 	// build a list of the entities in the save
 	bufferEntities* bEntities= m_entities[frame];
 	std::map<std::string, flightRecorder::Entity*> entities;
@@ -395,7 +403,7 @@ void flightRecorder::Blackbox::setFrame(int frame)
 
 	// and reload their states
 	for (auto &entry : g_gaWorld.m_entities) {
- 		for (auto &ent : entry.second) {
+ 		for (auto ent : entry.second) {
 			ent->loadState(entities[entry.first]);
 			ent->loadComponents(components[entry.first]);
 		}
@@ -409,6 +417,7 @@ void flightRecorder::Blackbox::setFrame(int frame)
 	}
 
 	// and update the world
+	g_gaWorld.process(0, true);
 	g_gaWorld.update();
 }
 

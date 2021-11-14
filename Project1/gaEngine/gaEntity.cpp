@@ -456,6 +456,8 @@ bool gaEntity::checkCollision(fwCylinder& bounding, glm::vec3& direction, glm::v
 	return true;
 }
 
+//*****************************************************
+
 /**
  * size of all the components
  */
@@ -483,6 +485,7 @@ uint32_t gaEntity::recordState(void *r)
 	m_modelAABB.recordState(&record->modelAABB);		// model space AABB
 	m_worldBounding.recordState(&record->worldBounding);// AABB bounding box in world opengl space
 	record->timer = m_timer;
+	record->processMessages = m_processMessages;
 	record->animation_time = m_animation_time;			// elapsed time when running animation
 	record->nbComponents = m_components.size();			// number of components to be found at the end of the record
 	return record->size;
@@ -529,7 +532,10 @@ void gaEntity::loadState(void* r)
 	m_worldBounding.loadState(&record->worldBounding);
 	m_animation_time = record->animation_time;
 	m_timer = record->timer;
+	m_processMessages = record->processMessages;
 }
+
+//********************************************
 
 void gaEntity::debugGUI(bool* close)
 {

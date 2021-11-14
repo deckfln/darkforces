@@ -271,6 +271,12 @@ static gaMessage* allocateMessage(void)
 	return ptr;
 }
 
+gaMessage* GameEngine::World::sendMessage(gaMessage* msg)
+{
+	m_queue.push_back(msg);
+	return msg;
+}
+
 /**
  * send a message for immediate action
  */
@@ -761,6 +767,9 @@ void World::suspendTimer(void)
 void GameEngine::World::clearQueue(void)
 {
 	m_queue.clear();
+	m_for_next_frame.clear();
+	m_alarms.clear();
+	m_timers.clear();
 
 	for (auto& message : g_messages) {
 		message.m_used = false;

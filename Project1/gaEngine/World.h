@@ -94,6 +94,7 @@ namespace GameEngine {
 
 		void spritesManager(dfSprites* sprites);			// add the sprites manager
 
+		gaMessage* sendMessage(gaMessage* msg);
 		gaMessage* sendMessage(const std::string& from,
 			const std::string& to,
 			int action,

@@ -74,6 +74,7 @@ DarkForces::Object::Object(flightRecorder::DarkForces::Object* record) :
 	gaEntity(&record->entity)
 {
 	m_className = g_className;
+	addComponent(&m_logic);
 	loadState((flightRecorder::Entity*)record);
 }
 

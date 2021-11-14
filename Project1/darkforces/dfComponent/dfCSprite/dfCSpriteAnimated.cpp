@@ -154,7 +154,7 @@ void DarkForces::Component::SpriteAnimated::onRotate(gaMessage* message)
  */
 void DarkForces::Component::SpriteAnimated::onTimer(gaMessage* message)
 {
-	if (!m_animated) {
+	if (!m_animated || m_state == dfState::NONE) {
 		// ignore timer ticks when there is no ongoing animation
 		return;
 	}
@@ -280,7 +280,8 @@ uint32_t DarkForces::Component::SpriteAnimated::recordState(void* r)
 	record->sprite.size = sizeof(flightRecorder::DarkForces::SpriteAnimated);
 	record->sprite.id = m_id;
 
-	record->state = (uint32_t)m_state;
+	record->state = (int32_t)m_state;
+	record->loop = m_loopAnimation;
 	record->frame = m_frame;
 	record->direction = m_direction;
 	record->lastFrame = m_lastFrame;
@@ -296,11 +297,18 @@ uint32_t DarkForces::Component::SpriteAnimated::loadState(void* r)
 {
 	flightRecorder::DarkForces::SpriteAnimated* record = (flightRecorder::DarkForces::SpriteAnimated*)r;
 
+	if (record->state > 10) {
+		__debugbreak();
+	}
 	m_state = (dfState)record->state;
+	m_loopAnimation = record->loop;
 	m_frame = record->frame;
 	m_direction = record->direction;
 	m_lastFrame = record->lastFrame;
 	m_currentFrame = record->currentFrame;
+
+	m_dirtyAnimation = true;
+	m_dirtyPosition = true;
 
 	return record->sprite.size;
 }
