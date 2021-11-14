@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../gaEngine/gaActor.h"
-#include "dfComponent/dfComponentActor.h"
+#include "dfComponent/dfCActor.h"
 #include "../gaEngine/gaComponent/gaSound.h"
 
 #include "dfLevel.h"

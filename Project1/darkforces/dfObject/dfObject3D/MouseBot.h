@@ -8,7 +8,7 @@
 
 #include "../df3DObject.h"
 #include "../../dfComponent/AIMouseBot.h"
-#include "../../dfComponent/dfComponentActor.h"
+#include "../../dfComponent/dfCActor.h"
 
 namespace DarkForces {
 	namespace Anim {

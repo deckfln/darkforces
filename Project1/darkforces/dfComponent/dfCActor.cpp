@@ -1,4 +1,4 @@
-#include "dfComponentActor.h"
+#include "dfCActor.h"
 
 #include <imgui.h>
 
@@ -92,6 +92,20 @@ void DarkForces::Component::Actor::onHitBullet(int32_t value)
 }
 
 /**
+ * when the dying animation starts
+ * move the actor back compared to the player
+ */
+void DarkForces::Component::Actor::onDying(gaMessage* message)
+{
+	gaEntity* player = g_gaWorld.getEntity("player");
+	glm::vec3 p = m_entity->position();
+	glm::vec3 direction = glm::normalize(p - player->position());
+
+	m_entity->translate( p + direction * m_entity->radius());
+	m_entity->sendMessage(gaMessage::Action::MOVE);
+}
+
+/**
  * return data on the class of the actor
  */
 const DarkForces::ActorClass* DarkForces::Component::Actor::getActorClass(void)
@@ -145,6 +159,10 @@ void DarkForces::Component::Actor::dispatchMessage(gaMessage* message)
 				m_currentSector = current;
 			}
 		}
+		break;
+
+	case DarkForces::Message::DYING:
+		onDying(message);
 		break;
 
 	case DarkForces::Message::DEAD:

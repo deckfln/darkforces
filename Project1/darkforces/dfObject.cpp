@@ -18,7 +18,7 @@
 #include "dfObject/dfSprite/dfRifle.h"
 #include "dfLevel.h"
 #include "dfCollision.h"
-#include "dfComponent/dfComponentActor.h"
+#include "dfComponent/dfCActor.h"
 #include "dfComponent/dfComponentLogic.h"
 
 static int g_ids = 0;

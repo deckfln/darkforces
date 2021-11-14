@@ -135,7 +135,7 @@
     <ClCompile Include="darkforces\dfBullet.cpp" />
     <ClCompile Include="darkforces\dfCollision.cpp" />
     <ClCompile Include="darkforces\dfComponent\dfCAnim3D.cpp" />
-    <ClCompile Include="darkforces\dfComponent\dfComponentActor.cpp" />
+    <ClCompile Include="darkforces\dfComponent\dfCActor.cpp" />
     <ClCompile Include="darkforces\dfComponent\AIMouseBot.cpp" />
     <ClCompile Include="darkforces\dfComponent\dfCSprite.cpp" />
     <ClCompile Include="darkforces\dfComponent\dfCSprite\dfCSpriteAnimated.cpp" />
@@ -343,7 +343,7 @@
     <ClInclude Include="darkforces\dfCollision.h" />
     <ClInclude Include="darkforces\dfComponent.h" />
     <ClInclude Include="darkforces\dfComponent\dfCAnim3D.h" />
-    <ClInclude Include="darkforces\dfComponent\dfComponentActor.h" />
+    <ClInclude Include="darkforces\dfComponent\dfCActor.h" />
     <ClInclude Include="darkforces\dfComponent\AIMouseBot.h" />
     <ClInclude Include="darkforces\dfComponent\dfCSprite.h" />
     <ClInclude Include="darkforces\dfComponent\dfCSprite\dfCSpriteAnimated.h" />

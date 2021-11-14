@@ -26,7 +26,7 @@
 #include "darkforces/dfConfig.h"
 #include "darkforces/dfLevel.h"
 #include "darkforces/dfCollision.h"
-#include "darkforces/dfComponent/dfComponentActor.h"
+#include "darkforces/dfComponent/dfCActor.h"
 
 #include "darkforces/dfFileLFD.h"
 #include "darkforces/dfFileSystem.h"

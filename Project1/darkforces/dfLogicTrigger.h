@@ -11,7 +11,7 @@
 #include "../gaEngine/gaEntity.h"
 #include "../gaEngine/World.h"
 
-#include "dfComponent/dfComponentActor.h"
+#include "dfComponent/dfCActor.h"
 #include "flightRecorder/frLogicTrigger.h"
 #include "../config.h"
 

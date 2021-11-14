@@ -11,7 +11,7 @@
 #include "../gaEngine/gaActor.h"
 
 #include "dfConfig.h"
-#include "dfComponent/dfComponentActor.h"
+#include "dfComponent/dfCActor.h"
 #include "dfComponent/Trigger.h"
 #include "dfLogicTrigger.h"
 #include "dfSector.h"

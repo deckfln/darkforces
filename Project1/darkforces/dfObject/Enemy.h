@@ -8,7 +8,7 @@
 
 #include "../dfObject.h"
 #include "../dfComponent/dfCWeapon.h"
-#include "../dfComponent/dfComponentActor.h"
+#include "../dfComponent/dfCActor.h"
 #include "../dfComponent/dfEnemyAI.h"
 
 class dfLevel;
