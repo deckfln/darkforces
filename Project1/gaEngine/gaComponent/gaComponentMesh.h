@@ -10,6 +10,12 @@ namespace GameEngine
 	class ComponentMesh : public gaComponent
 	{
 		fwMesh* m_mesh = nullptr;
+
+		void onMove(gaMessage* message);						// move a mesh
+		void onRotate(gaMessage* message);						// rotate a mesh
+		void onWorldInsert(gaMessage* message);					// when the object is first injected in the world
+		void onWorldRemove(gaMessage* message);					// when the object is removed from the world
+
 	public:
 		ComponentMesh();
 		ComponentMesh(fwMesh *mesh);
