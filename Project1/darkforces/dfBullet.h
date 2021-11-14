@@ -28,6 +28,7 @@ class dfBullet : public gaEntity
 	Framework::Segment m_segment;
 
 	void tryToMove(void);
+	void init(uint32_t damage, const glm::vec3& position, const glm::vec3& direction);
 
 public:
 	dfBullet(uint32_t damage, const glm::vec3& position, const glm::vec3& direction);

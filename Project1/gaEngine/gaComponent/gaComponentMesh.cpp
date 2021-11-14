@@ -7,6 +7,7 @@
 
 #include "../World.h"
 #include "../gaEntity.h"
+#include "../flightRecorder/frCMesh.h"
 
 using namespace GameEngine;
 
@@ -156,6 +157,30 @@ void ComponentMesh::debugGUIinline(void)
 		m_mesh->debugGUIChildClass();
 		ImGui::TreePop();
 	}
+}
+
+//*********************************************
+
+inline uint32_t GameEngine::ComponentMesh::recordSize(void)
+{
+	return sizeof(flighRecorder::GameEngine::CMesh);
+}
+
+uint32_t GameEngine::ComponentMesh::recordState(void* r)
+{
+	flighRecorder::GameEngine::CMesh* record = static_cast<flighRecorder::GameEngine::CMesh*>(r);
+
+	record->size = sizeof(flighRecorder::GameEngine::CMesh);
+	m_mesh->recordState(&record->object3D);
+
+	return record->size;
+}
+
+uint32_t GameEngine::ComponentMesh::loadState(void* r)
+{
+	flighRecorder::GameEngine::CMesh* record = static_cast<flighRecorder::GameEngine::CMesh*>(r);
+	m_mesh->loadState(&record->object3D);
+	return record->size;
 }
 
 ComponentMesh::~ComponentMesh()

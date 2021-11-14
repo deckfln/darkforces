@@ -1481,6 +1481,9 @@
     <ClInclude Include="darkforces\flightRecorder\frDarkForces.h">
       <Filter>Fichiers d%27en-tête\DarkForces\flightRecorder</Filter>
     </ClInclude>
+    <ClInclude Include="gaEngine\flightRecorder\frCMesh.h">
+      <Filter>Fichiers d%27en-tête\gaEngine\flightRecorder</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\fragment.glsl">

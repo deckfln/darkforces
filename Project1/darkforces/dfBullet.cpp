@@ -43,11 +43,41 @@ static const char* g_className = "dfBullet";
  *
  */
 dfBullet::dfBullet(uint32_t damage , const glm::vec3& position, const glm::vec3& direction):
-	gaEntity(DarkForces::ClassID::_Bullet, "bullet("+std::to_string(g_bulletID++)+")", position),
-	m_direction(glm::normalize(direction)),
-	m_damage(damage)
+	gaEntity(DarkForces::ClassID::_Bullet, "bullet("+std::to_string(g_bulletID++)+")", position)
+{
+	init(damage, position, direction);
+}
+
+/**
+ *
+ */
+dfBullet::dfBullet(flightRecorder::dfBullet* record):
+	gaEntity(&record->entity)
+{
+	init(record->damage, record->entity.object3D.position, record->direction);
+}
+
+/**
+ *
+ */
+void dfBullet::tryToMove(void)
+{
+	m_transforms.m_position = position() + m_transforms.m_forward;
+
+	sendDelayedMessage(gaMessage::WANT_TO_MOVE,
+		gaMessage::Flag::WANT_TO_MOVE_LASER,
+		&m_transforms);
+}
+
+/**
+ *
+ */
+void dfBullet::init(uint32_t damage, const glm::vec3& position, const glm::vec3& direction)
 {
 	m_className = g_className;
+
+	m_direction = glm::normalize(direction);
+	m_damage = damage;
 
 	// create a mesh for the blaster
 	if (g_blaster == nullptr) {
@@ -55,7 +85,7 @@ dfBullet::dfBullet(uint32_t damage , const glm::vec3& position, const glm::vec3&
 		g_blaster = new fwGeometryCylinder(bullet_radius, bullet_length, 8, -1);
 		g_blaster->makeStatic();
 	}
-	
+
 	// change the collider to a geometry
 	m_segment.m_start = glm::vec3(0);
 	m_segment.m_end = glm::vec3(0.0, 0.0, 1.0) * 33.0f / bullet_speed;
@@ -89,29 +119,6 @@ dfBullet::dfBullet(uint32_t damage , const glm::vec3& position, const glm::vec3&
 	// add the mesh component to the entity
 	m_componentMesh.set(g_blaster, &g_basic);
 	addComponent(&m_componentMesh);
-}
-
-/**
- *
- */
-dfBullet::dfBullet(flightRecorder::dfBullet* record):
-	gaEntity(&record->entity)
-{
-	m_direction = record->m_direction;
-	m_componentMesh.set(g_blaster, &g_basic);
-	addComponent(&m_componentMesh);
-}
-
-/**
- *
- */
-void dfBullet::tryToMove(void)
-{
-	m_transforms.m_position = position() + m_transforms.m_forward;
-
-	sendDelayedMessage(gaMessage::WANT_TO_MOVE,
-		gaMessage::Flag::WANT_TO_MOVE_LASER,
-		&m_transforms);
 }
 
 /**
@@ -177,7 +184,8 @@ uint32_t dfBullet::recordState(void* r)
 	gaEntity::recordState(&record->entity);
 	record->entity.classID = flightRecorder::TYPE::DF_ENTITY_BULLET;
 	record->entity.size = sizeof(flightRecorder::dfBullet);
-	record->m_direction = m_direction;
+	record->direction = m_direction;
+	record->damage = m_damage;
 
 	return record->entity.size;
 }
@@ -189,7 +197,8 @@ void dfBullet::loadState(void* r)
 {
 	flightRecorder::dfBullet* record = (flightRecorder::dfBullet*)r;
 	gaEntity::loadState(&record->entity);
-	m_direction = record->m_direction;
+	m_direction = record->direction;
+	m_damage = record->damage;
 }
 
 dfBullet::~dfBullet()
