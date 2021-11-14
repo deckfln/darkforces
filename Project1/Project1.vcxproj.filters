@@ -1475,6 +1475,12 @@
     <ClInclude Include="darkforces\dfSounds.h">
       <Filter>Fichiers d%27en-tête\DarkForces</Filter>
     </ClInclude>
+    <ClInclude Include="darkforces\flightRecorder\fdBulletExplode.h">
+      <Filter>Fichiers d%27en-tête\DarkForces\flightRecorder</Filter>
+    </ClInclude>
+    <ClInclude Include="darkforces\flightRecorder\frDarkForces.h">
+      <Filter>Fichiers d%27en-tête\DarkForces\flightRecorder</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\fragment.glsl">

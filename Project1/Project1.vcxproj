@@ -403,10 +403,12 @@
     <ClInclude Include="darkforces\dfVue.h" />
     <ClInclude Include="darkforces\dfWall.h" />
     <ClInclude Include="darkforces\dfWeapon.h" />
+    <ClInclude Include="darkforces\flightRecorder\fdBulletExplode.h" />
     <ClInclude Include="darkforces\flightRecorder\frActor.h" />
     <ClInclude Include="darkforces\flightRecorder\frAnim3D.h" />
     <ClInclude Include="darkforces\flightRecorder\frCompActor.h" />
     <ClInclude Include="darkforces\flightRecorder\frCompElevator.h" />
+    <ClInclude Include="darkforces\flightRecorder\frDarkForces.h" />
     <ClInclude Include="darkforces\flightRecorder\frElevator.h" />
     <ClInclude Include="darkforces\flightRecorder\frLogicTrigger.h" />
     <ClInclude Include="darkforces\flightRecorder\frObject.h" />

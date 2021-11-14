@@ -13,7 +13,7 @@ namespace flightRecorder {
 	 */
 	struct Entity {
 		uint32_t size;						// size of the record
-		TYPE classID;						// class gaEntity
+		uint32_t classID;						// class gaEntity
 		char className[32];					// class name
 		char name[64];						// name of the entity
 		Object3D object3D;					// source object

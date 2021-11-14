@@ -1,7 +1,7 @@
 #pragma once
 
 namespace flightRecorder {
-	enum class TYPE {
+	enum TYPE {
 		ENTITY,
 		ENTITY_ACTOR,
 		OBJECT3D,
