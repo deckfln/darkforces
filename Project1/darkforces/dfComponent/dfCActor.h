@@ -32,9 +32,16 @@ namespace DarkForces {
 			dfSector* m_currentSector = nullptr;	// in what sector is the sector located
 			dfLevel* m_level = nullptr;				// fast access to the loaded level
 
+			// module to play a death animation (falling back)
+			float m_dyingDelta;						// percentage of the falling back for each frame
+			bool m_dying = false;					// if the dying animation playing ?
+			glm::vec3 m_dyingDirection;				// direction the actor is falling back when dying
+
 			void setDataFromClass(void);			// extract data from the class
 			void onHitBullet(int32_t value);		// hit by a bullet, reduce shield and life
 			void onDying(gaMessage* message);		// when the dying animation starts
+			void onAnimStart(gaMessage* message);	// when animations starts
+			void onAnimNextFrame(gaMessage* message);	// when animations are running
 
 		public:
 			enum Sound {

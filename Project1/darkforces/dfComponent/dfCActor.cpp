@@ -97,12 +97,44 @@ void DarkForces::Component::Actor::onHitBullet(int32_t value)
  */
 void DarkForces::Component::Actor::onDying(gaMessage* message)
 {
+	m_dying = true;
+}
+
+/**
+ * when animations stats
+ */
+void DarkForces::Component::Actor::onAnimStart(gaMessage * message)
+{
+	if (!m_dying) {
+		return;
+	}
+
 	gaEntity* player = g_gaWorld.getEntity("player");
 	glm::vec3 p = m_entity->position();
-	glm::vec3 direction = glm::normalize(p - player->position());
 
-	m_entity->translate( p + direction * m_entity->radius());
-	m_entity->sendMessage(gaMessage::Action::MOVE);
+	// fallback by the actor radius
+	m_dyingDirection = glm::normalize(p - player->position()) * 2.0f * m_entity->radius();
+
+	float frames = (float)(*(uint32_t*)message->m_extra);
+	m_dyingDirection /= frames;
+}
+
+/**
+ * when animations are running
+ */
+void DarkForces::Component::Actor::onAnimNextFrame(gaMessage* message)
+{
+	if (!m_dying) {
+		return;
+	}
+
+	// only do something if the player is dying
+	glm::vec3 p = m_entity->position();
+	GameEngine::Transform* transform = m_entity->pTransform();
+	transform->m_position += m_dyingDirection;
+
+	// the actor can fall off an edge when dying
+	m_entity->sendMessage(gaMessage::Action::WANT_TO_MOVE, gaMessage::Flag::WANT_TO_MOVE_FALL, transform);
 }
 
 /**
@@ -163,6 +195,14 @@ void DarkForces::Component::Actor::dispatchMessage(gaMessage* message)
 
 	case DarkForces::Message::DYING:
 		onDying(message);
+		break;
+
+	case DarkForces::Message::ANIM_START:
+		onAnimStart(message);
+		break;
+
+	case DarkForces::Message::ANIM_NEXT_FRAME:
+		onAnimNextFrame(message);
 		break;
 
 	case DarkForces::Message::DEAD:
