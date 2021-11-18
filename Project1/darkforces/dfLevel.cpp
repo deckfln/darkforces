@@ -223,6 +223,9 @@ dfLevel::dfLevel(dfFileSystem* fs, std::string file)
 	// partition of space for quick move
 	spacePartitioning();		
 
+	// convert the sectors into space volumes for sound
+	createSoundVolumes();
+
 	// build the geometry of each super sectors
 	buildGeometry();			
 
@@ -377,6 +380,49 @@ void dfLevel::convertDoors2Elevators(void)
 			DarkForces::Entity::ElevatorDoor* door = new DarkForces::Entity::ElevatorDoor(sector);
 			//m_inf->m_triggers.push_back(door->trigger());
 			m_doors.push_back(door);
+		}
+	}
+}
+
+/**
+ * convert the dfSectors into a volume space for sound propagation
+ */
+void dfLevel::createSoundVolumes(void)
+{
+	std::map<uint32_t, uint32_t> sector2Volume;
+
+	// load all sectors wAABB as volumes in the sound volume
+	for (auto sector : m_sectorsID) {
+		sector2Volume[sector->m_id] = m_soundVolumes.add(sector->worldAABB());
+	}
+
+	// use the sector portals to link the volumes
+	glm::vec3 center;
+	uint32_t portalID = 0;
+	uint32_t wallID = 0;
+	uint32_t portalSectorID = 0;
+	uint32_t mirrorWallID = 0;
+	dfSector* portalSector;
+	float floor;
+	float ceiling;
+
+	for (auto sector : m_sectorsID) {
+		portalID = 0;
+		for (auto portal : sector->m_portals) {
+			portalSector = m_sectorsID[portal];
+
+			floor = std::max(sector->staticFloorAltitude(), portalSector->staticFloorAltitude());
+			ceiling = std::min(sector->staticCeilingAltitude(), portalSector->staticCeilingAltitude());
+
+			// some data on the front up wall portal
+			sector->wallCenter(mirrorWallID, center);
+
+			// and replace the altitude
+			center.z = (floor + ceiling) / 2.0f;
+
+			level2gl(center);
+			m_soundVolumes.link(sector2Volume[sector->m_id], sector2Volume[portal], center);
+			portalID++;
 		}
 	}
 }

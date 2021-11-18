@@ -4,6 +4,8 @@
 #include "../framework/fwCamera.h"
 #include "../darkforces/dfSuperSector.h"
 
+GameEngine::Level* g_gaLevel = nullptr;
+
 GameEngine::Level::Level()
 {
 }

@@ -68,7 +68,7 @@ class dfLevel : public GameEngine::Level
 	void spacePartitioning(void);
 	void buildGeometry(void);
 	void convertDoors2Elevators(void);
-
+	void createSoundVolumes(void);								// convert the dfSectors into a volume space for sound propagation
 public:
 	dfLevel(dfFileSystem* fs, std::string file);
 	dfSector* findSector(const glm::vec3& position);			// find sector by GL coordinate

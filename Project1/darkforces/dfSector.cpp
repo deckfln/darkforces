@@ -158,11 +158,13 @@ dfSector::dfSector(std::istringstream& infile, std::vector<dfSector*>& sectorsID
 			wall->m_tex[DFWALL_TEXTURE_SIGN] = sign;
 			wall->m_id = currentWall;
 
-			m_walls[currentWall++] = wall;
-
 			if (adjoint >= 0) {
 				m_portals.push_back(adjoint);
+				m_portalWall.push_back(currentWall);
+				m_mirrorWall.push_back(mirror);
 			}
+
+			m_walls[currentWall++] = wall;
 		}
 	}
 
@@ -261,6 +263,19 @@ void dfSector::staticCeilingAltitude(float z)
 float dfSector::staticCeilingAltitude(void)
 {
 	return m_staticMeshCeilingAltitude;
+}
+
+/**
+ * fill in the 3D center of the wall
+ */
+void dfSector::wallCenter(uint32_t wallID, glm::vec3& center)
+{
+	dfWall* wall = m_walls[wallID];
+
+	center.z = (m_staticMeshFloorAltitude + m_staticMeshCeilingAltitude) / 2.0f;
+	glm::vec2 center2D = (m_vertices[wall->m_left] + m_vertices[wall->m_right]) / 2.0f;
+	center.x = center2D.x;
+	center.y = center2D.y;
 }
 
 /**

@@ -1,6 +1,8 @@
 #include "gaSound.h"
 
 #include "../gaEntity.h"
+#include "../gaLevel.h"
+#include "../World.h"
 
 #include <imgui.h>
 
@@ -34,6 +36,13 @@ void GameEngine::Component::Sound::dispatchMessage(gaMessage* message)
 			}
 			else {
 				p = m_entity->position();
+			}
+
+			if (message->m_value == 1024) {
+				gaEntity* player = g_gaWorld.getEntity("player");
+
+				std::vector<GameEngine::Sound::Virtual> virtualSources;
+				g_gaLevel->volume().path(p, player->position(), 50.0f, virtualSources);
 			}
 			m_source.play(sound, p);
 		}

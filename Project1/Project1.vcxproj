@@ -294,6 +294,7 @@
     <ClCompile Include="gaEngine\gaLevel.cpp" />
     <ClCompile Include="gaEngine\gaMessage.cpp" />
     <ClCompile Include="gaEngine\gaNavMesh.cpp" />
+    <ClCompile Include="gaEngine\gaVolumeSpace.cpp" />
     <ClCompile Include="gaEngine\Model.cpp" />
     <ClCompile Include="gaEngine\World.cpp" />
     <ClCompile Include="gaEngine\Lexer.cpp" />
@@ -531,6 +532,7 @@
     <ClInclude Include="gaEngine\gaLevel.h" />
     <ClInclude Include="gaEngine\gaMessage.h" />
     <ClInclude Include="gaEngine\gaNavMesh.h" />
+    <ClInclude Include="gaEngine\gaVolumeSpace.h" />
     <ClInclude Include="gaEngine\Model.h" />
     <ClInclude Include="gaEngine\World.h" />
     <ClInclude Include="gaEngine\Lexer.h" />

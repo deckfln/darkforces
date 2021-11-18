@@ -13,7 +13,7 @@ class alSource
 
 public:
 	alSource(void);
-	bool play(alSound* buffer, const glm::vec3& position);	// play the sound (return false) or says it is already running(true)
+	bool play(alSound* buffer, const glm::vec3& position, float loundness = 1.0f);	// play the sound (return false) or says it is already running(true)
 	bool play(void);			// is playing something ?
 	void stop(alSound* buffer = nullptr);
 	~alSource();

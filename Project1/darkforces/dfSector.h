@@ -110,6 +110,8 @@ class dfSector : public gaEntity
 	float m_currentAmbient;								// current value for an elevator light
 
 	dfSuperSector* m_super = nullptr;					// link back to the supersector
+	std::vector<uint32_t> m_portalWall;					// wall used as a portal to another sector
+	std::vector<uint32_t> m_mirrorWall;					// wall used as a portal to another sector
 
 	GameEngine::Component::Sound m_sound;               // to play sound when a laser hit the wall
 
@@ -157,6 +159,10 @@ public:
 	// getter/setter
 	inline dfSuperSector* supersector(void) { return m_super; };
 	inline void supersector(dfSuperSector* s) { m_super = s; };
+	inline uint32_t portalWall(uint32_t portalID) { return m_portalWall[portalID]; };
+	inline uint32_t portalMirror(uint32_t portalID) { return m_mirrorWall[portalID]; };
+
+	void wallCenter(uint32_t wallID, glm::vec3& center);			// fill the 3D center of the wall
 
 	void ceiling(float z);
 

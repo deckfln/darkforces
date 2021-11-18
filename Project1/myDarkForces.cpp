@@ -89,7 +89,7 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 	}
 
 	// load first level
-	m_level = new dfLevel(g_dfFiles, "SECBASE");
+	g_gaLevel = m_level = new dfLevel(g_dfFiles, "SECBASE");
 	static_cast<dfLevel*>(m_level)->addSkymap(m_scene);
 
 	// mandatory to get all data together

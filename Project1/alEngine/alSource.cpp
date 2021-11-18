@@ -13,7 +13,7 @@ alSource::alSource(void)
 /**
  * bind the given buffer and play it
  */
-bool alSource::play(alSound* buffer, const glm::vec3& position)
+bool alSource::play(alSound* buffer, const glm::vec3& position, float loundness)
 {
 	// drop the sound if it is too far from the listener
 	if (g_Listener.clamp(position)) {
@@ -48,6 +48,10 @@ bool alSource::play(alSound* buffer, const glm::vec3& position)
 
 	// set position
 	alSource3f((ALuint)player, AL_POSITION, position.x, position.y, position.z);
+
+	if (loundness != 1.0f) {
+		alSourcef((ALuint)player, AL_GAIN, loundness);
+	}
 
 	ALCenum error = alGetError();
 
