@@ -238,6 +238,11 @@ gaMessage* gaEntity::sendMessage(const std::string& target, int action, const gl
 	return g_gaWorld.sendMessage(m_name, target, action, value, extra);
 }
 
+gaMessage* gaEntity::sendMessage(const std::string& target, int action, uint32_t value, float fvalue, const glm::vec3& v3value, void* extra)
+{
+	return g_gaWorld.sendMessage(m_name, target, action, value, fvalue, v3value, extra);
+}
+
 gaMessage* gaEntity::sendMessage(int action, int value, void* extra)
 {
 	return g_gaWorld.sendMessage(m_name, m_name, action, value, extra);
@@ -251,6 +256,11 @@ gaMessage* gaEntity::sendMessage(int action, int value, float fvalue, void* extr
 gaMessage* gaEntity::sendMessage(int action, int value, const glm::vec3& v3alue, void* extra)
 {
 	return g_gaWorld.sendMessage(m_name, m_name, action, value, 0.0f, v3alue, extra);
+}
+
+gaMessage* gaEntity::sendMessage(int action, int value, float fvalue, const glm::vec3& v3alue, void* extra)
+{
+	return g_gaWorld.sendMessage(m_name, m_name, action, value, fvalue, v3alue, extra);
 }
 
 gaMessage* gaEntity::sendMessage(int action, const glm::vec3& value, void* extra)

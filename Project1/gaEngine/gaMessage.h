@@ -74,6 +74,8 @@ public:
 		VIEW,			// an entity entered the cone of vision of an other entity
 		BULLET_HIT,		// the entity was hit by a bullet
 		BULLET_MISS,	// a bullet passed by the entity
+		HEAR_SOUND,		// inform a sound is heard
+		HEAR_STOP		// actualy not
 
 	};
 

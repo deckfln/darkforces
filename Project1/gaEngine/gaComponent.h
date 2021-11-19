@@ -24,7 +24,8 @@ public:
 		PathFinding,
 		BehaviorTree,
 		AIPerception,
-		Actor
+		Actor,
+		Listener
 	};
 
 	gaComponent(int m_type);

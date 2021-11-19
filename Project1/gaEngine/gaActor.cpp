@@ -49,6 +49,8 @@ gaActor::gaActor(
 
 	GameEngine::Component::ActiveProbe* probe = new GameEngine::Component::ActiveProbe();
 	addComponent(probe, gaEntity::Flag::DELETE_AT_EXIT);
+
+	addComponent(&m_listener);
 }
 
 /**

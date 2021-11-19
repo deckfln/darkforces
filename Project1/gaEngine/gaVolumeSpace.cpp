@@ -163,13 +163,16 @@ void GameEngine::VolumeSpace::path(const glm::vec3& source, const glm::vec3& lis
 					p.push_back(c);
 					c = data[c].came_from;
 				}
+				float dx = glm::distance(listener, source);
 				float d1 = glm::distance(listener, data[current].came_from_portal);
 				float d2 = glm::distance(source, data[vSource].came_from_portal);
 				float d = data[current].cost_so_far + d1 + d2;
 				current_loundness = loundness - 20 * log10(d);
 
 				if (current_loundness > 25.0f) {
-					xSolutions.push_back(Sound::Virtual(data[current].came_from_portal, d));
+					glm::vec3 direction = glm::normalize(data[current].came_from_portal - listener);
+					glm::vec3 p = direction * d + listener;
+					xSolutions.push_back(Sound::Virtual(p, d));
 				}
 				continue;
 			}

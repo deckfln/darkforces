@@ -38,22 +38,25 @@ void GameEngine::Component::Sound::dispatchMessage(gaMessage* message)
 				p = m_entity->position();
 			}
 
-			if (message->m_value == 1024) {
-				gaEntity* player = g_gaWorld.getEntity("player");
+			// compute the virtual sound to the player
+			gaEntity* player = g_gaWorld.getEntity("player");
 
-				std::vector<GameEngine::Sound::Virtual> virtualSources;
-				g_gaLevel->volume().path(p, player->position(), 50.0f, virtualSources);
+			std::vector<GameEngine::Sound::Virtual> virtualSources;
+			g_gaLevel->volume().path(p, player->position(), 50.0f, virtualSources);
+			
+			// ask the player to play the sound
+			if (virtualSources.size() > 0) {
+				for (auto& source : virtualSources) {
+					m_entity->sendMessage("player", gaMessage::Action::HEAR_SOUND, source.distance, source.origin, sound);
+				}
 			}
-			m_source.play(sound, p);
 		}
 		break;
 	}
 	case gaMessage::STOP_SOUND: {
 		// Stop playing a sound (or all sound if nullptr)
 		alSound* sound = m_sounds[message->m_value];
-		if (sound) {
-			m_source.stop(sound);
-		}
+		m_entity->sendMessage("player", gaMessage::Action::HEAR_STOP, 0, sound);
 		break;
 	}
 	}
@@ -65,7 +68,6 @@ void GameEngine::Component::Sound::dispatchMessage(gaMessage* message)
 void GameEngine::Component::Sound::debugGUIinline(void)
 {
 	if (ImGui::TreeNode("Sound")) {
-		ImGui::Text("position: %.2f %.2f %.2f", m_position.x, m_position.y, m_position.z);
 		ImGui::TreePop();
 	}
 }

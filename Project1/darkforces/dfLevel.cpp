@@ -415,7 +415,8 @@ void dfLevel::createSoundVolumes(void)
 			ceiling = std::min(sector->staticCeilingAltitude(), portalSector->staticCeilingAltitude());
 
 			// some data on the front up wall portal
-			sector->wallCenter(mirrorWallID, center);
+			wallID = sector->portalWall(portalID);
+			sector->wallCenter(wallID, center);
 
 			// and replace the altitude
 			center.z = (floor + ceiling) / 2.0f;

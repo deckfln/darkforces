@@ -6,7 +6,7 @@ class alListener
 {
 	glm::vec3 m_position;
 	float m_maxdistance = 100.0f;								// maximum distance to hear a sound
-	float m_mindistance = 0.0f;									// maximum distance to hear a sound
+	float m_mindistance = 1.0f;									// maximum distance to hear a sound
 
 public:
 	alListener();

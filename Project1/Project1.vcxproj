@@ -287,6 +287,7 @@
     <ClCompile Include="gaEngine\gaComponent\gaBehaviorTree.cpp" />
     <ClCompile Include="gaEngine\gaComponent\gaComponentMesh.cpp" />
     <ClCompile Include="gaEngine\gaComponent\gaController.cpp" />
+    <ClCompile Include="gaEngine\gaComponent\gaListener.cpp" />
     <ClCompile Include="gaEngine\gaComponent\gaSatNav.cpp" />
     <ClCompile Include="gaEngine\gaComponent\gaSound.cpp" />
     <ClCompile Include="gaEngine\gaDebug.cpp" />
@@ -525,6 +526,7 @@
     <ClInclude Include="gaEngine\gaComponent\gaBehaviorTree.h" />
     <ClInclude Include="gaEngine\gaComponent\gaComponentMesh.h" />
     <ClInclude Include="gaEngine\gaComponent\gaController.h" />
+    <ClInclude Include="gaEngine\gaComponent\gaListener.h" />
     <ClInclude Include="gaEngine\gaComponent\gaSatNav.h" />
     <ClInclude Include="gaEngine\gaComponent\gaSound.h" />
     <ClInclude Include="gaEngine\gaDebug.h" />

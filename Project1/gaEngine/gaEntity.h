@@ -160,9 +160,11 @@ public:
 		void* extra = nullptr);							// send a message to an other entity
 	gaMessage* sendMessage(const std::string& target, int action, uint32_t value, const glm::vec3& v3value, void* extra = nullptr);
 	gaMessage* sendMessage(const std::string& target, int action, const glm::vec3& value, void* extra = nullptr);
-	gaMessage* sendMessage(int action, int value = 0, void* extra = nullptr);							
+	gaMessage* sendMessage(const std::string& target, int action, uint32_t value, float fvalue, const glm::vec3& v3value, void* extra = nullptr);
+	gaMessage* sendMessage(int action, int value = 0, void* extra = nullptr);
 	gaMessage* sendMessage(int action, int value, float fvalue, void* extra = nullptr);
 	gaMessage* sendMessage(int action, int value, const glm::vec3& v3alue, void* extra = nullptr);
+	gaMessage* sendMessage(int action, int value, float fvalue, const glm::vec3& v3alue, void* extra = nullptr);
 	gaMessage* sendMessage(int action, const glm::vec3& v3alue, void* extra = nullptr);
 
 	gaMessage* sendMessageToWorld(int action,

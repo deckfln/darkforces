@@ -23,7 +23,7 @@ alListener::alListener()
 		std::cerr << "alListener::orientation error" << std::endl;
 	}
 
-	alDistanceModel(AL_LINEAR_DISTANCE);
+	alDistanceModel(AL_EXPONENT_DISTANCE);
 }
 
 void alListener::position(const glm::vec3& position)
