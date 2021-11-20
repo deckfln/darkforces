@@ -20,6 +20,7 @@ class fwScene;
 class fwMesh;
 class dfSuperSector;
 class dfSprites;
+class alSound;
 
 namespace GameEngine {
 	struct Alarm {
@@ -53,7 +54,8 @@ namespace GameEngine {
 
 		std::list<gaEntity*> m_timers;						// entities that registered to receive timer events
 		std::list<GameEngine::Alarm> m_alarms;				// entities that registered to receive alarm events
-		std::map<uint32_t, gaEntity*> m_views;		// entities that registered to receive view events
+		std::map<uint32_t, gaEntity*> m_views;				// entities that registered to receive view events
+		std::map<uint32_t, gaEntity*> m_hear;				// entities that registered to receive audio events
 
 		std::vector<dfSuperSector*> m_sectors;
 		dfSprites* m_sprites = nullptr;						// sprites manager
@@ -67,6 +69,9 @@ namespace GameEngine {
 		friend flightRecorder::Blackbox;					// flight recorder has direct access to everything
 
 		std::map<std::string, bool>	m_watch;				// keep a list of entities to display in the debugger
+
+		void checkSoundPerceptions(gaEntity* source, const glm::vec3& p, alSound* sound);			// parse all listening entity to check if they can hear a PLAY_SOUND message
+
 	public:
 		World(void);
 
@@ -202,6 +207,8 @@ namespace GameEngine {
 		// (de)register entities for visual perceptions
 		void registerViewEvents(gaEntity* entity);
 		void deRegisterViewEvents(gaEntity* entity);
+		void registerHearEvents(gaEntity* entity);
+		void deRegisterHearEvents(gaEntity* entity);
 		void checkPerceptions(void);
 
 		// debugger

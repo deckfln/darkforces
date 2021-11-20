@@ -45,6 +45,7 @@ public:
 		ROTATE,			// rotate the entity
 		REGISTER_SOUND,	// bind a sound to an ID
 		PLAY_SOUND,		// play sound bound to ID
+		PROPAGATE_SOUND,// propagate a sound in the level
 		STOP_SOUND,		// stop sound bound to ID
 		WANT_TO_MOVE,	// the entity want to move in a direction (sent to the world)
 		COLLISION,		// the entity cannot move, it would collide with ...

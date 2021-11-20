@@ -51,6 +51,8 @@ gaActor::gaActor(
 	addComponent(probe, gaEntity::Flag::DELETE_AT_EXIT);
 
 	addComponent(&m_listener);
+
+	g_gaWorld.registerHearEvents(this);	// wants to receive sound events
 }
 
 /**
@@ -230,4 +232,5 @@ void gaActor::loadState(void* r)
 
 gaActor::~gaActor()
 {
+	g_gaWorld.deRegisterHearEvents(this);	// wants to receive sound events
 }

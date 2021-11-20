@@ -9,6 +9,7 @@
 #include "gaEntity.h"
 #include "Physics.h"
 #include "gaComponent/gaListener.h"
+#include "gaComponent/gaAIPerception.h"
 
 #include "../flightRecorder/Actor.h"
 
@@ -32,7 +33,7 @@ protected:
 	time_t m_animation_time = 0;				// start of the physic driven movement
 
 	gaPlayer* m_parent = nullptr;				// parent player
-	GameEngine::Component::Listener m_listener;
+	GameEngine::Component::Listener m_listener;			// play the sound for real
 
 public:
 	gaActor(

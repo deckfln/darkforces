@@ -123,6 +123,10 @@ void GameEngine::VolumeSpace::path(const glm::vec3& source, const glm::vec3& lis
 	int32_t vSource = findVolume(source);
 	int32_t vListener = findVolume(listener);
 
+	if (vSource < 0 || vListener < 0) {
+		__debugbreak();
+	}
+
 	// if the 2 objects are in the same volume, stop there
 	if (vSource == vListener) {
 		xSolutions.push_back(Sound::Virtual(source, d));

@@ -37,19 +37,7 @@ void GameEngine::Component::Sound::dispatchMessage(gaMessage* message)
 			else {
 				p = m_entity->position();
 			}
-
-			// compute the virtual sound to the player
-			gaEntity* player = g_gaWorld.getEntity("player");
-
-			std::vector<GameEngine::Sound::Virtual> virtualSources;
-			g_gaLevel->volume().path(p, player->position(), 50.0f, virtualSources);
-			
-			// ask the player to play the sound
-			if (virtualSources.size() > 0) {
-				for (auto& source : virtualSources) {
-					m_entity->sendMessage("player", gaMessage::Action::HEAR_SOUND, source.distance, source.origin, sound);
-				}
-			}
+			m_entity->sendMessage(gaMessage::Action::PROPAGATE_SOUND, p, sound);
 		}
 		break;
 	}

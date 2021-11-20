@@ -31,10 +31,39 @@ GameEngine::World g_gaWorld;
 /**
  * Create and initialize the world
  */
-World::World():
+World::World() :
 	m_scene(nullptr)
 {
 }
+
+//*********************** Private functions *************************************
+
+/**
+ * parse all listening entity to check if they can hear a PLAY_SOUND message
+ */
+void GameEngine::World::checkSoundPerceptions(gaEntity* source, const glm::vec3& p, alSound* sound)
+{
+	gaEntity* entity;
+	Component::AIPerception* perception;
+	std::vector<GameEngine::Sound::Virtual> virtualSources;
+
+	// check audio perceptions
+	for (auto& pair : m_hear) {
+		entity = pair.second;
+		perception = dynamic_cast<Component::AIPerception*>(entity->findComponent(gaComponent::AIPerception));
+
+		g_gaLevel->volume().path(p, entity->position(), 50.0f, virtualSources);
+
+		// ask the player to play the sound
+		if (virtualSources.size() > 0) {
+			for (auto& source : virtualSources) {
+				entity->sendMessage(entity->name(), gaMessage::Action::HEAR_SOUND, source.distance, source.origin, sound);
+			}
+		}
+	}
+}
+
+//*********************** public functions *************************************
 
 /**
  * Let the game engine process events
@@ -737,10 +766,22 @@ void World::process(time_t delta, bool force)
 			}
 			for (auto entity : m_entities[message->m_client]) {
 
-				if (message->m_action == gaMessage::Action::WANT_TO_MOVE) {
-					g_gaPhysics.moveEntity(entity, message);
+				// some entities go full ghost
+				if (!entity->processMessages()) {
+					continue;
 				}
-				else if (entity->processMessages()) {
+
+				// intercept some messages to pass to a plugin
+				switch (message->m_action) {
+				case gaMessage::Action::WANT_TO_MOVE :
+					g_gaPhysics.moveEntity(entity, message);
+					break;
+
+				case gaMessage::Action::PROPAGATE_SOUND:
+					checkSoundPerceptions(entity, message->m_v3value, static_cast<alSound*>(message->m_extra));
+					break;
+
+				default:
 					// only pass messages to entity that request so
 					message->m_frame = m_frame;
 					entity->dispatchMessage(message);
@@ -948,7 +989,7 @@ bool GameEngine::World::cancelAlarmEvent(uint32_t id)
 }
 
 /**
- *  (de)register entities for visual perceptions
+ *  (de)register entities for audio/visual perceptions
  */
 void GameEngine::World::registerViewEvents(gaEntity* entity)
 {
@@ -966,6 +1007,25 @@ void GameEngine::World::deRegisterViewEvents(gaEntity* entity)
 	}
 }
 
+void GameEngine::World::registerHearEvents(gaEntity* entity)
+{
+	uint32_t id = entity->entityID();
+	if (m_hear.count(id) == 0) {
+		m_hear[id] = entity;
+	}
+}
+
+void GameEngine::World::deRegisterHearEvents(gaEntity* entity)
+{
+	uint32_t id = entity->entityID();
+	if (m_hear.count(id) != 0) {
+		m_hear.erase(id);
+	}
+}
+
+/**
+ * Check what the entity would see/hear
+ */
 void GameEngine::World::checkPerceptions(void)
 {
 	gaEntity* player = getEntity("player");
@@ -973,6 +1033,7 @@ void GameEngine::World::checkPerceptions(void)
 	Component::AIPerception* perception;
 	Component::Actor* actor;
 
+	// check visual perceptions
 	for(auto& pair: m_views) {
 		entity = pair.second;
 		perception = dynamic_cast<Component::AIPerception*>(entity->findComponent(gaComponent::AIPerception));
