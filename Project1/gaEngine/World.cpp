@@ -52,12 +52,31 @@ void GameEngine::World::checkSoundPerceptions(gaEntity* source, const glm::vec3&
 		entity = pair.second;
 		perception = dynamic_cast<Component::AIPerception*>(entity->findComponent(gaComponent::AIPerception));
 
+		// if the entity register the sounds it wants to hear
+		if (perception) {
+			const std::vector<alSound*> sounds = perception->heardSound();
+
+			// if there are sound registered, only run the process for these sounds
+			if (sounds.size() > 0) {
+				bool process = false;
+				for (auto s : sounds) {
+					if (sound == s) {
+						process = true;
+						break;
+					}
+				}
+				if (!process) {
+					continue;
+				}
+			}
+		}
+
 		g_gaLevel->volume().path(p, entity->position(), 50.0f, virtualSources);
 
 		// ask the player to play the sound
 		if (virtualSources.size() > 0) {
 			for (auto& source : virtualSources) {
-				entity->sendMessage(entity->name(), gaMessage::Action::HEAR_SOUND, source.distance, source.origin, sound);
+				entity->sendMessage(entity->name(), gaMessage::Action::HEAR_SOUND, 0, source.distance, source.origin, sound);
 			}
 		}
 	}
@@ -1028,34 +1047,42 @@ void GameEngine::World::deRegisterHearEvents(gaEntity* entity)
  */
 void GameEngine::World::checkPerceptions(void)
 {
-	gaEntity* player = getEntity("player");
-	gaEntity* entity;
+	gaEntity* viewed;
+	gaEntity* viewer;
 	Component::AIPerception* perception;
 	Component::Actor* actor;
 
 	// check visual perceptions
 	for(auto& pair: m_views) {
-		entity = pair.second;
-		perception = dynamic_cast<Component::AIPerception*>(entity->findComponent(gaComponent::AIPerception));
+		viewer = pair.second;
+		perception = dynamic_cast<Component::AIPerception*>(viewer->findComponent(gaComponent::AIPerception));
 
-		// the player is in the entity distance perception
-		if (player->distanceTo(entity) < perception->distance()) {
-			actor = dynamic_cast<Component::Actor*>(entity->findComponent(gaComponent::Actor));
+		// for every entity the viewer wants to see
+		const std::vector<std::string>& viewedEntities = perception->viewedEntities();
 
-			glm::vec3 d = player->position() - entity->position();
-			glm::vec3 v = actor->direction();
+		for (auto& s : viewedEntities) {
+			viewed = getEntity(s);
 
-			//printf("%.2f,%.2f,%.2f,%.2f,%.2f,%.2f\n", player->position().x, player->position().z, entity->position().x, entity->position().z, actor->direction().x, actor->direction().z);
-			// the player is in front of the entity
-			if (glm::dot(d, v) > 0) {
+			// the player is in the entity distance perception
+			if (viewed->distanceTo(viewer) < perception->distance()) {
+				actor = dynamic_cast<Component::Actor*>(viewer->findComponent(gaComponent::Actor));
 
-				//TODO: the player is in the entity cone of vision
-				
-				// the player is in the line of sight of the entity
-				if (lineOfSight(player, entity)) {
-					sendMessage(player->name(), entity->name(), gaMessage::Action::VIEW, player->position(), nullptr);
+				glm::vec3 d = viewed->position() - viewer->position();
+				glm::vec3 v = actor->direction();
+
+				//printf("%.2f,%.2f,%.2f,%.2f,%.2f,%.2f\n", player->position().x, player->position().z, entity->position().x, entity->position().z, actor->direction().x, actor->direction().z);
+				// the player is in front of the entity
+				if (glm::dot(d, v) > 0) {
+
+					//TODO: the player is in the entity cone of vision
+
+					// the player is in the line of sight of the entity
+					if (lineOfSight(viewed, viewer)) {
+						sendMessage(viewed->name(), viewer->name(), gaMessage::Action::VIEW, viewed->position(), nullptr);
+					}
 				}
 			}
+
 		}
 	}
 }
