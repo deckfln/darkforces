@@ -37,14 +37,14 @@ void GameEngine::Component::Sound::dispatchMessage(gaMessage* message)
 			else {
 				p = m_entity->position();
 			}
-			m_entity->sendMessage(gaMessage::Action::PROPAGATE_SOUND, p, sound);
+			m_entity->sendMessage(gaMessage::Action::PROPAGATE_SOUND, message->m_value, p, sound);
 		}
 		break;
 	}
 	case gaMessage::STOP_SOUND: {
 		// Stop playing a sound (or all sound if nullptr)
 		alSound* sound = m_sounds[message->m_value];
-		m_entity->sendMessage("player", gaMessage::Action::HEAR_STOP, 0, sound);
+		m_entity->sendMessage("player", gaMessage::Action::HEAR_STOP, message->m_value, sound);
 		break;
 	}
 	}

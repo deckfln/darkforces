@@ -41,7 +41,7 @@ World::World() :
 /**
  * parse all listening entity to check if they can hear a PLAY_SOUND message
  */
-void GameEngine::World::checkSoundPerceptions(gaEntity* source, const glm::vec3& p, alSound* sound)
+void GameEngine::World::checkSoundPerceptions(gaEntity* source, uint32_t soundID, const glm::vec3& p, alSound* sound)
 {
 	gaEntity* entity;
 	Component::AIPerception* perception;
@@ -71,12 +71,13 @@ void GameEngine::World::checkSoundPerceptions(gaEntity* source, const glm::vec3&
 			}
 		}
 
+		virtualSources.clear();
 		g_gaLevel->volume().path(p, entity->position(), 50.0f, virtualSources);
 
 		// ask the player to play the sound
 		if (virtualSources.size() > 0) {
-			for (auto& source : virtualSources) {
-				entity->sendMessage(entity->name(), gaMessage::Action::HEAR_SOUND, 0, source.distance, source.origin, sound);
+			for (auto& vs : virtualSources) {
+				source->sendMessage(entity->name(), gaMessage::Action::HEAR_SOUND, soundID, vs.distance, vs.origin, sound);
 			}
 		}
 	}
@@ -797,7 +798,7 @@ void World::process(time_t delta, bool force)
 					break;
 
 				case gaMessage::Action::PROPAGATE_SOUND:
-					checkSoundPerceptions(entity, message->m_v3value, static_cast<alSound*>(message->m_extra));
+					checkSoundPerceptions(entity, message->m_value, message->m_v3value, static_cast<alSound*>(message->m_extra));
 					break;
 
 				default:

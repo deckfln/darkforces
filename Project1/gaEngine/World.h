@@ -70,7 +70,7 @@ namespace GameEngine {
 
 		std::map<std::string, bool>	m_watch;				// keep a list of entities to display in the debugger
 
-		void checkSoundPerceptions(gaEntity* source, const glm::vec3& p, alSound* sound);			// parse all listening entity to check if they can hear a PLAY_SOUND message
+		void checkSoundPerceptions(gaEntity* source, uint32_t soundID, const glm::vec3& p, alSound* sound);			// parse all listening entity to check if they can hear a PLAY_SOUND message
 
 	public:
 		World(void);

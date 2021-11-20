@@ -57,6 +57,8 @@ void DarkForces::Component::EnemyAI::dispatchMessage(gaMessage* message)
 		m_lastPlayerView = message->m_v3value;
 		m_lastPlayerViewFrame = message->m_frame;
 		break;
+	case gaMessage::Action::HEAR_SOUND:
+		break;
 	case DarkForces::Message::DYING:
 		// when the player starts dying, ignore any incoming messages
 		m_discardMessages = true;
