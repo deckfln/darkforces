@@ -23,7 +23,6 @@
 #include "dfObject.h"
 #include "dfPalette.h"
 #include "dfAtlasTexture.h"
-#include "dfSprites.h"
 #include "dfGame.h"
 #include "dfLevel.h"
 #include "dfVOC.h"
@@ -35,6 +34,8 @@
 #include "dfObject/dfObject3D/MouseBot.h"
 #include "dfObject/Enemy.h"
 #include "dfObject/df3DObject.h"
+
+#include "dfPlugin/dfSprites.h"
 
 /*
 DIFF	EASY	MED	HARD
@@ -552,20 +553,19 @@ dfAtlasTexture* dfParserObjects::buildAtlasTexture(void)
 void dfParserObjects::buildSprites(void)
 {
 	// build the sprites
-	dfSprites* manager = new dfSprites(m_objects.size(), m_textures);
-	g_gaWorld.spritesManager(manager);
+	g_dfSpritesEngine.init(m_objects.size(), m_textures);
 
 	std::list<GameEngine::Model*> l;
 	g_gaWorld.getModelsByClass(g_wax_class, l);
 
 	for (auto wax : l) {
-		manager->addModel((dfWAX*)wax);
+		g_dfSpritesEngine.addModel((dfWAX*)wax);
 	}
 
 	l.clear();
 	g_gaWorld.getModelsByClass(g_fme_class, l);
 	for (auto fme : l) {
-		manager->addModel((dfFME*)fme);
+		g_dfSpritesEngine.addModel((dfFME*)fme);
 	}
 
 	// add to the world
@@ -576,7 +576,7 @@ void dfParserObjects::buildSprites(void)
 	}
 
 	time_t timer = GetTickCount64();
-	manager->update();
+	g_dfSpritesEngine.update();
 }
 
 dfParserObjects::~dfParserObjects()

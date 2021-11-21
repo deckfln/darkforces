@@ -11,6 +11,7 @@
 #include "gaEntity.h"
 #include "gaComponent/gaController.h"
 #include "gaComponent/gaActiveProbe.h"
+#include "gaPlugin/gaPSounds.h"
 #include "World.h"
 
 #include "../darkforces/dfLevel.h"
@@ -52,7 +53,7 @@ gaActor::gaActor(
 
 	addComponent(&m_listener);
 
-	g_gaWorld.registerHearEvents(this);	// wants to receive sound events
+	g_gaSoundEngine.registerHearEvents(this);	// wants to receive sound events
 }
 
 /**
@@ -232,5 +233,5 @@ void gaActor::loadState(void* r)
 
 gaActor::~gaActor()
 {
-	g_gaWorld.deRegisterHearEvents(this);	// wants to receive sound events
+	g_gaSoundEngine.deRegisterHearEvents(this);	// wants to receive sound events
 }

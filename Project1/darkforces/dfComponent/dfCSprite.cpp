@@ -5,10 +5,10 @@
 
 #include "../dfComponent.h"
 
-#include "../dfSprites.h"
 #include "../dfLevel.h"
 #include "../dfModel.h"
 #include "../dfModel/dfFME.h"
+#include "../dfPlugin/dfSprites.h"
 
 static uint32_t g_spriteID = 0;
 
@@ -82,8 +82,7 @@ bool DarkForces::Component::Sprite::update(glm::vec3* position, glm::vec4* textu
  */
 void DarkForces::Component::Sprite::onWorldInsert(void)
 {
-	dfSprites* manager = g_gaWorld.spritesManager();
-	manager->add(this);
+	g_dfSpritesEngine.add(this);
 }
 
 /**
@@ -92,8 +91,7 @@ void DarkForces::Component::Sprite::onWorldInsert(void)
  */
 void DarkForces::Component::Sprite::onWorldRemove(void)
 {
-	dfSprites* manager = g_gaWorld.spritesManager();
-	manager->remove(this);
+	g_dfSpritesEngine.remove(this);
 }
 
 /**

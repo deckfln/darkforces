@@ -35,6 +35,7 @@
 #include "darkforces/dfBullet.h"
 #include "darkforces/dfObject/dfBulletExplode.h"
 #include "darkforces/dfHUD.h"
+#include "darkforces/dfPlugin/dfSprites.h"
 
 const float c_height = 0.70f;
 const float c_radius = 0.2f;
@@ -98,6 +99,10 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 	// hud display
 	m_hud = new DarkForces::HUD(m_level);
 	m_hud->display(m_scene);
+
+	// add the sprites manager to the world
+	g_gaWorld.registerPlugin(&g_dfSpritesEngine);
+	g_dfSpritesEngine.OnWorldInsert();
 
 	// and put the player in position
 	m_player = new DarkForces::Player(DarkForces::ClassID::_Object, "player", bounding, start, c_eyes, c_ankle);

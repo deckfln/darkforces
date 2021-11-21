@@ -185,9 +185,9 @@
     <ClCompile Include="darkforces\dfLevel.cpp" />
     <ClCompile Include="darkforces\dfParserObjects.cpp" />
     <ClCompile Include="darkforces\dfPlayer.cpp" />
+    <ClCompile Include="darkforces\dfPlugin\dfSprites.cpp" />
     <ClCompile Include="darkforces\dfSector.cpp" />
     <ClCompile Include="darkforces\dfSounds.cpp" />
-    <ClCompile Include="darkforces\dfSprites.cpp" />
     <ClCompile Include="darkforces\dfSuperSector.cpp" />
     <ClCompile Include="darkforces\dfVOC.cpp" />
     <ClCompile Include="darkforces\dfVue.cpp" />
@@ -295,6 +295,9 @@
     <ClCompile Include="gaEngine\gaLevel.cpp" />
     <ClCompile Include="gaEngine\gaMessage.cpp" />
     <ClCompile Include="gaEngine\gaNavMesh.cpp" />
+    <ClCompile Include="gaEngine\gaPlugin.cpp" />
+    <ClCompile Include="gaEngine\gaPlugin\gaPSounds.cpp" />
+    <ClCompile Include="gaEngine\gaPlugin\gaPView.cpp" />
     <ClCompile Include="gaEngine\gaVolumeSpace.cpp" />
     <ClCompile Include="gaEngine\Model.cpp" />
     <ClCompile Include="gaEngine\World.cpp" />
@@ -397,9 +400,9 @@
     <ClInclude Include="darkforces\dfLevel.h" />
     <ClInclude Include="darkforces\dfParserObjects.h" />
     <ClInclude Include="darkforces\dfPlayer.h" />
+    <ClInclude Include="darkforces\dfPlugin\dfSprites.h" />
     <ClInclude Include="darkforces\dfSector.h" />
     <ClInclude Include="darkforces\dfSounds.h" />
-    <ClInclude Include="darkforces\dfSprites.h" />
     <ClInclude Include="darkforces\dfSuperSector.h" />
     <ClInclude Include="darkforces\dfVOC.h" />
     <ClInclude Include="darkforces\dfVue.h" />
@@ -534,6 +537,9 @@
     <ClInclude Include="gaEngine\gaLevel.h" />
     <ClInclude Include="gaEngine\gaMessage.h" />
     <ClInclude Include="gaEngine\gaNavMesh.h" />
+    <ClInclude Include="gaEngine\gaPlugin.h" />
+    <ClInclude Include="gaEngine\gaPlugin\gaPSounds.h" />
+    <ClInclude Include="gaEngine\gaPlugin\gaPView.h" />
     <ClInclude Include="gaEngine\gaVolumeSpace.h" />
     <ClInclude Include="gaEngine\Model.h" />
     <ClInclude Include="gaEngine\World.h" />

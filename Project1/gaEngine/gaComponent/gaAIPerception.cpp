@@ -3,6 +3,8 @@
 #include <imgui.h>
 
 #include "../World.h"
+#include "../gaPlugin/gaPSounds.h"
+#include "../gaPlugin/gaPView.h"
 #include "../gaActor.h"
 
 GameEngine::Component::AIPerception::AIPerception(bool view, bool audio, float distance, float angle) :
@@ -14,10 +16,10 @@ GameEngine::Component::AIPerception::AIPerception(bool view, bool audio, float d
 {
 	if (m_entity) {
 		if (m_view) {
-			g_gaWorld.registerViewEvents(this->m_entity);
+			g_gaViewEngine.registerViewEvents(this->m_entity);
 		}
 		if (m_audio) {
-			g_gaWorld.registerHearEvents(this->m_entity);
+			g_gaSoundEngine.registerHearEvents(this->m_entity);
 		}
 	}
 }
@@ -41,16 +43,16 @@ void GameEngine::Component::AIPerception::debugGUIinline(void)
 void GameEngine::Component::AIPerception::registerEvents(void)
 {
 	if (m_view) {
-		g_gaWorld.registerViewEvents(this->m_entity);
+		g_gaViewEngine.registerViewEvents(this->m_entity);
 	}
 	if (m_audio) {
-		g_gaWorld.registerHearEvents(this->m_entity);
+		g_gaSoundEngine.registerHearEvents(this->m_entity);
 	}
 }
 
 GameEngine::Component::AIPerception::~AIPerception()
 {
-	g_gaWorld.deRegisterViewEvents(this->m_entity);
-	g_gaWorld.deRegisterHearEvents(this->m_entity);
+	g_gaViewEngine.deregisterViewEvents(this->m_entity);
+	g_gaSoundEngine.deRegisterHearEvents(this->m_entity);
 }
 

@@ -15,7 +15,7 @@ class dfWAX;
 class dfFME;
 class dfPalette;
 class dfAtlasTexture;
-class dfSprites;
+class Sprites;
 class fwScene;
 class dfLevel;
 class df3DO;

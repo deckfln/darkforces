@@ -15,16 +15,14 @@
 #include "Physics.h"
 #include "gaComponent/gaAIPerception.h"
 #include "gaComponent/gaCActor.h"
+#include "gaPlugin.h"
 
 #include "../darkforces/dfLevel.h"
 #include "../darkforces/dfSuperSector.h"
-#include "../darkforces/dfSprites.h"
 
 #include "../flightRecorder/Blackbox.h"
 
 using namespace GameEngine;
-
-static std::map<uint32_t, const char*> g_entityClassName;
 
 GameEngine::World g_gaWorld;
 
@@ -38,50 +36,38 @@ World::World() :
 
 //*********************** Private functions *************************************
 
+#define MAXIMUM_MESSAGES 2048
+static int g_lastMessage = 0;
+static uint32_t g_MsgID = 0;
+static gaMessage g_messages[MAXIMUM_MESSAGES];
+static std::map<uint32_t, const char*> g_entityClassName;
+
 /**
- * parse all listening entity to check if they can hear a PLAY_SOUND message
+ * Allocate a new message
  */
-void GameEngine::World::checkSoundPerceptions(gaEntity* source, uint32_t soundID, const glm::vec3& p, alSound* sound)
+static gaMessage* allocateMessage(void)
 {
-	gaEntity* entity;
-	Component::AIPerception* perception;
-	std::vector<GameEngine::Sound::Virtual> virtualSources;
+	// search for an available message
+	int count = 2048;
 
-	// check audio perceptions
-	for (auto& pair : m_hear) {
-		entity = pair.second;
-		perception = dynamic_cast<Component::AIPerception*>(entity->findComponent(gaComponent::AIPerception));
+	gaMessage* ptr = nullptr;
+	do {
+		--count;
+		assert(count > 0);
 
-		// if the entity register the sounds it wants to hear
-		if (perception) {
-			const std::vector<alSound*> sounds = perception->heardSound();
-
-			// if there are sound registered, only run the process for these sounds
-			if (sounds.size() > 0) {
-				bool process = false;
-				for (auto s : sounds) {
-					if (sound == s) {
-						process = true;
-						break;
-					}
-				}
-				if (!process) {
-					continue;
-				}
-			}
+		ptr = &g_messages[g_lastMessage++];
+		if (g_lastMessage == MAXIMUM_MESSAGES) {
+			g_lastMessage = 0;
 		}
+	} while (ptr->m_used);
 
-		virtualSources.clear();
-		g_gaLevel->volume().path(p, entity->position(), 50.0f, virtualSources);
+	ptr->m_used = true;
+	ptr->m_id = g_MsgID++;
+	ptr->m_canceled = false;
 
-		// ask the player to play the sound
-		if (virtualSources.size() > 0) {
-			for (auto& vs : virtualSources) {
-				source->sendMessage(entity->name(), gaMessage::Action::HEAR_SOUND, soundID, vs.distance, vs.origin, sound);
-			}
-		}
-	}
+	return ptr;
 }
+
 
 //*********************** public functions *************************************
 
@@ -108,6 +94,17 @@ void World::scene(fwScene* scene)
 {
 	m_scene = scene;
 	set("scene", scene);
+}
+
+/**
+ * force plugins to update
+ */
+void GameEngine::World::update(void)
+{
+	// let plugins do stuff after the queue
+	for (auto plugin : m_plugins) {
+		plugin->afterProcessing();
+	}
 }
 
 /**
@@ -278,46 +275,6 @@ void World::getModelsByClass(uint32_t myclass, std::list<GameEngine::Model*>& r)
 			r.push_back(model.second);
 		}
 	}
-}
-
-/**
- * add the sprite manager
- */
-void World::spritesManager(dfSprites* sprites)
-{
-	m_sprites = sprites;
-	sprites->OnWorldInsert();
-}
-
-#define MAXIMUM_MESSAGES 2048
-static int g_lastMessage = 0;
-static uint32_t g_MsgID = 0;
-static gaMessage g_messages[MAXIMUM_MESSAGES];
-
-/**
- * Allocate a new message
- */
-static gaMessage* allocateMessage(void)
-{
-	// search for an available message
-	int count = 2048;
-
-	gaMessage* ptr = nullptr;
-	do {
-		--count;
-		assert(count > 0);
-
-		ptr = &g_messages[g_lastMessage++];
-		if (g_lastMessage == MAXIMUM_MESSAGES) {
-			g_lastMessage = 0;
-		}
-	} while (ptr->m_used);
-
-	ptr->m_used = true;
-	ptr->m_id = g_MsgID++;
-	ptr->m_canceled = false;
-
-	return ptr;
 }
 
 gaMessage* GameEngine::World::sendMessage(gaMessage* msg)
@@ -692,8 +649,10 @@ void World::process(time_t delta, bool force)
 		sendMessage(entity->name(), entity->name(), gaMessage::TIMER, 0, nullptr);
 	}
 
-	// inject view perception events
-	checkPerceptions();
+	// let plugins do stuff before the queue
+	for (auto plugin : m_plugins) {
+		plugin->beforeProcessing();
+	}
 
 #ifdef _DEBUG
 	// record start at start of frame
@@ -792,13 +751,15 @@ void World::process(time_t delta, bool force)
 				}
 
 				// intercept some messages to pass to a plugin
+				for (auto plugin : m_plugins) {
+					if (!plugin->dispatchMessage(entity, message)) {
+						continue;
+					}
+				}
+
 				switch (message->m_action) {
 				case gaMessage::Action::WANT_TO_MOVE :
 					g_gaPhysics.moveEntity(entity, message);
-					break;
-
-				case gaMessage::Action::PROPAGATE_SOUND:
-					checkSoundPerceptions(entity, message->m_value, message->m_v3value, static_cast<alSound*>(message->m_extra));
 					break;
 
 				default:
@@ -811,7 +772,10 @@ void World::process(time_t delta, bool force)
 		message->m_used = false;
 	}
 
-	update();	// update extra attributes of the world
+	// let plugins do stuff after the queue
+	for (auto plugin : m_plugins) {
+		plugin->afterProcessing();
+	}
 
 	// swap the current queue and the queue for next frame
 	m_queue.swap(m_for_next_frame);
@@ -836,17 +800,6 @@ void GameEngine::World::clearQueue(void)
 		message.m_used = false;
 	}
 	g_lastMessage = 0;
-}
-
-/**
- * force an update of the world
- */
-void GameEngine::World::update(void)
-{
-	// update all sprites if needed
-	if (m_sprites) {
-		m_sprites->update();
-	}
 }
 
 /**
@@ -1009,81 +962,26 @@ bool GameEngine::World::cancelAlarmEvent(uint32_t id)
 }
 
 /**
- *  (de)register entities for audio/visual perceptions
+ * // (de)register world plugins 
  */
-void GameEngine::World::registerViewEvents(gaEntity* entity)
+void GameEngine::World::registerPlugin(GameEngine::Plugin* plugin)
 {
-	uint32_t id = entity->entityID();
-	if (m_views.count(id) == 0) {
-		m_views[id] = entity;
+	// ensure we do not register the plugin twice
+	for (auto p : m_plugins) {
+		if (p == plugin) {
+			return;
+		}
 	}
+
+	m_plugins.push_back(plugin);
 }
 
-void GameEngine::World::deRegisterViewEvents(gaEntity* entity)
+void GameEngine::World::deregisterPlugin(GameEngine::Plugin* plugin)
 {
-	uint32_t id = entity->entityID();
-	if (m_views.count(id) != 0) {
-		m_views.erase(id);
-	}
-}
-
-void GameEngine::World::registerHearEvents(gaEntity* entity)
-{
-	uint32_t id = entity->entityID();
-	if (m_hear.count(id) == 0) {
-		m_hear[id] = entity;
-	}
-}
-
-void GameEngine::World::deRegisterHearEvents(gaEntity* entity)
-{
-	uint32_t id = entity->entityID();
-	if (m_hear.count(id) != 0) {
-		m_hear.erase(id);
-	}
-}
-
-/**
- * Check what the entity would see/hear
- */
-void GameEngine::World::checkPerceptions(void)
-{
-	gaEntity* viewed;
-	gaEntity* viewer;
-	Component::AIPerception* perception;
-	Component::Actor* actor;
-
-	// check visual perceptions
-	for(auto& pair: m_views) {
-		viewer = pair.second;
-		perception = dynamic_cast<Component::AIPerception*>(viewer->findComponent(gaComponent::AIPerception));
-
-		// for every entity the viewer wants to see
-		const std::vector<std::string>& viewedEntities = perception->viewedEntities();
-
-		for (auto& s : viewedEntities) {
-			viewed = getEntity(s);
-
-			// the player is in the entity distance perception
-			if (viewed->distanceTo(viewer) < perception->distance()) {
-				actor = dynamic_cast<Component::Actor*>(viewer->findComponent(gaComponent::Actor));
-
-				glm::vec3 d = viewed->position() - viewer->position();
-				glm::vec3 v = actor->direction();
-
-				//printf("%.2f,%.2f,%.2f,%.2f,%.2f,%.2f\n", player->position().x, player->position().z, entity->position().x, entity->position().z, actor->direction().x, actor->direction().z);
-				// the player is in front of the entity
-				if (glm::dot(d, v) > 0) {
-
-					//TODO: the player is in the entity cone of vision
-
-					// the player is in the line of sight of the entity
-					if (lineOfSight(viewed, viewer)) {
-						sendMessage(viewed->name(), viewer->name(), gaMessage::Action::VIEW, viewed->position(), nullptr);
-					}
-				}
-			}
-
+	for (auto i = 0; i < m_plugins.size(); i++) {
+		if (m_plugins[i] == plugin) {
+			m_plugins[i] = nullptr;
+			return;
 		}
 	}
 }

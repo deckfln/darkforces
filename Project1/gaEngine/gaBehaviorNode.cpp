@@ -19,6 +19,11 @@ void GameEngine::BehaviorNode::init(void* data)
 	m_status = Status::RUNNING;
 	m_runningChild = -1;
 	m_data = data;
+
+	// reset the status of all children
+	for (auto& child : m_children) {
+		child->status(Status::NONE);
+	}
 }
 
 /**

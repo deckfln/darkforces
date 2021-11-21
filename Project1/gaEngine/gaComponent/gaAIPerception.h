@@ -12,7 +12,7 @@ namespace GameEngine {
 		class AIPerception : public gaComponent {
 			// audio perception
 			bool m_audio = false;
-			std::vector<alSound*>  m_soundID;			// sounds that need to trigger a hearmessage
+			std::vector<uint32_t>  m_soundID;			// sounds that need to trigger a hearmessage
 
 			// view perception
 			bool m_view = false;
@@ -32,11 +32,11 @@ namespace GameEngine {
 			inline void audio(void) { m_audio = true; registerEvents(); };
 			inline void view(void) { m_view = true; registerEvents(); };
 
-			inline void hearSound(alSound* sound) { m_soundID.push_back(sound); };
+			inline void hearSound(uint32_t soundID) { m_soundID.push_back(soundID); };
 			inline void viewEntity(const std::string& entity) { m_viewEntities.push_back(entity); };
 
 			inline const std::vector<std::string> viewedEntities(void) { return m_viewEntities; };
-			inline const std::vector<alSound*> heardSound(void) { return m_soundID; };
+			inline const std::vector<uint32_t> heardSound(void) { return m_soundID; };
 
 			~AIPerception();
 			void debugGUIinline(void) override;					// display the component in the debugger
