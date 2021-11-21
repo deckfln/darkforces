@@ -23,6 +23,8 @@ class dfSprites;
 class alSound;
 
 namespace GameEngine {
+	class Plugin;
+
 	struct Alarm {
 		uint32_t m_id=0;
 		gaEntity* m_entity;
@@ -55,7 +57,8 @@ namespace GameEngine {
 		std::list<gaEntity*> m_timers;						// entities that registered to receive timer events
 		std::list<GameEngine::Alarm> m_alarms;				// entities that registered to receive alarm events
 		std::map<uint32_t, gaEntity*> m_views;				// entities that registered to receive view events
-		std::map<uint32_t, gaEntity*> m_hear;				// entities that registered to receive audio events
+
+		std::vector<GameEngine::Plugin*> m_plugins;			// world plugin extensions
 
 		std::vector<dfSuperSector*> m_sectors;
 		dfSprites* m_sprites = nullptr;						// sprites manager
@@ -69,8 +72,6 @@ namespace GameEngine {
 		friend flightRecorder::Blackbox;					// flight recorder has direct access to everything
 
 		std::map<std::string, bool>	m_watch;				// keep a list of entities to display in the debugger
-
-		void checkSoundPerceptions(gaEntity* source, uint32_t soundID, const glm::vec3& p, alSound* sound);			// parse all listening entity to check if they can hear a PLAY_SOUND message
 
 	public:
 		World(void);
@@ -207,8 +208,11 @@ namespace GameEngine {
 		// (de)register entities for visual perceptions
 		void registerViewEvents(gaEntity* entity);
 		void deRegisterViewEvents(gaEntity* entity);
-		void registerHearEvents(gaEntity* entity);
-		void deRegisterHearEvents(gaEntity* entity);
+
+		// (de)register world plugins 
+		void registerPlugin(GameEngine::Plugin* plugin);
+		void deregisterPlugin(GameEngine::Plugin* plugin);
+
 		void checkPerceptions(void);
 
 		// debugger

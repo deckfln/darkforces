@@ -9,6 +9,8 @@
 #include "gaLevel.h"
 #include "gaActor.h"
 
+#include "gaPlugin/gaPSounds.h"
+
 /**
  *
  */
@@ -22,6 +24,9 @@ GameEngine::App::App(const std::string& name, int width, int height, const std::
 	// prepare the flight recorder
 	g_Blackbox.registerClass("gaEntity", &gaEntity::create);
 	g_Blackbox.registerClass("gaActor", &gaActor::create);
+
+	// add the plugins
+	g_gaWorld.registerPlugin(&g_gaSoundEngine);
 
 #ifdef _DEBUG
 	m_debugger = new GameEngine::Debug(this);

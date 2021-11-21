@@ -157,6 +157,12 @@
     <Filter Include="Fichiers sources\Dark Forces\dfComponent\dfCSprite">
       <UniqueIdentifier>{6779f5da-0b57-47a6-b201-caa653b784e2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Fichiers d%27en-tête\gaEngine\gaPlugins">
+      <UniqueIdentifier>{8a94e5c1-06ed-4cc7-9eef-c66309c76424}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers sources\gaEngine\gaPlugins">
+      <UniqueIdentifier>{8c9c86a6-a5aa-4f4e-b379-cab5855540aa}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source.cpp">
@@ -776,6 +782,12 @@
     </ClCompile>
     <ClCompile Include="gaEngine\gaComponent\gaListener.cpp">
       <Filter>Fichiers sources\gaEngine\gaComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="gaEngine\gaPlugin.cpp">
+      <Filter>Fichiers sources\gaEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="gaEngine\gaPlugin\gaPSounds.cpp">
+      <Filter>Fichiers sources\gaEngine\gaPlugins</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1495,6 +1507,12 @@
     </ClInclude>
     <ClInclude Include="gaEngine\gaComponent\gaListener.h">
       <Filter>Fichiers d%27en-tête\gaEngine\gaComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="gaEngine\gaPlugin.h">
+      <Filter>Fichiers d%27en-tête\gaEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="gaEngine\gaPlugin\gaPSounds.h">
+      <Filter>Fichiers d%27en-tête\gaEngine\gaPlugins</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

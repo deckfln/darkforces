@@ -15,6 +15,7 @@
 #include "Physics.h"
 #include "gaComponent/gaAIPerception.h"
 #include "gaComponent/gaCActor.h"
+#include "gaPlugin.h"
 
 #include "../darkforces/dfLevel.h"
 #include "../darkforces/dfSuperSector.h"
@@ -37,51 +38,6 @@ World::World() :
 }
 
 //*********************** Private functions *************************************
-
-/**
- * parse all listening entity to check if they can hear a PLAY_SOUND message
- */
-void GameEngine::World::checkSoundPerceptions(gaEntity* source, uint32_t soundID, const glm::vec3& p, alSound* sound)
-{
-	gaEntity* entity;
-	Component::AIPerception* perception;
-	std::vector<GameEngine::Sound::Virtual> virtualSources;
-
-	// check audio perceptions
-	for (auto& pair : m_hear) {
-		entity = pair.second;
-		perception = dynamic_cast<Component::AIPerception*>(entity->findComponent(gaComponent::AIPerception));
-
-		// if the entity register the sounds it wants to hear
-		if (perception) {
-			const std::vector<alSound*> sounds = perception->heardSound();
-
-			// if there are sound registered, only run the process for these sounds
-			if (sounds.size() > 0) {
-				bool process = false;
-				for (auto s : sounds) {
-					if (sound == s) {
-						process = true;
-						break;
-					}
-				}
-				if (!process) {
-					continue;
-				}
-			}
-		}
-
-		virtualSources.clear();
-		g_gaLevel->volume().path(p, entity->position(), 50.0f, virtualSources);
-
-		// ask the player to play the sound
-		if (virtualSources.size() > 0) {
-			for (auto& vs : virtualSources) {
-				source->sendMessage(entity->name(), gaMessage::Action::HEAR_SOUND, soundID, vs.distance, vs.origin, sound);
-			}
-		}
-	}
-}
 
 //*********************** public functions *************************************
 
@@ -792,13 +748,15 @@ void World::process(time_t delta, bool force)
 				}
 
 				// intercept some messages to pass to a plugin
+				for (auto plugin : m_plugins) {
+					if (!plugin->dispatchMessage(entity, message)) {
+						continue;
+					}
+				}
+
 				switch (message->m_action) {
 				case gaMessage::Action::WANT_TO_MOVE :
 					g_gaPhysics.moveEntity(entity, message);
-					break;
-
-				case gaMessage::Action::PROPAGATE_SOUND:
-					checkSoundPerceptions(entity, message->m_value, message->m_v3value, static_cast<alSound*>(message->m_extra));
 					break;
 
 				default:
@@ -1027,19 +985,28 @@ void GameEngine::World::deRegisterViewEvents(gaEntity* entity)
 	}
 }
 
-void GameEngine::World::registerHearEvents(gaEntity* entity)
+/**
+ * // (de)register world plugins 
+ */
+void GameEngine::World::registerPlugin(GameEngine::Plugin* plugin)
 {
-	uint32_t id = entity->entityID();
-	if (m_hear.count(id) == 0) {
-		m_hear[id] = entity;
+	// ensure we do not register the plugin twice
+	for (auto p : m_plugins) {
+		if (p == plugin) {
+			return;
+		}
 	}
+
+	m_plugins.push_back(plugin);
 }
 
-void GameEngine::World::deRegisterHearEvents(gaEntity* entity)
+void GameEngine::World::deregisterPlugin(GameEngine::Plugin* plugin)
 {
-	uint32_t id = entity->entityID();
-	if (m_hear.count(id) != 0) {
-		m_hear.erase(id);
+	for (auto i = 0; i < m_plugins.size(); i++) {
+		if (m_plugins[i] == plugin) {
+			m_plugins[i] = nullptr;
+			return;
+		}
 	}
 }
 
