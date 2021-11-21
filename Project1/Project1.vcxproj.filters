@@ -789,6 +789,9 @@
     <ClCompile Include="gaEngine\gaPlugin\gaPSounds.cpp">
       <Filter>Fichiers sources\gaEngine\gaPlugins</Filter>
     </ClCompile>
+    <ClCompile Include="gaEngine\gaPlugin\gaPView.cpp">
+      <Filter>Fichiers sources\gaEngine\gaPlugins</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="glad\glad.h">
@@ -1512,6 +1515,9 @@
       <Filter>Fichiers d%27en-tête\gaEngine</Filter>
     </ClInclude>
     <ClInclude Include="gaEngine\gaPlugin\gaPSounds.h">
+      <Filter>Fichiers d%27en-tête\gaEngine\gaPlugins</Filter>
+    </ClInclude>
+    <ClInclude Include="gaEngine\gaPlugin\gaPView.h">
       <Filter>Fichiers d%27en-tête\gaEngine\gaPlugins</Filter>
     </ClInclude>
   </ItemGroup>

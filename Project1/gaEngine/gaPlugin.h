@@ -14,7 +14,13 @@ namespace GameEngine {
 		const char* m_plugin = nullptr;	// name of the plugin
 	public:
 		Plugin(const char* name);
-		virtual bool dispatchMessage(gaEntity* to, gaMessage* message) = 0;
+		virtual void beforeProcessing(void) {};								// execute the plugin before processing the message queue
+		virtual bool dispatchMessage(gaEntity* to, gaMessage* message) {
+			return true;
+		};																	// handle messages specific for the engine
+		virtual bool interceptMessages(gaEntity* to, gaMessage* message) {
+			return true;
+		};																	// intercept messages dedicated to entities (with option to change them)
 		~Plugin();
 	};
 }

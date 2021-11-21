@@ -297,6 +297,7 @@
     <ClCompile Include="gaEngine\gaNavMesh.cpp" />
     <ClCompile Include="gaEngine\gaPlugin.cpp" />
     <ClCompile Include="gaEngine\gaPlugin\gaPSounds.cpp" />
+    <ClCompile Include="gaEngine\gaPlugin\gaPView.cpp" />
     <ClCompile Include="gaEngine\gaVolumeSpace.cpp" />
     <ClCompile Include="gaEngine\Model.cpp" />
     <ClCompile Include="gaEngine\World.cpp" />
@@ -538,6 +539,7 @@
     <ClInclude Include="gaEngine\gaNavMesh.h" />
     <ClInclude Include="gaEngine\gaPlugin.h" />
     <ClInclude Include="gaEngine\gaPlugin\gaPSounds.h" />
+    <ClInclude Include="gaEngine\gaPlugin\gaPView.h" />
     <ClInclude Include="gaEngine\gaVolumeSpace.h" />
     <ClInclude Include="gaEngine\Model.h" />
     <ClInclude Include="gaEngine\World.h" />

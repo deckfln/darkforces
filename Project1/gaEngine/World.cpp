@@ -648,8 +648,10 @@ void World::process(time_t delta, bool force)
 		sendMessage(entity->name(), entity->name(), gaMessage::TIMER, 0, nullptr);
 	}
 
-	// inject view perception events
-	checkPerceptions();
+	// let plugins do stuff before the queue
+	for (auto plugin : m_plugins) {
+		plugin->beforeProcessing();
+	}
 
 #ifdef _DEBUG
 	// record start at start of frame
@@ -967,25 +969,6 @@ bool GameEngine::World::cancelAlarmEvent(uint32_t id)
 }
 
 /**
- *  (de)register entities for audio/visual perceptions
- */
-void GameEngine::World::registerViewEvents(gaEntity* entity)
-{
-	uint32_t id = entity->entityID();
-	if (m_views.count(id) == 0) {
-		m_views[id] = entity;
-	}
-}
-
-void GameEngine::World::deRegisterViewEvents(gaEntity* entity)
-{
-	uint32_t id = entity->entityID();
-	if (m_views.count(id) != 0) {
-		m_views.erase(id);
-	}
-}
-
-/**
  * // (de)register world plugins 
  */
 void GameEngine::World::registerPlugin(GameEngine::Plugin* plugin)
@@ -1006,51 +989,6 @@ void GameEngine::World::deregisterPlugin(GameEngine::Plugin* plugin)
 		if (m_plugins[i] == plugin) {
 			m_plugins[i] = nullptr;
 			return;
-		}
-	}
-}
-
-/**
- * Check what the entity would see/hear
- */
-void GameEngine::World::checkPerceptions(void)
-{
-	gaEntity* viewed;
-	gaEntity* viewer;
-	Component::AIPerception* perception;
-	Component::Actor* actor;
-
-	// check visual perceptions
-	for(auto& pair: m_views) {
-		viewer = pair.second;
-		perception = dynamic_cast<Component::AIPerception*>(viewer->findComponent(gaComponent::AIPerception));
-
-		// for every entity the viewer wants to see
-		const std::vector<std::string>& viewedEntities = perception->viewedEntities();
-
-		for (auto& s : viewedEntities) {
-			viewed = getEntity(s);
-
-			// the player is in the entity distance perception
-			if (viewed->distanceTo(viewer) < perception->distance()) {
-				actor = dynamic_cast<Component::Actor*>(viewer->findComponent(gaComponent::Actor));
-
-				glm::vec3 d = viewed->position() - viewer->position();
-				glm::vec3 v = actor->direction();
-
-				//printf("%.2f,%.2f,%.2f,%.2f,%.2f,%.2f\n", player->position().x, player->position().z, entity->position().x, entity->position().z, actor->direction().x, actor->direction().z);
-				// the player is in front of the entity
-				if (glm::dot(d, v) > 0) {
-
-					//TODO: the player is in the entity cone of vision
-
-					// the player is in the line of sight of the entity
-					if (lineOfSight(viewed, viewer)) {
-						sendMessage(viewed->name(), viewer->name(), gaMessage::Action::VIEW, viewed->position(), nullptr);
-					}
-				}
-			}
-
 		}
 	}
 }

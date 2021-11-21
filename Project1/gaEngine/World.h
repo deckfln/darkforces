@@ -56,7 +56,6 @@ namespace GameEngine {
 
 		std::list<gaEntity*> m_timers;						// entities that registered to receive timer events
 		std::list<GameEngine::Alarm> m_alarms;				// entities that registered to receive alarm events
-		std::map<uint32_t, gaEntity*> m_views;				// entities that registered to receive view events
 
 		std::vector<GameEngine::Plugin*> m_plugins;			// world plugin extensions
 
@@ -205,15 +204,9 @@ namespace GameEngine {
 		uint32_t registerAlarmEvent(Alarm& alarm);			// register an entity to receive alarm event
 		bool cancelAlarmEvent(uint32_t id);					// cancel a programmed alarm
 
-		// (de)register entities for visual perceptions
-		void registerViewEvents(gaEntity* entity);
-		void deRegisterViewEvents(gaEntity* entity);
-
 		// (de)register world plugins 
 		void registerPlugin(GameEngine::Plugin* plugin);
 		void deregisterPlugin(GameEngine::Plugin* plugin);
-
-		void checkPerceptions(void);
 
 		// debugger
 		void debugGUI(void);								// render the imGUI debug

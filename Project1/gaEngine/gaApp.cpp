@@ -10,6 +10,7 @@
 #include "gaActor.h"
 
 #include "gaPlugin/gaPSounds.h"
+#include "gaPlugin/gaPView.h"
 
 /**
  *
@@ -27,6 +28,7 @@ GameEngine::App::App(const std::string& name, int width, int height, const std::
 
 	// add the plugins
 	g_gaWorld.registerPlugin(&g_gaSoundEngine);
+	g_gaWorld.registerPlugin(&g_gaViewEngine);
 
 #ifdef _DEBUG
 	m_debugger = new GameEngine::Debug(this);
