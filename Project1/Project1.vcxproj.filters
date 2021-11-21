@@ -163,6 +163,12 @@
     <Filter Include="Fichiers sources\gaEngine\gaPlugins">
       <UniqueIdentifier>{8c9c86a6-a5aa-4f4e-b379-cab5855540aa}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Fichiers d%27en-tête\DarkForces\dfPlugin">
+      <UniqueIdentifier>{5a646350-ae0e-4ac7-ab13-f423ae4e2a7c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers sources\Dark Forces\dfPlugin">
+      <UniqueIdentifier>{ef667e4d-9402-4346-8d05-a1736875f93c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source.cpp">
@@ -244,9 +250,6 @@
       <Filter>Fichiers sources\Dark Forces</Filter>
     </ClCompile>
     <ClCompile Include="darkforces\dfSector.cpp">
-      <Filter>Fichiers sources\Dark Forces</Filter>
-    </ClCompile>
-    <ClCompile Include="darkforces\dfSprites.cpp">
       <Filter>Fichiers sources\Dark Forces</Filter>
     </ClCompile>
     <ClCompile Include="darkforces\dfSuperSector.cpp">
@@ -792,6 +795,9 @@
     <ClCompile Include="gaEngine\gaPlugin\gaPView.cpp">
       <Filter>Fichiers sources\gaEngine\gaPlugins</Filter>
     </ClCompile>
+    <ClCompile Include="darkforces\dfPlugin\dfSprites.cpp">
+      <Filter>Fichiers sources\Dark Forces\dfPlugin</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="glad\glad.h">
@@ -876,9 +882,6 @@
       <Filter>Fichiers d%27en-tête\DarkForces</Filter>
     </ClInclude>
     <ClInclude Include="darkforces\dfSector.h">
-      <Filter>Fichiers d%27en-tête\DarkForces</Filter>
-    </ClInclude>
-    <ClInclude Include="darkforces\dfSprites.h">
       <Filter>Fichiers d%27en-tête\DarkForces</Filter>
     </ClInclude>
     <ClInclude Include="darkforces\dfSuperSector.h">
@@ -1519,6 +1522,9 @@
     </ClInclude>
     <ClInclude Include="gaEngine\gaPlugin\gaPView.h">
       <Filter>Fichiers d%27en-tête\gaEngine\gaPlugins</Filter>
+    </ClInclude>
+    <ClInclude Include="darkforces\dfPlugin\dfSprites.h">
+      <Filter>Fichiers d%27en-tête\DarkForces\dfPlugin</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -19,13 +19,10 @@
 
 #include "../darkforces/dfLevel.h"
 #include "../darkforces/dfSuperSector.h"
-#include "../darkforces/dfSprites.h"
 
 #include "../flightRecorder/Blackbox.h"
 
 using namespace GameEngine;
-
-static std::map<uint32_t, const char*> g_entityClassName;
 
 GameEngine::World g_gaWorld;
 
@@ -38,6 +35,39 @@ World::World() :
 }
 
 //*********************** Private functions *************************************
+
+#define MAXIMUM_MESSAGES 2048
+static int g_lastMessage = 0;
+static uint32_t g_MsgID = 0;
+static gaMessage g_messages[MAXIMUM_MESSAGES];
+static std::map<uint32_t, const char*> g_entityClassName;
+
+/**
+ * Allocate a new message
+ */
+static gaMessage* allocateMessage(void)
+{
+	// search for an available message
+	int count = 2048;
+
+	gaMessage* ptr = nullptr;
+	do {
+		--count;
+		assert(count > 0);
+
+		ptr = &g_messages[g_lastMessage++];
+		if (g_lastMessage == MAXIMUM_MESSAGES) {
+			g_lastMessage = 0;
+		}
+	} while (ptr->m_used);
+
+	ptr->m_used = true;
+	ptr->m_id = g_MsgID++;
+	ptr->m_canceled = false;
+
+	return ptr;
+}
+
 
 //*********************** public functions *************************************
 
@@ -64,6 +94,17 @@ void World::scene(fwScene* scene)
 {
 	m_scene = scene;
 	set("scene", scene);
+}
+
+/**
+ * force plugins to update
+ */
+void GameEngine::World::update(void)
+{
+	// let plugins do stuff after the queue
+	for (auto plugin : m_plugins) {
+		plugin->afterProcessing();
+	}
 }
 
 /**
@@ -234,46 +275,6 @@ void World::getModelsByClass(uint32_t myclass, std::list<GameEngine::Model*>& r)
 			r.push_back(model.second);
 		}
 	}
-}
-
-/**
- * add the sprite manager
- */
-void World::spritesManager(dfSprites* sprites)
-{
-	m_sprites = sprites;
-	sprites->OnWorldInsert();
-}
-
-#define MAXIMUM_MESSAGES 2048
-static int g_lastMessage = 0;
-static uint32_t g_MsgID = 0;
-static gaMessage g_messages[MAXIMUM_MESSAGES];
-
-/**
- * Allocate a new message
- */
-static gaMessage* allocateMessage(void)
-{
-	// search for an available message
-	int count = 2048;
-
-	gaMessage* ptr = nullptr;
-	do {
-		--count;
-		assert(count > 0);
-
-		ptr = &g_messages[g_lastMessage++];
-		if (g_lastMessage == MAXIMUM_MESSAGES) {
-			g_lastMessage = 0;
-		}
-	} while (ptr->m_used);
-
-	ptr->m_used = true;
-	ptr->m_id = g_MsgID++;
-	ptr->m_canceled = false;
-
-	return ptr;
 }
 
 gaMessage* GameEngine::World::sendMessage(gaMessage* msg)
@@ -771,7 +772,10 @@ void World::process(time_t delta, bool force)
 		message->m_used = false;
 	}
 
-	update();	// update extra attributes of the world
+	// let plugins do stuff after the queue
+	for (auto plugin : m_plugins) {
+		plugin->afterProcessing();
+	}
 
 	// swap the current queue and the queue for next frame
 	m_queue.swap(m_for_next_frame);
@@ -796,17 +800,6 @@ void GameEngine::World::clearQueue(void)
 		message.m_used = false;
 	}
 	g_lastMessage = 0;
-}
-
-/**
- * force an update of the world
- */
-void GameEngine::World::update(void)
-{
-	// update all sprites if needed
-	if (m_sprites) {
-		m_sprites->update();
-	}
 }
 
 /**

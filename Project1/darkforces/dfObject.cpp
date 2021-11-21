@@ -12,7 +12,6 @@
 #include "dfComponent.h"
 #include "dfConfig.h"
 #include "dfModel.h"
-#include "dfSprites.h"
 #include "dfObject/dfSpriteFME.h"
 #include "dfObject/dfSprite/ienergy.h"
 #include "dfObject/dfSprite/dfRifle.h"

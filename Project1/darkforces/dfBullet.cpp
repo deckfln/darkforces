@@ -23,7 +23,6 @@
 #include "weapons.h"
 #include "dfSuperSector.h"
 #include "dfModel/dfWAX.h"
-#include "dfSprites.h"
 #include "dfObject/dfBulletExplode.h"
 #include "dfVOC.h"
 

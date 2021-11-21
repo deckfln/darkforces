@@ -18,9 +18,7 @@ namespace GameEngine {
 		virtual bool dispatchMessage(gaEntity* to, gaMessage* message) {
 			return true;
 		};																	// handle messages specific for the engine
-		virtual bool interceptMessages(gaEntity* to, gaMessage* message) {
-			return true;
-		};																	// intercept messages dedicated to entities (with option to change them)
+		virtual void afterProcessing(void) {};								// execute the plugin after processing the message queue
 		~Plugin();
 	};
 }

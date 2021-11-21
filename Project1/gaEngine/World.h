@@ -19,7 +19,6 @@ class gaEntity;
 class fwScene;
 class fwMesh;
 class dfSuperSector;
-class dfSprites;
 class alSound;
 
 namespace GameEngine {
@@ -60,7 +59,6 @@ namespace GameEngine {
 		std::vector<GameEngine::Plugin*> m_plugins;			// world plugin extensions
 
 		std::vector<dfSuperSector*> m_sectors;
-		dfSprites* m_sprites = nullptr;						// sprites manager
 		std::map<std::string, GameEngine::Model*> m_models;	// list of models (images, 3D objects ...)
 		std::map<std::string, void*> m_registry;				// list of objects
 
@@ -78,6 +76,7 @@ namespace GameEngine {
 		void run(void);										// run the game engine
 		void suspend(void);									// suspend the game engine
 		void scene(fwScene* scene);							// register the scene
+		void update(void);									// force plugins to update
 
 		void addClient(gaEntity* client);					// add a spirit entity
 		void removeClient(gaEntity* client);				// remove a spirit entity
@@ -97,70 +96,22 @@ namespace GameEngine {
 			uint32_t myclass,
 			std::list<GameEngine::Model*>& r);			// return all models of a specific class
 
-		void spritesManager(dfSprites* sprites);			// add the sprites manager
-
 		gaMessage* sendMessage(gaMessage* msg);
-		gaMessage* sendMessage(const std::string& from,
-			const std::string& to,
-			int action,
-			int value,
-			void* extra);									// send message an the queue
+		gaMessage* sendMessage(const std::string& from,	const std::string& to,	int action,	int value,	void* extra);	// send message an the queue
+		gaMessage* sendMessage(const std::string& from,	const std::string& to,	int action,	int value,	float fvalue,	void* extra);									
+		gaMessage* sendMessage(const std::string& from,	const std::string& to,	int action,	int value,	const glm::vec3& v3value,	void* extra);
+		gaMessage* sendMessage(const std::string& from,	const std::string& to,	int action,	int value,	float fvalue,  const glm::vec3& v3value,	void* extra);
+		gaMessage* sendMessage(const std::string& from,	const std::string& to,	int action,	float value,	void* extra);									
+		gaMessage* sendMessage(const std::string& from,	const std::string& to,	int action,	const glm::vec3& value,	void* extra);
+		gaMessage* sendMessage(flightRecorder::Message *message);
 
-		gaMessage* sendMessage(const std::string& from,
-			const std::string& to,
-			int action,
-			int value,
-			float fvalue,
-			void* extra);									
-
-		gaMessage* sendMessage(const std::string& from,
-			const std::string& to,
-			int action,
-			int value,
-			const glm::vec3& v3value,
-			void* extra);
-
-		gaMessage* sendMessage(const std::string& from,
-			const std::string& to,
-			int action,
-			int value,
-			float fvalue,
-			const glm::vec3& v3value,
-			void* extra);
-
-		gaMessage* sendMessage(const std::string& from,
-			const std::string& to,
-			int action,
-			float value,
-			void* extra);									
-
-		gaMessage* sendMessage(const std::string& from,
-			const std::string& to,
-			int action,
-			const glm::vec3& value,
-			void* extra);									// send message an the queue
-
-		gaMessage* sendMessage(flightRecorder::Message *message);// send message an the queue
-
-		gaMessage* sendMessageDelayed(const std::string& from,
-			const std::string& to,
-			int action,
-			int value,
-			void* extra);									// send message for next frame
-
-		gaMessage* sendImmediateMessage(const std::string& from,
-			const std::string& to,
-			int action,
-			int value,
-			void* extra);									// send message for immediate dispatch
+		gaMessage* sendMessageDelayed(const std::string& from,	const std::string& to,	int action,		int value,		void* extra);		// send message for next frame
+		gaMessage* sendImmediateMessage(const std::string& from,	const std::string& to,	int action,	int value,	void* extra);			// send message for immediate dispatch
 
 		bool deleteMessage(uint32_t id);					// delete a previously submitted message
 		void deleteMessages(gaEntity*);						// delete all messages for that entity
 
 		gaEntity* getEntity(const std::string& name);
-		dfSprites* spritesManager(void) {
-			return m_sprites;
-		}
 
 		void findAABBCollision(const fwAABBox& box,
 			std::list<gaEntity*>& collisions,
@@ -179,7 +130,6 @@ namespace GameEngine {
 		void clearQueue(void);								// clear the message queue
 		inline int queueLen(void) { return m_queue.size(); }// number of messages on the queue
 		inline int frame(void) { return m_frame; }			// number of messages on the queue
-		void update(void);									// force an update of the world
 
 		bool lineOfSight(gaEntity* source, gaEntity* target); // test the line of the sight between 2 entities
 
