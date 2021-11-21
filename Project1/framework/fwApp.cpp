@@ -7,7 +7,7 @@ using namespace std::literals::chrono_literals;
 
 #include "../config.h"
 
-#include <include/imnodes.h>
+#include "../include/imnodes.h"
 
 #include "fwScene.h"
 #include "fwRenderer.h"

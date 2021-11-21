@@ -1,8 +1,8 @@
 #include "gaBehaviorNode.h"
 
-#include <include/imnodes.h>
 #include <imgui.h>
 
+#include "../include/imnodes.h"
 #include "gaComponent/gaBehaviorTree.h"
 #include "gaEntity.h"
 

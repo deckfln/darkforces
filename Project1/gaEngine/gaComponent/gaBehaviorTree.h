@@ -1,7 +1,7 @@
 #pragma once
 
 #include <map>
-#include <include/imnodes.h>
+#include "../../include/imnodes.h"
 
 #include "../gaComponent.h"
 

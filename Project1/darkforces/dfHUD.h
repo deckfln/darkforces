@@ -1,6 +1,6 @@
 #pragma once
 
-#include "framework/fwHUDelement.h"
+#include "../framework/fwHUDelement.h"
 #include "dfBitmap.h"
 
 class fwScene;
