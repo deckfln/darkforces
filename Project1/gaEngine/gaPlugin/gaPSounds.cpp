@@ -26,13 +26,13 @@ void GameEngine::Plugins::Sounds::onPropagateSound(gaEntity* from, gaMessage* me
 
 		// if the entity register the sounds it wants to hear
 		if (perception) {
-			const std::vector<alSound*> sounds = perception->heardSound();
+			const std::vector<uint32_t> sounds = perception->heardSound();
 
 			// if there are sound registered, only run the process for these sounds
 			if (sounds.size() > 0) {
 				bool process = false;
 				for (auto s : sounds) {
-					if (sound == s) {
+					if (soundID == s) {
 						process = true;
 						break;
 					}

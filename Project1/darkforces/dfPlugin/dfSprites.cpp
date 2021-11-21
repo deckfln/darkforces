@@ -10,16 +10,16 @@ static fwMaterialBasic* spriteMaterial = nullptr;
 static glUniformBuffer* models = nullptr;
 static fwUniform* modelsUniform = nullptr;
 
-DarkForces::Plugins::dfSprites g_dfSpritesEngine;
+DarkForces::Plugins::Sprites g_dfSpritesEngine;
 
-DarkForces::Plugins::dfSprites::dfSprites(void):
+DarkForces::Plugins::Sprites::Sprites(void):
 	fwSprites(),
 	GameEngine::Plugin("Sprites")
 {
 	set_name("dfSprites");
 }
 
-DarkForces::Plugins::dfSprites::dfSprites(int nbSprites, dfAtlasTexture* atlas):
+DarkForces::Plugins::Sprites::Sprites(int nbSprites, dfAtlasTexture* atlas):
 	fwSprites(nbSprites),
 	GameEngine::Plugin("Sprites")
 {
@@ -31,7 +31,7 @@ DarkForces::Plugins::dfSprites::dfSprites(int nbSprites, dfAtlasTexture* atlas):
 /**
  * initialise all data for the sprites manager
  */
-void DarkForces::Plugins::dfSprites::init(int nbSprites, dfAtlasTexture* atlas)
+void DarkForces::Plugins::Sprites::init(int nbSprites, dfAtlasTexture* atlas)
 {
 	m_size = nbSprites;
 
@@ -72,7 +72,7 @@ void DarkForces::Plugins::dfSprites::init(int nbSprites, dfAtlasTexture* atlas)
 /**
  * Add a model (wax, fme)
  */
-void DarkForces::Plugins::dfSprites::addModel(dfModel* model)
+void DarkForces::Plugins::Sprites::addModel(dfModel* model)
 {
 	const std::string& modelName = model->name();
 	m_modelsIndex[modelName] = m_nbModels;
@@ -86,7 +86,7 @@ void DarkForces::Plugins::dfSprites::addModel(dfModel* model)
 /**
  * Add a static sprite
  */
-void DarkForces::Plugins::dfSprites::add(DarkForces::Component::Sprite* sprite)
+void DarkForces::Plugins::Sprites::add(DarkForces::Component::Sprite* sprite)
 {
 	// find an empty slot
 	size_t slot;
@@ -134,7 +134,7 @@ void DarkForces::Plugins::dfSprites::add(DarkForces::Component::Sprite* sprite)
 /**
  * Push updated attributes to the GPU
  */
-void DarkForces::Plugins::dfSprites::update(void)
+void DarkForces::Plugins::Sprites::update(void)
 {
 	int i = 0;
 	bool b;
@@ -175,7 +175,7 @@ void DarkForces::Plugins::dfSprites::update(void)
 /**
  * Remove a sprite from the list
  */
-void DarkForces::Plugins::dfSprites::remove(DarkForces::Component::Sprite* sprite)
+void DarkForces::Plugins::Sprites::remove(DarkForces::Component::Sprite* sprite)
 {
 	for (size_t i = 0; i < m_objects.size(); i++) {
 		if (m_objects[i] == sprite) {
@@ -191,7 +191,7 @@ void DarkForces::Plugins::dfSprites::remove(DarkForces::Component::Sprite* sprit
 /**
  *
  */
-void DarkForces::Plugins::dfSprites::OnWorldInsert(void)
+void DarkForces::Plugins::Sprites::OnWorldInsert(void)
 {
 	fwScene* scene = (fwScene * )g_gaWorld.get("scene");
 	scene->addChild(this);
@@ -200,7 +200,7 @@ void DarkForces::Plugins::dfSprites::OnWorldInsert(void)
 /**
  * trigger when from the gaWorld
  */
-void DarkForces::Plugins::dfSprites::OnWorldRemove(void)
+void DarkForces::Plugins::Sprites::OnWorldRemove(void)
 {
 	fwScene* scene = (fwScene*)g_gaWorld.get("scene");
 	scene->removeChild(this);
@@ -209,7 +209,7 @@ void DarkForces::Plugins::dfSprites::OnWorldRemove(void)
 /**
  * // execute the plugin after processing the message queue
  */
-void DarkForces::Plugins::dfSprites::afterProcessing(void)
+void DarkForces::Plugins::Sprites::afterProcessing(void)
 {
 	update();
 }

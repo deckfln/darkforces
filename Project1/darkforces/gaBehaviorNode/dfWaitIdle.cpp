@@ -36,6 +36,7 @@ void DarkForces::Behavior::WaitIdle::dispatchMessage(gaMessage* message, Action*
 		return startChild(r, 0, m_data); }
 
 	case gaMessage::Action::VIEW:
+	case gaMessage::Action::HEAR_SOUND:
 		m_original = m_entity->position();
 		m_data = &m_original;
 		m_runningChild = 0;

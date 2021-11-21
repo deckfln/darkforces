@@ -24,8 +24,7 @@ DarkForces::Enemy::Enemy(dfWAX* model, const glm::vec3& position, float ambient,
 
 	addComponent(&m_aiPerception);
 	m_aiPerception.audio();
-	m_aiPerception.hearSound(DarkForces::loadSound(DarkForces::Sounds::WALL_HIT_LASER)->sound());	// enemy react when they hear a bullet hitting a wall
-	m_aiPerception.hearSound(DarkForces::loadSound(DarkForces::Sounds::STORM_COMMANDO_OFFICER_HIT_LASER)->sound());	// enemy react when they hear a bullet hitting an other enemy
+	m_aiPerception.hearSound(DarkForces::Component::Actor::Sound::FIRE);	// enemy react when they hear a bullet hitting a wall
 
 	m_aiPerception.view();
 	m_aiPerception.distance(m_radius * 30.0f);

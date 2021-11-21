@@ -19,7 +19,7 @@ class dfSprite;
 
 namespace DarkForces {
 	namespace Plugins {
-		class dfSprites : public GameEngine::Plugin, fwSprites
+		class Sprites : public GameEngine::Plugin, fwSprites
 		{
 			std::vector<glm::vec3> m_positions;						// position of each sprite
 			std::vector<glm::vec3> m_directions;					// direction of the virtual object
@@ -41,8 +41,8 @@ namespace DarkForces {
 			bool m_added = false;
 
 		public:
-			dfSprites(void);
-			dfSprites(int nbSprites, dfAtlasTexture* atlas);
+			Sprites(void);
+			Sprites(int nbSprites, dfAtlasTexture* atlas);
 			void init(int nbSprites, dfAtlasTexture* atlas);		// initialise all data for the sprites manager
 			void addModel(dfModel* model);
 			void add(DarkForces::Component::Sprite* object);		// add a sprite
@@ -57,4 +57,4 @@ namespace DarkForces {
 	}
 }
 
-extern DarkForces::Plugins::dfSprites g_dfSpritesEngine;
+extern DarkForces::Plugins::Sprites g_dfSpritesEngine;
