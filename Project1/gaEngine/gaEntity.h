@@ -71,7 +71,9 @@ protected:
 public:
 	enum Flag {
 		DONT_DELETE,
-		DELETE_AT_EXIT
+		DELETE_AT_EXIT,
+		EXTEND_AABB,
+		DONT_EXTEND_AABB
 	};
 	gaEntity(uint32_t mclass);
 	gaEntity(uint32_t mclass, const std::string& name);
@@ -127,7 +129,7 @@ public:
 	float radius(void);									// maximum radius of the entity (radius of the AABB if not initialized)
 	float height(void);									// maximum height of the entity (height of the AABB if not initialized)
 
-	void addChild(gaEntity* entity);					// add an entity inside that one (and increase the AABB if needed)
+	void addChild(gaEntity* entity, Flag flag=EXTEND_AABB);		// add an entity inside that one (and increase the AABB if needed)
 
 	bool collideAABB(const fwAABBox& box);				// quick test to find AABB collision
 	bool collideAABB(gaEntity const* with);				// quick test to find AABB collision

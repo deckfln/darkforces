@@ -177,6 +177,7 @@ dfSector::dfSector(std::istringstream& infile, std::vector<dfSector*>& sectorsID
 	dfLevel::level2gl(p1);
 	m_worldAABB = GameEngine::AABBoxTree(p, p1);
 	m_worldBounding = fwAABBox(p, p1);
+	m_modelAABB = fwAABBox(p, p1);
 }
 
 /**
@@ -661,7 +662,8 @@ dfLogicTrigger* dfSector::addSign(dfMesh *mesh, dfWall* wall, float z, float z1,
 
 	// add the sign as a sub-entity of the current object
 	// if the current object moves, the sign will move along
-	addChild(trigger);
+	// the sign is mapped on the sector, no need to extend the entity modelAABB
+	addChild(trigger, gaEntity::Flag::DONT_EXTEND_AABB);
 
 	return trigger;
 }

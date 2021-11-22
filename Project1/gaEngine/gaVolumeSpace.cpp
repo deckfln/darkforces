@@ -194,7 +194,8 @@ void GameEngine::VolumeSpace::path(const glm::vec3& source, const glm::vec3& lis
 			new_cost = data[current].cost_so_far + glm::distance(old_position, p.center());
 			current_loundness = loundness - 20 * log10(new_cost);
 
-			if (current_loundness > 25.0f) {
+			// only continue the tree if the current sound is lound enough and the next portal is not blocked (transparency=0)
+			if (current_loundness > 25.0f && m_volumes[next].transparency() > 0) {
 				data[next] = Data(
 					current,
 					new_cost * m_volumes[next].transparency(),
@@ -205,4 +206,12 @@ void GameEngine::VolumeSpace::path(const glm::vec3& source, const glm::vec3& lis
 			}
 		}
 	}
+}
+
+/**
+ * set the volume transparency
+ */
+void GameEngine::VolumeSpace::transparency(uint32_t volumeID, float transparency)
+{
+	m_volumes[volumeID].transparency(transparency);
 }

@@ -294,7 +294,9 @@ void dfParseINF::parseSector(std::istringstream& infile, const std::string& sect
 
 				pSector->addElevator(inv);
 				pSector->addComponent(m_component, gaEntity::Flag::DELETE_AT_EXIT);
-				inv->gotoStop(0);
+
+				// move the elevator at the default position at first run
+				pSector->sendMessage(DarkForces::Message::GOTO_STOP_FORCE, 0);
 
 				if (sound) {
 					// if sounds were defined in the INF

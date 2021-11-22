@@ -223,14 +223,14 @@ dfLevel::dfLevel(dfFileSystem* fs, std::string file)
 	// partition of space for quick move
 	spacePartitioning();		
 
-	// convert the sectors into space volumes for sound
-	createSoundVolumes();
-
 	// build the geometry of each super sectors
 	buildGeometry();			
 
 	// for every sector 'DOOR', create an elevator and a trigger
 	convertDoors2Elevators();	
+
+	// convert the sectors into space volumes for sound
+	createSoundVolumes();
 
 	// Add doors
 	for (auto door : m_doors) {
@@ -390,10 +390,13 @@ void dfLevel::convertDoors2Elevators(void)
 void dfLevel::createSoundVolumes(void)
 {
 	std::map<uint32_t, uint32_t> sector2Volume;
+	uint32_t volumeID;
 
 	// load all sectors wAABB as volumes in the sound volume
 	for (auto sector : m_sectorsID) {
-		sector2Volume[sector->m_id] = m_soundVolumes.add(sector->worldAABB());
+		volumeID = m_soundVolumes.add(sector->worldAABB());
+		sector2Volume[sector->m_id] = volumeID;
+		sector->soundVolume(volumeID);
 	}
 
 	// use the sector portals to link the volumes

@@ -15,6 +15,7 @@ using Point = std::array<Coord, 2>;
 #include "../gaEngine/gaMessage.h"
 #include "../gaEngine/gaEntity.h"
 #include "../gaEngine/gaComponent/gaSound.h"
+#include "../gaEngine/gaVolumeSpace.h"
 
 #include "dfComponent/InfStandardTrigger.h"
 
@@ -113,6 +114,7 @@ class dfSector : public gaEntity
 	std::vector<uint32_t> m_portalWall;					// wall used as a portal to another sector
 	std::vector<uint32_t> m_mirrorWall;					// wall used as a portal to another sector
 
+	uint32_t m_soundVolumeID;							// sound volume based on the sector
 	GameEngine::Component::Sound m_sound;               // to play sound when a laser hit the wall
 
 	void buildWalls(dfMesh* mesh, dfWallFlag displayPolygon);
@@ -161,7 +163,8 @@ public:
 	inline void supersector(dfSuperSector* s) { m_super = s; };
 	inline uint32_t portalWall(uint32_t portalID) { return m_portalWall[portalID]; };
 	inline uint32_t portalMirror(uint32_t portalID) { return m_mirrorWall[portalID]; };
-
+	inline void soundVolume(uint32_t volume) { m_soundVolumeID = volume; };
+	inline uint32_t soundVolume(void) { return m_soundVolumeID; };
 	void wallCenter(uint32_t wallID, glm::vec3& center);			// fill the 3D center of the wall
 
 	void ceiling(float z);

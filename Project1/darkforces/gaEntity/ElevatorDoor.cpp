@@ -64,7 +64,7 @@ DarkForces::Entity::ElevatorDoor::ElevatorDoor(dfSector* sector):
 	addComponent(trigger, gaEntity::Flag::DELETE_AT_EXIT);
 
 	//only init the elevator at the end, AFTER the entity position is forced by the Mesh 
-	elevator->gotoStop(0);
+	sector->sendMessage(DarkForces::Message::GOTO_STOP_FORCE, 0);
 }
 
 DarkForces::Entity::ElevatorDoor::~ElevatorDoor()

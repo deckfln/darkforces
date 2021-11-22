@@ -295,9 +295,10 @@ void DarkForces::Component::InfElevator::addSound(uint32_t action, dfVOC* sound)
 /**
  * Force an elevator to go to a specific Stop
  */
-void DarkForces::Component::InfElevator::gotoStop(uint32_t stop)
+void DarkForces::Component::InfElevator::onGotoStopForced(gaMessage* message)
 {
-	m_currentStop = stop;
+
+	m_currentStop = message->m_value;
 	moveTo(m_stops[m_currentStop]);
 }
 
@@ -332,6 +333,10 @@ void DarkForces::Component::InfElevator::dispatchMessage(gaMessage* message)
 			m_entity->sendMessage(trigger->entity()->name(), DarkForces::Message::TRIGGER);
 		}
 
+		break;
+
+	case DarkForces::Message::GOTO_STOP_FORCE:
+		onGotoStopForced(message);
 		break;
 
 	case DarkForces::Message::GOTO_STOP:

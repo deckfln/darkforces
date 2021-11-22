@@ -87,8 +87,6 @@ namespace DarkForces {
 			void addStop(dfLogicStop* stop);				// add a stop and update the range of the elevator
 			void addSound(uint32_t action, dfVOC* sound);	// register a sound for a SART, MOVE, STOP
 
-			void gotoStop(uint32_t stop);					// Force an elevator to go to a specific Stop
-
 			void dispatchMessage(gaMessage* message) override;
 
 			virtual dfMesh* buildMesh(void);				// build the dfMesh of the elevator
@@ -149,6 +147,9 @@ namespace DarkForces {
 			bool animate(time_t delta);						// move between stops
 			void startTimer(void);
 			void stopTimer(void);
+
+			// messages
+			void onGotoStopForced(gaMessage* message);		// Force an elevator to go to a specific Stop
 		};
 	}
 }

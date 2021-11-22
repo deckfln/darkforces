@@ -55,6 +55,11 @@ void GameEngine::Plugins::Sounds::onPropagateSound(gaEntity* from, gaMessage* me
 	}
 }
 
+void GameEngine::Plugins::Sounds::onChangeVolumeTransparency(gaEntity* to, gaMessage* message)
+{
+	g_gaLevel->volume().transparency(message->m_value, message->m_fvalue);
+}
+
 /**
  *
  */
@@ -91,6 +96,10 @@ bool GameEngine::Plugins::Sounds::dispatchMessage(gaEntity*to, gaMessage* messag
 	case gaMessage::Action::PROPAGATE_SOUND:
 		onPropagateSound(to, message);
 		break;
+
+	case gaMessage::Action::VOLUME_TRANSPARENCY:
+		onChangeVolumeTransparency(to, message);
+		return false;	// intercept the message
 	}
 	return true;
 }

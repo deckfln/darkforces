@@ -44,6 +44,7 @@ namespace GameEngine {
 			inline Portal& portal(uint32_t i) { return m_portals[i]; };
 			inline const glm::vec3 center(void) { return m_worldAABB.center(); };
 			inline const float transparency(void) { return m_transparency; };
+			inline void transparency(const float transparency) { m_transparency = transparency; };
 		};
 	};
 
@@ -62,5 +63,6 @@ namespace GameEngine {
 			float loudness,												// sound loundness (in Decibel)
 			std::vector<GameEngine::Sound::Virtual>& xSolutions
 			);															// build a path between the 2 volumes
+		void transparency(uint32_t volumeID, float transparency);		// set the volume transparency
 	};
 }

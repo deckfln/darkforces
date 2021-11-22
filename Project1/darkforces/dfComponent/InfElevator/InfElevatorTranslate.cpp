@@ -1,6 +1,7 @@
 #include "InfElevatorTranslate.h"
 
 #include "../../dfFileSystem.h"
+#include "../../dfSector.h"
 #include "../../../config.h"
 
 void DarkForces::Component::InfElevatorTranslate::moveTo(float z_lvl)
@@ -10,6 +11,34 @@ void DarkForces::Component::InfElevatorTranslate::moveTo(float z_lvl)
 	tr->m_position = m_entity->position();
 	tr->m_position.y = z_lvl / 10.0f;
 	m_entity->sendMessage(m_entity->name(), gaMessage::Action::WANT_TO_MOVE, 0, tr);
+
+	// change the sound 'opacity' of the elevator (door) base don openess
+	switch (m_type) {
+	case DarkForces::Component::InfElevator::Type::DOOR: {
+		float h = m_zmax - m_zmin;
+		float p = z_lvl - m_zmin;
+		float openess = 0;
+		
+		if (p > 0) {
+			p = h / p;
+		}
+		break;
+	}
+	case DarkForces::Component::InfElevator::Type::INV:
+	case DarkForces::Component::InfElevator::Type::BASIC: {
+		dfSector* sector = dynamic_cast<dfSector*>(m_entity);
+		float h = sector->staticCeilingAltitude() - sector->staticFloorAltitude();
+		float p = z_lvl - sector->staticFloorAltitude();
+		float openess = 0;
+
+		if (p > 0) {
+			openess = p / h;
+		}
+		m_entity->sendMessage(gaMessage::Action::VOLUME_TRANSPARENCY, sector->soundVolume(), openess);
+
+		break;
+	}
+	}
 }
 
 DarkForces::Component::InfElevatorTranslate::InfElevatorTranslate(DarkForces::Component::InfElevator::Type kind, dfSector* sector, bool smart):

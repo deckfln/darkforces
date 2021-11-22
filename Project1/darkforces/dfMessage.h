@@ -6,7 +6,8 @@
 namespace DarkForces {
 	enum Message {
 		TRIGGER = 1024,
-		GOTO_STOP,
+		GOTO_STOP,			// move to the next stop
+		GOTO_STOP_FORCE,	// jump directly to the stop
 		DONE,
 		ADD_SHIELD,
 		ADD_ENERGY,

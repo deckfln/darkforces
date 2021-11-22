@@ -113,11 +113,13 @@ gaComponent* gaEntity::findComponent(int type)
 /**
  * add an entity inside that one (and increase the AABB if needed)
  */
-void gaEntity::addChild(gaEntity* entity)
+void gaEntity::addChild(gaEntity* entity, Flag flag)
 {
 	fwObject3D::addChild(entity);
-	m_modelAABB.extend(entity->m_modelAABB);
-	updateWorldAABB();
+	if (flag == EXTEND_AABB) {
+		m_modelAABB.extend(entity->m_modelAABB);
+		updateWorldAABB();
+	}
 }
 
 /**
