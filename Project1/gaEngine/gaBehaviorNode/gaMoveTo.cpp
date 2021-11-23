@@ -380,6 +380,7 @@ void GameEngine::Behavior::MoveTo::dispatchMessage(gaMessage* message, Action *r
 
 	case gaMessage::Action::WOULD_FALL:
 		// find an other path
+		return failed(r);
 		__debugbreak();
 		break;
 	}

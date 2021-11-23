@@ -39,7 +39,6 @@ class dfLevel : public GameEngine::Level
 	std::vector<dfSector*> m_sectorsID;			// all sectors of the level by ID
 	std::vector<dfBitmap*> m_bitmaps;			// all textures of the level
 
-	std::list<gaEntity*> m_doors;				// all doors on the level
 	glm::vec3 m_skyTexture;						// Identify texture for sectors FLAGS1 = 1
 	float m_skyAltitude=0;						
 

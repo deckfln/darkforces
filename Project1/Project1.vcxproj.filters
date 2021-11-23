@@ -169,6 +169,12 @@
     <Filter Include="Fichiers sources\Dark Forces\dfPlugin">
       <UniqueIdentifier>{ef667e4d-9402-4346-8d05-a1736875f93c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Fichiers sources\Dark Forces\prefab">
+      <UniqueIdentifier>{d9a1e9f4-9a4b-4248-bc58-0179185d3c7f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers d%27en-tête\DarkForces\prefab">
+      <UniqueIdentifier>{bf5c22c9-234e-43c8-b06a-138f033205a6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source.cpp">
@@ -797,6 +803,9 @@
     </ClCompile>
     <ClCompile Include="darkforces\dfPlugin\dfSprites.cpp">
       <Filter>Fichiers sources\Dark Forces\dfPlugin</Filter>
+    </ClCompile>
+    <ClCompile Include="darkforces\prefab\dfElevatorDoor.cpp">
+      <Filter>Fichiers sources\Dark Forces\prefab</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1525,6 +1534,9 @@
     </ClInclude>
     <ClInclude Include="darkforces\dfPlugin\dfSprites.h">
       <Filter>Fichiers d%27en-tête\DarkForces\dfPlugin</Filter>
+    </ClInclude>
+    <ClInclude Include="darkforces\prefab\dfElevatorDoor.h">
+      <Filter>Fichiers d%27en-tête\DarkForces\prefab</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

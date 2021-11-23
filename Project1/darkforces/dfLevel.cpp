@@ -31,8 +31,7 @@
 #include "dfComponent.h"
 #include "dfComponent/InfElevator.h"
 #include "dfComponent/Trigger.h"
-
-#include "gaEntity/ElevatorDoor.h"
+#include "prefab/dfElevatorDoor.h"
 
 dfLevel::dfLevel(dfFileSystem* fs, std::string file)
 {
@@ -232,11 +231,6 @@ dfLevel::dfLevel(dfFileSystem* fs, std::string file)
 	// convert the sectors into space volumes for sound
 	createSoundVolumes();
 
-	// Add doors
-	for (auto door : m_doors) {
-		g_gaWorld.addClient(door);
-	}
-
 	// Add the missing triggers to the world
 	for (auto trigger : m_inf->m_triggers) {
 		if (g_gaWorld.getEntity(trigger->name()) == nullptr) {
@@ -377,9 +371,7 @@ void dfLevel::convertDoors2Elevators(void)
 {
 	for (auto sector: m_sectorsID) {
 		if (sector->flag() & dfSectorFlag::DOOR) {
-			DarkForces::Entity::ElevatorDoor* door = new DarkForces::Entity::ElevatorDoor(sector);
-			//m_inf->m_triggers.push_back(door->trigger());
-			m_doors.push_back(door);
+			DarkForces::Prefab::ElevatorDoor(sector);
 		}
 	}
 }
@@ -590,9 +582,6 @@ dfLevel::~dfLevel()
 	}
 	for (auto bitmap : m_bitmaps) {
 		delete bitmap;
-	}
-	for (auto door : m_doors) {
-		delete door;
 	}
 
 	delete m_inf;
