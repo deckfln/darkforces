@@ -269,7 +269,7 @@ float dfSector::staticCeilingAltitude(void)
 /**
  * fill in the 3D center of the wall
  */
-void dfSector::wallCenter(uint32_t wallID, glm::vec3& center)
+void dfSector::wallCenter(uint32_t wallID, glm::vec3& center, float &surface)
 {
 	dfWall* wall = m_walls[wallID];
 
@@ -277,6 +277,10 @@ void dfSector::wallCenter(uint32_t wallID, glm::vec3& center)
 	glm::vec2 center2D = (m_vertices[wall->m_left] + m_vertices[wall->m_right]) / 2.0f;
 	center.x = center2D.x;
 	center.y = center2D.y;
+
+	float w = glm::distance(m_vertices[wall->m_left], m_vertices[wall->m_right]),
+		h = m_staticMeshCeilingAltitude - m_staticMeshFloorAltitude;
+	surface = w * h;
 }
 
 /**

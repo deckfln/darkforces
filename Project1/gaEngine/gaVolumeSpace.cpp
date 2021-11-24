@@ -49,18 +49,18 @@ uint32_t GameEngine::VolumeSpace::add(const fwAABBox& aabb)
 /**
  * one way portal from id to id1
  */
-void GameEngine::VolumeSpace::link(uint32_t id, uint32_t id1, const glm::vec3& center)
+void GameEngine::VolumeSpace::link(uint32_t id, uint32_t id1, const glm::vec3& center, float surface)
 {
-	m_volumes[id].linkTo(id1, center);
+	m_volumes[id].linkTo(id1, center, surface);
 }
 
 /**
  * two-way portal from id to id1
  */
-void GameEngine::VolumeSpace::link2(uint32_t id, uint32_t id1, const glm::vec3& center)
+void GameEngine::VolumeSpace::link2(uint32_t id, uint32_t id1, const glm::vec3& center, float surface)
 {
-	m_volumes[id].linkTo(id1, center);
-	m_volumes[id1].linkTo(id, center);
+	m_volumes[id].linkTo(id1, center, surface);
+	m_volumes[id1].linkTo(id, center, surface);
 }
 
 /**
@@ -199,7 +199,7 @@ void GameEngine::VolumeSpace::path(const glm::vec3& source, const glm::vec3& lis
 			if (current_loundness > 25.0f && m_volumes[next].transparency() > 0) {
 				data[next] = Data(
 					current,
-					new_cost * m_volumes[next].transparency(),
+					new_cost * m_volumes[next].transparency() * p.absorption(),
 					p.center()
 				);
 

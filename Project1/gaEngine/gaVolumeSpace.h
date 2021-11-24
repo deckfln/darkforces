@@ -16,13 +16,26 @@ namespace GameEngine {
 		class Portal {
 			uint32_t m_id;					// index of the next volume in the list
 			glm::vec3 m_center;
+			float m_surface;
+			float m_absortion;				// percentage of sound absorbtion based on surface
 		public:
-			Portal(uint32_t id, const glm::vec3& center) {
-				m_id = id;
-				m_center = center;
+			Portal(uint32_t id, const glm::vec3& center, float surface):
+				m_id(id),
+				m_center(center),
+				m_surface(surface)
+			{		
+				if (m_surface > 1.0f)
+					m_absortion = 1.0f;
+				else if (m_surface > 0.5f)
+					m_absortion = 0.8f;
+				else if (m_surface > 0.25f)
+					m_absortion = 0.6f;
+				else
+					m_absortion = 0.4f;
 			}
 			inline uint32_t volumeID(void) { return m_id; };
 			inline const glm::vec3 center(void) { return m_center; };
+			inline const float absorption(void) { return m_absortion; };
 		};
 
 		class Volume {
@@ -39,7 +52,7 @@ namespace GameEngine {
 
 			// getter/setter
 			inline uint32_t id(void) { return m_id; };
-			inline void linkTo(uint32_t id, const glm::vec3& center) { m_portals.push_back(Portal(id, center)); };
+			inline void linkTo(uint32_t id, const glm::vec3& center, float surface) { m_portals.push_back(Portal(id, center, surface)); };
 			inline uint32_t portal(void) { return m_portals.size(); };
 			inline Portal& portal(uint32_t i) { return m_portals[i]; };
 			inline const glm::vec3 center(void) { return m_worldAABB.center(); };
@@ -55,8 +68,8 @@ namespace GameEngine {
 	public:
 		VolumeSpace(void);
 		uint32_t add(const fwAABBox& aabb);								// create a new volume on the list
-		void link(uint32_t id, uint32_t id1, const glm::vec3& center);	// one way portal from id to id1
-		void link2(uint32_t id, uint32_t id1, const glm::vec3& center);	// two way portal from id to id1
+		void link(uint32_t id, uint32_t id1, const glm::vec3& center, float surface);	// one way portal from id to id1
+		void link2(uint32_t id, uint32_t id1, const glm::vec3& center, float surface);	// two way portal from id to id1
 		void path(
 			const glm::vec3& source, 
 			const glm::vec3& listener, 

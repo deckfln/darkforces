@@ -165,7 +165,7 @@ public:
 	inline uint32_t portalMirror(uint32_t portalID) { return m_mirrorWall[portalID]; };
 	inline void soundVolume(uint32_t volume) { m_soundVolumeID = volume; };
 	inline uint32_t soundVolume(void) { return m_soundVolumeID; };
-	void wallCenter(uint32_t wallID, glm::vec3& center);			// fill the 3D center of the wall
+	void wallCenter(uint32_t wallID, glm::vec3& center, float &surface);			// fill the 3D center of the wall
 
 	void ceiling(float z);
 

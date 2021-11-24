@@ -400,6 +400,7 @@ void dfLevel::createSoundVolumes(void)
 	dfSector* portalSector;
 	float floor;
 	float ceiling;
+	float surface;
 
 	for (auto sector : m_sectorsID) {
 		portalID = 0;
@@ -411,13 +412,13 @@ void dfLevel::createSoundVolumes(void)
 
 			// some data on the front up wall portal
 			wallID = sector->portalWall(portalID);
-			sector->wallCenter(wallID, center);
+			sector->wallCenter(wallID, center, surface);
 
 			// and replace the altitude
 			center.z = (floor + ceiling) / 2.0f;
 
 			level2gl(center);
-			m_soundVolumes.link(sector2Volume[sector->m_id], sector2Volume[portal], center);
+			m_soundVolumes.link(sector2Volume[sector->m_id], sector2Volume[portal], center, surface/100.0);
 			portalID++;
 		}
 	}
