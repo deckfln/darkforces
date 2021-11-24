@@ -17,41 +17,40 @@ void DarkForces::Component::InfElevatorTranslate::moveTo(float z_lvl)
 	// change the sound 'opacity' of the elevator (door) base don openess
 	dfSector* sector = dynamic_cast<dfSector*>(m_entity);
 	float openess = 0;
+	float h;
+	float p;
 
 	switch (m_type) {
-	case DarkForces::Component::InfElevator::Type::DOOR: {
-		float h = m_stops[1]->z_position(m_type) - m_stops[0]->z_position(m_type);
-		float p = z_lvl - m_stops[0]->z_position(m_type);
+	case DarkForces::Component::InfElevator::Type::DOOR:
+		h = m_stops[1]->z_position(m_type) - m_stops[0]->z_position(m_type);
+		p = z_lvl - m_stops[0]->z_position(m_type);
+		break;
 
-		if (p > 0) {
-			openess = p / h;
-		}
-		m_entity->sendMessage(gaMessage::Action::VOLUME_TRANSPARENCY, sector->soundVolume(), openess);
-		break; }
+	case DarkForces::Component::InfElevator::Type::MOVE_FLOOR:
+		h = sector->staticCeilingAltitude() - sector->staticFloorAltitude();
+		p = sector->staticCeilingAltitude() - z_lvl;
+		break;
 
-	case DarkForces::Component::InfElevator::Type::MOVE_FLOOR: {
-		float h = sector->staticCeilingAltitude() - sector->staticFloorAltitude();
-		float p = sector->staticCeilingAltitude() - z_lvl;
-
-		if (p > 0) {
-			openess = p / h;
-		}
-		m_entity->sendMessage(gaMessage::Action::VOLUME_TRANSPARENCY, sector->soundVolume(), openess);
-
-		break; }
+	case DarkForces::Component::InfElevator::Type::MOVE_CEILING:
+		h = sector->staticCeilingAltitude() - sector->staticFloorAltitude();
+		p = sector->staticFloorAltitude() - z_lvl;
+		break;
 
 	case DarkForces::Component::InfElevator::Type::INV:
-	case DarkForces::Component::InfElevator::Type::BASIC: {
-		float h = sector->staticCeilingAltitude() - sector->staticFloorAltitude();
-		float p = z_lvl - sector->staticFloorAltitude();
+	case DarkForces::Component::InfElevator::Type::BASIC:
+		h = sector->staticCeilingAltitude() - sector->staticFloorAltitude();
+		p = z_lvl - sector->staticFloorAltitude();
+		break;
 
-		if (p > 0) {
-			openess = p / h;
-		}
-		m_entity->sendMessage(gaMessage::Action::VOLUME_TRANSPARENCY, sector->soundVolume(), openess);
-
-		break; }
+	default:
+		p = h = 1.0f;
+		__debugbreak();
 	}
+
+	if (p > 0) {
+		openess = p / h;
+	}
+	m_entity->sendMessage(gaMessage::Action::VOLUME_TRANSPARENCY, sector->soundVolume(), openess);
 }
 
 DarkForces::Component::InfElevatorTranslate::InfElevatorTranslate(DarkForces::Component::InfElevator::Type kind, dfSector* sector, bool smart):
