@@ -22,13 +22,24 @@ void DarkForces::Component::InfElevatorTranslate::moveTo(float z_lvl)
 	case DarkForces::Component::InfElevator::Type::DOOR: {
 		float h = m_stops[1]->z_position(m_type) - m_stops[0]->z_position(m_type);
 		float p = z_lvl - m_stops[0]->z_position(m_type);
-		
+
 		if (p > 0) {
 			openess = p / h;
 		}
 		m_entity->sendMessage(gaMessage::Action::VOLUME_TRANSPARENCY, sector->soundVolume(), openess);
-		break;
-	}
+		break; }
+
+	case DarkForces::Component::InfElevator::Type::MOVE_FLOOR: {
+		float h = sector->staticCeilingAltitude() - sector->staticFloorAltitude();
+		float p = sector->staticCeilingAltitude() - z_lvl;
+
+		if (p > 0) {
+			openess = p / h;
+		}
+		m_entity->sendMessage(gaMessage::Action::VOLUME_TRANSPARENCY, sector->soundVolume(), openess);
+
+		break; }
+
 	case DarkForces::Component::InfElevator::Type::INV:
 	case DarkForces::Component::InfElevator::Type::BASIC: {
 		float h = sector->staticCeilingAltitude() - sector->staticFloorAltitude();
@@ -39,8 +50,7 @@ void DarkForces::Component::InfElevatorTranslate::moveTo(float z_lvl)
 		}
 		m_entity->sendMessage(gaMessage::Action::VOLUME_TRANSPARENCY, sector->soundVolume(), openess);
 
-		break;
-	}
+		break; }
 	}
 }
 
