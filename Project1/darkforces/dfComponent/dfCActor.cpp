@@ -131,7 +131,7 @@ void DarkForces::Component::Actor::onAnimNextFrame(gaMessage* message)
 	// only do something if the player is dying
 	glm::vec3 p = m_entity->position();
 	GameEngine::Transform* transform = m_entity->pTransform();
-	transform->m_position += m_dyingDirection;
+	transform->m_position = p + m_dyingDirection;
 
 	// the actor can fall off an edge when dying
 	m_entity->sendMessage(gaMessage::Action::WANT_TO_MOVE, gaMessage::Flag::WANT_TO_MOVE_FALL, transform);
