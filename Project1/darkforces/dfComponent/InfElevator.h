@@ -33,12 +33,6 @@ namespace DarkForces {
 		 */
 		class InfElevator : public gaComponent {
 		public:
-			/* Sounds to play when elevator move */
-			enum Sound {
-				START = 0,	// leaving a stop
-				MOVE = 1,	// moving between stops
-				END = 2		// arriving at stop
-			};
 			enum class Type {
 				INV,		// moving up
 				BASIC,		// moving down

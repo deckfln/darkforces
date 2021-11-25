@@ -12,6 +12,7 @@
 #include "../dfVOC.h"
 #include "../dfSector.h"
 #include "../dfMesh.h"
+#include "../dfSounds.h"
 #include "Trigger.h"
 
 #include "../flightRecorder/frCompElevator.h"
@@ -85,8 +86,8 @@ void DarkForces::Component::InfElevator::moveToNextStop(void)
 		m_delay = abs(m_direction) * 838 / m_speed;
 
 		// play the starting sound & the moving sound
-		m_entity->sendInternalMessage(gaMessage::PLAY_SOUND, DarkForces::Component::InfElevator::Sound::START);
-		m_entity->sendInternalMessage(gaMessage::PLAY_SOUND, DarkForces::Component::InfElevator::Sound::MOVE);
+		m_entity->sendMessage(gaMessage::PLAY_SOUND, DarkForces::Sounds::ELEVATOR_START);
+		m_entity->sendMessage(gaMessage::PLAY_SOUND, DarkForces::Sounds::ELEVATOR_MOVE);
 	}
 	else {
 		// instant move
@@ -158,15 +159,15 @@ bool DarkForces::Component::InfElevator::animate(time_t delta)
 
 				// stop the move sound and play the end sound if it exists AND the stop is NOT zero
 				if (stop->time() != 0) {
-					m_entity->sendInternalMessage(gaMessage::STOP_SOUND, DarkForces::Component::InfElevator::Sound::MOVE);
-					m_entity->sendInternalMessage(gaMessage::STOP_SOUND, DarkForces::Component::InfElevator::Sound::END);
+					m_entity->sendMessage(gaMessage::STOP_SOUND, DarkForces::Sounds::ELEVATOR_MOVE);
+					m_entity->sendMessage(gaMessage::STOP_SOUND, DarkForces::Sounds::ELEVATOR_STOP);
 				}
 			}
 			else {
 				// still moving
 				// play the end sound if it exists
-				m_entity->sendInternalMessage(gaMessage::STOP_SOUND, DarkForces::Component::InfElevator::Sound::MOVE);
-				m_entity->sendInternalMessage(gaMessage::PLAY_SOUND, DarkForces::Component::InfElevator::Sound::END);
+				m_entity->sendMessage(gaMessage::STOP_SOUND, DarkForces::Sounds::ELEVATOR_MOVE);
+				m_entity->sendMessage(gaMessage::PLAY_SOUND, DarkForces::Sounds::ELEVATOR_STOP);
 
 				switch (stop->action()) {
 				case dfLogicStop::Action::HOLD:
@@ -369,8 +370,8 @@ void DarkForces::Component::InfElevator::dispatchMessage(gaMessage* message)
 			if (m_status == Status::HOLD) {
 
 				// start the sounds
-				m_entity->sendInternalMessage(gaMessage::PLAY_SOUND, DarkForces::Component::InfElevator::Sound::START);
-				m_entity->sendInternalMessage(gaMessage::PLAY_SOUND, DarkForces::Component::InfElevator::Sound::MOVE);
+				m_entity->sendMessage(gaMessage::PLAY_SOUND, DarkForces::Sounds::ELEVATOR_START);
+				m_entity->sendMessage(gaMessage::PLAY_SOUND, DarkForces::Sounds::ELEVATOR_MOVE);
 
 				m_status = Status::MOVE;
 				startTimer();

@@ -10,6 +10,7 @@
 #include "../dfLogicTrigger.h"
 #include "../dfMesh.h"
 #include "../dfVOC.h"
+#include "../dfSounds.h"
 #include "../dfComponent/Trigger.h"
 #include "../dfComponent/InfElevator/InfElevatorVertical/InfElevatorDoor.h"
 
@@ -52,7 +53,7 @@ DarkForces::Entity::ElevatorDoor::ElevatorDoor(dfSector* sector):
 
 	// prepare the sound component
 	GameEngine::Component::Sound* sound = new GameEngine::Component::Sound();
-	sound->addSound(DarkForces::Component::InfElevator::Sound::START, loadVOC("door.voc")->sound());
+	sound->addSound(DarkForces::Sounds::ELEVATOR_START, loadVOC("door.voc")->sound());
 
 	// prepare the Trigger component (to handle key press)
 	DarkForces::Component::Trigger* trigger = new DarkForces::Component::Trigger();

@@ -14,6 +14,7 @@
 #include "dfFileSystem.h"
 #include "dfVOC.h"
 #include "dfMesh.h"
+#include "dfSounds.h"
 #include "dfComponent/InfStandardTrigger.h"
 #include "dfComponent/Trigger.h"
 #include "dfComponent/InfElevator/InfElevatorLight.h"
@@ -34,7 +35,7 @@ static std::map<std::string, dfVOC*> g_cachedVOC;
 /**
  * Create a default sound component
  */
-static GameEngine::Component::Sound* newElevatorSound(DarkForces::Component::InfElevator *elevator)
+static GameEngine::Component::Sound* newElevatorSound(DarkForces::Component::InfElevator *elevator, dfSector* pSector)
 {
 	// default elevators sounds
 	static std::vector<std::vector<std::string>> g_Default_sounds = {
@@ -55,19 +56,41 @@ static GameEngine::Component::Sound* newElevatorSound(DarkForces::Component::Inf
 
 	if (g_sound_evelators.count(elevator->type())) {
 		// if there is a default sound
-		GameEngine::Component::Sound* sound = new GameEngine::Component::Sound();
+		GameEngine::Component::Sound* sound = dynamic_cast<GameEngine::Component::Sound *>(pSector->findComponent(gaComponent::SOUND));
 		DarkForces::Component::InfElevator::Type type = elevator->type();
 		int sounds = g_sound_evelators[type];
 
 		for (auto i = 0; i < 3; i++) {
 			const std::string& file = g_Default_sounds[sounds][i];
-			sound->addSound(i, loadVOC(file)->sound());
+			sound->addSound(DarkForces::Sounds::ELEVATOR_START + i, loadVOC(file)->sound());
 		}
 
 		return sound;
 	}
 
 	return nullptr;
+}
+
+/**
+ * replace an elevator sound
+ */
+static void addSound(dfSector* pSector, uint32_t code, const char* file)
+{
+	// if there is a default sound
+	GameEngine::Component::Sound* sound = dynamic_cast<GameEngine::Component::Sound*>(pSector->findComponent(gaComponent::SOUND));
+
+	sound->addSound(DarkForces::Sounds::ELEVATOR_START + code, loadVOC(file)->sound());
+}
+
+/**
+ * remove an elevator sound
+ */
+static void removeSound(dfSector* pSector, uint32_t code)
+{
+	// if there is a default sound
+	GameEngine::Component::Sound* sound = dynamic_cast<GameEngine::Component::Sound*>(pSector->findComponent(gaComponent::SOUND));
+
+	sound->addSound(DarkForces::Sounds::ELEVATOR_START + code, nullptr);
 }
 
 /**
@@ -254,7 +277,6 @@ void dfParseINF::parseSector(std::istringstream& infile, const std::string& sect
 	DarkForces::Component::InfStandardTrigger* program = nullptr;	// for a trigger standard
 	DarkForces::Component::InfElevatorLight* light = nullptr;	// for elevator change_light
 	DarkForces::Component::InfElevator* inv = nullptr;	// for elevator INV & MOVE_FLOOR
-	GameEngine::Component::Sound* sound = nullptr;				// for elevator with sound
 
 	dfLogicStop* stop = nullptr;
 	std::map<std::string, std::string> tokenMap;
@@ -298,18 +320,8 @@ void dfParseINF::parseSector(std::istringstream& infile, const std::string& sect
 				// move the elevator at the default position at first run
 				pSector->sendMessage(DarkForces::Message::GOTO_STOP_FORCE, 0);
 
-				if (sound) {
-					// if sounds were defined in the INF
-					pSector->addComponent(sound, gaEntity::Flag::DELETE_AT_EXIT);
-					sound->position(mesh->position());
-				}
-				else {
-					// else activate the default sounds
-					sound = newElevatorSound(inv);
-					if (sound) {
-						pSector->addComponent(sound, gaEntity::Flag::DELETE_AT_EXIT);
-					}
-				}
+				// else activate the default sounds
+				newElevatorSound(inv, pSector);
 
 				// if the eventMask of the sector is <> add a key manager
 				if (inv->eventMask() != 0 || inv->key() != DarkForces::Keys::NONE) {
@@ -475,28 +487,13 @@ void dfParseINF::parseSector(std::istringstream& infile, const std::string& sect
 			}
 		}
 		else if (tokens[0] == "sound:") {
-			if (inv && sound == nullptr) {
-				// if the is no sound component, create one first
-				sound = new GameEngine::Component::Sound();
-			}
-
 			if (light || inv) {
 				uint32_t effect = std::stoi(tokens[1]);
 				if (tokens[2] != "0") {
-					if (g_cachedVOC.count(tokens[2]) == 0) {
-						g_cachedVOC[tokens[2]] = new dfVOC(dfFiles, tokens[2]);
-					}
-
-					if (light)
-						light->addSound(effect - 1, g_cachedVOC[tokens[2]]);
-					else if (inv)
-						sound->addSound(effect - 1, g_cachedVOC[tokens[2]]->sound());
+					addSound(pSector, effect - 1, tokens[2].c_str());
 				}
 				else {
-					if (light)
-						light->addSound(effect - 1, nullptr);
-					else if (inv)
-						sound->addSound(effect - 1, nullptr);
+					removeSound(pSector, effect - 1);
 				}
 			}
 			else if (program) {

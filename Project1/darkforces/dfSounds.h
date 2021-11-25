@@ -13,6 +13,9 @@ namespace DarkForces {
 		STORM_COMMANDO_OFFICER_DIE,
 		MOUSEBOT_EEK,
 		MOUSEBOT_DIE,
+		ELEVATOR_START,
+		ELEVATOR_MOVE,
+		ELEVATOR_STOP,
 	};
 
 	dfVOC* loadSound(uint32_t soundID);

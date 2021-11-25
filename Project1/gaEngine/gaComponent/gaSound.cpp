@@ -55,7 +55,10 @@ void GameEngine::Component::Sound::dispatchMessage(gaMessage* message)
  */
 void GameEngine::Component::Sound::debugGUIinline(void)
 {
-	if (ImGui::TreeNode("Sound")) {
+	if (ImGui::TreeNode("Sounds")) {
+		for (auto& s : m_sounds) {
+			ImGui::Text("%d", s.first);
+		}
 		ImGui::TreePop();
 	}
 }
@@ -65,7 +68,12 @@ void GameEngine::Component::Sound::debugGUIinline(void)
  */
 void GameEngine::Component::Sound::addSound(uint32_t name, alSound* sound)
 {
-	m_sounds[name] = sound;
+	if (sound) {
+		m_sounds[name] = sound;
+	}
+	else {
+		m_sounds.erase(name);
+	}
 }
 
 void GameEngine::Component::Sound::position(const glm::vec3& position)
