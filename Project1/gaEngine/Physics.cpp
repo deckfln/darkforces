@@ -1047,7 +1047,8 @@ void Physics::update(time_t delta)
 			gaDebugLog(1, "GameEngine::Physics::update", entity->name());
 			b.apply(delta, entity->pTransform());
 
-			entity->sendMessage(entity->name(), 
+			g_gaWorld.sendMessage("_physics", 
+				entity->name(), 
 				gaMessage::Action::WANT_TO_MOVE, 
 				gaMessage::Flag::WANT_TO_MOVE_FALL, 
 				entity->pTransform());

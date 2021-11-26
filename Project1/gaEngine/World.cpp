@@ -746,10 +746,10 @@ void World::process(time_t delta, bool force)
 			for (auto entity : m_entities[message->m_client]) {
 
 				// some entities go full ghost
-				if (!entity->processMessages()) {
+				// physics messages cannot be blocked
+				if (message->m_action != gaMessage::Action::WANT_TO_MOVE && message->m_action != gaMessage::Action::MOVE && !entity->processMessages()) {
 					continue;
 				}
-
 				// intercept some messages to pass to a plugin
 				for (auto plugin : m_plugins) {
 					if (!plugin->dispatchMessage(entity, message)) {
@@ -758,7 +758,7 @@ void World::process(time_t delta, bool force)
 				}
 
 				switch (message->m_action) {
-				case gaMessage::Action::WANT_TO_MOVE :
+				case gaMessage::Action::WANT_TO_MOVE:
 					g_gaPhysics.moveEntity(entity, message);
 					break;
 
