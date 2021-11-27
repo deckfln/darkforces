@@ -62,6 +62,10 @@ DarkForces::Component::Actor::Actor(const std::string& xclass):
  */
 void DarkForces::Component::Actor::addShield(int32_t value)
 {
+	if (m_dying) {
+		return;
+	}
+
 	m_shield += value;
 	if (m_shield > m_maxShield) {
 		m_shield = m_maxShield;
@@ -76,6 +80,10 @@ void DarkForces::Component::Actor::addShield(int32_t value)
  */
 void DarkForces::Component::Actor::onHitBullet(int32_t value)
 {
+	if (m_dying) {
+		return;
+	}
+
 	if (m_shield > 0) {
 		m_shield -= value;
 	}
