@@ -411,9 +411,9 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 		}
 		*/
 
-		// non collider object do not trigger collisions
+		// non-collider object do not trigger collisions, unles they are falling
 		// collide against the entities
-		if (entity->hasCollider()) {
+		if (entity->falling() || entity->hasCollider()) {
 			testEntities(entity, tranform, collisions);
 		}
 
@@ -653,10 +653,13 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 				if (m_ballistics.count(entity->name()) > 0 && m_ballistics[entity->name()].m_inUse) {
 					// if the object was falling, remove from the list and force the position
 					m_remove.push_back(entity->name());
+					entity->falling(false);
 					m_ballistics[entity->name()].m_inUse = false;
 
 					tranform.m_position.y = nearest_ground->m_triangle[0].y;
 					fix_y = true;
+					actions.push(entity);
+
 					if (entity->name() == "player")
 						gaDebugLog(1, "GameEngine::Physics::wantToMove", entity->name() + " falling to ground " + std::to_string(tranform.m_position.x)
 							+ " " + std::to_string(tranform.m_position.y)
@@ -770,6 +773,7 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 							);
 
 							// engage ballistic
+							entity->falling(true);
 							m_ballistics[entity->name()] = Ballistic(tranform.m_position, old_position);
 						}
 

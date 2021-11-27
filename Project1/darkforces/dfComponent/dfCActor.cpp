@@ -98,6 +98,12 @@ void DarkForces::Component::Actor::onHitBullet(int32_t value)
 void DarkForces::Component::Actor::onDying(gaMessage* message)
 {
 	m_dying = true;
+
+	// activate the entity last animation
+	m_entity->sendMessage(DarkForces::Message::STATE, (uint32_t)dfState::ENEMY_DIE_FROM_SHOT);
+
+	// play a sound if there is one
+	m_entity->sendMessage(gaMessage::PLAY_SOUND, DarkForces::Component::Actor::Sound::DIE);
 }
 
 /**
@@ -138,6 +144,20 @@ void DarkForces::Component::Actor::onAnimNextFrame(gaMessage* message)
 }
 
 /**
+ * when the dying animation stops
+ */
+void DarkForces::Component::Actor::onDead(gaMessage* message)
+{
+	// object can now be traversed
+	m_entity->hasCollider(false);
+	m_entity->physical(false);
+
+	m_entity->discardMessages();
+
+	gaDebugLog(1, "DarkForces::Component::Actor::die", "kill the entity " + m_entity->name() + " and block from the world");
+}
+
+/**
  * return data on the class of the actor
  */
 const DarkForces::ActorClass* DarkForces::Component::Actor::getActorClass(void)
@@ -149,6 +169,18 @@ const DarkForces::ActorClass* DarkForces::Component::Actor::getActorClass(void)
 		gaDebugLog(0, "DarkForces::Component::Actor::setDataFromClass", m_class + " unknown");
 		return nullptr;
 	}
+}
+
+/**
+ * start the kill actor sequence
+ */
+void DarkForces::Component::Actor::die(void)
+{
+	// cancel any message the entity was expecting
+	g_gaWorld.deleteMessages(m_entity);
+
+	// let everyone this is the last stage
+	m_entity->sendMessage(DarkForces::Message::DYING, 0);
 }
 
 /**
@@ -206,35 +238,11 @@ void DarkForces::Component::Actor::dispatchMessage(gaMessage* message)
 		break;
 
 	case DarkForces::Message::DEAD:
-		m_entity->discardMessages();
+		onDead(message);
 		break;
 	}
 
 	GameEngine::Component::Actor::dispatchMessage(message);
-}
-
-/**
- * kill the actor
- */
-void DarkForces::Component::Actor::die(void)
-{
-	// cancel any message the entity was expecting
-	g_gaWorld.deleteMessages(m_entity);
-
-	// activate the entity last animation
-	m_entity->sendMessage(DarkForces::Message::STATE, (uint32_t)dfState::ENEMY_DIE_FROM_SHOT);
-
-	// object can now be traversed
-	m_entity->hasCollider(false);
-	m_entity->physical(false);
-
-	// play a sound if there is one
-	m_entity->sendMessage(gaMessage::PLAY_SOUND, DarkForces::Component::Actor::Sound::DIE);
-
-	// let everyone this is the last stage
-	m_entity->sendMessage(DarkForces::Message::DYING, 0);
-
-	gaDebugLog(1, "DarkForces::Component::Actor::die", "kill the entity " + m_entity->name() + " and block from the world");
 }
 
 //*****************************************************

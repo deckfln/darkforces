@@ -42,6 +42,7 @@ namespace DarkForces {
 			void onDying(gaMessage* message);		// when the dying animation starts
 			void onAnimStart(gaMessage* message);	// when animations starts
 			void onAnimNextFrame(gaMessage* message);	// when animations are running
+			void onDead(gaMessage* message);		// when the dying animation stops
 
 		public:
 			enum Sound {

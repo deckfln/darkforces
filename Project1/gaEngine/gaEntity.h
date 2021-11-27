@@ -45,6 +45,7 @@ protected:
 	bool m_hasCollider = false;						// entity needs to be tested with collider
 	bool m_movable = true;							// entity can be pushed
 	bool m_processMessages = true;					// shall the entity receive messages for processing
+	bool m_falling = false;							// the physic engine is falling the entity
 	uint32_t m_timer = 0;							// number of components waiting for a gaMessage::TIMER every frame
 
 	GameEngine::Transform m_transforms;				// transforms to move the object
@@ -98,6 +99,8 @@ public:
 	inline void physical(bool p) { m_physical = p; };
 	inline bool gravity(void) { return m_gravity; };
 	inline void gravity(bool p) { m_gravity = p; };
+	inline void falling(bool p) { m_falling= p; };
+	inline bool falling(void) { return m_falling; };
 	inline bool canStep(void) { return m_canStep; };
 	inline bool collideSectors(void) { return m_collideSectors; };
 	inline void collideSectors(bool c) { m_collideSectors = c; };
