@@ -79,11 +79,11 @@ void DarkForces::AIMouseBot::dispatchMessage(gaMessage* message)
 	case DarkForces::Message::DYING:
 		// there is no animation between dying and dead
 		m_entity->sendMessage(DarkForces::Message::DEAD);
+		static_cast<DarkForces::Object*>(m_entity)->drop(dfLogic::DEAD_MOUSE);
+		static_cast<DarkForces::Object*>(m_entity)->drop(dfLogic::ITEM_BATTERY);
 		break;
 
 	case DarkForces::Message::DEAD:
-		static_cast<DarkForces::Object *>(m_entity)->drop(dfLogic::DEAD_MOUSE);
-		static_cast<DarkForces::Object *>(m_entity)->drop(dfLogic::ITEM_BATTERY);
 		
 		// 3D objects being registered in dfParserObject cannot be deleted, so move away
 		m_entity->moveTo(glm::vec3(0));

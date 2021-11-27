@@ -4,6 +4,7 @@
 #include "../dfObject.h"
 #include "../dfWeapon.h"
 #include "../dfComponent.h"
+#include "dfCActor.h"
 
 #include <imgui.h>
 
@@ -39,11 +40,15 @@ void dfComponentLogic::logic(uint32_t logic)
 
 void dfComponentLogic::dispatchMessage(gaMessage* message)
 {
+	DarkForces::Component::Actor* actor;
+
 	switch (message->m_action) {
 	case gaMessage::Action::COLLIDE:
-		if (m_logics & dfLogic::ITEM_SHIELD) {
-			// ADD ARMOR
-			if (message->m_pServer->findComponent(gaComponent::Actor)) {
+		actor = dynamic_cast<DarkForces::Component::Actor *>(message->m_pServer->findComponent(gaComponent::Actor));
+
+		// only grant ressources for alive actors
+		if (actor && !actor->dying()) {
+			if (m_logics & dfLogic::ITEM_SHIELD) {
 				// if the collider is a DF_ACTOR
 				// send shield from me to the actor
 				m_entity->sendMessage(message->m_server, DarkForces::Message::ADD_SHIELD, m_value, nullptr);
@@ -51,10 +56,8 @@ void dfComponentLogic::dispatchMessage(gaMessage* message)
 				// and remove the object from the scene
 				m_entity->sendMessageToWorld(gaMessage::DELETE_ENTITY, 0, nullptr);
 			}
-		}
-		else if (m_logics & dfLogic::ITEM_ENERGY) {
-			// ADD ENERGY
-			if (message->m_pServer->findComponent(gaComponent::Actor)) {
+			else if (m_logics & dfLogic::ITEM_ENERGY) {
+				// ADD ENERGY
 				// if the collider is a DF_ACTOR
 				// send energy from me to the actor
 				m_entity->sendMessage(message->m_server, DarkForces::Message::ADD_ENERGY, m_value, nullptr);
@@ -62,10 +65,8 @@ void dfComponentLogic::dispatchMessage(gaMessage* message)
 				// and remove the object from the scene
 				m_entity->sendMessageToWorld(gaMessage::DELETE_ENTITY, 0, nullptr);
 			}
-		}
-		else if (m_logics & dfLogic::ITEM_RIFLE) {
-			// pick a rifle and bullets
-			if (message->m_pServer->findComponent(gaComponent::Actor)) {
+			else if (m_logics & dfLogic::ITEM_RIFLE) {
+				// pick a rifle and bullets
 				// if the collider is a DF_ACTOR
 				// send shield from me to the actor
 				m_entity->sendMessage(message->m_server, DarkForces::Message::PICK_RIFLE_AND_BULLETS, m_value, nullptr);
@@ -73,10 +74,8 @@ void dfComponentLogic::dispatchMessage(gaMessage* message)
 				// and remove the object from the scene
 				m_entity->sendMessageToWorld(gaMessage::DELETE_ENTITY, 0, nullptr);
 			}
-		}
-		else if (m_logics & dfLogic::ITEM_BATTERY) {
-			// pick a rifle and bullets
-			if (message->m_pServer->findComponent(gaComponent::Actor)) {
+			else if (m_logics & dfLogic::ITEM_BATTERY) {
+				// pick a rifle and bullets
 				// if the collider is a DF_ACTOR
 				// send shield from me to the actor
 				m_entity->sendMessage(message->m_server, DarkForces::Message::ADD_BATTERY, DF_BATTERY_ENERGY, nullptr);
@@ -85,13 +84,14 @@ void dfComponentLogic::dispatchMessage(gaMessage* message)
 				m_entity->sendMessageToWorld(gaMessage::DELETE_ENTITY, 0, nullptr);
 			}
 		}
-		
 		break;
+
 	case gaMessage::Action::BULLET_HIT:
 		if (m_logics & dfLogic::SCENERY) {
 			m_entity->sendMessage(DarkForces::Message::STATE, (int)dfState::SCENERY_ATTACK);
 		}
 		break;
+
 	case DarkForces::Message::ANIM_LASTFRAME:
 		// animation loop for an object reached it's end
 		if (m_logics & DF_LOGIC_ENEMIES) {
@@ -102,6 +102,7 @@ void dfComponentLogic::dispatchMessage(gaMessage* message)
 			}
 		}
 		break;
+
 	case DarkForces::Message::STATE:
 		// trigger animation for enemy, unless the object is static or has no animation
 		if (m_logics & DF_LOGIC_ENEMIES) {
@@ -111,7 +112,7 @@ void dfComponentLogic::dispatchMessage(gaMessage* message)
 		}		
 		break;
 
-	case DarkForces::Message::DEAD:
+	case DarkForces::Message::DYING:
 		//drop the bag of the object when an enemy dies
 		if (m_logics & DF_LOGIC_ENEMIES) {
 			if (m_logics & dfLogic::OFFICER) {

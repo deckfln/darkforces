@@ -38,7 +38,7 @@ namespace DarkForces {
 			void onChangeWeapon(gaMessage* message);			// change the current weapon
 			void onFire(const glm::vec3& direction, time_t time);	// single shot
 			void onStopFire(gaMessage* message);				// keep the finger on the trigger
-			void onDead(gaMessage* message);					// drop ammo when dying
+			void onDying(gaMessage* message);					// drop ammo when dying
 		};
 	}
 }

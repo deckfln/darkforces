@@ -60,6 +60,7 @@ namespace DarkForces {
 			inline void currentSector(dfSector* sector) { m_currentSector = sector; };
 			inline void bind(dfLevel* level) { m_level = level; };
 			inline DarkForces::Keys keys(void) { return m_keys; };
+			inline bool dying(void) { return m_dying; };
 			inline void setClass(const std::string& xclass) { 
 				m_class = xclass;
 				setDataFromClass();

@@ -228,7 +228,7 @@ void DarkForces::Component::Weapon::onStopFire(gaMessage* message)
  *  if the entity holds a rifle, drop it with the ammo
  *  if it holds a rifle, drop the ammo
  */
-void DarkForces::Component::Weapon::onDead(gaMessage* message)
+void DarkForces::Component::Weapon::onDying(gaMessage* message)
 {
 	switch (m_kind) {
 	case DarkForces::Weapon::Kind::Rifle:
@@ -276,8 +276,8 @@ void DarkForces::Component::Weapon::dispatchMessage(gaMessage* message)
 		addEnergy(message->m_value);
 		break;
 
-	case DarkForces::Message::DEAD:
-		onDead(message);
+	case DarkForces::Message::DYING:
+		onDying(message);
 		break;
 	}
 }
