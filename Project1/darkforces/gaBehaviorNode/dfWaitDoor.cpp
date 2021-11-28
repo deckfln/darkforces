@@ -1,5 +1,7 @@
 #include "dfWaitDoor.h"
 
+#include <tinyxml2.h>
+
 #include "../../gaEngine/gaEntity.h"
 #include "../../gaEngine/gaComponent/gaBehaviorTree.h"
 
@@ -10,6 +12,12 @@ DarkForces::Behavior::WaitDoor::WaitDoor(const char* name):
 {
 }
 
+BehaviorNode* DarkForces::Behavior::WaitDoor::create(const char* name, tinyxml2::XMLElement* element)
+{
+	return new DarkForces::Behavior::WaitDoor(name);
+}
+
+
 /**
  *
  */
@@ -19,11 +27,6 @@ void DarkForces::Behavior::WaitDoor::init(void* data)
 	m_entity->sendDelayedMessage(gaMessage::Action::TICK);
 
 	BehaviorNode::init(data);
-}
-
-BehaviorNode* DarkForces::Behavior::WaitDoor::create(const char* name)
-{
-	return new DarkForces::Behavior::WaitDoor(name);
 }
 
 /**

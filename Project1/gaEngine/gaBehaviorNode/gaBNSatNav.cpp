@@ -2,6 +2,7 @@
 
 #include <map>
 #include <imgui.h>
+#include <tinyxml2.h>
 
 #include "../gaEntity.h"
 #include "../gaNavMesh.h"
@@ -28,7 +29,7 @@ GameEngine::Behavior::SatNav::SatNav(const char *name, float speed) :
 {
 }
 
-GameEngine::BehaviorNode* GameEngine::Behavior::SatNav::create(const char* name)
+GameEngine::BehaviorNode* GameEngine::Behavior::SatNav::create(const char* name, tinyxml2::XMLElement* element)
 {
 	return new GameEngine::Behavior::SatNav(name);
 }

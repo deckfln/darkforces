@@ -60,8 +60,9 @@ const float c_direction = pi/2.0f ; // 1.0f;
 
 static void registerNodes(void) {
 	GameEngine::Behavior::registerNode("AttackPlayer", DarkForces::Behavior::AttackPlayer::create);
-	GameEngine::Behavior::registerNode("Fire", DarkForces::Behavior::Fire2Player::create);
+	GameEngine::Behavior::registerNode("Fire2Player", DarkForces::Behavior::Fire2Player::create);
 	GameEngine::Behavior::registerNode("GotoTrigger", DarkForces::Behavior::GotoTrigger::create);
+	GameEngine::Behavior::registerNode("Move2Player", DarkForces::Behavior::Move2Player::create);
 	GameEngine::Behavior::registerNode("MoveEnemyTo", DarkForces::Behavior::MoveEnemyTo::create);
 	GameEngine::Behavior::registerNode("MoveToAndAttack", DarkForces::Behavior::MoveToAndAttack::create);
 	GameEngine::Behavior::registerNode("OpenDoor", DarkForces::Behavior::OpenDoor::create);
@@ -76,6 +77,13 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 	int Button = 0;
 	//DarkForces::FileLFD briefing(ROOT_FOLDER + "/lfd/DFBRIEF.LFD");
 	m_filesystem = new dfFileSystem(ROOT_FOLDER);
+
+	// register darkforces entities for the flight recorder
+	g_Blackbox.registerClass("dfBullet", &dfBullet::create);
+	g_Blackbox.registerClass("dfBulletExplode", &dfBulletExplode::create);
+
+	// register darkforces bevavionr nodes for the behavior engine
+	registerNodes();
 
 	// player
 	//glm::vec3 start = glm::vec3(-21.26f, 0.95f, 29.064f);	// stage
@@ -155,13 +163,6 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 
 	// init the m_scene
 	glm::vec3* yellow = new glm::vec3(255, 255, 0);
-
-	// register darkforces entities for the flight recorder
-	g_Blackbox.registerClass("dfBullet", &dfBullet::create);
-	g_Blackbox.registerClass("dfBulletExplode", &dfBulletExplode::create);
-
-	// register darkforces bevavionr nodes for the behavior engine
-	registerNodes();
 
 	// prepare the debugger
 	static std::map<int32_t, const char*> g_definitions = {

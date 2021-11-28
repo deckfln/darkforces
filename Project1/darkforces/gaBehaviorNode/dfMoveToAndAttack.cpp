@@ -1,6 +1,7 @@
 #include "dfMoveToAndAttack.h"
 
 #include <imgui.h>
+#include <tinyxml2.h>
 
 #include "../../darkforces/dfObject.h"
 #include "../dfComponent/dfEnemyAI.h"
@@ -15,6 +16,11 @@ DarkForces::Behavior::MoveToAndAttack::MoveToAndAttack(const char* name):
 {
 }
 
+BehaviorNode* DarkForces::Behavior::MoveToAndAttack::create(const char* name, tinyxml2::XMLElement* element)
+{
+	return new DarkForces::Behavior::MoveToAndAttack(name);
+}
+
 /**
  * let a parent take a decision with it's current running child
  */
@@ -27,7 +33,3 @@ void DarkForces::Behavior::MoveToAndAttack::execute(Action* r)
 	GameEngine::Behavior::Loop::execute(r);
 }
 
-BehaviorNode* DarkForces::Behavior::MoveToAndAttack::create(const char* name)
-{
-	return new DarkForces::Behavior::MoveToAndAttack(name);
-}

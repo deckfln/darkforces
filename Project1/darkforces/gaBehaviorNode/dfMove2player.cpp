@@ -1,5 +1,7 @@
 #include "dfMove2player.h"
 
+#include <tinyxml2.h>
+
 #include "../../darkforces/dfObject.h"
 
 #include "../../gaEngine/gaComponent/gaBehaviorTree.h"
@@ -17,6 +19,11 @@ void DarkForces::Behavior::Move2Player::onChildExit(uint32_t child, Status statu
 DarkForces::Behavior::Move2Player::Move2Player(const char* name):
 	GameEngine::Behavior::Decorator(name)
 {
+}
+
+BehaviorNode* DarkForces::Behavior::Move2Player::create(const char* name, tinyxml2::XMLElement* element)
+{
+	return new DarkForces::Behavior::Move2Player(name);
 }
 
 /**
@@ -70,7 +77,3 @@ void DarkForces::Behavior::Move2Player::init(void* data)
 	GameEngine::BehaviorNode::init(&m_navpoints);
 }
 
-BehaviorNode* DarkForces::Behavior::Move2Player::create(const char* name)
-{
-	return new DarkForces::Behavior::Move2Player(name);
-}

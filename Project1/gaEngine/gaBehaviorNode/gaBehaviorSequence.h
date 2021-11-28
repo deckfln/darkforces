@@ -16,7 +16,7 @@ namespace GameEngine {
 			void execute(Action* r) override;						// let a parent take a decision with it's current running child
 
 			// Behavior engine
-			static BehaviorNode* create(const char* name);				// create a node
+			static BehaviorNode* create(const char* name, tinyxml2::XMLElement* element);// create a node
 
 			// debugger
 			void debugGUInode(void) override;

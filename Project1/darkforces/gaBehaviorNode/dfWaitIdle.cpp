@@ -1,5 +1,7 @@
 #include "dfWaitIdle.h"
 
+#include <tinyxml2.h>
+
 #include "../dfConfig.h"
 #include "../dfObject.h"
 
@@ -9,6 +11,11 @@ DarkForces::Behavior::WaitIdle::WaitIdle(const char* name):
 	GameEngine::Behavior::Sequence(name)
 {
 	m_condition = Condition::EXIT_AT_END;
+}
+
+BehaviorNode* DarkForces::Behavior::WaitIdle::create(const char* name, tinyxml2::XMLElement* element)
+{
+	return new DarkForces::Behavior::WaitIdle(name);
 }
 
 /**
@@ -48,7 +55,3 @@ void DarkForces::Behavior::WaitIdle::dispatchMessage(gaMessage* message, Action*
 	GameEngine::BehaviorNode::execute(r);
 }
 
-BehaviorNode* DarkForces::Behavior::WaitIdle::create(const char* name)
-{
-	return new DarkForces::Behavior::WaitIdle(name);
-}

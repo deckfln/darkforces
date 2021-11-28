@@ -1,6 +1,7 @@
 #include "gaBehaviorDecorator.h"
 
 #include <imgui.h>
+#include <tinyxml2.h>
 
 /**
  * Create a node
@@ -10,9 +11,17 @@ GameEngine::Behavior::Decorator::Decorator(const char *name) :
 {
 }
 
-GameEngine::BehaviorNode* GameEngine::Behavior::Decorator::create(const char* name)
+GameEngine::BehaviorNode* GameEngine::Behavior::Decorator::create(const char* name, tinyxml2::XMLElement* element)
 {
-	return new GameEngine::Behavior::Decorator(name);
+	GameEngine::Behavior::Decorator* node = new GameEngine::Behavior::Decorator(name);
+	tinyxml2::XMLElement* attr = element->FirstChildElement("condition");
+	if (attr) {
+		const char* t = attr->GetText();
+		if (strcmp(t, "always_false") == 0) {
+			node->condition(Condition::FAILURE);
+		}
+	}
+	return node;
 }
 
 void GameEngine::Behavior::Decorator::execute(Action* r)

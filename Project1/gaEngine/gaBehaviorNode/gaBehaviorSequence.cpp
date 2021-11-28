@@ -1,13 +1,14 @@
 #include "gaBehaviorSequence.h"
 
 #include <imgui.h>
+#include <tinyxml2.h>
 
 GameEngine::Behavior::Sequence::Sequence(const char *name) : 
 	BehaviorNode(name)
 {
 }
 
-GameEngine::BehaviorNode* GameEngine::Behavior::Sequence::create(const char* name)
+GameEngine::BehaviorNode* GameEngine::Behavior::Sequence::create(const char* name, tinyxml2::XMLElement* element)
 {
 	return new GameEngine::Behavior::Sequence(name);
 }

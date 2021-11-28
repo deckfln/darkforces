@@ -1,6 +1,8 @@
 #include "gaBehaviorNode.h"
 
 #include <imgui.h>
+#include <tinyxml2.h>
+#include <queue>
 
 #include "../include/imnodes.h"
 #include "gaComponent/gaBehaviorTree.h"
@@ -9,6 +11,27 @@
 GameEngine::BehaviorNode::BehaviorNode(const char* name):
 	m_name(name)
 {
+}
+
+/**
+ * bind all nodes to the tree
+ */
+void GameEngine::BehaviorNode::tree(Component::BehaviorTree* tree)
+{
+	std::queue<BehaviorNode*> nodes;
+	BehaviorNode* node;
+
+	nodes.push(this);
+
+	while (!nodes.empty()) {
+		node = nodes.front();
+		nodes.pop();
+
+		node->m_tree = tree;
+		for (auto child : node->m_children) {
+			nodes.push(child);
+		}
+	}
 }
 
 /**
@@ -29,7 +52,7 @@ void GameEngine::BehaviorNode::init(void* data)
 /**
  *
  */
-BehaviorNode* GameEngine::BehaviorNode::create(const char* name)
+BehaviorNode* GameEngine::BehaviorNode::create(const char* name, tinyxml2::XMLElement* element)
 {
 	return new BehaviorNode(name);
 }

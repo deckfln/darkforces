@@ -1,6 +1,7 @@
 #include "dfFire2Player.h"
 
 #include <imgui.h>
+#include <tinyxml2.h>
 
 #include "../../darkforces/dfObject.h"
 
@@ -25,6 +26,12 @@ DarkForces::Behavior::Fire2Player::Fire2Player(const char* name):
 	BehaviorNode(name)
 {
 }
+
+BehaviorNode* DarkForces::Behavior::Fire2Player::create(const char* name, tinyxml2::XMLElement* element)
+{
+	return new DarkForces::Behavior::Fire2Player(name);
+}
+
 
 /**
  * on init, look for the player and fire on him
@@ -76,11 +83,6 @@ void DarkForces::Behavior::Fire2Player::dispatchMessage(gaMessage* message, Acti
 		break;
 	}
 	BehaviorNode::execute(r);
-}
-
-BehaviorNode* DarkForces::Behavior::Fire2Player::create(const char* name)
-{
-	return new DarkForces::Behavior::Fire2Player(name);
 }
 
 /**

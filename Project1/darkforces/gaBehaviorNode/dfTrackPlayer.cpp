@@ -1,5 +1,7 @@
 #include "dfTrackPlayer.h"
 
+#include <tinyxml2.h>
+
 #include "../dfComponent/dfEnemyAI.h"
 
 #include "../../gaEngine/gaComponent/gaBehaviorTree.h"
@@ -32,6 +34,11 @@ void DarkForces::Behavior::TrackPlayer::onChildExit(uint32_t child, Status statu
 DarkForces::Behavior::TrackPlayer::TrackPlayer(const char* name):
 	GameEngine::Behavior::Decorator(name)
 {
+}
+
+BehaviorNode* DarkForces::Behavior::TrackPlayer::create(const char* name, tinyxml2::XMLElement* element)
+{
+	return new DarkForces::Behavior::TrackPlayer(name);
 }
 
 /**
@@ -95,7 +102,3 @@ void DarkForces::Behavior::TrackPlayer::init(void* data)
 	GameEngine::BehaviorNode::init(&m_navpoints);
 }
 
-BehaviorNode* DarkForces::Behavior::TrackPlayer::create(const char* name)
-{
-	return new DarkForces::Behavior::TrackPlayer(name);
-}

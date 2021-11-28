@@ -1,5 +1,7 @@
 #include "dfMoveEnemyTo.h"
 
+#include <tinyxml2.h>
+
 #include "../../gaEngine/gaEntity.h"
 #include "../../gaEngine/gaComponent/gaBehaviorTree.h"
 #include "../../gaEngine/Physics.h"
@@ -22,6 +24,12 @@ DarkForces::Behavior::MoveEnemyTo::MoveEnemyTo(const char* name):
 	GameEngine::BehaviorNode(name)
 {
 }
+
+BehaviorNode* DarkForces::Behavior::MoveEnemyTo::create(const char* name, tinyxml2::XMLElement* element)
+{
+	return new DarkForces::Behavior::MoveEnemyTo(name);
+}
+
 
 void DarkForces::Behavior::MoveEnemyTo::init(void* data)
 {
@@ -112,11 +120,6 @@ void DarkForces::Behavior::MoveEnemyTo::execute(Action* r)
 	}
 
 	BehaviorNode::execute(r);
-}
-
-BehaviorNode* DarkForces::Behavior::MoveEnemyTo::create(const char* name)
-{
-	return new DarkForces::Behavior::MoveEnemyTo(name);
 }
 
 /**

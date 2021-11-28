@@ -2,6 +2,7 @@
 
 #include <map>
 #include <imgui.h>
+#include <tinyxml2.h>
 
 #include "../gaEntity.h"
 #include "../gaNavMesh.h"
@@ -31,7 +32,7 @@ GameEngine::Behavior::MoveTo::MoveTo(const char *name, float speed) :
 {
 }
 
-GameEngine::BehaviorNode* GameEngine::Behavior::MoveTo::create(const char* name)
+GameEngine::BehaviorNode* GameEngine::Behavior::MoveTo::create(const char* name, tinyxml2::XMLElement* element)
 {
 	return new GameEngine::Behavior::MoveTo(name);
 }

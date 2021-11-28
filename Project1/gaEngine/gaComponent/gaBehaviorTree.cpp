@@ -4,6 +4,7 @@
 
 #include "../gaEntity.h"
 #include "../gaBehaviorNode.h"
+#include "../gaBehavior.h"
 #include "../flightRecorder/frBehaviorTree.h"
 
 static const char* g_className = "BehaviorTree";
@@ -11,11 +12,29 @@ static const char* g_className = "BehaviorTree";
 uint32_t GameEngine::Component::BehaviorTree::m_lastId = 0;
 uint32_t GameEngine::Component::BehaviorTree::m_lastNode = 0;
 
+GameEngine::Component::BehaviorTree::BehaviorTree(void):
+	gaComponent(gaComponent::BehaviorTree)
+{
+}
+
 GameEngine::Component::BehaviorTree::BehaviorTree(BehaviorNode* root):
 	gaComponent(gaComponent::BehaviorTree),
 	m_root(root),
 	m_current(root)
 {
+}
+
+/**
+ * create a tree from XML data
+ */
+void GameEngine::Component::BehaviorTree::parse(const std::string& data)
+{
+	m_root = GameEngine::Behavior::loadTree(data);
+	m_current = m_root;
+
+	m_root->tree(this);
+	m_root->init(nullptr);
+
 }
 
 void GameEngine::Component::BehaviorTree::blackboard(const std::string key, void* value)

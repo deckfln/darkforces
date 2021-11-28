@@ -3,13 +3,14 @@
 #include "../gaEntity.h"
 
 #include <imgui.h>
+#include <tinyxml2.h>
 
 GameEngine::Behavior::Sound::Sound(const char *name) :
 	BehaviorNode(name)
 {
 }
 
-GameEngine::BehaviorNode* GameEngine::Behavior::Sound::create(const char* name)
+GameEngine::BehaviorNode* GameEngine::Behavior::Sound::create(const char* name, tinyxml2::XMLElement* element)
 {
 	return new GameEngine::Behavior::Sound(name);
 }

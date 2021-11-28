@@ -19,7 +19,7 @@ namespace GameEngine {
 			void init(void *) override;
 
 			// Behavior engine
-			static BehaviorNode* create(const char* name);					// create a node
+			static BehaviorNode* create(const char* name, tinyxml2::XMLElement* element);// create a node
 
 			// flight recorder status
 			uint32_t recordState(void* record) override;				// save the component state in a record

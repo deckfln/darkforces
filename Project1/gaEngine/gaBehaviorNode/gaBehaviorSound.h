@@ -19,7 +19,7 @@ namespace GameEngine {
 			void addSound(alSound* sound, uint32_t id);				// register a new sound
 
 			// Behavior engine
-			static BehaviorNode* create(const char* name);					// create a node
+			static BehaviorNode* create(const char* name, tinyxml2::XMLElement* element);// create a node
 
 			//debugger
 			void debugGUInode(void) override;						// display the component in the debugger

@@ -10,6 +10,7 @@ namespace GameEngine {
 
 	namespace Component {
 		class BehaviorTree : public gaComponent {
+		protected:
 			uint32_t m_nbnodes=0;								// number of nodes in the tree
 			BehaviorNode* m_root = nullptr;
 			BehaviorNode* m_current = nullptr;
@@ -26,7 +27,12 @@ namespace GameEngine {
 #endif // _DEBUG
 
 		public:
+			BehaviorTree(void);
 			BehaviorTree(BehaviorNode* root);
+
+			void parse(const std::string& data);				// create a tree from XML data
+
+			// blackboard management
 			void blackboard(const std::string key, void *value);
 
 			template <typename T>
@@ -42,6 +48,7 @@ namespace GameEngine {
 
 			inline uint32_t lastAttrId(void) { return m_lastId++; };
 			inline uint32_t lastNode(void) { return m_lastNode; };
+
 			// flight recorder status
 			inline uint32_t recordSize(void);					// size of the component record
 			uint32_t recordState(void* record);					// save the component state in a record

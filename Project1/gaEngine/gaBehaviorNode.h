@@ -9,6 +9,10 @@
 
 class gaEntity;
 
+namespace tinyxml2 {
+	class XMLElement;
+};
+
 namespace GameEngine {
 	namespace Component {
 		class BehaviorTree;
@@ -40,12 +44,12 @@ namespace GameEngine {
 		// getter/setter
 		inline BehaviorNode* parent(void) { return m_parent; };
 		inline bool isSequence(void) { return m_sequence; };
-		inline void tree(Component::BehaviorTree* tree) { m_tree = tree; };
 		inline const char* name(void) { return m_name; };
 		inline uint32_t id(void) { return m_id; };
 		inline Status status(void) { return m_status; };
 		inline void status(Status s) { m_status = s; };
 
+		void tree(Component::BehaviorTree* tree);					// bind all nodes to the tree
 		void instanciate(gaEntity* entity);
 
 		BehaviorNode* addNode(BehaviorNode*);						// add a sub-node to that node
@@ -59,7 +63,7 @@ namespace GameEngine {
 		virtual void dispatchMessage(gaMessage* message, BehaviorNode::Action* r);
 
 		// Behavior engine
-		static BehaviorNode* create(const char* name);							// create a node
+		static BehaviorNode* create(const char* name, tinyxml2::XMLElement* element);// create a node
 
 		// debugger
 		virtual void debugGUIinline(BehaviorNode* current, float x, float& y);	// display the component in the debugger

@@ -1,13 +1,14 @@
 #include "gaBehaviorLoop.h"
 
 #include <imgui.h>
+#include <tinyxml2.h>
 
 GameEngine::Behavior::Loop::Loop(const char *name) : 
 	BehaviorNode(name)
 {
 }
 
-GameEngine::BehaviorNode* GameEngine::Behavior::Loop::create(const char* name)
+GameEngine::BehaviorNode* GameEngine::Behavior::Loop::create(const char* name, tinyxml2::XMLElement* element)
 {
 	return new GameEngine::Behavior::Loop(name);
 }

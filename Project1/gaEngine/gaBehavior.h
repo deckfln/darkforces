@@ -1,5 +1,9 @@
 #pragma once
 
+namespace tinyxml2 {
+	class XMLElement;
+};
+
 /**
  * Bahavior Engine: Behavior Tree
  */
@@ -8,11 +12,12 @@
 
 namespace GameEngine
 {
+	class BehaviorNode;
+
 	namespace Behavior {
+		typedef GameEngine::BehaviorNode* (*createFunction)(const char* name, tinyxml2::XMLElement* element);
 
-		typedef GameEngine::BehaviorNode* (*createFunction)(const char* name);
-
-		void registerNode(const std::string& name, createFunction);
-		GameEngine::Component::BehaviorTree* loadTree(const std::string& data);
+		void registerNode(const char* name, createFunction);
+		GameEngine::BehaviorNode* loadTree(const std::string& data);
 	}
 }

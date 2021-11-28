@@ -1,6 +1,7 @@
 #include "dfAttackPlayer.h"
 
 #include <imgui.h>
+#include <tinyxml2.h>
 
 #include "../../gaEngine/gaComponent/gaBehaviorTree.h"
 #include "../../gaEngine/gaEntity.h"
@@ -10,6 +11,11 @@
 DarkForces::Behavior::AttackPlayer::AttackPlayer(const char* name):
 	GameEngine::Behavior::Loop(name)
 {
+}
+
+BehaviorNode* DarkForces::Behavior::AttackPlayer::create(const char* name, tinyxml2::XMLElement* element)
+{
+	return new DarkForces::Behavior::AttackPlayer(name);
 }
 
 /**
@@ -22,11 +28,6 @@ void DarkForces::Behavior::AttackPlayer::init(void* data)
 	}
 
 	GameEngine::Behavior::Loop::init(data);
-}
-
-BehaviorNode* DarkForces::Behavior::AttackPlayer::create(const char* name)
-{
-	return new DarkForces::Behavior::AttackPlayer(name);
 }
 
 namespace DarkForces {

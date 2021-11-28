@@ -1,5 +1,7 @@
 #include "dfGotoTrigger.h"
 
+#include <tinyxml2.h>
+
 #include "../../gaEngine/gaEntity.h"
 #include "../../gaEngine/gaComponent/gaBehaviorTree.h"
 #include "../../gaEngine/World.h"
@@ -16,6 +18,11 @@ DarkForces::Behavior::GotoTrigger::GotoTrigger(const char *name):
 	GameEngine::BehaviorNode(name)
 {
 	m_sequence = true;
+}
+
+BehaviorNode* DarkForces::Behavior::GotoTrigger::create(const char* name, tinyxml2::XMLElement* element)
+{
+	return new DarkForces::Behavior::GotoTrigger(name);
 }
 
 void DarkForces::Behavior::GotoTrigger::init(void *data)
@@ -132,11 +139,6 @@ void DarkForces::Behavior::GotoTrigger::execute(Action *r)
 
 	// otherwise try th next trigger
 	return goto_next_trigger(r);
-}
-
-BehaviorNode* DarkForces::Behavior::GotoTrigger::create(const char* name)
-{
-	return new DarkForces::Behavior::GotoTrigger(name);
 }
 
 /**
