@@ -94,3 +94,8 @@ void DarkForces::Behavior::TrackPlayer::init(void* data)
 
 	GameEngine::BehaviorNode::init(&m_navpoints);
 }
+
+BehaviorNode* DarkForces::Behavior::TrackPlayer::create(const char* name)
+{
+	return new DarkForces::Behavior::TrackPlayer(name);
+}

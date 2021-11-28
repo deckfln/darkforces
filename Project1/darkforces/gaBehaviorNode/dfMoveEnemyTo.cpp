@@ -114,6 +114,11 @@ void DarkForces::Behavior::MoveEnemyTo::execute(Action* r)
 	BehaviorNode::execute(r);
 }
 
+BehaviorNode* DarkForces::Behavior::MoveEnemyTo::create(const char* name)
+{
+	return new DarkForces::Behavior::MoveEnemyTo(name);
+}
+
 /**
  * flight recorder status
  */

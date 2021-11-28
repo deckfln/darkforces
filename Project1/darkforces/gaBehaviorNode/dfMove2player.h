@@ -22,6 +22,9 @@ namespace DarkForces {
 		public:
 			Move2Player(const char* name);
 			void init(void* data) override;									// init the node before running
+
+			// Behavior engine
+			static BehaviorNode* create(const char* name);				// create a node
 		};
 	}
 }

@@ -25,6 +25,9 @@ namespace DarkForces {
 			void init(void* data) override;									// init the node before running
 			void dispatchMessage(gaMessage* message, Action* r) override;	// let a component deal with a situation
 
+			// Behavior engine
+			static BehaviorNode* create(const char* name);				// create a node
+
 			//debugger
 			void debugGUInode(void) override;							// display the component in the debugger
 

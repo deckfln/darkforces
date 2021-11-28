@@ -24,6 +24,11 @@ void DarkForces::Behavior::AttackPlayer::init(void* data)
 	GameEngine::Behavior::Loop::init(data);
 }
 
+BehaviorNode* DarkForces::Behavior::AttackPlayer::create(const char* name)
+{
+	return new DarkForces::Behavior::AttackPlayer(name);
+}
+
 namespace DarkForces {
 	namespace FlightRecorder {
 		struct AttackPlayer {

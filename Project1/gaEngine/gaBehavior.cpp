@@ -1,12 +1,15 @@
 #include "gaBehavior.h"
 
 #include <map>
+#include <tinyxml2.h>
+
 #include "gaBehaviorNode/gaBehaviorDecorator.h"
 #include "gaBehaviorNode/gaBehaviorLoop.h"
 #include "gaBehaviorNode/gaBehaviorSequence.h"
 #include "gaBehaviorNode/gaBehaviorSound.h"
 #include "gaBehaviorNode/gaBNSatNav.h"
 #include "gaBehaviorNode/gaMoveTo.h"
+
 
 static std::map<std::string, GameEngine::Behavior::createFunction> g_createNodes = {
 	{"Decorator", GameEngine::Behavior::Decorator::create},
@@ -24,6 +27,9 @@ void GameEngine::Behavior::registerNode(const std::string& name, createFunction 
 
 GameEngine::Component::BehaviorTree* GameEngine::Behavior::loadTree(const std::string& data)
 {
+	tinyxml2::XMLDocument doc;
+	doc.Parse(data.c_str());
+
 	return nullptr;
 }
  

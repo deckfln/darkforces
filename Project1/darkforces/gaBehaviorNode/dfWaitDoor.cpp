@@ -21,6 +21,11 @@ void DarkForces::Behavior::WaitDoor::init(void* data)
 	BehaviorNode::init(data);
 }
 
+BehaviorNode* DarkForces::Behavior::WaitDoor::create(const char* name)
+{
+	return new DarkForces::Behavior::WaitDoor(name);
+}
+
 /**
  *
  */

@@ -69,3 +69,8 @@ void DarkForces::Behavior::Move2Player::init(void* data)
 
 	GameEngine::BehaviorNode::init(&m_navpoints);
 }
+
+BehaviorNode* DarkForces::Behavior::Move2Player::create(const char* name)
+{
+	return new DarkForces::Behavior::Move2Player(name);
+}

@@ -47,3 +47,8 @@ void DarkForces::Behavior::WaitIdle::dispatchMessage(gaMessage* message, Action*
 
 	GameEngine::BehaviorNode::execute(r);
 }
+
+BehaviorNode* DarkForces::Behavior::WaitIdle::create(const char* name)
+{
+	return new DarkForces::Behavior::WaitIdle(name);
+}

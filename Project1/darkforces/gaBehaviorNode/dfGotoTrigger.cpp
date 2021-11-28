@@ -134,6 +134,11 @@ void DarkForces::Behavior::GotoTrigger::execute(Action *r)
 	return goto_next_trigger(r);
 }
 
+BehaviorNode* DarkForces::Behavior::GotoTrigger::create(const char* name)
+{
+	return new DarkForces::Behavior::GotoTrigger(name);
+}
+
 /**
  * flight recorder status
  */

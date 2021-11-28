@@ -26,3 +26,8 @@ void DarkForces::Behavior::MoveToAndAttack::execute(Action* r)
 
 	GameEngine::Behavior::Loop::execute(r);
 }
+
+BehaviorNode* DarkForces::Behavior::MoveToAndAttack::create(const char* name)
+{
+	return new DarkForces::Behavior::MoveToAndAttack(name);
+}

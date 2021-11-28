@@ -25,3 +25,8 @@ void DarkForces::Behavior::OpenDoor::init(void *data)
 	m_tree->blackboard("lastCollision", nullptr);
 	GameEngine::Behavior::Sequence::init(data);
 }
+
+BehaviorNode* DarkForces::Behavior::OpenDoor::create(const char* name)
+{
+	return new DarkForces::Behavior::OpenDoor(name);
+}

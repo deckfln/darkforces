@@ -22,6 +22,7 @@
 #include "gaEngine/gaComponent/gaController.h"
 #include "gaEngine/gaComponent/gaActiveProbe.h"
 #include "gaEngine/gaBoundingBoxes.h"
+#include "gaEngine/gaBehavior.h"
 
 #include "darkforces/dfConfig.h"
 #include "darkforces/dfLevel.h"
@@ -42,6 +43,32 @@ const float c_radius = 0.2f;
 const float c_eyes = 0.55f;
 const float c_ankle = 0.26f;
 const float c_direction = pi/2.0f ; // 1.0f;
+
+/**
+ * Register al DarkForces behavior nodes on the GameEngine
+ */
+#include "darkforces/gaBehaviorNode/dfAttackPlayer.h"
+#include "darkforces/gaBehaviorNode/dfFire2Player.h"
+#include "darkforces/gaBehaviorNode/dfGotoTrigger.h"
+#include "darkforces/gaBehaviorNode/dfMove2player.h"
+#include "darkforces/gaBehaviorNode/dfMoveEnemyTo.h"
+#include "darkforces/gaBehaviorNode/dfMoveToAndAttack.h"
+#include "darkforces/gaBehaviorNode/dfOpenDoor.h"
+#include "darkforces/gaBehaviorNode/dfTrackPlayer.h"
+#include "darkforces/gaBehaviorNode/dfWaitDoor.h"
+#include "darkforces/gaBehaviorNode/dfWaitIdle.h"
+
+static void registerNodes(void) {
+	GameEngine::Behavior::registerNode("AttackPlayer", DarkForces::Behavior::AttackPlayer::create);
+	GameEngine::Behavior::registerNode("Fire", DarkForces::Behavior::Fire2Player::create);
+	GameEngine::Behavior::registerNode("GotoTrigger", DarkForces::Behavior::GotoTrigger::create);
+	GameEngine::Behavior::registerNode("MoveEnemyTo", DarkForces::Behavior::MoveEnemyTo::create);
+	GameEngine::Behavior::registerNode("MoveToAndAttack", DarkForces::Behavior::MoveToAndAttack::create);
+	GameEngine::Behavior::registerNode("OpenDoor", DarkForces::Behavior::OpenDoor::create);
+	GameEngine::Behavior::registerNode("TrackPlayer", DarkForces::Behavior::TrackPlayer::create);
+	GameEngine::Behavior::registerNode("WaitDoor", DarkForces::Behavior::WaitDoor::create);
+	GameEngine::Behavior::registerNode("WaitIdle", DarkForces::Behavior::WaitIdle::create);
+}
 
 myDarkForces::myDarkForces(std::string name, int width, int height) :
 	GameEngine::App(name, width, height, "shaders/gamma", "#define GAMMA_CORRECTION 1\n")
@@ -129,8 +156,12 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 	// init the m_scene
 	glm::vec3* yellow = new glm::vec3(255, 255, 0);
 
+	// register darkforces entities for the flight recorder
 	g_Blackbox.registerClass("dfBullet", &dfBullet::create);
 	g_Blackbox.registerClass("dfBulletExplode", &dfBulletExplode::create);
+
+	// register darkforces bevavionr nodes for the behavior engine
+	registerNodes();
 
 	// prepare the debugger
 	static std::map<int32_t, const char*> g_definitions = {

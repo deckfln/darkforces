@@ -13,6 +13,9 @@ namespace DarkForces {
 		public:
 			OpenDoor(const char* name);
 			void init(void *) override;							// init the node before running
+
+			// Behavior engine
+			static BehaviorNode* create(const char* name);				// create a node
 		};
 	}
 }

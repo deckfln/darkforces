@@ -78,6 +78,11 @@ void DarkForces::Behavior::Fire2Player::dispatchMessage(gaMessage* message, Acti
 	BehaviorNode::execute(r);
 }
 
+BehaviorNode* DarkForces::Behavior::Fire2Player::create(const char* name)
+{
+	return new DarkForces::Behavior::Fire2Player(name);
+}
+
 /**
  * debugger
  */
