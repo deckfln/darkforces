@@ -7,6 +7,11 @@ GameEngine::Behavior::Sequence::Sequence(const char *name) :
 {
 }
 
+GameEngine::BehaviorNode* GameEngine::Behavior::Sequence::create(const char* name)
+{
+	return new GameEngine::Behavior::Sequence(name);
+}
+
 void GameEngine::Behavior::Sequence::init(void* data)
 {
 	m_failed = 0;

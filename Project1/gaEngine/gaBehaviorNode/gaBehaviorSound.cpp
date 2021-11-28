@@ -9,6 +9,11 @@ GameEngine::Behavior::Sound::Sound(const char *name) :
 {
 }
 
+GameEngine::BehaviorNode* GameEngine::Behavior::Sound::create(const char* name)
+{
+	return new GameEngine::Behavior::Sound(name);
+}
+
 void GameEngine::Behavior::Sound::execute(Action* r)
 {
 	// only play a sound every maxdelay s

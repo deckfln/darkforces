@@ -2,9 +2,17 @@
 
 #include <imgui.h>
 
-GameEngine::Behavior::Decorator::Decorator(const char *name) : 
+/**
+ * Create a node
+ */
+GameEngine::Behavior::Decorator::Decorator(const char *name) :
 	BehaviorNode(name)
 {
+}
+
+GameEngine::BehaviorNode* GameEngine::Behavior::Decorator::create(const char* name)
+{
+	return new GameEngine::Behavior::Decorator(name);
 }
 
 void GameEngine::Behavior::Decorator::execute(Action* r)
@@ -51,7 +59,7 @@ void GameEngine::Behavior::Decorator::execute(Action* r)
 }
 
 /**
- * display the node data in the debugger
+ * Debugger
  */
 void GameEngine::Behavior::Decorator::debugGUInode(void)
 {

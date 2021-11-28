@@ -17,6 +17,9 @@ namespace GameEngine {
 
 			inline void condition(Condition c) { m_condition = c; };
 
+			// Behavior engine
+			static BehaviorNode* create(const char* name);				// create a node
+
 			//debugger
 			void debugGUInode(void) override;						// display the component in the debugger
 		protected:

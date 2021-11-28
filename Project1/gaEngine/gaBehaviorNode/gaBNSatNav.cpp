@@ -28,6 +28,11 @@ GameEngine::Behavior::SatNav::SatNav(const char *name, float speed) :
 {
 }
 
+GameEngine::BehaviorNode* GameEngine::Behavior::SatNav::create(const char* name)
+{
+	return new GameEngine::Behavior::SatNav(name);
+}
+
 /**
  *
  */

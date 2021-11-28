@@ -7,6 +7,11 @@ GameEngine::Behavior::Loop::Loop(const char *name) :
 {
 }
 
+GameEngine::BehaviorNode* GameEngine::Behavior::Loop::create(const char* name)
+{
+	return new GameEngine::Behavior::Loop(name);
+}
+
 void GameEngine::Behavior::Loop::execute(Action* r)
 {
 	// exit if init changed the status

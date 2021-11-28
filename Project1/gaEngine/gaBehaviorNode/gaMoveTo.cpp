@@ -31,6 +31,11 @@ GameEngine::Behavior::MoveTo::MoveTo(const char *name, float speed) :
 {
 }
 
+GameEngine::BehaviorNode* GameEngine::Behavior::MoveTo::create(const char* name)
+{
+	return new GameEngine::Behavior::MoveTo(name);
+}
+
 /**
  *
  */

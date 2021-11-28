@@ -14,6 +14,10 @@ namespace GameEngine {
 			Sequence(const char* name);
 			void init(void* data) override;
 			void execute(Action* r) override;						// let a parent take a decision with it's current running child
+
+			// Behavior engine
+			static BehaviorNode* create(const char* name);				// create a node
+
 			// debugger
 			void debugGUInode(void) override;
 

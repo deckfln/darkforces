@@ -271,6 +271,7 @@
     <ClCompile Include="gaEngine\Debug.cpp" />
     <ClCompile Include="gaEngine\gaActor.cpp" />
     <ClCompile Include="gaEngine\gaApp.cpp" />
+    <ClCompile Include="gaEngine\gaBehavior.cpp" />
     <ClCompile Include="gaEngine\gaBehaviorNode.cpp" />
     <ClCompile Include="gaEngine\gaBehaviorNode\gaBehaviorDecorator.cpp" />
     <ClCompile Include="gaEngine\gaBehaviorNode\gaBehaviorLoop.cpp" />
@@ -514,6 +515,7 @@
     <ClInclude Include="gaEngine\flightRecorder\frPathFinding.h" />
     <ClInclude Include="gaEngine\gaActor.h" />
     <ClInclude Include="gaEngine\gaApp.h" />
+    <ClInclude Include="gaEngine\gaBehavior.h" />
     <ClInclude Include="gaEngine\gaBehaviorNode.h" />
     <ClInclude Include="gaEngine\gaBehaviorNode\gaBehaviorDecorator.h" />
     <ClInclude Include="gaEngine\gaBehaviorNode\gaBehaviorLoop.h" />

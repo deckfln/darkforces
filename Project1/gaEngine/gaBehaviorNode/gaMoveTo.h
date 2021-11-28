@@ -46,6 +46,9 @@ namespace GameEngine {
 			void dispatchMessage(gaMessage* message, Action *r) override;	// let a component deal with a situation
 			void init(void *) override;
 
+			// Behavior engine
+			static BehaviorNode* create(const char* name);					// create a node
+
 			// flight recorder status
 			uint32_t recordState(void* record) override;				// save the component state in a record
 			uint32_t loadState(void* record) override;					// reload a component state from a record

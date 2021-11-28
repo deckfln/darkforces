@@ -27,6 +27,14 @@ void GameEngine::BehaviorNode::init(void* data)
 }
 
 /**
+ *
+ */
+BehaviorNode* GameEngine::BehaviorNode::create(const char* name)
+{
+	return new BehaviorNode(name);
+}
+
+/**
  * bind node to an entity
  */
 void GameEngine::BehaviorNode::instanciate(gaEntity* entity)
@@ -134,6 +142,8 @@ void GameEngine::BehaviorNode::activated(void)
 {
 }
 
+//*********************************************************
+
 /**
  * let a parent take a decision with it's current running child result
  */
@@ -155,6 +165,8 @@ void GameEngine::BehaviorNode::execute(BehaviorNode::Action *r)
 	}
 }
 
+//*********************************************************
+
 /**
  *
  */
@@ -162,6 +174,8 @@ void GameEngine::BehaviorNode::dispatchMessage(gaMessage*message, BehaviorNode::
 {
 	r->action = BehaviorNode::Status::RUNNING;
 }
+
+//*********************************************************
 
 /**
  *
@@ -242,6 +256,8 @@ void GameEngine::BehaviorNode::debugGUIinline(BehaviorNode* current, float x, fl
 void GameEngine::BehaviorNode::debugGUInode(void)
 {
 }
+
+//*********************************************************
 
 /**
  * flight recorder

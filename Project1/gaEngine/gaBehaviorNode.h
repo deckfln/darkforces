@@ -58,6 +58,9 @@ namespace GameEngine {
 		virtual void init(void *);									// init the node before running
 		virtual void dispatchMessage(gaMessage* message, BehaviorNode::Action* r);
 
+		// Behavior engine
+		static BehaviorNode* create(const char* name);							// create a node
+
 		// debugger
 		virtual void debugGUIinline(BehaviorNode* current, float x, float& y);	// display the component in the debugger
 		virtual void debugGUInode(void);							// display the component in the debugger
