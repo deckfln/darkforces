@@ -12,7 +12,7 @@ void DarkForces::Component::InfElevatorTranslate::moveTo(float z_lvl)
 	GameEngine::Transform* tr = m_entity->pTransform();
 	tr->m_position = m_entity->position();
 	tr->m_position.y = z_lvl / 10.0f;
-	m_entity->sendMessage(m_entity->name(), gaMessage::Action::MOVE, 0, &tr->m_position);
+	m_entity->sendMessage(m_entity->name(), gaMessage::Action::WANT_TO_MOVE, 0, &tr->m_position);
 
 	// change the sound 'opacity' of the elevator (door) base don openess
 	dfSector* sector = dynamic_cast<dfSector*>(m_entity);
