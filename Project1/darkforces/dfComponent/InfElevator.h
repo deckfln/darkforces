@@ -144,6 +144,9 @@ namespace DarkForces {
 
 			// messages
 			void onGotoStopForced(gaMessage* message);		// Force an elevator to go to a specific Stop
+			void onTrigger(gaMessage* message);				// activate the elevator
+			void onGotoStop(gaMessage* message);			// Move to the next stop
+			void onTimer(gaMessage* message);				// animate the elevator
 		};
 	}
 }

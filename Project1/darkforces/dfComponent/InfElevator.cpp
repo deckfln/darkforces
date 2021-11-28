@@ -293,6 +293,8 @@ void DarkForces::Component::InfElevator::addSound(uint32_t action, dfVOC* sound)
 	__debugbreak();
 }
 
+//*******************************************************
+
 /**
  * Force an elevator to go to a specific Stop
  */
@@ -304,36 +306,106 @@ void DarkForces::Component::InfElevator::onGotoStopForced(gaMessage* message)
 }
 
 /**
+ * activate the elevator
+ */
+void DarkForces::Component::InfElevator::onTrigger(gaMessage* message)
+{
+	if (m_status != Status::HOLD) {
+		// break the animation and move directly to the next stop
+		moveToNextStop();
+		m_status = Status::MOVE;
+		// no need for animation, there is already one on the message queue
+	}
+	else {
+		// for speed = 0, move instantly to the next stop
+		if (m_speed == 0) {
+			gaDebugLog(1, "DarkForces::Component::Elevator::dispatchMessage", "speed==0 not implemented");
+		}
+		else {
+			startTimer();
+			if (!animate(0)) {
+				stopTimer();
+			}
+		}
+	}
+
+	// synchronize all triggers to the status of the elevator
+	for (auto trigger : m_triggers) {
+		m_entity->sendMessage(trigger->entity()->name(), DarkForces::Message::TRIGGER);
+	}
+}
+
+/**
+ * Move to the next stop
+ */
+void DarkForces::Component::InfElevator::onGotoStop(gaMessage* message)
+{
+	if (m_status == Status::HOLD && m_currentStop == message->m_value) {
+		return;				// nothing to do, we're already at the correct stop
+	}
+
+	if (m_status == Status::MOVE && m_nextStop == message->m_value) {
+		return;				// nothing to do, we're already moving toward the requested stop
+	}
+
+	m_nextStop = message->m_value;
+
+	if (m_speed > 0) {
+		// animated move
+		m_current = m_stops[m_currentStop]->z_position(m_type);
+		m_target = m_stops[m_nextStop]->z_position(m_type);
+
+		float t1 = m_stops[m_currentStop]->time();
+		float t2 = m_stops[m_nextStop]->time();
+
+		float delta = (t2 - t1) * 1000;	// time in millisecond
+
+		m_direction = m_target - m_current;
+
+		// TODO adapt the speed
+		m_delay = abs(m_direction) * 1600 / m_speed;
+
+		// only trigger a loop if the object is currently still
+		if (m_status == Status::HOLD) {
+
+			// start the sounds
+			m_entity->sendMessage(gaMessage::PLAY_SOUND, DarkForces::Sounds::ELEVATOR_START);
+			m_entity->sendMessage(gaMessage::PLAY_SOUND, DarkForces::Sounds::ELEVATOR_MOVE);
+
+			m_status = Status::MOVE;
+			startTimer();
+			if (!animate(0)) {
+				stopTimer();
+			}
+		}
+	}
+	else {
+		// instant move
+		m_currentStop = message->m_value;
+		moveTo(m_stops[m_currentStop]);
+	}
+}
+
+/**
+ * animate the elevator
+ */
+void DarkForces::Component::InfElevator::onTimer(gaMessage* message)
+{
+	if (!animate(message->m_delta)) {
+		stopTimer();
+	}
+}
+
+//*******************************************************
+
+/**
  * Handle messages
  */
 void DarkForces::Component::InfElevator::dispatchMessage(gaMessage* message)
 {
 	switch (message->m_action) {
 	case DarkForces::Message::TRIGGER:
-		if (m_status != Status::HOLD) {
-			// break the animation and move directly to the next stop
-			moveToNextStop();
-			m_status = Status::MOVE;
-			// no need for animation, there is already one on the message queue
-		}
-		else {
-			// for speed = 0, move instantly to the next stop
-			if (m_speed == 0) {
-				gaDebugLog(1, "DarkForces::Component::Elevator::dispatchMessage", "speed==0 not implemented");
-			}
-			else {
-				startTimer();
-				if (!animate(0)) {
-					stopTimer();
-				}
-			}
-		}
-
-		// synchronize all triggers to the status of the elevator
-		for (auto trigger : m_triggers) {
-			m_entity->sendMessage(trigger->entity()->name(), DarkForces::Message::TRIGGER);
-		}
-
+		onTrigger(message);
 		break;
 
 	case DarkForces::Message::GOTO_STOP_FORCE:
@@ -341,56 +413,11 @@ void DarkForces::Component::InfElevator::dispatchMessage(gaMessage* message)
 		break;
 
 	case DarkForces::Message::GOTO_STOP:
-		if (m_status == Status::HOLD && m_currentStop == message->m_value) {
-			return;				// nothing to do, we're already at the correct stop
-		}
-
-		if (m_status == Status::MOVE && m_nextStop == message->m_value) {
-			return;				// nothing to do, we're already moving toward the requested stop
-		}
-
-		m_nextStop = message->m_value;
-
-		if (m_speed > 0) {
-			// animated move
-			m_current = m_stops[m_currentStop]->z_position(m_type);
-			m_target = m_stops[m_nextStop]->z_position(m_type);
-
-			float t1 = m_stops[m_currentStop]->time();
-			float t2 = m_stops[m_nextStop]->time();
-
-			float delta = (t2 - t1) * 1000;	// time in millisecond
-
-			m_direction = m_target - m_current;
-
-			// TODO adapt the speed
-			m_delay = abs(m_direction) * 1600 / m_speed;
-
-			// only trigger a loop if the object is currently still
-			if (m_status == Status::HOLD) {
-
-				// start the sounds
-				m_entity->sendMessage(gaMessage::PLAY_SOUND, DarkForces::Sounds::ELEVATOR_START);
-				m_entity->sendMessage(gaMessage::PLAY_SOUND, DarkForces::Sounds::ELEVATOR_MOVE);
-
-				m_status = Status::MOVE;
-				startTimer();
-				if (!animate(0)) {
-					stopTimer();
-				}
-			}
-		}
-		else {
-			// instant move
-			m_currentStop = message->m_value;
-			moveTo(m_stops[m_currentStop]);
-		}
+		onGotoStop(message);
 		break;
 
 	case gaMessage::TIMER:
-		if (!animate(message->m_delta)) {
-			stopTimer();
-		}
+		onTimer(message);
 		break;
 	}
 }
@@ -447,6 +474,8 @@ void DarkForces::Component::InfElevator::prepareMesh(void)
 	}
 }
 
+//*******************************************************
+
 /**
  * size of the component
  */
@@ -495,6 +524,8 @@ uint32_t DarkForces::Component::InfElevator::loadState(void* r)
 
 	return record->size;
 }
+
+//*******************************************************
 
 /**
  * display the component in the debugger
