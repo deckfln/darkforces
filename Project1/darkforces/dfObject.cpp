@@ -42,6 +42,12 @@ DarkForces::Object::Object(dfModel *source, const glm::vec3& position, float amb
 	m_is(type),
 	m_objectID(g_ids++)
 {
+#ifdef _DEBUG
+	if (position.x == +INFINITY || position.y == +INFINITY || position.z == +INFINITY) {
+		__debugbreak();
+	}
+#endif
+
 	modelAABB(m_source->modelAABB());
 	moveTo(position);
 	m_className = g_className;
