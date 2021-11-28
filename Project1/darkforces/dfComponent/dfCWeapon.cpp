@@ -232,10 +232,10 @@ void DarkForces::Component::Weapon::onDying(gaMessage* message)
 {
 	switch (m_kind) {
 	case DarkForces::Weapon::Kind::Rifle:
-		((DarkForces::Object*)m_entity)->drop(dfLogic::ITEM_RIFLE, m_energy);
+		m_entity->sendMessage(DarkForces::Message::DROP_ITEM, dfLogic::ITEM_RIFLE, m_energy);
 		break;
 	case DarkForces::Weapon::Kind::Pistol:
-		((DarkForces::Object*)m_entity)->drop(dfLogic::ITEM_ENERGY, m_energy);
+		m_entity->sendMessage(DarkForces::Message::DROP_ITEM, dfLogic::ITEM_ENERGY, m_energy);
 		break;
 	}
 }

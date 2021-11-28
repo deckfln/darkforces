@@ -158,6 +158,7 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 		{DarkForces::Message::ROTATE, "df_ROTATE"},
 		{DarkForces::Message::ANIM_PAUSE, "df_AnimPause"},
 		{DarkForces::Message::ANIM_VUE, "df_AnimVUE"},
+		{DarkForces::Message::DROP_ITEM, "df_DropItem"}
 	};
 
 	static std::map<int32_t, const std::map<int32_t, const char*>> g_def = {

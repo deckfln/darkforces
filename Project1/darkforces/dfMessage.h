@@ -30,7 +30,8 @@ namespace DarkForces {
 		ANIM_END,			// WAX animation reached the end and is stopping
 		ROTATE,				// rotate objects in degrees
 		ANIM_PAUSE,			// let the animation loop or not
-		ANIM_VUE			// load an animation VUE for 3D objects
+		ANIM_VUE,			// load an animation VUE for 3D objects
+		DROP_ITEM			// entity shall drop an item
 	};
 
 	enum MessageEvent {

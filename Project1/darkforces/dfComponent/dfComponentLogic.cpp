@@ -117,11 +117,11 @@ void dfComponentLogic::dispatchMessage(gaMessage* message)
 		if (m_logics & DF_LOGIC_ENEMIES) {
 			if (m_logics & dfLogic::OFFICER) {
 				if (m_logics & dfLogic::RED_KEY) {
-					((DarkForces::Object*)m_entity)->drop(dfLogic::RED_KEY);
+					m_entity->sendMessage(DarkForces::Message::DROP_ITEM, dfLogic::RED_KEY);
 				}
 			}
 			else if (m_logics & dfLogic::INTDROID) {
-				((DarkForces::Object*)m_entity)->drop(dfLogic::ITEM_POWER);
+				m_entity->sendMessage(DarkForces::Message::DROP_ITEM, dfLogic::ITEM_POWER);
 			}
 		}
 		break;

@@ -79,8 +79,8 @@ void DarkForces::AIMouseBot::dispatchMessage(gaMessage* message)
 	case DarkForces::Message::DYING:
 		// there is no animation between dying and dead
 		m_entity->sendMessage(DarkForces::Message::DEAD);
-		static_cast<DarkForces::Object*>(m_entity)->drop(dfLogic::DEAD_MOUSE);
-		static_cast<DarkForces::Object*>(m_entity)->drop(dfLogic::ITEM_BATTERY);
+		m_entity->sendMessage(DarkForces::Message::DROP_ITEM, dfLogic::DEAD_MOUSE);
+		m_entity->sendMessage(DarkForces::Message::DROP_ITEM, dfLogic::ITEM_BATTERY);
 		break;
 
 	case DarkForces::Message::DEAD:

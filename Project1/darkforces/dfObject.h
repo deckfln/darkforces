@@ -128,6 +128,9 @@ namespace DarkForces {
 		dfModel* m_source = nullptr;
 		dfSector* m_sector = nullptr;							// cached pointer to the sector hosting the object
 
+		void onDropItem(gaMessage *message);					// entity shall drop an item where it is located
+		void onStateChange(dfState state, bool loop);			// direct change of state
+
 	public:
 		Object(dfModel* source, const glm::vec3& position, float ambient, int type, uint32_t objectID);
 		Object(const std::string& model, const glm::vec3& position);
@@ -155,7 +158,6 @@ namespace DarkForces {
 		void sector(dfSector* s) { m_sector = s; };
 		dfSuperSector* superSector(void) override;
 
-		void onStateChange(dfState state, bool loop);					// direct change of state
 		/*
 		void pushState(dfState state);							// save and restore status
 		dfState popState(void);

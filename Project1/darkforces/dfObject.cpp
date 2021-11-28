@@ -24,6 +24,14 @@ static int g_ids = 0;
 static const char* g_className = "Object";
 
 /**
+ * entity shall drop an item where it is located
+ */
+void DarkForces::Object::onDropItem(gaMessage* message)
+{
+	drop(message->m_value, message->m_fvalue);
+}
+
+/**
  *
  */
 DarkForces::Object::Object(dfModel *source, const glm::vec3& position, float ambient, int type, uint32_t objectID):
@@ -405,6 +413,10 @@ void DarkForces::Object::dispatchMessage(gaMessage* message)
 
 	case DarkForces::Message::START_FIRE:
 		onStateChange(dfState::ENEMY_ATTACK, true);
+		break;
+
+	case DarkForces::Message::DROP_ITEM:
+		onDropItem(message);
 		break;
 
 	case gaMessage::START_MOVE:
