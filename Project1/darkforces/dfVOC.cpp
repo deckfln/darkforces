@@ -263,6 +263,7 @@ alSound* dfVOC::sound(void)
 	}
 
 	m_sound = new alSound(AL_FORMAT_MONO8, (ALvoid *)&m_pcm8[0], m_pcm8.size(), m_sampleRate, m_repeat == 0Xffff);
+	m_sound->source(m_name);
 
 	return m_sound;
 }

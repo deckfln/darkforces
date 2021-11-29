@@ -103,5 +103,7 @@ void GameEngine::Behavior::Sound::debugGUInode(void)
 		break;
 	}
 
-	ImGui::Text("# sounds: %d", m_sounds.size());
+	for (auto i = 0; i < m_sounds.size(); i++) {
+		ImGui::Text("%d: %s", m_ids[i], m_sounds[i]->source().c_str());
+	}
 }
