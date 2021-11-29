@@ -50,6 +50,7 @@ void DarkForces::Behavior::TrackPlayer::init(void* data)
 	std::vector<glm::vec3>* playerLastPositions = m_tree->blackboard<std::vector<glm::vec3>>("player_last_positions");
 	uint32_t size = playerLastPositions->size();
 	glm::vec2 direction;
+	glm::vec3 target;
 
 	if (size < 2) {
 		// if we don't have enough position of the player, were and when did we last heard a blaster shot
@@ -60,16 +61,15 @@ void DarkForces::Behavior::TrackPlayer::init(void* data)
 			return;
 		}
 
-		glm::vec2 sound2D(sound->x, sound->z);
-		glm::vec2 entity2D(m_entity->position().x, m_entity->position().z);
-		direction = glm::normalize(sound2D - entity2D);
+		target = glm::vec3(sound->x, m_entity->position().y, sound->z);
 	}
 	else {
-		// the player may have been seen twice at the same position, so find a different position
+		// the player may have been seen twice at the same position, so find a different position, but only go back a bit
 		glm::vec3 p1 = playerLastPositions->at(--size);
 		glm::vec3 p2 = playerLastPositions->at(--size);
+		int i = 5;
 
-		while (p1 == p2 && size > 0) {
+		while (p1.x == p2.x && p1.z == p2.z && size > 0) {
 			p2 = playerLastPositions->at(--size);
 		}
 		if (size <= 0) {
@@ -80,17 +80,15 @@ void DarkForces::Behavior::TrackPlayer::init(void* data)
 		glm::vec2 p1d(p1.x, p1.z);
 		glm::vec2 p2d(p2.x, p2.z);
 
-		direction = glm::normalize(p1d - p2d);
-		if (glm::length(direction) < m_entity->radius()) {
-			m_status = Status::FAILED;
-			return;
+#ifdef _DEBUG
+		if (p1d == p2d) {
+			__debugbreak();
 		}
+#endif
+
+		direction = glm::normalize(p1d - p2d);
+		target = glm::vec3(direction.x + p1d.x, m_entity->position().y, direction.y + p1d.y);
 	}
-
-	// walk 10 times in the direction
-	direction *= m_entity->radius() * 10.0f;
-
-	glm::vec3 target(direction.x + m_entity->position().x, m_entity->position().y, direction.y + m_entity->position().z);
 
 	m_navpoints.clear();
 	m_navpoints.push_back(target);

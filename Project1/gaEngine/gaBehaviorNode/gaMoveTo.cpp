@@ -63,12 +63,19 @@ void GameEngine::Behavior::MoveTo::init(void *data)
 	m_status = Status::MOVE_TO_NEXT_WAYPOINT;
 	BehaviorNode::m_status = BehaviorNode::Status::RUNNING;
 
-	printf("GameEngine::Behavior::MoveTo::init\n");
-	//printf("%f,%f,\n", m_transforms->m_position.x, m_transforms->m_position.z);
-	for (auto& p : *m_navpoints) {
-		printf("%f,%f,\n", p.x, p.z);
+#ifdef _DEBUG
+	if (m_entity->name() == "STORMFIN.WAX(59)") {
+		printf("GameEngine::Behavior::MoveTo::init\n");
+		//printf("%f,%f,\n", m_transforms->m_position.x, m_transforms->m_position.z);
+		for (auto& p : *m_navpoints) {
+			printf("%f,%f,\n", p.x, p.z);
+			if (p.x != p.x) {
+				__debugbreak();
+			}
+		}
+		printf("<\n");
 	}
-	printf("<\n");
+#endif
 
 	// broadcast the beginning of the move (for animation)
 	m_entity->sendDelayedMessage(gaMessage::START_MOVE);

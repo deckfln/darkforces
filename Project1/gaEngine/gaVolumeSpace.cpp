@@ -123,10 +123,12 @@ void GameEngine::VolumeSpace::path(const glm::vec3& source, const glm::vec3& lis
 	int32_t vSource = findVolume(source);
 	int32_t vListener = findVolume(listener);
 
+#ifdef _DEBUG
 	if (vSource < 0 || vListener < 0) {
 		__debugbreak();
 		return;
 	}
+#endif
 
 	// if the 2 objects are in the same volume, stop there
 	if (vSource == vListener) {

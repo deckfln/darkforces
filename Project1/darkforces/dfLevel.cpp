@@ -448,7 +448,7 @@ dfSector* dfLevel::findSector(const glm::vec3& position)
 		sector = m_lastSuperSector->findDFSector(position);
 		if (sector) {
 #ifdef _DEBUG
-			gaDebugLog(LOW_DEBUG, "dfLevel::findSector", " leave=" + m_lastSector->name() + " enter=" + sector->name());
+			//gaDebugLog(LOW_DEBUG, "dfLevel::findSector", " leave=" + m_lastSector->name() + " enter=" + sector->name());
 #endif
 
 			m_lastSector = sector;
@@ -470,10 +470,10 @@ dfSector* dfLevel::findSector(const glm::vec3& position)
 			if (m_lastSector) {
 				message += m_lastSector->name();
 			}
-			gaDebugLog(LOW_DEBUG, "dfLevel::findSector", message);
+			//gaDebugLog(LOW_DEBUG, "dfLevel::findSector", message);
 
 			message = " enter=" + sector->name();
-			gaDebugLog(LOW_DEBUG, "dfLevel::findSector", message);
+			//gaDebugLog(LOW_DEBUG, "dfLevel::findSector", message);
 
 #endif
 

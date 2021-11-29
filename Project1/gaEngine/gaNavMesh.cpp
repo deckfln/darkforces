@@ -282,7 +282,8 @@ uint32_t GameEngine::NavMesh::findPath(const glm::vec3& from, const glm::vec3& t
 
 	cost_so_far[start] = 0;
 
-	int32_t current, next;
+	int32_t current = start;
+	int32_t next;
 	Node c;
 	float new_cost;
 	float priority;
