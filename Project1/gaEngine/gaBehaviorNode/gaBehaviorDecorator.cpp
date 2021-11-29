@@ -11,7 +11,7 @@ GameEngine::Behavior::Decorator::Decorator(const char *name) :
 {
 }
 
-GameEngine::BehaviorNode* GameEngine::Behavior::Decorator::create(const char* name, tinyxml2::XMLElement* element)
+GameEngine::BehaviorNode* GameEngine::Behavior::Decorator::create(const char* name, tinyxml2::XMLElement* element, GameEngine::BehaviorNode* used)
 {
 	GameEngine::Behavior::Decorator* node = new GameEngine::Behavior::Decorator(name);
 	tinyxml2::XMLElement* attr = element->FirstChildElement("condition");

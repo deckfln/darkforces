@@ -18,7 +18,7 @@ namespace GameEngine {
 			inline void condition(Condition c) { m_condition = c; };
 
 			// Behavior engine
-			static BehaviorNode* create(const char* name, tinyxml2::XMLElement* element);// create a node
+			static BehaviorNode* create(const char* name, tinyxml2::XMLElement* element, GameEngine::BehaviorNode* used);// create a node
 
 			//debugger
 			void debugGUInode(void) override;						// display the component in the debugger

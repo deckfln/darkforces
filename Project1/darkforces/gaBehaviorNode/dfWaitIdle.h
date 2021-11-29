@@ -14,7 +14,7 @@ namespace DarkForces {
 			void dispatchMessage(gaMessage* message, Action* r) override;	// let a component deal with a situation
 
 			// Behavior engine
-			static BehaviorNode* create(const char* name, tinyxml2::XMLElement* element);// create a node
+			static BehaviorNode* create(const char* name, tinyxml2::XMLElement* element, GameEngine::BehaviorNode* used);// create a node
 		};
 	}
 }

@@ -1,5 +1,7 @@
 #include "Enemy.h"
 
+#include <map>
+
 #include "../dfComponent/dfCSprite/dfCSpriteAnimated.h"
 
 #include "../dfWeapon.h"
@@ -9,6 +11,60 @@
 
 static const char* g_className = "dfEnemy";
 
+const std::string g_behaviorTree = "<node type='WaitIdle' name='Wait for event'>\
+<condition>FAILURE</condition>\
+<tree>\
+<node type='AttackPlayer' name='attack and track'>\
+	<tree>\
+	<node type='MoveToAndAttack' name='find the player, move toward him and shoot at him'>\
+		<tree>\
+		<node type='Decorator' name='always return false'>\
+			<condition>always_false</condition>\
+			<tree>\
+			<node type='darkForces:sound' name='tease the player'>\
+				<sounds>\
+<#include sounds.inc>\
+				</sounds>\
+			</node>\
+			</tree>\
+		</node>\
+		<node type='Move2Player' name='move toward player'>\
+			<tree>\
+			<node type='MoveTo' name='move to waypoints'></node>\
+			</tree>\
+		</node>\
+		<node type='Fire2Player' name='shoot player'></node>\
+		<node type='TrackPlayer' name='track the player after losing him'>\
+			<tree>\
+			<node type='MoveTo' name='move to waypoints'></node>\
+			</tree>\
+		</node>\
+		</tree>\
+	</node>\
+	</tree>\
+</node>\
+<node type='MoveEnemyTo' name='move to destination'>\
+	<tree>\
+	<node type='SatNav' name='go to destination'></node>\
+	<node type='WaitDoor' name='wait for door to open'></node>\
+	<node type='OpenDoor' name='go to destination'>\
+		<tree>\
+		<node type='GotoTrigger' name='try to reach each trigger'>\
+			<tree>\
+			<node type='SatNav' name='go to trigger'></node>\
+			<node type='WaitDoor' name='wait for door to open'></node>\
+			</tree>\
+		</node>\
+		</tree>\
+	</node>\
+	</tree>\
+</node>\
+</tree>\
+</node>";
+
+/**
+ *
+ */
 DarkForces::Enemy::Enemy(dfWAX* model, const glm::vec3& position, float ambient, uint32_t objectID):
 	DarkForces::Object(model, position, ambient, OBJECT_WAX, objectID)
 {
@@ -36,19 +92,41 @@ DarkForces::Enemy::Enemy(dfWAX* model, const glm::vec3& position, float ambient,
 	addComponent(&m_weapon);
 
 	m_actor.setClass(model->name());
+
+	// set sounds
+	std::string sounds;
+	std::map<std::string, std::string> includes;
+
 	if (model->name() == "OFFCFIN.WAX") {
 		m_weapon.set(DarkForces::Weapon::Kind::Pistol);
 
+		includes["sounds.inc"] = "<sound file = 'RANOFC02.voc' id = '2048' />\
+			< sound file = 'RANOFC04.voc' id = '2050' /> \
+			<sound file = 'RANOFC05.voc' id = '2051' />\
+			<sound file = 'RANOFC06.voc' id = '2052' />";
+
 		// load sounds
+		/*
 		m_ai.addSound("RANOFC02.voc", 2048);
 		m_ai.addSound("RANOFC04.voc", 2050);
 		m_ai.addSound("RANOFC05.voc", 2051);
 		m_ai.addSound("RANOFC06.voc", 2052);
+		*/
 	}
 	else {
 		m_weapon.set(DarkForces::Weapon::Kind::Rifle);
 
+		includes["sounds.inc"] = "<sound file = 'Ransto01.voc' id = '2048' />\
+			< sound file = 'Ransto02.voc' id = '2049' /> \
+			<sound file = 'Ransto03.voc' id = '2050' />\
+			<sound file = 'Ransto04.voc' id = '2051' />\
+			<sound file = 'Ransto05.voc' id = '2052' />\
+			<sound file = 'Ransto06.voc' id = '2053' />\
+			<sound file = 'Ransto07.voc' id = '2054' />\
+			<sound file = 'Ransto08.voc' id = '2055' />";
+
 		// load sounds
+		/*
 		m_ai.addSound("Ransto01.voc", 2048);
 		m_ai.addSound("Ransto02.voc", 2049);
 		m_ai.addSound("Ransto03.voc", 2050);
@@ -57,7 +135,11 @@ DarkForces::Enemy::Enemy(dfWAX* model, const glm::vec3& position, float ambient,
 		m_ai.addSound("Ransto06.voc", 2053);
 		m_ai.addSound("Ransto07.voc", 2054);
 		m_ai.addSound("Ransto08.voc", 2055);
+		*/
 	}
+	m_ai.parse(g_behaviorTree, includes);
+
+
 	m_weapon.addEnergy(200);
 
 	m_sound.addSound(DarkForces::Component::Actor::Sound::DIE, DarkForces::loadSound(DarkForces::Sounds::STORM_COMMANDO_OFFICER_DIE)->sound());

@@ -13,7 +13,7 @@ DarkForces::Behavior::WaitIdle::WaitIdle(const char* name):
 	m_condition = Condition::EXIT_AT_END;
 }
 
-BehaviorNode* DarkForces::Behavior::WaitIdle::create(const char* name, tinyxml2::XMLElement* element)
+BehaviorNode* DarkForces::Behavior::WaitIdle::create(const char* name, tinyxml2::XMLElement* element, GameEngine::BehaviorNode* used)
 {
 	return new DarkForces::Behavior::WaitIdle(name);
 }

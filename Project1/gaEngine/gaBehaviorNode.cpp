@@ -52,7 +52,7 @@ void GameEngine::BehaviorNode::init(void* data)
 /**
  *
  */
-BehaviorNode* GameEngine::BehaviorNode::create(const char* name, tinyxml2::XMLElement* element)
+BehaviorNode* GameEngine::BehaviorNode::create(const char* name, tinyxml2::XMLElement* element, GameEngine::BehaviorNode* used)
 {
 	return new BehaviorNode(name);
 }

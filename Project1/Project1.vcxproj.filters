@@ -810,6 +810,9 @@
     <ClCompile Include="gaEngine\gaBehavior.cpp">
       <Filter>Fichiers sources\gaEngine</Filter>
     </ClCompile>
+    <ClCompile Include="darkforces\gaBehaviorNode\dfBSound.cpp">
+      <Filter>Fichiers sources\Dark Forces\gaBehaviorNode</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="glad\glad.h">
@@ -1543,6 +1546,9 @@
     </ClInclude>
     <ClInclude Include="gaEngine\gaBehavior.h">
       <Filter>Fichiers d%27en-tête\gaEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="darkforces\gaBehaviorNode\dfBSound.h">
+      <Filter>Fichiers d%27en-tête\DarkForces\gaBehaviorNode</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -36,7 +36,7 @@ DarkForces::Behavior::TrackPlayer::TrackPlayer(const char* name):
 {
 }
 
-BehaviorNode* DarkForces::Behavior::TrackPlayer::create(const char* name, tinyxml2::XMLElement* element)
+BehaviorNode* DarkForces::Behavior::TrackPlayer::create(const char* name, tinyxml2::XMLElement* element, GameEngine::BehaviorNode* used)
 {
 	return new DarkForces::Behavior::TrackPlayer(name);
 }

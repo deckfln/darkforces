@@ -8,7 +8,7 @@ GameEngine::Behavior::Sequence::Sequence(const char *name) :
 {
 }
 
-GameEngine::BehaviorNode* GameEngine::Behavior::Sequence::create(const char* name, tinyxml2::XMLElement* element)
+GameEngine::BehaviorNode* GameEngine::Behavior::Sequence::create(const char* name, tinyxml2::XMLElement* element, GameEngine::BehaviorNode* used)
 {
 	return new GameEngine::Behavior::Sequence(name);
 }

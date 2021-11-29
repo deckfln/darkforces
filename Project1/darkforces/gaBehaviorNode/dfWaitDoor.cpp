@@ -12,7 +12,7 @@ DarkForces::Behavior::WaitDoor::WaitDoor(const char* name):
 {
 }
 
-BehaviorNode* DarkForces::Behavior::WaitDoor::create(const char* name, tinyxml2::XMLElement* element)
+BehaviorNode* DarkForces::Behavior::WaitDoor::create(const char* name, tinyxml2::XMLElement* element, GameEngine::BehaviorNode* used)
 {
 	return new DarkForces::Behavior::WaitDoor(name);
 }

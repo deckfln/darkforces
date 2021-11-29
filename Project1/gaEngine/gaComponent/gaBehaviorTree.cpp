@@ -27,9 +27,9 @@ GameEngine::Component::BehaviorTree::BehaviorTree(BehaviorNode* root):
 /**
  * create a tree from XML data
  */
-void GameEngine::Component::BehaviorTree::parse(const std::string& data)
+void GameEngine::Component::BehaviorTree::parse(const std::string& data, const std::map<std::string, std::string>& includes)
 {
-	m_root = GameEngine::Behavior::loadTree(data);
+	m_root = GameEngine::Behavior::loadTree(data, includes);
 	m_current = m_root;
 
 	m_root->tree(this);

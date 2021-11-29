@@ -15,7 +15,7 @@ DarkForces::Behavior::OpenDoor::OpenDoor(const char* name):
 {
 }
 
-BehaviorNode* DarkForces::Behavior::OpenDoor::create(const char* name, tinyxml2::XMLElement* element)
+BehaviorNode* DarkForces::Behavior::OpenDoor::create(const char* name, tinyxml2::XMLElement* element, GameEngine::BehaviorNode* used)
 {
 	return new DarkForces::Behavior::OpenDoor(name);
 }

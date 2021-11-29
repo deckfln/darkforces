@@ -15,7 +15,7 @@ namespace DarkForces {
 			void init(void *) override;							// init the node before running
 
 			// Behavior engine
-			static BehaviorNode* create(const char* name, tinyxml2::XMLElement* element);	// create a node
+			static BehaviorNode* create(const char* name, tinyxml2::XMLElement* element, GameEngine::BehaviorNode* used);	// create a node
 		};
 	}
 }

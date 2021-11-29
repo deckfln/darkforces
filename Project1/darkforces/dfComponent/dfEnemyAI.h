@@ -20,6 +20,7 @@ namespace DarkForces {
 	namespace Component {
 		class EnemyAI : public GameEngine::Component::BehaviorTree
 		{
+			/*
 			Behavior::WaitIdle m_waitIdle = Behavior::WaitIdle("wait_idle");
 				Behavior::AttackPlayer m_attack = Behavior::AttackPlayer("attack and track");
 					Behavior::MoveToAndAttack m_moveAndAttack = Behavior::MoveToAndAttack("find the player, move toward him and shoot at him");
@@ -38,7 +39,7 @@ namespace DarkForces {
 					Behavior::GotoTrigger m_goto_trigger = Behavior::GotoTrigger("try to reach each trigger");
 						GameEngine::Behavior::SatNav m_satnav_door = GameEngine::Behavior::SatNav("go to trigger");
 						Behavior::WaitDoor m_wait_door_2 = Behavior::WaitDoor("wait for door to open");
-
+			*/
 			gaEntity* m_player = nullptr;						// player entity
 			glm::vec3 m_lastPlayerView;
 			uint32_t m_lastPlayerViewFrame=0;					// frame ID when the player was seen

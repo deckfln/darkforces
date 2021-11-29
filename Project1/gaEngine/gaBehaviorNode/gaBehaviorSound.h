@@ -17,9 +17,10 @@ namespace GameEngine {
 			void execute(Action* r) override;						// let a parent take a decision with it's current running child
 
 			void addSound(alSound* sound, uint32_t id);				// register a new sound
+			virtual void addSound(const char* file, uint32_t id);	// register a new sound
 
 			// Behavior engine
-			static BehaviorNode* create(const char* name, tinyxml2::XMLElement* element);// create a node
+			static BehaviorNode* create(const char* name, tinyxml2::XMLElement* element, GameEngine::BehaviorNode* used);// create a node
 
 			//debugger
 			void debugGUInode(void) override;						// display the component in the debugger

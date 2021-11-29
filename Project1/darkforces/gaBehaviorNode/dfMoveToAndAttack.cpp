@@ -16,7 +16,7 @@ DarkForces::Behavior::MoveToAndAttack::MoveToAndAttack(const char* name):
 {
 }
 
-BehaviorNode* DarkForces::Behavior::MoveToAndAttack::create(const char* name, tinyxml2::XMLElement* element)
+BehaviorNode* DarkForces::Behavior::MoveToAndAttack::create(const char* name, tinyxml2::XMLElement* element, GameEngine::BehaviorNode* used)
 {
 	return new DarkForces::Behavior::MoveToAndAttack(name);
 }

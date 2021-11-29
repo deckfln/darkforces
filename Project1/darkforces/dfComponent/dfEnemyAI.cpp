@@ -9,8 +9,9 @@
 #include "../dfVOC.h"
 
 DarkForces::Component::EnemyAI::EnemyAI():
-	GameEngine::Component::BehaviorTree(&m_waitIdle)
+	GameEngine::Component::BehaviorTree( /*&m_waitIdle*/)
 {
+	/*
 	m_waitIdle.tree(this);
 	m_waitIdle.init(nullptr);
 
@@ -32,59 +33,10 @@ DarkForces::Component::EnemyAI::EnemyAI():
 				m_goto_trigger.addNode(&m_satnav_door);
 			m_open_door.addNode(&m_wait_door_2);
 
-	blackboard("player_last_positions", (void*)&m_playerLastPositions);
-
 	m_satnav.speed(1.0f);
 	m_InverseTeasePlayer.condition(GameEngine::Behavior::Decorator::Condition::FAILURE);
-
-	const std::string data="<node type='WaitIdle' name='Wait for event'>\
-<condition>FAILURE</condition>\
-<tree>\
-<node type='AttackPlayer' name='attack and track'>\
-	<tree>\
-	<node type='MoveToAndAttack' name='find the player, move toward him and shoot at him'>\
-		<tree>\
-		<node type='Decorator' name='always return false'>\
-			<condition>always_false</condition>\
-			<tree>\
-			<node type='Sound' name='tease the player'></node>\
-			</tree>\
-		</node>\
-		<node type='Move2Player' name='move toward player'>\
-			<tree>\
-			<node type='MoveTo' name='move to waypoints'></node>\
-			</tree>\
-		</node>\
-		<node type='Fire2Player' name='shoot player'></node>\
-		<node type='TrackPlayer' name='track the player after losing him'>\
-			<tree>\
-			<node type='MoveTo' name='move to waypoints'></node>\
-			</tree>\
-		</node>\
-		</tree>\
-	</node>\
-	</tree>\
-</node>\
-<node type='MoveEnemyTo' name='move to destination'>\
-	<tree>\
-	<node type='SatNav' name='go to destination'></node>\
-	<node type='WaitDoor' name='wait for door to open'></node>\
-	<node type='OpenDoor' name='go to destination'>\
-		<tree>\
-		<node type='GotoTrigger' name='try to reach each trigger'>\
-			<tree>\
-			<node type='SatNav' name='go to trigger'></node>\
-			<node type='WaitDoor' name='wait for door to open'></node>\
-			</tree>\
-		</node>\
-		</tree>\
-	</node>\
-	</tree>\
-</node>\
-</tree>\
-</node>";
-
-	GameEngine::Component::BehaviorTree::parse(data);
+	*/
+	blackboard("player_last_positions", (void*)&m_playerLastPositions);
 }
 
 /**
@@ -230,5 +182,5 @@ bool DarkForces::Component::EnemyAI::locatePlayer(void)
  */
 void DarkForces::Component::EnemyAI::addSound(const std::string& file, uint32_t id)
 {
-	m_teasePlayer.addSound(loadVOC(file)->sound(), id);
+	//m_teasePlayer.addSound(loadVOC(file)->sound(), id);
 }

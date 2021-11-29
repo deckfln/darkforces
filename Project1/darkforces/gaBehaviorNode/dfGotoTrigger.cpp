@@ -20,7 +20,7 @@ DarkForces::Behavior::GotoTrigger::GotoTrigger(const char *name):
 	m_sequence = true;
 }
 
-BehaviorNode* DarkForces::Behavior::GotoTrigger::create(const char* name, tinyxml2::XMLElement* element)
+BehaviorNode* DarkForces::Behavior::GotoTrigger::create(const char* name, tinyxml2::XMLElement* element, GameEngine::BehaviorNode* used)
 {
 	return new DarkForces::Behavior::GotoTrigger(name);
 }

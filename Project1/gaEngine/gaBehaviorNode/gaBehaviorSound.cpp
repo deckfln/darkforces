@@ -10,9 +10,35 @@ GameEngine::Behavior::Sound::Sound(const char *name) :
 {
 }
 
-GameEngine::BehaviorNode* GameEngine::Behavior::Sound::create(const char* name, tinyxml2::XMLElement* element)
+GameEngine::BehaviorNode* GameEngine::Behavior::Sound::create(const char* name, tinyxml2::XMLElement* element, GameEngine::BehaviorNode* used)
 {
-	return new GameEngine::Behavior::Sound(name);
+	GameEngine::Behavior::Sound* node;;
+
+	if (used == nullptr) {
+		node = new GameEngine::Behavior::Sound(name);
+	}
+	else {
+		node = dynamic_cast<GameEngine::Behavior::Sound*>(used);
+	}
+
+	const char* file;
+	int32_t id;
+
+	tinyxml2::XMLElement* sounds = element->FirstChildElement("sounds");
+	if (sounds) {
+		tinyxml2::XMLElement* sound = sounds->FirstChildElement("sound");
+
+		while (sound != nullptr) {
+			file = sound->Attribute("file");
+			sound->QueryIntAttribute("id", &id);
+
+			node->addSound(file, id);
+
+			sound = sound->NextSiblingElement("sound");
+		}
+	}
+
+	return node;
 }
 
 void GameEngine::Behavior::Sound::execute(Action* r)
@@ -58,6 +84,10 @@ void GameEngine::Behavior::Sound::addSound(alSound* sound, uint32_t id)
 	m_loaded.push_back(false);
 }
 
+void GameEngine::Behavior::Sound::addSound(const char* file, uint32_t id)
+{
+}
+
 /**
  * display the node data in the debugger
  */
@@ -72,5 +102,6 @@ void GameEngine::Behavior::Sound::debugGUInode(void)
 		ImGui::Text("Play randomly");
 		break;
 	}
-	ImGui::Text("# sounds: ", m_sounds.size());
+
+	ImGui::Text("# sounds: %d", m_sounds.size());
 }

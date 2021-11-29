@@ -21,7 +21,7 @@ DarkForces::Behavior::Move2Player::Move2Player(const char* name):
 {
 }
 
-BehaviorNode* DarkForces::Behavior::Move2Player::create(const char* name, tinyxml2::XMLElement* element)
+BehaviorNode* DarkForces::Behavior::Move2Player::create(const char* name, tinyxml2::XMLElement* element, GameEngine::BehaviorNode* used)
 {
 	return new DarkForces::Behavior::Move2Player(name);
 }

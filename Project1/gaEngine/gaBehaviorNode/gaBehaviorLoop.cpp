@@ -8,7 +8,7 @@ GameEngine::Behavior::Loop::Loop(const char *name) :
 {
 }
 
-GameEngine::BehaviorNode* GameEngine::Behavior::Loop::create(const char* name, tinyxml2::XMLElement* element)
+GameEngine::BehaviorNode* GameEngine::Behavior::Loop::create(const char* name, tinyxml2::XMLElement* element, GameEngine::BehaviorNode* used)
 {
 	return new GameEngine::Behavior::Loop(name);
 }

@@ -30,7 +30,8 @@ namespace GameEngine {
 			BehaviorTree(void);
 			BehaviorTree(BehaviorNode* root);
 
-			void parse(const std::string& data);				// create a tree from XML data
+			void parse(const std::string& data,
+				const std::map<std::string, std::string>& includes);// create a tree from XML data
 
 			// blackboard management
 			void blackboard(const std::string key, void *value);

@@ -57,6 +57,7 @@ const float c_direction = pi/2.0f ; // 1.0f;
 #include "darkforces/gaBehaviorNode/dfTrackPlayer.h"
 #include "darkforces/gaBehaviorNode/dfWaitDoor.h"
 #include "darkforces/gaBehaviorNode/dfWaitIdle.h"
+#include "darkforces/gaBehaviorNode/dfBSound.h"
 
 static void registerNodes(void) {
 	GameEngine::Behavior::registerNode("AttackPlayer", DarkForces::Behavior::AttackPlayer::create);
@@ -69,6 +70,7 @@ static void registerNodes(void) {
 	GameEngine::Behavior::registerNode("TrackPlayer", DarkForces::Behavior::TrackPlayer::create);
 	GameEngine::Behavior::registerNode("WaitDoor", DarkForces::Behavior::WaitDoor::create);
 	GameEngine::Behavior::registerNode("WaitIdle", DarkForces::Behavior::WaitIdle::create);
+	GameEngine::Behavior::registerNode("darkForces:sound", DarkForces::Behavior::Sound::create);
 }
 
 myDarkForces::myDarkForces(std::string name, int width, int height) :

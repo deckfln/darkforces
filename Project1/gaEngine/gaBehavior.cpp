@@ -46,7 +46,7 @@ static GameEngine::BehaviorNode* loadNode(tinyxml2::XMLElement* node)
 	}
 
 	// and create the node
-	bnode = (*g_createNodes[type])(_strdup(name), node);
+	bnode = (*g_createNodes[type])(_strdup(name), node, nullptr);
 
 	// and create an bind the children
 	tinyxml2::XMLElement* tree = node->FirstChildElement("tree");
@@ -64,10 +64,23 @@ static GameEngine::BehaviorNode* loadNode(tinyxml2::XMLElement* node)
 	return bnode;
 }
 
-GameEngine::BehaviorNode* GameEngine::Behavior::loadTree(const std::string& data)
+GameEngine::BehaviorNode* GameEngine::Behavior::loadTree(const std::string& data,
+	const std::map<std::string, std::string>& includes)
 {
+	std::string xml = data;
+	std::string xmlInclude;
+	int hasInclude;
+
+	for (auto& include : includes) {
+		xmlInclude = "<#include " + include.first + ">";
+		hasInclude = data.find(xmlInclude);
+		if (hasInclude >= 0) {
+			xml.replace(hasInclude, xmlInclude.size(), include.second);
+		}
+	}
+
 	tinyxml2::XMLDocument doc;
-	doc.Parse(data.c_str());
+	doc.Parse(xml.c_str());
 
 	// create the node
 	tinyxml2::XMLElement* pRoot = doc.FirstChildElement("node");
