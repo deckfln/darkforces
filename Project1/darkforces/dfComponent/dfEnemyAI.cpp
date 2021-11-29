@@ -9,33 +9,8 @@
 #include "../dfVOC.h"
 
 DarkForces::Component::EnemyAI::EnemyAI():
-	GameEngine::Component::BehaviorTree( /*&m_waitIdle*/)
+	GameEngine::Component::BehaviorTree()
 {
-	/*
-	m_waitIdle.tree(this);
-	m_waitIdle.init(nullptr);
-
-	m_waitIdle.addNode(&m_attack);
-		m_attack.addNode(&m_moveAndAttack);
-			m_moveAndAttack.addNode(&m_InverseTeasePlayer);
-				m_InverseTeasePlayer.addNode(&m_teasePlayer);
-			m_moveAndAttack.addNode(&m_move2player);
-				m_move2player.addNode(&m_move2);
-			m_moveAndAttack.addNode(&m_shootPlayer);
-		m_attack.addNode(&m_track);
-			m_track.addNode(&m_move3);
-
-	m_waitIdle.addNode(&m_move_to);
-		m_move_to.addNode(&m_satnav);
-		m_move_to.addNode(&m_wait_door);
-		m_move_to.addNode(&m_open_door);
-			m_open_door.addNode(&m_goto_trigger);
-				m_goto_trigger.addNode(&m_satnav_door);
-			m_open_door.addNode(&m_wait_door_2);
-
-	m_satnav.speed(1.0f);
-	m_InverseTeasePlayer.condition(GameEngine::Behavior::Decorator::Condition::FAILURE);
-	*/
 	blackboard("player_last_positions", (void*)&m_playerLastPositions);
 }
 

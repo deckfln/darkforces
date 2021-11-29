@@ -104,14 +104,6 @@ DarkForces::Enemy::Enemy(dfWAX* model, const glm::vec3& position, float ambient,
 			< sound file = 'RANOFC04.voc' id = '2050' /> \
 			<sound file = 'RANOFC05.voc' id = '2051' />\
 			<sound file = 'RANOFC06.voc' id = '2052' />";
-
-		// load sounds
-		/*
-		m_ai.addSound("RANOFC02.voc", 2048);
-		m_ai.addSound("RANOFC04.voc", 2050);
-		m_ai.addSound("RANOFC05.voc", 2051);
-		m_ai.addSound("RANOFC06.voc", 2052);
-		*/
 	}
 	else {
 		m_weapon.set(DarkForces::Weapon::Kind::Rifle);
@@ -124,18 +116,6 @@ DarkForces::Enemy::Enemy(dfWAX* model, const glm::vec3& position, float ambient,
 			<sound file = 'Ransto06.voc' id = '2053' />\
 			<sound file = 'Ransto07.voc' id = '2054' />\
 			<sound file = 'Ransto08.voc' id = '2055' />";
-
-		// load sounds
-		/*
-		m_ai.addSound("Ransto01.voc", 2048);
-		m_ai.addSound("Ransto02.voc", 2049);
-		m_ai.addSound("Ransto03.voc", 2050);
-		m_ai.addSound("Ransto04.voc", 2051);
-		m_ai.addSound("Ransto05.voc", 2052);
-		m_ai.addSound("Ransto06.voc", 2053);
-		m_ai.addSound("Ransto07.voc", 2054);
-		m_ai.addSound("Ransto08.voc", 2055);
-		*/
 	}
 	m_ai.parse(g_behaviorTree, includes);
 
