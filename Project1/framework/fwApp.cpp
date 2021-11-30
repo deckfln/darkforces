@@ -1,5 +1,8 @@
 #include "fwapp.h"
 
+#include <direct.h>
+#include <limits.h>
+
 #include <iostream>
 #include <chrono>
 #include <thread>
@@ -47,6 +50,34 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 	currentApp->keyEvent(key, scancode, action, mods);
 }
 
+/**
+ * set the root folder
+ */
+static void rootfolder(void)
+{
+	char tmp[1024];
+	if (_getcwd(tmp, 1024) == nullptr) {
+		std::cout << "FrameWork::rootfolder can't read current path" << std::endl;
+		exit(-1);
+	}
+
+	std::string path(tmp);
+	int hasInclude = path.find("Release");
+	if (hasInclude >= 0) {
+		path.replace(hasInclude, 7, "Project1");
+	}
+	hasInclude = path.find("Debug");
+	if (hasInclude >= 0) {
+		path.replace(hasInclude, 5, "Project1");
+	}
+
+	const char* c = path.c_str();
+	if (_chdir(c) != 0) {
+		std::cout << "FrameWork::rootfolder can't set current path " << path << std::endl;
+		exit(-1);
+	}
+}
+
 /***
  *
  */
@@ -54,6 +85,9 @@ fwApp::fwApp(std::string name, int _width, int _height, std::string post_process
 	height(_height),
 	width(_width)
 {
+	// set the root app folder
+	rootfolder();
+
 	// glfw: initialize and configure
 	// ------------------------------
 	glfwInit();

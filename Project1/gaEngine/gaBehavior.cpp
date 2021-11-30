@@ -1,6 +1,11 @@
 #include "gaBehavior.h"
 
 #include <map>
+#include <iostream>
+#include <fstream>
+#include <sstream>
+#include <stdio.h>
+
 #include <tinyxml2.h>
 
 #include "gaBehaviorNode/gaBehaviorDecorator.h"
@@ -67,20 +72,49 @@ static GameEngine::BehaviorNode* loadNode(tinyxml2::XMLElement* node)
 GameEngine::BehaviorNode* GameEngine::Behavior::loadTree(const std::string& data,
 	const std::map<std::string, std::string>& includes)
 {
-	std::string xml = data;
+	std::string xml;
+	if (data.substr(0, 5) == "file:") {
+		std::ifstream file;
+
+		// ensure ifstream objects can throw exceptions:
+		file.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+		try
+		{
+			// open files
+			file.open(data.substr(5));
+			std::stringstream vStream;
+			// read file's buffer contents into streams
+			vStream << file.rdbuf();
+			// close file handlers
+			file.close();
+			// convert stream into string
+			xml = vStream.str();
+		}
+		catch (std::ifstream::failure e)
+		{
+			std::cout << "GameEngine::Behavior::loadTree " << data << " ::FILE_NOT_SUCCESFULLY_READ" << std::endl;
+			exit(-1);
+		}
+	}
+	else {
+		xml = data;
+	}
 	std::string xmlInclude;
 	int hasInclude;
 
 	for (auto& include : includes) {
-		xmlInclude = "<#include " + include.first + ">";
-		hasInclude = data.find(xmlInclude);
+		xmlInclude = "<include file=\'" + include.first + "\'/>";
+		hasInclude = xml.find(xmlInclude);
 		if (hasInclude >= 0) {
 			xml.replace(hasInclude, xmlInclude.size(), include.second);
 		}
 	}
 
 	tinyxml2::XMLDocument doc;
-	doc.Parse(xml.c_str());
+	if (doc.Parse(xml.c_str()) != tinyxml2::XML_SUCCESS) {
+		std::cout << "GameEngine::Behavior::loadTree " << xml << std::endl;
+		exit(-1);
+	};
 
 	// create the node
 	tinyxml2::XMLElement* pRoot = doc.FirstChildElement("node");

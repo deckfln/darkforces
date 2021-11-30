@@ -11,57 +11,6 @@
 
 static const char* g_className = "dfEnemy";
 
-const std::string g_behaviorTree = "<node type='WaitIdle' name='Wait for event'>\
-<condition>FAILURE</condition>\
-<tree>\
-<node type='AttackPlayer' name='attack and track'>\
-	<tree>\
-	<node type='MoveToAndAttack' name='find the player, move toward him and shoot at him'>\
-		<tree>\
-		<node type='Decorator' name='always return false'>\
-			<condition>always_false</condition>\
-			<tree>\
-			<node type='darkForces:sound' name='tease the player'>\
-				<sounds>\
-<#include sounds.inc>\
-				</sounds>\
-			</node>\
-			</tree>\
-		</node>\
-		<node type='Move2Player' name='move toward player'>\
-			<tree>\
-			<node type='MoveTo' name='move to waypoints'></node>\
-			</tree>\
-		</node>\
-		<node type='Fire2Player' name='shoot player'></node>\
-		<node type='TrackPlayer' name='track the player after losing him'>\
-			<tree>\
-			<node type='MoveTo' name='move to waypoints'></node>\
-			</tree>\
-		</node>\
-		</tree>\
-	</node>\
-	</tree>\
-</node>\
-<node type='MoveEnemyTo' name='move to destination'>\
-	<tree>\
-	<node type='SatNav' name='go to destination'></node>\
-	<node type='WaitDoor' name='wait for door to open'></node>\
-	<node type='OpenDoor' name='go to destination'>\
-		<tree>\
-		<node type='GotoTrigger' name='try to reach each trigger'>\
-			<tree>\
-			<node type='SatNav' name='go to trigger'></node>\
-			<node type='WaitDoor' name='wait for door to open'></node>\
-			</tree>\
-		</node>\
-		</tree>\
-	</node>\
-	</tree>\
-</node>\
-</tree>\
-</node>";
-
 /**
  *
  */
@@ -117,7 +66,7 @@ DarkForces::Enemy::Enemy(dfWAX* model, const glm::vec3& position, float ambient,
 			<sound file = 'Ransto07.voc' id = '2054' />\
 			<sound file = 'Ransto08.voc' id = '2055' />";
 	}
-	m_ai.parse(g_behaviorTree, includes);
+	m_ai.parse("file:DarkForces/AI/Enemy.xml", includes);
 
 
 	m_weapon.addEnergy(200);
