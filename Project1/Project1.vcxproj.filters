@@ -175,6 +175,12 @@
     <Filter Include="Fichiers d%27en-tête\DarkForces\prefab">
       <UniqueIdentifier>{bf5c22c9-234e-43c8-b06a-138f033205a6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Fichiers de ressources\DarkForces">
+      <UniqueIdentifier>{9599834f-c23a-4a6e-9d3a-03541f3d0ed0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers de ressources\DarkForces\AI">
+      <UniqueIdentifier>{50005e01-8e8e-4b10-aa1b-e6e8f7bcbfa2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source.cpp">
@@ -1617,5 +1623,10 @@
     <Text Include="todo.txt">
       <Filter>Fichiers de ressources</Filter>
     </Text>
+  </ItemGroup>
+  <ItemGroup>
+    <Xml Include="darkforces\AI\Enemy.xml">
+      <Filter>Fichiers de ressources\DarkForces\AI</Filter>
+    </Xml>
   </ItemGroup>
 </Project>
