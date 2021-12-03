@@ -54,7 +54,7 @@ namespace GameEngine {
 		std::vector<satNavTriangle> m_triangles;
 		bool m_debug = false;
 
-		int32_t findTriangle(const glm::vec3& p);				// find the nearest triangle to the position
+		int32_t findTriangle(const glm::vec3& p, float z, float z1);// find the nearest triangle to the position
 		bool lineOfSight(
 			const Framework::Segment2D& line,
 			satNavTriangle* from, satNavTriangle* to);			// is there a direct line of sight (x,y) -> (x1,y1) over the triangles

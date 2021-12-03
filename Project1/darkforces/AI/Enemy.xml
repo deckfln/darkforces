@@ -17,7 +17,7 @@
 			</node>
 			<node type='Move2Player' name='move toward player'>
 				<tree>
-				<node type='MoveTo' name='move to waypoints'></node>
+				<node type='SatNav' name='go to destination'></node>
 				</tree>
 			</node>
 			<node type='Fire2Player' name='shoot player'></node>

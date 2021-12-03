@@ -20,14 +20,16 @@ const float my_EPSILON = 4 * FLT_EPSILON;
 /**
  * // find the nearest triangle to the position
  */
-int32_t GameEngine::NavMesh::findTriangle(const glm::vec3& p)
+int32_t GameEngine::NavMesh::findTriangle(const glm::vec3& p, float z, float z1)
 {
 	glm::vec2 p2D(p.x, p.z);
 	for (uint32_t i = 0; i < m_triangles.size(); i++) {
-		float d = p.y - m_triangles[i].m_center.y;
+		float d = abs(p.y - m_triangles[i].m_center.y);
 
-		if ((d >= -my_EPSILON && d <= 8.0f) && m_triangles[i].inside(p2D)) {
-			return i;
+		if (m_triangles[i].inside(p2D)) {
+			if (d <= 8) {
+				return i;
+			}
 		}
 	}
 
@@ -83,8 +85,8 @@ bool GameEngine::NavMesh::findDirectPath(uint32_t from, uint32_t to,
 		from2D.x, from2D.y,
 		to2D.x, to2D.y);
 	*/
-	int32_t trFrom = findTriangle(from3D);
-	int32_t trTo = findTriangle(to3D);
+	int32_t trFrom = findTriangle(from3D, from3D.y, to3D.y);
+	int32_t trTo = findTriangle(to3D, from3D.y, to3D.y);
 
 	if (lineOfSight(line, &m_triangles[trFrom], &m_triangles[trTo])) {
 		directPath.push_back(graphPath[to]);
@@ -262,8 +264,11 @@ uint32_t GameEngine::NavMesh::findPath(const glm::vec3& from, const glm::vec3& t
 {
 	std::vector<glm::vec3> graphPath;		// path computed from the navmesh graph
 
-	int32_t start = findTriangle(from * 10.0f);
-	int32_t end = findTriangle(to * 10.0f);
+	glm::vec3 from3D = from * 10.0f;
+	glm::vec3 to3D = to * 10.0f;
+
+	int32_t start = findTriangle(from3D, from3D.y, to3D.y);
+	int32_t end = findTriangle(to3D, from3D.y, to3D.y);
 
 	if (start < 0 || end < 0) {
 		return 0;
