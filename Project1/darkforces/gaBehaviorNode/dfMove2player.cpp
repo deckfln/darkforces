@@ -1,6 +1,7 @@
 #include "dfMove2player.h"
 
 #include <tinyxml2.h>
+#include <imgui.h>
 
 #include "../../darkforces/dfObject.h"
 
@@ -42,7 +43,7 @@ void DarkForces::Behavior::Move2Player::init(void* data)
 	glm::vec3 move2 = playerLastPositions->back();
 
 	// stop 8 clicks away from the player
-	glm::vec3 m_target = move2 - m_entity->position();
+	m_target = move2 - m_entity->position();
 	float l = glm::length(m_target) - m_entity->radius() * 8.0f;
 	if (l < 0) {
 		m_status = Status::FAILED;
@@ -62,4 +63,14 @@ void DarkForces::Behavior::Move2Player::init(void* data)
 	m_alarmID = g_gaWorld.registerAlarmEvent(alarm);
 
 	GameEngine::BehaviorNode::init(&m_target);
+}
+
+//---------------------------------------------------------------
+
+/**
+ * display the node data in the debugger
+ */
+void DarkForces::Behavior::Move2Player::debugGUInode(void)
+{
+	ImGui::Text("%.2f %.2f %.2f", m_target.x, m_target.y, m_target.z);
 }

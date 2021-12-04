@@ -46,6 +46,10 @@ BehaviorNode* DarkForces::Behavior::TrackPlayer::create(const char* name, tinyxm
  */
 void DarkForces::Behavior::TrackPlayer::init(void* data)
 {
+	if (m_entity->name() == "OFFCFIN.WAX(21)") {
+		__debugbreak();
+	}
+
 	// Pick the last 2 known positions and run the entity along the axe up to a wall
 	std::vector<glm::vec3>* playerLastPositions = m_tree->blackboard<std::vector<glm::vec3>>("player_last_positions");
 	uint32_t size = playerLastPositions->size();
@@ -96,3 +100,12 @@ void DarkForces::Behavior::TrackPlayer::init(void* data)
 	GameEngine::BehaviorNode::init(&m_target);
 }
 
+//-------------------------------------------
+
+/**
+ * display the component in the debugger
+ */
+void DarkForces::Behavior::TrackPlayer::debugGUInode(void)
+{
+	ImGui::Text("%.2f %.2f %.2f", m_target.x, m_target.y, m_target.z);
+}

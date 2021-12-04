@@ -88,22 +88,28 @@ void GameEngine::Behavior::Sound::addSound(const char* file, uint32_t id)
 {
 }
 
+//-----------------------------------------------
+
 /**
  * display the node data in the debugger
  */
 void GameEngine::Behavior::Sound::debugGUInode(void)
 {
+	static char tmp[64];
 	switch (m_condition) {
 	case Condition::IN_ORDER:
-		ImGui::Text("Play in order");
+		sprintf_s(tmp, "Play in order %d", m_currentSound);
 		break;
 
 	case Condition::RANDOM:
-		ImGui::Text("Play randomly");
+		strcpy_s(tmp, "Play randomly");
 		break;
 	}
 
-	for (auto i = 0; i < m_sounds.size(); i++) {
-		ImGui::Text("%d: %s", m_ids[i], m_sounds[i]->source().c_str());
+	if (ImGui::TreeNode(tmp)) {
+		for (auto i = 0; i < m_sounds.size(); i++) {
+			ImGui::Text("%d: %s", m_ids[i], m_sounds[i]->source().c_str());
+		}
+		ImGui::TreePop();
 	}
 }

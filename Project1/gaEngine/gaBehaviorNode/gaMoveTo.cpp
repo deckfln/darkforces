@@ -4,6 +4,10 @@
 #include <imgui.h>
 #include <tinyxml2.h>
 
+#include "../../framework/fwGeometry.h"
+#include "../../framework/fwMesh.h"
+#include "../../framework/fwMaterialBasic.h"
+
 #include "../gaEntity.h"
 #include "../gaNavMesh.h"
 #include "../World.h"
@@ -12,24 +16,27 @@
 
 #include "../flightRecorder/frPathFinding.h"
 
-GameEngine::Behavior::MoveTo::MoveTo(void) :
-	GameEngine::BehaviorNode("SatNave")
-{
-}
-
 /**
  * create the component
  */
+GameEngine::Behavior::MoveTo::MoveTo(void) :
+	GameEngine::BehaviorNode("SatNave")
+{
+	debug();
+}
+
 GameEngine::Behavior::MoveTo::MoveTo(const char *name) :
 	GameEngine::BehaviorNode(name)
 {
 	m_previous.resize(16);
+	debug();
 }
 
 GameEngine::Behavior::MoveTo::MoveTo(const char *name, float speed) :
 	GameEngine::BehaviorNode(name),
 	m_speed(speed)
 {
+	debug();
 }
 
 GameEngine::BehaviorNode* GameEngine::Behavior::MoveTo::create(const char* name, tinyxml2::XMLElement* element, GameEngine::BehaviorNode* used)
@@ -391,6 +398,30 @@ void GameEngine::Behavior::MoveTo::dispatchMessage(gaMessage* message, Action *r
 
 //---------------------------------------------------------------
 
+#ifdef _DEBUG
+/**
+ * init opengl debug mode
+ */
+void GameEngine::Behavior::MoveTo::debug(void)
+{
+	m_geometry = new fwGeometry();
+	m_vertices = (float*)calloc(32, sizeof(float) * 3);
+
+	m_geometry->addVertices("aPos", m_vertices, 3, sizeof(float) * 3 * 32, ARRAY_SIZE_OF_ELEMENT(m_vertices));
+
+	// shared geometry
+	static glm::vec4 w(1.0, 1.0, 1.0, 1.0);
+	static fwMaterialBasic white(&w);
+	m_mesh = new fwMesh(m_geometry, &white);
+	m_mesh->rendering(fwMeshRendering::FW_MESH_LINES);
+	m_mesh->translate(glm::vec3(0.0f, 0.0f, 0.0f));
+	m_mesh->name("navpoints");
+
+	m_mesh->set_visible(false);
+	g_gaWorld.add2scene(m_mesh);
+}
+#endif
+
 /**
  * display the node data in the debugger
  */
@@ -401,22 +432,54 @@ void GameEngine::Behavior::MoveTo::debugGUInode(void)
 		return;
 	}
 
+	static char tmp[64];
+
 	switch (m_status) {
 	case Status::MOVE_TO_NEXT_WAYPOINT:
-		ImGui::Text("Move to %d", m_currentNavPoint);
+		sprintf_s(tmp, "Move to %d", m_currentNavPoint);
 		break;
 
 	case Status::NEARLY_REACHED_NEXT_WAYPOINT:
-		ImGui::Text("Nearly reached %d", m_currentNavPoint);
+		sprintf_s(tmp, "Nearly reached %d", m_currentNavPoint);
 		break;
 
 	case Status::REACHED_NEXT_WAYPOINT:
-		ImGui::Text("Reached %d", m_currentNavPoint);
+		sprintf_s(tmp, "Reached %d", m_currentNavPoint);
 		break;
 	}
 
-	for (auto i = 0; i < m_navpoints->size(); i++) {
-		ImGui::Text("%d: %.2f %.2f %.2f", i, m_navpoints->at(i).x, m_navpoints->at(i).y, m_navpoints->at(i).z);
+	bool m_old_debug = m_debug;
+
+	if (ImGui::TreeNode(tmp)) {
+		if (m_navpoints->size() > 16) {
+			__debugbreak();
+		}
+		m_debug = true;
+		for (auto i = 0, j=0; i < m_navpoints->size()-1; i++) {
+			ImGui::Text("%d: %.2f %.2f %.2f", i, m_navpoints->at(i).x, m_navpoints->at(i).y, m_navpoints->at(i).z);
+			m_vertices[j++] = m_navpoints->at(i).x;
+			m_vertices[j++] = m_navpoints->at(i).y+0.5;
+			m_vertices[j++] = m_navpoints->at(i).z;
+			m_vertices[j++] = m_navpoints->at(i+1).x;
+			m_vertices[j++] = m_navpoints->at(i+1).y+0.5;
+			m_vertices[j++] = m_navpoints->at(i+1).z;
+		}
+		m_geometry->update();
+		//m_geometry->resizeAttribute("aPos", m_vertices, m_navpoints->size());
+		ImGui::TreePop();
+	}
+	else {
+		m_debug = false;
+	}
+
+	// display or not the debug mesh
+	if (m_old_debug != m_debug) {
+		if (m_debug) {
+			m_mesh->set_visible(true);
+		}
+		else {
+			m_mesh->set_visible(false);
+		}
 	}
 }
 

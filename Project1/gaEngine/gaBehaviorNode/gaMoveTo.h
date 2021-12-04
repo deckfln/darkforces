@@ -3,6 +3,8 @@
 #include "../gaBehaviorNode.h"
 
 class gaEntity;
+class fwGeometry;
+class fwMesh;
 
 namespace GameEngine {
 	namespace Behavior {
@@ -24,6 +26,15 @@ namespace GameEngine {
 			uint32_t m_previous_current = 0;
 			uint32_t m_previous_size = 0;
 			uint32_t m_moveID;									// ID of the last raised WANT_TO_MOVE message
+
+#ifdef _DEBUG
+			void debug(void);									// init debug mode
+			bool m_debug = false;								// display navpoints in opengl
+			fwGeometry* m_geometry=nullptr;
+			float* m_vertices = nullptr;
+			fwMesh* m_mesh = nullptr;
+
+#endif
 
 			glm::vec3 nextWayPoint(bool normalize);				// return the direction to the next way point
 			void triggerMove(void);								// send the move messages

@@ -1,6 +1,8 @@
 #pragma once
 
 #include <vector>
+#include <imgui.h>
+
 #include "../../gaEngine/gaBehaviorNode/gaBehaviorDecorator.h"
 
 namespace DarkForces {
@@ -18,6 +20,9 @@ namespace DarkForces {
 
 			// Behavior engine
 			static BehaviorNode* create(const char* name, tinyxml2::XMLElement* element, GameEngine::BehaviorNode* used);// create a node
+
+			//debugger
+			void debugGUInode(void) override;							// display the component in the debugger
 		};
 	}
 }
