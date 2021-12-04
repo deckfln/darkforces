@@ -21,11 +21,11 @@
 				</tree>
 			</node>
 			<node type='Fire2Player' name='shoot player if visible'></node>
-			<node type='TrackPlayer' name='track the player'>
-				<tree>
+			</tree>
+		</node>
+		<node type='TrackPlayer' name='track the player'>
+			<tree>
 				<node type='SatNav' name='move to player last position'></node>
-				</tree>
-			</node>
 			</tree>
 		</node>
 		</tree>

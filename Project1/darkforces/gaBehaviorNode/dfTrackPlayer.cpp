@@ -52,7 +52,7 @@ void DarkForces::Behavior::TrackPlayer::init(void* data)
 
 	// Pick the last 2 known positions and run the entity along the axe up to a wall
 	std::vector<glm::vec3>* playerLastPositions = m_tree->blackboard<std::vector<glm::vec3>>("player_last_positions");
-	uint32_t size = playerLastPositions->size();
+	size_t size = playerLastPositions->size();
 	glm::vec2 direction;
 
 	if (size < 2) {
@@ -76,21 +76,23 @@ void DarkForces::Behavior::TrackPlayer::init(void* data)
 			p2 = playerLastPositions->at(--size);
 		}
 		if (size <= 0) {
-			m_status = Status::FAILED;
-			return;
+			// player as static all the time
+			m_target = playerLastPositions->back();
 		}
-
-		glm::vec2 p1d(p1.x, p1.z);
-		glm::vec2 p2d(p2.x, p2.z);
+		else {
+			glm::vec2 p1d(p1.x, p1.z);
+			glm::vec2 p2d(p2.x, p2.z);
 
 #ifdef _DEBUG
-		if (p1d == p2d) {
-			__debugbreak();
-		}
+			if (p1d == p2d) {
+				__debugbreak();
+			}
 #endif
 
-		direction = glm::normalize(p1d - p2d);
-		m_target = glm::vec3(direction.x + p1d.x, m_entity->position().y, direction.y + p1d.y);
+			direction = glm::normalize(p1d - p2d);
+			m_target = glm::vec3(direction.x + p1d.x, m_entity->position().y, direction.y + p1d.y);
+		}
+
 	}
 
 	// walk only for 2s
