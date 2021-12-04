@@ -49,6 +49,9 @@ namespace GameEngine {
 			// Behavior engine, GameEngine::BehaviorNode* used
 			static BehaviorNode* create(const char* name, tinyxml2::XMLElement* element, GameEngine::BehaviorNode* used);// create a node
 
+			//debugger
+			void debugGUInode(void) override;							// display the component in the debugger
+
 			// flight recorder status
 			uint32_t recordState(void* record) override;				// save the component state in a record
 			uint32_t loadState(void* record) override;					// reload a component state from a record

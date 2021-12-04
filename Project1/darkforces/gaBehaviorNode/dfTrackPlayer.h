@@ -6,7 +6,7 @@
 namespace DarkForces {
 	namespace Behavior {
 		class TrackPlayer : public GameEngine::Behavior::Decorator {
-			std::vector<glm::vec3> m_navpoints;								// navigation for satnav
+			glm::vec3 m_target;								// navigation for satnav
 			uint32_t m_alarmID;
 
 		protected:

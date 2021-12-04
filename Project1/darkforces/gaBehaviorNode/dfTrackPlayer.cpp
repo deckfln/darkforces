@@ -50,7 +50,6 @@ void DarkForces::Behavior::TrackPlayer::init(void* data)
 	std::vector<glm::vec3>* playerLastPositions = m_tree->blackboard<std::vector<glm::vec3>>("player_last_positions");
 	uint32_t size = playerLastPositions->size();
 	glm::vec2 direction;
-	glm::vec3 target;
 
 	if (size < 2) {
 		// if we don't have enough position of the player, were and when did we last heard a blaster shot
@@ -61,7 +60,7 @@ void DarkForces::Behavior::TrackPlayer::init(void* data)
 			return;
 		}
 
-		target = glm::vec3(sound->x, m_entity->position().y, sound->z);
+		m_target = glm::vec3(sound->x, m_entity->position().y, sound->z);
 	}
 	else {
 		// the player may have been seen twice at the same position, so find a different position, but only go back a bit
@@ -87,16 +86,13 @@ void DarkForces::Behavior::TrackPlayer::init(void* data)
 #endif
 
 		direction = glm::normalize(p1d - p2d);
-		target = glm::vec3(direction.x + p1d.x, m_entity->position().y, direction.y + p1d.y);
+		m_target = glm::vec3(direction.x + p1d.x, m_entity->position().y, direction.y + p1d.y);
 	}
-
-	m_navpoints.clear();
-	m_navpoints.push_back(target);
 
 	// walk only for 2s
 	GameEngine::Alarm alarm(m_entity, 2000, gaMessage::Action::SatNav_CANCEL);
 	m_alarmID = g_gaWorld.registerAlarmEvent(alarm);
 
-	GameEngine::BehaviorNode::init(&m_navpoints);
+	GameEngine::BehaviorNode::init(&m_target);
 }
 

@@ -359,6 +359,8 @@ void GameEngine::Behavior::MoveTo::onCancel(gaMessage* message)
 	BehaviorNode::m_status = BehaviorNode::Status::SUCCESSED;
 }
 
+//---------------------------------------------------------------
+
 /**
  * let a component deal with a situation
  */
@@ -386,6 +388,39 @@ void GameEngine::Behavior::MoveTo::dispatchMessage(gaMessage* message, Action *r
 
 	return execute(r);
 }
+
+//---------------------------------------------------------------
+
+/**
+ * display the node data in the debugger
+ */
+void GameEngine::Behavior::MoveTo::debugGUInode(void)
+{
+	if (m_status == Status::STILL) {
+		ImGui::Text("Stay Still");
+		return;
+	}
+
+	switch (m_status) {
+	case Status::MOVE_TO_NEXT_WAYPOINT:
+		ImGui::Text("Move to %d", m_currentNavPoint);
+		break;
+
+	case Status::NEARLY_REACHED_NEXT_WAYPOINT:
+		ImGui::Text("Nearly reached %d", m_currentNavPoint);
+		break;
+
+	case Status::REACHED_NEXT_WAYPOINT:
+		ImGui::Text("Reached %d", m_currentNavPoint);
+		break;
+	}
+
+	for (auto i = 0; i < m_navpoints->size(); i++) {
+		ImGui::Text("%d: %.2f %.2f %.2f", i, m_navpoints->at(i).x, m_navpoints->at(i).y, m_navpoints->at(i).z);
+	}
+}
+
+//---------------------------------------------------------------
 
 /**
  * flight recorder

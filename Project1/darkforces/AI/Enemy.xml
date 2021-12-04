@@ -15,15 +15,15 @@
 				</node>
 				</tree>
 			</node>
-			<node type='Move2Player' name='move toward player'>
+			<node type='Move2Player' name='get player position'>
 				<tree>
-				<node type='SatNav' name='go to destination'></node>
+				<node type='SatNav' name='move to player'></node>
 				</tree>
 			</node>
-			<node type='Fire2Player' name='shoot player'></node>
-			<node type='TrackPlayer' name='track the player after losing him'>
+			<node type='Fire2Player' name='shoot player if visible'></node>
+			<node type='TrackPlayer' name='track the player'>
 				<tree>
-				<node type='MoveTo' name='move to waypoints'></node>
+				<node type='SatNav' name='move to player last position'></node>
 				</tree>
 			</node>
 			</tree>
