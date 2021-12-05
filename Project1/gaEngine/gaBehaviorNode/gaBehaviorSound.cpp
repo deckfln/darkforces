@@ -5,6 +5,11 @@
 #include <imgui.h>
 #include <tinyxml2.h>
 
+static std::map<const char*, GameEngine::Behavior::Sound::Condition> g_conditions = {
+	{"play_in_order", GameEngine::Behavior::Sound::Condition::IN_ORDER},
+	{"play_random", GameEngine::Behavior::Sound::Condition::RANDOM},
+};
+
 GameEngine::Behavior::Sound::Sound(const char *name) :
 	BehaviorNode(name)
 {
@@ -19,6 +24,17 @@ GameEngine::BehaviorNode* GameEngine::Behavior::Sound::create(const char* name, 
 	}
 	else {
 		node = dynamic_cast<GameEngine::Behavior::Sound*>(used);
+	}
+
+	tinyxml2::XMLElement* attr = element->FirstChildElement("condition");
+	if (attr) {
+		const char* t = attr->GetText();
+		for (auto& c : g_conditions) {
+			if (strcmp(t, c.first) == 0) {
+				node->m_condition = c.second;
+				break;
+			}
+		}
 	}
 
 	const char* file;

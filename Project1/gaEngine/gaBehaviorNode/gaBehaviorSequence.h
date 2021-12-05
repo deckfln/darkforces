@@ -12,6 +12,7 @@ namespace GameEngine {
 			};
 
 			Sequence(const char* name);
+			inline void condition(Condition c) { m_condition = c; };
 			void init(void* data) override;
 			void execute(Action* r) override;						// let a parent take a decision with it's current running child
 

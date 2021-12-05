@@ -3,6 +3,11 @@
 #include <imgui.h>
 #include <tinyxml2.h>
 
+static std::map<const char*, GameEngine::Behavior::Sequence::Condition> g_conditions = {
+	{"until_all_fail", GameEngine::Behavior::Sequence::Condition::EXIT_WHEN_ONE_FAIL},
+	{"until_one_fail", GameEngine::Behavior::Sequence::Condition::EXIT_AT_END},	
+};
+
 GameEngine::Behavior::Sequence::Sequence(const char *name) : 
 	BehaviorNode(name)
 {
@@ -10,7 +15,18 @@ GameEngine::Behavior::Sequence::Sequence(const char *name) :
 
 GameEngine::BehaviorNode* GameEngine::Behavior::Sequence::create(const char* name, tinyxml2::XMLElement* element, GameEngine::BehaviorNode* used)
 {
-	return new GameEngine::Behavior::Sequence(name);
+	GameEngine::Behavior::Sequence* node = new GameEngine::Behavior::Sequence(name);
+	tinyxml2::XMLElement* attr = element->FirstChildElement("condition");
+	if (attr) {
+		const char* t = attr->GetText();
+		for (auto& c : g_conditions) {
+			if (strcmp(t, c.first) == 0) {
+				node->condition(c.second);
+				break;
+			}
+		}
+	}
+	return node;
 }
 
 void GameEngine::Behavior::Sequence::init(void* data)

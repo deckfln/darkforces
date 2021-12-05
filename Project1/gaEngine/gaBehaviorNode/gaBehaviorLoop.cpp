@@ -3,6 +3,11 @@
 #include <imgui.h>
 #include <tinyxml2.h>
 
+static std::map<const char*, GameEngine::Behavior::Loop::Condition> g_conditions = {
+	{"until_all_fail", GameEngine::Behavior::Loop::Condition::UNTIL_ALL_FAIL},		// return the status of the child
+	{"until_one_fail", GameEngine::Behavior::Loop::Condition::UNTIL_ONE_FAIL},			// return the inverse of the child status
+};
+
 GameEngine::Behavior::Loop::Loop(const char *name) : 
 	BehaviorNode(name)
 {
@@ -10,9 +15,23 @@ GameEngine::Behavior::Loop::Loop(const char *name) :
 
 GameEngine::BehaviorNode* GameEngine::Behavior::Loop::create(const char* name, tinyxml2::XMLElement* element, GameEngine::BehaviorNode* used)
 {
-	return new GameEngine::Behavior::Loop(name);
+	GameEngine::Behavior::Loop* node = new GameEngine::Behavior::Loop(name);
+	tinyxml2::XMLElement* attr = element->FirstChildElement("condition");
+	if (attr) {
+		const char* t = attr->GetText();
+		for (auto& c : g_conditions) {
+			if (strcmp(t, c.first) == 0) {
+				node->condition(c.second);
+				break;
+			}
+		}
+	}
+	return node;
 }
 
+/**
+ *
+ */
 void GameEngine::Behavior::Loop::execute(Action* r)
 {
 	// exit if init changed the status

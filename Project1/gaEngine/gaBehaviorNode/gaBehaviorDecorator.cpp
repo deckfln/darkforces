@@ -2,6 +2,14 @@
 
 #include <imgui.h>
 #include <tinyxml2.h>
+#include <map>
+
+static std::map<const char*, GameEngine::Behavior::Decorator::Condition> g_conditions = {
+	{"straight", GameEngine::Behavior::Decorator::Condition::STRAIGHT},		// return the status of the child
+	{"invert", GameEngine::Behavior::Decorator::Condition::INVERT},			// return the inverse of the child status
+	{"false", GameEngine::Behavior::Decorator::Condition::FAILURE},		// always return failure
+	{"true", GameEngine::Behavior::Decorator::Condition::SUCESS}			// always return success
+};
 
 /**
  * Create a node
@@ -17,8 +25,11 @@ GameEngine::BehaviorNode* GameEngine::Behavior::Decorator::create(const char* na
 	tinyxml2::XMLElement* attr = element->FirstChildElement("condition");
 	if (attr) {
 		const char* t = attr->GetText();
-		if (strcmp(t, "always_false") == 0) {
-			node->condition(Condition::FAILURE);
+		for (auto& c : g_conditions) {
+			if (strcmp(t, c.first) == 0) {
+				node->condition(c.second);
+				break;
+			}
 		}
 	}
 	return node;

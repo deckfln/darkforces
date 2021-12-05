@@ -6,7 +6,7 @@
 		<node type='MoveToAndAttack' name='find the player, move toward him and shoot at him'>
 			<tree>
 			<node type='Decorator' name='always return false'>
-				<condition>always_false</condition>
+				<condition>false</condition>
 				<tree>
 				<node type='darkForces:sound' name='tease the player'>
 					<sounds>
@@ -15,15 +15,17 @@
 				</node>
 				</tree>
 			</node>
+			<node type='Fire2Player' name='shoot player if visible'></node>
 			<node type='Move2Player' name='get player position'>
+				<walk max='3000' min='1500' random='true'/>
 				<tree>
 				<node type='SatNav' name='move to player'></node>
 				</tree>
 			</node>
-			<node type='Fire2Player' name='shoot player if visible'></node>
 			</tree>
 		</node>
 		<node type='TrackPlayer' name='track the player'>
+			<walk max='3000' min='1500' random='true'/>
 			<tree>
 				<node type='SatNav' name='move to player last position'></node>
 			</tree>

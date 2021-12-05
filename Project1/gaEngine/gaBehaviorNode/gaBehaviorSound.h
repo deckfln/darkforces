@@ -14,6 +14,7 @@ namespace GameEngine {
 			};
 				
 			Sound(const char* name);
+			inline void condition(Condition c) { m_condition = c; };
 			void execute(Action* r) override;						// let a parent take a decision with it's current running child
 
 			void addSound(alSound* sound, uint32_t id);				// register a new sound

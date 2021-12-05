@@ -24,7 +24,29 @@ DarkForces::Behavior::Move2Player::Move2Player(const char* name):
 
 BehaviorNode* DarkForces::Behavior::Move2Player::create(const char* name, tinyxml2::XMLElement* element, GameEngine::BehaviorNode* used)
 {
-	return new DarkForces::Behavior::Move2Player(name);
+	DarkForces::Behavior::Move2Player* node = new DarkForces::Behavior::Move2Player(name);
+	tinyxml2::XMLElement* walk = element->FirstChildElement("walk");
+	if (walk) {
+		int mmin=2000;
+		int mmax=2000;
+		const char* rnd=nullptr;
+		bool brnd = false;
+
+		walk->QueryIntAttribute("min", &mmin);
+		walk->QueryIntAttribute("max", &mmax);
+		rnd = walk->Attribute("random");
+		if (rnd != nullptr) {
+			if (strcmp(rnd, "true") == 0) {
+				brnd = true;
+			}
+		}
+
+		node->m_maximum_walk = mmax;
+		node->m_minimum_walk = mmin;
+		node->m_random = brnd;
+
+	}
+	return node;
 }
 
 /**
@@ -58,8 +80,14 @@ void DarkForces::Behavior::Move2Player::init(void* data)
 	m_target += m_entity->position();
 	//m_target.y = m_entity->position().y;
 
-	// walk only for 2s
-	GameEngine::Alarm alarm(m_entity, 2000, gaMessage::Action::SatNav_CANCEL);
+	// walk only for some seconds
+	if (m_random) {
+		m_walk = (rand() % (m_maximum_walk - m_minimum_walk)) + m_minimum_walk;
+	}
+	else {
+		m_walk = m_maximum_walk;
+	}
+	GameEngine::Alarm alarm(m_entity, m_walk, gaMessage::Action::SatNav_CANCEL);
 	m_alarmID = g_gaWorld.registerAlarmEvent(alarm);
 
 	GameEngine::BehaviorNode::init(&m_target);
@@ -72,5 +100,6 @@ void DarkForces::Behavior::Move2Player::init(void* data)
  */
 void DarkForces::Behavior::Move2Player::debugGUInode(void)
 {
-	ImGui::Text("%.2f %.2f %.2f", m_target.x, m_target.y, m_target.z);
+	ImGui::Text("target:%.2f %.2f %.2f", m_target.x, m_target.y, m_target.z);
+	ImGui::Text("max_walk:%d", m_walk);
 }
