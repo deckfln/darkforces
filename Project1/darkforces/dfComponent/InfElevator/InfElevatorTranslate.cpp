@@ -20,6 +20,9 @@ void DarkForces::Component::InfElevatorTranslate::moveTo(float z_lvl)
 	float h;
 	float p;
 
+	if (m_entity->name() == "floor3edoor") {
+		__debugbreak();
+	}
 	switch (m_type) {
 	case DarkForces::Component::InfElevator::Type::DOOR:
 		h = m_stops[1]->z_position(m_type) - m_stops[0]->z_position(m_type);
@@ -27,6 +30,7 @@ void DarkForces::Component::InfElevatorTranslate::moveTo(float z_lvl)
 		break;
 
 	case DarkForces::Component::InfElevator::Type::MOVE_FLOOR:
+	case DarkForces::Component::InfElevator::Type::BASIC:
 		h = sector->staticCeilingAltitude() - sector->staticFloorAltitude();
 		p = sector->staticCeilingAltitude() - z_lvl;
 		break;
@@ -37,9 +41,12 @@ void DarkForces::Component::InfElevatorTranslate::moveTo(float z_lvl)
 		break;
 
 	case DarkForces::Component::InfElevator::Type::INV:
-	case DarkForces::Component::InfElevator::Type::BASIC:
 		h = sector->staticCeilingAltitude() - sector->staticFloorAltitude();
 		p = z_lvl - sector->staticFloorAltitude();
+		break;
+
+	case DarkForces::Component::InfElevator::Type::MORPH_SPIN1:
+		p = 0.0f;
 		break;
 
 	default:

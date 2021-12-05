@@ -44,6 +44,10 @@ void DarkForces::Behavior::WaitIdle::dispatchMessage(gaMessage* message, Action*
 
 	case gaMessage::Action::VIEW:
 	case gaMessage::Action::HEAR_SOUND:
+		//if (m_entity->name() == "STORMFIN.WAX(25)") {
+		//	__debugbreak();
+		//}
+
 		m_original = m_entity->position();
 		m_data = &m_original;
 		m_runningChild = 0;

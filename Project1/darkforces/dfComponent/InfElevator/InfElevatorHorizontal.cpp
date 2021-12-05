@@ -9,6 +9,28 @@ void DarkForces::Component::InfElevatorHorizontal::moveTo(float z_lvl)
 	glm::vec3 p = m_center + m_move * z_lvl;
 	dfLevel::level2gl(p);
 	m_entity->sendInternalMessage(gaMessage::MOVE, 0, &p);
+
+	// change the sound 'opacity' of the elevator (door) base don openess
+	dfSector* sector = dynamic_cast<dfSector*>(m_entity);
+	float openess = 0;
+	float a;
+	float p1;
+
+	switch (m_type) {
+	case DarkForces::Component::InfElevator::Type::MORPH_MOVE1:
+		a = m_zmax - m_zmin;
+		p1 = z_lvl - m_zmin;
+		break;
+
+	default:
+		a = p1 = 1.0f;
+		__debugbreak();
+	}
+
+	if (p1 > 0) {
+		openess = p1 / a;
+	}
+	m_entity->sendMessage(gaMessage::Action::VOLUME_TRANSPARENCY, sector->soundVolume(), openess);
 }
 
 DarkForces::Component::InfElevatorHorizontal::InfElevatorHorizontal(DarkForces::Component::InfElevator::Type kind, dfSector* sector, bool smart):
