@@ -6,11 +6,14 @@
 
 namespace GameEngine {
 	namespace Sound {
+		/**
+		 * position the sound is coming
+		 */
 		class Virtual {
 		public:
 			glm::vec3 origin;
-			float distance;
-			inline Virtual(const glm::vec3& p, const float d) { origin = p; distance = d; }
+			float loundness;
+			inline Virtual(const glm::vec3& p, const float d) { origin = p; loundness = d; }
 		};
 
 		class Portal {

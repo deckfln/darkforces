@@ -177,9 +177,7 @@ void GameEngine::VolumeSpace::path(const glm::vec3& source, const glm::vec3& lis
 				current_loundness = loundness - 20 * log10(d);
 
 				if (current_loundness > 25.0f) {
-					glm::vec3 direction = glm::normalize(data[current].came_from_portal - listener);
-					glm::vec3 p = direction * d + listener;
-					xSolutions.push_back(Sound::Virtual(p, d));
+					xSolutions.push_back(Sound::Virtual(data[current].came_from_portal, current_loundness));
 				}
 				continue;
 			}

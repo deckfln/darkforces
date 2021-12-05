@@ -49,7 +49,7 @@ void GameEngine::Plugins::Sounds::onPropagateSound(gaEntity* from, gaMessage* me
 		// ask the player to play the sound
 		if (virtualSources.size() > 0) {
 			for (auto& vs : virtualSources) {
-				from->sendMessage(entity->name(), gaMessage::Action::HEAR_SOUND, soundID, vs.distance, vs.origin, sound);
+				from->sendMessage(entity->name(), gaMessage::Action::HEAR_SOUND, soundID, vs.loundness, vs.origin, sound);
 			}
 		}
 	}
