@@ -26,7 +26,8 @@ BehaviorNode* DarkForces::Behavior::MoveToAndAttack::create(const char* name, ti
  */
 void DarkForces::Behavior::MoveToAndAttack::execute(Action* r)
 {
-	if (!static_cast<DarkForces::Component::EnemyAI*>(m_tree)->viewPlayer()) {
+	bool* b = m_tree->blackboard<bool>("player_visible");
+	if (*b == false) {
 		return failed(r);
 	}
 

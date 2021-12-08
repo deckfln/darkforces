@@ -17,9 +17,8 @@ void DarkForces::Behavior::TrackPlayer::onChildExit(uint32_t child, Status statu
 	g_gaWorld.cancelAlarmEvent(m_alarmID);
 
 	// check the player location, but only react to visibility, not to distance from last knwon position because we are away
-	static_cast<DarkForces::Component::EnemyAI*>(m_tree)->viewPlayer();
 	bool* b = m_tree->blackboard<bool>("player_visible");
-	if (*b == false) {
+	if (b == nullptr || *b == false) {
 		// we still can' see the player, so the tracking failed
 		m_children[m_runningChild]->status(Status::FAILED);
 	}

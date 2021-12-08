@@ -38,12 +38,6 @@ BehaviorNode* DarkForces::Behavior::Fire2Player::create(const char* name, tinyxm
  */
 void DarkForces::Behavior::Fire2Player::init(void* data)
 {
-	bool* visible = m_tree->blackboard<bool>("player_visible");
-	if (*visible == false) {
-		m_status = Status::FAILED;
-		return;
-	}
-
 	m_entity->sendMessage(DarkForces::Message::FORCE_STATE, (uint32_t)dfState::ENEMY_ATTACK, 1.0f);
 
 	GameEngine::BehaviorNode::init(data);

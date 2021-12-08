@@ -4,8 +4,8 @@
 #include <tinyxml2.h>
 
 static std::map<const char*, GameEngine::Behavior::Sequence::Condition> g_conditions = {
-	{"until_all_fail", GameEngine::Behavior::Sequence::Condition::EXIT_WHEN_ONE_FAIL},
-	{"until_one_fail", GameEngine::Behavior::Sequence::Condition::EXIT_AT_END},	
+	{"exit_if_fail", GameEngine::Behavior::Sequence::Condition::EXIT_WHEN_ONE_FAIL},
+	{"even_if_fail", GameEngine::Behavior::Sequence::Condition::EXIT_AT_END},	
 };
 
 GameEngine::Behavior::Sequence::Sequence(const char *name) : 

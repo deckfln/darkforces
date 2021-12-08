@@ -1,21 +1,20 @@
+<behaviortree>
+	<plugin>viewPlayer</plugin>
 <node type='WaitIdle' name='Wait for event'>
 	<condition>FAILURE</condition>
 	<tree>
 	<node type='AttackPlayer' name='attack and track'>
 		<tree>
-		<node type='MoveToAndAttack' name='find the player, move toward him and shoot at him'>
+		<node type='Loop' name='find the player, move toward him and shoot at him'>
+			<condition>until_one_fail</condition>
 			<tree>
-			<node type='Decorator' name='always return false'>
-				<condition>false</condition>
-				<tree>
-				<node type='darkForces:sound' name='tease the player'>
-					<sounds>
+			<node type='PlayerVisible' name='Check player'></node>
+			<node type='darkForces:sound' name='tease the player'>
+				<sounds>
 <include file='sounds.inc'/>
-					</sounds>
-				</node>
-				</tree>
+				</sounds>
 			</node>
-			<node type='Fire2Player' name='shoot player if visible'></node>
+			<node type='Fire2Player' name='Shoot player'></node>
 			<node type='Move2Player' name='get player position'>
 				<walk max='3000' min='1500' random='true'/>
 				<tree>
@@ -50,3 +49,4 @@
 	</node>
 	</tree>
 </node>
+</behaviortree>

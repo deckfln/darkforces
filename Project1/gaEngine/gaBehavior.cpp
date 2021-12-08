@@ -14,6 +14,7 @@
 #include "gaBehaviorNode/gaBehaviorSound.h"
 #include "gaBehaviorNode/gaBNSatNav.h"
 #include "gaBehaviorNode/gaMoveTo.h"
+#include "gaBehaviorNode/gaBtPlayerVisible.h"
 
 struct char_cmp {
 	bool operator () (const char* a, const char* b) const
@@ -28,7 +29,8 @@ static std::map<const char*, GameEngine::Behavior::createFunction, char_cmp> g_c
 	{"Sequence", GameEngine::Behavior::Sequence::create},
 	{"Sound", GameEngine::Behavior::Sound::create},
 	{"SatNav", GameEngine::Behavior::SatNav::create},
-	{"MoveTo", GameEngine::Behavior::MoveTo::create}
+	{"MoveTo", GameEngine::Behavior::MoveTo::create},
+	{"PlayerVisible", GameEngine::Behavior::PlayerVisible::create}
 };
 
 void GameEngine::Behavior::registerNode(const char* name, createFunction create)
@@ -36,6 +38,9 @@ void GameEngine::Behavior::registerNode(const char* name, createFunction create)
 	g_createNodes[name] = create;
 }
 
+/**
+ * 
+ */
 static GameEngine::BehaviorNode* loadNode(tinyxml2::XMLElement* node)
 {
 	GameEngine::BehaviorNode* bnode = nullptr;
@@ -69,6 +74,9 @@ static GameEngine::BehaviorNode* loadNode(tinyxml2::XMLElement* node)
 	return bnode;
 }
 
+/**
+ *
+ */
 GameEngine::BehaviorNode* GameEngine::Behavior::loadTree(const std::string& data,
 	const std::map<std::string, std::string>& includes)
 {
@@ -116,8 +124,16 @@ GameEngine::BehaviorNode* GameEngine::Behavior::loadTree(const std::string& data
 		exit(-1);
 	};
 
+	// load the plugins
+	tinyxml2::XMLElement* bt = doc.FirstChildElement("behaviortree");
+	tinyxml2::XMLElement* plugin = bt->FirstChildElement("plugin");
+	while (plugin != nullptr) {
+		const char* t = plugin->GetText();
+		plugin = plugin->NextSiblingElement("plugin");
+	}
+
 	// create the node
-	tinyxml2::XMLElement* pRoot = doc.FirstChildElement("node");
+	tinyxml2::XMLElement* pRoot = bt->FirstChildElement("node");
 
 	return loadNode(pRoot);
 }

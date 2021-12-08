@@ -72,6 +72,9 @@ namespace GameEngine {
 		template<typename T>
 		inline void BehaviorTree::blackboard(const std::string key, const T* value)
 		{
+			if (m_blackboard[key] == nullptr) {
+				m_blackboard[key] = new T;
+			}
 			m_blackboard[key] = (void*)value;
 		}
 

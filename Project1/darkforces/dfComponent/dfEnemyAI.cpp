@@ -15,48 +15,13 @@ DarkForces::Component::EnemyAI::EnemyAI():
 }
 
 /**
- * Record player position
- */
-void DarkForces::Component::EnemyAI::dispatchMessage(gaMessage* message)
-{
-	if (m_discardMessages) {
-		// player is dying, ignore messages
-		return;
-	}
-
-	if (message->m_frame > 0) {
-		m_currentFrame = message->m_frame;
-	}
-
-	switch (message->m_action) {
-	case gaMessage::Action::VIEW:
-		m_lastPlayerView = message->m_v3value;
-		m_lastPlayerViewFrame = message->m_frame;
-		break;
-
-	case gaMessage::Action::HEAR_SOUND:
-		blackboard<glm::vec3>("last_heard_sound", message->m_v3value);
-		m_lastPlayerView = message->m_v3value;
-		break;
-
-	case DarkForces::Message::DYING:
-		// when the player starts dying, ignore any incoming messages
-		m_discardMessages = true;
-		break;
-
-	}
-
-	GameEngine::Component::BehaviorTree::dispatchMessage(message);
-}
-
-/**
  * check if see the player in the cone of vision
  */
-bool DarkForces::Component::EnemyAI::viewPlayer(void)
+bool DarkForces::Component::EnemyAI::onViewPlayer(gaMessage* message)
 {
 	std::vector<glm::vec3>* playerLastPositions = blackboard<std::vector<glm::vec3>>("player_last_positions");
 
-	if (m_currentFrame == m_lastPlayerViewFrame || m_currentFrame == m_lastPlayerViewFrame+1) {
+	if (m_currentFrame == m_lastPlayerViewFrame || m_currentFrame == m_lastPlayerViewFrame + 1) {
 		// player is visible, because we just received a notification
 		playerLastPositions->push_back(m_lastPlayerView);
 		blackboard<bool>("player_visible", true);
@@ -86,6 +51,42 @@ bool DarkForces::Component::EnemyAI::viewPlayer(void)
 	}
 
 	return true;
+}
+
+/**
+ * Record player position
+ */
+void DarkForces::Component::EnemyAI::dispatchMessage(gaMessage* message)
+{
+	if (m_discardMessages) {
+		// player is dying, ignore messages
+		return;
+	}
+
+	if (message->m_frame > 0) {
+		m_currentFrame = message->m_frame;
+	}
+
+	switch (message->m_action) {
+	case gaMessage::Action::VIEW:
+		m_lastPlayerView = message->m_v3value;
+		m_lastPlayerViewFrame = message->m_frame;
+		onViewPlayer(message);
+		break;
+
+	case gaMessage::Action::HEAR_SOUND:
+		blackboard<glm::vec3>("last_heard_sound", message->m_v3value);
+		m_lastPlayerView = message->m_v3value;
+		break;
+
+	case DarkForces::Message::DYING:
+		// when the player starts dying, ignore any incoming messages
+		m_discardMessages = true;
+		break;
+
+	}
+
+	GameEngine::Component::BehaviorTree::dispatchMessage(message);
 }
 
 /**

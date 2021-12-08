@@ -48,12 +48,13 @@ namespace DarkForces {
 
 			std::vector<glm::vec3> m_playerLastPositions;
 
+			bool onViewPlayer(gaMessage*);						// check if see the player in the cone of vision
+
 		public:
 			EnemyAI();
 
 			void dispatchMessage(gaMessage* message) override;
 
-			bool viewPlayer(void);								// check if see the player in the cone of vision
 			bool locatePlayer(void);							// locate the player fully around the player
 
 			void addSound(const std::string& file, uint32_t);	// add sounds to 'tease the player'
