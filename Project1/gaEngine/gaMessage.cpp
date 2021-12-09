@@ -143,6 +143,7 @@ static std::map<int32_t, const char*> g_definitions = {
     { gaMessage::Action::TICK, "TICK"},
     { gaMessage::Action::ALARM, "ALARM"},
     { gaMessage::Action::VIEW, "VIEW"},
+    { gaMessage::Action::NOT_VIEW, "NOT_VIEW"},
     { gaMessage::Action::BULLET_HIT, "BULLERT_HIT"},
     { gaMessage::Action::BULLET_MISS, "BULLET_MISS"},
     { gaMessage::Action::HEAR_SOUND, "HEAR_SOUND"},

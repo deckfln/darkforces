@@ -68,13 +68,13 @@ void DarkForces::Behavior::Move2Player::init(void* data)
 	m_target = move2 - m_entity->position();
 	float l = glm::length(m_target) - m_entity->radius() * 8.0f;
 	if (l < 0) {
-		m_status = Status::FAILED;
+		m_status = Status::SUCCESSED;
 		return;
 	}
 
 	m_target = glm::normalize(m_target) * l;
 	if (glm::length(m_target) < m_entity->radius()) {
-		m_status = Status::FAILED;
+		m_status = Status::SUCCESSED;
 		return;
 	}
 	m_target += m_entity->position();

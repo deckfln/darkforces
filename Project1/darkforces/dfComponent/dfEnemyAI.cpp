@@ -21,35 +21,19 @@ bool DarkForces::Component::EnemyAI::onViewPlayer(gaMessage* message)
 {
 	std::vector<glm::vec3>* playerLastPositions = blackboard<std::vector<glm::vec3>>("player_last_positions");
 
-	if (m_currentFrame == m_lastPlayerViewFrame || m_currentFrame == m_lastPlayerViewFrame + 1) {
-		// player is visible, because we just received a notification
-		playerLastPositions->push_back(m_lastPlayerView);
-		blackboard<bool>("player_visible", true);
+	// player is visible, because we just received a notification
+	playerLastPositions->push_back(m_lastPlayerView);
+	blackboard<bool>("player_visible", true);
 
-	}
-	else {
-		// player is not visible, the last time we saw it is in the past
+	return true;
+}
 
-		blackboard<bool>("player_visible", false);
-		if (playerLastPositions->size() == 0) {
-			// the player was never seen, so drop out
-			playerLastPositions->push_back(m_lastPlayerView);
-			return false;
-		}
-
-		// check if the last view is from last time we ran viewPlayer, or from the last time we actually saw the player
-		const glm::vec3& po = playerLastPositions->back();
-		if (m_lastPlayerViewFrame > 0 && po != m_lastPlayerView) {
-			playerLastPositions->push_back(m_lastPlayerView);
-		}
-
-		// if we are reaching the last known position and still can't see the player, give up
-		float l = glm::distance(po, m_entity->position());
-		if (l < m_entity->radius()) {
-			return false;
-		}
-	}
-
+/**
+ * player is viewed
+ */
+bool DarkForces::Component::EnemyAI::onNotViewPlayer(gaMessage*)
+{
+	blackboard<bool>("player_visible", false);
 	return true;
 }
 
@@ -74,9 +58,15 @@ void DarkForces::Component::EnemyAI::dispatchMessage(gaMessage* message)
 		onViewPlayer(message);
 		break;
 
+	case gaMessage::Action::NOT_VIEW:
+		onNotViewPlayer(message);
+		break;
+
 	case gaMessage::Action::HEAR_SOUND:
+		/*
 		blackboard<glm::vec3>("last_heard_sound", message->m_v3value);
 		m_lastPlayerView = message->m_v3value;
+		*/
 		break;
 
 	case DarkForces::Message::DYING:

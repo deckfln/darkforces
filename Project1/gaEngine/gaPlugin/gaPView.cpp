@@ -24,6 +24,7 @@ void GameEngine::Plugins::View::beforeProcessing(void)
 	gaEntity* viewer;
 	Component::AIPerception* perception;
 	Component::Actor* actor;
+	bool seen;
 
 	// check visual perceptions
 	for (auto& pair : m_views) {
@@ -36,6 +37,7 @@ void GameEngine::Plugins::View::beforeProcessing(void)
 		for (auto& s : viewedEntities) {
 			viewed = g_gaWorld.getEntity(s);
 
+			seen = false;
 			// the player is in the entity distance perception
 			if (viewed->distanceTo(viewer) < perception->distance()) {
 				actor = dynamic_cast<Component::Actor*>(viewer->findComponent(gaComponent::Actor));
@@ -51,11 +53,17 @@ void GameEngine::Plugins::View::beforeProcessing(void)
 
 					// the player is in the line of sight of the entity
 					if (g_gaWorld.lineOfSight(viewed, viewer)) {
-						viewed->sendMessage(viewer->name(), gaMessage::Action::VIEW, viewed->position(), nullptr);
+						seen = true;
 					}
 				}
 			}
 
+			if (seen) {
+				viewed->sendMessage(viewer->name(), gaMessage::Action::VIEW, viewed->position(), nullptr);
+			}
+			else {
+				viewed->sendMessage(viewer->name(), gaMessage::Action::NOT_VIEW);
+			}
 		}
 	}
 }

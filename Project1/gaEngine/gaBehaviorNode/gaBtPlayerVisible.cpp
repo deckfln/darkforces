@@ -32,3 +32,18 @@ void GameEngine::Behavior::PlayerVisible::execute(Action* r)
 
 	return succeeded(r);
 }
+
+/**
+ * display the component in the debugger
+ */
+void GameEngine::Behavior::PlayerVisible::debugGUInode(void)
+{
+	bool* visible = m_tree->blackboard<bool>("player_visible");
+	if (visible == nullptr || *visible == false) {
+		ImGui::Text("Player not visible");
+	}
+	else {
+		ImGui::Text("Player visible");
+	}
+}
+

@@ -48,7 +48,8 @@ namespace DarkForces {
 
 			std::vector<glm::vec3> m_playerLastPositions;
 
-			bool onViewPlayer(gaMessage*);						// check if see the player in the cone of vision
+			bool onViewPlayer(gaMessage*);						// player is viewed
+			bool onNotViewPlayer(gaMessage*);					// player is not viewed
 
 		public:
 			EnemyAI();

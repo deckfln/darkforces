@@ -73,6 +73,7 @@ public:
 		TICK,			// Behavior nodes tick
 		ALARM,			// trigger an alarm after Xs
 		VIEW,			// an entity entered the cone of vision of an other entity
+		NOT_VIEW,		// an entity is not visible
 		BULLET_HIT,		// the entity was hit by a bullet
 		BULLET_MISS,	// a bullet passed by the entity
 		HEAR_SOUND,		// inform a sound is heard
