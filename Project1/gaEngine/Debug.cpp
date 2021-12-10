@@ -140,39 +140,19 @@ void GameEngine::Debug::render(void)
 			g_Blackbox.previousFrame();
 		}
 
-		g_Blackbox.debugGUI();
-		/*
-		ImGui::Begin("FlightRecorder v1");
-			if (ImGui::Button("Load##1")) {
-				loadRecorderV1();
-			}
-			if (m_recorder_len > 0) {
-				ImGui::SameLine(); if (ImGui::Button(">##1")) {
-					if (!m_replay) {
-						m_replay = true;
-					}
-					m_debug = false;
-					g_gaWorld.run();
-				}
+		// display the flight recorder
+		bool loadedFrame = g_Blackbox.debugGUI();
 
-				ImGui::SameLine(); ImGui::SliderInt("f##1", &m_recorder_end, 0, m_recorder_len);
-				if (m_recorder_end < m_recorder_len) {
-					// display frame by frame up to the last frame
-					ImGui::SameLine(); if (ImGui::Button(">>##1")) {
-						playRecorderV1();
-						g_gaWorld.run();
-
-						m_framebyframe = true;
-						m_replay = true;
-						m_debug = false;
-					}
-				}
-			}
-		ImGui::End();
-		*/
-		// display all entities to pick from
+		// display all elements currently on the queue
 		g_gaWorld.debugGUI();
+		g_Blackbox.debugGUImessages();
 		g_Blackbox.debugGUIinframe();
+
+		// and update the world
+		if (loadedFrame) {
+			g_gaWorld.process(0, true);
+			g_gaWorld.update();
+		}
 	}
 	else {
 		if (m_replay) {

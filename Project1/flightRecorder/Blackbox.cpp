@@ -337,14 +337,6 @@ void flightRecorder::Blackbox::setFrame(int frame)
 		record++;
 	}
 
-	// and don't forget messages created during the run
-	/*
-	std::list<gaMessage>& inframe = m_inframe_messages[frame];
-	for (auto& message : inframe) {
-		g_gaWorld.sendMessage(&message);
-	}
-	*/
-
 	// build a list of the entities in the save
 	bufferEntities* bEntities= m_entities[frame];
 	std::map<std::string, flightRecorder::Entity*> entities;
@@ -415,10 +407,6 @@ void flightRecorder::Blackbox::setFrame(int frame)
 	for (uint32_t i = 0; i < bPhysics->size; i++) {
 		g_gaPhysics.loadState(&bPhysics->objects[i]);
 	}
-
-	// and update the world
-	g_gaWorld.process(0, true);
-	g_gaWorld.update();
 }
 
 /*
@@ -454,8 +442,10 @@ void flightRecorder::Blackbox::previousFrame(void)
 /*/
  * display the flight recorder data on the debugger
  */
-void flightRecorder::Blackbox::debugGUI(void)
+bool flightRecorder::Blackbox::debugGUI(void)
 {
+	bool loadedFrame = false;
+
 	ImGui::Begin("flightRecorder v2");
 	if (ImGui::Button("Load")) {
 		// load a flight recorder and position as frame 0
@@ -490,12 +480,14 @@ void flightRecorder::Blackbox::debugGUI(void)
 			//m_control->translateCamera(
 			//	dark->m_player->position()
 			//	);
+			loadedFrame = true;
 		}
 
 		if (m_currentFrame > 0) {
 			// display frame by frame up to the last frame
 			ImGui::SameLine(); if (ImGui::Button("<<")) {
 				previousFrame();
+				loadedFrame = true;
 			}
 		}
 
@@ -503,10 +495,29 @@ void flightRecorder::Blackbox::debugGUI(void)
 			// display frame by frame up to the last frame
 			ImGui::SameLine(); if (ImGui::Button(">>")) {
 				nextFrame();
+				loadedFrame = true;
 			}
 		}
 	}
 	ImGui::End();
+
+	return loadedFrame;
+}
+
+/**
+ * display messages from the queue
+ */
+void flightRecorder::Blackbox::debugGUImessages(void)
+{
+	// convert the absolute frame number to the circular buffer
+	int convertFrame = (m_first + m_currentFrame) % m_len;
+
+	bufferMessages* bMessages = m_messages[convertFrame];
+	if (bMessages == nullptr) {
+		return;
+	}
+
+	g_gaWorld.debugGUImsg(bMessages->size, &bMessages->messages[0]);
 }
 
 /**

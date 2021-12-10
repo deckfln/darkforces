@@ -141,6 +141,8 @@ public:
 	void recordState(void* record);
 
 	// debugger
-	void debugGUI(void);
+	static void debugGUI(flightRecorder::Message*);
+	void debugGUI1(void);
+
 	static void declareMessages(const std::map<int, const char*>& actions, const std::map<int32_t, const std::map<int32_t, const char*>>& values);
 };

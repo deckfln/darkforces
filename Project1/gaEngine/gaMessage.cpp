@@ -153,7 +153,43 @@ static std::map<int32_t, const char*> g_definitions = {
 static std::map<int32_t, std::map<int, const char*>> g_definitions_values = {
 };
 
-void gaMessage::debugGUI(void)
+void gaMessage::debugGUI(flightRecorder::Message* msg)
+{
+
+    ImGui::TableNextColumn();
+    ImGui::Text(msg->server);
+    ImGui::TableNextColumn();
+    ImGui::Text(msg->client);
+    ImGui::TableNextColumn();
+
+    if (g_definitions.count(msg->action) == 0) {
+        ImGui::Text("***%d***", msg->action);
+    }
+    else {
+        ImGui::Text(g_definitions[msg->action]);
+    }
+    ImGui::TableNextColumn();
+
+    if (g_definitions_values.count(msg->action) > 0) {
+        auto& values = g_definitions_values[msg->action];
+
+        if (values.count(msg->value) > 0) {
+            const char* txt = values[msg->value];
+            ImGui::Text(txt);
+        }
+        else {
+            ImGui::Text("%d", msg->value);
+        }
+    }
+    else {
+        ImGui::Text("%d", msg->value);
+    }
+    ImGui::TableNextColumn();
+    ImGui::Text("%.2f", msg->fvalue);
+    ImGui::TableNextRow();
+}
+
+void gaMessage::debugGUI1(void)
 {
 
     ImGui::TableNextColumn();

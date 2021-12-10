@@ -1035,7 +1035,13 @@ void GameEngine::World::debugGUI(void)
 		}
 	}
 	ImGui::End();
+}
 
+/**
+ * render the imGUI debug messages
+ */
+void GameEngine::World::debugGUImsg(uint32_t nb, flightRecorder::Message* msg)
+{
 	// display messages
 	static bool mclose = false;
 	if (!mclose && ImGui::Begin("Messages", &mclose)) {
@@ -1047,11 +1053,13 @@ void GameEngine::World::debugGUI(void)
 			ImGui::TableSetupColumn("fValue");
 			ImGui::TableHeadersRow();
 
-			for (auto message : m_queue) {
+			flightRecorder::Message* message = msg;
+			for (size_t i = 0; i < nb; i++) {
 				// only show messages for the monitored entities
-				if (m_watch[message->m_server] || m_watch[message->m_client]) {
-					message->debugGUI();
+				if (m_watch[message->server] || m_watch[message->client]) {
+					gaMessage::debugGUI(message);
 				}
+				message++;
 			}
 			ImGui::EndTable();
 		}
@@ -1077,7 +1085,7 @@ void GameEngine::World::debugGUImessages(std::list<gaMessage>& l)
 		for (auto& message : l) {
 			// only show messages for the monitored entities
 			if (m_watch[message.m_server] || m_watch[message.m_client]) {
-				message.debugGUI();
+				message.debugGUI1();
 			}
 		}
 		ImGui::EndTable();

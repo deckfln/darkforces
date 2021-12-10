@@ -160,7 +160,8 @@ namespace GameEngine {
 
 		// debugger
 		void debugGUI(void);								// render the imGUI debug
-		void debugGUImessages(std::list<gaMessage>& l);		// render the imGUI debug messages
+		void debugGUImsg(uint32_t nb, flightRecorder::Message* msg);			// render the imGUI debug messages
+		void debugGUImessages(std::list<gaMessage>& l);		// render the imGUI debug in-frame messages
 
 		~World();
 	};
