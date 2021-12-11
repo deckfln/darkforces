@@ -66,6 +66,7 @@ DarkForces::Enemy::Enemy(dfWAX* model, const glm::vec3& position, float ambient,
 			<sound file = 'Ransto07.voc' id = '2054' />\
 			<sound file = 'Ransto08.voc' id = '2055' />";
 	}
+
 	m_ai.parse("file:DarkForces/AI/Enemy.xml", includes);
 
 

@@ -1,8 +1,9 @@
 <behaviortree>
-	<message id='GameEngine:HEAR_SOUND'>GameEngine:onHearSound</message>
-	<message id='GameEngine:VIEW'>GameEngine:onViewPLayer</message>
-	<message id='GameEngine:NOT_VIEW'>GameEngine:onNotViewPlayer</message>
-	
+	<messages>
+		<message id='GameEngine:HEAR_SOUND'>GameEngine:onHearSound</message>
+		<message id='GameEngine:VIEW'>GameEngine:onViewPlayer</message>
+		<message id='GameEngine:NOT_VIEW'>GameEngine:onNotViewPlayer</message>
+	</messages>
 	<node type='WaitIdle' name='Wait for event'>
 	<condition>FAILURE</condition>
 	<tree>

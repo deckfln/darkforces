@@ -39,6 +39,48 @@ void GameEngine::Behavior::registerNode(const char* name, createFunction create)
 }
 
 /**
+ *
+ */
+static std::map<const std::string, uint32_t> g_createMessage;
+static std::map<const std::string, GameEngine::Component::BehaviorTree::msgHandler> g_createHandler;
+
+void GameEngine::Behavior::registerMessage(const char* name, uint32_t id)
+{
+	g_createMessage[name] = id;
+}
+
+void GameEngine::Behavior::registerHandler(const char* name, GameEngine::Component::BehaviorTree::msgHandler handler)
+{
+	g_createHandler[name] = handler;
+}
+
+/**
+ * load static plugins
+ */
+static GameEngine::BehaviorNode* loadPlugins(tinyxml2::XMLElement* bt, GameEngine::Component::BehaviorTree* tree)
+{
+	GameEngine::BehaviorNode* bnode = nullptr;
+	GameEngine::BehaviorNode* bchild = nullptr;
+
+	// and create an bind the children
+	tinyxml2::XMLElement* messages = bt->FirstChildElement("messages");
+	if (messages) {
+		tinyxml2::XMLElement* pNodeElement = messages->FirstChildElement("message");
+
+		while (pNodeElement != nullptr) {
+			const char* id = pNodeElement->Attribute("id");
+			const char* handler = pNodeElement->GetText();
+
+			tree->handlers(g_createMessage[id], g_createHandler[handler]);
+
+			pNodeElement = pNodeElement->NextSiblingElement("message");
+		}
+	}
+
+	return bnode;
+}
+
+/**
  * 
  */
 static GameEngine::BehaviorNode* loadNode(tinyxml2::XMLElement* node)
@@ -78,7 +120,8 @@ static GameEngine::BehaviorNode* loadNode(tinyxml2::XMLElement* node)
  *
  */
 GameEngine::BehaviorNode* GameEngine::Behavior::loadTree(const std::string& data,
-	const std::map<std::string, std::string>& includes)
+	const std::map<std::string, std::string>& includes,
+	GameEngine::Component::BehaviorTree* tree)
 {
 	std::string xml;
 	if (data.substr(0, 5) == "file:") {
@@ -126,11 +169,7 @@ GameEngine::BehaviorNode* GameEngine::Behavior::loadTree(const std::string& data
 
 	// load the plugins
 	tinyxml2::XMLElement* bt = doc.FirstChildElement("behaviortree");
-	tinyxml2::XMLElement* plugin = bt->FirstChildElement("plugin");
-	while (plugin != nullptr) {
-		const char* t = plugin->GetText();
-		plugin = plugin->NextSiblingElement("plugin");
-	}
+	loadPlugins(bt, tree);
 
 	// create the node
 	tinyxml2::XMLElement* pRoot = bt->FirstChildElement("node");
