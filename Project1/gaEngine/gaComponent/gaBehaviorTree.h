@@ -10,23 +10,9 @@ namespace GameEngine {
 
 	namespace Component {
 		class BehaviorTree : public gaComponent {
-		protected:
-			uint32_t m_nbnodes=0;								// number of nodes in the tree
-			BehaviorNode* m_root = nullptr;
-			BehaviorNode* m_current = nullptr;
-			bool m_instanciated = false;
-
-			std::map<std::string, void*> m_blackboard;
-			std::vector<BehaviorNode*> m_nodes;					// index of all nodes
-
-			static uint32_t m_lastId;
-			static uint32_t m_lastNode;
-
-#ifdef _DEBUG
-			ImNodesEditorContext* m_context=nullptr;
-#endif // _DEBUG
-
 		public:
+			typedef bool(GameEngine::Component::BehaviorTree::*msgHandler) (gaMessage*);//pointer-to-member function
+
 			BehaviorTree(void);
 			BehaviorTree(BehaviorNode* root);
 
@@ -50,6 +36,13 @@ namespace GameEngine {
 			inline uint32_t lastAttrId(void) { return m_lastId++; };
 			inline uint32_t lastNode(void) { return m_lastNode; };
 
+			void handlers(uint32_t, msgHandler);				// manager message handlers
+
+			// preset message handlers
+			bool onViewPlayer(gaMessage*);						// player is viewed
+			bool onNotViewPlayer(gaMessage*);					// player is not viewed
+			bool onHearSound(gaMessage*);						// hear a sound
+
 			// flight recorder status
 			inline uint32_t recordSize(void);					// size of the component record
 			uint32_t recordState(void* record);					// save the component state in a record
@@ -57,6 +50,24 @@ namespace GameEngine {
 
 			// debugger
 			void debugGUIinline(void) override;					// display the component in the debugger
+
+		protected:
+			uint32_t m_nbnodes = 0;								// number of nodes in the tree
+			BehaviorNode* m_root = nullptr;
+			BehaviorNode* m_current = nullptr;
+			bool m_instanciated = false;
+
+			std::map<std::string, void*> m_blackboard;
+			std::vector<BehaviorNode*> m_nodes;					// index of all nodes
+
+			std::map<uint32_t, msgHandler> m_handlers;
+			static uint32_t m_lastId;
+			static uint32_t m_lastNode;
+
+#ifdef _DEBUG
+			ImNodesEditorContext* m_context = nullptr;
+#endif // _DEBUG
+
 		};
 
 		template<typename T>

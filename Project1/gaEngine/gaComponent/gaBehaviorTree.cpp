@@ -42,9 +42,55 @@ void GameEngine::Component::BehaviorTree::blackboard(const std::string key, void
 	m_blackboard[key] = value;
 }
 
+//---------------------------------------------
+
+/**
+ * manager message handlers
+ */
+void GameEngine::Component::BehaviorTree::handlers(uint32_t message, msgHandler handler)
+{
+	m_handlers[message] = handler;
+}
+
+/**
+ * check if see the player in the cone of vision
+ */
+bool GameEngine::Component::BehaviorTree::onViewPlayer(gaMessage* message)
+{
+	std::vector<glm::vec3>* playerLastPositions = blackboard<std::vector<glm::vec3>>("player_last_positions");
+
+	// player is visible, because we just received a notification
+	playerLastPositions->push_back(message->m_v3value);
+	blackboard<bool>("player_visible", true);
+
+	return true;
+}
+
+/**
+ * player is viewed
+ */
+bool GameEngine::Component::BehaviorTree::onNotViewPlayer(gaMessage*)
+{
+	blackboard<bool>("player_visible", false);
+	return true;
+}
+
+/**
+ * hear a blaster
+ */
+bool GameEngine::Component::BehaviorTree::onHearSound(gaMessage* message)
+{
+	blackboard<glm::vec3>("last_heard_sound", message->m_v3value);
+	return true;
+}
+
+
+//---------------------------------------------
+
 /**
  * let a component deal with a situation
- */void GameEngine::Component::BehaviorTree::dispatchMessage(gaMessage* message)
+ */
+void GameEngine::Component::BehaviorTree::dispatchMessage(gaMessage* message)
 {
 	if (!m_instanciated) {
 		m_root->instanciate(m_entity);
@@ -54,6 +100,11 @@ void GameEngine::Component::BehaviorTree::blackboard(const std::string key, void
 
 	if (m_current == nullptr) {
 		return;
+	}
+
+	// use general purpose message handlers
+	if (m_handlers.count(message->m_action)) {
+		(this->*m_handlers[message->m_action])(message);
 	}
 
 	// pass the message to the current node
@@ -98,6 +149,8 @@ void GameEngine::Component::BehaviorTree::blackboard(const std::string key, void
 	}
 }
 
+//---------------------------------------------
+
 /**
  * display the component in the debugger
  */
@@ -141,6 +194,8 @@ void GameEngine::Component::BehaviorTree::debugGUIinline(void)
 
 	}
 }
+
+//---------------------------------------------
 
 /**
  * size of the component record

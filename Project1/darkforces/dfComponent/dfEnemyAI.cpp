@@ -12,29 +12,9 @@ DarkForces::Component::EnemyAI::EnemyAI():
 	GameEngine::Component::BehaviorTree()
 {
 	blackboard("player_last_positions", (void*)&m_playerLastPositions);
-}
-
-/**
- * check if see the player in the cone of vision
- */
-bool DarkForces::Component::EnemyAI::onViewPlayer(gaMessage* message)
-{
-	std::vector<glm::vec3>* playerLastPositions = blackboard<std::vector<glm::vec3>>("player_last_positions");
-
-	// player is visible, because we just received a notification
-	playerLastPositions->push_back(m_lastPlayerView);
-	blackboard<bool>("player_visible", true);
-
-	return true;
-}
-
-/**
- * player is viewed
- */
-bool DarkForces::Component::EnemyAI::onNotViewPlayer(gaMessage*)
-{
-	blackboard<bool>("player_visible", false);
-	return true;
+	handlers(gaMessage::Action::VIEW, &GameEngine::Component::BehaviorTree::onViewPlayer);
+	handlers(gaMessage::Action::NOT_VIEW, &GameEngine::Component::BehaviorTree::onNotViewPlayer);
+	handlers(gaMessage::Action::HEAR_SOUND, &GameEngine::Component::BehaviorTree::onHearSound);
 }
 
 /**
@@ -52,23 +32,6 @@ void DarkForces::Component::EnemyAI::dispatchMessage(gaMessage* message)
 	}
 
 	switch (message->m_action) {
-	case gaMessage::Action::VIEW:
-		m_lastPlayerView = message->m_v3value;
-		m_lastPlayerViewFrame = message->m_frame;
-		onViewPlayer(message);
-		break;
-
-	case gaMessage::Action::NOT_VIEW:
-		onNotViewPlayer(message);
-		break;
-
-	case gaMessage::Action::HEAR_SOUND:
-		/*
-		blackboard<glm::vec3>("last_heard_sound", message->m_v3value);
-		m_lastPlayerView = message->m_v3value;
-		*/
-		break;
-
 	case DarkForces::Message::DYING:
 		// when the player starts dying, ignore any incoming messages
 		m_discardMessages = true;

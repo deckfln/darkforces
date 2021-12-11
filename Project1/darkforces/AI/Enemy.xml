@@ -1,6 +1,9 @@
 <behaviortree>
-	<plugin>viewPlayer</plugin>
-<node type='WaitIdle' name='Wait for event'>
+	<message id='GameEngine:HEAR_SOUND'>GameEngine:onHearSound</message>
+	<message id='GameEngine:VIEW'>GameEngine:onViewPLayer</message>
+	<message id='GameEngine:NOT_VIEW'>GameEngine:onNotViewPlayer</message>
+	
+	<node type='WaitIdle' name='Wait for event'>
 	<condition>FAILURE</condition>
 	<tree>
 	<node type='AttackPlayer' name='attack and track'>
@@ -48,5 +51,5 @@
 		</tree>
 	</node>
 	</tree>
-</node>
+	</node>
 </behaviortree>
