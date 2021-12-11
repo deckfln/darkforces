@@ -150,7 +150,7 @@ void GameEngine::Debug::render(void)
 
 		// and update the world
 		if (loadedFrame) {
-			g_gaWorld.process(0, true);
+			g_gaWorld.process(0, true, true);	// force execution in debug mode
 			g_gaWorld.update();
 		}
 	}

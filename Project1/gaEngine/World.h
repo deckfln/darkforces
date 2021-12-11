@@ -125,7 +125,7 @@ namespace GameEngine {
 
 		void push(gaMessage* message);
 		void pushForNextFrame(gaMessage* message);
-		void process(time_t delta, bool force=false);		// process messages on the queue
+		void process(time_t delta, bool force=false, bool debug=false);	// process messages on the queue
 		void suspendTimer(void);							// stop the engine
 		void clearQueue(void);								// clear the message queue
 		inline int queueLen(void) { return m_queue.size(); }// number of messages on the queue

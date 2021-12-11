@@ -482,20 +482,20 @@ bool flightRecorder::Blackbox::debugGUI(void)
 			//	);
 			loadedFrame = true;
 		}
-
-		if (m_currentFrame > 0) {
-			// display frame by frame up to the last frame
-			ImGui::SameLine(); if (ImGui::Button("<<")) {
-				previousFrame();
-				loadedFrame = true;
+		else {
+			if (m_currentFrame > 0) {
+				// display frame by frame up to the last frame
+				ImGui::SameLine(); if (ImGui::Button("<<")) {
+					previousFrame();
+					loadedFrame = true;
+				}
 			}
-		}
-
-		if (m_currentFrame < m_len) {
-			// display frame by frame up to the last frame
-			ImGui::SameLine(); if (ImGui::Button(">>")) {
-				nextFrame();
-				loadedFrame = true;
+			if (m_currentFrame < m_len) {
+				// display frame by frame up to the last frame
+				ImGui::SameLine(); if (ImGui::Button(">>")) {
+					nextFrame();
+					loadedFrame = true;
+				}
 			}
 		}
 	}

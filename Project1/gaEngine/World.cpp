@@ -619,7 +619,7 @@ bool World::checkCollision(gaEntity* source, fwCylinder& bounding, glm::vec3& di
 /**
  * dispatch messages
  */
-void World::process(time_t delta, bool force)
+void World::process(time_t delta, bool force, bool debug)
 {
 	// is the engine actually running ?
 	if (!m_run && !force) {
@@ -655,8 +655,10 @@ void World::process(time_t delta, bool force)
 	}
 
 #ifdef _DEBUG
-	// record start at start of frame
-	g_Blackbox.recordState();
+	// record start at start of frame, unless we are in debug mode so everything is already recorded
+	if (!debug) {
+		g_Blackbox.recordState();
+	}
 #endif
 
 	/*
@@ -678,8 +680,10 @@ void World::process(time_t delta, bool force)
 		message = m_queue.front();
 
 #ifdef _DEBUG
-		// record messages on the fly
-		g_Blackbox.recordMessage(message);
+		// record messages on the fly, unless we are in debug mode so everything is already recorded
+		if (!debug) {
+			g_Blackbox.recordMessage(message);
+		}
 #endif
 
 		m_queue.pop_front();
@@ -978,7 +982,7 @@ void GameEngine::World::registerPlugin(GameEngine::Plugin* plugin)
 
 void GameEngine::World::deregisterPlugin(GameEngine::Plugin* plugin)
 {
-	for (auto i = 0; i < m_plugins.size(); i++) {
+	for (size_t i = 0; i < m_plugins.size(); i++) {
 		if (m_plugins[i] == plugin) {
 			m_plugins[i] = nullptr;
 			return;
