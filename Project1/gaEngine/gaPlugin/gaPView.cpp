@@ -60,9 +60,11 @@ void GameEngine::Plugins::View::beforeProcessing(void)
 
 			if (seen) {
 				viewed->sendMessage(viewer->name(), gaMessage::Action::VIEW, viewed->position(), nullptr);
+				perception->view(viewed->entityID(), true);
 			}
-			else {
+			else if (perception->view(viewed->entityID())) {
 				viewed->sendMessage(viewer->name(), gaMessage::Action::NOT_VIEW);
+				perception->view(viewed->entityID(), false);
 			}
 		}
 	}
