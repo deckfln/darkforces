@@ -26,14 +26,11 @@ namespace DarkForces {
 			uint32_t m_currentFrame=0;
 			bool m_discardMessages = false;						// shall we handle the incoming messages
 
-			std::vector<glm::vec3> m_playerLastPositions;
-
 		public:
 			EnemyAI();
 
 			void dispatchMessage(gaMessage* message) override;
 
-			bool locatePlayer(void);							// locate the player fully around the player
 			bool onDying(gaMessage*);
 
 			void addSound(const std::string& file, uint32_t);	// add sounds to 'tease the player'

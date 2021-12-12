@@ -1,6 +1,7 @@
 #include "gaBehaviorTree.h"
 
 #include <imgui.h>
+#include <deque>
 
 #include "../gaEntity.h"
 #include "../gaBehaviorNode.h"
@@ -15,6 +16,7 @@ uint32_t GameEngine::Component::BehaviorTree::m_lastNode = 0;
 GameEngine::Component::BehaviorTree::BehaviorTree(void):
 	gaComponent(gaComponent::BehaviorTree)
 {
+	blackboard("player_last_positions", (void*)&m_playerLastPositions);
 }
 
 GameEngine::Component::BehaviorTree::BehaviorTree(BehaviorNode* root):
@@ -57,10 +59,14 @@ void GameEngine::Component::BehaviorTree::handlers(uint32_t message, msgHandler 
  */
 bool GameEngine::Component::BehaviorTree::onViewPlayer(gaMessage* message)
 {
-	std::vector<glm::vec3>* playerLastPositions = blackboard<std::vector<glm::vec3>>("player_last_positions");
+	std::deque<glm::vec3>* playerLastPositions = blackboard<std::deque<glm::vec3>>("player_last_positions");
 
 	// player is visible, because we just received a notification
+	if (playerLastPositions->size() >= 32) {
+		playerLastPositions->pop_front();
+	}
 	playerLastPositions->push_back(message->m_v3value);
+
 	blackboard<bool>("player_visible", true);
 
 	return true;

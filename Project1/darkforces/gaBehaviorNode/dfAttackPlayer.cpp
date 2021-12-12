@@ -48,7 +48,7 @@ uint32_t DarkForces::Behavior::AttackPlayer::recordState(void* record)
 	DarkForces::FlightRecorder::AttackPlayer* r = static_cast<DarkForces::FlightRecorder::AttackPlayer*>(record);
 
 	GameEngine::BehaviorNode::recordState(&r->node);
-	std::vector<glm::vec3>* playerLastPositions = m_tree->blackboard<std::vector<glm::vec3>>("player_last_positions");
+	std::deque<glm::vec3>* playerLastPositions = m_tree->blackboard<std::deque<glm::vec3>>("player_last_positions");
 	r->node.size = sizeof(DarkForces::FlightRecorder::AttackPlayer) + sizeof(glm::vec3) * playerLastPositions->size();
 
 	if (playerLastPositions->size() == 0) {
@@ -69,7 +69,7 @@ uint32_t DarkForces::Behavior::AttackPlayer::loadState(void* record)
 	DarkForces::FlightRecorder::AttackPlayer* r = static_cast<DarkForces::FlightRecorder::AttackPlayer*>(record);
 
 	GameEngine::BehaviorNode::loadState(&r->node);
-	std::vector<glm::vec3>* playerLastPositions = m_tree->blackboard<std::vector<glm::vec3>>("player_last_positions");
+	std::deque<glm::vec3>* playerLastPositions = m_tree->blackboard<std::deque<glm::vec3>>("player_last_positions");
 	playerLastPositions->clear();
 	if (r->nbPositions != 0) {
 		for (uint32_t i = 0; i < r->nbPositions; i++) {

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <map>
+#include <deque>
 #include "../../include/imnodes.h"
 
 #include "../gaComponent.h"
@@ -56,6 +57,7 @@ namespace GameEngine {
 			BehaviorNode* m_root = nullptr;
 			BehaviorNode* m_current = nullptr;
 			bool m_instanciated = false;
+			std::deque<glm::vec3> m_playerLastPositions;
 
 			std::map<std::string, void*> m_blackboard;
 			std::vector<BehaviorNode*> m_nodes;					// index of all nodes

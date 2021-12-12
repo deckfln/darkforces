@@ -24,6 +24,10 @@ BehaviorNode* DarkForces::Behavior::WaitIdle::create(const char* name, tinyxml2:
 void DarkForces::Behavior::WaitIdle::activated(void)
 {
 	m_entity->sendMessage(DarkForces::Message::STATE, (uint32_t)dfState::ENEMY_STAY_STILL);
+
+	// reset the list of player positions
+	std::deque<glm::vec3>* playerLastPositions = m_tree->blackboard<std::deque<glm::vec3>>("player_last_positions");
+	playerLastPositions->clear();
 }
 
 
@@ -35,11 +39,6 @@ void DarkForces::Behavior::WaitIdle::dispatchMessage(gaMessage* message, Action*
 		m_data = &m_original;
 		m_runningChild = 0;
 
-		// reset the list of player positions
-		std::vector<glm::vec3>* playerLastPositions = m_tree->blackboard<std::vector<glm::vec3>>("player_last_positions");
-		playerLastPositions->clear();
-
-		dynamic_cast<DarkForces::Component::EnemyAI*>(m_tree)->locatePlayer();
 		return startChild(r, 0, m_data); }
 
 	case gaMessage::Action::VIEW:
