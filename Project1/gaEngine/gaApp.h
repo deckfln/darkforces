@@ -21,8 +21,13 @@ namespace GameEngine {
 		Level *m_level = nullptr;
 		gaActor* m_player = nullptr;
 
+		void registerFRclasses(void);	// register darkforces entities for the flight recorder
+		void registerBThandlers(void);	// init the BehaviorTree static plugins
+		void registerBTNodes(void);		// register darkforces bevavionr nodes for the behavior engine
+
 #ifdef _DEBUG
 		friend Debug;
+		virtual void registerDebugger(void);	// register messages & classed for debugger
 #endif
 
 	public:

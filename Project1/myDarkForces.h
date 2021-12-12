@@ -33,6 +33,14 @@ class myDarkForces : public GameEngine::App
 	bool m_headlight = false;
 	bool m_f5 = false;
 
+	void registerFRclasses(void);	// register darkforces entities for the flight recorder
+	void registerBThandlers(void);	// init the BehaviorTree static plugins
+	void registerBTNodes(void);	// register darkforces bevavionr nodes for the behavior engine
+
+#ifdef _DEBUG
+	void registerDebugger(void) override;	// register messages & classed for debugger
+#endif
+
 public:
 	myDarkForces(std::string name, int width, int height);
 	glTexture* draw(time_t delta, fwRenderer* renderer) override;

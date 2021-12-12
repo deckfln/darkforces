@@ -61,7 +61,29 @@ const float c_direction = pi/2.0f ; // 1.0f;
 #include "darkforces/gaBehaviorNode/dfWaitIdle.h"
 #include "darkforces/gaBehaviorNode/dfBSound.h"
 
-static void registerNodes(void) {
+ /**
+  * register darkforces entities for the flight recorder
+  */
+void myDarkForces::myDarkForces::registerFRclasses(void)
+{
+	g_Blackbox.registerClass("dfBullet", &dfBullet::create);
+	g_Blackbox.registerClass("dfBulletExplode", &dfBulletExplode::create);
+}
+
+/**
+ * init the BehaviorTree static plugins
+ */
+void myDarkForces::myDarkForces::registerBThandlers(void)
+{
+	GameEngine::Behavior::registerMessage("DarkForces:DYING", DarkForces::Message::DYING);
+	GameEngine::Behavior::registerHandler("DarkForces:onDying", reinterpret_cast<GameEngine::Component::BehaviorTree::msgHandler>(&DarkForces::Component::EnemyAI::onDying));
+}
+
+/**
+ * register darkforces bevavionr nodes for the behavior engine
+ */
+void myDarkForces::myDarkForces::registerBTNodes(void)
+{
 	GameEngine::Behavior::registerNode("AttackPlayer", DarkForces::Behavior::AttackPlayer::create);
 	GameEngine::Behavior::registerNode("Fire2Player", DarkForces::Behavior::Fire2Player::create);
 	GameEngine::Behavior::registerNode("GotoTrigger", DarkForces::Behavior::GotoTrigger::create);
@@ -75,6 +97,61 @@ static void registerNodes(void) {
 	GameEngine::Behavior::registerNode("darkForces:sound", DarkForces::Behavior::Sound::create);
 }
 
+#ifdef _DEBUG
+/**
+ * register messages & classed for debugger
+ */
+void myDarkForces::myDarkForces::registerDebugger(void)
+{
+	static std::map<int32_t, const char*> g_definitions = {
+		{DarkForces::Message::TRIGGER, "DF_TRIGGER"},
+		{DarkForces::Message::GOTO_STOP, "DF_GOTO_STOP"},
+		{DarkForces::Message::DONE, "DF_DONE"},
+		{DarkForces::Message::ADD_SHIELD, "DF_ADD_SHIELD"},
+		{DarkForces::Message::ADD_ENERGY, "DF_ADD_ENERGY"},
+		{DarkForces::Message::DYING, "DF_DYING"},
+		{DarkForces::Message::DEAD, "DF_DEAD"},
+		{DarkForces::Message::FORCE_STATE,		"DF_FORCE_STATE"},
+		{DarkForces::Message::STATE,			"DF_STATE"},
+		{DarkForces::Message::PICK_RIFLE_AND_BULLETS, "DF_PICK_RIFLE_AND_BULLETS"},
+		{DarkForces::Message::ADD_BATTERY, "DF_ADD_BATTERY"},
+		{DarkForces::Message::EVENT, "DF_EVENT"},
+		{DarkForces::Message::CHANGE_WEAPON, "CHANGE_WEAPON"},
+		{DarkForces::Message::FIRE, "df_FIRE"},
+		{DarkForces::Message::START_FIRE, "df_START_FIRE"},
+		{DarkForces::Message::STOP_FIRE, "df_STOP_FIRE"},
+		{DarkForces::Message::SET_ANIM, "df_setAnim"},
+		{DarkForces::Message::ANIM_START, "df_AnimStart"},
+		{DarkForces::Message::ANIM_NEXT_FRAME, "df_AnimNextFrame"},
+		{DarkForces::Message::ANIM_LASTFRAME, "DF_AnimEndLoop"},
+		{DarkForces::Message::ANIM_END, "df_AnimEnd"},
+		{DarkForces::Message::ROTATE, "df_ROTATE"},
+		{DarkForces::Message::ANIM_PAUSE, "df_AnimPause"},
+		{DarkForces::Message::ANIM_VUE, "df_AnimVUE"},
+		{DarkForces::Message::DROP_ITEM, "df_DropItem"}
+	};
+
+	static std::map<int32_t, const std::map<int32_t, const char*>> g_def = {
+		{DarkForces::Message::EVENT, {
+			{DarkForces::CROSSLINE_FRONT, "CROSSLINE_FRONT"},
+			{DarkForces::CROSSLINE_BACK, "CROSSLINE_BACK"},
+			{DarkForces::ENTER_SECTOR, "ENTER_SECTOR"},
+			{DarkForces::LEAVE_SECTOR, "LEAVE_SECTOR"},
+			{DarkForces::NUDGE_FRONT_INSIDE, "NUDGE_FRONT_INSIDE"},
+			{DarkForces::NUDGE_BACK_OUTSIE, "NUDGE_BACK_OUTSIE"},
+			{DarkForces::EXPLOSION, "EXPLOSION"},
+			{DarkForces::SHOOT, "SHOOT"},
+			{DarkForces::LAND, "LAND"}}
+		}
+	};
+
+	gaMessage::declareMessages(g_definitions, g_def);
+}
+#endif
+
+/**
+ *
+ */
 myDarkForces::myDarkForces(std::string name, int width, int height) :
 	GameEngine::App(name, width, height, "shaders/gamma", "#define GAMMA_CORRECTION 1\n")
 {
@@ -82,16 +159,12 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 	//DarkForces::FileLFD briefing(ROOT_FOLDER + "/lfd/DFBRIEF.LFD");
 	m_filesystem = new dfFileSystem(ROOT_FOLDER);
 
-	// register darkforces entities for the flight recorder
-	g_Blackbox.registerClass("dfBullet", &dfBullet::create);
-	g_Blackbox.registerClass("dfBulletExplode", &dfBulletExplode::create);
-
-	// init the BehaviorTree static plugins
-	GameEngine::Behavior::registerMessage("DarkForces:DYING", DarkForces::Message::DYING);
-	GameEngine::Behavior::registerHandler("DarkForces:onDying", reinterpret_cast<GameEngine::Component::BehaviorTree::msgHandler>(&DarkForces::Component::EnemyAI::onDying));
-
-	// register darkforces bevavionr nodes for the behavior engine
-	registerNodes();
+	registerFRclasses();	// register darkforces entities for the flight recorder
+	registerBThandlers();	// init the BehaviorTree static plugins
+	registerBTNodes();		// register darkforces bevavionr nodes for the behavior engine
+#ifdef _DEBUG
+	registerDebugger();	// register messages & classed for debugger
+#endif
 
 	// player
 	//glm::vec3 start = glm::vec3(-21.26f, 0.95f, 29.064f);	// stage
@@ -169,50 +242,6 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 	// init the m_scene
 	glm::vec3* yellow = new glm::vec3(255, 255, 0);
 
-	// prepare the debugger
-	static std::map<int32_t, const char*> g_definitions = {
-		{DarkForces::Message::TRIGGER, "DF_TRIGGER"},
-		{DarkForces::Message::GOTO_STOP, "DF_GOTO_STOP"},
-		{DarkForces::Message::DONE, "DF_DONE"},
-		{DarkForces::Message::ADD_SHIELD, "DF_ADD_SHIELD"},
-		{DarkForces::Message::ADD_ENERGY, "DF_ADD_ENERGY"},
-		{DarkForces::Message::DYING, "DF_DYING"},
-		{DarkForces::Message::DEAD, "DF_DEAD"},
-		{DarkForces::Message::FORCE_STATE,		"DF_FORCE_STATE"},
-		{DarkForces::Message::STATE,			"DF_STATE"},
-		{DarkForces::Message::PICK_RIFLE_AND_BULLETS, "DF_PICK_RIFLE_AND_BULLETS"},
-		{DarkForces::Message::ADD_BATTERY, "DF_ADD_BATTERY"},
-		{DarkForces::Message::EVENT, "DF_EVENT"},
-		{DarkForces::Message::CHANGE_WEAPON, "CHANGE_WEAPON"},
-		{DarkForces::Message::FIRE, "df_FIRE"},
-		{DarkForces::Message::START_FIRE, "df_START_FIRE"},
-		{DarkForces::Message::STOP_FIRE, "df_STOP_FIRE"},
-		{DarkForces::Message::SET_ANIM, "df_setAnim"},
-		{DarkForces::Message::ANIM_START, "df_AnimStart"},
-		{DarkForces::Message::ANIM_NEXT_FRAME, "df_AnimNextFrame"},
-		{DarkForces::Message::ANIM_LASTFRAME, "DF_AnimEndLoop"},
-		{DarkForces::Message::ANIM_END, "df_AnimEnd"},
-		{DarkForces::Message::ROTATE, "df_ROTATE"},
-		{DarkForces::Message::ANIM_PAUSE, "df_AnimPause"},
-		{DarkForces::Message::ANIM_VUE, "df_AnimVUE"},
-		{DarkForces::Message::DROP_ITEM, "df_DropItem"}
-	};
-
-	static std::map<int32_t, const std::map<int32_t, const char*>> g_def = {
-		{DarkForces::Message::EVENT, {
-			{DarkForces::CROSSLINE_FRONT, "CROSSLINE_FRONT"},
-			{DarkForces::CROSSLINE_BACK, "CROSSLINE_BACK"},
-			{DarkForces::ENTER_SECTOR, "ENTER_SECTOR"},
-			{DarkForces::LEAVE_SECTOR, "LEAVE_SECTOR"},
-			{DarkForces::NUDGE_FRONT_INSIDE, "NUDGE_FRONT_INSIDE"},
-			{DarkForces::NUDGE_BACK_OUTSIE, "NUDGE_BACK_OUTSIE"},
-			{DarkForces::EXPLOSION, "EXPLOSION"},
-			{DarkForces::SHOOT, "SHOOT"},
-			{DarkForces::LAND, "LAND"}}
-		}
-	};
-
-	gaMessage::declareMessages(g_definitions, g_def);
 }
 
 /**

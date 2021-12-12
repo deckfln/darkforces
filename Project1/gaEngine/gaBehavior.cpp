@@ -23,6 +23,7 @@ struct char_cmp {
 	}
 };
 
+/*
 static std::map<const char*, GameEngine::Behavior::createFunction, char_cmp> g_createNodes = {
 	{"Decorator", GameEngine::Behavior::Decorator::create},
 	{"Loop", GameEngine::Behavior::Loop::create},
@@ -32,6 +33,8 @@ static std::map<const char*, GameEngine::Behavior::createFunction, char_cmp> g_c
 	{"MoveTo", GameEngine::Behavior::MoveTo::create},
 	{"PlayerVisible", GameEngine::Behavior::PlayerVisible::create}
 };
+*/
+static std::map<const char*, GameEngine::Behavior::createFunction, char_cmp> g_createNodes;
 
 void GameEngine::Behavior::registerNode(const char* name, createFunction create)
 {

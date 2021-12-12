@@ -15,14 +15,6 @@ uint32_t GameEngine::Component::BehaviorTree::m_lastNode = 0;
 GameEngine::Component::BehaviorTree::BehaviorTree(void):
 	gaComponent(gaComponent::BehaviorTree)
 {
-	GameEngine::Behavior::registerMessage("GameEngine:VIEW", gaMessage::Action::VIEW);
-	GameEngine::Behavior::registerMessage("GameEngine:NOT_VIEW", gaMessage::Action::NOT_VIEW);
-	GameEngine::Behavior::registerMessage("GameEngine:HEAR_SOUND", gaMessage::Action::HEAR_SOUND);
-
-	GameEngine::Behavior::registerHandler("GameEngine:onViewPlayer", &GameEngine::Component::BehaviorTree::onViewPlayer);
-	GameEngine::Behavior::registerHandler("GameEngine:onNotViewPlayer", &GameEngine::Component::BehaviorTree::onNotViewPlayer);
-	GameEngine::Behavior::registerHandler("GameEngine:onHearSound", &GameEngine::Component::BehaviorTree::onHearSound);
-
 }
 
 GameEngine::Component::BehaviorTree::BehaviorTree(BehaviorNode* root):
@@ -111,10 +103,6 @@ void GameEngine::Component::BehaviorTree::dispatchMessage(gaMessage* message)
 	}
 
 	// use general purpose message handlers
-	if (message->m_action == 1030) {
-		__debugbreak();
-	}
-
 	if (m_handlers.count(message->m_action)) {
 		(this->*m_handlers[message->m_action])(message);
 	}

@@ -109,49 +109,8 @@ void gaMessage::recordState(void* r)
 /**
  * debugger
  */
-static std::map<int32_t, const char*> g_definitions = {
-    { gaMessage::Action::COLLIDE, "COLLIDE"},
-    { gaMessage::Action::TIMER, "TIMER"},
-    { gaMessage::Action::DELETE_ENTITY, "DELETE_ENTITY"},
-    { gaMessage::Action::MOVE, "MOVE"},
-    { gaMessage::Action::ROTATE, "ROTATE"},
-    { gaMessage::Action::REGISTER_SOUND, "REGISTER_SOUND"},
-    { gaMessage::Action::PLAY_SOUND, "PLAY_SOUND"},
-    { gaMessage::Action::PROPAGATE_SOUND, "PLAY_SOUND"},
-    { gaMessage::Action::STOP_SOUND, "STOP_SOUND"},
-    { gaMessage::Action::WANT_TO_MOVE, "WANT_TO_MOVE"},
-    { gaMessage::Action::COLLISION, "COLLISION"},
-    { gaMessage::Action::MOVE_TO, "MOVE_TO"},
-    { gaMessage::Action::WORLD_INSERT,"WORLD_INSERT" },
-    { gaMessage::Action::WORLD_REMOVE, "WORLD_REMOVE"},
-    { gaMessage::Action::WOULD_FALL, "WOULD_FALL"},
-    { gaMessage::Action::FALL, "FALL"},
-    { gaMessage::Action::CONTROLLER, "CONTROLLER"},
-    { gaMessage::Action::SAVE_WORLD, "SAVE_WORLD"},
-    { gaMessage::Action::KEY, "KEY"},
-    { gaMessage::Action::LOOK_AT, "LOOK_AT"},
-    { gaMessage::Action::MOVE_AT, "MOVE_AT"},
-    { gaMessage::Action::ACTIVATE, "ACTIVATE"},
-    { gaMessage::Action::HIDE, "HIDE"},
-    { gaMessage::Action::UNHIDE, "UNHIDE"},
-    { gaMessage::Action::START_MOVE, "START_MOVE"},
-    { gaMessage::Action::END_MOVE, "END_MOVE"},
-    { gaMessage::Action::SatNav_GOTO, "SatNav_GOTO"},
-    { gaMessage::Action::SatNav_NOGO, "SatNav_NOGO"},
-    { gaMessage::Action::SatNav_CANCEL, "SatNav_CANCEL"},
-    { gaMessage::Action::SatNav_REACHED, "SatNAV_REACHED"},
-    { gaMessage::Action::TICK, "TICK"},
-    { gaMessage::Action::ALARM, "ALARM"},
-    { gaMessage::Action::VIEW, "VIEW"},
-    { gaMessage::Action::NOT_VIEW, "NOT_VIEW"},
-    { gaMessage::Action::BULLET_HIT, "BULLERT_HIT"},
-    { gaMessage::Action::BULLET_MISS, "BULLET_MISS"},
-    { gaMessage::Action::HEAR_SOUND, "HEAR_SOUND"},
-    { gaMessage::Action::HEAR_STOP, "HEAR_STOP"},
-};
-
-static std::map<int32_t, std::map<int, const char*>> g_definitions_values = {
-};
+static std::map<int32_t, const char*> g_definitions;
+static std::map<int32_t, std::map<int, const char*>> g_definitions_values;
 
 void gaMessage::debugGUI(flightRecorder::Message* msg)
 {
