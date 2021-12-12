@@ -28,6 +28,7 @@
 #include "darkforces/dfLevel.h"
 #include "darkforces/dfCollision.h"
 #include "darkforces/dfComponent/dfCActor.h"
+#include "darkforces/dfComponent/dfEnemyAI.h"
 
 #include "darkforces/dfFileLFD.h"
 #include "darkforces/dfFileSystem.h"
@@ -37,6 +38,7 @@
 #include "darkforces/dfObject/dfBulletExplode.h"
 #include "darkforces/dfHUD.h"
 #include "darkforces/dfPlugin/dfSprites.h"
+
 
 const float c_height = 0.70f;
 const float c_radius = 0.2f;
@@ -84,6 +86,10 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 	g_Blackbox.registerClass("dfBullet", &dfBullet::create);
 	g_Blackbox.registerClass("dfBulletExplode", &dfBulletExplode::create);
 
+	// init the BehaviorTree static plugins
+	GameEngine::Behavior::registerMessage("DarkForces:DYING", DarkForces::Message::DYING);
+	GameEngine::Behavior::registerHandler("DarkForces:onDying", reinterpret_cast<GameEngine::Component::BehaviorTree::msgHandler>(&DarkForces::Component::EnemyAI::onDying));
+
 	// register darkforces bevavionr nodes for the behavior engine
 	registerNodes();
 
@@ -103,9 +109,6 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 	glm::vec3 start = glm::vec3(-24.52, 0.07, 31.75);	// enthall
 	//glm::vec3 start = glm::vec3(-38.80, 2.41, 39.7);	// switch_cover
 	//glm::vec3 start = glm::vec3(-29.06, -2.0, 24.75);	// cage
-
-	static glm::vec3 p(-18.17, 2.0, 37.1);
-	g_gaWorld.sendMessage("STORMFIN.WAX(88)", "STORMFIN.WAX(88)", gaMessage::Action::MOVE, 0, &p);
 
 	fwCylinder bounding(glm::vec3(0), c_radius, c_height); // stage
 

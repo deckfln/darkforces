@@ -12,9 +12,6 @@ DarkForces::Component::EnemyAI::EnemyAI():
 	GameEngine::Component::BehaviorTree()
 {
 	blackboard("player_last_positions", (void*)&m_playerLastPositions);
-	handlers(gaMessage::Action::VIEW, &GameEngine::Component::BehaviorTree::onViewPlayer);
-	handlers(gaMessage::Action::NOT_VIEW, &GameEngine::Component::BehaviorTree::onNotViewPlayer);
-	handlers(gaMessage::Action::HEAR_SOUND, &GameEngine::Component::BehaviorTree::onHearSound);
 }
 
 /**
@@ -33,8 +30,7 @@ void DarkForces::Component::EnemyAI::dispatchMessage(gaMessage* message)
 
 	switch (message->m_action) {
 	case DarkForces::Message::DYING:
-		// when the player starts dying, ignore any incoming messages
-		m_discardMessages = true;
+		//onDying(message);
 		break;
 
 	}
@@ -103,6 +99,16 @@ bool DarkForces::Component::EnemyAI::locatePlayer(void)
 		}
 	}
 
+	return true;
+}
+
+/**
+ *
+ */
+bool DarkForces::Component::EnemyAI::onDying(gaMessage*)
+{
+	// when the player starts dying, ignore any incoming messages
+	m_discardMessages = true;
 	return true;
 }
 

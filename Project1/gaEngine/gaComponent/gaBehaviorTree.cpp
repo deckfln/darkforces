@@ -111,6 +111,10 @@ void GameEngine::Component::BehaviorTree::dispatchMessage(gaMessage* message)
 	}
 
 	// use general purpose message handlers
+	if (message->m_action == 1030) {
+		__debugbreak();
+	}
+
 	if (m_handlers.count(message->m_action)) {
 		(this->*m_handlers[message->m_action])(message);
 	}
