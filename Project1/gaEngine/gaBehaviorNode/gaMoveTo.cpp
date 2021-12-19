@@ -400,7 +400,7 @@ void GameEngine::Behavior::MoveTo::dispatchMessage(gaMessage* message, Action *r
 	for (auto& exit : m_exit) {
 		condition = m_tree->blackboard<bool>(exit.first);
 		if (condition == exit.second) {
-			return failed(r);
+			return succeeded(r);
 		}
 	}
 
@@ -480,6 +480,15 @@ void GameEngine::Behavior::MoveTo::debugGUInode(void)
 	}
 
 	bool m_old_debug = m_debug;
+
+	if (m_exit.size() > 0) {
+		if (ImGui::TreeNode("Conditions")) {
+			for (auto& exit : m_exit) {
+				ImGui::Text("%s:%d", exit.first.c_str(), exit.second);
+			}
+			ImGui::TreePop();
+		}
+	}
 
 	if (ImGui::TreeNode(tmp)) {
 		if (m_navpoints->size() > 16) {

@@ -37,12 +37,10 @@
 			<walk max='3000' min='1500' random='true'/>
 			<tree>
 				<node type='SatNav' name='move to player last position'>
-					<!--
 					<exits>
 						<exit value='true'>player_visible</exit>
 						<exit value='true'>hit_bullet</exit>
 					</exits>
-					-->
 				</node>
 			</tree>
 		</node>

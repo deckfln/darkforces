@@ -16,7 +16,6 @@ namespace DarkForces {
 
 			glm::vec3 m_from;											// player position
 			glm::vec3 m_to;											// player position
-			bool m_visibility;
 
 			void fireNow(void);
 

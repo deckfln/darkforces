@@ -84,7 +84,6 @@ void DarkForces::Behavior::Fire2Player::dispatchMessage(gaMessage* message, Acti
  */
 void DarkForces::Behavior::Fire2Player::debugGUInode(void)
 {
-	ImGui::Text("visibility:%s", (m_visibility) ? "True" : "False");
 	ImGui::Text("from:%.2f %.2f %.2f", m_from.x, m_from.y, m_from.z);
 	ImGui::Text("to:%.2f %.2f %.2f", m_to.x, m_to.y, m_to.z);
 }
@@ -95,7 +94,6 @@ namespace DarkForces {
 			struct GameEngine::FlightRecorder::BehaviorNode node;
 			glm::vec3 from;
 			glm::vec3 to;
-			bool visibility;
 		};
 	}
 }
@@ -111,7 +109,6 @@ uint32_t DarkForces::Behavior::Fire2Player::recordState(void* record)
 	r->node.size = sizeof(DarkForces::FlightRecorder::fire2player);
 	r->to = m_to;
 	r->from = m_from;
-	r->visibility = m_visibility;
 
 	return r->node.size;
 }
@@ -123,7 +120,6 @@ uint32_t DarkForces::Behavior::Fire2Player::loadState(void* record)
 	GameEngine::BehaviorNode::loadState(&r->node);
 	m_to = r->to;
 	m_from = r->from;
-	m_visibility = r->visibility;
 
 	return r->node.size;
 }
