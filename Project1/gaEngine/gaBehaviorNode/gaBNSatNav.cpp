@@ -31,7 +31,9 @@ GameEngine::Behavior::SatNav::SatNav(const char *name, float speed) :
 
 GameEngine::BehaviorNode* GameEngine::Behavior::SatNav::create(const char* name, tinyxml2::XMLElement* element, GameEngine::BehaviorNode* used)
 {
-	return new GameEngine::Behavior::SatNav(name);
+	GameEngine::Behavior::SatNav* node = new GameEngine::Behavior::SatNav(name);
+	GameEngine::Behavior::MoveTo::create(name, element, node);
+	return node;
 }
 
 /**

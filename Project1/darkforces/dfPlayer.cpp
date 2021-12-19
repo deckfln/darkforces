@@ -180,7 +180,7 @@ void DarkForces::Player::onAlarm(gaMessage* message)
 void DarkForces::Player::onLookAt(gaMessage* message)
 {
 	// show more or less of the weapon based on the player look
-	float y = (*(glm::vec3*)message->m_extra).y;
+	float y = message->m_v3value.y;
 	const DarkForces::Weapon* hud = m_weapon.get(m_currentWeapon);
 
 	float y1 = hud->HUDposition.y + m_wobbling.y - y;

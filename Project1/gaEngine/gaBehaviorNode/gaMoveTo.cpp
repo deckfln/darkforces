@@ -41,7 +41,29 @@ GameEngine::Behavior::MoveTo::MoveTo(const char *name, float speed) :
 
 GameEngine::BehaviorNode* GameEngine::Behavior::MoveTo::create(const char* name, tinyxml2::XMLElement* element, GameEngine::BehaviorNode* used)
 {
-	return new GameEngine::Behavior::MoveTo(name);
+	GameEngine::Behavior::MoveTo* node;
+
+	if (used == nullptr) {
+		node = new GameEngine::Behavior::MoveTo(name);
+	}
+	else {
+		node = dynamic_cast<GameEngine::Behavior::MoveTo*>(used);
+	}
+
+	bool value=false;
+
+	tinyxml2::XMLElement* exits = element->FirstChildElement("exits");
+	if (exits) {
+		tinyxml2::XMLElement* exit = exits->FirstChildElement("exit");
+
+		while (exit != nullptr) {
+			exit->QueryBoolAttribute("value", &value);
+			node->m_exit[exit->GetText()] = value;
+			exit = exit->NextSiblingElement("exit");
+		}
+	}
+
+	return node;
 }
 
 /**
@@ -373,6 +395,16 @@ void GameEngine::Behavior::MoveTo::onCancel(gaMessage* message)
  */
 void GameEngine::Behavior::MoveTo::dispatchMessage(gaMessage* message, Action *r)
 {
+	// check the exit conditions
+	bool condition;
+	for (auto& exit : m_exit) {
+		condition = m_tree->blackboard<bool>(exit.first);
+		if (condition == exit.second) {
+			return failed(r);
+		}
+	}
+
+	// deal with messages
 	switch (message->m_action) {
 	case gaMessage::Action::SatNav_CANCEL:
 		onCancel(message);
@@ -389,7 +421,6 @@ void GameEngine::Behavior::MoveTo::dispatchMessage(gaMessage* message, Action *r
 	case gaMessage::Action::WOULD_FALL:
 		// find an other path
 		return failed(r);
-		__debugbreak();
 		break;
 	}
 
@@ -455,7 +486,7 @@ void GameEngine::Behavior::MoveTo::debugGUInode(void)
 			__debugbreak();
 		}
 		m_debug = true;
-		for (auto i = 0, j=0; i < m_navpoints->size()-1; i++) {
+		for (size_t i = 0, j=0; i < m_navpoints->size()-1; i++) {
 			ImGui::Text("%d: %.2f %.2f %.2f", i, m_navpoints->at(i).x, m_navpoints->at(i).y, m_navpoints->at(i).z);
 			m_vertices[j++] = m_navpoints->at(i).x;
 			m_vertices[j++] = m_navpoints->at(i).y+0.5;

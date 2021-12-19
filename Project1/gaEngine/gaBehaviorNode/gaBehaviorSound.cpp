@@ -17,7 +17,7 @@ GameEngine::Behavior::Sound::Sound(const char *name) :
 
 GameEngine::BehaviorNode* GameEngine::Behavior::Sound::create(const char* name, tinyxml2::XMLElement* element, GameEngine::BehaviorNode* used)
 {
-	GameEngine::Behavior::Sound* node;;
+	GameEngine::Behavior::Sound* node;
 
 	if (used == nullptr) {
 		node = new GameEngine::Behavior::Sound(name);

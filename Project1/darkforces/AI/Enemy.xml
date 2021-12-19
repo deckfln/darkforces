@@ -24,6 +24,11 @@
 				<walk max='3000' min='1500' random='true'/>
 				<tree>
 				<node type='SatNav' name='move to player'></node>
+					<!--
+					<exits>
+						<exit value='false'>player_visible</exit>
+					</exits>
+					-->
 				</tree>
 			</node>
 			</tree>
@@ -31,14 +36,27 @@
 		<node type='TrackPlayer' name='track the player'>
 			<walk max='3000' min='1500' random='true'/>
 			<tree>
-				<node type='SatNav' name='move to player last position'></node>
+				<node type='SatNav' name='move to player last position'>
+					<!--
+					<exits>
+						<exit value='true'>player_visible</exit>
+						<exit value='true'>hit_bullet</exit>
+					</exits>
+					-->
+				</node>
 			</tree>
 		</node>
 		</tree>
 	</node>
 	<node type='MoveEnemyTo' name='move to destination'>
 		<tree>
-		<node type='SatNav' name='go to destination'></node>
+		<node type='SatNav' name='go to destination'>
+			<exits>
+				<exit value='"true'>player_visible</exit>
+				<exit value='"true'>hit_bullet</exit>
+				<exit value='"true'>hear_sound</exit>
+			</exits>
+		</node>
 		<node type='WaitDoor' name='wait for door to open'></node>
 		<node type='OpenDoor' name='go to destination'>
 			<tree>

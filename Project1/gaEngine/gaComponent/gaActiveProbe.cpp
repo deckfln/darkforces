@@ -22,8 +22,8 @@ void GameEngine::Component::ActiveProbe::dispatchMessage(gaMessage* message)
 {
 	switch (message->m_action) {
 	case gaMessage::Action::MOVE_AT:
-		if (message->m_extra != nullptr) {
-			m_segment.m_start = *(glm::vec3*)message->m_extra;
+		if (message->m_v3value != glm::vec3(0)) {
+			m_segment.m_start = message->m_v3value;
 		}
 		else {
 			m_segment.m_start = m_entity->position();
@@ -33,7 +33,7 @@ void GameEngine::Component::ActiveProbe::dispatchMessage(gaMessage* message)
 		break;
 
 	case gaMessage::Action::LOOK_AT:
-		m_direction = glm::normalize(*(glm::vec3*)message->m_extra)/1.5f;
+		m_direction = glm::normalize(message->m_v3value)/1.5f;
 		m_segment.m_end = m_segment.m_start, m_direction;
 		m_worldAABB.set(m_segment.m_start, m_segment.m_end);
 		break;

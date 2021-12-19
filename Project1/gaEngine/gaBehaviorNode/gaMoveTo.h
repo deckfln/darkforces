@@ -27,6 +27,8 @@ namespace GameEngine {
 			uint32_t m_previous_size = 0;
 			uint32_t m_moveID;									// ID of the last raised WANT_TO_MOVE message
 
+			std::map<std::string, bool> m_exit;					// list of variables triggering exit of the loop
+
 #ifdef _DEBUG
 			void debug(void);									// init debug mode
 			bool m_debug = false;								// display navpoints in opengl

@@ -88,12 +88,12 @@ bool GameEngine::Component::Controller::checkKeys(time_t delta)
 void GameEngine::Component::Controller::updatePlayer(time_t delta)
 {
 	if (m_velocity != glm::vec3(0)) {
-		m_entity->sendInternalMessage(gaMessage::CONTROLLER, (uint32_t)delta, &m_velocity);
+		m_entity->sendMessage(gaMessage::CONTROLLER, (uint32_t)delta, m_velocity);
 	}
 
 	if (m_eye != m_oldEye || m_lookAt != m_oldLookAt) {
-		m_entity->sendInternalMessage(gaMessage::Action::LOOK_AT, 0, &m_lookDirection);
-		m_entity->sendInternalMessage(gaMessage::Action::MOVE_AT, 0, &m_eye);
+		m_entity->sendMessage(gaMessage::Action::LOOK_AT, m_lookDirection);
+		m_entity->sendMessage(gaMessage::Action::MOVE_AT, m_eye);
 
 		m_oldEye = m_eye;
 		m_oldLookAt = m_lookAt;

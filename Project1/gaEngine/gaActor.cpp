@@ -173,11 +173,11 @@ void gaActor::dispatchMessage(gaMessage* message)
 		break; }
 
 	case gaMessage::CONTROLLER:
-		moveTo(message->m_value, *(glm::vec3*)message->m_extra);
+		moveTo(message->m_value, message->m_v3value);
 		break;
 
 	case gaMessage::Action::LOOK_AT:
-		m_direction = (*(glm::vec3*)message->m_extra);
+		m_direction = message->m_v3value;
 		break;
 
 	case gaMessage::KEY:
