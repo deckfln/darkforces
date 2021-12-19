@@ -49,10 +49,10 @@ void GameEngine::Level::draw(dfSuperSector* current, fwCamera* camera)
 	for (auto ssector : m_supersectors) {
 		if (visibilityCache[i] != ssector->visible()) {
 			if (ssector->visible()) {
-				ssector->sendInternalMessage(gaMessage::Action::UNHIDE);
+				ssector->sendMessage(gaMessage::Action::UNHIDE);
 			}
 			else {
-				ssector->sendInternalMessage(gaMessage::Action::HIDE);
+				ssector->sendMessage(gaMessage::Action::HIDE);
 			}
 		}
 		i++;
@@ -66,7 +66,7 @@ void GameEngine::Level::hideSectors(void)
 {
 	for (auto ssector : m_supersectors) {
 		ssector->visible(false);
-		ssector->sendInternalMessage(gaMessage::Action::HIDE);
+		ssector->sendMessage(gaMessage::Action::HIDE);
 	}
 }
 

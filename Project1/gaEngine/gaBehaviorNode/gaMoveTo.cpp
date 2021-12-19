@@ -148,10 +148,10 @@ void GameEngine::Behavior::MoveTo::onReachedNextWayPoint(gaMessage *message)
 		m_status = Status::STILL;
 
 		// broadcast the end of the move (for animation)
-		m_entity->sendInternalMessage(gaMessage::END_MOVE);
+		m_entity->sendMessage(gaMessage::END_MOVE);
 
 		// broadcast the point reached
-		m_entity->sendInternalMessage(gaMessage::SatNav_REACHED);
+		m_entity->sendMessage(gaMessage::SatNav_REACHED);
 
 		BehaviorNode::m_status = BehaviorNode::Status::SUCCESSED;
 	}
@@ -173,7 +173,7 @@ void GameEngine::Behavior::MoveTo::onBlockedWay(gaMessage *message)
 {
 	// broadcast the end of the move
 	m_status = Status::STILL;
-	m_entity->sendInternalMessage(gaMessage::END_MOVE);
+	m_entity->sendMessage(gaMessage::END_MOVE);
 
 	float distance = glm::distance(m_entity->position(), m_destination);
 
@@ -242,7 +242,7 @@ void GameEngine::Behavior::MoveTo::onMove(gaMessage* message)
 			*/
 		}
 		lookAt = glm::normalize(lookAt);
-		m_entity->sendInternalMessage(
+		m_entity->sendMessage(
 			gaMessage::LOOK_AT,
 			lookAt);
 
@@ -382,7 +382,7 @@ void GameEngine::Behavior::MoveTo::onCancel(gaMessage* message)
 	m_status = Status::STILL;
 
 	// broadcast the end of the move (for animation)
-	m_entity->sendInternalMessage(gaMessage::END_MOVE);
+	m_entity->sendMessage(gaMessage::END_MOVE);
 
 	g_gaWorld.deleteMessage(m_moveID);
 	BehaviorNode::m_status = BehaviorNode::Status::SUCCESSED;

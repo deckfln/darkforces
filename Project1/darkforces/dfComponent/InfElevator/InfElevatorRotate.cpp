@@ -7,7 +7,7 @@ void DarkForces::Component::InfElevatorRotate::moveTo(float z_lvl)
 {
 	GameEngine::Transform* tr = m_entity->pTransform();
 	tr->m_position = glm::vec3(0, glm::radians(z_lvl), 0);
-	m_entity->sendInternalMessage(gaMessage::ROTATE, gaMessage::Flag::ROTATE_VEC3, tr);
+	m_entity->sendMessage(gaMessage::ROTATE, gaMessage::Flag::ROTATE_VEC3, tr);
 
 	// change the sound 'opacity' of the elevator (door) base don openess
 	dfSector* sector = dynamic_cast<dfSector*>(m_entity);
@@ -78,7 +78,7 @@ void DarkForces::Component::InfElevatorRotate::dispatchMessage(gaMessage* messag
 
 		if ((m_eventMask & event) != 0) {
 			// trigger the program if it fits the eventMask
-			m_entity->sendInternalMessage(DarkForces::Message::TRIGGER);
+			m_entity->sendMessage(DarkForces::Message::TRIGGER);
 		}
 		break;
 	}

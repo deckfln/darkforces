@@ -45,7 +45,7 @@ void GameEngine::Component::SatNav::triggerMove(const glm::vec3& direction)
 	triggerMove();
 
 	// turn the entity in the direction of the move
-	m_entity->sendInternalMessage(
+	m_entity->sendMessage(
 		gaMessage::LOOK_AT,
 		-direction);
 }
@@ -94,11 +94,11 @@ void GameEngine::Component::SatNav::dispatchMessage(gaMessage* message)
 			m_status = Status::MOVE_TO_NEXT_WAYPOINT;
 
 			// broadcast the beginning of the move (for animation)
-			m_entity->sendInternalMessage(gaMessage::START_MOVE);
+			m_entity->sendMessage(gaMessage::START_MOVE);
 		}
 		else {
 			// inform everyone of the failure
-			m_entity->sendInternalMessage(gaMessage::SatNav_NOGO);
+			m_entity->sendMessage(gaMessage::SatNav_NOGO);
 		}
 		break;
 
@@ -107,7 +107,7 @@ void GameEngine::Component::SatNav::dispatchMessage(gaMessage* message)
 		m_status = Status::STILL;
 
 		// broadcast the end of the move (for animation)
-		m_entity->sendInternalMessage(gaMessage::END_MOVE);
+		m_entity->sendMessage(gaMessage::END_MOVE);
 		break;
 
 	case gaMessage::Action::MOVE:
@@ -151,10 +151,10 @@ void GameEngine::Component::SatNav::dispatchMessage(gaMessage* message)
 					m_status = Status::STILL;
 
 					// broadcast the end of the move (for animation)
-					m_entity->sendInternalMessage(gaMessage::END_MOVE);
+					m_entity->sendMessage(gaMessage::END_MOVE);
 
 					// broadcast the point reached
-					m_entity->sendInternalMessage(gaMessage::SatNav_REACHED);
+					m_entity->sendMessage(gaMessage::SatNav_REACHED);
 				}
 				else {
 					// if we reached the next navpoint, move to the next one
@@ -192,7 +192,7 @@ void GameEngine::Component::SatNav::dispatchMessage(gaMessage* message)
 			else {
 				// broadcast the end of the move
 				m_status = Status::STILL;
-				m_entity->sendInternalMessage(gaMessage::END_MOVE);
+				m_entity->sendMessage(gaMessage::END_MOVE);
 			}
 		}
 		else {

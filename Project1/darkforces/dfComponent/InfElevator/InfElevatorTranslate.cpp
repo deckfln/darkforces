@@ -77,7 +77,7 @@ void DarkForces::Component::InfElevatorTranslate::dispatchMessage(gaMessage* mes
 
 		if ((m_eventMask & event) != 0) {
 			// trigger the program if it fits the eventMask
-			m_entity->sendInternalMessage(DarkForces::Message::TRIGGER);
+			m_entity->sendMessage(DarkForces::Message::TRIGGER);
 		}
 		break;
 	}
