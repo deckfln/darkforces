@@ -13,7 +13,7 @@ dfFileGOB::dfFileGOB(std::string file)
 	GOB_Header header;
 	fd.read((char*)&header, sizeof(GOB_Header));
 	if (strncmp(header.magic, "GOB\n", 4) != 0) {
-		std::cerr << "dfFileGOB::dfFileGOB << file << is not a GOB file" << std::endl;
+		std::cerr << "dfFileGOB::dfFileGOB " << file << " is not a GOB file" << std::endl;
 		exit(-1);
 	}
 

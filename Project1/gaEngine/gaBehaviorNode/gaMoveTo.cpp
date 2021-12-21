@@ -138,6 +138,22 @@ void GameEngine::Behavior::MoveTo::triggerMove(const glm::vec3& direction)
 }
 
 /**
+ * check exit conditions
+ */
+bool GameEngine::Behavior::MoveTo::conditionMet(void)
+{
+	bool condition;
+	for (auto& exit : m_exit) {
+		condition = m_tree->blackboard<bool>(exit.first);
+		if (condition == exit.second) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+/**
  * select the next waypoint or end the movement
  */
 void GameEngine::Behavior::MoveTo::onReachedNextWayPoint(gaMessage *message)
@@ -395,15 +411,6 @@ void GameEngine::Behavior::MoveTo::onCancel(gaMessage* message)
  */
 void GameEngine::Behavior::MoveTo::dispatchMessage(gaMessage* message, Action *r)
 {
-	// check the exit conditions
-	bool condition;
-	for (auto& exit : m_exit) {
-		condition = m_tree->blackboard<bool>(exit.first);
-		if (condition == exit.second) {
-			return succeeded(r);
-		}
-	}
-
 	// deal with messages
 	switch (message->m_action) {
 	case gaMessage::Action::SatNav_CANCEL:
@@ -411,10 +418,16 @@ void GameEngine::Behavior::MoveTo::dispatchMessage(gaMessage* message, Action *r
 		break;
 
 	case gaMessage::Action::MOVE:
+		if (conditionMet()) {
+			return succeeded(r);
+		}
 		onMove(message);
 		break;
 
 	case gaMessage::Action::COLLIDE: 
+		if (conditionMet()) {
+			return succeeded(r);
+		}
 		onCollide(message);
 		break;
 
