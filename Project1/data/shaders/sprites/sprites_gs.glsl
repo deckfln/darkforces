@@ -9,7 +9,7 @@ struct SpriteModel {
     vec2 size;		// sprite size in pixel
     vec2 insert;	// offset of center point
     vec2 world;
-    uvec2 statesIndex;	// pointer to the state table
+    ivec2 statesIndex;	// pointer to the state table
 };
 
 in SpriteModel sm[];
