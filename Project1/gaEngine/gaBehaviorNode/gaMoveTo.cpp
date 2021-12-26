@@ -71,6 +71,10 @@ GameEngine::BehaviorNode* GameEngine::Behavior::MoveTo::create(const char* name,
  */
 void GameEngine::Behavior::MoveTo::init(void *data)
 {
+	if (m_entity->name() == "OFFCFIN.WAX(21)") {
+		__debugbreak();
+	}
+
 	m_navpoints = static_cast<std::vector<glm::vec3>*>(data);
 
 	if (m_transforms == nullptr) {

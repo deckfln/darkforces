@@ -67,6 +67,15 @@ BehaviorNode* DarkForces::Behavior::TrackPlayer::create(const char* name, tinyxm
  */
 void DarkForces::Behavior::TrackPlayer::init(void* data)
 {
+	/*
+	static int pi = 0;
+	if (m_entity->name() == "OFFCFIN.WAX(21)") {
+		pi++;
+		if (pi == 2) {
+			m_tree->blackboard<bool>("debug_satnave", true);
+		}
+	}
+	*/
 	// Pick the last 2 known positions and run the entity along the axe up to a wall
 	std::deque<glm::vec3>* playerLastPositions = m_tree->blackboard<std::deque<glm::vec3>>("player_last_positions");
 	size_t size = playerLastPositions->size();
