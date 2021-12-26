@@ -68,6 +68,7 @@ namespace GameEngine {
 
 #ifdef _DEBUG
 			ImNodesEditorContext* m_context = nullptr;
+			bool m_debug = false;
 #endif // _DEBUG
 
 		};

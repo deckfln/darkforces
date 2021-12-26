@@ -307,3 +307,18 @@ uint32_t GameEngine::BehaviorNode::loadState(void* record)
 	return r->size;
 }
 
+const char* GameEngine::BehaviorNode::Action::debug(void)
+{
+	static std::map <GameEngine::BehaviorNode::Status, const char*> m_debugActions = {
+	{BehaviorNode::Status::START_CHILD, "Start Child"},
+	{BehaviorNode::Status::EXIT, "Exit"},
+	{BehaviorNode::Status::EXECUTE, "Execute"},
+	{BehaviorNode::Status::RUNNING, "Running"}
+	};
+
+	if (m_debugActions.count(action) > 0) {
+		return m_debugActions[action];
+	}
+
+	return "unknown";
+}

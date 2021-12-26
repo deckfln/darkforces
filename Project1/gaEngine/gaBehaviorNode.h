@@ -38,6 +38,9 @@ namespace GameEngine {
 
 			inline Action(Status a, uint32_t c, void* d, Status s) { action = a; child = c; data = d; status = s; }
 			inline Action(void) {}
+#ifdef _DEBUG
+			const char* debug(void);
+#endif
 		};
 		BehaviorNode(const char *name);
 

@@ -3,6 +3,7 @@
 #include <imgui.h>
 #include <deque>
 
+#include "../gaDebug.h"
 #include "../gaEntity.h"
 #include "../gaBehaviorNode.h"
 #include "../gaBehavior.h"
@@ -121,6 +122,14 @@ void GameEngine::Component::BehaviorTree::dispatchMessage(gaMessage* message)
 
 	// Navigate the tree
 	while (r.action != BehaviorNode::Status::RUNNING) {
+#ifdef _DEBUG
+		if (m_debug) {
+			gaDebugLog(1, "GameEngine::BehaviorTree", 
+				std::to_string(message->m_frame) + " " +
+				m_entity->name() + " " + r.debug() + " " + m_current->name()
+			);
+		}
+#endif
 		switch (r.action) {
 		case BehaviorNode::Status::START_CHILD:
 			m_current->m_runningChild = r.child;
@@ -185,6 +194,8 @@ void GameEngine::Component::BehaviorTree::debugGUIinline(void)
 
 		ImGui::End();
 
+		m_debug = true;
+
 		ImGui::TreePop();
 	}
 	else {
@@ -197,7 +208,7 @@ void GameEngine::Component::BehaviorTree::debugGUIinline(void)
 				node->m_pined = false;
 			}
 		}
-
+		m_debug = false;
 	}
 }
 
