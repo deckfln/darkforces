@@ -271,7 +271,7 @@ float GameEngine::NavMesh::findPath(const glm::vec3& from, const glm::vec3& to, 
 	int32_t end = findTriangle(to3D, from3D.y, to3D.y);
 
 	if (start < 0 || end < 0) {
-		return 0;
+		return -1;
 	}
 
 	// A* algorithm
@@ -322,7 +322,7 @@ float GameEngine::NavMesh::findPath(const glm::vec3& from, const glm::vec3& to, 
 	}
 
 	if (current != end) {
-		return 0;
+		return -1;
 	}
 
 	// back track from end to start

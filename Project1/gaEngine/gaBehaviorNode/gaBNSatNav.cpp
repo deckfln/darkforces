@@ -55,6 +55,10 @@ void GameEngine::Behavior::SatNav::init(void *data)
 	if ( l > 0) {
 		MoveTo::init(&m_navpoints);
 	}
+	else if (l == 0) {
+		// on the stop
+		BehaviorNode::m_status = BehaviorNode::Status::SUCCESSED;
+	}
 	else {
 		// inform everyone of the failure
 		BehaviorNode::m_status = BehaviorNode::Status::FAILED;

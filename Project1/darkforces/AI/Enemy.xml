@@ -34,13 +34,29 @@
 			</tree>
 		</node>
 		<node type='TrackPlayer' name='track the player'>
-			<walk max='3000' min='1500' random='true'/>
 			<tree>
-				<node type='SatNav' name='move to player last position'>
-					<exits>
-						<exit value='true'>player_visible</exit>
-						<exit value='true'>hit_bullet</exit>
-					</exits>
+				<node type='Sequence' name='move to the last seen/heard position and do a 360 scan'>
+					<condition>until_one_fail</condition>
+					<tree>
+						<node type='SatNav' name='move to player last position'>
+							<exits>
+								<exit value='true'>player_visible</exit>
+								<exit value='true'>hit_bullet</exit>
+							</exits>
+						</node>
+						<node type='GameEngine:Turn' name='scan around'>
+							<exits>
+								<exit value='true'>player_visible</exit>
+								<exit value='true'>hit_bullet</exit>
+							</exits>
+							<delay>1</delay>
+							<angles>
+								<angle>-90</angle>
+								<angle>90</angle>
+								<angle>90</angle>
+							</angles>
+						</node>
+					</tree>
 				</node>
 			</tree>
 		</node>

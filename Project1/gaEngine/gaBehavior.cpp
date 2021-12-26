@@ -8,13 +8,8 @@
 
 #include <tinyxml2.h>
 
-#include "gaBehaviorNode/gaBehaviorDecorator.h"
-#include "gaBehaviorNode/gaBehaviorLoop.h"
-#include "gaBehaviorNode/gaBehaviorSequence.h"
-#include "gaBehaviorNode/gaBehaviorSound.h"
-#include "gaBehaviorNode/gaBNSatNav.h"
-#include "gaBehaviorNode/gaMoveTo.h"
-#include "gaBehaviorNode/gaBtPlayerVisible.h"
+#include "gaDebug.h"
+#include "gaBehaviorNode.h"
 
 struct char_cmp {
 	bool operator () (const char* a, const char* b) const
@@ -23,17 +18,6 @@ struct char_cmp {
 	}
 };
 
-/*
-static std::map<const char*, GameEngine::Behavior::createFunction, char_cmp> g_createNodes = {
-	{"Decorator", GameEngine::Behavior::Decorator::create},
-	{"Loop", GameEngine::Behavior::Loop::create},
-	{"Sequence", GameEngine::Behavior::Sequence::create},
-	{"Sound", GameEngine::Behavior::Sound::create},
-	{"SatNav", GameEngine::Behavior::SatNav::create},
-	{"MoveTo", GameEngine::Behavior::MoveTo::create},
-	{"PlayerVisible", GameEngine::Behavior::PlayerVisible::create}
-};
-*/
 static std::map<const char*, GameEngine::Behavior::createFunction, char_cmp> g_createNodes;
 
 void GameEngine::Behavior::registerNode(const char* name, createFunction create)
@@ -96,7 +80,7 @@ static GameEngine::BehaviorNode* loadNode(tinyxml2::XMLElement* node)
 	const char* name = node->Attribute("name");
 
 	if (g_createNodes[type] == nullptr) {
-		printf("GameEngine::Behavior::loadTree: unknwon type %s in file", type);
+		gaDebugLog(1, "GameEngine::Behavior::loadTree", "unknwon type " + std::string(type) + " in file");
 		return nullptr;
 	}
 
