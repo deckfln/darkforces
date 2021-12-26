@@ -307,7 +307,6 @@ gaMessage* World::sendMessage(const std::string& from, const std::string& to, in
 gaMessage* World::sendMessage(const std::string& from, const std::string& to, int action, int value, float fvalue, void* extra)
 {
 	gaMessage* ptr = allocateMessage();
-
 	ptr->m_server = from;
 	ptr->m_client = to;
 	ptr->m_action = action;
@@ -686,7 +685,6 @@ void World::process(time_t delta, bool force, bool debug)
 			g_Blackbox.recordMessage(message);
 		}
 #endif
-
 		m_queue.pop_front();
 
 		// someone canceled the message

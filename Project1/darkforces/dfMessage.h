@@ -23,7 +23,7 @@ namespace DarkForces {
 		START_FIRE,			// pull the trigger
 		STOP_FIRE,			// stop firing
 		SatNav_Wait,		// ticks for the DF satnav
-		SET_ANIM,			// define the display of an object
+		SET_ANIM,			// 1042: define the display of an object
 		ANIM_START,			// WAX animation is starting
 		ANIM_NEXT_FRAME,	// WAX animation start the next frame
 		ANIM_LASTFRAME,		// the animation loop reached the end

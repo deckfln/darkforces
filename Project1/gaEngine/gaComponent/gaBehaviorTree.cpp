@@ -122,24 +122,32 @@ void GameEngine::Component::BehaviorTree::dispatchMessage(gaMessage* message)
 
 	// Navigate the tree
 	while (r.action != BehaviorNode::Status::RUNNING) {
-#ifdef _DEBUG
-		if (m_debug) {
-			gaDebugLog(1, "GameEngine::BehaviorTree", 
-				std::to_string(message->m_frame) + " " +
-				m_entity->name() + " " + r.debug() + " " + m_current->name()
-			);
-		}
-#endif
 		switch (r.action) {
 		case BehaviorNode::Status::START_CHILD:
 			m_current->m_runningChild = r.child;
 			m_current = m_current->m_children[m_current->m_runningChild];
+#ifdef _DEBUG
+			if (m_debug) {
+				gaDebugLog(1, "GameEngine::BehaviorTree",
+					std::to_string(message->m_frame) + " " +
+					m_entity->name() + " init_child " + m_current->name()
+				);
+			}
+#endif
 			m_current->init(r.data);
 
 			r.action = BehaviorNode::Status::EXECUTE;
 			break;
 
 		case BehaviorNode::Status::EXIT:
+#ifdef _DEBUG
+			if (m_debug) {
+				gaDebugLog(1, "GameEngine::BehaviorTree",
+					std::to_string(message->m_frame) + " " +
+					m_entity->name() + " exit " + m_current->name() + " with status " + std::to_string((int)r.status)
+				);
+			}
+#endif
 			if (m_current->m_parent) {
 				m_current = m_current->m_parent;
 				m_current->activated();
@@ -151,6 +159,14 @@ void GameEngine::Component::BehaviorTree::dispatchMessage(gaMessage* message)
 			break;;
 
 		case BehaviorNode::Status::EXECUTE:
+#ifdef _DEBUG
+			if (m_debug) {
+				gaDebugLog(1, "GameEngine::BehaviorTree",
+					std::to_string(message->m_frame) + " " +
+					m_entity->name() + " execute " + m_current->name()
+				);
+			}
+#endif
 			m_current->execute(&r);
 			break;
 		}

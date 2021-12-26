@@ -260,7 +260,7 @@ bool operator> (const Node& node1, const Node& node2)
 }
 
 
-uint32_t GameEngine::NavMesh::findPath(const glm::vec3& from, const glm::vec3& to, std::vector<glm::vec3>& directPath)
+float GameEngine::NavMesh::findPath(const glm::vec3& from, const glm::vec3& to, std::vector<glm::vec3>& directPath)
 {
 	std::vector<glm::vec3> graphPath;		// path computed from the navmesh graph
 
