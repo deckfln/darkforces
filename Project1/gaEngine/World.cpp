@@ -11,6 +11,7 @@
 #include "../framework/fwMesh.h"
 #include "../framework/fwTransforms.h"
 
+#include "gaDebug.h"
 #include "gaEntity.h"
 #include "Physics.h"
 #include "gaComponent/gaAIPerception.h"
@@ -700,6 +701,9 @@ void World::process(time_t delta, bool force, bool debug)
 			k = message->m_server + message->m_client + std::to_string(message->m_action);
 			if (loopDetector.count(k) > 0) {
 				message->m_used = false;
+#ifdef _DEBUG
+				gaDebugLog(1, "world", "loop detector " + k + " value=" + std::to_string(message->m_value));
+#endif
 				continue;
 			}
 

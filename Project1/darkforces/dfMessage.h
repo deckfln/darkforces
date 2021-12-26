@@ -6,20 +6,20 @@
 namespace DarkForces {
 	enum Message {
 		TRIGGER = 1024,
-		GOTO_STOP,			// move to the next stop
-		GOTO_STOP_FORCE,	// jump directly to the stop
+		GOTO_STOP,			// 1025: move to the next stop
+		GOTO_STOP_FORCE,	// 1026: jump directly to the stop
 		DONE,
 		ADD_SHIELD,
 		ADD_ENERGY,
-		DYING,				// the object is dying but not yet dead
-		DEAD,				// the object is dead
-		STATE,				// change the state of the object unless it is already on that state
-		FORCE_STATE,		// change the state of the object
+		DYING,				// 1030: the object is dying but not yet dead
+		DEAD,				// 1031: the object is dead
+		STATE,				// 1032: change the state of the object unless it is already on that state
+		FORCE_STATE,		// 1033: change the state of the object
 		PICK_RIFLE_AND_BULLETS,
 		ADD_BATTERY,
-		EVENT,				// send events to sectors
-		CHANGE_WEAPON,		// activate a new weapon
-		FIRE,				// fire a bullet from a gun
+		EVENT,				// 1036: send events to sectors
+		CHANGE_WEAPON,		// 1037: activate a new weapon
+		FIRE,				// 1038: fire a bullet from a gun
 		START_FIRE,			// pull the trigger
 		STOP_FIRE,			// stop firing
 		SatNav_Wait,		// ticks for the DF satnav
