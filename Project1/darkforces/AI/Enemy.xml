@@ -35,6 +35,15 @@
 		</node>
 		<node type='TrackPlayer' name='track the player'>
 			<tree>
+				<node type='SatNav' name='move to player last position'>
+					<exits>
+						<exit value='true'>player_visible</exit>
+						<exit value='true'>hit_bullet</exit>
+					</exits>
+				</node>
+			</tree>
+			<!--
+			<tree>
 				<node type='Sequence' name='move to the last seen/heard position and do a 360 scan'>
 					<condition>until_one_fail</condition>
 					<tree>
@@ -59,22 +68,23 @@
 					</tree>
 				</node>
 			</tree>
+			-->
 		</node>
 		</tree>
 	</node>
-	<node type='MoveEnemyTo' name='move to destination'>
+	<node type='MoveEnemyTo' name='stroll back to wait position'>
 		<tree>
-		<node type='SatNav' name='go to destination'>
+		<node type='SatNav' name='direct go to wait position'>
 			<exits>
-				<exit value='"true'>player_visible</exit>
-				<exit value='"true'>hit_bullet</exit>
-				<exit value='"true'>hear_sound</exit>
+				<exit value='true'>player_visible</exit>
+				<exit value='true'>hit_bullet</exit>
+				<exit value='true'>hear_sound</exit>
 			</exits>
 		</node>
-		<node type='WaitDoor' name='wait for door to open'></node>
-		<node type='OpenDoor' name='go to destination'>
+		<node type='WaitDoor' name='if door is openeing, wait for end of opening'></node>
+		<node type='OpenDoor' name='open a door to go to wait position'>
 			<tree>
-			<node type='GotoTrigger' name='try to reach each trigger'>
+			<node type='GotoTrigger' name='try to reach each trigger of the door'>
 				<tree>
 					<node type='SatNav' name='go to trigger'></node>
 					<node type='WaitDoor' name='wait for door to open'></node>

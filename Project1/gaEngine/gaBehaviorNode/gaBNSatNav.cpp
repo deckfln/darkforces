@@ -46,23 +46,16 @@ void GameEngine::Behavior::SatNav::init(void *data)
 	m_destination = *destination;
 
 	m_navpoints.clear();
-	if (m_entity->name() == "COMMANDO.WAX(24)") {
-		__debugbreak();
-	}
-
 	float l = g_navMesh.findPath(m_entity->position(), m_destination, m_navpoints);
 
 	if ( l > 0) {
 		MoveTo::init(&m_navpoints);
 	}
-	else if (l == 0) {
-		// on the stop
-		BehaviorNode::m_status = BehaviorNode::Status::SUCCESSED;
-	}
-	else {
-		// inform everyone of the failure
+	else if (l <= 0) {
+		// can move (l < 0)
+		// or already reached the destination (l == 0)
+		// both cases, exi with failure
 		BehaviorNode::m_status = BehaviorNode::Status::FAILED;
-		m_entity->sendMessage(gaMessage::SatNav_NOGO);
 	}
 }
 

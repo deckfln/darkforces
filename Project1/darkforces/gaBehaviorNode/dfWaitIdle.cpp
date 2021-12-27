@@ -33,6 +33,10 @@ void DarkForces::Behavior::WaitIdle::activated(void)
 
 void DarkForces::Behavior::WaitIdle::dispatchMessage(gaMessage* message, Action* r)
 {
+	/*
+	if (m_entity->name() != "COMMANDO.WAX(24)") {
+		return 	GameEngine::BehaviorNode::execute(r);
+	}*/
 	switch (message->m_action) {
 	case gaMessage::Action::BULLET_HIT: {
 		m_original = m_entity->position();
