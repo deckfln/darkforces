@@ -142,10 +142,10 @@ void GameEngine::Behavior::MoveTo::triggerMove(const glm::vec3& direction)
  */
 bool GameEngine::Behavior::MoveTo::conditionMet(void)
 {
-	bool condition;
+	bool *condition;
 	for (auto& exit : m_exit) {
 		condition = m_tree->blackboard<bool>(exit.first);
-		if (condition == exit.second) {
+		if (condition && *condition == exit.second) {
 			return true;
 		}
 	}
@@ -401,7 +401,7 @@ void GameEngine::Behavior::MoveTo::onCancel(gaMessage* message)
 	m_entity->sendMessage(gaMessage::END_MOVE);
 
 	g_gaWorld.deleteMessage(m_moveID);
-	BehaviorNode::m_status = BehaviorNode::Status::SUCCESSED;
+	BehaviorNode::m_status = BehaviorNode::Status::FAILED;
 }
 
 //---------------------------------------------------------------
@@ -419,14 +419,14 @@ void GameEngine::Behavior::MoveTo::dispatchMessage(gaMessage* message, Action *r
 
 	case gaMessage::Action::MOVE:
 		if (conditionMet()) {
-			return succeeded(r);
+			return failed(r);
 		}
 		onMove(message);
 		break;
 
 	case gaMessage::Action::COLLIDE: 
 		if (conditionMet()) {
-			return succeeded(r);
+			return failed(r);
 		}
 		onCollide(message);
 		break;

@@ -33,8 +33,8 @@ BehaviorNode* DarkForces::Behavior::MoveEnemyTo::create(const char* name, tinyxm
 
 void DarkForces::Behavior::MoveEnemyTo::init(void* data)
 {
-	m_destination = *(static_cast<glm::vec3*>(data));
-	BehaviorNode::init(data);
+	m_destination = *(m_tree->blackboard<glm::vec3>("static_position"));
+	BehaviorNode::init(&m_destination);
 }
 
 

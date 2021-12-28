@@ -88,9 +88,21 @@ bool GameEngine::Component::BehaviorTree::onNotViewPlayer(gaMessage*)
 bool GameEngine::Component::BehaviorTree::onHearSound(gaMessage* message)
 {
 	blackboard<glm::vec3>("last_heard_sound", message->m_v3value);
+	blackboard<bool>("heard_sound", true);
+
 	return true;
 }
 
+/**
+ * shot by a bullet
+ */
+bool GameEngine::Component::BehaviorTree::onBulletHit(gaMessage* message)
+{
+	blackboard<glm::vec3>("last_bullet", message->m_v3value);
+	blackboard<bool>("hit_bullet", true);
+
+	return true;
+}
 
 //---------------------------------------------
 
@@ -126,14 +138,7 @@ void GameEngine::Component::BehaviorTree::dispatchMessage(gaMessage* message)
 		case BehaviorNode::Status::START_CHILD:
 			m_current->m_runningChild = r.child;
 			m_current = m_current->m_children[m_current->m_runningChild];
-#ifdef _DEBUG
-			if (m_debug) {
-				gaDebugLog(1, "GameEngine::BehaviorTree",
-					std::to_string(message->m_frame) + " " +
-					m_entity->name() + " init_child " + m_current->name()
-				);
-			}
-#endif
+
 			m_current->init(r.data);
 
 			r.action = BehaviorNode::Status::EXECUTE;
@@ -159,6 +164,7 @@ void GameEngine::Component::BehaviorTree::dispatchMessage(gaMessage* message)
 			break;;
 
 		case BehaviorNode::Status::EXECUTE:
+			count++;
 #ifdef _DEBUG
 			if (m_debug) {
 				gaDebugLog(1, "GameEngine::BehaviorTree",
@@ -170,7 +176,7 @@ void GameEngine::Component::BehaviorTree::dispatchMessage(gaMessage* message)
 			m_current->execute(&r);
 			break;
 		}
-		if (count++ > 50) {
+		if (count > 50) {
 			__debugbreak();
 		}
 	}

@@ -43,6 +43,7 @@ namespace GameEngine {
 			bool onViewPlayer(gaMessage*);						// player is viewed
 			bool onNotViewPlayer(gaMessage*);					// player is not viewed
 			bool onHearSound(gaMessage*);						// hear a sound
+			bool onBulletHit(gaMessage*);						// hit by a bullet
 
 			// flight recorder status
 			inline uint32_t recordSize(void);					// size of the component record

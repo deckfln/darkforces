@@ -46,7 +46,7 @@ void GameEngine::Behavior::Loop::execute(Action* r)
 	if (m_runningChild == -1) {
 		m_runningChild = 0;
 		onChildStart(m_runningChild);
-		return startChild(r, m_runningChild, m_data);
+		return startChild(r, m_runningChild, r->data);
 	}
 
 	onChildExit(m_runningChild, m_children[m_runningChild]->status());
@@ -71,7 +71,7 @@ void GameEngine::Behavior::Loop::execute(Action* r)
 				m_runningChild = 0;
 			}
 			onChildStart(m_runningChild);
-			return startChild(r, m_runningChild, m_data);
+			return startChild(r, m_runningChild, r->data);
 		}
 
 		// drop out of the loop if all failed
@@ -102,6 +102,14 @@ void GameEngine::Behavior::Loop::execute(Action* r)
 			break;
 		}}
 	}
+}
+
+/**
+ * if the loop is running alone, force it to execute the children
+ */
+void GameEngine::Behavior::Loop::dispatchMessage(gaMessage* message, Action* r)
+{
+	r->action = BehaviorNode::Status::EXECUTE;
 }
 
 /**

@@ -14,6 +14,7 @@ namespace GameEngine {
 			Loop(const char* name);
 			inline void condition(Condition c) { m_condition = c; };
 			void execute(Action* r) override;						// let a parent take a decision with it's current running child
+			void dispatchMessage(gaMessage* message, Action* r) override;	// let a component deal with a situation
 
 			// Behavior engine
 			static BehaviorNode* create(const char* name, tinyxml2::XMLElement* element, GameEngine::BehaviorNode* used);// create a node

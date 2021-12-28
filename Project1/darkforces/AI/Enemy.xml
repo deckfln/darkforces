@@ -3,49 +3,45 @@
 		<message id='GameEngine:HEAR_SOUND'>GameEngine:onHearSound</message>
 		<message id='GameEngine:VIEW'>GameEngine:onViewPlayer</message>
 		<message id='GameEngine:NOT_VIEW'>GameEngine:onNotViewPlayer</message>
+		<message id='GameEngine:BULLET_HIT'>GameEngine:onBulletHit</message>
 		<message id='DarkForces:DYING'>DarkForces:onDying</message>
 	</messages>
-	<node type='WaitIdle' name='Wait for event'>
-	<condition>FAILURE</condition>
+	<node type='Loop' name='main control'>
+	<condition>until_all_fail</condition>
 	<tree>
-	<node type='AttackPlayer' name='attack and track'>
-		<tree>
-		<node type='Loop' name='find the player, move toward him and shoot at him'>
-			<condition>until_one_fail</condition>
-			<tree>
-			<node type='PlayerVisible' name='Check player'></node>
-			<node type='darkForces:sound' name='tease the player'>
-				<sounds>
-<include file='sounds.inc'/>
-				</sounds>
-			</node>
-			<node type='Fire2Player' name='Shoot player'></node>
-			<node type='Move2Player' name='get player position'>
-				<walk max='3000' min='1500' random='true'/>
-				<tree>
-				<node type='SatNav' name='move to player'></node>
-					<!--
-					<exits>
-						<exit value='false'>player_visible</exit>
-					</exits>
-					-->
-				</tree>
-			</node>
-			</tree>
+		<node type='WaitIdle' name='Wait for action'>
+			<exits>
+				<exit value='true'>player_visible</exit>
+				<exit value='true'>hit_bullet</exit>
+				<exit value='true'>heard_sound</exit>
+			</exits>
 		</node>
-		<node type='TrackPlayer' name='track the player'>
+		<node type='AttackPlayer' name='attack and track'>
 			<tree>
-				<node type='SatNav' name='move to player last position'>
-					<exits>
-						<exit value='true'>player_visible</exit>
-						<exit value='true'>hit_bullet</exit>
-					</exits>
-				</node>
-			</tree>
-			<!--
-			<tree>
-				<node type='Sequence' name='move to the last seen/heard position and do a 360 scan'>
+				<node type='Loop' name='find the player, move toward him and shoot at him'>
 					<condition>until_one_fail</condition>
+					<tree>
+					<node type='PlayerVisible' name='Check player'></node>
+					<node type='darkForces:sound' name='tease the player'>
+						<sounds>
+		<include file='sounds.inc'/>
+						</sounds>
+					</node>
+					<node type='Fire2Player' name='Shoot player'></node>
+					<node type='Move2Player' name='get player position'>
+						<walk max='3000' min='1500' random='true'/>
+						<tree>
+						<node type='SatNav' name='move to player'></node>
+							<!--
+							<exits>
+								<exit value='false'>player_visible</exit>
+							</exits>
+							-->
+						</tree>
+					</node>
+					</tree>
+				</node>
+				<node type='TrackPlayer' name='track the player'>
 					<tree>
 						<node type='SatNav' name='move to player last position'>
 							<exits>
@@ -53,47 +49,67 @@
 								<exit value='true'>hit_bullet</exit>
 							</exits>
 						</node>
-						<node type='GameEngine:Turn' name='scan around'>
+					</tree>
+					<!--
+					<tree>
+						<node type='Sequence' name='move to the last seen/heard position and do a 360 scan'>
+							<condition>until_one_fail</condition>
+							<tree>
+								<node type='SatNav' name='move to player last position'>
+									<exits>
+										<exit value='true'>player_visible</exit>
+										<exit value='true'>hit_bullet</exit>
+									</exits>
+								</node>
+								<node type='GameEngine:Turn' name='scan around'>
+									<exits>
+										<exit value='true'>player_visible</exit>
+										<exit value='true'>hit_bullet</exit>
+									</exits>
+									<delay>1</delay>
+									<angles>
+										<angle>-90</angle>
+										<angle>90</angle>
+										<angle>90</angle>
+									</angles>
+								</node>
+							</tree>
+						</node>
+					</tree>
+					-->
+				</node>
+			</tree>
+		</node>
+		<node type='Sequence' name='stroll back to wait position and reset flags'>
+			<condition>unless one fails</condition>
+			<tree>
+				<node type='MoveEnemyTo' name='stroll back to wait position'>
+					<tree>
+						<node type='SatNav' name='direct go to wait position'>
 							<exits>
 								<exit value='true'>player_visible</exit>
 								<exit value='true'>hit_bullet</exit>
+								<exit value='true'>heard_sound</exit>
 							</exits>
-							<delay>1</delay>
-							<angles>
-								<angle>-90</angle>
-								<angle>90</angle>
-								<angle>90</angle>
-							</angles>
+						</node>
+						<node type='WaitDoor' name='if door is openeing, wait for end of opening'></node>
+						<node type='OpenDoor' name='open a door to go to wait position'>
+							<tree>
+								<node type='GotoTrigger' name='try to reach each trigger of the door'>
+									<tree>
+										<node type='SatNav' name='go to trigger'></node>
+										<node type='WaitDoor' name='wait for door to open'></node>
+									</tree>
+								</node>
+							</tree>
 						</node>
 					</tree>
 				</node>
+				<node type='GameEngine:SetVar' name='reset flags'>
+					<variable type='bool' value='false'>heard_sound</variable>
+				</node>
 			</tree>
-			-->
-		</node>
-		</tree>
-	</node>
-	<node type='MoveEnemyTo' name='stroll back to wait position'>
-		<tree>
-		<node type='SatNav' name='direct go to wait position'>
-			<exits>
-				<exit value='true'>player_visible</exit>
-				<exit value='true'>hit_bullet</exit>
-				<exit value='true'>hear_sound</exit>
-			</exits>
-		</node>
-		<node type='WaitDoor' name='if door is openeing, wait for end of opening'></node>
-		<node type='OpenDoor' name='open a door to go to wait position'>
-			<tree>
-			<node type='GotoTrigger' name='try to reach each trigger of the door'>
-				<tree>
-					<node type='SatNav' name='go to trigger'></node>
-					<node type='WaitDoor' name='wait for door to open'></node>
-				</tree>
-			</node>
-			</tree>
-		</node>
-		</tree>
-	</node>
+		</node>			
 	</tree>
 	</node>
 </behaviortree>

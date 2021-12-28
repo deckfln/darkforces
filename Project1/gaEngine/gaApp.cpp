@@ -21,6 +21,7 @@
 #include "gaBehaviorNode/gaMoveTo.h"
 #include "gaBehaviorNode/gaBtPlayerVisible.h"
 #include "gaBehaviorNode/gaBTurn.h"
+#include "gaBehaviorNode/gaBSetVar.h"
 
 /**
  * register darkforces entities for the flight recorder
@@ -39,9 +40,12 @@ void GameEngine::App::registerBThandlers(void)
 	GameEngine::Behavior::registerHandler("GameEngine:onViewPlayer", &GameEngine::Component::BehaviorTree::onViewPlayer);
 	GameEngine::Behavior::registerHandler("GameEngine:onNotViewPlayer", &GameEngine::Component::BehaviorTree::onNotViewPlayer);
 	GameEngine::Behavior::registerHandler("GameEngine:onHearSound", &GameEngine::Component::BehaviorTree::onHearSound);
+	GameEngine::Behavior::registerHandler("GameEngine:onBulletHit", &GameEngine::Component::BehaviorTree::onBulletHit);
+
 	GameEngine::Behavior::registerMessage("GameEngine:VIEW", gaMessage::Action::VIEW);
 	GameEngine::Behavior::registerMessage("GameEngine:NOT_VIEW", gaMessage::Action::NOT_VIEW);
 	GameEngine::Behavior::registerMessage("GameEngine:HEAR_SOUND", gaMessage::Action::HEAR_SOUND);
+	GameEngine::Behavior::registerMessage("GameEngine:BULLET_HIT", gaMessage::Action::BULLET_HIT);
 }
 
 /**
@@ -64,7 +68,8 @@ void GameEngine::App::registerBTNodes(void)
 		{"SatNav", GameEngine::Behavior::SatNav::create},
 		{"MoveTo", GameEngine::Behavior::MoveTo::create},
 		{"PlayerVisible", GameEngine::Behavior::PlayerVisible::create},
-		{"GameEngine:Turn", GameEngine::Behavior::Turn::create}
+		{"GameEngine:Turn", GameEngine::Behavior::Turn::create},
+		{"GameEngine:SetVar", GameEngine::Behavior::SetVar::create}
 	};
 
 	for (auto& b : g_createNodes) {

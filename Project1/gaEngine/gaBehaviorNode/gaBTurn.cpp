@@ -15,10 +15,10 @@
   */
 bool GameEngine::Behavior::Turn::conditionMet(void)
 {
-	bool condition;
+	bool *condition;
 	for (auto& exit : m_exit) {
 		condition = m_tree->blackboard<bool>(exit.first);
-		if (condition == exit.second) {
+		if (condition && *condition == exit.second) {
 			return true;
 		}
 	}
@@ -45,8 +45,7 @@ void GameEngine::Behavior::Turn::onTimer(gaMessage* message)
 			return;
 		}
 
-		const double pi = 3.14159265359;
-		float a = m_angles[m_currentAngle] * (pi / 180);
+		float a = m_angles[m_currentAngle];
 		m_entity->sendMessage(gaMessage::ROTATE, gaMessage::Flag::ROTATE_BY, a);
 		m_untilNextTurn = m_delay * 33;
 	}
@@ -64,8 +63,7 @@ void GameEngine::Behavior::Turn::init(void*)
 	float a;
 	m_currentAngle = 0;
 
-	const double pi = 3.14159265359;
-	a = m_angles[m_currentAngle] * (pi / 180);
+	a = m_angles[m_currentAngle];
 
 	m_entity->sendMessage(gaMessage::ROTATE, gaMessage::Flag::ROTATE_BY, a);
 
@@ -110,6 +108,7 @@ GameEngine::BehaviorNode* GameEngine::Behavior::Turn::create(const char* name, t
 	}
 
 	// load the angles
+	const double pi = 3.14159265359;
 	tinyxml2::XMLElement* angles = element->FirstChildElement("angles");
 	if (angles) {
 		const char* cangle;
@@ -118,7 +117,8 @@ GameEngine::BehaviorNode* GameEngine::Behavior::Turn::create(const char* name, t
 		while (xmlAngle != nullptr) {
 			cangle = xmlAngle->GetText();
 			if (cangle) {
-				node->m_angles.push_back(std::stof(cangle));
+				float a = std::stof(cangle) * (pi / 180.0);
+				node->m_angles.push_back(a);
 			}
 			xmlAngle = xmlAngle->NextSiblingElement("angle");
 		}

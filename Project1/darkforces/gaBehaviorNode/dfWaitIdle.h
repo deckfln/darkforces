@@ -1,16 +1,21 @@
 #pragma once
 
-#include "../../gaEngine/gaBehaviorNode/gaBehaviorSequence.h"
+#include <map>
+#include "../../gaEngine/gaBehaviorNode.h"
 
 namespace DarkForces {
 	namespace Behavior {
-		class WaitIdle : public GameEngine::Behavior::Sequence
+		class WaitIdle : public GameEngine::BehaviorNode
 		{
 			glm::vec3 m_original;							// still position of the enemy
 
+			std::map<std::string, bool> m_exit;					// list of variables triggering exit of the loop
+			bool conditionMet(void);
 		public:
 			WaitIdle(const char* name);
 			void activated(void) override;						// a node get re-activated after a child exit
+			//void init(void*) override;
+			void execute(Action* r) override;
 			void dispatchMessage(gaMessage* message, Action* r) override;	// let a component deal with a situation
 
 			// Behavior engine

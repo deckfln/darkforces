@@ -279,6 +279,7 @@
     <ClCompile Include="gaEngine\gaBehaviorNode\gaBehaviorSequence.cpp" />
     <ClCompile Include="gaEngine\gaBehaviorNode\gaBehaviorSound.cpp" />
     <ClCompile Include="gaEngine\gaBehaviorNode\gaBNSatNav.cpp" />
+    <ClCompile Include="gaEngine\gaBehaviorNode\gaBSetVar.cpp" />
     <ClCompile Include="gaEngine\gaBehaviorNode\gaBtPlayerVisible.cpp" />
     <ClCompile Include="gaEngine\gaBehaviorNode\gaBTurn.cpp" />
     <ClCompile Include="gaEngine\gaBehaviorNode\gaMoveTo.cpp" />
@@ -526,6 +527,7 @@
     <ClInclude Include="gaEngine\gaBehaviorNode\gaBehaviorSequence.h" />
     <ClInclude Include="gaEngine\gaBehaviorNode\gaBehaviorSound.h" />
     <ClInclude Include="gaEngine\gaBehaviorNode\gaBNSatNav.h" />
+    <ClInclude Include="gaEngine\gaBehaviorNode\gaBSetVar.h" />
     <ClInclude Include="gaEngine\gaBehaviorNode\gaBtPlayerVisible.h" />
     <ClInclude Include="gaEngine\gaBehaviorNode\gaBTurn.h" />
     <ClInclude Include="gaEngine\gaBehaviorNode\gaMoveTo.h" />
