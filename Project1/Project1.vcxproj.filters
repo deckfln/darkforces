@@ -819,13 +819,13 @@
     <ClCompile Include="darkforces\gaBehaviorNode\dfBSound.cpp">
       <Filter>Fichiers sources\Dark Forces\gaBehaviorNode</Filter>
     </ClCompile>
-    <ClCompile Include="gaEngine\gaBehaviorNode\gaBtPlayerVisible.cpp">
-      <Filter>Fichiers sources\gaEngine\gaBehaviorNode</Filter>
-    </ClCompile>
     <ClCompile Include="gaEngine\gaBehaviorNode\gaBTurn.cpp">
       <Filter>Fichiers sources\gaEngine\gaBehaviorNode</Filter>
     </ClCompile>
     <ClCompile Include="gaEngine\gaBehaviorNode\gaBSetVar.cpp">
+      <Filter>Fichiers sources\gaEngine\gaBehaviorNode</Filter>
+    </ClCompile>
+    <ClCompile Include="gaEngine\gaBehaviorNode\gaBCheckVar.cpp">
       <Filter>Fichiers sources\gaEngine\gaBehaviorNode</Filter>
     </ClCompile>
   </ItemGroup>
@@ -1565,13 +1565,13 @@
     <ClInclude Include="darkforces\gaBehaviorNode\dfBSound.h">
       <Filter>Fichiers d%27en-tête\DarkForces\gaBehaviorNode</Filter>
     </ClInclude>
-    <ClInclude Include="gaEngine\gaBehaviorNode\gaBtPlayerVisible.h">
-      <Filter>Fichiers d%27en-tête\DarkForces\gaBehaviorNode</Filter>
-    </ClInclude>
     <ClInclude Include="gaEngine\gaBehaviorNode\gaBTurn.h">
       <Filter>Fichiers d%27en-tête\gaEngine\gaBehaviorNode</Filter>
     </ClInclude>
     <ClInclude Include="gaEngine\gaBehaviorNode\gaBSetVar.h">
+      <Filter>Fichiers d%27en-tête\gaEngine\gaBehaviorNode</Filter>
+    </ClInclude>
+    <ClInclude Include="gaEngine\gaBehaviorNode\gaBCheckVar.h">
       <Filter>Fichiers d%27en-tête\gaEngine\gaBehaviorNode</Filter>
     </ClInclude>
   </ItemGroup>

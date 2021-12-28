@@ -21,7 +21,9 @@
 				<node type='Loop' name='find the player, move toward him and shoot at him'>
 					<condition>until_one_fail</condition>
 					<tree>
-					<node type='PlayerVisible' name='Check player'></node>
+					<node type='GameEngine:CheckVar' name='player is visible'>
+						<variable type='bool' value='true'>player_visible</variable>
+					</node>
 					<node type='darkForces:sound' name='tease the player'>
 						<sounds>
 		<include file='sounds.inc'/>

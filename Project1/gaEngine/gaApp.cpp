@@ -22,6 +22,7 @@
 #include "gaBehaviorNode/gaBtPlayerVisible.h"
 #include "gaBehaviorNode/gaBTurn.h"
 #include "gaBehaviorNode/gaBSetVar.h"
+#include "gaBehaviorNode/gaBCheckVar.h"
 
 /**
  * register darkforces entities for the flight recorder
@@ -69,7 +70,8 @@ void GameEngine::App::registerBTNodes(void)
 		{"MoveTo", GameEngine::Behavior::MoveTo::create},
 		{"PlayerVisible", GameEngine::Behavior::PlayerVisible::create},
 		{"GameEngine:Turn", GameEngine::Behavior::Turn::create},
-		{"GameEngine:SetVar", GameEngine::Behavior::SetVar::create}
+		{"GameEngine:SetVar", GameEngine::Behavior::SetVar::create},
+		{"GameEngine:CheckVar", GameEngine::Behavior::CheckVar::create}
 	};
 
 	for (auto& b : g_createNodes) {
