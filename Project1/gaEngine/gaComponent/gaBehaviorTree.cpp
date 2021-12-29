@@ -159,14 +159,17 @@ void GameEngine::Component::BehaviorTree::dispatchMessage(gaMessage* message)
 			}
 #endif
 			if (m_current->m_parent) {
+				// move to parent node
 				m_current = m_current->m_parent;
 				m_current->activated();
 				r.action = BehaviorNode::Status::EXECUTE;
 			}
 			else {
+				// when exiting the root, reinit the tree,
 				r.action = BehaviorNode::Status::RUNNING;
+				m_current->init(r.data);
 			}
-			break;;
+			break;
 
 		case BehaviorNode::Status::EXECUTE:
 			count++;

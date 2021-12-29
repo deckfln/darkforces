@@ -25,7 +25,7 @@ GameEngine::BehaviorNode* GameEngine::Behavior::SetVar::clone(GameEngine::Behavi
 	else {
 		cl = new GameEngine::Behavior::SetVar(m_name);
 	}
-
+	GameEngine::BehaviorNode::clone(cl);
 	cl->m_variable = m_variable;
 	cl->m_value = m_value;
 	return cl;
@@ -50,6 +50,7 @@ GameEngine::BehaviorNode* GameEngine::Behavior::SetVar::create(const char* name,
 	else {
 		node = dynamic_cast<GameEngine::Behavior::SetVar*>(used);
 	}
+	GameEngine::BehaviorNode::create(name, element, node);
 
 	// get the variable name
 	tinyxml2::XMLElement* xmlVariable = element->FirstChildElement("variable");

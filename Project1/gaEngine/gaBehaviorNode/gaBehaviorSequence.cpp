@@ -22,13 +22,23 @@ GameEngine::BehaviorNode* GameEngine::Behavior::Sequence::clone(GameEngine::Beha
 	else {
 		cl = new GameEngine::Behavior::Sequence(m_name);
 	}
+	GameEngine::BehaviorNode::clone(cl);
 	cl->m_condition = m_condition;
 	return cl;
 }
 
 GameEngine::BehaviorNode* GameEngine::Behavior::Sequence::create(const char* name, tinyxml2::XMLElement* element, GameEngine::BehaviorNode* used)
 {
-	GameEngine::Behavior::Sequence* node = new GameEngine::Behavior::Sequence(name);
+	GameEngine::Behavior::Sequence* node;
+
+	if (used == nullptr) {
+		node = new GameEngine::Behavior::Sequence(name);
+	}
+	else {
+		node = dynamic_cast<GameEngine::Behavior::Sequence*>(used);
+	}
+	GameEngine::BehaviorNode::create(name, element, node);
+
 	tinyxml2::XMLElement* attr = element->FirstChildElement("condition");
 	if (attr) {
 		const char* t = attr->GetText();
@@ -68,13 +78,15 @@ void GameEngine::Behavior::Sequence::execute(Action* r)
 	Status status = m_children[m_runningChild]->status();
 	onChildExit(m_runningChild, status);
 
+	if (status == Status::ERR) {
+		return error(r);
+	}
+
 	// if the current node fails, it depends on the exit condition
 	if (status == Status::FAILED) {
 		if (m_condition == Condition::EXIT_WHEN_ONE_FAIL) {
 			// drop out of the loop
-			r->action = BehaviorNode::Status::EXIT;
-			r->status = Status::FAILED;
-			return;
+			return failed(r);
 		}
 		else {
 			m_failed++;

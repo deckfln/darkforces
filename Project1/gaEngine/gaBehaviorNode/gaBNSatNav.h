@@ -7,9 +7,15 @@ class gaEntity;
 namespace GameEngine {
 	namespace Behavior {
 		class SatNav : public MoveTo {
+			bool m_move2variable = false;						// move to a position given directly or to a variable on the blackboard
+
 			glm::vec3 m_destination;
+			std::string m_destName;								// name of the variable storing the position
+			std::string m_variable_type;						// type of the variable
 			std::vector<glm::vec3> m_navpoints;					// nav points for the move
+
 			void onGoto(gaMessage* message);
+
 		public:
 			SatNav(void);
 			SatNav(const char* name);
@@ -21,6 +27,9 @@ namespace GameEngine {
 
 			// Behavior engine
 			static BehaviorNode* create(const char* name, tinyxml2::XMLElement* element, GameEngine::BehaviorNode* used);// create a node
+
+			// debugger
+			void debugGUInode(void) override;
 
 			// flight recorder status
 			uint32_t recordState(void* record) override;				// save the component state in a record

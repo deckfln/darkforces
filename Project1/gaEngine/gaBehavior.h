@@ -21,6 +21,8 @@ namespace GameEngine
 
 		void registerNode(const char* name, createFunction);
 		void registerMessage(const char* name, uint32_t id);
+		int32_t getMessage(const char* message);
+
 		void registerHandler(const char* name, GameEngine::Component::BehaviorTree::msgHandler);
 		GameEngine::BehaviorNode* loadTree(
 			const std::string& data,

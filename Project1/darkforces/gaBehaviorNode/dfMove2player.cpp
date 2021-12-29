@@ -11,12 +11,6 @@
 #include "../../gaEngine/gaNavMesh.h"
 #include "../../config.h"
 
-void DarkForces::Behavior::Move2Player::onChildExit(uint32_t child, Status status)
-{
-	// remove programmed alarm
-	g_gaWorld.cancelAlarmEvent(m_alarmID);
-}
-
 DarkForces::Behavior::Move2Player::Move2Player(const char* name):
 	GameEngine::Behavior::Decorator(name)
 {
@@ -32,37 +26,13 @@ GameEngine::BehaviorNode* DarkForces::Behavior::Move2Player::clone(GameEngine::B
 		cl = new DarkForces::Behavior::Move2Player(m_name);
 	}
 	GameEngine::Behavior::Decorator::clone(cl);
-	cl->m_walk = m_walk;
-	cl->m_maximum_walk = m_maximum_walk;
-	cl->m_minimum_walk = m_minimum_walk;
-	cl->m_random = m_random;
 	return cl;
 }
 
 BehaviorNode* DarkForces::Behavior::Move2Player::create(const char* name, tinyxml2::XMLElement* element, GameEngine::BehaviorNode* used)
 {
 	DarkForces::Behavior::Move2Player* node = new DarkForces::Behavior::Move2Player(name);
-	tinyxml2::XMLElement* walk = element->FirstChildElement("walk");
-	if (walk) {
-		int mmin=2000;
-		int mmax=2000;
-		const char* rnd=nullptr;
-		bool brnd = false;
-
-		walk->QueryIntAttribute("min", &mmin);
-		walk->QueryIntAttribute("max", &mmax);
-		rnd = walk->Attribute("random");
-		if (rnd != nullptr) {
-			if (strcmp(rnd, "true") == 0) {
-				brnd = true;
-			}
-		}
-
-		node->m_maximum_walk = mmax;
-		node->m_minimum_walk = mmin;
-		node->m_random = brnd;
-
-	}
+	GameEngine::Behavior::Decorator::create(name, element, node);
 	return node;
 }
 
@@ -75,6 +45,13 @@ void DarkForces::Behavior::Move2Player::init(void* data)
 	// or the last known position (player is hidden)
 	std::deque<glm::vec3>* playerLastPositions = m_tree->blackboard<std::deque<glm::vec3>>("player_last_positions");
 	if (playerLastPositions->size() == 0) {
+		glm::vec3* last_sound = m_tree->blackboard<glm::vec3>("last_heard_position");
+		if (last_sound) {
+			m_target = *last_sound;
+			m_tree->blackboard<glm::vec3>("last_seen_heard", &m_target);
+			m_status = Status::SUCCESSED;
+			return;
+		}
 		m_status = Status::FAILED;
 		return;
 	}
@@ -85,27 +62,19 @@ void DarkForces::Behavior::Move2Player::init(void* data)
 	m_target = move2 - m_entity->position();
 	float l = glm::length(m_target) - m_entity->radius() * 8.0f;
 	if (l < 0) {
-		m_status = Status::SUCCESSED;
+		m_status = Status::FAILED;
 		return;
 	}
 
 	m_target = glm::normalize(m_target) * l;
 	if (glm::length(m_target) < m_entity->radius()) {
-		m_status = Status::SUCCESSED;
+		m_status = Status::FAILED;
 		return;
 	}
 	m_target += m_entity->position();
 	//m_target.y = m_entity->position().y;
 
-	// walk only for some seconds
-	if (m_random) {
-		m_walk = (rand() % (m_maximum_walk - m_minimum_walk)) + m_minimum_walk;
-	}
-	else {
-		m_walk = m_maximum_walk;
-	}
-	GameEngine::Alarm alarm(m_entity, m_walk, gaMessage::Action::SatNav_CANCEL);
-	m_alarmID = g_gaWorld.registerAlarmEvent(alarm);
+	m_tree->blackboard<glm::vec3>("last_seen_heard", &m_target);
 
 	GameEngine::BehaviorNode::init(&m_target);
 }
@@ -118,5 +87,4 @@ void DarkForces::Behavior::Move2Player::init(void* data)
 void DarkForces::Behavior::Move2Player::debugGUInode(void)
 {
 	ImGui::Text("target:%.2f %.2f %.2f", m_target.x, m_target.y, m_target.z);
-	ImGui::Text("max_walk:%d", m_walk);
 }

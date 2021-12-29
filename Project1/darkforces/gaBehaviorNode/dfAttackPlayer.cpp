@@ -28,7 +28,17 @@ BehaviorNode* DarkForces::Behavior::AttackPlayer::clone(GameEngine::BehaviorNode
 
 BehaviorNode* DarkForces::Behavior::AttackPlayer::create(const char* name, tinyxml2::XMLElement* element, GameEngine::BehaviorNode* used)
 {
-	return new DarkForces::Behavior::AttackPlayer(name);
+	DarkForces::Behavior::AttackPlayer* node;
+
+	if (used == nullptr) {
+		node = new DarkForces::Behavior::AttackPlayer(name);
+	}
+	else {
+		node = dynamic_cast<DarkForces::Behavior::AttackPlayer*>(used);
+	}
+	GameEngine::Behavior::Loop::create(name, element, node);
+
+	return node;
 }
 
 /**

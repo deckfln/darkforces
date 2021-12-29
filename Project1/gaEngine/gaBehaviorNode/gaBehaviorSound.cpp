@@ -24,6 +24,8 @@ GameEngine::BehaviorNode* GameEngine::Behavior::Sound::clone(GameEngine::Behavio
 	else {
 		cl = new GameEngine::Behavior::Sound(m_name);
 	}
+	GameEngine::BehaviorNode::clone(cl);
+
 	cl->m_condition = m_condition;
 	for (auto& sound : m_sounds) {
 		cl->m_sounds.push_back(sound);
@@ -46,6 +48,7 @@ GameEngine::BehaviorNode* GameEngine::Behavior::Sound::create(const char* name, 
 	else {
 		node = dynamic_cast<GameEngine::Behavior::Sound*>(used);
 	}
+	GameEngine::BehaviorNode::create(name, element, node);
 
 	tinyxml2::XMLElement* attr = element->FirstChildElement("condition");
 	if (attr) {

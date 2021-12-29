@@ -28,7 +28,8 @@ namespace GameEngine {
 			NONE,
 			START_CHILD,
 			EXECUTE,
-			EXIT
+			EXIT,
+			ERR
 		};
 		struct Action {
 			Status action=Status::NONE;
@@ -49,7 +50,6 @@ namespace GameEngine {
 
 		// getter/setter
 		inline BehaviorNode* parent(void) { return m_parent; };
-		inline bool isSequence(void) { return m_sequence; };
 		inline const char* name(void) { return m_name; };
 		inline uint32_t id(void) { return m_id; };
 		inline Status status(void) { return m_status; };
@@ -83,16 +83,15 @@ namespace GameEngine {
 
 	protected:
 		uint32_t m_id = 0;											// uniq ID of the node in the tree
-		const char* m_name = nullptr;
-		Status m_status = Status::WAIT;
 		BehaviorNode* m_parent = nullptr;
+		const char* m_name = nullptr;								// description of the node
+		Status m_status = Status::WAIT;
 		gaEntity* m_entity = nullptr;								// entity this node belongs to
 		Component::BehaviorTree* m_tree = nullptr;					// tree this node belongs to
-		bool m_sequence = false;
 		void* m_data = nullptr;
-
+		bool m_continueOnError = false;								// deal with errors of children
 		int32_t m_runningChild = -1;								// currently running child (-1 = the current node is running)
-		std::vector<BehaviorNode*> m_children;
+		std::vector<BehaviorNode*> m_children;						// list of sub nodes
 
 		std::map<std::string, bool> m_exit;							// list of variables triggering exit of the node
 
@@ -105,6 +104,7 @@ namespace GameEngine {
 
 		void failed(Action* r);
 		void succeeded(Action* r);
+		void error(Action* r);
 		void startChild(Action* r,uint32_t child, void* data);
 		bool conditionMet(void);
 

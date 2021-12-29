@@ -22,13 +22,23 @@ GameEngine::BehaviorNode* GameEngine::Behavior::Loop::clone(GameEngine::Behavior
 	else {
 		cl = new GameEngine::Behavior::Loop(m_name);
 	}
+	GameEngine::BehaviorNode::clone(cl);
 	cl->m_condition = m_condition;
 	return cl;
 }
 
 GameEngine::BehaviorNode* GameEngine::Behavior::Loop::create(const char* name, tinyxml2::XMLElement* element, GameEngine::BehaviorNode* used)
 {
-	GameEngine::Behavior::Loop* node = new GameEngine::Behavior::Loop(name);
+	GameEngine::Behavior::Loop* node;
+
+	if (used == nullptr) {
+		node = new GameEngine::Behavior::Loop(name);
+	}
+	else {
+		node = dynamic_cast<GameEngine::Behavior::Loop*>(used);
+	}
+	GameEngine::BehaviorNode::create(name, element, node);
+
 	tinyxml2::XMLElement* attr = element->FirstChildElement("condition");
 	if (attr) {
 		const char* t = attr->GetText();
@@ -64,20 +74,29 @@ void GameEngine::Behavior::Loop::execute(Action* r)
 
 	onChildExit(m_runningChild, m_children[m_runningChild]->status());
 
+	Status status = m_children[m_runningChild]->status();
+	if (status == Status::ERR) {
+		if (m_continueOnError) {
+			return failed(r);
+		}
+		return error(r);
+	}
+
 	// we are in the default loop
 	switch (m_condition) {
 	case Condition::UNTIL_ALL_FAIL: {
 		// check if all children failed
-		uint32_t failed = true;
+		uint32_t fail = true;
 		for (auto& child : m_children) {
-			if (child->status() != Status::FAILED) {
-				failed = !failed;
+			status = child->status();
+			if (status != Status::FAILED) {
+				fail = false;
 				break;
 			}
 		}
 
 		// if one succeeded continue the loop
-		if (!failed) {
+		if (!fail) {
 			// loop over the nodes
 			m_runningChild++;
 			if (m_runningChild >= m_children.size()) {
@@ -88,8 +107,7 @@ void GameEngine::Behavior::Loop::execute(Action* r)
 		}
 
 		// drop out of the loop if all failed
-		r->action = BehaviorNode::Status::EXIT;
-		m_status  = r->status = BehaviorNode::Status::FAILED;
+		return failed(r);
 		break;}
 
 	case Condition::UNTIL_ONE_FAIL: {
@@ -106,8 +124,7 @@ void GameEngine::Behavior::Loop::execute(Action* r)
 
 		case Status::FAILED:
 			// drop out of the loop
-			r->action = BehaviorNode::Status::EXIT;
-			m_status = r->status = BehaviorNode::Status::FAILED;
+			return failed(r);
 			break;
 
 		default:

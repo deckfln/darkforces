@@ -11,25 +11,6 @@
 /**
  *
  */
-void DarkForces::Behavior::TrackPlayer::onChildExit(uint32_t child, Status status)
-{
-	// remove programmed alarm
-	g_gaWorld.cancelAlarmEvent(m_alarmID);
-
-	// check the player location, but only react to visibility, not to distance from last knwon position because we are away
-	bool* b = m_tree->blackboard<bool>("player_visible");
-	if (b == nullptr || *b == false) {
-		// we still can' see the player, so the tracking failed
-		m_children[m_runningChild]->status(Status::FAILED);
-	}
-	else {
-		m_children[m_runningChild]->status(Status::SUCCESSED);
-	}
-}
-
-/**
- *
- */
 DarkForces::Behavior::TrackPlayer::TrackPlayer(const char* name):
 	GameEngine::Behavior::Decorator(name)
 {
@@ -45,36 +26,21 @@ GameEngine::BehaviorNode* DarkForces::Behavior::TrackPlayer::clone(GameEngine::B
 		cl = new DarkForces::Behavior::TrackPlayer(m_name);
 	}
 	GameEngine::Behavior::Decorator::clone(cl);
-	cl->m_maximum_walk = m_maximum_walk;
-	cl->m_minimum_walk= m_minimum_walk;
-	cl->m_random = m_random;
 	return cl;
 }
 
 BehaviorNode* DarkForces::Behavior::TrackPlayer::create(const char* name, tinyxml2::XMLElement* element, GameEngine::BehaviorNode* used)
 {
-	DarkForces::Behavior::TrackPlayer* node = new DarkForces::Behavior::TrackPlayer(name);
-	tinyxml2::XMLElement* walk = element->FirstChildElement("walk");
-	if (walk) {
-		int mmin = 2000;
-		int mmax = 2000;
-		const char* rnd = nullptr;
-		bool brnd = false;
+	DarkForces::Behavior::TrackPlayer* node;
 
-		walk->QueryIntAttribute("min", &mmin);
-		walk->QueryIntAttribute("max", &mmax);
-		rnd = walk->Attribute("random");
-		if (rnd != nullptr) {
-			if (strcmp(rnd, "true") == 0) {
-				brnd = true;
-			}
-		}
-
-		node->m_maximum_walk = mmax;
-		node->m_minimum_walk = mmin;
-		node->m_random = brnd;
-
+	if (used == nullptr) {
+		node = new DarkForces::Behavior::TrackPlayer(name);
 	}
+	else {
+		node = dynamic_cast<DarkForces::Behavior::TrackPlayer*>(used);
+	}
+
+	GameEngine::Behavior::Decorator::create(name, element, node);
 	return node;
 }
 
@@ -137,17 +103,7 @@ void DarkForces::Behavior::TrackPlayer::init(void* data)
 
 	}
 
-	if (m_random) {
-		m_walk = (rand() % (m_maximum_walk - m_minimum_walk)) + m_minimum_walk;
-	}
-	else {
-		m_walk = m_maximum_walk;
-	}
-
-	// walk only for 2s
-	GameEngine::Alarm alarm(m_entity, m_walk, gaMessage::Action::SatNav_CANCEL);
-	m_alarmID = g_gaWorld.registerAlarmEvent(alarm);
-
+	m_tree->blackboard<glm::vec3>("track_player_position", &m_target);
 	GameEngine::BehaviorNode::init(&m_target);
 }
 
@@ -159,5 +115,4 @@ void DarkForces::Behavior::TrackPlayer::init(void* data)
 void DarkForces::Behavior::TrackPlayer::debugGUInode(void)
 {
 	ImGui::Text("%.2f %.2f %.2f", m_target.x, m_target.y, m_target.z);
-	ImGui::Text("max_walk:%d", m_walk);
 }

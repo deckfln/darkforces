@@ -41,6 +41,15 @@ void GameEngine::Behavior::registerHandler(const char* name, GameEngine::Compone
 	g_createHandler[name] = handler;
 }
 
+int32_t GameEngine::Behavior::getMessage(const char* message)
+{
+	if (g_createMessage.count(message) == 0) {
+		return -1;
+	}
+
+	return g_createMessage[message];
+}
+
 /**
  * load static plugins
  */

@@ -9,14 +9,6 @@ namespace DarkForces {
 	namespace Behavior {
 		class TrackPlayer : public GameEngine::Behavior::Decorator {
 			glm::vec3 m_target;								// navigation for satnav
-			uint32_t m_alarmID;
-			uint32_t m_maximum_walk = 2000;
-			uint32_t m_minimum_walk = 2000;
-			bool m_random = false;
-			uint32_t m_walk = 2000;											// time to walk before dropping out
-
-		protected:
-			void onChildExit(uint32_t child, Status status) override;
 
 		public:
 			TrackPlayer(const char* name);

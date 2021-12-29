@@ -24,21 +24,10 @@ BehaviorNode* GameEngine::Behavior::CheckVar::clone(GameEngine::BehaviorNode* p)
 	else {
 		cl = new GameEngine::Behavior::CheckVar(m_name);
 	}
+	GameEngine::BehaviorNode::clone(cl);
 	cl->m_variable = m_variable;
 	cl->m_value = m_value;
 	return cl;
-}
-
-void GameEngine::Behavior::CheckVar::init(void*)
-{
-	bool* b;
-	b = m_tree->blackboard<bool>(m_variable);
-	if (b && *b == m_value) {
-		m_status = GameEngine::BehaviorNode::Status::SUCCESSED;
-	}
-	else {
-		m_status = GameEngine::BehaviorNode::Status::FAILED;
-	}
 }
 
 /**
@@ -54,6 +43,7 @@ GameEngine::BehaviorNode* GameEngine::Behavior::CheckVar::create(const char* nam
 	else {
 		node = dynamic_cast<GameEngine::Behavior::CheckVar*>(used);
 	}
+	GameEngine::BehaviorNode::create(name, element, node);
 
 	// get the variable name
 	tinyxml2::XMLElement* xmlVariable = element->FirstChildElement("variable");
@@ -73,6 +63,18 @@ GameEngine::BehaviorNode* GameEngine::Behavior::CheckVar::create(const char* nam
 	}
 
 	return node;
+}
+
+void GameEngine::Behavior::CheckVar::init(void*)
+{
+	bool* b;
+	b = m_tree->blackboard<bool>(m_variable);
+	if (b && *b == m_value) {
+		m_status = GameEngine::BehaviorNode::Status::SUCCESSED;
+	}
+	else {
+		m_status = GameEngine::BehaviorNode::Status::FAILED;
+	}
 }
 
 //----------------------------------------------

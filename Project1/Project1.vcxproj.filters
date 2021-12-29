@@ -828,6 +828,9 @@
     <ClCompile Include="gaEngine\gaBehaviorNode\gaBCheckVar.cpp">
       <Filter>Fichiers sources\gaEngine\gaBehaviorNode</Filter>
     </ClCompile>
+    <ClCompile Include="gaEngine\gaBehaviorNode\gaBAlarm.cpp">
+      <Filter>Fichiers sources\gaEngine\gaBehaviorNode</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="glad\glad.h">
@@ -1572,6 +1575,9 @@
       <Filter>Fichiers d%27en-tête\gaEngine\gaBehaviorNode</Filter>
     </ClInclude>
     <ClInclude Include="gaEngine\gaBehaviorNode\gaBCheckVar.h">
+      <Filter>Fichiers d%27en-tête\gaEngine\gaBehaviorNode</Filter>
+    </ClInclude>
+    <ClInclude Include="gaEngine\gaBehaviorNode\gaBAlarm.h">
       <Filter>Fichiers d%27en-tête\gaEngine\gaBehaviorNode</Filter>
     </ClInclude>
   </ItemGroup>

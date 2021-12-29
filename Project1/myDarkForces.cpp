@@ -87,7 +87,7 @@ void myDarkForces::myDarkForces::registerBTNodes(void)
 	GameEngine::Behavior::registerNode("AttackPlayer", DarkForces::Behavior::AttackPlayer::create);
 	GameEngine::Behavior::registerNode("Fire2Player", DarkForces::Behavior::Fire2Player::create);
 	GameEngine::Behavior::registerNode("GotoTrigger", DarkForces::Behavior::GotoTrigger::create);
-	GameEngine::Behavior::registerNode("Move2Player", DarkForces::Behavior::Move2Player::create);
+	GameEngine::Behavior::registerNode("DarkForces:Move2Player", DarkForces::Behavior::Move2Player::create);
 	GameEngine::Behavior::registerNode("MoveEnemyTo", DarkForces::Behavior::MoveEnemyTo::create);
 	GameEngine::Behavior::registerNode("MoveToAndAttack", DarkForces::Behavior::MoveToAndAttack::create);
 	GameEngine::Behavior::registerNode("OpenDoor", DarkForces::Behavior::OpenDoor::create);

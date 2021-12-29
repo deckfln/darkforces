@@ -387,7 +387,7 @@ void GameEngine::Behavior::MoveTo::onCancel(gaMessage* message)
 	m_entity->sendMessage(gaMessage::END_MOVE);
 
 	g_gaWorld.deleteMessage(m_moveID);
-	BehaviorNode::m_status = BehaviorNode::Status::FAILED;
+	BehaviorNode::m_status = BehaviorNode::Status::SUCCESSED;
 }
 
 //---------------------------------------------------------------

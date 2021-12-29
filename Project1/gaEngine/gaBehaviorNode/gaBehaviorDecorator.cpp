@@ -28,13 +28,23 @@ GameEngine::BehaviorNode* GameEngine::Behavior::Decorator::clone(GameEngine::Beh
 	else {
 		cl = new GameEngine::Behavior::Decorator(m_name);
 	}
+	GameEngine::BehaviorNode::clone(cl);
 	cl->m_condition = m_condition;
 	return cl;
 }
 
 GameEngine::BehaviorNode* GameEngine::Behavior::Decorator::create(const char* name, tinyxml2::XMLElement* element, GameEngine::BehaviorNode* used)
 {
-	GameEngine::Behavior::Decorator* node = new GameEngine::Behavior::Decorator(name);
+	GameEngine::Behavior::Decorator* node;
+
+	if (used == nullptr) {
+		node = new GameEngine::Behavior::Decorator(name);
+	}
+	else {
+		node = dynamic_cast<GameEngine::Behavior::Decorator*>(used);
+	}
+	GameEngine::BehaviorNode::create(name, element, node);
+
 	tinyxml2::XMLElement* attr = element->FirstChildElement("condition");
 	if (attr) {
 		const char* t = attr->GetText();
@@ -84,6 +94,12 @@ void GameEngine::Behavior::Decorator::execute(Action* r)
 		}
 		r->status = m_status;
 		break;
+
+	case Status::ERR:
+		if (m_continueOnError) {
+			return failed(r);
+		}
+		return error(r);
 
 	default:
 		r->action = BehaviorNode::Status::RUNNING;

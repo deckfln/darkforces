@@ -7,6 +7,7 @@
 		<message id='DarkForces:DYING'>DarkForces:onDying</message>
 	</messages>
 	<node type='Loop' name='main control'>
+	<onerror action='continue'/>
 	<condition>until_all_fail</condition>
 	<tree>
 		<node type='WaitIdle' name='Wait for action'>
@@ -30,17 +31,24 @@
 						</sounds>
 					</node>
 					<node type='Fire2Player' name='Shoot player'></node>
-					<node type='Move2Player' name='get player position'>
-						<walk max='3000' min='1500' random='true'/>
+					<node type='Sequence' name='Move to player position'>
 						<tree>
-							<node type='SatNav' name='move to player'></node>
+							<node type='GameEngine:Alarm' name='walk for limited time'>
+								<message>GameEngine:SatNav_CANCEL</message>
+								<timer max='3000' min='1500' />
+							</node>
+							<node type='SatNav' name='move to player'>
+								<position type='dequeu'>player_last_positions</position>
+							</node>
 						</tree>
 					</node>
 					</tree>
 				</node>
 				<node type='TrackPlayer' name='track the player'>
+					<condition>invert</condition>	<!-- reaching the end of trip means not seing/hearing anything, so it is actualy a failure-->
 					<tree>
 						<node type='SatNav' name='move to player last position'>
+							<position type='vec3'>track_player_position</position>
 							<exits>
 								<exit value='true'>player_visible</exit>
 								<exit value='true'>hit_bullet</exit>

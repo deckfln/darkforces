@@ -17,7 +17,6 @@
 DarkForces::Behavior::GotoTrigger::GotoTrigger(const char *name):
 	GameEngine::BehaviorNode(name)
 {
-	m_sequence = true;
 }
 
 GameEngine::BehaviorNode* DarkForces::Behavior::GotoTrigger::clone(GameEngine::BehaviorNode* p)

@@ -28,6 +28,7 @@ GameEngine::BehaviorNode* GameEngine::BehaviorNode::clone(GameEngine::BehaviorNo
 	for (auto& condition : m_exit) {
 		cl->m_exit[condition.first] = condition.second;
 	}
+	cl->m_continueOnError = m_continueOnError;
 	return cl;
 }
 
@@ -121,8 +122,14 @@ BehaviorNode* GameEngine::BehaviorNode::create(const char* name, tinyxml2::XMLEl
 		node = dynamic_cast<GameEngine::BehaviorNode*>(used);
 	}
 
+	tinyxml2::XMLElement* xmlOnError = element->FirstChildElement("onerror");
+	if (xmlOnError) {
+		const char* action = xmlOnError->Attribute("action");
+		if (strcmp(action, "continue") == 0) {
+			node->m_continueOnError = true;
+		}
+	}
 	bool value = false;
-
 	tinyxml2::XMLElement* exits = element->FirstChildElement("exits");
 	if (exits) {
 		tinyxml2::XMLElement* exit = exits->FirstChildElement("exit");
@@ -161,11 +168,6 @@ GameEngine::BehaviorNode* GameEngine::BehaviorNode::addNode(BehaviorNode* node)
 	m_children.push_back(node);
 	node->m_parent = this;
 	node->m_tree = m_tree;
-
-
-	if (m_children.size() > 1) {
-		m_sequence = true;
-	}
 
 	return this;
 }
@@ -231,6 +233,13 @@ void GameEngine::BehaviorNode::succeeded(Action* r)
 	m_status = Status::SUCCESSED;
 }
 
+void GameEngine::BehaviorNode::error(Action* r)
+{
+	r->action = Status::EXIT;
+	r->status = Status::ERR;
+	m_status = Status::ERR;
+}
+
 void GameEngine::BehaviorNode::startChild(Action* r, uint32_t child, void* data)
 {
 	r->action = Status::START_CHILD;
@@ -261,6 +270,16 @@ void GameEngine::BehaviorNode::execute(BehaviorNode::Action *r)
 	case Status::SUCCESSED:
 		r->action = BehaviorNode::Status::EXIT;
 		r->status = m_status;
+		break;
+
+	case Status::ERR:
+		r->action = BehaviorNode::Status::EXIT;
+		if (m_continueOnError) {
+			r->status = Status::FAILED;
+		}
+		else {
+			r->status = Status::ERR;
+		}
 		break;
 
 	default:

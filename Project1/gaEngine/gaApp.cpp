@@ -22,6 +22,7 @@
 #include "gaBehaviorNode/gaBTurn.h"
 #include "gaBehaviorNode/gaBSetVar.h"
 #include "gaBehaviorNode/gaBCheckVar.h"
+#include "gaBehaviorNode//gaBAlarm.h"
 
 /**
  * register darkforces entities for the flight recorder
@@ -46,6 +47,7 @@ void GameEngine::App::registerBThandlers(void)
 	GameEngine::Behavior::registerMessage("GameEngine:NOT_VIEW", gaMessage::Action::NOT_VIEW);
 	GameEngine::Behavior::registerMessage("GameEngine:HEAR_SOUND", gaMessage::Action::HEAR_SOUND);
 	GameEngine::Behavior::registerMessage("GameEngine:BULLET_HIT", gaMessage::Action::BULLET_HIT);
+	GameEngine::Behavior::registerMessage("GameEngine:SatNav_CANCEL", gaMessage::Action::SatNav_CANCEL);
 }
 
 /**
@@ -69,7 +71,8 @@ void GameEngine::App::registerBTNodes(void)
 		{"MoveTo", GameEngine::Behavior::MoveTo::create},
 		{"GameEngine:Turn", GameEngine::Behavior::Turn::create},
 		{"GameEngine:SetVar", GameEngine::Behavior::SetVar::create},
-		{"GameEngine:CheckVar", GameEngine::Behavior::CheckVar::create}
+		{"GameEngine:CheckVar", GameEngine::Behavior::CheckVar::create},
+		{"GameEngine:Alarm", GameEngine::Behavior::Alarm::create}
 	};
 
 	for (auto& b : g_createNodes) {
