@@ -7,7 +7,7 @@
 		<message id='DarkForces:DYING'>DarkForces:onDying</message>
 	</messages>
 	<node type='Loop' name='main control'>
-	<onerror action='continue'/>
+	<onerror action='failed'/>
 	<condition>until_all_fail</condition>
 	<tree>
 		<node type='WaitIdle' name='Wait for action'>

@@ -76,9 +76,6 @@ void GameEngine::Behavior::Loop::execute(Action* r)
 
 	Status status = m_children[m_runningChild]->status();
 	if (status == Status::ERR) {
-		if (m_continueOnError) {
-			return failed(r);
-		}
 		return error(r);
 	}
 

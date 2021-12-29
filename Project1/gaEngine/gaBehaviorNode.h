@@ -21,11 +21,11 @@ namespace GameEngine {
 	class BehaviorNode {
 	public:
 		enum class Status {
+			NONE,
+			SUCCESSED,
+			FAILED,
 			WAIT,
 			RUNNING,
-			FAILED,
-			SUCCESSED,
-			NONE,
 			START_CHILD,
 			EXECUTE,
 			EXIT,
@@ -89,7 +89,7 @@ namespace GameEngine {
 		gaEntity* m_entity = nullptr;								// entity this node belongs to
 		Component::BehaviorTree* m_tree = nullptr;					// tree this node belongs to
 		void* m_data = nullptr;
-		bool m_continueOnError = false;								// deal with errors of children
+		Status m_continueOnError = Status::NONE;					// deal with errors of children
 		int32_t m_runningChild = -1;								// currently running child (-1 = the current node is running)
 		std::vector<BehaviorNode*> m_children;						// list of sub nodes
 

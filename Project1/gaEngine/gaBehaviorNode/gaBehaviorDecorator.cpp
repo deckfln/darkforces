@@ -96,9 +96,6 @@ void GameEngine::Behavior::Decorator::execute(Action* r)
 		break;
 
 	case Status::ERR:
-		if (m_continueOnError) {
-			return failed(r);
-		}
 		return error(r);
 
 	default:
