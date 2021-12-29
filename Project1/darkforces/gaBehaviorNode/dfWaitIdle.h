@@ -9,8 +9,6 @@ namespace DarkForces {
 		{
 			glm::vec3 m_original;							// still position of the enemy
 
-			std::map<std::string, bool> m_exit;					// list of variables triggering exit of the loop
-			bool conditionMet(void);
 		public:
 			WaitIdle(const char* name);
 			BehaviorNode* clone(GameEngine::BehaviorNode* p) override;

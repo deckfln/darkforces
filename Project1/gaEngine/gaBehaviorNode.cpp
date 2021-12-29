@@ -25,6 +25,9 @@ GameEngine::BehaviorNode* GameEngine::BehaviorNode::clone(GameEngine::BehaviorNo
 	else {
 		cl = new BehaviorNode(m_name);
 	}
+	for (auto& condition : m_exit) {
+		cl->m_exit[condition.first] = condition.second;
+	}
 	return cl;
 }
 
@@ -50,6 +53,22 @@ GameEngine::BehaviorNode::~BehaviorNode(void)
 	for (auto& child : m_children) {
 		delete child;
 	}
+}
+
+/**
+ * check exit conditions
+ */
+bool GameEngine::BehaviorNode::conditionMet(void)
+{
+	bool* condition;
+	for (auto& exit : m_exit) {
+		condition = m_tree->blackboard<bool>(exit.first);
+		if (condition && *condition == exit.second) {
+			return true;
+		}
+	}
+
+	return false;
 }
 
 /**
@@ -93,7 +112,29 @@ void GameEngine::BehaviorNode::init(void* data)
  */
 BehaviorNode* GameEngine::BehaviorNode::create(const char* name, tinyxml2::XMLElement* element, GameEngine::BehaviorNode* used)
 {
-	return new BehaviorNode(name);
+	GameEngine::BehaviorNode* node;
+
+	if (used == nullptr) {
+		node = new GameEngine::BehaviorNode(name);
+	}
+	else {
+		node = dynamic_cast<GameEngine::BehaviorNode*>(used);
+	}
+
+	bool value = false;
+
+	tinyxml2::XMLElement* exits = element->FirstChildElement("exits");
+	if (exits) {
+		tinyxml2::XMLElement* exit = exits->FirstChildElement("exit");
+
+		while (exit != nullptr) {
+			exit->QueryBoolAttribute("value", &value);
+			node->m_exit[exit->GetText()] = value;
+			exit = exit->NextSiblingElement("exit");
+		}
+	}
+
+	return node;
 }
 
 /**

@@ -49,9 +49,7 @@ GameEngine::BehaviorNode* GameEngine::Behavior::MoveTo::clone(GameEngine::Behavi
 	else {
 		cl = new GameEngine::Behavior::MoveTo(m_name);
 	}
-	for (auto& condition : m_exit) {
-		cl->m_exit[condition.first] = condition.second;
-	}
+	GameEngine::BehaviorNode::clone(cl);
 	return cl;
 }
 
@@ -66,19 +64,7 @@ GameEngine::BehaviorNode* GameEngine::Behavior::MoveTo::create(const char* name,
 		node = dynamic_cast<GameEngine::Behavior::MoveTo*>(used);
 	}
 
-	bool value=false;
-
-	tinyxml2::XMLElement* exits = element->FirstChildElement("exits");
-	if (exits) {
-		tinyxml2::XMLElement* exit = exits->FirstChildElement("exit");
-
-		while (exit != nullptr) {
-			exit->QueryBoolAttribute("value", &value);
-			node->m_exit[exit->GetText()] = value;
-			exit = exit->NextSiblingElement("exit");
-		}
-	}
-
+	GameEngine::BehaviorNode::create(name, element, node);
 	return node;
 }
 
@@ -151,22 +137,6 @@ void GameEngine::Behavior::MoveTo::triggerMove(const glm::vec3& direction)
 {
 	triggerMove();
 
-}
-
-/**
- * check exit conditions
- */
-bool GameEngine::Behavior::MoveTo::conditionMet(void)
-{
-	bool *condition;
-	for (auto& exit : m_exit) {
-		condition = m_tree->blackboard<bool>(exit.first);
-		if (condition && *condition == exit.second) {
-			return true;
-		}
-	}
-
-	return false;
 }
 
 /**

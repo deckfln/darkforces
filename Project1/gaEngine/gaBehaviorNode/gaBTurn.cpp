@@ -10,22 +10,6 @@
 /**
  * test conditions
  */
- /**
-  * check exit conditions
-  */
-bool GameEngine::Behavior::Turn::conditionMet(void)
-{
-	bool *condition;
-	for (auto& exit : m_exit) {
-		condition = m_tree->blackboard<bool>(exit.first);
-		if (condition && *condition == exit.second) {
-			return true;
-		}
-	}
-
-	return false;
-}
-
 /**
  * "look around"
  */
@@ -68,10 +52,9 @@ GameEngine::BehaviorNode* GameEngine::Behavior::Turn::clone(GameEngine::Behavior
 		cl = new GameEngine::Behavior::Turn(m_name);
 	}
 
+	GameEngine::BehaviorNode::clone(cl);
+
 	cl->m_delay = m_delay;
-	for (auto& condition : m_exit) {
-		cl->m_exit[condition.first] = condition.second;
-	}
 	for (auto& angle : m_angles) {
 		cl->m_angles.push_back(angle);
 	}
@@ -106,25 +89,14 @@ GameEngine::BehaviorNode* GameEngine::Behavior::Turn::create(const char* name, t
 		node = dynamic_cast<GameEngine::Behavior::Turn*>(used);
 	}
 
+	// load the exit conditions
+	GameEngine::BehaviorNode::create(name, element, node);
+
 	// get the delay
 	tinyxml2::XMLElement* xmlDelay = element->FirstChildElement("delay");
 	const char* cdelay = xmlDelay->GetText();
 	if (cdelay) {
 		node->m_delay = std::stoi(cdelay);
-	}
-
-	// load the exit conditions
-	bool value = false;
-
-	tinyxml2::XMLElement* exits = element->FirstChildElement("exits");
-	if (exits) {
-		tinyxml2::XMLElement* exit = exits->FirstChildElement("exit");
-
-		while (exit != nullptr) {
-			exit->QueryBoolAttribute("value", &value);
-			node->m_exit[exit->GetText()] = value;
-			exit = exit->NextSiblingElement("exit");
-		}
 	}
 
 	// load the angles

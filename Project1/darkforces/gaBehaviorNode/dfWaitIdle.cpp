@@ -21,10 +21,7 @@ GameEngine::BehaviorNode* DarkForces::Behavior::WaitIdle::clone(GameEngine::Beha
 	else {
 		cl = new DarkForces::Behavior::WaitIdle(m_name);
 	}
-
-	for (auto& condition : m_exit) {
-		cl->m_exit[condition.first] = condition.second;
-	}
+	GameEngine::BehaviorNode::clone(cl);
 	return cl;
 }
 
@@ -39,18 +36,7 @@ BehaviorNode* DarkForces::Behavior::WaitIdle::create(const char* name, tinyxml2:
 		node = dynamic_cast<DarkForces::Behavior::WaitIdle*>(used);
 	}
 
-	bool value = false;
-
-	tinyxml2::XMLElement* exits = element->FirstChildElement("exits");
-	if (exits) {
-		tinyxml2::XMLElement* exit = exits->FirstChildElement("exit");
-
-		while (exit != nullptr) {
-			exit->QueryBoolAttribute("value", &value);
-			node->m_exit[exit->GetText()] = value;
-			exit = exit->NextSiblingElement("exit");
-		}
-	}
+	GameEngine::BehaviorNode::create(name, element, node);
 
 	return node;
 }
@@ -66,22 +52,6 @@ void DarkForces::Behavior::WaitIdle::execute(Action* r)
 	GameEngine::BehaviorNode::execute(r);
 }
 
-
-/**
- * check exit conditions
- */
-bool DarkForces::Behavior::WaitIdle::conditionMet(void)
-{
-	bool *condition;
-	for (auto& exit : m_exit) {
-		condition = m_tree->blackboard<bool>(exit.first);
-		if (condition && *condition == exit.second) {
-			return true;
-		}
-	}
-
-	return false;
-}
 
 /**
  * re-activated the STILL status when the node gets re-activated

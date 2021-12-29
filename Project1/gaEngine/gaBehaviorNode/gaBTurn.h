@@ -10,9 +10,7 @@ namespace GameEngine {
 			uint32_t m_currentAngle=0;							// current one
 			uint32_t m_delay=0;									// time to spend on each angle
 			uint32_t m_untilNextTurn=0;							// frames left until next turn
-			std::map<std::string, bool> m_exit;					// list of variables triggering exit of the node
 
-			bool conditionMet(void);
 			void onTimer(gaMessage* message);					// move around
 
 		public:

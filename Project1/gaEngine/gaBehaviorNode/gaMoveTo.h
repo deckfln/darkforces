@@ -27,8 +27,6 @@ namespace GameEngine {
 			uint32_t m_previous_size = 0;
 			uint32_t m_moveID;									// ID of the last raised WANT_TO_MOVE message
 
-			std::map<std::string, bool> m_exit;					// list of variables triggering exit of the loop
-
 #ifdef _DEBUG
 			void debug(void);									// init debug mode
 			bool m_debug = false;								// display navpoints in opengl
@@ -42,7 +40,6 @@ namespace GameEngine {
 			void triggerMove(void);								// send the move messages
 			void triggerMove(const glm::vec3& direction);		// send the move messages
 
-			bool conditionMet(void);							// check exit conditions
 			void onReachedNextWayPoint(gaMessage* message);		// select the next waypoint or end the movement
 			void onBlockedWay(gaMessage* message);				// cancel the satnav because there is a obstable in front
 

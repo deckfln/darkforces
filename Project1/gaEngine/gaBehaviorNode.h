@@ -94,6 +94,8 @@ namespace GameEngine {
 		int32_t m_runningChild = -1;								// currently running child (-1 = the current node is running)
 		std::vector<BehaviorNode*> m_children;
 
+		std::map<std::string, bool> m_exit;							// list of variables triggering exit of the node
+
 #if defined _DEBUG
 		std::vector<uint32_t> m_childrenID;
 		uint32_t m_entryAttr;
@@ -104,6 +106,7 @@ namespace GameEngine {
 		void failed(Action* r);
 		void succeeded(Action* r);
 		void startChild(Action* r,uint32_t child, void* data);
+		bool conditionMet(void);
 
 		inline virtual void onChildExit(uint32_t child, Status status) {};
 		inline virtual void onChildStart(uint32_t child) {};

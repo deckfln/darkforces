@@ -33,12 +33,7 @@
 					<node type='Move2Player' name='get player position'>
 						<walk max='3000' min='1500' random='true'/>
 						<tree>
-						<node type='SatNav' name='move to player'></node>
-							<!--
-							<exits>
-								<exit value='false'>player_visible</exit>
-							</exits>
-							-->
+							<node type='SatNav' name='move to player'></node>
 						</tree>
 					</node>
 					</tree>
