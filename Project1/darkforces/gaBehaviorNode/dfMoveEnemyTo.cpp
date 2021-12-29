@@ -25,6 +25,18 @@ DarkForces::Behavior::MoveEnemyTo::MoveEnemyTo(const char* name):
 {
 }
 
+GameEngine::BehaviorNode* DarkForces::Behavior::MoveEnemyTo::clone(GameEngine::BehaviorNode* p)
+{
+	DarkForces::Behavior::MoveEnemyTo* cl;
+	if (p) {
+		cl = dynamic_cast<DarkForces::Behavior::MoveEnemyTo*>(p);
+	}
+	else {
+		cl = new DarkForces::Behavior::MoveEnemyTo(m_name);
+	}
+	return cl;
+}
+
 BehaviorNode* DarkForces::Behavior::MoveEnemyTo::create(const char* name, tinyxml2::XMLElement* element, GameEngine::BehaviorNode* used)
 {
 	return new DarkForces::Behavior::MoveEnemyTo(name);

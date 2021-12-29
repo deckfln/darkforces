@@ -7,6 +7,19 @@ DarkForces::Behavior::Sound::Sound(const char* name) :
 {
 }
 
+GameEngine::BehaviorNode* DarkForces::Behavior::Sound::clone(GameEngine::BehaviorNode* p)
+{
+	DarkForces::Behavior::Sound* cl;
+	if (p) {
+		cl = dynamic_cast<DarkForces::Behavior::Sound*>(p);
+	}
+	else {
+		cl = new DarkForces::Behavior::Sound(m_name);
+	}
+	GameEngine::Behavior::Sound::clone(cl);
+	return cl;
+}
+
 GameEngine::BehaviorNode* DarkForces::Behavior::Sound::create(const char* name, tinyxml2::XMLElement* element, GameEngine::BehaviorNode* used)
 {
 	GameEngine::Behavior::Sound* node;

@@ -58,6 +58,26 @@ GameEngine::Behavior::Turn::Turn(const char* name) :
 {
 }
 
+GameEngine::BehaviorNode* GameEngine::Behavior::Turn::clone(GameEngine::BehaviorNode* p)
+{
+	GameEngine::Behavior::Turn* cl;
+	if (p) {
+		cl = dynamic_cast<GameEngine::Behavior::Turn*>(p);
+	}
+	else {
+		cl = new GameEngine::Behavior::Turn(m_name);
+	}
+
+	cl->m_delay = m_delay;
+	for (auto& condition : m_exit) {
+		cl->m_exit[condition.first] = condition.second;
+	}
+	for (auto& angle : m_angles) {
+		cl->m_angles.push_back(angle);
+	}
+	return cl;
+}
+
 void GameEngine::Behavior::Turn::init(void*)
 {
 	float a;

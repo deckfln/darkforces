@@ -19,7 +19,6 @@
 #include "gaBehaviorNode/gaBehaviorSound.h"
 #include "gaBehaviorNode/gaBNSatNav.h"
 #include "gaBehaviorNode/gaMoveTo.h"
-#include "gaBehaviorNode/gaBtPlayerVisible.h"
 #include "gaBehaviorNode/gaBTurn.h"
 #include "gaBehaviorNode/gaBSetVar.h"
 #include "gaBehaviorNode/gaBCheckVar.h"
@@ -68,7 +67,6 @@ void GameEngine::App::registerBTNodes(void)
 		{"Sound", GameEngine::Behavior::Sound::create},
 		{"SatNav", GameEngine::Behavior::SatNav::create},
 		{"MoveTo", GameEngine::Behavior::MoveTo::create},
-		{"PlayerVisible", GameEngine::Behavior::PlayerVisible::create},
 		{"GameEngine:Turn", GameEngine::Behavior::Turn::create},
 		{"GameEngine:SetVar", GameEngine::Behavior::SetVar::create},
 		{"GameEngine:CheckVar", GameEngine::Behavior::CheckVar::create}

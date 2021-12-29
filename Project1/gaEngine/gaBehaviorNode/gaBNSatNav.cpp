@@ -29,6 +29,20 @@ GameEngine::Behavior::SatNav::SatNav(const char *name, float speed) :
 {
 }
 
+GameEngine::BehaviorNode* GameEngine::Behavior::SatNav::clone(GameEngine::BehaviorNode* p)
+{
+	GameEngine::Behavior::SatNav* cl;
+	if (p) {
+		cl = dynamic_cast<GameEngine::Behavior::SatNav*>(p);
+	}
+	else {
+		cl = new GameEngine::Behavior::SatNav(m_name);
+	}
+
+	GameEngine::Behavior::MoveTo::clone(cl);
+	return cl;
+}
+
 GameEngine::BehaviorNode* GameEngine::Behavior::SatNav::create(const char* name, tinyxml2::XMLElement* element, GameEngine::BehaviorNode* used)
 {
 	GameEngine::Behavior::SatNav* node = new GameEngine::Behavior::SatNav(name);

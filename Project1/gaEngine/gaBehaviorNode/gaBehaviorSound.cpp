@@ -15,6 +15,27 @@ GameEngine::Behavior::Sound::Sound(const char *name) :
 {
 }
 
+GameEngine::BehaviorNode* GameEngine::Behavior::Sound::clone(GameEngine::BehaviorNode* p)
+{
+	GameEngine::Behavior::Sound* cl;
+	if (p) {
+		cl = dynamic_cast<GameEngine::Behavior::Sound*>(p);
+	}
+	else {
+		cl = new GameEngine::Behavior::Sound(m_name);
+	}
+	cl->m_condition = m_condition;
+	for (auto& sound : m_sounds) {
+		cl->m_sounds.push_back(sound);
+		cl->m_loaded.push_back(false);
+
+	}
+	for (auto& id: m_ids) {
+		cl->m_ids.push_back(id);
+	}
+	return cl;
+}
+
 GameEngine::BehaviorNode* GameEngine::Behavior::Sound::create(const char* name, tinyxml2::XMLElement* element, GameEngine::BehaviorNode* used)
 {
 	GameEngine::Behavior::Sound* node;

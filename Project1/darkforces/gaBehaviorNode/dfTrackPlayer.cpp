@@ -35,6 +35,22 @@ DarkForces::Behavior::TrackPlayer::TrackPlayer(const char* name):
 {
 }
 
+GameEngine::BehaviorNode* DarkForces::Behavior::TrackPlayer::clone(GameEngine::BehaviorNode* p)
+{
+	DarkForces::Behavior::TrackPlayer* cl;
+	if (p) {
+		cl = dynamic_cast<DarkForces::Behavior::TrackPlayer*>(p);
+	}
+	else {
+		cl = new DarkForces::Behavior::TrackPlayer(m_name);
+	}
+	GameEngine::Behavior::Decorator::clone(cl);
+	cl->m_maximum_walk = m_maximum_walk;
+	cl->m_minimum_walk= m_minimum_walk;
+	cl->m_random = m_random;
+	return cl;
+}
+
 BehaviorNode* DarkForces::Behavior::TrackPlayer::create(const char* name, tinyxml2::XMLElement* element, GameEngine::BehaviorNode* used)
 {
 	DarkForces::Behavior::TrackPlayer* node = new DarkForces::Behavior::TrackPlayer(name);

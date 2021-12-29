@@ -14,6 +14,45 @@ GameEngine::BehaviorNode::BehaviorNode(const char* name):
 }
 
 /**
+ * virtual clone
+ */
+GameEngine::BehaviorNode* GameEngine::BehaviorNode::clone(GameEngine::BehaviorNode* p)
+{
+	GameEngine::BehaviorNode* cl;
+	if (p) {
+		cl = p;
+	}
+	else {
+		cl = new BehaviorNode(m_name);
+	}
+	return cl;
+}
+
+/**
+ * recursivlt clone a BT node
+ */
+BehaviorNode* GameEngine::BehaviorNode::deepClone(void)
+{
+	GameEngine::BehaviorNode* cl = clone(nullptr);
+	GameEngine::BehaviorNode* ch;
+
+	for (auto& child : m_children) {
+		ch = child->deepClone();
+		cl->m_children.push_back(ch);
+		ch->m_parent = cl;
+		
+	}
+	return cl;
+}
+
+GameEngine::BehaviorNode::~BehaviorNode(void)
+{
+	for (auto& child : m_children) {
+		delete child;
+	}
+}
+
+/**
  * bind all nodes to the tree
  */
 void GameEngine::BehaviorNode::tree(Component::BehaviorTree* tree)

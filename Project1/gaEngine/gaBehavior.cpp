@@ -5,7 +5,7 @@
 #include <fstream>
 #include <sstream>
 #include <stdio.h>
-
+#include <utility>
 #include <tinyxml2.h>
 
 #include "gaDebug.h"
@@ -44,7 +44,9 @@ void GameEngine::Behavior::registerHandler(const char* name, GameEngine::Compone
 /**
  * load static plugins
  */
-static GameEngine::BehaviorNode* loadPlugins(tinyxml2::XMLElement* bt, GameEngine::Component::BehaviorTree* tree)
+static std::map<std::string, std::vector<std::pair<std::string, std::string>>> g_plugins;
+
+static void loadPlugins(tinyxml2::XMLElement* bt, const std::string& data)
 {
 	GameEngine::BehaviorNode* bnode = nullptr;
 	GameEngine::BehaviorNode* bchild = nullptr;
@@ -58,13 +60,22 @@ static GameEngine::BehaviorNode* loadPlugins(tinyxml2::XMLElement* bt, GameEngin
 			const char* id = pNodeElement->Attribute("id");
 			const char* handler = pNodeElement->GetText();
 
-			tree->handlers(g_createMessage[id], g_createHandler[handler]);
+			g_plugins[data].push_back(std::make_pair(id, handler));
 
 			pNodeElement = pNodeElement->NextSiblingElement("message");
 		}
 	}
+}
 
-	return bnode;
+static void loadPlugins(GameEngine::Component::BehaviorTree* tree, const std::string& data)
+{
+	std::vector<std::pair<std::string, std::string>>& handlers = g_plugins[data];
+	for (auto& handler : handlers) {
+		const std::string& id = handler.first;
+		const std::string& h = handler.second;
+
+		tree->handlers(g_createMessage[id], g_createHandler[h]);
+	}
 }
 
 /**
@@ -104,6 +115,11 @@ static GameEngine::BehaviorNode* loadNode(tinyxml2::XMLElement* node)
 }
 
 /**
+ * cache of compiled BT 
+ */
+static std::map<std::string, GameEngine::BehaviorNode*> g_cache;
+
+/**
  *
  */
 GameEngine::BehaviorNode* GameEngine::Behavior::loadTree(const std::string& data,
@@ -111,6 +127,15 @@ GameEngine::BehaviorNode* GameEngine::Behavior::loadTree(const std::string& data
 	GameEngine::Component::BehaviorTree* tree)
 {
 	std::string xml;
+
+	// check built hash in the cache
+	if (g_cache.count(data) > 0) {
+		loadPlugins(tree, data);
+
+		GameEngine::BehaviorNode* cl = g_cache[data];
+		return cl->deepClone();
+	}
+
 	if (data.substr(0, 5) == "file:") {
 		std::ifstream file;
 
@@ -156,11 +181,13 @@ GameEngine::BehaviorNode* GameEngine::Behavior::loadTree(const std::string& data
 
 	// load the plugins
 	tinyxml2::XMLElement* bt = doc.FirstChildElement("behaviortree");
-	loadPlugins(bt, tree);
+	loadPlugins(bt, data);	// load in the cache
 
 	// create the node
 	tinyxml2::XMLElement* pRoot = bt->FirstChildElement("node");
 
-	return loadNode(pRoot);
+	g_cache[data] = loadNode(pRoot);
+
+	loadPlugins(tree, data);
+	return g_cache[data]->deepClone();
 }
- 

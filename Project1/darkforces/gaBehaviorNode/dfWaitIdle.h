@@ -13,6 +13,7 @@ namespace DarkForces {
 			bool conditionMet(void);
 		public:
 			WaitIdle(const char* name);
+			BehaviorNode* clone(GameEngine::BehaviorNode* p) override;
 			void activated(void) override;						// a node get re-activated after a child exit
 			//void init(void*) override;
 			void execute(Action* r) override;

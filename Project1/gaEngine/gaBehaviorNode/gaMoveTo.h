@@ -53,6 +53,7 @@ namespace GameEngine {
 			MoveTo(void);
 			MoveTo(const char* name);
 			MoveTo(const char* name, float speed);
+			BehaviorNode* clone(GameEngine::BehaviorNode* p) override;
 
 			// getter/setter
 			inline void speed(float speed) { m_speed = speed; };

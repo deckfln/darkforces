@@ -8,10 +8,11 @@
 namespace GameEngine {
 	namespace Behavior {
 		class CheckVar : public BehaviorNode {
-			std::string m_name;						// list of angles to turn to
+			std::string m_variable;						// list of angles to turn to
 			bool m_value;							// current one
 		public:
 			CheckVar(const char* name);
+			BehaviorNode* clone(GameEngine::BehaviorNode* p) override;
 
 			void init(void*) override;
 

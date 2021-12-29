@@ -16,6 +16,19 @@ DarkForces::Behavior::MoveToAndAttack::MoveToAndAttack(const char* name):
 {
 }
 
+GameEngine::BehaviorNode* DarkForces::Behavior::MoveToAndAttack::clone(GameEngine::BehaviorNode* p)
+{
+	DarkForces::Behavior::MoveToAndAttack* cl;
+	if (p) {
+		cl = dynamic_cast<DarkForces::Behavior::MoveToAndAttack*>(p);
+	}
+	else {
+		cl = new DarkForces::Behavior::MoveToAndAttack(m_name);
+	}
+	GameEngine::Behavior::Loop::clone(cl);
+	return cl;
+}
+
 BehaviorNode* DarkForces::Behavior::MoveToAndAttack::create(const char* name, tinyxml2::XMLElement* element, GameEngine::BehaviorNode* used)
 {
 	return new DarkForces::Behavior::MoveToAndAttack(name);

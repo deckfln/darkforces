@@ -13,6 +13,7 @@ namespace GameEngine {
 				SUCESS			// always return success
 			};
 			Decorator(const char* name);
+			BehaviorNode* clone(GameEngine::BehaviorNode* p) override;
 			void execute(Action* r) override;						// let a parent take a decision with it's current running child
 
 			inline void condition(Condition c) { m_condition = c; };

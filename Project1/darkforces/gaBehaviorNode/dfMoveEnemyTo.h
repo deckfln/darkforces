@@ -9,6 +9,7 @@ namespace DarkForces {
 			glm::vec3 m_destination;
 		public:
 			MoveEnemyTo(const char* name);
+			BehaviorNode* clone(GameEngine::BehaviorNode* p) override;
 			void init(void* data) override;
 			void execute(Action* r) override;							// let a parent take a decision with it's current running child
 

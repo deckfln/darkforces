@@ -16,6 +16,7 @@ namespace GameEngine {
 
 			BehaviorTree(void);
 			BehaviorTree(BehaviorNode* root);
+			~BehaviorTree(void);
 
 			void parse(const std::string& data,
 				const std::map<std::string, std::string>& includes);// create a tree from XML data

@@ -43,6 +43,9 @@ namespace GameEngine {
 #endif
 		};
 		BehaviorNode(const char *name);
+		virtual BehaviorNode* clone(GameEngine::BehaviorNode* p);
+		BehaviorNode* deepClone(void);
+		~BehaviorNode(void);
 
 		// getter/setter
 		inline BehaviorNode* parent(void) { return m_parent; };

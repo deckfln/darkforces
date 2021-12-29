@@ -12,6 +12,22 @@ DarkForces::Behavior::WaitIdle::WaitIdle(const char* name):
 {
 }
 
+GameEngine::BehaviorNode* DarkForces::Behavior::WaitIdle::clone(GameEngine::BehaviorNode* p)
+{
+	DarkForces::Behavior::WaitIdle* cl;
+	if (p) {
+		cl = dynamic_cast<DarkForces::Behavior::WaitIdle*>(p);
+	}
+	else {
+		cl = new DarkForces::Behavior::WaitIdle(m_name);
+	}
+
+	for (auto& condition : m_exit) {
+		cl->m_exit[condition.first] = condition.second;
+	}
+	return cl;
+}
+
 BehaviorNode* DarkForces::Behavior::WaitIdle::create(const char* name, tinyxml2::XMLElement* element, GameEngine::BehaviorNode* used)
 {
 	DarkForces::Behavior::WaitIdle* node;

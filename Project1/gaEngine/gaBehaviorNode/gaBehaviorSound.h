@@ -14,6 +14,8 @@ namespace GameEngine {
 			};
 				
 			Sound(const char* name);
+			BehaviorNode* clone(GameEngine::BehaviorNode* p) override;
+
 			inline void condition(Condition c) { m_condition = c; };
 			void execute(Action* r) override;						// let a parent take a decision with it's current running child
 

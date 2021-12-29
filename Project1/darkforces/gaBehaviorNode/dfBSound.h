@@ -7,6 +7,7 @@ namespace DarkForces {
 		class Sound : public GameEngine::Behavior::Sound {
 		public:
 			Sound(const char* name);
+			BehaviorNode* clone(GameEngine::BehaviorNode* p) override;
 
 			// Behavior engine
 			static BehaviorNode* create(const char* name, tinyxml2::XMLElement* element, GameEngine::BehaviorNode* used);// create a node

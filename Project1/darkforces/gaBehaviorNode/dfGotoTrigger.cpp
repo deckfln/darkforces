@@ -20,6 +20,18 @@ DarkForces::Behavior::GotoTrigger::GotoTrigger(const char *name):
 	m_sequence = true;
 }
 
+GameEngine::BehaviorNode* DarkForces::Behavior::GotoTrigger::clone(GameEngine::BehaviorNode* p)
+{
+	DarkForces::Behavior::GotoTrigger* cl;
+	if (p) {
+		cl = dynamic_cast<DarkForces::Behavior::GotoTrigger*>(p);
+	}
+	else {
+		cl = new DarkForces::Behavior::GotoTrigger(m_name);
+	}
+	return cl;
+}
+
 BehaviorNode* DarkForces::Behavior::GotoTrigger::create(const char* name, tinyxml2::XMLElement* element, GameEngine::BehaviorNode* used)
 {
 	return new DarkForces::Behavior::GotoTrigger(name);

@@ -27,6 +27,11 @@ GameEngine::Component::BehaviorTree::BehaviorTree(BehaviorNode* root):
 {
 }
 
+GameEngine::Component::BehaviorTree::~BehaviorTree(void)
+{
+	delete m_root;
+}
+
 /**
  * create a tree from XML data
  */

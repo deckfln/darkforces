@@ -13,6 +13,19 @@ GameEngine::Behavior::Sequence::Sequence(const char *name) :
 {
 }
 
+GameEngine::BehaviorNode* GameEngine::Behavior::Sequence::clone(GameEngine::BehaviorNode* p)
+{
+	GameEngine::Behavior::Sequence* cl;
+	if (p) {
+		cl = dynamic_cast<GameEngine::Behavior::Sequence*>(p);
+	}
+	else {
+		cl = new GameEngine::Behavior::Sequence(m_name);
+	}
+	cl->m_condition = m_condition;
+	return cl;
+}
+
 GameEngine::BehaviorNode* GameEngine::Behavior::Sequence::create(const char* name, tinyxml2::XMLElement* element, GameEngine::BehaviorNode* used)
 {
 	GameEngine::Behavior::Sequence* node = new GameEngine::Behavior::Sequence(name);

@@ -19,6 +19,19 @@ GameEngine::Behavior::Decorator::Decorator(const char *name) :
 {
 }
 
+GameEngine::BehaviorNode* GameEngine::Behavior::Decorator::clone(GameEngine::BehaviorNode* p)
+{
+	GameEngine::Behavior::Decorator* cl;
+	if (p) {
+		cl = dynamic_cast<GameEngine::Behavior::Decorator*>(p);
+	}
+	else {
+		cl = new GameEngine::Behavior::Decorator(m_name);
+	}
+	cl->m_condition = m_condition;
+	return cl;
+}
+
 GameEngine::BehaviorNode* GameEngine::Behavior::Decorator::create(const char* name, tinyxml2::XMLElement* element, GameEngine::BehaviorNode* used)
 {
 	GameEngine::Behavior::Decorator* node = new GameEngine::Behavior::Decorator(name);

@@ -13,6 +13,19 @@ GameEngine::Behavior::Loop::Loop(const char *name) :
 {
 }
 
+GameEngine::BehaviorNode* GameEngine::Behavior::Loop::clone(GameEngine::BehaviorNode* p)
+{
+	GameEngine::Behavior::Loop* cl;
+	if (p) {
+		cl = dynamic_cast<GameEngine::Behavior::Loop*>(p);
+	}
+	else {
+		cl = new GameEngine::Behavior::Loop(m_name);
+	}
+	cl->m_condition = m_condition;
+	return cl;
+}
+
 GameEngine::BehaviorNode* GameEngine::Behavior::Loop::create(const char* name, tinyxml2::XMLElement* element, GameEngine::BehaviorNode* used)
 {
 	GameEngine::Behavior::Loop* node = new GameEngine::Behavior::Loop(name);

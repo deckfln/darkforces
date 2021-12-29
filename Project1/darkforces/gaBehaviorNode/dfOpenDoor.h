@@ -12,6 +12,7 @@ namespace DarkForces {
 
 		public:
 			OpenDoor(const char* name);
+			BehaviorNode* clone(GameEngine::BehaviorNode* p) override;
 			void init(void *) override;							// init the node before running
 
 			// Behavior engine

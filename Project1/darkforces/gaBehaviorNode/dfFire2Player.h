@@ -21,6 +21,8 @@ namespace DarkForces {
 
 		public:
 			Fire2Player(const char* name);
+			BehaviorNode* clone(GameEngine::BehaviorNode* p) override;
+
 			void init(void* data) override;									// init the node before running
 			void dispatchMessage(gaMessage* message, Action* r) override;	// let a component deal with a situation
 

@@ -27,6 +27,18 @@ DarkForces::Behavior::Fire2Player::Fire2Player(const char* name):
 {
 }
 
+GameEngine::BehaviorNode* DarkForces::Behavior::Fire2Player::clone(GameEngine::BehaviorNode* p)
+{
+	DarkForces::Behavior::Fire2Player* cl;
+	if (p) {
+		cl = dynamic_cast<DarkForces::Behavior::Fire2Player*>(p);
+	}
+	else {
+		cl = new DarkForces::Behavior::Fire2Player(m_name);
+	}
+	return cl;
+}
+
 BehaviorNode* DarkForces::Behavior::Fire2Player::create(const char* name, tinyxml2::XMLElement* element, GameEngine::BehaviorNode* used)
 {
 	return new DarkForces::Behavior::Fire2Player(name);

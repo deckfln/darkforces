@@ -14,6 +14,7 @@ namespace GameEngine {
 			SatNav(void);
 			SatNav(const char* name);
 			SatNav(const char* name, float speed);
+			BehaviorNode* clone(GameEngine::BehaviorNode* p) override;
 
 			void dispatchMessage(gaMessage* message, Action *r) override;	// let a component deal with a situation
 			void init(void *) override;

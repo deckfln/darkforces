@@ -39,6 +39,22 @@ GameEngine::Behavior::MoveTo::MoveTo(const char *name, float speed) :
 	debug();
 }
 
+GameEngine::BehaviorNode* GameEngine::Behavior::MoveTo::clone(GameEngine::BehaviorNode* p)
+{
+	GameEngine::Behavior::MoveTo* cl;
+
+	if (p) {
+		cl = dynamic_cast<GameEngine::Behavior::MoveTo*>(p);
+	}
+	else {
+		cl = new GameEngine::Behavior::MoveTo(m_name);
+	}
+	for (auto& condition : m_exit) {
+		cl->m_exit[condition.first] = condition.second;
+	}
+	return cl;
+}
+
 GameEngine::BehaviorNode* GameEngine::Behavior::MoveTo::create(const char* name, tinyxml2::XMLElement* element, GameEngine::BehaviorNode* used)
 {
 	GameEngine::Behavior::MoveTo* node;

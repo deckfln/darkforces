@@ -15,10 +15,24 @@ GameEngine::Behavior::CheckVar::CheckVar(const char* name) :
 {
 }
 
+BehaviorNode* GameEngine::Behavior::CheckVar::clone(GameEngine::BehaviorNode* p)
+{
+	GameEngine::Behavior::CheckVar* cl;
+	if (p) {
+		cl = dynamic_cast<GameEngine::Behavior::CheckVar*>(p);
+	}
+	else {
+		cl = new GameEngine::Behavior::CheckVar(m_name);
+	}
+	cl->m_variable = m_variable;
+	cl->m_value = m_value;
+	return cl;
+}
+
 void GameEngine::Behavior::CheckVar::init(void*)
 {
 	bool* b;
-	b = m_tree->blackboard<bool>(m_name);
+	b = m_tree->blackboard<bool>(m_variable);
 	if (b && *b == m_value) {
 		m_status = GameEngine::BehaviorNode::Status::SUCCESSED;
 	}
@@ -45,7 +59,7 @@ GameEngine::BehaviorNode* GameEngine::Behavior::CheckVar::create(const char* nam
 	tinyxml2::XMLElement* xmlVariable = element->FirstChildElement("variable");
 	const char* cname = xmlVariable->GetText();
 	if (cname) {
-		node->m_name = cname;
+		node->m_variable = cname;
 		const char *type = xmlVariable->Attribute("type");
 		if (strcmp(type, "bool") == 0) {
 			bool b;
@@ -65,5 +79,5 @@ GameEngine::BehaviorNode* GameEngine::Behavior::CheckVar::create(const char* nam
 
 void GameEngine::Behavior::CheckVar::debugGUInode(void)
 {
-	ImGui::Text("%s:%d", m_name.c_str(), m_value);
+	ImGui::Text("%s:%d", m_variable.c_str(), m_value);
 }

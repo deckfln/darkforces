@@ -15,6 +15,19 @@ DarkForces::Behavior::OpenDoor::OpenDoor(const char* name):
 {
 }
 
+GameEngine::BehaviorNode* DarkForces::Behavior::OpenDoor::clone(GameEngine::BehaviorNode* p)
+{
+	DarkForces::Behavior::OpenDoor* cl;
+	if (p) {
+		cl = dynamic_cast<DarkForces::Behavior::OpenDoor*>(p);
+	}
+	else {
+		cl = new DarkForces::Behavior::OpenDoor(m_name);
+	}
+	GameEngine::Behavior::Sequence::clone(cl);
+	return cl;
+}
+
 BehaviorNode* DarkForces::Behavior::OpenDoor::create(const char* name, tinyxml2::XMLElement* element, GameEngine::BehaviorNode* used)
 {
 	return new DarkForces::Behavior::OpenDoor(name);

@@ -22,6 +22,23 @@ DarkForces::Behavior::Move2Player::Move2Player(const char* name):
 {
 }
 
+GameEngine::BehaviorNode* DarkForces::Behavior::Move2Player::clone(GameEngine::BehaviorNode* p)
+{
+	DarkForces::Behavior::Move2Player* cl;
+	if (p) {
+		cl = dynamic_cast<DarkForces::Behavior::Move2Player*>(p);
+	}
+	else {
+		cl = new DarkForces::Behavior::Move2Player(m_name);
+	}
+	GameEngine::Behavior::Decorator::clone(cl);
+	cl->m_walk = m_walk;
+	cl->m_maximum_walk = m_maximum_walk;
+	cl->m_minimum_walk = m_minimum_walk;
+	cl->m_random = m_random;
+	return cl;
+}
+
 BehaviorNode* DarkForces::Behavior::Move2Player::create(const char* name, tinyxml2::XMLElement* element, GameEngine::BehaviorNode* used)
 {
 	DarkForces::Behavior::Move2Player* node = new DarkForces::Behavior::Move2Player(name);

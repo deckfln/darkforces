@@ -12,6 +12,18 @@ DarkForces::Behavior::WaitDoor::WaitDoor(const char* name):
 {
 }
 
+GameEngine::BehaviorNode* DarkForces::Behavior::WaitDoor::clone(GameEngine::BehaviorNode* p)
+{
+	DarkForces::Behavior::WaitDoor* cl;
+	if (p) {
+		cl = dynamic_cast<DarkForces::Behavior::WaitDoor*>(p);
+	}
+	else {
+		cl = new DarkForces::Behavior::WaitDoor(m_name);
+	}
+	return cl;
+}
+
 BehaviorNode* DarkForces::Behavior::WaitDoor::create(const char* name, tinyxml2::XMLElement* element, GameEngine::BehaviorNode* used)
 {
 	return new DarkForces::Behavior::WaitDoor(name);

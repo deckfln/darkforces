@@ -13,6 +13,19 @@ DarkForces::Behavior::AttackPlayer::AttackPlayer(const char* name):
 {
 }
 
+BehaviorNode* DarkForces::Behavior::AttackPlayer::clone(GameEngine::BehaviorNode* p)
+{
+	DarkForces::Behavior::AttackPlayer* cl;
+	if (p) {
+		cl = dynamic_cast<DarkForces::Behavior::AttackPlayer*>(p);
+	}
+	else {
+		cl = new DarkForces::Behavior::AttackPlayer(m_name);
+	}
+	GameEngine::Behavior::Loop::clone(cl);
+	return cl;
+}
+
 BehaviorNode* DarkForces::Behavior::AttackPlayer::create(const char* name, tinyxml2::XMLElement* element, GameEngine::BehaviorNode* used)
 {
 	return new DarkForces::Behavior::AttackPlayer(name);
