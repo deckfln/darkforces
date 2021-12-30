@@ -3,11 +3,11 @@
 #include <vector>
 #include <imgui.h>
 
-#include "../../gaEngine/gaBehaviorNode/gaBehaviorDecorator.h"
+#include "../../gaEngine/gaBehaviorNode/gaBSetVar.h"
 
 namespace DarkForces {
 	namespace Behavior {
-		class TrackPlayer : public GameEngine::Behavior::Decorator {
+		class TrackPlayer : public GameEngine::Behavior::SetVar {
 			glm::vec3 m_target;								// navigation for satnav
 
 		public:
@@ -17,9 +17,6 @@ namespace DarkForces {
 
 			// Behavior engine
 			static BehaviorNode* create(const char* name, tinyxml2::XMLElement* element, GameEngine::BehaviorNode* used);// create a node
-
-			//debugger
-			void debugGUInode(void) override;							// display the component in the debugger
 		};
 	}
 }

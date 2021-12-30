@@ -91,7 +91,7 @@ void myDarkForces::myDarkForces::registerBTNodes(void)
 	GameEngine::Behavior::registerNode("MoveEnemyTo", DarkForces::Behavior::MoveEnemyTo::create);
 	GameEngine::Behavior::registerNode("MoveToAndAttack", DarkForces::Behavior::MoveToAndAttack::create);
 	GameEngine::Behavior::registerNode("OpenDoor", DarkForces::Behavior::OpenDoor::create);
-	GameEngine::Behavior::registerNode("TrackPlayer", DarkForces::Behavior::TrackPlayer::create);
+	GameEngine::Behavior::registerNode("DarkForces:TrackPlayer", DarkForces::Behavior::TrackPlayer::create);
 	GameEngine::Behavior::registerNode("WaitDoor", DarkForces::Behavior::WaitDoor::create);
 	GameEngine::Behavior::registerNode("WaitIdle", DarkForces::Behavior::WaitIdle::create);
 	GameEngine::Behavior::registerNode("darkForces:sound", DarkForces::Behavior::Sound::create);

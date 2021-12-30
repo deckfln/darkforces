@@ -75,13 +75,3 @@ void DarkForces::Behavior::Move2Player::init(void* data)
 
 	GameEngine::Behavior::SetVar::init(&m_target);
 }
-
-//---------------------------------------------------------------
-
-/**
- * display the node data in the debugger
- */
-void DarkForces::Behavior::Move2Player::debugGUInode(void)
-{
-	ImGui::Text("target:%.2f %.2f %.2f", m_target.x, m_target.y, m_target.z);
-}

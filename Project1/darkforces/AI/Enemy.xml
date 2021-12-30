@@ -42,7 +42,7 @@
 							</node>
 							<node type='SatNav' name='move to player'>
 								<exits>
-									<exit value='true'>nearvy_player</exit>
+									<exit value='true'>nearby_player</exit>
 								</exits>
 								<position type='vec3'>player_last_position</position>
 							</node>
@@ -50,9 +50,12 @@
 					</node>
 					</tree>
 				</node>
-				<node type='TrackPlayer' name='track the player'>
+				<node type='Sequence' name='move to player last known position'>
 					<condition>invert</condition>	<!-- reaching the end of trip means not seing/hearing anything, so it is actualy a failure-->
 					<tree>
+						<node type='DarkForces:TrackPlayer' name='set player last known position (view/soud)'>
+							<variable type='vec3'>track_player_position</variable>
+						</node>
 						<node type='SatNav' name='move to player last position'>
 							<position type='vec3'>track_player_position</position>
 							<exits>

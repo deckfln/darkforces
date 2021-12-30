@@ -12,7 +12,7 @@
  *
  */
 DarkForces::Behavior::TrackPlayer::TrackPlayer(const char* name):
-	GameEngine::Behavior::Decorator(name)
+	GameEngine::Behavior::SetVar(name)
 {
 }
 
@@ -25,7 +25,7 @@ GameEngine::BehaviorNode* DarkForces::Behavior::TrackPlayer::clone(GameEngine::B
 	else {
 		cl = new DarkForces::Behavior::TrackPlayer(m_name);
 	}
-	GameEngine::Behavior::Decorator::clone(cl);
+	GameEngine::Behavior::SetVar::clone(cl);
 	return cl;
 }
 
@@ -40,7 +40,7 @@ BehaviorNode* DarkForces::Behavior::TrackPlayer::create(const char* name, tinyxm
 		node = dynamic_cast<DarkForces::Behavior::TrackPlayer*>(used);
 	}
 
-	GameEngine::Behavior::Decorator::create(name, element, node);
+	GameEngine::Behavior::SetVar::create(name, element, node);
 	return node;
 }
 
@@ -103,16 +103,6 @@ void DarkForces::Behavior::TrackPlayer::init(void* data)
 
 	}
 
-	m_tree->blackboard<glm::vec3>("track_player_position", &m_target);
-	GameEngine::BehaviorNode::init(&m_target);
-}
-
-//-------------------------------------------
-
-/**
- * display the component in the debugger
- */
-void DarkForces::Behavior::TrackPlayer::debugGUInode(void)
-{
-	ImGui::Text("%.2f %.2f %.2f", m_target.x, m_target.y, m_target.z);
+	m_v3value = m_target;
+	GameEngine::Behavior::SetVar::init(&m_target);
 }
