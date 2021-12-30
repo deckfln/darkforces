@@ -2,17 +2,17 @@
 
 #include <tinyxml2.h>
 #include <imgui.h>
+#include <map>
 
 #include "../gaEntity.h"
 #include "../World.h"
 #include "../gaDebug.h"
 #include "../gaComponent/gaBehaviorTree.h"
-#include "gaBSetVar.h"
 
 //-------------------------------------
 
 GameEngine::Behavior::SetVar::SetVar(const char* name) :
-	BehaviorNode(name)
+	Var(name)
 {
 }
 
@@ -25,15 +25,26 @@ GameEngine::BehaviorNode* GameEngine::Behavior::SetVar::clone(GameEngine::Behavi
 	else {
 		cl = new GameEngine::Behavior::SetVar(m_name);
 	}
-	GameEngine::BehaviorNode::clone(cl);
-	cl->m_variable = m_variable;
-	cl->m_value = m_value;
+	GameEngine::Behavior::Var::clone(cl);
 	return cl;
 }
 
 void GameEngine::Behavior::SetVar::init(void*)
 {
-	m_tree->blackboard<bool>(m_variable, m_value);
+	switch (m_type) {
+	case Type::BOOL:
+		m_tree->blackboard<bool>(m_variable, m_value);
+		break;
+	case Type::INT32:
+		m_tree->blackboard<int32_t>(m_variable, m_ivalue);
+		break;
+	case Type::FLOAT:
+		m_tree->blackboard<float>(m_variable, m_fvalue);
+		break;
+	case Type::VEC3:
+		m_tree->blackboard<glm::vec3>(m_variable, m_v3value);
+		break;
+	}
 	m_status = GameEngine::BehaviorNode::Status::SUCCESSED;
 }
 
@@ -50,31 +61,6 @@ GameEngine::BehaviorNode* GameEngine::Behavior::SetVar::create(const char* name,
 	else {
 		node = dynamic_cast<GameEngine::Behavior::SetVar*>(used);
 	}
-	GameEngine::BehaviorNode::create(name, element, node);
-
-	// get the variable name
-	tinyxml2::XMLElement* xmlVariable = element->FirstChildElement("variable");
-	const char* cname = xmlVariable->GetText();
-	if (cname) {
-		node->m_variable = cname;
-		const char *type = xmlVariable->Attribute("type");
-		if (strcmp(type, "bool") == 0) {
-			bool b;
-			if (xmlVariable->QueryBoolAttribute("value", &b) == tinyxml2::XML_SUCCESS) {
-				node->m_value = b;
-			}
-		}
-		else {
-			gaDebugLog(1, "GameEngine::Behavior::SetVar", "unknown type");
-		}
-	}
-
+	GameEngine::Behavior::Var::create(name, element, node);
 	return node;
-}
-
-//----------------------------------------------
-
-void GameEngine::Behavior::SetVar::debugGUInode(void)
-{
-	ImGui::Text("%s:%d", m_variable.c_str(), m_value);
 }

@@ -3,13 +3,11 @@
 #pragma once
 
 #include <vector>
-#include "../gaBehaviorNode.h"
+#include "gaBVar.h"
 
 namespace GameEngine {
 	namespace Behavior {
-		class SetVar : public BehaviorNode {
-			std::string m_variable;						// list of angles to turn to
-			bool m_value;							// current one
+		class SetVar : public Var {
 		public:
 			SetVar(const char* name);
 			BehaviorNode* clone(GameEngine::BehaviorNode* p) override;
@@ -18,9 +16,6 @@ namespace GameEngine {
 
 			// Behavior engine, GameEngine::BehaviorNode* used
 			static BehaviorNode* create(const char* name, tinyxml2::XMLElement* element, GameEngine::BehaviorNode* used);// create a node
-
-			// debugger
-			void debugGUInode(void) override;							// display the component in the debugger
 		};
 	}
 }

@@ -33,12 +33,18 @@
 					<node type='Fire2Player' name='Shoot player'></node>
 					<node type='Sequence' name='Move to player position'>
 						<tree>
+							<node type='DarkForces:Move2Player' name='set the player nearby position'>
+								<variable type='vec3'>player_last_position</variable>
+							</node>
 							<node type='GameEngine:Alarm' name='walk for limited time'>
 								<message>GameEngine:SatNav_CANCEL</message>
 								<timer max='3000' min='1500' />
 							</node>
 							<node type='SatNav' name='move to player'>
-								<position type='dequeu'>player_last_positions</position>
+								<exits>
+									<exit value='true'>nearvy_player</exit>
+								</exits>
+								<position type='vec3'>player_last_position</position>
 							</node>
 						</tree>
 					</node>

@@ -11,7 +11,7 @@
 //-------------------------------------
 
 GameEngine::Behavior::CheckVar::CheckVar(const char* name) :
-	BehaviorNode(name)
+	Var(name)
 {
 }
 
@@ -24,9 +24,7 @@ BehaviorNode* GameEngine::Behavior::CheckVar::clone(GameEngine::BehaviorNode* p)
 	else {
 		cl = new GameEngine::Behavior::CheckVar(m_name);
 	}
-	GameEngine::BehaviorNode::clone(cl);
-	cl->m_variable = m_variable;
-	cl->m_value = m_value;
+	GameEngine::Behavior::Var::clone(cl);
 	return cl;
 }
 
@@ -43,43 +41,58 @@ GameEngine::BehaviorNode* GameEngine::Behavior::CheckVar::create(const char* nam
 	else {
 		node = dynamic_cast<GameEngine::Behavior::CheckVar*>(used);
 	}
-	GameEngine::BehaviorNode::create(name, element, node);
-
-	// get the variable name
-	tinyxml2::XMLElement* xmlVariable = element->FirstChildElement("variable");
-	const char* cname = xmlVariable->GetText();
-	if (cname) {
-		node->m_variable = cname;
-		const char *type = xmlVariable->Attribute("type");
-		if (strcmp(type, "bool") == 0) {
-			bool b;
-			if (xmlVariable->QueryBoolAttribute("value", &b) == tinyxml2::XML_SUCCESS) {
-				node->m_value = b;
-			}
-		}
-		else {
-			gaDebugLog(1, "GameEngine::Behavior::SetVar", "unknown type");
-		}
-	}
-
+	GameEngine::Behavior::Var::create(name, element, node);
 	return node;
 }
 
+/**
+ *
+ */
 void GameEngine::Behavior::CheckVar::init(void*)
 {
-	bool* b;
-	b = m_tree->blackboard<bool>(m_variable);
-	if (b && *b == m_value) {
-		m_status = GameEngine::BehaviorNode::Status::SUCCESSED;
-	}
-	else {
-		m_status = GameEngine::BehaviorNode::Status::FAILED;
-	}
-}
+	switch (m_type) {
+	case Type::BOOL: {
+		bool* b;
+		b = m_tree->blackboard<bool>(m_variable);
+		if (b && *b == m_value) {
+			m_status = GameEngine::BehaviorNode::Status::SUCCESSED;
+		}
+		else {
+			m_status = GameEngine::BehaviorNode::Status::FAILED;
+		}
+		break; }
 
-//----------------------------------------------
+	case Type::INT32: {
+		int32_t* b;
+		b = m_tree->blackboard<int32_t>(m_variable);
+		if (b && *b == m_ivalue) {
+			m_status = GameEngine::BehaviorNode::Status::SUCCESSED;
+		}
+		else {
+			m_status = GameEngine::BehaviorNode::Status::FAILED;
+		}
+		break; }
 
-void GameEngine::Behavior::CheckVar::debugGUInode(void)
-{
-	ImGui::Text("%s:%d", m_variable.c_str(), m_value);
+	case Type::FLOAT: {
+		float* b;
+		b = m_tree->blackboard<float>(m_variable);
+		if (b && *b == m_fvalue) {
+			m_status = GameEngine::BehaviorNode::Status::SUCCESSED;
+		}
+		else {
+			m_status = GameEngine::BehaviorNode::Status::FAILED;
+		}
+		break; }
+
+	case Type::VEC3: {
+		glm::vec3* b;
+		b = m_tree->blackboard<glm::vec3>(m_variable);
+		if (b && *b == m_v3value) {
+			m_status = GameEngine::BehaviorNode::Status::SUCCESSED;
+		}
+		else {
+			m_status = GameEngine::BehaviorNode::Status::FAILED;
+		}
+		break; }
+	}
 }

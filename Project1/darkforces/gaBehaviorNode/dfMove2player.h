@@ -1,13 +1,13 @@
 #pragma once
 
 #include <vector>
-#include "../../gaEngine/gaBehaviorNode/gaBehaviorDecorator.h"
+#include "../../gaEngine/gaBehaviorNode/gaBSetVar.h"
 
 class gaEntity;
 
 namespace DarkForces {
 	namespace Behavior {
-		class Move2Player : public GameEngine::Behavior::Decorator
+		class Move2Player : public GameEngine::Behavior::SetVar
 		{
 			glm::vec3 m_target;												// move
 

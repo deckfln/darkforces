@@ -110,7 +110,11 @@ glm::vec3 GameEngine::Behavior::MoveTo::nextWayPoint(bool normalize)
 	glm::vec3 p = m_navpoints->at(m_currentNavPoint);
 	glm::vec3 direction = p - m_entity->position();
 	direction.y = 0;	// move forward, physics will take care of problems
-
+	
+	if (glm::length2(direction) == 0) {
+		m_status = Status::REACHED_NEXT_WAYPOINT;
+		return glm::vec3(0);
+	}
 	if (normalize) {
 		direction = glm::normalize(direction) * m_speed;
 	}
