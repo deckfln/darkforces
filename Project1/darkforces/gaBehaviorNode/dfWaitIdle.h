@@ -7,8 +7,6 @@ namespace DarkForces {
 	namespace Behavior {
 		class WaitIdle : public GameEngine::BehaviorNode
 		{
-			glm::vec3 m_original;							// still position of the enemy
-
 		public:
 			WaitIdle(const char* name);
 			BehaviorNode* clone(GameEngine::BehaviorNode* p) override;

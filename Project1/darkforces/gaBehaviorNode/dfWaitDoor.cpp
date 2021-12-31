@@ -26,16 +26,23 @@ GameEngine::BehaviorNode* DarkForces::Behavior::WaitDoor::clone(GameEngine::Beha
 
 BehaviorNode* DarkForces::Behavior::WaitDoor::create(const char* name, tinyxml2::XMLElement* element, GameEngine::BehaviorNode* used)
 {
-	return new DarkForces::Behavior::WaitDoor(name);
-}
+	DarkForces::Behavior::WaitDoor* node;
 
+	if (used == nullptr) {
+		node = new DarkForces::Behavior::WaitDoor(name);
+	}
+	else {
+		node = dynamic_cast<DarkForces::Behavior::WaitDoor*>(used);
+	}
+	GameEngine::BehaviorNode::create(name, element, node);
+	return node;
+}
 
 /**
  *
  */
 void DarkForces::Behavior::WaitDoor::init(void* data)
 {
-	m_elevator = static_cast<Component::InfElevator*>(data);
 	m_entity->sendDelayedMessage(gaMessage::Action::TICK);
 
 	BehaviorNode::init(data);
@@ -46,6 +53,8 @@ void DarkForces::Behavior::WaitDoor::init(void* data)
  */
 void DarkForces::Behavior::WaitDoor::dispatchMessage(gaMessage* message, Action* r)
 {
+	DarkForces::Component::InfElevator* m_elevator = m_tree->blackboard<DarkForces::Component::InfElevator*>("wait_elevator");
+
 	if (message->m_action == gaMessage::Action::TICK) {
 		switch (m_elevator->status()) {
 		case Component::InfElevator::Status::MOVE:
@@ -56,7 +65,7 @@ void DarkForces::Behavior::WaitDoor::dispatchMessage(gaMessage* message, Action*
 		case Component::InfElevator::Status::WAIT:
 		case Component::InfElevator::Status::HOLD:
 			m_status = Status::SUCCESSED;
-			m_tree->blackboard<glm::vec3*>("wait_elevator", nullptr);
+			m_tree->blackboard<DarkForces::Component::InfElevator*>("wait_elevator", nullptr);
 			break;
 		}
 	}

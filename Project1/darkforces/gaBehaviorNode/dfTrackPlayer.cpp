@@ -72,7 +72,7 @@ void DarkForces::Behavior::TrackPlayer::init(void* data)
 			return;
 		}
 
-		m_target = glm::vec3(sound.x, m_entity->position().y, sound.z);
+		m_v3value = glm::vec3(sound.x, m_entity->position().y, sound.z);
 	}
 	else {
 		// the player may have been seen twice at the same position, so find a different position, but only go back a bit
@@ -85,7 +85,7 @@ void DarkForces::Behavior::TrackPlayer::init(void* data)
 		}
 		if (size <= 0) {
 			// player as static all the time
-			m_target = playerLastPositions.back();
+			m_v3value = playerLastPositions.back();
 		}
 		else {
 			glm::vec2 p1d(p1.x, p1.z);
@@ -98,11 +98,10 @@ void DarkForces::Behavior::TrackPlayer::init(void* data)
 #endif
 
 			direction = glm::normalize(p1d - p2d);
-			m_target = glm::vec3(direction.x + p1d.x, m_entity->position().y, direction.y + p1d.y);
+			m_v3value = glm::vec3(direction.x + p1d.x, m_entity->position().y, direction.y + p1d.y);
 		}
 
 	}
 
-	m_v3value = m_target;
-	GameEngine::Behavior::SetVar::init(&m_target);
+	GameEngine::Behavior::SetVar::init(nullptr);
 }

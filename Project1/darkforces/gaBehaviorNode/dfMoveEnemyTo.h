@@ -6,7 +6,6 @@ namespace DarkForces {
 	namespace Behavior {
 		class MoveEnemyTo : public GameEngine::BehaviorNode
 		{
-			glm::vec3 m_destination;
 		public:
 			MoveEnemyTo(const char* name);
 			BehaviorNode* clone(GameEngine::BehaviorNode* p) override;

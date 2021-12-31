@@ -12,7 +12,6 @@
 #include "../gaBehaviorNode/dfWaitIdle.h"
 #include "../gaBehaviorNode/dfMove2player.h"
 #include "../gaBehaviorNode/dfFire2Player.h"
-#include "../gaBehaviorNode/dfAttackPlayer.h"
 #include "../gaBehaviorNode/dfMoveToAndAttack.h"
 #include "../gaBehaviorNode/dfTrackPlayer.h"
 

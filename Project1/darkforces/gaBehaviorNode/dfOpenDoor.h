@@ -8,8 +8,6 @@ namespace DarkForces {
 	namespace Behavior {
 		class OpenDoor : public GameEngine::Behavior::Sequence
 		{
-			void* m_collision = nullptr;
-
 		public:
 			OpenDoor(const char* name);
 			BehaviorNode* clone(GameEngine::BehaviorNode* p) override;

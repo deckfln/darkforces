@@ -8,8 +8,6 @@
 namespace DarkForces {
 	namespace Behavior {
 		class TrackPlayer : public GameEngine::Behavior::SetVar {
-			glm::vec3 m_target;								// navigation for satnav
-
 		public:
 			TrackPlayer(const char* name);
 			BehaviorNode* clone(GameEngine::BehaviorNode* p) override;

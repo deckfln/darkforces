@@ -49,7 +49,6 @@ const float c_direction = pi/2.0f ; // 1.0f;
 /**
  * Register al DarkForces behavior nodes on the GameEngine
  */
-#include "darkforces/gaBehaviorNode/dfAttackPlayer.h"
 #include "darkforces/gaBehaviorNode/dfFire2Player.h"
 #include "darkforces/gaBehaviorNode/dfGotoTrigger.h"
 #include "darkforces/gaBehaviorNode/dfMove2player.h"
@@ -84,7 +83,6 @@ void myDarkForces::myDarkForces::registerBThandlers(void)
  */
 void myDarkForces::myDarkForces::registerBTNodes(void)
 {
-	GameEngine::Behavior::registerNode("AttackPlayer", DarkForces::Behavior::AttackPlayer::create);
 	GameEngine::Behavior::registerNode("Fire2Player", DarkForces::Behavior::Fire2Player::create);
 	GameEngine::Behavior::registerNode("GotoTrigger", DarkForces::Behavior::GotoTrigger::create);
 	GameEngine::Behavior::registerNode("DarkForces:Move2Player", DarkForces::Behavior::Move2Player::create);

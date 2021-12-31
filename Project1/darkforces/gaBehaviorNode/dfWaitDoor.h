@@ -10,8 +10,6 @@ namespace DarkForces {
 	namespace Behavior {
 		class WaitDoor : public GameEngine::BehaviorNode
 		{
-			Component::InfElevator* m_elevator;
-
 		public:
 			WaitDoor(const char* name);
 			BehaviorNode* clone(GameEngine::BehaviorNode* p) override;

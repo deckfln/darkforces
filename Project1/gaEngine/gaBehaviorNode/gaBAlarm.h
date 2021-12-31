@@ -12,7 +12,7 @@ namespace GameEngine {
 			int m_maxDelay = 0;
 			uint32_t m_timer = 0;
 			uint32_t m_message = 0;
-			uint32_t m_alarmID = 0;
+
 		public:
 			Alarm(const char* name);
 			BehaviorNode* clone(GameEngine::BehaviorNode* p) override;

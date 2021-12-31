@@ -52,26 +52,25 @@ void DarkForces::Behavior::Move2Player::init(void* data)
 	glm::vec3 move2 = playerLastPositions.back();
 
 	// stop 8 clicks away from the player
-	m_target = move2 - m_entity->position();
-	float l = glm::length(m_target) - m_entity->radius() * 8.0f;
+	m_v3value = move2 - m_entity->position();
+	float l = glm::length(m_v3value) - m_entity->radius() * 8.0f;
 	if (l < 0) {
 		m_tree->blackboard<bool>("nearby_player", true);
 		m_status = Status::SUCCESSED;
 		return;
 	}
 
-	m_target = glm::normalize(m_target) * l;
-	if (glm::length(m_target) < m_entity->radius()) {
+	m_v3value = glm::normalize(m_v3value) * l;
+	if (glm::length(m_v3value) < m_entity->radius()) {
 		m_tree->blackboard<bool>("nearby_player", true);
 		m_status = Status::SUCCESSED;
 		return;
 	}
 
-	m_target += m_entity->position();
+	m_v3value += m_entity->position();
 	//m_target.y = m_entity->position().y;
 
-	m_v3value = m_target;
 	m_tree->blackboard<bool>("nearby_player", false);
 
-	GameEngine::Behavior::SetVar::init(&m_target);
+	GameEngine::Behavior::SetVar::init(nullptr);
 }

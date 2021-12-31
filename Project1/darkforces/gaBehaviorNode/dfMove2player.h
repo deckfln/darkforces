@@ -9,8 +9,6 @@ namespace DarkForces {
 	namespace Behavior {
 		class Move2Player : public GameEngine::Behavior::SetVar
 		{
-			glm::vec3 m_target;												// move
-
 		public:
 			Move2Player(const char* name);
 			BehaviorNode* clone(GameEngine::BehaviorNode* p) override;

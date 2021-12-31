@@ -41,7 +41,6 @@ enum Child {
 
 void DarkForces::Behavior::OpenDoor::init(void *data)
 {
-	m_collision = data;
 	m_tree->blackboard("lastCollision", nullptr);
 	GameEngine::Behavior::Sequence::init(data);
 }

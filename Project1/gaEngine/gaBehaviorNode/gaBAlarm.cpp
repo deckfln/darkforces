@@ -80,7 +80,9 @@ void GameEngine::Behavior::Alarm::init(void*)
 {
 	m_timer = (rand() % (m_maxDelay - m_minDelay)) + m_minDelay;
 	GameEngine::Alarm alarm(m_entity, m_timer, m_message);
-	m_alarmID = g_gaWorld.registerAlarmEvent(alarm);
+
+	uint32_t alarmID = g_gaWorld.registerAlarmEvent(alarm);
+	m_tree->blackboard<uint32_t>("walk_timeout_alarm", alarmID);
 
 	m_status = GameEngine::BehaviorNode::Status::SUCCESSED;
 }

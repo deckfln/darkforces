@@ -726,9 +726,6 @@
     <ClCompile Include="gaEngine\gaBehaviorNode\gaMoveTo.cpp">
       <Filter>Fichiers sources\gaEngine\gaBehaviorNode</Filter>
     </ClCompile>
-    <ClCompile Include="darkforces\gaBehaviorNode\dfAttackPlayer.cpp">
-      <Filter>Fichiers sources\Dark Forces\gaBehaviorNode</Filter>
-    </ClCompile>
     <ClCompile Include="gaEngine\gaBehaviorNode\gaBehaviorSequence.cpp">
       <Filter>Fichiers sources\gaEngine\gaBehaviorNode</Filter>
     </ClCompile>
@@ -1456,9 +1453,6 @@
     </ClInclude>
     <ClInclude Include="gaEngine\gaBehaviorNode\gaMoveTo.h">
       <Filter>Fichiers d%27en-tête\gaEngine\gaBehaviorNode</Filter>
-    </ClInclude>
-    <ClInclude Include="darkforces\gaBehaviorNode\dfAttackPlayer.h">
-      <Filter>Fichiers d%27en-tête\DarkForces\gaBehaviorNode</Filter>
     </ClInclude>
     <ClInclude Include="gaEngine\gaBehaviorNode\gaBehaviorSequence.h">
       <Filter>Fichiers d%27en-tête\gaEngine\gaBehaviorNode</Filter>

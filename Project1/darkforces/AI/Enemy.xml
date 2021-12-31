@@ -17,7 +17,7 @@
 				<exit value='true'>heard_sound</exit>
 			</exits>
 		</node>
-		<node type='AttackPlayer' name='attack and track'>
+		<node type='Loop' name='attack and track'>
 			<tree>
 				<node type='Loop' name='find the player, move toward him and shoot at him'>
 					<condition>until_one_fail</condition>
@@ -100,6 +100,7 @@
 				<node type='MoveEnemyTo' name='stroll back to wait position'>
 					<tree>
 						<node type='SatNav' name='direct go to wait position'>
+							<position type='vec3'>static_position</position>
 							<exits>
 								<exit value='true'>player_visible</exit>
 								<exit value='true'>hit_bullet</exit>

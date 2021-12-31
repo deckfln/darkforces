@@ -45,8 +45,7 @@ BehaviorNode* DarkForces::Behavior::MoveEnemyTo::create(const char* name, tinyxm
 
 void DarkForces::Behavior::MoveEnemyTo::init(void* data)
 {
-	m_destination = m_tree->blackboard<glm::vec3>("static_position");
-	BehaviorNode::init(&m_destination);
+	BehaviorNode::init(nullptr);
 }
 
 
@@ -62,7 +61,7 @@ void DarkForces::Behavior::MoveEnemyTo::execute(Action* r)
 
 	switch (m_runningChild) {
 	case Child::init:
-		return startChild(r, Child::move_to, &m_destination);
+		return startChild(r, Child::move_to, nullptr);
 
 	case Child::move_to: {
 		if (childStatus == GameEngine::BehaviorNode::Status::SUCCESSED) {
@@ -88,7 +87,7 @@ void DarkForces::Behavior::MoveEnemyTo::execute(Action* r)
 		}
 
 		if (elevator) {
-			m_tree->blackboard("wait_elevator", elevator);
+			m_tree->blackboard<DarkForces::Component::InfElevator*>("wait_elevator", elevator);
 
 			// so we are colliding with an elevator, check the status of the elevator
 			switch (elevator->status()) {
@@ -115,7 +114,7 @@ void DarkForces::Behavior::MoveEnemyTo::execute(Action* r)
 	case wait_door:
 		if (childStatus == Status::SUCCESSED) {
 			// now that the door finished moving, restart the move
-			return startChild(r, Child::move_to, &m_destination);
+			return startChild(r, Child::move_to, nullptr);
 		}
 		m_status = Status::FAILED;
 		break;
@@ -123,7 +122,7 @@ void DarkForces::Behavior::MoveEnemyTo::execute(Action* r)
 	case open_door:
 		if (childStatus == Status::SUCCESSED) {
 			// now that the door is open, restart the move
-			return startChild(r, Child::move_to, &m_destination);
+			return startChild(r, Child::move_to, nullptr);
 		}
 		m_status = Status::FAILED;
 		break;
@@ -142,8 +141,6 @@ uint32_t DarkForces::Behavior::MoveEnemyTo::recordState(void* record)
 	BehaviorNode::recordState(record);
 
 	uint32_t len = sizeof(FlightRecorder::MoveEnemyTo);
-	r->destination = m_destination;
-
 	r->node.size = len;
 	return r->node.size;
 }
@@ -153,8 +150,6 @@ uint32_t DarkForces::Behavior::MoveEnemyTo::loadState(void* record)
 	BehaviorNode::loadState(record);
 
 	FlightRecorder::MoveEnemyTo* r = static_cast<FlightRecorder::MoveEnemyTo*>(record);
-
-	m_destination = r->destination;
 
 	return r->node.size;
 }
