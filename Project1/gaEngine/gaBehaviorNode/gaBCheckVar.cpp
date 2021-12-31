@@ -52,9 +52,8 @@ void GameEngine::Behavior::CheckVar::init(void*)
 {
 	switch (m_type) {
 	case Type::BOOL: {
-		bool* b;
-		b = m_tree->blackboard<bool>(m_variable);
-		if (b && *b == m_value) {
+		bool& b = m_tree->blackboard<bool>(m_variable);
+		if (b == m_value) {
 			m_status = GameEngine::BehaviorNode::Status::SUCCESSED;
 		}
 		else {
@@ -63,9 +62,8 @@ void GameEngine::Behavior::CheckVar::init(void*)
 		break; }
 
 	case Type::INT32: {
-		int32_t* b;
-		b = m_tree->blackboard<int32_t>(m_variable);
-		if (b && *b == m_ivalue) {
+		int32_t& b = m_tree->blackboard<int32_t>(m_variable);
+		if (b == m_ivalue) {
 			m_status = GameEngine::BehaviorNode::Status::SUCCESSED;
 		}
 		else {
@@ -74,9 +72,8 @@ void GameEngine::Behavior::CheckVar::init(void*)
 		break; }
 
 	case Type::FLOAT: {
-		float* b;
-		b = m_tree->blackboard<float>(m_variable);
-		if (b && *b == m_fvalue) {
+		float& b = m_tree->blackboard<float>(m_variable);
+		if (b == m_fvalue) {
 			m_status = GameEngine::BehaviorNode::Status::SUCCESSED;
 		}
 		else {
@@ -85,9 +82,8 @@ void GameEngine::Behavior::CheckVar::init(void*)
 		break; }
 
 	case Type::VEC3: {
-		glm::vec3* b;
-		b = m_tree->blackboard<glm::vec3>(m_variable);
-		if (b && *b == m_v3value) {
+		glm::vec3& b = m_tree->blackboard<glm::vec3>(m_variable);
+		if (b == m_v3value) {
 			m_status = GameEngine::BehaviorNode::Status::SUCCESSED;
 		}
 		else {

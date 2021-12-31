@@ -17,7 +17,6 @@ uint32_t GameEngine::Component::BehaviorTree::m_lastNode = 0;
 GameEngine::Component::BehaviorTree::BehaviorTree(void):
 	gaComponent(gaComponent::BehaviorTree)
 {
-	blackboard("player_last_positions", (void*)&m_playerLastPositions);
 }
 
 GameEngine::Component::BehaviorTree::BehaviorTree(BehaviorNode* root):
@@ -45,11 +44,6 @@ void GameEngine::Component::BehaviorTree::parse(const std::string& data, const s
 
 }
 
-void GameEngine::Component::BehaviorTree::blackboard(const std::string key, void* value)
-{
-	m_blackboard[key] = value;
-}
-
 //---------------------------------------------
 
 /**
@@ -65,13 +59,13 @@ void GameEngine::Component::BehaviorTree::handlers(uint32_t message, msgHandler 
  */
 bool GameEngine::Component::BehaviorTree::onViewPlayer(gaMessage* message)
 {
-	std::deque<glm::vec3>* playerLastPositions = blackboard<std::deque<glm::vec3>>("player_last_positions");
+	std::deque<glm::vec3>& playerLastPositions = blackboard<std::deque<glm::vec3>>("player_last_positions");
 
 	// player is visible, because we just received a notification
-	if (playerLastPositions->size() >= 32) {
-		playerLastPositions->pop_front();
+	if (playerLastPositions.size() >= 32) {
+		playerLastPositions.pop_front();
 	}
-	playerLastPositions->push_back(message->m_v3value);
+	playerLastPositions.push_back(message->m_v3value);
 
 	blackboard<bool>("player_visible", true);
 

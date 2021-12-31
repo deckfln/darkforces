@@ -61,10 +61,9 @@ GameEngine::BehaviorNode::~BehaviorNode(void)
  */
 bool GameEngine::BehaviorNode::conditionMet(void)
 {
-	bool* condition;
 	for (auto& exit : m_exit) {
-		condition = m_tree->blackboard<bool>(exit.first);
-		if (condition && *condition == exit.second) {
+		bool& condition = m_tree->blackboard<bool>(exit.first);
+		if (condition == exit.second) {
 			return true;
 		}
 	}

@@ -59,33 +59,33 @@ void DarkForces::Behavior::TrackPlayer::init(void* data)
 	}
 	*/
 	// Pick the last 2 known positions and run the entity along the axe up to a wall
-	std::deque<glm::vec3>* playerLastPositions = m_tree->blackboard<std::deque<glm::vec3>>("player_last_positions");
-	size_t size = playerLastPositions->size();
+	std::deque<glm::vec3>& playerLastPositions = m_tree->blackboard<std::deque<glm::vec3>>("player_last_positions");
+	size_t size = playerLastPositions.size();
 	glm::vec2 direction;
 
 	if (size < 2) {
 		// if we don't have enough position of the player, were and when did we last heard a blaster shot
 
-		glm::vec3* sound = m_tree->blackboard<glm::vec3>("last_heard_sound");
-		if (sound == nullptr) {
+		glm::vec3& sound = m_tree->blackboard<glm::vec3>("last_heard_sound");
+		if (sound == glm::vec3(0)) {
 			m_status = Status::FAILED;
 			return;
 		}
 
-		m_target = glm::vec3(sound->x, m_entity->position().y, sound->z);
+		m_target = glm::vec3(sound.x, m_entity->position().y, sound.z);
 	}
 	else {
 		// the player may have been seen twice at the same position, so find a different position, but only go back a bit
-		glm::vec3 p1 = playerLastPositions->at(--size);
-		glm::vec3 p2 = playerLastPositions->at(--size);
+		glm::vec3 p1 = playerLastPositions.at(--size);
+		glm::vec3 p2 = playerLastPositions.at(--size);
 		int i = 5;
 
 		while (p1.x == p2.x && p1.z == p2.z && size > 0) {
-			p2 = playerLastPositions->at(--size);
+			p2 = playerLastPositions.at(--size);
 		}
 		if (size <= 0) {
 			// player as static all the time
-			m_target = playerLastPositions->back();
+			m_target = playerLastPositions.back();
 		}
 		else {
 			glm::vec2 p1d(p1.x, p1.z);

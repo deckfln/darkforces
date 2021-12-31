@@ -45,7 +45,7 @@ BehaviorNode* DarkForces::Behavior::MoveEnemyTo::create(const char* name, tinyxm
 
 void DarkForces::Behavior::MoveEnemyTo::init(void* data)
 {
-	m_destination = *(m_tree->blackboard<glm::vec3>("static_position"));
+	m_destination = m_tree->blackboard<glm::vec3>("static_position");
 	BehaviorNode::init(&m_destination);
 }
 
@@ -71,21 +71,19 @@ void DarkForces::Behavior::MoveEnemyTo::execute(Action* r)
 		}
 
 		// the move_to node failed, it probably collided with something
-		struct GameEngine::Physics::CollisionList* collidedList = m_tree->blackboard<struct GameEngine::Physics::CollisionList>("lastCollision");
-		if (collidedList != nullptr && collidedList->size == 0) {
+		struct GameEngine::Physics::CollisionList& collidedList = m_tree->blackboard<struct GameEngine::Physics::CollisionList>("lastCollision");
+		if (collidedList.size == 0) {
 			return failed(r);
 		}
 
 		DarkForces::Component::InfElevator* elevator = nullptr;
-		if (collidedList != nullptr) {
-			gaEntity* collided;
-			for (auto i = 0; i < collidedList->size; i++) {
-				collided = collidedList->entities[i];
-				elevator = static_cast<DarkForces::Component::InfElevator*>(collided->findComponent(DF_COMPONENT_INF_ELEVATOR));
+		gaEntity* collided;
+		for (auto i = 0; i < collidedList.size; i++) {
+			collided = collidedList.entities[i];
+			elevator = static_cast<DarkForces::Component::InfElevator*>(collided->findComponent(DF_COMPONENT_INF_ELEVATOR));
 
-				if (elevator != nullptr) {
-					break;
-				}
+			if (elevator != nullptr) {
+				break;
 			}
 		}
 
@@ -146,16 +144,6 @@ uint32_t DarkForces::Behavior::MoveEnemyTo::recordState(void* record)
 	uint32_t len = sizeof(FlightRecorder::MoveEnemyTo);
 	r->destination = m_destination;
 
-	DarkForces::Component::InfElevator* elevator = m_tree->blackboard<DarkForces::Component::InfElevator>("wait_elevator");
-	if (elevator) {
-		gaEntity* entity = elevator->entity();
-		strcpy_s(&r->wait_elevator[0], 1024, entity->name().c_str());
-		len += entity->name().size() + 1;
-	}
-	else {
-		r->wait_elevator[0] = 0;
-	}
-
 	r->node.size = len;
 	return r->node.size;
 }
@@ -168,10 +156,5 @@ uint32_t DarkForces::Behavior::MoveEnemyTo::loadState(void* record)
 
 	m_destination = r->destination;
 
-	if (r->wait_elevator[0] != 0) {
-		gaEntity* entity = g_gaWorld.getEntity(r->wait_elevator);
-		DarkForces::Component::InfElevator* elevator = dynamic_cast<DarkForces::Component::InfElevator*>(entity->findComponent(DF_COMPONENT_INF_ELEVATOR));
-		m_tree->blackboard("wait_elevator", elevator);
-	}
 	return r->node.size;
 }

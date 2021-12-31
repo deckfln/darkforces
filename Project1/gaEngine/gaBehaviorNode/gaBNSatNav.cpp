@@ -83,16 +83,16 @@ void GameEngine::Behavior::SatNav::init(void *data)
 	if (m_move2variable) {
 		// load from a variable
 		if (m_variable_type == "dequeu") {
-			std::deque<glm::vec3>* playerLastPositions = m_tree->blackboard<std::deque<glm::vec3>>(m_destName);
-			if (playerLastPositions->size() == 0) {
+			std::deque<glm::vec3>& playerLastPositions = m_tree->blackboard<std::deque<glm::vec3>>(m_destName);
+			if (playerLastPositions.size() == 0) {
 				BehaviorNode::m_status = BehaviorNode::Status::FAILED;
 				return;
 			}
-			m_destination = playerLastPositions->back();
+			m_destination = playerLastPositions.back();
 		}
 		else if (m_variable_type == "vec3") {
-			glm::vec3* playerLastPositions = m_tree->blackboard<glm::vec3>(m_destName);
-			m_destination = *playerLastPositions;
+			glm::vec3& playerLastPositions = m_tree->blackboard<glm::vec3>(m_destName);
+			m_destination = playerLastPositions;
 		}
 	}
 	else {
@@ -127,8 +127,6 @@ void GameEngine::Behavior::SatNav::onGoto(gaMessage* message)
 	else {
 		m_destination = *(static_cast<glm::vec3*>(message->m_extra));
 	}
-
-	m_tree->blackboard("final_target", &m_destination);
 
 	init(&m_destination);
 }

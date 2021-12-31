@@ -39,8 +39,8 @@ BehaviorNode* DarkForces::Behavior::MoveToAndAttack::create(const char* name, ti
  */
 void DarkForces::Behavior::MoveToAndAttack::execute(Action* r)
 {
-	bool* b = m_tree->blackboard<bool>("player_visible");
-	if (*b == false) {
+	bool& b = m_tree->blackboard<bool>("player_visible");
+	if (b == false) {
 		return failed(r);
 	}
 

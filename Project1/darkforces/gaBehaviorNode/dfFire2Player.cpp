@@ -13,8 +13,8 @@
 void DarkForces::Behavior::Fire2Player::fireNow(void)
 {
 	// and fire
-	std::deque<glm::vec3>* playerLastPositions = m_tree->blackboard<std::deque<glm::vec3>>("player_last_positions");
-	const glm::vec3& p = playerLastPositions->back();
+	std::deque<glm::vec3>& playerLastPositions = m_tree->blackboard<std::deque<glm::vec3>>("player_last_positions");
+	const glm::vec3& p = playerLastPositions.back();
 	m_direction = glm::normalize(p - m_entity->position());
 
 	//printf("%.2f,%.2f,%.2f,%.2f,%.2f,%.2f\n", p.x, p.z, m_entity->position().x, m_entity->position().z, m_direction.x, m_direction.z);

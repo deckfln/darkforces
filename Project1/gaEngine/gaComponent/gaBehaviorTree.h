@@ -21,9 +21,6 @@ namespace GameEngine {
 			void parse(const std::string& data,
 				const std::map<std::string, std::string>& includes);// create a tree from XML data
 
-			// blackboard management
-			void blackboard(const std::string key, void *value);
-
 			template <typename T>
 			void blackboard(const std::string key, const T& value);
 
@@ -31,7 +28,7 @@ namespace GameEngine {
 			void blackboard(const std::string key, const T* value);
 
 			template <typename T>
-			T* blackboard(const std::string key);
+			T& blackboard(const std::string key);
 
 			void dispatchMessage(gaMessage* message) override;	// let a component deal with a situation
 
@@ -59,7 +56,6 @@ namespace GameEngine {
 			BehaviorNode* m_root = nullptr;
 			BehaviorNode* m_current = nullptr;
 			bool m_instanciated = false;
-			std::deque<glm::vec3> m_playerLastPositions;
 
 			std::map<std::string, void*> m_blackboard;
 			std::vector<BehaviorNode*> m_nodes;					// index of all nodes
@@ -95,9 +91,13 @@ namespace GameEngine {
 		}
 
 		template<typename T>
-		inline T* BehaviorTree::blackboard(const std::string key)
+		inline T& BehaviorTree::blackboard(const std::string key)
 		{
-			return static_cast<T*>(m_blackboard[key]);
+			if (m_blackboard[key] == nullptr) {
+				m_blackboard[key] = new T;
+			}
+
+			return *(static_cast<T*>(m_blackboard[key]));
 		}
 	}
 }

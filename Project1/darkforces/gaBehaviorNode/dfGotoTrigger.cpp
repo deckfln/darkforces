@@ -115,9 +115,9 @@ void DarkForces::Behavior::GotoTrigger::execute(Action *r)
 		return succeeded(r);
 	}
 
-	struct GameEngine::Physics::CollisionList* collidedList = m_tree->blackboard<struct GameEngine::Physics::CollisionList>("lastCollision");
+	struct GameEngine::Physics::CollisionList& collidedList = m_tree->blackboard<struct GameEngine::Physics::CollisionList>("lastCollision");
 
-	if (collidedList != nullptr && collidedList->size == 0) {
+	if (collidedList.size == 0) {
 		return failed(r);
 	}
 
@@ -127,14 +127,12 @@ void DarkForces::Behavior::GotoTrigger::execute(Action *r)
 	}
 
 	// check if we are colliding with the destination
-	if (collidedList != nullptr) {
-		gaEntity* entity;
-		for (auto i = 0; i < collidedList->size; i++) {
-			entity = collidedList->entities[i];
+	gaEntity* entity;
+	for (auto i = 0; i < collidedList.size; i++) {
+		entity = collidedList.entities[i];
 
-			if (m_targetTrigger == entity) {
-				return activate_trigger(r);
-			}
+		if (m_targetTrigger == entity) {
+			return activate_trigger(r);
 		}
 	}
 

@@ -43,13 +43,13 @@ void DarkForces::Behavior::Move2Player::init(void* data)
 {
 	// this could be the real position (player is visible)
 	// or the last known position (player is hidden)
-	std::deque<glm::vec3>* playerLastPositions = m_tree->blackboard<std::deque<glm::vec3>>("player_last_positions");
-	if (playerLastPositions->size() == 0) {
+	std::deque<glm::vec3>& playerLastPositions = m_tree->blackboard<std::deque<glm::vec3>>("player_last_positions");
+	if (playerLastPositions.size() == 0) {
 		m_status = Status::FAILED;
 		return;
 	}
 
-	glm::vec3 move2 = playerLastPositions->back();
+	glm::vec3 move2 = playerLastPositions.back();
 
 	// stop 8 clicks away from the player
 	m_target = move2 - m_entity->position();

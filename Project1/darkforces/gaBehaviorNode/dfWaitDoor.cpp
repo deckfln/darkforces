@@ -56,7 +56,7 @@ void DarkForces::Behavior::WaitDoor::dispatchMessage(gaMessage* message, Action*
 		case Component::InfElevator::Status::WAIT:
 		case Component::InfElevator::Status::HOLD:
 			m_status = Status::SUCCESSED;
-			m_tree->blackboard("wait_elevator", nullptr);
+			m_tree->blackboard<glm::vec3*>("wait_elevator", nullptr);
 			break;
 		}
 	}
