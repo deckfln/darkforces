@@ -32,7 +32,7 @@ static const std::map<const char*, GameEngine::Behavior::Value::Type> g_types1 =
 /**
  * initialize variable from XML
  */
-void GameEngine::Behavior::Value::set(tinyxml2::XMLElement* xmlVar, GameEngine::Component::BehaviorTree* tree)
+void GameEngine::Behavior::Value::set(tinyxml2::XMLElement* xmlVar)
 {
 	const char* type = xmlVar->Attribute("type");
 	for (auto& t : g_types1) {

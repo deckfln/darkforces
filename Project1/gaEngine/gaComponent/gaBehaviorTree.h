@@ -30,6 +30,9 @@ namespace GameEngine {
 			template <typename T>
 			T& blackboard(const std::string key);
 
+			template <typename T>
+			T* pBlackboard(const std::string key);
+
 			void dispatchMessage(gaMessage* message) override;	// let a component deal with a situation
 
 			inline uint32_t lastAttrId(void) { return m_lastId++; };
@@ -84,9 +87,6 @@ namespace GameEngine {
 		template<typename T>
 		inline void BehaviorTree::blackboard(const std::string key, const T* value)
 		{
-			if (m_blackboard[key] == nullptr) {
-				m_blackboard[key] = new T;
-			}
 			m_blackboard[key] = (void*)value;
 		}
 
@@ -98,6 +98,12 @@ namespace GameEngine {
 			}
 
 			return *(static_cast<T*>(m_blackboard[key]));
+		}
+
+		template<typename T>
+		inline T* BehaviorTree::pBlackboard(const std::string key)
+		{
+			return static_cast<T*>(m_blackboard[key]);
 		}
 	}
 }

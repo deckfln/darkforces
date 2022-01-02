@@ -29,6 +29,7 @@ GameEngine::BehaviorNode* DarkForces::Behavior::Activate::clone(GameEngine::Beha
 		cl = new DarkForces::Behavior::Activate(m_name);
 	}
 	GameEngine::BehaviorNode::clone(cl);
+	cl->m_variable = m_variable;
 	return cl;
 }
 
@@ -44,6 +45,11 @@ BehaviorNode* DarkForces::Behavior::Activate::create(const char* name, tinyxml2:
 	}
 	GameEngine::BehaviorNode::create(name, element, node);
 
+	tinyxml2::XMLElement* xml = element->FirstChildElement("variable");
+	if (xml) {
+		node->m_variable = xml->GetText();
+	}
+
 	return node;
 }
 
@@ -52,7 +58,7 @@ void DarkForces::Behavior::Activate::init(void *data)
 	// we are on a natural move, to the elevator can be activated
 	// test all triggers of the object
 
-	const std::string& trigger = m_tree->blackboard<std::string>("trigger");
+	const std::string& trigger = m_tree->blackboard<std::string>(m_variable);
 
 	m_entity->sendMessage(trigger, DarkForces::Message::TRIGGER);
 

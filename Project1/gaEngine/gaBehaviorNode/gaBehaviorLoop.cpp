@@ -4,8 +4,9 @@
 #include <tinyxml2.h>
 
 static std::map<const char*, GameEngine::Behavior::Loop::Condition> g_conditions = {
-	{"until_all_fail", GameEngine::Behavior::Loop::Condition::UNTIL_ALL_FAIL},		// return the status of the child
-	{"until_one_fail", GameEngine::Behavior::Loop::Condition::UNTIL_ONE_FAIL},			// return the inverse of the child status
+	{"until_all_fail", GameEngine::Behavior::Loop::Condition::UNTIL_ALL_FAIL},
+	{"until_one_fail", GameEngine::Behavior::Loop::Condition::UNTIL_ONE_FAIL},
+	{"until_all_success", GameEngine::Behavior::Loop::Condition::UNTIL_ALL_SUCCCES},
 };
 
 GameEngine::Behavior::Loop::Loop(const char *name) : 
@@ -55,6 +56,42 @@ GameEngine::BehaviorNode* GameEngine::Behavior::Loop::create(const char* name, t
 /**
  *
  */
+bool GameEngine::Behavior::Loop::endLoop(void)
+{
+	Status status;
+	uint32_t fail=0;
+	uint32_t sucess = 0;
+
+	for (auto& child : m_children) {
+		status = child->status();
+		switch (status) {
+		case Status::FAILED:
+			fail++;
+			break;
+		case Status::SUCCESSED:
+			sucess++;
+			break;
+		}
+	}
+
+	if (m_condition == Condition::UNTIL_ALL_FAIL) {
+		if (fail == m_children.size()) {
+			m_status = Status::FAILED;
+			return true;
+		}
+	}
+
+	if (sucess == m_children.size()) {
+		m_status = Status::SUCCESSED;
+		return true;
+	}
+
+	return false;
+}
+
+/**
+ *
+ */
 void GameEngine::Behavior::Loop::execute(Action* r)
 {
 	// exit if init changed the status
@@ -81,34 +118,22 @@ void GameEngine::Behavior::Loop::execute(Action* r)
 
 	// we are in the default loop
 	switch (m_condition) {
-	case Condition::UNTIL_ALL_FAIL: {
-		// check if all children failed
-		uint32_t fail = true;
-		for (auto& child : m_children) {
-			status = child->status();
-			if (status != Status::FAILED) {
-				fail = false;
-				break;
-			}
+	case Condition::UNTIL_ALL_FAIL:
+	case Condition::UNTIL_ALL_SUCCCES:
+		// loop over the nodes
+		m_runningChild++;
+		if (m_runningChild >= m_children.size()) {
+			m_runningChild = 0;
+			if (endLoop()) {
+				// handle end of the loop
+				return GameEngine::BehaviorNode::execute(r);
+			}		
 		}
+		onChildStart(m_runningChild);
+		return startChild(r, m_runningChild, r->data);
 
-		// if one succeeded continue the loop
-		if (!fail) {
-			// loop over the nodes
-			m_runningChild++;
-			if (m_runningChild >= m_children.size()) {
-				m_runningChild = 0;
-			}
-			onChildStart(m_runningChild);
-			return startChild(r, m_runningChild, r->data);
-		}
-
-		// drop out of the loop if all failed
-		return failed(r);
-		break;}
-
-	case Condition::UNTIL_ONE_FAIL: {
-		switch (m_children[m_runningChild]->status()) {
+	case Condition::UNTIL_ONE_FAIL:
+		switch (status) {
 		case Status::SUCCESSED:
 			// loop over the nodes
 			m_runningChild++;
@@ -127,7 +152,7 @@ void GameEngine::Behavior::Loop::execute(Action* r)
 		default:
 			r->action = BehaviorNode::Status::RUNNING;
 			break;
-		}}
+		}
 	}
 }
 
@@ -151,6 +176,10 @@ void GameEngine::Behavior::Loop::debugGUInode(void)
 
 	case Condition::UNTIL_ONE_FAIL:
 		ImGui::Text("Loop until one fail");
+		break;
+
+	case Condition::UNTIL_ALL_SUCCCES:
+		ImGui::Text("Loop until all success");
 		break;
 	}
 }

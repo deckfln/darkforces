@@ -61,6 +61,7 @@ const float c_direction = pi/2.0f ; // 1.0f;
 #include "darkforces/gaBehaviorNode/dfBSound.h"
 #include "darkforces/gaBehaviorNode/dfBSetVar.h"
 #include "darkforces/gaBehaviorNode/dfBActivate.h"
+#include "darkforces/gaBehaviorNode/dfBFindElevator.h"
 
  /**
   * register darkforces entities for the flight recorder
@@ -97,6 +98,7 @@ void myDarkForces::myDarkForces::registerBTNodes(void)
 	GameEngine::Behavior::registerNode("darkForces:sound", DarkForces::Behavior::Sound::create);
 	GameEngine::Behavior::registerNode("DarkForces:SetVar", DarkForces::Behavior::SetVar::create);
 	GameEngine::Behavior::registerNode("DarkForces:Activate", DarkForces::Behavior::Activate::create);
+	GameEngine::Behavior::registerNode("DarkForces:FindElevator", DarkForces::Behavior::FindElevator::create);
 }
 
 #ifdef _DEBUG

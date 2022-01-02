@@ -192,7 +192,8 @@
     <ClCompile Include="darkforces\dfVOC.cpp" />
     <ClCompile Include="darkforces\dfVue.cpp" />
     <ClCompile Include="darkforces\dfWall.cpp" />
-    <ClCompile Include="darkforces\gaBehaviorNode\dfActivate.cpp" />
+    <ClCompile Include="darkforces\gaBehaviorNode\dfBActivate.cpp" />
+    <ClCompile Include="darkforces\gaBehaviorNode\dfBFindElevator.cpp" />
     <ClCompile Include="darkforces\gaBehaviorNode\dfBSetVar.cpp" />
     <ClCompile Include="darkforces\gaBehaviorNode\dfBSound.cpp" />
     <ClCompile Include="darkforces\gaBehaviorNode\dfFire2Player.cpp" />
@@ -432,6 +433,7 @@
     <ClInclude Include="darkforces\flightRecorder\frSpriteAnimated.h" />
     <ClInclude Include="darkforces\flightRecorder\Object3D.h" />
     <ClInclude Include="darkforces\gaBehaviorNode\dfBActivate.h" />
+    <ClInclude Include="darkforces\gaBehaviorNode\dfBFindElevator.h" />
     <ClInclude Include="darkforces\gaBehaviorNode\dfBSetVar.h" />
     <ClInclude Include="darkforces\gaBehaviorNode\dfBSound.h" />
     <ClInclude Include="darkforces\gaBehaviorNode\dfFire2Player.h" />

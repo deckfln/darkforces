@@ -87,7 +87,7 @@ void DarkForces::Behavior::MoveEnemyTo::execute(Action* r)
 		}
 
 		if (elevator) {
-			m_tree->blackboard<DarkForces::Component::InfElevator*>("wait_elevator", elevator);
+			m_tree->blackboard<DarkForces::Component::InfElevator>("wait_elevator", elevator);
 
 			// so we are colliding with an elevator, check the status of the elevator
 			switch (elevator->status()) {

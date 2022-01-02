@@ -834,11 +834,14 @@
     <ClCompile Include="darkforces\gaBehaviorNode\dfBSetVar.cpp">
       <Filter>Fichiers sources\Dark Forces\gaBehaviorNode</Filter>
     </ClCompile>
-    <ClCompile Include="darkforces\gaBehaviorNode\dfActivate.cpp">
+    <ClCompile Include="darkforces\gaBehaviorNode\dfBActivate.cpp">
       <Filter>Fichiers sources\Dark Forces\gaBehaviorNode</Filter>
     </ClCompile>
     <ClCompile Include="gaEngine\gaBehaviorNode\gaBFor.cpp">
       <Filter>Fichiers sources\gaEngine\gaBehaviorNode</Filter>
+    </ClCompile>
+    <ClCompile Include="darkforces\gaBehaviorNode\dfBFindElevator.cpp">
+      <Filter>Fichiers sources\Dark Forces\gaBehaviorNode</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1597,6 +1600,9 @@
     </ClInclude>
     <ClInclude Include="gaEngine\gaBehaviorNode\gaBFor.h">
       <Filter>Fichiers d%27en-tête\gaEngine\gaBehaviorNode</Filter>
+    </ClInclude>
+    <ClInclude Include="darkforces\gaBehaviorNode\dfBFindElevator.h">
+      <Filter>Fichiers d%27en-tête\DarkForces\gaBehaviorNode</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

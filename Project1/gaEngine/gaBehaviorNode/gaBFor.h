@@ -23,11 +23,10 @@ namespace GameEngine {
 			BehaviorNode* clone(GameEngine::BehaviorNode* p) override;
 			static BehaviorNode* create(const char* name, tinyxml2::XMLElement* element, GameEngine::BehaviorNode* used);// create a node
 
-			void init(void* data) override;						// init the node before running
-			void execute(Action* r) override;						// let a parent take a decision with it's current running child
+			void init(void* data) override;							// init the node before running
 
-			//debugger
-			void debugGUInode(void) override;						// display the component in the debugger
+		protected:
+			bool endLoop(void) override;
 		};
 	}
 }

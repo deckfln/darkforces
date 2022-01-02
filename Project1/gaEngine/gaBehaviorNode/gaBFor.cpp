@@ -19,6 +19,8 @@ GameEngine::BehaviorNode* GameEngine::Behavior::For::clone(GameEngine::BehaviorN
 	}
 	GameEngine::Behavior::Loop::clone(cl);
 	cl->m_variable = m_variable;
+	cl->m_start = m_start;
+	cl->m_end = m_end;
 	return cl;
 }
 
@@ -40,10 +42,10 @@ GameEngine::BehaviorNode* GameEngine::Behavior::For::create(const char* name, ti
 	}
 
 	xmlVar = element->FirstChildElement("start");
-	node->m_start.set(xmlVar, node->m_tree);
+	node->m_start.set(xmlVar);
 
 	xmlVar = element->FirstChildElement("end");
-	node->m_end.set(xmlVar, node->m_tree);
+	node->m_end.set(xmlVar);
 
 	xmlVar = element->FirstChildElement("default_return");
 	const char* returndefault = xmlVar->GetText();
@@ -67,32 +69,29 @@ GameEngine::BehaviorNode* GameEngine::Behavior::For::create(const char* name, ti
 void GameEngine::Behavior::For::init(void* data)
 {
 	int32_t& counter = m_tree->blackboard<int32_t>(m_variable);
-	m_start.get(counter);
+	m_start.get(counter, m_tree);
 }
 
 /**
- *
+ * let a parent take a decision with it's current running child
  */
-void GameEngine::Behavior::For::execute(Action* r)
+bool GameEngine::Behavior::For::endLoop(void)
 {
-	int32_t& counter = m_tree->blackboard<int32_t>(m_variable);
-	int32_t end;
-	m_end.get(end);
+	bool b = GameEngine::Behavior::Loop::endLoop();
 
-	if (counter > end) {
-		m_status = m_defaultreturn;
-		return GameEngine::BehaviorNode::execute(r);
+	if (!b) {
+		// end of the loop without exit
+		// increase the counter at the end of each loop
+		int32_t& counter = m_tree->blackboard<int32_t>(m_variable);
+		int32_t end;
+		m_end.get(end, m_tree);
+
+		counter++;
+
+		if (counter >= end) {
+			m_status = m_defaultreturn;
+		}
 	}
 
-	counter++;
-
-	GameEngine::Behavior::Loop::execute(r);
-}
-
-/**
- * display the node data in the debugger
- */
-void GameEngine::Behavior::For::debugGUInode(void)
-{
-	GameEngine::Behavior::Loop::debugGUInode();
+	return b;
 }

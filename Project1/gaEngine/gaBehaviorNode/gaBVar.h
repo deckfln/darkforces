@@ -20,38 +20,38 @@ namespace GameEngine {
 				VAR
 			};
 			Value(void) {};
-			void set(tinyxml2::XMLElement* xmlVar, GameEngine::Component::BehaviorTree *tree);
+			void set(tinyxml2::XMLElement* xmlVar);
 
-			void get(bool& b) {
+			void get(bool& b, GameEngine::Component::BehaviorTree* tree) {
 				if (m_type == Type::BOOL) { 
 					b = m_value; 
 				}
 				else {
-					b = m_tree->blackboard<bool>(m_svalue);
+					b = tree->blackboard<bool>(m_svalue);
 				}
 			}
-			void get(int32_t& b) {
+			void get(int32_t& b, GameEngine::Component::BehaviorTree* tree) {
 				if (m_type == Type::INT32) {
 					b = m_ivalue;
 				}
 				else {
-					b = m_tree->blackboard<int32_t>(m_svalue);
+					b = tree->blackboard<int32_t>(m_svalue);
 				}
 			}
-			void get(float& b) {
+			void get(float& b, GameEngine::Component::BehaviorTree* tree) {
 				if (m_type == Type::FLOAT) {
 					b = m_fvalue;
 				}
 				else {
-					b = m_tree->blackboard<float>(m_svalue);
+					b = tree->blackboard<float>(m_svalue);
 				}
 			}
-			void get(glm::vec3& b) {
+			void get(glm::vec3& b, GameEngine::Component::BehaviorTree* tree) {
 				if (m_type == Type::VEC3) {
 					b = m_v3value;
 				}
 				else {
-					b = m_tree->blackboard<glm::vec3>(m_svalue);
+					b = tree->blackboard<glm::vec3>(m_svalue);
 				}
 			}
 

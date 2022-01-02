@@ -27,13 +27,13 @@
 					<tree>
 						<node type='SatNav' name='direct go to wait position'>
 							<position type='vec3'>static_position</position>
-							<exits>
-								<exit value='true'>player_visible</exit>
-								<exit value='true'>hit_bullet</exit>
-								<exit value='true'>heard_sound</exit>
-							</exits>
 						</node>
-						<node type='DarkForces:WaitDoor' name='if door is opening, wait for end of opening'></node>
+						<node type='DarkForces:FindElevator' name='check if the entity collided with an elevator'>
+							<variable type='ptr'>wait_elevator</variable>
+						</node>
+						<node type='DarkForces:WaitDoor' name='if door is opening, wait for end of opening'>
+							<variable type='ptr'>wait_elevator</variable>
+						</node>
 						<node type='Sequence' name='open a door to go to wait position'>
 							<tree>
 								<node type='DarkForces:SetVar' name='number of triggers of an elevator'>
@@ -47,7 +47,7 @@
 									<default_return>failure</default_return>
 									<tree>
 										<node type='DarkForces:SetVar' name='position of current trigger'>
-											<variable type='variable' value='elevator.triggers[trigger].position'>trigger_position</variable>
+											<variable type='var' value='elevator.triggers[trigger].position'>trigger_position</variable>
 										</node>
 										<node type='DarkForces:SetVar' name='name of current trigger'>
 											<variable type='var' value='elevator.triggers[trigger].name'>trigger_name</variable>

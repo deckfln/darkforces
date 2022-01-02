@@ -53,7 +53,7 @@ void DarkForces::Behavior::WaitDoor::init(void* data)
  */
 void DarkForces::Behavior::WaitDoor::dispatchMessage(gaMessage* message, Action* r)
 {
-	DarkForces::Component::InfElevator* m_elevator = m_tree->blackboard<DarkForces::Component::InfElevator*>("wait_elevator");
+	DarkForces::Component::InfElevator* m_elevator = m_tree->pBlackboard<DarkForces::Component::InfElevator>("wait_elevator");
 
 	if (message->m_action == gaMessage::Action::TICK) {
 		switch (m_elevator->status()) {
@@ -64,8 +64,7 @@ void DarkForces::Behavior::WaitDoor::dispatchMessage(gaMessage* message, Action*
 
 		case Component::InfElevator::Status::WAIT:
 		case Component::InfElevator::Status::HOLD:
-			m_status = Status::SUCCESSED;
-			m_tree->blackboard<DarkForces::Component::InfElevator*>("wait_elevator", nullptr);
+			return failed(r);
 			break;
 		}
 	}

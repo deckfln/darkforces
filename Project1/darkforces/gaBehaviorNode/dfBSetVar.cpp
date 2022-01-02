@@ -67,7 +67,7 @@ void DarkForces::Behavior::SetVar::init(void* data)
 	if (m_svalue == "elevator.triggers.count") {
 		// we are on a natural move, to the elevator can be activated
 		// test all triggers of the object
-		Component::InfElevator* elevator = m_tree->blackboard<Component::InfElevator*>("elevator");
+		Component::InfElevator* elevator = m_tree->pBlackboard<Component::InfElevator>("wait_elevator");
 
 		if (elevator == nullptr) {
 			m_status = Status::FAILED;
@@ -81,8 +81,8 @@ void DarkForces::Behavior::SetVar::init(void* data)
 	}
 	else if (m_svalue == "elevator.triggers[trigger].position") {
 		// we are on a natural move, to the elevator can be activated
-		// test all triggers of the object
-		Component::InfElevator* elevator = m_tree->blackboard<Component::InfElevator*>("elevator");
+		// test all triggers of the objectwait
+		Component::InfElevator* elevator = m_tree->pBlackboard<Component::InfElevator>("wait_elevator");
 		int32_t current_trigger = m_tree->blackboard<int32_t>("trigger");
 
 		if (elevator == nullptr) {
@@ -105,7 +105,7 @@ void DarkForces::Behavior::SetVar::init(void* data)
 	else if (m_svalue == "elevator.triggers[trigger].name") {
 		// we are on a natural move, to the elevator can be activated
 		// test all triggers of the object
-		Component::InfElevator* elevator = m_tree->blackboard<Component::InfElevator*>("elevator");
+		Component::InfElevator* elevator = m_tree->pBlackboard<Component::InfElevator>("wait_elevator");
 		int32_t current_trigger = m_tree->blackboard<int32_t>("trigger");
 
 		if (elevator == nullptr) {
@@ -120,5 +120,5 @@ void DarkForces::Behavior::SetVar::init(void* data)
 		m_svalue = targetTrigger->name();
 	}
 
-	GameEngine::BehaviorNode::init(data);
+	GameEngine::Behavior::SetVar::init(data);
 }

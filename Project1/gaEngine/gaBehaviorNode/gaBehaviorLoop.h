@@ -8,7 +8,8 @@ namespace GameEngine {
 		public:
 			enum class Condition {
 				UNTIL_ALL_FAIL,
-				UNTIL_ONE_FAIL
+				UNTIL_ONE_FAIL,
+				UNTIL_ALL_SUCCCES
 			};
 				
 			Loop(const char* name);
@@ -25,6 +26,7 @@ namespace GameEngine {
 			void debugGUInode(void) override;						// display the component in the debugger
 		protected:
 			Condition m_condition = Condition::UNTIL_ALL_FAIL;
+			virtual bool endLoop(void);
 		};
 	}
 }
