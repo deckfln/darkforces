@@ -9,12 +9,69 @@
 #include "../gaDebug.h"
 #include "../gaComponent/gaBehaviorTree.h"
 
+//-------------------------------------
+
 static const std::map<const char*, GameEngine::Behavior::Var::Type> g_types = {
 	{"bool", GameEngine::Behavior::Var::Type::BOOL},
-	{"uint32", GameEngine::Behavior::Var::Type::INT32},
+	{"int32", GameEngine::Behavior::Var::Type::INT32},
 	{"float", GameEngine::Behavior::Var::Type::FLOAT},
 	{"vec3", GameEngine::Behavior::Var::Type::VEC3},
+	{"string", GameEngine::Behavior::Var::Type::STRING},
+	{"var", GameEngine::Behavior::Var::Type::VAR},
 };
+
+static const std::map<const char*, GameEngine::Behavior::Value::Type> g_types1 = {
+	{"bool", GameEngine::Behavior::Value::Type::BOOL},
+	{"int32", GameEngine::Behavior::Value::Type::INT32},
+	{"float", GameEngine::Behavior::Value::Type::FLOAT},
+	{"vec3", GameEngine::Behavior::Value::Type::VEC3},
+	{"string", GameEngine::Behavior::Value::Type::STRING},
+	{"var", GameEngine::Behavior::Value::Type::VAR},
+};
+
+/**
+ * initialize variable from XML
+ */
+void GameEngine::Behavior::Value::set(tinyxml2::XMLElement* xmlVar, GameEngine::Component::BehaviorTree* tree)
+{
+	const char* type = xmlVar->Attribute("type");
+	for (auto& t : g_types1) {
+		if (strcmp(type, t.first) == 0) {
+			m_type = t.second;
+			break;
+		}
+	}
+
+	if (m_type == Type::NONE) {
+		gaDebugLog(1, "GameEngine::Behavior::SetVar", "unknown type");
+		exit(-1);
+	}
+
+	switch (m_type) {
+	case Type::BOOL:
+		xmlVar->QueryBoolAttribute("value", &m_value);
+		break;
+	case Type::INT32:
+		xmlVar->QueryIntAttribute("value", &m_ivalue);
+		break;
+	case Type::FLOAT:
+		xmlVar->QueryFloatAttribute("value", &m_fvalue);
+		break;
+	case Type::VEC3: {
+		const char* v = xmlVar->Attribute("value");
+		float x, y, z;
+		if (v != nullptr) {
+			scanf_s("%f,%f,%f", &x, &y, &z);
+			m_v3value = glm::vec3(x, y, z);
+		}
+		// value defined by code, so not available here
+		break; }
+	case Type::VAR:
+	case Type::STRING:
+		m_svalue = xmlVar->Attribute("value");
+		break;
+	}
+}
 
 //-------------------------------------
 
@@ -38,7 +95,8 @@ GameEngine::BehaviorNode* GameEngine::Behavior::Var::clone(GameEngine::BehaviorN
 	cl->m_value = m_value;
 	cl->m_ivalue = m_ivalue;
 	cl->m_fvalue = m_fvalue;
-	cl->m_v3value = cl->m_v3value;
+	cl->m_v3value = m_v3value;
+	cl->m_svalue = m_svalue;
 	return cl;
 }
 
@@ -85,8 +143,18 @@ GameEngine::BehaviorNode* GameEngine::Behavior::Var::create(const char* name, ti
 		case Type::FLOAT:
 			xmlVariable->QueryFloatAttribute("value", &node->m_fvalue);
 			break;
-		case Type::VEC3:
+		case Type::VEC3: {
+			const char* v = xmlVariable->Attribute("value");
+			float x, y, z;
+			if (v != nullptr) {
+				sscanf_s(v, "%f,%f,%f", &x, &y, &z);
+				node->m_v3value = glm::vec3(x, y, z);
+			}
 			// value defined by code, so not available here
+			break; }
+		case Type::VAR:
+		case Type::STRING:
+			node->m_svalue = xmlVariable->Attribute("value");
 			break;
 		}
 	}

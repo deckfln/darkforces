@@ -16,6 +16,7 @@
 #include "gaBehaviorNode/gaBehaviorDecorator.h"
 #include "gaBehaviorNode/gaBehaviorLoop.h"
 #include "gaBehaviorNode/gaBehaviorSequence.h"
+#include "gaBehaviorNode/gaBFor.h"
 #include "gaBehaviorNode/gaBehaviorSound.h"
 #include "gaBehaviorNode/gaBNSatNav.h"
 #include "gaBehaviorNode/gaMoveTo.h"
@@ -66,6 +67,7 @@ void GameEngine::App::registerBTNodes(void)
 		{"Decorator", GameEngine::Behavior::Decorator::create},
 		{"Loop", GameEngine::Behavior::Loop::create},
 		{"Sequence", GameEngine::Behavior::Sequence::create},
+		{"GameEngine:For", GameEngine::Behavior::For::create},
 		{"Sound", GameEngine::Behavior::Sound::create},
 		{"SatNav", GameEngine::Behavior::SatNav::create},
 		{"MoveTo", GameEngine::Behavior::MoveTo::create},

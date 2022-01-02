@@ -44,6 +44,10 @@ void GameEngine::Behavior::SetVar::init(void*)
 	case Type::VEC3:
 		m_tree->blackboard<glm::vec3>(m_variable, m_v3value);
 		break;
+	case Type::VAR:
+	case Type::STRING:
+		m_tree->blackboard<std::string>(m_variable, m_svalue);
+		break;
 	}
 	m_status = GameEngine::BehaviorNode::Status::SUCCESSED;
 }

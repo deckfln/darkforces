@@ -831,6 +831,15 @@
     <ClCompile Include="gaEngine\gaBehaviorNode\gaBVar.cpp">
       <Filter>Fichiers sources\gaEngine\gaBehaviorNode</Filter>
     </ClCompile>
+    <ClCompile Include="darkforces\gaBehaviorNode\dfBSetVar.cpp">
+      <Filter>Fichiers sources\Dark Forces\gaBehaviorNode</Filter>
+    </ClCompile>
+    <ClCompile Include="darkforces\gaBehaviorNode\dfActivate.cpp">
+      <Filter>Fichiers sources\Dark Forces\gaBehaviorNode</Filter>
+    </ClCompile>
+    <ClCompile Include="gaEngine\gaBehaviorNode\gaBFor.cpp">
+      <Filter>Fichiers sources\gaEngine\gaBehaviorNode</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="glad\glad.h">
@@ -1578,6 +1587,15 @@
       <Filter>Fichiers d%27en-tête\gaEngine\gaBehaviorNode</Filter>
     </ClInclude>
     <ClInclude Include="gaEngine\gaBehaviorNode\gaBVar.h">
+      <Filter>Fichiers d%27en-tête\gaEngine\gaBehaviorNode</Filter>
+    </ClInclude>
+    <ClInclude Include="darkforces\gaBehaviorNode\dfBSetVar.h">
+      <Filter>Fichiers d%27en-tête\DarkForces\gaBehaviorNode</Filter>
+    </ClInclude>
+    <ClInclude Include="darkforces\gaBehaviorNode\dfBActivate.h">
+      <Filter>Fichiers d%27en-tête\DarkForces\gaBehaviorNode</Filter>
+    </ClInclude>
+    <ClInclude Include="gaEngine\gaBehaviorNode\gaBFor.h">
       <Filter>Fichiers d%27en-tête\gaEngine\gaBehaviorNode</Filter>
     </ClInclude>
   </ItemGroup>

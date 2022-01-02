@@ -90,5 +90,15 @@ void GameEngine::Behavior::CheckVar::init(void*)
 			m_status = GameEngine::BehaviorNode::Status::FAILED;
 		}
 		break; }
+
+	case Type::STRING: {
+		std::string& b = m_tree->blackboard<std::string>(m_variable);
+		if (b == m_svalue) {
+			m_status = GameEngine::BehaviorNode::Status::SUCCESSED;
+		}
+		else {
+			m_status = GameEngine::BehaviorNode::Status::FAILED;
+		}
+		break; }
 	}
 }

@@ -110,6 +110,9 @@ bool GameEngine::Component::BehaviorTree::onBulletHit(gaMessage* message)
  */
 void GameEngine::Component::BehaviorTree::dispatchMessage(gaMessage* message)
 {
+	if (m_entity->name() != "OFFCFIN.WAX(21)") {
+		return;
+	}
 	if (!m_instanciated) {
 		m_root->instanciate(m_entity);
 		m_instanciated = true;
