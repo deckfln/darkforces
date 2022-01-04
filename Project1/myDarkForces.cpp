@@ -50,11 +50,7 @@ const float c_direction = pi/2.0f ; // 1.0f;
  * Register al DarkForces behavior nodes on the GameEngine
  */
 #include "darkforces/gaBehaviorNode/dfFire2Player.h"
-#include "darkforces/gaBehaviorNode/dfGotoTrigger.h"
 #include "darkforces/gaBehaviorNode/dfMove2player.h"
-#include "darkforces/gaBehaviorNode/dfMoveEnemyTo.h"
-#include "darkforces/gaBehaviorNode/dfMoveToAndAttack.h"
-#include "darkforces/gaBehaviorNode/dfOpenDoor.h"
 #include "darkforces/gaBehaviorNode/dfTrackPlayer.h"
 #include "darkforces/gaBehaviorNode/dfWaitDoor.h"
 #include "darkforces/gaBehaviorNode/dfWaitIdle.h"
@@ -87,11 +83,8 @@ void myDarkForces::myDarkForces::registerBThandlers(void)
 void myDarkForces::myDarkForces::registerBTNodes(void)
 {
 	GameEngine::Behavior::registerNode("Fire2Player", DarkForces::Behavior::Fire2Player::create);
-	GameEngine::Behavior::registerNode("GotoTrigger", DarkForces::Behavior::GotoTrigger::create);
 	GameEngine::Behavior::registerNode("DarkForces:Move2Player", DarkForces::Behavior::Move2Player::create);
-	GameEngine::Behavior::registerNode("MoveEnemyTo", DarkForces::Behavior::MoveEnemyTo::create);
-	GameEngine::Behavior::registerNode("MoveToAndAttack", DarkForces::Behavior::MoveToAndAttack::create);
-	GameEngine::Behavior::registerNode("OpenDoor", DarkForces::Behavior::OpenDoor::create);
+//	GameEngine::Behavior::registerNode("OpenDoor", DarkForces::Behavior::OpenDoor::create);
 	GameEngine::Behavior::registerNode("DarkForces:TrackPlayer", DarkForces::Behavior::TrackPlayer::create);
 	GameEngine::Behavior::registerNode("DarkForces:WaitDoor", DarkForces::Behavior::WaitDoor::create);
 	GameEngine::Behavior::registerNode("WaitIdle", DarkForces::Behavior::WaitIdle::create);

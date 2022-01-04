@@ -7,8 +7,9 @@ namespace GameEngine {
 		class Loop : public BehaviorNode {
 		public:
 			enum class Condition {
-				UNTIL_ALL_FAIL,
 				UNTIL_ONE_FAIL,
+				UNTIL_ONE_SUCCESS,
+				UNTIL_ALL_FAIL,
 				UNTIL_ALL_SUCCCES
 			};
 				

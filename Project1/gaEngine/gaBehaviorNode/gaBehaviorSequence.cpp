@@ -5,7 +5,8 @@
 
 static std::map<const char*, GameEngine::Behavior::Sequence::Condition> g_conditions = {
 	{"exit_if_fail", GameEngine::Behavior::Sequence::Condition::EXIT_WHEN_ONE_FAIL},
-	{"even_if_fail", GameEngine::Behavior::Sequence::Condition::EXIT_AT_END},	
+	{"exit_first_success", GameEngine::Behavior::Sequence::Condition::EXIT_FIRST_SUCCESS},
+	{"even_if_fail", GameEngine::Behavior::Sequence::Condition::EXIT_AT_END},
 };
 
 GameEngine::Behavior::Sequence::Sequence(const char *name) : 
@@ -92,6 +93,12 @@ void GameEngine::Behavior::Sequence::execute(Action* r)
 			m_failed++;
 		}
 	}
+	else if (status == Status::SUCCESSED) {
+		if (m_condition == Condition::EXIT_FIRST_SUCCESS) {
+			// drop out of the loop
+			return succeeded(r);
+		}
+	}
 
 	// Move to the next node in the sequence
 	m_runningChild++;
@@ -109,10 +116,15 @@ void GameEngine::Behavior::Sequence::execute(Action* r)
  */
 void GameEngine::Behavior::Sequence::debugGUInode(void)
 {
-	if (m_condition == Condition::EXIT_WHEN_ONE_FAIL) {
+	switch (m_condition) {
+	case Condition::EXIT_WHEN_ONE_FAIL:
 		ImGui::Text("Sequence unless one fail");
-	}
-	else {
-		ImGui::Text("Sequence even if one fail");
+		break;
+	case Condition::EXIT_FIRST_SUCCESS:
+		ImGui::Text("Sequence until one success");
+		break;
+	case Condition::EXIT_AT_END:
+		ImGui::Text("Sequence to the end");
+		break;
 	}
 }

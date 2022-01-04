@@ -55,7 +55,7 @@ void DarkForces::Behavior::FindElevator::init(void* data)
 	// the move_to node failed, it probably collided with something
 	struct GameEngine::Physics::CollisionList& collidedList = m_tree->blackboard<struct GameEngine::Physics::CollisionList>("lastCollision");
 	if (collidedList.size == 0) {
-		m_status = GameEngine::BehaviorNode::Status::SUCCESSED;
+		m_status = GameEngine::BehaviorNode::Status::FAILED;
 		return;
 	}
 
@@ -71,7 +71,7 @@ void DarkForces::Behavior::FindElevator::init(void* data)
 	}
 
 	if (elevator == nullptr) {
-		m_status = GameEngine::BehaviorNode::Status::SUCCESSED;
+		m_status = GameEngine::BehaviorNode::Status::FAILED;
 		return;
 	}
 

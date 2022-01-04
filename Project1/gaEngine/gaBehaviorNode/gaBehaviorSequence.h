@@ -8,7 +8,8 @@ namespace GameEngine {
 		public:
 			enum class Condition {
 				EXIT_WHEN_ONE_FAIL,
-				EXIT_AT_END
+				EXIT_AT_END,
+				EXIT_FIRST_SUCCESS
 			};
 
 			Sequence(const char* name);

@@ -197,11 +197,7 @@
     <ClCompile Include="darkforces\gaBehaviorNode\dfBSetVar.cpp" />
     <ClCompile Include="darkforces\gaBehaviorNode\dfBSound.cpp" />
     <ClCompile Include="darkforces\gaBehaviorNode\dfFire2Player.cpp" />
-    <ClCompile Include="darkforces\gaBehaviorNode\dfGotoTrigger.cpp" />
     <ClCompile Include="darkforces\gaBehaviorNode\dfMove2player.cpp" />
-    <ClCompile Include="darkforces\gaBehaviorNode\dfMoveEnemyTo.cpp" />
-    <ClCompile Include="darkforces\gaBehaviorNode\dfMoveToAndAttack.cpp" />
-    <ClCompile Include="darkforces\gaBehaviorNode\dfOpenDoor.cpp" />
     <ClCompile Include="darkforces\gaBehaviorNode\dfTrackPlayer.cpp" />
     <ClCompile Include="darkforces\gaBehaviorNode\dfWaitDoor.cpp" />
     <ClCompile Include="darkforces\gaBehaviorNode\dfWaitIdle.cpp" />
@@ -437,11 +433,7 @@
     <ClInclude Include="darkforces\gaBehaviorNode\dfBSetVar.h" />
     <ClInclude Include="darkforces\gaBehaviorNode\dfBSound.h" />
     <ClInclude Include="darkforces\gaBehaviorNode\dfFire2Player.h" />
-    <ClInclude Include="darkforces\gaBehaviorNode\dfGotoTrigger.h" />
     <ClInclude Include="darkforces\gaBehaviorNode\dfMove2player.h" />
-    <ClInclude Include="darkforces\gaBehaviorNode\dfMoveEnemyTo.h" />
-    <ClInclude Include="darkforces\gaBehaviorNode\dfMoveToAndAttack.h" />
-    <ClInclude Include="darkforces\gaBehaviorNode\dfOpenDoor.h" />
     <ClInclude Include="darkforces\gaBehaviorNode\dfTrackPlayer.h" />
     <ClInclude Include="darkforces\gaBehaviorNode\dfWaitDoor.h" />
     <ClInclude Include="darkforces\gaBehaviorNode\dfWaitIdle.h" />

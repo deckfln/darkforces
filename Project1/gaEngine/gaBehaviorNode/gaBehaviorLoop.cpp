@@ -6,7 +6,8 @@
 static std::map<const char*, GameEngine::Behavior::Loop::Condition> g_conditions = {
 	{"until_all_fail", GameEngine::Behavior::Loop::Condition::UNTIL_ALL_FAIL},
 	{"until_one_fail", GameEngine::Behavior::Loop::Condition::UNTIL_ONE_FAIL},
-	{"until_all_success", GameEngine::Behavior::Loop::Condition::UNTIL_ALL_SUCCCES},
+	{"until_one_success", GameEngine::Behavior::Loop::Condition::UNTIL_ONE_SUCCESS},
+	{"until_all_success", GameEngine::Behavior::Loop::Condition::UNTIL_ALL_SUCCCES}
 };
 
 GameEngine::Behavior::Loop::Loop(const char *name) : 
@@ -153,6 +154,28 @@ void GameEngine::Behavior::Loop::execute(Action* r)
 			r->action = BehaviorNode::Status::RUNNING;
 			break;
 		}
+
+	case Condition::UNTIL_ONE_SUCCESS:
+		switch (status) {
+		case Status::FAILED:
+			// loop over the nodes
+			m_runningChild++;
+			if (m_runningChild >= m_children.size()) {
+				m_runningChild = 0;
+			}
+			onChildStart(m_runningChild);
+			return startChild(r, m_runningChild, m_data);
+			break;
+
+		case Status::SUCCESSED:
+			// drop out of the loop
+			return succeeded(r);
+			break;
+
+		default:
+			r->action = BehaviorNode::Status::RUNNING;
+			break;
+		}
 	}
 }
 
@@ -180,6 +203,10 @@ void GameEngine::Behavior::Loop::debugGUInode(void)
 
 	case Condition::UNTIL_ALL_SUCCCES:
 		ImGui::Text("Loop until all success");
+		break;
+
+	case Condition::UNTIL_ONE_SUCCESS:
+		ImGui::Text("Loop until one success");
 		break;
 	}
 }

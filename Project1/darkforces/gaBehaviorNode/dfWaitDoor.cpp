@@ -39,11 +39,23 @@ BehaviorNode* DarkForces::Behavior::WaitDoor::create(const char* name, tinyxml2:
 }
 
 /**
- *
+ * if the elevator is moving, wait for the opening. Else fail.
  */
 void DarkForces::Behavior::WaitDoor::init(void* data)
 {
-	m_entity->sendDelayedMessage(gaMessage::Action::TICK);
+	DarkForces::Component::InfElevator* m_elevator = m_tree->pBlackboard<DarkForces::Component::InfElevator>("wait_elevator");
+
+	switch (m_elevator->status()) {
+	case Component::InfElevator::Status::MOVE:
+		// wait for the elevator to finish its move, maybe it is opening
+		m_entity->sendDelayedMessage(gaMessage::Action::TICK);
+		break;
+
+	case Component::InfElevator::Status::WAIT:
+	case Component::InfElevator::Status::HOLD:
+		m_status = Status::FAILED;
+		break;
+	}
 
 	BehaviorNode::init(data);
 }
@@ -64,7 +76,7 @@ void DarkForces::Behavior::WaitDoor::dispatchMessage(gaMessage* message, Action*
 
 		case Component::InfElevator::Status::WAIT:
 		case Component::InfElevator::Status::HOLD:
-			return failed(r);
+			return succeeded(r);
 			break;
 		}
 	}
