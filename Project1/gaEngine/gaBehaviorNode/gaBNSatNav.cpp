@@ -11,6 +11,8 @@
 
 #include "../flightRecorder/frPathFinding.h"
 
+static const char* g_className = "SatNaev";
+
 GameEngine::Behavior::SatNav::SatNav(void) :
 	MoveTo("SatNave")
 {
@@ -22,6 +24,7 @@ GameEngine::Behavior::SatNav::SatNav(void) :
 GameEngine::Behavior::SatNav::SatNav(const char *name) :
 	MoveTo(name)
 {
+	m_className = g_className;
 }
 
 GameEngine::Behavior::SatNav::SatNav(const char *name, float speed) :

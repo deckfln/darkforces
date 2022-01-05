@@ -1,15 +1,19 @@
 #include "dfWaitDoor.h"
 
 #include <tinyxml2.h>
+#include <imgui.h>
 
 #include "../../gaEngine/gaEntity.h"
 #include "../../gaEngine/gaComponent/gaBehaviorTree.h"
 
 #include "../dfComponent/InfElevator.h"
 
+static const char* g_className = "DarkForces:waitDoor";
+
 DarkForces::Behavior::WaitDoor::WaitDoor(const char* name):
 	GameEngine::BehaviorNode(name)
 {
+	m_className = g_className;
 }
 
 GameEngine::BehaviorNode* DarkForces::Behavior::WaitDoor::clone(GameEngine::BehaviorNode* p)
@@ -54,7 +58,7 @@ void DarkForces::Behavior::WaitDoor::init(void* data)
 	case Component::InfElevator::Status::WAIT:
 	case Component::InfElevator::Status::HOLD:
 		m_status = Status::FAILED;
-		break;
+		return;
 	}
 
 	BehaviorNode::init(data);
@@ -83,3 +87,18 @@ void DarkForces::Behavior::WaitDoor::dispatchMessage(gaMessage* message, Action*
 
 	execute(r);
 }
+
+//---------------------------------------
+
+/**
+ * Debugger
+ */
+void DarkForces::Behavior::WaitDoor::debugGUInode(void)
+{
+	DarkForces::Component::InfElevator* elevator = m_tree->pBlackboard<DarkForces::Component::InfElevator>("wait_elevator");
+	if (elevator != nullptr) {
+		gaEntity* entity = elevator->entity();
+		ImGui::Text("Wait elevator: %s", entity->name().c_str());
+	}
+}
+

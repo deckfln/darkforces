@@ -2,9 +2,12 @@
 
 #include "../dfVOC.h"
 
+static const char* g_className = "DarkForces:Sound";
+
 DarkForces::Behavior::Sound::Sound(const char* name) :
 	GameEngine::Behavior::Sound(name)
 {
+	m_className = g_className;
 }
 
 GameEngine::BehaviorNode* DarkForces::Behavior::Sound::clone(GameEngine::BehaviorNode* p)

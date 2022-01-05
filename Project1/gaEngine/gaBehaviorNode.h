@@ -96,6 +96,7 @@ namespace GameEngine {
 		std::map<std::string, bool> m_exit;							// list of variables triggering exit of the node
 
 #if defined _DEBUG
+		const char* m_className = nullptr;
 		std::vector<uint32_t> m_childrenID;
 		uint32_t m_entryAttr;
 		float m_x, m_y;

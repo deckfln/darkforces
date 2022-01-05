@@ -11,9 +11,12 @@
 
 //-------------------------------------
 
+static const char* g_className = "SetVar";
+
 GameEngine::Behavior::SetVar::SetVar(const char* name) :
 	Var(name)
 {
+	m_className = g_className;
 }
 
 GameEngine::BehaviorNode* GameEngine::Behavior::SetVar::clone(GameEngine::BehaviorNode* p)

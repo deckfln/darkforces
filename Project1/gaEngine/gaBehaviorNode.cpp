@@ -8,9 +8,12 @@
 #include "gaComponent/gaBehaviorTree.h"
 #include "gaEntity.h"
 
+static const char* g_className = "Node";
+
 GameEngine::BehaviorNode::BehaviorNode(const char* name):
 	m_name(name)
 {
+	m_className = g_className;
 }
 
 /**
@@ -310,26 +313,38 @@ void GameEngine::BehaviorNode::dispatchMessage(gaMessage*message, BehaviorNode::
 //*********************************************************
 
 /**
- *
+ * Debugger
  */
 void GameEngine::BehaviorNode::debugGUIinline(BehaviorNode* current, float x, float& y)
 {
 	static uint32_t attr = 0;
 	static char tmp[64];
 	const char* p = m_name;
+	bool changeColor = false;
 
 	if (this == current) {
 		snprintf(tmp, sizeof(tmp), ">%s", m_name);
 		p = tmp;
 	}
 	
-	if (this == current) {
+	switch (m_status) {
+	case Status::RUNNING:
 		ImNodes::PushColorStyle(ImNodesCol_TitleBar, IM_COL32(81, 48, 04, 255));
+		changeColor = true;
+		break;
+	case Status::SUCCESSED:
+		ImNodes::PushColorStyle(ImNodesCol_TitleBar, IM_COL32(61, 150, 04, 255));
+		changeColor = true;
+		break;
+	case Status::FAILED:
+		ImNodes::PushColorStyle(ImNodesCol_TitleBar, IM_COL32(150, 38, 04, 255));
+		changeColor = true;
+		break;
 	}
 	ImNodes::BeginNode(m_id);
 	ImNodes::BeginNodeTitleBar();
 
-	strncpy_s(tmp, m_name, sizeof(tmp));
+	strncpy_s(tmp, m_className, sizeof(tmp));
 	float lx = ImGui::CalcTextSize(tmp).x;
 	if (lx > 200) {
 		uint32_t l = strlen(tmp) / 2;
@@ -352,16 +367,25 @@ void GameEngine::BehaviorNode::debugGUIinline(BehaviorNode* current, float x, fl
 		ImNodes::BeginOutputAttribute(m_childrenID[i]);
 
 		if (m_children.size() > 1) {
-			snprintf(tmp, sizeof(tmp), "%d", i);
+			snprintf(tmp, sizeof(tmp), "%s", n->m_name);
+			strcpy_s(tmp + 24, sizeof(tmp), "...");
 			const float label_width = ImGui::CalcTextSize(tmp).x;
 			ImGui::Indent(200.0f - label_width);
 			ImGui::TextUnformatted(tmp);
+			if (ImGui::IsItemHovered())
+			{
+				ImGui::BeginTooltip();
+				ImGui::PushTextWrapPos(ImGui::GetFontSize() * 15.0f);
+				ImGui::TextUnformatted(n->m_name);
+				ImGui::PopTextWrapPos();
+				ImGui::EndTooltip();
+			}
 		}
 		ImNodes::EndOutputAttribute();
 		i++;
 	}
 	ImNodes::EndNode();
-	if (this == current) {
+	if (changeColor) {
 		ImNodes::PopColorStyle();
 	}
 

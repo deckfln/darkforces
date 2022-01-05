@@ -7,6 +7,8 @@
 #include "../World.h"
 #include "../gaComponent/gaBehaviorTree.h"
 
+static const char* g_className = "Turn";
+
 /**
  * test conditions
  */
@@ -40,6 +42,7 @@ void GameEngine::Behavior::Turn::onTimer(gaMessage* message)
 GameEngine::Behavior::Turn::Turn(const char* name) :
 	BehaviorNode(name)
 {
+	m_className = g_className;
 }
 
 GameEngine::BehaviorNode* GameEngine::Behavior::Turn::clone(GameEngine::BehaviorNode* p)

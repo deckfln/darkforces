@@ -29,6 +29,8 @@ static const std::map<const char*, GameEngine::Behavior::Value::Type> g_types1 =
 	{"var", GameEngine::Behavior::Value::Type::VAR},
 };
 
+static const char* g_className = "Var";
+
 /**
  * initialize variable from XML
  */
@@ -78,6 +80,7 @@ void GameEngine::Behavior::Value::set(tinyxml2::XMLElement* xmlVar)
 GameEngine::Behavior::Var::Var(const char* name) :
 	BehaviorNode(name)
 {
+	m_className = g_className;
 }
 
 GameEngine::BehaviorNode* GameEngine::Behavior::Var::clone(GameEngine::BehaviorNode* p)
@@ -166,5 +169,22 @@ GameEngine::BehaviorNode* GameEngine::Behavior::Var::create(const char* name, ti
 
 void GameEngine::Behavior::Var::debugGUInode(void)
 {
-	ImGui::Text("%s:%d", m_variable.c_str(), m_value);
+	switch (m_type) {
+	case Type::BOOL:
+		ImGui::Text("%s:%d", m_variable.c_str(), m_value);
+		break;
+	case Type::INT32:
+		ImGui::Text("%s:%d", m_variable.c_str(), m_ivalue);
+		break;
+	case Type::FLOAT:
+		ImGui::Text("%s:%.2f", m_variable.c_str(), m_fvalue);
+		break;
+	case Type::VEC3: {
+		ImGui::Text("%s:%.2f %.2f %.2f", m_variable.c_str(), m_v3value.x, m_v3value.y, m_v3value.z);
+		break; }
+	case Type::VAR:
+	case Type::STRING:
+		ImGui::Text("%s:%s", m_variable.c_str(), m_svalue.c_str());
+		break;
+	}
 }

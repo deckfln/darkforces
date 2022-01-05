@@ -10,6 +10,8 @@
 #include "../../gaEngine/World.h"
 #include "../../config.h"
 
+static const char* g_className = "DarkForces:fire2player";
+
 void DarkForces::Behavior::Fire2Player::fireNow(void)
 {
 	// and fire
@@ -25,6 +27,7 @@ void DarkForces::Behavior::Fire2Player::fireNow(void)
 DarkForces::Behavior::Fire2Player::Fire2Player(const char* name):
 	BehaviorNode(name)
 {
+	m_className = g_className;
 }
 
 GameEngine::BehaviorNode* DarkForces::Behavior::Fire2Player::clone(GameEngine::BehaviorNode* p)

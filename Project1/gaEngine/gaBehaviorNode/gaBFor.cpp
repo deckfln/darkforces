@@ -3,9 +3,12 @@
 #include <imgui.h>
 #include <tinyxml2.h>
 
+static const char* g_className = "For";
+
 GameEngine::Behavior::For::For(const char *name) : 
 	GameEngine::Behavior::Loop(name)
 {
+	m_className = g_className;
 }
 
 GameEngine::BehaviorNode* GameEngine::Behavior::For::clone(GameEngine::BehaviorNode* p)

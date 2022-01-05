@@ -10,9 +10,12 @@
 
 #include <tinyxml2.h>
 
+static const char* g_className = "DarkForces:FindElevator";
+
 DarkForces::Behavior::FindElevator::FindElevator(const char* name):
 	GameEngine::BehaviorNode(name)
 {
+	m_className = g_className;
 }
 
 GameEngine::BehaviorNode* DarkForces::Behavior::FindElevator::clone(GameEngine::BehaviorNode* p)

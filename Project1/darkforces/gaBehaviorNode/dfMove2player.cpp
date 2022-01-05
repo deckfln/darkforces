@@ -11,9 +11,12 @@
 #include "../../gaEngine/gaNavMesh.h"
 #include "../../config.h"
 
+static const char* g_className = "DarkForces:move2player";
+
 DarkForces::Behavior::Move2Player::Move2Player(const char* name):
 	GameEngine::Behavior::SetVar(name)
 {
+	m_className = g_className;
 }
 
 GameEngine::BehaviorNode* DarkForces::Behavior::Move2Player::clone(GameEngine::BehaviorNode* p)

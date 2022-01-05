@@ -16,6 +16,8 @@
 
 #include "../flightRecorder/frPathFinding.h"
 
+static const char* g_className = "MoveTo";
+
 /**
  * create the component
  */
@@ -29,7 +31,10 @@ GameEngine::Behavior::MoveTo::MoveTo(const char *name) :
 	GameEngine::BehaviorNode(name)
 {
 	m_previous.resize(16);
+#ifdef _DEBUG
+	m_className = g_className;
 	debug();
+#endif
 }
 
 GameEngine::Behavior::MoveTo::MoveTo(const char *name, float speed) :
@@ -470,11 +475,11 @@ void GameEngine::Behavior::MoveTo::debugGUInode(void)
 
 	switch (m_status) {
 	case Status::MOVE_TO_NEXT_WAYPOINT:
-		sprintf_s(tmp, "Move to %d", m_currentNavPoint);
+		sprintf_s(tmp, "to %d", m_currentNavPoint);
 		break;
 
 	case Status::NEARLY_REACHED_NEXT_WAYPOINT:
-		sprintf_s(tmp, "Nearly reached %d", m_currentNavPoint);
+		sprintf_s(tmp, "nearly reached %d", m_currentNavPoint);
 		break;
 
 	case Status::REACHED_NEXT_WAYPOINT:

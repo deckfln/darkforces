@@ -8,10 +8,12 @@ static std::map<const char*, GameEngine::Behavior::Sequence::Condition> g_condit
 	{"exit_first_success", GameEngine::Behavior::Sequence::Condition::EXIT_FIRST_SUCCESS},
 	{"even_if_fail", GameEngine::Behavior::Sequence::Condition::EXIT_AT_END},
 };
+static const char* g_className = "Sequence";
 
 GameEngine::Behavior::Sequence::Sequence(const char *name) : 
 	BehaviorNode(name)
 {
+	m_className = g_className;
 }
 
 GameEngine::BehaviorNode* GameEngine::Behavior::Sequence::clone(GameEngine::BehaviorNode* p)
@@ -118,13 +120,13 @@ void GameEngine::Behavior::Sequence::debugGUInode(void)
 {
 	switch (m_condition) {
 	case Condition::EXIT_WHEN_ONE_FAIL:
-		ImGui::Text("Sequence unless one fail");
+		ImGui::Text("unless one fail");
 		break;
 	case Condition::EXIT_FIRST_SUCCESS:
-		ImGui::Text("Sequence until one success");
+		ImGui::Text("until one success");
 		break;
 	case Condition::EXIT_AT_END:
-		ImGui::Text("Sequence to the end");
+		ImGui::Text("to the end");
 		break;
 	}
 }

@@ -10,9 +10,12 @@
 
 //-------------------------------------
 
+static const char* g_className = "CheckVar";
+
 GameEngine::Behavior::CheckVar::CheckVar(const char* name) :
 	Var(name)
 {
+	m_className = g_className;
 }
 
 BehaviorNode* GameEngine::Behavior::CheckVar::clone(GameEngine::BehaviorNode* p)

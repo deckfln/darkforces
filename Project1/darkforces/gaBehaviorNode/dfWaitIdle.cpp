@@ -7,9 +7,12 @@
 
 #include "../dfComponent/dfEnemyAI.h"
 
+static const char* g_className = "DarkForces:waitIdle";
+
 DarkForces::Behavior::WaitIdle::WaitIdle(const char* name):
 	GameEngine::BehaviorNode(name)
 {
+	m_className = g_className;
 }
 
 GameEngine::BehaviorNode* DarkForces::Behavior::WaitIdle::clone(GameEngine::BehaviorNode* p)

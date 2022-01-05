@@ -11,9 +11,12 @@
 
 //-------------------------------------
 
+static const char* g_className = "Alarm";
+
 GameEngine::Behavior::Alarm::Alarm(const char* name) :
 	BehaviorNode(name)
 {
+	m_className = g_className;
 }
 
 BehaviorNode* GameEngine::Behavior::Alarm::clone(GameEngine::BehaviorNode* p)

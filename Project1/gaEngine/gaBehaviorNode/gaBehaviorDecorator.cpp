@@ -11,12 +11,15 @@ static std::map<const char*, GameEngine::Behavior::Decorator::Condition> g_condi
 	{"true", GameEngine::Behavior::Decorator::Condition::SUCESS}			// always return success
 };
 
+static const char* g_className = "Decorator";
+
 /**
  * Create a node
  */
 GameEngine::Behavior::Decorator::Decorator(const char *name) :
 	BehaviorNode(name)
 {
+	m_className = g_className;
 }
 
 GameEngine::BehaviorNode* GameEngine::Behavior::Decorator::clone(GameEngine::BehaviorNode* p)
@@ -115,5 +118,5 @@ void GameEngine::Behavior::Decorator::debugGUInode(void)
 		"Failure",
 		"Sucess"
 	};
-	ImGui::Text("Decorator:%s", conditions[(uint32_t)m_condition]);
+	ImGui::Text("%s", conditions[(uint32_t)m_condition]);
 }

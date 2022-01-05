@@ -10,9 +10,12 @@ static std::map<const char*, GameEngine::Behavior::Sound::Condition> g_condition
 	{"play_random", GameEngine::Behavior::Sound::Condition::RANDOM},
 };
 
+static const char* g_className = "Sound";
+
 GameEngine::Behavior::Sound::Sound(const char *name) :
 	BehaviorNode(name)
 {
+	m_className = g_className;
 }
 
 GameEngine::BehaviorNode* GameEngine::Behavior::Sound::clone(GameEngine::BehaviorNode* p)

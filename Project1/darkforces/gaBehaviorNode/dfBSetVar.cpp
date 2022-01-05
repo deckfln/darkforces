@@ -11,9 +11,12 @@
 
 #include <tinyxml2.h>
 
+static const char* g_className = "DarkForces:SetVar";
+
 DarkForces::Behavior::SetVar::SetVar(const char* name):
 	GameEngine::Behavior::SetVar(name)
 {
+	m_className = g_className;
 }
 
 GameEngine::BehaviorNode* DarkForces::Behavior::SetVar::clone(GameEngine::BehaviorNode* p)

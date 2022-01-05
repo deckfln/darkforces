@@ -14,9 +14,12 @@
 #include "../dfComponent/InfElevator.h"
 #include "../dfComponent/dfSign.h"
 
+static const char* g_className = "DarkForces:Alarm";
+
 DarkForces::Behavior::Activate::Activate(const char *name):
 	GameEngine::BehaviorNode(name)
 {
+	m_className = g_className;
 }
 
 GameEngine::BehaviorNode* DarkForces::Behavior::Activate::clone(GameEngine::BehaviorNode* p)
@@ -53,6 +56,8 @@ BehaviorNode* DarkForces::Behavior::Activate::create(const char* name, tinyxml2:
 	return node;
 }
 
+//------------------------------
+
 void DarkForces::Behavior::Activate::init(void *data)
 {
 	// we are on a natural move, to the elevator can be activated
@@ -65,5 +70,34 @@ void DarkForces::Behavior::Activate::init(void *data)
 	// broadcast the end of the move (for animation)
 	m_entity->sendMessage(gaMessage::END_MOVE);
 
-	m_status = GameEngine::BehaviorNode::Status::SUCCESSED;
+	// give time for the door to start opening, so check on next frame
+	g_gaWorld.sendMessageDelayed(m_entity->name(), m_entity->name(), gaMessage::Action::TICK, 0, nullptr);
+
+	GameEngine::BehaviorNode::init(data);
+}
+
+/**
+ *
+ */
+void DarkForces::Behavior::Activate::dispatchMessage(gaMessage* message, Action* r)
+{
+	if (message->m_action == gaMessage::Action::TICK) {
+		return succeeded(r);
+	}
+
+	GameEngine::BehaviorNode::dispatchMessage(message, r);
+}
+
+//---------------------------
+
+/**
+ * Debugger
+ */
+void DarkForces::Behavior::Activate::debugGUInode(void)
+{
+	const std::string& trigger = m_tree->blackboard<std::string>(m_variable);
+
+	if (trigger != "") {
+		ImGui::Text("Activate: %s", trigger.c_str());
+	}
 }

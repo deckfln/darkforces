@@ -8,12 +8,15 @@
 #include "../../gaEngine/gaEntity.h"
 #include "../../gaEngine/World.h"
 
+static const char* g_className = "DarkForces:trackPlayer";
+
 /**
  *
  */
 DarkForces::Behavior::TrackPlayer::TrackPlayer(const char* name):
 	GameEngine::Behavior::SetVar(name)
 {
+	m_className = g_className;
 }
 
 GameEngine::BehaviorNode* DarkForces::Behavior::TrackPlayer::clone(GameEngine::BehaviorNode* p)

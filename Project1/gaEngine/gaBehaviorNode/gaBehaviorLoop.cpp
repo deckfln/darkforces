@@ -10,9 +10,12 @@ static std::map<const char*, GameEngine::Behavior::Loop::Condition> g_conditions
 	{"until_all_success", GameEngine::Behavior::Loop::Condition::UNTIL_ALL_SUCCCES}
 };
 
+static const char* g_className = "Loop";
+
 GameEngine::Behavior::Loop::Loop(const char *name) : 
 	BehaviorNode(name)
 {
+	m_className = g_className;
 }
 
 GameEngine::BehaviorNode* GameEngine::Behavior::Loop::clone(GameEngine::BehaviorNode* p)
@@ -194,19 +197,19 @@ void GameEngine::Behavior::Loop::debugGUInode(void)
 {
 	switch (m_condition) {
 	case Condition::UNTIL_ALL_FAIL:
-		ImGui::Text("Loop until all fail");
+		ImGui::Text("until all fail");
 		break;
 
 	case Condition::UNTIL_ONE_FAIL:
-		ImGui::Text("Loop until one fail");
+		ImGui::Text("until one fail");
 		break;
 
 	case Condition::UNTIL_ALL_SUCCCES:
-		ImGui::Text("Loop until all success");
+		ImGui::Text("until all success");
 		break;
 
 	case Condition::UNTIL_ONE_SUCCESS:
-		ImGui::Text("Loop until one success");
+		ImGui::Text("until one success");
 		break;
 	}
 }
