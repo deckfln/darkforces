@@ -47,7 +47,7 @@ BehaviorNode* DarkForces::Behavior::WaitDoor::create(const char* name, tinyxml2:
  */
 void DarkForces::Behavior::WaitDoor::init(void* data)
 {
-	DarkForces::Component::InfElevator* m_elevator = m_tree->pBlackboard<DarkForces::Component::InfElevator>("wait_elevator");
+	DarkForces::Component::InfElevator* m_elevator = m_tree->blackboard().pGet<DarkForces::Component::InfElevator>("wait_elevator", GameEngine::Variable::Type::PTR);
 
 	switch (m_elevator->status()) {
 	case Component::InfElevator::Status::MOVE:
@@ -69,7 +69,7 @@ void DarkForces::Behavior::WaitDoor::init(void* data)
  */
 void DarkForces::Behavior::WaitDoor::dispatchMessage(gaMessage* message, Action* r)
 {
-	DarkForces::Component::InfElevator* m_elevator = m_tree->pBlackboard<DarkForces::Component::InfElevator>("wait_elevator");
+	DarkForces::Component::InfElevator* m_elevator = m_tree->blackboard().pGet<DarkForces::Component::InfElevator>("wait_elevator", GameEngine::Variable::Type::PTR);
 
 	if (message->m_action == gaMessage::Action::TICK) {
 		switch (m_elevator->status()) {
@@ -95,7 +95,7 @@ void DarkForces::Behavior::WaitDoor::dispatchMessage(gaMessage* message, Action*
  */
 void DarkForces::Behavior::WaitDoor::debugGUInode(void)
 {
-	DarkForces::Component::InfElevator* elevator = m_tree->pBlackboard<DarkForces::Component::InfElevator>("wait_elevator");
+	DarkForces::Component::InfElevator* elevator = m_tree->blackboard().pGet<DarkForces::Component::InfElevator>("wait_elevator", GameEngine::Variable::Type::PTR);
 	if (elevator != nullptr) {
 		gaEntity* entity = elevator->entity();
 		ImGui::Text("Wait elevator: %s", entity->name().c_str());

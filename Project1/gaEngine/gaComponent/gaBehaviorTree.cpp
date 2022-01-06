@@ -59,7 +59,7 @@ void GameEngine::Component::BehaviorTree::handlers(uint32_t message, msgHandler 
  */
 bool GameEngine::Component::BehaviorTree::onViewPlayer(gaMessage* message)
 {
-	std::deque<glm::vec3>& playerLastPositions = blackboard<std::deque<glm::vec3>>("player_last_positions");
+	std::deque<glm::vec3>& playerLastPositions = blackboard().get<std::deque<glm::vec3>>("player_last_positions", GameEngine::Variable::Type::OBJECT);
 
 	// player is visible, because we just received a notification
 	if (playerLastPositions.size() >= 32) {
@@ -67,7 +67,7 @@ bool GameEngine::Component::BehaviorTree::onViewPlayer(gaMessage* message)
 	}
 	playerLastPositions.push_back(message->m_v3value);
 
-	blackboard<bool>("player_visible", true);
+	blackboard().set<bool>("player_visible", true, GameEngine::Variable::Type::BOOL);
 
 	return true;
 }
@@ -77,7 +77,7 @@ bool GameEngine::Component::BehaviorTree::onViewPlayer(gaMessage* message)
  */
 bool GameEngine::Component::BehaviorTree::onNotViewPlayer(gaMessage*)
 {
-	blackboard<bool>("player_visible", false);
+	blackboard().set<bool>("player_visible", false, GameEngine::Variable::Type::BOOL);
 	return true;
 }
 
@@ -86,8 +86,8 @@ bool GameEngine::Component::BehaviorTree::onNotViewPlayer(gaMessage*)
  */
 bool GameEngine::Component::BehaviorTree::onHearSound(gaMessage* message)
 {
-	blackboard<glm::vec3>("last_heard_sound", message->m_v3value);
-	blackboard<bool>("heard_sound", true);
+	blackboard().set<glm::vec3>("last_heard_sound", message->m_v3value, GameEngine::Variable::Type::VEC3);
+	blackboard().set<bool>("heard_sound", true, GameEngine::Variable::Type::BOOL);
 
 	return true;
 }
@@ -97,8 +97,8 @@ bool GameEngine::Component::BehaviorTree::onHearSound(gaMessage* message)
  */
 bool GameEngine::Component::BehaviorTree::onBulletHit(gaMessage* message)
 {
-	blackboard<glm::vec3>("last_bullet", message->m_v3value);
-	blackboard<bool>("hit_bullet", true);
+	blackboard().set<glm::vec3>("last_bullet", message->m_v3value, GameEngine::Variable::Type::VEC3);
+	blackboard().set<bool>("hit_bullet", true, GameEngine::Variable::Type::BOOL);
 
 	return true;
 }

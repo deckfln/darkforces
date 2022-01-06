@@ -78,6 +78,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link />
     <Link>
@@ -284,6 +285,7 @@
     <ClCompile Include="gaEngine\gaBehaviorNode\gaBTurn.cpp" />
     <ClCompile Include="gaEngine\gaBehaviorNode\gaBVar.cpp" />
     <ClCompile Include="gaEngine\gaBehaviorNode\gaMoveTo.cpp" />
+    <ClCompile Include="gaEngine\gaBlackboard.cpp" />
     <ClCompile Include="gaEngine\gaBoundingBoxes.cpp" />
     <ClCompile Include="gaEngine\gaCollisionPoint.cpp" />
     <ClCompile Include="gaEngine\gaComponent.cpp" />
@@ -533,6 +535,7 @@
     <ClInclude Include="gaEngine\gaBehaviorNode\gaBTurn.h" />
     <ClInclude Include="gaEngine\gaBehaviorNode\gaBVar.h" />
     <ClInclude Include="gaEngine\gaBehaviorNode\gaMoveTo.h" />
+    <ClInclude Include="gaEngine\gaBlackboard.h" />
     <ClInclude Include="gaEngine\gaBoundingBoxes.h" />
     <ClInclude Include="gaEngine\gaCollisionPoint.h" />
     <ClInclude Include="gaEngine\gaComponent.h" />
@@ -554,6 +557,8 @@
     <ClInclude Include="gaEngine\gaPlugin.h" />
     <ClInclude Include="gaEngine\gaPlugin\gaPSounds.h" />
     <ClInclude Include="gaEngine\gaPlugin\gaPView.h" />
+    <ClInclude Include="gaEngine\gaValue.h" />
+    <ClInclude Include="gaEngine\gaVariable.h" />
     <ClInclude Include="gaEngine\gaVolumeSpace.h" />
     <ClInclude Include="gaEngine\Model.h" />
     <ClInclude Include="gaEngine\World.h" />

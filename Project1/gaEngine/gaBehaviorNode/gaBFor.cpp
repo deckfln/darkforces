@@ -71,7 +71,7 @@ GameEngine::BehaviorNode* GameEngine::Behavior::For::create(const char* name, ti
  */
 void GameEngine::Behavior::For::init(void* data)
 {
-	int32_t& counter = m_tree->blackboard<int32_t>(m_variable);
+	int32_t& counter = m_tree->blackboard().get<int32_t>(m_variable, GameEngine::Variable::Type::INT32);
 	m_start.get(counter, m_tree);
 }
 
@@ -85,7 +85,7 @@ bool GameEngine::Behavior::For::endLoop(void)
 	if (!b) {
 		// end of the loop without exit
 		// increase the counter at the end of each loop
-		int32_t& counter = m_tree->blackboard<int32_t>(m_variable);
+		int32_t& counter = m_tree->blackboard().get<int32_t>(m_variable, GameEngine::Variable::Type::INT32);
 		int32_t end;
 		m_end.get(end, m_tree);
 

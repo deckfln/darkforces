@@ -36,20 +36,22 @@ void GameEngine::Behavior::SetVar::init(void*)
 {
 	switch (m_type) {
 	case Type::BOOL:
-		m_tree->blackboard<bool>(m_variable, m_value);
+		m_tree->blackboard().set<bool>(m_variable, m_value, GameEngine::Variable::Type::BOOL);
 		break;
 	case Type::INT32:
-		m_tree->blackboard<int32_t>(m_variable, m_ivalue);
+		m_tree->blackboard().set<int32_t>(m_variable, m_ivalue, GameEngine::Variable::Type::INT32);
 		break;
 	case Type::FLOAT:
-		m_tree->blackboard<float>(m_variable, m_fvalue);
+		m_tree->blackboard().set<float>(m_variable, m_fvalue, GameEngine::Variable::Type::FLOAT);
 		break;
 	case Type::VEC3:
-		m_tree->blackboard<glm::vec3>(m_variable, m_v3value);
+		m_tree->blackboard().set<glm::vec3>(m_variable, m_v3value, GameEngine::Variable::Type::VEC3);
 		break;
 	case Type::VAR:
+		m_tree->blackboard().assign(m_variable, m_svalue);
+		break;
 	case Type::STRING:
-		m_tree->blackboard<std::string>(m_variable, m_svalue);
+		m_tree->blackboard().set<std::string>(m_variable, m_svalue, GameEngine::Variable::Type::STRING);
 		break;
 	}
 	m_status = GameEngine::BehaviorNode::Status::SUCCESSED;

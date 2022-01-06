@@ -2,6 +2,7 @@
 
 #include "gaBehaviorLoop.h"
 #include "gaBVar.h"
+#include "../gaValue.h"
 
 namespace GameEngine {
 	namespace Behavior {

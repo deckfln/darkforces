@@ -2,9 +2,12 @@
 
 #include <map>
 #include <deque>
+#ifdef _DEBUG
 #include "../../include/imnodes.h"
+#endif
 
 #include "../gaComponent.h"
+#include "../gaBlackboard.h"
 
 namespace GameEngine {
 	class BehaviorNode;
@@ -21,24 +24,14 @@ namespace GameEngine {
 			void parse(const std::string& data,
 				const std::map<std::string, std::string>& includes);// create a tree from XML data
 
-			template <typename T>
-			void blackboard(const std::string key, const T& value);
-
-			template <typename T>
-			void blackboard(const std::string key, const T* value);
-
-			template <typename T>
-			T& blackboard(const std::string key);
-
-			template <typename T>
-			T* pBlackboard(const std::string key);
-
 			void dispatchMessage(gaMessage* message) override;	// let a component deal with a situation
 
 			inline uint32_t lastAttrId(void) { return m_lastId++; };
 			inline uint32_t lastNode(void) { return m_lastNode; };
+			inline GameEngine::Blackboard& blackboard(void) { return m_blackboard; };
 
 			void handlers(uint32_t, msgHandler);				// manager message handlers
+
 
 			// preset message handlers
 			bool onViewPlayer(gaMessage*);						// player is viewed
@@ -60,7 +53,6 @@ namespace GameEngine {
 			BehaviorNode* m_current = nullptr;
 			bool m_instanciated = false;
 
-			std::map<std::string, void*> m_blackboard;
 			std::vector<BehaviorNode*> m_nodes;					// index of all nodes
 
 			std::map<uint32_t, msgHandler> m_handlers;
@@ -72,38 +64,8 @@ namespace GameEngine {
 			bool m_debug = false;
 #endif // _DEBUG
 
+			// blackboard
+			GameEngine::Blackboard m_blackboard;
 		};
-
-		template<typename T>
-		inline void BehaviorTree::blackboard(const std::string key, const T& value)
-		{
-			if (m_blackboard[key] == nullptr) {
-				m_blackboard[key] = new T;
-			}
-
-			*(static_cast<T*>(m_blackboard[key])) = value;
-		}
-
-		template<typename T>
-		inline void BehaviorTree::blackboard(const std::string key, const T* value)
-		{
-			m_blackboard[key] = (void*)value;
-		}
-
-		template<typename T>
-		inline T& BehaviorTree::blackboard(const std::string key)
-		{
-			if (m_blackboard[key] == nullptr) {
-				m_blackboard[key] = new T;
-			}
-
-			return *(static_cast<T*>(m_blackboard[key]));
-		}
-
-		template<typename T>
-		inline T* BehaviorTree::pBlackboard(const std::string key)
-		{
-			return static_cast<T*>(m_blackboard[key]);
-		}
 	}
 }

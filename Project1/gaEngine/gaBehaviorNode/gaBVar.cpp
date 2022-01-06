@@ -8,6 +8,7 @@
 #include "../World.h"
 #include "../gaDebug.h"
 #include "../gaComponent/gaBehaviorTree.h"
+#include "../gaValue.h"
 
 //-------------------------------------
 
@@ -20,13 +21,13 @@ static const std::map<const char*, GameEngine::Behavior::Var::Type> g_types = {
 	{"var", GameEngine::Behavior::Var::Type::VAR},
 };
 
-static const std::map<const char*, GameEngine::Behavior::Value::Type> g_types1 = {
-	{"bool", GameEngine::Behavior::Value::Type::BOOL},
-	{"int32", GameEngine::Behavior::Value::Type::INT32},
-	{"float", GameEngine::Behavior::Value::Type::FLOAT},
-	{"vec3", GameEngine::Behavior::Value::Type::VEC3},
-	{"string", GameEngine::Behavior::Value::Type::STRING},
-	{"var", GameEngine::Behavior::Value::Type::VAR},
+static const std::map<const char*, GameEngine::Value::Type> g_types1 = {
+	{"bool", GameEngine::Value::Type::BOOL},
+	{"int32", GameEngine::Value::Type::INT32},
+	{"float", GameEngine::Value::Type::FLOAT},
+	{"vec3", GameEngine::Value::Type::VEC3},
+	{"string", GameEngine::Value::Type::STRING},
+	{"var", GameEngine::Value::Type::VAR},
 };
 
 static const char* g_className = "Var";
@@ -34,7 +35,7 @@ static const char* g_className = "Var";
 /**
  * initialize variable from XML
  */
-void GameEngine::Behavior::Value::set(tinyxml2::XMLElement* xmlVar)
+void GameEngine::Value::set(tinyxml2::XMLElement* xmlVar)
 {
 	const char* type = xmlVar->Attribute("type");
 	for (auto& t : g_types1) {

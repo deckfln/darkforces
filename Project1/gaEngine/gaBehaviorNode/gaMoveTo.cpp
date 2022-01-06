@@ -195,7 +195,7 @@ void GameEngine::Behavior::MoveTo::onBlockedWay(gaMessage *message)
 	else {
 		// we are blocked and jumped over all waypoints
 		struct GameEngine::Physics::CollisionList& collisions = *(struct GameEngine::Physics::CollisionList *)&message->m_data;
-		m_tree->blackboard<struct GameEngine::Physics::CollisionList>("lastCollision", collisions);
+		m_tree->blackboard().set<struct GameEngine::Physics::CollisionList>("lastCollision", collisions, GameEngine::Variable::Type::OBJECT);
 		BehaviorNode::m_status = BehaviorNode::Status::FAILED;
 	}
 }
@@ -581,7 +581,7 @@ uint32_t GameEngine::Behavior::MoveTo::loadState(void* record)
 	m_currentNavPoint = r->current;
 
 	if (r->lastCollision[0] != 0) {
-		struct Physics::CollisionList& data = m_tree->blackboard<struct Physics::CollisionList>("lastCollision");
+		struct Physics::CollisionList& data = m_tree->blackboard().get<struct Physics::CollisionList>("lastCollision", GameEngine::Variable::Type::OBJECT);
 		gaEntity* collided = g_gaWorld.getEntity(r->lastCollision);
 		//m_tree->blackboard<gaEntity>("lastCollision", collided);
 	}

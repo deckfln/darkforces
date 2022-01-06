@@ -62,14 +62,14 @@ void DarkForces::Behavior::TrackPlayer::init(void* data)
 	}
 	*/
 	// Pick the last 2 known positions and run the entity along the axe up to a wall
-	std::deque<glm::vec3>& playerLastPositions = m_tree->blackboard<std::deque<glm::vec3>>("player_last_positions");
+	std::deque<glm::vec3>& playerLastPositions = m_tree->blackboard().get<std::deque<glm::vec3>>("player_last_positions", GameEngine::Variable::Type::OBJECT);
 	size_t size = playerLastPositions.size();
 	glm::vec2 direction;
 
 	if (size < 2) {
 		// if we don't have enough position of the player, were and when did we last heard a blaster shot
 
-		glm::vec3& sound = m_tree->blackboard<glm::vec3>("last_heard_sound");
+		glm::vec3& sound = m_tree->blackboard().get<glm::vec3>("last_heard_sound", GameEngine::Variable::Type::VEC3);
 		if (sound == glm::vec3(0)) {
 			m_status = Status::FAILED;
 			return;

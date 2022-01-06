@@ -65,14 +65,14 @@ void DarkForces::Behavior::WaitIdle::activated(void)
 
 	// reset the list of player positions
 
-	std::deque<glm::vec3>& playerLastPositions = m_tree->blackboard<std::deque<glm::vec3>>("player_last_positions");
+	std::deque<glm::vec3>& playerLastPositions = m_tree->blackboard().get<std::deque<glm::vec3>>("player_last_positions", GameEngine::Variable::Type::OBJECT);
 	playerLastPositions.clear();
 }
 
 void DarkForces::Behavior::WaitIdle::dispatchMessage(gaMessage* message, Action* r)
 {
 	if (conditionMet()) {
-		m_tree->blackboard<glm::vec3>("static_position", m_entity->position());
+		m_tree->blackboard().set<glm::vec3>("static_position", m_entity->position(), GameEngine::Variable::Type::VEC3);
 
 		return succeeded(r);
 	}

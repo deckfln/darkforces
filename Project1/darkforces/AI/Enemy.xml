@@ -85,6 +85,9 @@
 				<node type='GameEngine:SetVar' name='force target'>
 					<variable type='vec3' value='-21.29,-0.3,16.6'>static_position</variable>
 				</node>
+				<node type='GameEngine:SetVar' name='define satnav target'>
+					<variable type='var' value='static_position'>entity_position</variable>
+				</node>
 				<node type='task' task ='moveAndOpenDoor' name='stroll back to wait position'>
 				</node>
 		<!--
