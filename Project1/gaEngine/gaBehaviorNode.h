@@ -51,6 +51,7 @@ namespace GameEngine {
 		// getter/setter
 		inline BehaviorNode* parent(void) { return m_parent; };
 		inline const char* name(void) { return m_name; };
+		inline void name(const char* name) { m_name = name; };
 		inline uint32_t id(void) { return m_id; };
 		inline Status status(void) { return m_status; };
 		inline void status(Status s) { m_status = s; };

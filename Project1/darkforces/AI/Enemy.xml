@@ -6,6 +6,69 @@
 		<message id='GameEngine:BULLET_HIT'>GameEngine:onBulletHit</message>
 		<message id='DarkForces:DYING'>DarkForces:onDying</message>
 	</messages>
+	<tasks>
+		<task class='moveAndOpenDoor' description=''>
+			<node type='Loop' name='moveAndOpenDoor'>
+				<condition>until_one_success</condition>
+				<tree>
+					<node type='SatNav' name='direct go to wait position'>
+						<position type='vec3'>static_position</position>
+					</node>
+					<node type='Decorator' name='return success if failed to force exit of the parent'>
+						<condition>invert</condition>
+						<tree>
+							<node type='DarkForces:FindElevator' name='check if the entity collided with an elevator'>
+								<variable type='ptr'>wait_elevator</variable>
+							</node>
+						</tree>
+					</node>
+					<node type='Decorator' name='invert'>
+						<condition>invert</condition>
+						<tree>
+							<node type='Sequence' name='wait for door or open door'>
+								<condition>exit_first_success</condition>
+								<tree>
+									<node type='DarkForces:WaitDoor' name='if door is opening, wait for end of opening'>
+										<variable type='ptr'>wait_elevator</variable>
+									</node>
+									<node type='Sequence' name='open a door to go to wait position'>
+										<tree>
+											<node type='DarkForces:SetVar' name='number of triggers of an elevator'>
+												<variable type='var' value='elevator.triggers.count'>max_triggers</variable>
+											</node>
+											<node type='GameEngine:For' name='try to reach each trigger of the door'>
+												<variable>trigger</variable>
+												<start type='int32' value='0' />
+												<end type='var' value='max_triggers' />
+												<condition>all_success</condition>
+												<default_return>failure</default_return>
+												<tree>
+													<node type='DarkForces:SetVar' name='position of current trigger'>
+														<variable type='var' value='elevator.triggers[trigger].position'>trigger_position</variable>
+													</node>
+													<node type='DarkForces:SetVar' name='name of current trigger'>
+														<variable type='var' value='elevator.triggers[trigger].name'>trigger_name</variable>
+													</node>
+													<node type='SatNav' name='go to trigger'>
+														<position type='vec3'>trigger_position</position>
+													</node>
+												</tree>
+											</node>
+											<node type='DarkForces:Activate' name='push the trigger'>
+												<variable>trigger_name</variable>
+											</node>
+											<node type='DarkForces:WaitDoor' name='wait for door to open'></node>
+										</tree>
+									</node>
+								</tree>
+							</node>
+						</tree>
+					</node>
+				</tree>
+			</node>
+
+		</task>
+	</tasks>
 	<node type='Loop' name='main control'>
 	<onerror action='failed'/>
 	<condition>until_all_fail</condition>
@@ -22,63 +85,7 @@
 				<node type='GameEngine:SetVar' name='force target'>
 					<variable type='vec3' value='-21.29,-0.3,16.6'>static_position</variable>
 				</node>
-				<node type='Loop' name='stroll back to wait position'>
-					<condition>until_one_success</condition>
-					<tree>
-						<node type='SatNav' name='direct go to wait position'>
-							<position type='vec3'>static_position</position>
-						</node>
-						<node type='Decorator' name='return success if failed to force exit of the parent'>
-							<condition>invert</condition>
-							<tree>
-								<node type='DarkForces:FindElevator' name='check if the entity collided with an elevator'>
-									<variable type='ptr'>wait_elevator</variable>
-								</node>
-							</tree>
-						</node>
-						<node type='Decorator' name='invert'>
-							<condition>invert</condition>
-							<tree>
-								<node type='Sequence' name='wait for door or open door'>
-									<condition>exit_first_success</condition>
-									<tree>
-										<node type='DarkForces:WaitDoor' name='if door is opening, wait for end of opening'>
-											<variable type='ptr'>wait_elevator</variable>
-										</node>
-										<node type='Sequence' name='open a door to go to wait position'>
-											<tree>
-												<node type='DarkForces:SetVar' name='number of triggers of an elevator'>
-													<variable type='var' value='elevator.triggers.count'>max_triggers</variable>
-												</node>
-												<node type='GameEngine:For' name='try to reach each trigger of the door'>
-													<variable>trigger</variable>
-													<start type='int32' value='0' />
-													<end type='var' value='max_triggers' />
-													<condition>all_success</condition>
-													<default_return>failure</default_return>
-													<tree>
-														<node type='DarkForces:SetVar' name='position of current trigger'>
-															<variable type='var' value='elevator.triggers[trigger].position'>trigger_position</variable>
-														</node>
-														<node type='DarkForces:SetVar' name='name of current trigger'>
-															<variable type='var' value='elevator.triggers[trigger].name'>trigger_name</variable>
-														</node>
-														<node type='SatNav' name='go to trigger'>
-															<position type='vec3'>trigger_position</position>
-														</node>
-													</tree>
-												</node>
-												<node type='DarkForces:Activate' name='push the trigger'>
-													<variable>trigger_name</variable>
-												</node>
-												<node type='DarkForces:WaitDoor' name='wait for door to open'></node>
-											</tree>
-										</node>
-									</tree>
-								</node>
-							</tree>
-						</node>
-					</tree>
+				<node type='task' task ='moveAndOpenDoor' name='stroll back to wait position'>
 				</node>
 		<!--
 		-->
