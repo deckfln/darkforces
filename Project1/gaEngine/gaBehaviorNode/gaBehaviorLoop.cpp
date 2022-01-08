@@ -84,10 +84,14 @@ bool GameEngine::Behavior::Loop::endLoop(void)
 			return true;
 		}
 	}
-
-	if (sucess == m_children.size()) {
-		m_status = Status::SUCCESSED;
-		return true;
+	else if (m_condition == Condition::UNTIL_ALL_SUCCCES) {
+		if (sucess == m_children.size()) {
+			m_status = Status::SUCCESSED;
+			return true;
+		}
+	}
+	else {
+		exit(-1);
 	}
 
 	return false;

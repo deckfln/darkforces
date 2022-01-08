@@ -12,7 +12,7 @@
 				<condition>until_one_success</condition>
 				<tree>
 					<node type='SatNav' name='direct go to wait position'>
-						<position type='vec3'>static_position</position>
+						<variable type='vec3'>static_position</variable>
 					</node>
 					<node type='Decorator' name='return success if failed to force exit of the parent'>
 						<condition>invert</condition>
@@ -34,30 +34,32 @@
 									<node type='Sequence' name='open a door to go to wait position'>
 										<tree>
 											<node type='DarkForces:SetVar' name='number of triggers of an elevator'>
-												<variable type='var' value='elevator.triggers.count'>max_triggers</variable>
+												<variable type='int32' value='=elevator.triggers.count'>max_triggers</variable>
 											</node>
 											<node type='GameEngine:For' name='try to reach each trigger of the door'>
-												<variable>trigger</variable>
+												<variable type='int32'>trigger</variable>
 												<start type='int32' value='0' />
-												<end type='var' value='max_triggers' />
+												<end type='int32' value='=max_triggers' />
 												<condition>all_success</condition>
 												<default_return>failure</default_return>
 												<tree>
 													<node type='DarkForces:SetVar' name='position of current trigger'>
-														<variable type='var' value='elevator.triggers[trigger].position'>trigger_position</variable>
+														<variable type='vec3' value='=elevator.triggers[trigger].position'>trigger_position</variable>
 													</node>
 													<node type='DarkForces:SetVar' name='name of current trigger'>
-														<variable type='var' value='elevator.triggers[trigger].name'>trigger_name</variable>
+														<variable type='string' value='=elevator.triggers[trigger].name'>trigger_name</variable>
 													</node>
 													<node type='SatNav' name='go to trigger'>
-														<position type='vec3'>trigger_position</position>
+														<variable type='vec3'>trigger_position</variable>
 													</node>
 												</tree>
 											</node>
 											<node type='DarkForces:Activate' name='push the trigger'>
 												<variable>trigger_name</variable>
 											</node>
-											<node type='DarkForces:WaitDoor' name='wait for door to open'></node>
+											<node type='DarkForces:WaitDoor' name='wait for door to open'>
+												<variable type='ptr'>wait_elevator</variable>
+											</node>
 										</tree>
 									</node>
 								</tree>
@@ -86,7 +88,7 @@
 					<variable type='vec3' value='-21.29,-0.3,16.6'>static_position</variable>
 				</node>
 				<node type='GameEngine:SetVar' name='define satnav target'>
-					<variable type='var' value='static_position'>entity_position</variable>
+					<variable type='vec3' value='=static_position'>entity_position</variable>
 				</node>
 				<node type='task' task ='moveAndOpenDoor' name='stroll back to wait position'>
 				</node>
@@ -119,7 +121,7 @@
 								<exits>
 									<exit value='true'>nearby_player</exit>
 								</exits>
-								<position type='vec3'>player_last_position</position>
+								<variable type='vec3'>player_last_position</variable>
 							</node>
 						</tree>
 					</node>
@@ -132,7 +134,7 @@
 							<variable type='vec3'>track_player_position</variable>
 						</node>
 						<node type='SatNav' name='move to player last position'>
-							<position type='vec3'>track_player_position</position>
+							<variable type='vec3'>track_player_position</variable>
 							<exits>
 								<exit value='true'>player_visible</exit>
 								<exit value='true'>hit_bullet</exit>

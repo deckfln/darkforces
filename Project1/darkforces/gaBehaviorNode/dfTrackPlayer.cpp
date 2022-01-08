@@ -61,6 +61,8 @@ void DarkForces::Behavior::TrackPlayer::init(void* data)
 		}
 	}
 	*/
+	glm::vec3 v;
+
 	// Pick the last 2 known positions and run the entity along the axe up to a wall
 	std::deque<glm::vec3>& playerLastPositions = m_tree->blackboard().get<std::deque<glm::vec3>>("player_last_positions", GameEngine::Variable::Type::OBJECT);
 	size_t size = playerLastPositions.size();
@@ -75,7 +77,7 @@ void DarkForces::Behavior::TrackPlayer::init(void* data)
 			return;
 		}
 
-		m_v3value = glm::vec3(sound.x, m_entity->position().y, sound.z);
+		v = glm::vec3(sound.x, m_entity->position().y, sound.z);
 	}
 	else {
 		// the player may have been seen twice at the same position, so find a different position, but only go back a bit
@@ -88,7 +90,7 @@ void DarkForces::Behavior::TrackPlayer::init(void* data)
 		}
 		if (size <= 0) {
 			// player as static all the time
-			m_v3value = playerLastPositions.back();
+			v = playerLastPositions.back();
 		}
 		else {
 			glm::vec2 p1d(p1.x, p1.z);
@@ -101,10 +103,11 @@ void DarkForces::Behavior::TrackPlayer::init(void* data)
 #endif
 
 			direction = glm::normalize(p1d - p2d);
-			m_v3value = glm::vec3(direction.x + p1d.x, m_entity->position().y, direction.y + p1d.y);
+			v = glm::vec3(direction.x + p1d.x, m_entity->position().y, direction.y + p1d.y);
 		}
 
 	}
 
+	m_variable.set(v);
 	GameEngine::Behavior::SetVar::init(nullptr);
 }

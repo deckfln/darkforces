@@ -7,6 +7,7 @@
 #include "../gaEntity.h"
 #include "../gaNavMesh.h"
 #include "../World.h"
+#include "../gaBlackboard.h"
 #include "../gaComponent/gaBehaviorTree.h"
 
 #include "../flightRecorder/frPathFinding.h"
@@ -46,7 +47,6 @@ GameEngine::BehaviorNode* GameEngine::Behavior::SatNav::clone(GameEngine::Behavi
 	}
 	cl->m_move2variable = m_move2variable;
 	cl->m_destName = m_destName;
-	cl->m_variable_type = m_variable_type;
 	GameEngine::Behavior::MoveTo::clone(cl);
 	return cl;
 }
@@ -67,12 +67,10 @@ GameEngine::BehaviorNode* GameEngine::Behavior::SatNav::create(const char* name,
 
 	GameEngine::Behavior::MoveTo::create(name, element, node);
 
-	tinyxml2::XMLElement* variable = element->FirstChildElement("position");
-	if (variable != nullptr) {
+	if (node->m_destName.create(element)) {
 		node->m_move2variable = true;
-		node->m_destName = variable->GetText();
-		node->m_variable_type = variable->Attribute("type");
 	}
+
 	return node;
 }
 
@@ -85,18 +83,9 @@ void GameEngine::Behavior::SatNav::init(void *data)
 {
 	if (m_move2variable) {
 		// load from a variable
-		if (m_variable_type == "dequeu") {
-			std::deque<glm::vec3>& playerLastPositions = m_tree->blackboard().get<std::deque<glm::vec3>>(m_destName, GameEngine::Variable::Type::OBJECT);
-			if (playerLastPositions.size() == 0) {
-				BehaviorNode::m_status = BehaviorNode::Status::FAILED;
-				return;
-			}
-			m_destination = playerLastPositions.back();
-		}
-		else if (m_variable_type == "vec3") {
-			glm::vec3& playerLastPositions = m_tree->blackboard().get<glm::vec3>(m_destName, GameEngine::Variable::Type::VEC3);
-			m_destination = playerLastPositions;
-		}
+		glm::vec3& playerLastPositions = m_destName.getv3(m_tree);
+//			m_tree->blackboard().get<glm::vec3>(m_destName, GameEngine::Variable::Type::VEC3);
+		m_destination = playerLastPositions;
 	}
 	else {
 		glm::vec3* destination = static_cast<glm::vec3*>(data);
@@ -156,7 +145,7 @@ void GameEngine::Behavior::SatNav::dispatchMessage(gaMessage* message, Action *r
 void GameEngine::Behavior::SatNav::debugGUInode(void)
 {
 	if (m_move2variable) {
-		ImGui::Text("%s(%s)", m_destName.c_str(), m_variable_type.c_str());
+		ImGui::Text("%s", m_destName.debug());
 	}
 	GameEngine::Behavior::MoveTo::debugGUInode();
 }

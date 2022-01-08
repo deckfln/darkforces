@@ -48,17 +48,6 @@ GameEngine::BehaviorNode* DarkForces::Behavior::SetVar::create(const char* name,
 
 	GameEngine::Behavior::SetVar::create(name, element, node);
 
-	if (node->m_type == Type::VAR) {
-		if (node->m_svalue == "elevator.triggers.count") {
-			node->m_type = Type::INT32;
-		}
-		else if (node->m_svalue == "elevator.triggers[trigger].position") {
-			node->m_type = Type::VEC3;
-		}
-		else if (node->m_svalue == "elevator.triggers[trigger].name") {
-			node->m_type = Type::STRING;
-		}
-	}
 	return node;
 }
 
@@ -67,7 +56,7 @@ GameEngine::BehaviorNode* DarkForces::Behavior::SetVar::create(const char* name,
  */
 void DarkForces::Behavior::SetVar::init(void* data)
 {
-	if (m_svalue == "elevator.triggers.count") {
+	if (m_variable.var() == "elevator.triggers.count") {
 		// we are on a natural move, to the elevator can be activated
 		// test all triggers of the object
 		Component::InfElevator* elevator = m_tree->blackboard().pGet<Component::InfElevator>("wait_elevator", GameEngine::Variable::Type::PTR);
@@ -80,9 +69,11 @@ void DarkForces::Behavior::SetVar::init(void* data)
 		// convert the Trigger elevator to the parent entity
 		const std::vector<Component::Trigger*>& cTriggers = elevator->getTriggers();
 
-		m_ivalue = cTriggers.size();
+		m_variable.set(m_tree, (int32_t)cTriggers.size());
+		m_status = GameEngine::BehaviorNode::Status::SUCCESSED;
+		return;
 	}
-	else if (m_svalue == "elevator.triggers[trigger].position") {
+	else if (m_variable.var() == "elevator.triggers[trigger].position") {
 		// we are on a natural move, to the elevator can be activated
 		// test all triggers of the objectwait
 		Component::InfElevator* elevator = m_tree->blackboard().pGet<Component::InfElevator>("wait_elevator", GameEngine::Variable::Type::PTR);
@@ -97,15 +88,19 @@ void DarkForces::Behavior::SetVar::init(void* data)
 		const std::vector<Component::Trigger*>& cTriggers = elevator->getTriggers();
 		gaEntity* targetTrigger = cTriggers[current_trigger]->entity();
 
-		m_v3value = targetTrigger->position();
+		glm::vec3 v3 = targetTrigger->position();
 
 		// if the trigger is a dfSign, move in front of the object, on ON the object
 		Component::Sign* sign = dynamic_cast<Component::Sign*>(targetTrigger->findComponent(DF_COMPONENT_SIGN));
 		if (sign) {
-			m_v3value += sign->normal();
+			v3 += sign->normal();
 		}
+
+		m_variable.set(m_tree, v3);
+		m_status = GameEngine::BehaviorNode::Status::SUCCESSED;
+		return;
 	}
-	else if (m_svalue == "elevator.triggers[trigger].name") {
+	else if (m_variable.var() == "elevator.triggers[trigger].name") {
 		// we are on a natural move, to the elevator can be activated
 		// test all triggers of the object
 		Component::InfElevator* elevator = m_tree->blackboard().pGet<Component::InfElevator>("wait_elevator", GameEngine::Variable::Type::PTR);
@@ -120,7 +115,9 @@ void DarkForces::Behavior::SetVar::init(void* data)
 		const std::vector<Component::Trigger*>& cTriggers = elevator->getTriggers();
 		gaEntity* targetTrigger = cTriggers[current_trigger]->entity();
 
-		m_svalue = targetTrigger->name();
+		m_variable.set(m_tree, targetTrigger->name());
+		m_status = GameEngine::BehaviorNode::Status::SUCCESSED;
+		return;
 	}
 
 	GameEngine::Behavior::SetVar::init(data);

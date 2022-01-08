@@ -1,6 +1,7 @@
 #pragma once
 
 #include "gaMoveTo.h"
+#include "../gaVariable.h"
 
 class gaEntity;
 
@@ -10,8 +11,9 @@ namespace GameEngine {
 			bool m_move2variable = false;						// move to a position given directly or to a variable on the blackboard
 
 			glm::vec3 m_destination;
-			std::string m_destName;								// name of the variable storing the position
-			std::string m_variable_type;						// type of the variable
+
+			Variable m_destName;
+
 			std::vector<glm::vec3> m_navpoints;					// nav points for the move
 
 			void onGoto(gaMessage* message);

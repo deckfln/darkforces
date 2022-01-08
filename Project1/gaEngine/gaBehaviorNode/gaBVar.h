@@ -4,7 +4,7 @@
 
 #include <vector>
 #include "../gaBehaviorNode.h"
-#include "../gaComponent/gaBehaviorTree.h"
+#include "../gaVariable.h"
 
 namespace GameEngine {
 	namespace Behavior {
@@ -31,14 +31,7 @@ namespace GameEngine {
 			void debugGUInode(void) override;							// display the component in the debugger
 
 		protected:
-			std::string m_variable;						// list of angles to turn to
-			Type m_type=Type::BOOL;							// variable type
-
-			bool m_value;								// content for possible types
-			int32_t m_ivalue;
-			float m_fvalue;
-			glm::vec3 m_v3value;
-			std::string m_svalue;
+			Variable m_variable;
 		};
 	}
 }

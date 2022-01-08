@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../../gaEngine/gaBehaviorNode.h"
+#include "../../gaEngine/gaVariable.h"
 
 namespace DarkForces {
 	namespace Component {
@@ -10,6 +11,8 @@ namespace DarkForces {
 	namespace Behavior {
 		class WaitDoor : public GameEngine::BehaviorNode
 		{
+			GameEngine::Variable m_elevator;
+
 		public:
 			WaitDoor(const char* name);
 			BehaviorNode* clone(GameEngine::BehaviorNode* p) override;

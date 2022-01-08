@@ -25,6 +25,9 @@ namespace GameEngine {
 
 		template <typename T>
 		T* pGet(const std::string& key, GameEngine::Variable::Type t);
+
+		template <typename T>
+		void pSet(const std::string& key, T* ptr);
 	};
 
 	template<typename T>
@@ -82,4 +85,19 @@ namespace GameEngine {
 		}
 		return static_cast<T*>(m_value[variable]);
 	}
+
+	template <typename T>
+	void GameEngine::Blackboard::pSet(const std::string& variable, T* ptr)
+	{
+		if (m_type.count(variable) == 0) {
+			m_type[variable] = GameEngine::Variable::Type::PTR;
+		}
+
+		if (m_type[variable] != GameEngine::Variable::Type::PTR) {
+			gaDebugLog(1, "GameEngine::Blackboard::pSet", "incompatible type for " + variable);
+			exit(-1);
+		}
+		m_value[variable] = ptr;
+	}
+
 }

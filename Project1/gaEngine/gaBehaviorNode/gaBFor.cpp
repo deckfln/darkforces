@@ -93,6 +93,7 @@ bool GameEngine::Behavior::For::endLoop(void)
 
 		if (counter >= end) {
 			m_status = m_defaultreturn;
+			return true;
 		}
 	}
 

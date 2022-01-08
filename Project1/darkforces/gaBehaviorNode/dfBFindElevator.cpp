@@ -28,6 +28,7 @@ GameEngine::BehaviorNode* DarkForces::Behavior::FindElevator::clone(GameEngine::
 		cl = new DarkForces::Behavior::FindElevator(m_name);
 	}
 	GameEngine::BehaviorNode::clone(cl);
+	cl->m_elevator = m_elevator;
 	return cl;
 }
 
@@ -46,7 +47,11 @@ GameEngine::BehaviorNode* DarkForces::Behavior::FindElevator::create(const char*
 	}
 
 	GameEngine::BehaviorNode::create(name, element, node);
+	if (!node->m_elevator.create(element)) {
+		gaDebugLog(1, "DarkForces::Behavior::FindElevator", "target variable is missing for " + (std::string)node->m_name);
+		exit(-1);
 
+	}
 	return node;
 }
 
@@ -78,6 +83,7 @@ void DarkForces::Behavior::FindElevator::init(void* data)
 		return;
 	}
 
-	m_tree->blackboard().set<DarkForces::Component::InfElevator>("wait_elevator", elevator, GameEngine::Variable::Type::PTR);
+	m_elevator.set(m_tree, elevator);
+	//m_tree->blackboard().set<DarkForces::Component::InfElevator>("wait_elevator", elevator, GameEngine::Variable::Type::PTR);
 	m_status = GameEngine::BehaviorNode::Status::SUCCESSED;
 }

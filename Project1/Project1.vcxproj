@@ -78,7 +78,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <MultiProcessorCompilation>false</MultiProcessorCompilation>
     </ClCompile>
     <Link />
     <Link>
@@ -307,6 +307,7 @@
     <ClCompile Include="gaEngine\gaPlugin.cpp" />
     <ClCompile Include="gaEngine\gaPlugin\gaPSounds.cpp" />
     <ClCompile Include="gaEngine\gaPlugin\gaPView.cpp" />
+    <ClCompile Include="gaEngine\gaVariable.cpp" />
     <ClCompile Include="gaEngine\gaVolumeSpace.cpp" />
     <ClCompile Include="gaEngine\Model.cpp" />
     <ClCompile Include="gaEngine\World.cpp" />
