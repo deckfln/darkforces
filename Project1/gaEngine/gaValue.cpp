@@ -11,6 +11,7 @@ static const std::map<const char*, GameEngine::Value::Type> g_types1 = {
 	{"vec3", GameEngine::Value::Type::VEC3},
 	{"string", GameEngine::Value::Type::STRING},
 	{"var", GameEngine::Value::Type::VAR},
+	{"ptr", GameEngine::Value::Type::PTR},
 };
 
 
@@ -28,11 +29,11 @@ void GameEngine::Value::set(tinyxml2::XMLElement* xmlVar)
 	}
 
 	if (m_type == Type::NONE) {
-		gaDebugLog(1, "GameEngine::Behavior::SetVar", "unknown type");
+		gaDebugLog(1, "GameEngine::Value", "unknown type " + (std::string)type);
 		exit(-1);
 	}
 
-	const char* v = xmlVar->Attribute("value");
+	const char* v = xmlVar->GetText();
 
 	if (v) {
 		if (v[0] == '=') {
@@ -42,16 +43,15 @@ void GameEngine::Value::set(tinyxml2::XMLElement* xmlVar)
 		else {
 			switch (m_type) {
 			case Type::BOOL:
-				xmlVar->QueryBoolAttribute("value", &m_value);
+				m_value = strcmp(v, "true") == 0;
 				break;
 			case Type::INT32:
-				xmlVar->QueryIntAttribute("value", &m_ivalue);
+				m_ivalue = std::stoi(v);
 				break;
 			case Type::FLOAT:
-				xmlVar->QueryFloatAttribute("value", &m_fvalue);
+				m_fvalue = std::stof(v);
 				break;
 			case Type::VEC3: {
-				const char* v = xmlVar->Attribute("value");
 				float x, y, z;
 				if (v != nullptr) {
 					sscanf_s(v, "%f,%f,%f", &x, &y, &z);
@@ -60,7 +60,7 @@ void GameEngine::Value::set(tinyxml2::XMLElement* xmlVar)
 				// value defined by code, so not available here
 				break; }
 			case Type::STRING:
-				m_svalue = xmlVar->Attribute("value");
+				m_svalue = v;
 				break;
 			}
 		}

@@ -19,8 +19,9 @@
 					<node type='Decorator' name='return success if failed to force exit of the parent'>
 						<condition>invert</condition>
 						<tree>
-							<node type='DarkForces:FindElevator' name='check if the entity collided with an elevator'>
+							<node type='DarkForces:SetVar' name='check if the entity collided with an elevator'>
 								<variable type='ptr'>wait_elevator</variable>
+								<value type='ptr'>=findElevator</value>
 							</node>
 						</tree>
 					</node>
@@ -37,22 +38,22 @@
 										<tree>
 											<node type='DarkForces:SetVar' name='number of triggers of an elevator'>
 												<variable type='int32'>max_triggers</variable>
-												<value type='int32' value='=elevator.triggers.count' />
+												<value type='int32'>=elevator.triggers.count</value>
 											</node>
 											<node type='GameEngine:For' name='try to reach each trigger of the door'>
 												<variable type='int32'>trigger</variable>
-												<start type='int32' value='0' />
-												<end type='int32' value='=max_triggers' />
-												<condition>all_success</condition>
+												<start type='int32'>0</start>
+												<end type='int32'>=max_triggers</end>
+												<condition>until_all_success</condition>
 												<default_return>failure</default_return>
 												<tree>
 													<node type='DarkForces:SetVar' name='position of current trigger'>
 														<variable type='vec3'>trigger_position</variable>
-														<value type='vec3' value='=elevator.triggers[trigger].position' />
+														<value type='vec3'>=elevator.triggers[trigger].position</value>
 													</node>
 													<node type='DarkForces:SetVar' name='name of current trigger'>
 														<variable type='string'>trigger_name</variable>
-														<value type='string' value='=elevator.triggers[trigger].name' />
+														<value type='string'>=elevator.triggers[trigger].name</value>
 													</node>
 													<node type='SatNav' name='go to trigger'>
 														<variable type='vec3'>trigger_position</variable>
@@ -92,11 +93,11 @@
 		-->
 				<node type='GameEngine:SetVar' name='force target'>
 					<variable type='vec3' value='-21.29,-0.3,16.6'>static_position</variable>
-					<value type='vec3' value='-21.29,-0.3,16.6' />
+					<value type='vec3'>-21.29,-0.3,16.6</value>
 				</node>
 				<node type='GameEngine:SetVar' name='define satnav target'>
 					<variable type='vec3' value='=static_position'>entity_position</variable>
-					<value type='vec3' value='=static_position' />
+					<value type='vec3'>=static_position</value>
 				</node>
 				<node type='task' task ='moveAndOpenDoor' name='stroll back to wait position'>
 				</node>
@@ -109,7 +110,7 @@
 					<tree>
 					<node type='GameEngine:CheckVar' name='player is visible'>
 						<variable type='bool'>player_visible</variable>
-						<value type='bool' value='=static_position' />
+						<value type='bool'>true</value>
 					</node>
 					<node type='darkForces:sound' name='tease the player'>
 						<sounds>
@@ -119,8 +120,9 @@
 					<node type='Fire2Player' name='Shoot player'></node>
 					<node type='Sequence' name='Move to player position'>
 						<tree>
-							<node type='DarkForces:Move2Player' name='set the player nearby position'>
+							<node type='DarkForces:SetVar' name='set the player nearby position'>
 								<variable type='vec3'>player_last_position</variable>
+								<value type='vec3'>=playerLastPosition</value>
 							</node>
 							<node type='GameEngine:Alarm' name='walk for limited time'>
 								<message>GameEngine:SatNav_CANCEL</message>
@@ -139,11 +141,22 @@
 				<node type='Sequence' name='move to player last known position'>
 					<condition>invert</condition>	<!-- reaching the end of trip means not seing/hearing anything, so it is actualy a failure-->
 					<tree>
-						<node type='DarkForces:TrackPlayer' name='set player last known position (view/soud)'>
+						<node type='DarkForces:SetVar' name='set player last known position (view/soud)'>
 							<variable type='vec3'>track_player_position</variable>
+							<value type='vec3'>=playerEstimatedPosition()</value>
 						</node>
 						<node type='SatNav' name='move to player last position'>
 							<variable type='vec3'>track_player_position</variable>
+							<exit>
+								<if>
+									<variable type='bool'>player_visible</variable>
+									<value type='bool'>true</value>
+								</if>
+								<if>
+									<variable type='bool'>hit_bullet</variable>
+									<value type='bool'>true</value>
+								</if>
+							</exit>
 							<exits>
 								<exit value='true'>player_visible</exit>
 								<exit value='true'>hit_bullet</exit>

@@ -60,57 +60,6 @@ GameEngine::BehaviorNode::~BehaviorNode(void)
 }
 
 /**
- * check exit conditions
- */
-bool GameEngine::BehaviorNode::conditionMet(void)
-{
-	for (auto& exit : m_exit) {
-		bool& condition = m_tree->blackboard().get<bool>(exit.first, GameEngine::Variable::Type::BOOL);
-		if (condition == exit.second) {
-			return true;
-		}
-	}
-
-	return false;
-}
-
-/**
- * bind all nodes to the tree
- */
-void GameEngine::BehaviorNode::tree(Component::BehaviorTree* tree)
-{
-	std::queue<BehaviorNode*> nodes;
-	BehaviorNode* node;
-
-	nodes.push(this);
-
-	while (!nodes.empty()) {
-		node = nodes.front();
-		nodes.pop();
-
-		node->m_tree = tree;
-		for (auto child : node->m_children) {
-			nodes.push(child);
-		}
-	}
-}
-
-/**
- *
- */
-void GameEngine::BehaviorNode::init(void* data)
-{
-	m_status = Status::RUNNING;
-	m_runningChild = -1;
-	m_data = data;
-
-	// reset the status of all children
-	for (auto& child : m_children) {
-		child->status(Status::NONE);
-	}
-}
-
-/**
  *
  */
 BehaviorNode* GameEngine::BehaviorNode::create(const char* name, tinyxml2::XMLElement* element, GameEngine::BehaviorNode* used)
@@ -147,7 +96,70 @@ BehaviorNode* GameEngine::BehaviorNode::create(const char* name, tinyxml2::XMLEl
 		}
 	}
 
+	// Get the exit conditions
+	tinyxml2::XMLElement* xmlExit = element->FirstChildElement("exit");
+	if (xmlExit != nullptr) {
+		tinyxml2::XMLElement* xmlIf = xmlExit->FirstChildElement("if");
+
+		while (xmlIf != nullptr) {
+			Variable var;
+			Value val;
+
+			if (!var.create(xmlIf)) {
+				gaDebugLog(1, "GameEngine::Behavior::Var", "no variable defined for " + (std::string)node->m_name);
+				exit(-1);
+			}
+			if (!val.create(xmlIf)) {
+				gaDebugLog(1, "GameEngine::Behavior::Var", "no value defined for " + (std::string)node->m_name);
+				exit(-1);
+			}
+
+			node->m_if_variables.push_back(var);
+			node->m_if_value.push_back(val);
+
+			xmlIf = xmlIf->NextSiblingElement("if");
+		}
+	}
+
 	return node;
+}
+
+//-------------------------------------------------------------
+
+/**
+ * check exit conditions
+ */
+bool GameEngine::BehaviorNode::conditionMet(void)
+{
+	for (auto& exit : m_exit) {
+		bool& condition = m_tree->blackboard().get<bool>(exit.first, GameEngine::Variable::Type::BOOL);
+		if (condition == exit.second) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+/**
+ * bind all nodes to the tree
+ */
+void GameEngine::BehaviorNode::tree(Component::BehaviorTree* tree)
+{
+	std::queue<BehaviorNode*> nodes;
+	BehaviorNode* node;
+
+	nodes.push(this);
+
+	while (!nodes.empty()) {
+		node = nodes.front();
+		nodes.pop();
+
+		node->m_tree = tree;
+		for (auto child : node->m_children) {
+			nodes.push(child);
+		}
+	}
 }
 
 /**
@@ -221,6 +233,25 @@ void GameEngine::BehaviorNode::record(std::vector<BehaviorNode*>& nodes)
 		node->record(nodes);
 	}
 }
+
+//-------------------------------------------------------------------
+
+/**
+ *
+ */
+void GameEngine::BehaviorNode::init(void* data)
+{
+	m_status = Status::RUNNING;
+	m_runningChild = -1;
+	m_data = data;
+
+	// reset the status of all children
+	for (auto& child : m_children) {
+		child->status(Status::NONE);
+	}
+}
+
+
 
 /**
  * Node failed

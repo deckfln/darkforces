@@ -2,6 +2,8 @@
 
 #include <vector>
 #include "gaMessage.h"
+#include "gaVariable.h"
+#include "gaValue.h"
 
 /*
  * Define a default node in a Behavior Tree
@@ -95,6 +97,9 @@ namespace GameEngine {
 		std::vector<BehaviorNode*> m_children;						// list of sub nodes
 
 		std::map<std::string, bool> m_exit;							// list of variables triggering exit of the node
+
+		std::vector<Variable> m_if_variables;
+		std::vector<Value> m_if_value;
 
 #if defined _DEBUG
 		const char* m_className = nullptr;

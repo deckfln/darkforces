@@ -69,7 +69,7 @@ void DarkForces::Behavior::FindElevator::init(void* data)
 
 	DarkForces::Component::InfElevator* elevator = nullptr;
 	gaEntity* collided;
-	for (auto i = 0; i < collidedList.size; i++) {
+	for (size_t i = 0; i < collidedList.size; i++) {
 		collided = collidedList.entities[i];
 		elevator = dynamic_cast<DarkForces::Component::InfElevator*>(collided->findComponent(DF_COMPONENT_INF_ELEVATOR));
 
