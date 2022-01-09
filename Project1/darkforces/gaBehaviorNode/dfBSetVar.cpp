@@ -56,7 +56,7 @@ GameEngine::BehaviorNode* DarkForces::Behavior::SetVar::create(const char* name,
  */
 void DarkForces::Behavior::SetVar::init(void* data)
 {
-	if (m_variable.var() == "elevator.triggers.count") {
+	if (m_value.var() == "elevator.triggers.count") {
 		// we are on a natural move, to the elevator can be activated
 		// test all triggers of the object
 		Component::InfElevator* elevator = m_tree->blackboard().pGet<Component::InfElevator>("wait_elevator", GameEngine::Variable::Type::PTR);
@@ -73,7 +73,7 @@ void DarkForces::Behavior::SetVar::init(void* data)
 		m_status = GameEngine::BehaviorNode::Status::SUCCESSED;
 		return;
 	}
-	else if (m_variable.var() == "elevator.triggers[trigger].position") {
+	else if (m_value.var() == "elevator.triggers[trigger].position") {
 		// we are on a natural move, to the elevator can be activated
 		// test all triggers of the objectwait
 		Component::InfElevator* elevator = m_tree->blackboard().pGet<Component::InfElevator>("wait_elevator", GameEngine::Variable::Type::PTR);
@@ -100,7 +100,7 @@ void DarkForces::Behavior::SetVar::init(void* data)
 		m_status = GameEngine::BehaviorNode::Status::SUCCESSED;
 		return;
 	}
-	else if (m_variable.var() == "elevator.triggers[trigger].name") {
+	else if (m_value.var() == "elevator.triggers[trigger].name") {
 		// we are on a natural move, to the elevator can be activated
 		// test all triggers of the object
 		Component::InfElevator* elevator = m_tree->blackboard().pGet<Component::InfElevator>("wait_elevator", GameEngine::Variable::Type::PTR);
@@ -118,6 +118,33 @@ void DarkForces::Behavior::SetVar::init(void* data)
 		m_variable.set(m_tree, targetTrigger->name());
 		m_status = GameEngine::BehaviorNode::Status::SUCCESSED;
 		return;
+	}
+	else if (m_value.var() == "=findElevator") {
+		// the move_to node failed, it probably collided with something
+		struct GameEngine::Physics::CollisionList& collidedList = m_tree->blackboard().get<struct GameEngine::Physics::CollisionList>("lastCollision", GameEngine::Variable::Type::OBJECT);
+		if (collidedList.size == 0) {
+			m_status = GameEngine::BehaviorNode::Status::FAILED;
+			return;
+		}
+
+		DarkForces::Component::InfElevator* elevator = nullptr;
+		gaEntity* collided;
+		for (auto i = 0; i < collidedList.size; i++) {
+			collided = collidedList.entities[i];
+			elevator = dynamic_cast<DarkForces::Component::InfElevator*>(collided->findComponent(DF_COMPONENT_INF_ELEVATOR));
+
+			if (elevator != nullptr) {
+				break;
+			}
+		}
+
+		if (elevator == nullptr) {
+			m_status = GameEngine::BehaviorNode::Status::FAILED;
+			return;
+		}
+
+		m_variable.set(m_tree, elevator);
+		m_status = GameEngine::BehaviorNode::Status::SUCCESSED;
 	}
 
 	GameEngine::Behavior::SetVar::init(data);

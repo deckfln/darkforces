@@ -307,6 +307,7 @@
     <ClCompile Include="gaEngine\gaPlugin.cpp" />
     <ClCompile Include="gaEngine\gaPlugin\gaPSounds.cpp" />
     <ClCompile Include="gaEngine\gaPlugin\gaPView.cpp" />
+    <ClCompile Include="gaEngine\gaValue.cpp" />
     <ClCompile Include="gaEngine\gaVariable.cpp" />
     <ClCompile Include="gaEngine\gaVolumeSpace.cpp" />
     <ClCompile Include="gaEngine\Model.cpp" />

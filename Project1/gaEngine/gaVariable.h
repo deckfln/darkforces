@@ -4,6 +4,7 @@
 #include <tinyxml2.h>
 #include <map>
 #include <glm/vec3.hpp>
+#include "gaValue.h"
 
 namespace GameEngine {
 	namespace Component {
@@ -37,6 +38,7 @@ namespace GameEngine {
 
 		void set(GameEngine::Component::BehaviorTree* tree, void* ptr);	// set on the blackboard from a PTR
 		void set(GameEngine::Component::BehaviorTree* tree, int32_t i);	// set on the blackboard from an int32
+		void set(GameEngine::Component::BehaviorTree* tree, float f);	// set on the blackboard from an int32
 		void set(GameEngine::Component::BehaviorTree* tree, const glm::vec3& i);	// set on the blackboard from an VEC3
 		void set(GameEngine::Component::BehaviorTree* tree, const std::string& i);	// set on the blackboard from an STRING
 		void set(GameEngine::Component::BehaviorTree* tree);			// set on the blackboard from predefined value
@@ -49,7 +51,8 @@ namespace GameEngine {
 		inline void set(const std::string& v) { m_svalue = v; };
 
 		// compare
-		bool equal(GameEngine::Component::BehaviorTree* tree);
+		void set(GameEngine::Component::BehaviorTree* tree, GameEngine::Value& v);			// set on the blackboard from a value
+		bool equal(GameEngine::Component::BehaviorTree* tree, GameEngine::Value& v);
 
 		const char* debug(void);
 

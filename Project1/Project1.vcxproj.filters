@@ -837,6 +837,9 @@
     <ClCompile Include="gaEngine\gaVariable.cpp">
       <Filter>Fichiers sources\gaEngine</Filter>
     </ClCompile>
+    <ClCompile Include="gaEngine\gaValue.cpp">
+      <Filter>Fichiers sources\gaEngine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="glad\glad.h">

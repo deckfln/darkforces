@@ -172,6 +172,18 @@ void GameEngine::Variable::set(GameEngine::Component::BehaviorTree* tree, int32_
 }
 
 /**
+ * set a float
+ */
+void GameEngine::Variable::set(GameEngine::Component::BehaviorTree* tree, float f)
+{
+	if (m_type != GameEngine::Variable::Type::FLOAT) {
+		gaDebugLog(1, "GameEngine::Variable::set", "incompatible type requested for " + m_name);
+		exit(-1);
+	}
+	tree->blackboard().set<float>(m_name, f, GameEngine::Variable::Type::FLOAT);
+}
+
+/**
  * set on the blackboard from an VEC3
  */
 void GameEngine::Variable::set(GameEngine::Component::BehaviorTree* tree, const glm::vec3& v)
@@ -193,6 +205,47 @@ void GameEngine::Variable::set(GameEngine::Component::BehaviorTree* tree, const 
 		exit(-1);
 	}
 	tree->blackboard().set<std::string>(m_name, s, GameEngine::Variable::Type::STRING);
+}
+
+/**
+ * set on the blackboard from a value
+ */
+void GameEngine::Variable::set(GameEngine::Component::BehaviorTree* tree, Value& v)
+{
+	/*
+	if (m_type != v.m_type) {
+		gaDebugLog(1, "GameEngine::Variable::set", "incompatible type requested for " + m_name);
+		exit(-1);
+	}
+	*/
+
+	switch (m_type) {
+	case Type::BOOL: {
+		bool& b = v.getb(tree);
+		set(tree, b);
+		break;
+	}
+	case Type::INT32: {
+		int32_t& i = v.geti(tree);
+		set(tree, i);
+		break;
+	}
+	case Type::FLOAT: {
+		float& f = v.getf(tree);
+		set(tree, f);
+		break;
+	}
+	case Type::VEC3: {
+		glm::vec3& v3 = v.getv3(tree);
+		set(tree, v3);
+		break;
+	}
+	case Type::STRING: {
+		std::string& s = v.gets(tree);
+		set(tree, s);
+		break;
+	}
+	}
 }
 
 /**
@@ -252,33 +305,35 @@ void GameEngine::Variable::set(GameEngine::Component::BehaviorTree* tree)
 /**
  * compare the predef value to the blackbord
  */
-bool GameEngine::Variable::equal(GameEngine::Component::BehaviorTree* tree)
+bool GameEngine::Variable::equal(GameEngine::Component::BehaviorTree* tree, GameEngine::Value& v)
 {
 	switch (m_type) {
 	case Type::BOOL: {
-		bool current = getb(tree);
-		return (current == m_value);
+		bool& b = v.getb(tree);
+		return (m_value == b);
 	}
 	case Type::INT32: {
-		int32_t current = geti(tree);
-		return (current == m_ivalue);
+		int32_t& i = v.geti(tree);
+		return (m_ivalue == i);
 	}
 	case Type::FLOAT: {
-		float current = getf(tree);
-		return (current == m_fvalue);
+		float& f = v.getf(tree);
+		return (m_fvalue == f);
 	}
 	case Type::VEC3: {
-		const glm::vec3& current = getv3(tree);
-		return (current == m_v3value);
+		glm::vec3& v3 = v.getv3(tree);
+		return (m_v3value == v3);
 	}
 	case Type::STRING: {
-		const std::string& current = gets(tree);
-		return (current == m_svalue);
+		std::string& s = v.gets(tree);
+		return (m_svalue == s);
 	}
 	}
 
 	return false;
 }
+
+//---------------------------------------------------
 
 /**
  *

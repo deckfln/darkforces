@@ -5,6 +5,7 @@
 #include <vector>
 #include "../gaBehaviorNode.h"
 #include "../gaVariable.h"
+#include "../gaValue.h"
 
 namespace GameEngine {
 	namespace Behavior {
@@ -32,6 +33,7 @@ namespace GameEngine {
 
 		protected:
 			Variable m_variable;
+			Value m_value;
 		};
 	}
 }

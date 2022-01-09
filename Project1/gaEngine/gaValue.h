@@ -1,10 +1,15 @@
 #pragma once
 
 #include <tinyxml2.h>
-#include "gaComponent/gaBehaviorTree.h"
-#include "gaBehaviorNode/gaBVar.h"
+#include <string>
+#include <glm/vec3.hpp>
 
 namespace GameEngine {
+	namespace Component {
+		class BehaviorTree;
+	};
+	class Variable;
+
 	class Value {
 	public:
 		enum class Type {
@@ -14,52 +19,34 @@ namespace GameEngine {
 			FLOAT,
 			VEC3,
 			STRING,
-			VAR
+			VAR,
+			OBJECT,
+			PTR
 		};
 		Value(void) {};
 		void set(tinyxml2::XMLElement* xmlVar);
+		bool create(tinyxml2::XMLElement* xmlVar);
+		inline const std::string& var(void) { return m_svalue; };
+		inline Type type(void) { return m_type; };
 
-		void get(bool& b, GameEngine::Component::BehaviorTree* tree) {
-			if (m_type == Type::BOOL) {
-				b = m_value;
-			}
-			else {
-				b = tree->blackboard().get<bool>(m_svalue, GameEngine::Variable::Type::BOOL);
-			}
-		}
-		void get(int32_t& b, GameEngine::Component::BehaviorTree* tree) {
-			if (m_type == Type::INT32) {
-				b = m_ivalue;
-			}
-			else {
-				b = tree->blackboard().get<int32_t>(m_svalue, GameEngine::Variable::Type::INT32);
-			}
-		}
-		void get(float& b, GameEngine::Component::BehaviorTree* tree) {
-			if (m_type == Type::FLOAT) {
-				b = m_fvalue;
-			}
-			else {
-				b = tree->blackboard().get<float>(m_svalue, GameEngine::Variable::Type::FLOAT);
-			}
-		}
-		void get(glm::vec3& b, GameEngine::Component::BehaviorTree* tree) {
-			if (m_type == Type::VEC3) {
-				b = m_v3value;
-			}
-			else {
-				b = tree->blackboard().get<glm::vec3>(m_svalue, GameEngine::Variable::Type::VEC3);
-			}
-		}
+		void get(bool& b, GameEngine::Component::BehaviorTree* tree);
+		void get(int32_t& b, GameEngine::Component::BehaviorTree* tree);
+		void get(float& b, GameEngine::Component::BehaviorTree* tree);
+		void get(glm::vec3& b, GameEngine::Component::BehaviorTree* tree);
+
+		bool& getb(GameEngine::Component::BehaviorTree* tree) ;
+		int32_t& geti(GameEngine::Component::BehaviorTree* tree) ;
+		float& getf(GameEngine::Component::BehaviorTree* tree) ;
+		glm::vec3& getv3(GameEngine::Component::BehaviorTree* tree) ;
+		std::string& gets(GameEngine::Component::BehaviorTree* tree) ;
 
 	protected:
-		Type m_type = Type::BOOL;					// variable type
+		Type m_type = Type::NONE;							// value type
 
 		bool m_value = false;								// contents
 		int32_t m_ivalue = 0;
 		float m_fvalue = 0;
 		glm::vec3 m_v3value = glm::vec3(0);
 		std::string m_svalue;
-		GameEngine::Component::BehaviorTree* m_tree = nullptr;
 	};
 }

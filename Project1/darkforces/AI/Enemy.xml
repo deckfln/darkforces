@@ -1,4 +1,5 @@
 <behaviortree>
+	<!-- ******************************************************************** -->
 	<messages>
 		<message id='GameEngine:HEAR_SOUND'>GameEngine:onHearSound</message>
 		<message id='GameEngine:VIEW'>GameEngine:onViewPlayer</message>
@@ -6,6 +7,7 @@
 		<message id='GameEngine:BULLET_HIT'>GameEngine:onBulletHit</message>
 		<message id='DarkForces:DYING'>DarkForces:onDying</message>
 	</messages>
+	<!-- ******************************************************************** -->
 	<tasks>
 		<task class='moveAndOpenDoor' description=''>
 			<node type='Loop' name='moveAndOpenDoor'>
@@ -34,7 +36,8 @@
 									<node type='Sequence' name='open a door to go to wait position'>
 										<tree>
 											<node type='DarkForces:SetVar' name='number of triggers of an elevator'>
-												<variable type='int32' value='=elevator.triggers.count'>max_triggers</variable>
+												<variable type='int32'>max_triggers</variable>
+												<value type='int32' value='=elevator.triggers.count' />
 											</node>
 											<node type='GameEngine:For' name='try to reach each trigger of the door'>
 												<variable type='int32'>trigger</variable>
@@ -44,10 +47,12 @@
 												<default_return>failure</default_return>
 												<tree>
 													<node type='DarkForces:SetVar' name='position of current trigger'>
-														<variable type='vec3' value='=elevator.triggers[trigger].position'>trigger_position</variable>
+														<variable type='vec3'>trigger_position</variable>
+														<value type='vec3' value='=elevator.triggers[trigger].position' />
 													</node>
 													<node type='DarkForces:SetVar' name='name of current trigger'>
-														<variable type='string' value='=elevator.triggers[trigger].name'>trigger_name</variable>
+														<variable type='string'>trigger_name</variable>
+														<value type='string' value='=elevator.triggers[trigger].name' />
 													</node>
 													<node type='SatNav' name='go to trigger'>
 														<variable type='vec3'>trigger_position</variable>
@@ -71,6 +76,7 @@
 
 		</task>
 	</tasks>
+	<!-- ******************************************************************** -->
 	<node type='Loop' name='main control'>
 	<onerror action='failed'/>
 	<condition>until_all_fail</condition>
@@ -86,9 +92,11 @@
 		-->
 				<node type='GameEngine:SetVar' name='force target'>
 					<variable type='vec3' value='-21.29,-0.3,16.6'>static_position</variable>
+					<value type='vec3' value='-21.29,-0.3,16.6' />
 				</node>
 				<node type='GameEngine:SetVar' name='define satnav target'>
 					<variable type='vec3' value='=static_position'>entity_position</variable>
+					<value type='vec3' value='=static_position' />
 				</node>
 				<node type='task' task ='moveAndOpenDoor' name='stroll back to wait position'>
 				</node>
@@ -100,7 +108,8 @@
 					<condition>until_one_fail</condition>
 					<tree>
 					<node type='GameEngine:CheckVar' name='player is visible'>
-						<variable type='bool' value='true'>player_visible</variable>
+						<variable type='bool'>player_visible</variable>
+						<value type='bool' value='=static_position' />
 					</node>
 					<node type='darkForces:sound' name='tease the player'>
 						<sounds>

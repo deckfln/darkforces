@@ -37,7 +37,8 @@ GameEngine::BehaviorNode* GameEngine::Behavior::SetVar::clone(GameEngine::Behavi
  */
 void GameEngine::Behavior::SetVar::init(void*)
 {
-	m_variable.set(m_tree);
+	//m_variable.set(m_tree);
+	m_variable.set(m_tree, m_value);
 
 	m_status = GameEngine::BehaviorNode::Status::SUCCESSED;
 }

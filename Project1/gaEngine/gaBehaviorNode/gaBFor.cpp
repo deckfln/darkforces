@@ -3,6 +3,8 @@
 #include <imgui.h>
 #include <tinyxml2.h>
 
+#include "../gaComponent/gaBehaviorTree.h"
+
 static const char* g_className = "For";
 
 GameEngine::Behavior::For::For(const char *name) : 
