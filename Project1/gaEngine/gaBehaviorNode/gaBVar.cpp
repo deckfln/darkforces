@@ -67,5 +67,5 @@ GameEngine::BehaviorNode* GameEngine::Behavior::Var::create(const char* name, ti
 
 void GameEngine::Behavior::Var::debugGUInode(void)
 {
-	m_variable.debug();
+	ImGui::Text("%s=%s", m_variable.debug(), m_value.debug());
 }

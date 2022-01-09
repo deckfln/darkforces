@@ -708,9 +708,6 @@
     <ClCompile Include="gaEngine\gaBehaviorNode\gaBehaviorLoop.cpp">
       <Filter>Fichiers sources\gaEngine\gaBehaviorNode</Filter>
     </ClCompile>
-    <ClCompile Include="darkforces\gaBehaviorNode\dfMove2player.cpp">
-      <Filter>Fichiers sources\Dark Forces\gaBehaviorNode</Filter>
-    </ClCompile>
     <ClCompile Include="darkforces\gaBehaviorNode\dfFire2Player.cpp">
       <Filter>Fichiers sources\Dark Forces\gaBehaviorNode</Filter>
     </ClCompile>
@@ -719,9 +716,6 @@
     </ClCompile>
     <ClCompile Include="gaEngine\gaBehaviorNode\gaBehaviorSequence.cpp">
       <Filter>Fichiers sources\gaEngine\gaBehaviorNode</Filter>
-    </ClCompile>
-    <ClCompile Include="darkforces\gaBehaviorNode\dfTrackPlayer.cpp">
-      <Filter>Fichiers sources\Dark Forces\gaBehaviorNode</Filter>
     </ClCompile>
     <ClCompile Include="gaEngine\gaBehaviorNode\gaBehaviorDecorator.cpp">
       <Filter>Fichiers sources\gaEngine\gaBehaviorNode</Filter>
@@ -827,9 +821,6 @@
     </ClCompile>
     <ClCompile Include="gaEngine\gaBehaviorNode\gaBFor.cpp">
       <Filter>Fichiers sources\gaEngine\gaBehaviorNode</Filter>
-    </ClCompile>
-    <ClCompile Include="darkforces\gaBehaviorNode\dfBFindElevator.cpp">
-      <Filter>Fichiers sources\Dark Forces\gaBehaviorNode</Filter>
     </ClCompile>
     <ClCompile Include="gaEngine\gaBlackboard.cpp">
       <Filter>Fichiers sources\gaEngine</Filter>
@@ -1445,9 +1436,6 @@
     <ClInclude Include="gaEngine\gaBehaviorNode\gaBehaviorLoop.h">
       <Filter>Fichiers d%27en-tête\gaEngine\gaBehaviorNode</Filter>
     </ClInclude>
-    <ClInclude Include="darkforces\gaBehaviorNode\dfMove2player.h">
-      <Filter>Fichiers d%27en-tête\DarkForces\gaBehaviorNode</Filter>
-    </ClInclude>
     <ClInclude Include="darkforces\gaBehaviorNode\dfFire2Player.h">
       <Filter>Fichiers d%27en-tête\DarkForces\gaBehaviorNode</Filter>
     </ClInclude>
@@ -1456,9 +1444,6 @@
     </ClInclude>
     <ClInclude Include="gaEngine\gaBehaviorNode\gaBehaviorSequence.h">
       <Filter>Fichiers d%27en-tête\gaEngine\gaBehaviorNode</Filter>
-    </ClInclude>
-    <ClInclude Include="darkforces\gaBehaviorNode\dfTrackPlayer.h">
-      <Filter>Fichiers d%27en-tête\DarkForces\gaBehaviorNode</Filter>
     </ClInclude>
     <ClInclude Include="gaEngine\gaBehaviorNode\gaBehaviorDecorator.h">
       <Filter>Fichiers d%27en-tête\gaEngine\gaBehaviorNode</Filter>
@@ -1585,9 +1570,6 @@
     </ClInclude>
     <ClInclude Include="gaEngine\gaBehaviorNode\gaBFor.h">
       <Filter>Fichiers d%27en-tête\gaEngine\gaBehaviorNode</Filter>
-    </ClInclude>
-    <ClInclude Include="darkforces\gaBehaviorNode\dfBFindElevator.h">
-      <Filter>Fichiers d%27en-tête\DarkForces\gaBehaviorNode</Filter>
     </ClInclude>
     <ClInclude Include="gaEngine\gaBlackboard.h">
       <Filter>Fichiers d%27en-tête\gaEngine</Filter>

@@ -50,14 +50,11 @@ const float c_direction = pi/2.0f ; // 1.0f;
  * Register al DarkForces behavior nodes on the GameEngine
  */
 #include "darkforces/gaBehaviorNode/dfFire2Player.h"
-#include "darkforces/gaBehaviorNode/dfMove2player.h"
-#include "darkforces/gaBehaviorNode/dfTrackPlayer.h"
 #include "darkforces/gaBehaviorNode/dfWaitDoor.h"
 #include "darkforces/gaBehaviorNode/dfWaitIdle.h"
 #include "darkforces/gaBehaviorNode/dfBSound.h"
 #include "darkforces/gaBehaviorNode/dfBSetVar.h"
 #include "darkforces/gaBehaviorNode/dfBActivate.h"
-#include "darkforces/gaBehaviorNode/dfBFindElevator.h"
 
  /**
   * register darkforces entities for the flight recorder
@@ -83,15 +80,11 @@ void myDarkForces::myDarkForces::registerBThandlers(void)
 void myDarkForces::myDarkForces::registerBTNodes(void)
 {
 	GameEngine::Behavior::registerNode("Fire2Player", DarkForces::Behavior::Fire2Player::create);
-	GameEngine::Behavior::registerNode("DarkForces:Move2Player", DarkForces::Behavior::Move2Player::create);
-//	GameEngine::Behavior::registerNode("OpenDoor", DarkForces::Behavior::OpenDoor::create);
-	GameEngine::Behavior::registerNode("DarkForces:TrackPlayer", DarkForces::Behavior::TrackPlayer::create);
 	GameEngine::Behavior::registerNode("DarkForces:WaitDoor", DarkForces::Behavior::WaitDoor::create);
 	GameEngine::Behavior::registerNode("WaitIdle", DarkForces::Behavior::WaitIdle::create);
 	GameEngine::Behavior::registerNode("darkForces:sound", DarkForces::Behavior::Sound::create);
 	GameEngine::Behavior::registerNode("DarkForces:SetVar", DarkForces::Behavior::SetVar::create);
 	GameEngine::Behavior::registerNode("DarkForces:Activate", DarkForces::Behavior::Activate::create);
-	GameEngine::Behavior::registerNode("DarkForces:FindElevator", DarkForces::Behavior::FindElevator::create);
 }
 
 #ifdef _DEBUG

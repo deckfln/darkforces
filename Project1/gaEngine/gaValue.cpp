@@ -189,3 +189,34 @@ std::string& GameEngine::Value::gets(GameEngine::Component::BehaviorTree* tree) 
 		return tree->blackboard().get<std::string>(m_svalue, GameEngine::Variable::Type::STRING);
 	}
 }
+
+//----------------------------------------------------
+
+/**
+ *
+ */
+const char* GameEngine::Value::debug(void)
+{
+	static char tmp[64];
+
+	switch (m_type) {
+	case Type::BOOL:
+		snprintf(tmp, 64, "%db", m_value);
+		break;
+	case Type::INT32:
+		snprintf(tmp, 64, "%d", m_ivalue);
+		break;
+	case Type::FLOAT:
+		snprintf(tmp, 64, "%.2f", m_fvalue);
+		break;
+	case Type::VEC3: {
+		snprintf(tmp, 64, "%.2f %.2f %.2f", m_v3value.x, m_v3value.y, m_v3value.z);
+		break; }
+	case Type::VAR:
+	case Type::STRING:
+		snprintf(tmp, 64, "%s", m_svalue.c_str());
+		break;
+	}
+
+	return tmp;
+}

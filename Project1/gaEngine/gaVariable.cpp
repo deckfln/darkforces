@@ -342,24 +342,7 @@ const char* GameEngine::Variable::debug(void)
 {
 	static char tmp[64];
 
-	switch (m_type) {
-	case Type::BOOL:
-		ImGui::Text("%s:%db", m_name.c_str(), m_value);
-		break;
-	case Type::INT32:
-		ImGui::Text("%s:%di", m_name.c_str(), m_ivalue);
-		break;
-	case Type::FLOAT:
-		ImGui::Text("%s:%.2ff", m_name.c_str(), m_fvalue);
-		break;
-	case Type::VEC3: {
-		ImGui::Text("%s:%.2f %.2f %.2f", m_name.c_str(), m_v3value.x, m_v3value.y, m_v3value.z);
-		break; }
-	case Type::VAR:
-	case Type::STRING:
-		ImGui::Text("%s:%s", m_name.c_str(), m_svalue.c_str());
-		break;
-	}
+	snprintf(tmp, 64, "(%d)%s", m_type, m_name.c_str());
 
 	return tmp;
 }

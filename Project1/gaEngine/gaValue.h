@@ -40,6 +40,9 @@ namespace GameEngine {
 		glm::vec3& getv3(GameEngine::Component::BehaviorTree* tree) ;
 		std::string& gets(GameEngine::Component::BehaviorTree* tree) ;
 
+		// debugger
+		const char* debug(void);
+
 	protected:
 		Type m_type = Type::NONE;							// value type
 
