@@ -96,8 +96,6 @@ namespace GameEngine {
 		int32_t m_runningChild = -1;								// currently running child (-1 = the current node is running)
 		std::vector<BehaviorNode*> m_children;						// list of sub nodes
 
-		std::map<std::string, bool> m_exit;							// list of variables triggering exit of the node
-
 		std::vector<Variable> m_if_variables;
 		std::vector<Value> m_if_value;
 

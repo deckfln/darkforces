@@ -205,13 +205,11 @@ void DarkForces::Behavior::SetVar::init(void* data)
 		if (size < 2) {
 			// if we don't have enough position of the player, were and when did we last heard a blaster shot
 
-			glm::vec3& sound = m_tree->blackboard().get<glm::vec3>("last_heard_sound", GameEngine::Variable::Type::VEC3);
-			if (sound == glm::vec3(0)) {
+			v = m_tree->blackboard().get<glm::vec3>("last_heard_sound", GameEngine::Variable::Type::VEC3);
+			if (v == glm::vec3(0)) {
 				m_status = Status::FAILED;
 				return;
 			}
-
-			v = glm::vec3(sound.x, m_entity->position().y, sound.z);
 		}
 		else {
 			// the player may have been seen twice at the same position, so find a different position, but only go back a bit

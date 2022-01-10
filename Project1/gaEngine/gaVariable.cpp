@@ -310,23 +310,28 @@ bool GameEngine::Variable::equal(GameEngine::Component::BehaviorTree* tree, Game
 	switch (m_type) {
 	case Type::BOOL: {
 		bool& b = v.getb(tree);
-		return (m_value == b);
+		bool& v1 = tree->blackboard().get<bool>(m_name, GameEngine::Variable::Type::BOOL);
+		return (v1 == b);
 	}
 	case Type::INT32: {
 		int32_t& i = v.geti(tree);
-		return (m_ivalue == i);
+		int32_t& i1 = tree->blackboard().get<int32_t>(m_name, GameEngine::Variable::Type::INT32);
+		return (i1 == i);
 	}
 	case Type::FLOAT: {
 		float& f = v.getf(tree);
-		return (m_fvalue == f);
+		float& f1 = tree->blackboard().get<float>(m_name, GameEngine::Variable::Type::FLOAT);
+		return (f1 == f);
 	}
 	case Type::VEC3: {
 		glm::vec3& v3 = v.getv3(tree);
-		return (m_v3value == v3);
+		glm::vec3& v3a = tree->blackboard().get<glm::vec3>(m_name, GameEngine::Variable::Type::VEC3);
+		return (v3a == v3);
 	}
 	case Type::STRING: {
 		std::string& s = v.gets(tree);
-		return (m_svalue == s);
+		std::string& s1 = tree->blackboard().get<std::string>(m_name, GameEngine::Variable::Type::STRING);
+		return (s1 == s);
 	}
 	}
 

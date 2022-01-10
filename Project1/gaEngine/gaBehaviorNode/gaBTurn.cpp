@@ -141,15 +141,6 @@ void GameEngine::Behavior::Turn::dispatchMessage(gaMessage* message, Action* r)
 
 void GameEngine::Behavior::Turn::debugGUInode(void)
 {
-	if (m_exit.size() > 0) {
-		if (ImGui::TreeNode("Conditions")) {
-			for (auto& exit : m_exit) {
-				ImGui::Text("%s:%d", exit.first.c_str(), exit.second);
-			}
-			ImGui::TreePop();
-		}
-	}
-
 	ImGui::Text("Delay: %d", m_delay);
 	ImGui::Text("Until: %d", m_untilNextTurn);
 	ImGui::Text("Current: %d", m_currentAngle);
