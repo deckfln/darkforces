@@ -104,7 +104,7 @@ public:
 	inline bool canStep(void) { return m_canStep; };
 	inline bool collideSectors(void) { return m_collideSectors; };
 	inline void collideSectors(bool c) { m_collideSectors = c; };
-	inline void hasCollider(bool p) { m_hasCollider = p; };
+	void hasCollider(bool p);								 // Activate the collider(based on the worldAABB)
 	inline bool hasCollider(void) { return m_hasCollider; };
 	inline bool movable(void) { return m_movable; };
 	inline void movable(bool b) { m_movable = b; };

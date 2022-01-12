@@ -17,7 +17,17 @@ gaBoundingBoxes::gaBoundingBoxes()
  */
 void gaBoundingBoxes::add(const fwAABBox* box)
 {
-	m_boxes.push_back(box);
+	bool f = false;
+	for (auto b : m_boxes) {
+		if (b == box) {
+			f = true;
+			break;
+		}
+	}
+
+	if (f == false) {
+		m_boxes.push_back(box);
+	}
 }
 
 /**

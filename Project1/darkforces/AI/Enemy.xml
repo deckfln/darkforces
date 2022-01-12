@@ -98,6 +98,18 @@
 				</if>
 			</exit>
 		</node>
+		<!--	-->
+		<node type='GameEngine:SetVar' name='force target'>
+			<variable type='vec3' value='-21.29,-0.3,16.6'>static_position</variable>
+			<value type='vec3'>-21.29,-0.3,16.6</value>
+		</node>
+		<node type='GameEngine:SetVar' name='define satnav target'>
+			<variable type='vec3' value='=static_position'>entity_position</variable>
+			<value type='vec3'>=static_position</value>
+		</node>
+		<node type='task' task ='moveAndOpenDoor' name='stroll back to wait position'>
+		</node>
+		<!--	-->
 		<node type='Loop' name='attack and track'>
 			<tree>
 				<node type='Loop' name='find the player, move toward him and shoot at him'>
@@ -192,18 +204,6 @@
 				</node>
 			</tree>
 		</node>
-		<!--	-->
-		<node type='GameEngine:SetVar' name='force target'>
-			<variable type='vec3' value='-21.29,-0.3,16.6'>static_position</variable>
-			<value type='vec3'>-21.29,-0.3,16.6</value>
-		</node>
-		<node type='GameEngine:SetVar' name='define satnav target'>
-			<variable type='vec3' value='=static_position'>entity_position</variable>
-			<value type='vec3'>=static_position</value>
-		</node>
-		<node type='task' task ='moveAndOpenDoor' name='stroll back to wait position'>
-		</node>
-		<!--	-->
 	</tree>
 	</node>
 </behaviortree>

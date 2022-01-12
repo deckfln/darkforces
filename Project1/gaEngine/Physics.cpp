@@ -412,10 +412,21 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 		*/
 
 		// non-collider object do not trigger collisions, unles they are falling
-		// collide against the entities
-		if (entity->falling() || entity->hasCollider()) {
-			testEntities(entity, tranform, collisions);
+		if (!entity->hasCollider()) {
+			g_gaWorld.sendMessage(
+				entity->name(),
+				entity->name(),
+				gaMessage::Action::MOVE,
+				(int)message->m_id,				// WANT_TO_MOVE that triggered the event
+				nullptr
+			);
+			continue;
 		}
+
+//		if (entity->falling()) {
+		// collide against the entities
+		testEntities(entity, tranform, collisions);
+//		}
 
 		/*
 		if (collisions.size() == 0) {
