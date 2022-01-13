@@ -21,7 +21,7 @@ fwSprites::fwSprites(glm::vec3 *position, int nb, fwTexture *texture, float radi
 void fwSprites::set(glm::vec3* position, fwTexture* texture, float radius)
 {
 	m_geometry = new fwGeometry();
-	m_geometry->addVertices("aPos", position, 3, sizeof(glm::vec3) * m_size, sizeof(float));
+	m_geometry->addVertices("aPos", position, 3, sizeof(glm::vec3) * m_size, sizeof(float), false);	// do not delete on exit
 	m_geometry->setBoundingsphere(radius);
 
 	if (spriteMaterial == nullptr) {

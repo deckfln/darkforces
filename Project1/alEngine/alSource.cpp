@@ -111,7 +111,7 @@ void alSource::stop(alSound *sound)
 alSource::~alSource()
 {
 	for (auto& source : m_sources) {
-		alDeleteSources((ALuint)1, (ALuint *)&source.second);
+		alDeleteSources((ALuint)1, (ALuint *)&source.first);
 	}
 }
 

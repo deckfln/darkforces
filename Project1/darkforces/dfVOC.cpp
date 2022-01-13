@@ -288,3 +288,13 @@ dfVOC* loadVOC(const std::string& name)
 
 	return g_cachedVOC[name];
 }
+
+/**
+ * Delete all cached files
+ */
+void DarkForces::deleteVOCcache(void)
+{
+	for (auto& voc : g_cachedVOC) {
+		delete voc.second;
+	}
+}

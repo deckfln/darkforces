@@ -23,3 +23,7 @@ public:
 };
 
 dfVOC* loadVOC(const std::string& name);	// load a cached file
+
+namespace DarkForces {
+	void deleteVOCcache(void);						// clean up cached files
+}

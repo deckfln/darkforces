@@ -56,4 +56,5 @@ bool alListener::clamp(const glm::vec3& p)
 
 alListener::~alListener()
 {
+	alcCloseDevice(g_Device);
 }

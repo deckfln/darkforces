@@ -38,7 +38,7 @@
 #include "darkforces/dfObject/dfBulletExplode.h"
 #include "darkforces/dfHUD.h"
 #include "darkforces/dfPlugin/dfSprites.h"
-
+#include "darkforces/dfVOC.h"
 
 const float c_height = 0.70f;
 const float c_radius = 0.2f;
@@ -249,4 +249,6 @@ myDarkForces::~myDarkForces()
 	delete m_player;
 	delete m_light;
 	delete white;
+
+	DarkForces::deleteVOCcache();
 }
