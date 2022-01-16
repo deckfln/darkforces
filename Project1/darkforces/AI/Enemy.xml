@@ -78,6 +78,21 @@
 		</task>
 	</tasks>
 	<!-- ******************************************************************** -->
+	<blackboard>
+		<variable>
+			<variable type='bool'>player_visible</variable>
+			<value type='bool'>false</value>
+		</variable>
+		<variable>
+			<variable type='bool'>hit_bullet</variable>
+			<value type='bool'>false</value>
+		</variable>
+		<variable>
+			<variable type='bool'>heard_sound</variable>
+			<value type='bool'>false</value>
+		</variable>
+	</blackboard>
+	<!-- ******************************************************************** -->
 	<node type='Loop' name='main control'>
 	<onerror action='failed'/>
 	<condition>until_all_fail</condition>

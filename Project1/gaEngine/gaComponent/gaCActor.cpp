@@ -5,6 +5,7 @@
 #ifdef _DEBUG
 #include "../../gaEngine/gaEntity.h"
 #include "../../gaEngine/World.h"
+#include "../flightRecorder/Actor.h"
 
 #include "../../framework/fwMaterialBasic.h"
 #include "../../framework/geometries/fwGeometryCylinder.h"
@@ -57,6 +58,8 @@ void GameEngine::Component::Actor::dispatchMessage(gaMessage* message)
 	}
 }
 
+//-------------------------------------
+
 void GameEngine::Component::Actor::debugGUIinline(void)
 {
 	if (ImGui::TreeNode("Actor")) {
@@ -72,4 +75,35 @@ void GameEngine::Component::Actor::debugGUIinline(void)
 		ImGui::Text("lookAt:%.2f %.2f %.2f", m_direction.x, m_direction.y, m_direction.z);
 		ImGui::TreePop();
 	}
+}
+
+//---------------------------------------
+
+/**
+ * dynamic size of the blackboard
+ */
+uint32_t GameEngine::Component::Actor::recordSize(void)
+{
+	return sizeof(flightRecorder::GameEngine::Actor);
+}
+
+/**
+ *
+ */
+uint32_t GameEngine::Component::Actor::recordState(void* record)
+{
+	flightRecorder::GameEngine::Actor* r = static_cast<flightRecorder::GameEngine::Actor*>(record);
+	r->direction = m_direction;
+	r->size = sizeof(flightRecorder::GameEngine::Actor);
+	return r->size;
+}
+
+/**
+ *
+ */
+uint32_t GameEngine::Component::Actor::loadState(void* record)
+{
+	flightRecorder::GameEngine::Actor* r = static_cast<flightRecorder::GameEngine::Actor*>(record);
+	m_direction = r->direction;
+	return r->size;
 }

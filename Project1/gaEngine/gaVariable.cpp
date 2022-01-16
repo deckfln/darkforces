@@ -125,6 +125,18 @@ void GameEngine::Variable::set(GameEngine::Component::BehaviorTree* tree, void* 
 }
 
 /**
+ * set a BOOL
+ */
+void GameEngine::Variable::set(GameEngine::Component::BehaviorTree* tree, bool b)
+{
+	if (m_type != GameEngine::Variable::Type::BOOL) {
+		gaDebugLog(1, "GameEngine::Variable::set", "incompatible type requested for " + m_name);
+		exit(-1);
+	}
+	tree->blackboard().set<int32_t>(m_name, b, GameEngine::Variable::Type::BOOL);
+}
+
+/**
  * set anINT32
  */
 void GameEngine::Variable::set(GameEngine::Component::BehaviorTree* tree, int32_t i)

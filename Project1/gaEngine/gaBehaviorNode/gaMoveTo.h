@@ -76,7 +76,6 @@ namespace GameEngine {
 			uint32_t status;
 			uint32_t nbPrevious;
 			uint32_t current;
-			char lastCollision[64];
 		};
 	}
 }

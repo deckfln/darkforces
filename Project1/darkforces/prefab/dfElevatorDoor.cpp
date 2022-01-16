@@ -32,6 +32,15 @@ static dfVOC* cache[3] = { nullptr, nullptr, nullptr };
  */
 void DarkForces::Prefab::ElevatorDoor(dfSector* sector)
 {
+	// convert the sector to a physical object
+	sector->physical(true);
+	sector->gravity(false);
+	sector->collideSectors(false);
+	sector->hasCollider(true);
+#ifdef _DEBUG
+	sector->debugAABB(true);
+#endif
+
 	// prepare the elevator component
 	DarkForces::Component::InfElevatorDoor* elevator = new DarkForces::Component::InfElevatorDoor(sector);
 	dfLogicStop* closed = new dfLogicStop(sector, sector->referenceFloor(), hold);
@@ -60,9 +69,4 @@ void DarkForces::Prefab::ElevatorDoor(dfSector* sector)
 	//only init the elevator at the end, AFTER the entity position is forced by the Mesh 
 	sector->sendMessage(DarkForces::Message::GOTO_STOP_FORCE, 0);
 
-	// convert the sector to a physical object
-	sector->physical(true);
-	sector->gravity(false);
-	sector->collideSectors(false);
-	sector->hasCollider(true);
 }

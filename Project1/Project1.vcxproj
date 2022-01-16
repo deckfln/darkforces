@@ -439,7 +439,6 @@
     <ClInclude Include="darkforces\lexer\dfObject.lex.h" />
     <ClInclude Include="darkforces\prefab\dfElevatorDoor.h" />
     <ClInclude Include="flightRecorder\AABBox.h" />
-    <ClInclude Include="flightRecorder\Actor.h" />
     <ClInclude Include="flightRecorder\Ballistic.h" />
     <ClInclude Include="flightRecorder\Blackbox.h" />
     <ClInclude Include="flightRecorder\classes.h" />
@@ -512,6 +511,7 @@
     <ClInclude Include="gaEngine\AABBoxTree.h" />
     <ClInclude Include="gaEngine\Collider.h" />
     <ClInclude Include="gaEngine\Debug.h" />
+    <ClInclude Include="gaEngine\flightRecorder\Actor.h" />
     <ClInclude Include="gaEngine\flightRecorder\frBehaviorTree.h" />
     <ClInclude Include="gaEngine\flightRecorder\frCMesh.h" />
     <ClInclude Include="gaEngine\flightRecorder\frPathFinding.h" />

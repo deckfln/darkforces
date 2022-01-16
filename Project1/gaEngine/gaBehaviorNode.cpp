@@ -345,7 +345,7 @@ void GameEngine::BehaviorNode::debugGUIinline(BehaviorNode* current, float x, fl
 	
 	switch (m_status) {
 	case Status::RUNNING:
-		ImNodes::PushColorStyle(ImNodesCol_TitleBar, IM_COL32(81, 48, 04, 255));
+		ImNodes::PushColorStyle(ImNodesCol_TitleBar, IM_COL32(240, 210, 04, 255));
 		changeColor = true;
 		break;
 	case Status::SUCCESSED:
@@ -354,6 +354,14 @@ void GameEngine::BehaviorNode::debugGUIinline(BehaviorNode* current, float x, fl
 		break;
 	case Status::FAILED:
 		ImNodes::PushColorStyle(ImNodesCol_TitleBar, IM_COL32(150, 38, 04, 255));
+		changeColor = true;
+		break;
+	case Status::NONE:
+		ImNodes::PushColorStyle(ImNodesCol_TitleBar, IM_COL32(20, 40, 200, 255));
+		changeColor = true;
+		break;
+	case Status::WAIT:
+		ImNodes::PushColorStyle(ImNodesCol_TitleBar, IM_COL32(30, 30, 30, 255));
 		changeColor = true;
 		break;
 	}

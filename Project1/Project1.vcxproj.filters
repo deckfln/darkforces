@@ -79,12 +79,6 @@
     <Filter Include="Fichiers sources\Dark Forces\dfObject\dfObject3D">
       <UniqueIdentifier>{4bd2dc8d-4565-43be-b434-9a80900e43fb}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Fichiers d%27en-tête\DarkForces\dfObject\dfSprite">
-      <UniqueIdentifier>{bc5bc72e-268a-49c4-b898-d7e164643582}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Fichiers d%27en-tête\DarkForces\dfObject\dfSprite\dfSpriteAnimated">
-      <UniqueIdentifier>{b050ea31-02aa-4fbe-8e2a-8fc7b7fa9bad}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Fichiers d%27en-tête\Framework\math">
       <UniqueIdentifier>{463a39e8-292e-4dfd-ae5a-7a17e03e4802}</UniqueIdentifier>
     </Filter>
@@ -1274,9 +1268,6 @@
     <ClInclude Include="flightRecorder\Ballistic.h">
       <Filter>Fichiers d%27en-tête\flightRecorder</Filter>
     </ClInclude>
-    <ClInclude Include="flightRecorder\Actor.h">
-      <Filter>Fichiers d%27en-tête\flightRecorder</Filter>
-    </ClInclude>
     <ClInclude Include="flightRecorder\frBullet.h">
       <Filter>Fichiers d%27en-tête\flightRecorder</Filter>
     </ClInclude>
@@ -1579,6 +1570,9 @@
     </ClInclude>
     <ClInclude Include="gaEngine\gaVariable.h">
       <Filter>Fichiers d%27en-tête\gaEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="gaEngine\flightRecorder\Actor.h">
+      <Filter>Fichiers d%27en-tête\gaEngine\flightRecorder</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -459,7 +459,6 @@ void GameEngine::Behavior::MoveTo::debug(void)
 	m_mesh->set_visible(false);
 	g_gaWorld.add2scene(m_mesh);
 }
-#endif
 
 /**
  * display the node data in the debugger
@@ -521,6 +520,7 @@ void GameEngine::Behavior::MoveTo::debugGUInode(void)
 		}
 	}
 }
+#endif
 
 //---------------------------------------------------------------
 
@@ -538,25 +538,9 @@ uint32_t GameEngine::Behavior::MoveTo::recordState(void* record)
 	r->nbPrevious = m_previous.size();
 	r->current = m_currentNavPoint;
 
-	//struct Physics::CollisionList* data = m_tree->blackboard<struct Physics::CollisionList>("lastCollision");
-	//if (data) {
-	//	strncpy_s(r->lastCollision, sizeof(r->lastCollision), data->entities[0]->name().c_str(), _TRUNCATE);
-	//}
-	//lse {
-		r->lastCollision[0] = 0;
-	//}
-
 	if (r->nbPrevious > 1023) {
 		__debugbreak();
 	}
-
-	/*
-	uint32_t i = 0;
-	for (uint32_t j = i; j < m_previous.size(); j++) {
-		r->points[i++] = m_previous[j];
-		len += sizeof(glm::vec3);
-	}
-	*/
 
 	r->node.size = len;
 	return len;
@@ -570,21 +554,7 @@ uint32_t GameEngine::Behavior::MoveTo::loadState(void* record)
 
 	m_status = static_cast<Status>(r->status);
 	m_currentNavPoint = r->current;
-
-	if (r->lastCollision[0] != 0) {
-		struct Physics::CollisionList& data = m_tree->blackboard().get<struct Physics::CollisionList>("lastCollision", GameEngine::Variable::Type::OBJECT);
-		gaEntity* collided = g_gaWorld.getEntity(r->lastCollision);
-		//m_tree->blackboard<gaEntity>("lastCollision", collided);
-	}
-
 	m_previous.resize(r->nbPrevious);
-
-	/*
-	uint32_t i = 0;
-	for (uint32_t j = 0; j < r->nbPrevious; j++) {
-		m_previous[j] = r->points[i++];
-	}
-	*/
 
 	return r->node.size;
 }

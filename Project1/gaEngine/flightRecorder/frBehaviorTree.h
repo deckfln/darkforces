@@ -10,6 +10,7 @@ namespace GameEngine {
 			uint32_t nbNodes;
 			uint32_t m_current;
 			char nodes[1024 * 5];
+			char blackboard[1];
 		};
 	}
 }

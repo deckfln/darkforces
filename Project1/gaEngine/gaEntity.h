@@ -46,6 +46,9 @@ protected:
 	bool m_movable = true;							// entity can be pushed
 	bool m_processMessages = true;					// shall the entity receive messages for processing
 	bool m_falling = false;							// the physic engine is falling the entity
+#ifdef _DEBUG
+	bool m_displayAABB=false;						// display collision box
+#endif
 	uint32_t m_timer = 0;							// number of components waiting for a gaMessage::TIMER every frame
 
 	GameEngine::Transform m_transforms;				// transforms to move the object
@@ -120,7 +123,9 @@ public:
 	inline bool timer(void) { return m_timer > 0; };
 	inline void discardMessages(void) { m_processMessages = false; };	// discard any incoming message
 	inline bool processMessages(void) { return m_processMessages; };	// shall we process incoming message
-
+#ifdef _DEBUG
+	inline void debugAABB(bool b) { m_displayAABB = b; };				// display or not the collision box of the object
+#endif
 
 	void displayAABBox(void);							// display the world AABBox on screen
 

@@ -269,7 +269,8 @@ inline uint32_t DarkForces::Component::Actor::recordSize(void)
 uint32_t DarkForces::Component::Actor::recordState(void* r)
 {
 	flightRecorder::DarkForces::CompActor* record = static_cast<flightRecorder::DarkForces::CompActor*>(r);
-	record->size = sizeof(flightRecorder::DarkForces::CompActor);
+	GameEngine::Component::Actor::recordState(&record->actor);
+	record->actor.size = sizeof(flightRecorder::DarkForces::CompActor);
 	record->id = m_id;
 
 	record->shield = m_shield;
@@ -278,7 +279,7 @@ uint32_t DarkForces::Component::Actor::recordState(void* r)
 	record->life = m_life;
 	record->keys = static_cast<uint32_t>(m_keys);
 
-	return record->size;
+	return record->actor.size;
 }
 
 /**
@@ -287,6 +288,7 @@ uint32_t DarkForces::Component::Actor::recordState(void* r)
 uint32_t DarkForces::Component::Actor::loadState(void* r)
 {
 	flightRecorder::DarkForces::CompActor* record = (flightRecorder::DarkForces::CompActor*)r;
+	GameEngine::Component::Actor::loadState(&record->actor);
 
 	m_shield = record->shield;
 	m_maxShield = record->maxShield;
@@ -294,7 +296,7 @@ uint32_t DarkForces::Component::Actor::loadState(void* r)
 	m_life = record->life;
 	m_keys = static_cast<DarkForces::Keys>(record->keys);
 
-	return record->size;
+	return record->actor.size;
 }
 
 //*****************************************************

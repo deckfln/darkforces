@@ -12,6 +12,7 @@ namespace GameEngine {
 		std::map<std::string, GameEngine::Variable::Type> m_type;
 		std::map<std::string, void*> m_value;
 	public:
+		// access variables in the blackboard
 		template <typename T>
 		void set(const std::string& key, const T& value, GameEngine::Variable::Type t);
 
@@ -28,6 +29,11 @@ namespace GameEngine {
 
 		template <typename T>
 		void pSet(const std::string& key, T* ptr);
+
+		// flight recorder status
+		uint32_t recordSize(void);					// size of the component record
+		uint32_t recordState(void* record);					// save the component state in a record
+		uint32_t loadState(void* record);					// reload a component state from a record
 	};
 
 	template<typename T>

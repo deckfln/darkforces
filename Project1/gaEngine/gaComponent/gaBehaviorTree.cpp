@@ -248,7 +248,7 @@ void GameEngine::Component::BehaviorTree::debugGUIinline(void)
  */
 inline uint32_t GameEngine::Component::BehaviorTree::recordSize(void)
 {
-	return sizeof(GameEngine::flightRecorder::BehaviorTree);
+	return sizeof(GameEngine::flightRecorder::BehaviorTree) + m_blackboard.recordSize();
 }
 
 /**
@@ -288,7 +288,9 @@ uint32_t GameEngine::Component::BehaviorTree::recordState(void* record)
 	}
 
 	uint32_t l1 = p - (char *)r;
-	r->size = l1;
+	uint32_t lBlack = m_blackboard.recordState(p);
+
+	r->size = l1 + lBlack;
 
 	return r->size;
 }
@@ -298,6 +300,11 @@ uint32_t GameEngine::Component::BehaviorTree::recordState(void* record)
  */
 uint32_t GameEngine::Component::BehaviorTree::loadState(void* record)
 {
+	/*
+	if (m_entity->name() == "OFFCFIN.WAX(21)") {
+		__debugbreak();
+	}
+	*/
 	GameEngine::flightRecorder::BehaviorTree* r = static_cast<GameEngine::flightRecorder::BehaviorTree*>(record);
 
 	BehaviorNode* current = m_root->find(r->m_current);
@@ -317,6 +324,9 @@ uint32_t GameEngine::Component::BehaviorTree::loadState(void* record)
 		l = m_nodes[i]->loadState(p);
 		p += l;
 	}
+
+	uint32_t lBlack = m_blackboard.loadState(p);
+	p += lBlack;  
 
 	return r->size;
 }

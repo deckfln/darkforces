@@ -33,7 +33,11 @@ gaEntity::gaEntity(uint32_t mclass, const std::string& name) :
 	m_classID = GameEngine::ClassID::Entity | mclass;
 	m_className = g_className;
 
+#ifdef _DEBUG
+	m_displayAABB = true;
 	g_gaBoundingBoxes.add(&m_worldBounding);
+#endif
+
 	m_collider.set(&m_modelAABB, &m_worldMatrix, &m_inverseWorldMatrix);
 
 	m_transforms.m_flag = gaMessage::Flag::WANT_TO_MOVE_FALL;	// accept falling down
@@ -47,7 +51,11 @@ gaEntity::gaEntity(uint32_t mclass, const std::string& name, const glm::vec3& po
 	m_classID = GameEngine::ClassID::Entity | mclass;
 	m_className = g_className;
 
+#ifdef _DEBUG
+	m_displayAABB = true;
 	g_gaBoundingBoxes.add(&m_worldBounding);
+#endif
+
 	m_collider.set(&m_modelAABB, &m_worldMatrix, &m_inverseWorldMatrix);
 
 	m_transforms.m_flag = gaMessage::Flag::WANT_TO_MOVE_FALL;	// accept falling down
@@ -95,7 +103,9 @@ void gaEntity::addComponent(gaComponent* component, uint32_t flag)
 
 #ifdef _DEBUG
 			// register the AABB for debug
-			g_gaBoundingBoxes.add(&m_worldBounding);
+			if (m_displayAABB) {
+				g_gaBoundingBoxes.add(&m_worldBounding);
+			}
 #endif
 		}
 	}

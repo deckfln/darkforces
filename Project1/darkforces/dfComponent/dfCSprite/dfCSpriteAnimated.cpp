@@ -352,6 +352,8 @@ void DarkForces::Component::SpriteAnimated::debugGUIinline(void)
 			directionVector();
 		}
 #endif
+		ImGui::Text("direction: %.2f,%.2f,%.2f", m_direction.x, m_direction.y, m_direction.z);
+
 		dfComponentLogic* logic = dynamic_cast<dfComponentLogic*>(m_entity->findComponent(DF_COMPONENT_LOGIC));
 		if (logic->logic() & DF_LOGIC_ENEMIES) {
 			ImGui::Text("State: %s", debugStatesEnemies[static_cast<uint32_t>(m_state)]);

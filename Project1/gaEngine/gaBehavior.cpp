@@ -10,6 +10,8 @@
 
 #include "gaDebug.h"
 #include "gaBehaviorNode.h"
+#include "gaVariable.h"
+#include "gaValue.h"
 
 struct char_cmp {
 	bool operator () (const char* a, const char* b) const
@@ -87,6 +89,49 @@ static void loadPlugins(GameEngine::Component::BehaviorTree* tree, const std::st
 	}
 }
 
+/**
+ * load blackboard variables
+ */
+static std::map<std::string, std::vector<std::pair<GameEngine::Variable, GameEngine::Value>>> g_blackbloard;
+
+static void loadBlackboard(tinyxml2::XMLElement* bt, const std::string& data)
+{
+	GameEngine::BehaviorNode* bnode = nullptr;
+	GameEngine::BehaviorNode* bchild = nullptr;
+
+	// and create an bind the children
+	tinyxml2::XMLElement* messages = bt->FirstChildElement("blackboard");
+	if (messages) {
+		tinyxml2::XMLElement* pNodeElement = messages->FirstChildElement("variable");
+
+		while (pNodeElement != nullptr) {
+			GameEngine::Variable var;
+			GameEngine::Value val;
+
+			var.create(pNodeElement);
+			val.create(pNodeElement);
+
+			g_blackbloard[data].push_back(std::make_pair(var, val));
+
+			pNodeElement = pNodeElement->NextSiblingElement("variable");
+		}
+	}
+}
+
+static void activateBlackboard(GameEngine::Component::BehaviorTree* tree, const std::string& data)
+{
+	std::vector<std::pair<GameEngine::Variable, GameEngine::Value>>& variables= g_blackbloard[data];
+	for (auto& variable: variables) {
+		GameEngine::Variable& var = variable.first;
+		GameEngine::Value& val = variable.second;
+
+		var.set(tree, val);
+	}
+}
+
+/**
+ *
+ */
 static std::map<std::string, GameEngine::BehaviorNode*> g_tasks;
 
 /**
@@ -179,6 +224,7 @@ GameEngine::BehaviorNode* GameEngine::Behavior::loadTree(const std::string& data
 	// check built hash in the cache
 	if (g_cache.count(data) > 0) {
 		loadPlugins(tree, data);
+		activateBlackboard(tree, data);
 
 		GameEngine::BehaviorNode* cl = g_cache[data];
 		return cl->deepClone();
@@ -237,11 +283,15 @@ GameEngine::BehaviorNode* GameEngine::Behavior::loadTree(const std::string& data
 	g_tasks.clear();
 	loadTasks(bt, data);	// load in the cache
 
+	// load the blackboard
+	loadBlackboard(bt, data);	// load in the cache
+
 	// create the node
 	tinyxml2::XMLElement* pRoot = bt->FirstChildElement("node");
 
 	g_cache[data] = loadNode(pRoot);
 
 	loadPlugins(tree, data);
+	activateBlackboard(tree, data);
 	return g_cache[data]->deepClone();
 }

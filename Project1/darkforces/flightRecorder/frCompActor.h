@@ -1,9 +1,11 @@
 #pragma once
 
+#include "../../gaEngine/flightRecorder/Actor.h"
+
 namespace flightRecorder {
 	namespace DarkForces {
 		struct CompActor {
-			uint32_t size;
+			struct GameEngine::Actor actor;
 			uint32_t id;
 
 			int32_t shield;

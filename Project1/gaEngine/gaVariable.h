@@ -34,6 +34,7 @@ namespace GameEngine {
 		void* getp(GameEngine::Component::BehaviorTree* tree);
 
 		void set(GameEngine::Component::BehaviorTree* tree, void* ptr);	// set on the blackboard from a PTR
+		void set(GameEngine::Component::BehaviorTree* tree, bool b);	// set on the blackboard from an BOOL
 		void set(GameEngine::Component::BehaviorTree* tree, int32_t i);	// set on the blackboard from an int32
 		void set(GameEngine::Component::BehaviorTree* tree, float f);	// set on the blackboard from an int32
 		void set(GameEngine::Component::BehaviorTree* tree, const glm::vec3& i);	// set on the blackboard from an VEC3
