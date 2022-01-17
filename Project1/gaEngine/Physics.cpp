@@ -1051,6 +1051,10 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 void Physics::update(time_t delta)
 {
 	for (auto& name : m_remove) {
+		for (auto entity : g_gaWorld.m_entities[name]) {
+			entity->falling(false);
+		}
+
 		m_ballistics.erase(name);
 	}
 	m_remove.clear();

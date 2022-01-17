@@ -121,7 +121,8 @@ void GameEngine::Component::BehaviorTree::dispatchMessage(gaMessage* message)
 		return;
 	}
 
-	if (m_entity->name() != "OFFCFIN.WAX(21)") {
+	if (!m_active) {
+		// the AI is deactivated for the entity
 		return;
 	}
 

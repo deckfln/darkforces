@@ -87,6 +87,11 @@ bool gaActor::moveTo(time_t delta, glm::vec3& velocity)
 		return false;	// no action, let the entity live its life
 	}
 
+	// ignore request if the entity is falling
+	if (m_falling) {
+		return false;
+	}
+
 	glm::vec3 direction = velocity * m_speed;
 
 	delta = 33;	// TODO: remove the fixed time step
@@ -113,7 +118,7 @@ bool gaActor::moveTo(time_t delta, glm::vec3& velocity)
 		gaMessage::Flag::WANT_TO_MOVE_FALL,
 		&m_transforms);
 
-	return false;
+	return true;
 }
 
 /**
