@@ -83,6 +83,7 @@ public:
 	gaEntity(uint32_t mclass, const std::string& name);
 	gaEntity(uint32_t mclass, const std::string& name, const glm::vec3& position);
 	gaEntity(flightRecorder::Entity* record);
+	gaEntity(gaEntity*);
 
 	// external creator
 	static void *create(void* record) {
@@ -206,7 +207,7 @@ public:
 		return m_supersector; 
 	};
 
-	// flight recorder & debugger
+	// flight recorder
 	virtual int recordSize(void) {
 		return sizeof(flightRecorder::Entity);
 	}													// size of one record
@@ -215,7 +216,11 @@ public:
 	void loadComponents(void* p);						// load the components starting at p
 	virtual uint32_t recordState(void* record);			// return a record of the entity state (for debug)
 	virtual void loadState(void* record);// reload an entity state from a record
-	virtual void debugGUI(bool* close);				// debug the entity
+
+#ifdef _DEBUG
+	// debugger
+	virtual void debugGUI(const std::string& display, bool* close);				// debug the entity
+#endif
 
 	~gaEntity();
 };

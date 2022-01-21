@@ -181,6 +181,60 @@ dfSector::dfSector(std::istringstream& infile, std::vector<dfSector*>& sectorsID
 }
 
 /**
+ * clone the sector
+ */
+dfSector::dfSector(dfSector* sector):
+	gaEntity(DarkForces::ClassID::_Sector)
+{
+	m_level = sector->m_level;
+
+	m_physical = false;	// object is a virtual entity (cannot collide)
+	m_movable = false;
+
+	addComponent(&m_sound);
+	m_sound.addSound(DarkForces::Sounds::WALL_HIT_LASER, DarkForces::loadSound(DarkForces::Sounds::WALL_HIT_LASER)->sound());
+
+	m_className = g_className;
+
+	m_name = sector->m_name;
+
+	m_staticMeshFloorAltitude = sector->m_staticMeshFloorAltitude;
+	m_staticMeshCeilingAltitude = sector->m_staticMeshCeilingAltitude;
+	m_referenceFloorAltitude = sector->m_referenceFloorAltitude;
+	m_referenceCeilingAltitude = sector->m_referenceCeilingAltitude;
+	m_floorAltitude = sector->m_floorAltitude;
+	m_ceilingAltitude = sector->m_ceilingAltitude;
+	m_eventMask = sector->m_eventMask;
+	m_message = sector->m_eventMask;
+	m_verticeConnexions = sector->m_verticeConnexions;
+	m_polygons_vertices = sector->m_polygons_vertices;
+	m_polygons_walls = sector->m_polygons_walls;
+	m_displayPolygons = sector->m_displayPolygons;
+	m_sectorsID = sector->m_sectorsID;
+	m_ambient = sector->m_ambient;
+	m_height = sector->m_height;
+	m_floorTexture = sector->m_floorTexture;
+	m_ceilingTexture = sector->m_ceilingTexture;
+
+	m_layer = sector->m_layer;
+	m_currentAmbient = sector->m_currentAmbient;
+	m_flag1 = sector->m_flag1;
+	m_flag2 = sector->m_flag2;
+	m_flag3 = sector->m_flag3;
+
+	m_vertices = sector->m_vertices;
+	m_vertices = sector->m_vertices;
+	m_walls = sector->m_walls;
+	m_portals = sector->m_portals;
+	m_portalWall = sector->m_portalWall;
+	m_mirrorWall = sector->m_mirrorWall;
+
+	m_worldAABB = sector->m_worldAABB;
+	m_worldBounding = sector->m_worldBounding;
+	m_modelAABB = sector->m_modelAABB;
+}
+
+/**
  * configure the trigger based on the wall of the sector
  */
 void dfSector::setTriggerFromWall(dfLogicTrigger* trigger)

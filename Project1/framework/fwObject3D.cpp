@@ -426,8 +426,7 @@ void fwObject3D::debugGUI(void)
  */
 void fwObject3D::debugGUIChildClass(void)
 {
-	_snprintf_s(tmp, sizeof(tmp), _TRUNCATE, "%s##%d", m_className, m_id);
-	if (ImGui::TreeNode(tmp)) {
+	if (ImGui::TreeNode("fwObject3D")) {
 		if (m_name != "") {
 			ImGui::Text(m_name.c_str());
 		}

@@ -146,6 +146,8 @@ public:
 	std::list <int> m_portals;	// sectorID of the portals
 
 	dfSector(std::istringstream& infile, std::vector<dfSector*>& sectorsID, dfLevel *level);
+	dfSector(dfSector*);
+
 	void setTriggerFromWall(dfLogicTrigger* trigger);
 	void setTriggerFromFloor(dfLogicTrigger* trigger);
 	void setTriggerFromSector(dfLogicTrigger* trigger);

@@ -300,7 +300,6 @@ void DarkForces::Component::InfElevator::addSound(uint32_t action, dfVOC* sound)
  */
 void DarkForces::Component::InfElevator::onGotoStopForced(gaMessage* message)
 {
-
 	m_currentStop = message->m_value;
 	moveTo(m_stops[m_currentStop]);
 }

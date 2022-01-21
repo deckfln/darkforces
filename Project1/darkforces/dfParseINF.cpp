@@ -32,6 +32,8 @@
 static dfFileSystem* dfFiles = nullptr;
 static std::map<std::string, dfVOC*> g_cachedVOC;
 
+static std::map<std::string, dfSector*> g_Sectors;	// list of sectors parsed, to detect duplicated like big_mid
+
 /**
  * Create a default sound component
  */
@@ -99,6 +101,8 @@ static void removeSound(dfSector* pSector, uint32_t code)
 dfParseINF::dfParseINF(dfFileSystem* fs, const std::string& file, dfLevel *level)
 {
 	int size;
+
+	g_Sectors.clear();	// clean up the cache
 
 	dfFiles = fs;
 	m_level = level;
@@ -263,12 +267,25 @@ static gaMessage* parseMessage(std::vector<std::string>& tokens)
 	return new gaMessage(action, value, client);
 }
 
+/**
+ * Parse a sector to convert to an elevator
+ */
 void dfParseINF::parseSector(std::istringstream& infile, const std::string& sector)
 {
 	std::string line, dump;
 	bool start = false;
+	dfSector* pSector = nullptr;
 
-	dfSector* pSector = m_level->findSector(sector);
+	if (g_Sectors.count(sector)) {
+		// this is a clone of a previous elevator, but with different values
+		pSector = new dfSector(g_Sectors[sector]);
+		g_gaWorld.addClient(pSector);
+	}
+	else {
+		pSector = m_level->findSector(sector);
+		g_Sectors[sector] = pSector;
+	}
+
 	if (pSector == nullptr) {
 		gaDebugLog(1, "dfParseINF::parseSector", "sector " + sector + "not in the level");
 		return;

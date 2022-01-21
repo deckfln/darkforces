@@ -53,7 +53,7 @@ namespace GameEngine {
 		std::map<std::string, std::list<gaEntity*>> m_entities;
 		std::map<uint32_t, std::list<gaEntity*>> m_entitiesByClass;
 
-		std::list<gaEntity*> m_timers;						// entities that registered to receive timer events
+		std::map<std::string, bool> m_timers;				// entities that registered to receive timer events
 		std::list<GameEngine::Alarm> m_alarms;				// entities that registered to receive alarm events
 
 		std::vector<GameEngine::Plugin*> m_plugins;			// world plugin extensions
@@ -68,7 +68,19 @@ namespace GameEngine {
 		friend GameEngine::Physics;							// physic engine has direct access to world data
 		friend flightRecorder::Blackbox;					// flight recorder has direct access to everything
 
-		std::map<std::string, bool>	m_watch;				// keep a list of entities to display in the debugger
+#ifdef _DEBUG
+		struct watch {
+			bool m_display;
+			gaEntity* m_entity;
+
+			watch(void) {
+				m_display = false;
+				m_entity = nullptr;
+			};
+		};
+		std::map<std::string, struct watch>	m_watch;				// keep a list of entities to display in the debugger
+		std::map<std::string, bool>	m_watchName;				// keep a list of entities to display in the debugger
+#endif
 
 	public:
 		World(void);

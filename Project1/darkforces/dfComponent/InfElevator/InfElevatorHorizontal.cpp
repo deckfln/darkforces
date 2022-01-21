@@ -8,7 +8,7 @@ void DarkForces::Component::InfElevatorHorizontal::moveTo(float z_lvl)
 {
 	glm::vec3 p = m_center + m_move * z_lvl;
 	dfLevel::level2gl(p);
-	m_entity->sendMessage(gaMessage::MOVE, 0, &p);
+	m_entity->sendMessage(gaMessage::MOVE, 0, p);
 
 	// change the sound 'opacity' of the elevator (door) base don openess
 	dfSector* sector = dynamic_cast<dfSector*>(m_entity);

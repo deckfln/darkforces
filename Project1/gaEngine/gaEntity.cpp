@@ -78,6 +78,14 @@ gaEntity::gaEntity(flightRecorder::Entity* record):
 }
 
 /**
+ * clone the entity
+ */
+gaEntity::gaEntity(gaEntity* source):
+	fwObject3D()
+{
+}
+
+/**
  * extend the components of the entity
  */
 void gaEntity::addComponent(gaComponent* component, uint32_t flag)
@@ -440,6 +448,10 @@ void gaEntity::dispatchMessage(gaMessage* message)
 			translate((glm::vec3*)message->m_extra);
 			updateWorldAABB();
 		}
+		else if (message->m_v3value != glm::vec3(0)) {
+			translate(message->m_v3value);
+			updateWorldAABB();
+		}
 		break;
 
 	case gaMessage::Action::ROTATE:
@@ -572,13 +584,14 @@ void gaEntity::loadState(void* r)
 
 //********************************************
 
-void gaEntity::debugGUI(bool* close)
+#ifdef _DEBUG
+void gaEntity::debugGUI(const std::string& display, bool* close)
 {
 	static char tmp[64];
 
-	if (ImGui::CollapsingHeader(m_name.c_str())) {
-		sprintf_s(tmp, "gaEntity##%d", m_entityID);
-		if (ImGui::TreeNode(tmp)) {
+	if (ImGui::TreeNode(display.c_str())) {
+		if (ImGui::TreeNode("Entity")) {
+			ImGui::Text("Id:%d", m_entityID);
 			ImGui::Checkbox("Physical", &m_physical);
 			ImGui::Text("Timers : %d", m_timer);
 			ImGui::TreePop();
@@ -586,16 +599,19 @@ void gaEntity::debugGUI(bool* close)
 		debugGUIChildClass();
 
 		if (m_components.size() > 0) {
-			sprintf_s(tmp, "components##%d", m_entityID);
-			if (ImGui::TreeNode(tmp)) {
+			if (ImGui::TreeNode("Components")) {
 				for (auto& component : m_components) {
 					std::get<0>(component)->debugGUIinline();
 				}
 				ImGui::TreePop();
 			}
 		}
+		ImGui::TreePop();
 	}
 }
+#endif
+
+//----------------------------------------------
 
 /**
  *

@@ -20,9 +20,6 @@ void DarkForces::Component::InfElevatorTranslate::moveTo(float z_lvl)
 	float h;
 	float p;
 
-	if (m_entity->name() == "floor3edoor") {
-		__debugbreak();
-	}
 	switch (m_type) {
 	case DarkForces::Component::InfElevator::Type::DOOR:
 		h = m_stops[1]->z_position(m_type) - m_stops[0]->z_position(m_type);

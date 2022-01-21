@@ -645,8 +645,8 @@ void World::process(time_t delta, bool force, bool debug)
 
 	// inject timer messages if the entity request so
 	// only way to ensure there is not multiple timer message coming from different components of the entity
-	for (auto entity : m_timers) {
-		sendMessage(entity->name(), entity->name(), gaMessage::TIMER, 0, nullptr);
+	for (auto& entity : m_timers) {
+		sendMessage(entity.first, entity.first, gaMessage::TIMER, 0, nullptr);
 	}
 
 	// let plugins do stuff before the queue
@@ -749,6 +749,7 @@ void World::process(time_t delta, bool force, bool debug)
 			if (m_entities.count(message->m_server) > 0) {
 				message->m_pServer = m_entities[message->m_server].front();
 			}
+
 			for (auto entity : m_entities[message->m_client]) {
 
 				// some entities go full ghost
@@ -921,15 +922,14 @@ void GameEngine::World::registerTimerEvents(gaEntity* entity, bool b)
 {
 	if (b) {
 		// register
-		if (std::find(m_timers.begin(), m_timers.end(), entity) != m_timers.end()) {
-			// already registered
+		if (m_timers.count(entity->name()) > 0) {
 			return;
 		}
 
-		m_timers.push_back(entity);
+		m_timers[entity->name()] = true;
 	}
 	else {
-		m_timers.remove(entity);
+		m_timers.erase(entity->name());
 	}
 }
 
@@ -992,6 +992,10 @@ void GameEngine::World::deregisterPlugin(GameEngine::Plugin* plugin)
 	}
 }
 
+//-----------------------------------------------------------------------------
+
+#ifdef  _DEBUG
+
 /**
  * Render the list of entities on the debug imGUI
  */
@@ -1010,11 +1014,13 @@ void GameEngine::World::debugGUI(void)
 						[](gaEntity* a, gaEntity* b) { return a->name() < b->name(); }
 					);
 					for (auto entity : mclass.second) {
-						const std::string& name = entity->name();
-						bool old = m_watch[name];
-						ImGui::Checkbox(name.c_str(), &m_watch[name]);
-						if (old != m_watch[name]) {
-							if (m_watch[name]) {
+						const std::string& name = entity->name() + "##" + std::to_string(entity->entityID());
+						bool old = m_watch[name].m_display;
+						m_watch[name].m_entity = entity;
+						ImGui::Checkbox(name.c_str(), &m_watch[name].m_display);
+						if (old != m_watch[name].m_display) {
+							m_watchName[entity->name()] = m_watch[name].m_display;
+							if (m_watch[name].m_display) {
 								entity->worldAABB().color(glm::vec3(1.0f, 0.0f, 0.0f));
 							}
 							else {
@@ -1033,11 +1039,8 @@ void GameEngine::World::debugGUI(void)
 	// display entities monitored
 	ImGui::Begin("Inspector");
 	for (auto& watch : m_watch) {
-		if (watch.second) {
-			auto& entities = m_entities[watch.first];
-			for (auto entity : entities) {
-				entity->debugGUI(&m_watch[watch.first]);
-			}
+		if (watch.second.m_display) {
+			watch.second.m_entity->debugGUI(watch.first, &m_watch[watch.first].m_display);
 		}
 	}
 	ImGui::End();
@@ -1062,7 +1065,7 @@ void GameEngine::World::debugGUImsg(uint32_t nb, flightRecorder::Message* msg)
 			flightRecorder::Message* message = msg;
 			for (size_t i = 0; i < nb; i++) {
 				// only show messages for the monitored entities
-				if (m_watch[message->server] || m_watch[message->client]) {
+				if (m_watchName[message->server] || m_watchName[message->client]) {
 					gaMessage::debugGUI(message);
 				}
 				message++;
@@ -1090,7 +1093,7 @@ void GameEngine::World::debugGUImessages(std::list<gaMessage>& l)
 
 		for (auto& message : l) {
 			// only show messages for the monitored entities
-			if (m_watch[message.m_server] || m_watch[message.m_client]) {
+			if (m_watch[message.m_server].m_display || m_watch[message.m_client].m_display) {
 				message.debugGUI1();
 			}
 		}
@@ -1098,6 +1101,10 @@ void GameEngine::World::debugGUImessages(std::list<gaMessage>& l)
 	}
 	ImGui::End();
 }
+
+#endif //  _DEBUG
+
+//-----------------------------------------------------------------------------
 
 World::~World()
 {

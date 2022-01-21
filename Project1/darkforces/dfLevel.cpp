@@ -44,70 +44,70 @@ dfLevel::dfLevel(dfFileSystem* fs, std::string file)
 
 	while (std::getline(data, line))
 	{
-		// ignore comment
-		if (line[0] == '#' || line.length() == 0) {
-			continue;
-		}
+// ignore comment
+if (line[0] == '#' || line.length() == 0) {
+	continue;
+}
 
-		// per token
-		std::vector <std::string> tokens = dfParseTokens(line, tokenMap);
+// per token
+std::vector <std::string> tokens = dfParseTokens(line, tokenMap);
 
-		if (tokens.size() == 0) {
-			continue;
-		}
+if (tokens.size() == 0) {
+	continue;
+}
 
-		if (tokens[0] == "LEV") {
-			m_level = tokens[1];
-		}
-		else if (tokens[0] == "LEVELNAME") {
-			m_name = tokens[1];
-		}
-		else if (tokens[0] == "PALETTE") {
-			m_palette = new dfPalette(fs, tokens[1]);
-		}
-		else if (tokens[0] == "TEXTURES") {
-			int nbTextures = std::stoi(tokens[1]);
-			m_bitmaps.resize(nbTextures);
-		}
-		else if (tokens[0] == "TEXTURE:") {
-			std::string bm = tokens[1];
-			loadBitmaps(fs, bm);
-		}
-		else if (tokens[0] == "NUMSECTORS") {
-			int nbSectors = std::stoi(tokens[1]);
-			m_sectorsID.resize(nbSectors);
-		}
-		else if (tokens[0] == "SECTOR") {
-			int nSector = std::stoi(tokens[1]);
+if (tokens[0] == "LEV") {
+	m_level = tokens[1];
+}
+else if (tokens[0] == "LEVELNAME") {
+	m_name = tokens[1];
+}
+else if (tokens[0] == "PALETTE") {
+	m_palette = new dfPalette(fs, tokens[1]);
+}
+else if (tokens[0] == "TEXTURES") {
+	int nbTextures = std::stoi(tokens[1]);
+	m_bitmaps.resize(nbTextures);
+}
+else if (tokens[0] == "TEXTURE:") {
+	std::string bm = tokens[1];
+	loadBitmaps(fs, bm);
+}
+else if (tokens[0] == "NUMSECTORS") {
+	int nbSectors = std::stoi(tokens[1]);
+	m_sectorsID.resize(nbSectors);
+}
+else if (tokens[0] == "SECTOR") {
+	int nSector = std::stoi(tokens[1]);
 
-			dfSector* sector = new dfSector(data, m_sectorsID, this);
-			sector->m_id = nSector;
-			if (sector->name() == "") {
-				sector->name(std::to_string(nSector));
-			}
-			int layer = sector->m_layer;
+	dfSector* sector = new dfSector(data, m_sectorsID, this);
+	sector->m_id = nSector;
+	if (sector->name() == "") {
+		sector->name(std::to_string(nSector));
+	}
+	int layer = sector->m_layer;
 
-			// record the sector in the global list
-			// beware of sectors with the same !
-			if (m_sectorsName.count(sector->name()) == 0) {
-				m_sectorsName[sector->name()] = sector;
-			}
-			else {
-				m_sectorsName[sector->name() + "(1)"] = sector;
-			}
-			m_sectorsID[nSector] = sector;
+	// record the sector in the global list
+	// beware of sectors with the same !
+	if (m_sectorsName.count(sector->name()) == 0) {
+		m_sectorsName[sector->name()] = sector;
+	}
+	else {
+		m_sectorsName[sector->name() + "(1)"] = sector;
+	}
+	m_sectorsID[nSector] = sector;
 
-			sector->linkWalls();	// build the polygons from the sector
+	sector->linkWalls();	// build the polygons from the sector
 
-			// record the sky
-			if (sector->m_flag1 & dfSectorFlag::EXTERIOR_NO_CEIL) {
-				m_skyAltitude = std::max(m_skyAltitude, sector->ceiling() + 100);
-				m_skyTexture = sector->m_ceilingTexture;
-			}
+	// record the sky
+	if (sector->m_flag1 & dfSectorFlag::EXTERIOR_NO_CEIL) {
+		m_skyAltitude = std::max(m_skyAltitude, sector->ceiling() + 100);
+		m_skyTexture = sector->m_ceilingTexture;
+	}
 
-			// keep track of the bounding box
-			m_boundingBox.extend(sector->m_worldAABB);
-		}
+	// keep track of the bounding box
+	m_boundingBox.extend(sector->m_worldAABB);
+}
 	}
 
 	// bind the sectors to adjoint sectors and to mirror walls
