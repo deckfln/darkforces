@@ -15,7 +15,7 @@ dfLogicStop::dfLogicStop(dfSector* sector, float altitude, const std::string& ac
 	m_flag(Flag::Absolute | Flag::ActionAtStop),
 	m_absolute(altitude),
 	m_pSector(sector),
-	m_name ("STOP:" + sector->name())
+	m_name (sector->name())
 {
 	dfLogicStop::action(action);
 }
@@ -25,19 +25,19 @@ dfLogicStop::dfLogicStop(dfSector* sector, float altitude, float time):
 	m_absolute(altitude),
 	m_animation_time(time),
 	m_pSector(sector),
-	m_name("STOP:" + sector->name())
+	m_name(sector->name())
 {
 }
 
 dfLogicStop::dfLogicStop(const std::string& sector)
 {
-	m_name = "STOP:" + sector;
+	m_name = sector;
 }
 
 dfLogicStop::dfLogicStop(dfSector* sector):
 	m_pSector(sector)
 {
-	m_name = "STOP:" + sector->name();
+	m_name = sector->name();
 }
 
 /**

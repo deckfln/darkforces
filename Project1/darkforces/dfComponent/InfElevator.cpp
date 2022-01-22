@@ -339,6 +339,9 @@ void DarkForces::Component::InfElevator::onTrigger(gaMessage* message)
  */
 void DarkForces::Component::InfElevator::onGotoStop(gaMessage* message)
 {
+	if (message->m_server == "slider_ne" && message->m_client == "dumb_door2") {
+		__debugbreak();
+	}
 	if (m_status == Status::HOLD && m_currentStop == message->m_value) {
 		return;				// nothing to do, we're already at the correct stop
 	}
@@ -365,7 +368,7 @@ void DarkForces::Component::InfElevator::onGotoStop(gaMessage* message)
 		m_delay = abs(m_direction) * 1600 / m_speed;
 
 		// only trigger a loop if the object is currently still
-		if (m_status == Status::HOLD) {
+		if (m_status != Status::MOVE) {
 
 			// start the sounds
 			m_entity->sendMessage(gaMessage::PLAY_SOUND, DarkForces::Sounds::ELEVATOR_START);

@@ -1093,7 +1093,7 @@ void GameEngine::World::debugGUImessages(std::list<gaMessage>& l)
 
 		for (auto& message : l) {
 			// only show messages for the monitored entities
-			if (m_watch[message.m_server].m_display || m_watch[message.m_client].m_display) {
+			if (m_watchName[message.m_server] || m_watchName[message.m_client]) {
 				message.debugGUI1();
 			}
 		}
