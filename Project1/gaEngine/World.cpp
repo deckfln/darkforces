@@ -881,20 +881,18 @@ bool GameEngine::World::intersectWithEntity(Framework::Segment& segment,
 	gaEntity* collidedEntity = nullptr;
 
 	// test again entities
-	for (auto& entry : m_entities) {
-		for (auto ent : entry.second) {
-			// ignore ghosts and itself
-			if (!ent->physical()) {
-				continue;
-			}
+	for (auto& entry : m_entitiesByID) {
+		// ignore ghosts and itself
+		if (!entry.second->physical()) {
+			continue;
+		}
 
-			// quick test
-			if (ent->collideAABB(aabb)) {
-				// extended test
-				collisions.clear();
-				if (ent->collide(collider, forward, down, collisions)) {
-					entCollisions.push_back(ent);
-				}
+		// quick test
+		if (entry.second->collideAABB(aabb)) {
+			// extended test
+			collisions.clear();
+			if (entry.second->collide(collider, forward, down, collisions)) {
+				entCollisions.push_back(entry.second);
 			}
 		}
 	}
@@ -908,11 +906,9 @@ bool GameEngine::World::intersectWithEntity(Framework::Segment& segment,
 void GameEngine::World::getEntitiesWithComponents(uint32_t componentID, std::vector<gaEntity*>& entities)
 {
 	// test again entities
-	for (auto& entry : m_entities) {
-		for (auto ent : entry.second) {
-			if (ent->findComponent(componentID) != nullptr) {
-				entities.push_back(ent);
-			}
+	for (auto& entry : m_entitiesByID) {
+		if (entry.second->findComponent(componentID) != nullptr) {
+			entities.push_back(entry.second);
 		}
 	}
 }

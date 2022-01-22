@@ -87,11 +87,9 @@ void flightRecorder::Blackbox::recordEntities(void)
 
 	// compute the needed space
 	uint32_t data_size = sizeof(bufferEntities);
-	for (auto& entry : g_gaWorld.m_entities) {
-		for (auto entity : entry.second) {
-			data_size += entity->recordSize() + entity->componentsSize();
-			entities++;
-		}
+	for (auto& entry : g_gaWorld.m_entitiesByID) {
+		data_size += entry.second->recordSize() + entry.second->componentsSize();
+		entities++;
 	}
 
 	// we may need more memory than the previous allocated buffer
