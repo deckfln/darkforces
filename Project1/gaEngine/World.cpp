@@ -114,6 +114,7 @@ void GameEngine::World::update(void)
 void World::addClient(gaEntity* client)
 {
 	m_entities[client->name()].push_back(client);
+	m_entitiesByID[client->entityID()] = client;
 
 	uint32_t mclass = client->mclass();
 	m_entitiesByClass[mclass].push_back(client);
@@ -135,6 +136,7 @@ void World::removeClient(gaEntity* client)
 
 	// remove from the list
 	m_entities[client->name()].remove(client);
+	m_entitiesByID.erase(client->entityID());
 
 	// if the list is empty remove the name
 	if (m_entities[client->name()].size() == 0) {

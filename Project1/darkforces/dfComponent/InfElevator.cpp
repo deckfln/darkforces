@@ -17,6 +17,8 @@
 
 #include "../flightRecorder/frCompElevator.h"
 
+static bool g_debug = false;
+
 /**
  * default elevators speed
  */
@@ -339,9 +341,6 @@ void DarkForces::Component::InfElevator::onTrigger(gaMessage* message)
  */
 void DarkForces::Component::InfElevator::onGotoStop(gaMessage* message)
 {
-	if (message->m_server == "slider_ne" && message->m_client == "dumb_door2") {
-		__debugbreak();
-	}
 	if (m_status == Status::HOLD && m_currentStop == message->m_value) {
 		return;				// nothing to do, we're already at the correct stop
 	}
@@ -502,7 +501,7 @@ uint32_t DarkForces::Component::InfElevator::recordState(void* r)
 
 	record->m_current = m_current;			// current altitude of the part to move (floor or ceiling)
 	record->m_direction = m_direction;		// direction and speed of the move
-	record->m_target = m_direction;			// target altitude
+	record->m_target = m_target;			// target altitude
 
 	return record->size;
 }
@@ -522,7 +521,7 @@ uint32_t DarkForces::Component::InfElevator::loadState(void* r)
 
 	m_current = record->m_current;		// current altitude of the part to move (floor or ceiling)
 	m_direction = record->m_direction;	// direction and speed of the move
-	m_target = record->m_direction;		// target altitude
+	m_target = record->m_target;		// target altitude
 
 	return record->size;
 }

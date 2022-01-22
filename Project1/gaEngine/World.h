@@ -52,6 +52,7 @@ namespace GameEngine {
 
 		std::map<std::string, std::list<gaEntity*>> m_entities;
 		std::map<uint32_t, std::list<gaEntity*>> m_entitiesByClass;
+		std::map<uint32_t, gaEntity*> m_entitiesByID;
 
 		std::map<std::string, bool> m_timers;				// entities that registered to receive timer events
 		std::list<GameEngine::Alarm> m_alarms;				// entities that registered to receive alarm events

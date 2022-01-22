@@ -525,6 +525,7 @@ uint32_t gaEntity::recordState(void *r)
 	flightRecorder::Entity *record = (flightRecorder::Entity *)r;
 	record->size = sizeof(flightRecorder::Entity);
 	record->classID = flightRecorder::TYPE::ENTITY;
+	record->id = m_entityID;
 	strncpy_s(record->className, m_className, sizeof(record->className));
 	strncpy_s(record->name, m_name.c_str(), _TRUNCATE);
 	fwObject3D::recordState(&record->object3D);

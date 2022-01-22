@@ -125,8 +125,8 @@ void flightRecorder::Blackbox::recordEntities(void)
 	}
 
 	uint32_t f = p - (char*)bEntities->data;
-	if (f != bEntities->data_size) {
-		;
+	if (f > bEntities->data_size) {
+		__debugbreak();
 	}
 }
 
@@ -342,6 +342,9 @@ void flightRecorder::Blackbox::setFrame(int frame)
 	std::map<std::string, flightRecorder::Entity*> entities;
 	std::map<std::string, void*> components;
 
+	std::map<uint32_t, flightRecorder::Entity*> entitiesByID;
+	std::map<uint32_t, void*> componentsByID;
+
 	uint32_t size = bEntities->size;
 	flightRecorder::Entity* rEntity;
 	uint32_t* component=nullptr;
@@ -350,11 +353,13 @@ void flightRecorder::Blackbox::setFrame(int frame)
 		rEntity = (flightRecorder::Entity*)p;
 
 		entities[rEntity->name] = rEntity;
+		entitiesByID[rEntity->id] = rEntity;
 
 		p += rEntity->size;
 
 		// start of the components
 		components[rEntity->name] = p;
+		componentsByID[rEntity->id] = p;
 		for (uint32_t i = 0; i < rEntity->nbComponents; i++) {
 			component = (uint32_t*)p;
 			p += *component;		// move to next component 
@@ -363,11 +368,9 @@ void flightRecorder::Blackbox::setFrame(int frame)
 
 	//remove entities from the world that are not in the save
 	std::list<gaEntity*> to_delete;
-	for (auto &entity : g_gaWorld.m_entities) {
-		if (entities.count(entity.first) == 0) {
-			for (auto e : entity.second) {
-				to_delete.push_back(e);
-			}
+	for (auto &entity : g_gaWorld.m_entitiesByID) {
+		if (entitiesByID.count(entity.first) == 0) {
+			to_delete.push_back(entity.second);
 		}
 	}
 	for (auto entity : to_delete) {
@@ -377,8 +380,8 @@ void flightRecorder::Blackbox::setFrame(int frame)
 
 	// add entities to the world that are not in the save
 	gaEntity* child;
-	for (auto& entity : entities) {
-		if (g_gaWorld.m_entities.count(entity.first) == 0) {
+	for (auto& entity : entitiesByID) {
+		if (g_gaWorld.m_entitiesByID.count(entity.first) == 0) {
 			flightRecorder::Entity* record = entity.second;
 
 			if (m_callbacks.count(record->className) > 0) {
@@ -394,11 +397,9 @@ void flightRecorder::Blackbox::setFrame(int frame)
 	}
 
 	// and reload their states
-	for (auto &entry : g_gaWorld.m_entities) {
- 		for (auto ent : entry.second) {
-			ent->loadState(entities[entry.first]);
-			ent->loadComponents(components[entry.first]);
-		}
+	for (auto& entry: g_gaWorld.m_entitiesByID) {
+		entry.second->loadState(entitiesByID[entry.first]);
+		entry.second->loadComponents(componentsByID[entry.first]);
 	}
 
 	// reload the ballistic engine
