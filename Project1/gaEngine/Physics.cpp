@@ -659,6 +659,7 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 
 		// manage ground collision and accept to jump up if over a step
 		if (entity->gravity()) {
+			float deltaY = new_position.y - nearest_ground->m_position.y;	// distance to the ground
 
 			if (nearest_ground) {
 				if (m_ballistics.count(entity->name()) > 0 && m_ballistics[entity->name()].m_inUse) {
@@ -679,7 +680,11 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 					// give it an other try
 					continue;
 				}
-				else if (new_position.y - nearest_ground->m_position.y < static_cast<gaActor*>(entity)->step()) {
+				else if (abs(deltaY) < EPSILON) {
+					// the entity is 'nearly' on the ground, all is OK
+				}
+				else if (deltaY < static_cast<gaActor*>(entity)->step()) {
+
 					if (entity->canStep()) {
 						// if there is a step and the entity can step over
 						if (abs(nearest_ground->m_position.y - new_position.y) > EPSILON) {
