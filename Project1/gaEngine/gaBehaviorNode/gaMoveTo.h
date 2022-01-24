@@ -30,8 +30,8 @@ namespace GameEngine {
 #ifdef _DEBUG
 			void debug(void);									// init debug mode
 			bool m_debug = false;								// display navpoints in opengl
-			fwGeometry* m_geometry=nullptr;
-			float* m_vertices = nullptr;
+			fwGeometry *m_geometry=nullptr;
+			std::vector<float> m_vertices;
 			fwMesh* m_mesh = nullptr;
 
 #endif
@@ -51,6 +51,7 @@ namespace GameEngine {
 			MoveTo(const char* name);
 			MoveTo(const char* name, float speed);
 			BehaviorNode* clone(GameEngine::BehaviorNode* p) override;
+			~MoveTo();
 
 			// getter/setter
 			inline void speed(float speed) { m_speed = speed; };

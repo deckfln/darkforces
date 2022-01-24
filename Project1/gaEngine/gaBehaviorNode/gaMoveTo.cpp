@@ -435,6 +435,14 @@ void GameEngine::Behavior::MoveTo::dispatchMessage(gaMessage* message, Action *r
 	return execute(r);
 }
 
+GameEngine::Behavior::MoveTo::~MoveTo()
+{
+#ifdef _DEBUG
+	g_gaWorld.remove2scene(m_mesh);
+	delete m_mesh;	// will delete the geometry
+#endif
+}
+
 //---------------------------------------------------------------
 
 #ifdef _DEBUG
@@ -443,10 +451,10 @@ void GameEngine::Behavior::MoveTo::dispatchMessage(gaMessage* message, Action *r
  */
 void GameEngine::Behavior::MoveTo::debug(void)
 {
-	m_geometry = new fwGeometry();
-	m_vertices = (float*)calloc(32, sizeof(float) * 3);
+	m_vertices.resize(1 * 3);
 
-	m_geometry->addVertices("aPos", m_vertices, 3, sizeof(float) * 3 * 32, ARRAY_SIZE_OF_ELEMENT(m_vertices));
+	m_geometry = new fwGeometry();
+	m_geometry->addVertices("aPos", &m_vertices[0], 3, sizeof(float) * 3 * 1, ARRAY_SIZE_OF_ELEMENT(m_vertices), false);
 
 	// shared geometry
 	static glm::vec4 w(1.0, 1.0, 1.0, 1.0);
@@ -489,8 +497,10 @@ void GameEngine::Behavior::MoveTo::debugGUInode(void)
 	bool m_old_debug = m_debug;
 
 	if (ImGui::TreeNode(tmp)) {
-		if (m_navpoints->size() > 16) {
-			__debugbreak();
+		uint32_t s = m_navpoints->size() * 6;
+		if (m_vertices.size() < s) {
+			m_vertices.resize(s);
+			m_geometry->resizeAttribute("aPos", &m_vertices[0], m_navpoints->size() * 2);
 		}
 		m_debug = true;
 		for (size_t i = 0, j=0; i < m_navpoints->size()-1; i++) {

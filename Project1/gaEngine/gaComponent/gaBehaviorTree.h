@@ -52,7 +52,7 @@ namespace GameEngine {
 			BehaviorNode* m_root = nullptr;
 			BehaviorNode* m_current = nullptr;
 			bool m_instanciated = false;
-			bool m_active = false;								// AI is activated or not
+			bool m_active = true;								// AI is activated or not
 
 			std::vector<BehaviorNode*> m_nodes;					// index of all nodes
 
