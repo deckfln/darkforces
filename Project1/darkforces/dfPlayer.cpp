@@ -236,7 +236,7 @@ void DarkForces::Player::dispatchMessage(gaMessage* message)
 		}
 		break;
 
-	case gaMessage::KEY:
+	case gaMessage::Action::KEY:
 		switch (message->m_value) {
 		case GLFW_KEY_LEFT_CONTROL:
 			// auto fire

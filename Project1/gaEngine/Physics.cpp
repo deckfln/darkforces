@@ -33,7 +33,7 @@ Physics::Physics(void)
  *
  Test if the entity warped through a triangle
  */
-bool Physics::warpThrough(gaEntity *entity, 
+bool Physics::warpThrough(gaEntity* entity,
 	const glm::vec3& old_position,
 	Transform& tranform,
 	std::vector<gaCollisionPoint>& collisions)
@@ -60,7 +60,7 @@ bool Physics::warpThrough(gaEntity *entity,
 
 		float nearest = 9999999;
 		glm::vec3 near_c = glm::vec3(0);
-		gaEntity* collided=nullptr;
+		gaEntity* collided = nullptr;
 
 		if (entity->name() == "player")
 			gaDebugLog(1, "GameEngine::Physics::wantToMove", entity->name() + " warp detected");
@@ -110,24 +110,28 @@ bool Physics::warpThrough(gaEntity *entity,
 void Physics::testEntities(gaEntity* entity, const Transform& tranform, std::vector<gaCollisionPoint>& collisions)
 {
 	uint32_t size;
+	gaEntity* target = nullptr;
 
-	for (auto& entry : g_gaWorld.m_entities) {
-		for (auto ent : entry.second) {
-			// ignore ghosts
-			if (!ent->hasCollider()) {
-				continue;
-			}
+	for (auto& entry : g_gaWorld.m_entitiesByID) {
+		target = entry.second;
 
-			if (!entity->collideAABB(ent->worldAABB())) {
-				continue;
-			}
+		// ignore ghosts
+		if (!target->hasCollider()) {
+			continue;
+		}
 
-			if (ent->name() != entity->name()) {
-				size = collisions.size();
-				if (entity->collide(ent, tranform.m_forward, tranform.m_downward, collisions)) {
-					for (auto i = size; i < collisions.size(); i++) {
-						collisions[i].m_source = ent;
-					}
+		if (!entity->collideAABB(target->worldAABB())) {
+			continue;
+		}
+
+		if (entity->name() == "player" && target->name() == "gigantaur") {
+			printf("Physics::testEntities\n");
+		}
+		if (target->name() != entity->name()) {
+			size = collisions.size();
+			if (entity->collide(target, tranform.m_forward, tranform.m_downward, collisions)) {
+				for (auto i = size; i < collisions.size(); i++) {
+					collisions[i].m_source = target;
 				}
 			}
 		}
@@ -385,7 +389,7 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 		*/
 
 #ifdef _DEBUG
-		if (entity->name() == "XXXX") {
+		if (entity->name() == "player") {
 			gaDebugLog(1, "GameEngine::Physics::wantToMove", entity->name() + " to " + std::to_string(tranform.m_position.x)
 				+ " " + std::to_string(tranform.m_position.y)
 				+ " " + std::to_string(tranform.m_position.z));
@@ -659,9 +663,9 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 
 		// manage ground collision and accept to jump up if over a step
 		if (entity->gravity()) {
-			float deltaY = new_position.y - nearest_ground->m_position.y;	// distance to the ground
 
 			if (nearest_ground) {
+				float deltaY = new_position.y - nearest_ground->m_position.y;	// distance to the ground
 				if (m_ballistics.count(entity->name()) > 0 && m_ballistics[entity->name()].m_inUse) {
 					// if the object was falling, remove from the list and force the position
 					m_remove.push_back(entity->name());
@@ -852,6 +856,11 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 
 						entity->popTransformations();				// restore previous position
 						block_move = true;
+
+						if (m_ballistics.count(entity->name()) != 0) {
+							// if the object is jumping or falling change the balistic
+							m_ballistics[entity->name()] = Ballistic(old_position, old_position);
+						}
 					}
 					else {
 						if (entity->name() == "player")

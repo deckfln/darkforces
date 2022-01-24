@@ -185,15 +185,15 @@ void gaActor::dispatchMessage(gaMessage* message)
 		m_direction = message->m_v3value;
 		break;
 
-	case gaMessage::KEY:
+	case gaMessage::Action::KEY:
 		switch (message->m_value) {
 		case GLFW_KEY_S:
 			g_gaWorld.suspendTimer();
 			break;
 
 		case GLFW_KEY_X: {
-			glm::vec3* velocity = (glm::vec3 *)message->m_extra;
-			glm::vec3 v0(velocity->x/3.0f, 0.2f, velocity->z/3.0f);
+			const glm::vec3& velocity = message->m_v3value;
+			glm::vec3 v0(velocity.x/3.0f, 0.2f, velocity.z/3.0f);
 			g_gaPhysics.addBallistic(this, v0);
 			break; }
 		}

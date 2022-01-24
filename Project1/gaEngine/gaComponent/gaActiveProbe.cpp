@@ -1,6 +1,7 @@
 #include "gaActiveProbe.h"
 
 #include <imgui.h>
+#include <GLFW/glfw3.h>
 
 #include "../../config.h"
 #include "../gaEntity.h"
@@ -38,8 +39,8 @@ void GameEngine::Component::ActiveProbe::dispatchMessage(gaMessage* message)
 		m_worldAABB.set(m_segment.m_start, m_segment.m_end);
 		break;
 
-	case gaMessage::KEY:
-		if (message->m_value == 32) {
+	case gaMessage::Action::KEY:
+		if (message->m_value == GLFW_KEY_SPACE) {
 			gaEntity* collidedEntity=nullptr;
 
 			// check if entities with component TRIGGER intersect with the segment m_start-m_direction
