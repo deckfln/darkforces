@@ -36,6 +36,7 @@ DarkForces::Player::Player(int mclass, const std::string& name, fwCylinder& cyli
 	addComponent(&m_defaultAI);
 	addComponent(&m_sound);
 	addComponent(&m_weapon);
+	addComponent(&m_items);
 
 	// prepare the sound component
 	m_sound.addSound(DarkForces::Sounds::PLAYER_HIT_BY_STORM_COMMANDO_OFFICER, DarkForces::loadSound(DarkForces::Sounds::PLAYER_HIT_BY_STORM_COMMANDO_OFFICER)->sound());
@@ -44,6 +45,7 @@ DarkForces::Player::Player(int mclass, const std::string& name, fwCylinder& cyli
 	m_defaultAI.setClass("player");
 	m_weapon.set(DarkForces::Weapon::Kind::Rifle);
 	m_weapon.addEnergy(100);
+	m_items.add(&m_gogle);
 }
 
 DarkForces::Player::Player(flightRecorder::Entity* record) :
@@ -59,6 +61,25 @@ void DarkForces::Player::bind(dfLevel* level)
 {
 	m_level = level;
 	m_defaultAI.bind(level);
+}
+/**
+ * the item is present in the inventory and is turned on
+ */
+bool DarkForces::Player::isOn(const std::string& name)
+{
+	Item* item = m_items.get(name);
+	if (item == nullptr) {
+		return false;
+	}
+	return item->on();
+}
+
+/**
+ * add item to inventory
+ */
+void DarkForces::Player::addItem(Item* item)
+{
+	m_items.add(item);
 }
 
 /**
@@ -223,6 +244,22 @@ void DarkForces::Player::onBulletMiss(gaMessage* mmessage)
 }
 
 /**
+ * Togle the gogles
+ */
+void DarkForces::Player::onTogleGogle(gaMessage* mmessage)
+{
+	Item* item = m_items.get("gogle");
+	if (item) {
+		if (item->on()) {
+			item->set(false);
+		}
+		else {
+			item->set(true);
+		}
+	}
+}
+
+/**
  * let an entity deal with a situation
  */
 void DarkForces::Player::dispatchMessage(gaMessage* message)
@@ -241,6 +278,10 @@ void DarkForces::Player::dispatchMessage(gaMessage* message)
 		case GLFW_KEY_LEFT_CONTROL:
 			// auto fire
 			sendMessage(DarkForces::Message::START_FIRE, 0, &m_direction);
+			break;
+
+		case GLFW_KEY_F1:
+			onTogleGogle(message);
 			break;
 
 		case GLFW_KEY_F5:

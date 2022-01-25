@@ -24,3 +24,10 @@ enum {
 	DF_COMPONENT_SPRITE,
 	DF_COMPONENT_3DO,
 };
+
+namespace DarkForces 
+{
+	enum Components {
+		Inventory = 1060,
+	};
+}

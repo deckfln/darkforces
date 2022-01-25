@@ -168,8 +168,8 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 	//glm::vec3 start = glm::vec3(-20, 2.0, 34);	// mousebot(40)
 	//glm::vec3 start = glm::vec3(-28.65f, -2.0, 34.83f);	// spinner
 	//glm::vec3 start = glm::vec3(-28.0287533, -2.0, 27.4463711);	// projector
-	//glm::vec3 start = glm::vec3(-56.25, -0.9, 23.65);	// super secret 2
-	glm::vec3 start = glm::vec3(-24.52, 0.07, 31.75);	// enthall
+	glm::vec3 start = glm::vec3(-56.25, -0.9, 23.65);	// super secret 2
+	//glm::vec3 start = glm::vec3(-24.52, 0.07, 31.75);	// enthall
 	//glm::vec3 start = glm::vec3(-38.80, 2.41, 39.7);	// switch_cover
 	//glm::vec3 start = glm::vec3(-29.06, -2.0, 24.75);	// cage
 
@@ -217,6 +217,7 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 		{GLFW_KEY_LEFT_CONTROL, GameEngine::Component::Controller::KeyInfo::Msg::onPress},
 		{GLFW_KEY_SPACE, GameEngine::Component::Controller::KeyInfo::Msg::onPressDown}, 
 		{GLFW_KEY_S, GameEngine::Component::Controller::KeyInfo::Msg::onPressDown},
+		{GLFW_KEY_F1, GameEngine::Component::Controller::KeyInfo::Msg::onPressDown},
 		{GLFW_KEY_F5, GameEngine::Component::Controller::KeyInfo::Msg::onPressDown},
 		{GLFW_KEY_1, GameEngine::Component::Controller::KeyInfo::Msg::onPressDown},
 		{GLFW_KEY_2, GameEngine::Component::Controller::KeyInfo::Msg::onPressDown},
@@ -239,7 +240,10 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
  */
 glTexture* myDarkForces::draw(time_t delta, fwRenderer* renderer)
 {
-	m_renderer->customDefine("HEADLIGHT", static_cast<DarkForces::Player*>(m_player)->headlight());
+	DarkForces::Player* p = static_cast<DarkForces::Player*>(m_player);
+
+	m_renderer->customDefine("HEADLIGHT", p->headlight());
+	m_renderer->customDefine("GREEN", p->isOn("gogle"));
 
 	return GameEngine::App::draw(delta, renderer);
 }

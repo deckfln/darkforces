@@ -1,10 +1,11 @@
 #pragma once
 
 #include "../gaEngine/gaActor.h"
-#include "dfComponent/dfCActor.h"
 #include "../gaEngine/gaComponent/gaSound.h"
+#include "../gaEngine/gaComponent/gaCInventory.h"
 
 #include "dfLevel.h"
+#include "dfComponent/dfCActor.h"
 #include "dfComponent/dfCWeapon.h"
 #include "dfComponent/dfComponentLogic.h"
 
@@ -19,8 +20,12 @@ namespace DarkForces {
 	 */
 	class Player : public gaActor {
 		DarkForces::Component::Actor m_defaultAI;
-		GameEngine::Component::Sound m_sound;
 		DarkForces::Component::Weapon m_weapon;
+		GameEngine::Component::Inventory m_items;
+		GameEngine::Component::Sound m_sound;
+
+		// predefined items
+		Item m_gogle = Item("gogle");
 
 		dfLevel* m_level = nullptr;
 		bool m_headlight = false;
@@ -43,6 +48,7 @@ namespace DarkForces {
 		void onLookAt(gaMessage* message);		// when the player looks somewhere
 		void onHitBullet(gaMessage* mmessage);	// when the player gets hit by a laser
 		void onBulletMiss(gaMessage* mmessage);	// a bullet passed by the player
+		void onTogleGogle(gaMessage* mmessage);	// Togle the gogles
 
 	public:
 		Player(
@@ -58,6 +64,9 @@ namespace DarkForces {
 		// getter/setter
 		inline bool headlight(void) { return m_headlight; };
 		void bind(dfLevel* level);
+
+		bool isOn(const std::string& item);		// the item is present in the inventory and is turned on
+		void addItem(Item* item);				// add item to inventory
 
 		void dispatchMessage(gaMessage* message) override;		//
 

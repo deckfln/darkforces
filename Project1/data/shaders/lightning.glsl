@@ -11,10 +11,15 @@ float lumis = dot(color, W1);
 
 // detect case of non darkforces managed shader
 if (material != vec3(0)) {
-#ifdef HEADLIGHT
-	color = color * (ambient + (1.0 - z));
+#ifdef GREEN
+	color = vec3(0.0, lumis, 0.0);
 #else
-	color = color * ambient;
+	#ifdef HEADLIGHT
+		color = color * (ambient + (1.0 - z));
+	#else
+		color = color * ambient;
+	#endif
 #endif
 }
+
 //}

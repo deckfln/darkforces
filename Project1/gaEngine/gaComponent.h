@@ -25,7 +25,8 @@ public:
 		BehaviorTree,
 		AIPerception,
 		Actor,
-		Listener
+		Listener,
+		Inventory
 	};
 
 	gaComponent(int m_type);
