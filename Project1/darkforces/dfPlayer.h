@@ -26,9 +26,9 @@ namespace DarkForces {
 
 		// predefined items
 		Item m_gogle = Item("gogle");
+		Item m_headlight = Item("headlight");
 
 		dfLevel* m_level = nullptr;
-		bool m_headlight = false;
 
 		DarkForces::Weapon::Kind m_currentWeapon;		// current weapon
 		bool m_weaponFiring = false;					// weapon is on fire position
@@ -49,6 +49,7 @@ namespace DarkForces {
 		void onHitBullet(gaMessage* mmessage);	// when the player gets hit by a laser
 		void onBulletMiss(gaMessage* mmessage);	// a bullet passed by the player
 		void onTogleGogle(gaMessage* mmessage);	// Togle the gogles
+		void onTogleHeadlight(gaMessage* mmessage);	// Togle the headlight
 
 	public:
 		Player(
@@ -62,7 +63,6 @@ namespace DarkForces {
 		Player(flightRecorder::Entity* record);
 
 		// getter/setter
-		inline bool headlight(void) { return m_headlight; };
 		void bind(dfLevel* level);
 
 		bool isOn(const std::string& item);		// the item is present in the inventory and is turned on

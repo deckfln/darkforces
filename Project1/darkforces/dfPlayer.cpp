@@ -35,17 +35,16 @@ DarkForces::Player::Player(int mclass, const std::string& name, fwCylinder& cyli
 
 	addComponent(&m_defaultAI);
 	addComponent(&m_sound);
+		m_sound.addSound(DarkForces::Sounds::PLAYER_HIT_BY_STORM_COMMANDO_OFFICER, DarkForces::loadSound(DarkForces::Sounds::PLAYER_HIT_BY_STORM_COMMANDO_OFFICER)->sound());
+		m_sound.addSound(DarkForces::Sounds::PLAYER_NEARLY_HIT, DarkForces::loadSound(PLAYER_NEARLY_HIT)->sound());
 	addComponent(&m_weapon);
 	addComponent(&m_items);
-
-	// prepare the sound component
-	m_sound.addSound(DarkForces::Sounds::PLAYER_HIT_BY_STORM_COMMANDO_OFFICER, DarkForces::loadSound(DarkForces::Sounds::PLAYER_HIT_BY_STORM_COMMANDO_OFFICER)->sound());
-	m_sound.addSound(DarkForces::Sounds::PLAYER_NEARLY_HIT, DarkForces::loadSound(PLAYER_NEARLY_HIT)->sound());
+		m_items.add(&m_gogle);
+		m_items.add(&m_headlight);
 
 	m_defaultAI.setClass("player");
 	m_weapon.set(DarkForces::Weapon::Kind::Rifle);
 	m_weapon.addEnergy(100);
-	m_items.add(&m_gogle);
 }
 
 DarkForces::Player::Player(flightRecorder::Entity* record) :
@@ -260,6 +259,22 @@ void DarkForces::Player::onTogleGogle(gaMessage* mmessage)
 }
 
 /**
+ * Togle the headlight
+ */
+void DarkForces::Player::onTogleHeadlight(gaMessage* mmessage)
+{
+	Item* item = m_items.get("headlight");
+	if (item) {
+		if (item->on()) {
+			item->set(false);
+		}
+		else {
+			item->set(true);
+		}
+	}
+}
+
+/**
  * let an entity deal with a situation
  */
 void DarkForces::Player::dispatchMessage(gaMessage* message)
@@ -285,12 +300,7 @@ void DarkForces::Player::dispatchMessage(gaMessage* message)
 			break;
 
 		case GLFW_KEY_F5:
-			if (!m_headlight) {
-				m_headlight = true;
-			}
-			else {
-				m_headlight = false;
-			}
+			onTogleHeadlight(message);
 			break;
 
 		default:

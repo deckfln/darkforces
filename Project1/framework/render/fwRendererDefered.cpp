@@ -152,7 +152,7 @@ void fwRendererDefered::mergeMTR(fwScene *scene)
 	// add the custom defines
 	for (auto d : m_customDefines) {
 		if (d.second) {
-			define += "#define " + d.first;
+			define += "#define " + d.first + "\n";
 		}
 	}
 

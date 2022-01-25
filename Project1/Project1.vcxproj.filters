@@ -1642,6 +1642,9 @@
       <Filter>Fichiers de ressources\framework</Filter>
     </None>
     <None Include="packages.config" />
+    <None Include="data\shaders\lightning.glsl">
+      <Filter>Fichiers de ressources\DarkForces</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Text Include="todo.txt">

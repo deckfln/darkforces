@@ -242,7 +242,7 @@ glTexture* myDarkForces::draw(time_t delta, fwRenderer* renderer)
 {
 	DarkForces::Player* p = static_cast<DarkForces::Player*>(m_player);
 
-	m_renderer->customDefine("HEADLIGHT", p->headlight());
+	m_renderer->customDefine("HEADLIGHT", p->isOn("headlight"));
 	m_renderer->customDefine("GREEN", p->isOn("gogle"));
 
 	return GameEngine::App::draw(delta, renderer);
