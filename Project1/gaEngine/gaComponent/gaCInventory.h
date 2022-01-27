@@ -36,6 +36,8 @@ namespace GameEngine {
 			bool isPresent(const std::string& name);
 			Item* get(const std::string&);
 
+			void dispatchMessage(gaMessage* message) override;	// deal with messages
+
 			void debugGUIinline(void) override;					// display the component in the debugger
 		};
 	}

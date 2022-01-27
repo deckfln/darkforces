@@ -1,6 +1,8 @@
 #pragma once
 
+#include <vector>
 #include "../../gaEngine/gaComponent.h"
+#include "../../gaEngine/gaComponent/gaCInventory.h"
 #include "../dfConfig.h"
 
 class gaMessage;
@@ -11,6 +13,7 @@ class dfComponentLogic : public gaComponent
 	uint32_t m_logics=0;
 	dfComponentAI* m_ai = nullptr;						// for logic objects with an AI
 	uint32_t	m_value = 0;							// generic value to use in the logic
+	std::vector<GameEngine::Item*> m_items;				// list of items delivered to the inventory
 
 public:
 	dfComponentLogic();

@@ -25,7 +25,6 @@ namespace DarkForces {
 		GameEngine::Component::Sound m_sound;
 
 		// predefined items
-		Item m_gogle = Item("gogle");
 		Item m_headlight = Item("headlight");
 
 		dfLevel* m_level = nullptr;

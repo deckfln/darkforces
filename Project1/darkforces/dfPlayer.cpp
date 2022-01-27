@@ -39,7 +39,6 @@ DarkForces::Player::Player(int mclass, const std::string& name, fwCylinder& cyli
 		m_sound.addSound(DarkForces::Sounds::PLAYER_NEARLY_HIT, DarkForces::loadSound(PLAYER_NEARLY_HIT)->sound());
 	addComponent(&m_weapon);
 	addComponent(&m_items);
-		m_items.add(&m_gogle);
 		m_items.add(&m_headlight);
 
 	m_defaultAI.setClass("player");
@@ -247,7 +246,7 @@ void DarkForces::Player::onBulletMiss(gaMessage* mmessage)
  */
 void DarkForces::Player::onTogleGogle(gaMessage* mmessage)
 {
-	Item* item = m_items.get("gogle");
+	Item* item = m_items.get("goggles");
 	if (item) {
 		if (item->on()) {
 			item->set(false);

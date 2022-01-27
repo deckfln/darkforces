@@ -78,8 +78,8 @@ public:
 		BULLET_MISS,	// a bullet passed by the entity
 		HEAR_SOUND,		// inform a sound is heard
 		HEAR_STOP,		// actualy not
-		VOLUME_TRANSPARENCY // change the sound transparency of a volume
-
+		VOLUME_TRANSPARENCY, // change the sound transparency of a volume
+		ADD_ITEM			// add item to the entity inventory
 	};
 
 	// flags stored in messages

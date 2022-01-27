@@ -124,9 +124,6 @@ void Physics::testEntities(gaEntity* entity, const Transform& tranform, std::vec
 			continue;
 		}
 
-		if (entity->name() == "player" && target->name() == "gigantaur") {
-			printf("Physics::testEntities\n");
-		}
 		if (target->name() != entity->name()) {
 			size = collisions.size();
 			if (entity->collide(target, tranform.m_forward, tranform.m_downward, collisions)) {
@@ -389,7 +386,7 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 		*/
 
 #ifdef _DEBUG
-		if (entity->name() == "player") {
+		if (entity->name() == "XXXX") {
 			gaDebugLog(1, "GameEngine::Physics::wantToMove", entity->name() + " to " + std::to_string(tranform.m_position.x)
 				+ " " + std::to_string(tranform.m_position.y)
 				+ " " + std::to_string(tranform.m_position.z));

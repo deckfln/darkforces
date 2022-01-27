@@ -83,6 +83,16 @@ void dfComponentLogic::dispatchMessage(gaMessage* message)
 				// and remove the object from the scene
 				m_entity->sendMessageToWorld(gaMessage::DELETE_ENTITY, 0, nullptr);
 			}
+			else if (m_logics & dfLogic::GOGGLES) {
+				GameEngine::Item* goggles = new GameEngine::Item("goggles");
+				m_items.push_back(goggles);
+
+				// pick the googles and add to the inventory
+				m_entity->sendMessage(message->m_server, gaMessage::ADD_ITEM, 0, goggles);
+
+				// and remove the object from the scene
+				m_entity->sendMessageToWorld(gaMessage::DELETE_ENTITY, 0, nullptr);
+			}
 		}
 		break;
 
@@ -169,4 +179,7 @@ void dfComponentLogic::debugGUIinline(void)
 
 dfComponentLogic::~dfComponentLogic()
 {
+	for (auto item : m_items) {
+		delete item;
+	}
 }

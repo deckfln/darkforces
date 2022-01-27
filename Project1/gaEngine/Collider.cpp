@@ -4,6 +4,7 @@
 #include <glm/gtx/matrix_decompose.hpp>
 #include <glm/gtx/intersect.hpp>
 #include <glm/gtx/norm.hpp>
+#include <algorithm>
 
 #include "../framework/fwGeometry.h"
 #include "../framework/fwCollision.h"
@@ -854,6 +855,37 @@ bool Collider::collision_cylinder_aabb(const Collider& cylinder,
 
 	fwAABBox* pAabb = static_cast<fwAABBox*>(aabb.m_source);
 
+	//https://developer.mozilla.org/en-US/docs/Games/Techniques/3D_collision_detection
+	// convert AABB space into the cylinder space
+	mat = *cylinder.m_inverseWorldMatrix * *aabb.m_worldMatrix;
+	glm::vec3 p = mat * glm::vec4(pAabb->m_p.x, pAabb->m_p.y, pAabb->m_p.z, 1.0);
+	glm::vec3 p1 = mat * glm::vec4(pAabb->m_p1.x, pAabb->m_p1.y, pAabb->m_p1.z, 1.0);
+	glm::vec3 pmin = glm::min(p, p1);
+	glm::vec3 pmax = glm::max(p, p1);
+
+	p *= ellipsoid_space;
+	p1 *= ellipsoid_space;
+
+	// get box closest point to sphere center by clamping
+	p = glm::max(pmin, glm::min(glm::vec3(0), pmax));
+
+	// this is the same as isPointInsideSphere
+	float distance = glm::length(p);
+
+	if (distance < 1.0) {
+		glm::vec3 intersection_es = glm::normalize(p) * distance;
+
+		// convert the intersection from ellipsoid-space to cylinder-space
+		intersection_gs = intersection_es / ellipsoid_space;
+
+		// convert from cylinder-space => world-space
+		intersection_ws = glm::vec3(*aabb.m_worldMatrix * glm::vec4(intersection_gs, 1.0));
+
+		collisions.push_back(gaCollisionPoint(fwCollisionLocation::COLLIDE, intersection_gs, nullptr));
+	}
+	return distance < 1.0;
+
+	/*
 	// convert AABB space into the cylinder space
 	mat = *cylinder.m_inverseWorldMatrix * *aabb.m_worldMatrix;
 	convertVertex(0, pAabb->m_p.x, pAabb->m_p.y, pAabb->m_p.z, mat);
@@ -898,6 +930,7 @@ bool Collider::collision_cylinder_aabb(const Collider& cylinder,
 	}
 
 	return collide;
+	*/
 }
 
 /******************************************************************************

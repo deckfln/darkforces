@@ -31,7 +31,7 @@ namespace DarkForces {
 		ROTATE,				// rotate objects in degrees
 		ANIM_PAUSE,			// let the animation loop or not
 		ANIM_VUE,			// load an animation VUE for 3D objects
-		DROP_ITEM			// entity shall drop an item
+		DROP_ITEM,			// entity shall drop an item
 	};
 
 	enum MessageEvent {

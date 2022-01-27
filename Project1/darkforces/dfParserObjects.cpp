@@ -189,6 +189,7 @@ void dfParserObjects::parseObjectComponent(dfFileSystem* fs, DarkForces::Object*
 			object->hasCollider(true);
 			break;
 		case O_MEDKIT:
+			object->logic(dfLogic::MEDKIT);
 			object->physical(false);	// objects can be traversed and are not subject to gravity
 			object->gravity(false);
 			object->hasCollider(true);
@@ -199,6 +200,7 @@ void dfParserObjects::parseObjectComponent(dfFileSystem* fs, DarkForces::Object*
 			object->hasCollider(true);
 			break;
 		case O_SHIELD:
+			object->logic(dfLogic::ITEM_SHIELD);
 			object->physical(false);	// objects can be traversed and are not subject to gravity
 			object->gravity(false);
 			object->hasCollider(true);
@@ -221,14 +223,15 @@ void dfParserObjects::parseObjectComponent(dfFileSystem* fs, DarkForces::Object*
 			object->hasCollider(true);
 			break;
 		case O_KEY:
+			object->logic(dfLogic::KEY_TRIGGER);
 			object->logic(dfLogic::ANIM);
 			object->physical(false);	// objects can be traversed and are not subject to gravity
 			object->hasCollider(true);
 			object->gravity(false);
-			object->logic(dfLogic::KEY_TRIGGER);
 			//TODO : remove the hack
 			break;
 		case O_GOGGLES:
+			object->logic(dfLogic::GOGGLES);
 			object->physical(false);	// objects can be traversed and are not subject to gravity
 			object->gravity(false);
 			object->hasCollider(true);
@@ -240,10 +243,10 @@ void dfParserObjects::parseObjectComponent(dfFileSystem* fs, DarkForces::Object*
 			object->hasCollider(true);
 			break;
 		case O_REVIVE:
+			object->logic(dfLogic::REVIVE);
 			object->physical(false);	// objects can be traversed and are not subject to gravity
 			object->gravity(false);
 			object->hasCollider(true);
-			object->logic(dfLogic::REVIVE);
 			break;
 		case O_MOUSEBOT:
 			object->logic(dfLogic::MOUSEBOT);

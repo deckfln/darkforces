@@ -67,8 +67,8 @@ public:
 	void start(void);
 	void stop(void);
 	glm::vec2 size(void);
-	void customLight(const std::string& shader) { m_customLightning = shader; };
-	void customDefine(const std::string& define, bool defined) { m_customDefines[define] = defined; };
+	inline void customLight(const std::string& shader) { m_customLightning = shader; };
+	inline void customDefine(const std::string& define, bool defined) { m_customDefines[define] = defined; };
 
 	~fwRenderer();
 };
