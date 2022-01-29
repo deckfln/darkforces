@@ -10,6 +10,7 @@
 #include "../gaEngine/gaEntity.h"
 #include "../gaEngine/gaCollisionPoint.h"
 
+#include "dfItem.h"
 #include "dfCollision.h"
 #include "dfConfig.h"
 #include "dfComponent/dfComponentLogic.h"
@@ -131,7 +132,8 @@ namespace DarkForces {
 		dfModel* m_source = nullptr;
 		dfSector* m_sector = nullptr;							// cached pointer to the sector hosting the object
 
-		void onDropItem(gaMessage *message);					// entity shall drop an item where it is located
+		DarkForces::Item* m_item = nullptr;						// pointer to a an GameEngine::Item
+
 		void onStateChange(dfState state, bool loop);			// direct change of state
 
 	public:
@@ -144,12 +146,14 @@ namespace DarkForces {
 			return new Object((flightRecorder::DarkForces::Object*)record);
 		}
 
-		void height(float h) { m_height = h; };
-		float height(void) { return m_height; };
-		void radius(float r) { m_radius = r; };
-		float radius(void) { return m_radius; };
+		inline void item(DarkForces::Item* item) { m_item = item; };
+		inline DarkForces::Item* item(void) { return m_item; };
+		inline void height(float h) { m_height = h; };
+		inline float height(void) { return m_height; };
+		inline void radius(float r) { m_radius = r; };
+		inline float radius(void) { return m_radius; };
 		int difficulty(void);
-		void difficulty(int difficulty) { m_difficulty = difficulty; };
+		inline void difficulty(int difficulty) { m_difficulty = difficulty; };
 		bool collision(void);
 		bool named(std::string name);
 		bool is(int type);
@@ -157,8 +161,8 @@ namespace DarkForces {
 		const std::string& model(void);
 		void logic(uint32_t logic);
 		void drop(uint32_t logic, uint32_t value=0);			// object to drop in the scene at the current position
-		dfSector* sector(void) { return m_sector; };
-		void sector(dfSector* s) { m_sector = s; };
+		inline dfSector* sector(void) { return m_sector; };
+		inline void sector(dfSector* s) { m_sector = s; };
 		dfSuperSector* superSector(void) override;
 
 		/*

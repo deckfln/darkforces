@@ -747,9 +747,6 @@
     <ClCompile Include="darkforces\dfObject\dfSprite\dfRifle.cpp">
       <Filter>Fichiers sources\Dark Forces\dfObject</Filter>
     </ClCompile>
-    <ClCompile Include="darkforces\dfObject\dfSprite\ienergy.cpp">
-      <Filter>Fichiers sources\Dark Forces\dfObject</Filter>
-    </ClCompile>
     <ClCompile Include="darkforces\dfObject\dfSpriteWAX.cpp">
       <Filter>Fichiers sources\Dark Forces\dfObject</Filter>
     </ClCompile>
@@ -838,6 +835,9 @@
       <Filter>Fichiers sources\Dark Forces</Filter>
     </ClCompile>
     <ClCompile Include="darkforces\prefab\dfRedKey.cpp">
+      <Filter>Fichiers sources\Dark Forces\prefab</Filter>
+    </ClCompile>
+    <ClCompile Include="darkforces\prefab\dfEnergy.cpp">
       <Filter>Fichiers sources\Dark Forces\prefab</Filter>
     </ClCompile>
   </ItemGroup>
@@ -1496,9 +1496,6 @@
     <ClInclude Include="darkforces\dfObject\dfSprite\dfRifle.h">
       <Filter>Fichiers d%27en-tête\DarkForces\dfObject</Filter>
     </ClInclude>
-    <ClInclude Include="darkforces\dfObject\dfSprite\ienergy.h">
-      <Filter>Fichiers d%27en-tête\DarkForces\dfObject</Filter>
-    </ClInclude>
     <ClInclude Include="darkforces\dfObject\dfSpriteWAX.h">
       <Filter>Fichiers d%27en-tête\DarkForces\dfObject</Filter>
     </ClInclude>
@@ -1599,6 +1596,9 @@
       <Filter>Fichiers d%27en-tête\DarkForces</Filter>
     </ClInclude>
     <ClInclude Include="darkforces\prefab\dfRedKey.h">
+      <Filter>Fichiers d%27en-tête\DarkForces\prefab</Filter>
+    </ClInclude>
+    <ClInclude Include="darkforces\prefab\dfEnergy.h">
       <Filter>Fichiers d%27en-tête\DarkForces\prefab</Filter>
     </ClInclude>
   </ItemGroup>

@@ -15,13 +15,13 @@ dfComponentLogic::dfComponentLogic() :
 }
 
 namespace DarkForces {
-	struct Item {
+	struct gItem {
 		uint32_t kind;
 		uint32_t value;
 	};
 }
 
-static std::map<uint32_t, DarkForces::Item> g_items = {
+static std::map<uint32_t, DarkForces::gItem> g_items = {
 	{dfLogic::ITEM_ENERGY, {dfLogic::ITEM_ENERGY, 15}},
 	{dfLogic::ITEM_SHIELD, {dfLogic::ITEM_SHIELD, 100}}
 };
@@ -94,10 +94,9 @@ void dfComponentLogic::dispatchMessage(gaMessage* message)
 				m_entity->sendMessageToWorld(gaMessage::DELETE_ENTITY, 0, nullptr);
 			}
 			else if (m_logics & dfLogic::RED_KEY) {
-				GameEngine::Item* redkey = new GameEngine::Item("redkey");
-				m_items.push_back(redkey);
-
-				// pick the googles and add to the inventory
+				// transfert the redkey to collider
+				DarkForces::Object* object = dynamic_cast<DarkForces::Object*>(m_entity);
+				GameEngine::Item* redkey = object->item();
 				m_entity->sendMessage(message->m_server, gaMessage::ADD_ITEM, 0, redkey);
 
 				// and remove the object from the scene

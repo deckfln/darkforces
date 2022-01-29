@@ -13,7 +13,6 @@
 #include "dfConfig.h"
 #include "dfModel.h"
 #include "dfObject/dfSpriteFME.h"
-#include "dfObject/dfSprite/ienergy.h"
 #include "dfObject/dfSprite/dfRifle.h"
 #include "dfLevel.h"
 #include "dfCollision.h"

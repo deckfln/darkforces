@@ -180,7 +180,6 @@
     <ClCompile Include="darkforces\dfObject\dfSpriteFME.cpp" />
     <ClCompile Include="darkforces\dfObject\dfSpriteWAX.cpp" />
     <ClCompile Include="darkforces\dfObject\dfSprite\dfRifle.cpp" />
-    <ClCompile Include="darkforces\dfObject\dfSprite\ienergy.cpp" />
     <ClCompile Include="darkforces\dfObject\Enemy.cpp" />
     <ClCompile Include="darkforces\dfPalette.cpp" />
     <ClCompile Include="darkforces\dfParseINF.cpp" />
@@ -203,6 +202,7 @@
     <ClCompile Include="darkforces\gaBehaviorNode\dfWaitIdle.cpp" />
     <ClCompile Include="darkforces\gaEntity\ElevatorDoor.cpp" />
     <ClCompile Include="darkforces\prefab\dfElevatorDoor.cpp" />
+    <ClCompile Include="darkforces\prefab\dfEnergy.cpp" />
     <ClCompile Include="darkforces\prefab\dfRedKey.cpp" />
     <ClCompile Include="flightRecorder\Blackbox.cpp" />
     <ClCompile Include="framework\background\fwSkybox.cpp" />
@@ -407,7 +407,6 @@
     <ClInclude Include="darkforces\dfObject\dfSpriteFME.h" />
     <ClInclude Include="darkforces\dfObject\dfSpriteWAX.h" />
     <ClInclude Include="darkforces\dfObject\dfSprite\dfRifle.h" />
-    <ClInclude Include="darkforces\dfObject\dfSprite\ienergy.h" />
     <ClInclude Include="darkforces\dfObject\Enemy.h" />
     <ClInclude Include="darkforces\dfPalette.h" />
     <ClInclude Include="darkforces\dfParseINF.h" />
@@ -444,6 +443,7 @@
     <ClInclude Include="darkforces\gaEntity\ElevatorDoor.h" />
     <ClInclude Include="darkforces\lexer\dfObject.lex.h" />
     <ClInclude Include="darkforces\prefab\dfElevatorDoor.h" />
+    <ClInclude Include="darkforces\prefab\dfEnergy.h" />
     <ClInclude Include="darkforces\prefab\dfRedKey.h" />
     <ClInclude Include="flightRecorder\AABBox.h" />
     <ClInclude Include="flightRecorder\Ballistic.h" />
