@@ -12,103 +12,15 @@
 #include "../dfObject/Enemy.h"
 #include "../dfComponent.h"
 
-static std::map<DarkForces::Weapon::Kind, DarkForces::Weapon> g_WeaponSounds = {
-	{DarkForces::Weapon::Kind::Concussion, {
-		DarkForces::Weapon::Kind::Concussion,
-		"Concussion",
-		"CONCUSS5.VOC",
-		100,
-		0.1f,
-		5,
-		{"concuss1.bm"},
-		{nullptr},
-		glm::vec2(0.0, 0.0)
-		}
-	},
-	{DarkForces::Weapon::Kind::FusionCutter, {
-		DarkForces::Weapon::Kind::FusionCutter,
-		"FusionCutter",
-		"FUSION1.VOC",
-		100,
-		0.1f,
-		5,
-		{"fusion1.bm"},
-		{nullptr},
-		glm::vec2(0.0, 0.0)
-		}
-	},
-	{DarkForces::Weapon::Kind::Missile, {
-		DarkForces::Weapon::Kind::Missile,
-		"Missile",
-		"MISSILE1.VOC",
-		100,
-		0.1f,
-		5,
-		{"assault1.bm"},
-		{nullptr},
-		glm::vec2(0.0, 0.0)
-		}
-	},
-	{DarkForces::Weapon::Kind::MortarGun, {
-		DarkForces::Weapon::Kind::MortarGun,
-		"MortarGun",
-		"MORTAR2.VOC",
-		100,
-		0.1f,
-		5,
-		{"mortar1.bm"},
-		{nullptr},
-		glm::vec2(0.0, 0.0)
-		}
-	},
-	{DarkForces::Weapon::Kind::Pistol, {
-		DarkForces::Weapon::Kind::Pistol,
-		"Pistol",
-		"PISTOL-1.VOC",
-		10,
-		0.05f,
-		1000,
-		{"pistol1.bm", "pistol2.bm", "pistol3.bm"},
-		{nullptr, nullptr, nullptr},
-		glm::vec2(0.3, -0.9)
-		}
-	},
-	{DarkForces::Weapon::Kind::PlasmaCannon, {
-		DarkForces::Weapon::Kind::PlasmaCannon,
-		"PlasmaCannon",
-		"PLASMA4.VOC",
-		10,
-		0.1f,
-		5,
-		{"assault1.bm"},
-		{nullptr},
-		glm::vec2(0.0, 0.0)
-		}
-	},
-	{DarkForces::Weapon::Kind::Repeater, {
-		DarkForces::Weapon::Kind::Repeater,
-		"Repeater",
-		"REPEATER.VOC",
-		10,
-		0.1f,
-		5,
-		{"autogun1"},
-		{nullptr},
-		glm::vec2(0.2, 0.8)
-		}
-	},
-	{DarkForces::Weapon::Kind::Rifle, {
-		DarkForces::Weapon::Kind::Rifle,
-		"Rifle",
-		"RIFLE-1.VOC",
-		15,
-		0.2f,
-		200,
-		{"rifle1.bm", "rifle2.bm"},
-		{nullptr, nullptr},
-		glm::vec2(0.17, -0.83)
-		}
-	},
+static std::map<DarkForces::Weapon::Kind, DarkForces::Weapon*> g_Weapons = {
+	{DarkForces::Weapon::Kind::Concussion, &g_concussion},
+	{DarkForces::Weapon::Kind::FusionCutter, &g_FusionCutter},
+	{DarkForces::Weapon::Kind::Missile, &g_Missile},
+	{DarkForces::Weapon::Kind::MortarGun, &g_MortarGun},
+	{DarkForces::Weapon::Kind::Pistol, &g_Pistol},
+	{DarkForces::Weapon::Kind::PlasmaCannon, &g_PlasmaCannon},
+	{DarkForces::Weapon::Kind::Repeater, &g_Repeater},
+	{DarkForces::Weapon::Kind::Rifle, &g_Rifle},
 };
 
 DarkForces::Component::Weapon::Weapon(void) :
@@ -124,20 +36,20 @@ DarkForces::Component::Weapon::Weapon(DarkForces::Weapon::Kind weapon):
 	m_kind(weapon)
 {
 	// prepare the sound component if there is a sound
-	if (g_WeaponSounds.count(m_kind) > 0) {
-		DarkForces::Weapon& w = g_WeaponSounds.at(m_kind);
-		m_entity->sendMessage(gaMessage::Action::REGISTER_SOUND, DarkForces::Component::Actor::Sound::FIRE, loadVOC(w.m_fireSound)->sound());
+	if (g_Weapons.count(m_kind) > 0) {
+		DarkForces::Weapon* w = g_Weapons.at(m_kind);
+		m_entity->sendMessage(gaMessage::Action::REGISTER_SOUND, DarkForces::Component::Actor::Sound::FIRE, loadVOC(w->m_fireSound)->sound());
 	}
 }
 
 DarkForces::Weapon* DarkForces::Component::Weapon::set(DarkForces::Weapon::Kind k)
 {
 	m_kind = k;
-	if (g_WeaponSounds.count(m_kind) > 0) {
-		DarkForces::Weapon& w = g_WeaponSounds.at(m_kind);
-		m_entity->sendMessage(gaMessage::Action::REGISTER_SOUND, DarkForces::Component::Actor::Sound::FIRE, loadVOC(w.m_fireSound)->sound());
+	if (g_Weapons.count(m_kind) > 0) {
+		DarkForces::Weapon* w = g_Weapons.at(m_kind);
+		m_entity->sendMessage(gaMessage::Action::REGISTER_SOUND, DarkForces::Component::Actor::Sound::FIRE, loadVOC(w->m_fireSound)->sound());
 
-		return &w;
+		return w;
 	}
 
 	return nullptr;
@@ -146,9 +58,9 @@ DarkForces::Weapon* DarkForces::Component::Weapon::set(DarkForces::Weapon::Kind 
 DarkForces::Weapon* DarkForces::Component::Weapon::get(DarkForces::Weapon::Kind k)
 {
 	m_kind = k;
-	if (g_WeaponSounds.count(m_kind) > 0) {
-		DarkForces::Weapon& w = g_WeaponSounds.at(m_kind);
-		return &w;
+	if (g_Weapons.count(m_kind) > 0) {
+		DarkForces::Weapon* w = g_Weapons.at(m_kind);
+		return w;
 	}
 
 	return nullptr;
@@ -167,7 +79,7 @@ void DarkForces::Component::Weapon::onChangeWeapon(gaMessage* message)
  */
 void DarkForces::Component::Weapon::onFire(const glm::vec3& direction, time_t time)
 {
-	const DarkForces::Weapon& w = g_WeaponSounds.at(m_kind);
+	const DarkForces::Weapon* w = g_Weapons.at(m_kind);
 
 	// is there energy available for the weapon
 	if (m_energy == 0) {
@@ -175,7 +87,7 @@ void DarkForces::Component::Weapon::onFire(const glm::vec3& direction, time_t ti
 	}
 
 	// count time since the last fire, and auto-fire at the weapon rate
-	if (time - m_time < w.m_rate) {
+	if (time - m_time < w->m_rate) {
 		return;
 	}
 	m_time = time;
@@ -204,9 +116,9 @@ void DarkForces::Component::Weapon::onFire(const glm::vec3& direction, time_t ti
 
 	float x = ((float)rand()) / (float)RAND_MAX - 0.5f;
 	float y = ((float)rand()) / (float)RAND_MAX - 0.5f;
-	glm::vec3 d = direction + up * x * w.m_recoil + right * y * w.m_recoil;
+	glm::vec3 d = direction + up * x * w->m_recoil + right * y * w->m_recoil;
 
-	dfBullet* bullet = new dfBullet(w.m_damage, p + direction * m_entity->radius() * 2.0f, d);
+	dfBullet* bullet = new dfBullet(w->m_damage, p + direction * m_entity->radius() * 2.0f, d);
 	bullet->shooter(m_entity);
 
 	g_gaWorld.addClient(bullet);
@@ -232,10 +144,10 @@ void DarkForces::Component::Weapon::onDying(gaMessage* message)
 {
 	switch (m_kind) {
 	case DarkForces::Weapon::Kind::Rifle:
-		m_entity->sendMessage(DarkForces::Message::DROP_ITEM, dfLogic::ITEM_RIFLE, m_energy);
+		m_entity->sendMessage(gaMessage::Action::DROP_ITEM, dfLogic::ITEM_RIFLE, m_energy);
 		break;
 	case DarkForces::Weapon::Kind::Pistol:
-		m_entity->sendMessage(DarkForces::Message::DROP_ITEM, dfLogic::ITEM_ENERGY, m_energy);
+		m_entity->sendMessage(gaMessage::Action::DROP_ITEM, dfLogic::ITEM_ENERGY, m_energy);
 		break;
 	}
 }
@@ -285,7 +197,7 @@ void DarkForces::Component::Weapon::dispatchMessage(gaMessage* message)
 void DarkForces::Component::Weapon::debugGUIinline(void)
 {
 	if (ImGui::TreeNode("Weapon")) {
-		ImGui::Text("Type: %s", g_WeaponSounds[m_kind].debug);
+		ImGui::Text("Type: %s", g_Weapons[m_kind]->m_debug);
 		ImGui::Text("Energy: %d", m_energy);
 		ImGui::TreePop();
 	}

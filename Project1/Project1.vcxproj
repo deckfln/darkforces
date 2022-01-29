@@ -165,6 +165,7 @@
     <ClCompile Include="darkforces\dfFrame.cpp" />
     <ClCompile Include="darkforces\dfGame.cpp" />
     <ClCompile Include="darkforces\dfHUD.cpp" />
+    <ClCompile Include="darkforces\dfItem.cpp" />
     <ClCompile Include="darkforces\dfLogicStop.cpp" />
     <ClCompile Include="darkforces\dfLogicTrigger.cpp" />
     <ClCompile Include="darkforces\dfMesh.cpp" />
@@ -193,6 +194,7 @@
     <ClCompile Include="darkforces\dfVOC.cpp" />
     <ClCompile Include="darkforces\dfVue.cpp" />
     <ClCompile Include="darkforces\dfWall.cpp" />
+    <ClCompile Include="darkforces\dfWeapon.cpp" />
     <ClCompile Include="darkforces\gaBehaviorNode\dfBActivate.cpp" />
     <ClCompile Include="darkforces\gaBehaviorNode\dfBSetVar.cpp" />
     <ClCompile Include="darkforces\gaBehaviorNode\dfBSound.cpp" />
@@ -201,6 +203,7 @@
     <ClCompile Include="darkforces\gaBehaviorNode\dfWaitIdle.cpp" />
     <ClCompile Include="darkforces\gaEntity\ElevatorDoor.cpp" />
     <ClCompile Include="darkforces\prefab\dfElevatorDoor.cpp" />
+    <ClCompile Include="darkforces\prefab\dfRedKey.cpp" />
     <ClCompile Include="flightRecorder\Blackbox.cpp" />
     <ClCompile Include="framework\background\fwSkybox.cpp" />
     <ClCompile Include="framework\background\fwSkyline.cpp" />
@@ -299,6 +302,7 @@
     <ClCompile Include="gaEngine\gaComponent\gaSound.cpp" />
     <ClCompile Include="gaEngine\gaDebug.cpp" />
     <ClCompile Include="gaEngine\gaEntity.cpp" />
+    <ClCompile Include="gaEngine\gaItem.cpp" />
     <ClCompile Include="gaEngine\gaLevel.cpp" />
     <ClCompile Include="gaEngine\gaMessage.cpp" />
     <ClCompile Include="gaEngine\gaNavMesh.cpp" />
@@ -387,6 +391,7 @@
     <ClInclude Include="darkforces\dfFrame.h" />
     <ClInclude Include="darkforces\dfGame.h" />
     <ClInclude Include="darkforces\dfHUD.h" />
+    <ClInclude Include="darkforces\dfItem.h" />
     <ClInclude Include="darkforces\dfLogicStop.h" />
     <ClInclude Include="darkforces\dfLogicTrigger.h" />
     <ClInclude Include="darkforces\dfMesh.h" />
@@ -439,6 +444,7 @@
     <ClInclude Include="darkforces\gaEntity\ElevatorDoor.h" />
     <ClInclude Include="darkforces\lexer\dfObject.lex.h" />
     <ClInclude Include="darkforces\prefab\dfElevatorDoor.h" />
+    <ClInclude Include="darkforces\prefab\dfRedKey.h" />
     <ClInclude Include="flightRecorder\AABBox.h" />
     <ClInclude Include="flightRecorder\Ballistic.h" />
     <ClInclude Include="flightRecorder\Blackbox.h" />
@@ -549,6 +555,7 @@
     <ClInclude Include="gaEngine\gaComponent\gaSound.h" />
     <ClInclude Include="gaEngine\gaDebug.h" />
     <ClInclude Include="gaEngine\gaEntity.h" />
+    <ClInclude Include="gaEngine\gaItem.h" />
     <ClInclude Include="gaEngine\gaLevel.h" />
     <ClInclude Include="gaEngine\gaMessage.h" />
     <ClInclude Include="gaEngine\gaNavMesh.h" />

@@ -8,8 +8,29 @@
 #include "../dfModel/dfWAX.h"
 #include "../dfVOC.h"
 #include "../dfSounds.h"
+#include "../dfWeapon.h"
+#include "../dfItem.h"
 
 static const char* g_className = "dfEnemy";
+
+static DarkForces::Item g_RedKey("redkey", dfLogic::RED_KEY);
+
+/**
+ * when dying, drop all objects from the inventory
+ */
+void DarkForces::Enemy::onDie(gaMessage* message)
+{
+	// randomly drop around the object
+	float x = m_radius / (rand() % 10);
+	float z = m_radius / (rand() % 10);
+
+	glm::vec3 p = position();
+	p.x += x;
+	p.z += z;
+
+	// ask the inventory to drop all the items
+	sendMessage(m_name, gaMessage::Action::DROP_ITEM, -1, p);
+}
 
 /**
  *
@@ -39,15 +60,34 @@ DarkForces::Enemy::Enemy(dfWAX* model, const glm::vec3& position, float ambient,
 	addComponent(&m_sound);
 	addComponent(&m_ai);
 	addComponent(&m_weapon);
+	addComponent(&m_inventory);
 
 	m_actor.setClass(model->name());
 
+	m_weapon.addEnergy(200);
+
+	m_sound.addSound(DarkForces::Component::Actor::Sound::DIE, DarkForces::loadSound(DarkForces::Sounds::STORM_COMMANDO_OFFICER_DIE)->sound());
+	m_sound.addSound(DarkForces::Component::Actor::Sound::HURT, DarkForces::loadSound(DarkForces::Sounds::STORM_COMMANDO_OFFICER_HIT_LASER)->sound());
+
+	DarkForces::Component::SpriteAnimated* sprite = new DarkForces::Component::SpriteAnimated(model, ambient);
+	addComponent(sprite);
+}
+
+/**
+ * extend the object at the end of the load
+ */
+void DarkForces::Enemy::extend(void)
+{
 	// set sounds
-	std::string sounds;
 	std::map<std::string, std::string> includes;
 
-	if (model->name() == "OFFCFIN.WAX") {
+	if (m_logics & dfLogic::RED_KEY) {
+		m_inventory.add(&g_RedKey);
+	}
+
+	if (m_logics & dfLogic::OFFICER) {
 		m_weapon.set(DarkForces::Weapon::Kind::Pistol);
+		m_inventory.add(&g_Pistol);
 
 		includes["sounds.inc"] = "<sound file = 'RANOFC02.voc' id = '2048' />\
 			< sound file = 'RANOFC04.voc' id = '2050' /> \
@@ -56,6 +96,7 @@ DarkForces::Enemy::Enemy(dfWAX* model, const glm::vec3& position, float ambient,
 	}
 	else {
 		m_weapon.set(DarkForces::Weapon::Kind::Rifle);
+		m_inventory.add(&g_Rifle);
 
 		includes["sounds.inc"] = "<sound file = 'Ransto01.voc' id = '2048' />\
 			< sound file = 'Ransto02.voc' id = '2049' /> \
@@ -69,19 +110,28 @@ DarkForces::Enemy::Enemy(dfWAX* model, const glm::vec3& position, float ambient,
 
 	m_ai.parse("file:DarkForces/AI/Enemy.xml", includes);
 
-
-	m_weapon.addEnergy(200);
-
-	m_sound.addSound(DarkForces::Component::Actor::Sound::DIE, DarkForces::loadSound(DarkForces::Sounds::STORM_COMMANDO_OFFICER_DIE)->sound());
-	m_sound.addSound(DarkForces::Component::Actor::Sound::HURT, DarkForces::loadSound(DarkForces::Sounds::STORM_COMMANDO_OFFICER_HIT_LASER)->sound());
-
-	DarkForces::Component::SpriteAnimated* sprite = new DarkForces::Component::SpriteAnimated(model, ambient);
-	addComponent(sprite);
+	sendInternalMessage(gaMessage::Action::MOVE);
 }
 
+/**
+ *
+ */
 void DarkForces::Enemy::setLevel(dfLevel* level)
 {
 	m_actor.bind(level);
+}
+
+/**
+ *
+ */
+void DarkForces::Enemy::dispatchMessage(gaMessage* message)
+{
+	switch (message->m_action) {
+	case DarkForces::Message::DYING:
+		onDie(message);
+	}
+
+	DarkForces::Object::dispatchMessage(message);
 }
 
 DarkForces::Enemy::~Enemy()

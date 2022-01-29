@@ -93,6 +93,16 @@ void dfComponentLogic::dispatchMessage(gaMessage* message)
 				// and remove the object from the scene
 				m_entity->sendMessageToWorld(gaMessage::DELETE_ENTITY, 0, nullptr);
 			}
+			else if (m_logics & dfLogic::RED_KEY) {
+				GameEngine::Item* redkey = new GameEngine::Item("redkey");
+				m_items.push_back(redkey);
+
+				// pick the googles and add to the inventory
+				m_entity->sendMessage(message->m_server, gaMessage::ADD_ITEM, 0, redkey);
+
+				// and remove the object from the scene
+				m_entity->sendMessageToWorld(gaMessage::DELETE_ENTITY, 0, nullptr);
+			}
 		}
 		break;
 
@@ -125,13 +135,8 @@ void dfComponentLogic::dispatchMessage(gaMessage* message)
 	case DarkForces::Message::DYING:
 		//drop the bag of the object when an enemy dies
 		if (m_logics & DF_LOGIC_ENEMIES) {
-			if (m_logics & dfLogic::OFFICER) {
-				if (m_logics & dfLogic::RED_KEY) {
-					m_entity->sendMessage(DarkForces::Message::DROP_ITEM, dfLogic::RED_KEY);
-				}
-			}
-			else if (m_logics & dfLogic::INTDROID) {
-				m_entity->sendMessage(DarkForces::Message::DROP_ITEM, dfLogic::ITEM_POWER);
+			if (m_logics & dfLogic::INTDROID) {
+				m_entity->sendMessage(gaMessage::Action::DROP_ITEM, dfLogic::ITEM_POWER);
 			}
 		}
 		break;

@@ -127,6 +127,9 @@ void GameEngine::App::registerDebugger(void)
 		{ gaMessage::Action::BULLET_MISS, "BULLET_MISS"},
 		{ gaMessage::Action::HEAR_SOUND, "HEAR_SOUND"},
 		{ gaMessage::Action::HEAR_STOP, "HEAR_STOP"},
+		{ gaMessage::Action::VOLUME_TRANSPARENCY, "VolumeTransparency"},
+		{ gaMessage::Action::ADD_ITEM,	"AddItem"},
+		{ gaMessage::Action::DROP_ITEM, "DropItem"},
 	};
 
 	static const std::map<int32_t, const std::map<int32_t, const char*>>  g_definitions_values;

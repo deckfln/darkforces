@@ -404,9 +404,10 @@ void dfParserObjects::parseObject(dfFileSystem* fs, GameEngine::ParserExpression
 		if (obj->isLogic(DF_LOGIC_ENEMIES)) {
 			DarkForces::Enemy* enemy = dynamic_cast<DarkForces::Enemy*>(obj);
 			enemy->setLevel(level);
-			enemy->sendInternalMessage(gaMessage::Action::MOVE);
 		}
 
+		// extend the object based on internal data
+		obj->extend();
 		break; 
 	}
 	case O_CLASS:

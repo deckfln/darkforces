@@ -176,6 +176,8 @@ namespace DarkForces {
 
 		void dispatchMessage(gaMessage* message) override;		// let an entity deal with a situation
 
+		virtual void extend(void) {};							// extend the object at the end of the load
+
 		// flight recorder and debugger
 		inline int recordSize(void) override {
 			return sizeof(flightRecorder::DarkForces::Object);

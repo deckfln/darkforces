@@ -24,14 +24,6 @@ static int g_ids = 0;
 static const char* g_className = "Object";
 
 /**
- * entity shall drop an item where it is located
- */
-void DarkForces::Object::onDropItem(gaMessage* message)
-{
-	drop(message->m_value, message->m_fvalue);
-}
-
-/**
  *
  */
 DarkForces::Object::Object(dfModel *source, const glm::vec3& position, float ambient, int type, uint32_t objectID):
@@ -210,55 +202,6 @@ dfState DarkForces::Object::popState(void)
 */
 
 /**
- * object to drop in the scene at the current position
- */
-void DarkForces::Object::drop(uint32_t logic, uint32_t value)
-{
-	DarkForces::Object* obj=nullptr;
-
-	// constructor of a sprite expects a level space
-	glm::vec3 p;
-	dfLevel::gl2level(position(), p);
-
-	// randomly drop around the object
-	float x = m_radius / (rand() % 10);
-	float y = m_radius / (rand() % 10);
-
-	p.x += x;
-	p.y += y;
-
-	switch (logic) {
-	case dfLogic::DEAD_MOUSE:
-		obj = new DarkForces::Sprite::FME("DEDMOUSE.FME", p, 1.0f);
-		obj->hasCollider(false);
-		break;
-	case dfLogic::ITEM_BATTERY:
-		obj = new DarkForces::Sprite::FME("IBATTERY.FME", p, 1.0f);
-		obj->hasCollider(true);
-		break;
-	case dfLogic::ITEM_RIFLE:
-		obj = new DarkForces::Sprite::Rifle(p, 1.0f, value);
-		break;
-	case dfLogic::ITEM_POWER:
-		obj = new DarkForces::Sprite::FME("IPOWER.FME", p, 1.0f);
-		obj->hasCollider(true);
-		break;
-	case dfLogic::ITEM_ENERGY:
-		obj = new IEnergy(p, 1.0f, value);
-		break;
-	case dfLogic::RED_KEY:
-		obj = new DarkForces::Sprite::FME("IKEYR.FME", p, 1.0f);
-		obj->hasCollider(true);
-		break;
-	}
-	obj->logic(logic);
-	obj->physical(false);	// objects can be traversed and are not subject to gravity
-	obj->gravity(false);
-
-	g_gaWorld.addClient(obj);
-}
-
-/**
  * update the world AABB based on position
  */
 void DarkForces::Object::updateWorldAABB(void)
@@ -419,10 +362,6 @@ void DarkForces::Object::dispatchMessage(gaMessage* message)
 
 	case DarkForces::Message::START_FIRE:
 		onStateChange(dfState::ENEMY_ATTACK, true);
-		break;
-
-	case DarkForces::Message::DROP_ITEM:
-		onDropItem(message);
 		break;
 
 	case gaMessage::START_MOVE:

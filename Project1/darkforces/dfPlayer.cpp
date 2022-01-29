@@ -106,7 +106,7 @@ void DarkForces::Player::placeWeapon(DarkForces::Weapon::Kind weapon,
 	float width = 2.0f * w / 640.0f;
 	float height = 2.0f * h / 400.0f;
 
-	g_dfHUD->setWeapon(texture, hud->HUDposition.x + delta.x, hud->HUDposition.y + delta.y, width, height);
+	g_dfHUD->setWeapon(texture, hud->m_HUDposition.x + delta.x, hud->m_HUDposition.y + delta.y, width, height);
 }
 
 /**
@@ -202,13 +202,13 @@ void DarkForces::Player::onLookAt(gaMessage* message)
 	float y = message->m_v3value.y;
 	const DarkForces::Weapon* hud = m_weapon.get(m_currentWeapon);
 
-	float y1 = hud->HUDposition.y + m_wobbling.y - y;
+	float y1 = hud->m_HUDposition.y + m_wobbling.y - y;
 
 	if (y1 > -0.51f) {
-		m_wobbling.z = 0.51f + hud->HUDposition.y + m_wobbling.y;
+		m_wobbling.z = 0.51f + hud->m_HUDposition.y + m_wobbling.y;
 	}
 	else if (y1 < -1.1) {
-		m_wobbling.z = 1.1f + hud->HUDposition.y + m_wobbling.y;
+		m_wobbling.z = 1.1f + hud->m_HUDposition.y + m_wobbling.y;
 	}
 	else {
 		m_wobbling.z = y;

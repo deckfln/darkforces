@@ -117,8 +117,7 @@ void myDarkForces::myDarkForces::registerDebugger(void)
 		{DarkForces::Message::ANIM_END, "df_AnimEnd"},
 		{DarkForces::Message::ROTATE, "df_ROTATE"},
 		{DarkForces::Message::ANIM_PAUSE, "df_AnimPause"},
-		{DarkForces::Message::ANIM_VUE, "df_AnimVUE"},
-		{DarkForces::Message::DROP_ITEM, "df_DropItem"}
+		{DarkForces::Message::ANIM_VUE, "df_AnimVUE"}
 	};
 
 	static std::map<int32_t, const std::map<int32_t, const char*>> g_def = {
@@ -163,12 +162,12 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 	//glm::vec3 start = glm::vec3(-29.5f, 2.0f, 30.808f);	// gen_d
 	//glm::vec3 start = glm::vec3(-22.65f, 2.0f, 21.3);	// gen_d
 	//glm::vec3 start = glm::vec3(-20.8f, 0.4f, 29.7f);	// stage
-	//glm::vec3 start = glm::vec3(-21.29, -0.3, 16.6);	// post_e
+	glm::vec3 start = glm::vec3(-21.29, -0.3, 16.6);	// post_e
 	//glm::vec3 start = glm::vec3(-17.60, -2.0, 27.77);	// projector
 	//glm::vec3 start = glm::vec3(-20, 2.0, 34);	// mousebot(40)
 	//glm::vec3 start = glm::vec3(-28.65f, -2.0, 34.83f);	// spinner
 	//glm::vec3 start = glm::vec3(-28.0287533, -2.0, 27.4463711);	// projector
-	glm::vec3 start = glm::vec3(-56.25, -0.9, 23.65);	// super secret 2
+	//glm::vec3 start = glm::vec3(-56.25, -0.9, 23.65);	// super secret 2
 	//glm::vec3 start = glm::vec3(-24.52, 0.07, 31.75);	// enthall
 	//glm::vec3 start = glm::vec3(-38.80, 2.41, 39.7);	// switch_cover
 	//glm::vec3 start = glm::vec3(-29.06, -2.0, 24.75);	// cage
