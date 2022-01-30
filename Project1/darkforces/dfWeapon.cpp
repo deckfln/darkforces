@@ -14,6 +14,7 @@ DarkForces::Weapon g_concussion = DarkForces::Weapon(
 	100,
 	0.1f,
 	5,
+	1,
 	{ "concuss1.bm" },
 	{ nullptr },
 	glm::vec2(0.0, 0.0)
@@ -25,6 +26,7 @@ DarkForces::Weapon g_FusionCutter = DarkForces::Weapon(
 	100,
 	0.1f,
 	5,
+	1,
 	{ "fusion1.bm" },
 	{ nullptr },
 	glm::vec2(0.0, 0.0)
@@ -36,6 +38,7 @@ DarkForces::Weapon g_Missile = DarkForces::Weapon(
 	100,
 	0.1f,
 	5,
+	1,
 	{ "assault1.bm" },
 	{ nullptr },
 	glm::vec2(0.0, 0.0)
@@ -47,6 +50,7 @@ DarkForces::Weapon g_MortarGun = DarkForces::Weapon(
 	100,
 	0.1f,
 	5,
+	1,
 	{ "mortar1.bm" },
 	{ nullptr },
 	glm::vec2(0.0, 0.0)
@@ -58,6 +62,7 @@ DarkForces::Weapon g_Pistol = DarkForces::Weapon(
 	10,
 	0.05f,
 	500,
+	200,		// default energy on new pistol
 	{ "pistol1.bm", "pistol2.bm", "pistol3.bm" },
 	{ nullptr, nullptr, nullptr },
 	glm::vec2(0.3, -0.9)
@@ -69,6 +74,7 @@ DarkForces::Weapon g_PlasmaCannon = DarkForces::Weapon(
 	10,
 	0.1f,
 	5,
+	1,
 	{ "assault1.bm" },
 	{ nullptr },
 	glm::vec2(0.0, 0.0)
@@ -80,6 +86,7 @@ DarkForces::Weapon g_Repeater = DarkForces::Weapon(
 	10,
 	0.1f,
 	5,
+	1,
 	{ "autogun1" },
 	{ nullptr },
 	glm::vec2(0.2, 0.8)
@@ -91,6 +98,7 @@ DarkForces::Weapon g_Rifle = DarkForces::Weapon(
 	15,
 	0.2f,
 	200,
+	200,	// default energy on new riffle
 	{ "rifle1.bm", "rifle2.bm" },
 	{ nullptr, nullptr },
 	glm::vec2(0.17, -0.83)

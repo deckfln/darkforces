@@ -49,6 +49,7 @@ DarkForces::Component::Weapon::Weapon(DarkForces::Weapon* current) :
 DarkForces::Weapon* DarkForces::Component::Weapon::set(DarkForces::Weapon* current)
 {
 	m_current = current;
+	m_energy = current->energy();
 	m_kind = current->m_kind;
 	if (g_Weapons.count(m_kind) > 0) {
 		DarkForces::Weapon* w = g_Weapons.at(m_kind);
@@ -92,7 +93,13 @@ void DarkForces::Component::Weapon::onFire(const glm::vec3& direction, time_t ti
 	}
 	m_time = time;
 
+	// empty clip
+	if (m_energy == 0) {
+		return;
+	}
+
 	m_energy--;
+	m_current->decreaseEnergy();
 
 	// create a bullet based on the kind of weapon
 	// and add to the world to live its life
@@ -136,23 +143,6 @@ void DarkForces::Component::Weapon::onStopFire(gaMessage* message)
 }
 
 /**
- * Drop ammo or rifle when the entity is dying
- *  if the entity holds a rifle, drop it with the ammo
- *  if it holds a rifle, drop the ammo
- */
-void DarkForces::Component::Weapon::onDying(gaMessage* message)
-{
-	switch (m_kind) {
-	case DarkForces::Weapon::Kind::Rifle:
-		m_entity->sendMessage(gaMessage::Action::DROP_ITEM, dfLogic::ITEM_RIFLE, m_energy);
-		break;
-	case DarkForces::Weapon::Kind::Pistol:
-		m_entity->sendMessage(gaMessage::Action::DROP_ITEM, dfLogic::ITEM_ENERGY, m_energy);
-		break;
-	}
-}
-
-/**
  * Increase or decrease the energy and update the HUD
  */
 void DarkForces::Component::Weapon::addEnergy(int32_t value)
@@ -161,9 +151,7 @@ void DarkForces::Component::Weapon::addEnergy(int32_t value)
 	if (m_energy > m_maxEnergy) {
 		m_energy = m_maxEnergy;
 	}
-	else if (m_energy < 0) {
-		m_energy = 0;
-	}
+	m_current->addEnergy(value);
 }
 
 void DarkForces::Component::Weapon::dispatchMessage(gaMessage* message)
@@ -183,10 +171,6 @@ void DarkForces::Component::Weapon::dispatchMessage(gaMessage* message)
 
 	case DarkForces::Message::ADD_ENERGY:
 		addEnergy(message->m_value);
-		break;
-
-	case DarkForces::Message::DYING:
-		onDying(message);
 		break;
 	}
 }

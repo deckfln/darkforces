@@ -6,7 +6,7 @@
 
 void GameEngine::Component::Inventory::onAddItem(gaMessage* message)
 {
-	GameEngine::Item* item = static_cast<GameEngine::Item*>(message->m_extra)
+	GameEngine::Item* item = static_cast<GameEngine::Item*>(message->m_extra);
 
 	add(item);
 }

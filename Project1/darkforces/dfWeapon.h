@@ -14,7 +14,8 @@
 
 namespace DarkForces {
 	class Weapon: public DarkForces::Item {
-		uint32_t m_bullets = 0;
+		uint32_t m_energy = 0;					// current bullets
+
 		void onDropItem(gaMessage* message);
 
 	public:
@@ -34,9 +35,9 @@ namespace DarkForces {
 		Kind m_kind;
 		const char* m_debug;
 		const char* m_fireSound;
-		uint32_t m_damage;		// damage per bullet
-		float m_recoil;			// bullet dispersion based on recoil strength
-		time_t m_rate;			// how many bullets per seconds
+		uint32_t m_damage;						// damage per bullet
+		float m_recoil;							// bullet dispersion based on recoil strength
+		time_t m_rate;							// how many bullets per seconds
 		std::vector<const char*> m_HUDfiles;	// name of the HUD images
 		std::vector<dfBitmap*> m_HUDbmps;
 		glm::vec2 m_HUDposition;
@@ -56,7 +57,8 @@ namespace DarkForces {
 			m_rate(source->m_rate),
 			m_HUDfiles(source->m_HUDfiles),
 			m_HUDbmps(source->m_HUDbmps),
-			m_HUDposition(source->m_HUDposition)
+			m_HUDposition(source->m_HUDposition),
+			m_energy(source->m_energy)
 		{
 		};
 
@@ -67,6 +69,7 @@ namespace DarkForces {
 			const uint32_t damage,
 			const float recoil,
 			const time_t rate,
+			const uint32_t energy,
 			const std::vector<const char*>& HUDfiles,
 			const std::vector<dfBitmap*>& HUDbmps,
 			const glm::vec2& HUDposition
@@ -78,6 +81,7 @@ namespace DarkForces {
 			m_damage(damage),
 			m_recoil(recoil),
 			m_rate(rate),
+			m_energy(energy),
 			m_HUDfiles(HUDfiles),
 			m_HUDbmps(HUDbmps),
 			m_HUDposition(HUDposition)
@@ -93,6 +97,7 @@ namespace DarkForces {
 			m_damage = source->m_damage;
 			m_recoil = source->m_recoil;
 			m_rate = source->m_rate;
+			m_energy = source->m_energy;
 			m_HUDfiles = source->m_HUDfiles;
 			m_HUDbmps = source->m_HUDbmps;
 			m_HUDposition = source->m_HUDposition;
@@ -114,6 +119,19 @@ namespace DarkForces {
 		void dispatchMessage(gaMessage* message) override;
 
 		inline Kind kind(void) { return m_kind; };
+		inline uint32_t decreaseEnergy(void) {
+			if (m_energy > 0) {
+				m_energy--;
+			}
+			return m_energy;
+		}
+		inline uint32_t addEnergy(uint32_t value) {
+			m_energy += value;
+			return m_energy;
+		}
+		inline uint32_t energy(void) {
+			return m_energy;
+		}
 	};
 }
 
