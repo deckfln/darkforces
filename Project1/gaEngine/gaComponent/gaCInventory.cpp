@@ -6,7 +6,9 @@
 
 void GameEngine::Component::Inventory::onAddItem(gaMessage* message)
 {
-	add(static_cast<GameEngine::Item*>(message->m_extra));
+	GameEngine::Item* item = static_cast<GameEngine::Item*>(message->m_extra)
+
+	add(item);
 }
 
 void GameEngine::Component::Inventory::onDropItem(gaMessage* message)
@@ -32,7 +34,10 @@ GameEngine::Component::Inventory::Inventory(void):
 
 void GameEngine::Component::Inventory::add(Item* item)
 {
-	m_items[item->name()] = item;
+	if (m_items.count(item->name()) == 0) {
+		//items are added only once
+		m_items[item->name()] = item;
+	}
 }
 
 bool GameEngine::Component::Inventory::isPresent(const std::string& name)

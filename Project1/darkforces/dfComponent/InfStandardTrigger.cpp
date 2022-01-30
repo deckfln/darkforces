@@ -103,7 +103,6 @@ void InfStandardTrigger::debugGUIinline(void)
 			{DarkForces::Message::ANIM_LASTFRAME, "dfEndLoop"},		// the animation loop stopped
 			{DarkForces::Message::DEAD, "dfDies"},			// the object died
 			{DarkForces::Message::STATE, "dfState"},				// change the state of the object
-			{DarkForces::Message::PICK_RIFLE_AND_BULLETS, "dfPickRifleAndBullets"},
 			{DarkForces::Message::ADD_BATTERY, "dfAddBattery"},
 			{DarkForces::Message::EVENT, "dfEvent"}				// send events to sectors
 		};

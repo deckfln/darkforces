@@ -103,7 +103,6 @@ void myDarkForces::myDarkForces::registerDebugger(void)
 		{DarkForces::Message::DEAD, "DF_DEAD"},
 		{DarkForces::Message::FORCE_STATE,		"DF_FORCE_STATE"},
 		{DarkForces::Message::STATE,			"DF_STATE"},
-		{DarkForces::Message::PICK_RIFLE_AND_BULLETS, "DF_PICK_RIFLE_AND_BULLETS"},
 		{DarkForces::Message::ADD_BATTERY, "DF_ADD_BATTERY"},
 		{DarkForces::Message::EVENT, "DF_EVENT"},
 		{DarkForces::Message::CHANGE_WEAPON, "CHANGE_WEAPON"},

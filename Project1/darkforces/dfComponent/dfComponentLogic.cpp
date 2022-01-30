@@ -66,10 +66,14 @@ void dfComponentLogic::dispatchMessage(gaMessage* message)
 				m_entity->sendMessageToWorld(gaMessage::DELETE_ENTITY, 0, nullptr);
 			}
 			else if (m_logics & dfLogic::ITEM_RIFLE) {
+				DarkForces::Object* object = dynamic_cast<DarkForces::Object*>(m_entity);
+				GameEngine::Item* item = object->item();
+
 				// pick a rifle and bullets
 				// if the collider is a DF_ACTOR
 				// send shield from me to the actor
-				m_entity->sendMessage(message->m_server, DarkForces::Message::PICK_RIFLE_AND_BULLETS, m_value, nullptr);
+				m_entity->sendMessage(message->m_server, gaMessage::Action::ADD_ITEM, 0, item);
+				m_entity->sendMessage(DarkForces::Message::ADD_ENERGY, m_value);
 
 				// and remove the object from the scene
 				m_entity->sendMessageToWorld(gaMessage::DELETE_ENTITY, 0, nullptr);

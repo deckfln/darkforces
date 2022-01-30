@@ -15,7 +15,6 @@ namespace DarkForces {
 		DEAD,				// 1031: the object is dead
 		STATE,				// 1032: change the state of the object unless it is already on that state
 		FORCE_STATE,		// 1033: change the state of the object
-		PICK_RIFLE_AND_BULLETS,
 		ADD_BATTERY,
 		EVENT,				// 1036: send events to sectors
 		CHANGE_WEAPON,		// 1037: activate a new weapon
