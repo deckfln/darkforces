@@ -23,6 +23,9 @@ namespace GameEngine {
 		void set(bool b) {
 			m_on = b;
 		}
+		void set(const char* name) {
+			m_name = name;
+		}
 
 		virtual void dispatchMessage(gaMessage* message) {};
 	};

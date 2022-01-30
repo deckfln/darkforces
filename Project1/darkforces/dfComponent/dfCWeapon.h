@@ -11,16 +11,18 @@ class fwTexture;
 namespace DarkForces {
 	namespace Component {
 		class Weapon : public gaComponent {
+			DarkForces::Weapon* m_current=nullptr;
+
 		public:
 			Weapon(void);
-			Weapon(DarkForces::Weapon::Kind weapon);
-			DarkForces::Weapon* set(DarkForces::Weapon::Kind k);			// set the kind of weapon and return filename of HUD
-			DarkForces::Weapon* get(DarkForces::Weapon::Kind k);			// return data on weapons
+			Weapon(DarkForces::Weapon* current);
+			DarkForces::Weapon* set(DarkForces::Weapon* weapon);	// set the kind of weapon and return filename of HUD
+			DarkForces::Weapon* get(void);							// return data on weapons
 
 			inline void setActorPosition(const glm::vec2& v) {
 				m_ActorPosition = v;
-			};																	// force the position of the weapon the player
-			void addEnergy(int32_t value);						// add energy to the weapon
+			};														// force the position of the weapon the player
+			void addEnergy(int32_t value);							// add energy to the weapon
 
 			void dispatchMessage(gaMessage* message) override;
 

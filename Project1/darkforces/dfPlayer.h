@@ -21,15 +21,16 @@ namespace DarkForces {
 	class Player : public gaActor {
 		DarkForces::Component::Actor m_defaultAI;
 		DarkForces::Component::Weapon m_weapon;
-		GameEngine::Component::Inventory m_items;
+		GameEngine::Component::Inventory m_inventory;
 		GameEngine::Component::Sound m_sound;
 
 		// predefined items
-		Item m_headlight = Item("headlight");
+		Item m_headlight = Item("headlight", 0);
+		DarkForces::Weapon m_pistol;
 
 		dfLevel* m_level = nullptr;
 
-		DarkForces::Weapon::Kind m_currentWeapon;		// current weapon
+		DarkForces::Weapon* m_currentWeapon=nullptr;	// current weapon
 		bool m_weaponFiring = false;					// weapon is on fire position
 		bool m_inMove = false;							// currently moving
 		uint32_t m_frameStartMove = 0;					// when did the move start
@@ -37,7 +38,7 @@ namespace DarkForces {
 		float m_wobblingDirection = 1;
 		glm::vec3 m_wobbling = glm::vec3(0);			// wobbling the weapon when moving
 
-		void placeWeapon(DarkForces::Weapon::Kind weapon,
+		void placeWeapon(DarkForces::Weapon* weapon,
 			const glm::vec2& delta);			// place the weapon on screen
 
 		void onChangeWeapon(int kweapon);		// Change the current weapon
@@ -64,12 +65,13 @@ namespace DarkForces {
 		// getter/setter
 		void bind(dfLevel* level);
 
-		bool isOn(const std::string& item);		// the item is present in the inventory and is turned on
-		void addItem(Item* item);				// add item to inventory
+		bool isOn(const std::string& item);					// the item is present in the inventory and is turned on
+		void addItem(Item* item);							// add item to inventory
 
-		void dispatchMessage(gaMessage* message) override;		//
+		void dispatchMessage(gaMessage* message) override;	//
 
-		void setWeapon(DarkForces::Weapon::Kind);	// Change the current weapon
+		void setWeapon(DarkForces::Weapon* weapon);			// Change the current weapon
+		void setWeapon();									// force the default weapon (pistol)
 
 		int recordSize(void) override {
 			return sizeof(flightRecorder::DarkForces::Actor);

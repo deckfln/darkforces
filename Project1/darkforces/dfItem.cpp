@@ -20,8 +20,9 @@ void DarkForces::Item::onDropItem(gaMessage* message)
 	}
 
 	// constructor of a sprite expects a level space
-	glm::vec3 p ;
-	dfLevel::gl2level(message->m_v3value, p);
+	glm::vec3 p;
+	glm::vec3 p1 = message->m_v3value + glm::vec3(2.0*message->m_fvalue / (rand() % 10) - message->m_fvalue, 0, 2.0 * message->m_fvalue / (rand() % 10) - message->m_fvalue);
+	dfLevel::gl2level(p1, p);
 
 	switch (m_logic) {
 	case dfLogic::DEAD_MOUSE:
@@ -64,7 +65,19 @@ DarkForces::Item::Item(const std::string& name, uint32_t logic) :
 	GameEngine::Item(name),
 	m_logic(logic)
 {
+}
 
+DarkForces::Item::Item(const char *name, uint32_t logic) :
+	GameEngine::Item(name),
+	m_logic(logic)
+{
+
+}
+
+void DarkForces::Item::Set(const char* name, uint32_t logic)
+{
+	GameEngine::Item::set(name);
+	m_logic = logic;
 }
 
 DarkForces::Item::~Item(void)

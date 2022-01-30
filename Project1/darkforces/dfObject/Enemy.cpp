@@ -20,16 +20,10 @@ static DarkForces::Item g_RedKey("redkey", dfLogic::RED_KEY);
  */
 void DarkForces::Enemy::onDie(gaMessage* message)
 {
-	// randomly drop around the object
-	float x = m_radius / (rand() % 10);
-	float z = m_radius / (rand() % 10);
-
 	glm::vec3 p = position();
-	p.x += x;
-	p.z += z;
 
 	// ask the inventory to drop all the items
-	sendMessage(m_name, gaMessage::Action::DROP_ITEM, -1, p);
+	sendMessage(m_name, gaMessage::Action::DROP_ITEM, -1, m_radius, p);
 }
 
 /**
@@ -86,8 +80,9 @@ void DarkForces::Enemy::extend(void)
 	}
 
 	if (m_logics & dfLogic::OFFICER) {
-		m_weapon.set(DarkForces::Weapon::Kind::Pistol);
-		m_inventory.add(&g_Pistol);
+		m_currentWeapon.set(&g_Pistol);
+		m_weapon.set(&m_currentWeapon);
+		m_inventory.add(&m_currentWeapon);
 
 		includes["sounds.inc"] = "<sound file = 'RANOFC02.voc' id = '2048' />\
 			< sound file = 'RANOFC04.voc' id = '2050' /> \
@@ -95,8 +90,9 @@ void DarkForces::Enemy::extend(void)
 			<sound file = 'RANOFC06.voc' id = '2052' />";
 	}
 	else {
-		m_weapon.set(DarkForces::Weapon::Kind::Rifle);
-		m_inventory.add(&g_Rifle);
+		m_currentWeapon.set(&g_Rifle);
+		m_weapon.set(&m_currentWeapon);
+		m_inventory.add(&m_currentWeapon);
 
 		includes["sounds.inc"] = "<sound file = 'Ransto01.voc' id = '2048' />\
 			< sound file = 'Ransto02.voc' id = '2049' /> \

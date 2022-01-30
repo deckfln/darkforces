@@ -23,9 +23,9 @@ namespace DarkForces {
 
 static std::map<DarkForces::Weapon::Kind, DarkForces::weaponTexture> g_hud;
 
-static std::map<uint32_t, DarkForces::Weapon::Kind> g_WeaponKeys = {
-	{GLFW_KEY_1, DarkForces::Weapon::Kind::Pistol},
-	{GLFW_KEY_2, DarkForces::Weapon::Kind::Rifle}
+static std::map<uint32_t, std::string> g_WeaponKeys = {
+	{GLFW_KEY_1, "Pistol"},
+	{GLFW_KEY_2, "Rifle"}
 };
 
 DarkForces::Player::Player(int mclass, const std::string& name, fwCylinder& cylinder, const glm::vec3& feet, float eyes, float ankle) :
@@ -33,16 +33,18 @@ DarkForces::Player::Player(int mclass, const std::string& name, fwCylinder& cyli
 {
 	m_className = g_className;
 
+	m_pistol.set(&g_Pistol);
+
 	addComponent(&m_defaultAI);
 	addComponent(&m_sound);
 		m_sound.addSound(DarkForces::Sounds::PLAYER_HIT_BY_STORM_COMMANDO_OFFICER, DarkForces::loadSound(DarkForces::Sounds::PLAYER_HIT_BY_STORM_COMMANDO_OFFICER)->sound());
 		m_sound.addSound(DarkForces::Sounds::PLAYER_NEARLY_HIT, DarkForces::loadSound(PLAYER_NEARLY_HIT)->sound());
 	addComponent(&m_weapon);
-	addComponent(&m_items);
-		m_items.add(&m_headlight);
+	addComponent(&m_inventory);
+		m_inventory.add(&m_headlight);
+		m_inventory.add(&m_pistol);
 
 	m_defaultAI.setClass("player");
-	m_weapon.set(DarkForces::Weapon::Kind::Rifle);
 	m_weapon.addEnergy(100);
 }
 
@@ -65,7 +67,7 @@ void DarkForces::Player::bind(dfLevel* level)
  */
 bool DarkForces::Player::isOn(const std::string& name)
 {
-	Item* item = m_items.get(name);
+	GameEngine::Item* item = m_inventory.get(name);
 	if (item == nullptr) {
 		return false;
 	}
@@ -77,27 +79,26 @@ bool DarkForces::Player::isOn(const std::string& name)
  */
 void DarkForces::Player::addItem(Item* item)
 {
-	m_items.add(item);
+	m_inventory.add(item);
 }
 
 /**
  * place the weapon on screen
  */
-void DarkForces::Player::placeWeapon(DarkForces::Weapon::Kind weapon,
+void DarkForces::Player::placeWeapon(DarkForces::Weapon* weapon,
 	const glm::vec2& delta)
 {
 	fwTexture* texture;
 	float fire_y;				// move the weapon up if the weapon is firing
 
 	if (m_weaponFiring) {
-		texture = g_hud[weapon].m_fire;
+		texture = g_hud[weapon->kind()].m_fire;
 		fire_y = 0.1;
 	}
 	else {
-		texture = g_hud[weapon].m_still;
+		texture = g_hud[weapon->kind()].m_still;
 		fire_y = 0;
 	}
-	const DarkForces::Weapon* hud = m_weapon.get(weapon);
 
 	int w, h, ch;
 	texture->get_info(&w, &h, &ch);
@@ -106,25 +107,30 @@ void DarkForces::Player::placeWeapon(DarkForces::Weapon::Kind weapon,
 	float width = 2.0f * w / 640.0f;
 	float height = 2.0f * h / 400.0f;
 
-	g_dfHUD->setWeapon(texture, hud->m_HUDposition.x + delta.x, hud->m_HUDposition.y + delta.y, width, height);
+	g_dfHUD->setWeapon(texture, weapon->m_HUDposition.x + delta.x, weapon->m_HUDposition.y + delta.y, width, height);
 }
 
 /**
  * Change the current weapon
  */
-void DarkForces::Player::setWeapon(DarkForces::Weapon::Kind weapon)
+void DarkForces::Player::setWeapon(DarkForces::Weapon* weapon)
 {
 	m_currentWeapon = weapon;
 
-	DarkForces::Weapon* hud = m_weapon.set(weapon);
+	m_weapon.set(weapon);
 
-	if (hud && g_hud.count(weapon) == 0) {
-		g_hud[weapon].m_still = hud->getStillTexture(static_cast<dfLevel*>(m_level)->palette());
-		g_hud[weapon].m_fire = hud->getFireTexture(static_cast<dfLevel*>(m_level)->palette());
+	if (g_hud.count(weapon->kind()) == 0) {
+		g_hud[weapon->kind()].m_still = weapon->getStillTexture(static_cast<dfLevel*>(m_level)->palette());
+		g_hud[weapon->kind()].m_fire = weapon->getFireTexture(static_cast<dfLevel*>(m_level)->palette());
 	}
 
 	// compute the size of the texture in glspace
 	placeWeapon(weapon, glm::vec2(0, 0));
+}
+
+void DarkForces::Player::setWeapon()
+{
+	setWeapon(&m_pistol);
 }
 
 /**
@@ -136,12 +142,18 @@ void DarkForces::Player::onChangeWeapon(int kweapon)
 		return;
 	}
 
-	DarkForces::Weapon::Kind weapon = g_WeaponKeys[kweapon];
+	const std::string name = g_WeaponKeys[kweapon];
+	GameEngine::Item* weapon = m_inventory.get(name);
+	if (weapon == nullptr) {
+		// player doesn't have the weapong in its inventory
+		return;
+	}
+
 	if (m_currentWeapon == weapon) {
 		return;
 	}
 
-	setWeapon(weapon);
+	setWeapon(dynamic_cast<DarkForces::Weapon*>(weapon));
 }
 
 /**
@@ -200,15 +212,14 @@ void DarkForces::Player::onLookAt(gaMessage* message)
 {
 	// show more or less of the weapon based on the player look
 	float y = message->m_v3value.y;
-	const DarkForces::Weapon* hud = m_weapon.get(m_currentWeapon);
 
-	float y1 = hud->m_HUDposition.y + m_wobbling.y - y;
+	float y1 = m_currentWeapon->m_HUDposition.y + m_wobbling.y - y;
 
 	if (y1 > -0.51f) {
-		m_wobbling.z = 0.51f + hud->m_HUDposition.y + m_wobbling.y;
+		m_wobbling.z = 0.51f + m_currentWeapon->m_HUDposition.y + m_wobbling.y;
 	}
 	else if (y1 < -1.1) {
-		m_wobbling.z = 1.1f + hud->m_HUDposition.y + m_wobbling.y;
+		m_wobbling.z = 1.1f + m_currentWeapon->m_HUDposition.y + m_wobbling.y;
 	}
 	else {
 		m_wobbling.z = y;
@@ -246,7 +257,7 @@ void DarkForces::Player::onBulletMiss(gaMessage* mmessage)
  */
 void DarkForces::Player::onTogleGogle(gaMessage* mmessage)
 {
-	Item* item = m_items.get("goggles");
+	GameEngine::Item* item = m_inventory.get("goggles");
 	if (item) {
 		if (item->on()) {
 			item->set(false);
@@ -262,7 +273,7 @@ void DarkForces::Player::onTogleGogle(gaMessage* mmessage)
  */
 void DarkForces::Player::onTogleHeadlight(gaMessage* mmessage)
 {
-	Item* item = m_items.get("headlight");
+	GameEngine::Item* item = m_inventory.get("headlight");
 	if (item) {
 		if (item->on()) {
 			item->set(false);

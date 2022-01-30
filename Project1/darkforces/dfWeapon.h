@@ -6,14 +6,17 @@
 
 #include "../framework/fwTexture.h"
 
-#include "../gaEngine/gaItem.h"
-
+#include "dfItem.h"
+#include "dfObject.h"
 #include "dfPalette.h"
 #include "dfBitmap.h"
 #include "dfFileSystem.h"
 
 namespace DarkForces {
-	class Weapon: public GameEngine::Item {
+	class Weapon: public DarkForces::Item {
+		uint32_t m_bullets = 0;
+		void onDropItem(gaMessage* message);
+
 	public:
 		enum class Kind {
 			Concussion,
@@ -38,6 +41,25 @@ namespace DarkForces {
 		std::vector<dfBitmap*> m_HUDbmps;
 		glm::vec2 m_HUDposition;
 
+		DarkForces::Weapon(void):
+			DarkForces::Item("none", dfLogic::NONE)
+		{
+		};
+
+		DarkForces::Weapon(DarkForces::Weapon* source):
+			DarkForces::Item(source->m_debug, dfLogic::WEAPON),
+			m_kind(source->m_kind),
+			m_debug(source->m_debug),
+			m_fireSound(source->m_fireSound),
+			m_damage(source->m_damage),
+			m_recoil(source->m_recoil),
+			m_rate(source->m_rate),
+			m_HUDfiles(source->m_HUDfiles),
+			m_HUDbmps(source->m_HUDbmps),
+			m_HUDposition(source->m_HUDposition)
+		{
+		};
+
 		DarkForces::Weapon(
 			const Kind kind,
 			const char* debug,
@@ -49,7 +71,7 @@ namespace DarkForces {
 			const std::vector<dfBitmap*>& HUDbmps,
 			const glm::vec2& HUDposition
 		) :
-			GameEngine::Item(debug),
+			DarkForces::Item(debug, dfLogic::WEAPON),
 			m_kind(kind),
 			m_debug(debug),
 			m_fireSound(fireSound),
@@ -60,8 +82,21 @@ namespace DarkForces {
 			m_HUDbmps(HUDbmps),
 			m_HUDposition(HUDposition)
 		{
-
 		};
+
+		void set(DarkForces::Weapon* source)
+		{
+			DarkForces::Item::Set(source->m_debug, dfLogic::WEAPON);
+			m_kind = source->m_kind;
+			m_debug = source->m_debug;
+			m_fireSound = source->m_fireSound;
+			m_damage = source->m_damage;
+			m_recoil = source->m_recoil;
+			m_rate = source->m_rate;
+			m_HUDfiles = source->m_HUDfiles;
+			m_HUDbmps = source->m_HUDbmps;
+			m_HUDposition = source->m_HUDposition;
+		}
 
 		fwTexture* getStillTexture(dfPalette* palette) {
 			if (m_HUDbmps[0] == nullptr) {
@@ -75,6 +110,10 @@ namespace DarkForces {
 			}
 			return m_HUDbmps[1]->fwtexture();
 		}
+
+		void dispatchMessage(gaMessage* message) override;
+
+		inline Kind kind(void) { return m_kind; };
 	};
 }
 

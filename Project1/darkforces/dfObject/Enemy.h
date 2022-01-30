@@ -11,6 +11,7 @@
 #include "../dfComponent/dfCWeapon.h"
 #include "../dfComponent/dfCActor.h"
 #include "../dfComponent/dfEnemyAI.h"
+#include "../dfWeapon.h"
 
 class dfLevel;
 class dfWAX;
@@ -25,6 +26,8 @@ namespace DarkForces {
 		GameEngine::Component::AIPerception m_aiPerception;
 		GameEngine::Component::Sound m_sound;
 		GameEngine::Component::Inventory m_inventory;
+
+		DarkForces::Weapon m_currentWeapon;
 
 		void onDie(gaMessage* message);						// drop items when dying
 

@@ -23,17 +23,18 @@ static std::map<DarkForces::Weapon::Kind, DarkForces::Weapon*> g_Weapons = {
 	{DarkForces::Weapon::Kind::Rifle, &g_Rifle},
 };
 
+/**
+ *
+ */
 DarkForces::Component::Weapon::Weapon(void) :
 	gaComponent(DF_COMPONENT_WEAPON)
 {
 }
 
-/**
- *
- */
-DarkForces::Component::Weapon::Weapon(DarkForces::Weapon::Kind weapon):
+DarkForces::Component::Weapon::Weapon(DarkForces::Weapon* current) :
 	gaComponent(DF_COMPONENT_WEAPON),
-	m_kind(weapon)
+	m_current(current),
+	m_kind(current->kind())
 {
 	// prepare the sound component if there is a sound
 	if (g_Weapons.count(m_kind) > 0) {
@@ -42,9 +43,13 @@ DarkForces::Component::Weapon::Weapon(DarkForces::Weapon::Kind weapon):
 	}
 }
 
-DarkForces::Weapon* DarkForces::Component::Weapon::set(DarkForces::Weapon::Kind k)
+/**
+ *
+ */
+DarkForces::Weapon* DarkForces::Component::Weapon::set(DarkForces::Weapon* current)
 {
-	m_kind = k;
+	m_current = current;
+	m_kind = current->m_kind;
 	if (g_Weapons.count(m_kind) > 0) {
 		DarkForces::Weapon* w = g_Weapons.at(m_kind);
 		m_entity->sendMessage(gaMessage::Action::REGISTER_SOUND, DarkForces::Component::Actor::Sound::FIRE, loadVOC(w->m_fireSound)->sound());
@@ -55,15 +60,12 @@ DarkForces::Weapon* DarkForces::Component::Weapon::set(DarkForces::Weapon::Kind 
 	return nullptr;
 }
 
-DarkForces::Weapon* DarkForces::Component::Weapon::get(DarkForces::Weapon::Kind k)
+/**
+ *
+ */
+DarkForces::Weapon* DarkForces::Component::Weapon::get(void)
 {
-	m_kind = k;
-	if (g_Weapons.count(m_kind) > 0) {
-		DarkForces::Weapon* w = g_Weapons.at(m_kind);
-		return w;
-	}
-
-	return nullptr;
+	return m_current;
 }
 
 /**
@@ -71,7 +73,7 @@ DarkForces::Weapon* DarkForces::Component::Weapon::get(DarkForces::Weapon::Kind 
  */
 void DarkForces::Component::Weapon::onChangeWeapon(gaMessage* message)
 {
-	set((DarkForces::Weapon::Kind)message->m_value);
+	set(static_cast<DarkForces::Weapon*>(message->m_extra));
 }
 
 /**
@@ -79,15 +81,13 @@ void DarkForces::Component::Weapon::onChangeWeapon(gaMessage* message)
  */
 void DarkForces::Component::Weapon::onFire(const glm::vec3& direction, time_t time)
 {
-	const DarkForces::Weapon* w = g_Weapons.at(m_kind);
-
 	// is there energy available for the weapon
 	if (m_energy == 0) {
 		return;
 	}
 
 	// count time since the last fire, and auto-fire at the weapon rate
-	if (time - m_time < w->m_rate) {
+	if (time - m_time < m_current->m_rate) {
 		return;
 	}
 	m_time = time;
@@ -116,9 +116,9 @@ void DarkForces::Component::Weapon::onFire(const glm::vec3& direction, time_t ti
 
 	float x = ((float)rand()) / (float)RAND_MAX - 0.5f;
 	float y = ((float)rand()) / (float)RAND_MAX - 0.5f;
-	glm::vec3 d = direction + up * x * w->m_recoil + right * y * w->m_recoil;
+	glm::vec3 d = direction + up * x * m_current->m_recoil + right * y * m_current->m_recoil;
 
-	dfBullet* bullet = new dfBullet(w->m_damage, p + direction * m_entity->radius() * 2.0f, d);
+	dfBullet* bullet = new dfBullet(m_current->m_damage, p + direction * m_entity->radius() * 2.0f, d);
 	bullet->shooter(m_entity);
 
 	g_gaWorld.addClient(bullet);
@@ -166,9 +166,6 @@ void DarkForces::Component::Weapon::addEnergy(int32_t value)
 	}
 }
 
-/**
- *
- */
 void DarkForces::Component::Weapon::dispatchMessage(gaMessage* message)
 {
 	switch (message->m_action) {
