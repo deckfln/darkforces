@@ -77,10 +77,14 @@ void DarkForces::Enemy::extend(void)
 		m_inventory.add(&g_RedKey);
 	}
 
+	m_inventory.add(&m_clip);
+
 	if (m_logics & dfLogic::OFFICER) {
-		m_currentWeapon.set(&g_Pistol);
-		m_weapon.set(&m_currentWeapon);
+		m_currentWeapon.clone(&g_Pistol);
 		m_inventory.add(&m_currentWeapon);
+
+		m_currentWeapon.loadClip();
+		m_weapon.set(&m_currentWeapon);
 
 		includes["sounds.inc"] = "<sound file = 'RANOFC02.voc' id = '2048' />\
 			< sound file = 'RANOFC04.voc' id = '2050' /> \
@@ -88,9 +92,10 @@ void DarkForces::Enemy::extend(void)
 			<sound file = 'RANOFC06.voc' id = '2052' />";
 	}
 	else {
-		m_currentWeapon.set(&g_Rifle);
-		m_weapon.set(&m_currentWeapon);
+		m_currentWeapon.clone(&g_Rifle);
 		m_inventory.add(&m_currentWeapon);
+		m_currentWeapon.loadClip();
+		m_weapon.set(&m_currentWeapon);
 
 		includes["sounds.inc"] = "<sound file = 'Ransto01.voc' id = '2048' />\
 			< sound file = 'Ransto02.voc' id = '2049' /> \

@@ -34,9 +34,11 @@ GameEngine::Component::Inventory::Inventory(void):
 
 void GameEngine::Component::Inventory::add(Item* item)
 {
+	//items are added only once
 	if (m_items.count(item->name()) == 0) {
-		//items are added only once
+		// double link
 		m_items[item->name()] = item;
+		item->inventory(this);
 	}
 }
 
@@ -71,15 +73,19 @@ void GameEngine::Component::Inventory::dispatchMessage(gaMessage* message)
 
 //------------------------------------------------
 
+#ifdef _DEBUG
 void GameEngine::Component::Inventory::debugGUIinline(void)
 {
 	if (ImGui::TreeNode("Inventory")) {
 		for (auto& item : m_items) {
 			if (item.second != nullptr) {
-				ImGui::Text("%s", item.first.c_str());
+				if (ImGui::TreeNode(item.first.c_str())) {
+					item.second->debugGUIinline();
+					ImGui::TreePop();
+				}
 			}
 		}
 		ImGui::TreePop();
 	}
-
 }
+#endif

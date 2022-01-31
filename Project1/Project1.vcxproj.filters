@@ -175,6 +175,18 @@
     <Filter Include="Fichiers de ressources\DarkForces\AI">
       <UniqueIdentifier>{50005e01-8e8e-4b10-aa1b-e6e8f7bcbfa2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Fichiers d%27en-tête\DarkForces\gaItem">
+      <UniqueIdentifier>{85174d9f-634c-45fb-9967-868f032b82ce}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers d%27en-tête\DarkForces\gaItem\dfItem">
+      <UniqueIdentifier>{cb32101f-4483-40f7-9c32-77501e09de53}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers sources\Dark Forces\gaItem">
+      <UniqueIdentifier>{2fda224e-d353-4234-bac5-6fcc237bc488}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers sources\Dark Forces\gaItem\dfItem">
+      <UniqueIdentifier>{0c9f06e5-1ec6-42c7-8331-ff6f3c42eb6f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source.cpp">
@@ -839,6 +851,9 @@
     </ClCompile>
     <ClCompile Include="darkforces\prefab\dfEnergy.cpp">
       <Filter>Fichiers sources\Dark Forces\prefab</Filter>
+    </ClCompile>
+    <ClCompile Include="darkforces\gaItem\dfItem\dfEnergyClip.cpp">
+      <Filter>Fichiers sources\Dark Forces\gaItem\dfItem</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1600,6 +1615,9 @@
     </ClInclude>
     <ClInclude Include="darkforces\prefab\dfEnergy.h">
       <Filter>Fichiers d%27en-tête\DarkForces\prefab</Filter>
+    </ClInclude>
+    <ClInclude Include="darkforces\gaItem\dfItem\dfEnergyClip.h">
+      <Filter>Fichiers d%27en-tête\DarkForces\gaItem\dfItem</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

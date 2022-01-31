@@ -8,6 +8,7 @@
 #include "dfComponent/dfCActor.h"
 #include "dfComponent/dfCWeapon.h"
 #include "dfComponent/dfComponentLogic.h"
+#include "gaItem/dfItem/dfEnergyClip.h"
 
 #include "flightRecorder/frActor.h"
 
@@ -27,6 +28,7 @@ namespace DarkForces {
 		// predefined items
 		Item m_headlight = Item("headlight", 0);
 		DarkForces::Weapon m_pistol;
+		DarkForces::EnergyClip m_clip;
 
 		dfLevel* m_level = nullptr;
 

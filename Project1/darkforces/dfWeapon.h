@@ -15,6 +15,7 @@
 namespace DarkForces {
 	class Weapon: public DarkForces::Item {
 		uint32_t m_energy = 0;					// current bullets
+		uint32_t m_maxEnergy = 0;				// maximum bullets in the clip
 
 		void onDropItem(gaMessage* message);
 
@@ -69,7 +70,8 @@ namespace DarkForces {
 			const uint32_t damage,
 			const float recoil,
 			const time_t rate,
-			const uint32_t energy,
+			const uint32_t energy,		// default energy
+			const uint32_t maxEnergy,	// maximum energy
 			const std::vector<const char*>& HUDfiles,
 			const std::vector<dfBitmap*>& HUDbmps,
 			const glm::vec2& HUDposition
@@ -82,26 +84,15 @@ namespace DarkForces {
 			m_recoil(recoil),
 			m_rate(rate),
 			m_energy(energy),
+			m_maxEnergy(maxEnergy),
 			m_HUDfiles(HUDfiles),
 			m_HUDbmps(HUDbmps),
 			m_HUDposition(HUDposition)
 		{
 		};
 
-		void set(DarkForces::Weapon* source)
-		{
-			DarkForces::Item::Set(source->m_debug, dfLogic::WEAPON);
-			m_kind = source->m_kind;
-			m_debug = source->m_debug;
-			m_fireSound = source->m_fireSound;
-			m_damage = source->m_damage;
-			m_recoil = source->m_recoil;
-			m_rate = source->m_rate;
-			m_energy = source->m_energy;
-			m_HUDfiles = source->m_HUDfiles;
-			m_HUDbmps = source->m_HUDbmps;
-			m_HUDposition = source->m_HUDposition;
-		}
+		void clone(DarkForces::Weapon* source);			// clone the weapon
+		void loadClip(void);							// load the clip with energy
 
 		fwTexture* getStillTexture(dfPalette* palette) {
 			if (m_HUDbmps[0] == nullptr) {
@@ -119,17 +110,16 @@ namespace DarkForces {
 		void dispatchMessage(gaMessage* message) override;
 
 		inline Kind kind(void) { return m_kind; };
-		inline uint32_t decreaseEnergy(void) {
-			if (m_energy > 0) {
-				m_energy--;
+
+		uint32_t decreaseEnergy(void);					// remove a bullet from the weapon
+		uint32_t addEnergy(uint32_t value) {
+			m_energy += value;
+			if (m_energy > m_maxEnergy) {
+				m_energy = m_maxEnergy;
 			}
 			return m_energy;
 		}
-		inline uint32_t addEnergy(uint32_t value) {
-			m_energy += value;
-			return m_energy;
-		}
-		inline uint32_t energy(void) {
+		uint32_t energy(void) {
 			return m_energy;
 		}
 	};

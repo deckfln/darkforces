@@ -34,8 +34,6 @@ namespace DarkForces {
 			glm::vec2 m_ActorPosition=glm::vec2(0);				// position of the weapon on the actor
 
 			time_t m_time=0;									// world time of the last fire (when the player keep the fire button down)
-			uint32_t m_energy = 0;								// energy available for the weapon
-			uint32_t m_maxEnergy = 200;
 
 			void onChangeWeapon(gaMessage* message);			// change the current weapon
 			void onFire(const glm::vec3& direction, time_t time);	// single shot

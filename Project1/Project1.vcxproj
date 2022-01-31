@@ -201,6 +201,7 @@
     <ClCompile Include="darkforces\gaBehaviorNode\dfWaitDoor.cpp" />
     <ClCompile Include="darkforces\gaBehaviorNode\dfWaitIdle.cpp" />
     <ClCompile Include="darkforces\gaEntity\ElevatorDoor.cpp" />
+    <ClCompile Include="darkforces\gaItem\dfItem\dfEnergyClip.cpp" />
     <ClCompile Include="darkforces\prefab\dfElevatorDoor.cpp" />
     <ClCompile Include="darkforces\prefab\dfEnergy.cpp" />
     <ClCompile Include="darkforces\prefab\dfRedKey.cpp" />
@@ -441,6 +442,7 @@
     <ClInclude Include="darkforces\gaBehaviorNode\dfWaitDoor.h" />
     <ClInclude Include="darkforces\gaBehaviorNode\dfWaitIdle.h" />
     <ClInclude Include="darkforces\gaEntity\ElevatorDoor.h" />
+    <ClInclude Include="darkforces\gaItem\dfItem\dfEnergyClip.h" />
     <ClInclude Include="darkforces\lexer\dfObject.lex.h" />
     <ClInclude Include="darkforces\prefab\dfElevatorDoor.h" />
     <ClInclude Include="darkforces\prefab\dfEnergy.h" />

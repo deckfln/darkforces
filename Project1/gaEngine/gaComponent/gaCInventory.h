@@ -24,7 +24,9 @@ namespace GameEngine {
 
 			void dispatchMessage(gaMessage* message) override;	// deal with messages
 
+#ifdef _DEBUG
 			void debugGUIinline(void) override;					// display the component in the debugger
+#endif
 		};
 	}
 }

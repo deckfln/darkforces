@@ -1,8 +1,12 @@
 #include "dfWeapon.h"
 
+#include <imgui.h>
+
 #include "../gaEngine/World.h"
 #include "prefab/dfEnergy.h"
 #include "dfObject/dfSprite/dfRifle.h"
+#include "gaItem/dfItem/dfEnergyClip.h"
+#include "../gaEngine/gaComponent/gaCInventory.h"
 
 /**
  *
@@ -15,6 +19,7 @@ DarkForces::Weapon g_concussion = DarkForces::Weapon(
 	0.1f,
 	5,
 	1,
+	100,
 	{ "concuss1.bm" },
 	{ nullptr },
 	glm::vec2(0.0, 0.0)
@@ -27,6 +32,7 @@ DarkForces::Weapon g_FusionCutter = DarkForces::Weapon(
 	0.1f,
 	5,
 	1,
+	100, 
 	{ "fusion1.bm" },
 	{ nullptr },
 	glm::vec2(0.0, 0.0)
@@ -39,6 +45,7 @@ DarkForces::Weapon g_Missile = DarkForces::Weapon(
 	0.1f,
 	5,
 	1,
+	100,
 	{ "assault1.bm" },
 	{ nullptr },
 	glm::vec2(0.0, 0.0)
@@ -51,6 +58,7 @@ DarkForces::Weapon g_MortarGun = DarkForces::Weapon(
 	0.1f,
 	5,
 	1,
+	100,
 	{ "mortar1.bm" },
 	{ nullptr },
 	glm::vec2(0.0, 0.0)
@@ -62,7 +70,8 @@ DarkForces::Weapon g_Pistol = DarkForces::Weapon(
 	10,
 	0.05f,
 	500,
-	200,		// default energy on new pistol
+	100,		// default energy on new pistol
+	200,		// maximum energy on new pistol
 	{ "pistol1.bm", "pistol2.bm", "pistol3.bm" },
 	{ nullptr, nullptr, nullptr },
 	glm::vec2(0.3, -0.9)
@@ -75,6 +84,7 @@ DarkForces::Weapon g_PlasmaCannon = DarkForces::Weapon(
 	0.1f,
 	5,
 	1,
+	100,
 	{ "assault1.bm" },
 	{ nullptr },
 	glm::vec2(0.0, 0.0)
@@ -87,6 +97,7 @@ DarkForces::Weapon g_Repeater = DarkForces::Weapon(
 	0.1f,
 	5,
 	1,
+	100,
 	{ "autogun1" },
 	{ nullptr },
 	glm::vec2(0.2, 0.8)
@@ -98,7 +109,8 @@ DarkForces::Weapon g_Rifle = DarkForces::Weapon(
 	15,
 	0.2f,
 	200,
-	200,	// default energy on new riffle
+	100,		// default energy on new riffle
+	200,		// maximum energy 
 	{ "rifle1.bm", "rifle2.bm" },
 	{ nullptr, nullptr },
 	glm::vec2(0.17, -0.83)
@@ -133,6 +145,37 @@ void DarkForces::Weapon::onDropItem(gaMessage* message)
 /**
  *
  */
+void DarkForces::Weapon::clone(DarkForces::Weapon* source)
+{
+	DarkForces::Item::Set(source->m_debug, dfLogic::WEAPON);
+	m_kind = source->m_kind;
+	m_debug = source->m_debug;
+	m_fireSound = source->m_fireSound;
+	m_damage = source->m_damage;
+	m_recoil = source->m_recoil;
+	m_rate = source->m_rate;
+	m_HUDfiles = source->m_HUDfiles;
+	m_HUDbmps = source->m_HUDbmps;
+	m_HUDposition = source->m_HUDposition;
+	m_energy = source->m_energy;
+	m_maxEnergy = source->m_maxEnergy;
+}
+
+/**
+ * // load the clip with energy
+ */
+void DarkForces::Weapon::loadClip(void)
+{
+	// weapon do store bullets in the inventory clip
+	DarkForces::EnergyClip* clip = dynamic_cast<DarkForces::EnergyClip*>(m_inventory->get("EnergyClip"));
+	clip->addEnergy(m_energy);
+	clip->maxEnergy(m_maxEnergy);
+
+}
+
+/**
+ *
+ */
 void DarkForces::Weapon::dispatchMessage(gaMessage* message)
 {
 	switch (message->m_action) {
@@ -140,4 +183,14 @@ void DarkForces::Weapon::dispatchMessage(gaMessage* message)
 		onDropItem(message);
 		break;
 	}
+}
+
+/**
+ * fire a bullet from the weapon
+ */
+uint32_t DarkForces::Weapon::decreaseEnergy(void) 
+{
+	// weapon do store bullets in the inventory clip
+	DarkForces::EnergyClip* clip = dynamic_cast<DarkForces::EnergyClip*>(m_inventory->get("EnergyClip"));
+	return clip->decreaseEnergy();
 }

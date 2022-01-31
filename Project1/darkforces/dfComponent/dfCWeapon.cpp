@@ -49,7 +49,6 @@ DarkForces::Component::Weapon::Weapon(DarkForces::Weapon* current) :
 DarkForces::Weapon* DarkForces::Component::Weapon::set(DarkForces::Weapon* current)
 {
 	m_current = current;
-	m_energy = current->energy();
 	m_kind = current->m_kind;
 	if (g_Weapons.count(m_kind) > 0) {
 		DarkForces::Weapon* w = g_Weapons.at(m_kind);
@@ -83,7 +82,7 @@ void DarkForces::Component::Weapon::onChangeWeapon(gaMessage* message)
 void DarkForces::Component::Weapon::onFire(const glm::vec3& direction, time_t time)
 {
 	// is there energy available for the weapon
-	if (m_energy == 0) {
+	if (m_current->energy() == 0) {
 		return;
 	}
 
@@ -93,12 +92,6 @@ void DarkForces::Component::Weapon::onFire(const glm::vec3& direction, time_t ti
 	}
 	m_time = time;
 
-	// empty clip
-	if (m_energy == 0) {
-		return;
-	}
-
-	m_energy--;
 	m_current->decreaseEnergy();
 
 	// create a bullet based on the kind of weapon
@@ -147,10 +140,6 @@ void DarkForces::Component::Weapon::onStopFire(gaMessage* message)
  */
 void DarkForces::Component::Weapon::addEnergy(int32_t value)
 {
-	m_energy += value;
-	if (m_energy > m_maxEnergy) {
-		m_energy = m_maxEnergy;
-	}
 	m_current->addEnergy(value);
 }
 
@@ -175,11 +164,12 @@ void DarkForces::Component::Weapon::dispatchMessage(gaMessage* message)
 	}
 }
 
+//-----------------------------------
+
 void DarkForces::Component::Weapon::debugGUIinline(void)
 {
 	if (ImGui::TreeNode("Weapon")) {
 		ImGui::Text("Type: %s", g_Weapons[m_kind]->m_debug);
-		ImGui::Text("Energy: %d", m_energy);
 		ImGui::TreePop();
 	}
 }

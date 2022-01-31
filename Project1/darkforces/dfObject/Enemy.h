@@ -12,6 +12,7 @@
 #include "../dfComponent/dfCActor.h"
 #include "../dfComponent/dfEnemyAI.h"
 #include "../dfWeapon.h"
+#include "../gaItem/dfItem/dfEnergyClip.h"
 
 class dfLevel;
 class dfWAX;
@@ -27,7 +28,8 @@ namespace DarkForces {
 		GameEngine::Component::Sound m_sound;
 		GameEngine::Component::Inventory m_inventory;
 
-		DarkForces::Weapon m_currentWeapon;
+		DarkForces::EnergyClip m_clip;						// shared clip to store energy
+		DarkForces::Weapon m_currentWeapon;					// default weapon the enemy holds
 
 		void onDie(gaMessage* message);						// drop items when dying
 

@@ -15,6 +15,10 @@
  */
 void DarkForces::Item::onDropItem(gaMessage* message)
 {
+	// unlink from parent inventory
+	inventory(nullptr);
+
+	// does the item drop a DF entity ?
 	if (!m_droppable) {
 		return;
 	}

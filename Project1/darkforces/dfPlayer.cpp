@@ -28,12 +28,15 @@ static std::map<uint32_t, std::string> g_WeaponKeys = {
 	{GLFW_KEY_2, "Rifle"}
 };
 
+/**
+ *
+ */
 DarkForces::Player::Player(int mclass, const std::string& name, fwCylinder& cylinder, const glm::vec3& feet, float eyes, float ankle) :
 	gaActor(mclass, name, cylinder, feet, eyes, ankle)
 {
 	m_className = g_className;
 
-	m_pistol.set(&g_Pistol);
+	m_pistol.clone(&g_Pistol);
 
 	addComponent(&m_defaultAI);
 	addComponent(&m_sound);
@@ -42,11 +45,16 @@ DarkForces::Player::Player(int mclass, const std::string& name, fwCylinder& cyli
 	addComponent(&m_weapon);
 	addComponent(&m_inventory);
 		m_inventory.add(&m_headlight);
+		m_inventory.add(&m_clip);
 		m_inventory.add(&m_pistol);
+			m_pistol.loadClip();
 
 	m_defaultAI.setClass("player");
 }
 
+/**
+ *
+ */
 DarkForces::Player::Player(flightRecorder::Entity* record) :
 	gaActor(record)
 {
