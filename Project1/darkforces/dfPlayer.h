@@ -9,6 +9,7 @@
 #include "dfComponent/dfCWeapon.h"
 #include "dfComponent/dfComponentLogic.h"
 #include "gaItem/dfItem/dfEnergyClip.h"
+#include "gaItem/dfItem/dfHeadlight.h"
 
 #include "flightRecorder/frActor.h"
 
@@ -26,7 +27,7 @@ namespace DarkForces {
 		GameEngine::Component::Sound m_sound;
 
 		// predefined items
-		Item m_headlight = Item("headlight", 0);
+		DarkForces::Headlight m_headlight = DarkForces::Headlight("headlight");
 		DarkForces::Weapon m_pistol;
 		DarkForces::EnergyClip m_clip;
 

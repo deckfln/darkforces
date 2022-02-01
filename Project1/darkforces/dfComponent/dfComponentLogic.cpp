@@ -2,9 +2,10 @@
 
 #include "../../config.h"
 #include "../dfObject.h"
-#include "../dfWeapon.h"
+#include "../gaItem/dfItem/dfWeapon.h"
 #include "../dfComponent.h"
 #include "dfCActor.h"
+#include "../gaItem/dfItem/dfHeadlight.h"
 
 #include <imgui.h>
 
@@ -88,7 +89,7 @@ void dfComponentLogic::dispatchMessage(gaMessage* message)
 				m_entity->sendMessageToWorld(gaMessage::DELETE_ENTITY, 0, nullptr);
 			}
 			else if (m_logics & dfLogic::GOGGLES) {
-				GameEngine::Item* goggles = new GameEngine::Item("goggles");
+				DarkForces::Headlight* goggles = new DarkForces::Headlight("goggles");
 				m_items.push_back(goggles);
 
 				// pick the googles and add to the inventory

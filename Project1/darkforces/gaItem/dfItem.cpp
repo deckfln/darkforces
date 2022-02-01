@@ -1,14 +1,14 @@
 #include "dfItem.h"
 
-#include "../gaEngine/World.h"
+#include "../../gaEngine/World.h"
 
-#include "dfMessage.h"
-#include "dfObject.h"
-#include "dfObject/dfSpriteFME.h"
-#include "dfObject/dfSprite/dfRifle.h"
+#include "../dfMessage.h"
+#include "../dfObject.h"
+#include "../dfObject/dfSpriteFME.h"
+#include "../dfObject/dfSprite/dfRifle.h"
 
-#include "prefab/dfRedKey.h"
-#include "prefab/dfEnergy.h"
+#include "../prefab/dfRedKey.h"
+#include "../prefab/dfEnergy.h"
 
 /**
  * Drop the item on the floor

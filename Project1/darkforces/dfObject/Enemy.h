@@ -11,7 +11,7 @@
 #include "../dfComponent/dfCWeapon.h"
 #include "../dfComponent/dfCActor.h"
 #include "../dfComponent/dfEnemyAI.h"
-#include "../dfWeapon.h"
+#include "../gaItem/dfItem/dfWeapon.h"
 #include "../gaItem/dfItem/dfEnergyClip.h"
 
 class dfLevel;

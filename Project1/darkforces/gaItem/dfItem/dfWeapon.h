@@ -4,13 +4,13 @@
 #include <map>
 #include <glm/vec2.hpp>
 
-#include "../framework/fwTexture.h"
+#include "../../../framework/fwTexture.h"
 
-#include "dfItem.h"
-#include "dfObject.h"
-#include "dfPalette.h"
-#include "dfBitmap.h"
-#include "dfFileSystem.h"
+#include "../dfItem.h"
+#include "../../dfObject.h"
+#include "../../dfPalette.h"
+#include "../../dfBitmap.h"
+#include "../../dfFileSystem.h"
 
 namespace DarkForces {
 	class Weapon: public DarkForces::Item {

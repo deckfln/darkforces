@@ -10,7 +10,7 @@
 #include "../gaEngine/gaEntity.h"
 #include "../gaEngine/gaCollisionPoint.h"
 
-#include "dfItem.h"
+#include "gaItem/dfItem.h"
 #include "dfCollision.h"
 #include "dfConfig.h"
 #include "dfComponent/dfComponentLogic.h"

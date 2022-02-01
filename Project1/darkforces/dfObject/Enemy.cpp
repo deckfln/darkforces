@@ -4,12 +4,10 @@
 
 #include "../dfComponent/dfCSprite/dfCSpriteAnimated.h"
 
-#include "../dfWeapon.h"
 #include "../dfModel/dfWAX.h"
 #include "../dfVOC.h"
 #include "../dfSounds.h"
-#include "../dfWeapon.h"
-#include "../dfItem.h"
+#include "../gaItem/dfItem/dfWeapon.h"
 
 static const char* g_className = "dfEnemy";
 

@@ -11,6 +11,7 @@
 #include "dfLevel.h"
 #include "dfHUD.h"
 #include "dfVOC.h"
+#include "gaItem/dfItem/dfHeadlight.h"
 
 static const char* g_className = "dfPlayer";
 
@@ -74,7 +75,7 @@ void DarkForces::Player::bind(dfLevel* level)
  */
 bool DarkForces::Player::isOn(const std::string& name)
 {
-	GameEngine::Item* item = m_inventory.get(name);
+	DarkForces::Headlight* item = dynamic_cast<DarkForces::Headlight * >(m_inventory.get(name));
 	if (item == nullptr) {
 		return false;
 	}
@@ -264,7 +265,7 @@ void DarkForces::Player::onBulletMiss(gaMessage* mmessage)
  */
 void DarkForces::Player::onTogleGogle(gaMessage* mmessage)
 {
-	GameEngine::Item* item = m_inventory.get("goggles");
+	DarkForces::Headlight* item = dynamic_cast<DarkForces::Headlight*>(m_inventory.get("goggles"));
 	if (item) {
 		if (item->on()) {
 			item->set(false);
@@ -280,7 +281,7 @@ void DarkForces::Player::onTogleGogle(gaMessage* mmessage)
  */
 void DarkForces::Player::onTogleHeadlight(gaMessage* mmessage)
 {
-	GameEngine::Item* item = m_inventory.get("headlight");
+	DarkForces::Headlight* item = dynamic_cast<DarkForces::Headlight*>(m_inventory.get("headlight"));
 	if (item) {
 		if (item->on()) {
 			item->set(false);

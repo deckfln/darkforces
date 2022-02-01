@@ -2,11 +2,12 @@
 
 #include <imgui.h>
 
-#include "../gaEngine/World.h"
-#include "prefab/dfEnergy.h"
-#include "dfObject/dfSprite/dfRifle.h"
-#include "gaItem/dfItem/dfEnergyClip.h"
-#include "../gaEngine/gaComponent/gaCInventory.h"
+#include "../../../gaEngine/World.h"
+#include "../../../gaEngine/gaComponent/gaCInventory.h"
+
+#include "../../prefab/dfEnergy.h"
+#include "../../dfObject/dfSprite/dfRifle.h"
+#include "../../gaItem/dfItem/dfEnergyClip.h"
 
 /**
  *

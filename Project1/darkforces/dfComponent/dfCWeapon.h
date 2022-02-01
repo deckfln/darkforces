@@ -4,7 +4,7 @@
 
 #include "../../gaEngine/gaComponent.h"
 
-#include "../dfWeapon.h"
+#include "../gaItem/dfItem/dfWeapon.h"
 
 class fwTexture;
 

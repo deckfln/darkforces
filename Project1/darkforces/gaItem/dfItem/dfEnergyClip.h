@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../dfItem.h"
+#include "../dfItem.h"
 
 namespace DarkForces
 {

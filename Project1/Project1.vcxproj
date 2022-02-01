@@ -165,7 +165,6 @@
     <ClCompile Include="darkforces\dfFrame.cpp" />
     <ClCompile Include="darkforces\dfGame.cpp" />
     <ClCompile Include="darkforces\dfHUD.cpp" />
-    <ClCompile Include="darkforces\dfItem.cpp" />
     <ClCompile Include="darkforces\dfLogicStop.cpp" />
     <ClCompile Include="darkforces\dfLogicTrigger.cpp" />
     <ClCompile Include="darkforces\dfMesh.cpp" />
@@ -193,7 +192,6 @@
     <ClCompile Include="darkforces\dfVOC.cpp" />
     <ClCompile Include="darkforces\dfVue.cpp" />
     <ClCompile Include="darkforces\dfWall.cpp" />
-    <ClCompile Include="darkforces\dfWeapon.cpp" />
     <ClCompile Include="darkforces\gaBehaviorNode\dfBActivate.cpp" />
     <ClCompile Include="darkforces\gaBehaviorNode\dfBSetVar.cpp" />
     <ClCompile Include="darkforces\gaBehaviorNode\dfBSound.cpp" />
@@ -201,7 +199,10 @@
     <ClCompile Include="darkforces\gaBehaviorNode\dfWaitDoor.cpp" />
     <ClCompile Include="darkforces\gaBehaviorNode\dfWaitIdle.cpp" />
     <ClCompile Include="darkforces\gaEntity\ElevatorDoor.cpp" />
+    <ClCompile Include="darkforces\gaItem\dfItem.cpp" />
     <ClCompile Include="darkforces\gaItem\dfItem\dfEnergyClip.cpp" />
+    <ClCompile Include="darkforces\gaItem\dfItem\dfHeadlight.cpp" />
+    <ClCompile Include="darkforces\gaItem\dfItem\dfWeapon.cpp" />
     <ClCompile Include="darkforces\prefab\dfElevatorDoor.cpp" />
     <ClCompile Include="darkforces\prefab\dfEnergy.cpp" />
     <ClCompile Include="darkforces\prefab\dfRedKey.cpp" />
@@ -392,7 +393,6 @@
     <ClInclude Include="darkforces\dfFrame.h" />
     <ClInclude Include="darkforces\dfGame.h" />
     <ClInclude Include="darkforces\dfHUD.h" />
-    <ClInclude Include="darkforces\dfItem.h" />
     <ClInclude Include="darkforces\dfLogicStop.h" />
     <ClInclude Include="darkforces\dfLogicTrigger.h" />
     <ClInclude Include="darkforces\dfMesh.h" />
@@ -421,7 +421,6 @@
     <ClInclude Include="darkforces\dfVOC.h" />
     <ClInclude Include="darkforces\dfVue.h" />
     <ClInclude Include="darkforces\dfWall.h" />
-    <ClInclude Include="darkforces\dfWeapon.h" />
     <ClInclude Include="darkforces\flightRecorder\fdBulletExplode.h" />
     <ClInclude Include="darkforces\flightRecorder\frActor.h" />
     <ClInclude Include="darkforces\flightRecorder\frAnim3D.h" />
@@ -442,7 +441,10 @@
     <ClInclude Include="darkforces\gaBehaviorNode\dfWaitDoor.h" />
     <ClInclude Include="darkforces\gaBehaviorNode\dfWaitIdle.h" />
     <ClInclude Include="darkforces\gaEntity\ElevatorDoor.h" />
+    <ClInclude Include="darkforces\gaItem\dfItem.h" />
     <ClInclude Include="darkforces\gaItem\dfItem\dfEnergyClip.h" />
+    <ClInclude Include="darkforces\gaItem\dfItem\dfHeadlight.h" />
+    <ClInclude Include="darkforces\gaItem\dfItem\dfWeapon.h" />
     <ClInclude Include="darkforces\lexer\dfObject.lex.h" />
     <ClInclude Include="darkforces\prefab\dfElevatorDoor.h" />
     <ClInclude Include="darkforces\prefab\dfEnergy.h" />
