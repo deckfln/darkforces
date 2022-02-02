@@ -9,6 +9,7 @@ namespace DarkForces {
 			DarkForces::Component::SpriteAnimated m_sprite;
 
 		public:
+			WAX(const std::string& model, const glm::vec3& p, float ambient, uint32_t objectid);
 			WAX(const std::string& model, const glm::vec3& p, float ambient=1.0f);
 		};
 	}

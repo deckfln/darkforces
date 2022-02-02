@@ -34,6 +34,8 @@
 #include "dfObject/dfObject3D/MouseBot.h"
 #include "dfObject/Enemy.h"
 #include "dfObject/df3DObject.h"
+#include "dfObject/dfSpriteFME.h"
+#include "dfObject/dfSpriteWAX.h"
 
 #include "dfPlugin/dfSprites.h"
 
@@ -355,17 +357,13 @@ void dfParserObjects::parseObject(dfFileSystem* fs, GameEngine::ParserExpression
 				obj->sendMessage(DarkForces::Message::ROTATE, rotation);
 				break;
 			default:
-				obj = new DarkForces::Object(wax, position, ambient, OBJECT_WAX, objectID);
+				obj = new DarkForces::Sprite::WAX(m_waxes[data], position, ambient, objectID);
 				obj->sendMessage(DarkForces::Message::STATE, (uint32_t)dfState::SCENERY_NORMAL);
-				DarkForces::Component::SpriteAnimated* sprite = new DarkForces::Component::SpriteAnimated(wax, ambient);
-				obj->addComponent(sprite);
 			}
 			obj->sendMessage(DarkForces::Message::ROTATE, rotation);
 			break;
 		}
-		case O_3D: {
-			df3DO* tdo = (df3DO*)g_gaWorld.getModel(m_t3DOs[data]);
-
+		case O_3D:
 			switch (type) {
 			case O_MOUSEBOT:
 				obj = new DarkForces::Anim::MouseBot(m_t3DOs[data], position, ambient, objectID);
@@ -374,14 +372,11 @@ void dfParserObjects::parseObject(dfFileSystem* fs, GameEngine::ParserExpression
 				obj = new DarkForces::Anim::ThreeD(m_t3DOs[data], position, ambient, objectID);
 			}
 			break;
-		}
-		case O_FRAME: {
-			dfFME* fme = (dfFME*)g_gaWorld.getModel(m_fmes[data]);
-			obj = new DarkForces::Object(fme, position, ambient, OBJECT_FME, objectID);
-			DarkForces::Component::Sprite* sprite = new DarkForces::Component::Sprite(fme, ambient);
-			obj->addComponent(sprite);
+		
+		case O_FRAME:
+			obj = new DarkForces::Sprite::FME(m_fmes[data], position, ambient, objectID);
 			break;
-		}
+		
 		default:
 #ifdef _DEBUG
 			gaDebugLog(LOW_DEBUG, "dfParserObjects::parseObject", "unknown code " + std::to_string(mclass.m_expression));

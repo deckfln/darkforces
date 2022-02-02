@@ -9,6 +9,7 @@ namespace DarkForces {
 			DarkForces::Component::Sprite m_sprite;
 
 		public:
+			FME(const std::string& model, const glm::vec3& p, float ambient, uint32_t objectID);
 			FME(const std::string& model, const glm::vec3& p, float ambient);
 		};
 	}
