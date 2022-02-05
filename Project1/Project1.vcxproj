@@ -258,6 +258,7 @@
     <ClCompile Include="framework\math\fwBox3.cpp" />
     <ClCompile Include="framework\math\fwCylinder.cpp" />
     <ClCompile Include="framework\math\fwPlane.cpp" />
+    <ClCompile Include="framework\math\fwPolygon2D.cpp" />
     <ClCompile Include="framework\math\fwSegment2D.cpp" />
     <ClCompile Include="framework\math\fwSphere.cpp" />
     <ClCompile Include="framework\math\Segment.cpp" />
@@ -510,6 +511,7 @@
     <ClInclude Include="framework\math\fwBox3.h" />
     <ClInclude Include="framework\math\fwCylinder.h" />
     <ClInclude Include="framework\math\fwPlane.h" />
+    <ClInclude Include="framework\math\fwPolygon2D.h" />
     <ClInclude Include="framework\math\fwSegment2D.h" />
     <ClInclude Include="framework\math\fwSphere.h" />
     <ClInclude Include="framework\math\Segment.h" />

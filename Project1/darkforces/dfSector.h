@@ -10,6 +10,7 @@ using Coord = float;
 using Point = std::array<Coord, 2>;
 
 #include "../framework/math/fwSphere.h"
+#include "../framework/math/fwPolygon2D.h"
 
 #include "../gaEngine/AABBoxTree.h"
 #include "../gaEngine/gaMessage.h"
@@ -92,9 +93,11 @@ class dfSector : public gaEntity
 	int m_eventMask = 0;								// events triggering messages
 	gaMessage m_message;								// message to send
 	std::vector <struct dfVerticeConnexion> m_verticeConnexions;	// get the vertice to the right and the left of each vertice
-	std::vector<std::vector<Point>> m_polygons_vertices;			// polylines enclosing the sector : [0] external polygon, [1+] internal holes : by vertices
-	std::vector<std::vector<dfWall*>> m_polygons_walls;				// polylines enclosing the sector : [0] external polygon, [1+] internal holes : by walls
-	int m_displayPolygons = 0;										// default number of polygon to draw 0=ALL, 1 = external one, 2 = first hole
+	std::vector<std::vector<Point>> m_polygons_vertices;// polylines enclosing the sector : [0] external polygon, [1+] internal holes : by vertices
+	Framework::Primitive::Polygon2D m_2Dpolygon;		// polylines of the sector
+
+	std::vector<std::vector<dfWall*>> m_polygons_walls;	// polylines enclosing the sector : [0] external polygon, [1+] internal holes : by walls
+	int m_displayPolygons = 0;							// default number of polygon to draw 0=ALL, 1 = external one, 2 = first hole
 	int m_firstVertex = 0;								// position of the first sector vertice in the super-sector vertices
 	int m_nbVertices = 0;
 	int m_wallVerticesStart = 0;						// position of the first wall vertice in the super-sector vertices

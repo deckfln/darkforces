@@ -170,3 +170,14 @@ bool Framework::AABBox2D::inside(const glm::vec2& p)
 	return (p.x >= (m_p.x - MY_EPSILON) && p.x <= (m_p1.x + MY_EPSILON) &&
 			p.y >= (m_p.y - MY_EPSILON) && p.y <= (m_p1.y + MY_EPSILON));
 }
+
+/**
+ * extend the AABB using the point
+ */
+void Framework::AABBox2D::extend(const glm::vec2& p)
+{
+	if (p.x < m_p.x) { m_p.x = p.x; };
+	if (p.x > m_p1.x) { m_p1.x = p.x; };
+	if (p.y < m_p.y) { m_p.y = p.y; };
+	if (p.y > m_p1.y) { m_p1.y = p.y; };
+}

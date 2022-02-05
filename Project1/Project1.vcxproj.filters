@@ -858,6 +858,9 @@
     <ClCompile Include="darkforces\gaItem\dfItem\dfWeapon.cpp">
       <Filter>Fichiers sources\Dark Forces\gaItem\dfItem</Filter>
     </ClCompile>
+    <ClCompile Include="framework\math\fwPolygon2D.cpp">
+      <Filter>Fichiers sources\Framework\math</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="glad\glad.h">
@@ -1624,6 +1627,9 @@
     </ClInclude>
     <ClInclude Include="darkforces\gaItem\dfItem\dfWeapon.h">
       <Filter>Fichiers d%27en-tête\DarkForces\gaItem\dfItem</Filter>
+    </ClInclude>
+    <ClInclude Include="framework\math\fwPolygon2D.h">
+      <Filter>Fichiers d%27en-tête\Framework\math</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -25,5 +25,6 @@ namespace Framework {
 		bool intersect(const Framework::Segment2D& segment, glm::vec2& p);	// intersect with a segment
 		bool intersect(const AABBox2D& aabb);				// intersect with a box
 		bool inside(const glm::vec2& p);					// is point inside
+		void extend(const glm::vec2& p);					// extend the AABB using the point
 	};
 }

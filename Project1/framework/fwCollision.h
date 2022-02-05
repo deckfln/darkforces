@@ -10,6 +10,7 @@
 #include <glm/vec2.hpp>
 
 #include "fwAABBox.h"
+#include "math/fwPlane.h"
 
 enum class fwCollisionLocation {
     NONE,
@@ -116,5 +117,6 @@ namespace Framework
     bool CircLine(glm::vec2& A, glm::vec2& B, glm::vec2& C, float r, glm::vec2& result);
 
     bool intersectRayAABox2(const glm::vec3& p0, const glm::vec3& p1, const fwAABBox& box, float& tnear, float& tfar);
-
+    bool PlaneAABB(const fwAABBox& aabb, const fwPlane& plane);
+    bool TriangleAABB(const glm::vec3& a, const glm::vec3& b, const glm::vec3& c, const fwAABBox& aabb);
 }

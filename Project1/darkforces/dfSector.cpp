@@ -584,6 +584,26 @@ void dfSector::linkWalls(void)
 			}
 		}
 	}
+
+	// convert to a fwPolygon2D in GL space
+	uint32_t h;
+	glm::vec3 plevel;
+	glm::vec3 pgl;
+
+	for (size_t i = 0; i < m_polygons_vertices[0].size(); i++) {
+		plevel = glm::vec3(m_polygons_vertices[0][i][0], m_polygons_vertices[0][i][1], 0);
+		dfLevel::level2gl(plevel, pgl);
+		m_2Dpolygon.addPoint(glm::vec2(pgl.x, pgl.z));
+	}
+
+	for (size_t j = 1; j < m_polygons_vertices.size(); j++) {
+		h = m_2Dpolygon.addHole();
+		for (size_t i = 0; i < m_polygons_vertices[j].size(); i++) {
+			plevel = glm::vec3(m_polygons_vertices[j][i][0], m_polygons_vertices[j][i][1], 0);
+			dfLevel::level2gl(plevel, pgl);
+			m_2Dpolygon.addPoint(h, glm::vec2(pgl.x, pgl.z));
+		}
+	}
 }
 
 /**
@@ -667,11 +687,23 @@ void dfSector::removeHollowWalls(void)
  */
 bool dfSector::inAABBox(const glm::vec3& position)
 {
-	if (m_worldAABB.inside(position)) {
-		return isPointInside(position, true);
+//	bool b = isPointInside(position, true);
+	bool b1 = false;
+
+	if (m_2Dpolygon.isPointInside(glm::vec2(position.x, position.z))) {
+		float floor = m_staticMeshFloorAltitude / 10.0f;
+		float ceiling = m_staticMeshCeilingAltitude / 10.0f;
+		if (position.y >= floor && position.y <= ceiling) {
+			b1 = true;
+		}
 	}
 
-	return false;
+	/*
+	if (b != b1) {
+		__debugbreak();
+	}
+	*/
+	return b;
 }
 
 /**

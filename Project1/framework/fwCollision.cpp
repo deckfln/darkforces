@@ -1,6 +1,7 @@
 #include "fwCollision.h"
 
 #include <glm/glm.hpp>
+#include <algorithm>
 
 fwCollision::fwCollision()
 {
@@ -603,3 +604,167 @@ bool Framework::intersectRayAABox2(const glm::vec3& p0, const glm::vec3& p1, con
 	tnear = t_near; tfar = t_far; // put return values in place
 	return true; // if we made it here, there was an intersection - YAY
 }
+
+/**
+ * Collision AABB vs Plane
+ * https://gist.github.com/yomotsu/d845f21e2e1eb49f647f
+ */
+bool Framework::PlaneAABB(const fwAABBox& aabb, const fwPlane& plane)
+{
+	const glm::vec3 center = (aabb.m_p1 + aabb.m_p) * 0.5f;
+	const glm::vec3 extents = aabb.m_p1 - center;
+
+	float r = extents.x * abs(plane.normal().x) + extents.y * abs(plane.normal().y) + extents.z * abs(plane.normal().z);
+	float s = glm::dot(plane.normal(), center) - plane.constant();
+
+	return abs(s) <= r;
+}
+
+/**
+ * Collision AABB vs Triangle
+ * https://gist.github.com/yomotsu/d845f21e2e1eb49f647f
+ */
+bool Framework::TriangleAABB(const glm::vec3& a, const glm::vec3& b, const glm::vec3& c, const fwAABBox& aabb) {
+
+	// Compute box center and extents of AABoundingBox (if not already given in that format)
+	glm::vec3 center = (aabb.m_p1 + aabb.m_p) * 0.5f;
+	glm::vec3 extents = aabb.m_p1 - center;
+
+	// Translate triangle as conceptually moving AABB to origin
+	const glm::vec3 v0 = a - center;
+	const glm::vec3 v1 = b - center; 
+	const glm::vec3 v2 = c - center;
+
+	// Compute edge vectors for triangle
+	const glm::vec3  f0 = v1 - v0;
+	const glm::vec3 f1 = v2 - v1;
+	const glm::vec3 f2 = v0 - v2;
+
+	// Test axes a00..a22 (category 3)
+	const glm::vec3 a00(0, -f0.z, f0.y);
+	const glm::vec3 a01(0, -f1.z, f1.y);
+	const glm::vec3 a02(0, -f2.z, f2.y);
+	const glm::vec3 a10(f0.z, 0, -f0.x);
+	const glm::vec3 a11(f1.z, 0, -f1.x);
+	const glm::vec3 a12(f2.z, 0, -f2.x);
+	const glm::vec3 a20(-f0.y, f0.x, 0);
+	const glm::vec3 a21(-f1.y, f1.x, 0);
+	const glm::vec3 a22(-f2.y, f2.x, 0);
+
+	// Test axis a00
+	float p0 = glm::dot(v0, a00);
+	float p1 = glm::dot(v1, a00);
+	float p2 = glm::dot(v2, a00);
+	float r = extents.y * abs(f0.z) + extents.z * abs(f0.y);
+
+
+	if (std::max(-std::max(p0, std::max(p1, p2)), std::min(p0, std::min(p1, p2))) > r) {
+		return false; // Axis is a separating axis
+	}
+
+	// Test axis a01
+	p0 = glm::dot(v0, a01);
+	p1 = glm::dot(v1, a01);
+	p2 = glm::dot(v2, a01);
+	r = extents.y * abs(f1.z) + extents.z * abs(f1.y);
+
+	if (std::max(-std::max(p0, std::max(p1, p2)), std::min(p0, std::min(p1, p2))) > r) {
+		return false; // Axis is a separating axis
+	}
+
+	// Test axis a02
+	p0 = glm::dot(v0, a02);
+	p1 = glm::dot(v1, a02);
+	p2 = glm::dot(v2, a02);
+	r = extents.y * abs(f2.z) + extents.z * abs(f2.y);
+
+	if (std::max(-std::max(p0, std::max(p1, p2)), std::min(p0, std::min(p1, p2))) > r) {
+		return false; // Axis is a separating axis
+	}
+
+	// Test axis a10
+	p0 = glm::dot(v0, a10);
+	p1 = glm::dot(v1, a10);
+	p2 = glm::dot(v2, a10);
+	r = extents.x * abs(f0.z) + extents.z * abs(f0.x);
+
+	if (std::max(-std::max(p0, std::max(p1, p2)), std::min(p0, std::min(p1, p2))) > r) {
+		return false; // Axis is a separating axis
+	}
+
+	// Test axis a11
+	p0 = glm::dot(v0, a11);
+	p1 = glm::dot(v1, a11);
+	p2 = glm::dot(v2, a11);
+	r = extents.x * abs(f1.z) + extents.z * abs(f1.x);
+
+	if (std::max(-std::max(p0, std::max(p1, p2)), std::min(p0, std::min(p1, p2))) > r) {
+		return false; // Axis is a separating axis
+	}
+
+	// Test axis a12
+	p0 = glm::dot(v0, a12);
+	p1 = glm::dot(v1, a12);
+	p2 = glm::dot(v2, a12);
+	r = extents.x * abs(f2.z) + extents.z * abs(f2.x);
+
+	if (std::max(-std::max(p0, std::max(p1, p2)), std::min(p0, std::min(p1, p2))) > r) {
+		return false; // Axis is a separating axis
+	}
+
+	// Test axis a20
+	p0 = glm::dot(v0, a20);
+	p1 = glm::dot(v1, a20);
+	p2 = glm::dot(v2, a20);
+	r = extents.x * abs(f0.y) + extents.y * abs(f0.x);
+
+	if (std::max(-std::max(p0, std::max(p1, p2)), std::min(p0, std::min(p1, p2))) > r) {
+		return false; // Axis is a separating axis
+	}
+
+	// Test axis a21
+	p0 = glm::dot(v0, a21);
+	p1 = glm::dot(v1, a21);
+	p2 = glm::dot(v2, a21);
+	r = extents.x * abs(f1.y) + extents.y * abs(f1.x);
+
+	if (std::max(-std::max(p0, std::max(p1, p2)), std::min(p0, std::min(p1, p2))) > r) {
+		return false; // Axis is a separating axis
+	}
+
+	// Test axis a22
+	p0 = glm::dot(v0, a22);
+	p1 = glm::dot(v1, a22);
+	p2 = glm::dot(v2, a22);
+	r = extents.x * abs(f2.y) + extents.y * abs(f2.x);
+
+	if (std::max(-std::max(p0, std::max(p1, p2)), std::min(p0, std::min(p1, p2))) > r) {
+		return false; // Axis is a separating axis
+	}
+
+	// Test the three axes corresponding to the face normals of AABB b (category 1).
+	// Exit if...
+	// ... [-extents.x, extents.x] and [min(v0.x,v1.x,v2.x), max(v0.x,v1.x,v2.x)] do not overlap
+	if (std::max(v0.x, std::max(v1.x, v2.x)) < -extents.x || std::min(v0.x, std::min(v1.x, v2.x)) > extents.x) {
+		return false;
+	}
+
+	// ... [-extents.y, extents.y] and [min(v0.y,v1.y,v2.y), max(v0.y,v1.y,v2.y)] do not overlap
+	if (std::max(v0.y, std::max(v1.y, v2.y)) < -extents.y || std::min(v0.y, std::min(v1.y, v2.y)) > extents.y) {
+		return false;
+	}
+	// ... [-extents.z, extents.z] and [min(v0.z,v1.z,v2.z), max(v0.z,v1.z,v2.z)] do not overlap
+	if (std::max(v0.z, std::max(v1.z, v2.z)) < -extents.z || std::min(v0.z, std::min(v1.z, v2.z)) > extents.z) {
+		return false;
+	}
+	// Test separating axis corresponding to triangle face normal (category 2)
+	// Face Normal is -ve as Triangle is clockwise winding (and XNA uses -z for into screen)
+	glm::vec3 normal = glm::normalize(glm::cross(f1, f0));
+	fwPlane plane (
+		normal,
+		glm::dot(normal, a)
+		);
+
+	return PlaneAABB(aabb, plane);
+}
+
