@@ -31,6 +31,8 @@ fwAABBox::fwAABBox(float x, float x1, float y, float y1, float z, float z1)
 	m_p1.x = std::max(x, x1);
 	m_p1.y = std::max(y, y1);
 	m_p1.z = std::max(z, z1);
+
+	m_center = (m_p + m_p1) / 2.0f;
 }
 
 fwAABBox::fwAABBox(fwSphere& sphere)
@@ -40,11 +42,13 @@ fwAABBox::fwAABBox(fwSphere& sphere)
 
 	m_p = glm::vec3(center.x - radius, center.y - radius, center.z - radius);
 	m_p1 = glm::vec3(center.x + radius, center.y + radius, center.z + radius);
+	m_center = (m_p + m_p1) / 2.0f;
 }
 
 fwAABBox::fwAABBox(const glm::vec3& p1, const glm::vec3& p2)
 {
 	set(p1, p2);
+	m_center = (m_p + m_p1) / 2.0f;
 }
 
 fwAABBox::fwAABBox(const fwAABBox& source, const glm::mat4& matrix)
@@ -54,6 +58,7 @@ fwAABBox::fwAABBox(const fwAABBox& source, const glm::mat4& matrix)
 		m_p = source.m_p;
 		m_p1 = source.m_p1;
 		m_dirty = true;
+		m_center = (m_p + m_p1) / 2.0f;
 	}
 	else {
 
@@ -68,9 +73,9 @@ fwAABBox::fwAABBox(const fwAABBox* source, const glm::mat4& matrix)
 		m_p = source->m_p;
 		m_p1 = source->m_p1;
 		m_dirty = true;
+		m_center = (m_p + m_p1) / 2.0f;
 	}
 	else {
-
 		apply(source, matrix);
 	}
 }
@@ -85,6 +90,7 @@ fwAABBox::fwAABBox(fwCylinder& cylinder)
 	const glm::vec3& center = cylinder.position();
 	m_p = glm::vec3(center.x - radius, center.y, center.z - radius);
 	m_p1 = glm::vec3(center.x + radius, center.y + height, center.z + radius);
+	m_center = (m_p + m_p1) / 2.0f;
 }
 
 /**
@@ -107,6 +113,8 @@ void fwAABBox::set(float xmin, float ymin, float zmin, float xmax, float ymax, f
 	m_p1.x = std::max(xmin, xmax);
 	m_p1.y = std::max(ymin, ymax);
 	m_p1.z = std::max(zmin, zmax);
+
+	m_center = (m_p + m_p1) / 2.0f;
 
 	m_dirty = true;
 }
@@ -151,6 +159,7 @@ void fwAABBox::set(glBufferAttribute* attribute)
 	}
 	m_p = glm::vec3(minX, minY, minZ);
 	m_p1= glm::vec3(maxX, maxY, maxZ);
+	m_center = (m_p + m_p1) / 2.0f;
 
 	m_dirty = true;
 }
@@ -179,6 +188,7 @@ void fwAABBox::set(glm::vec3 const* pVertices, int nb)
 	}
 	m_p = glm::vec3(minX, minY, minZ);
 	m_p1 = glm::vec3(maxX, maxY, maxZ);
+	m_center = (m_p + m_p1) / 2.0f;
 
 	m_dirty = true;
 }
@@ -190,6 +200,7 @@ void fwAABBox::set(const glm::vec3& p1, const glm::vec3& p2)
 {
 	m_p = glm::min(p1, p2);
 	m_p1 = glm::max(p1, p2);
+	m_center = (m_p + m_p1) / 2.0f;
 	m_dirty = true;
 }
 
@@ -200,6 +211,7 @@ void fwAABBox::translateFrom(const fwAABBox& source, glm::vec3& translation)
 {
 	m_p = source.m_p + translation;
 	m_p1 = source.m_p1 + translation;
+	m_center = (m_p + m_p1) / 2.0f;
 	m_dirty = true;
 }
 
@@ -210,6 +222,7 @@ void fwAABBox::rotateFrom(const fwAABBox& source, const glm::vec3& rotation)
 {
 	glm::quat quaternion = glm::quat(glm::vec3(rotation.x, rotation.y, rotation.z));
 	rotateFrom(source, quaternion);
+	m_center = (m_p + m_p1) / 2.0f;
 	m_dirty = true;
 }
 
@@ -379,6 +392,7 @@ fwAABBox& fwAABBox::copy(fwAABBox& source)
 {
 	m_p = source.m_p;
 	m_p1 = source.m_p1;
+	m_center = (m_p + m_p1) / 2.0f;
 	m_dirty = true;
 
 	return *this;
@@ -388,6 +402,7 @@ fwAABBox& fwAABBox::multiplyBy(float v)
 {
 	m_p *= v;
 	m_p1 *= v;
+	m_center = (m_p + m_p1) / 2.0f;
 	m_dirty = true;
 
 	return *this;
@@ -635,6 +650,7 @@ void fwAABBox::extend(const fwAABBox& box)
 	if (m_p1.y < box.m_p1.y) m_p1.y = box.m_p1.y;
 	if (m_p.z > box.m_p.z) m_p.z = box.m_p.z;
 	if (m_p1.z < box.m_p1.z) m_p1.z = box.m_p1.z;
+	m_center = (m_p + m_p1) / 2.0f;
 	m_dirty = true;
 }
 
@@ -649,6 +665,7 @@ void fwAABBox::extend(glm::vec3& vertice)
 	if (m_p1.y < vertice.y) m_p1.y = vertice.y;
 	if (m_p.z > vertice.z) m_p.z = vertice.z;
 	if (m_p1.z < vertice.z) m_p1.z = vertice.z;
+	m_center = (m_p + m_p1) / 2.0f;
 	m_dirty = true;
 }
 
@@ -669,13 +686,14 @@ void fwAABBox::reset(void)
 {
 	m_p.x = m_p.y = m_p.z = 999999;
 	m_p1.x = m_p1.y = m_p1.z = -99999;
+	m_center = glm::vec3(0);
 }
 /**
  * return the center of the box
  */
 const glm::vec3 fwAABBox::center(void) const
 {
-	return (m_p + m_p1) / 2.0f;
+	return m_center;
 }
 
 /**
@@ -693,6 +711,7 @@ fwAABBox fwAABBox::operator+(const glm::vec3& v)
 {
 	glm::vec3 p = m_p + v;
 	glm::vec3 p1 = m_p1 + v;
+	m_center = (m_p + m_p1) / 2.0f;
 	m_dirty = true;
 	return fwAABBox(p, p1);
 }
@@ -703,6 +722,7 @@ fwAABBox& fwAABBox::operator+=(const glm::vec3& v)
 {
 	m_p += v;
 	m_p1 += v;
+	m_center = (m_p + m_p1) / 2.0f;
 
 	m_dirty = true;
 

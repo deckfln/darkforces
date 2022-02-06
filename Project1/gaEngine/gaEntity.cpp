@@ -35,7 +35,7 @@ gaEntity::gaEntity(uint32_t mclass, const std::string& name) :
 
 #ifdef _DEBUG
 	m_displayAABB = true;
-	g_gaBoundingBoxes.add(&m_worldBounding);
+	//g_gaBoundingBoxes.add(&m_worldBounding);
 #endif
 
 	m_collider.set(&m_modelAABB, &m_worldMatrix, &m_inverseWorldMatrix);
@@ -53,7 +53,7 @@ gaEntity::gaEntity(uint32_t mclass, const std::string& name, const glm::vec3& po
 
 #ifdef _DEBUG
 	m_displayAABB = true;
-	g_gaBoundingBoxes.add(&m_worldBounding);
+	//g_gaBoundingBoxes.add(&m_worldBounding);
 #endif
 
 	m_collider.set(&m_modelAABB, &m_worldMatrix, &m_inverseWorldMatrix);
@@ -71,7 +71,7 @@ gaEntity::gaEntity(flightRecorder::Entity* record):
 	m_className = g_className;
 	loadState(record);
 
-	g_gaBoundingBoxes.add(&m_worldBounding);
+	//g_gaBoundingBoxes.add(&m_worldBounding);
 	m_collider.set(&m_modelAABB, &m_worldMatrix, &m_inverseWorldMatrix);
 
 	m_transforms.m_flag = gaMessage::Flag::WANT_TO_MOVE_FALL;	// accept falling down
@@ -112,7 +112,7 @@ void gaEntity::addComponent(gaComponent* component, uint32_t flag)
 #ifdef _DEBUG
 			// register the AABB for debug
 			if (m_displayAABB) {
-				g_gaBoundingBoxes.add(&m_worldBounding);
+				//g_gaBoundingBoxes.add(&m_worldBounding);
 			}
 #endif
 		}
@@ -377,7 +377,7 @@ void gaEntity::timer(bool onOff)
  */
 void gaEntity::displayAABBox(void)
 {
-	g_gaBoundingBoxes.add(&m_worldBounding);
+	//g_gaBoundingBoxes.add(&m_worldBounding);
 }
 
 /**

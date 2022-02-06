@@ -17,6 +17,7 @@ using Point = std::array<Coord, 2>;
 #include "../gaEngine/gaEntity.h"
 #include "../gaEngine/gaComponent/gaSound.h"
 #include "../gaEngine/gaVolumeSpace.h"
+#include "../gaEngine/gaVoxelSpace.h"
 
 #include "dfComponent/InfStandardTrigger.h"
 
@@ -218,6 +219,7 @@ public:
 
 	void changeAmbient(float ambient);
 	void buildGeometry(dfMesh *mesh, dfWallFlag);
+	void voxelisation(GameEngine::VoxelSpace& voxels);				// voxelize the current sector
 
 	bool visible(void);
 	void addProgram(DarkForces::Component::InfStandardTrigger*);	// register a INF trigger standard on the sector

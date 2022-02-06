@@ -703,7 +703,7 @@ bool dfSector::inAABBox(const glm::vec3& position)
 		__debugbreak();
 	}
 	*/
-	return b;
+	return b1;
 }
 
 /**
@@ -999,6 +999,27 @@ void dfSector::buildGeometry(dfMesh* mesh, dfWallFlag displayPolygon)
 			&worldM,
 			&invworldM,
 			this);
+	}
+}
+
+/**
+ * voxelize the current sector
+ */
+void dfSector::voxelisation(GameEngine::VoxelSpace& voxels)
+{
+	glm::vec3 p;
+
+	for (float x = m_worldAABB.m_p.x; x < m_worldAABB.m_p1.x; x += 0.125f) {
+		for (float y = m_worldAABB.m_p.y; y < m_worldAABB.m_p1.y; y += 0.125f) {
+			for (float z = m_worldAABB.m_p.z; z < m_worldAABB.m_p1.z; z += 0.125f) {
+				p.x = x;
+				p.y = y;
+				p.z = z;
+				if (isPointInside(p)) {
+					voxels.add(p, this);
+				}
+			}
+		}
 	}
 }
 

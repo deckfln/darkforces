@@ -11,6 +11,7 @@
 #include "../framework/fwMaterialBasic.h"
 
 #include "../gaEngine/gaLevel.h"
+#include "../gaEngine/gaVoxelSpace.h"
 
 #include "dfSector.h"
 #include "dfSuperSector.h"
@@ -38,6 +39,8 @@ class dfLevel : public GameEngine::Level
 	std::map<std::string, dfSector *> m_sectorsName;	// all sectors of the level by Name
 	std::vector<dfSector*> m_sectorsID;			// all sectors of the level by ID
 	std::vector<dfBitmap*> m_bitmaps;			// all textures of the level
+
+	GameEngine::VoxelSpace m_voxels = GameEngine::VoxelSpace(100, 10);	// voxel modelization of the level
 
 	glm::vec3 m_skyTexture;						// Identify texture for sectors FLAGS1 = 1
 	float m_skyAltitude=0;						
@@ -68,6 +71,7 @@ class dfLevel : public GameEngine::Level
 	void buildGeometry(void);
 	void convertDoors2Elevators(void);
 	void createSoundVolumes(void);								// convert the dfSectors into a volume space for sound propagation
+	void voxelisation(void);									// convert the dfSectors into a volume space
 public:
 	dfLevel(dfFileSystem* fs, std::string file);
 	dfSector* findSector(const glm::vec3& position);			// find sector by GL coordinate

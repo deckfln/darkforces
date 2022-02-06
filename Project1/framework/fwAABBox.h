@@ -49,6 +49,7 @@ public:
 	// create an impossible box, so 'extend' can work
 	glm::vec3 m_p = glm::vec3(999999, 999999, 999999);
 	glm::vec3 m_p1 = glm::vec3(-999999, -999999, -999999);
+	glm::vec3 m_center = glm::vec3(0);
 
 	fwAABBox();
 	fwAABBox(float, float, float, float, float, float);

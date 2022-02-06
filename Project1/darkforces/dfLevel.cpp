@@ -231,6 +231,9 @@ else if (tokens[0] == "SECTOR") {
 	// convert the sectors into space volumes for sound
 	createSoundVolumes();
 
+	// convert the sectors into a voxel spacevolumes for sound
+	voxelisation();
+
 	// Add the missing triggers to the world
 	for (auto trigger : m_inf->m_triggers) {
 		if (g_gaWorld.getEntity(trigger->name()) == nullptr) {
@@ -422,6 +425,21 @@ void dfLevel::createSoundVolumes(void)
 			portalID++;
 		}
 	}
+}
+
+/**
+ * convert the dfSectors into a volume space
+ */
+void dfLevel::voxelisation(void)
+{
+	// load all sectors wAABB as volumes in the sound volume
+	for (auto sector : m_sectorsID) {
+//		if (sector->name() == "enthall") {
+			sector->voxelisation(m_voxels);
+//		}
+	}
+	m_voxels.debug();
+	printf("dfLevel::voxelisation done\n");
 }
 
 /**

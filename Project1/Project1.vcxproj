@@ -315,6 +315,8 @@
     <ClCompile Include="gaEngine\gaValue.cpp" />
     <ClCompile Include="gaEngine\gaVariable.cpp" />
     <ClCompile Include="gaEngine\gaVolumeSpace.cpp" />
+    <ClCompile Include="gaEngine\gaVoxel.cpp" />
+    <ClCompile Include="gaEngine\gaVoxelSpace.cpp" />
     <ClCompile Include="gaEngine\Model.cpp" />
     <ClCompile Include="gaEngine\World.cpp" />
     <ClCompile Include="gaEngine\Lexer.cpp" />
@@ -571,6 +573,8 @@
     <ClInclude Include="gaEngine\gaValue.h" />
     <ClInclude Include="gaEngine\gaVariable.h" />
     <ClInclude Include="gaEngine\gaVolumeSpace.h" />
+    <ClInclude Include="gaEngine\gaVoxel.h" />
+    <ClInclude Include="gaEngine\gaVoxelSpace.h" />
     <ClInclude Include="gaEngine\Model.h" />
     <ClInclude Include="gaEngine\World.h" />
     <ClInclude Include="gaEngine\Lexer.h" />
