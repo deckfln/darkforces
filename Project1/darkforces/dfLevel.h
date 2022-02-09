@@ -40,7 +40,7 @@ class dfLevel : public GameEngine::Level
 	std::vector<dfSector*> m_sectorsID;			// all sectors of the level by ID
 	std::vector<dfBitmap*> m_bitmaps;			// all textures of the level
 
-	GameEngine::VoxelSpace m_voxels = GameEngine::VoxelSpace(100, 10);	// voxel modelization of the level
+	GameEngine::VoxelSpace m_voxels = GameEngine::VoxelSpace(100, 9);	// voxel modelization of the level
 
 	glm::vec3 m_skyTexture;						// Identify texture for sectors FLAGS1 = 1
 	float m_skyAltitude=0;						
@@ -74,7 +74,7 @@ class dfLevel : public GameEngine::Level
 	void voxelisation(void);									// convert the dfSectors into a volume space
 public:
 	dfLevel(dfFileSystem* fs, std::string file);
-	dfSector* findSector(const glm::vec3& position);			// find sector by GL coordinate
+	dfSector* findSector(const glm::vec3& position, gaEntity* source);			// find sector by GL coordinate
 	dfSector* findSector(char *name);							// find sector by name
 	dfSector* findSector(const std::string& name);				// find sector by name
 	dfSector* findSectorLVL(const glm::vec3& level_position);	// find sector by level coordinate

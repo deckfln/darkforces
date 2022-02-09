@@ -212,7 +212,7 @@ void DarkForces::Component::Actor::dispatchMessage(gaMessage* message)
 
 		// identity the DF sector and trigger enter/leave if changing
 		if (message->m_extra == nullptr) {
-			dfSector* current = m_level->findSector(m_entity->position());
+			dfSector* current = m_level->findSector(m_entity->position(), m_entity);
 			if (current != m_currentSector) {
 				if (m_currentSector != nullptr) {
 					m_entity->sendMessage(m_currentSector->name(), DarkForces::Message::EVENT, DarkForces::MessageEvent::LEAVE_SECTOR);

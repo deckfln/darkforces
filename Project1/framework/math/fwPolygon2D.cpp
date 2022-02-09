@@ -65,8 +65,8 @@ bool Framework::Primitive::Polygon2D::isPointInside(const glm::vec2& p)
 	// finish with the external line
 	for (size_t i = 0, j = m_points.size() - 1; i < m_points.size(); j = i++)
 	{
-		if ((m_points[i].y > p.y) != (m_points[j].y >= p.y) &&
-			p.x <= (m_points[j].x - m_points[i].x) * (p.y - m_points[i].y) / (m_points[j].y - m_points[i].y) + m_points[i].x)
+		if ((m_points[i].y > p.y) != (m_points[j].y > p.y) &&
+			p.x < (m_points[j].x - m_points[i].x) * (p.y - m_points[i].y) / (m_points[j].y - m_points[i].y) + m_points[i].x)
 		{
 			inside = !inside;
 		}

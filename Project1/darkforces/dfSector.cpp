@@ -12,6 +12,7 @@
 
 #include "../framework/math/fwCylinder.h"
 #include "../framework/fwCollision.h"
+#include "../framework/geometries/fwBoxGeometry.h"
 
 #include "../gaEngine/gaCollisionPoint.h"
 #include "../gaEngine/World.h"
@@ -427,7 +428,15 @@ void dfSector::addObject(dfMesh* object)
  */
 bool dfSector::isPointInside(const glm::vec3& p)
 {
-	return isPointInside(p, true);
+	if (m_2Dpolygon.isPointInside(glm::vec2(p.x, p.z))) {
+		float floor = m_staticMeshFloorAltitude / 10.0f;
+		float ceiling = m_staticMeshCeilingAltitude / 10.0f;
+		if (p.y >= floor && p.y <= ceiling) {
+			return true;
+		}
+	}
+
+	return false;
 }
 
 bool dfSector::isPointInside(const glm::vec3 &p, bool fullTest)
@@ -468,8 +477,8 @@ bool dfSector::isPointInside(const glm::vec3 &p, bool fullTest)
 	std::vector<Point>& outline = m_polygons_vertices[0];
 	for (unsigned int i = 0, j = outline.size() - 1; i < outline.size(); j = i++)
 	{
-		if ((outline[i][1] > level_p.y) != (outline[j][1] >= level_p.y) &&
-			level_p.x <= (outline[j][0] - outline[i][0]) * (level_p.y - outline[i][1]) / (outline[j][1] - outline[i][1]) + outline[i][0])
+		if ((outline[i][1] > level_p.y) != (outline[j][1] > level_p.y) &&
+			level_p.x < (outline[j][0] - outline[i][0]) * (level_p.y - outline[i][1]) / (outline[j][1] - outline[i][1]) + outline[i][0])
 		{
 			inside = !inside;
 		}
@@ -1009,13 +1018,26 @@ void dfSector::voxelisation(GameEngine::VoxelSpace& voxels)
 {
 	glm::vec3 p;
 
-	for (float x = m_worldAABB.m_p.x; x < m_worldAABB.m_p1.x; x += 0.125f) {
-		for (float y = m_worldAABB.m_p.y; y < m_worldAABB.m_p1.y; y += 0.125f) {
-			for (float z = m_worldAABB.m_p.z; z < m_worldAABB.m_p1.z; z += 0.125f) {
+	static glm::vec4 white(1.0, 0.0, 1.0, 1.0);
+	static fwMaterialBasic material(&white);
+	static fwBoxGeometry cube;
+	static fwMesh probe(&cube, &material);
+	fwMesh* clone;
+
+	for (float x = m_worldAABB.m_p.x; x < m_worldAABB.m_p1.x; x += 0.25f) {
+		for (float y = m_worldAABB.m_p.y; y < m_worldAABB.m_p1.y; y += 0.25f) {
+			for (float z = m_worldAABB.m_p.z; z < m_worldAABB.m_p1.z; z += 0.25f) {
 				p.x = x;
 				p.y = y;
 				p.z = z;
+
 				if (isPointInside(p)) {
+/*
+					clone = probe.clone();
+					clone->translate(p);
+					clone->set_scale(0.01);
+					g_gaWorld.add2scene(clone);
+*/
 					voxels.add(p, this);
 				}
 			}

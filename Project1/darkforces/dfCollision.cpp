@@ -15,7 +15,7 @@ float dfCollision::ground(glm::vec3& position)
 	assert(m_level != nullptr);
 
 	// find the sector of the position
-	dfSector* currentSector = m_level->findSector(position);
+	dfSector* currentSector = m_level->findSector(position, nullptr);
 	if (currentSector) {
 		//std::cout << currentSector->m_id << " " << currentSector->m_floorAltitude << std::endl;
 		// TODO where should the conversion from level space to opengl space take place

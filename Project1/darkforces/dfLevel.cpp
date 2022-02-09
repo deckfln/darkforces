@@ -434,7 +434,7 @@ void dfLevel::voxelisation(void)
 {
 	// load all sectors wAABB as volumes in the sound volume
 	for (auto sector : m_sectorsID) {
-//		if (sector->name() == "enthall") {
+//		if (sector->name() == "21") {
 			sector->voxelisation(m_voxels);
 //		}
 	}
@@ -445,9 +445,11 @@ void dfLevel::voxelisation(void)
 /**
  * return the sector fitting the GL position
  */
-dfSector* dfLevel::findSector(const glm::vec3& position)
+dfSector* dfLevel::findSector(const glm::vec3& position, gaEntity* source)
 {
 	dfSector* sector;
+	dfSector* sector1;
+	
 	// std::cout << position.x << ":" << position.y << ":" << position.z << std::endl;
 
 	// position is in opengl space
@@ -479,6 +481,12 @@ dfSector* dfLevel::findSector(const glm::vec3& position)
 		sector = ssector->findDFSector(position);
 
 		if (sector) {
+//			if (source->name() == "OFFCFIN.WAX(1)") {
+				sector1 = (dfSector*)m_voxels.find(position);
+				if (sector != sector1) {
+					__debugbreak();
+				}
+//			}
 			if (m_lastSector) {
 				m_lastSector->event(DarkForces::MessageEvent::LEAVE_SECTOR);
 			}
