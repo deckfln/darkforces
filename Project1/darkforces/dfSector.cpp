@@ -428,10 +428,11 @@ void dfSector::addObject(dfMesh* object)
  */
 bool dfSector::isPointInside(const glm::vec3& p)
 {
-	if (m_2Dpolygon.isPointInside(glm::vec2(p.x, p.z))) {
-		float floor = m_staticMeshFloorAltitude / 10.0f;
-		float ceiling = m_staticMeshCeilingAltitude / 10.0f;
-		if (p.y >= floor && p.y <= ceiling) {
+	float floor = m_staticMeshFloorAltitude / 10.0f;
+	float ceiling = m_staticMeshCeilingAltitude / 10.0f;
+
+	if (p.y >= floor && p.y <= ceiling) {
+		if (m_2Dpolygon.isPointInside(glm::vec2(p.x, p.z))) {
 			return true;
 		}
 	}
@@ -1014,7 +1015,7 @@ void dfSector::buildGeometry(dfMesh* mesh, dfWallFlag displayPolygon)
 /**
  * voxelize the current sector
  */
-void dfSector::voxelisation(GameEngine::VoxelSpace& voxels)
+void dfSector::voxelisation(GameEngine::VoxelSpace<dfSector*>& voxels)
 {
 	glm::vec3 p;
 

@@ -9,11 +9,12 @@
 /**
  *
  */
-int32_t GameEngine::VoxelSpace::allocate(const glm::vec3& pmin, const glm::vec3& pmax, uint32_t level)
+template <class T>
+int32_t GameEngine::VoxelSpace<T>::allocate(const glm::vec3& pmin, const glm::vec3& pmax, uint32_t level)
 {
 	int32_t voxel = -1;
 	if (m_freeList == -1) {
-		m_voxels.push_back(Voxel(pmin, pmax, level));
+		m_voxels.push_back(Voxel<T>(pmin, pmax, level));
 		voxel = m_voxels.size() - 1;
 	}
 	else {
@@ -28,7 +29,8 @@ int32_t GameEngine::VoxelSpace::allocate(const glm::vec3& pmin, const glm::vec3&
 /**
  *
  */
-void GameEngine::VoxelSpace::release(int32_t voxel)
+template <class T>
+void GameEngine::VoxelSpace<T>::release(int32_t voxel)
 {
 	m_voxels[voxel].m_nextBlock = m_freeList;
 	m_voxels[voxel].m_object = nullptr;
@@ -38,11 +40,12 @@ void GameEngine::VoxelSpace::release(int32_t voxel)
 /**
  *
  */
-void GameEngine::VoxelSpace::split(uint32_t current)
+template <class T>
+void GameEngine::VoxelSpace<T>::split(uint32_t current)
 {
 	glm::vec3 pmin, pmax;
 
-	GameEngine::Voxel& voxel = m_voxels[current];
+	GameEngine::Voxel<T>& voxel = m_voxels[current];
 
 	pmin = voxel.m_aabb.m_center;
 	pmax = voxel.m_aabb.m_p1;
@@ -90,9 +93,10 @@ void GameEngine::VoxelSpace::split(uint32_t current)
 /**
  *
  */
-void GameEngine::VoxelSpace::merge(int32_t voxel)
+template <class T>
+void GameEngine::VoxelSpace<T>::merge(int32_t voxel)
 {
-	void *object = m_voxels[m_voxels[voxel].m_blocks[0]].m_object;
+	T object = m_voxels[m_voxels[voxel].m_blocks[0]].m_object;
 	for (uint32_t i = 0; i < 8; i++) {
 		release(m_voxels[voxel].m_blocks[i]);
 	}
@@ -105,19 +109,21 @@ void GameEngine::VoxelSpace::merge(int32_t voxel)
 /**
  *
  */
-GameEngine::VoxelSpace::VoxelSpace(int32_t extend, uint32_t depth) :
+template <class T>
+GameEngine::VoxelSpace<T>::VoxelSpace(int32_t extend, uint32_t depth) :
 	m_depth(depth)
 {
 	const glm::vec3 pmin(-extend, -extend, -extend);
 	const glm::vec3 pmax(extend, extend, extend);
 
-	m_voxels.push_back(Voxel(pmin, pmax, 0));
+	m_voxels.push_back(Voxel<T>(pmin, pmax, 0));
 }
 
 /**
  *
  */
-void GameEngine::VoxelSpace::add(const glm::vec3& p, void* object)
+template <class T>
+void GameEngine::VoxelSpace<T>::add(const glm::vec3& p, T object)
 {
 	int32_t current = 0;
 	int32_t child = -1;
@@ -125,7 +131,7 @@ void GameEngine::VoxelSpace::add(const glm::vec3& p, void* object)
 	uint32_t depth = 0;
 
 	while (depth < m_depth) {
-		GameEngine::Voxel& pvoxel = m_voxels[current];
+		GameEngine::Voxel<T>& pvoxel = m_voxels[current];
 
 		history.push(current);
 
@@ -195,7 +201,7 @@ void GameEngine::VoxelSpace::add(const glm::vec3& p, void* object)
 		//        \! 6 ! 2 +
 		//         +---+---+
 		glm::vec3 pmin, pmax;
-		Voxel* voxel = nullptr;
+		Voxel<T>* voxel = nullptr;
 		if (m_voxels[current].m_blocks[index] == -1) {
 			switch (index) {
 			case 0:
@@ -272,14 +278,15 @@ void GameEngine::VoxelSpace::add(const glm::vec3& p, void* object)
 /**
  *
  */
-void* GameEngine::VoxelSpace::find(const glm::vec3& p)
+template <class T>
+void* GameEngine::VoxelSpace<T>::find(const glm::vec3& p)
 {
 	int32_t current = 0;
 	uint32_t depth = 0;
 	uint32_t index;
 
 	while (current >= 0 && depth <= m_depth) {
-		GameEngine::Voxel& voxel = m_voxels[current];
+		GameEngine::Voxel<T>& voxel = m_voxels[current];
 		/*
 		if (!voxel.m_aabb.inside(p)) {
 			__debugbreak();
@@ -347,7 +354,8 @@ void* GameEngine::VoxelSpace::find(const glm::vec3& p)
 
 #include "../darkforces/dfSector.h"
 
-void GameEngine::VoxelSpace::debug(void)
+template <class T>
+void GameEngine::VoxelSpace<T>::debug(void)
 {
 	size_t free = 0;
 	int32_t c = m_freeList;

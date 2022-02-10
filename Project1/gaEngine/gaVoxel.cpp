@@ -3,7 +3,8 @@
 /**
  *
  */
-GameEngine::Voxel::Voxel(const glm::vec3& pmin, const glm::vec3& pmax, uint32_t level):
+template <class T>
+GameEngine::Voxel<T>::Voxel(const glm::vec3& pmin, const glm::vec3& pmax, uint32_t level):
 	m_level(level)
 {
 	m_aabb.set(pmin, pmax);
@@ -12,7 +13,8 @@ GameEngine::Voxel::Voxel(const glm::vec3& pmin, const glm::vec3& pmax, uint32_t 
 /**
  *
  */
-void GameEngine::Voxel::set(const glm::vec3& pmin, const glm::vec3& pmax, uint32_t level)
+template <class T>
+void GameEngine::Voxel<T>::set(const glm::vec3& pmin, const glm::vec3& pmax, uint32_t level)
 {
 	m_level = level;
 	m_aabb.set(pmin, pmax);

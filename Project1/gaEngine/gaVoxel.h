@@ -4,8 +4,10 @@
 
 namespace GameEngine
 {
+	template <class T>
 	class VoxelSpace;
 
+	template <typename T>
 	class Voxel
 	{
 		int32_t m_nextBlock = -1;
@@ -13,12 +15,12 @@ namespace GameEngine
 #ifdef _DEBUG
 		fwAABBox m_aabb;
 #endif
-		void* m_object = nullptr;
+		T m_object;
 
 		// 8 subblocks, by default all empty
 		int32_t m_blocks[8] = {-1, -1, -1, -1, -1, -1, -1, -1};
 
-		friend GameEngine::VoxelSpace;
+		friend GameEngine::VoxelSpace<T>;
 
 	public:
 		Voxel(void) {};

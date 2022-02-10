@@ -219,7 +219,7 @@ public:
 
 	void changeAmbient(float ambient);
 	void buildGeometry(dfMesh *mesh, dfWallFlag);
-	void voxelisation(GameEngine::VoxelSpace& voxels);				// voxelize the current sector
+	void voxelisation(GameEngine::VoxelSpace<dfSector*>& voxels);				// voxelize the current sector
 
 	bool visible(void);
 	void addProgram(DarkForces::Component::InfStandardTrigger*);	// register a INF trigger standard on the sector

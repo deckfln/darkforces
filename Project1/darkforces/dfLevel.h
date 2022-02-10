@@ -12,6 +12,7 @@
 
 #include "../gaEngine/gaLevel.h"
 #include "../gaEngine/gaVoxelSpace.h"
+#include "../gaEngine/gaVoxelSpace.cpp"
 
 #include "dfSector.h"
 #include "dfSuperSector.h"
@@ -40,7 +41,7 @@ class dfLevel : public GameEngine::Level
 	std::vector<dfSector*> m_sectorsID;			// all sectors of the level by ID
 	std::vector<dfBitmap*> m_bitmaps;			// all textures of the level
 
-	GameEngine::VoxelSpace m_voxels = GameEngine::VoxelSpace(100, 9);	// voxel modelization of the level
+	GameEngine::VoxelSpace<dfSector*> m_voxels = GameEngine::VoxelSpace<dfSector *>(100, 9);	// voxel modelization of the level
 
 	glm::vec3 m_skyTexture;						// Identify texture for sectors FLAGS1 = 1
 	float m_skyAltitude=0;						
