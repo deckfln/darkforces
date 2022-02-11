@@ -1023,7 +1023,7 @@ void dfSector::voxelisation(GameEngine::VoxelSpace<dfSector*>& voxels)
 	static fwMaterialBasic material(&white);
 	static fwBoxGeometry cube;
 	static fwMesh probe(&cube, &material);
-	fwMesh* clone;
+	//fwMesh* clone;
 
 	for (float x = m_worldAABB.m_p.x; x < m_worldAABB.m_p1.x; x += 0.25f) {
 		for (float y = m_worldAABB.m_p.y; y < m_worldAABB.m_p1.y; y += 0.25f) {

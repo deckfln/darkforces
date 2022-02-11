@@ -263,10 +263,19 @@ void GameEngine::VoxelSpace<T>::add(const glm::vec3& p, T object)
 		history.pop();
 
 		uint32_t count = 0;
+		bool found = false;
+		T value;
+
 		for (uint32_t i = 0; i < 8; i++) {
-			if (m_voxels[current].m_blocks[i] != -1 && m_voxels[m_voxels[current].m_blocks[i]].m_object != nullptr) {
-				count++;
-			}
+			if (m_voxels[current].m_blocks[i] != -1) {
+				if (!found) {
+					found = true;
+					value = m_voxels[current].m_blocks[i].m_object;
+				}
+				if (m_voxels[m_voxels[current].m_blocks[i]].m_object == value) {
+					count++;
+				}
+			} 
 		}
 
 		if (count == 8) {
