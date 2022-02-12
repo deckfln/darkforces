@@ -434,7 +434,7 @@ void dfLevel::voxelisation(void)
 {
 	// load all sectors wAABB as volumes in the sound volume
 	for (auto sector : m_sectorsID) {
-//		if (sector->name() == "21") {
+//		if (sector->name() == "enthall") {
 			sector->voxelisation(m_voxels);
 //		}
 	}
@@ -482,10 +482,10 @@ dfSector* dfLevel::findSector(const glm::vec3& position, gaEntity* source)
 
 		if (sector) {
 //			if (source->name() == "OFFCFIN.WAX(1)") {
-				sector1 = (dfSector*)m_voxels.find(position);
-				if (sector != sector1) {
-					__debugbreak();
-				}
+//				sector1 = (dfSector*)m_voxels.find(position);
+//				if (sector != sector1) {
+//					__debugbreak();
+//				}
 //			}
 			if (m_lastSector) {
 				m_lastSector->event(DarkForces::MessageEvent::LEAVE_SECTOR);
