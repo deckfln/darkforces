@@ -72,45 +72,47 @@ void GameEngine::VoxelSpace<T>::split(uint32_t current)
 {
 	glm::vec3 pmin, pmax;
 	GameEngine::Voxel<T>& voxel = m_voxels[current];
+	const fwAABBox& aabb = voxel.m_aabb;
+
 	uint32_t l = 0;// voxel.m_level;
 
-	pmin = voxel.m_aabb.m_center;
-	pmax = voxel.m_aabb.m_p1;
+	pmin = aabb.m_center;
+	pmax = aabb.m_p1;
 	voxel.m_blocks[0] = allocate(pmin, pmax, 0);
 	m_voxels[voxel.m_blocks[0]].m_object = voxel.m_object;
 
-	pmin = glm::vec3(voxel.m_aabb.m_center.x, voxel.m_aabb.m_center.y, voxel.m_aabb.m_p.z);
-	pmax = glm::vec3(voxel.m_aabb.m_p1.x, voxel.m_aabb.m_p1.y, voxel.m_aabb.m_center.z);
+	pmin = glm::vec3(aabb.m_center.x, aabb.m_center.y, aabb.m_p.z);
+	pmax = glm::vec3(aabb.m_p1.x, aabb.m_p1.y, aabb.m_center.z);
 	voxel.m_blocks[1] = allocate(pmin, pmax, l);
 	m_voxels[voxel.m_blocks[1]].m_object = voxel.m_object;
 
-	pmin = glm::vec3(voxel.m_aabb.m_center.x, voxel.m_aabb.m_p.y, voxel.m_aabb.m_center.z);
-	pmax = glm::vec3(voxel.m_aabb.m_p1.x, voxel.m_aabb.m_center.y, voxel.m_aabb.m_p1.z);
+	pmin = glm::vec3(aabb.m_center.x, aabb.m_p.y, aabb.m_center.z);
+	pmax = glm::vec3(aabb.m_p1.x, aabb.m_center.y, aabb.m_p1.z);
 	voxel.m_blocks[2] = allocate(pmin, pmax, l);
 	m_voxels[voxel.m_blocks[2]].m_object = voxel.m_object;
 
-	pmin = glm::vec3(voxel.m_aabb.m_center.x, voxel.m_aabb.m_p.y, voxel.m_aabb.m_p.z);
-	pmax = glm::vec3(voxel.m_aabb.m_p1.x, voxel.m_aabb.m_center.y, voxel.m_aabb.m_center.z);
+	pmin = glm::vec3(aabb.m_center.x, aabb.m_p.y, aabb.m_p.z);
+	pmax = glm::vec3(aabb.m_p1.x, aabb.m_center.y, aabb.m_center.z);
 	voxel.m_blocks[3] = allocate(pmin, pmax, l);
 	m_voxels[voxel.m_blocks[3]].m_object = voxel.m_object;
 
-	pmin = glm::vec3(voxel.m_aabb.m_p.x, voxel.m_aabb.m_center.y, voxel.m_aabb.m_center.z);
-	pmax = glm::vec3(voxel.m_aabb.m_center.x, voxel.m_aabb.m_p1.y, voxel.m_aabb.m_p1.z);
+	pmin = glm::vec3(aabb.m_p.x, aabb.m_center.y, aabb.m_center.z);
+	pmax = glm::vec3(aabb.m_center.x, aabb.m_p1.y, aabb.m_p1.z);
 	voxel.m_blocks[4] = allocate(pmin, pmax, l);
 	m_voxels[voxel.m_blocks[4]].m_object = voxel.m_object;
 
-	pmin = glm::vec3(voxel.m_aabb.m_p.x, voxel.m_aabb.m_center.y, voxel.m_aabb.m_p.z);
-	pmax = glm::vec3(voxel.m_aabb.m_center.x, voxel.m_aabb.m_p1.y, voxel.m_aabb.m_center.z);
+	pmin = glm::vec3(aabb.m_p.x, aabb.m_center.y, aabb.m_p.z);
+	pmax = glm::vec3(aabb.m_center.x, aabb.m_p1.y, aabb.m_center.z);
 	voxel.m_blocks[5] = allocate(pmin, pmax, l);
 	m_voxels[voxel.m_blocks[5]].m_object = voxel.m_object;
 
-	pmin = glm::vec3(voxel.m_aabb.m_p.x, voxel.m_aabb.m_p.y, voxel.m_aabb.m_center.z);
-	pmax = glm::vec3(voxel.m_aabb.m_center.x, voxel.m_aabb.m_center.y, voxel.m_aabb.m_p1.z);
+	pmin = glm::vec3(aabb.m_p.x, aabb.m_p.y, aabb.m_center.z);
+	pmax = glm::vec3(aabb.m_center.x, aabb.m_center.y, aabb.m_p1.z);
 	voxel.m_blocks[6] = allocate(pmin, pmax, l);
 	m_voxels[voxel.m_blocks[6]].m_object = voxel.m_object;
 
-	pmin = glm::vec3(voxel.m_aabb.m_p.x, voxel.m_aabb.m_p.y, voxel.m_aabb.m_p.z);
-	pmax = glm::vec3(voxel.m_aabb.m_center.x, voxel.m_aabb.m_center.y, voxel.m_aabb.m_center.z);
+	pmin = glm::vec3(aabb.m_p.x, aabb.m_p.y, aabb.m_p.z);
+	pmax = glm::vec3(aabb.m_center.x, aabb.m_center.y, aabb.m_center.z);
 	voxel.m_blocks[7] = allocate(pmin, pmax, l);
 	m_voxels[voxel.m_blocks[7]].m_object = voxel.m_object;
 

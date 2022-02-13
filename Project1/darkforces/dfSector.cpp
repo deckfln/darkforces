@@ -1025,6 +1025,7 @@ void dfSector::voxelisation(GameEngine::VoxelSpace<dfSector*>& voxels)
 	static fwMesh probe(&cube, &material);
 	//fwMesh* clone;
 
+	// build by running around the lines
 	for (float x = m_worldAABB.m_p.x; x < m_worldAABB.m_p1.x; x += 0.25f) {
 		for (float y = m_worldAABB.m_p.y; y < m_worldAABB.m_p1.y; y += 0.25f) {
 			for (float z = m_worldAABB.m_p.z; z < m_worldAABB.m_p1.z; z += 0.25f) {
