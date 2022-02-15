@@ -4,6 +4,8 @@
 #include <stack>
 #include "gaVoxel.h"
 
+class dfSector;
+
 namespace GameEngine {
 	class Octree {
 		struct node {
@@ -12,7 +14,7 @@ namespace GameEngine {
 #ifdef _DEBUG
 			fwAABBox m_aabb;
 #endif
-			std::vector<void*> m_objects;
+			std::vector<dfSector*> m_objects;
 
 			// 8 subblocks, by default all empty
 			int32_t m_blocks[8] = { -1, -1, -1, -1, -1, -1, -1, -1 };
@@ -37,7 +39,7 @@ namespace GameEngine {
 
 		void mqueue(
 			uint32_t depth,
-			fwAABBox& object,
+			dfSector* object,
 			fwAABBox& subtree,
 			glm::vec3& pmin,
 			glm::vec3& pmax,
@@ -51,8 +53,8 @@ namespace GameEngine {
 	public:
 		Octree(int32_t extend, uint32_t depth);
 
-		void add(fwAABBox& aabb, void* object);
-		const std::vector<void*>& find(const glm::vec3& p);
+		void add(fwAABBox& aabb, dfSector* object);
+		const std::vector<dfSector*>& find(const glm::vec3& p);
 		void compress(void);
 #ifdef _DEBUG
 		void debug(void);

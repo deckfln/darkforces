@@ -1,5 +1,7 @@
 #include "gaOctree.h"
 
+#include "../darkforces/dfSector.h"
+
 GameEngine::Octree::Octree(int32_t extend, uint32_t depth):
 	m_depth(depth)
 {
@@ -16,15 +18,18 @@ GameEngine::Octree::Octree(int32_t extend, uint32_t depth):
  */
 void GameEngine::Octree::mqueue(
 	uint32_t depth,
-	fwAABBox& object, 
+	dfSector* object, 
 	fwAABBox& subtree, 
 	glm::vec3& pmin, 
 	glm::vec3& pmax, 
 	uint32_t currentNode, 
 	uint32_t i)
 {
+	glm::vec3 corner;
 	subtree.set(pmin, pmax);
-	if (object.intersect(subtree)) {
+
+	bool inside = object->AABBcollide(subtree);
+	if (inside) {
 		uint32_t size;
 
 		if (m_quadrant[currentNode].m_blocks[i] == -1) {
@@ -49,7 +54,7 @@ void GameEngine::Octree::mqueue(
  */
 void GameEngine::Octree::merge(int32_t current)
 {
-	std::vector<void*> objects = m_quadrant[m_quadrant[current].m_blocks[0]].m_objects;
+	std::vector<dfSector*> objects = m_quadrant[m_quadrant[current].m_blocks[0]].m_objects;
 	for (uint32_t i = 0; i < 8; i++) {
 		release(m_quadrant[current].m_blocks[i]);
 	}
@@ -73,7 +78,7 @@ void GameEngine::Octree::release(int32_t index)
 /**
  *
  */
-void GameEngine::Octree::add(fwAABBox& aabb, void* object)
+void GameEngine::Octree::add(fwAABBox& aabb, dfSector* object)
 {
 	int32_t current = 0;
 	int32_t child = -1;
@@ -105,35 +110,35 @@ void GameEngine::Octree::add(fwAABBox& aabb, void* object)
 			// check against sub-quadrant 0,0
 			pmin = cAABB.m_center;
 			pmax = cAABB.m_p1;
-			mqueue(depth + 1, aabb, subtree, pmin, pmax, current, 0);
+			mqueue(depth + 1, object, subtree, pmin, pmax, current, 0);
 
 			pmin = glm::vec3(cAABB.m_center.x, cAABB.m_center.y, cAABB.m_p.z);
 			pmax = glm::vec3(cAABB.m_p1.x, cAABB.m_p1.y, cAABB.m_center.z);
-			mqueue(depth + 1, aabb, subtree, pmin, pmax, current, 1);
+			mqueue(depth + 1, object, subtree, pmin, pmax, current, 1);
 
 			pmin = glm::vec3(cAABB.m_center.x, cAABB.m_p.y, cAABB.m_center.z);
 			pmax = glm::vec3(cAABB.m_p1.x, cAABB.m_center.y, cAABB.m_p1.z);
-			mqueue(depth + 1, aabb, subtree, pmin, pmax, current, 2);
+			mqueue(depth + 1, object, subtree, pmin, pmax, current, 2);
 
 			pmin = glm::vec3(cAABB.m_center.x, cAABB.m_p.y, cAABB.m_p.z);
 			pmax = glm::vec3(cAABB.m_p1.x, cAABB.m_center.y, cAABB.m_center.z);
-			mqueue(depth + 1, aabb, subtree, pmin, pmax, current, 3);
+			mqueue(depth + 1, object, subtree, pmin, pmax, current, 3);
 
 			pmin = glm::vec3(cAABB.m_p.x, cAABB.m_center.y, cAABB.m_center.z);
 			pmax = glm::vec3(cAABB.m_center.x, cAABB.m_p1.y, cAABB.m_p1.z);
-			mqueue(depth + 1, aabb, subtree, pmin, pmax, current, 4);
+			mqueue(depth + 1, object, subtree, pmin, pmax, current, 4);
 
 			pmin = glm::vec3(cAABB.m_p.x, cAABB.m_center.y, cAABB.m_p.z);
 			pmax = glm::vec3(cAABB.m_center.x, cAABB.m_p1.y, cAABB.m_center.z);
-			mqueue(depth + 1, aabb, subtree, pmin, pmax, current, 5);
+			mqueue(depth + 1, object, subtree, pmin, pmax, current, 5);
 
 			pmin = glm::vec3(cAABB.m_p.x, cAABB.m_p.y, cAABB.m_center.z);
 			pmax = glm::vec3(cAABB.m_center.x, cAABB.m_center.y, cAABB.m_p1.z);
-			mqueue(depth + 1, aabb, subtree, pmin, pmax, current, 6);
+			mqueue(depth + 1, object, subtree, pmin, pmax, current, 6);
 
 			pmin = glm::vec3(cAABB.m_p.x, cAABB.m_p.y, cAABB.m_p.z);
 			pmax = glm::vec3(cAABB.m_center.x, cAABB.m_center.y, cAABB.m_center.z);
-			mqueue(depth + 1, aabb, subtree, pmin, pmax, current, 7);
+			mqueue(depth + 1, object, subtree, pmin, pmax, current, 7);
 		}
 	}
 }
@@ -173,7 +178,7 @@ void GameEngine::Octree::compress(void)
 		// if all 8 subblocks have the same value merge them together upward
 		uint32_t count = 0;
 		bool found = false;
-		std::vector<void*> value;
+		std::vector<dfSector*> value;
 
 		if (node.m_blocks[0] != -1) {
 			value = m_quadrant[node.m_blocks[0]].m_objects;
@@ -201,7 +206,7 @@ void GameEngine::Octree::compress(void)
 /**
  *
  */
-const std::vector<void*>& GameEngine::Octree::find(const glm::vec3& p)
+const std::vector<dfSector*>& GameEngine::Octree::find(const glm::vec3& p)
 {
 	int32_t current = 0;
 	uint32_t depth = 0;
@@ -260,7 +265,7 @@ const std::vector<void*>& GameEngine::Octree::find(const glm::vec3& p)
 		current = cNode.m_blocks[index];
 	}
 
-	static std::vector<void*> empty;
+	static std::vector<dfSector*> empty;
 	return empty;
 }
 
@@ -283,6 +288,7 @@ void GameEngine::Octree::debug(void)
 		current = list.top();
 		list.pop();
 		node& node = m_quadrant[current];
+//		g_gaBoundingBoxes.add(&node.m_aabb);
 
 		if (node.m_objects.size() > 0) {
 			/*

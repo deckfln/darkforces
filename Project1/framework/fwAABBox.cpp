@@ -423,7 +423,7 @@ bool fwAABBox::inside(const glm::vec3& position)
 /**
  * If the current AABB is completely inside the given AABB
  */
-bool fwAABBox::inside(fwAABBox& box)
+bool fwAABBox::inside(const fwAABBox& box)
 {
 	// using 6 splitting planes to rule out intersections.
 	return (m_p.x >= box.m_p.x && m_p1.x < box.m_p1.x &&

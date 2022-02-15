@@ -71,7 +71,7 @@ public:
 
 	fwAABBox& multiplyBy(float v);
 	bool inside(const glm::vec3& position);
-	bool inside(fwAABBox& box);
+	bool inside(const fwAABBox& box);
 	bool isAbove(const fwAABBox& box);
 	bool not_init(void);
 

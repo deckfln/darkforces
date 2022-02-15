@@ -172,6 +172,15 @@ bool Framework::AABBox2D::inside(const glm::vec2& p)
 }
 
 /**
+ * is "this" inside "box"
+ */
+bool Framework::AABBox2D::inside(const AABBox2D& box)
+{
+	return (m_p.x >= box.m_p.x && m_p1.x < box.m_p1.x&&
+		m_p.y >= box.m_p.y && m_p1.y <= box.m_p1.y);
+}
+
+/**
  * extend the AABB using the point
  */
 void Framework::AABBox2D::extend(const glm::vec2& p)

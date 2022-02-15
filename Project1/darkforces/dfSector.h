@@ -158,6 +158,7 @@ public:
 
 	bool inAABBox(const glm::vec3& position);						// quick test point inside AABB
 	bool collideAABB(const fwAABBox& box);							// quick test to find AABB collision
+	bool AABBcollide(const fwAABBox& box);							// if the AABB collide with the sector
 
 	// overriden function
 	bool isPointInside(const glm::vec3& position) override;

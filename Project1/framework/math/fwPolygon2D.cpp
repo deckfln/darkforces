@@ -1,5 +1,7 @@
 #include "fwPolygon2D.h"
 
+#include "fwSegment2D.h"
+
 Framework::Primitive::Polygon2D::Polygon2D(void)
 {
 }
@@ -73,6 +75,112 @@ bool Framework::Primitive::Polygon2D::isPointInside(const glm::vec2& p)
 	}
 
 	return inside;
+}
+
+/**
+ * if the given segment intersect with any of the outter polyline
+ */
+bool Framework::Primitive::Polygon2D::intersect(Framework::Segment2D& seg)
+{
+	Segment2D line;
+	glm::vec2 p;
+
+	for (size_t i = 0; i < m_points.size() - 1; i++)
+	{
+		line.set(m_points[i], m_points[i + 1]);
+		if (line.intersect(seg, p)) {
+			return true;
+		}
+	}
+	return false;
+}
+
+/**
+ * fwAABBox2D
+ */
+bool Framework::Primitive::Polygon2D::AABBcollide(AABBox2D& aabb)
+{
+	if (m_aabb.inside(aabb)) {
+		return true;
+	}
+
+	if (!aabb.intersect(m_aabb)) {
+		return false;
+	}
+	/*
+	printf("polyline\n");
+	for (size_t i = 0; i < m_points.size() - 1; i++) {
+		printf("%.2f,%.2f,\n", m_points[i].x, m_points[i].y);
+	}
+	*/
+/*
+	printf("box\n");
+	printf("%.2f,%.2f,%.2f,%.2f,\n", aabb.min().x, aabb.min().y, aabb.max().x, aabb.max().y);
+*/
+	bool inside = false;
+	const glm::vec2& pmin = aabb.min();
+	const glm::vec2& pmax = aabb.max();
+
+
+	// quicktest2: if any of the 4 flat corners are inside the 2D polygon
+	glm::vec2 corner(pmin.x, pmin.y);
+	if (isPointInside(corner)) {
+		return true;
+	}
+	else {
+		corner.x = pmax.x;
+		if (isPointInside(corner)) {
+			return true;
+		}
+		else {
+			corner.y = pmax.y;
+			if (isPointInside(corner)) {
+				return true;
+			}
+			else {
+				corner.x = pmin.x;
+				if (isPointInside(corner)) {
+					return true;
+				}
+			}
+		}
+	}
+
+	// if no corner is inside the 2D poliygon, check if the 2D aabb cross any of the polylines
+	if (!inside) {
+		glm::vec2 p0(pmin.x, pmin.y);
+		glm::vec2 p1(pmax.x, pmin.y);
+		glm::vec2 p;
+
+		Segment2D border(p0, p1);
+
+		if (intersect(border)) {
+			return true;
+		}
+
+		p0 = p1;
+		p1.x = pmax.x; p1.y = pmax.y;
+		border.set(p0, p1);
+		if (intersect(border)) {
+			return true;
+		}
+
+		p0 = p1;
+		p1.x = pmin.x; p1.y = pmax.y;
+		border.set(p0, p1);
+		if (intersect(border)) {
+			return true;
+		}
+
+		p0 = p1;
+		p1.x = pmin.x; p1.y = pmin.y;
+		border.set(p0, p1);
+		if (intersect(border)) {
+			return true;
+		}
+	}
+
+	return false;
 }
 
 /**

@@ -428,8 +428,8 @@ void dfSector::addObject(dfMesh* object)
  */
 bool dfSector::isPointInside(const glm::vec3& p)
 {
-	float floor = m_staticMeshFloorAltitude / 10.0f;
-	float ceiling = m_staticMeshCeilingAltitude / 10.0f;
+	float floor = m_staticMeshFloorAltitude / 10.0f - FLT_EPSILON;
+	float ceiling = m_staticMeshCeilingAltitude / 10.0f + FLT_EPSILON;
 
 	if (p.y >= floor && p.y <= ceiling) {
 		if (m_2Dpolygon.isPointInside(glm::vec2(p.x, p.z))) {
@@ -699,11 +699,11 @@ bool dfSector::inAABBox(const glm::vec3& position)
 {
 //	bool b = isPointInside(position, true);
 	bool b1 = false;
+	float floor = m_staticMeshFloorAltitude / 10.0f - FLT_EPSILON;
+	float ceiling = m_staticMeshCeilingAltitude / 10.0f + FLT_EPSILON;
 
-	if (m_2Dpolygon.isPointInside(glm::vec2(position.x, position.z))) {
-		float floor = m_staticMeshFloorAltitude / 10.0f;
-		float ceiling = m_staticMeshCeilingAltitude / 10.0f;
-		if (position.y >= floor && position.y <= ceiling) {
+	if (position.y >= floor && position.y <= ceiling) {
+		if (m_2Dpolygon.isPointInside(glm::vec2(position.x, position.z))) {	
 			b1 = true;
 		}
 	}
@@ -722,6 +722,37 @@ bool dfSector::inAABBox(const glm::vec3& position)
 bool dfSector::collideAABB(const fwAABBox& box)
 {
 	return m_worldAABB.intersect(box);
+}
+
+/**
+ * if the AABB collide with the sector
+ */
+bool dfSector::AABBcollide(const fwAABBox& box)
+{
+	bool inside = false;
+
+	if (m_worldAABB.inside(box)) {
+		return true;
+	}
+
+	if (!m_worldAABB.intersect(box)) {
+		return false;
+	}
+
+	Framework::AABBox2D aabb2D(box.m_p.x, box.m_p.z, box.m_p1.x, box.m_p1.z);
+	inside = m_2Dpolygon.AABBcollide(aabb2D);
+
+	//final test: if a point is inside the 2D polygon, is it in Z
+	if (inside) {
+		float ceiling = m_staticMeshCeilingAltitude / 10.0 + FLT_EPSILON;
+		float floor = m_staticMeshFloorAltitude / 10.0 - FLT_EPSILON;
+
+		if ((box.m_p.y <= ceiling) && (box.m_p1.y >= floor)) {
+			return true;
+		}
+	}
+
+	return false;
 }
 
 /**
