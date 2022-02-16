@@ -77,6 +77,7 @@ public:
 	dfSector* findSector(const glm::vec3& position, gaEntity* source);			// find sector by GL coordinate
 	dfSector* findSector(char *name);							// find sector by name
 	dfSector* findSector(const std::string& name);				// find sector by name
+	dfSector* findSector(const glm::vec3& position);			// find sector by GL coordinate
 	dfSector* findSectorLVL(const glm::vec3& level_position);	// find sector by level coordinate
 
 	void addSkymap(fwScene* scene);

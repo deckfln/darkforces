@@ -21,6 +21,7 @@ namespace DarkForces {
 
 			void onWorldInsert(void);
 			void onWorldRemove(void);
+			void onMove(gaMessage* message);					// change lighting when object moves
 
 		public:
 			Sprite(void);

@@ -62,13 +62,13 @@ bool DarkForces::Component::Sprite::update(glm::vec3* position, glm::vec4* textu
 
 	if (m_dirtyAnimation) {
 		texture->r = (float)m_source->id();
-		texture->a = m_ambient;
 		m_dirtyAnimation = false;
 		updates++;
 	}
 
 	if (m_dirtyPosition) {
 		*position = m_entity->position();
+		texture->a = m_ambient;
 		m_dirtyPosition = false;
 		updates++;
 	}
@@ -95,6 +95,21 @@ void DarkForces::Component::Sprite::onWorldRemove(void)
 }
 
 /**
+ * change lighting when object moves
+ */
+void DarkForces::Component::Sprite::onMove(gaMessage* message)
+{
+	dfSector* currentSector = nullptr;
+	const glm::vec3& p = message->m_v3value;
+
+	currentSector = static_cast<dfLevel*>(g_gaLevel)->findSector(m_entity->position());
+	if (currentSector) {
+		m_ambient = currentSector->m_ambient / 32.0;
+	}
+	m_dirtyPosition = true;
+}
+
+/**
  * Deal with animation messages
  */
 void DarkForces::Component::Sprite::dispatchMessage(gaMessage* message)
@@ -109,7 +124,7 @@ void DarkForces::Component::Sprite::dispatchMessage(gaMessage* message)
 		break;
 
 	case gaMessage::MOVE:
-		m_dirtyPosition = true;
+		onMove(message);
 		break;
 	}
 	gaComponent::dispatchMessage(message);

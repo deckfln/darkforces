@@ -523,6 +523,21 @@ dfSector* dfLevel::findSector(const std::string& name)
 }
 
 /**
+ * find sector by GL coordinate
+ */
+dfSector* dfLevel::findSector(const glm::vec3& position)
+{
+	const std::vector<dfSector*>& sectors = m_octree.find(position);
+	for (auto p : sectors) {
+		if (p->isPointInside(position)) {
+			return p;
+		}
+	}
+
+	return nullptr;
+}
+
+/**
  * Parse all sectors to find the one with the position
  * provided by level space
  */

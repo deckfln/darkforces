@@ -107,7 +107,7 @@ void DarkForces::Enemy::extend(void)
 
 	m_ai.parse("file:DarkForces/AI/Enemy.xml", includes);
 
-	sendInternalMessage(gaMessage::Action::MOVE);
+	sendMessage(gaMessage::Action::MOVE);
 }
 
 /**
