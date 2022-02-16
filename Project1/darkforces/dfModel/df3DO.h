@@ -42,7 +42,7 @@ class df3DO : public dfModel
 
 	fwGeometry* m_geometry = nullptr;
 	fwMesh* m_mesh = nullptr;
-
+	float m_ambient = 1.0;
 	fwMeshRendering m_shading = fwMeshRendering::FW_MESH_TRIANGLES;
 
 	bool m_firstVertex = true;

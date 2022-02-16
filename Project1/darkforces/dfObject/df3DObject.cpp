@@ -15,6 +15,9 @@ void DarkForces::Anim::ThreeD::init(const std::string& model)
 	set_scale(glm::vec3(0.1f));
 
 	tdo->clone(m_componentMesh);
+
+	m_uniformAmbient = new fwUniform("ambient", &m_ambient);
+	m_componentMesh.addUniform(m_uniformAmbient);
 	m_componentMesh.set_scale(0.10f);
 	addComponent(&m_componentMesh);
 
@@ -22,14 +25,48 @@ void DarkForces::Anim::ThreeD::init(const std::string& model)
 	Object::moveTo(m_position_lvl);
 }
 
+/**
+ *
+ */
+void DarkForces::Anim::ThreeD::onMove(gaMessage* message)
+{
+	dfSector* currentSector = nullptr;
+	const glm::vec3& p = message->m_v3value;
+
+	currentSector = static_cast<dfLevel*>(g_gaLevel)->findSector(position());
+	if (currentSector) {
+		m_ambient = currentSector->m_ambient / 32.0;
+	}
+}
+
+/**
+ *
+ */
 DarkForces::Anim::ThreeD::ThreeD(const std::string& model, const glm::vec3& p, float ambient):
 	DarkForces::Object(model, p)
 {
 	init(model);
 }
 
+/**
+ *
+ */
 DarkForces::Anim::ThreeD::ThreeD(const std::string& model, const glm::vec3& p, float ambient, uint32_t objectID) :
 	DarkForces::Object(model, p, objectID)
 {
 	init(model);
+}
+
+/**
+ *
+ */
+void DarkForces::Anim::ThreeD::dispatchMessage(gaMessage* message)
+{
+	switch (message->m_action) {
+	case gaMessage::MOVE:
+		onMove(message);
+		break;
+	}
+
+	Object::dispatchMessage(message);
 }

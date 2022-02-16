@@ -234,6 +234,8 @@ else if (tokens[0] == "SECTOR") {
 	// convert the sectors into a voxel spacevolumes for sound
 	voxelisation();
 
+	g_gaLevel = this;
+
 	// Add the missing triggers to the world
 	for (auto trigger : m_inf->m_triggers) {
 		if (g_gaWorld.getEntity(trigger->name()) == nullptr) {
