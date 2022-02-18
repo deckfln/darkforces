@@ -189,6 +189,11 @@ void DarkForces::Player::onMove(gaMessage* message)
 		m_wobblingDirection = +0.0872665f;
 	}
 	placeWeapon(m_currentWeapon, glm::vec2(m_wobbling.x, m_wobbling.y - m_wobbling.z));
+
+	// extract our sector and get the lighthing for the hud
+	dfSector* sector = static_cast<dfLevel*>(g_gaLevel)->findSector(position());
+	float ambient = sector->m_ambient / 32.0f;
+	g_dfHUD->setAmbient(ambient);
 }
 
 /**
@@ -269,9 +274,11 @@ void DarkForces::Player::onTogleGogle(gaMessage* mmessage)
 	if (item) {
 		if (item->on()) {
 			item->set(false);
+			g_dfHUD->setGoggle(false);
 		}
 		else {
 			item->set(true);
+			g_dfHUD->setGoggle(true);
 		}
 	}
 }
@@ -285,9 +292,11 @@ void DarkForces::Player::onTogleHeadlight(gaMessage* mmessage)
 	if (item) {
 		if (item->on()) {
 			item->set(false);
+			g_dfHUD->setHeadlight(false);
 		}
 		else {
 			item->set(true);
+			g_dfHUD->setHeadlight(true);
 		}
 	}
 }

@@ -41,7 +41,8 @@ public:
 	fwMaterial();
 	int type(int flag) { return m_type & flag; };
 	fwMaterial(const std::string& vertexShader, const std::string& fragmentShader, const std::string& geometryShader = "");
-	fwMaterial(std::map<ShaderType, std::string>& shaders);
+	fwMaterial(const std::map<ShaderType, std::string>& shaders);
+	fwMaterial(const std::map<ShaderType, std::string>* pShaders);
 	fwMaterial &addTexture(const std::string& uniform, fwTexture *texture);
 	fwMaterial &addTexture(const std::string& uniform, glTexture *texture);
 	fwMaterial& addTextures(const std::string& uniform, fwTextures* textures);
@@ -57,7 +58,7 @@ public:
 	const std::string &get_fragmentShader(void);
 	const std::string &get_geometryShader(void);
 	const std::string &get_shader(int shader, RenderType render = FORWARD_RENDER);
-	const std::string &get_shader(int shader, RenderType render, std::map<std::string, std::string> defines);
+	const std::string &get_shader(int shader, RenderType render, std::map<std::string, std::string>& defines);
 	const int id(void) { return m_id; };
 	const std::string defines(void) { return m_defines; };
 

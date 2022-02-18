@@ -15,14 +15,18 @@ static fwMaterial* g_material = nullptr;
 static fwUniform* g_uniformTexture = nullptr;
 static glm::vec4 g_screen;
 
-fwHUD::fwHUD()
+static std::map<ShaderType, std::string> g_subShaders = {
+	{VERTEX_SHADER, "framework/shaders/hud/hud_vs.glsl"},
+	{FRAGMENT_SHADER, "framework/shaders/hud/hud_fs.glsl"}
+};
+
+fwHUD::fwHUD(std::map<ShaderType, std::string>* shaders)
 {
 	if (g_material == nullptr) {
-		std::map<ShaderType, std::string> shaders = {
-			{VERTEX_SHADER, "framework/shaders/hud/hud_vs.glsl"},
-			{FRAGMENT_SHADER, "framework/shaders/hud/hud_fs.glsl"}
-		};
-		g_material = new fwMaterial(shaders);
+		if (shaders == nullptr) {
+			shaders = &g_subShaders;
+		}
+		g_material = new fwMaterial(*shaders);
 		g_material->addTexture("image", (glTexture*)nullptr);
 		g_material->addUniform(new fwUniform("onscreen", &g_screen));
 
@@ -36,6 +40,11 @@ fwHUD::fwHUD()
 void fwHUD::add(fwHUDelement* element)
 {
 	m_elements.push_back(element);
+}
+
+void fwHUD::addUniform(fwUniform* uniform)
+{
+	g_material->addUniform(uniform);
 }
 
 /**

@@ -166,8 +166,8 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 	//glm::vec3 start = glm::vec3(-20, 2.0, 34);	// mousebot(40)
 	//glm::vec3 start = glm::vec3(-28.65f, -2.0, 34.83f);	// spinner
 	//glm::vec3 start = glm::vec3(-28.0287533, -2.0, 27.4463711);	// projector
-	//glm::vec3 start = glm::vec3(-56.25, -0.9, 23.65);	// super secret 2
-	glm::vec3 start = glm::vec3(-24.52, 0.07, 31.75);	// enthall
+	glm::vec3 start = glm::vec3(-56.25, -0.9, 23.65);	// super secret 2
+	//glm::vec3 start = glm::vec3(-24.52, 0.07, 31.75);	// enthall
 	//glm::vec3 start = glm::vec3(-38.80, 2.41, 39.7);	// switch_cover
 	//glm::vec3 start = glm::vec3(-29.06, -2.0, 24.75);	// cage
 
@@ -176,7 +176,7 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 	// set the sound environement
 	g_Listener.maxdistance(20.0f);
 
-	m_renderer->customLight("/data/shaders/lightning.glsl");
+	m_renderer->customLight("/darkforces/shaders/lightning.glsl");
 
 	// pre-load animations
 	const std::vector<std::string> preloads = {
@@ -201,8 +201,8 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 	resizeEvent(width, height);
 
 	// hud display
-	m_hud = new DarkForces::HUD(m_level);
-	m_hud->display(m_scene);
+	g_dfHUD = new DarkForces::HUD(m_level);
+	m_scene->hud(g_dfHUD);
 
 	// add the sprites manager to the world
 	g_gaWorld.registerPlugin(&g_dfSpritesEngine);

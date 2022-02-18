@@ -30,13 +30,14 @@ public:
 	fwScene();
 	fwScene &addLight(fwLight *light);
 	fwScene &setOutline(glm::vec3 *_color);
-	const std::list <fwLight*>& lights(void) { return m_lights;  }
+	inline const std::list <fwLight*>& lights(void) { return m_lights;  }
 
-	fwScene &background(fwBackground *_background) { m_pBackground = _background; return *this; };
-	fwBackground *background(void) { return m_pBackground; };
+	inline fwScene &background(fwBackground *_background) { m_pBackground = _background; return *this; };
+	inline fwBackground *background(void) { return m_pBackground; };
 
+	inline void hud(fwHUD* hud) { m_hud = hud; };
 	fwScene& hud(fwHUDelement* element);
-	fwHUD* hud(void) { return m_hud; };
+	inline fwHUD* hud(void) { return m_hud; };
 
 	void debugGUI(void);
 

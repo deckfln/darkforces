@@ -343,7 +343,7 @@ glTexture *fwRendererDefered::draw(fwCamera* camera, fwScene* scene)
 	glPopDebugGroup();
 
 	/*
-	 * 4th pass : lighting + generate bloom buffer
+	 * 5th pass : lighting + generate bloom buffer
 	 * DO NOT overwrite the depth buffer with merging to the quad
 	 */
 	static const char* s3 = "merge_mtr";
@@ -352,7 +352,7 @@ glTexture *fwRendererDefered::draw(fwCamera* camera, fwScene* scene)
 	glPopDebugGroup();
 
 	/*
-	 * 5th pass : draw skybox
+	 * 6th pass : draw skybox
 	 */
 	static const char* s4 = "draw_skybox";
 	glPushDebugGroup(GL_DEBUG_SOURCE_APPLICATION, 0, GLsizei(strlen(s4)), s4);
@@ -372,7 +372,7 @@ glTexture *fwRendererDefered::draw(fwCamera* camera, fwScene* scene)
 	glPopDebugGroup();
 
 	/*
-	 * 6th pass: bloom pass
+	 * 7th pass: bloom pass
 	 */
 	if (m_bloom) {
 		static const char* s5 = "draw_bloom";
@@ -384,7 +384,7 @@ glTexture *fwRendererDefered::draw(fwCamera* camera, fwScene* scene)
 
 
 	/*
-	 * 7th pass : draw transparent objects with forward rendering
+	 * 8th pass : draw transparent objects with forward rendering
 	 */
 	std::map <std::string, std::list <fwLight*>> lightsByType;
 	std::string defines;
@@ -405,7 +405,7 @@ glTexture *fwRendererDefered::draw(fwCamera* camera, fwScene* scene)
 	glPopDebugGroup();
 
 	/*
-	 * 8th pass: draw the HUD
+	 * 4th pass: draw the HUD
 	 */
 	if (scene->hud() != nullptr) {
 		static const char* s7 = "draw_hud";
@@ -413,6 +413,7 @@ glTexture *fwRendererDefered::draw(fwCamera* camera, fwScene* scene)
 		scene->hud()->draw();
 		glPopDebugGroup();
 	}
+
 	return m_lightRendering->getColorTexture(0);
 }
 

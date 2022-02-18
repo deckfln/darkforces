@@ -27,7 +27,6 @@ class myDarkForces : public GameEngine::App
 	glm::vec4* white = nullptr;
 
 	dfFileSystem* m_filesystem = nullptr;
-	DarkForces::HUD* m_hud= nullptr;
 
 	bool m_keySpace = false;	// SPACE is pressed
 	bool m_headlight = false;

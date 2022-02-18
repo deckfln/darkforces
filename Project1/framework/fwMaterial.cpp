@@ -36,10 +36,23 @@ fwMaterial::fwMaterial(const std::string& _vertexShader, const std::string& _fra
 /**
  * Create a Material with 1 argument
  */
-fwMaterial::fwMaterial(std::map<ShaderType, std::string>& shaders):
+fwMaterial::fwMaterial(const std::map<ShaderType, std::string>& shaders):
 	m_id(g_materialID++)
 {
-	for (auto shader : shaders) {
+	for (auto& shader : shaders) {
+		if (shader.first == FRAGMENT_SHADER_DEFERED) {
+			addShader(FRAGMENT_SHADER, shader.second, DEFERED_RENDER);
+		}
+		else {
+			addShader(shader.first, shader.second);
+		}
+	}
+}
+
+fwMaterial::fwMaterial(const std::map<ShaderType, std::string>* pShaders) :
+	m_id(g_materialID++)
+{
+	for (auto& shader : *pShaders) {
 		if (shader.first == FRAGMENT_SHADER_DEFERED) {
 			addShader(FRAGMENT_SHADER, shader.second, DEFERED_RENDER);
 		}
@@ -101,7 +114,7 @@ fwMaterial &fwMaterial::addUniform(fwUniform *uniform)
  */
 void fwMaterial::set_uniforms(glProgram *program)
 {
-	for (auto uniform: m_uniforms) {
+	for (auto& uniform: m_uniforms) {
 		uniform.second->set_uniform(program);
 	}
 }
@@ -133,7 +146,7 @@ void fwMaterial::set(const std::string& name, glm::vec4* v)
  */
 void fwMaterial::bindTextures(void)
 {
-	for (auto texture: m_textures) {
+	for (auto& texture: m_textures) {
 		texture.second->bind();
 	}
 }
@@ -185,7 +198,7 @@ const std::string& fwMaterial::get_shader(int shader, RenderType render)
 	return m_shaders[render][shader];
 }
 
-const std::string& fwMaterial::get_shader(int shader, RenderType render, std::map<std::string, std::string>variables)
+const std::string& fwMaterial::get_shader(int shader, RenderType render, std::map<std::string, std::string>& variables)
 {
 	//TODO: return a reference to the real code instead of a copy of the string 
 	if (m_shaders[render][shader] == "") {

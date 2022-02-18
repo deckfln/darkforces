@@ -187,6 +187,9 @@
     <Filter Include="Fichiers sources\Dark Forces\gaItem\dfItem">
       <UniqueIdentifier>{0c9f06e5-1ec6-42c7-8331-ff6f3c42eb6f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Fichiers de ressources\DarkForces\Shaders">
+      <UniqueIdentifier>{f60f2215-e339-47ab-a1da-c1001135b202}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source.cpp">
@@ -1707,6 +1710,15 @@
     <None Include="packages.config" />
     <None Include="data\shaders\lightning.glsl">
       <Filter>Fichiers de ressources\DarkForces</Filter>
+    </None>
+    <None Include="darkforces\shaders\hud\hud_fs.glsl">
+      <Filter>Fichiers de ressources\DarkForces\Shaders</Filter>
+    </None>
+    <None Include="darkforces\shaders\hud\hud_vs.glsl">
+      <Filter>Fichiers de ressources\DarkForces\Shaders</Filter>
+    </None>
+    <None Include="darkforces\shaders\lightning.glsl">
+      <Filter>Fichiers de ressources\DarkForces\Shaders</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
