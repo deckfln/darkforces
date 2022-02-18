@@ -35,7 +35,7 @@ GameEngine::Component::Inventory::Inventory(void):
 void GameEngine::Component::Inventory::add(Item* item)
 {
 	//items are added only once
-	if (m_items.count(item->name()) == 0) {
+	if (m_items.count(item->name()) == 0 || m_items[item->name()] == nullptr) {
 		// double link
 		m_items[item->name()] = item;
 		item->inventory(this);
