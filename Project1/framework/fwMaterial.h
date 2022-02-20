@@ -66,6 +66,7 @@ public:
 	void set_uniforms(glProgram *program);
 	void set(const std::string& name, fwTexture* texture);
 	void set(const std::string& name, glm::vec4* v4);
+	fwMaterial* clone(void);
 
 	~fwMaterial();
 };

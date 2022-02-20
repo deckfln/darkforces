@@ -1,10 +1,12 @@
 #pragma once
 
 #include <string>
+#include <vector>
 #include <glm/vec4.hpp>
 
 class fwTexture;
 class fwFlatPanel;
+class fwUniform;
 
 enum class fwHUDElementPosition {
 	BOTTOM_LEFT,
@@ -41,10 +43,11 @@ public:
 		CENTER_RIGHT
 	};
 
-	fwHUDelement(const std::string& name, Position position, fwHUDelementSizeLock lock, float width, float height, fwTexture *texture);
+	fwHUDelement(const std::string& name, Position position, fwHUDelementSizeLock lock, float width, float height, fwTexture* texture, fwFlatPanel* panel = nullptr);
 	void position(float x, float y);	// force the X position (between -1. and 1.0)
 	void size(float w, float h);		// force the size in glspace (between -1. and 1.0)
 	void texture(fwTexture* texture);	// change the current texture
+	void addUniform(fwUniform* uniform);	// dedicated uniforms for that element
 	void draw(fwFlatPanel* panel);
 	~fwHUDelement();
 
@@ -54,4 +57,6 @@ private:
 	fwHUDelementSizeLock m_sizeLock = fwHUDelementSizeLock::UNLOCKED;
 	glm::vec4 m_onscreen = glm::vec4(0);
 	fwTexture* m_texture = nullptr;
+	std::vector<fwUniform*> m_uniforms;
+	fwFlatPanel* m_panel = nullptr;
 };

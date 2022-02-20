@@ -18,11 +18,17 @@ namespace DarkForces {
 		dfBitmap* m_ammo_bmp = nullptr;		// ammo
 		fwHUDelement* m_ammo = nullptr;
 
+		// weapon needs a dedicated panel
 		dfBitmap* m_weapon_bmp = nullptr;	// animated weapon
 		fwHUDelement* m_weapon = nullptr;
+		glm::vec4 m_materialWeapon = glm::vec4(0);
+		fwUniform* m_uniWeapon = nullptr;
+		fwFlatPanel* m_panel = nullptr;
+		fwMaterial* m_panelMaterial = nullptr;
 
+		// default data for the HUD
 		glm::vec4 m_material = glm::vec4(0);
-		fwUniform* m_materialUniform;
+		fwUniform* m_materialUniform = nullptr;
 
 	public:
 		HUD(GameEngine::Level*);

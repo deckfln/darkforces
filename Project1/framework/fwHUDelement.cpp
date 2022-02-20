@@ -11,11 +11,12 @@
  * if LOCKED_X, height is computed based on width
  * if UNLOCKED, width & height are mandaotry
  */
-fwHUDelement::fwHUDelement(const std::string& name, Position position, fwHUDelementSizeLock lock, float width, float height, fwTexture *texture):
+fwHUDelement::fwHUDelement(const std::string& name, Position position, fwHUDelementSizeLock lock, float width, float height, fwTexture *texture, fwFlatPanel *panel):
 	m_name(name),
 	m_position(position),
 	m_sizeLock(lock),
-	m_texture(texture)
+	m_texture(texture),
+	m_panel(panel)
 {
 	m_onscreen.x = width;
 	m_onscreen.y = height;
@@ -62,11 +63,28 @@ void fwHUDelement::texture(fwTexture* texture)
 	m_texture = texture;
 }
 
+/**
+ * dedicated uniforms for that element
+ */
+void fwHUDelement::addUniform(fwUniform* uniform)
+{
+	m_uniforms.push_back(uniform);
+}
+
 void fwHUDelement::draw(fwFlatPanel *panel)
 {
-	panel->set("image", m_texture);
-	panel->set("onscreen", &m_onscreen);
-	panel->draw();
+	if (m_panel) {
+		// dedicated panel
+		m_panel->set("image", m_texture);
+		m_panel->set("onscreen", &m_onscreen);
+		m_panel->draw();
+	}
+	else {
+		// use the default panel
+		panel->set("image", m_texture);
+		panel->set("onscreen", &m_onscreen);
+		panel->draw();
+	}
 }
 
 fwHUDelement::~fwHUDelement()

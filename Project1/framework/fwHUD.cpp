@@ -47,6 +47,11 @@ void fwHUD::addUniform(fwUniform* uniform)
 	g_material->addUniform(uniform);
 }
 
+fwMaterial* fwHUD::cloneMaterial(void)
+{
+	return g_material->clone();
+}
+
 /**
  * draw all elements
  */

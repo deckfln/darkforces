@@ -15,6 +15,7 @@ public:
 	fwHUD(std::map<ShaderType, std::string> *shaders = nullptr);
 	void add(fwHUDelement* element);
 	void addUniform(fwUniform* uniform);
+	fwMaterial* cloneMaterial(void);
 	void draw(void);
 	~fwHUD();
 };

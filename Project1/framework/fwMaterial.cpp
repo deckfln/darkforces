@@ -142,6 +142,25 @@ void fwMaterial::set(const std::string& name, glm::vec4* v)
 }
 
 /**
+ *
+ */
+fwMaterial* fwMaterial::clone(void)
+{
+	fwMaterial* material = new fwMaterial();
+	material->m_files = m_files;
+	material->m_shaders = m_shaders;
+	material->m_currentTexture = m_currentTexture;
+	material->m_uniforms = m_uniforms;
+	material->m_textures = m_textures;
+	material->m_textureArrays = m_textureArrays;
+	material->m_hash = m_hash;
+	material->m_type = m_type;
+	material->m_defines = m_defines;
+
+	return material;
+}
+
+/**
  * Bind all textures
  */
 void fwMaterial::bindTextures(void)
