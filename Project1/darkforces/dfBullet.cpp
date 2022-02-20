@@ -18,6 +18,7 @@
 #include "../gaEngine/World.h"
 #include "../gaEngine/gaMessage.h"
 #include "../gaEngine/gaCollisionPoint.h"
+#include "../gaEngine/gaLevel.h"
 
 #include "dfConfig.h"
 #include "weapons.h"
@@ -25,6 +26,7 @@
 #include "dfModel/dfWAX.h"
 #include "dfObject/dfBulletExplode.h"
 #include "dfVOC.h"
+#include "dfSector.h"
 
 const float bullet_length = 0.60f;
 const float bullet_radius = 0.005f;
@@ -146,6 +148,11 @@ void dfBullet::dispatchMessage(gaMessage* message)
 		sendMessage(message->m_server, gaMessage::Action::BULLET_HIT, m_damage, message->m_v3value, m_shooter);
 		gaDebugLog(REDUCED_DEBUG, "dfBullet::dispatchMessage", "hit");
 
+		if (m_current) {
+			m_current->popAmbient();
+			m_current = nullptr;
+		}
+
 		// drop the bullet
 		sendMessageToWorld(gaMessage::DELETE_ENTITY, 0, nullptr);
 		break;
@@ -155,6 +162,17 @@ void dfBullet::dispatchMessage(gaMessage* message)
 		m_animation_time += message->m_delta;
 
 		if (m_animation_time < bullet_life) {
+			// change the lighting of the sector
+			dfSector* current = static_cast<dfLevel*>(g_gaLevel)->findSector(position());
+			if (current != m_current) {
+				if (m_current != nullptr) {
+					// reset the old sector lightning
+					m_current->popAmbient();
+				}
+				m_current = current;
+				m_current->addToAmbient(+10.0f);
+			}
+
 			glm::vec3 d = (m_direction * (float)message->m_delta / bullet_speed);
 			m_transforms.m_position = position() + d;
 			m_transforms.m_forward = -(m_modelAABB.m_p1.z - m_modelAABB.m_p.z) * m_direction;
@@ -164,6 +182,11 @@ void dfBullet::dispatchMessage(gaMessage* message)
 				&m_transforms);
 		}
 		else {
+			if (m_current) {
+				m_current->popAmbient();
+				m_current = nullptr;
+			}
+
 			// get the bullet deleted after 5s
 			sendMessageToWorld(gaMessage::DELETE_ENTITY, 0, nullptr);
 			gaDebugLog(LOW_DEBUG, "dfBullet::dispatchMessage", "remove bullet");

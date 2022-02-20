@@ -16,12 +16,14 @@
 class fwMesh;
 class fwScene;
 class gaMessage;
+class dfSector;
 
 class dfBullet : public gaEntity
 {
 	glm::vec3 m_direction;				// direction of the bullet
 	gaEntity* m_shooter;				// entity that shoot the bullet
 	uint32_t m_damage;					// damage the bullet will do
+	dfSector* m_current=nullptr;		// sector the bullet is in (for lightning)
 
 	GameEngine::ComponentMesh m_componentMesh;
 	GameEngine::Component::Sound m_sound;

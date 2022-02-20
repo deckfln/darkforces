@@ -330,7 +330,7 @@ void dfParserObjects::parseObject(dfFileSystem* fs, GameEngine::ParserExpression
 		float ambient = 0;
 		dfSector* sector = level->findSectorLVL(position);
 		if (sector) {
-			ambient = sector->m_ambient / 32.0f;
+			ambient = sector->ambient() / 32.0f;
 		}
 		else {
 #ifdef _DEBUG

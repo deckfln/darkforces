@@ -192,7 +192,7 @@ void DarkForces::Player::onMove(gaMessage* message)
 
 	// extract our sector and get the lighthing for the hud
 	dfSector* sector = static_cast<dfLevel*>(g_gaLevel)->findSector(position());
-	float ambient = sector->m_ambient / 32.0f;
+	float ambient = sector->ambient() / 32.0f;
 	g_dfHUD->setAmbient(ambient);
 }
 

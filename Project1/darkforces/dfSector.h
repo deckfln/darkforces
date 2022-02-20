@@ -112,7 +112,9 @@ class dfSector : public gaEntity
 	std::vector<dfSector*> m_includes;					// list of sectors included in the current one
 	dfSector* m_includedIn = nullptr;					// if the sector is included in another one
 
-	float m_currentAmbient;								// current value for an elevator light
+	float m_ambient = 0;								// DarkForces light (0..31)
+	float m_currentAmbient = 0;							// OpenGL light (0..1)
+	std::stack<float> m_ambients;						// previous lightning
 
 	dfSuperSector* m_super = nullptr;					// link back to the supersector
 	std::vector<uint32_t> m_portalWall;					// wall used as a portal to another sector
@@ -131,7 +133,6 @@ public:
 
 	int m_id = -1;
 	int m_layer = -1;
-	float m_ambient = 0;
 
 	// original values
 	float m_height = 0;									// height of the sector
@@ -172,6 +173,7 @@ public:
 	inline uint32_t portalMirror(uint32_t portalID) { return m_mirrorWall[portalID]; };
 	inline void soundVolume(uint32_t volume) { m_soundVolumeID = volume; };
 	inline uint32_t soundVolume(void) { return m_soundVolumeID; };
+	inline float ambient(void) { return m_ambient; };
 	void wallCenter(uint32_t wallID, glm::vec3& center, float &surface);			// fill the 3D center of the wall
 
 	void ceiling(float z);
@@ -218,17 +220,19 @@ public:
 	int firstVertex(void) { return m_firstVertex; };
 	int nbVertices(void) { return m_nbVertices; };
 
-	void changeAmbient(float ambient);
+	void changeAmbient(float ambient);								// set ambient lightning of the sector
+	void addToAmbient(float delta);									// add/substract from the current lighning
+	void popAmbient(void);										// restore previous ambient lighning
 	void buildGeometry(dfMesh *mesh, dfWallFlag);
-	void voxelisation(GameEngine::VoxelSpace<dfSector*>& voxels);				// voxelize the current sector
+	void voxelisation(GameEngine::VoxelSpace<dfSector*>& voxels);	// voxelize the current sector
 
-	bool visible(void);
+	bool visible(void);												// get current visibility of the sector
 	void addProgram(DarkForces::Component::InfStandardTrigger*);	// register a INF trigger standard on the sector
 	void addElevator(DarkForces::Component::InfElevator* elevator); // register a INF elevator on the sector
 	void setAABBtop(float z_level);
 	void setAABBbottom(float z_level);
 
-	void dispatchMessage(gaMessage* message);						// let an entity deal with a situation
+	void dispatchMessage(gaMessage* message) override;				// let an entity deal with a situation
 
 	// debugger
 	inline int recordSize(void) override {

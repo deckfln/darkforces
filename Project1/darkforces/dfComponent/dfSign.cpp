@@ -138,7 +138,7 @@ void DarkForces::Component::Sign::buildGeometry(dfSector* sector, dfWall* wall, 
 		offset,
 		size,
 		image->m_textureID,
-		sector->m_ambient);
+		sector->ambient());
 
 	// position of the sign is the center of the sign. move to gl space
 	m_position = (glm::vec3(sign_p.x, sign_p.z, sign_p.y) + glm::vec3(sign_p1.x, sign_p1.z, sign_p1.y)) / 20.0f;

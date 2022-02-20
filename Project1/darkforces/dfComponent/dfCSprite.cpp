@@ -104,7 +104,7 @@ void DarkForces::Component::Sprite::onMove(gaMessage* message)
 
 	currentSector = static_cast<dfLevel*>(g_gaLevel)->findSector(m_entity->position());
 	if (currentSector) {
-		m_ambient = currentSector->m_ambient / 32.0;
+		m_ambient = currentSector->ambient() / 32.0;
 	}
 	m_dirtyPosition = true;
 }

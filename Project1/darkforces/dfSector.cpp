@@ -772,6 +772,33 @@ void dfSector::changeAmbient(float ambient)
 	}
 }
 
+/**
+ * add/substract from the current lighning and push the previous value
+ */
+void dfSector::addToAmbient(float delta)
+{
+	if (delta < 0.0f and m_ambient < delta) {
+		delta = -m_ambient;
+	}
+	if (delta > 0.0f and m_ambient + delta > 32.0f) {
+		delta = 32.0 - m_ambient;
+	}
+	m_ambients.push(m_ambient);
+	changeAmbient(m_ambient + delta);
+}
+
+/**
+ * restore previous ambient lighning
+ */
+void dfSector::popAmbient(void)
+{
+	if (m_ambients.size() > 0) {
+		float ambient = m_ambients.top();
+		m_ambients.pop();
+		changeAmbient(ambient);
+	}
+}
+
 /***
  * create a trigger and a geometry for a sign
  */

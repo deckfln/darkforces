@@ -35,7 +35,7 @@ void DarkForces::Anim::ThreeD::onMove(gaMessage* message)
 
 	currentSector = static_cast<dfLevel*>(g_gaLevel)->findSector(position());
 	if (currentSector) {
-		m_ambient = currentSector->m_ambient / 32.0;
+		m_ambient = currentSector->ambient() / 32.0;
 	}
 }
 
