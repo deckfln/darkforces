@@ -15,11 +15,15 @@ namespace DarkForces {
 		void onDropItem(gaMessage* message);
 
 	public:
-		Item(const std::string& name, uint32_t logic);
-		Item(const char* name, uint32_t logic);
+		Item(const std::string& name, uint32_t logic, bool droppable = true);
+		Item(const char* name, uint32_t logic, bool droppable = true);
 		void Set(const char* name, uint32_t logic);
 		void dispatchMessage(gaMessage* message) override;
-		~Item(void);
+		void drop(const glm::vec3& p);			// force drop the item
 
+		//getter/setter
+		inline bool droppable(void) { return m_droppable; };
+
+		~Item(void);
 	};
 }

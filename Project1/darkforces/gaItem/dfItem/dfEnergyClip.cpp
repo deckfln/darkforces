@@ -1,9 +1,10 @@
 #include "dfEnergyClip.h"
 
 #include <imgui.h>
+#include "../../dfObject.h"
 
 DarkForces::EnergyClip::EnergyClip(void):
-	DarkForces::Item("EnergyClip", 0)
+	DarkForces::Item("EnergyClip", dfLogic::ITEM_ENERGY, false)
 {
 }
 

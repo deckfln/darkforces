@@ -127,20 +127,28 @@ void DarkForces::Weapon::onDropItem(gaMessage* message)
 	glm::vec3 p1 = message->m_v3value + glm::vec3(2.0 * message->m_fvalue / (rand() % 10) - message->m_fvalue, 0, 2.0 * message->m_fvalue / (rand() % 10) - message->m_fvalue);
 	dfLevel::gl2level(p1, p);
 
+	// force drop of the clip
+	DarkForces::EnergyClip* energy = dynamic_cast<DarkForces::EnergyClip*>(m_inventory->get("EnergyClip"));
+
 	switch (m_kind) {
 	case DarkForces::Weapon::Kind::Pistol:
-		m_object = new DarkForces::Prefab::Energy(p, (uint32_t)message->m_fvalue);
+		energy->drop(p);
 		break;
+
 	case DarkForces::Weapon::Kind::Rifle:
-		m_object = new DarkForces::Sprite::Rifle(p, 1.0f, (uint32_t)message->m_fvalue);
+		// drop a rifle loaded with the content of the energyclip
+		m_object = new DarkForces::Sprite::Rifle(p, 1.0f, (uint32_t)energy->energy());
 		m_object->logic(dfLogic::ITEM_RIFLE);
 		break;
 	}
-	m_object->item(this);
-	m_object->physical(false);	// objects can be traversed and are not subject to gravity
-	m_object->gravity(false);
 
-	g_gaWorld.addClient(m_object);
+	if (m_object) {
+		m_object->item(this);
+		m_object->physical(false);	// objects can be traversed and are not subject to gravity
+		m_object->gravity(false);
+
+		g_gaWorld.addClient(m_object);
+	}
 }
 
 /**
