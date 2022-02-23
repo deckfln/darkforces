@@ -11,7 +11,7 @@
 #include "../dfMesh.h"
 #include "../dfVOC.h"
 #include "../dfSounds.h"
-#include "../dfComponent/Trigger.h"
+#include "../dfComponent/dfCTrigger.h"
 #include "../dfComponent/InfElevator/InfElevatorVertical/InfElevatorDoor.h"
 
 static const std::string hold = "hold";

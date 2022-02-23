@@ -12,7 +12,7 @@
 
 #include "dfConfig.h"
 #include "dfComponent/dfCActor.h"
-#include "dfComponent/Trigger.h"
+#include "dfComponent/dfCTrigger.h"
 #include "dfLogicTrigger.h"
 #include "dfSector.h"
 #include "dfMesh.h"

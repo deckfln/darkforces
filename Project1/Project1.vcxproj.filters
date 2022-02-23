@@ -663,7 +663,7 @@
     <ClCompile Include="darkforces\dfComponent\InfElevator\infElevatorHorizontal\InfElevatorMorphMove1.cpp">
       <Filter>Fichiers sources\Dark Forces\dfComponent\InfElevator\InfElevatorHorizontal</Filter>
     </ClCompile>
-    <ClCompile Include="darkforces\dfComponent\Trigger.cpp">
+    <ClCompile Include="darkforces\dfComponent\dfCTrigger.cpp">
       <Filter>Fichiers sources\Dark Forces\dfComponent</Filter>
     </ClCompile>
     <ClCompile Include="gaEngine\gaComponent\gaActiveProbe.cpp">
@@ -1397,7 +1397,7 @@
     <ClInclude Include="darkforces\dfComponent\InfElevator\infElevatorHorizontal\InfElevatorMorphMove1.h">
       <Filter>Fichiers d%27en-tête\DarkForces\dfComponent\InfElevator\InfElevatorHorizontal</Filter>
     </ClInclude>
-    <ClInclude Include="darkforces\dfComponent\Trigger.h">
+    <ClInclude Include="darkforces\dfComponent\dfCTrigger.h">
       <Filter>Fichiers d%27en-tête\DarkForces\dfComponent</Filter>
     </ClInclude>
     <ClInclude Include="gaEngine\gaComponent\gaActiveProbe.h">

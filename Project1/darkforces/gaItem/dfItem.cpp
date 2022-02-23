@@ -22,11 +22,16 @@ void DarkForces::Item::onDropItem(gaMessage* message)
 		return;
 	}
 
-	// constructor of a sprite expects a level space
+	//drop the item somewhere on the outside of the entity
 	glm::vec3 p;
-	glm::vec3 p1 = message->m_v3value + glm::vec3(2.0*message->m_fvalue / (rand() % 10) - message->m_fvalue, 0, 2.0 * message->m_fvalue / (rand() % 10) - message->m_fvalue);
-	dfLevel::gl2level(p1, p);
+	float deltaX = (rand() % 10) + 1;	// avoid the 0 value
+	float deltaY = (rand() % 10) + 1;
 
+	glm::vec3 delta(2.0 * message->m_fvalue / deltaX - message->m_fvalue, 0, 2.0 * message->m_fvalue / deltaY - message->m_fvalue);
+	glm::vec3 p1 = message->m_v3value + delta;
+
+	// constructor of a sprite expects a level space
+	dfLevel::gl2level(p1, p);
 	drop(p);
 }
 

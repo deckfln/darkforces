@@ -10,7 +10,7 @@
 #include "../dfComponent.h"
 #include "../dfSector.h"
 #include "../dfLogicTrigger.h"
-#include "../dfComponent/Trigger.h"
+#include "../dfComponent/dfCTrigger.h"
 #include "../dfComponent/InfElevator.h"
 #include "../dfComponent/dfSign.h"
 

@@ -13,7 +13,7 @@
 #include "../dfSector.h"
 #include "../dfMesh.h"
 #include "../dfSounds.h"
-#include "Trigger.h"
+#include "dfCTrigger.h"
 
 #include "../flightRecorder/frCompElevator.h"
 

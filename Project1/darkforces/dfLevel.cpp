@@ -30,7 +30,7 @@
 
 #include "dfComponent.h"
 #include "dfComponent/InfElevator.h"
-#include "dfComponent/Trigger.h"
+#include "dfComponent/dfCTrigger.h"
 #include "prefab/dfElevatorDoor.h"
 
 dfLevel::dfLevel(dfFileSystem* fs, std::string file)

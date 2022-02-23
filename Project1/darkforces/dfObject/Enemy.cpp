@@ -11,7 +11,7 @@
 
 static const char* g_className = "dfEnemy";
 
-static DarkForces::Item g_RedKey("redkey", dfLogic::RED_KEY);
+static DarkForces::Item g_RedKey("darkforce:redkey", dfLogic::RED_KEY);
 
 /**
  * when dying, drop all objects from the inventory

@@ -16,7 +16,7 @@
 #include "dfMesh.h"
 #include "dfSounds.h"
 #include "dfComponent/InfStandardTrigger.h"
-#include "dfComponent/Trigger.h"
+#include "dfComponent/dfCTrigger.h"
 #include "dfComponent/InfElevator/InfElevatorLight.h"
 #include "dfComponent/InfElevator/InfElevatorVertical/InfElevatorInv.h"
 #include "dfComponent/InfElevator/InfElevatorVertical/InfElevatorMoveFloor.h"
@@ -297,6 +297,7 @@ void dfParseINF::parseSector(std::istringstream& infile, const std::string& sect
 
 	dfLogicStop* stop = nullptr;
 	std::map<std::string, std::string> tokenMap;
+	std::string key;
 
 	int nbStops = -1;
 
@@ -341,8 +342,8 @@ void dfParseINF::parseSector(std::istringstream& infile, const std::string& sect
 				newElevatorSound(inv, pSector);
 
 				// if the eventMask of the sector is <> add a key manager
-				if (inv->eventMask() != 0 || inv->key() != DarkForces::Keys::NONE) {
-					DarkForces::Component::Trigger* trigger = new DarkForces::Component::Trigger();
+				if (inv->eventMask() != 0 || key != "") {
+					DarkForces::Component::Trigger* trigger = new DarkForces::Component::Trigger(key);
 					pSector->addComponent(trigger, gaEntity::Flag::DELETE_AT_EXIT);
 				}
 			}
@@ -428,6 +429,7 @@ void dfParseINF::parseSector(std::istringstream& infile, const std::string& sect
 				gaDebugLog(1, "dfParseINF", "key not implemented for standard trigger");
 			}
 			else if (inv) {
+				key = tokens[1];
 				inv->key(tokens[1]);
 			}
 		}
