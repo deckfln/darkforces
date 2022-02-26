@@ -97,7 +97,7 @@ void DarkForces::Behavior::Fire2Player::dispatchMessage(gaMessage* message, Acti
 /**
  * debugger
  */
-void DarkForces::Behavior::Fire2Player::debugGUInode(void)
+void DarkForces::Behavior::Fire2Player::debugGUInode(GameEngine::Component::BehaviorTree* tree)
 {
 	ImGui::Text("from:%.2f %.2f %.2f", m_from.x, m_from.y, m_from.z);
 	ImGui::Text("to:%.2f %.2f %.2f", m_to.x, m_to.y, m_to.z);

@@ -18,6 +18,9 @@ GameEngine::Behavior::Loop::Loop(const char *name) :
 	m_className = g_className;
 }
 
+/**
+ *
+ */
 GameEngine::BehaviorNode* GameEngine::Behavior::Loop::clone(GameEngine::BehaviorNode* p)
 {
 	GameEngine::Behavior::Loop* cl;
@@ -32,6 +35,9 @@ GameEngine::BehaviorNode* GameEngine::Behavior::Loop::clone(GameEngine::Behavior
 	return cl;
 }
 
+/**
+ *
+ */
 GameEngine::BehaviorNode* GameEngine::Behavior::Loop::create(const char* name, tinyxml2::XMLElement* element, GameEngine::BehaviorNode* used)
 {
 	GameEngine::Behavior::Loop* node;
@@ -197,7 +203,7 @@ void GameEngine::Behavior::Loop::dispatchMessage(gaMessage* message, Action* r)
 /**
  * display the node data in the debugger
  */
-void GameEngine::Behavior::Loop::debugGUInode(void)
+void GameEngine::Behavior::Loop::debugGUInode(GameEngine::Component::BehaviorTree* tree)
 {
 	switch (m_condition) {
 	case Condition::UNTIL_ALL_FAIL:

@@ -102,7 +102,7 @@ void DarkForces::Behavior::WaitDoor::dispatchMessage(gaMessage* message, Action*
 /**
  * Debugger
  */
-void DarkForces::Behavior::WaitDoor::debugGUInode(void)
+void DarkForces::Behavior::WaitDoor::debugGUInode(GameEngine::Component::BehaviorTree* tree)
 {
 //	DarkForces::Component::InfElevator* elevator = m_tree->blackboard().pGet<DarkForces::Component::InfElevator>("wait_elevator", GameEngine::Variable::Type::PTR);
 	DarkForces::Component::InfElevator* elevator = static_cast<DarkForces::Component::InfElevator*>(m_elevator.getp(m_tree));

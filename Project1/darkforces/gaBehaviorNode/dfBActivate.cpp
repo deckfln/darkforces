@@ -93,7 +93,7 @@ void DarkForces::Behavior::Activate::dispatchMessage(gaMessage* message, Action*
 /**
  * Debugger
  */
-void DarkForces::Behavior::Activate::debugGUInode(void)
+void DarkForces::Behavior::Activate::debugGUInode(GameEngine::Component::BehaviorTree* tree)
 {
 	const std::string& trigger = m_tree->blackboard().get<std::string>(m_variable, GameEngine::Variable::Type::STRING);
 

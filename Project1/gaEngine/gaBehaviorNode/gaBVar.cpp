@@ -65,9 +65,9 @@ GameEngine::BehaviorNode* GameEngine::Behavior::Var::create(const char* name, ti
 
 //----------------------------------------------
 
-void GameEngine::Behavior::Var::debugGUInode(void)
+void GameEngine::Behavior::Var::debugGUInode(GameEngine::Component::BehaviorTree* tree)
 {
-	ImGui::Text(m_variable.debug());
+	ImGui::Text(m_variable.name());
 	ImGui::Text("=");
-	ImGui::Text(m_value.debug());
+	ImGui::Text(m_variable.value(tree));
 }

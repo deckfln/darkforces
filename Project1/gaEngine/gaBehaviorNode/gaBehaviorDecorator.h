@@ -22,7 +22,7 @@ namespace GameEngine {
 			static BehaviorNode* create(const char* name, tinyxml2::XMLElement* element, GameEngine::BehaviorNode* used);// create a node
 
 			//debugger
-			void debugGUInode(void) override;						// display the component in the debugger
+			void debugGUInode(GameEngine::Component::BehaviorTree* tree) override;	// display the component in the debugger
 		protected:
 			Condition m_condition = Condition::STRAIGHT;
 		};

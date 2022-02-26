@@ -29,6 +29,9 @@ GameEngine::BehaviorNode* GameEngine::Behavior::For::clone(GameEngine::BehaviorN
 	return cl;
 }
 
+/**
+ *
+ */
 GameEngine::BehaviorNode* GameEngine::Behavior::For::create(const char* name, tinyxml2::XMLElement* element, GameEngine::BehaviorNode* used)
 {
 	GameEngine::Behavior::For* node;
@@ -75,6 +78,8 @@ void GameEngine::Behavior::For::init(void* data)
 {
 	int32_t& counter = m_tree->blackboard().get<int32_t>(m_variable, GameEngine::Variable::Type::INT32);
 	m_start.get(counter, m_tree);
+
+	Loop::init(data);
 }
 
 /**

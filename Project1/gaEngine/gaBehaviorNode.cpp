@@ -331,7 +331,7 @@ void GameEngine::BehaviorNode::dispatchMessage(gaMessage*message, BehaviorNode::
 /**
  * Debugger
  */
-void GameEngine::BehaviorNode::debugGUIinline(BehaviorNode* current, float x, float& y)
+void GameEngine::BehaviorNode::debugGUIinline(GameEngine::Component::BehaviorTree* tree, BehaviorNode* current, float x, float& y)
 {
 	static uint32_t attr = 0;
 	static char tmp[64];
@@ -383,7 +383,7 @@ void GameEngine::BehaviorNode::debugGUIinline(BehaviorNode* current, float x, fl
 	ImNodes::EndNodeTitleBar();
 
 	ImNodes::BeginInputAttribute(m_entryAttr);
-	debugGUInode();
+	debugGUInode(tree);
 	ImNodes::EndInputAttribute();
 
 	uint32_t i=0;
@@ -424,7 +424,7 @@ void GameEngine::BehaviorNode::debugGUIinline(BehaviorNode* current, float x, fl
 
 	i = 0;
 	for (auto n : m_children) {
-		m_children[i]->debugGUIinline(current, x + 300, y);
+		m_children[i]->debugGUIinline(tree, current, x + 300, y);
 		ImNodes::Link(m_childrenID[i], m_childrenID[i], m_children[i]->m_entryAttr);
 		i++;
 	}
@@ -433,7 +433,7 @@ void GameEngine::BehaviorNode::debugGUIinline(BehaviorNode* current, float x, fl
 /**
  *
  */
-void GameEngine::BehaviorNode::debugGUInode(void)
+void GameEngine::BehaviorNode::debugGUInode(GameEngine::Component::BehaviorTree* tree)
 {
 }
 

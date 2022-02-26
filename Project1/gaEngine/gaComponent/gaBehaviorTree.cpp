@@ -219,7 +219,7 @@ void GameEngine::Component::BehaviorTree::debugGUIinline(void)
 
 		ImNodes::BeginNodeEditor();
 		float y = 0;
-		m_root->debugGUIinline(m_current, 0, y);
+		m_root->debugGUIinline(this, m_current, 0, y);
 		ImNodes::EndNodeEditor();
 
 		ImGui::End();

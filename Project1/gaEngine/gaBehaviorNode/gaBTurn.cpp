@@ -76,6 +76,8 @@ void GameEngine::Behavior::Turn::init(void*)
 	m_untilNextTurn = m_delay * 33;
 
 	g_gaWorld.registerTimerEvents(m_entity, true);
+
+	BehaviorNode::init(nullptr);
 }
 
 /**
@@ -139,7 +141,7 @@ void GameEngine::Behavior::Turn::dispatchMessage(gaMessage* message, Action* r)
 
 //---------------------------------------------
 
-void GameEngine::Behavior::Turn::debugGUInode(void)
+void GameEngine::Behavior::Turn::debugGUInode(GameEngine::Component::BehaviorTree* tree)
 {
 	ImGui::Text("Delay: %d", m_delay);
 	ImGui::Text("Until: %d", m_untilNextTurn);

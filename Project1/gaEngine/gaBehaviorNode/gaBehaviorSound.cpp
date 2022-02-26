@@ -18,6 +18,9 @@ GameEngine::Behavior::Sound::Sound(const char *name) :
 	m_className = g_className;
 }
 
+/**
+ *
+ */
 GameEngine::BehaviorNode* GameEngine::Behavior::Sound::clone(GameEngine::BehaviorNode* p)
 {
 	GameEngine::Behavior::Sound* cl;
@@ -41,6 +44,9 @@ GameEngine::BehaviorNode* GameEngine::Behavior::Sound::clone(GameEngine::Behavio
 	return cl;
 }
 
+/**
+ *
+ */
 GameEngine::BehaviorNode* GameEngine::Behavior::Sound::create(const char* name, tinyxml2::XMLElement* element, GameEngine::BehaviorNode* used)
 {
 	GameEngine::Behavior::Sound* node;
@@ -139,7 +145,7 @@ void GameEngine::Behavior::Sound::addSound(const char* file, uint32_t id)
 /**
  * display the node data in the debugger
  */
-void GameEngine::Behavior::Sound::debugGUInode(void)
+void GameEngine::Behavior::Sound::debugGUInode(GameEngine::Component::BehaviorTree* tree)
 {
 	static char tmp[64];
 	switch (m_condition) {

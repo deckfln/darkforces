@@ -78,6 +78,8 @@ GameEngine::BehaviorNode* GameEngine::Behavior::MoveTo::create(const char* name,
  */
 void GameEngine::Behavior::MoveTo::init(void *data)
 {
+	BehaviorNode::init(data);
+
 	m_navpoints = static_cast<std::vector<glm::vec3>*>(data);
 
 	if (m_transforms == nullptr) {
@@ -471,7 +473,7 @@ void GameEngine::Behavior::MoveTo::debug(void)
 /**
  * display the node data in the debugger
  */
-void GameEngine::Behavior::MoveTo::debugGUInode(void)
+void GameEngine::Behavior::MoveTo::debugGUInode(GameEngine::Component::BehaviorTree* tree)
 {
 	if (m_status == Status::STILL) {
 		ImGui::Text("Stay Still");

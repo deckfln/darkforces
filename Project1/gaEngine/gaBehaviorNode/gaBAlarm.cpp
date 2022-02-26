@@ -81,6 +81,8 @@ GameEngine::BehaviorNode* GameEngine::Behavior::Alarm::create(const char* name, 
 
 void GameEngine::Behavior::Alarm::init(void*)
 {
+	BehaviorNode::init(nullptr);
+
 	m_timer = (rand() % (m_maxDelay - m_minDelay)) + m_minDelay;
 	GameEngine::Alarm alarm(m_entity, m_timer, m_message);
 
@@ -92,7 +94,7 @@ void GameEngine::Behavior::Alarm::init(void*)
 
 //----------------------------------------------
 
-void GameEngine::Behavior::Alarm::debugGUInode(void)
+void GameEngine::Behavior::Alarm::debugGUInode(GameEngine::Component::BehaviorTree* tree)
 {
 	ImGui::Text("max:%d", m_maxDelay);
 	ImGui::Text("min:%d", m_minDelay);

@@ -13,10 +13,10 @@
 			<node type='Loop' name='moveAndOpenDoor'>
 				<condition>until_one_success</condition>
 				<tree>
-					<node type='SatNav' name='direct go to wait position'>
+					<node type='SatNav' name='go directy to final position'>
 						<variable type='vec3'>static_position</variable>
 					</node>
-					<node type='Decorator' name='return success if failed to force exit of the parent'>
+					<node type='Decorator' name='fail if didnt collid with an elevator'>
 						<condition>invert</condition>
 						<tree>
 							<node type='DarkForces:SetVar' name='check if the entity collided with an elevator'>
@@ -125,100 +125,6 @@
 		<node type='task' task ='moveAndOpenDoor' name='stroll back to wait position'>
 		</node>
 		<!--	-->
-		<node type='Loop' name='attack and track'>
-			<tree>
-				<node type='Loop' name='find the player, move toward him and shoot at him'>
-					<condition>until_one_fail</condition>
-					<tree>
-					<node type='GameEngine:CheckVar' name='player is visible'>
-						<variable type='bool'>player_visible</variable>
-						<value type='bool'>true</value>
-					</node>
-					<node type='darkForces:sound' name='tease the player'>
-						<sounds>
-		<include file='sounds.inc'/>
-						</sounds>
-					</node>
-					<node type='Fire2Player' name='Shoot player'></node>
-					<node type='Sequence' name='Move to player position'>
-						<tree>
-							<node type='DarkForces:SetVar' name='set the player nearby position'>
-								<variable type='vec3'>player_last_position</variable>
-								<value type='vec3'>=playerLastPosition</value>
-							</node>
-							<node type='GameEngine:Alarm' name='walk for limited time'>
-								<message>GameEngine:SatNav_CANCEL</message>
-								<timer max='3000' min='1500' />
-							</node>
-							<node type='SatNav' name='move to player'>
-								<exit>
-									<if>
-										<variable type='bool'>nearby_player</variable>
-										<value type='bool'>true</value>
-									</if>
-								</exit>
-								<variable type='vec3'>player_last_position</variable>
-							</node>
-						</tree>
-					</node>
-					</tree>
-				</node>
-				<node type='Decorator' name='detected the player while scouting'>
-					<condition>invert</condition>
-					<!-- reaching the end of trip means not seing/hearing anything, so it is actualy a failure-->
-					<tree>
-						<node type='Sequence' name='move to player last known position'>
-							<tree>
-								<node type='DarkForces:SetVar' name='set player last known position (view/soud)'>
-									<variable type='vec3'>track_player_position</variable>
-									<value type='vec3'>=playerEstimatedPosition()</value>
-								</node>
-								<node type='SatNav' name='move to player last position'>
-									<variable type='vec3'>track_player_position</variable>
-									<exit>
-										<if>
-											<variable type='bool'>player_visible</variable>
-											<value type='bool'>true</value>
-										</if>
-										<if>
-											<variable type='bool'>hit_bullet</variable>
-											<value type='bool'>true</value>
-										</if>
-									</exit>
-								</node>
-							</tree>
-							<!--
-					<tree>
-						<node type='Sequence' name='move to the last seen/heard position and do a 360 scan'>
-							<condition>until_one_fail</condition>
-							<tree>
-								<node type='SatNav' name='move to player last position'>
-									<exits>
-										<exit value='true'>player_visible</exit>
-										<exit value='true'>hit_bullet</exit>
-									</exits>
-								</node>
-								<node type='GameEngine:Turn' name='scan around'>
-									<exits>
-										<exit value='true'>player_visible</exit>
-										<exit value='true'>hit_bullet</exit>
-									</exits>
-									<delay>1</delay>
-									<angles>
-										<angle>-90</angle>
-										<angle>90</angle>
-										<angle>90</angle>
-									</angles>
-								</node>
-							</tree>
-						</node>
-					</tree>
-					-->
-						</node>
-					</tree>
-				</node>
-			</tree>
-		</node>
 	</tree>
 	</node>
 </behaviortree>

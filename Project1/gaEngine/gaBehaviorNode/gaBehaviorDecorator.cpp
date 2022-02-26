@@ -22,6 +22,9 @@ GameEngine::Behavior::Decorator::Decorator(const char *name) :
 	m_className = g_className;
 }
 
+/**
+ *
+ */
 GameEngine::BehaviorNode* GameEngine::Behavior::Decorator::clone(GameEngine::BehaviorNode* p)
 {
 	GameEngine::Behavior::Decorator* cl;
@@ -36,6 +39,9 @@ GameEngine::BehaviorNode* GameEngine::Behavior::Decorator::clone(GameEngine::Beh
 	return cl;
 }
 
+/**
+ *
+ */
 GameEngine::BehaviorNode* GameEngine::Behavior::Decorator::create(const char* name, tinyxml2::XMLElement* element, GameEngine::BehaviorNode* used)
 {
 	GameEngine::Behavior::Decorator* node;
@@ -61,6 +67,9 @@ GameEngine::BehaviorNode* GameEngine::Behavior::Decorator::create(const char* na
 	return node;
 }
 
+/**
+ *
+ */
 void GameEngine::Behavior::Decorator::execute(Action* r)
 {
 	// exit the node if the init part failed
@@ -110,7 +119,7 @@ void GameEngine::Behavior::Decorator::execute(Action* r)
 /**
  * Debugger
  */
-void GameEngine::Behavior::Decorator::debugGUInode(void)
+void GameEngine::Behavior::Decorator::debugGUInode(GameEngine::Component::BehaviorTree* tree)
 {
 	static const char* conditions[] = {
 		"Straight",

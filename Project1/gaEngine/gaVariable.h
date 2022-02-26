@@ -44,7 +44,8 @@ namespace GameEngine {
 		void set(GameEngine::Component::BehaviorTree* tree, GameEngine::Value& v);			// set on the blackboard from a value
 		bool equal(GameEngine::Component::BehaviorTree* tree, GameEngine::Value& v);
 
-		const char* debug(void);
+		const char* name(void);											// display name of the variable
+		const char* value(GameEngine::Component::BehaviorTree* tree);	// display content of the variable
 
 	protected:
 		std::string m_name;

@@ -142,12 +142,12 @@ void GameEngine::Behavior::SatNav::dispatchMessage(gaMessage* message, Action *r
 /**
  * display the component in the debugger
  */
-void GameEngine::Behavior::SatNav::debugGUInode(void)
+void GameEngine::Behavior::SatNav::debugGUInode(GameEngine::Component::BehaviorTree* tree)
 {
 	if (m_move2variable) {
-		ImGui::Text("%s", m_destName.debug());
+		ImGui::Text("%s", m_destName.name());
 	}
-	GameEngine::Behavior::MoveTo::debugGUInode();
+	GameEngine::Behavior::MoveTo::debugGUInode(tree);
 }
 
 //----------------------------------

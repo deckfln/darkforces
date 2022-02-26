@@ -53,6 +53,8 @@ GameEngine::BehaviorNode* GameEngine::Behavior::CheckVar::create(const char* nam
  */
 void GameEngine::Behavior::CheckVar::init(void*)
 {
+	Var::init(nullptr);
+
 	if (m_variable.equal(m_tree, m_value)) {
 		m_status = GameEngine::BehaviorNode::Status::SUCCESSED;
 	}

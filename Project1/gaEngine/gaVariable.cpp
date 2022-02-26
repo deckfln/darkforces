@@ -85,7 +85,7 @@ int32_t& GameEngine::Variable::geti(GameEngine::Component::BehaviorTree* tree)
 		gaDebugLog(1, "GameEngine::Variable::geti", "incompatible type requested for " + m_name);
 		exit(-1);
 	}
-	return tree->blackboard().get<int32_t>(m_name, GameEngine::Variable::Type::FLOAT);
+	return tree->blackboard().get<int32_t>(m_name, GameEngine::Variable::Type::INT32);
 }
 
 /**
@@ -266,11 +266,46 @@ bool GameEngine::Variable::equal(GameEngine::Component::BehaviorTree* tree, Game
 /**
  *
  */
-const char* GameEngine::Variable::debug(void)
-{
-	static char tmp[64];
+static char tmp[64];
 
+const char* GameEngine::Variable::name(void)
+{
 	snprintf(tmp, 64, "(%d)%s", m_type, m_name.c_str());
+	return tmp;
+}
+
+/**
+ *
+ */
+const char* GameEngine::Variable::value(GameEngine::Component::BehaviorTree* tree)
+{
+	switch (m_type) {
+	case Type::BOOL: {
+		const bool& b1 = getb(tree);
+		snprintf(tmp, 64, "%s", b1 ? "true" : "false");
+		break;
+	}
+	case Type::INT32: {
+		const int32_t& i1 = geti(tree);
+		snprintf(tmp, 64, "%d", i1);
+		break;
+	}
+	case Type::FLOAT: {
+		const float& f1 = getf(tree);
+		snprintf(tmp, 64, "%.2f", f1);
+		break;
+	}
+	case Type::VEC3: {
+		const glm::vec3& v3a = getv3(tree);
+		snprintf(tmp, 64, "%.2f %.2f %.2f", v3a.x, v3a.x, v3a.y);
+		break;
+	}
+	case Type::STRING: {
+		const std::string& s1 = gets(tree);
+		snprintf(tmp, 64, "%s", s1.c_str());
+		break;
+	}
+	}
 
 	return tmp;
 }

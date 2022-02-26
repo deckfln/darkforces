@@ -16,6 +16,9 @@ GameEngine::Behavior::Sequence::Sequence(const char *name) :
 	m_className = g_className;
 }
 
+/**
+ *
+ */
 GameEngine::BehaviorNode* GameEngine::Behavior::Sequence::clone(GameEngine::BehaviorNode* p)
 {
 	GameEngine::Behavior::Sequence* cl;
@@ -30,6 +33,9 @@ GameEngine::BehaviorNode* GameEngine::Behavior::Sequence::clone(GameEngine::Beha
 	return cl;
 }
 
+/**
+ *
+ */
 GameEngine::BehaviorNode* GameEngine::Behavior::Sequence::create(const char* name, tinyxml2::XMLElement* element, GameEngine::BehaviorNode* used)
 {
 	GameEngine::Behavior::Sequence* node;
@@ -55,12 +61,18 @@ GameEngine::BehaviorNode* GameEngine::Behavior::Sequence::create(const char* nam
 	return node;
 }
 
+/**
+ *
+ */
 void GameEngine::Behavior::Sequence::init(void* data)
 {
 	m_failed = 0;
 	BehaviorNode::init(data);
 }
 
+/**
+ * 
+ */
 void GameEngine::Behavior::Sequence::execute(Action* r)
 {
 	// exit if init changed the status
@@ -116,7 +128,7 @@ void GameEngine::Behavior::Sequence::execute(Action* r)
 /**
  * display the node data in the debugger
  */
-void GameEngine::Behavior::Sequence::debugGUInode(void)
+void GameEngine::Behavior::Sequence::debugGUInode(GameEngine::Component::BehaviorTree* tree)
 {
 	switch (m_condition) {
 	case Condition::EXIT_WHEN_ONE_FAIL:
