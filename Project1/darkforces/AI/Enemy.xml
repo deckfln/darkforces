@@ -113,6 +113,14 @@
 				</if>
 			</exit>
 		</node>
+		<node type='GameEngine:SetVar' name='reset heard sound'>
+			<variable type='bool'>heard_sound</variable>
+			<value type='bool'>false</value>
+		</node>
+		<node type='GameEngine:SetVar' name='reset hit_bullet'>
+			<variable type='bool'>hit_bullet</variable>
+			<value type='bool'>false</value>
+		</node>
 		<!--	-->
 		<node type='GameEngine:SetVar' name='force target'>
 			<variable type='vec3' value='-21.29,-0.3,16.6'>static_position</variable>
