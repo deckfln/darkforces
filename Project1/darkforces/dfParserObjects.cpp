@@ -143,6 +143,7 @@ void dfParserObjects::parseObjectComponent(dfFileSystem* fs, DarkForces::Object*
 			break;
 		case O_PLANS:
 			object->hasCollider(true);
+			object->logic(dfLogic::PLANS);
 			break;
 		case E_ITEM: {
 			GameEngine::ParserExpression& item = component.m_children[2].m_children[0].m_children[0];

@@ -48,6 +48,8 @@ enum dfLogic {
 	GOGGLES = 131072,
 	MEDKIT = 262144,
 	WEAPON = 524288,
+	PLANS = 1048576,	// death star plans
+	GOAL = 2097152		// is a goal and needs to send a nextStop to 
 };
 
 /**

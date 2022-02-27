@@ -9,6 +9,10 @@
 
 #include <imgui.h>
 
+// unique Items
+static DarkForces::Item g_Plans("darkforce:plans", dfLogic::PLANS);
+static DarkForces::Headlight g_Goggles("goggles");
+
 dfComponentLogic::dfComponentLogic() :
 	gaComponent(DF_COMPONENT_LOGIC),
 	m_logics(0)
@@ -89,11 +93,8 @@ void dfComponentLogic::dispatchMessage(gaMessage* message)
 				m_entity->sendMessageToWorld(gaMessage::DELETE_ENTITY, 0, nullptr);
 			}
 			else if (m_logics & dfLogic::GOGGLES) {
-				DarkForces::Headlight* goggles = new DarkForces::Headlight("goggles");
-				m_items.push_back(goggles);
-
 				// pick the googles and add to the inventory
-				m_entity->sendMessage(message->m_server, gaMessage::ADD_ITEM, 0, goggles);
+				m_entity->sendMessage(message->m_server, gaMessage::ADD_ITEM, 0, &g_Goggles);
 
 				// and remove the object from the scene
 				m_entity->sendMessageToWorld(gaMessage::DELETE_ENTITY, 0, nullptr);
@@ -103,6 +104,17 @@ void dfComponentLogic::dispatchMessage(gaMessage* message)
 				DarkForces::Object* object = dynamic_cast<DarkForces::Object*>(m_entity);
 				GameEngine::Item* redkey = object->item();
 				m_entity->sendMessage(message->m_server, gaMessage::ADD_ITEM, 0, redkey);
+
+				// and remove the object from the scene
+				m_entity->sendMessageToWorld(gaMessage::DELETE_ENTITY, 0, nullptr);
+			}
+			else if (m_logics & dfLogic::PLANS) {
+				// transfert the redkey to collider
+				m_entity->sendMessage(message->m_server, gaMessage::ADD_ITEM, 0, &g_Plans);
+
+				if (m_logics & dfLogic::GOAL) {
+					m_entity->sendMessage("complete", DarkForces::Message::TRIGGER);
+				}
 
 				// and remove the object from the scene
 				m_entity->sendMessageToWorld(gaMessage::DELETE_ENTITY, 0, nullptr);
