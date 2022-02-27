@@ -132,6 +132,9 @@
 		</node>
 		<node type='task' task ='moveAndOpenDoor' name='stroll back to wait position'>
 		</node>
+		<node type='DarkForces:State' name='change back to static pose'>
+			<state>ENEMY_STAY_STILL</state>
+		</node>
 		<!--	-->
 	</tree>
 	</node>

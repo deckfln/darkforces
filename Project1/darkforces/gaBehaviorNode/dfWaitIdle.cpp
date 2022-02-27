@@ -61,10 +61,7 @@ void DarkForces::Behavior::WaitIdle::execute(Action* r)
  */ 
 void DarkForces::Behavior::WaitIdle::activated(void)
 {
-	m_entity->sendMessage(DarkForces::Message::STATE, (uint32_t)dfState::ENEMY_STAY_STILL);
-
 	// reset the list of player positions
-
 	std::deque<glm::vec3>& playerLastPositions = m_tree->blackboard().get<std::deque<glm::vec3>>("player_last_positions", GameEngine::Variable::Type::OBJECT);
 	playerLastPositions.clear();
 }

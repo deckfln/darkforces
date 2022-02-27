@@ -195,6 +195,7 @@
     <ClCompile Include="darkforces\gaBehaviorNode\dfBActivate.cpp" />
     <ClCompile Include="darkforces\gaBehaviorNode\dfBSetVar.cpp" />
     <ClCompile Include="darkforces\gaBehaviorNode\dfBSound.cpp" />
+    <ClCompile Include="darkforces\gaBehaviorNode\dfBState.cpp" />
     <ClCompile Include="darkforces\gaBehaviorNode\dfFire2Player.cpp" />
     <ClCompile Include="darkforces\gaBehaviorNode\dfWaitDoor.cpp" />
     <ClCompile Include="darkforces\gaBehaviorNode\dfWaitIdle.cpp" />
@@ -439,6 +440,7 @@
     <ClInclude Include="darkforces\gaBehaviorNode\dfBActivate.h" />
     <ClInclude Include="darkforces\gaBehaviorNode\dfBSetVar.h" />
     <ClInclude Include="darkforces\gaBehaviorNode\dfBSound.h" />
+    <ClInclude Include="darkforces\gaBehaviorNode\dfBState.h" />
     <ClInclude Include="darkforces\gaBehaviorNode\dfFire2Player.h" />
     <ClInclude Include="darkforces\gaBehaviorNode\dfWaitDoor.h" />
     <ClInclude Include="darkforces\gaBehaviorNode\dfWaitIdle.h" />
