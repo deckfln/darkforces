@@ -8,6 +8,7 @@
 static std::map<std::string, uint32_t> g_states = {
 	{"ENEMY_STAY_STILL", (uint32_t)dfState::ENEMY_STAY_STILL}
 };
+static const char* g_className = "DarkForces:State";
 
 /**
  *
@@ -15,6 +16,7 @@ static std::map<std::string, uint32_t> g_states = {
 DarkForces::Behavior::State::State(const char* name) :
 	GameEngine::BehaviorNode(name)
 {
+	m_className = g_className;
 }
 
 /**

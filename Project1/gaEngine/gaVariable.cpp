@@ -270,7 +270,7 @@ static char tmp[64];
 
 const char* GameEngine::Variable::name(void)
 {
-	snprintf(tmp, 64, "(%d)%s", m_type, m_name.c_str());
+	snprintf(tmp, 64, "%s", m_name.c_str());
 	return tmp;
 }
 
