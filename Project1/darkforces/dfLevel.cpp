@@ -44,46 +44,46 @@ dfLevel::dfLevel(dfFileSystem* fs, std::string file)
 
 	while (std::getline(data, line))
 	{
-// ignore comment
-if (line[0] == '#' || line.length() == 0) {
-	continue;
-}
+	// ignore comment
+	if (line[0] == '#' || line.length() == 0) {
+		continue;
+	}
 
-// per token
-std::vector <std::string> tokens = dfParseTokens(line, tokenMap);
+	// per token
+	std::vector <std::string> tokens = dfParseTokens(line, tokenMap);
 
-if (tokens.size() == 0) {
-	continue;
-}
+	if (tokens.size() == 0) {
+		continue;
+	}
 
-if (tokens[0] == "LEV") {
-	m_level = tokens[1];
-}
-else if (tokens[0] == "LEVELNAME") {
-	m_name = tokens[1];
-}
-else if (tokens[0] == "PALETTE") {
-	m_palette = new dfPalette(fs, tokens[1]);
-}
-else if (tokens[0] == "TEXTURES") {
-	int nbTextures = std::stoi(tokens[1]);
-	m_bitmaps.resize(nbTextures);
-}
-else if (tokens[0] == "TEXTURE:") {
-	std::string bm = tokens[1];
-	loadBitmaps(fs, bm);
-}
-else if (tokens[0] == "NUMSECTORS") {
-	int nbSectors = std::stoi(tokens[1]);
-	m_sectorsID.resize(nbSectors);
-}
-else if (tokens[0] == "SECTOR") {
-	int nSector = std::stoi(tokens[1]);
+	if (tokens[0] == "LEV") {
+		m_level = tokens[1];
+	}
+	else if (tokens[0] == "LEVELNAME") {
+		m_name = tokens[1];
+	}
+	else if (tokens[0] == "PALETTE") {
+		m_palette = new dfPalette(fs, tokens[1]);
+	}
+	else if (tokens[0] == "TEXTURES") {
+		int nbTextures = std::stoi(tokens[1]);
+		m_bitmaps.resize(nbTextures);
+	}
+	else if (tokens[0] == "TEXTURE:") {
+		std::string bm = tokens[1];
+		loadBitmaps(fs, bm);
+	}
+	else if (tokens[0] == "NUMSECTORS") {
+		int nbSectors = std::stoi(tokens[1]);
+		m_sectorsID.resize(nbSectors);
+	}
+	else if (tokens[0] == "SECTOR") {
+		int nSector = std::stoi(tokens[1]);
 
-	dfSector* sector = new dfSector(data, m_sectorsID, this);
-	sector->m_id = nSector;
-	if (sector->name() == "") {
-		sector->name(std::to_string(nSector));
+		dfSector* sector = new dfSector(data, m_sectorsID, this);
+		sector->m_id = nSector;
+		if (sector->name() == "") {
+			sector->name(std::to_string(nSector));
 	}
 	int layer = sector->m_layer;
 
@@ -255,6 +255,10 @@ else if (tokens[0] == "SECTOR") {
 	m_objects = new dfParserObjects(fs, m_palette, file, this);
 	m_sprites = m_objects->buildAtlasTexture();
 	m_sprites->save("D:/dev/Project1/Project1/images/sprites.png");
+
+	// load the goal file
+	m_goals = new DarkForces::Goals(file);
+	g_gaWorld.addClient(m_goals);
 
 	// start with all supersectors hidden
 	hideSectors();
@@ -625,6 +629,7 @@ dfLevel::~dfLevel()
 
 	delete m_inf;
 	delete m_objects;
+	delete m_goals;
 	delete m_palette;
 	delete m_atlasTexture;
 	delete m_material;

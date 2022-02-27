@@ -56,6 +56,18 @@ void DarkForces::Component::InfElevator::moveTo(dfLogicStop* stop)
 {
 	float p = stop->z_position(m_type);
 	moveTo(p);
+
+	switch (stop->action()) {
+	case dfLogicStop::Action::HOLD:
+		m_status = Status::HOLD;
+		break;
+	case dfLogicStop::Action::TERMINATE:
+		m_status = Status::TERMINATED;
+		break;
+	case dfLogicStop::Action::COMPLETE:
+		m_status = Status::TERMINATED;
+		break;
+	}
 }
 
 /**
@@ -179,6 +191,9 @@ bool DarkForces::Component::InfElevator::animate(time_t delta)
 				case dfLogicStop::Action::TERMINATE:
 					m_status = Status::TERMINATED;
 					// stop the animation
+					return false;
+				case dfLogicStop::Action::COMPLETE:
+					m_status = Status::TERMINATED;
 					return false;
 				default:
 					gaDebugLog(1, "DarkForces::Component::Elevator::animate", "action " + std::to_string(static_cast<uint32_t>(stop->action())));
@@ -320,7 +335,7 @@ void DarkForces::Component::InfElevator::onTrigger(gaMessage* message)
 	else {
 		// for speed = 0, move instantly to the next stop
 		if (m_speed == 0) {
-			gaDebugLog(1, "DarkForces::Component::Elevator::dispatchMessage", "speed==0 not implemented");
+			moveToNextStop();
 		}
 		else {
 			startTimer();

@@ -28,28 +28,32 @@ class dfSector;
  */
 enum dfLogic {
 	NONE,
-	SCENERY = 1,
-	ANIM = 2,
-	OFFICER = 4,
-	COMMANDO = 8,
-	TROOP = 16,
-	RED_KEY = 32,
-	INTDROID = 64,
-	ITEM_SHIELD = 128,
-	ITEM_ENERGY = 256,
-	LIFE = 512,
-	REVIVE = 1024,
-	MOUSEBOT = 2048,
-	KEY_TRIGGER = 4096,
-	ITEM_RIFLE = 8192,
-	ITEM_POWER = 16384,
-	ITEM_BATTERY = 32768,
-	DEAD_MOUSE = 65536,
-	GOGGLES = 131072,
-	MEDKIT = 262144,
-	WEAPON = 524288,
-	PLANS = 1048576,	// death star plans
-	GOAL = 2097152		// is a goal and needs to send a nextStop to 
+	SCENERY = 1<<1,
+	ANIM = 1<<2,
+	OFFICER = 1<<3,
+	COMMANDO = 1<<4,
+	TROOP = 1<<5,
+	RED_KEY = 1<<6,
+	INTDROID = 1<<7,
+	ITEM_SHIELD = 1<<8,
+	ITEM_ENERGY = 1<<9,
+	LIFE = 1<<10,
+	REVIVE = 1<<11,
+	MOUSEBOT = 1<<12,
+	KEY_TRIGGER = 1<<13,
+	ITEM_RIFLE = 1<<14,
+	ITEM_POWER = 1<<15,
+	ITEM_BATTERY = 1<<16,
+	DEAD_MOUSE = 1<<17,
+	GOGGLES = 1<<18,
+	MEDKIT = 1<<19,
+	WEAPON = 1<<20,
+	PLANS = 1<<21,			// death star plans
+	PHRIK = 1<<22,			// Phrik metal
+	NAVA = 1<<23,			// Nava Card
+	DATATAPE = 1<<24,		// data tapes 
+	DT_WEAPON = 1<<25,		// broken DT weapon
+	PILE = 1<<26,			// Your Gear
 };
 
 /**

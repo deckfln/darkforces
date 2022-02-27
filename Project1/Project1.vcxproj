@@ -181,6 +181,7 @@
     <ClCompile Include="darkforces\dfObject\dfSprite\dfRifle.cpp" />
     <ClCompile Include="darkforces\dfObject\Enemy.cpp" />
     <ClCompile Include="darkforces\dfPalette.cpp" />
+    <ClCompile Include="darkforces\dfParseGoal.cpp" />
     <ClCompile Include="darkforces\dfParseINF.cpp" />
     <ClCompile Include="darkforces\dfLevel.cpp" />
     <ClCompile Include="darkforces\dfParserObjects.cpp" />
@@ -413,6 +414,7 @@
     <ClInclude Include="darkforces\dfObject\dfSprite\dfRifle.h" />
     <ClInclude Include="darkforces\dfObject\Enemy.h" />
     <ClInclude Include="darkforces\dfPalette.h" />
+    <ClInclude Include="darkforces\dfParseGoal.h" />
     <ClInclude Include="darkforces\dfParseINF.h" />
     <ClInclude Include="darkforces\dfLevel.h" />
     <ClInclude Include="darkforces\dfParserObjects.h" />

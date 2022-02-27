@@ -17,6 +17,7 @@
 #include "dfSuperSector.h"
 #include "dfBitmap.h"
 #include "dfFileGOB.h"
+#include "dfParseGoal.h"
 
 class fwCylinder;
 
@@ -65,6 +66,7 @@ class dfLevel : public GameEngine::Level
 	std::list <dfLogicTrigger*> m_triggers;		// all triggers of the level
 
 	dfParserObjects* m_objects = nullptr;		// all objects in the level
+	DarkForces::Goals* m_goals = nullptr;		// goals of the level
 
 	void loadBitmaps(dfFileSystem* fs, std::string file);
 	void spacePartitioning(void);

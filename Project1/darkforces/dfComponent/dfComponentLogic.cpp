@@ -112,9 +112,11 @@ void dfComponentLogic::dispatchMessage(gaMessage* message)
 				// transfert the redkey to collider
 				m_entity->sendMessage(message->m_server, gaMessage::ADD_ITEM, 0, &g_Plans);
 
-				if (m_logics & dfLogic::GOAL) {
-					m_entity->sendMessage("complete", DarkForces::Message::TRIGGER);
-				}
+				// inform the goal entity of the progress
+				m_entity->sendMessage("DarkForces:Goals", DarkForces::Message::TRIGGER, 0);
+
+				// move the the "complete" entity to the next level
+				m_entity->sendMessage("complete", DarkForces::Message::TRIGGER);
 
 				// and remove the object from the scene
 				m_entity->sendMessageToWorld(gaMessage::DELETE_ENTITY, 0, nullptr);
