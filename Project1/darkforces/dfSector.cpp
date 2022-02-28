@@ -432,7 +432,7 @@ bool dfSector::isPointInside(const glm::vec3& p)
 	float ceiling = m_staticMeshCeilingAltitude / 10.0f + FLT_EPSILON;
 
 	if (p.y >= floor && p.y <= ceiling) {
-		if (m_2Dpolygon.isPointInside(glm::vec2(p.x, p.z))) {
+		if (m_2Dpolygon.isPointInside(glm::vec2(p.x, p.z)) == 1) {
 			return true;
 		}
 	}
@@ -703,7 +703,7 @@ bool dfSector::inAABBox(const glm::vec3& position)
 	float ceiling = m_staticMeshCeilingAltitude / 10.0f + FLT_EPSILON;
 
 	if (position.y >= floor && position.y <= ceiling) {
-		if (m_2Dpolygon.isPointInside(glm::vec2(position.x, position.z))) {	
+		if (m_2Dpolygon.isPointInside(glm::vec2(position.x, position.z)) == 1) {	
 			b1 = true;
 		}
 	}
@@ -739,17 +739,15 @@ bool dfSector::AABBcollide(const fwAABBox& box)
 		return false;
 	}
 
-	Framework::AABBox2D aabb2D(box.m_p.x, box.m_p.z, box.m_p1.x, box.m_p1.z);
-	inside = m_2Dpolygon.AABBcollide(aabb2D);
+	float ceiling = m_staticMeshCeilingAltitude / 10.0 + FLT_EPSILON;
+	float floor = m_staticMeshFloorAltitude / 10.0 - FLT_EPSILON;
 
-	//final test: if a point is inside the 2D polygon, is it in Z
-	if (inside) {
-		float ceiling = m_staticMeshCeilingAltitude / 10.0 + FLT_EPSILON;
-		float floor = m_staticMeshFloorAltitude / 10.0 - FLT_EPSILON;
-
-		if ((box.m_p.y <= ceiling) && (box.m_p1.y >= floor)) {
+	if ((box.m_p.y <= ceiling) && (box.m_p1.y >= floor)) {
+		Framework::AABBox2D aabb2D(box.m_p.x, box.m_p.z, box.m_p1.x, box.m_p1.z);
+		if (m_2Dpolygon.AABBcollide(aabb2D)) {
+			// inside the outer rim
 			return true;
-		}
+		};
 	}
 
 	return false;

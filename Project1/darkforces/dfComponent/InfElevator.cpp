@@ -435,9 +435,6 @@ void DarkForces::Component::InfElevator::onMaster(gaMessage* message)
  */
 void DarkForces::Component::InfElevator::dispatchMessage(gaMessage* message)
 {
-	if (message->m_client == "complete") {
-		__debugbreak();
-	}
 	switch (message->m_action) {
 	case DarkForces::Message::MASTER:
 		onMaster(message);

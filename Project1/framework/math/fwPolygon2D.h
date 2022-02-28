@@ -18,7 +18,7 @@ namespace Framework {
 			Polygon2D(const glm::vec2* points, uint32_t nb);
 
 			void addPoint(const glm::vec2& p);
-			bool isPointInside(const glm::vec2& p);
+			uint32_t isPointInside(const glm::vec2& p);
 			bool intersect(Framework::Segment2D& seg);		// if the given segment intersect with any of the outter polyline
 			bool AABBcollide(AABBox2D& aabb);				// if the given AABB intersect/collide with the polyline
 			void addHole(const std::vector<glm::vec2>& hole);

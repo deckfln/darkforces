@@ -35,8 +35,11 @@ void Framework::Primitive::Polygon2D::addPoint(const glm::vec2& p)
 
 /**
  * Is a 2D point inside a polygon
+ * 0: completely outside (outer rim and holes)
+ * 1: inside the outer rim
+ * 2: inside a hole
  */
-bool Framework::Primitive::Polygon2D::isPointInside(const glm::vec2& p)
+uint32_t Framework::Primitive::Polygon2D::isPointInside(const glm::vec2& p)
 {
 	// quick test
 	if (!m_aabb.inside(p)) {
@@ -60,7 +63,7 @@ bool Framework::Primitive::Polygon2D::isPointInside(const glm::vec2& p)
 			}
 		}
 		if (inside) {
-			return false;	// if we are in the hole, we are not on the sector
+			return 2;	// if we are in the hole, we are not on the sector
 		}
 	}
 
@@ -122,24 +125,24 @@ bool Framework::Primitive::Polygon2D::AABBcollide(AABBox2D& aabb)
 	const glm::vec2& pmax = aabb.max();
 
 
-	// quicktest2: if any of the 4 flat corners are inside the 2D polygon
+	// quicktest2: if any of the 4 flat corners are inside the outer 2D polygon but not in a hole
 	glm::vec2 corner(pmin.x, pmin.y);
-	if (isPointInside(corner)) {
+	if (isPointInside(corner) == 1) {
 		return true;
 	}
 	else {
 		corner.x = pmax.x;
-		if (isPointInside(corner)) {
+		if (isPointInside(corner) == 1) {
 			return true;
 		}
 		else {
 			corner.y = pmax.y;
-			if (isPointInside(corner)) {
+			if (isPointInside(corner) == 1) {
 				return true;
 			}
 			else {
 				corner.x = pmin.x;
-				if (isPointInside(corner)) {
+				if (isPointInside(corner) == 1) {
 					return true;
 				}
 			}
