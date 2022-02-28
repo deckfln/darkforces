@@ -263,7 +263,6 @@ uint32_t dfLogicTrigger::recordState(void* r)
 	gaEntity::recordState(&record->entity);
 	record->entity.classID = flightRecorder::TYPE::DF_ENTITY_LOGIC_TRIGGER;
 	record->entity.size = sizeof(flightRecorder::DarkForces::LogicTrigger);
-	record->master = m_master;
 	record->actived = m_actived;
 
 	return record->entity.size;
@@ -276,7 +275,6 @@ void dfLogicTrigger::loadState(void* r)
 {
 	flightRecorder::DarkForces::LogicTrigger* record = (flightRecorder::DarkForces::LogicTrigger*)r;
 	gaEntity::loadState(&record->entity);
-	m_master = record->master;
 	m_actived = record->actived;
 }
 
@@ -290,7 +288,6 @@ void dfLogicTrigger::debugGUIChildClass(void)
 	static char tmp[64];
 	sprintf_s(tmp, "%s##%d", g_className, m_entityID);
 	if (ImGui::TreeNode(tmp)) {
-		ImGui::Checkbox("Master", &m_master);
 		ImGui::Checkbox("Activated", &m_actived);
 		ImGui::TreePop();
 	}

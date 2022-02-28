@@ -245,6 +245,16 @@ static gaMessage* parseMessage(std::vector<std::string>& tokens)
 			value = std::stoi(tokens[1]);
 			client = tokens[2];
 		}
+		else if (tokens[3] == "master_on") {
+			action = DarkForces::Message::MASTER;
+			value = true;
+			client = tokens[2];
+		}
+		else if (tokens[3] == "master_off") {
+			action = DarkForces::Message::MASTER;
+			value = false;
+			client = tokens[2];
+		}
 		break;
 	case 3:
 		// message: goto_stop 1
@@ -252,6 +262,13 @@ static gaMessage* parseMessage(std::vector<std::string>& tokens)
 			action = DarkForces::Message::GOTO_STOP;
 			value = std::stoi(tokens[2]);
 		}
+		break;
+	case 2:
+		// message: next_stop
+		if (tokens[1] == "next_stop") {
+			action = DarkForces::Message::TRIGGER;
+		}
+		break;
 	}
 
 	// detect failed parsing
@@ -517,6 +534,13 @@ void dfParseINF::parseSector(std::istringstream& infile, const std::string& sect
 			}
 			else if (program) {
 				gaDebugLog(1, "dfParseINF::parseSector", "sound: not implement for triggers");
+			}
+		}
+		else if (tokens[0] == "master:") {
+			if (inv != nullptr) {
+				if (tokens[1] == "off") {
+					inv->master(false);
+				}
 			}
 		}
 		else {

@@ -67,6 +67,8 @@ namespace DarkForces {
 			void key(const std::string& key);				// register the needed key
 			inline DarkForces::Keys key(void) { return m_key; };
 			inline Status status(void) { return m_status; };
+			inline bool master(void) { return m_master; };
+			inline void master(bool b) { m_master = b; };
 
 			inline void addTrigger(Trigger* trigger) { 
 				m_triggers.push_back(trigger); 
@@ -103,6 +105,7 @@ namespace DarkForces {
 			bool m_smart = false;							// TODO react to smart objects
 			std::vector<dfLogicStop*> m_stops;				// all stops of the elevator
 			Keys m_key = Keys::NONE;						// needed key to activate the elevator
+			bool m_master = true;							// is the object operational ?
 
 			const std::string& m_sector;					// sector that is an elevator
 			dfSector* m_pSector = nullptr;
@@ -147,6 +150,7 @@ namespace DarkForces {
 			void onTrigger(gaMessage* message);				// activate the elevator
 			void onGotoStop(gaMessage* message);			// Move to the next stop
 			void onTimer(gaMessage* message);				// animate the elevator
+			void onMaster(gaMessage* message);				// change the master status
 		};
 	}
 }

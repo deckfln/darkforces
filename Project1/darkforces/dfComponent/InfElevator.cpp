@@ -115,6 +115,9 @@ void DarkForces::Component::InfElevator::moveToNextStop(void)
 		}
 
 		moveTo(m_stops[m_currentStop]);
+
+		// send messages to the clients
+		m_stops[m_currentStop]->sendMessages();
 	}
 }
 
@@ -326,6 +329,11 @@ void DarkForces::Component::InfElevator::onGotoStopForced(gaMessage* message)
  */
 void DarkForces::Component::InfElevator::onTrigger(gaMessage* message)
 {
+	// ignore messages if the elevator if off
+	if (m_master == false) {
+		return;
+	}
+
 	if (m_status != Status::HOLD) {
 		// break the animation and move directly to the next stop
 		moveToNextStop();
@@ -412,6 +420,14 @@ void DarkForces::Component::InfElevator::onTimer(gaMessage* message)
 	}
 }
 
+/**
+ * change the master status
+ */
+void DarkForces::Component::InfElevator::onMaster(gaMessage* message)
+{
+	m_master = message->m_value;
+}
+
 //*******************************************************
 
 /**
@@ -419,7 +435,14 @@ void DarkForces::Component::InfElevator::onTimer(gaMessage* message)
  */
 void DarkForces::Component::InfElevator::dispatchMessage(gaMessage* message)
 {
+	if (message->m_client == "complete") {
+		__debugbreak();
+	}
 	switch (message->m_action) {
+	case DarkForces::Message::MASTER:
+		onMaster(message);
+		break;
+
 	case DarkForces::Message::TRIGGER:
 		onTrigger(message);
 		break;

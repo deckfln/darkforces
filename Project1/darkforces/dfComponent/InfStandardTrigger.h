@@ -17,7 +17,6 @@ namespace DarkForces {
 		class InfStandardTrigger : public gaComponent {
 			Event m_class;
 			uint32_t m_eventMask = 0;
-			bool m_master = true;				// is the trigger operational ?
 			bool m_actived = false;				// trigger was activated and shall not accept any new activation
 			std::vector<std::string> m_clients;		// name of the target sector 
 

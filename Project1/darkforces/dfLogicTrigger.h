@@ -28,7 +28,6 @@ enum {
 class dfLogicTrigger: public gaEntity {
 	int m_class;
 	int m_eventMask = 0;
-	bool m_master = true;					// is the trigger operational ?
 	bool m_actived = false;					// trigger was activated and shall not accept any new activation
 	std::vector<std::string> m_clients;		// name of the target sector 
 	DarkForces::Keys m_keys = DarkForces::Keys::NONE;		// keys needed to activate the triggers
