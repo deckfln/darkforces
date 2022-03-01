@@ -107,17 +107,14 @@ void DarkForces::Component::InfElevator::moveToNextStop(void)
 		// instant move
 		if (m_currentStop >= m_stops.size() - 1) {
 			// move backward
-			m_currentStop = 0;
+			m_nextStop = 0;
 		}
 		else {
 			// move upward
-			m_currentStop = m_currentStop + 1;
+			m_nextStop = m_currentStop + 1;
 		}
-
-		moveTo(m_stops[m_currentStop]);
-
-		// send messages to the clients
-		m_stops[m_currentStop]->sendMessages();
+		m_delay = 0;
+		m_direction = 0;
 	}
 }
 
@@ -341,15 +338,9 @@ void DarkForces::Component::InfElevator::onTrigger(gaMessage* message)
 		// no need for animation, there is already one on the message queue
 	}
 	else {
-		// for speed = 0, move instantly to the next stop
-		if (m_speed == 0) {
-			moveToNextStop();
-		}
-		else {
-			startTimer();
-			if (!animate(0)) {
-				stopTimer();
-			}
+		startTimer();
+		if (!animate(0)) {
+			stopTimer();
 		}
 	}
 
@@ -428,6 +419,15 @@ void DarkForces::Component::InfElevator::onMaster(gaMessage* message)
 	m_master = message->m_value;
 }
 
+/**
+ * complete a goal
+ */
+void DarkForces::Component::InfElevator::onComplete(gaMessage* message)
+{
+	// inform the goal entity of the completion
+	m_entity->sendMessage("goal", message->m_value);
+}
+
 //*******************************************************
 
 /**
@@ -436,6 +436,10 @@ void DarkForces::Component::InfElevator::onMaster(gaMessage* message)
 void DarkForces::Component::InfElevator::dispatchMessage(gaMessage* message)
 {
 	switch (message->m_action) {
+	case DarkForces::Message::COMPLETE:
+		onComplete(message);
+		break;
+
 	case DarkForces::Message::MASTER:
 		onMaster(message);
 		break;

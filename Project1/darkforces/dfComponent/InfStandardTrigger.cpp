@@ -12,6 +12,7 @@
 using namespace DarkForces::Component;
 
 static std::map<const std::string, Event> _triggers = {
+	{"", Event::DF_TRIGGER_STANDARD},
 	{"standard", Event::DF_TRIGGER_STANDARD},
 	{"switch1", Event::DF_TRIGGER_SWITCH1}
 };

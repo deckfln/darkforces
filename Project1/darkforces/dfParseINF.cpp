@@ -220,7 +220,7 @@ static gaMessage* parseMessage(std::vector<std::string>& tokens)
 	const std::string gotostop = "goto_stop";
 
 	int action = -1;
-	int value;
+	int value = 0;
 	std::string client;
 
 	switch (s) {
@@ -228,6 +228,11 @@ static gaMessage* parseMessage(std::vector<std::string>& tokens)
 		// message: 1 elev3-5 goto_stop 0
 		if (tokens[3] == gotostop) {
 			action = DarkForces::Message::GOTO_STOP;
+			value = std::stoi(tokens[4]);
+			client = tokens[2];
+		}
+		else if (tokens[3] == "complete") {
+			action = DarkForces::Message::COMPLETE;
 			value = std::stoi(tokens[4]);
 			client = tokens[2];
 		}
@@ -252,6 +257,11 @@ static gaMessage* parseMessage(std::vector<std::string>& tokens)
 		}
 		else if (tokens[3] == "master_off") {
 			action = DarkForces::Message::MASTER;
+			value = false;
+			client = tokens[2];
+		}
+		else if (tokens[3] == "next_stop") {
+			action = DarkForces::Message::TRIGGER;
 			value = false;
 			client = tokens[2];
 		}
@@ -400,7 +410,7 @@ void dfParseINF::parseSector(std::istringstream& infile, const std::string& sect
 			}
 			else if (tokens[1] == "trigger") {
 				if (tokens.size() == 2) {
-					std::cerr << "*class: trigger* not implemented" << std::endl;
+					program = new DarkForces::Component::InfStandardTrigger("", sector);
 				}
 				else {
 					program = new DarkForces::Component::InfStandardTrigger(tokens[2], sector);
@@ -458,12 +468,7 @@ void dfParseINF::parseSector(std::istringstream& infile, const std::string& sect
 		else if (tokens[0] == "message:") {
 			if (stop) {
 				int i = std::stoi(tokens[1]);
-				if (i == nbStops) {
-					stop->message( parseMessage(tokens) );
-				}
-				else {
-					std::cerr << "dfParseINF::parseSector stop/messages not in order for " << sector << " stop #" << nbStops << " message #" << i << std::endl;
-				}
+				inv->stop(i)->message(parseMessage(tokens));
 			}
 			else if (program) {
 				program->message( parseMessage(tokens) );
@@ -541,6 +546,13 @@ void dfParseINF::parseSector(std::istringstream& infile, const std::string& sect
 				if (tokens[1] == "off") {
 					inv->master(false);
 				}
+			}
+		}
+		else if (tokens[0] == "page:") {
+			if (inv != nullptr) {
+				uint32_t iStop = std::stoi(tokens[1]);
+				gaMessage* msg = new gaMessage(gaMessage::PLAY_SOUND, 0, "player");
+				inv->stop(iStop)->message(msg);
 			}
 		}
 		else {

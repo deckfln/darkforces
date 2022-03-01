@@ -69,6 +69,7 @@ namespace DarkForces {
 			inline Status status(void) { return m_status; };
 			inline bool master(void) { return m_master; };
 			inline void master(bool b) { m_master = b; };
+			inline 	dfLogicStop* stop(uint32_t i) { return m_stops[i]; };
 
 			inline void addTrigger(Trigger* trigger) { 
 				m_triggers.push_back(trigger); 
@@ -151,6 +152,7 @@ namespace DarkForces {
 			void onGotoStop(gaMessage* message);			// Move to the next stop
 			void onTimer(gaMessage* message);				// animate the elevator
 			void onMaster(gaMessage* message);				// change the master status
+			void onComplete(gaMessage* message);			// complete a goal
 		};
 	}
 }

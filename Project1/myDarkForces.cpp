@@ -117,7 +117,9 @@ void myDarkForces::myDarkForces::registerDebugger(void)
 		{DarkForces::Message::ANIM_END, "df_AnimEnd"},
 		{DarkForces::Message::ROTATE, "df_ROTATE"},
 		{DarkForces::Message::ANIM_PAUSE, "df_AnimPause"},
-		{DarkForces::Message::ANIM_VUE, "df_AnimVUE"}
+		{DarkForces::Message::ANIM_VUE, "df_AnimVUE"},
+		{DarkForces::Message::MASTER, "df_Master"},
+		{DarkForces::Message::COMPLETE, "df_Complete"}
 	};
 
 	static std::map<int32_t, const std::map<int32_t, const char*>> g_def = {
