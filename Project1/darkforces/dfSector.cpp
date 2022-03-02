@@ -1371,6 +1371,12 @@ void dfSector::dispatchMessage(gaMessage* message)
 	case gaMessage::Action::BULLET_HIT:
 		sendMessage(gaMessage::Action::PLAY_SOUND, DarkForces::Sounds::WALL_HIT_LASER, message->m_v3value);
 		break;
+
+	case DarkForces::Message::WAKEUP:
+		for (auto entity : m_3DObjects) {
+			sendMessage(entity->name(), DarkForces::Message::ANIM_PAUSE, false);
+		}
+		break;
 	}
 
 	gaEntity::dispatchMessage(message);

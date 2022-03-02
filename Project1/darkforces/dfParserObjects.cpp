@@ -275,7 +275,7 @@ void dfParserObjects::parseObjectComponent(dfFileSystem* fs, DarkForces::Object*
 		break;
 	case E_PAUSE: {
 		GameEngine::ParserExpression& truefalse = component.m_children[2].m_children[0];
-		object->sendMessage(DarkForces::Message::ANIM_PAUSE, component.m_expression == O_TRUE);
+		object->sendMessage(DarkForces::Message::ANIM_PAUSE, truefalse.m_expression == O_TRUE);
 		break;
 	}
 	case E_VUE: {

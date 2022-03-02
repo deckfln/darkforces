@@ -61,10 +61,16 @@ void DarkForces::Component::Anim3D::onTimer(gaMessage* message)
 		// follow a path
 		glm::mat4* mat4x4 = m_vue->nextFrame(t);
 		if (mat4x4 == nullptr) {
+			// do not loop on a vue
+			m_entity->timer(false);
+			/*
 			mat4x4 = m_vue->firstFrame(m_lastFrame);
 			m_lastFrame = t;
+			*/
 		}
-		m_entity->sendMessage(gaMessage::MOVE_ROTATE, 0, (void*)mat4x4);
+		else {
+			m_entity->sendMessage(gaMessage::MOVE_ROTATE, 0, (void*)mat4x4);
+		}
 	}
 	else {
 		// rotate the object
@@ -110,6 +116,14 @@ void DarkForces::Component::Anim3D::onAnimPause(gaMessage* message)
 {
 	// change the status of the looping animation
 	m_pause = (message->m_value != 0);
+
+	if (m_pause) {
+		// trigger the animation
+		m_entity->timer(false);
+	}
+	else {
+		m_entity->timer(true);
+	}
 }
 
 /**
@@ -132,6 +146,18 @@ void DarkForces::Component::Anim3D::onAnimVue(gaMessage* message)
 	m_vue = new dfVue(g_dfFiles, file, vue);
 }
 
+void DarkForces::Component::Anim3D::onWorldInsert(gaMessage* message)
+{
+	// trigger the animation
+	m_entity->timer(true);
+
+	// find the sector the object is in and record (to deal with wakeup messages)
+	dfSector* sector = static_cast<dfLevel*>(g_gaLevel)->findSector(m_entity->position());
+	if (sector != nullptr) {
+		sector->add3Dobject(m_entity);
+	}
+}
+
 /**
  * Deal with animation messages
  */
@@ -147,8 +173,7 @@ void DarkForces::Component::Anim3D::dispatchMessage(gaMessage* message)
 		break;
 
 	case gaMessage::WORLD_INSERT:
-		// trigger the animation
-		m_entity->timer(true);
+		onWorldInsert(message);
 		break;
 
 	case DarkForces::Message::ANIM_PAUSE:

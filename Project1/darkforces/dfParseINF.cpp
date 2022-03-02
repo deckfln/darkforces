@@ -265,6 +265,11 @@ static gaMessage* parseMessage(std::vector<std::string>& tokens)
 			value = false;
 			client = tokens[2];
 		}
+		else if (tokens[3] == "wakeup") {
+			action = DarkForces::Message::WAKEUP;
+			value = false;
+			client = tokens[2];
+		}
 		break;
 	case 3:
 		// message: goto_stop 1

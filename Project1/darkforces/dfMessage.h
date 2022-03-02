@@ -31,7 +31,8 @@ namespace DarkForces {
 		ANIM_PAUSE,			// let the animation loop or not
 		ANIM_VUE,			// load an animation VUE for 3D objects
 		MASTER,				// Change the master status of an elevator
-		COMPLETE			// complete a goal (eg TRIGGER:1 in .GOL)
+		COMPLETE,			// complete a goal (eg TRIGGER:1 in .GOL)
+		WAKEUP				// Un-pause all VUE loops hosted in the sector
 	};
 
 	enum MessageEvent {

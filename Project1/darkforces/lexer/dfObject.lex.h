@@ -171,7 +171,7 @@ enum {
 	E_D_YAW,
 	E_RADIUS,
 	E_HEIGHT,
-	E_PAUSE,
+	E_PAUSE,		//4134
 	E_VUE,			//4135
 	E_ITEMTYPE,
 	E_SHIELD,

@@ -123,6 +123,8 @@ class dfSector : public gaEntity
 	uint32_t m_soundVolumeID;							// sound volume based on the sector
 	GameEngine::Component::Sound m_sound;               // to play sound when a laser hit the wall
 
+	std::vector<gaEntity*> m_3DObjects;					// 3D objects stored in the sector (to deal with wakeup messages)
+
 	void buildWalls(dfMesh* mesh, dfWallFlag displayPolygon);
 	void buildFloorAndCeiling(dfMesh* mesh);
 	void buildSigns(dfMesh* mesh);
@@ -174,14 +176,26 @@ public:
 	inline void soundVolume(uint32_t volume) { m_soundVolumeID = volume; };
 	inline uint32_t soundVolume(void) { return m_soundVolumeID; };
 	inline float ambient(void) { return m_ambient; };
+	inline float ceiling(void) { return m_referenceCeilingAltitude; };
+	inline float currentFloorAltitude(void) { return m_floorAltitude; };
+	inline float referenceFloor(void) { return m_referenceFloorAltitude; };
+	inline float referenceCeiling(void) { return m_referenceCeilingAltitude; };
+	inline dfSector* isIncludedIn(void) { return m_includedIn; };
+	inline float height(void) { return m_height; };
+	inline unsigned flag(void) { return m_flag1; };
+	inline bool flag(int v) { return (m_flag1 & v) != 0; };
+	inline void eventMask(int eventMask) { m_eventMask = eventMask; };
+	inline void wallVertices(int start, int len) { m_wallVerticesStart = start, m_wallVerticesLen = len; };
+	inline void floorVertices(int start, int len) { m_floorVerticesStart = start, m_floorVerticesLen = len; };
+	inline int firstVertex(void) { return m_firstVertex; };
+	inline int nbVertices(void) { return m_nbVertices; };
+	inline void add3Dobject(gaEntity* entity) { m_3DObjects.push_back(entity); };
+
 	void wallCenter(uint32_t wallID, glm::vec3& center, float &surface);			// fill the 3D center of the wall
 
 	void ceiling(float z);
 
-	float ceiling(void) { return m_referenceCeilingAltitude; };
-
 	void currentFloorAltitude(float z);
-	float currentFloorAltitude(void) { return m_floorAltitude; };
 
 	void staticFloorAltitude(float z);
 	float staticFloorAltitude(void);
@@ -189,13 +203,6 @@ public:
 	void staticCeilingAltitude(float z);
 	float staticCeilingAltitude(void);
 
-	float referenceFloor(void) { return m_referenceFloorAltitude; };
-	float referenceCeiling(void) { return m_referenceCeilingAltitude; };
-
-	float height(void) { return m_height; };
-	unsigned flag(void) { return m_flag1; };
-	bool flag(int v) { return (m_flag1 & v) != 0; };
-	void eventMask(int eventMask) { m_eventMask = eventMask; };
 	std::vector <dfWall*>& walls(dfWallFlag);
 
 	std::vector<std::vector<Point>>& polygons(int displayPolygon);
@@ -207,18 +214,12 @@ public:
 	dfMesh* buildElevator_new(float bottom, float top, int what, bool clockwise, dfWallFlag flags, std::list<dfLogicTrigger*>& m_signs);
 
 	bool includedIn(dfSector* sector);
-	dfSector* isIncludedIn(void) { return m_includedIn; };
 
 	void bindWall2Sector(void);
 
 	void event(int event_mask);
 	void removeHollowWalls(void);
 
-	void wallVertices(int start, int len) { m_wallVerticesStart = start, m_wallVerticesLen = len; };
-	void floorVertices(int start, int len) { m_floorVerticesStart = start, m_floorVerticesLen = len; };
-
-	int firstVertex(void) { return m_firstVertex; };
-	int nbVertices(void) { return m_nbVertices; };
 
 	void changeAmbient(float ambient);								// set ambient lightning of the sector
 	void addToAmbient(float delta);									// add/substract from the current lighning
