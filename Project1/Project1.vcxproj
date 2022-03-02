@@ -172,6 +172,7 @@
     <ClCompile Include="darkforces\dfModel\df3DO.cpp" />
     <ClCompile Include="darkforces\dfModel\dfFME.cpp" />
     <ClCompile Include="darkforces\dfModel\dfWAX.cpp" />
+    <ClCompile Include="darkforces\dfMsg.cpp" />
     <ClCompile Include="darkforces\dfObject.cpp" />
     <ClCompile Include="darkforces\dfObject\df3DObject.cpp" />
     <ClCompile Include="darkforces\dfObject\dfBulletExplode.cpp" />

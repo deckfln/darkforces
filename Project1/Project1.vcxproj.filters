@@ -873,6 +873,9 @@
     <ClCompile Include="darkforces\dfParseGoal.cpp">
       <Filter>Fichiers sources\Dark Forces</Filter>
     </ClCompile>
+    <ClCompile Include="darkforces\dfMsg.cpp">
+      <Filter>Fichiers sources\Dark Forces</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="glad\glad.h">

@@ -152,6 +152,7 @@ std::vector<std::string>& dfParseTokens(std::string& line, std::map<std::string,
 
 	unsigned char c;
 	int start = -1;
+	bool string = false;
 
 	int size = line.length();
 	if (line[size - 1] == '\r') {
@@ -184,8 +185,21 @@ std::vector<std::string>& dfParseTokens(std::string& line, std::map<std::string,
 		}
 
 		if (c == ' ' || c == '\t') {
-			if (start >= 0) {
+			if (start >= 0 && string == false) {
 				tokens.push_back(line.substr(start, i - start));
+				start = -1;
+			}
+		}
+		else if (c == '\"') {
+			if (start == -1) {
+				// start a full string
+				start = i + 1;
+				string = true;
+			}
+			else {
+				// end a string
+				tokens.push_back(line.substr(start, i - start));
+				string = false;
 				start = -1;
 			}
 		}

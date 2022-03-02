@@ -39,6 +39,7 @@
 #include "darkforces/dfHUD.h"
 #include "darkforces/dfPlugin/dfSprites.h"
 #include "darkforces/dfVOC.h"
+#include "darkforces/dfMsg.h"
 
 const float c_height = 0.70f;
 const float c_radius = 0.2f;
@@ -214,6 +215,9 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 	bindControl((fwControl*)controller);
 	m_player->addComponent(controller, gaEntity::Flag::DONT_DELETE);
 	g_gaWorld.addClient(m_player);
+
+	// load the text file
+	g_dfMsg.Parse("TEXT.MSG");
 
 	// load first level
 	m_level = new dfLevel(g_dfFiles, "SECBASE");
