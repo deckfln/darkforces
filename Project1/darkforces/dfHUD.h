@@ -2,8 +2,13 @@
 
 #include "../framework/fwHUDelement.h"
 #include "../framework/fwHUD.h"
-#include "dfBitmap.h"
 #include "../framework/fwTexture.h"
+
+#include "../gaEngine/gaEntity.h"
+
+#include "dfConfig.h"
+#include "dfBitmap.h"
+#include "dfComponent/dfCHUDText.h"
 
 class fwScene;
 namespace GameEngine {
@@ -33,6 +38,8 @@ namespace DarkForces {
 
 		fwTexture m_text_bmp = fwTexture(720, 18, 4);
 		fwHUDelement* m_text = nullptr;		// text bar
+		gaEntity m_entText = gaEntity(DarkForces::ClassID::_HUD, "hud");
+		Component::HUDtext m_compText;
 
 	public:
 		HUD(GameEngine::Level*);

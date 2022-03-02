@@ -879,6 +879,9 @@
     <ClCompile Include="darkforces\dfFNT.cpp">
       <Filter>Fichiers sources\Dark Forces</Filter>
     </ClCompile>
+    <ClCompile Include="darkforces\dfComponent\dfCHUDText.cpp">
+      <Filter>Fichiers sources\Dark Forces</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="glad\glad.h">
@@ -1665,6 +1668,12 @@
       <Filter>Fichiers d%27en-tête\DarkForces</Filter>
     </ClInclude>
     <ClInclude Include="darkforces\dfFNT.h">
+      <Filter>Fichiers d%27en-tête\DarkForces</Filter>
+    </ClInclude>
+    <ClInclude Include="darkforces\dfComponent\dfCHUDText.h">
+      <Filter>Fichiers d%27en-tête\DarkForces\dfComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="darkforces\dfMsg.h">
       <Filter>Fichiers d%27en-tête\DarkForces</Filter>
     </ClInclude>
   </ItemGroup>

@@ -27,9 +27,13 @@ public:
 	int filter(void) { return m_filter; };
 	int id(void) { return m_id; };
 	unsigned char *get_info(int *width, int *height, int *nrChannels);
-	bool is(const int mclass) { return m_class & mclass; };
 	bool save(const std::string& file);
 	void clear(void);	// set the bitmap to ZERO (or transparent if RGBA)
+
+	// getter/setter
+	inline bool is(const int mclass) { return m_class & mclass; };
+	inline void data(uint8_t* data) { m_data = data; };
+
 	~fwTexture();
 };
 

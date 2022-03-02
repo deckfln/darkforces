@@ -15,6 +15,7 @@ namespace DarkForces {
 			m_importance(importance),
 			m_text(string)
 		{}
+		inline std::string& text(void) { return m_text; };
 
 		enum Logic {
 			// general
@@ -82,7 +83,7 @@ namespace DarkForces {
 	public:
 		Msgs(void) {};
 		void Parse(const std::string& file);
-		inline const Msg& get(uint32_t id) {
+		inline Msg& get(uint32_t id) {
 			return m_msgs[id];
 		}
 	};

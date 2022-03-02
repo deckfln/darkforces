@@ -1,8 +1,9 @@
 #include "dfHUD.h"
 
+#include "../framework/fwFlatPanel.h"
+#include "../gaEngine/World.h"
 #include "dfFileSystem.h"
 #include "dfLevel.h"
-#include "../framework/fwFlatPanel.h"
 
 DarkForces::HUD* g_dfHUD;
 
@@ -36,8 +37,20 @@ DarkForces::HUD::HUD(GameEngine::Level* level) :
 	m_weapon = new fwHUDelement("rifle", fwHUDelement::Position::BOTTOM_CENTER, fwHUDelementSizeLock::UNLOCKED, 0.4f, 0.4f, nullptr, m_panel);
 
 	// text hud
-	m_text_bmp.clear();
+	int32_t h, w, ch;
+	uint8_t* data = m_text_bmp.get_info(&h, &w, &ch);
+	if (data == nullptr) {
+		m_text_bmp.data(new uint8_t[h * w * ch]);
+	}
+
 	m_text = new fwHUDelement("text", fwHUDelement::Position::TOP_LET, fwHUDelementSizeLock::UNLOCKED, 1.0f, 0.05f, &m_text_bmp);
+
+	// prepare the entity part of the HUD
+	m_compText.texture(&m_text_bmp);
+	m_entText.addComponent(&m_compText);
+	m_entText.physical(false);
+	m_entText.gravity(false);
+	g_gaWorld.addClient(&m_entText);
 
 	add(m_health);
 	add(m_ammo);
