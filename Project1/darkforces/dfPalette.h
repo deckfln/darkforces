@@ -25,3 +25,5 @@ public:
 	glm::ivec4* getColor(int v, bool transparent = false);
 	~dfPalette();
 };
+
+extern dfPalette* g_dfCurrentPalette;

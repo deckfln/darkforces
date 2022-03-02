@@ -29,6 +29,7 @@ public:
 	unsigned char *get_info(int *width, int *height, int *nrChannels);
 	bool is(const int mclass) { return m_class & mclass; };
 	bool save(const std::string& file);
+	void clear(void);	// set the bitmap to ZERO (or transparent if RGBA)
 	~fwTexture();
 };
 

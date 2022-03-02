@@ -1,11 +1,13 @@
 #include "dfComponentLogic.h"
 
+#include "../gaItem/dfItem/dfWeapon.h"
+#include "../gaItem/dfItem/dfHeadlight.h"
+
 #include "../../config.h"
 #include "../dfObject.h"
-#include "../gaItem/dfItem/dfWeapon.h"
 #include "../dfComponent.h"
+#include "../dfMsg.h"
 #include "dfCActor.h"
-#include "../gaItem/dfItem/dfHeadlight.h"
 
 #include <imgui.h>
 
@@ -60,6 +62,9 @@ void dfComponentLogic::dispatchMessage(gaMessage* message)
 
 				// and remove the object from the scene
 				m_entity->sendMessageToWorld(gaMessage::DELETE_ENTITY, 0, nullptr);
+
+				// and display the proper message on screen
+				m_entity->sendMessage("hud", DarkForces::Message::TEXT, DarkForces::Msg::SHIELD);
 			}
 			else if (m_logics & dfLogic::ITEM_ENERGY) {
 				// ADD ENERGY
@@ -69,6 +74,9 @@ void dfComponentLogic::dispatchMessage(gaMessage* message)
 
 				// and remove the object from the scene
 				m_entity->sendMessageToWorld(gaMessage::DELETE_ENTITY, 0, nullptr);
+
+				// and display the proper message on screen
+				m_entity->sendMessage("hud", DarkForces::Message::TEXT, DarkForces::Msg::ENERGY);
 			}
 			else if (m_logics & dfLogic::ITEM_RIFLE) {
 				DarkForces::Object* object = dynamic_cast<DarkForces::Object*>(m_entity);
@@ -82,6 +90,9 @@ void dfComponentLogic::dispatchMessage(gaMessage* message)
 
 				// and remove the object from the scene
 				m_entity->sendMessageToWorld(gaMessage::DELETE_ENTITY, 0, nullptr);
+
+				// and display the proper message on screen
+				m_entity->sendMessage("hud", DarkForces::Message::TEXT, DarkForces::Msg::RIFLE);
 			}
 			else if (m_logics & dfLogic::ITEM_BATTERY) {
 				// pick a rifle and bullets
@@ -91,6 +102,9 @@ void dfComponentLogic::dispatchMessage(gaMessage* message)
 
 				// and remove the object from the scene
 				m_entity->sendMessageToWorld(gaMessage::DELETE_ENTITY, 0, nullptr);
+
+				// and display the proper message on screen
+				m_entity->sendMessage("hud", DarkForces::Message::TEXT, DarkForces::Msg::BATTERY);
 			}
 			else if (m_logics & dfLogic::GOGGLES) {
 				// pick the googles and add to the inventory
@@ -98,6 +112,9 @@ void dfComponentLogic::dispatchMessage(gaMessage* message)
 
 				// and remove the object from the scene
 				m_entity->sendMessageToWorld(gaMessage::DELETE_ENTITY, 0, nullptr);
+
+				// and display the proper message on screen
+				m_entity->sendMessage("hud", DarkForces::Message::TEXT, DarkForces::Msg::GOGGLES);
 			}
 			else if (m_logics & dfLogic::RED_KEY) {
 				// transfert the redkey to collider
@@ -107,6 +124,9 @@ void dfComponentLogic::dispatchMessage(gaMessage* message)
 
 				// and remove the object from the scene
 				m_entity->sendMessageToWorld(gaMessage::DELETE_ENTITY, 0, nullptr);
+
+				// and display the proper message on screen
+				m_entity->sendMessage("hud", DarkForces::Message::TEXT, DarkForces::Msg::RED);
 			}
 			else if (m_logics & dfLogic::PLANS) {
 				// transfert the redkey to collider
@@ -120,6 +140,9 @@ void dfComponentLogic::dispatchMessage(gaMessage* message)
 
 				// and remove the object from the scene
 				m_entity->sendMessageToWorld(gaMessage::DELETE_ENTITY, 0, nullptr);
+
+				// and display the proper message on screen
+				m_entity->sendMessage("hud", DarkForces::Message::TEXT, DarkForces::Msg::PLANS);
 			}
 		}
 		break;

@@ -40,6 +40,7 @@
 #include "darkforces/dfPlugin/dfSprites.h"
 #include "darkforces/dfVOC.h"
 #include "darkforces/dfMsg.h"
+#include "darkforces/dfFNT.h"
 
 const float c_height = 0.70f;
 const float c_radius = 0.2f;
@@ -218,6 +219,9 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 
 	// load the text file
 	g_dfMsg.Parse("TEXT.MSG");
+
+	// load the default fontset
+	DarkForces::FNT *swFont1= new DarkForces::FNT("SWFONT1.FNT");
 
 	// load first level
 	m_level = new dfLevel(g_dfFiles, "SECBASE");

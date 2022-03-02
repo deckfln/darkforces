@@ -876,6 +876,9 @@
     <ClCompile Include="darkforces\dfMsg.cpp">
       <Filter>Fichiers sources\Dark Forces</Filter>
     </ClCompile>
+    <ClCompile Include="darkforces\dfFNT.cpp">
+      <Filter>Fichiers sources\Dark Forces</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="glad\glad.h">
@@ -1659,6 +1662,9 @@
       <Filter>Fichiers d%27en-tête\DarkForces\gaBehaviorNode</Filter>
     </ClInclude>
     <ClInclude Include="darkforces\dfParseGoal.h">
+      <Filter>Fichiers d%27en-tête\DarkForces</Filter>
+    </ClInclude>
+    <ClInclude Include="darkforces\dfFNT.h">
       <Filter>Fichiers d%27en-tête\DarkForces</Filter>
     </ClInclude>
   </ItemGroup>

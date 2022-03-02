@@ -4,6 +4,8 @@
 
 #include "dfFileSystem.h"
 
+dfPalette* g_dfCurrentPalette = nullptr;
+
 dfPalette::dfPalette(dfFileSystem* fs, std::string file)
 {
 	int size;

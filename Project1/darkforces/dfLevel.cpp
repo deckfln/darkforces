@@ -63,7 +63,7 @@ dfLevel::dfLevel(dfFileSystem* fs, std::string file)
 		m_name = tokens[1];
 	}
 	else if (tokens[0] == "PALETTE") {
-		m_palette = new dfPalette(fs, tokens[1]);
+		g_dfCurrentPalette = m_palette = new dfPalette(fs, tokens[1]);
 	}
 	else if (tokens[0] == "TEXTURES") {
 		int nbTextures = std::stoi(tokens[1]);

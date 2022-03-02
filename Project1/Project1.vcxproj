@@ -162,6 +162,7 @@
     <ClCompile Include="darkforces\dfFileGOB.cpp" />
     <ClCompile Include="darkforces\dfFileLFD.cpp" />
     <ClCompile Include="darkforces\dfFileSystem.cpp" />
+    <ClCompile Include="darkforces\dfFNT.cpp" />
     <ClCompile Include="darkforces\dfFrame.cpp" />
     <ClCompile Include="darkforces\dfGame.cpp" />
     <ClCompile Include="darkforces\dfHUD.cpp" />
@@ -395,6 +396,7 @@
     <ClInclude Include="darkforces\dfFileGOB.h" />
     <ClInclude Include="darkforces\dfFileLFD.h" />
     <ClInclude Include="darkforces\dfFileSystem.h" />
+    <ClInclude Include="darkforces\dfFNT.h" />
     <ClInclude Include="darkforces\dfFrame.h" />
     <ClInclude Include="darkforces\dfGame.h" />
     <ClInclude Include="darkforces\dfHUD.h" />

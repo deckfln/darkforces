@@ -3,6 +3,7 @@
 #include "../framework/fwHUDelement.h"
 #include "../framework/fwHUD.h"
 #include "dfBitmap.h"
+#include "../framework/fwTexture.h"
 
 class fwScene;
 namespace GameEngine {
@@ -29,6 +30,9 @@ namespace DarkForces {
 		// default data for the HUD
 		glm::vec4 m_material = glm::vec4(0);
 		fwUniform* m_materialUniform = nullptr;
+
+		fwTexture m_text_bmp = fwTexture(720, 18, 4);
+		fwHUDelement* m_text = nullptr;		// text bar
 
 	public:
 		HUD(GameEngine::Level*);

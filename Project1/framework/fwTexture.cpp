@@ -60,6 +60,13 @@ bool fwTexture::save(const std::string& file)
 	return stbi_write_png(file.c_str(), m_width, m_height,m_nrChannels, m_data, m_width * m_nrChannels);
 }
 
+/**
+ * set the bitmap to ZERO (or transparent if RGBA)
+ */
+void fwTexture::clear(void)
+{
+}
+
 fwTexture::~fwTexture()
 {
 	if (m_data != nullptr) {

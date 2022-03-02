@@ -23,16 +23,28 @@ fwHUDelement::fwHUDelement(const std::string& name, Position position, fwHUDelem
 
 	switch(position) {
 	case Position::BOTTOM_LEFT:
-		m_onscreen.z = (2.0f * width) / 2.0f - 1.0f;
-		m_onscreen.w = (2.0f * height) / 2.0f - 1.0f;
+		m_onscreen.z = width - 1.0f;
+		m_onscreen.w = height - 1.0f;
 		break;
 	case Position::BOTTOM_RIGHT:
-		m_onscreen.z = 1.0f - (2.0f * width) / 2.0f;
-		m_onscreen.w = (2.0f * height) / 2.0f - 1.0f;
+		m_onscreen.z = 1.0f - width;
+		m_onscreen.w = height - 1.0f;
 		break;
 	case Position::BOTTOM_CENTER:
 		m_onscreen.z = 0;
-		m_onscreen.w = (2.0f * height) / 2.0f - 1.0f;
+		m_onscreen.w = height - 1.0f;
+		break;
+	case Position::TOP_LET:
+		m_onscreen.z = width - 1.0f;
+		m_onscreen.w = 1.0f-height;
+		break;
+	case Position::TOP_RIGHT:
+		m_onscreen.z = 1.0f - width;
+		m_onscreen.w = 1.0f - height;
+		break;
+	case Position::TOP_CENTER:
+		m_onscreen.z = 0;
+		m_onscreen.w = 1.0f - height;
 		break;
 	}
 }

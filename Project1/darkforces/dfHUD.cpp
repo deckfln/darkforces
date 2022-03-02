@@ -35,9 +35,14 @@ DarkForces::HUD::HUD(GameEngine::Level* level) :
 	m_panel = new fwFlatPanel(m_panelMaterial);
 	m_weapon = new fwHUDelement("rifle", fwHUDelement::Position::BOTTOM_CENTER, fwHUDelementSizeLock::UNLOCKED, 0.4f, 0.4f, nullptr, m_panel);
 
+	// text hud
+	m_text_bmp.clear();
+	m_text = new fwHUDelement("text", fwHUDelement::Position::TOP_LET, fwHUDelementSizeLock::UNLOCKED, 1.0f, 0.05f, &m_text_bmp);
+
 	add(m_health);
 	add(m_ammo);
 	add(m_weapon);
+	add(m_text);
 }
 
 void DarkForces::HUD::setWeapon(fwTexture* texture, float x, float y, float w, float h)
