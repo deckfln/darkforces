@@ -551,7 +551,13 @@ void dfParseINF::parseSector(std::istringstream& infile, const std::string& sect
 		else if (tokens[0] == "page:") {
 			if (inv != nullptr) {
 				uint32_t iStop = std::stoi(tokens[1]);
-				gaMessage* msg = new gaMessage(gaMessage::PLAY_SOUND, 0, "player");
+
+				// add the sound to the player
+				gaEntity* player = g_gaWorld.getEntity("player");
+				GameEngine::Component::Sound* sound = dynamic_cast<GameEngine::Component::Sound*>(player->findComponent(gaComponent::SOUND));
+				uint32_t soundID = sound->addSound(loadVOC(tokens[2])->sound());
+
+				gaMessage* msg = new gaMessage(gaMessage::PLAY_SOUND, soundID, "player");
 				inv->stop(iStop)->message(msg);
 			}
 		}

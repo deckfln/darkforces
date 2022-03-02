@@ -76,6 +76,20 @@ void GameEngine::Component::Sound::addSound(uint32_t name, alSound* sound)
 	}
 }
 
+uint32_t GameEngine::Component::Sound::addSound(alSound* sound)
+{
+	uint32_t id = 0;
+
+	// find the last index
+	for (auto& sound : m_sounds) {
+		if (id <= sound.first) {
+			id = sound.first + 1;
+		}
+	}
+	m_sounds[id] = sound;
+	return id;
+}
+
 void GameEngine::Component::Sound::position(const glm::vec3& position)
 {
 	m_position = position;

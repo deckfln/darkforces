@@ -196,6 +196,24 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 		g_gaWorld.addModel(mod);
 	}
 
+	// first object of the world is the player
+	m_player = new DarkForces::Player(DarkForces::ClassID::_Object, "player", bounding, start, c_eyes, c_ankle);
+	const std::vector<GameEngine::Component::Controller::KeyInfo> keys = {
+		{GLFW_KEY_X, GameEngine::Component::Controller::KeyInfo::Msg::onPressDown},
+		{GLFW_KEY_LEFT_CONTROL, GameEngine::Component::Controller::KeyInfo::Msg::onPress},
+		{GLFW_KEY_SPACE, GameEngine::Component::Controller::KeyInfo::Msg::onPressDown},
+		{GLFW_KEY_S, GameEngine::Component::Controller::KeyInfo::Msg::onPressDown},
+		{GLFW_KEY_F1, GameEngine::Component::Controller::KeyInfo::Msg::onPressDown},
+		{GLFW_KEY_F5, GameEngine::Component::Controller::KeyInfo::Msg::onPressDown},
+		{GLFW_KEY_1, GameEngine::Component::Controller::KeyInfo::Msg::onPressDown},
+		{GLFW_KEY_2, GameEngine::Component::Controller::KeyInfo::Msg::onPressDown},
+	};
+
+	GameEngine::Component::Controller* controller = new GameEngine::Component::Controller(m_camera, start, c_eyes, c_direction, c_radius, keys);
+	bindControl((fwControl*)controller);
+	m_player->addComponent(controller, gaEntity::Flag::DONT_DELETE);
+	g_gaWorld.addClient(m_player);
+
 	// load first level
 	m_level = new dfLevel(g_dfFiles, "SECBASE");
 	static_cast<dfLevel*>(m_level)->addSkymap(m_scene);
@@ -212,22 +230,6 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 	g_dfSpritesEngine.OnWorldInsert();
 
 	// and put the player in position
-	m_player = new DarkForces::Player(DarkForces::ClassID::_Object, "player", bounding, start, c_eyes, c_ankle);
-	const std::vector<GameEngine::Component::Controller::KeyInfo> keys = {
-		{GLFW_KEY_X, GameEngine::Component::Controller::KeyInfo::Msg::onPressDown},
-		{GLFW_KEY_LEFT_CONTROL, GameEngine::Component::Controller::KeyInfo::Msg::onPress},
-		{GLFW_KEY_SPACE, GameEngine::Component::Controller::KeyInfo::Msg::onPressDown}, 
-		{GLFW_KEY_S, GameEngine::Component::Controller::KeyInfo::Msg::onPressDown},
-		{GLFW_KEY_F1, GameEngine::Component::Controller::KeyInfo::Msg::onPressDown},
-		{GLFW_KEY_F5, GameEngine::Component::Controller::KeyInfo::Msg::onPressDown},
-		{GLFW_KEY_1, GameEngine::Component::Controller::KeyInfo::Msg::onPressDown},
-		{GLFW_KEY_2, GameEngine::Component::Controller::KeyInfo::Msg::onPressDown},
-	};
-
-	GameEngine::Component::Controller* controller = new GameEngine::Component::Controller(m_camera, start, c_eyes, c_direction, c_radius, keys);
-	bindControl((fwControl*)controller);
-	m_player->addComponent(controller, gaEntity::Flag::DONT_DELETE);
-	g_gaWorld.addClient(m_player);
 	static_cast<DarkForces::Player*>(m_player)->bind(static_cast<dfLevel*>(m_level));
 	static_cast<DarkForces::Player*>(m_player)->setWeapon();
 
