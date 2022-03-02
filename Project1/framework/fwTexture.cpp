@@ -65,6 +65,14 @@ bool fwTexture::save(const std::string& file)
  */
 void fwTexture::clear(void)
 {
+	if (m_data) {
+		m_dirty = true;
+		uint8_t* p = m_data;
+		for (size_t i = 0; i < m_width * m_height * m_nrChannels; i++) {
+			*(p++) = 0;
+		}
+	}
+	m_dirty = true;
 }
 
 fwTexture::~fwTexture()

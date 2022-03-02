@@ -36,7 +36,7 @@ namespace DarkForces {
 		glm::vec4 m_material = glm::vec4(0);
 		fwUniform* m_materialUniform = nullptr;
 
-		fwTexture m_text_bmp = fwTexture(720, 18, 4);
+		fwTexture m_text_bmp = fwTexture(320, 12, 4);
 		fwHUDelement* m_text = nullptr;		// text bar
 		gaEntity m_entText = gaEntity(DarkForces::ClassID::_HUD, "hud");
 		Component::HUDtext m_compText;

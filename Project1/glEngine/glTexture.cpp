@@ -123,6 +123,26 @@ glTexture::glTexture(fwTexture* texture)
 	init();
 }
 
+/**
+ * update the texture without changing the format
+ */
+void glTexture::update(fwTexture* texture)
+{
+	m_data = texture->get_info(&m_width, &m_height, &m_nrChannels);
+
+	glBindTexture(GL_TEXTURE_2D, id);
+	GLuint pixels = GL_RGB;
+
+	switch (m_nrChannels) {
+	case 1: pixels = GL_RED; break;
+	case 2: pixels = GL_RG; break;
+	case 3: pixels = GL_RGB; break;
+	case 4: pixels = GL_RGBA; break;
+	}
+	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, m_width, m_height, pixels, GL_UNSIGNED_BYTE, m_data);
+	glBindTexture(GL_TEXTURE_2D, 0);
+}
+
 GLuint glTexture::getID(void)
 {
 	return id;

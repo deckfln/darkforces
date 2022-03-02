@@ -221,7 +221,7 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 	g_dfMsg.Parse("TEXT.MSG");
 
 	// load the default fontset
-	DarkForces::FNT *swFont1= new DarkForces::FNT("SWFONT1.FNT");
+	DarkForces::FNT *swFont1= new DarkForces::FNT("glowing.fnt");
 
 	// load first level
 	m_level = new dfLevel(g_dfFiles, "SECBASE");

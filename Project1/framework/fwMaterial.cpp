@@ -126,10 +126,16 @@ void fwMaterial::set(const std::string& name, fwTexture* texture)
 {
 	glTexture* glTex=nullptr;
 
+	// create the glTexture the first time
 	if (m_textures.count(texture->id()) == 0) {
 		m_textures[texture->id()] = new glTexture(texture);
 	}
 
+	// update the glTexture if the fwTexture is dirty
+	if (texture->isDirty()) {
+		m_textures[texture->id()]->update(texture);
+		texture->dirty(false);
+	}
 	m_uniforms[name]->set(m_textures[texture->id()]);
 }
 

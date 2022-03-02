@@ -17,6 +17,7 @@ protected:
 	int m_height = 0;
 	int m_nrChannels = 0;
 	int m_filter = GL_LINEAR;
+	bool m_dirty = false;		// data is dirty
 
 public:
 	fwTexture();
@@ -33,6 +34,8 @@ public:
 	// getter/setter
 	inline bool is(const int mclass) { return m_class & mclass; };
 	inline void data(uint8_t* data) { m_data = data; };
+	inline bool isDirty(void) { return m_dirty; };
+	inline void dirty(bool b=true) { m_dirty = b; };
 
 	~fwTexture();
 };

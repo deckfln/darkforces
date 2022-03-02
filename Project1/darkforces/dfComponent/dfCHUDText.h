@@ -9,7 +9,11 @@ namespace DarkForces {
 		class HUDtext : public gaComponent
 		{
 			fwTexture* m_hud = nullptr;
+			int32_t m_alarmID = -1;								// registered alarm
+			int32_t m_importance = -1;							// importance of currently displayed message
+
 			void onText(gaMessage* message);					// display a text
+			void onAlarm(gaMessage* message);					// remove the text
 
 		public:
 			HUDtext(void);

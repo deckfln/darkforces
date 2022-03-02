@@ -56,9 +56,18 @@ void DarkForces::FNT::draw(fwTexture* texture, const std::string& text)
 	uint8_t *bitmap;
 	uint8_t* column=nullptr;
 	glm::ivec4* rgba = nullptr;
+	float a = 1.0f;
+
+	data += w * (m_height + 2)* channels - channels;
 
 	for (size_t i = 0; i < text.size(); i++) {
 		c = text[i];
+
+		// spaces are not encoded, 4 pixels space
+		if (c == ' ') {
+			data -= 4 * 4;
+			continue;
+		}
 
 		// missing char
 		if (m_bitmaps.count(c) == 0) {
@@ -75,22 +84,34 @@ void DarkForces::FNT::draw(fwTexture* texture, const std::string& text)
 			for (size_t y1 = 0; y1 < m_height; y1++) {
 				rgba = g_dfCurrentPalette->getColor(*bitmap);
 
+				// black = transparent
+				if (*bitmap == 0) {
+					a = 0.0;
+				}
+				else {
+					a = 1.0f;
+				}
+				bitmap++;
+
 				switch (channels) {
 				case 4:
 					column[0] = rgba->r;
 					column[1] = rgba->g;
 					column[2] = rgba->b;
-					column[3] = rgba->a;
+					column[3] = a;
 
-					column += w * 4;	// move to next row of the fwTexture
+					column -= w * channels;	// move to next row of the fwTexture
 					break;
 				default:
 					printf("DarkForces::FNT::draw bitmaps != RGBA not supported\n");
 					__debugbreak();
 				}
 			}
-			data += 4;	// move to next row of the fwTexture
+			data -= channels;	// move to next row of the fwTexture
 		}
+
+		// 1 pixel space between chars
+		data -= channels;
 	}
 }
 

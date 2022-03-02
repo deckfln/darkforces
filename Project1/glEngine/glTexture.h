@@ -37,6 +37,7 @@ public:
 	glTexture(int width, int height, int format, int channels = -1, int filter=GL_LINEAR);
 	glTexture(unsigned char *data, int width, int height, int channels = -1, int filter = GL_LINEAR);
 	glTexture(fwTexture *texture);
+	void update(fwTexture* texture);			// update the texture without changing the format
 	GLuint getID(void);
 	GLint bind(void);
 	static void PushTextureUnit(void);

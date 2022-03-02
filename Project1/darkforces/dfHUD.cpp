@@ -41,6 +41,7 @@ DarkForces::HUD::HUD(GameEngine::Level* level) :
 	uint8_t* data = m_text_bmp.get_info(&h, &w, &ch);
 	if (data == nullptr) {
 		m_text_bmp.data(new uint8_t[h * w * ch]);
+		//m_text_bmp.clear();
 	}
 
 	m_text = new fwHUDelement("text", fwHUDelement::Position::TOP_LET, fwHUDelementSizeLock::UNLOCKED, 1.0f, 0.05f, &m_text_bmp);

@@ -6,7 +6,7 @@
 namespace DarkForces {
 	class Msg {
 		uint32_t m_id=0;
-		uint32_t m_importance=0;
+		int32_t m_importance=0;
 		std::string m_text;
 	public:
 		Msg(void) {};
@@ -16,6 +16,7 @@ namespace DarkForces {
 			m_text(string)
 		{}
 		inline std::string& text(void) { return m_text; };
+		inline int32_t importance(void) { return m_importance; };
 
 		enum Logic {
 			// general
