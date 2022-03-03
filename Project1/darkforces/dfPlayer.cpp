@@ -304,6 +304,15 @@ void DarkForces::Player::onTogleHeadlight(gaMessage* mmessage)
 }
 
 /**
+ * display number of ammo
+ */
+void DarkForces::Player::onAmmo(gaMessage* message)
+{
+	// only the entity player catches the AMMO message to passthrough to the hud
+	sendMessage("hud", DarkForces::Message::AMMO, message->m_value);
+}
+
+/**
  * let an entity deal with a situation
  */
 void DarkForces::Player::dispatchMessage(gaMessage* message)
@@ -363,6 +372,9 @@ void DarkForces::Player::dispatchMessage(gaMessage* message)
 		onBulletMiss(message);
 		break;
 
+	case DarkForces::Message::AMMO:
+		onAmmo(message);
+		break;
 	}
 
 	gaActor::dispatchMessage(message);

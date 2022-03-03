@@ -53,6 +53,7 @@ namespace DarkForces {
 		void onBulletMiss(gaMessage* mmessage);	// a bullet passed by the player
 		void onTogleGogle(gaMessage* mmessage);	// Togle the gogles
 		void onTogleHeadlight(gaMessage* mmessage);	// Togle the headlight
+		void onAmmo(gaMessage* message);		// display number of ammo
 
 	public:
 		Player(
