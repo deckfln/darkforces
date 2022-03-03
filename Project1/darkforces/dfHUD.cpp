@@ -4,6 +4,7 @@
 #include "../gaEngine/World.h"
 #include "dfFileSystem.h"
 #include "dfLevel.h"
+#include "dfFNT.h"
 
 DarkForces::HUD* g_dfHUD;
 
@@ -28,6 +29,7 @@ DarkForces::HUD::HUD(GameEngine::Level* level) :
 	m_ammo_bmp = new dfBitmap(g_dfFiles, "STATUSRT.BM", static_cast<dfLevel*>(level)->palette());
 	m_ammo = new fwHUDelement("statusrt", fwHUDelement::Position::BOTTOM_RIGHT, fwHUDelementSizeLock::UNLOCKED, 0.2f, 0.2f, m_ammo_bmp->fwtexture());
 
+
 	// dedicated hud for the weapon
 	m_uniWeapon = new fwUniform("material", &m_materialWeapon);
 
@@ -48,6 +50,8 @@ DarkForces::HUD::HUD(GameEngine::Level* level) :
 
 	// prepare the entity part of the HUD
 	m_compText.texture(&m_text_bmp);
+	m_compText.ammo(m_ammo_bmp->fwtexture());
+
 	m_entText.addComponent(&m_compText);
 	m_entText.physical(false);
 	m_entText.gravity(false);

@@ -38,8 +38,8 @@ namespace DarkForces {
 
 	public:
 		FNT(const std::string& file);
-		void draw(fwTexture* texture, const std::string& text);
+		void draw(fwTexture* texture, const std::string& text, int32_t x, int32_t y);
 
-		static void draw(fwTexture* texture, const std::string& text, const std::string& font);
+		static void draw(fwTexture* texture, const std::string& text, const std::string& font, int32_t x, int32_t y);
 	};
 }

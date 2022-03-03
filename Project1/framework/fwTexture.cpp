@@ -72,7 +72,37 @@ void fwTexture::clear(void)
 			*(p++) = 0;
 		}
 	}
-	m_dirty = true;
+}
+
+/**
+ *
+ */
+void fwTexture::box(int32_t x, int32_t y, int32_t w, int32_t h, const glm::ivec4& color)
+{
+	if (m_data) {
+		m_dirty = true;
+		uint8_t* p = m_data;
+
+		p = m_data + y * m_width * m_nrChannels + (m_width - x - 1) * m_nrChannels; //  += m_width * (m_height + y) * m_nrChannels - m_nrChannels * x;
+
+		for (size_t ty = 0; ty < h; ty++) {
+			for (size_t tx = 0; tx < w; tx++) {
+				switch (m_nrChannels) {
+				case 4:
+					p[0] = color.r;
+					p[1] = color.g;
+					p[2] = color.b;
+					p[3] = color.a;
+					break;
+				default:
+					printf("fwTexture::box format not supported\n");
+					__debugbreak();
+				}
+				p -= m_nrChannels;
+			}
+			p += m_width * m_nrChannels + m_nrChannels * w;
+		}
+	}
 }
 
 fwTexture::~fwTexture()

@@ -33,7 +33,8 @@ namespace DarkForces {
 		MASTER,				// Change the master status of an elevator
 		COMPLETE,			// complete a goal (eg TRIGGER:1 in .GOL)
 		WAKEUP,				// Un-pause all VUE loops hosted in the sector
-		TEXT				// display a text on screen
+		TEXT,				// display a text on screen
+		AMMO,				// display ammo on the hub
 	};
 
 	enum MessageEvent {

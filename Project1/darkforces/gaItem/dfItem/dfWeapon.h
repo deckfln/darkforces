@@ -111,17 +111,9 @@ namespace DarkForces {
 
 		inline Kind kind(void) { return m_kind; };
 
+		uint32_t energy(void);
 		uint32_t decreaseEnergy(void);					// remove a bullet from the weapon
-		uint32_t addEnergy(uint32_t value) {
-			m_energy += value;
-			if (m_energy > m_maxEnergy) {
-				m_energy = m_maxEnergy;
-			}
-			return m_energy;
-		}
-		uint32_t energy(void) {
-			return m_energy;
-		}
+		uint32_t addEnergy(uint32_t v);					// remove a bullet from the weapon
 	};
 }
 

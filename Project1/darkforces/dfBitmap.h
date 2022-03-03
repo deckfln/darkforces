@@ -39,6 +39,8 @@ public:
 	char *m_raw = nullptr;		// palette based raw data, stored by column  first
 	char* m_data = nullptr;		// RGB converted image, stored by row first
 
+	fwTexture* m_texture = nullptr;
+
 	void targetSize(int x, int y);
 	void boardSize(int blockSize);
 	fwSkybox* convert2skybox(void);

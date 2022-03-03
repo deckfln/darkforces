@@ -1,5 +1,6 @@
 #pragma once
 #include <iostream>
+#include <glm/vec4.hpp>
 
 #include "../glad/glad.h"
 
@@ -29,7 +30,8 @@ public:
 	int id(void) { return m_id; };
 	unsigned char *get_info(int *width, int *height, int *nrChannels);
 	bool save(const std::string& file);
-	void clear(void);	// set the bitmap to ZERO (or transparent if RGBA)
+	void clear(void);										// set the bitmap to ZERO (or transparent if RGBA)
+	void box(int32_t x, int32_t y, int32_t w, int32_t h, const glm::ivec4& color);	// draw a box on the bitmap
 
 	// getter/setter
 	inline bool is(const int mclass) { return m_class & mclass; };

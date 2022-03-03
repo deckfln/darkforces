@@ -880,7 +880,7 @@
       <Filter>Fichiers sources\Dark Forces</Filter>
     </ClCompile>
     <ClCompile Include="darkforces\dfComponent\dfCHUDText.cpp">
-      <Filter>Fichiers sources\Dark Forces</Filter>
+      <Filter>Fichiers sources\Dark Forces\dfComponent</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

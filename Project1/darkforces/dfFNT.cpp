@@ -44,21 +44,18 @@ DarkForces::FNT::FNT(const std::string& file)
 /**
  *
  */
-void DarkForces::FNT::draw(fwTexture* texture, const std::string& text)
+void DarkForces::FNT::draw(fwTexture* texture, const std::string& text, int32_t x, int32_t y)
 {
-	texture->clear();	// clear the background
-
 	int w, h, channels;
 	uint8_t* data = texture->get_info(&w, &h, &channels);
 	uint8_t c;
 	fntChar* charSet=nullptr;
-	uint32_t x = 0;
 	uint8_t *bitmap;
 	uint8_t* column=nullptr;
 	glm::ivec4* rgba = nullptr;
 	float a = 1.0f;
 
-	data += w * (m_height + 2)* channels - channels;
+	data += w * (m_height + y)* channels - channels * x;
 
 	for (size_t i = 0; i < text.size(); i++) {
 		c = text[i];
@@ -113,12 +110,17 @@ void DarkForces::FNT::draw(fwTexture* texture, const std::string& text)
 		// 1 pixel space between chars
 		data -= channels;
 	}
+	texture->dirty();
 }
 
 /**
  *
  */
-void DarkForces::FNT::draw(fwTexture* texture, const std::string& text, const std::string& font)
+void DarkForces::FNT::draw(fwTexture* texture, const std::string& text, const std::string& font, int32_t x, int32_t y)
 {
-	g_dfFonts[font]->draw(texture, text);
+	if (g_dfFonts.count(font) == 0) {
+		// lazy load of the font
+		g_dfFonts[font] = new FNT(font);
+	}
+	g_dfFonts[font]->draw(texture, text, x, y);
 }

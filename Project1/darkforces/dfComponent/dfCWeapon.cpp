@@ -81,8 +81,9 @@ void DarkForces::Component::Weapon::onChangeWeapon(gaMessage* message)
  */
 void DarkForces::Component::Weapon::onFire(const glm::vec3& direction, time_t time)
 {
+	uint32_t nbAmmo = m_current->energy();
 	// is there energy available for the weapon
-	if (m_current->energy() == 0) {
+	if (nbAmmo == 0) {
 		return;
 	}
 
@@ -92,7 +93,10 @@ void DarkForces::Component::Weapon::onFire(const glm::vec3& direction, time_t ti
 	}
 	m_time = time;
 
-	m_current->decreaseEnergy();
+	nbAmmo = m_current->decreaseEnergy();
+	if (m_entity->name() == "player") {
+		m_entity->sendMessage("hud", DarkForces::Message::AMMO, nbAmmo);
+	}
 
 	// create a bullet based on the kind of weapon
 	// and add to the world to live its life
@@ -140,7 +144,10 @@ void DarkForces::Component::Weapon::onStopFire(gaMessage* message)
  */
 void DarkForces::Component::Weapon::addEnergy(int32_t value)
 {
-	m_current->addEnergy(value);
+	uint32_t nbAmmo = m_current->addEnergy(value);
+	if (m_entity->name() == "player") {
+		m_entity->sendMessage("hud", DarkForces::Message::AMMO, nbAmmo);
+	}
 }
 
 void DarkForces::Component::Weapon::dispatchMessage(gaMessage* message)

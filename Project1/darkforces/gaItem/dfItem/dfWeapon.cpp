@@ -203,3 +203,17 @@ uint32_t DarkForces::Weapon::decreaseEnergy(void)
 	DarkForces::EnergyClip* clip = dynamic_cast<DarkForces::EnergyClip*>(m_inventory->get("EnergyClip"));
 	return clip->decreaseEnergy();
 }
+
+uint32_t DarkForces::Weapon::addEnergy(uint32_t v)
+{
+	// weapon do store bullets in the inventory clip
+	DarkForces::EnergyClip* clip = dynamic_cast<DarkForces::EnergyClip*>(m_inventory->get("EnergyClip"));
+	return clip->addEnergy(v);
+}
+
+uint32_t DarkForces::Weapon::energy(void)
+{
+	// weapon do store bullets in the inventory clip
+	DarkForces::EnergyClip* clip = dynamic_cast<DarkForces::EnergyClip*>(m_inventory->get("EnergyClip"));
+	return clip->energy();
+}

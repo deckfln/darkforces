@@ -18,8 +18,8 @@ void DarkForces::Component::HUDtext::onText(gaMessage* message)
 	if (msg.importance() > m_importance) {
 		uint32_t ticks;
 
-		DarkForces::FNT::draw(m_hud, msg.text(), "glowing.fnt");
-		m_hud->dirty(true);
+		m_hud->clear();	// clear the background
+		DarkForces::FNT::draw(m_hud, msg.text(), "glowing.fnt", 0, 1);
 
 		// cancel existing alarm
 		if (m_alarmID >= 0) {
@@ -51,6 +51,18 @@ void DarkForces::Component::HUDtext::onAlarm(gaMessage* message)
 }
 
 /**
+ * display number of ammo
+ */
+void DarkForces::Component::HUDtext::onAmmo(gaMessage* message)
+{
+	char tmp[32];
+	// clear the ammo box and draw the new ammo count
+	m_ammo->box(11, 21, 37, 11, glm::ivec4(0, 0, 0, 255));
+	snprintf(tmp, sizeof(tmp), "%03d", message->m_value);
+	DarkForces::FNT::draw(m_ammo, tmp, "AMONUM.FNT", 13, 21);
+}
+
+/**
  * create
  */
 DarkForces::Component::HUDtext::HUDtext(void) :
@@ -78,6 +90,9 @@ void DarkForces::Component::HUDtext::dispatchMessage(gaMessage* message)
 		break;
 	case gaMessage::ALARM:
 		onAlarm(message);
+		break;
+	case DarkForces::Message::AMMO:
+		onAmmo(message);
 		break;
 	}
 }

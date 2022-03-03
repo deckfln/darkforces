@@ -184,7 +184,12 @@ dfBitmapImage* dfBitmap::getImage(unsigned int index)
 fwTexture* dfBitmap::fwtexture(void)
 {
 	dfBitmapImage& first = m_images[0];
-	return new fwTexture((unsigned char*)first.m_data, first.m_width, first.m_height, first.m_nrChannels, GL_NEAREST);
+
+	if (first.m_texture == nullptr) {
+		first.m_texture = new fwTexture((unsigned char*)first.m_data, first.m_width, first.m_height, first.m_nrChannels, GL_NEAREST);
+	}
+
+	return first.m_texture;
 }
 
 dfBitmap::~dfBitmap()
@@ -195,6 +200,10 @@ dfBitmap::~dfBitmap()
 
 	for (auto& image : m_images) {
 		delete[] image.m_data;
+
+		if (image.m_texture != nullptr) {
+			delete image.m_texture;
+		}
 	}
 }
 
