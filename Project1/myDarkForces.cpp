@@ -150,8 +150,14 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 	GameEngine::App(name, width, height, "shaders/gamma", "#define GAMMA_CORRECTION 1\n")
 {
 	int Button = 0;
-	//DarkForces::FileLFD briefing(ROOT_FOLDER + "/lfd/DFBRIEF.LFD");
 	m_filesystem = new dfFileSystem(ROOT_FOLDER);
+
+	// preload default LFD files
+	DarkForces::FileLFD::load("DFBRIEF");
+	DarkForces::FileLFD::load("MENU");
+
+	// preload the PDA background
+	DarkForces::ANIM* pda = DarkForces::FileLFD::loadAnim("pda", "MENU");
 
 	registerFRclasses();	// register darkforces entities for the flight recorder
 	registerBThandlers();	// init the BehaviorTree static plugins
