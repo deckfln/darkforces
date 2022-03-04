@@ -106,8 +106,24 @@ DarkForces::DELT::DELT(uint8_t* buffer, uint32_t size, std::vector<PLTT_RGB>* pa
 		}
 	}
 
+	// flipX
+	uint32_t* flipx = new uint32_t[rs];
+	uint32_t* flip = (uint32_t*)block;
+	uint32_t* t,* s, *bmp = flipx;
 
-	m_texture = new fwTexture(&block[0], width, height, 4, GL_NEAREST);
+	for (auto y = 0; y < height; y++) {
+		t = flipx;
+		s = flip + width - 1;
+		for (auto x = 0; x < width; x++) {
+			*(t++) = *(s--);
+		}
+		flipx += width;
+		flip += width;
+	}
+
+	delete[] block;
+
+	m_texture = new fwTexture((uint8_t*)bmp, width, height, 4, GL_NEAREST);
 	m_posX = header->OffsX;
 	m_posY = header->OffsY;
 }

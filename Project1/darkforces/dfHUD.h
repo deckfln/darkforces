@@ -41,6 +41,10 @@ namespace DarkForces {
 		gaEntity m_entText = gaEntity(DarkForces::ClassID::_HUD, "hud");
 		Component::HUDtext m_compText;
 
+		// data for the pad
+		fwTexture *m_pda_bmp = nullptr;
+		fwHUDelement* m_pda = nullptr;
+
 	public:
 		HUD(GameEngine::Level*);
 		void setWeapon(fwTexture* texture, float x, float y, float w, float h);	// change the weapon texture and X position (-1::1)

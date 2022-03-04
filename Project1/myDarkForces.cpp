@@ -156,9 +156,6 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 	DarkForces::FileLFD::load("DFBRIEF");
 	DarkForces::FileLFD::load("MENU");
 
-	// preload the PDA background
-	DarkForces::ANIM* pda = DarkForces::FileLFD::loadAnim("pda", "MENU");
-
 	registerFRclasses();	// register darkforces entities for the flight recorder
 	registerBThandlers();	// init the BehaviorTree static plugins
 	registerBTNodes();		// register darkforces bevavionr nodes for the behavior engine

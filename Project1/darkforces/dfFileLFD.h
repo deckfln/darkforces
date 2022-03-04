@@ -30,7 +30,7 @@ namespace DarkForces {
 		fwTexture* m_texture = nullptr;
 	public:
 		DELT(uint8_t* buffer, uint32_t size, std::vector<PLTT_RGB>* palette);
-
+		inline fwTexture* texture(void) { return m_texture; };
 		~DELT(void) {
 			delete m_texture;
 		}
@@ -41,6 +41,9 @@ namespace DarkForces {
 	public:
 		ANIM(uint8_t* buffer, std::vector<PLTT_RGB>* palette);
 
+		DELT* texture(uint32_t i) {
+			return m_delts[i];
+		}
 		~ANIM() {
 			for (auto delt : m_delts) {
 				delete delt;

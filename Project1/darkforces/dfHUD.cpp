@@ -5,6 +5,7 @@
 #include "dfFileSystem.h"
 #include "dfLevel.h"
 #include "dfFNT.h"
+#include "dfFileLFD.h"
 
 DarkForces::HUD* g_dfHUD;
 
@@ -43,10 +44,19 @@ DarkForces::HUD::HUD(GameEngine::Level* level) :
 	uint8_t* data = m_text_bmp.get_info(&h, &w, &ch);
 	if (data == nullptr) {
 		m_text_bmp.data(new uint8_t[h * w * ch]);
-		//m_text_bmp.clear();
+		m_text_bmp.clear();
 	}
 
 	m_text = new fwHUDelement("text", fwHUDelement::Position::TOP_LET, fwHUDelementSizeLock::UNLOCKED, 1.0f, 0.05f, &m_text_bmp);
+
+	// PDA hud
+	// preload the PDA background
+	DarkForces::ANIM* pda = DarkForces::FileLFD::loadAnim("pda", "MENU");
+	DarkForces::ANIM* guns = DarkForces::FileLFD::loadAnim("guns", "DFBRIEF");
+	DarkForces::ANIM* items = DarkForces::FileLFD::loadAnim("items", "DFBRIEF");
+
+	DELT* pda_delt = pda->texture(0);
+	m_pda = new fwHUDelement("pda", fwHUDelement::Position::BOTTOM_LEFT, fwHUDelementSizeLock::UNLOCKED, 1.0f, 1.0f, pda_delt->texture());
 
 	// prepare the entity part of the HUD
 	m_compText.texture(&m_text_bmp);
@@ -62,6 +72,7 @@ DarkForces::HUD::HUD(GameEngine::Level* level) :
 	add(m_ammo);
 	add(m_weapon);
 	add(m_text);
+	add(m_pda);
 }
 
 void DarkForces::HUD::setWeapon(fwTexture* texture, float x, float y, float w, float h)
