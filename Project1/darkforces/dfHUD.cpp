@@ -57,6 +57,7 @@ DarkForces::HUD::HUD(GameEngine::Level* level) :
 
 	DELT* pda_delt = pda->texture(0);
 	m_pda = new fwHUDelement("pda", fwHUDelement::Position::BOTTOM_LEFT, fwHUDelementSizeLock::UNLOCKED, 1.0f, 1.0f, pda_delt->texture());
+	m_pda->visible(false);
 
 	// prepare the entity part of the HUD
 	m_compText.texture(&m_text_bmp);

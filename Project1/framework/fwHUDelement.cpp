@@ -85,6 +85,10 @@ void fwHUDelement::addUniform(fwUniform* uniform)
 
 void fwHUDelement::draw(fwFlatPanel *panel)
 {
+	if (!m_visible) {
+		return;
+	}
+
 	if (m_panel) {
 		// dedicated panel
 		m_panel->set("image", m_texture);
