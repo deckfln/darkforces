@@ -22,7 +22,7 @@ namespace DarkForces {
 		{
 			std::string m_class;	// class of the actor: player, officer, commando ...
 			int32_t m_shield = 100;
-			int32_t m_maxShield = 300;
+			int32_t m_maxShield = 200;
 
 			int32_t m_battery = 0;
 			int32_t m_life = 100;

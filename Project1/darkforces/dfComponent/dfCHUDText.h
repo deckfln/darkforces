@@ -18,6 +18,7 @@ namespace DarkForces {
 			void onAlarm(gaMessage* message);					// remove the text
 			void onAmmo(gaMessage* message);					// display number of ammo
 			void onShield(gaMessage* message);					// display number of shield
+			void onLife(gaMessage* message);					// display number of life
 
 		public:
 			HUDtext(void);

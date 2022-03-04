@@ -323,6 +323,15 @@ void DarkForces::Player::onShield(gaMessage* message)
 }
 
 /**
+ * display live status
+ */
+void DarkForces::Player::onLife(gaMessage* message)
+{
+	// only the entity player catches the LIFE message to passthrough to the hud
+	sendMessage("hud", DarkForces::Message::LIFE, message->m_value);
+}
+
+/**
  * let an entity deal with a situation
  */
 void DarkForces::Player::dispatchMessage(gaMessage* message)
@@ -388,6 +397,10 @@ void DarkForces::Player::dispatchMessage(gaMessage* message)
 
 	case DarkForces::Message::SHIELD:
 		onShield(message);
+		break;
+
+	case DarkForces::Message::LIFE:
+		onLife(message);
 		break;
 	}
 

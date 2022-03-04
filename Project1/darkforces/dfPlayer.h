@@ -55,6 +55,7 @@ namespace DarkForces {
 		void onTogleHeadlight(gaMessage* mmessage);	// Togle the headlight
 		void onAmmo(gaMessage* message);		// display number of ammo
 		void onShield(gaMessage* message);		// display number of shield
+		void onLife(gaMessage* message);		// display live status
 
 	public:
 		Player(

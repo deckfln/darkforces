@@ -47,6 +47,7 @@ void DarkForces::Component::Actor::setDataFromClass(void)
 
 		// inform the entity of the new shield value
 		m_entity->sendMessage(DarkForces::Message::SHIELD, m_shield);
+		m_entity->sendMessage(DarkForces::Message::LIFE, m_life);
 	}
 	else {
 		gaDebugLog(0, "DarkForces::Component::Actor::setDataFromClass", m_class + " unknown");
@@ -102,6 +103,7 @@ void DarkForces::Component::Actor::onHitBullet(int32_t value)
 			die();
 			return;
 		}
+		m_entity->sendMessage(DarkForces::Message::LIFE, m_life);
 	}
 
 	// play a sound if there is one

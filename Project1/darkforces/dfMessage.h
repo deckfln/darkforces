@@ -36,6 +36,7 @@ namespace DarkForces {
 		TEXT,				// display a text on screen
 		AMMO,				// get number of ammo available
 		SHIELD,				// get shield available
+		LIFE				// get life available
 	};
 
 	enum MessageEvent {

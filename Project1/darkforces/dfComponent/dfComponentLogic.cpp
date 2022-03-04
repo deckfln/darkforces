@@ -30,7 +30,7 @@ namespace DarkForces {
 
 static std::map<uint32_t, DarkForces::gItem> g_items = {
 	{dfLogic::ITEM_ENERGY, {dfLogic::ITEM_ENERGY, 15}},
-	{dfLogic::ITEM_SHIELD, {dfLogic::ITEM_SHIELD, 100}}
+	{dfLogic::ITEM_SHIELD, {dfLogic::ITEM_SHIELD, 20}}
 };
 
 /**
