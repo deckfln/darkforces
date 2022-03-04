@@ -51,6 +51,7 @@ DarkForces::HUD::HUD(GameEngine::Level* level) :
 	// prepare the entity part of the HUD
 	m_compText.texture(&m_text_bmp);
 	m_compText.ammo(m_ammo_bmp->fwtexture());
+	m_compText.shield(m_health_bmp->fwtexture());
 
 	m_entText.addComponent(&m_compText);
 	m_entText.physical(false);

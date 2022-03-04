@@ -51,6 +51,7 @@ DarkForces::Player::Player(int mclass, const std::string& name, fwCylinder& cyli
 			m_pistol.loadClip();
 
 	m_defaultAI.setClass("player");
+	sendMessage("hud", DarkForces::Message::AMMO, m_clip.energy());
 }
 
 /**
@@ -313,6 +314,15 @@ void DarkForces::Player::onAmmo(gaMessage* message)
 }
 
 /**
+ * display number of shield
+ */
+void DarkForces::Player::onShield(gaMessage* message)
+{
+	// only the entity player catches the AMMO message to passthrough to the hud
+	sendMessage("hud", DarkForces::Message::SHIELD, message->m_value);
+}
+
+/**
  * let an entity deal with a situation
  */
 void DarkForces::Player::dispatchMessage(gaMessage* message)
@@ -374,6 +384,10 @@ void DarkForces::Player::dispatchMessage(gaMessage* message)
 
 	case DarkForces::Message::AMMO:
 		onAmmo(message);
+		break;
+
+	case DarkForces::Message::SHIELD:
+		onShield(message);
 		break;
 	}
 

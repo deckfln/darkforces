@@ -34,7 +34,8 @@ namespace DarkForces {
 		COMPLETE,			// complete a goal (eg TRIGGER:1 in .GOL)
 		WAKEUP,				// Un-pause all VUE loops hosted in the sector
 		TEXT,				// display a text on screen
-		AMMO,				// display ammo on the hub
+		AMMO,				// get number of ammo available
+		SHIELD,				// get shield available
 	};
 
 	enum MessageEvent {

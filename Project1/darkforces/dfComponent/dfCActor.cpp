@@ -44,6 +44,9 @@ void DarkForces::Component::Actor::setDataFromClass(void)
 		if (weapon) {
 			weapon->setActorPosition(m_actors[m_class].weapon);
 		}
+
+		// inform the entity of the new shield value
+		m_entity->sendMessage(DarkForces::Message::SHIELD, m_shield);
 	}
 	else {
 		gaDebugLog(0, "DarkForces::Component::Actor::setDataFromClass", m_class + " unknown");
@@ -73,6 +76,9 @@ void DarkForces::Component::Actor::addShield(int32_t value)
 	else if (m_shield < 0) {
 		m_shield = 0;
 	}
+
+	// inform the entity of the new shield value
+	m_entity->sendMessage(DarkForces::Message::SHIELD, m_shield);
 }
 
 /**
@@ -86,6 +92,9 @@ void DarkForces::Component::Actor::onHitBullet(int32_t value)
 
 	if (m_shield > 0) {
 		m_shield -= value;
+
+		// inform the entity of the new shield value
+		m_entity->sendMessage(DarkForces::Message::SHIELD, m_shield);
 	}
 	else {
 		m_life -= value;
