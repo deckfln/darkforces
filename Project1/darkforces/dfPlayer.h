@@ -56,6 +56,7 @@ namespace DarkForces {
 		void onAmmo(gaMessage* message);		// display number of ammo
 		void onShield(gaMessage* message);		// display number of shield
 		void onLife(gaMessage* message);		// display live status
+		void onShowPDA(gaMessage* message);		// display the PDA
 
 	public:
 		Player(

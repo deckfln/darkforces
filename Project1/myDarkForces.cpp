@@ -209,8 +209,9 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 		{GLFW_KEY_LEFT_CONTROL, GameEngine::Component::Controller::KeyInfo::Msg::onPress},
 		{GLFW_KEY_SPACE, GameEngine::Component::Controller::KeyInfo::Msg::onPressDown},
 		{GLFW_KEY_S, GameEngine::Component::Controller::KeyInfo::Msg::onPressDown},
-		{GLFW_KEY_F1, GameEngine::Component::Controller::KeyInfo::Msg::onPressDown},
-		{GLFW_KEY_F5, GameEngine::Component::Controller::KeyInfo::Msg::onPressDown},
+		{GLFW_KEY_F1, GameEngine::Component::Controller::KeyInfo::Msg::onPressDown},	// PDA
+		{GLFW_KEY_F3, GameEngine::Component::Controller::KeyInfo::Msg::onPressDown},	// IR goggles
+		{GLFW_KEY_F5, GameEngine::Component::Controller::KeyInfo::Msg::onPressDown},	// headlight
 		{GLFW_KEY_1, GameEngine::Component::Controller::KeyInfo::Msg::onPressDown},
 		{GLFW_KEY_2, GameEngine::Component::Controller::KeyInfo::Msg::onPressDown},
 	};

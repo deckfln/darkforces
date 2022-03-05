@@ -49,22 +49,14 @@ DarkForces::HUD::HUD(GameEngine::Level* level) :
 
 	m_text = new fwHUDelement("text", fwHUDelement::Position::TOP_LET, fwHUDelementSizeLock::UNLOCKED, 1.0f, 0.05f, &m_text_bmp);
 
-	// PDA hud
-	// preload the PDA background
-	DarkForces::ANIM* pda = DarkForces::FileLFD::loadAnim("pda", "MENU");
-	DarkForces::ANIM* guns = DarkForces::FileLFD::loadAnim("guns", "DFBRIEF");
-	DarkForces::ANIM* items = DarkForces::FileLFD::loadAnim("items", "DFBRIEF");
-
-	DELT* pda_delt = pda->texture(0);
-	m_pda = new fwHUDelement("pda", fwHUDelement::Position::BOTTOM_LEFT, fwHUDelementSizeLock::UNLOCKED, 1.0f, 1.0f, pda_delt->texture());
-	m_pda->visible(false);
-
 	// prepare the entity part of the HUD
 	m_compText.texture(&m_text_bmp);
 	m_compText.ammo(m_ammo_bmp->fwtexture());
 	m_compText.shield(m_health_bmp->fwtexture());
 
 	m_entText.addComponent(&m_compText);
+	m_entText.addComponent(&m_pda);
+
 	m_entText.physical(false);
 	m_entText.gravity(false);
 	g_gaWorld.addClient(&m_entText);
@@ -73,7 +65,7 @@ DarkForces::HUD::HUD(GameEngine::Level* level) :
 	add(m_ammo);
 	add(m_weapon);
 	add(m_text);
-	add(m_pda);
+	add(m_pda.hud());
 }
 
 void DarkForces::HUD::setWeapon(fwTexture* texture, float x, float y, float w, float h)

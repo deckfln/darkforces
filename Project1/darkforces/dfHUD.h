@@ -9,6 +9,7 @@
 #include "dfConfig.h"
 #include "dfBitmap.h"
 #include "dfComponent/dfCHUDText.h"
+#include "dfComponent/dfCPDA.h"
 
 class fwScene;
 namespace GameEngine {
@@ -40,10 +41,7 @@ namespace DarkForces {
 		fwHUDelement* m_text = nullptr;		// text bar
 		gaEntity m_entText = gaEntity(DarkForces::ClassID::_HUD, "hud");
 		Component::HUDtext m_compText;
-
-		// data for the pad
-		fwTexture *m_pda_bmp = nullptr;
-		fwHUDelement* m_pda = nullptr;
+		Component::PDA m_pda;
 
 	public:
 		HUD(GameEngine::Level*);

@@ -332,6 +332,15 @@ void DarkForces::Player::onLife(gaMessage* message)
 }
 
 /**
+ * display the PDA
+ */
+void DarkForces::Player::onShowPDA(gaMessage* message)
+{
+	// only the entity player catches the LIFE message to passthrough to the hud
+	sendMessage("hud", DarkForces::Message::PDA);
+}
+
+/**
  * let an entity deal with a situation
  */
 void DarkForces::Player::dispatchMessage(gaMessage* message)
@@ -353,6 +362,10 @@ void DarkForces::Player::dispatchMessage(gaMessage* message)
 			break;
 
 		case GLFW_KEY_F1:
+			onShowPDA(message);
+			break;
+
+		case GLFW_KEY_F3:
 			onTogleGogle(message);
 			break;
 
