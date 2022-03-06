@@ -3,6 +3,7 @@
 #include <queue>
 #include <map>
 #include <list>
+#include <stack>
 
 #include "../framework/fwAABBox.h"
 #include "../framework/math/fwCylinder.h"
@@ -20,6 +21,10 @@ class fwScene;
 class fwMesh;
 class dfSuperSector;
 class alSound;
+
+namespace GameEngine {
+	class World;
+}
 
 namespace GameEngine {
 	class Plugin;
@@ -57,6 +62,12 @@ namespace GameEngine {
 		std::map<std::string, bool> m_timers;				// entities that registered to receive timer events
 		std::list<GameEngine::Alarm> m_alarms;				// entities that registered to receive alarm events
 
+		// state lists
+		std::stack<std::deque<gaMessage*>> m_queues;		// frozen queues
+		std::stack<std::deque<gaMessage*>> m_delay_queues;
+		std::stack<std::map<std::string, bool>> m_saved_timers;
+		std::stack<std::list<GameEngine::Alarm>> m_saved_alarms;
+
 		std::vector<GameEngine::Plugin*> m_plugins;			// world plugin extensions
 
 		std::vector<dfSuperSector*> m_sectors;
@@ -65,6 +76,8 @@ namespace GameEngine {
 
 		bool m_timer = true;								// pass DF_MESSAGE_TIMER event
 		fwScene* m_scene;									// current scene on screen;
+
+		static World m_world;
 
 		friend GameEngine::Physics;							// physic engine has direct access to world data
 		friend flightRecorder::Blackbox;					// flight recorder has direct access to everything
@@ -171,11 +184,16 @@ namespace GameEngine {
 		void registerPlugin(GameEngine::Plugin* plugin);
 		void deregisterPlugin(GameEngine::Plugin* plugin);
 
+		// manage a stack of frozen messages
+		static void pushState(void);								// save the state of the messages queue
+		static void popState(void);								// restore the state of the messages queue
+
+#ifdef _DEBUG
 		// debugger
 		void debugGUI(void);								// render the imGUI debug
 		void debugGUImsg(uint32_t nb, flightRecorder::Message* msg);			// render the imGUI debug messages
 		void debugGUImessages(std::list<gaMessage>& l);		// render the imGUI debug in-frame messages
-
+#endif
 		~World();
 	};
 }

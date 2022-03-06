@@ -5,6 +5,7 @@
 
 #include "../../gaEngine/gaMessage.h"
 #include "../../gaEngine/gaItem.h"
+#include "../../gaEngine/World.h"
 #include "../dfComponent.h"
 #include "../dfMessage.h"
 
@@ -27,9 +28,11 @@ void DarkForces::Component::PDA::onShowPDA(gaMessage*)
 {
 	if (m_hud->visible()) {
 		m_hud->visible(false);
+		GameEngine::World::popState();	// restart the game
 	}
 	else {
 		m_hud->visible(true);
+		GameEngine::World::pushState(); // suspend the game
 	}
 }
 

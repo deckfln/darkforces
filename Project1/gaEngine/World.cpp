@@ -992,6 +992,42 @@ void GameEngine::World::deregisterPlugin(GameEngine::Plugin* plugin)
 
 //-----------------------------------------------------------------------------
 
+/**
+ * save the state of the messages queue
+ */
+void GameEngine::World::pushState(void)
+{
+	// push the current state
+	g_gaWorld.m_queues.push(g_gaWorld.m_queue);
+	g_gaWorld.m_delay_queues.push(g_gaWorld.m_for_next_frame);
+	g_gaWorld.m_saved_alarms.push(g_gaWorld.m_alarms);
+	g_gaWorld.m_saved_timers.push(g_gaWorld.m_timers);
+
+	// create a new queue
+	g_gaWorld.m_queue.clear();
+	g_gaWorld.m_for_next_frame.clear();
+	g_gaWorld.m_alarms.clear();
+	g_gaWorld.m_timers.clear();
+}
+
+/**
+ * restore the state of the messages queue
+ */
+void GameEngine::World::popState(void)
+{
+	g_gaWorld.m_queue = g_gaWorld.m_queues.top();
+	g_gaWorld.m_for_next_frame = g_gaWorld.m_delay_queues.top();
+	g_gaWorld.m_alarms = g_gaWorld.m_saved_alarms.top();
+	g_gaWorld.m_timers = g_gaWorld.m_saved_timers.top();
+
+	g_gaWorld.m_queues.pop();
+	g_gaWorld.m_delay_queues.pop();
+	g_gaWorld.m_saved_alarms.pop();
+	g_gaWorld.m_saved_timers.pop();
+}
+
+//-----------------------------------------------------------------------------
+
 #ifdef  _DEBUG
 
 /**
