@@ -14,37 +14,6 @@ DarkForces::HUDelement::PDA* DarkForces::Component::PDA::m_hud = nullptr;
 Framework::TextureAtlas* DarkForces::Component::PDA::m_items_textures = nullptr;
 
 /**
- * initialize the PDA
- */
-void DarkForces::Component::PDA::onWorldInsert(gaMessage*)
-{
-	if (m_pda == nullptr) {
-		// preload the PDA background
-		m_pda = DarkForces::FileLFD::loadAnim("pda", "MENU");
-
-		m_items_textures = new Framework::TextureAtlas();
-
-		// load all guns into a texturearray
-		m_guns = DarkForces::FileLFD::loadAnim("guns", "DFBRIEF");
-		size_t nbItems = m_guns->size();
-		for (size_t i = 0; i < nbItems; i++) {
-			m_items_textures->add(m_guns->texture(i)->texture());
-		}
-
-		// load all items into a texturearray
-		m_items = DarkForces::FileLFD::loadAnim("items", "DFBRIEF");
-		nbItems = m_items->size();
-		for (size_t i = 0; i < nbItems; i++) {
-			m_items_textures->add(m_items->texture(i)->texture());
-		}
-
-		m_items_textures->generate();
-
-		m_pda_background = m_pda->texture(0);
-	}
-}
-
-/**
  * display the PDA
  */
 void DarkForces::Component::PDA::onShowPDA(gaMessage*)
@@ -53,6 +22,7 @@ void DarkForces::Component::PDA::onShowPDA(gaMessage*)
 		m_hud->visible(false);
 	}
 	else {
+		m_hud->activateGun(0);
 		m_hud->visible(true);
 	}
 }
@@ -71,9 +41,6 @@ DarkForces::Component::PDA::PDA(void):
 void DarkForces::Component::PDA::dispatchMessage(gaMessage* message)
 {
 	switch (message->m_action) {
-		case gaMessage::WORLD_INSERT:
-			onWorldInsert(message);
-			break;
 		case DarkForces::Message::PDA:
 			onShowPDA(message);
 			break;
@@ -86,7 +53,7 @@ void DarkForces::Component::PDA::dispatchMessage(gaMessage* message)
 fwHUDelement* DarkForces::Component::PDA::hud(void)
 {
 	if (m_hud == nullptr) {
-		m_hud = new DarkForces::HUDelement::PDA("pda", fwHUDelement::Position::BOTTOM_LEFT, fwHUDelementSizeLock::UNLOCKED, 1.0f, 1.0f, m_pda_background->texture());
+		m_hud = new DarkForces::HUDelement::PDA("pda", fwHUDelement::Position::BOTTOM_LEFT, fwHUDelementSizeLock::UNLOCKED, 1.0f, 1.0f);
 		m_hud->visible(false);
 	}
 	return m_hud;

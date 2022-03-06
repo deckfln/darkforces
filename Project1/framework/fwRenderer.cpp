@@ -146,7 +146,6 @@ void fwRenderer::parseChildren(fwObject3D* root, std::list <fwMesh *> meshes[], 
 					meshes[FW_RENDER_OPAQ].push_front(mesh);
 				}
 			}
-			mesh->get_geometry()->updateIfDirty();
 		}
 	}
 }

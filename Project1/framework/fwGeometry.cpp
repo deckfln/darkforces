@@ -63,7 +63,7 @@ void fwGeometry::enable_attributes(glProgram *program)
 	}
 
 	// other attributes
-	for (auto attribute: m_attributes) {
+	for (auto& attribute: m_attributes) {
 		const std::string _name = attribute.first;
 		glBufferAttribute *_attribute = attribute.second;
 		glVertexAttribute *va = program->get_attribute(_attribute->name());
@@ -110,13 +110,13 @@ void fwGeometry::update(void)
 		// limited number of vertices
 		m_vertices->update(0, m_verticesToDisplay);
 
-		for (auto attribute : m_attributes) {
+		for (auto& attribute : m_attributes) {
 			attribute.second->update(0, m_verticesToDisplay);
 		}
 	}
 	else {
 		// all of them
-		for (auto attribute : m_attributes) {
+		for (auto& attribute : m_attributes) {
 			attribute.second->update();
 		}
 	}
@@ -164,7 +164,7 @@ void fwGeometry::updateIfDirty(void)
 	else {
 		// and test each of the attibute individualy
 		m_vertices->updateIfDirty();
-		for (auto attribute : m_attributes) {
+		for (auto& attribute : m_attributes) {
 			attribute.second->updateIfDirty();
 		}
 	}
@@ -187,6 +187,9 @@ bool fwGeometry::resizedAttribute(void)
  */
 void fwGeometry::draw(GLenum mode, glVertexArray *va)
 {
+	// last chance to update the attributes if they a re empty
+	updateIfDirty();
+
 	if (m_verticesToDisplay > 0) {
 		if (index != nullptr) {
 			va->draw(mode, true, m_verticesToDisplay);

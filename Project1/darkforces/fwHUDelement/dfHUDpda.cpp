@@ -128,8 +128,8 @@ static fwTexture* g_items_texture = nullptr;
 /**
  *
  */
-DarkForces::HUDelement::PDA::PDA(const std::string& name, Position position, fwHUDelementSizeLock lock, float width, float height, fwTexture* texture, fwFlatPanel* panel):
-	fwHUDelement(name, position, lock, width, height, texture, panel)
+DarkForces::HUDelement::PDA::PDA(const std::string& name, Position position, fwHUDelementSizeLock lock, float width, float height):
+	fwHUDelement(name, position, lock, width, height, nullptr, nullptr)
 {
 	if (g_pda == nullptr) {
 		// preload the PDA background
@@ -154,12 +154,17 @@ DarkForces::HUDelement::PDA::PDA(const std::string& name, Position position, fwH
 		g_items_texture = g_items_textures->generate();
 
 		g_pda_background = g_pda->texture(0);
+		m_texture = g_pda_background->texture();
 	}
 
 	if (g_geometry == nullptr) {
 		g_material = new fwMaterial(g_subShaders);
 		g_material->addTexture("image", (glTexture*)nullptr);
 		g_material->addUniform(new fwUniform("onscreen", &g_screen));
+
+		static glm::vec4 v(-0.08, 0.11, 0.0, 0.75);	// position of the list of guns on the pda
+		g_material->set("onscreen", &v);
+		g_material->set("image", g_items_texture);
 
 		std::string vs = g_material->load_shader(FORWARD_RENDER, VERTEX_SHADER, "");
 		std::string fs = g_material->load_shader(FORWARD_RENDER, FRAGMENT_SHADER, "");
@@ -168,8 +173,8 @@ DarkForces::HUDelement::PDA::PDA(const std::string& name, Position position, fwH
 		//preload the textureatlas texture position
 		glm::vec4 tex;
 		uint32_t i = 0, j=0;
+		g_items_textures->texel(9, tex);	// display the empty slot
 		for (size_t c = 0; c < g_guns->size(); c++) {
-			g_items_textures->texel(c, tex);
 			gunsQuadUvs[j++] = tex.x;	gunsQuadUvs[j++] = tex.y + tex.w;
 			gunsQuadUvs[j++] = tex.x;	gunsQuadUvs[j++] = tex.y;
 			gunsQuadUvs[j++] = tex.x + tex.z;	gunsQuadUvs[j++] = tex.y;
@@ -193,6 +198,28 @@ DarkForces::HUDelement::PDA::PDA(const std::string& name, Position position, fwH
 	}
 }
 
+/**
+ * // display the gun on the PDA
+ */
+void DarkForces::HUDelement::PDA::activateGun(uint32_t gunID)
+{
+	// draw the existing weapons
+	glm::vec4 tex;
+	uint32_t i = 0, j = 0;
+
+	j = gunID * 12;
+
+	g_items_textures->texel(gunID, tex);
+	gunsQuadUvs[j++] = tex.x;	gunsQuadUvs[j++] = tex.y + tex.w;
+	gunsQuadUvs[j++] = tex.x;	gunsQuadUvs[j++] = tex.y;
+	gunsQuadUvs[j++] = tex.x + tex.z;	gunsQuadUvs[j++] = tex.y;
+
+	gunsQuadUvs[j++] = tex.x;			gunsQuadUvs[j++] = tex.y + tex.w;
+	gunsQuadUvs[j++] = tex.x + tex.z;	gunsQuadUvs[j++] = tex.y;
+	gunsQuadUvs[j++] = tex.x + tex.z;	gunsQuadUvs[j++] = tex.y + tex.w;
+	g_geometry->dirty();
+}
+
 void DarkForces::HUDelement::PDA::draw(fwFlatPanel* panel)
 {
 	if (!m_visible) {
@@ -201,13 +228,6 @@ void DarkForces::HUDelement::PDA::draw(fwFlatPanel* panel)
 
 	fwHUDelement::draw(panel);	// draw the backgroup
 
-	// access the player inventory
-	gaEntity* player = g_gaWorld.getEntity("player");
-	GameEngine::Component::Inventory* inventory = dynamic_cast<GameEngine::Component::Inventory *>(player->findComponent(gaComponent::Inventory));
-
-	glm::vec4 v(-0.08, 0.11, 0.0, 0.75);
-	g_material->set("onscreen", &v);
-	g_material->set("image", g_items_texture);
 	g_program->run();
 	g_material->set_uniforms(g_program);
 	g_geometry->draw(GL_TRIANGLES, g_vertexArray);

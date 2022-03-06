@@ -18,7 +18,6 @@ namespace DarkForces {
 
 			static Framework::TextureAtlas* m_items_textures;
 
-			void onWorldInsert(gaMessage*);						// initialize the PDA
 			void onShowPDA(gaMessage*);							// display the PDA
 
 		public:
