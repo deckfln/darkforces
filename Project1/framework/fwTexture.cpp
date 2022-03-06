@@ -105,6 +105,24 @@ void fwTexture::box(int32_t x, int32_t y, int32_t w, int32_t h, const glm::ivec4
 	}
 }
 
+/**
+ * Copy the bitmap into an atlasmap.
+ * if the target size is bigger than the real size, place the bitmap at the defined corner
+ */
+void fwTexture::copyTo(uint8_t* target, uint32_t x, uint32_t y, uint32_t stride, uint32_t rgba, uint32_t Xcorner, uint32_t Ycorner)
+{
+	int source_line = 0;
+	int bytes = m_width * m_nrChannels;				// number of real bytes per line
+	int dest_line = (y + Ycorner) * stride * rgba + (x + Xcorner) * rgba;
+
+	for (auto y = 0; y < m_height; y++) {
+		// copy one line
+		memcpy(target + dest_line, m_data + source_line, bytes);
+		source_line += bytes;
+		dest_line += stride * rgba;
+	}
+}
+
 fwTexture::~fwTexture()
 {
 	if (m_data != nullptr) {

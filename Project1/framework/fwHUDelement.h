@@ -50,10 +50,10 @@ public:
 	void addUniform(fwUniform* uniform);	// dedicated uniforms for that element
 	inline void visible(bool b) { m_visible = b; };
 	inline bool visible(void) { return m_visible; };
-	void draw(fwFlatPanel* panel);
+	virtual void draw(fwFlatPanel* panel);
 	~fwHUDelement();
 
-private:
+protected:
 	std::string m_name;
 	Position m_position = Position::BOTTOM_CENTER;
 	fwHUDelementSizeLock m_sizeLock = fwHUDelementSizeLock::UNLOCKED;

@@ -41,7 +41,11 @@ namespace DarkForces {
 	public:
 		ANIM(uint8_t* buffer, std::vector<PLTT_RGB>* palette);
 
-		DELT* texture(uint32_t i) {
+		inline size_t size(void) {
+			return m_delts.size();
+		}
+
+		inline DELT* texture(uint32_t i) {
 			return m_delts[i];
 		}
 		~ANIM() {

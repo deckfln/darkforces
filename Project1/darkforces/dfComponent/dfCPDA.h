@@ -1,9 +1,10 @@
 #pragma once
 
-#include "../../framework/fwTexture.h"
+#include "../../framework/fwTextureAtlas.h"
 #include "../../framework/fwHUDelement.h"
 #include "../../gaEngine/gaComponent.h"
 #include "../dfFileLFD.h"
+#include "../fwHUDelement/dfHUDpda.h"
 
 namespace DarkForces {
 	namespace Component {
@@ -13,7 +14,9 @@ namespace DarkForces {
 			static DarkForces::ANIM* m_guns;
 			static DarkForces::ANIM* m_items;
 			static DarkForces::DELT* m_pda_background;
-			static fwHUDelement* m_hud;
+			static HUDelement::PDA* m_hud;
+
+			static Framework::TextureAtlas* m_items_textures;
 
 			void onWorldInsert(gaMessage*);						// initialize the PDA
 			void onShowPDA(gaMessage*);							// display the PDA

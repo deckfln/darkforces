@@ -285,7 +285,12 @@ void DarkForces::FileLFD::loadPltt(const std::string& file)
 	LFD_Entry entry;
 	uint8_t* buffer;
 
-	m_fd.seekg(m_index["PLTT"+file].start);
+	std::string f = "PLTT" + file;
+	if (m_index.count(f) == 0) {
+		// try the default ones
+		f = "PLTTbrf-jan";
+	}
+	m_fd.seekg(m_index[f].start);
 	m_fd.read((char*)&entry, sizeof(LFD_Entry));
 	buffer = new uint8_t[entry.length];
 	m_fd.read((char*)buffer, entry.length);

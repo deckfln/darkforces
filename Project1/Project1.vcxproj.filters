@@ -190,6 +190,12 @@
     <Filter Include="Fichiers de ressources\DarkForces\Shaders">
       <UniqueIdentifier>{f60f2215-e339-47ab-a1da-c1001135b202}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Fichiers d%27en-tête\DarkForces\fwHUDelement">
+      <UniqueIdentifier>{6d00e6c7-1db4-4bf9-91b6-ae1d10c29595}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers sources\Dark Forces\fwHUDelement">
+      <UniqueIdentifier>{4f5f3b08-c6e9-4f0a-b822-6ed3d5c2a456}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source.cpp">
@@ -884,6 +890,12 @@
     </ClCompile>
     <ClCompile Include="darkforces\dfComponent\dfCPDA.cpp">
       <Filter>Fichiers sources\Dark Forces\dfComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="framework\fwTextureAtlas.cpp">
+      <Filter>Fichiers sources\Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="darkforces\fwHUDelement\dfHUDpda.cpp">
+      <Filter>Fichiers sources\Dark Forces\fwHUDelement</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1682,6 +1694,12 @@
     <ClInclude Include="darkforces\dfComponent\dfCPDA.h">
       <Filter>Fichiers d%27en-tête\DarkForces\dfComponent</Filter>
     </ClInclude>
+    <ClInclude Include="framework\fwTextureAtlas.h">
+      <Filter>Fichiers d%27en-tête\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="darkforces\fwHUDelement\dfHUDpda.h">
+      <Filter>Fichiers d%27en-tête\DarkForces\fwHUDelement</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\fragment.glsl">
@@ -1754,6 +1772,12 @@
       <Filter>Fichiers de ressources\DarkForces\Shaders</Filter>
     </None>
     <None Include="darkforces\shaders\lightning.glsl">
+      <Filter>Fichiers de ressources\DarkForces\Shaders</Filter>
+    </None>
+    <None Include="darkforces\shaders\hud\pda_fs.glsl">
+      <Filter>Fichiers de ressources\DarkForces\Shaders</Filter>
+    </None>
+    <None Include="darkforces\shaders\hud\pda_vs.glsl">
       <Filter>Fichiers de ressources\DarkForces\Shaders</Filter>
     </None>
   </ItemGroup>

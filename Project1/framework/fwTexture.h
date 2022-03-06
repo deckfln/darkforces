@@ -32,6 +32,7 @@ public:
 	bool save(const std::string& file);
 	void clear(void);										// set the bitmap to ZERO (or transparent if RGBA)
 	void box(int32_t x, int32_t y, int32_t w, int32_t h, const glm::ivec4& color);	// draw a box on the bitmap
+	void copyTo(uint8_t *target, uint32_t x, uint32_t y, uint32_t stride, uint32_t rgba, uint32_t Xcorner=0, uint32_t Ycorner=0); //Copy the bitmap into an atlasmap.
 
 	// getter/setter
 	inline bool is(const int mclass) { return m_class & mclass; };
