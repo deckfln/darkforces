@@ -112,5 +112,5 @@ void DarkForces::Item::drop(const glm::vec3& p)
 	m_object->physical(false);	// objects can be traversed and are not subject to gravity
 	m_object->gravity(false);
 
-	g_gaWorld.addClient(m_object);
+	GameEngine::World::add(m_object);
 }

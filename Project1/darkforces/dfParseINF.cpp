@@ -325,7 +325,7 @@ void dfParseINF::parseSector(std::istringstream& infile, const std::string& sect
 	if (g_Sectors.count(sector)) {
 		// this is a clone of a previous elevator, but with different values
 		pSector = new dfSector(g_Sectors[sector]);
-		g_gaWorld.addClient(pSector);
+		GameEngine::World::add(pSector);
 	}
 	else {
 		pSector = m_level->findSector(sector);

@@ -123,7 +123,7 @@ void DarkForces::Component::Weapon::onFire(const glm::vec3& direction, time_t ti
 	dfBullet* bullet = new dfBullet(m_current->m_damage, p + direction * m_entity->radius() * 2.0f, d);
 	bullet->shooter(m_entity);
 
-	g_gaWorld.addClient(bullet);
+	GameEngine::World::add(bullet);
 
 	m_entity->sendMessage(gaMessage::Action::PLAY_SOUND, DarkForces::Component::Actor::Sound::FIRE);
 	m_entity->sendMessage(DarkForces::Message::FIRE);

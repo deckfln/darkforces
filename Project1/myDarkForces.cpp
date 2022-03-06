@@ -219,7 +219,7 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 	GameEngine::Component::Controller* controller = new GameEngine::Component::Controller(m_camera, start, c_eyes, c_direction, c_radius, keys);
 	bindControl((fwControl*)controller);
 	m_player->addComponent(controller, gaEntity::Flag::DONT_DELETE);
-	g_gaWorld.addClient(m_player);
+	GameEngine::World::add(m_player);
 
 	// load the text file
 	g_dfMsg.Parse("TEXT.MSG");

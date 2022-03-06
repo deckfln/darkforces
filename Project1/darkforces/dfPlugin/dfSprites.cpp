@@ -141,7 +141,8 @@ void DarkForces::Plugins::Sprites::update(void)
 	for (auto obj : m_objects) {
 
 		if (obj) {
-			b = static_cast<DarkForces::Component::Sprite*>(obj)->update(
+			DarkForces::Component::Sprite* sprite = static_cast<DarkForces::Component::Sprite*>(obj);
+			b = sprite->update(
 				&m_positions[i],
 				&m_textureIndex[i],
 				&m_directions[i]);

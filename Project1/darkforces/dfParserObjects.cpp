@@ -571,7 +571,7 @@ void dfParserObjects::buildSprites(void)
 	// add to the world
 	for (auto object: m_objects) {
 		if (object != nullptr) {
-			g_gaWorld.addClient(object);
+			GameEngine::World::add(object);
 		}
 	}
 

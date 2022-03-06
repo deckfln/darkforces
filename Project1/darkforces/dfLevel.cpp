@@ -144,7 +144,7 @@ dfLevel::dfLevel(dfFileSystem* fs, std::string file)
 	// find all sectors with a InfProgram component and add them to the world
 	for (auto sector : m_sectorsID) {
 		if (sector->components() > 0) {
-			g_gaWorld.addClient(sector);
+			GameEngine::World::add(sector);
 		}
 	}
 
@@ -209,7 +209,7 @@ dfLevel::dfLevel(dfFileSystem* fs, std::string file)
 			}
 		}
 
-		g_gaWorld.addClient(trigger);
+		GameEngine::World::add(trigger);
 	}
 
 	// delete dfLogicTrigger's that are managed by elevators
@@ -239,14 +239,14 @@ dfLevel::dfLevel(dfFileSystem* fs, std::string file)
 	// Add the missing triggers to the world
 	for (auto trigger : m_inf->m_triggers) {
 		if (g_gaWorld.getEntity(trigger->name()) == nullptr) {
-			g_gaWorld.addClient(trigger);
+			GameEngine::World::add(trigger);
 		}
 	}
 
 	// Add SuperSectors
 	fwScene* scene = static_cast<fwScene*>(g_gaWorld.get("scene"));
 	for (auto ssector : m_supersectors) {
-		g_gaWorld.addClient(ssector);
+		GameEngine::World::add(ssector);
 
 		ssector->rebuildScene(scene);
 	}
@@ -258,7 +258,7 @@ dfLevel::dfLevel(dfFileSystem* fs, std::string file)
 
 	// load the goal file
 	m_goals = new DarkForces::Goals(file);
-	g_gaWorld.addClient(m_goals);
+	GameEngine::World::add(m_goals);
 
 	// start with all supersectors hidden
 	hideSectors();

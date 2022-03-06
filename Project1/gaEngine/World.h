@@ -184,9 +184,12 @@ namespace GameEngine {
 		void registerPlugin(GameEngine::Plugin* plugin);
 		void deregisterPlugin(GameEngine::Plugin* plugin);
 
+		//--------------------------- static functions
+
 		// manage a stack of frozen messages
-		static void pushState(void);								// save the state of the messages queue
+		static void pushState(void);							// save the state of the messages queue
 		static void popState(void);								// restore the state of the messages queue
+		static void add(gaEntity*);								// add an entity to the world
 
 #ifdef _DEBUG
 		// debugger

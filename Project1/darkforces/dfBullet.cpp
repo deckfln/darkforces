@@ -142,7 +142,7 @@ void dfBullet::dispatchMessage(gaMessage* message)
 
 		dfBulletExplode* impact = new dfBulletExplode(p, 1.0f);
 
-		g_gaWorld.addClient(impact);
+		GameEngine::World::add(impact);
 
 		// on collision, inform the target it was hit with the energy of the bullet
 		sendMessage(message->m_server, gaMessage::Action::BULLET_HIT, m_damage, message->m_v3value, m_shooter);

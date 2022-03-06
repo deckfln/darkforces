@@ -59,7 +59,7 @@ DarkForces::HUD::HUD(GameEngine::Level* level) :
 
 	m_entText.physical(false);
 	m_entText.gravity(false);
-	g_gaWorld.addClient(&m_entText);
+	GameEngine::World::add(&m_entText);
 
 	add(m_health);
 	add(m_ammo);

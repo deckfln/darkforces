@@ -386,7 +386,7 @@ void flightRecorder::Blackbox::setFrame(int frame)
 				void* (*create)(void*) = m_callbacks[record->className];
 
 				child = (gaEntity *)create(entity.second);
-				g_gaWorld.addClient(child);
+				GameEngine::World::add(child);
 			}
 			else {
 				__debugbreak();

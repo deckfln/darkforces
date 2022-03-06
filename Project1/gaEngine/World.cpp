@@ -1026,6 +1026,14 @@ void GameEngine::World::popState(void)
 	g_gaWorld.m_saved_timers.pop();
 }
 
+/**
+ * add an entity to the world
+ */
+void GameEngine::World::add(gaEntity* entity)
+{
+	g_gaWorld.addClient(entity);
+}
+
 //-----------------------------------------------------------------------------
 
 #ifdef  _DEBUG
