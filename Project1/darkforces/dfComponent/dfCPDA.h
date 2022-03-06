@@ -19,6 +19,7 @@ namespace DarkForces {
 			static Framework::TextureAtlas* m_items_textures;
 
 			void onShowPDA(gaMessage*);							// display the PDA
+			void onAddItem(gaMessage*);							// addItem on the PDA
 
 		public:
 			PDA(void);

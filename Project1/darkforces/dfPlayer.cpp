@@ -52,6 +52,7 @@ DarkForces::Player::Player(int mclass, const std::string& name, fwCylinder& cyli
 
 	m_defaultAI.setClass("player");
 	sendMessage("hud", DarkForces::Message::AMMO, m_clip.energy());
+	sendMessage("hud", gaMessage::ADD_ITEM, 0, &m_pistol);
 }
 
 /**
@@ -332,6 +333,14 @@ void DarkForces::Player::onLife(gaMessage* message)
 }
 
 /**
+ * add item on the PDA
+ */
+void DarkForces::Player::onAddItem(gaMessage* message)
+{
+	sendMessage("hud", gaMessage::ADD_ITEM, message->m_value, message->m_extra);
+}
+
+/**
  * display the PDA
  */
 void DarkForces::Player::onShowPDA(gaMessage* message)
@@ -415,6 +424,11 @@ void DarkForces::Player::dispatchMessage(gaMessage* message)
 	case DarkForces::Message::LIFE:
 		onLife(message);
 		break;
+
+	case gaMessage::ADD_ITEM:
+		onAddItem(message);
+		break;
+
 	}
 
 	gaActor::dispatchMessage(message);
