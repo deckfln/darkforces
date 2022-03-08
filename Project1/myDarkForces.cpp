@@ -41,6 +41,7 @@
 #include "darkforces/dfVOC.h"
 #include "darkforces/dfMsg.h"
 #include "darkforces/dfFNT.h"
+#include "darkforces/prefab/dfPDA.h"
 
 const float c_height = 0.70f;
 const float c_radius = 0.2f;
@@ -143,6 +144,8 @@ void myDarkForces::myDarkForces::registerDebugger(void)
 }
 #endif
 
+static DarkForces::Prefab::PDA *g_pda = nullptr;
+
 /**
  *
  */
@@ -220,6 +223,10 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 	bindControl((fwControl*)controller);
 	m_player->addComponent(controller, gaEntity::Flag::DONT_DELETE);
 	GameEngine::World::add(m_player);
+
+	// PDA
+	g_pda = new DarkForces::Prefab::PDA();
+	GameEngine::World::add(g_pda);
 
 	// load the text file
 	g_dfMsg.Parse("TEXT.MSG");

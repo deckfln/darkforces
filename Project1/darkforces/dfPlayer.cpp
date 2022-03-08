@@ -346,7 +346,7 @@ void DarkForces::Player::onAddItem(gaMessage* message)
 void DarkForces::Player::onShowPDA(gaMessage* message)
 {
 	// only the entity player catches the LIFE message to passthrough to the hud
-	sendMessage("hud", DarkForces::Message::PDA);
+	sendMessage("pda", DarkForces::Message::PDA);
 }
 
 /**

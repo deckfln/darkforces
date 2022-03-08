@@ -897,6 +897,12 @@
     <ClCompile Include="darkforces\fwHUDelement\dfHUDpda.cpp">
       <Filter>Fichiers sources\Dark Forces\fwHUDelement</Filter>
     </ClCompile>
+    <ClCompile Include="darkforces\prefab\dfPDA.cpp">
+      <Filter>Fichiers sources\Dark Forces\prefab</Filter>
+    </ClCompile>
+    <ClCompile Include="gaEngine\gaComponent\gaControlerUI.cpp">
+      <Filter>Fichiers sources\gaEngine\gaComponent</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="glad\glad.h">
@@ -1699,6 +1705,12 @@
     </ClInclude>
     <ClInclude Include="darkforces\fwHUDelement\dfHUDpda.h">
       <Filter>Fichiers d%27en-tête\DarkForces\fwHUDelement</Filter>
+    </ClInclude>
+    <ClInclude Include="darkforces\prefab\dfPDA.h">
+      <Filter>Fichiers d%27en-tête\DarkForces\prefab</Filter>
+    </ClInclude>
+    <ClInclude Include="gaEngine\gaComponent\gaControlerUI.h">
+      <Filter>Fichiers d%27en-tête\gaEngine\gaComponent</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

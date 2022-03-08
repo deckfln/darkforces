@@ -2,6 +2,7 @@
 
 #include "../framework/fwFlatPanel.h"
 #include "../gaEngine/World.h"
+#include "../gaEngine/gaComponent/gaController.h"
 #include "dfFileSystem.h"
 #include "dfLevel.h"
 #include "dfFNT.h"
@@ -55,7 +56,6 @@ DarkForces::HUD::HUD(GameEngine::Level* level) :
 	m_compText.shield(m_health_bmp->fwtexture());
 
 	m_entText.addComponent(&m_compText);
-	m_entText.addComponent(&m_pda);
 
 	m_entText.physical(false);
 	m_entText.gravity(false);
@@ -65,7 +65,6 @@ DarkForces::HUD::HUD(GameEngine::Level* level) :
 	add(m_ammo);
 	add(m_weapon);
 	add(m_text);
-	add(m_pda.hud());
 }
 
 void DarkForces::HUD::setWeapon(fwTexture* texture, float x, float y, float w, float h)

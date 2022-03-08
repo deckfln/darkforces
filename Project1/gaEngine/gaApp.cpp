@@ -2,6 +2,7 @@
 
 #include "../framework/fwScene.h"
 #include "../framework/fwCamera.h"
+#include "../framework/fwControl.h"
 
 #include "Debug.h"
 #include "gaBoundingBoxes.h"
@@ -24,6 +25,12 @@
 #include "gaBehaviorNode/gaBSetVar.h"
 #include "gaBehaviorNode/gaBCheckVar.h"
 #include "gaBehaviorNode//gaBAlarm.h"
+
+/**
+ *
+ */
+GameEngine::App* GameEngine::App::m_currentApp = nullptr;
+std::map<std::string, App*> GameEngine::App::m_apps;	// list of running app
 
 /**
  * register darkforces entities for the flight recorder
@@ -159,6 +166,10 @@ GameEngine::App::App(const std::string& name, int width, int height, const std::
 #ifdef _DEBUG
 	m_debugger = new GameEngine::Debug(this);
 #endif
+
+	// record the app
+	m_apps[name] = this;
+	m_currentApp = this;
 }
 
 /**
@@ -181,6 +192,35 @@ glTexture* GameEngine::App::draw(time_t delta, fwRenderer* renderer)
 void GameEngine::App::resize(int width, int height)
 {
 	m_camera->set_ratio(width, height);
+}
+
+/**
+ * save and replace the current controler
+ */
+void GameEngine::App::pushControl(fwControl* newControler)
+{
+	m_currentApp->_pushControl(newControler);
+}
+
+void GameEngine::App::_pushControl(fwControl* newControler)
+{
+	m_controlers.push(m_control);
+	m_control = newControler;
+}
+
+/**
+ * restore the previous controler
+ */
+fwControl* GameEngine::App::popControl(void)
+{
+	return m_currentApp->_popControl();
+}
+
+fwControl* GameEngine::App::_popControl(void)
+{
+	m_control = m_controlers.top();
+	m_controlers.pop();
+	return m_control;
 }
 
 /**

@@ -103,6 +103,16 @@ void fwControl::keyEvent(int key, int scancode, int action, int mods)
 	}
 }
 
+void fwControl::update(time_t delta)
+{
+	checkKeys(delta);
+
+	// record the status of the key for the next frame
+	for (auto& k : m_currentKeys) {
+		m_prevKeys[k.first] = k.second;
+	}
+}
+
 bool fwControl::isKeyPressed(int key)
 {
 	return m_currentKeys[key];

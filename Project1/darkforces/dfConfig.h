@@ -13,5 +13,6 @@ namespace DarkForces {
 		_Object = _Root | (1<<9),
 		_Goals = _Root | (1<<10),
 		_HUD = _Root | (1 << 11),
+		_PDA = _Root | (1 << 12)
 	};
 }

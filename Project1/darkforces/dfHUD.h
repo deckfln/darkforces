@@ -41,7 +41,6 @@ namespace DarkForces {
 		fwHUDelement* m_text = nullptr;		// text bar
 		gaEntity m_entText = gaEntity(DarkForces::ClassID::_HUD, "hud");
 		Component::HUDtext m_compText;
-		Component::PDA m_pda;
 
 	public:
 		HUD(GameEngine::Level*);

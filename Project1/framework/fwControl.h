@@ -44,7 +44,8 @@ public:
 	void mouseScroll(double xoffset, double yoffset);
 	void keyEvent(int key, int scancode, int action, int mods);
 	void bind(fwCollision* collision) { m_collision = collision; };
-	virtual void update(time_t) {};
+	inline virtual bool checkKeys(time_t delta) { return true; };
+	virtual void update(time_t);
 	bool isKeyPressed(int key);
 	fwCamera* bindCamera(fwCamera* camera);		// bind the controller to another camera
 	~fwControl();

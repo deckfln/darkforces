@@ -20,6 +20,7 @@ namespace DarkForces {
 
 			void onShowPDA(gaMessage*);							// display the PDA
 			void onAddItem(gaMessage*);							// addItem on the PDA
+			void onKeyDown(gaMessage*);							// deal with UI keyboard
 
 		public:
 			PDA(void);
