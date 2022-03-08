@@ -38,19 +38,33 @@ fwScene &fwScene::addLight(fwLight *light)
 }
 
 /**
- * Add a hud element on the scene, create the HUD the first time
+ * Add a new flatUI on top of the previous one
  */
-fwScene& fwScene::hud(fwHUDelement* element)
+
+void fwScene::hud(fwHUD* ui)
 {
-	if (m_hud == nullptr) {
-		m_hud = new fwHUD();
-	}
-
-	m_hud->add(element);
-
-	return *this;
+	m_uis.push_back(ui);
 }
 
+/**
+ * ig there are UI's
+ */
+bool fwScene::hasUI(void)
+{
+	return m_uis.size() > 0;
+}
+
+/**
+ * Draw the UI's
+ */
+void fwScene::drawUI(void)
+{
+	for (auto ui : m_uis) {
+		ui->draw();
+	}
+}
+
+#ifdef _DEBUG
 /**
  * Display the scene content on the debugger
  */
@@ -69,10 +83,8 @@ void fwScene::debugGUI(void)
 	}
 	ImGui::End();
 }
+#endif
 
 fwScene::~fwScene()
 {
-	if (m_hud != nullptr) {
-		delete m_hud;
-	}
 }

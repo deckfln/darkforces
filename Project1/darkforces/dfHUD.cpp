@@ -16,7 +16,7 @@ static std::map<ShaderType, std::string> g_subShaders = {
 };
 
 DarkForces::HUD::HUD(GameEngine::Level* level) :
-	fwHUD(&g_subShaders)
+	fwHUD("DarkForces::HUD", &g_subShaders)
 {
 	g_dfHUD = this;
 

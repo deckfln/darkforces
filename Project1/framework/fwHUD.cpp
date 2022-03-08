@@ -20,7 +20,8 @@ static std::map<ShaderType, std::string> g_subShaders = {
 	{FRAGMENT_SHADER, "framework/shaders/hud/hud_fs.glsl"}
 };
 
-fwHUD::fwHUD(std::map<ShaderType, std::string>* shaders)
+fwHUD::fwHUD(const std::string& name,  std::map<ShaderType, std::string>* shaders):
+	m_name(name)
 {
 	if (g_material == nullptr) {
 		if (shaders == nullptr) {
@@ -57,6 +58,10 @@ fwMaterial* fwHUD::cloneMaterial(void)
  */
 void fwHUD::draw(void)
 {
+	if (!m_visible) {
+		return;
+	}
+
 	// always draw on top of screen
 	glDisable(GL_DEPTH_TEST);								// disable depth test so screen-space quad isn't discarded due to depth test.
 

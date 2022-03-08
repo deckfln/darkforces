@@ -14,13 +14,6 @@
 #include "../dfComponent.h"
 #include "../dfMessage.h"
 
-DarkForces::ANIM* DarkForces::Component::PDA::m_pda = nullptr;
-DarkForces::ANIM* DarkForces::Component::PDA::m_guns = nullptr;
-DarkForces::ANIM* DarkForces::Component::PDA::m_items = nullptr;
-DarkForces::DELT* DarkForces::Component::PDA::m_pda_background = nullptr;
-DarkForces::HUDelement::PDA* DarkForces::Component::PDA::m_hud = nullptr;
-Framework::TextureAtlas* DarkForces::Component::PDA::m_items_textures = nullptr;
-
 static std::map<std::string, uint32_t> g_dfItems = {
 	{"Pistol", 0},
 	{"Rifle", 1}
@@ -31,13 +24,13 @@ static std::map<std::string, uint32_t> g_dfItems = {
  */
 void DarkForces::Component::PDA::onShowPDA(gaMessage*)
 {
-	if (m_hud->visible()) {
-		m_hud->visible(false);
+	if (m_ui->visible()) {
+		m_ui->visible(false);
 		GameEngine::World::popState();				// restart the game
 		GameEngine::App::popControl();				// restore the correct controler
 	}
 	else {
-		m_hud->visible(true);
+		m_ui->visible(true);
 		GameEngine::World::pushState();				// suspend the game
 
 		// push the current game controller and replace with the one of the PDA
@@ -54,7 +47,7 @@ void DarkForces::Component::PDA::onAddItem(gaMessage* message)
 	// activate the item on the PDA
 	GameEngine::Item* item = static_cast<GameEngine::Item*>(message->m_extra);
 	if (g_dfItems.count(item->name()) > 0) {
-		m_hud->activateGun(g_dfItems[item->name()]);
+		m_ui_guns->activateGun(g_dfItems[item->name()]);
 	}
 }
 
@@ -76,6 +69,10 @@ void DarkForces::Component::PDA::onKeyDown(gaMessage* message)
 DarkForces::Component::PDA::PDA(void):
 	gaComponent(DF_COMPONENT_PDA)
 {
+	m_ui = new fwHUD("DarkForces::PDA");
+	m_ui->visible(false);	// hide by default
+	m_ui_guns = new DarkForces::HUDelement::PDA("guns", fwHUDelement::Position::BOTTOM_LEFT, fwHUDelementSizeLock::UNLOCKED, 1.0f, 1.0f);
+	m_ui->add(m_ui_guns);
 }
 
 /**
@@ -99,18 +96,6 @@ void DarkForces::Component::PDA::dispatchMessage(gaMessage* message)
 	}
 }
 
-/**
- * initiliaze and return and hud element
- */
-fwHUDelement* DarkForces::Component::PDA::hud(void)
-{
-	if (m_hud == nullptr) {
-		m_hud = new DarkForces::HUDelement::PDA("pda", fwHUDelement::Position::BOTTOM_LEFT, fwHUDelementSizeLock::UNLOCKED, 1.0f, 1.0f);
-		m_hud->visible(false);
-	}
-	return m_hud;
-}
-
 #ifdef _DEBUG
 void DarkForces::Component::PDA::debugGUIinline(void)
 {
@@ -127,6 +112,6 @@ DarkForces::Component::PDA::~PDA(void)
 		delete m_guns;
 		delete m_items;
 		delete m_pda_background;
-		delete m_hud;
+		delete m_ui;
 	}
 }

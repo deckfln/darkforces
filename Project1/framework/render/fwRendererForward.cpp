@@ -204,10 +204,10 @@ glTexture *fwRendererForward::draw(fwCamera* camera, fwScene *scene)
 	/*
 	 * 6th pass: draw the HUD
 	 */
-	if (scene->hud() != nullptr) {
+	if (scene->hasUI()) {
 		static const char* s7 = "draw_hud";
 		glPushDebugGroup(GL_DEBUG_SOURCE_APPLICATION, 0, GLsizei(strlen(s7)), s7);
-		scene->hud()->draw();
+		scene->drawUI();
 		glPopDebugGroup();
 	}
 

@@ -24,6 +24,7 @@
 #include "gaEngine/gaBoundingBoxes.h"
 #include "gaEngine/gaBehavior.h"
 
+#include "darkforces/dfComponent.h"
 #include "darkforces/dfConfig.h"
 #include "darkforces/dfLevel.h"
 #include "darkforces/dfCollision.h"
@@ -241,6 +242,10 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 	// hud display
 	g_dfHUD = new DarkForces::HUD(m_level);
 	m_scene->hud(g_dfHUD);
+
+	// PDA UI
+	DarkForces::Component::PDA* cPDA = dynamic_cast<DarkForces::Component::PDA*>(g_pda->findComponent(DF_COMPONENT_PDA));
+	m_scene->hud(cPDA->ui());
 
 	// add the sprites manager to the world
 	g_gaWorld.registerPlugin(&g_dfSpritesEngine);

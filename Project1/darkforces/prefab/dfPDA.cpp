@@ -26,7 +26,4 @@ DarkForces::Prefab::PDA::PDA(void):
 	// record the components
 	addComponent(&m_controler);
 	addComponent(&m_pda);
-
-	// and prepare the hud
-	m_ui.add(m_pda.hud());
 }

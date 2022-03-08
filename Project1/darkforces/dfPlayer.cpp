@@ -52,7 +52,7 @@ DarkForces::Player::Player(int mclass, const std::string& name, fwCylinder& cyli
 
 	m_defaultAI.setClass("player");
 	sendMessage("hud", DarkForces::Message::AMMO, m_clip.energy());
-	sendMessage("hud", gaMessage::ADD_ITEM, 0, &m_pistol);
+	sendMessage("pda", gaMessage::ADD_ITEM, 0, &m_pistol);
 }
 
 /**
@@ -337,7 +337,7 @@ void DarkForces::Player::onLife(gaMessage* message)
  */
 void DarkForces::Player::onAddItem(gaMessage* message)
 {
-	sendMessage("hud", gaMessage::ADD_ITEM, message->m_value, message->m_extra);
+	sendMessage("pda", gaMessage::ADD_ITEM, message->m_value, message->m_extra);
 }
 
 /**

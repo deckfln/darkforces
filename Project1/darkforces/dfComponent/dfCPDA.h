@@ -3,6 +3,8 @@
 #include "../../framework/fwTextureAtlas.h"
 #include "../../framework/fwHUDelement.h"
 #include "../../gaEngine/gaComponent.h"
+#include "../../framework/fwHUD.h"
+
 #include "../dfFileLFD.h"
 #include "../fwHUDelement/dfHUDpda.h"
 
@@ -10,13 +12,15 @@ namespace DarkForces {
 	namespace Component {
 		class PDA : public gaComponent
 		{
-			static DarkForces::ANIM* m_pda;
-			static DarkForces::ANIM* m_guns;
-			static DarkForces::ANIM* m_items;
-			static DarkForces::DELT* m_pda_background;
-			static HUDelement::PDA* m_hud;
+			DarkForces::ANIM* m_pda=nullptr;
+			DarkForces::ANIM* m_guns=nullptr;
+			DarkForces::ANIM* m_items=nullptr;
+			DarkForces::DELT* m_pda_background=nullptr;
 
-			static Framework::TextureAtlas* m_items_textures;
+			fwHUD* m_ui = nullptr;
+			HUDelement::PDA* m_ui_guns = nullptr;
+
+			Framework::TextureAtlas* m_items_textures = nullptr;
 
 			void onShowPDA(gaMessage*);							// display the PDA
 			void onAddItem(gaMessage*);							// addItem on the PDA
@@ -25,8 +29,7 @@ namespace DarkForces {
 		public:
 			PDA(void);
 			void dispatchMessage(gaMessage* message) override;
-			fwHUDelement* hud(void);
-
+			inline fwHUD* ui(void) { return m_ui; };
 #ifdef _DEBUG
 			// debugger
 			void debugGUIinline(void) override;					// Add dedicated component debug the entity

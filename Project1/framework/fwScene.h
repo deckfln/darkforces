@@ -3,6 +3,7 @@
 #include <glm/vec3.hpp>
 #include <string>
 #include <map>
+#include <vector>
 
 #include "../glEngine/glProgram.h"
 #include "../glEngine/glUniformBuffer.h"
@@ -19,7 +20,7 @@ class fwScene : public fwObject3D
 	std::list <fwLight*> m_lights;
 
 	fwBackground *m_pBackground = nullptr;
-	fwHUD* m_hud = nullptr;
+	std::vector<fwHUD*> m_uis;		// stack of flat UI to display with overdraw
 
 	glm::vec3 *outlinecolor = nullptr;
 
@@ -35,11 +36,13 @@ public:
 	inline fwScene &background(fwBackground *_background) { m_pBackground = _background; return *this; };
 	inline fwBackground *background(void) { return m_pBackground; };
 
-	inline void hud(fwHUD* hud) { m_hud = hud; };
-	fwScene& hud(fwHUDelement* element);
-	inline fwHUD* hud(void) { return m_hud; };
+	void hud(fwHUD* hud);	// Add a new flatUI on top of the previous one
+	bool hasUI(void);		// if there are UI's to draw
+	void drawUI(void);		// Draw the UI's
 
+#ifdef _DEBUG
 	void debugGUI(void);
+#endif
 
 	~fwScene();
 };

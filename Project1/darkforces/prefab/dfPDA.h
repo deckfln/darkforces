@@ -12,7 +12,6 @@ namespace DarkForces {
 		class PDA : public gaEntity {
 			GameEngine::Component::ControllerUI m_controler;	// basic controler for an UI
 			Component::PDA m_pda;
-			fwHUD m_ui;
 		public:
 			PDA(void);
 		};
