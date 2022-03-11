@@ -10,6 +10,7 @@
 #include "../../gaEngine/gaApp.h"
 #include "../../gaEngine/gaEntity.h"
 #include "../../gaEngine/gaComponent/gaControlerUI.h"
+#include "../../gaEngine/gaUI.h"
 
 #include "../dfComponent.h"
 #include "../dfMessage.h"
@@ -18,6 +19,8 @@ static std::map<std::string, uint32_t> g_dfItems = {
 	{"Pistol", 0},
 	{"Rifle", 1}
 };
+static Framework::TextureAtlas* g_items_textures = nullptr;
+static fwTexture* g_items_texture = nullptr;
 
 /**
  * display the PDA
@@ -69,10 +72,63 @@ void DarkForces::Component::PDA::onKeyDown(gaMessage* message)
 DarkForces::Component::PDA::PDA(void):
 	gaComponent(DF_COMPONENT_PDA)
 {
-	m_ui = new fwHUD("DarkForces::PDA");
-	m_ui->visible(false);	// hide by default
+	// preload the PDA images
+	DarkForces::ANIM* pda = nullptr;
+	DarkForces::ANIM* guns = nullptr;
+	DarkForces::ANIM* items = nullptr;
+
+	g_items_textures = new Framework::TextureAtlas();
+
+	pda = DarkForces::FileLFD::loadAnim("pda", "MENU");
+	size_t nbItems = pda->size();
+	for (size_t i = 0; i < nbItems; i++) {
+		g_items_textures->add(pda->texture(i)->texture());
+	}
+
+	// load all guns into a texturearray
+	guns = DarkForces::FileLFD::loadAnim("guns", "DFBRIEF");
+	nbItems = guns->size();
+	for (size_t i = 0; i < nbItems; i++) {
+		g_items_textures->add(guns->texture(i)->texture());
+	}
+
+	// load all items into a texturearray
+	items = DarkForces::FileLFD::loadAnim("items", "DFBRIEF");
+	nbItems = items->size();
+	for (size_t i = 0; i < nbItems; i++) {
+		g_items_textures->add(items->texture(i)->texture());
+	}
+
+	g_items_texture = g_items_textures->generate();
+	g_items_texture->save("0.png");
+
+	delete guns;
+	delete items;
+	delete pda;
+
 	m_ui_guns = new DarkForces::HUDelement::PDA("guns", fwHUDelement::Position::BOTTOM_LEFT, fwHUDelementSizeLock::UNLOCKED, 1.0f, 1.0f);
-	m_ui->add(m_ui_guns);
+
+	m_ui = new GameEngine::UI("DarkForces::PDA", g_items_textures);
+	glm::vec4 texel;
+	g_items_textures->texel(0, texel);
+	GameEngine::UI_picture* ui_background = new GameEngine::UI_picture("DarkForces::pda::background", 
+		glm::vec4(0, 0, 1, 1),
+		texel);
+
+	g_items_textures->texel(4, texel);
+	GameEngine::UI_picture* guns_ui = new GameEngine::UI_picture("DarkForces::pda::weapon",
+		glm::vec4(-0.2, -0.8, 0.1, 0.1),	// position & size of the tab panel
+		texel
+	);
+
+	m_ui->root(ui_background);
+	ui_background->add(guns_ui);
+
+}
+
+GameEngine::UI* DarkForces::Component::PDA::ui(void)
+{
+	return m_ui;
 }
 
 /**

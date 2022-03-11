@@ -7,14 +7,18 @@
 #include <string>
 #include <glm/vec4.hpp>
 
-class fwMaterial;
 class glProgram;
+class glVertexArray;
+class fwMaterial;
 class fwTexture;
+class fwGeometry;
 
 class fwFlatPanel
 {
 	fwMaterial* m_material = nullptr;
 	glProgram* m_program = nullptr;
+	fwGeometry* m_geometry = nullptr;
+	glVertexArray* m_vertexArray = nullptr;
 
 public:
 	fwFlatPanel(fwMaterial* material);

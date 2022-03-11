@@ -323,6 +323,7 @@
     <ClCompile Include="gaEngine\gaPlugin.cpp" />
     <ClCompile Include="gaEngine\gaPlugin\gaPSounds.cpp" />
     <ClCompile Include="gaEngine\gaPlugin\gaPView.cpp" />
+    <ClCompile Include="gaEngine\gaUI.cpp" />
     <ClCompile Include="gaEngine\gaValue.cpp" />
     <ClCompile Include="gaEngine\gaVariable.cpp" />
     <ClCompile Include="gaEngine\gaVolumeSpace.cpp" />
@@ -590,6 +591,7 @@
     <ClInclude Include="gaEngine\gaPlugin.h" />
     <ClInclude Include="gaEngine\gaPlugin\gaPSounds.h" />
     <ClInclude Include="gaEngine\gaPlugin\gaPView.h" />
+    <ClInclude Include="gaEngine\gaUI.h" />
     <ClInclude Include="gaEngine\gaValue.h" />
     <ClInclude Include="gaEngine\gaVariable.h" />
     <ClInclude Include="gaEngine\gaVolumeSpace.h" />
@@ -653,6 +655,8 @@
     <None Include="framework\shaders\background\skyline_vs.glsl" />
     <None Include="framework\shaders\hud\hud_fs.glsl" />
     <None Include="framework\shaders\hud\hud_vs.glsl" />
+    <None Include="gaEngine\shaders\gui_fs.glsl" />
+    <None Include="gaEngine\shaders\gui_vs.glsl" />
     <None Include="packages.config" />
     <None Include="shaders\cubemap_fragment.glsl" />
     <None Include="shaders\cubemap_vertex.glsl" />

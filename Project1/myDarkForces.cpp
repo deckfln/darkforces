@@ -243,9 +243,8 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 	g_dfHUD = new DarkForces::HUD(m_level);
 	m_scene->hud(g_dfHUD);
 
-	// PDA UI
-	DarkForces::Component::PDA* cPDA = dynamic_cast<DarkForces::Component::PDA*>(g_pda->findComponent(DF_COMPONENT_PDA));
-	m_scene->hud(cPDA->ui());
+	// PDA GUI
+	m_scene->hud(g_pda->ui());
 
 	// add the sprites manager to the world
 	g_gaWorld.registerPlugin(&g_dfSpritesEngine);

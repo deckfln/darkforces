@@ -5,6 +5,8 @@
 #include "../../gaEngine/gaEntity.h"
 #include "../../framework/fwHUD.h"
 #include "../../gaEngine/gaComponent/gaControlerUI.h"
+#include "../../gaEngine/gaUI.h"
+
 #include "../dfComponent/dfCPDA.h"
 
 namespace DarkForces {
@@ -14,6 +16,7 @@ namespace DarkForces {
 			Component::PDA m_pda;
 		public:
 			PDA(void);
+			GameEngine::UI* ui(void);
 		};
 	}
 }

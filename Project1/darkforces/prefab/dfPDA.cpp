@@ -27,3 +27,8 @@ DarkForces::Prefab::PDA::PDA(void):
 	addComponent(&m_controler);
 	addComponent(&m_pda);
 }
+
+GameEngine::UI* DarkForces::Prefab::PDA::ui(void)
+{
+	return m_pda.ui();
+}

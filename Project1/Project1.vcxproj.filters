@@ -196,6 +196,12 @@
     <Filter Include="Fichiers sources\Dark Forces\fwHUDelement">
       <UniqueIdentifier>{4f5f3b08-c6e9-4f0a-b822-6ed3d5c2a456}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Fichiers de ressources\gaEngine">
+      <UniqueIdentifier>{5e565ec9-db78-4173-8728-83457a5e4bce}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers de ressources\gaEngine\shaders">
+      <UniqueIdentifier>{5cab9472-ef42-4d3e-838a-de2fe908b33a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source.cpp">
@@ -902,6 +908,9 @@
     </ClCompile>
     <ClCompile Include="gaEngine\gaComponent\gaControlerUI.cpp">
       <Filter>Fichiers sources\gaEngine\gaComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="gaEngine\gaUI.cpp">
+      <Filter>Fichiers sources\gaEngine</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1712,6 +1721,9 @@
     <ClInclude Include="gaEngine\gaComponent\gaControlerUI.h">
       <Filter>Fichiers d%27en-tête\gaEngine\gaComponent</Filter>
     </ClInclude>
+    <ClInclude Include="gaEngine\gaUI.h">
+      <Filter>Fichiers d%27en-tête\gaEngine</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\fragment.glsl">
@@ -1791,6 +1803,12 @@
     </None>
     <None Include="darkforces\shaders\hud\pda_vs.glsl">
       <Filter>Fichiers de ressources\DarkForces\Shaders</Filter>
+    </None>
+    <None Include="gaEngine\shaders\gui_fs.glsl">
+      <Filter>Fichiers de ressources\gaEngine\shaders</Filter>
+    </None>
+    <None Include="gaEngine\shaders\gui_vs.glsl">
+      <Filter>Fichiers de ressources\gaEngine\shaders</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

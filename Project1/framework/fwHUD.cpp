@@ -8,10 +8,7 @@
 #include "fwGeometry.h"
 #include "fwUniform.h"
 #include "fwMaterial.h"
-#include "fwFlatPanel.h"
 
-static fwFlatPanel* g_hudPanel=nullptr;
-static fwMaterial* g_material = nullptr;
 static fwUniform* g_uniformTexture = nullptr;
 static glm::vec4 g_screen;
 
@@ -23,16 +20,14 @@ static std::map<ShaderType, std::string> g_subShaders = {
 fwHUD::fwHUD(const std::string& name,  std::map<ShaderType, std::string>* shaders):
 	m_name(name)
 {
-	if (g_material == nullptr) {
-		if (shaders == nullptr) {
-			shaders = &g_subShaders;
-		}
-		g_material = new fwMaterial(*shaders);
-		g_material->addTexture("image", (glTexture*)nullptr);
-		g_material->addUniform(new fwUniform("onscreen", &g_screen));
-
-		g_hudPanel = new fwFlatPanel(g_material);
+	if (shaders == nullptr) {
+		shaders = &g_subShaders;
 	}
+	m_material = new fwMaterial(*shaders);
+	m_material->addTexture("image", (glTexture*)nullptr);
+	m_material->addUniform(new fwUniform("onscreen", &g_screen));
+
+	m_hudPanel = new fwFlatPanel(m_material);
 }
 
 /**
@@ -45,12 +40,12 @@ void fwHUD::add(fwHUDelement* element)
 
 void fwHUD::addUniform(fwUniform* uniform)
 {
-	g_material->addUniform(uniform);
+	m_material->addUniform(uniform);
 }
 
 fwMaterial* fwHUD::cloneMaterial(void)
 {
-	return g_material->clone();
+	return m_material->clone();
 }
 
 /**
@@ -66,7 +61,7 @@ void fwHUD::draw(void)
 	glDisable(GL_DEPTH_TEST);								// disable depth test so screen-space quad isn't discarded due to depth test.
 
 	for (auto element : m_elements) {
-		element->draw(g_hudPanel);
+		element->draw(m_hudPanel);
 	}
 
 	glEnable(GL_DEPTH_TEST);

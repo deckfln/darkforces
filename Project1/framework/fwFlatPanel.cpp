@@ -29,9 +29,6 @@ static float quadUvs[] = { // vertex attributes for a quad that fills the entire
 	0.0f, 0.0f
 };
 
-static fwGeometry* g_geometry = nullptr;
-static glVertexArray* g_vertexArray = nullptr;
-
 fwFlatPanel::fwFlatPanel(fwMaterial *material):
 	m_material(material)
 {
@@ -41,15 +38,13 @@ fwFlatPanel::fwFlatPanel(fwMaterial *material):
 
 	m_program = new glProgram(vs, fs, gs, "");
 
-	if (g_geometry == nullptr) {
-		g_geometry = new fwGeometry();
-		g_geometry->addVertices("aPos", quadVertices, 2, sizeof(quadVertices), sizeof(float), false);
-		g_geometry->addAttribute("aTex", GL_ARRAY_BUFFER, quadUvs, 2, sizeof(quadUvs), sizeof(float), false);
+	m_geometry = new fwGeometry();
+	m_geometry->addVertices("aPos", quadVertices, 2, sizeof(quadVertices), sizeof(float), false);
+	m_geometry->addAttribute("aTex", GL_ARRAY_BUFFER, quadUvs, 2, sizeof(quadUvs), sizeof(float), false);
 
-		g_vertexArray = new glVertexArray();
-		g_geometry->enable_attributes(m_program);
-		g_vertexArray->unbind();
-	}
+	m_vertexArray = new glVertexArray();
+	m_geometry->enable_attributes(m_program);
+	m_vertexArray->unbind();
 }
 
 /**
@@ -76,7 +71,7 @@ void fwFlatPanel::draw(void)
 	m_program->run();
 
 	m_material->set_uniforms(m_program);
-	g_geometry->draw(GL_TRIANGLES, g_vertexArray);
+	m_geometry->draw(GL_TRIANGLES, m_vertexArray);
 }
 
 fwFlatPanel::~fwFlatPanel()

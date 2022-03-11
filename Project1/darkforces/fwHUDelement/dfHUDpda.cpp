@@ -112,7 +112,7 @@ static glVertexArray* g_vertexArray = nullptr;
 static glProgram* g_program = nullptr;
 static fwMaterial* g_material = nullptr;
 static glm::vec4 g_screen;
-static std::map<ShaderType, std::string> g_subShaders = {
+static std::map<ShaderType, std::string> g_pdaShaders = {
 	{VERTEX_SHADER, "darkforces/shaders/hud/pda_vs.glsl"},
 	{FRAGMENT_SHADER, "darkforces/shaders/hud/pda_fs.glsl"}
 };
@@ -158,7 +158,7 @@ DarkForces::HUDelement::PDA::PDA(const std::string& name, Position position, fwH
 	}
 
 	if (g_geometry == nullptr) {
-		g_material = new fwMaterial(g_subShaders);
+		g_material = new fwMaterial(g_pdaShaders);
 		g_material->addTexture("image", (glTexture*)nullptr);
 		g_material->addUniform(new fwUniform("onscreen", &g_screen));
 
