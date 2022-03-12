@@ -50,7 +50,7 @@ void DarkForces::Component::PDA::onAddItem(gaMessage* message)
 	// activate the item on the PDA
 	GameEngine::Item* item = static_cast<GameEngine::Item*>(message->m_extra);
 	if (g_dfItems.count(item->name()) > 0) {
-		m_ui_guns->activateGun(g_dfItems[item->name()]);
+		m_ui_weapons->widget(g_dfItems[item->name()])->visible(true);
 	}
 }
 
@@ -86,6 +86,7 @@ DarkForces::Component::PDA::PDA(void):
 	}
 
 	// load all guns into a texturearray
+	uint32_t startGuns = nbItems;
 	guns = DarkForces::FileLFD::loadAnim("guns", "DFBRIEF");
 	nbItems = guns->size();
 	for (size_t i = 0; i < nbItems; i++) {
@@ -93,6 +94,7 @@ DarkForces::Component::PDA::PDA(void):
 	}
 
 	// load all items into a texturearray
+	uint32_t startItems = startGuns + nbItems;
 	items = DarkForces::FileLFD::loadAnim("items", "DFBRIEF");
 	nbItems = items->size();
 	for (size_t i = 0; i < nbItems; i++) {
@@ -100,15 +102,8 @@ DarkForces::Component::PDA::PDA(void):
 	}
 
 	g_items_texture = g_items_textures->generate();
-	g_items_texture->save("0.png");
 
-	delete guns;
-	delete items;
-	delete pda;
-
-	m_ui_guns = new DarkForces::HUDelement::PDA("guns", fwHUDelement::Position::BOTTOM_LEFT, fwHUDelementSizeLock::UNLOCKED, 1.0f, 1.0f);
-
-	m_ui = new GameEngine::UI("DarkForces::PDA", g_items_textures);
+	m_ui = new GameEngine::UI("DarkForces::PDA", g_items_textures, false);
 	glm::vec4 texel;
 	g_items_textures->texel(0, texel);
 	GameEngine::UI_picture* ui_background = new GameEngine::UI_picture("DarkForces::pda::background", 
@@ -117,13 +112,41 @@ DarkForces::Component::PDA::PDA(void):
 
 	g_items_textures->texel(4, texel);
 	GameEngine::UI_picture* guns_ui = new GameEngine::UI_picture("DarkForces::pda::weapon",
-		glm::vec4(-0.2, -0.8, 0.1, 0.1),	// position & size of the tab panel
+		glm::vec4(115.0f/320.0f, 176.0f/200.0f, 31.0f/320.0f, 14.0f/200.0f),	// position & size of the button Weapon
 		texel
 	);
 
-	m_ui->root(ui_background);
-	ui_background->add(guns_ui);
+	// build the tab for weapons
+	m_ui_weapons = new GameEngine::UI_widget("DarkForces::pda::weapons",
+		glm::vec4(0.06, 0.06, 0.9, 0.76)	// position & size of the tab panel
+	);
 
+	float x=0.0f, y=0.0f;
+	for (size_t c = 0; c < guns->size(); c++) {
+		g_items_textures->texel(startGuns + c, texel);
+		GameEngine::UI_picture* ui_weapon = new GameEngine::UI_picture("DarkForces::pda::weapon",
+			glm::vec4(x, y, 0.49f, 0.19f),
+			texel,
+			false	// hide weapons by default
+		);	
+
+		m_ui_weapons->add(ui_weapon);
+
+		y += 0.2f;	// next row
+		if (y >= 1.0f) {
+			y = 0.0f;
+			x += 0.5f;
+		}
+	}
+	m_ui_weapons->widget(0)->visible(true);	// display the briad pistol
+
+	m_ui->root(ui_background);
+		ui_background->add(guns_ui);
+		ui_background->add(m_ui_weapons);
+
+	delete guns;
+	delete items;
+	delete pda;
 }
 
 GameEngine::UI* DarkForces::Component::PDA::ui(void)

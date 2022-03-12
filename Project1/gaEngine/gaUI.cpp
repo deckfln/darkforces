@@ -24,12 +24,12 @@ static std::map<ShaderType, std::string> g_subShaders = {
 
 static float quadVertices[] = { // vertex attributes for a quad that fills the entire screen in Normalized Device Coordinates.
 	// m_positions   // texCoords
-	-1.0f,  1.0f,
-	-1.0f, -1.0f,
-	 1.0f, -1.0f,
+	1.0f,  1.0f,
+	1.0f, 1.0f,
+	 1.0f, 1.0f,
 
-	-1.0f,  1.0f,
-	 1.0f, -1.0f,
+	1.0f,  1.0f,
+	 1.0f, 1.0f,
 	 1.0f,  1.0f
 };
 
@@ -54,8 +54,8 @@ static fwUniform g_uni_ip("imagepos", &g_imagepos);
 
 //-------------------------------------------------------
 
-GameEngine::UI::UI(const std::string& name, Framework::TextureAtlas* textures):
-	fwHUD(name, &g_subShaders),
+GameEngine::UI::UI(const std::string& name, Framework::TextureAtlas* textures, bool visible):
+	fwHUD(name, &g_subShaders, visible),
 	m_textures(textures)
 {
 	if (g_material == nullptr) {
@@ -89,6 +89,10 @@ void GameEngine::UI::draw(void)
 		return;
 	}
 
+	if (m_dirty) {
+		m_dirty = false;
+		m_root->update(glm::vec4(0, 0, 1, 1));
+	}
 	// always draw on top of screen
 	glDisable(GL_DEPTH_TEST);								// disable depth test so screen-space quad isn't discarded due to depth test.
 
@@ -110,9 +114,10 @@ void GameEngine::UI::draw_widget(const glm::vec4& position_size)
 
 //------------------------------------------------------
 
-GameEngine::UI_widget::UI_widget(const std::string& name, const glm::vec4& position) :
+GameEngine::UI_widget::UI_widget(const std::string& name, const glm::vec4& position, bool visible) :
 	m_name(name),
-	m_position_size(position)
+	m_position_size(position),
+	m_visible(visible)
 {
 }
 
@@ -125,6 +130,22 @@ void GameEngine::UI_widget::add(GameEngine::UI_widget* widget)
 }
 
 /**
+ * update screen position
+ */
+void GameEngine::UI_widget::update(const glm::vec4& parent)
+{
+	m_screen_position_size.w = m_position_size.w * parent.w;
+	m_screen_position_size.z = m_position_size.z * parent.z;
+
+	m_screen_position_size.x = parent.x + m_position_size.x * parent.z;
+	m_screen_position_size.y = parent.y + m_position_size.y * parent.w;
+
+	for (auto widget : m_widgets) {
+		widget->update(m_screen_position_size);
+	}
+}
+
+/**
  * draw the GUI
  */
 void GameEngine::UI_widget::draw(void)
@@ -133,9 +154,11 @@ void GameEngine::UI_widget::draw(void)
 		return;
 	}
 
-	GameEngine::UI::draw_widget(
-		m_position_size
-	);
+	if (m_draw) {
+		GameEngine::UI::draw_widget(
+			m_screen_position_size
+		);
+	}
 
 	for (auto widget : m_widgets) {
 		widget->draw();
@@ -151,10 +174,11 @@ GameEngine::UI_tab::UI_tab(const std::string& name, const glm::vec4& panel, cons
 	add(new UI_widget("tab", panel));
 }
 
-GameEngine::UI_picture::UI_picture(const std::string& name, const glm::vec4& panel, const glm::vec4& textureIndex):
-	UI_widget(name, panel),
+GameEngine::UI_picture::UI_picture(const std::string& name, const glm::vec4& panel, const glm::vec4& textureIndex, bool visible):
+	UI_widget(name, panel, visible),
 	m_textureIndex(textureIndex)
 {
+	m_draw = true;
 }
 
 void GameEngine::UI_picture::draw(void)

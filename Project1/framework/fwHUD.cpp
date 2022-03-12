@@ -17,8 +17,9 @@ static std::map<ShaderType, std::string> g_subShaders = {
 	{FRAGMENT_SHADER, "framework/shaders/hud/hud_fs.glsl"}
 };
 
-fwHUD::fwHUD(const std::string& name,  std::map<ShaderType, std::string>* shaders):
-	m_name(name)
+fwHUD::fwHUD(const std::string& name,  std::map<ShaderType, std::string>* shaders, bool visible):
+	m_name(name),
+	m_visible(visible)
 {
 	if (shaders == nullptr) {
 		shaders = &g_subShaders;

@@ -8,7 +8,6 @@
 #include "../../gaEngine/gaUI.h"
 
 #include "../dfFileLFD.h"
-#include "../fwHUDelement/dfHUDpda.h"
 
 namespace DarkForces {
 	namespace Component {
@@ -21,7 +20,7 @@ namespace DarkForces {
 
 			GameEngine::UI* m_ui = nullptr;
 			GameEngine::UI_widget* m_ui_background = nullptr;
-			HUDelement::PDA* m_ui_guns = nullptr;
+			GameEngine::UI_widget* m_ui_weapons = nullptr;
 
 			Framework::TextureAtlas* m_items_textures = nullptr;
 

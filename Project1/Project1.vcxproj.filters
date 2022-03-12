@@ -900,9 +900,6 @@
     <ClCompile Include="framework\fwTextureAtlas.cpp">
       <Filter>Fichiers sources\Framework</Filter>
     </ClCompile>
-    <ClCompile Include="darkforces\fwHUDelement\dfHUDpda.cpp">
-      <Filter>Fichiers sources\Dark Forces\fwHUDelement</Filter>
-    </ClCompile>
     <ClCompile Include="darkforces\prefab\dfPDA.cpp">
       <Filter>Fichiers sources\Dark Forces\prefab</Filter>
     </ClCompile>
@@ -1711,9 +1708,6 @@
     </ClInclude>
     <ClInclude Include="framework\fwTextureAtlas.h">
       <Filter>Fichiers d%27en-tête\Framework</Filter>
-    </ClInclude>
-    <ClInclude Include="darkforces\fwHUDelement\dfHUDpda.h">
-      <Filter>Fichiers d%27en-tête\DarkForces\fwHUDelement</Filter>
     </ClInclude>
     <ClInclude Include="darkforces\prefab\dfPDA.h">
       <Filter>Fichiers d%27en-tête\DarkForces\prefab</Filter>
