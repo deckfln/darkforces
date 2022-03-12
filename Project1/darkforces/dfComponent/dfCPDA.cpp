@@ -110,9 +110,40 @@ DarkForces::Component::PDA::PDA(void):
 		glm::vec4(0, 0, 1, 1),
 		texel);
 
+	// tabs buttons
+	g_items_textures->texel(2, texel);
+	GameEngine::UI_picture* map = new GameEngine::UI_picture("DarkForces::pda::map",
+		glm::vec4(75.0f / 320.0f, 176.0f / 200.0f, 27.0f / 320.0f, 14.0f / 200.0f),	
+		texel
+	);
+
 	g_items_textures->texel(4, texel);
-	GameEngine::UI_picture* guns_ui = new GameEngine::UI_picture("DarkForces::pda::weapon",
-		glm::vec4(115.0f/320.0f, 176.0f/200.0f, 31.0f/320.0f, 14.0f/200.0f),	// position & size of the button Weapon
+	GameEngine::UI_picture* weapons = new GameEngine::UI_picture("DarkForces::pda::weapon",
+		glm::vec4(115.0f/320.0f, 176.0f/200.0f, 31.0f/320.0f, 14.0f/200.0f),	
+		texel
+	);
+
+	g_items_textures->texel(6, texel);
+	GameEngine::UI_picture* inv = new GameEngine::UI_picture("DarkForces::pda::inventory",
+		glm::vec4(147.0f / 320.0f, 176.0f / 200.0f, 25.0f / 320.0f, 14.0f / 200.0f),	
+		texel
+	);
+
+	g_items_textures->texel(8, texel);
+	GameEngine::UI_picture* obj = new GameEngine::UI_picture("DarkForces::pda::objects",
+		glm::vec4(173.0f / 320.0f, 176.0f / 200.0f, 29.0f / 320.0f, 14.0f / 200.0f),	
+		texel
+	);
+
+	g_items_textures->texel(10, texel);
+	GameEngine::UI_picture* mis = new GameEngine::UI_picture("DarkForces::pda::mission",
+		glm::vec4(217.0f / 320.0f, 176.0f / 200.0f, 27.0f / 320.0f, 14.0f / 200.0f),	
+		texel
+	);
+
+	g_items_textures->texel(12, texel);
+	GameEngine::UI_picture* exit = new GameEngine::UI_picture("DarkForces::pda::exit",
+		glm::vec4(266.0f / 320.0f, 185.0f / 200.0f, 24.0f / 320.0f, 15.0f / 200.0f),	
 		texel
 	);
 
@@ -141,7 +172,12 @@ DarkForces::Component::PDA::PDA(void):
 	m_ui_weapons->widget(0)->visible(true);	// display the briad pistol
 
 	m_ui->root(ui_background);
-		ui_background->add(guns_ui);
+		ui_background->add(map);
+		ui_background->add(weapons);
+		ui_background->add(inv);
+		ui_background->add(obj);
+		ui_background->add(mis);
+		ui_background->add(exit);
 		ui_background->add(m_ui_weapons);
 
 	delete guns;
