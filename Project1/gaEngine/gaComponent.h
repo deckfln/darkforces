@@ -26,7 +26,8 @@ public:
 		AIPerception,
 		Actor,
 		Listener,
-		Inventory
+		Inventory,
+		Gui
 	};
 
 	gaComponent(int m_type);

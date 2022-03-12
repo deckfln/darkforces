@@ -8,23 +8,28 @@
 #include "../framework/fwHUDelement.h"
 #include "../framework/fwTextureAtlas.h"
 
+#include "gaComponent.h"
+
 namespace GameEngine
 {
 
 	class UI_widget;
 	class UI_tab;
 
-	class UI : public fwHUD
+	class UI : public fwHUD, public gaComponent
 	{
+	protected:
 		UI_widget* m_root;
-		Framework::TextureAtlas* m_textures;
+		Framework::TextureAtlas* m_textures=nullptr;
 		bool m_dirty = true;
+		void onMouseDown(gaMessage*);															// dipatch mouse actions to widgets
 
 	public:
-		UI(const std::string& name, Framework::TextureAtlas*, bool m_visible=true);
+		UI(const std::string& name, bool m_visible=true);
 		inline void root(UI_widget* widget) { m_root = widget; };
-		void draw(void)  override;																		// draw the GUI
+		void draw(void)  override;																// draw the GUI
 		static void draw_widget(const glm::vec4& position_size);
+		void dispatchMessage(gaMessage*) override;												// receive and dispatch controller messages
 	};
 
 	class UI_widget
@@ -61,5 +66,11 @@ namespace GameEngine
 		UI_tab(const std::string& name, const glm::vec4& panel, const glm::vec4& button);
 	};
 
-
+	class UI_button : public UI_picture
+	{
+		glm::vec4 m_texture_on;		
+		glm::vec4 m_texture_off;
+	public:
+		UI_button(const std::string& name, const glm::vec4& position, const glm::vec4& textureOnIndex, const glm::vec4& textureOffIndex, bool visible = true);
+	};
 }

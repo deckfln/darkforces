@@ -13,7 +13,7 @@ namespace DarkForces {
 	namespace Prefab {
 		class PDA : public gaEntity {
 			GameEngine::Component::ControllerUI m_controler;	// basic controler for an UI
-			Component::PDA m_pda;
+			Component::PDA m_pda = Component::PDA("pda");
 		public:
 			PDA(void);
 			GameEngine::UI* ui(void);

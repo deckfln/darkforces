@@ -30,5 +30,5 @@ DarkForces::Prefab::PDA::PDA(void):
 
 GameEngine::UI* DarkForces::Prefab::PDA::ui(void)
 {
-	return m_pda.ui();
+	return &m_pda;
 }

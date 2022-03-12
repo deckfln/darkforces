@@ -59,6 +59,18 @@ bool GameEngine::Component::ControllerUI::checkKeys(time_t delta)
 }
 
 /**
+ * convert mouse actions to messages
+ */
+void GameEngine::Component::ControllerUI::_mouseButton(int action)
+{
+	switch (m_button) {
+	case GLFW_MOUSE_BUTTON_LEFT:
+		m_entity->sendMessage(gaMessage::Action::MOUSE_DOWN, 1, glm::vec3(m_currentX, m_currentY, 0));
+		break;
+	}
+}
+
+/**
  * Debugger
  */
 void GameEngine::Component::ControllerUI::debugGUIinline(void)

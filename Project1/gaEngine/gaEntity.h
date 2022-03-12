@@ -27,7 +27,8 @@ namespace GameEngine {
 	enum ClassID {
 		Entity = Framework::ClassID::Object3D | (1 << 1),
 		Sector = Entity | (1 << 5),
-		Actor = Entity | (1 << 6)
+		Actor = Entity | (1 << 6),
+		GUI = Entity | (1 << 7)
 	};
 };
 

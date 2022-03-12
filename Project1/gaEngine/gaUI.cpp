@@ -54,10 +54,34 @@ static fwUniform g_uni_ip("imagepos", &g_imagepos);
 
 //-------------------------------------------------------
 
-GameEngine::UI::UI(const std::string& name, Framework::TextureAtlas* textures, bool visible):
-	fwHUD(name, &g_subShaders, visible),
-	m_textures(textures)
+/**
+ * dipatch mouse actions to widgets
+ */
+void GameEngine::UI::onMouseDown(gaMessage* message)
 {
+	float x = message->m_v3value.x;
+	float y = message->m_v3value.y;
+	uint32_t button = message->m_value;
+}
+
+/**
+ *
+ */
+GameEngine::UI::UI(const std::string& name, bool visible):
+	fwHUD(name, &g_subShaders, visible),
+	gaComponent(gaComponent::Gui)
+{
+}
+
+/**
+ * draw the GUI
+ */
+void GameEngine::UI::draw(void)
+{
+	if (!m_visible) {
+		return;
+	}
+
 	if (g_material == nullptr) {
 		g_material = new fwMaterial(g_subShaders);
 		g_material->addTexture("image", m_textures->texture());
@@ -77,16 +101,6 @@ GameEngine::UI::UI(const std::string& name, Framework::TextureAtlas* textures, b
 		g_vertexArray = new glVertexArray();
 		g_geometry->enable_attributes(g_program);
 		g_vertexArray->unbind();
-	}
-}
-
-/**
- * draw the GUI
- */
-void GameEngine::UI::draw(void)
-{
-	if (!m_visible) {
-		return;
 	}
 
 	if (m_dirty) {
@@ -110,6 +124,18 @@ void GameEngine::UI::draw_widget(const glm::vec4& position_size)
 	g_positionsize = position_size;
 	g_material->set_uniforms(g_program);
 	g_geometry->draw(GL_TRIANGLES, g_vertexArray);
+}
+
+/**
+ * receive and dispatch controller messages
+ */
+void GameEngine::UI::dispatchMessage(gaMessage* message)
+{
+	switch (message->m_action) {
+	case gaMessage::Action::MOUSE_DOWN:
+		onMouseDown(message);
+		break;
+	}
 }
 
 //------------------------------------------------------
@@ -185,4 +211,13 @@ void GameEngine::UI_picture::draw(void)
 {
 	g_imagepos = m_textureIndex;
 	UI_widget::draw();
+}
+
+// ------------------------------------------------------
+
+GameEngine::UI_button::UI_button(const std::string& name, const glm::vec4& position, const glm::vec4& textureOnIndex, const glm::vec4& textureOffIndex, bool visible):
+	UI_picture(name, position, textureOnIndex, visible),
+	m_texture_on(textureOnIndex),
+	m_texture_off(textureOffIndex)
+{
 }

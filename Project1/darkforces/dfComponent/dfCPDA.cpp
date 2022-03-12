@@ -19,21 +19,19 @@ static std::map<std::string, uint32_t> g_dfItems = {
 	{"Pistol", 0},
 	{"Rifle", 1}
 };
-static Framework::TextureAtlas* g_items_textures = nullptr;
-static fwTexture* g_items_texture = nullptr;
 
 /**
  * display the PDA
  */
 void DarkForces::Component::PDA::onShowPDA(gaMessage*)
 {
-	if (m_ui->visible()) {
-		m_ui->visible(false);
+	if (m_visible) {
+		m_visible = false;
 		GameEngine::World::popState();				// restart the game
 		GameEngine::App::popControl();				// restore the correct controler
 	}
 	else {
-		m_ui->visible(true);
+		m_visible = true;
 		GameEngine::World::pushState();				// suspend the game
 
 		// push the current game controller and replace with the one of the PDA
@@ -69,20 +67,22 @@ void DarkForces::Component::PDA::onKeyDown(gaMessage* message)
 /**
  * create
  */
-DarkForces::Component::PDA::PDA(void):
-	gaComponent(DF_COMPONENT_PDA)
+DarkForces::Component::PDA::PDA(const std::string& name):
+	GameEngine::UI(name)
 {
+	m_visible = false;
+
 	// preload the PDA images
 	DarkForces::ANIM* pda = nullptr;
 	DarkForces::ANIM* guns = nullptr;
 	DarkForces::ANIM* items = nullptr;
 
-	g_items_textures = new Framework::TextureAtlas();
+	m_textures = new Framework::TextureAtlas();
 
 	pda = DarkForces::FileLFD::loadAnim("pda", "MENU");
 	size_t nbItems = pda->size();
 	for (size_t i = 0; i < nbItems; i++) {
-		g_items_textures->add(pda->texture(i)->texture());
+		m_textures->add(pda->texture(i)->texture());
 	}
 
 	// load all guns into a texturearray
@@ -90,7 +90,7 @@ DarkForces::Component::PDA::PDA(void):
 	guns = DarkForces::FileLFD::loadAnim("guns", "DFBRIEF");
 	nbItems = guns->size();
 	for (size_t i = 0; i < nbItems; i++) {
-		g_items_textures->add(guns->texture(i)->texture());
+		m_textures->add(guns->texture(i)->texture());
 	}
 
 	// load all items into a texturearray
@@ -98,50 +98,49 @@ DarkForces::Component::PDA::PDA(void):
 	items = DarkForces::FileLFD::loadAnim("items", "DFBRIEF");
 	nbItems = items->size();
 	for (size_t i = 0; i < nbItems; i++) {
-		g_items_textures->add(items->texture(i)->texture());
+		m_textures->add(items->texture(i)->texture());
 	}
 
-	g_items_texture = g_items_textures->generate();
+	m_textures->generate();
 
-	m_ui = new GameEngine::UI("DarkForces::PDA", g_items_textures, false);
 	glm::vec4 texel;
-	g_items_textures->texel(0, texel);
+	m_textures->texel(0, texel);
 	GameEngine::UI_picture* ui_background = new GameEngine::UI_picture("DarkForces::pda::background", 
 		glm::vec4(0, 0, 1, 1),
 		texel);
 
 	// tabs buttons
-	g_items_textures->texel(2, texel);
+	m_textures->texel(2, texel);
 	GameEngine::UI_picture* map = new GameEngine::UI_picture("DarkForces::pda::map",
 		glm::vec4(75.0f / 320.0f, 176.0f / 200.0f, 27.0f / 320.0f, 14.0f / 200.0f),	
 		texel
 	);
 
-	g_items_textures->texel(4, texel);
+	m_textures->texel(4, texel);
 	GameEngine::UI_picture* weapons = new GameEngine::UI_picture("DarkForces::pda::weapon",
 		glm::vec4(115.0f/320.0f, 176.0f/200.0f, 31.0f/320.0f, 14.0f/200.0f),	
 		texel
 	);
 
-	g_items_textures->texel(6, texel);
+	m_textures->texel(6, texel);
 	GameEngine::UI_picture* inv = new GameEngine::UI_picture("DarkForces::pda::inventory",
 		glm::vec4(147.0f / 320.0f, 176.0f / 200.0f, 25.0f / 320.0f, 14.0f / 200.0f),	
 		texel
 	);
 
-	g_items_textures->texel(8, texel);
+	m_textures->texel(8, texel);
 	GameEngine::UI_picture* obj = new GameEngine::UI_picture("DarkForces::pda::objects",
 		glm::vec4(173.0f / 320.0f, 176.0f / 200.0f, 29.0f / 320.0f, 14.0f / 200.0f),	
 		texel
 	);
 
-	g_items_textures->texel(10, texel);
+	m_textures->texel(10, texel);
 	GameEngine::UI_picture* mis = new GameEngine::UI_picture("DarkForces::pda::mission",
 		glm::vec4(217.0f / 320.0f, 176.0f / 200.0f, 27.0f / 320.0f, 14.0f / 200.0f),	
 		texel
 	);
 
-	g_items_textures->texel(12, texel);
+	m_textures->texel(12, texel);
 	GameEngine::UI_picture* exit = new GameEngine::UI_picture("DarkForces::pda::exit",
 		glm::vec4(266.0f / 320.0f, 185.0f / 200.0f, 24.0f / 320.0f, 15.0f / 200.0f),	
 		texel
@@ -154,7 +153,7 @@ DarkForces::Component::PDA::PDA(void):
 
 	float x=0.0f, y=0.0f;
 	for (size_t c = 0; c < guns->size(); c++) {
-		g_items_textures->texel(startGuns + c, texel);
+		m_textures->texel(startGuns + c, texel);
 		GameEngine::UI_picture* ui_weapon = new GameEngine::UI_picture("DarkForces::pda::weapon",
 			glm::vec4(x, y, 0.49f, 0.19f),
 			texel,
@@ -171,7 +170,7 @@ DarkForces::Component::PDA::PDA(void):
 	}
 	m_ui_weapons->widget(0)->visible(true);	// display the briad pistol
 
-	m_ui->root(ui_background);
+	m_root = ui_background;
 		ui_background->add(map);
 		ui_background->add(weapons);
 		ui_background->add(inv);
@@ -183,11 +182,6 @@ DarkForces::Component::PDA::PDA(void):
 	delete guns;
 	delete items;
 	delete pda;
-}
-
-GameEngine::UI* DarkForces::Component::PDA::ui(void)
-{
-	return m_ui;
 }
 
 /**
@@ -207,8 +201,8 @@ void DarkForces::Component::PDA::dispatchMessage(gaMessage* message)
 		case gaMessage::ADD_ITEM:
 			onAddItem(message);
 			break;
-
 	}
+	GameEngine::UI::dispatchMessage(message);
 }
 
 #ifdef _DEBUG
@@ -227,6 +221,5 @@ DarkForces::Component::PDA::~PDA(void)
 		delete m_guns;
 		delete m_items;
 		delete m_pda_background;
-		delete m_ui;
 	}
 }
