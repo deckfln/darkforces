@@ -37,7 +37,8 @@ namespace DarkForces {
 		AMMO,				// get number of ammo available
 		SHIELD,				// get shield available
 		LIFE,				// get life available
-		PDA					// display the PDA
+		PDA,				// display the PDA
+		PDA_EXIT			// EXIT button on the PDA GUI
 	};
 
 	enum MessageEvent {

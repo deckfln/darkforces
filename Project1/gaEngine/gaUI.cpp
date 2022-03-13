@@ -10,6 +10,8 @@
 #include "../framework/fwMaterial.h"
 #include "../framework/fwFlatPanel.h"
 
+#include "gaEntity.h"
+
 static fwFlatPanel* g_hudPanel = nullptr;
 static fwMaterial* g_material = nullptr;
 static fwUniform* g_uniformTexture = nullptr;
@@ -62,10 +64,24 @@ void GameEngine::UI::onMouseDown(gaMessage* message)
 	float x = message->m_v3value.x;
 	float y = message->m_v3value.y;
 	uint32_t button = message->m_value;
+
+	// find the widget that is under the cursor
+	m_currentButton = m_root->findWidgetAt(x, y);
+	if (m_currentButton != nullptr) {
+		m_currentButton->onMouseDown();
+	}
+}
+
+void GameEngine::UI::onMouseUp(gaMessage*)
+{
+	if (m_currentButton) {
+		m_currentButton->onMouseUp();
+		m_currentButton = nullptr;
+	}
 }
 
 /**
- *
+ * create an UI
  */
 GameEngine::UI::UI(const std::string& name, bool visible):
 	fwHUD(name, &g_subShaders, visible),
@@ -127,6 +143,14 @@ void GameEngine::UI::draw_widget(const glm::vec4& position_size)
 }
 
 /**
+ * receive a message from a widget and pass to the GameEngine
+ */
+void GameEngine::UI::receiveMessage(UI_widget* from, uint32_t imessage)
+{
+	m_entity->sendMessage(imessage);
+}
+
+/**
  * receive and dispatch controller messages
  */
 void GameEngine::UI::dispatchMessage(gaMessage* message)
@@ -135,10 +159,30 @@ void GameEngine::UI::dispatchMessage(gaMessage* message)
 	case gaMessage::Action::MOUSE_DOWN:
 		onMouseDown(message);
 		break;
+	case gaMessage::Action::MOUSE_UP:
+		onMouseUp(message);
+		break;
 	}
 }
 
 //------------------------------------------------------
+
+/**
+ *
+ */
+void GameEngine::UI_widget::sendMessage(UI_widget* from, uint32_t imessage)
+{
+	if (imessage == 0) {
+		return;
+	}
+
+	if (m_parent) {
+		m_parent->sendMessage(from, imessage);
+	}
+	else {
+		m_ui->receiveMessage(from, imessage);
+	}
+}
 
 GameEngine::UI_widget::UI_widget(const std::string& name, const glm::vec4& position, bool visible) :
 	m_name(name),
@@ -152,6 +196,7 @@ GameEngine::UI_widget::UI_widget(const std::string& name, const glm::vec4& posit
  */
 void GameEngine::UI_widget::add(GameEngine::UI_widget* widget)
 {
+	widget->m_parent = this;
 	m_widgets.push_back(widget);
 }
 
@@ -168,6 +213,45 @@ void GameEngine::UI_widget::update(const glm::vec4& parent)
 
 	for (auto widget : m_widgets) {
 		widget->update(m_screen_position_size);
+	}
+}
+
+/**
+ * find relative widget
+ */
+GameEngine::UI_widget* GameEngine::UI_widget::findWidgetAt(float x, float y)
+{
+	if (!m_visible) {
+		return nullptr;
+	}
+
+	if (x >= m_screen_position_size.x && x <= m_screen_position_size.x + m_screen_position_size.z &&
+		y >= m_screen_position_size.y && y <= m_screen_position_size.y + m_screen_position_size.w
+		) {
+		if (m_widgets.size() == 0) {
+			return this;
+		}
+
+		GameEngine::UI_widget* w = nullptr;
+
+		for (auto widget : m_widgets) {
+			w = widget->findWidgetAt(x, y);
+			if (w != nullptr) {
+				return w;
+			}
+		}
+	}
+	return nullptr;
+}
+
+/**
+ * link each widget to the top UI
+ */
+void GameEngine::UI_widget::link(UI* ui)
+{
+	m_ui = ui;
+	for (auto widget : m_widgets) {
+		widget->link(ui);
 	}
 }
 
@@ -193,12 +277,42 @@ void GameEngine::UI_widget::draw(void)
 
 //-------------------------------------------------------
 
-
-GameEngine::UI_tab::UI_tab(const std::string& name, const glm::vec4& panel, const glm::vec4& button):
-	UI_widget(name, button)
+/**
+ * send a message to the parent
+ */
+void GameEngine::UI_tab::sendMessage(UI_widget* from, uint32_t imessage)
 {
-	add(new UI_widget("tab", panel));
+	switch (imessage) {
+	case GameEngine::UI_message::click:
+		tab(from);
+		break;
+
+	default:
+		GameEngine::UI_widget::sendMessage(from, imessage);
+	}
 }
+
+/**
+ * create
+ */
+GameEngine::UI_tab::UI_tab(const std::string& name, const glm::vec4& position):
+	UI_widget(name, position)
+{
+}
+
+/**
+ * force the current tab
+ */
+void GameEngine::UI_tab::tab(UI_widget* current)
+{
+	if (m_activeTab != nullptr) {
+		dynamic_cast<UI_button*>(m_activeTab)->off();	// deactivate the previous tab
+	}
+	m_activeTab = current;
+	dynamic_cast<UI_button*>(m_activeTab)->on();	// force the current tab on
+}
+
+//-------------------------------------------------------
 
 GameEngine::UI_picture::UI_picture(const std::string& name, const glm::vec4& panel, const glm::vec4& textureIndex, bool visible):
 	UI_widget(name, panel, visible),
@@ -215,9 +329,53 @@ void GameEngine::UI_picture::draw(void)
 
 // ------------------------------------------------------
 
-GameEngine::UI_button::UI_button(const std::string& name, const glm::vec4& position, const glm::vec4& textureOnIndex, const glm::vec4& textureOffIndex, bool visible):
-	UI_picture(name, position, textureOnIndex, visible),
+GameEngine::UI_button::UI_button(const std::string& name, 
+	const glm::vec4& position, 
+	const glm::vec4& textureOffIndex, const glm::vec4& textureOnIndex, 
+	uint32_t message,
+	bool visible):
+	UI_picture(name, position, textureOffIndex, visible),
 	m_texture_on(textureOnIndex),
-	m_texture_off(textureOffIndex)
+	m_texture_off(textureOffIndex),
+	m_message(message)
 {
+}
+
+/**
+ * activate the button
+ */
+void GameEngine::UI_button::onMouseDown(void)
+{
+	on();
+}
+
+/**
+ * reelase the button
+ */
+void GameEngine::UI_button::onMouseUp(void)
+{
+	off();
+
+	if (m_message == 0) {
+		sendMessage(this, GameEngine::UI_message::click);
+	}
+	else {
+		sendMessage(this, m_message);
+	}
+}
+
+/**
+ * force the OFF image
+ */
+void GameEngine::UI_button::off(void)
+{
+	m_textureIndex = m_texture_off;
+}
+
+/**
+ *
+ */
+void GameEngine::UI_button::on(void)
+{
+	m_textureIndex = m_texture_on;
 }

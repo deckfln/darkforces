@@ -31,6 +31,7 @@ namespace GameEngine {
 
 		private:
 			const std::vector<KeyInfo>	m_keys;					// keys to monitor
+			bool m_left_mouse_down = false;						// real-time status of the button
 		};
 	}
 }

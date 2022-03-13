@@ -65,7 +65,18 @@ void GameEngine::Component::ControllerUI::_mouseButton(int action)
 {
 	switch (m_button) {
 	case GLFW_MOUSE_BUTTON_LEFT:
-		m_entity->sendMessage(gaMessage::Action::MOUSE_DOWN, 1, glm::vec3(m_currentX, m_currentY, 0));
+		if (action == GLFW_PRESS) {
+			if (!m_left_mouse_down) {
+				m_entity->sendMessage(gaMessage::Action::MOUSE_DOWN, 1, glm::vec3(m_currentX, m_currentY, 0));
+				m_left_mouse_down = true;
+			}
+		}
+		else if (action == GLFW_RELEASE) {
+			if (m_left_mouse_down) {
+				m_entity->sendMessage(gaMessage::Action::MOUSE_UP, 1, glm::vec3(m_currentX, m_currentY, 0));
+				m_left_mouse_down = false;
+			}
+		}
 		break;
 	}
 }
