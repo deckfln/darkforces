@@ -15,6 +15,7 @@ namespace GameEngine
 
 	class UI_widget;
 	class UI_tab;
+	class UI_button;
 
 	enum UI_message {
 		click = 1
@@ -81,11 +82,13 @@ namespace GameEngine
 
 	class UI_tab : public UI_widget
 	{
-		UI_widget* m_activeTab = nullptr;
+		std::map<UI_button*, UI_widget*> m_tabs;							// list of button/panel
+		UI_button* m_activeTab = nullptr;
 		void sendMessage(UI_widget* from, uint32_t imessageu) override;		// send a message to the parent
 	public:
 		UI_tab(const std::string& name, const glm::vec4& position);
-		void tab(UI_widget* current);										// force the current tab
+		void tab(UI_button* current);										// force the current tab
+		void addTab(UI_button* button, UI_widget* panel);					// add a tab : button + panel
 	};
 
 	class UI_button : public UI_picture
@@ -103,7 +106,7 @@ namespace GameEngine
 		void onMouseDown(void) override;									// push the button
 		void onMouseUp(void) override;										// release the button
 
-		void off(void);														// force the OFF image
-		void on(void);														// force the ON image
+		void release(void);													// force the OFF image
+		void press(void);													// force the ON image
 	};
 }

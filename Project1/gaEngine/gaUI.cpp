@@ -284,7 +284,7 @@ void GameEngine::UI_tab::sendMessage(UI_widget* from, uint32_t imessage)
 {
 	switch (imessage) {
 	case GameEngine::UI_message::click:
-		tab(from);
+		tab(dynamic_cast<UI_button*>(from));
 		break;
 
 	default:
@@ -303,13 +303,39 @@ GameEngine::UI_tab::UI_tab(const std::string& name, const glm::vec4& position):
 /**
  * force the current tab
  */
-void GameEngine::UI_tab::tab(UI_widget* current)
+void GameEngine::UI_tab::tab(UI_button* current)
 {
 	if (m_activeTab != nullptr) {
-		dynamic_cast<UI_button*>(m_activeTab)->off();	// deactivate the previous tab
+		dynamic_cast<UI_button*>(m_activeTab)->release();	// deactivate the previous button
+
+		if (m_tabs[m_activeTab] != nullptr) {
+			// and hide the panel
+			m_tabs[m_activeTab]->visible(false);
+		}
+
 	}
 	m_activeTab = current;
-	dynamic_cast<UI_button*>(m_activeTab)->on();	// force the current tab on
+	m_activeTab->press();			// force the current tab on
+
+	if (m_tabs[m_activeTab] != nullptr) {
+		// and display the panel
+		m_tabs[m_activeTab]->visible(true);
+	}
+}
+
+/**
+ * add a tab : button + pannel
+ */
+void GameEngine::UI_tab::addTab(UI_button* button, UI_widget* panel)
+{
+	m_tabs[button] = panel;
+
+	// register the widget
+	add(button);
+	if (panel) {
+		add(panel);		
+		panel->visible(false);	// hide the panel by default
+	}
 }
 
 //-------------------------------------------------------
@@ -346,7 +372,7 @@ GameEngine::UI_button::UI_button(const std::string& name,
  */
 void GameEngine::UI_button::onMouseDown(void)
 {
-	on();
+	press();
 }
 
 /**
@@ -354,7 +380,7 @@ void GameEngine::UI_button::onMouseDown(void)
  */
 void GameEngine::UI_button::onMouseUp(void)
 {
-	off();
+	release();
 
 	if (m_message == 0) {
 		sendMessage(this, GameEngine::UI_message::click);
@@ -367,7 +393,7 @@ void GameEngine::UI_button::onMouseUp(void)
 /**
  * force the OFF image
  */
-void GameEngine::UI_button::off(void)
+void GameEngine::UI_button::release(void)
 {
 	m_textureIndex = m_texture_off;
 }
@@ -375,7 +401,7 @@ void GameEngine::UI_button::off(void)
 /**
  *
  */
-void GameEngine::UI_button::on(void)
+void GameEngine::UI_button::press(void)
 {
 	m_textureIndex = m_texture_on;
 }

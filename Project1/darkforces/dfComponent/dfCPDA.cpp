@@ -202,11 +202,11 @@ DarkForces::Component::PDA::PDA(const std::string& name):
 
 	m_root = ui_background;
 		ui_background->add(tab);
-			tab->add(map);
-			tab->add(weapons);
-			tab->add(inv);
-			tab->add(obj);
-			tab->add(mis);
+			tab->addTab(map, nullptr);
+			tab->addTab(weapons, m_ui_weapons);
+			tab->addTab(inv, nullptr);
+			tab->addTab(obj, nullptr);
+			tab->addTab(mis, nullptr);
 		ui_background->add(exit);
 		ui_background->add(m_ui_weapons);
 
