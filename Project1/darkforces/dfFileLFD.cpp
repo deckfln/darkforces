@@ -257,6 +257,11 @@ DarkForces::ANIM* DarkForces::FileLFD::loadAnim(const std::string& file, const s
 	return g_LFDs[source]->anim(file);
 }
 
+DarkForces::DELT* DarkForces::FileLFD::loadDelt(const std::string& file, const std::string& source)
+{
+	return g_LFDs[source]->delt(file);
+}
+
 /**
  * load specificaly an ANIM file
  */
@@ -275,6 +280,23 @@ DarkForces::ANIM* DarkForces::FileLFD::anim(const std::string& file)
 	delete[] buffer;
 
 	return anim;
+}
+
+DarkForces::DELT* DarkForces::FileLFD::delt(const std::string& file)
+{
+	LFD_Entry entry;
+	uint8_t* buffer;
+	DELT* delt;
+
+	loadPltt("menu");
+	m_fd.seekg(m_index["DELT" + file].start);
+	m_fd.read((char*)&entry, sizeof(LFD_Entry));
+	buffer = new uint8_t[entry.length];
+	m_fd.read((char*)buffer, entry.length);
+	delt = new DELT(buffer, entry.length, (std::vector<PLTT_RGB> *)m_ressources["PLTTmenu"]);
+	delete[] buffer;
+
+	return delt;
 }
 
 /**

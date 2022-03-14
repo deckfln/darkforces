@@ -24,7 +24,7 @@ namespace GameEngine
 	class UI : public fwHUD, public gaComponent
 	{
 	protected:
-		UI_widget* m_root;
+		UI_widget* m_root = nullptr;
 		Framework::TextureAtlas* m_textures=nullptr;
 		bool m_dirty = true;
 		UI_widget* m_currentButton = nullptr;									// currently pressed button
@@ -58,13 +58,16 @@ namespace GameEngine
 	public:
 		UI_widget(const std::string& name, const glm::vec4& position, bool visible = true);
 		void add(UI_widget* widget);										// add a widget on the panel
-		void update(const glm::vec4&);										// update screen position
+		void update(const glm::vec4&);										// update screen position based on parent
+		void update(void);													// update children screen position
 		UI_widget* findWidgetAt(float x, float y);							// find relative widget
 		void link(UI* ui);													// link each widget to the top UI
 		
 		inline void visible(bool b) { m_visible = b; };
+		inline void draw(bool b) { m_draw = b; };
 		inline bool visible(void) { return m_visible; };
 		inline UI_widget* widget(uint32_t i) { return m_widgets[i]; };
+		inline void clear(void) { m_widgets.clear(); };						// remove all children
 
 		virtual void draw(void);											// draw the GUI
 		inline virtual void onMouseDown(void) { };							// click on the widget
@@ -84,11 +87,13 @@ namespace GameEngine
 	{
 		std::map<UI_button*, UI_widget*> m_tabs;							// list of button/panel
 		UI_button* m_activeTab = nullptr;
+		UI_widget* m_panel = nullptr;										// target panel
 		void sendMessage(UI_widget* from, uint32_t imessageu) override;		// send a message to the parent
 	public:
 		UI_tab(const std::string& name, const glm::vec4& position);
 		void tab(UI_button* current);										// force the current tab
 		void addTab(UI_button* button, UI_widget* panel);					// add a tab : button + panel
+		void setPanel(UI_widget* panel);									// define the display panel
 	};
 
 	class UI_button : public UI_picture

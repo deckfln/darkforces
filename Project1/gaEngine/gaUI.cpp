@@ -211,6 +211,14 @@ void GameEngine::UI_widget::update(const glm::vec4& parent)
 	m_screen_position_size.x = parent.x + m_position_size.x * parent.z;
 	m_screen_position_size.y = parent.y + m_position_size.y * parent.w;
 
+	update();
+}
+
+/**
+ * update children screen position
+ */
+void GameEngine::UI_widget::update(void)
+{
 	for (auto widget : m_widgets) {
 		widget->update(m_screen_position_size);
 	}
@@ -307,19 +315,17 @@ void GameEngine::UI_tab::tab(UI_button* current)
 {
 	if (m_activeTab != nullptr) {
 		dynamic_cast<UI_button*>(m_activeTab)->release();	// deactivate the previous button
-
-		if (m_tabs[m_activeTab] != nullptr) {
-			// and hide the panel
-			m_tabs[m_activeTab]->visible(false);
-		}
-
 	}
 	m_activeTab = current;
-	m_activeTab->press();			// force the current tab on
+	m_activeTab->press();			// force the current button to 'press' image
+
+	// clear the old tab
+	m_panel->clear();
 
 	if (m_tabs[m_activeTab] != nullptr) {
-		// and display the panel
-		m_tabs[m_activeTab]->visible(true);
+		// and bind the the block to the display panel
+		m_panel->add(m_tabs[m_activeTab]);
+		m_panel->update();
 	}
 }
 
@@ -332,10 +338,14 @@ void GameEngine::UI_tab::addTab(UI_button* button, UI_widget* panel)
 
 	// register the widget
 	add(button);
-	if (panel) {
-		add(panel);		
-		panel->visible(false);	// hide the panel by default
-	}
+}
+
+/**
+ * define the display panel
+ */
+void GameEngine::UI_tab::setPanel(UI_widget* panel)
+{
+	m_panel = panel;
 }
 
 //-------------------------------------------------------

@@ -67,10 +67,12 @@ namespace DarkForces {
 	public:
 		FileLFD(const std::string& file);
 		DarkForces::ANIM* anim(const std::string& file);
+		DarkForces::DELT* delt(const std::string& file);
 		void loadPltt(const std::string& file);
 
 		static void load(const std::string& file);										// load a permanent LFD
 		static DarkForces::ANIM* loadAnim(const std::string& file, const std::string& source);		// load an ANIM from a permanent LFD
+		static DarkForces::DELT* loadDelt(const std::string& file, const std::string& source);		// load an DELT from a permanent LFD
 		~FileLFD();
 	};
 };
