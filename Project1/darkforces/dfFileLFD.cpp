@@ -56,6 +56,11 @@ DarkForces::DELT::DELT(uint8_t* buffer, uint32_t size, std::vector<PLTT_RGB>* pa
 	uint32_t d;
 	uint8_t colorIndex;
 
+	// by default the whole DELT is transparent
+	for (size_t i = 3; i < rs * 4; i+=4) {
+		block[i] = 0;
+	}
+
 	while (p < size) {
 		line = (DELT_Line*)(buffer + p);
 		p += sizeof(DELT_Line);
