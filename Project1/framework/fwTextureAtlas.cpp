@@ -217,14 +217,18 @@ fwTexture* Framework::TextureAtlas::generate(void)
 
 	// build the index
 	m_megatexture_idx.resize(sorted_images.size());
+	m_megatexture_size.resize(sorted_images.size());
 
 	i = 0;
 	for (auto image : sorted_images) {
 		m_megatexture_idx[image->index] = glm::vec4(image->xoffset, image->yoffset, image->width, image->height);
-		//image->m_textureID = i;
+		m_megatexture_size[image->index] = glm::ivec2(image->pWidth, image->pHeight);
 		i++;
 	}
 	m_shader_idx = new fwUniform("megatexture_idx", &m_megatexture_idx[0], i);
+
+	// to avoid future issue, delete the list of source textures
+	m_source.clear();
 
 	return m_fwtextures;
 }

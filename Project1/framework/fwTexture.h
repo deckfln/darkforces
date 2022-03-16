@@ -1,6 +1,7 @@
 #pragma once
 #include <iostream>
 #include <glm/vec4.hpp>
+#include <glm/vec2.hpp>
 
 #include "../glad/glad.h"
 
@@ -39,6 +40,8 @@ public:
 	inline void data(uint8_t* data) { m_data = data; };
 	inline bool isDirty(void) { return m_dirty; };
 	inline void dirty(bool b=true) { m_dirty = b; };
+	inline const glm::ivec2 size(void) { return glm::ivec2(m_width, m_height); };
+
 
 	~fwTexture();
 };

@@ -6,6 +6,7 @@
 #include <map>
 #include <vector>
 
+#include <glm/vec2.hpp>
 #include "../framework/fwTexture.h"
 
 namespace DarkForces {
@@ -31,6 +32,7 @@ namespace DarkForces {
 	public:
 		DELT(uint8_t* buffer, uint32_t size, std::vector<PLTT_RGB>* palette);
 		inline fwTexture* texture(void) { return m_texture; };
+		inline const glm::ivec2 size(void) { return m_texture->size(); };
 		~DELT(void) {
 			delete m_texture;
 		}

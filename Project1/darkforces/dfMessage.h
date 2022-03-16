@@ -38,7 +38,9 @@ namespace DarkForces {
 		SHIELD,				// get shield available
 		LIFE,				// get life available
 		PDA,				// display the PDA
-		PDA_EXIT			// EXIT button on the PDA GUI
+		PDA_EXIT,			// EXIT button on the PDA GUI
+		PDA_UP,				// UP arrow button on the PDA GUI
+		PDA_DOWN			// DOWN arrow button on the PDA GUI
 	};
 
 	enum MessageEvent {

@@ -31,13 +31,16 @@ namespace GameEngine
 
 		void onMouseDown(gaMessage*);											// dipatch mouse actions to widgets
 		void onMouseUp(gaMessage*);												// dipatch mouse actions to widgets
+		void onMouseMove(gaMessage*);											// dipatch mouse actions to widgets
+		void onTimer(gaMessage*);												// 
 
 	public:
 		UI(const std::string& name, bool m_visible=true);
 		inline void root(UI_widget* widget) { m_root = widget; };
 		void draw(void)  override;												// draw the GUI
 		static void draw_widget(const glm::vec4& position_size);
-		void receiveMessage(UI_widget* from, uint32_t imessage);		// receive a message from a widget
+		void receiveMessage(UI_widget* from, uint32_t imessage);				// receive a message from a widget
+		void timer(bool b);														// (de)activate the timer
 		void dispatchMessage(gaMessage*) override;								// receive and dispatch controller messages
 	};
 
@@ -62,7 +65,8 @@ namespace GameEngine
 		void update(void);													// update children screen position
 		UI_widget* findWidgetAt(float x, float y);							// find relative widget
 		void link(UI* ui);													// link each widget to the top UI
-		
+
+		inline const std::string& name(void) { return m_name; };
 		inline void visible(bool b) { m_visible = b; };
 		inline void draw(bool b) { m_draw = b; };
 		inline bool visible(void) { return m_visible; };
@@ -72,6 +76,10 @@ namespace GameEngine
 		virtual void draw(void);											// draw the GUI
 		inline virtual void onMouseDown(void) { };							// click on the widget
 		inline virtual void onMouseUp(void) { };							// release the widget
+		inline virtual void onMouseMove(void) { };							// get cursor movement when captured
+		inline virtual void onEnterArea(void) { };							// cursor enters the widget area
+		inline virtual void onExitArea(void) { };							// cursor leaves the widget area
+		inline virtual void onTimer(void) { };								// timer when widget captured the mouse
 	};
 
 	class UI_picture : public UI_widget
@@ -101,6 +109,7 @@ namespace GameEngine
 		glm::vec4 m_texture_on;		
 		glm::vec4 m_texture_off;
 		uint32_t m_message;
+
 	public:
 		UI_button(const std::string& name, 
 			const glm::vec4& position, 
@@ -110,8 +119,28 @@ namespace GameEngine
 			bool visible = true);
 		void onMouseDown(void) override;									// push the button
 		void onMouseUp(void) override;										// release the button
+		void onEnterArea(void) override;									// cursor enters the button area
+		void onExitArea(void) override;										// cursor leaves the button area
+		void onTimer(void) override;										// timer when widget captured the mouse
 
 		void release(void);													// force the OFF image
 		void press(void);													// force the ON image
+	};
+
+	class UI_ZoomPicture : public UI_picture
+	{
+		glm::ivec2 m_imageSize;
+		glm::ivec2 m_viewPort;
+		glm::ivec2 m_scroll;
+
+		float m_zoom = 1.0f;
+	public:
+		UI_ZoomPicture(const std::string& name, const glm::vec4& panel, const glm::vec4& textureIndex, 
+			const glm::ivec2& imageSize, 
+			const glm::ivec2& viewPort,
+			bool visible = true);
+		void draw(void) override;											// draw the GUI
+		void scrollUp(void);
+		void scrollDown(void);
 	};
 }

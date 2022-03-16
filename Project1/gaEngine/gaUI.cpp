@@ -11,6 +11,7 @@
 #include "../framework/fwFlatPanel.h"
 
 #include "gaEntity.h"
+#include "World.h"
 
 static fwFlatPanel* g_hudPanel = nullptr;
 static fwMaterial* g_material = nullptr;
@@ -77,6 +78,46 @@ void GameEngine::UI::onMouseUp(gaMessage*)
 	if (m_currentButton) {
 		m_currentButton->onMouseUp();
 		m_currentButton = nullptr;
+	}
+}
+
+/**
+ *
+ */
+void GameEngine::UI::onMouseMove(gaMessage* message)
+{
+	float x = message->m_v3value.x;
+	float y = message->m_v3value.y;
+
+	UI_widget* m_current = m_root->findWidgetAt(x, y);
+
+	if (m_currentButton != m_current) {
+		// moving to a new button
+		if (m_currentButton != nullptr) {
+			// inform the previous button that we exit its area
+			m_currentButton->onExitArea();
+		}
+
+		if (m_current != nullptr) {
+			// inform the new button that we enter its area
+			m_current->onEnterArea();
+		}
+
+		m_currentButton = m_current;
+	}
+
+	if (m_currentButton != nullptr) {
+		m_currentButton->onMouseMove();
+	}
+}
+
+/**
+ *
+ */
+void GameEngine::UI::onTimer(gaMessage*)
+{
+	if (m_currentButton) {
+		m_currentButton->onTimer();
 	}
 }
 
@@ -151,6 +192,19 @@ void GameEngine::UI::receiveMessage(UI_widget* from, uint32_t imessage)
 }
 
 /**
+ * (de)activate the timer
+ */
+void GameEngine::UI::timer(bool activate)
+{
+	if (activate) {
+		g_gaWorld.registerTimerEvents(this->m_entity, true);
+	}
+	else {
+		g_gaWorld.registerTimerEvents(this->m_entity, false);
+	}
+}
+
+/**
  * receive and dispatch controller messages
  */
 void GameEngine::UI::dispatchMessage(gaMessage* message)
@@ -161,6 +215,12 @@ void GameEngine::UI::dispatchMessage(gaMessage* message)
 		break;
 	case gaMessage::Action::MOUSE_UP:
 		onMouseUp(message);
+		break;
+	case gaMessage::Action::MOUSE_MOVE:
+		onMouseMove(message);
+		break;
+	case gaMessage::Action::TIMER:
+		onTimer(message);
 		break;
 	}
 }
@@ -325,6 +385,7 @@ void GameEngine::UI_tab::tab(UI_button* current)
 	if (m_tabs[m_activeTab] != nullptr) {
 		// and bind the the block to the display panel
 		m_panel->add(m_tabs[m_activeTab]);
+		m_panel->link(m_ui);
 		m_panel->update();
 	}
 }
@@ -382,7 +443,8 @@ GameEngine::UI_button::UI_button(const std::string& name,
  */
 void GameEngine::UI_button::onMouseDown(void)
 {
-	press();
+	press();	// display the 'pressed' image
+	m_ui->timer(true);
 }
 
 /**
@@ -390,7 +452,7 @@ void GameEngine::UI_button::onMouseDown(void)
  */
 void GameEngine::UI_button::onMouseUp(void)
 {
-	release();
+	release();	// display the 'released' image
 
 	if (m_message == 0) {
 		sendMessage(this, GameEngine::UI_message::click);
@@ -398,6 +460,7 @@ void GameEngine::UI_button::onMouseUp(void)
 	else {
 		sendMessage(this, m_message);
 	}
+	m_ui->timer(false);
 }
 
 /**
@@ -414,4 +477,72 @@ void GameEngine::UI_button::release(void)
 void GameEngine::UI_button::press(void)
 {
 	m_textureIndex = m_texture_on;
+}
+
+/**
+ * cursor enters the button area
+ */
+void GameEngine::UI_button::onEnterArea(void)
+{
+	// display the 'pressed' image
+	press();
+	m_ui->timer(true);
+}
+
+/**
+ * cursor leaves the button area
+ */
+void GameEngine::UI_button::onExitArea(void)
+{
+	// display the 'released' image
+	release();
+	m_ui->timer(false);
+}
+
+/**
+ * timer when widget captured the mouse
+ */
+void GameEngine::UI_button::onTimer(void)
+{
+	if (m_message == 0) {
+		sendMessage(this, GameEngine::UI_message::click);
+	}
+	else {
+		sendMessage(this, m_message);
+	}
+}
+
+// ------------------------------------------------------
+
+GameEngine::UI_ZoomPicture::UI_ZoomPicture(const std::string& name, const glm::vec4& panel, const glm::vec4& textureIndex,
+	const glm::ivec2& imageSize,
+	const glm::ivec2& viewPort,
+	bool visible):
+	UI_picture(name, panel, textureIndex, visible),
+	m_imageSize(imageSize),
+	m_viewPort(viewPort),
+	m_scroll(0, imageSize.y)
+{
+}
+
+void GameEngine::UI_ZoomPicture::draw(void)
+{
+	g_imagepos = m_textureIndex;
+	g_imagepos.w = m_viewPort.y * m_textureIndex.w / m_imageSize.y;
+	g_imagepos.y = m_textureIndex.y + m_scroll.y * m_textureIndex.w / m_imageSize.y - g_imagepos.w ;
+	UI_widget::draw();
+}
+
+void GameEngine::UI_ZoomPicture::scrollUp(void)
+{
+	if (m_scroll.y < m_imageSize.y) {
+		m_scroll.y++;
+	}
+}
+
+void GameEngine::UI_ZoomPicture::scrollDown(void)
+{
+	if (m_scroll.y > m_viewPort.y) {
+		m_scroll.y--;
+	}
 }

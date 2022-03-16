@@ -19,6 +19,7 @@ namespace DarkForces {
 			DarkForces::DELT* m_pda_background=nullptr;
 
 			GameEngine::UI_widget *m_ui_weapons = nullptr;
+			GameEngine::UI_ZoomPicture* m_ui_debrief = nullptr;
 
 			void onShowPDA(gaMessage*);							// display the PDA
 			void onAddItem(gaMessage*);							// addItem on the PDA

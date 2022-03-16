@@ -61,6 +61,7 @@ public:
 		KEY_DOWN,		// key was pressed
 		MOUSE_DOWN,		// mouse button was pressed
 		MOUSE_UP,		// mouse button was released
+		MOUSE_MOVE,		// mouse moving
 		LOOK_AT,		// look into a direction
 		MOVE_AT,
 		ACTIVATE,		// an active probe tries to activate an entity

@@ -82,6 +82,14 @@ void GameEngine::Component::ControllerUI::_mouseButton(int action)
 }
 
 /**
+ * convert mouse move to messages
+ */
+void GameEngine::Component::ControllerUI::_mouseMove(float x, float y)
+{
+	m_entity->sendMessage(gaMessage::Action::MOUSE_MOVE, 1, glm::vec3(m_currentX, m_currentY, 0));
+}
+
+/**
  * Debugger
  */
 void GameEngine::Component::ControllerUI::debugGUIinline(void)

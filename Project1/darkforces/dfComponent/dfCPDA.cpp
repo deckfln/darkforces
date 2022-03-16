@@ -64,6 +64,30 @@ void DarkForces::Component::PDA::onKeyDown(gaMessage* message)
 	}
 }
 
+// list of pictures in the PDA MENU ADMIN
+enum PDA_BUTTONS {
+	Background,
+	XXX,
+	Map_press,
+	Map_release,
+	Weapon_press,
+	Weapon_release,
+	Inventory_press,
+	Inventory_release,
+	Object_press,
+	Object_release,
+	Mission_press,
+	Mission_release,
+	Exit_press,
+	Exit_release,
+	Up_press,
+	Up_release,
+	Right_press,
+	Right_release,
+	Down_press,
+	Down_release,
+};
+
 /**
  * create
  */
@@ -112,14 +136,14 @@ DarkForces::Component::PDA::PDA(const std::string& name):
 
 	glm::vec4 texel;
 	glm::vec4 texel_off;
-	m_textures->texel(0, texel);
+	m_textures->texel(PDA_BUTTONS::Background, texel);
 	GameEngine::UI_picture* ui_background = new GameEngine::UI_picture("DarkForces::pda::background", 
 		glm::vec4(0, 0, 1, 1),
 		texel);
 
 	// tabs buttons
-	m_textures->texel(2, texel);
-	m_textures->texel(3, texel_off);
+	m_textures->texel(PDA_BUTTONS::Map_press, texel);
+	m_textures->texel(PDA_BUTTONS::Map_release, texel_off);
 	GameEngine::UI_button* map = new GameEngine::UI_button(
 		"DarkForces::pda::map",
 		glm::vec4(75.0f / 320.0f, 0.0f, 27.0f / 320.0f, 1.0f),	
@@ -127,8 +151,8 @@ DarkForces::Component::PDA::PDA(const std::string& name):
 		texel
 	);
 
-	m_textures->texel(4, texel);
-	m_textures->texel(5, texel_off);
+	m_textures->texel(PDA_BUTTONS::Weapon_press, texel);
+	m_textures->texel(PDA_BUTTONS::Weapon_release, texel_off);
 	GameEngine::UI_button* weapons = new GameEngine::UI_button(
 		"DarkForces::pda::weapon",
 		glm::vec4(115.0f/320.0f, 0.0f, 31.0f/320.0f, 1.0f),	
@@ -136,8 +160,8 @@ DarkForces::Component::PDA::PDA(const std::string& name):
 		texel
 	);
 
-	m_textures->texel(6, texel);
-	m_textures->texel(7, texel_off);
+	m_textures->texel(PDA_BUTTONS::Inventory_press, texel);
+	m_textures->texel(PDA_BUTTONS::Inventory_release, texel_off);
 	GameEngine::UI_button* inv = new GameEngine::UI_button(
 		"DarkForces::pda::inventory",
 		glm::vec4(147.0f / 320.0f, 0.0f, 25.0f / 320.0f, 1.0f),	
@@ -145,8 +169,8 @@ DarkForces::Component::PDA::PDA(const std::string& name):
 		texel
 	);
 
-	m_textures->texel(8, texel);
-	m_textures->texel(9, texel_off);
+	m_textures->texel(PDA_BUTTONS::Object_press, texel);
+	m_textures->texel(PDA_BUTTONS::Object_release, texel_off);
 	GameEngine::UI_button* obj = new GameEngine::UI_button(
 		"DarkForces::pda::objects",
 		glm::vec4(173.0f / 320.0f, 0.0f, 29.0f / 320.0f, 1.0f),	
@@ -154,8 +178,8 @@ DarkForces::Component::PDA::PDA(const std::string& name):
 		texel
 	);
 
-	m_textures->texel(10, texel);
-	m_textures->texel(11, texel_off);
+	m_textures->texel(PDA_BUTTONS::Mission_press, texel);
+	m_textures->texel(PDA_BUTTONS::Mission_release, texel_off);
 	GameEngine::UI_button* mis = new GameEngine::UI_button(
 		"DarkForces::pda::mission",
 		glm::vec4(217.0f / 320.0f, 0.0f, 27.0f / 320.0f, 1.0f),	
@@ -198,15 +222,46 @@ DarkForces::Component::PDA::PDA(const std::string& name):
 	m_ui_weapons->widget(0)->visible(true);	// display the briad pistol
 
 	// build the tab for mission
-	m_textures->texel(briefing, texel);
-	GameEngine::UI_picture *missions = new GameEngine::UI_picture("DarkForces::pda::missions",
-		glm::vec4(0.25, 0.0, 0.5, 1.0),
-		texel
+	GameEngine::UI_widget* mission_tab = new GameEngine::UI_widget("DarkForces::pda::panel",
+		glm::vec4(0.0, 0.0, 1.0, 1.0)	// position & size of the tab panel
 	);
 
+	m_textures->texel(briefing, texel);
+	m_ui_debrief = new GameEngine::UI_ZoomPicture(
+		"DarkForces::pda::missions",
+		glm::vec4(40.0f / 280.0f, 0.0, 200.0 / 280.0f, 155.0 / 155.0f),
+		texel,
+		secbase->size(),
+		glm::ivec2(0,155)
+	);
+
+	m_textures->texel(PDA_BUTTONS::Up_press, texel);
+	m_textures->texel(PDA_BUTTONS::Up_release, texel_off);
+	GameEngine::UI_button* scrollup = new GameEngine::UI_button(
+		"DarkForces::pda::scrollup",
+		glm::vec4(243.0f / 280.0f, 9.0f / 155.0f, 20.0f / 280.0f, 15.0f / 155.0f),
+		texel_off,
+		texel,
+		DarkForces::Message::PDA_UP
+	);
+
+	m_textures->texel(PDA_BUTTONS::Down_press, texel);
+	m_textures->texel(PDA_BUTTONS::Down_release, texel_off);
+	GameEngine::UI_button* scrolldown = new GameEngine::UI_button(
+		"DarkForces::pda::scrolldown",
+		glm::vec4(243.0f / 280.0f, 32.0f / 155.0f, 20.0f / 280.0f, 15.0f / 155.0f),
+		texel_off,
+		texel,
+		DarkForces::Message::PDA_DOWN
+	);
+
+	mission_tab->add(m_ui_debrief);
+	mission_tab->add(scrollup);
+	mission_tab->add(scrolldown);
+
 	// Exit button
-	m_textures->texel(12, texel);
-	m_textures->texel(13, texel_off);
+	m_textures->texel(PDA_BUTTONS::Exit_press, texel);
+	m_textures->texel(PDA_BUTTONS::Exit_release, texel_off);
 	GameEngine::UI_button* exit = new GameEngine::UI_button(
 		"DarkForces::pda::exit",
 		glm::vec4(266.0f / 320.0f, 185.0f / 200.0f, 24.0f / 320.0f, 15.0f / 200.0f),	
@@ -222,7 +277,7 @@ DarkForces::Component::PDA::PDA(const std::string& name):
 			tab->addTab(weapons, m_ui_weapons);
 			tab->addTab(inv, nullptr);
 			tab->addTab(obj, nullptr);
-			tab->addTab(mis, missions);
+			tab->addTab(mis, mission_tab);
 		ui_background->add(panel);
 		ui_background->add(exit);
 
@@ -247,6 +302,14 @@ void DarkForces::Component::PDA::dispatchMessage(gaMessage* message)
 
 		case DarkForces::Message::PDA_EXIT:
 			onShowPDA(message);
+			break;
+
+		case DarkForces::Message::PDA_UP:
+			m_ui_debrief->scrollUp();
+			break;
+
+		case DarkForces::Message::PDA_DOWN:
+			m_ui_debrief->scrollDown();
 			break;
 
 		case gaMessage::Action::KEY:
