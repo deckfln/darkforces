@@ -98,6 +98,17 @@ void DarkForces::Component::PDA::onKeyDown(gaMessage* message)
 	}
 }
 
+/**
+ * when the playre reached a goal
+ */
+void DarkForces::Component::PDA::onCompleteGoal(gaMessage* message)
+{
+	// display the DELT od the given goal
+	m_ui_goals->widget(message->m_value)->visible(true);
+}
+
+//------------------------------------------------------
+// 
 // list of pictures in the PDA MENU ADMIN
 enum PDA_BUTTONS {
 	Background,
@@ -128,7 +139,6 @@ enum PDA_BUTTONS {
 GameEngine::UI_button* DarkForces::Component::PDA::buildButton(
 	const std::string& name,
 	uint32_t pressed,
-	uint32_t released,
 	uint32_t message
 )
 {
@@ -141,9 +151,9 @@ GameEngine::UI_button* DarkForces::Component::PDA::buildButton(
 	const glm::vec2 position = m_pda->texture(pressed)->position();
 
 	m_textures->texel(pressed, texel);
-	m_textures->texel(released, texel_off);
+	m_textures->texel(pressed + 1, texel_off);
 	return new GameEngine::UI_button(
-		name,
+		"DarkForces:pda:" + name,
 		glm::vec4(position.x / m_pda_size.x, 0.0, size.x / m_pda_size.x, 1.0),
 		texel_off,
 		texel,
@@ -155,10 +165,9 @@ GameEngine::UI_button* DarkForces::Component::PDA::buildButton(
  * add a button on a panel
  */
 GameEngine::UI_button* DarkForces::Component::PDA::addButton(
-	const glm::vec2& parentPixelSize,
+	DarkForces::DELT* parent,
 	const std::string& name,
 	uint32_t pressed,
-	uint32_t released,
 	uint32_t message
 )
 {
@@ -170,11 +179,16 @@ GameEngine::UI_button* DarkForces::Component::PDA::addButton(
 	const glm::vec2 size = m_pda->texture(pressed)->size();
 	const glm::vec2 position = m_pda->texture(pressed)->position();
 
+	// parent position
+	const glm::vec2& parentPixelSize = parent->size();
+	const glm::vec2& parentPixelOffset = parent->position();
+
 	m_textures->texel(pressed, texel);
-	m_textures->texel(released, texel_off);
+	m_textures->texel(pressed + 1, texel_off);
 	return new GameEngine::UI_button(
-		name,
-		glm::vec4((position.x - m_pda_panel_position.x) / parentPixelSize.x, (position.y - m_pda_panel_position.y) / parentPixelSize.y, size.x / parentPixelSize.x, size.y / parentPixelSize.y),
+		"DarkForces:pda:" + name,
+		// convert "pixel absolute position" into "relative position against parent in %"
+		glm::vec4((position.x - parentPixelOffset.x) / parentPixelSize.x, (position.y - parentPixelOffset.y) / parentPixelSize.y, size.x / parentPixelSize.x, size.y / parentPixelSize.y),
 		texel_off,
 		texel,
 		message
@@ -184,7 +198,8 @@ GameEngine::UI_button* DarkForces::Component::PDA::addButton(
 /**
  * add an image on the panel
  */
-GameEngine::UI_picture* DarkForces::Component::PDA::buidIcon(
+GameEngine::UI_picture* DarkForces::Component::PDA::addImage(
+	DarkForces::DELT* parent,
 	const std::string& name,
 	DarkForces::ANIM* source,
 	uint32_t image,
@@ -194,12 +209,18 @@ GameEngine::UI_picture* DarkForces::Component::PDA::buidIcon(
 	glm::vec4 texel;
 
 	m_textures->texel(textureIndex + image, texel);
+
+	// image position on screen (extracted from the DELT)
 	const glm::vec2 size = source->texture(image)->size();
 	const glm::vec2 position = source->texture(image)->position();
 
+	// parent position
+	const glm::vec2& parentPixelSize = parent->size();
+	const glm::vec2& parentPixelOffset = parent->position();
+
 	return new GameEngine::UI_picture(
-		name,
-		glm::vec4((position.x - m_pda_panel_position.x) / m_pda_panel_size.x, (position.y - m_pda_panel_position.y) / m_pda_panel_size.y, size.x / m_pda_panel_size.x, size.y / m_pda_panel_size.y),
+		"DarkForces:pda:" + name,
+		glm::vec4((position.x - parentPixelOffset.x) / parentPixelSize.x, (position.y - parentPixelOffset.y) / parentPixelSize.y, size.x / parentPixelSize.x, size.y / parentPixelSize.y),
 		texel,
 		false	// hide weapons by default
 	);
@@ -230,6 +251,7 @@ DarkForces::Component::PDA::PDA(const std::string& name):
 	}
 
 	m_pda_size = m_pda->texture(0)->size();
+	m_pda_position = m_pda->texture(0)->position();
 	m_pda_panel_size = m_pda->texture(1)->size();
 	m_pda_panel_position = m_pda->texture(1)->position();
 
@@ -271,7 +293,6 @@ DarkForces::Component::PDA::PDA(const std::string& name):
 	glm::vec2 position;
 
 	glm::vec4 texel;
-	glm::vec4 texel_off;
 
 	m_textures->texel(PDA_BUTTONS::Background, texel);
 	GameEngine::UI_picture* ui_background = new GameEngine::UI_picture(
@@ -285,14 +306,14 @@ DarkForces::Component::PDA::PDA(const std::string& name):
 
 	GameEngine::UI_tab* tab = new GameEngine::UI_tab(
 		"DarkForces::pda::tab",
-		glm::vec4(0.0f / 320.0f, position.y / m_pda_size.y, 320.0f / 320.0f, size.y / m_pda_size.y)	// tab buttons
+		glm::vec4(0.0f / m_pda_size.x, position.y / m_pda_size.y, 320.0f / m_pda_size.x, size.y / m_pda_size.y)	// tab buttons
 	);
 
-	GameEngine::UI_button* map = buildButton("DarkForces::pda::map", PDA_BUTTONS::Map_press, PDA_BUTTONS::Map_release, 0);
-	GameEngine::UI_button* weapons = buildButton("DarkForces::pda::weapon", PDA_BUTTONS::Weapon_press, PDA_BUTTONS::Weapon_release, 0);
-	GameEngine::UI_button* inv = buildButton("DarkForces::pda::inventory", PDA_BUTTONS::Inventory_press, PDA_BUTTONS::Inventory_release, 0);
-	GameEngine::UI_button* obj = buildButton("DarkForces::pda::objects", PDA_BUTTONS::Object_press, PDA_BUTTONS::Object_release, 0);
-	GameEngine::UI_button* mis = buildButton("DarkForces::pda::mission", PDA_BUTTONS::Mission_press, PDA_BUTTONS::Mission_release, 0);
+	GameEngine::UI_button* map = buildButton("map", PDA_BUTTONS::Map_press, 0);
+	GameEngine::UI_button* weapons = buildButton("weapon", PDA_BUTTONS::Weapon_press, 0);
+	GameEngine::UI_button* inv = buildButton("inventory", PDA_BUTTONS::Inventory_press, 0);
+	GameEngine::UI_button* obj = buildButton("objects", PDA_BUTTONS::Object_press, 0);
+	GameEngine::UI_button* mis = buildButton("mission", PDA_BUTTONS::Mission_press, 0);
 
 	// TAB of buttons
 	GameEngine::UI_widget* panel = new GameEngine::UI_widget(
@@ -309,8 +330,9 @@ DarkForces::Component::PDA::PDA(const std::string& name):
 	float x = 0.0f, y = 0.0f;
 	for (size_t c = 0; c < guns->size(); c++) {
 		m_ui_weapons->add(
-			buidIcon(
-				"DarkForces::pda::weapon",
+			addImage(
+				m_pda->texture(1),
+				"weapon",
 				guns,
 				c,
 				startGuns
@@ -329,8 +351,9 @@ DarkForces::Component::PDA::PDA(const std::string& name):
 
 	for (size_t i = 0; i < items->size(); i++) {
 		m_ui_inventory->add(
-			buidIcon(
-				"DarkForces::pda::item",
+			addImage(
+				m_pda->texture(1),
+				"item",
 				items,
 				i,
 				startItems
@@ -356,16 +379,16 @@ DarkForces::Component::PDA::PDA(const std::string& name):
 	);
 
 	GameEngine::UI_button* scrollup = addButton(
-		m_pda_panel_size,
-		"DarkForces::pda::scrollup", 
-		PDA_BUTTONS::Up_press, PDA_BUTTONS::Up_release, 
+		m_pda->texture(1),
+		"scrollup", 
+		PDA_BUTTONS::Up_press, 
 		DarkForces::Message::PDA_UP
 	);
 
 	GameEngine::UI_button* scrolldown = addButton(
-		m_pda_panel_size,
-		"DarkForces::pda::scrolldown",
-		PDA_BUTTONS::Down_press, PDA_BUTTONS::Down_release, 
+		m_pda->texture(1),
+		"scrolldown",
+		PDA_BUTTONS::Down_press, 
 		DarkForces::Message::PDA_DOWN
 	);
 
@@ -388,22 +411,29 @@ DarkForces::Component::PDA::PDA(const std::string& name):
 		texel
 	);
 
+	// add the completed goals
+	for (size_t i = 1; i < goals->size(); i++) {
+		m_ui_goals->add(
+			addImage(
+				goals->texture(0),
+				"goal",
+				goals,
+				i,
+				pgoals
+			)
+		);
+	}
 	goal_tab->add(m_ui_goals);
 
 	// -------------------------- Exit button
-	m_textures->texel(PDA_BUTTONS::Exit_press, texel);
-	m_textures->texel(PDA_BUTTONS::Exit_release, texel_off);
-	size = m_pda->texture(PDA_BUTTONS::Exit_press)->size();
-	position = m_pda->texture(PDA_BUTTONS::Exit_press)->position();
-	GameEngine::UI_button* exit = new GameEngine::UI_button(
-		"DarkForces::pda::exit",
-		//glm::vec4(266.0f / 320.0f, 185.0f / 200.0f, 24.0f / 320.0f, 15.0f / 200.0f),	
-		glm::vec4(position.x / m_pda_size.x, position.y / m_pda_size.y, size.x / m_pda_size.x, size.y / m_pda_size.y),
-		texel_off,
-		texel,
+	GameEngine::UI_button* exit = addButton(
+		m_pda->texture(0),
+		"exit",
+		PDA_BUTTONS::Exit_press,
 		DarkForces::Message::PDA_EXIT
 	);
 
+	// -------------------------- final build
 	m_root = ui_background;
 		ui_background->add(tab);
 			tab->setPanel(panel);
@@ -453,6 +483,11 @@ void DarkForces::Component::PDA::dispatchMessage(gaMessage* message)
 		case gaMessage::ADD_ITEM:
 			onAddItem(message);
 			break;
+
+		case DarkForces::Message::COMPLETE:
+			onCompleteGoal(message);
+			break;
+
 	}
 	GameEngine::UI::dispatchMessage(message);
 }

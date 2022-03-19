@@ -444,7 +444,7 @@ GameEngine::UI_button::UI_button(const std::string& name,
 void GameEngine::UI_button::onMouseDown(void)
 {
 	press();	// display the 'pressed' image
-	m_ui->timer(true);
+	//m_ui->timer(true);
 }
 
 /**

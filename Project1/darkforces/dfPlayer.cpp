@@ -350,6 +350,14 @@ void DarkForces::Player::onShowPDA(gaMessage* message)
 }
 
 /**
+ * when a goal is complete
+ */
+void DarkForces::Player::onCompleteGoal(gaMessage* message)
+{
+	sendMessage("pda", DarkForces::Message::COMPLETE, message->m_value);
+}
+
+/**
  * let an entity deal with a situation
  */
 void DarkForces::Player::dispatchMessage(gaMessage* message)
@@ -427,6 +435,10 @@ void DarkForces::Player::dispatchMessage(gaMessage* message)
 
 	case gaMessage::ADD_ITEM:
 		onAddItem(message);
+		break;
+
+	case DarkForces::Message::COMPLETE:
+		onCompleteGoal(message);
 		break;
 
 	}

@@ -63,13 +63,14 @@ void DarkForces::Goals::parse(const std::string& file)
 }
 
 /**
- * tick goals
+ * tick goals and inform the player of each completion
  */
 void DarkForces::Goals::onTrigger(gaMessage* message)
 {
 	for (auto& goal : m_goals) {
 		if (goal.m_id == message->m_value) {
 			m_completed++;
+			sendMessage("player", DarkForces::Message::COMPLETE, message->m_value);
 		}
 	}
 }
