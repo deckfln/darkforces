@@ -33,6 +33,7 @@ namespace DarkForces {
 		DELT(uint8_t* buffer, uint32_t size, std::vector<PLTT_RGB>* palette);
 		inline fwTexture* texture(void) { return m_texture; };
 		inline const glm::ivec2 size(void) { return m_texture->size(); };
+		inline const glm::ivec2 position(void) { return glm::ivec2(m_posX, m_posY); };
 		~DELT(void) {
 			delete m_texture;
 		}

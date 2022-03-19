@@ -13,7 +13,7 @@
 
 // unique Items
 static DarkForces::Item g_Plans("darkforce:plans", dfLogic::PLANS);
-static DarkForces::Headlight g_Goggles("goggles");
+static DarkForces::Headlight g_Goggles("darkforce:goggles");
 
 dfComponentLogic::dfComponentLogic() :
 	gaComponent(DF_COMPONENT_LOGIC),
@@ -129,7 +129,7 @@ void dfComponentLogic::dispatchMessage(gaMessage* message)
 				m_entity->sendMessage("hud", DarkForces::Message::TEXT, DarkForces::Msg::RED);
 			}
 			else if (m_logics & dfLogic::PLANS) {
-				// transfert the redkey to collider
+				// transfert the plans to collider
 				m_entity->sendMessage(message->m_server, gaMessage::ADD_ITEM, 0, &g_Plans);
 
 				// inform the goal entity of the progress
