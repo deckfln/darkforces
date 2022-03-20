@@ -40,7 +40,13 @@ namespace DarkForces {
 		PDA,				// display the PDA
 		PDA_EXIT,			// EXIT button on the PDA GUI
 		PDA_UP,				// UP arrow button on the PDA GUI
-		PDA_DOWN			// DOWN arrow button on the PDA GUI
+		PDA_DOWN,			// DOWN arrow button on the PDA GUI
+		PDA_LEFT,
+		PDA_RIGHT,
+		PDA_ZOOM_DOWN,
+		PDA_ZOOM_UP,
+		PDA_FLOOR_UP,
+		PDA_FLOOR_DOWN
 	};
 
 	enum MessageEvent {

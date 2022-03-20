@@ -131,6 +131,16 @@ enum PDA_BUTTONS {
 	Right_release,
 	Down_press,
 	Down_release,
+	Left_press,
+	Left_Release,
+	Zoom_Down_press,
+	Zoom_Down_Release,
+	Zoom_Up_press,
+	Zoom_Up_Release,
+	Floor_Up_press,
+	Floor_Up_release,
+	Floor_Down_press,
+	Floor_Down_release
 };
 
 /**
@@ -164,11 +174,9 @@ GameEngine::UI_button* DarkForces::Component::PDA::buildButton(
 /**
  * add a button on a panel
  */
-GameEngine::UI_button* DarkForces::Component::PDA::addButton(
+void DarkForces::Component::PDA::addButton(
 	DarkForces::DELT* parent,
-	const std::string& name,
-	uint32_t pressed,
-	uint32_t message
+	GameEngine::UI_def_button& button
 )
 {
 	// image position on the mega_texture
@@ -176,23 +184,20 @@ GameEngine::UI_button* DarkForces::Component::PDA::addButton(
 	glm::vec4 texel_off;
 
 	// image position on screen (extracted from the DELT)
-	const glm::vec2 size = m_pda->texture(pressed)->size();
-	const glm::vec2 position = m_pda->texture(pressed)->position();
+	const glm::vec2 size = m_pda->texture(button.imageIndex)->size();
+	const glm::vec2 position = m_pda->texture(button.imageIndex)->position();
 
 	// parent position
 	const glm::vec2& parentPixelSize = parent->size();
 	const glm::vec2& parentPixelOffset = parent->position();
 
-	m_textures->texel(pressed, texel);
-	m_textures->texel(pressed + 1, texel_off);
-	return new GameEngine::UI_button(
-		"DarkForces:pda:" + name,
-		// convert "pixel absolute position" into "relative position against parent in %"
-		glm::vec4((position.x - parentPixelOffset.x) / parentPixelSize.x, (position.y - parentPixelOffset.y) / parentPixelSize.y, size.x / parentPixelSize.x, size.y / parentPixelSize.y),
-		texel_off,
-		texel,
-		message
-	);
+	m_textures->texel(button.imageIndex, texel);
+	m_textures->texel(button.imageIndex + 1, texel_off);
+
+	button.position_size = glm::vec4((position.x - parentPixelOffset.x) / parentPixelSize.x, (position.y - parentPixelOffset.y) / parentPixelSize.y, size.x / parentPixelSize.x, size.y / parentPixelSize.y);
+	button.img_press_position_size = texel;
+	button.img_release_position_size = texel_off;
+	button.name = "DarkForces:pda:" + std::string(button.name);
 }
 
 /**
@@ -377,24 +382,18 @@ DarkForces::Component::PDA::PDA(const std::string& name):
 		size,
 		glm::ivec2(0,155)
 	);
-
-	GameEngine::UI_button* scrollup = addButton(
-		m_pda->texture(1),
-		"scrollup", 
-		PDA_BUTTONS::Up_press, 
-		DarkForces::Message::PDA_UP
-	);
-
-	GameEngine::UI_button* scrolldown = addButton(
-		m_pda->texture(1),
-		"scrolldown",
-		PDA_BUTTONS::Down_press, 
-		DarkForces::Message::PDA_DOWN
-	);
-
 	mission_tab->add(m_ui_debrief);
-	mission_tab->add(scrollup);
-	mission_tab->add(scrolldown);
+
+	static std::vector<struct UI_def_button> mission_buttons = {
+		{"scrollup", 	PDA_BUTTONS::Up_press,	DarkForces::Message::PDA_UP,	true, false, glm::vec4(0),	glm::vec4(0),	glm::vec4(0)},
+		{"scrolldown",	PDA_BUTTONS::Down_press,DarkForces::Message::PDA_DOWN,	true, false, glm::vec4(0),	glm::vec4(0),	glm::vec4(0)}
+	};
+
+	// convert DarkForces UI to GameEngine::UI
+	for (auto& button : mission_buttons) {
+		addButton(m_pda->texture(1), button);
+	}
+	mission_tab->addButtons(mission_buttons);
 
 	// -------------------- build the tab for goals
 	GameEngine::UI_widget* goal_tab = new GameEngine::UI_widget(
@@ -425,25 +424,46 @@ DarkForces::Component::PDA::PDA(const std::string& name):
 	}
 	goal_tab->add(m_ui_goals);
 
-	// -------------------------- Exit button
-	GameEngine::UI_button* exit = addButton(
-		m_pda->texture(0),
-		"exit",
-		PDA_BUTTONS::Exit_press,
-		DarkForces::Message::PDA_EXIT
+	// -------------------- build the tab for automap
+	GameEngine::UI_widget* map_tab = new GameEngine::UI_widget(
+		"DarkForces::pda::panel",
+		glm::vec4(0.0, 0.0, 1.0, 1.0)	// position & size of the tab panel
 	);
+
+	static std::vector<struct UI_def_button> automap_buttons = {
+		{"up",			PDA_BUTTONS::Up_press,			DarkForces::Message::PDA_UP,		true,	false, glm::vec4(0),glm::vec4(0),glm::vec4(0)},
+		{"down",		PDA_BUTTONS::Down_press,		DarkForces::Message::PDA_DOWN,		true,	false, glm::vec4(0),glm::vec4(0),glm::vec4(0)},
+		{"left",		PDA_BUTTONS::Left_press,		DarkForces::Message::PDA_LEFT,		true,	false, glm::vec4(0),glm::vec4(0),glm::vec4(0)},
+		{"right",		PDA_BUTTONS::Right_press,		DarkForces::Message::PDA_RIGHT,		true,	false, glm::vec4(0),glm::vec4(0),glm::vec4(0)},
+		{"zoomdown",	PDA_BUTTONS::Zoom_Down_press,	DarkForces::Message::PDA_ZOOM_DOWN,	true,	false, glm::vec4(0),glm::vec4(0),glm::vec4(0)},
+		{"zoomup",		PDA_BUTTONS::Zoom_Up_press,		DarkForces::Message::PDA_ZOOM_UP,	true,	false, glm::vec4(0),glm::vec4(0),glm::vec4(0)},
+		{"floordown",	PDA_BUTTONS::Floor_Down_press,	DarkForces::Message::PDA_FLOOR_DOWN,false,	false, glm::vec4(0),glm::vec4(0),glm::vec4(0)},
+		{"floorup",		PDA_BUTTONS::Floor_Up_press,	DarkForces::Message::PDA_FLOOR_UP,	false,	false, glm::vec4(0),glm::vec4(0),glm::vec4(0)}
+	};
+
+	for (auto& button : automap_buttons) {
+		addButton(m_pda->texture(1), button);
+	}
+	map_tab->addButtons(automap_buttons);
+
+	// -------------------------- Exit button
+	static std::vector<struct UI_def_button> pda_buttons = {
+		{"exit", 		PDA_BUTTONS::Exit_press,		DarkForces::Message::PDA_EXIT,		false, false, glm::vec4(0),glm::vec4(0),glm::vec4(0)}
+	};
+
+	addButton(m_pda->texture(0), pda_buttons[0]);
+	ui_background->addButtons(pda_buttons);
 
 	// -------------------------- final build
 	m_root = ui_background;
 		ui_background->add(tab);
 			tab->setPanel(panel);
-			tab->addTab(map, nullptr);
+			tab->addTab(map, map_tab);
 			tab->addTab(weapons, m_ui_weapons);
 			tab->addTab(inv, m_ui_inventory);
 			tab->addTab(obj, m_ui_goals);
 			tab->addTab(mis, mission_tab);
 		ui_background->add(panel);
-		ui_background->add(exit);
 
 	m_root->link(this);
 	tab->tab(weapons);	// force the tab original panel

@@ -40,11 +40,9 @@ namespace DarkForces {
 				uint32_t image,
 				uint32_t textureIndex
 			);													// add an image on the panel
-			GameEngine::UI_button* addButton(
+			void addButton(
 				DarkForces::DELT* parent,
-				const std::string& name,
-				uint32_t pressed,
-				uint32_t message
+				GameEngine::UI_def_button& button
 			);													// add a button to the panel
 
 			void onShowPDA(gaMessage*);							// display the PDA

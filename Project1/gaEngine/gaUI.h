@@ -21,6 +21,17 @@ namespace GameEngine
 		click = 1
 	} ;
 
+	struct UI_def_button {
+		std::string name;
+		uint32_t imageIndex;
+		uint32_t message;
+		bool repeater;
+		bool visible;
+		glm::vec4 position_size;							// position and size of the button relative to its parent
+		glm::vec4 img_press_position_size;					// position and size of the 'pressed' image
+		glm::vec4 img_release_position_size;				// position and size of the 'released' image
+	};
+
 	class UI : public fwHUD, public gaComponent
 	{
 	protected:
@@ -65,6 +76,7 @@ namespace GameEngine
 		void update(void);													// update children screen position
 		UI_widget* findWidgetAt(float x, float y);							// find relative widget
 		void link(UI* ui);													// link each widget to the top UI
+		void addButtons(std::vector<struct UI_def_button>& buttons);		// add buttons to the widget using a template
 
 		inline const std::string& name(void) { return m_name; };
 		inline void visible(bool b) { m_visible = b; };
@@ -106,9 +118,10 @@ namespace GameEngine
 
 	class UI_button : public UI_picture
 	{
-		glm::vec4 m_texture_on;		
-		glm::vec4 m_texture_off;
-		uint32_t m_message;
+		glm::vec4 m_texture_on;												// when button is pressed: position&size of the image
+		glm::vec4 m_texture_off;											// when button is releases: position&size of the image
+		uint32_t m_message = 0;												// message to send when the button is released of pressed with repeater
+		bool m_repeater = false;											// send 'repeat' messages while pressed (like a scroll down button)
 
 	public:
 		UI_button(const std::string& name, 
@@ -116,6 +129,7 @@ namespace GameEngine
 			const glm::vec4& textureOnIndex, 
 			const glm::vec4& textureOffIndex, 
 			uint32_t message = 0,											// message sent when activated (none by default)
+			bool repeater = false,											// does the button send messages while pressed ?
 			bool visible = true);
 		void onMouseDown(void) override;									// push the button
 		void onMouseUp(void) override;										// release the button

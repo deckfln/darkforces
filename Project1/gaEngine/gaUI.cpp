@@ -1,4 +1,5 @@
 #include "gaUI.h"
+#include "gaUI.h"
 
 #include <map>
 
@@ -324,6 +325,26 @@ void GameEngine::UI_widget::link(UI* ui)
 }
 
 /**
+ * add buttons to the widget using a template
+ */
+void GameEngine::UI_widget::addButtons(std::vector<struct UI_def_button>& buttons)
+{
+	for (auto& button : buttons) {
+
+		GameEngine::UI_button *b = new GameEngine::UI_button(
+			button.name,
+			button.position_size,
+			button.img_release_position_size,
+			button.img_press_position_size,
+			button.message,
+			button.repeater
+		);
+
+		add(b);
+	}
+}
+
+/**
  * draw the GUI
  */
 void GameEngine::UI_widget::draw(void)
@@ -430,11 +451,13 @@ GameEngine::UI_button::UI_button(const std::string& name,
 	const glm::vec4& position, 
 	const glm::vec4& textureOffIndex, const glm::vec4& textureOnIndex, 
 	uint32_t message,
+	bool repeater,
 	bool visible):
 	UI_picture(name, position, textureOffIndex, visible),
 	m_texture_on(textureOnIndex),
 	m_texture_off(textureOffIndex),
-	m_message(message)
+	m_message(message),
+	m_repeater(repeater)
 {
 }
 
@@ -444,7 +467,9 @@ GameEngine::UI_button::UI_button(const std::string& name,
 void GameEngine::UI_button::onMouseDown(void)
 {
 	press();	// display the 'pressed' image
-	//m_ui->timer(true);
+	if (m_repeater) {
+		m_ui->timer(true);
+	}
 }
 
 /**
@@ -460,7 +485,9 @@ void GameEngine::UI_button::onMouseUp(void)
 	else {
 		sendMessage(this, m_message);
 	}
-	m_ui->timer(false);
+	if (m_repeater) {
+		m_ui->timer(false);
+	}
 }
 
 /**
@@ -500,7 +527,7 @@ void GameEngine::UI_button::onExitArea(void)
 }
 
 /**
- * timer when widget captured the mouse
+ * if 'repeater' send a message while the button is pressed
  */
 void GameEngine::UI_button::onTimer(void)
 {
