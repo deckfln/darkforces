@@ -34,7 +34,19 @@ public:
 	fwUniform(const std::string& _name, glUniformBuffer *ubo);
 	void set_uniform(glProgram *);
 	void *get(void);
+
 	void set(void *_data);
+	void set(const std::string& _name, glm::vec4* _v4);
+	void set(const std::string& _name, glm::vec2* _v2);
+	void set(const std::string& _name, GLint* id);
+	void set(const std::string& _name, GLfloat* f);
+	void set(const std::string& _name, glTexture* y);
+	void set(const std::string& _name, glTextureArray* y);
+	void set(const std::string& _name, glCubeTexture* y);
+	void set(const std::string& _name, glm::mat4* t, int size);
+	void set(const std::string& _name, glm::vec4* t, int size);
+	void set(const std::string& _name, glUniformBuffer* ubo);
+
 	const std::string& name(void) { return m_name; };
 	~fwUniform();
 };

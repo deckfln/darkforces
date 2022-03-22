@@ -78,6 +78,8 @@ class dfSector : public gaEntity
 {
 	dfLevel* m_level = nullptr;
 
+	int32_t m_layer = -1;								// floor number
+
 	float m_staticMeshFloorAltitude = 0;				// floor altitude for the superSector static mesh
 	float m_staticMeshCeilingAltitude = 0;				// ceiling altitude for the superSector static mesh
 
@@ -114,6 +116,9 @@ class dfSector : public gaEntity
 
 	float m_ambient = 0;								// DarkForces light (0..31)
 	float m_currentAmbient = 0;							// OpenGL light (0..1)
+
+	bool m_visited = false;								// did the player visit the sector (for the automap)
+
 	std::stack<float> m_ambients;						// previous lightning
 
 	dfSuperSector* m_super = nullptr;					// link back to the supersector
@@ -134,7 +139,6 @@ public:
 	GameEngine::AABBoxTree m_worldAABB;					// AABB node to be inserted in a bigger tree
 
 	int m_id = -1;
-	int m_layer = -1;
 
 	// original values
 	float m_height = 0;									// height of the sector
@@ -190,7 +194,7 @@ public:
 	inline int firstVertex(void) { return m_firstVertex; };
 	inline int nbVertices(void) { return m_nbVertices; };
 	inline void add3Dobject(gaEntity* entity) { m_3DObjects.push_back(entity); };
-
+	inline const uint32_t layer(void) { return m_layer; };
 	void wallCenter(uint32_t wallID, glm::vec3& center, float &surface);			// fill the 3D center of the wall
 
 	void ceiling(float z);

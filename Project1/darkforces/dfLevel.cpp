@@ -85,7 +85,6 @@ dfLevel::dfLevel(dfFileSystem* fs, std::string file)
 		if (sector->name() == "") {
 			sector->name(std::to_string(nSector));
 	}
-	int layer = sector->m_layer;
 
 	// record the sector in the global list
 	// beware of sectors with the same !

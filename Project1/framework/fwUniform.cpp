@@ -97,6 +97,82 @@ void fwUniform::set(void *_data)
 	m_data = _data;
 }
 
+/**
+ *
+ */
+void fwUniform::set(const std::string& _name, glm::vec4* _v4)
+{
+	m_name = _name;
+	m_data = _v4;
+	m_type = GL_FLOAT_VEC4;
+}
+
+void fwUniform::set(const std::string& _name, glm::vec2* _v2)
+{
+	m_name = _name;
+	m_data = _v2;
+	m_type = GL_FLOAT_VEC2;
+}
+
+void fwUniform::set(const std::string& _name, GLint* id)
+{
+	m_name = _name;
+	m_data = id;
+	m_type = GL_SAMPLER_2D;
+}
+
+void fwUniform::set(const std::string& _name, GLfloat* f)
+{
+	m_name = _name;
+	m_data = f;
+	m_type = GL_FLOAT;
+}
+
+void fwUniform::set(const std::string& _name, glTexture* t)
+{
+	m_name = _name;
+	m_data = t;
+	m_type = GL_SAMPLER_2D;
+}
+
+void fwUniform::set(const std::string& _name, glTextureArray* t)
+{
+	m_name = _name;
+	m_data = t;
+	m_type = GL_TEXTURE_2D_ARRAY;
+}
+
+void fwUniform::set(const std::string& _name, glCubeTexture* t)
+{
+	m_name = _name;
+	m_data = t;
+	m_type = GL_TEXTURE_CUBE_MAP;
+}
+
+void fwUniform::set(const std::string& _name, glm::mat4* t, int size)
+{
+	m_name = _name;
+	m_data = t;
+	m_size = size;
+	m_type = GL_FLOAT_MAT4;
+}
+
+void fwUniform::set(const std::string& _name, glm::vec4* t, int size)
+{
+	m_name = _name + "[0]";
+	m_data = t;
+	m_size = size;
+	m_type = GL_FLOAT_VEC4;
+}
+
+void fwUniform::set(const std::string& _name, glUniformBuffer* ubo)
+{
+	m_name = _name;
+}
+
+/**
+ *
+ */
 void fwUniform::set_uniform(glProgram *program)
 {
 	// ignore non initalizerd uniforms

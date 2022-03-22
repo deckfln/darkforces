@@ -220,9 +220,12 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 		{GLFW_KEY_2, GameEngine::Component::Controller::KeyInfo::Msg::onPressDown},
 	};
 
+	// add a controller to the player
 	GameEngine::Component::Controller* controller = new GameEngine::Component::Controller(m_camera, start, c_eyes, c_direction, c_radius, keys);
 	bindControl((fwControl*)controller);
 	m_player->addComponent(controller, gaEntity::Flag::DONT_DELETE);
+
+
 	GameEngine::World::add(m_player);
 
 	// PDA
@@ -236,11 +239,16 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 	m_level = new dfLevel(g_dfFiles, "SECBASE");
 	static_cast<dfLevel*>(m_level)->addSkymap(m_scene);
 
+	// extract the automap from the player, to be added on the hud
+	DarkForces::Component::AutoMap* automap = static_cast<DarkForces::Player*>(m_player)->automap();
+	automap->set(static_cast<dfLevel*>(m_level));
+
 	// mandatory to get all data together
 	resizeEvent(width, height);
 
 	// hud display
 	g_dfHUD = new DarkForces::HUD(m_level);
+	g_dfHUD->add(automap);							// add the automap on the HUD
 	m_scene->hud(g_dfHUD);
 
 	// PDA GUI

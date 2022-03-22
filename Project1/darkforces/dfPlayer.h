@@ -8,6 +8,7 @@
 #include "dfComponent/dfCActor.h"
 #include "dfComponent/dfCWeapon.h"
 #include "dfComponent/dfComponentLogic.h"
+#include "dfComponent/dfCAutoMap.h"
 #include "gaItem/dfItem/dfEnergyClip.h"
 #include "gaItem/dfItem/dfHeadlight.h"
 
@@ -25,6 +26,7 @@ namespace DarkForces {
 		DarkForces::Component::Weapon m_weapon;
 		GameEngine::Component::Inventory m_inventory;
 		GameEngine::Component::Sound m_sound;
+		DarkForces::Component::AutoMap m_automap;
 
 		// predefined items
 		DarkForces::Headlight m_headlight = DarkForces::Headlight("headlight");
@@ -73,6 +75,7 @@ namespace DarkForces {
 
 		// getter/setter
 		void bind(dfLevel* level);
+		inline DarkForces::Component::AutoMap* automap(void) { return &m_automap; };
 
 		bool isOn(const std::string& item);					// the item is present in the inventory and is turned on
 		void addItem(Item* item);							// add item to inventory

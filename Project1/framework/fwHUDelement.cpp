@@ -6,6 +6,11 @@
 #include "fwGeometry.h"
 #include "fwFlatPanel.h"
 
+fwHUDelement::fwHUDelement(const std::string& name):
+	m_name(name)
+{
+}
+
 /**
  * if LOCKED_Y, width is extended based on height
  * if LOCKED_X, height is computed based on width

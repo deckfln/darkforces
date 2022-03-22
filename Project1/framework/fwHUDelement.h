@@ -43,6 +43,7 @@ public:
 		CENTER_RIGHT
 	};
 
+	fwHUDelement(const std::string& name);
 	fwHUDelement(const std::string& name, Position position, fwHUDelementSizeLock lock, float width, float height, fwTexture* texture, fwFlatPanel* panel = nullptr);
 	void position(float x, float y);		// force the X position (between -1. and 1.0)
 	void size(float w, float h);			// force the size in glspace (between -1. and 1.0)

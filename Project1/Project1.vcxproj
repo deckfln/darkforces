@@ -138,6 +138,7 @@
     <ClCompile Include="darkforces\dfComponent\dfCAnim3D.cpp" />
     <ClCompile Include="darkforces\dfComponent\dfCActor.cpp" />
     <ClCompile Include="darkforces\dfComponent\AIMouseBot.cpp" />
+    <ClCompile Include="darkforces\dfComponent\dfCAutoMap.cpp" />
     <ClCompile Include="darkforces\dfComponent\dfCHUDText.cpp" />
     <ClCompile Include="darkforces\dfComponent\dfCPDA.cpp" />
     <ClCompile Include="darkforces\dfComponent\dfCSprite.cpp" />
@@ -377,6 +378,7 @@
     <ClInclude Include="darkforces\dfComponent\dfCAnim3D.h" />
     <ClInclude Include="darkforces\dfComponent\dfCActor.h" />
     <ClInclude Include="darkforces\dfComponent\AIMouseBot.h" />
+    <ClInclude Include="darkforces\dfComponent\dfCAutoMap.h" />
     <ClInclude Include="darkforces\dfComponent\dfCHUDText.h" />
     <ClInclude Include="darkforces\dfComponent\dfCPDA.h" />
     <ClInclude Include="darkforces\dfComponent\dfCSprite.h" />
@@ -636,6 +638,8 @@
     <ClInclude Include="Reference.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="darkforces\shaders\hud\automap_fs.glsl" />
+    <None Include="darkforces\shaders\hud\automap_vs.glsl" />
     <None Include="darkforces\shaders\hud\hud_fs.glsl" />
     <None Include="darkforces\shaders\hud\hud_vs.glsl" />
     <None Include="darkforces\shaders\hud\pda_fs.glsl" />
