@@ -378,6 +378,7 @@ void dfParseINF::parseSector(std::istringstream& infile, const std::string& sect
 				dfMesh* mesh = inv->buildMesh();
 				GameEngine::ComponentMesh* m_component = new GameEngine::ComponentMesh(mesh);
 
+				pSector->m_flag1 |= dfSectorFlag::ELEVATOR;	// mark the sector as an elevator of somme sort
 				pSector->addElevator(inv);
 				pSector->addComponent(m_component, gaEntity::Flag::DELETE_AT_EXIT);
 

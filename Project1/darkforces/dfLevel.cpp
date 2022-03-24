@@ -379,6 +379,7 @@ void dfLevel::convertDoors2Elevators(void)
 {
 	for (auto sector: m_sectorsID) {
 		if (sector->flag() & dfSectorFlag::DOOR) {
+			sector->m_flag1 |= dfSectorFlag::ELEVATOR;
 			DarkForces::Prefab::ElevatorDoor(sector);
 		}
 	}

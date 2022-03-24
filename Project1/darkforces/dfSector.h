@@ -52,26 +52,27 @@ struct dfVerticeConnexion {
 // Flag1 values
 enum dfSectorFlag {
 	// Flag 1
-	EXTERIOR_NO_CEIL = 1,				// (SKY) Note: actual ceiling limit will be the ceiling altitude + 100 
-	DOOR = 2,							// instant door 
-	SHOT_REFLECTION = 4,				// MAG.SEAL walls, floorand ceiling reflect weapon shots 
-	EXTERIOR_ADJOIN = 8,				// will adjoin adjacent skies 
-	ICE_FLOOR = 16,					// (SKATING)
-	SNOW_FLOOR = 32,					// no apparent effects 
-	EXPLODING_WALL_DOOR  = 64,		// instant exploding door 
-	EXTERIOR_NO_FLOOR = 128,			// (PIT) Note : actual floor limit will be the floor altitude - 100 
-	EXTERIOR_FLOOR_ADJOIN = 256,		// will adjoin adjacent pits 
-	CRUSHING_SECTOR = 512,			// vertically moving elevators will crush the player 
-	NO_WALL_DRAW = 1024,				//  "HORIZON" removes walls of a sector(sector must be sky and pit to work properly) 
-	LOW_DAMAGE = 2048,
-	HIGH_DAMAGE = 4096,				//	both can be combined for GAS 
-	NO_SMART_OBJECT_REACTION = 8192,	//
-	SMART_OBJECT_REACTION = 16384,
-	SUBSECTOR = 32768,				// no apparent effects 
-	SAFE_SECTOR = 65536,
-	RENDERED = 131072,
-	PLAYER = 262144,
-	SECRET_SECTOR = 524288,			// increments the % secret when entered
+	EXTERIOR_NO_CEIL = 1<<0,				// (SKY) Note: actual ceiling limit will be the ceiling altitude + 100 
+	DOOR = 1<<1,							// instant door 
+	SHOT_REFLECTION = 1<<2,				// MAG.SEAL walls, floorand ceiling reflect weapon shots 
+	EXTERIOR_ADJOIN = 1<<3,				// will adjoin adjacent skies 
+	ICE_FLOOR = 1<<4,					// (SKATING)
+	SNOW_FLOOR = 1<<5,					// no apparent effects 
+	EXPLODING_WALL_DOOR  = 1<<6,		// instant exploding door 
+	EXTERIOR_NO_FLOOR = 1<<7,			// (PIT) Note : actual floor limit will be the floor altitude - 100 
+	EXTERIOR_FLOOR_ADJOIN = 1<<8,		// will adjoin adjacent pits 
+	CRUSHING_SECTOR = 1<<9,				// vertically moving elevators will crush the player 
+	NO_WALL_DRAW = 1<<10,				//  "HORIZON" removes walls of a sector(sector must be sky and pit to work properly) 
+	LOW_DAMAGE = 1<<11,
+	HIGH_DAMAGE = 1<<12,				//	both can be combined for GAS 
+	NO_SMART_OBJECT_REACTION = 1<<13,	//
+	SMART_OBJECT_REACTION = 1<<14,
+	SUBSECTOR = 1<<15,					// no apparent effects 
+	SAFE_SECTOR = 1<<16,
+	RENDERED = 1<<17,
+	PLAYER = 1<<18,
+	SECRET_SECTOR = 1<<19,				// increments the % secret when entered
+	ELEVATOR = 1<<20,					// sector is actually an elevator
 };
 
 class dfSector : public gaEntity

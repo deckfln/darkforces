@@ -21,6 +21,7 @@ namespace DarkForces {
 			struct Layer {
 				uint32_t m_nbVertices;				// number of walls really stored in the buffer
 				std::vector<glm::vec2> m_vertices;	// list of walls : 2 vertices = 1 wall
+				std::vector<glm::vec3> m_colors;	// list of walls : 2 vertices = 1 wall
 			};
 			dfLevel* m_level = nullptr;
 			std::map<uint32_t, Layer> m_verticesPerLayer;

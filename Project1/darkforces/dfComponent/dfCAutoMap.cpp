@@ -29,28 +29,58 @@ void DarkForces::Component::AutoMap::set(dfLevel* level)
 		layers[sector->layer()].push_back(sector);
 	}
 
-	// allocate a 2D buffer to hold walls for each layer
-	for (auto& layer : layers) {
-		uint32_t nbWalls = 0;
-		for (auto sector : layer.second) {
-			nbWalls += sector->m_walls.size();
-		}
-		m_verticesPerLayer[layer.first].m_vertices.resize(nbWalls * 2);	// maximum vertices that can be stored
-		m_verticesPerLayer[layer.first].m_nbVertices = 0;				// start empty
-	}
+	std::map<uint32_t, std::map<uint32_t, bool>> portalRender;
 
 	// allocate a 2D buffer to hold walls for each layer
 	for (auto& layer : layers) {
 		uint32_t nbVertices = 0;
 		for (auto sector : layer.second) {
-			for (auto wall : sector->m_walls) {
-				m_verticesPerLayer[layer.first].m_vertices[nbVertices] = sector->m_vertices[wall->m_left] / 10.0f;
-				m_verticesPerLayer[layer.first].m_vertices[nbVertices + 1] = sector->m_vertices[wall->m_right] / 10.0f;
 
-				nbVertices += 2;
+			for (auto wall : sector->m_walls) {
+
+				// check if the wall was rendered from a mirrored portal
+				if (wall->m_adjoint >= 0) {
+					if (portalRender[wall->m_adjoint][wall->m_mirror] == true) {
+						continue;
+					}
+				}
+
+				// add new portals
+				portalRender[sector->m_id][wall->m_id] = true;
+
+				const glm::vec2& left = sector->m_vertices[wall->m_left];
+				const glm::vec2& right = sector->m_vertices[wall->m_right];
+
+				glm::vec3 color;
+				if (sector->flag() & dfSectorFlag::ELEVATOR) {
+					color = glm::vec3(1.0, 1.0, 0.0);
+				}
+				else if (wall->m_adjoint >= 0) {
+
+					if (wall->m_pAdjoint->flag() & dfSectorFlag::ELEVATOR) {
+						color = glm::vec3(1.0, 1.0, 0.0);
+					}
+					else {
+						color = glm::vec3(0.0, 0.4, 0.0);
+					}
+				}
+				else {
+					color = glm::vec3(0.0, 1.0, 0.0);
+				}
+
+				int32_t lindex = -1;
+				int32_t rindex = -1;
+				uint32_t i = 0;
+
+				m_verticesPerLayer[layer.first].m_vertices.push_back(left);
+				m_verticesPerLayer[layer.first].m_colors.push_back(color);
+
+				m_verticesPerLayer[layer.first].m_vertices.push_back(right);
+				m_verticesPerLayer[layer.first].m_colors.push_back(color);
 			}
+
+			m_verticesPerLayer[layer.first].m_nbVertices = nbVertices;				// start empty
 		}
-		m_verticesPerLayer[layer.first].m_nbVertices = nbVertices;				// start empty
 	}
 
 	static std::map<ShaderType, std::string> g_subShaders = {
@@ -83,8 +113,16 @@ void DarkForces::Component::AutoMap::set(dfLevel* level)
 	m_geometry->addVertices("aPos",
 		&m_verticesPerLayer[1].m_vertices[0],
 		2,																// 2 float per point
-		sizeof(float) * 2 * m_verticesPerLayer[1].m_vertices.size(),
-		ARRAY_SIZE_OF_ELEMENT(m_verticesPerLayer[1].m_vertices),
+		sizeof(glm::vec2) * m_verticesPerLayer[1].m_vertices.size(),
+		sizeof(float),
+		false);
+
+	m_geometry->addAttribute("aColor",
+		GL_ARRAY_BUFFER,
+		&m_verticesPerLayer[1].m_colors[0],
+		3,																// 2 float per point
+		sizeof(glm::vec3) * m_verticesPerLayer[1].m_colors.size(),
+		sizeof(float),
 		false);
 
 	m_vertexArray = new glVertexArray();
