@@ -1377,6 +1377,12 @@ void dfSector::dispatchMessage(gaMessage* message)
 			sendMessage(entity->name(), DarkForces::Message::ANIM_PAUSE, false);
 		}
 		break;
+
+	case DarkForces::Message::EVENT:
+		if (message->m_value == DarkForces::MessageEvent::ENTER_SECTOR && message->m_server == "player") {
+			m_flag1 |= dfSectorFlag::RENDERED;
+		}
+		break;
 	}
 
 	gaEntity::dispatchMessage(message);

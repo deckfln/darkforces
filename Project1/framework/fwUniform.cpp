@@ -149,12 +149,28 @@ void fwUniform::set(const std::string& _name, glCubeTexture* t)
 	m_type = GL_TEXTURE_CUBE_MAP;
 }
 
+void fwUniform::set(const std::string& _name, int32_t* t, int size)
+{
+	m_name = _name + "[0]";
+	m_data = t;
+	m_size = size;
+	m_type = GL_INT;
+}
+
 void fwUniform::set(const std::string& _name, glm::mat4* t, int size)
 {
 	m_name = _name;
 	m_data = t;
 	m_size = size;
 	m_type = GL_FLOAT_MAT4;
+}
+
+void fwUniform::set(const std::string& _name, glm::vec3* t, int size)
+{
+	m_name = _name + "[0]";
+	m_data = t;
+	m_size = size;
+	m_type = GL_FLOAT_VEC3;
 }
 
 void fwUniform::set(const std::string& _name, glm::vec4* t, int size)

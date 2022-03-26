@@ -52,31 +52,33 @@ void DarkForces::Component::AutoMap::set(dfLevel* level)
 				const glm::vec2& right = sector->m_vertices[wall->m_right];
 
 				glm::vec3 color;
+				int32_t  colorIndex = 0;
+
 				if (sector->flag() & dfSectorFlag::ELEVATOR) {
 					color = glm::vec3(1.0, 1.0, 0.0);
+					colorIndex = 3;
 				}
 				else if (wall->m_adjoint >= 0) {
 
 					if (wall->m_pAdjoint->flag() & dfSectorFlag::ELEVATOR) {
 						color = glm::vec3(1.0, 1.0, 0.0);
+						colorIndex = 3;
 					}
 					else {
 						color = glm::vec3(0.0, 0.4, 0.0);
+						colorIndex = 2;
 					}
 				}
 				else {
 					color = glm::vec3(0.0, 1.0, 0.0);
+					colorIndex = 1;
 				}
 
-				int32_t lindex = -1;
-				int32_t rindex = -1;
-				uint32_t i = 0;
-
 				m_verticesPerLayer[layer.first].m_vertices.push_back(left);
-				m_verticesPerLayer[layer.first].m_colors.push_back(color);
-
 				m_verticesPerLayer[layer.first].m_vertices.push_back(right);
-				m_verticesPerLayer[layer.first].m_colors.push_back(color);
+
+				m_verticesPerLayer[layer.first].m_walls.push_back(colorIndex);
+				m_verticesPerLayer[layer.first].m_walls.push_back(colorIndex);
 			}
 
 			m_verticesPerLayer[layer.first].m_nbVertices = nbVertices;				// start empty
@@ -117,12 +119,12 @@ void DarkForces::Component::AutoMap::set(dfLevel* level)
 		sizeof(float),
 		false);
 
-	m_geometry->addAttribute("aColor",
+	m_geometry->addAttribute("aWall",
 		GL_ARRAY_BUFFER,
-		&m_verticesPerLayer[1].m_colors[0],
-		3,																// 2 float per point
-		sizeof(glm::vec3) * m_verticesPerLayer[1].m_colors.size(),
-		sizeof(float),
+		&m_verticesPerLayer[1].m_walls[0],
+		1,																// 2 float per point
+		sizeof(int32_t) * m_verticesPerLayer[1].m_walls.size(),
+		sizeof(int32_t),
 		false);
 
 	m_vertexArray = new glVertexArray();

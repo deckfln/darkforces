@@ -48,6 +48,11 @@ glVertexAttribute::glVertexAttribute(GLchar *_name, GLsizei _length, GLsizei _si
 		m_single_size = sizeof(GLuint);
 		m_single_nb = 1;
 		break;
+	case GL_INT:
+		m_single_type = GL_INT;
+		m_single_size = sizeof(GLint);
+		m_single_nb = 1;
+		break;
 	default:
 		std::cout << "Unkown vertex attribute type " << m_name << " " << m_type << std::endl;
 	}
@@ -86,6 +91,14 @@ void glVertexAttribute::EnableVertex(glBufferAttribute *vba)
 		if (divisor > 0)
 			glVertexAttribDivisor(m_location, divisor);
 		break;
+	case GL_INT:
+		glVertexAttribIPointer(m_location, m_single_nb, m_single_type, 0, (void*)0);
+		glEnableVertexAttribArray(m_location);
+
+		if (divisor > 0)
+			glVertexAttribDivisor(m_location, divisor);
+		break;
+
 	default:
 		glVertexAttribPointer(m_location, m_single_nb, m_single_type, GL_FALSE, 0, (void*)0);
 		glEnableVertexAttribArray(m_location);

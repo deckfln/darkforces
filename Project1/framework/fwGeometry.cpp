@@ -190,7 +190,7 @@ void fwGeometry::draw(GLenum mode, glVertexArray *va)
 	// last chance to update the attributes if they a re empty
 	updateIfDirty();
 
-	if (m_verticesToDisplay > 0) {
+	if (m_verticesToDisplay >= 0) {
 		if (index != nullptr) {
 			va->draw(mode, true, m_verticesToDisplay);
 		}

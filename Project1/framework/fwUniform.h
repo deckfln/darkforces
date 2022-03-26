@@ -43,7 +43,9 @@ public:
 	void set(const std::string& _name, glTexture* y);
 	void set(const std::string& _name, glTextureArray* y);
 	void set(const std::string& _name, glCubeTexture* y);
+	void set(const std::string& _name, int32_t* t, int size);
 	void set(const std::string& _name, glm::mat4* t, int size);
+	void set(const std::string& _name, glm::vec3* t, int size);
 	void set(const std::string& _name, glm::vec4* t, int size);
 	void set(const std::string& _name, glUniformBuffer* ubo);
 
