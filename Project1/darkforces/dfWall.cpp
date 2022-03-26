@@ -5,7 +5,10 @@
 const dfWallFlag flag1Implemented = (dfWallFlag)((int)dfWallFlag::MORPHS_WITH_ELEV | (int)dfWallFlag::FLIP_TEXTURE_HORIZONTALLY);
 const int flag3Implemented = 65536;
 
+static uint32_t g_ids = 1;
+
 dfWall::dfWall(int left, int right, int adjoint, int mirror, dfWallFlag flag1, dfWallFlag flag3) :
+	m_id(g_ids++),
 	m_left(left),
 	m_right(right),
 	m_adjoint(adjoint),
@@ -19,8 +22,4 @@ dfWall::dfWall(int left, int right, int adjoint, int mirror, dfWallFlag flag1, d
 	if (m_flag3 != dfWallFlag::ALL && (int(m_flag3) & int(flag1Implemented)) == 0) {
 		std::cerr << "dfWall::dfWall flag3 = " << (int)m_flag3 << " not implemented" << std::endl;
 	}
-}
-
-dfWall::~dfWall()
-{
 }

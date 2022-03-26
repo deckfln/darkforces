@@ -157,7 +157,7 @@ dfSector::dfSector(std::istringstream& infile, std::vector<dfSector*>& sectorsID
 			wall->m_tex[DFWALL_TEXTURE_MID] = mid;
 			wall->m_tex[DFWALL_TEXTURE_TOP] = top;
 			wall->m_tex[DFWALL_TEXTURE_SIGN] = sign;
-			wall->m_id = currentWall;
+			wall->m_index = currentWall;
 
 			if (adjoint >= 0) {
 				m_portals.push_back(adjoint);
@@ -505,8 +505,8 @@ void dfSector::linkWalls(void)
 		m_verticeConnexions[wall->m_left].m_rightVertice = wall->m_right;
 		m_verticeConnexions[wall->m_right].m_leftVertice = wall->m_left;
 
-		m_verticeConnexions[wall->m_left].m_leftWall = wall->m_id;
-		m_verticeConnexions[wall->m_right].m_rightWall = wall->m_id;
+		m_verticeConnexions[wall->m_left].m_leftWall = wall->m_index;
+		m_verticeConnexions[wall->m_right].m_rightWall = wall->m_index;
 
 		wall->sector(this);
 	}
@@ -804,7 +804,7 @@ dfLogicTrigger* dfSector::addSign(dfMesh *mesh, dfWall* wall, float z, float z1,
 {
 	// record the sign on the wall
 	dfSector* s = wall->sector();
-	std::string name = s->m_name + "(" + std::to_string(wall->m_id) + ")";
+	std::string name = s->m_name + "(" + std::to_string(wall->m_index) + ")";
 
 	dfLogicTrigger* trigger = (dfLogicTrigger*)g_gaWorld.getEntity(name);
 	if (trigger) {

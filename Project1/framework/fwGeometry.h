@@ -51,7 +51,10 @@ public:
 	int verticesToDisplay(void);
 	void verticesToDisplay(int nb);
 
-	void dirty(void) { m_dirty = true; };				// request all attributes to the uploaded to the GPU
+	inline void dirty(void) { m_dirty = true; };				// request all attributes to the uploaded to the GPU
+	inline void dirty(const std::string& attribute) {			// request attribute to the uploaded to the GPU
+		m_attributes[attribute]->dirty(); 
+	};				
 	void updateIfDirty(void);							// check if something need to be uploaded to the GPU
 	bool resizedAttribute(void);						// check if at least 1 attribute was resized, reset the flag on exit
 

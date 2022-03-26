@@ -29,7 +29,7 @@ void DarkForces::Component::AutoMap::set(dfLevel* level)
 		layers[sector->layer()].push_back(sector);
 	}
 
-	std::map<uint32_t, std::map<uint32_t, bool>> portalRender;
+	std::map<uint32_t, std::map<uint32_t, int32_t>> portalRender;
 
 	// allocate a 2D buffer to hold walls for each layer
 	for (auto& layer : layers) {
@@ -40,38 +40,35 @@ void DarkForces::Component::AutoMap::set(dfLevel* level)
 
 				// check if the wall was rendered from a mirrored portal
 				if (wall->m_adjoint >= 0) {
-					if (portalRender[wall->m_adjoint][wall->m_mirror] == true) {
+					if (portalRender[wall->m_adjoint][wall->m_mirror] > 0) {
+						wall->automap(portalRender[wall->m_adjoint][wall->m_mirror]);
 						continue;
 					}
 				}
 
 				// add new portals
-				portalRender[sector->m_id][wall->m_id] = true;
+				portalRender[sector->m_id][wall->m_index] = m_verticesPerLayer[layer.first].m_walls.size();
+				wall->automap(portalRender[sector->m_id][wall->m_index]);
+
+				// register the wall index
+				m_wallsIndex[wall->id()] = m_verticesPerLayer[layer.first].m_walls.size();
 
 				const glm::vec2& left = sector->m_vertices[wall->m_left];
 				const glm::vec2& right = sector->m_vertices[wall->m_right];
 
-				glm::vec3 color;
-				int32_t  colorIndex = 0;
+				int32_t  colorIndex = 1 | 128;	// default color
 
 				if (sector->flag() & dfSectorFlag::ELEVATOR) {
-					color = glm::vec3(1.0, 1.0, 0.0);
-					colorIndex = 3;
+					colorIndex = 3 | 128;
 				}
 				else if (wall->m_adjoint >= 0) {
 
 					if (wall->m_pAdjoint->flag() & dfSectorFlag::ELEVATOR) {
-						color = glm::vec3(1.0, 1.0, 0.0);
-						colorIndex = 3;
+						colorIndex = 3 | 128;
 					}
 					else {
-						color = glm::vec3(0.0, 0.4, 0.0);
-						colorIndex = 2;
+						colorIndex = 2 | 128;
 					}
-				}
-				else {
-					color = glm::vec3(0.0, 1.0, 0.0);
-					colorIndex = 1;
 				}
 
 				m_verticesPerLayer[layer.first].m_vertices.push_back(left);
@@ -132,6 +129,22 @@ void DarkForces::Component::AutoMap::set(dfLevel* level)
 	m_vertexArray->unbind();
 }
 
+/**
+ * display a sector when the player enters
+ */
+void DarkForces::Component::AutoMap::onEnterSector(gaMessage* message)
+{
+	dfSector* sector = dynamic_cast<dfSector*>(message->m_pServer);
+
+	uint32_t index;
+	for (auto wall : sector->m_walls) {
+		index = wall->automap();
+		m_verticesPerLayer[1].m_walls[index] &= ~128;
+		m_verticesPerLayer[1].m_walls[index + 1] &= ~128;
+
+		m_geometry->dirty("aWall");
+	}
+}
 
 /**
  * create empty
@@ -163,4 +176,20 @@ void DarkForces::Component::AutoMap::draw(fwFlatPanel* panel)
 
 	m_material->set_uniforms(m_program);
 	m_geometry->draw(GL_LINES, m_vertexArray);
+}
+
+/**
+ *
+ */
+void DarkForces::Component::AutoMap::dispatchMessage(gaMessage* message)
+{
+	switch (message->m_action) {
+	case DarkForces::Message::EVENT:
+		switch (message->m_value) {
+		case DarkForces::MessageEvent::ENTER_SECTOR:
+			onEnterSector(message);
+			break;
+		}
+		break;
+	}
 }

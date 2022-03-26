@@ -227,9 +227,11 @@ void DarkForces::Component::Actor::dispatchMessage(gaMessage* message)
 			if (current != m_currentSector) {
 				if (m_currentSector != nullptr) {
 					m_entity->sendMessage(m_currentSector->name(), DarkForces::Message::EVENT, DarkForces::MessageEvent::LEAVE_SECTOR);
+					m_currentSector->sendMessage(m_entity->name(), DarkForces::Message::EVENT, DarkForces::MessageEvent::LEAVE_SECTOR);
 
 					if (current != nullptr) {
 						m_entity->sendMessage(current->name(), DarkForces::Message::EVENT, DarkForces::MessageEvent::ENTER_SECTOR);
+						current->sendMessage(m_entity->name(), DarkForces::Message::EVENT, DarkForces::MessageEvent::ENTER_SECTOR);
 					}
 				}
 				m_currentSector = current;

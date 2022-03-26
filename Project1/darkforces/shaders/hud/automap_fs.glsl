@@ -1,8 +1,20 @@
 #version 330 core
-in vec4 vColor;
+flat in int vColor;
 out vec4 FragColor;
 
 void main()
 {    
-	FragColor = vColor;
+    switch (vColor) {
+    case 1:
+        FragColor  = vec4(0, 1, 0, 1);
+        break;
+    case 2:
+        FragColor  = vec4(0, 0.4, 0, 1);
+        break;
+    case 3:
+        FragColor  = vec4(1, 1, 0, 1);
+        break;
+    default:
+        discard;
+    }
 }

@@ -42,9 +42,11 @@ class dfWall
 {
 private:
 	dfSector* m_sector = nullptr;
+	uint32_t m_id = 0;					// absolute ID of the wall in the game
+	uint32_t m_automapIndex = 0;		// index of the wall in the automap
 
 public:
-	int m_id = 0;
+	uint32_t m_index = 0;				// index of the wall in the sector
 
 	int m_left = -1;				// index of the left vertice (in the sector vertices)
 	int m_right = -1;
@@ -59,8 +61,12 @@ public:
 	glm::vec3 m_tex[4];
 
 	dfWall(int left, int right, int ajdoint, int mirror, dfWallFlag flag1, dfWallFlag flag3);
-	bool flag1(dfWallFlag flag) { return (int)m_flag1 & (int)flag; };
-	void sector(dfSector* parent) { m_sector = parent; };
-	dfSector* sector(void) { return m_sector; };
-	~dfWall();
+
+	// getter/setter
+	inline bool flag1(dfWallFlag flag) { return (int)m_flag1 & (int)flag; };
+	inline void sector(dfSector* parent) { m_sector = parent; };
+	inline uint32_t id(void) { return m_id; };
+	inline dfSector* sector(void) { return m_sector; };
+	inline uint32_t automap(void) { return m_automapIndex; };
+	inline void automap(uint32_t i) { m_automapIndex = i; };
 };

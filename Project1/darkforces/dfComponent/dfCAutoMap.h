@@ -13,6 +13,7 @@ class fwGeometry;
 class glProgram;
 class glVertexArray;
 class fwMaterial;
+class dfWall;
 
 namespace DarkForces {
 	namespace Component {
@@ -25,6 +26,8 @@ namespace DarkForces {
 			};
 			dfLevel* m_level = nullptr;
 			std::map<uint32_t, Layer> m_verticesPerLayer;
+			std::map<uint32_t, size_t> m_wallsIndex;// offset of the wall in the aWall attribute
+
 			fwUniform m_uniPosition;
 			glm::vec2 m_playerPosition;				// position of the center to act as center of the map
 
@@ -33,6 +36,8 @@ namespace DarkForces {
 			glProgram* m_program = nullptr;
 			fwGeometry* m_geometry = nullptr;
 			glVertexArray* m_vertexArray = nullptr;
+
+			void onEnterSector(gaMessage* message);	// display a sector when the player enters
 #endif
 
 		public:
@@ -40,6 +45,7 @@ namespace DarkForces {
 			AutoMap(dfLevel* level);
 			void set(dfLevel* level);
 			void draw(fwFlatPanel* panel) override;	// dedicated draw function
+			void dispatchMessage(gaMessage* message) override;
 		};
 	}
 }
