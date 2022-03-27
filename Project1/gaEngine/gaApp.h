@@ -40,7 +40,7 @@ namespace GameEngine {
 	public:
 		App(const std::string& name, int width, int height, const std::string& post_processing, const std::string& defines);
 		glTexture* draw(time_t delta, fwRenderer* renderer) override;
-		void resize(int x, int y);
+		void resize(int x, int y) override;
 
 		static void pushControl(fwControl* newControler);
 		static fwControl* popControl(void);

@@ -190,6 +190,8 @@ namespace GameEngine {
 		static void pushState(void);							// save the state of the messages queue
 		static void popState(void);								// restore the state of the messages queue
 		static void add(gaEntity*);								// add an entity to the world
+		static gaMessage* send(const std::string& from, const std::string& to, int action, int value, void* extra=nullptr);	// send message an the queue
+		static gaMessage* send(const std::string& from, const std::string& to, int action, float value, void* extra=nullptr);
 
 #ifdef _DEBUG
 		// debugger

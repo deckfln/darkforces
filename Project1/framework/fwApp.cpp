@@ -86,8 +86,8 @@ static void rootfolder(void)
  *
  */
 fwApp::fwApp(std::string name, int _width, int _height, std::string post_processing, std::string defines):
-	height(_height),
-	width(_width)
+	m_height(_height),
+	m_width(_width)
 {
 	// set the root app folder
 	rootfolder();
@@ -105,7 +105,7 @@ fwApp::fwApp(std::string name, int _width, int _height, std::string post_process
 
 	// glfw window creation
 	// --------------------
-	window = glfwCreateWindow(width, height, name.c_str() , NULL, NULL);
+	window = glfwCreateWindow(m_width, m_height, name.c_str() , NULL, NULL);
 	if (window == NULL)
 	{
 		std::cout << "Failed to create GLFW window" << std::endl;
@@ -187,17 +187,17 @@ void fwApp::processInput(void)
 
 void fwApp::resizeEvent(int _width, int _height)
 {
-	width = _width;
-	height = _height;
+	m_width = _width;
+	m_height = _height;
 
 	glm::vec2 cm = m_renderer->size();
 	m_pixelsize.x = 1.0f / cm.x;
 	m_pixelsize.y = 1.0f / cm.y;
 
-	SCR_WIDTH = width;
-	SCR_HEIGHT = height;
-	resize(width, height);
-	glViewport(0, 0, width, height);
+	SCR_WIDTH = m_width;
+	SCR_HEIGHT = m_height;
+	resize(m_width, m_height);
+	glViewport(0, 0, m_width, m_height);
 }
 
 void fwApp::mouseButton(int button, int action)
@@ -208,8 +208,8 @@ void fwApp::mouseButton(int button, int action)
 
 void fwApp::mouseMove(double xpos, double ypos)
 {
-	double x = xpos / width;
-	double y = ypos / height;
+	double x = xpos / m_width;
+	double y = ypos / m_height;
 
 	if (m_control)
 		m_control->mouseMove(x, y);

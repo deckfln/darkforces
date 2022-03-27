@@ -82,8 +82,9 @@ public:
 		HEAR_SOUND,		// inform a sound is heard
 		HEAR_STOP,		// actualy not
 		VOLUME_TRANSPARENCY, // change the sound transparency of a volume
-		ADD_ITEM,			// add item to the entity inventory
-		DROP_ITEM			// entity shall drop an item
+		ADD_ITEM,		// add item to the entity inventory
+		DROP_ITEM,		// entity shall drop an item
+		SCREEN_RESIZE	// provide the screen ration after a resize
 	};
 
 	// flags stored in messages

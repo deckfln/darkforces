@@ -187,11 +187,15 @@ glTexture* GameEngine::App::draw(time_t delta, fwRenderer* renderer)
 }
 
 /**
- *
+ * screen resize event
  */
 void GameEngine::App::resize(int width, int height)
 {
 	m_camera->set_ratio(width, height);
+	float ratio = (float)width / (float)height;
+
+	// inform all entities of the new screen ration
+	GameEngine::World::send("GameEngine:Core", "*", gaMessage::Action::SCREEN_RESIZE, ratio);
 }
 
 /**

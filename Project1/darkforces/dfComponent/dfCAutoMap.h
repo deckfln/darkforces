@@ -29,7 +29,9 @@ namespace DarkForces {
 			std::map<uint32_t, size_t> m_wallsIndex;// offset of the wall in the aWall attribute
 
 			fwUniform m_uniPosition;
+			fwUniform m_uniRatio;
 			glm::vec2 m_playerPosition;				// position of the center to act as center of the map
+			float m_ratio = 1.0f;					// screen ratio
 
 #ifdef _DEBUG
 			fwMaterial* m_material = nullptr;
@@ -37,8 +39,9 @@ namespace DarkForces {
 			fwGeometry* m_geometry = nullptr;
 			glVertexArray* m_vertexArray = nullptr;
 
-			void onEnterSector(gaMessage* message);	// display a sector when the player enters
 #endif
+			void onEnterSector(gaMessage* message);	// display a sector when the player enters
+			void onScreenResize(gaMessage* message);// set the new screen ratio
 
 		public:
 			AutoMap(void);

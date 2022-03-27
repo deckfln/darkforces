@@ -286,6 +286,23 @@ gaMessage* GameEngine::World::sendMessage(gaMessage* msg)
 	return msg;
 }
 
+//---------------------------------------------------------------
+
+/**
+ *
+ */
+gaMessage* GameEngine::World::send(const std::string& from, const std::string& to, int action, int value, void* extra)
+{
+	return g_gaWorld.sendMessage(from, to, action, value, extra);
+}
+
+gaMessage* GameEngine::World::send(const std::string& from, const std::string& to, int action, float fvalue, void* extra)
+{
+	return g_gaWorld.sendMessage(from, to, action, fvalue, extra);
+}
+
+//---------------------------------------------------------------
+
 /**
  * send a message for immediate action
  */
@@ -740,6 +757,23 @@ void World::process(time_t delta, bool force, bool debug)
 			case gaMessage::SAVE_WORLD:
 				g_Blackbox.saveStates();
 				break;
+			}
+		}
+		else if (message->m_client == "*") {
+			// send a message to ALL entities
+			message->m_delta = delta;
+			message->m_time = t;
+			message->m_frame = m_frame;
+
+			if (m_entities.count(message->m_server) > 0) {
+				message->m_pServer = m_entities[message->m_server].front();
+			}
+
+			for (auto& list : m_entities) {
+				for (auto entity : list.second) {
+					// some entities go full ghost
+					entity->dispatchMessage(message);
+				}
 			}
 		}
 		else if (m_entities.count(message->m_client) > 0) {

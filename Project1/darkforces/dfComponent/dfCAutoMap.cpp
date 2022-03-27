@@ -100,7 +100,10 @@ void DarkForces::Component::AutoMap::set(dfLevel* level)
 
 	m_material = new fwMaterial(g_subShaders);
 	m_uniPosition.set("player", &m_playerPosition);
+	m_uniRatio.set("ratio", &m_ratio);
+
 	m_material->addUniform(&m_uniPosition);
+	m_material->addUniform(&m_uniRatio);
 
 	std::string vs = m_material->load_shader(FORWARD_RENDER, VERTEX_SHADER, "");
 	std::string fs = m_material->load_shader(FORWARD_RENDER, FRAGMENT_SHADER, "");
@@ -129,6 +132,8 @@ void DarkForces::Component::AutoMap::set(dfLevel* level)
 	m_vertexArray->unbind();
 }
 
+//-------------------------------------------------------
+
 /**
  * display a sector when the player enters
  */
@@ -145,6 +150,16 @@ void DarkForces::Component::AutoMap::onEnterSector(gaMessage* message)
 		m_geometry->dirty("aWall");
 	}
 }
+
+/**
+ * set the new screen ratio
+ */
+void DarkForces::Component::AutoMap::onScreenResize(gaMessage* message)
+{
+	m_ratio = message->m_fvalue;
+}
+
+//-------------------------------------------------------
 
 /**
  * create empty
@@ -190,6 +205,10 @@ void DarkForces::Component::AutoMap::dispatchMessage(gaMessage* message)
 			onEnterSector(message);
 			break;
 		}
+		break;
+
+	case gaMessage::Action::SCREEN_RESIZE:
+		onScreenResize(message);
 		break;
 	}
 }

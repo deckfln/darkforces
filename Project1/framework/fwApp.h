@@ -20,8 +20,8 @@ protected:
 
 	Framework::Debug* m_debugger = nullptr;
 
-	int height = 0;
-	int width = 0;
+	int m_height = 0;
+	int m_width = 0;
 	glm::vec2 m_pixelsize = glm::vec2(0);
 	GLFWwindow* window = nullptr;
 	fwPostProcessing *postProcessing = nullptr;
