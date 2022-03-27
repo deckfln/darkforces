@@ -351,6 +351,14 @@ void DarkForces::Player::onShowPDA(gaMessage* message)
 }
 
 /**
+ * display/hide the automap
+ */
+void DarkForces::Player::onShowAutomap(gaMessage* message)
+{
+	sendMessage(DarkForces::Message::AUTOMAP);
+}
+
+/**
  * when a goal is complete
  */
 void DarkForces::Player::onCompleteGoal(gaMessage* message)
@@ -389,6 +397,10 @@ void DarkForces::Player::dispatchMessage(gaMessage* message)
 
 		case GLFW_KEY_F5:
 			onTogleHeadlight(message);
+			break;
+
+		case GLFW_KEY_TAB:
+			onShowAutomap(message);
 			break;
 
 		default:

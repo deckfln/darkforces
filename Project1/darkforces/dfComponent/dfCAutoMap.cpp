@@ -159,6 +159,14 @@ void DarkForces::Component::AutoMap::onScreenResize(gaMessage* message)
 	m_ratio = message->m_fvalue;
 }
 
+/**
+ * hide/display the automap
+ */
+void DarkForces::Component::AutoMap::onShowAutomap(gaMessage* message)
+{
+	m_visible = !m_visible;
+}
+
 //-------------------------------------------------------
 
 /**
@@ -168,6 +176,7 @@ DarkForces::Component::AutoMap::AutoMap(void):
 	gaComponent(DF_COMPONENT_AUTOMAP),
 	fwHUDelement("DarkForces:automap")
 {
+	m_visible = false;	// hidden at start
 }
 
 /**
@@ -178,6 +187,7 @@ DarkForces::Component::AutoMap::AutoMap(dfLevel* level) :
 	fwHUDelement("DarkForces:automap")
 {
 	set(level);
+	m_visible = false;	// hidden at start
 }
 
 /**
@@ -185,12 +195,15 @@ DarkForces::Component::AutoMap::AutoMap(dfLevel* level) :
  */
 void DarkForces::Component::AutoMap::draw(fwFlatPanel* panel)
 {
-	m_program->run();
 	m_playerPosition.x = m_entity->position().x;
 	m_playerPosition.y = m_entity->position().z;
 
-	m_material->set_uniforms(m_program);
-	m_geometry->draw(GL_LINES, m_vertexArray);
+	if (m_visible) {
+		m_program->run();
+
+		m_material->set_uniforms(m_program);
+		m_geometry->draw(GL_LINES, m_vertexArray);
+	}
 }
 
 /**
@@ -209,6 +222,10 @@ void DarkForces::Component::AutoMap::dispatchMessage(gaMessage* message)
 
 	case gaMessage::Action::SCREEN_RESIZE:
 		onScreenResize(message);
+		break;
+
+	case DarkForces::Message::AUTOMAP:
+		onShowAutomap(message);
 		break;
 	}
 }

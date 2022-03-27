@@ -46,7 +46,8 @@ namespace DarkForces {
 		PDA_ZOOM_DOWN,
 		PDA_ZOOM_UP,
 		PDA_FLOOR_UP,
-		PDA_FLOOR_DOWN
+		PDA_FLOOR_DOWN,
+		AUTOMAP				// display/hide the automap
 	};
 
 	enum MessageEvent {

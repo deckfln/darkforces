@@ -60,6 +60,7 @@ namespace DarkForces {
 		void onLife(gaMessage* message);		// display live status
 		void onAddItem(gaMessage* message);		// add item on the PDA
 		void onShowPDA(gaMessage* message);		// display the PDA
+		void onShowAutomap(gaMessage* message);	// display/hide the automap
 		void onCompleteGoal(gaMessage* message);// when a goal is complete
 
 	public:

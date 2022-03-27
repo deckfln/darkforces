@@ -42,6 +42,7 @@ namespace DarkForces {
 #endif
 			void onEnterSector(gaMessage* message);	// display a sector when the player enters
 			void onScreenResize(gaMessage* message);// set the new screen ratio
+			void onShowAutomap(gaMessage* message);	// hide/display the automap
 
 		public:
 			AutoMap(void);

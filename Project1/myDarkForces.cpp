@@ -218,6 +218,7 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 		{GLFW_KEY_F5, GameEngine::Component::Controller::KeyInfo::Msg::onPressDown},	// headlight
 		{GLFW_KEY_1, GameEngine::Component::Controller::KeyInfo::Msg::onPressDown},
 		{GLFW_KEY_2, GameEngine::Component::Controller::KeyInfo::Msg::onPressDown},
+		{GLFW_KEY_TAB, GameEngine::Component::Controller::KeyInfo::Msg::onPressDown},	// automap
 	};
 
 	// add a controller to the player
