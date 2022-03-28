@@ -118,7 +118,7 @@ void fwUniform::set(const std::string& _name, GLint* id)
 {
 	m_name = _name;
 	m_data = id;
-	m_type = GL_SAMPLER_2D;
+	m_type = GL_INT;
 }
 
 void fwUniform::set(const std::string& _name, GLfloat* f)
@@ -200,6 +200,9 @@ void fwUniform::set_uniform(glProgram *program)
 	case GL_FLOAT:
 		program->set_uniform(m_name, *(GLfloat *)m_data);
 		break;
+	case GL_INT:
+		program->set_uniform(m_name, *(GLint*)m_data);
+		break;
 	case GL_FLOAT_VEC4:
 		// TODO : for single vec4 it should be size 1
 		if (m_size == 0) {
@@ -228,8 +231,4 @@ void fwUniform::set_uniform(glProgram *program)
 		((glUniformBuffer *)m_data)->bind(program, m_name);
 		break;
 	}
-}
-
-fwUniform::~fwUniform()
-{
 }

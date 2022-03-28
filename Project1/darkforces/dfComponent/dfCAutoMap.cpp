@@ -23,63 +23,55 @@ void DarkForces::Component::AutoMap::set(dfLevel* level)
 	// parse all sectors and sort them by layer
 	std::vector<dfSector*>& sectorsID = m_level->sectorsID();
 
-	std::map<uint32_t, std::vector<dfSector*>> layers;
-
-	for (auto sector : sectorsID) {
-		layers[sector->layer()].push_back(sector);
-	}
-
 	std::map<uint32_t, std::map<uint32_t, int32_t>> portalRender;
 
-	// allocate a 2D buffer to hold walls for each layer
-	for (auto& layer : layers) {
-		uint32_t nbVertices = 0;
-		for (auto sector : layer.second) {
+	for (auto sector : sectorsID) {
 
-			for (auto wall : sector->m_walls) {
+		for (auto wall : sector->m_walls) {
 
-				// check if the wall was rendered from a mirrored portal
-				if (wall->m_adjoint >= 0) {
-					if (portalRender[wall->m_adjoint][wall->m_mirror] > 0) {
-						wall->automap(portalRender[wall->m_adjoint][wall->m_mirror]);
-						continue;
-					}
+			// check if the wall was rendered from a mirrored portal
+			if (wall->m_adjoint >= 0 && sector->layer() == wall->m_pAdjoint->layer()) {
+				if (portalRender[wall->m_adjoint][wall->m_mirror] > 0) {
+					wall->automap(portalRender[wall->m_adjoint][wall->m_mirror]);
+					continue;
 				}
-
-				// add new portals
-				portalRender[sector->m_id][wall->m_index] = m_verticesPerLayer[layer.first].m_walls.size();
-				wall->automap(portalRender[sector->m_id][wall->m_index]);
-
-				// register the wall index
-				m_wallsIndex[wall->id()] = m_verticesPerLayer[layer.first].m_walls.size();
-
-				const glm::vec2& left = sector->m_vertices[wall->m_left];
-				const glm::vec2& right = sector->m_vertices[wall->m_right];
-
-				int32_t  colorIndex = 1 | 128;	// default color
-
-				if (sector->flag() & dfSectorFlag::ELEVATOR) {
-					colorIndex = 3 | 128;
-				}
-				else if (wall->m_adjoint >= 0) {
-
-					if (wall->m_pAdjoint->flag() & dfSectorFlag::ELEVATOR) {
-						colorIndex = 3 | 128;
-					}
-					else {
-						colorIndex = 2 | 128;
-					}
-				}
-
-				m_verticesPerLayer[layer.first].m_vertices.push_back(left);
-				m_verticesPerLayer[layer.first].m_vertices.push_back(right);
-
-				m_verticesPerLayer[layer.first].m_walls.push_back(colorIndex);
-				m_verticesPerLayer[layer.first].m_walls.push_back(colorIndex);
 			}
 
-			m_verticesPerLayer[layer.first].m_nbVertices = nbVertices;				// start empty
+			// add new portals
+			portalRender[sector->m_id][wall->m_index] = m_walls.size();
+			wall->automap(portalRender[sector->m_id][wall->m_index]);
+
+			// register the wall index
+			m_wallsIndex[wall->id()] = m_walls.size();
+
+			const glm::vec2& left = sector->m_vertices[wall->m_left];
+			const glm::vec2& right = sector->m_vertices[wall->m_right];
+
+			int32_t  colorIndex = 1 | (1 << 8);	// default color
+
+			if (sector->flag() & dfSectorFlag::ELEVATOR) {
+				colorIndex = 3 | (1 << 8);
+			}
+			else if (wall->m_adjoint >= 0) {
+
+				if (wall->m_pAdjoint->flag() & dfSectorFlag::ELEVATOR) {
+					colorIndex = 3 | (1 << 8);
+				}
+				else {
+					colorIndex = 2 | (1 << 8);
+				}
+			}
+
+			// record the layer in the wall information
+			colorIndex |= (sector->layer() << 16);
+
+			m_vertices.push_back(left);
+			m_vertices.push_back(right);
+
+			m_walls.push_back(colorIndex);
+			m_walls.push_back(colorIndex);
 		}
+
 	}
 
 	static std::map<ShaderType, std::string> g_subShaders = {
@@ -101,9 +93,11 @@ void DarkForces::Component::AutoMap::set(dfLevel* level)
 	m_material = new fwMaterial(g_subShaders);
 	m_uniPosition.set("player", &m_playerPosition);
 	m_uniRatio.set("ratio", &m_ratio);
+	m_uniLayer.set("playerLayer", &m_layer);
 
 	m_material->addUniform(&m_uniPosition);
 	m_material->addUniform(&m_uniRatio);
+	m_material->addUniform(&m_uniLayer);
 
 	std::string vs = m_material->load_shader(FORWARD_RENDER, VERTEX_SHADER, "");
 	std::string fs = m_material->load_shader(FORWARD_RENDER, FRAGMENT_SHADER, "");
@@ -113,17 +107,17 @@ void DarkForces::Component::AutoMap::set(dfLevel* level)
 
 	m_geometry = new fwGeometry();
 	m_geometry->addVertices("aPos",
-		&m_verticesPerLayer[1].m_vertices[0],
+		&m_vertices[0],
 		2,																// 2 float per point
-		sizeof(glm::vec2) * m_verticesPerLayer[1].m_vertices.size(),
+		sizeof(glm::vec2) * m_vertices.size(),
 		sizeof(float),
 		false);
 
 	m_geometry->addAttribute("aWall",
 		GL_ARRAY_BUFFER,
-		&m_verticesPerLayer[1].m_walls[0],
+		&m_walls[0],
 		1,																// 2 float per point
-		sizeof(int32_t) * m_verticesPerLayer[1].m_walls.size(),
+		sizeof(int32_t) * m_walls.size(),
 		sizeof(int32_t),
 		false);
 
@@ -141,11 +135,13 @@ void DarkForces::Component::AutoMap::onEnterSector(gaMessage* message)
 {
 	dfSector* sector = dynamic_cast<dfSector*>(message->m_pServer);
 
+	m_layer = sector->layer();
+
 	uint32_t index;
 	for (auto wall : sector->m_walls) {
 		index = wall->automap();
-		m_verticesPerLayer[1].m_walls[index] &= ~128;
-		m_verticesPerLayer[1].m_walls[index + 1] &= ~128;
+		m_walls[index] &= ~256;
+		m_walls[index + 1] &= ~256;
 
 		m_geometry->dirty("aWall");
 	}

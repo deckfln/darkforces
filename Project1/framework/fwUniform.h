@@ -49,6 +49,5 @@ public:
 	void set(const std::string& _name, glm::vec4* t, int size);
 	void set(const std::string& _name, glUniformBuffer* ubo);
 
-	const std::string& name(void) { return m_name; };
-	~fwUniform();
+	inline const std::string& name(void) { return m_name; };
 };

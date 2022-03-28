@@ -19,19 +19,19 @@ namespace DarkForces {
 	namespace Component {
 		class AutoMap : public gaComponent, public fwHUDelement
 		{
-			struct Layer {
-				uint32_t m_nbVertices;				// number of walls really stored in the buffer
-				std::vector<glm::vec2> m_vertices;	// list of walls : 2 vertices = 1 wall
-				std::vector<int32_t> m_walls;		// list of colors index for walls : 2 vertices = 1 wall
-			};
 			dfLevel* m_level = nullptr;
-			std::map<uint32_t, Layer> m_verticesPerLayer;
 			std::map<uint32_t, size_t> m_wallsIndex;// offset of the wall in the aWall attribute
+
+			std::vector<glm::vec2> m_vertices;	// list of walls : 2 vertices = 1 wall
+			std::vector<int32_t> m_walls;		// list of colors index for walls : 2 vertices = 1 wall
+
+			glm::vec2 m_playerPosition;				// position of the center to act as center of the map
+			float m_ratio = 1.0f;					// screen ratio
+			int32_t m_layer=1;						// layer of the player
 
 			fwUniform m_uniPosition;
 			fwUniform m_uniRatio;
-			glm::vec2 m_playerPosition;				// position of the center to act as center of the map
-			float m_ratio = 1.0f;					// screen ratio
+			fwUniform m_uniLayer;
 
 #ifdef _DEBUG
 			fwMaterial* m_material = nullptr;

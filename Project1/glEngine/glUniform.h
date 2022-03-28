@@ -36,5 +36,4 @@ public:
 	void set_value(const glm::vec2 &vec2);
 	void set_value(glm::mat4 *mat4, int size);
 	void set_value(glm::vec4 *vec4, int size);
-	~glUniform();
 };
