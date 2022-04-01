@@ -13,6 +13,7 @@
 #include "mesh/fwMeshSkinned.h"
 #include "fwParticles.h"
 #include "fwLight.h"
+#include "fwMesh2D.h"
 
 fwRenderer::fwRenderer()
 {
@@ -339,6 +340,91 @@ void fwRenderer::sortMeshes(std::list<fwMesh *>& meshes, const glm::vec3& camera
 		return a->sqDistance2boundingSphere(cameraPosition) < b->sqDistance2boundingSphere(cameraPosition);
 	});
 }
+
+//--------------------------------------------------------
+
+static std::map<uint32_t, std::map<uint32_t, glVertexArray*>> g_vaos;
+static std::map<fwMaterial*, std::map<Framework::Mesh2D*, uint32_t>> m_meshesByMaterial;
+static std::map<uint32_t, fwMaterial*> m_materials;
+static std::map<fwMaterial*, glProgram*> g_programs;
+
+/**
+ *
+ */
+static glVertexArray* getVAO(fwGeometry* geometry, glProgram* program)
+{
+	uint32_t geometryID = geometry->id();
+	uint32_t programID = program->id();
+
+	glVertexArray* vao = g_vaos[geometryID][programID];
+	if (vao == nullptr) {
+		vao = new glVertexArray();
+		geometry->enable_attributes(program);
+		vao->unbind();
+		g_vaos[geometryID][programID] = vao;
+	}
+
+	return vao;
+}
+
+/**
+ * draw 2D interface
+ */
+void fwRenderer::draw2D(fwScene* scene)
+{
+	static uint32_t m_frame = 0;
+
+	std::list<Framework::Mesh2D*>& meshes2D = scene->meshes2D();
+
+	// update the global list of mesh per material
+	for (auto mesh : meshes2D) {
+		fwMaterial* material = mesh->material();
+
+		m_meshesByMaterial[material][mesh] = m_frame;
+	}
+	m_frame++;
+
+	// remove missing meshes
+
+	static const char* s7 = "draw_meshes2d";
+	glPushDebugGroup(GL_DEBUG_SOURCE_APPLICATION, 0, GLsizei(strlen(s7)), s7);
+
+	// render meshed per materials
+	for (auto& materialMeshes : m_meshesByMaterial) {
+		fwMaterial* material = materialMeshes.first;
+
+		// compile the program if it is missing
+		glProgram* program = g_programs[materialMeshes.first];
+		if (program == nullptr) {
+			std::string vs = material->load_shader(FORWARD_RENDER, VERTEX_SHADER, "");
+			std::string fs = material->load_shader(FORWARD_RENDER, FRAGMENT_SHADER, "");
+			std::string gs = material->load_shader(FORWARD_RENDER, GEOMETRY_SHADER, "");
+
+			program = new glProgram(vs, fs, gs, "");
+
+			g_programs[materialMeshes.first] = program;
+		}
+
+		program->run();
+		material->set_uniforms(program);
+
+		// parse all meshes
+		for (auto& meshFrame : materialMeshes.second) {
+			Framework::Mesh2D* mesh = meshFrame.first;
+			if (mesh->visible()) {
+				fwGeometry* geometry = mesh->geometry();
+
+				// build the VAO if it is missing
+				glVertexArray* vao = getVAO(geometry, program);
+				mesh->draw(vao);
+			}
+		}
+	}
+
+	glPopDebugGroup();
+}
+
+//--------------------------------------------------------
 
 glm::vec2 fwRenderer::size(void)
 {

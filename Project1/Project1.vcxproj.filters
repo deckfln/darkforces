@@ -912,6 +912,9 @@
     <ClCompile Include="darkforces\dfComponent\dfCAutoMap.cpp">
       <Filter>Fichiers sources\Dark Forces\dfComponent</Filter>
     </ClCompile>
+    <ClCompile Include="framework\fwMesh2D.cpp">
+      <Filter>Fichiers sources\Framework</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="glad\glad.h">
@@ -1723,6 +1726,9 @@
     </ClInclude>
     <ClInclude Include="darkforces\dfComponent\dfCAutoMap.h">
       <Filter>Fichiers d%27en-tête\DarkForces\dfComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="framework\fwMesh2D.h">
+      <Filter>Fichiers d%27en-tête\Framework</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

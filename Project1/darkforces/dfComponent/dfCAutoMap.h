@@ -4,7 +4,7 @@
 #include <map>
 #include <glm/vec2.hpp>
 
-#include "../../framework/fwHUDelement.h"
+#include "../../framework/fwMesh2D.h"
 #include "../../framework/fwUniform.h"
 #include "../../gaEngine/gaComponent.h"
 
@@ -17,7 +17,7 @@ class dfWall;
 
 namespace DarkForces {
 	namespace Component {
-		class AutoMap : public gaComponent, public fwHUDelement
+		class AutoMap : public gaComponent, public Framework::Mesh2D
 		{
 			dfLevel* m_level = nullptr;
 			std::map<uint32_t, size_t> m_wallsIndex;// offset of the wall in the aWall attribute
@@ -33,13 +33,6 @@ namespace DarkForces {
 			fwUniform m_uniRatio;
 			fwUniform m_uniLayer;
 
-#ifdef _DEBUG
-			fwMaterial* m_material = nullptr;
-			glProgram* m_program = nullptr;
-			fwGeometry* m_geometry = nullptr;
-			glVertexArray* m_vertexArray = nullptr;
-
-#endif
 			void onEnterSector(gaMessage* message);	// display a sector when the player enters
 			void onScreenResize(gaMessage* message);// set the new screen ratio
 			void onShowAutomap(gaMessage* message);	// hide/display the automap
@@ -48,7 +41,7 @@ namespace DarkForces {
 			AutoMap(void);
 			AutoMap(dfLevel* level);
 			void set(dfLevel* level);
-			void draw(fwFlatPanel* panel) override;	// dedicated draw function
+			void draw(glVertexArray*) override;		// dedicated draw function
 			void dispatchMessage(gaMessage* message) override;
 		};
 	}

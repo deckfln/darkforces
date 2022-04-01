@@ -291,7 +291,7 @@ fwMesh::~fwMesh()
 	if (m_material && m_material->dereference())
 		delete m_material;
 
-	for (auto vo : m_vao) {
+	for (auto& vo : m_vao) {
 		delete vo.second;
 	}
 }

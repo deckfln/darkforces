@@ -88,3 +88,11 @@ void fwScene::debugGUI(void)
 fwScene::~fwScene()
 {
 }
+
+/**
+ * add a 2D element
+ */
+void fwScene::addMesh2D(Framework::Mesh2D* mesh)
+{
+	m_meshes2D.push_back(mesh);
+}

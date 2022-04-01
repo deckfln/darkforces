@@ -126,21 +126,21 @@ glProgram::glProgram(const std::string& vertexShader,
 		geometry = new glShader(geometryShader, defines, GL_GEOMETRY_SHADER);
 	}
 	// link shaders
-	id = glCreateProgram();
+	m_id = glCreateProgram();
 
-	glAttachShader(id, vertex->id);
-	glAttachShader(id, fragment->id);
+	glAttachShader(m_id, vertex->id);
+	glAttachShader(m_id, fragment->id);
 	if (geometry) {
-		glAttachShader(id, geometry->id);
+		glAttachShader(m_id, geometry->id);
 	}
-	glLinkProgram(id);
+	glLinkProgram(m_id);
 
 	// check for linking errors
 	int success;
 	char infoLog[512];
-	glGetProgramiv(id, GL_LINK_STATUS, &success);
+	glGetProgramiv(m_id, GL_LINK_STATUS, &success);
 	if (!success) {
-		glGetProgramInfoLog(id, 512, NULL, infoLog);
+		glGetProgramInfoLog(m_id, 512, NULL, infoLog);
 		std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << infoLog << std::endl;
 		exit(-1);
 	}
@@ -153,32 +153,32 @@ glProgram::glProgram(const std::string& vertexShader,
 	GLenum type;
 	GLint location;
 
-	glGetProgramiv(id, GL_ACTIVE_ATTRIBUTES, &n);
+	glGetProgramiv(m_id, GL_ACTIVE_ATTRIBUTES, &n);
 	for (int i = 0; i < n; i++) {
-		glGetActiveAttrib(id, i, sizeof(name), &length, &size, &type, name);
-		location = glGetAttribLocation(id, name);
+		glGetActiveAttrib(m_id, i, sizeof(name), &length, &size, &type, name);
+		location = glGetAttribLocation(m_id, name);
 
 		glVertexAttribute *attr = new glVertexAttribute(name, length, size, type, location);
 		attributes[name] = attr;
 	}
 
 	// extract active uniforms
-	glGetProgramiv(id, GL_ACTIVE_UNIFORMS, &n);
+	glGetProgramiv(m_id, GL_ACTIVE_UNIFORMS, &n);
 	for (int i = 0; i < n; i++) {
-		glGetActiveUniform(id, i, sizeof(name), &length, &size, &type, name);
-		location = glGetUniformLocation(id, name);
+		glGetActiveUniform(m_id, i, sizeof(name), &length, &size, &type, name);
+		location = glGetUniformLocation(m_id, name);
 
 		glUniform *uniform = new glUniform(name, length, size, type, location);
 		uniforms[name] = uniform;
 	}
 
 	// extract active uniform blocks
-	glGetProgramInterfaceiv(id, GL_UNIFORM_BLOCK, GL_ACTIVE_RESOURCES, &m_nbUniformBlocks);
+	glGetProgramInterfaceiv(m_id, GL_UNIFORM_BLOCK, GL_ACTIVE_RESOURCES, &m_nbUniformBlocks);
 
 	for (auto i = 0; i < m_nbUniformBlocks; i++) {
-		glGetProgramResourceName(id, GL_UNIFORM_BLOCK, i, sizeof(name), &length, name);
+		glGetProgramResourceName(m_id, GL_UNIFORM_BLOCK, i, sizeof(name), &length, name);
 		if (m_uniformBlocks.count(name) == 0) {
-			m_uniformBlocks[name] = new glUniformBlock(name, id, i);
+			m_uniformBlocks[name] = new glUniformBlock(name, m_id, i);
 		}
 	}
 
@@ -191,12 +191,12 @@ glProgram::glProgram(const std::string& vertexShader,
 
 GLuint glProgram::getID(void)
 {
-	return id;
+	return m_id;
 }
 
 void glProgram::run(void)
 {
-	glUseProgram(id);
+	glUseProgram(m_id);
 }
 
 glVertexAttribute *glProgram::get_attribute(const std::string& name)
@@ -212,10 +212,10 @@ glVertexAttribute *glProgram::get_attribute(const std::string& name)
 bool glProgram::bindBufferAttribute(const std::string& name, int bindingPoint)
 {
 	if (uniformBufferBindingPoints.count(name) == 0) {
-		GLuint blockIndex = glGetUniformBlockIndex(id, name.c_str());
+		GLuint blockIndex = glGetUniformBlockIndex(m_id, name.c_str());
 
 		if (blockIndex >= 0) {
-			glUniformBlockBinding(id, blockIndex, bindingPoint);
+			glUniformBlockBinding(m_id, blockIndex, bindingPoint);
 		}
 
 		uniformBufferBindingPoints[name] = blockIndex;
@@ -319,7 +319,7 @@ void glProgram::set_uniform(const std::string& name, glTexture *texture)
 
 glProgram::~glProgram()
 {
-	glDeleteProgram(id);
+	glDeleteProgram(m_id);
 
 	for (auto attribute : attributes) {
 		delete attribute.second;

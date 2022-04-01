@@ -23,12 +23,13 @@ class glProgram
 	int m_nbUniformBlocks = 0;
 	std::map<std::string, glUniformBlock*> m_uniformBlocks;
 
-	GLuint id;
+	GLuint m_id;
 
 public:
 	glProgram(void);
 	glProgram(const std::string& vertexShader, const std::string& fragmentShader, const std::string& geometryShader, const std::string& defines);
 	GLuint getID(void);
+	inline uint32_t id(void) { return m_id; };
 	void run(void);
 	glVertexAttribute *get_attribute(const std::string& name);
 	glUniform *get_uniform(const std::string& name);

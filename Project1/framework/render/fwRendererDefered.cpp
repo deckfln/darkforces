@@ -414,6 +414,11 @@ glTexture *fwRendererDefered::draw(fwCamera* camera, fwScene* scene)
 		glPopDebugGroup();
 	}
 
+	/*
+	 * 4th pass: draw the flat UI's
+	 */
+	draw2D(scene);
+
 	return m_lightRendering->getColorTexture(0);
 }
 

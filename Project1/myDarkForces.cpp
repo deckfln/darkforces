@@ -249,8 +249,9 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 
 	// hud display
 	g_dfHUD = new DarkForces::HUD(m_level);
-	g_dfHUD->add(automap);							// add the automap on the HUD
 	m_scene->hud(g_dfHUD);
+
+	m_scene->addMesh2D(automap);							// add the automap on the HUD
 
 	// PDA GUI
 	m_scene->hud(g_pda->ui());

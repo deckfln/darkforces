@@ -5,8 +5,8 @@
 glVertexArray::glVertexArray()
 {
 	// bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
-	glGenVertexArrays(1, &id);
-	glBindVertexArray(id);
+	glGenVertexArrays(1, &m_id);
+	glBindVertexArray(m_id);
 
 	// remember: do NOT unbind the EBO while a VAO is active as the bound element buffer object IS stored in the VAO; keep the EBO bound.
 	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
@@ -21,7 +21,7 @@ glVertexArray::glVertexArray()
 
 void glVertexArray::bind(void)
 {
-	glBindVertexArray(id);
+	glBindVertexArray(m_id);
 }
 
 void glVertexArray::unbind(void)
@@ -35,7 +35,7 @@ void glVertexArray::unbind(void)
  */
 void glVertexArray::label(const char* s)
 {
-	glObjectLabel(GL_VERTEX_ARRAY, id, -1, s);
+	glObjectLabel(GL_VERTEX_ARRAY, m_id, -1, s);
 }
 
 void glVertexArray::draw(GLenum mode, bool indexed, int count)
@@ -52,5 +52,5 @@ void glVertexArray::draw(GLenum mode, bool indexed, int count)
 
 glVertexArray::~glVertexArray()
 {
-	glDeleteVertexArrays(1, &id);
+	glDeleteVertexArrays(1, &m_id);
 }

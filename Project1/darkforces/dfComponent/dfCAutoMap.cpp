@@ -99,12 +99,6 @@ void DarkForces::Component::AutoMap::set(dfLevel* level)
 	m_material->addUniform(&m_uniRatio);
 	m_material->addUniform(&m_uniLayer);
 
-	std::string vs = m_material->load_shader(FORWARD_RENDER, VERTEX_SHADER, "");
-	std::string fs = m_material->load_shader(FORWARD_RENDER, FRAGMENT_SHADER, "");
-	std::string gs = m_material->load_shader(FORWARD_RENDER, GEOMETRY_SHADER, "");
-
-	m_program = new glProgram(vs, fs, gs, "");
-
 	m_geometry = new fwGeometry();
 	m_geometry->addVertices("aPos",
 		&m_vertices[0],
@@ -120,10 +114,6 @@ void DarkForces::Component::AutoMap::set(dfLevel* level)
 		sizeof(int32_t) * m_walls.size(),
 		sizeof(int32_t),
 		false);
-
-	m_vertexArray = new glVertexArray();
-	m_geometry->enable_attributes(m_program);
-	m_vertexArray->unbind();
 }
 
 //-------------------------------------------------------
@@ -170,9 +160,10 @@ void DarkForces::Component::AutoMap::onShowAutomap(gaMessage* message)
  */
 DarkForces::Component::AutoMap::AutoMap(void):
 	gaComponent(DF_COMPONENT_AUTOMAP),
-	fwHUDelement("DarkForces:automap")
+	Framework::Mesh2D("DarkForces:automap")
 {
 	m_visible = false;	// hidden at start
+	m_rendering = GL_LINES;
 }
 
 /**
@@ -180,26 +171,22 @@ DarkForces::Component::AutoMap::AutoMap(void):
  */
 DarkForces::Component::AutoMap::AutoMap(dfLevel* level) :
 	gaComponent(DF_COMPONENT_AUTOMAP),
-	fwHUDelement("DarkForces:automap")
+	Framework::Mesh2D("DarkForces:automap")
 {
 	set(level);
 	m_visible = false;	// hidden at start
+	m_rendering = GL_LINES;
 }
 
 /**
  * dedicated draw function
  */
-void DarkForces::Component::AutoMap::draw(fwFlatPanel* panel)
+void DarkForces::Component::AutoMap::draw(glVertexArray* vao)
 {
 	m_playerPosition.x = m_entity->position().x;
 	m_playerPosition.y = m_entity->position().z;
 
-	if (m_visible) {
-		m_program->run();
-
-		m_material->set_uniforms(m_program);
-		m_geometry->draw(GL_LINES, m_vertexArray);
-	}
+	Framework::Mesh2D::draw(vao);
 }
 
 /**

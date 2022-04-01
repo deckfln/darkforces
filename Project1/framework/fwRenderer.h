@@ -60,10 +60,12 @@ protected:
 	);
 	static void sortMeshes(std::list<fwMesh*>& meshes, const glm::vec3& CameraPosition);
 
+	void draw2D(fwScene* scene);								// draw 2D interface
+
 public:
 	fwRenderer();
 
-	virtual glTexture* draw(fwCamera* camera, fwScene* scene) { return nullptr; };
+	virtual glTexture* draw(fwCamera* camera, fwScene* scene) = 0;
 	void start(void);
 	void stop(void);
 	glm::vec2 size(void);
