@@ -5,6 +5,7 @@
 #include "../framework/fwTexture.h"
 
 #include "../gaEngine/gaEntity.h"
+#include "../gaEngine/gaImage2D.h"
 
 #include "dfConfig.h"
 #include "dfBitmap.h"
@@ -20,30 +21,31 @@ namespace DarkForces {
 	class HUD : public fwHUD {
 		// hud display
 		dfBitmap* m_health_bmp = nullptr;	// health and shield
-		fwHUDelement* m_health = nullptr;
+		GameEngine::Image2D* m_health = nullptr;
 
 		dfBitmap* m_ammo_bmp = nullptr;		// ammo
-		fwHUDelement* m_ammo = nullptr;
+		GameEngine::Image2D* m_ammo = nullptr;
 
 		// weapon needs a dedicated panel
 		dfBitmap* m_weapon_bmp = nullptr;	// animated weapon
-		fwHUDelement* m_weapon = nullptr;
+		GameEngine::Image2D* m_weapon = nullptr;
 		glm::vec4 m_materialWeapon = glm::vec4(0);
-		fwUniform* m_uniWeapon = nullptr;
-		fwFlatPanel* m_panel = nullptr;
-		fwMaterial* m_panelMaterial = nullptr;
+		//fwUniform* m_uniWeapon = nullptr;
+		//fwFlatPanel* m_panel = nullptr;
+		fwMaterial* m_weaponMaterial = nullptr;
+		glm::vec4 m_weaponImage;
 
 		// default data for the HUD
 		glm::vec4 m_material = glm::vec4(0);
 		fwUniform* m_materialUniform = nullptr;
 
 		fwTexture m_text_bmp = fwTexture(320, 12, 4);
-		fwHUDelement* m_text = nullptr;		// text bar
+		GameEngine::Image2D* m_text = nullptr;		// text bar
 		gaEntity m_entText = gaEntity(DarkForces::ClassID::_HUD, "hud");
 		Component::HUDtext m_compText;
 
 	public:
-		HUD(GameEngine::Level*);
+		HUD(GameEngine::Level*, fwScene* scene);
 		void setWeapon(fwTexture* texture, float x, float y, float w, float h);	// change the weapon texture and X position (-1::1)
 		void setGoggle(bool onoff);
 		void setAmbient(float ambient);

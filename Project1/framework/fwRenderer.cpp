@@ -411,6 +411,8 @@ void fwRenderer::draw2D(fwScene* scene)
 		// parse all meshes
 		for (auto& meshFrame : materialMeshes.second) {
 			Framework::Mesh2D* mesh = meshFrame.first;
+
+			mesh->set_uniforms(program);
 			if (mesh->visible()) {
 				fwGeometry* geometry = mesh->geometry();
 

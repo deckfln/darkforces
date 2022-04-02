@@ -15,32 +15,47 @@ static std::map<ShaderType, std::string> g_subShaders = {
 	{FRAGMENT_SHADER, "darkforces/shaders/hud/hud_fs.glsl"}
 };
 
-DarkForces::HUD::HUD(GameEngine::Level* level) :
+DarkForces::HUD::HUD(GameEngine::Level* level, fwScene* scene) :
 	fwHUD("DarkForces::HUD", &g_subShaders)
 {
 	g_dfHUD = this;
 
-	m_material.r = 1.0f;
-	m_materialUniform = new fwUniform("material", &m_material);
-	addUniform(m_materialUniform);
-
-	// generic hud display
+	// health display using default image2D
 	m_health_bmp = new dfBitmap(g_dfFiles, "STATUSLF.BM", static_cast<dfLevel*>(level)->palette());
-	m_health = new fwHUDelement("statuslt", fwHUDelement::Position::BOTTOM_LEFT, fwHUDelementSizeLock::UNLOCKED, 0.2f, 0.2f, m_health_bmp->fwtexture());
+	m_health = new GameEngine::Image2D(
+		"darkforce:statuslt", 
+		0.2f, 0.2f,					// width
+		0.2f - 1.0f, 0.2f - 1.0f,	// position
+		m_health_bmp->fwtexture()
+	);
+	scene->addMesh2D(m_health);							// add the healthbar on the HUD
 	
+	// ammo display using default image2D
 	m_ammo_bmp = new dfBitmap(g_dfFiles, "STATUSRT.BM", static_cast<dfLevel*>(level)->palette());
-	m_ammo = new fwHUDelement("statusrt", fwHUDelement::Position::BOTTOM_RIGHT, fwHUDelementSizeLock::UNLOCKED, 0.2f, 0.2f, m_ammo_bmp->fwtexture());
+	m_ammo = new GameEngine::Image2D(
+		"darkforce:statusrt", 
+		0.2f, 0.2f,					// width
+		1.0f - 0.2f, 0.2f - 1.0f,	// position
+		m_ammo_bmp->fwtexture()
+	);
+	scene->addMesh2D(m_ammo);							// add the healthbar on the HUD
 
+	// weapon display using a dedicated material
+	m_weaponMaterial = new fwMaterial(g_subShaders);
+	m_weaponMaterial->addTexture("image", (glTexture*)nullptr);
+	m_weaponMaterial->addUniform(new fwUniform("onscreen", &m_weaponImage));
+	m_weaponMaterial->addUniform(new fwUniform("material", &m_materialWeapon));
 
-	// dedicated hud for the weapon
-	m_uniWeapon = new fwUniform("material", &m_materialWeapon);
+	m_weapon = new GameEngine::Image2D(
+		"darkforce:weapon",
+		0.4f, 0.4f, 
+		-0.2f, 0.4f - 1.0f,	// position
+		nullptr,
+		m_weaponMaterial
+	);
+	scene->addMesh2D(m_weapon);							// add the healthbar on the HUD
 
-	m_panelMaterial = cloneMaterial();
-	m_panelMaterial->addUniform(m_uniWeapon);
-	m_panel = new fwFlatPanel(m_panelMaterial);
-	m_weapon = new fwHUDelement("rifle", fwHUDelement::Position::BOTTOM_CENTER, fwHUDelementSizeLock::UNLOCKED, 0.4f, 0.4f, nullptr, m_panel);
-
-	// text hud
+	// text display using default image2D
 	int32_t h, w, ch;
 	uint8_t* data = m_text_bmp.get_info(&h, &w, &ch);
 	if (data == nullptr) {
@@ -48,7 +63,13 @@ DarkForces::HUD::HUD(GameEngine::Level* level) :
 		m_text_bmp.clear();
 	}
 
-	m_text = new fwHUDelement("text", fwHUDelement::Position::TOP_LET, fwHUDelementSizeLock::UNLOCKED, 1.0f, 0.05f, &m_text_bmp);
+	m_text = new GameEngine::Image2D(
+		"text", 
+		1.0f, 0.05f, 
+		0.0f, 0.95f,
+		&m_text_bmp
+	);
+	scene->addMesh2D(m_text);							// add the healthbar on the HUD
 
 	// prepare the entity part of the HUD
 	m_compText.texture(&m_text_bmp);
@@ -60,18 +81,14 @@ DarkForces::HUD::HUD(GameEngine::Level* level) :
 	m_entText.physical(false);
 	m_entText.gravity(false);
 	GameEngine::World::add(&m_entText);
-
-	add(m_health);
-	add(m_ammo);
-	add(m_weapon);
-	add(m_text);
 }
 
 void DarkForces::HUD::setWeapon(fwTexture* texture, float x, float y, float w, float h)
 {
-	m_weapon->texture(texture);
-	m_weapon->position(x, y);
-	m_weapon->size(w, h);
+	m_weaponImage = glm::vec4(w, h, x, y);
+
+	m_weapon->add_uniform("image", texture);
+	m_weapon->add_uniform("onscreen", m_weaponImage);
 }
 
 void DarkForces::HUD::setGoggle(bool onoff)
@@ -97,8 +114,8 @@ DarkForces::HUD::~HUD()
 	delete m_weapon;
 	delete m_ammo_bmp;
 	delete m_health_bmp;
-	delete m_panel;
-	delete m_panelMaterial;
+	//delete m_panel;
+	delete m_weaponMaterial;
 	delete m_materialUniform;
-	delete m_uniWeapon;
+	//delete m_uniWeapon;
 }

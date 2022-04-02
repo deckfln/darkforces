@@ -248,8 +248,7 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 	resizeEvent(width, height);
 
 	// hud display
-	g_dfHUD = new DarkForces::HUD(m_level);
-	m_scene->hud(g_dfHUD);
+	g_dfHUD = new DarkForces::HUD(m_level, m_scene);
 
 	m_scene->addMesh2D(automap);							// add the automap on the HUD
 

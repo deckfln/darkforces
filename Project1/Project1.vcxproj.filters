@@ -915,6 +915,9 @@
     <ClCompile Include="framework\fwMesh2D.cpp">
       <Filter>Fichiers sources\Framework</Filter>
     </ClCompile>
+    <ClCompile Include="gaEngine\gaImage2D.cpp">
+      <Filter>Fichiers sources\gaEngine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="glad\glad.h">
@@ -1729,6 +1732,9 @@
     </ClInclude>
     <ClInclude Include="framework\fwMesh2D.h">
       <Filter>Fichiers d%27en-tête\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="gaEngine\gaImage2D.h">
+      <Filter>Fichiers d%27en-tête\gaEngine</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

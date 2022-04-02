@@ -316,6 +316,7 @@
     <ClCompile Include="gaEngine\gaComponent\gaSound.cpp" />
     <ClCompile Include="gaEngine\gaDebug.cpp" />
     <ClCompile Include="gaEngine\gaEntity.cpp" />
+    <ClCompile Include="gaEngine\gaImage2D.cpp" />
     <ClCompile Include="gaEngine\gaItem.cpp" />
     <ClCompile Include="gaEngine\gaLevel.cpp" />
     <ClCompile Include="gaEngine\gaMessage.cpp" />
@@ -585,6 +586,7 @@
     <ClInclude Include="gaEngine\gaComponent\gaSound.h" />
     <ClInclude Include="gaEngine\gaDebug.h" />
     <ClInclude Include="gaEngine\gaEntity.h" />
+    <ClInclude Include="gaEngine\gaImage2D.h" />
     <ClInclude Include="gaEngine\gaItem.h" />
     <ClInclude Include="gaEngine\gaLevel.h" />
     <ClInclude Include="gaEngine\gaMessage.h" />
