@@ -14,7 +14,7 @@
  */
 DarkForces::Weapon g_concussion = DarkForces::Weapon(
 	DarkForces::Weapon::Kind::Concussion,
-	"Concussion",
+	"DarkForces:weapon:concussion",
 	"CONCUSS5.VOC",
 	100,
 	0.1f,
@@ -27,7 +27,7 @@ DarkForces::Weapon g_concussion = DarkForces::Weapon(
 );
 DarkForces::Weapon g_FusionCutter = DarkForces::Weapon(
 	DarkForces::Weapon::Kind::FusionCutter,
-	"FusionCutter",
+	"DarkForces:weapon:fusionCutter",
 	"FUSION1.VOC",
 	100,
 	0.1f,
@@ -40,7 +40,7 @@ DarkForces::Weapon g_FusionCutter = DarkForces::Weapon(
 );
 DarkForces::Weapon g_Missile = DarkForces::Weapon(
 	DarkForces::Weapon::Kind::Missile,
-	"Missile",
+	"DarkForces:weapon:missile",
 	"MISSILE1.VOC",
 	100,
 	0.1f,
@@ -53,7 +53,7 @@ DarkForces::Weapon g_Missile = DarkForces::Weapon(
 );
 DarkForces::Weapon g_MortarGun = DarkForces::Weapon(
 	DarkForces::Weapon::Kind::MortarGun,
-	"MortarGun",
+	"DarkForces:weapon:mortarGun",
 	"MORTAR2.VOC",
 	100,
 	0.1f,
@@ -66,7 +66,7 @@ DarkForces::Weapon g_MortarGun = DarkForces::Weapon(
 );
 DarkForces::Weapon g_Pistol = DarkForces::Weapon(
 	DarkForces::Weapon::Kind::Pistol,
-	"Pistol",
+	"DarkForces:weapon:pistol",
 	"PISTOL-1.VOC",
 	10,
 	0.05f,
@@ -79,7 +79,7 @@ DarkForces::Weapon g_Pistol = DarkForces::Weapon(
 );
 DarkForces::Weapon g_PlasmaCannon = DarkForces::Weapon(
 	DarkForces::Weapon::Kind::PlasmaCannon,
-	"PlasmaCannon",
+	"DarkForces:weapon:plasmaCannon",
 	"PLASMA4.VOC",
 	10,
 	0.1f,
@@ -92,7 +92,7 @@ DarkForces::Weapon g_PlasmaCannon = DarkForces::Weapon(
 );
 DarkForces::Weapon g_Repeater = DarkForces::Weapon(
 	DarkForces::Weapon::Kind::Repeater,
-	"Repeater",
+	"DarkForces:weapon:repeater",
 	"REPEATER.VOC",
 	10,
 	0.1f,
@@ -105,7 +105,7 @@ DarkForces::Weapon g_Repeater = DarkForces::Weapon(
 );
 DarkForces::Weapon g_Rifle = DarkForces::Weapon(
 	DarkForces::Weapon::Kind::Rifle,
-	"Rifle",
+	"DarkForces:weapon:rifle",
 	"RIFLE-1.VOC",
 	15,
 	0.2f,

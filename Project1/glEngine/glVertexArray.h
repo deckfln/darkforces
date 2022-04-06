@@ -1,4 +1,5 @@
 #pragma once
+#include <string>
 #include "../glad/glad.h"
 
 class glVertexArray
@@ -10,6 +11,7 @@ public:
 	void bind(void);
 	static void unbind(void);
 	void label(const char* s);
+	void label(const std::string& s);
 	virtual void draw(GLenum mode, bool indexed, int count);
 
 	//getter/setter

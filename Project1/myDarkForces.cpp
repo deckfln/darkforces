@@ -253,7 +253,7 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 	m_scene->addMesh2D(automap);							// add the automap on the HUD
 
 	// PDA GUI
-	m_scene->hud(g_pda->ui());
+	m_scene->addMesh2D(g_pda->ui());
 
 	// add the sprites manager to the world
 	g_gaWorld.registerPlugin(&g_dfSpritesEngine);

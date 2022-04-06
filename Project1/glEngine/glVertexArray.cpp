@@ -37,6 +37,10 @@ void glVertexArray::label(const char* s)
 {
 	glObjectLabel(GL_VERTEX_ARRAY, m_id, -1, s);
 }
+void glVertexArray::label(const std::string& s)
+{
+	glObjectLabel(GL_VERTEX_ARRAY, m_id, -1, s.c_str());
+}
 
 void glVertexArray::draw(GLenum mode, bool indexed, int count)
 {

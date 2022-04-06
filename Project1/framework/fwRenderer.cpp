@@ -1,5 +1,7 @@
 #include "fwRenderer.h"
 
+#include <vector>
+#include <queue>
 #include "fwConstants.h"
 
 #include "../glEngine/glColorMap.h"
@@ -344,14 +346,14 @@ void fwRenderer::sortMeshes(std::list<fwMesh *>& meshes, const glm::vec3& camera
 //--------------------------------------------------------
 
 static std::map<uint32_t, std::map<uint32_t, glVertexArray*>> g_vaos;
-static std::map<fwMaterial*, std::map<Framework::Mesh2D*, uint32_t>> m_meshesByMaterial;
+static std::map<fwMaterial*, std::vector<Framework::Mesh2D*>> g_meshesByMaterial;
 static std::map<uint32_t, fwMaterial*> m_materials;
 static std::map<fwMaterial*, glProgram*> g_programs;
 
 /**
  *
  */
-static glVertexArray* getVAO(fwGeometry* geometry, glProgram* program)
+static glVertexArray* getVAO(fwGeometry* geometry, glProgram* program, const std::string& name)
 {
 	uint32_t geometryID = geometry->id();
 	uint32_t programID = program->id();
@@ -359,6 +361,9 @@ static glVertexArray* getVAO(fwGeometry* geometry, glProgram* program)
 	glVertexArray* vao = g_vaos[geometryID][programID];
 	if (vao == nullptr) {
 		vao = new glVertexArray();
+#ifdef _DEBUG
+		vao->label(name);
+#endif
 		geometry->enable_attributes(program);
 		vao->unbind();
 		g_vaos[geometryID][programID] = vao;
@@ -376,11 +381,42 @@ void fwRenderer::draw2D(fwScene* scene)
 
 	std::list<Framework::Mesh2D*>& meshes2D = scene->meshes2D();
 
-	// update the global list of mesh per material
+	// build a list of all meshed and children
+	std::vector<Framework::Mesh2D*> meshes;
+	std::queue<Framework::Mesh2D*> queue;
+
 	for (auto mesh : meshes2D) {
+		if (mesh->visible()) {
+			queue.push(mesh);
+			mesh->updateWorld(nullptr);
+		}
+	}
+
+	Framework::Mesh2D* mesh = nullptr;
+	while (queue.size() > 0) {
+		mesh = queue.front();
+		meshes.push_back(mesh);
+		queue.pop();
+
+		for (auto child : mesh->children()) {
+			if (child->visible()) {
+				queue.push(child);
+			}
+		}
+	}
+
+	// update the global list of mesh per material
+	g_meshesByMaterial.clear();
+	for (auto mesh : meshes) {
 		fwMaterial* material = mesh->material();
 
-		m_meshesByMaterial[material][mesh] = m_frame;
+		// ignore container (mesh without material or geometry)
+		if (material) {
+			fwGeometry* geometry= mesh->geometry();
+			if (geometry) {
+				g_meshesByMaterial[material].push_back(mesh);
+			}
+		}
 	}
 	m_frame++;
 
@@ -388,9 +424,10 @@ void fwRenderer::draw2D(fwScene* scene)
 
 	static const char* s7 = "draw_meshes2d";
 	glPushDebugGroup(GL_DEBUG_SOURCE_APPLICATION, 0, GLsizei(strlen(s7)), s7);
+	glDisable(GL_DEPTH_TEST);								// disable depth test so screen-space quad isn't discarded due to depth test.
 
 	// render meshed per materials
-	for (auto& materialMeshes : m_meshesByMaterial) {
+	for (auto& materialMeshes : g_meshesByMaterial) {
 		fwMaterial* material = materialMeshes.first;
 
 		// compile the program if it is missing
@@ -409,19 +446,16 @@ void fwRenderer::draw2D(fwScene* scene)
 		material->set_uniforms(program);
 
 		// parse all meshes
-		for (auto& meshFrame : materialMeshes.second) {
-			Framework::Mesh2D* mesh = meshFrame.first;
-
+		for (auto& mesh : materialMeshes.second) {
 			mesh->set_uniforms(program);
-			if (mesh->visible()) {
-				fwGeometry* geometry = mesh->geometry();
+			fwGeometry* geometry = mesh->geometry();
 
-				// build the VAO if it is missing
-				glVertexArray* vao = getVAO(geometry, program);
-				mesh->draw(vao);
-			}
+			// build the VAO if it is missing
+			glVertexArray* vao = getVAO(geometry, program, mesh->name());
+			mesh->draw(vao);
 		}
 	}
+	glEnable(GL_DEPTH_TEST);
 
 	glPopDebugGroup();
 }

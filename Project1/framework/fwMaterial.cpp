@@ -67,8 +67,11 @@ fwMaterial::fwMaterial(const std::map<ShaderType, std::string>* pShaders) :
  */
 fwMaterial& fwMaterial::addTexture(const std::string& uniform, fwTexture *texture)
 {
-	glTexture *glTex = new glTexture(texture);
-	m_textures[texture->id()] = glTex;
+	glTexture* glTex = nullptr;
+	if (texture != nullptr) {
+		glTex = new glTexture(texture);
+		m_textures[texture->id()] = glTex;
+	}
 
 	addUniform(new fwUniform(uniform, glTex));
 
@@ -115,7 +118,9 @@ fwMaterial &fwMaterial::addUniform(fwUniform *uniform)
 void fwMaterial::set_uniforms(glProgram *program)
 {
 	for (auto& uniform: m_uniforms) {
-		uniform.second->set_uniform(program);
+		if (uniform.second != nullptr) {
+			uniform.second->set_uniform(program);
+		}
 	}
 }
 
@@ -125,6 +130,10 @@ void fwMaterial::set_uniforms(glProgram *program)
 void fwMaterial::set(const std::string& name, fwTexture* texture)
 {
 	glTexture* glTex=nullptr;
+
+	if (texture == nullptr) {
+		return;
+	}
 
 	// create the glTexture the first time
 	if (m_textures.count(texture->id()) == 0) {
@@ -136,7 +145,11 @@ void fwMaterial::set(const std::string& name, fwTexture* texture)
 		m_textures[texture->id()]->update(texture);
 		texture->dirty(false);
 	}
-	m_uniforms[name]->set(m_textures[texture->id()]);
+	fwUniform* uniform = m_uniforms[name];
+	if (uniform) {
+		// setting a uniform that exists
+		uniform->set(m_textures[texture->id()]);
+	}
 }
 
 /**
@@ -144,7 +157,11 @@ void fwMaterial::set(const std::string& name, fwTexture* texture)
  */
 void fwMaterial::set(const std::string& name, glm::vec4* v)
 {
-	m_uniforms[name]->set(v);
+	fwUniform* uniform = m_uniforms[name];
+	if (uniform) {
+		// setting a uniform that exists
+		uniform->set(v);
+	}
 }
 
 /**

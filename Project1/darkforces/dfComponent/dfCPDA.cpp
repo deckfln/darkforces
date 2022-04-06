@@ -12,41 +12,43 @@
 #include "../../gaEngine/gaComponent/gaControlerUI.h"
 #include "../../gaEngine/gaUI.h"
 
+#include "../../framework/fwScene.h"
+
 #include "../dfComponent.h"
 #include "../dfMessage.h"
 
 
 //-------------------------------------------
 
-static std::map<std::string, uint32_t> g_dfItems = {
-	{"Pistol", 0},
-	{"Rifle", 1},
-	{"Detonator", 2},
-	{"Repeater", 3},
-	{"Fusion", 4},
-	{"Mine", 5},
-	{"Mortar", 6},
-	{"Concussion", 7},
-	{"Canoon", 8},
+static std::map<uint32_t, std::string> g_dfWeaponsRev = {
+	{0, "pistol"},
+	{1, "rifle"},
+	{2, "detonator"},
+	{3, "repeater"},
+	{4, "fusion"},
+	{5, "mine"},
+	{6, "mortar"},
+	{7, "concussion"},
+	{8, "canoon"},
 };
 
-static std::map<std::string, uint32_t> g_dfInventory = {
-	{ "darkforce:redkey", 0},
-	{ "darkforce:bluekey", 1},
-	{ "darkforce:yellowkey", 2},
-	{ "darkforce:datatape", 9},
-	{ "darkforce:plans", 6},
-	{ "darkforce:dtweapon", 11},
-	{ "darkforce:phrik", 7},
-	{ "darkforce:nava", 8},
-	{ "darkforce:icecleats", 4},
-	{ "darkforce:gasmask", 5},
-	{ "darkforce:goggles", 3},
-	{ "darkforce:code1", 12},
-	{ "darkforce:code2", 13},
-	{ "darkforce:code3", 14},
-	{ "darkforce:code4", 15},
-	{ "darkforce:code5", 16}
+static std::map<uint32_t, std::string> g_dfInventoryRev = {
+	{0, "redkey"},
+	{1, "bluekey"},
+	{2, "yellowkey"},
+	{9, "datatape"},
+	{6, "plans"},
+	{11,"dtweapon"},
+	{7, "phrik"},
+	{8, "nava"},
+	{4, "icecleats"},
+	{5, "gasmask"},
+	{3, "goggles"},
+	{12,"code1"},
+	{13,"code2"},
+	{14,"code3"},
+	{15,"code4"},
+	{16,"code5"}
 };
 
 //-------------------------------------------
@@ -58,11 +60,13 @@ void DarkForces::Component::PDA::onShowPDA(gaMessage*)
 {
 	if (m_visible) {
 		m_visible = false;
+		m_background->visible(false);
 		GameEngine::World::popState();				// restart the game
 		GameEngine::App::popControl();				// restore the correct controler
 	}
 	else {
 		m_visible = true;
+		m_background->visible(true);
 		GameEngine::World::pushState();				// suspend the game
 
 		// push the current game controller and replace with the one of the PDA
@@ -78,11 +82,14 @@ void DarkForces::Component::PDA::onAddItem(gaMessage* message)
 {
 	// activate the item on the PDA
 	GameEngine::Item* item = static_cast<GameEngine::Item*>(message->m_extra);
-	if (g_dfItems.count(item->name()) > 0) {
-		m_ui_weapons->widget(g_dfItems[item->name()])->visible(true);
+	GameEngine::Image2D* image = m_ui_weapons->widget(item->name());
+	if (image != nullptr) {
+		image->visible(true);
 	}
-	if (g_dfInventory.count(item->name()) > 0) {
-		m_ui_inventory->widget(g_dfInventory[item->name()])->visible(true);
+
+	image = m_ui_inventory->widget(item->name());
+	if (image) {
+		image->visible(true);
 	}
 }
 
@@ -103,8 +110,9 @@ void DarkForces::Component::PDA::onKeyDown(gaMessage* message)
  */
 void DarkForces::Component::PDA::onCompleteGoal(gaMessage* message)
 {
-	// display the DELT od the given goal
-	m_ui_goals->widget(message->m_value)->visible(true);
+	// display the DELT of the given goal
+	__debugbreak();
+	m_ui_goals->widget("DarkForces:goal:" + std::to_string(message->m_value))->visible(true);
 }
 
 //------------------------------------------------------
@@ -160,15 +168,29 @@ GameEngine::UI_button* DarkForces::Component::PDA::buildButton(
 	const glm::vec2 size = m_pda->texture(pressed)->size();
 	const glm::vec2 position = m_pda->texture(pressed)->position();
 
+	const glm::vec2 scale(
+		size.x / 320.0f,
+		size.y / 200.0f
+	);
+	const glm::vec2 translation(
+		(position.x + size.x / 2.0f) / 160.0f - 1.0f,
+		1.0f - (position.y + size.y / 2.0f) / 100.0f
+	);
+
 	m_textures->texel(pressed, texel);
 	m_textures->texel(pressed + 1, texel_off);
-	return new GameEngine::UI_button(
+	GameEngine::UI_button *button = new GameEngine::UI_button(
 		"DarkForces:pda:" + name,
 		glm::vec4(position.x / m_pda_size.x, 0.0, size.x / m_pda_size.x, 1.0),
 		texel_off,
 		texel,
+		m_textures->texture(),
 		message
 	);
+	button->scale(scale);
+	button->translate(translation);
+
+	return button;
 }
 
 /**
@@ -194,6 +216,14 @@ void DarkForces::Component::PDA::addButton(
 	m_textures->texel(button.imageIndex, texel);
 	m_textures->texel(button.imageIndex + 1, texel_off);
 
+	button.scale = glm::vec2(
+		size.x / 320.0f,
+		size.y / 200.0f
+	);
+	button.translation = glm::vec2(
+		(position.x + size.x / 2.0f) / 160.0f - 1.0f,
+		1.0f - (position.y + size.y / 2.0f) / 100.0f
+	);
 	button.position_size = glm::vec4((position.x - parentPixelOffset.x) / parentPixelSize.x, (position.y - parentPixelOffset.y) / parentPixelSize.y, size.x / parentPixelSize.x, size.y / parentPixelSize.y);
 	button.img_press_position_size = texel;
 	button.img_release_position_size = texel_off;
@@ -223,12 +253,27 @@ GameEngine::UI_picture* DarkForces::Component::PDA::addImage(
 	const glm::vec2& parentPixelSize = parent->size();
 	const glm::vec2& parentPixelOffset = parent->position();
 
-	return new GameEngine::UI_picture(
-		"DarkForces:pda:" + name,
+	const glm::vec2 scale(
+		size.x / parentPixelSize.x,
+		size.y / parentPixelSize.y
+	);
+	const glm::vec2 translation(
+		(position.x - parentPixelOffset.x + size.x / 2.0f) / (parentPixelSize.x / 2.0f) - 1.0f,
+		1.0f - (position.y - parentPixelOffset.y + size.y / 2.0f) / (parentPixelSize.y / 2.0f)
+	);
+
+	GameEngine::UI_picture* picture = new GameEngine::UI_picture(
+		name,
 		glm::vec4((position.x - parentPixelOffset.x) / parentPixelSize.x, (position.y - parentPixelOffset.y) / parentPixelSize.y, size.x / parentPixelSize.x, size.y / parentPixelSize.y),
 		texel,
-		false	// hide weapons by default
+		m_textures->texture(),
+		true	// hide weapons by default
 	);
+
+	picture->scale(scale);
+	picture->translate(translation);
+
+	return picture;
 }
 
 //------------------------------------------------------
@@ -290,6 +335,11 @@ DarkForces::Component::PDA::PDA(const std::string& name):
 	}
 
 	m_textures->generate();
+
+	fwTexture* textureAtlas = m_textures->texture();
+
+	//setTexture(m_textures->texture());
+
 	//m_textures->save("0.png");
 
 	// build the GUI ------------------------------------
@@ -300,10 +350,14 @@ DarkForces::Component::PDA::PDA(const std::string& name):
 	glm::vec4 texel;
 
 	m_textures->texel(PDA_BUTTONS::Background, texel);
-	GameEngine::UI_picture* ui_background = new GameEngine::UI_picture(
+	m_background = new GameEngine::UI_picture(
 		"DarkForces::pda::background", 
 		glm::vec4(0, 0, 1, 1),
-		texel);
+		texel,
+		textureAtlas,
+		false);
+	m_background->translate(glm::vec2(0));
+	m_background->scale(glm::vec2(1));
 
 	// TAB of buttons
 	size = m_pda->texture(PDA_BUTTONS::Map_press)->size();
@@ -313,6 +367,8 @@ DarkForces::Component::PDA::PDA(const std::string& name):
 		"DarkForces::pda::tab",
 		glm::vec4(0.0f / m_pda_size.x, position.y / m_pda_size.y, 320.0f / m_pda_size.x, size.y / m_pda_size.y)	// tab buttons
 	);
+	m_background->translate(glm::vec2(0));
+	m_background->scale(glm::vec2(1));
 
 	GameEngine::UI_button* map = buildButton("map", PDA_BUTTONS::Map_press, 0);
 	GameEngine::UI_button* weapons = buildButton("weapon", PDA_BUTTONS::Weapon_press, 0);
@@ -320,24 +376,28 @@ DarkForces::Component::PDA::PDA(const std::string& name):
 	GameEngine::UI_button* obj = buildButton("objects", PDA_BUTTONS::Object_press, 0);
 	GameEngine::UI_button* mis = buildButton("mission", PDA_BUTTONS::Mission_press, 0);
 
-	// TAB of buttons
-	GameEngine::UI_widget* panel = new GameEngine::UI_widget(
-		"DarkForces::pda::panel",
-		glm::vec4(m_pda_panel_position.x / m_pda_size.x, m_pda_panel_position.y / m_pda_size.y, m_pda_panel_size.x / m_pda_size.x, m_pda_panel_size.y / m_pda_size.y)	// position & size of the tab panel
-		);
-
 	// -------------------- build the tab for weapons
-	m_ui_weapons = new GameEngine::UI_widget(
+	m_ui_weapons = new GameEngine::UI_container(
 		"DarkForces::pda::weapons",
 		glm::vec4(0.0, 0.0, 1.0, 1.0)
 		);
+	const glm::vec2 scale(
+		m_pda_panel_size.x / 320.0f,
+		m_pda_panel_size.y / 200.0f
+	);
+	const glm::vec2 translation(
+		(m_pda_panel_position.x + m_pda_panel_size.x / 2.0f) / 160.0f - 1.0f,
+		1.0f - (m_pda_panel_position.y + m_pda_panel_size.y / 2.0f) / 100.0f
+	);
+	m_ui_weapons->scale(scale);
+	m_ui_weapons->translate(translation);
 
 	float x = 0.0f, y = 0.0f;
 	for (size_t c = 0; c < guns->size(); c++) {
 		m_ui_weapons->add(
 			addImage(
 				m_pda->texture(1),
-				"weapon",
+				"DarkForces:weapon:" + g_dfWeaponsRev[c],
 				guns,
 				c,
 				startGuns
@@ -346,10 +406,12 @@ DarkForces::Component::PDA::PDA(const std::string& name):
 	}
 
 	// -------------------- build the tab for inventory
-	m_ui_inventory = new GameEngine::UI_widget(
+	m_ui_inventory = new GameEngine::UI_container(
 		"DarkForces::pda::items",
 		glm::vec4(0.0, 0.0, 1.0, 1.0)
 	);
+	m_ui_inventory->scale(scale);
+	m_ui_inventory->translate(translation);
 
 	uint32_t c = 0;
 	float w = 0;
@@ -358,7 +420,7 @@ DarkForces::Component::PDA::PDA(const std::string& name):
 		m_ui_inventory->add(
 			addImage(
 				m_pda->texture(1),
-				"item",
+				"DarkForces:item:" + g_dfInventoryRev[i],
 				items,
 				i,
 				startItems
@@ -367,10 +429,12 @@ DarkForces::Component::PDA::PDA(const std::string& name):
 	}
 
 	// -------------------- build the tab for mission
-	GameEngine::UI_widget* mission_tab = new GameEngine::UI_widget(
-		"DarkForces::pda::panel",
+	GameEngine::UI_container* mission_tab = new GameEngine::UI_container(
+		"DarkForces::pda::mis_panel",
 		glm::vec4(0.0, 0.0, 1.0, 1.0)	// position & size of the tab panel
 	);
+	mission_tab->scale(scale);
+	mission_tab->translate(translation);
 
 	m_textures->texel(briefing, texel);
 	size = secbase->size();
@@ -380,13 +444,18 @@ DarkForces::Component::PDA::PDA(const std::string& name):
 		glm::vec4((1.0 - size.x / m_pda_panel_size.x) / 2.0f, 0.0, size.x / m_pda_panel_size.x, 1.0),
 		texel,
 		size,
-		glm::ivec2(0,155)
+		glm::ivec2(0,155),
+		textureAtlas
+	);
+	m_ui_debrief->scale(glm::vec2(
+		size.x / m_pda_panel_size.x,
+		1.0f)
 	);
 	mission_tab->add(m_ui_debrief);
 
 	static std::vector<struct UI_def_button> mission_buttons = {
-		{"scrollup", 	PDA_BUTTONS::Up_press,	DarkForces::Message::PDA_UP,	true, false, glm::vec4(0),	glm::vec4(0),	glm::vec4(0)},
-		{"scrolldown",	PDA_BUTTONS::Down_press,DarkForces::Message::PDA_DOWN,	true, false, glm::vec4(0),	glm::vec4(0),	glm::vec4(0)}
+		{"scrollup", 	PDA_BUTTONS::Up_press,	DarkForces::Message::PDA_UP,	true, false, glm::vec4(0),	glm::vec4(0),	glm::vec4(0), textureAtlas, glm::vec2(0), glm::vec2(0)},
+		{"scrolldown",	PDA_BUTTONS::Down_press,DarkForces::Message::PDA_DOWN,	true, false, glm::vec4(0),	glm::vec4(0),	glm::vec4(0), textureAtlas, glm::vec2(0), glm::vec2(0)}
 	};
 
 	// convert DarkForces UI to GameEngine::UI
@@ -396,10 +465,12 @@ DarkForces::Component::PDA::PDA(const std::string& name):
 	mission_tab->addButtons(mission_buttons);
 
 	// -------------------- build the tab for goals
-	GameEngine::UI_widget* goal_tab = new GameEngine::UI_widget(
-		"DarkForces::pda::panel",
+	GameEngine::UI_container* goal_tab = new GameEngine::UI_container(
+		"DarkForces::pda::goal_panel",
 		glm::vec4(0.0, 0.0, 1.0, 1.0)	// position & size of the tab panel
 	);
+	goal_tab->scale(scale);
+	goal_tab->translate(translation);
 
 	m_textures->texel(pgoals, texel);
 	size = goals->texture(0)->size();
@@ -407,15 +478,17 @@ DarkForces::Component::PDA::PDA(const std::string& name):
 	m_ui_goals = new GameEngine::UI_picture(
 		"DarkForces::pda::goals",
 		glm::vec4((1.0 - size.x / m_pda_panel_size.x) / 2.0f, 0.0, size.x / m_pda_panel_size.x, size.y / m_pda_panel_size.y),
-		texel
+		texel,
+		textureAtlas
 	);
+	m_ui_goals->scale(size / m_pda_panel_size);
 
 	// add the completed goals
 	for (size_t i = 1; i < goals->size(); i++) {
 		m_ui_goals->add(
 			addImage(
 				goals->texture(0),
-				"goal",
+				"DarkForces:goal:"+std::to_string(i),
 				goals,
 				i,
 				pgoals
@@ -425,20 +498,22 @@ DarkForces::Component::PDA::PDA(const std::string& name):
 	goal_tab->add(m_ui_goals);
 
 	// -------------------- build the tab for automap
-	GameEngine::UI_widget* map_tab = new GameEngine::UI_widget(
-		"DarkForces::pda::panel",
+	GameEngine::UI_container* map_tab = new GameEngine::UI_container(
+		"DarkForces::pda::map_panel",
 		glm::vec4(0.0, 0.0, 1.0, 1.0)	// position & size of the tab panel
 	);
+	map_tab->scale(scale);
+	map_tab->translate(translation);
 
-	static std::vector<struct UI_def_button> automap_buttons = {
-		{"up",			PDA_BUTTONS::Up_press,			DarkForces::Message::PDA_UP,		true,	false, glm::vec4(0),glm::vec4(0),glm::vec4(0)},
-		{"down",		PDA_BUTTONS::Down_press,		DarkForces::Message::PDA_DOWN,		true,	false, glm::vec4(0),glm::vec4(0),glm::vec4(0)},
-		{"left",		PDA_BUTTONS::Left_press,		DarkForces::Message::PDA_LEFT,		true,	false, glm::vec4(0),glm::vec4(0),glm::vec4(0)},
-		{"right",		PDA_BUTTONS::Right_press,		DarkForces::Message::PDA_RIGHT,		true,	false, glm::vec4(0),glm::vec4(0),glm::vec4(0)},
-		{"zoomdown",	PDA_BUTTONS::Zoom_Down_press,	DarkForces::Message::PDA_ZOOM_DOWN,	true,	false, glm::vec4(0),glm::vec4(0),glm::vec4(0)},
-		{"zoomup",		PDA_BUTTONS::Zoom_Up_press,		DarkForces::Message::PDA_ZOOM_UP,	true,	false, glm::vec4(0),glm::vec4(0),glm::vec4(0)},
-		{"floordown",	PDA_BUTTONS::Floor_Down_press,	DarkForces::Message::PDA_FLOOR_DOWN,false,	false, glm::vec4(0),glm::vec4(0),glm::vec4(0)},
-		{"floorup",		PDA_BUTTONS::Floor_Up_press,	DarkForces::Message::PDA_FLOOR_UP,	false,	false, glm::vec4(0),glm::vec4(0),glm::vec4(0)}
+	std::vector<struct UI_def_button> automap_buttons = {
+		{"up",			PDA_BUTTONS::Up_press,			DarkForces::Message::PDA_UP,		true,	false, glm::vec4(0),glm::vec4(0),glm::vec4(0), textureAtlas, glm::vec2(0), glm::vec2(0)},
+		{"down",		PDA_BUTTONS::Down_press,		DarkForces::Message::PDA_DOWN,		true,	false, glm::vec4(0),glm::vec4(0),glm::vec4(0), textureAtlas, glm::vec2(0), glm::vec2(0)},
+		{"left",		PDA_BUTTONS::Left_press,		DarkForces::Message::PDA_LEFT,		true,	false, glm::vec4(0),glm::vec4(0),glm::vec4(0), textureAtlas, glm::vec2(0), glm::vec2(0)},
+		{"right",		PDA_BUTTONS::Right_press,		DarkForces::Message::PDA_RIGHT,		true,	false, glm::vec4(0),glm::vec4(0),glm::vec4(0), textureAtlas, glm::vec2(0), glm::vec2(0)},
+		{"zoomdown",	PDA_BUTTONS::Zoom_Down_press,	DarkForces::Message::PDA_ZOOM_DOWN,	true,	false, glm::vec4(0),glm::vec4(0),glm::vec4(0), textureAtlas, glm::vec2(0), glm::vec2(0)},
+		{"zoomup",		PDA_BUTTONS::Zoom_Up_press,		DarkForces::Message::PDA_ZOOM_UP,	true,	false, glm::vec4(0),glm::vec4(0),glm::vec4(0), textureAtlas, glm::vec2(0), glm::vec2(0)},
+		{"floordown",	PDA_BUTTONS::Floor_Down_press,	DarkForces::Message::PDA_FLOOR_DOWN,false,	false, glm::vec4(0),glm::vec4(0),glm::vec4(0), textureAtlas, glm::vec2(0), glm::vec2(0)},
+		{"floorup",		PDA_BUTTONS::Floor_Up_press,	DarkForces::Message::PDA_FLOOR_UP,	false,	false, glm::vec4(0),glm::vec4(0),glm::vec4(0), textureAtlas, glm::vec2(0), glm::vec2(0)}
 	};
 
 	for (auto& button : automap_buttons) {
@@ -448,22 +523,20 @@ DarkForces::Component::PDA::PDA(const std::string& name):
 
 	// -------------------------- Exit button
 	static std::vector<struct UI_def_button> pda_buttons = {
-		{"exit", 		PDA_BUTTONS::Exit_press,		DarkForces::Message::PDA_EXIT,		false, false, glm::vec4(0),glm::vec4(0),glm::vec4(0)}
+		{"exit", 		PDA_BUTTONS::Exit_press,		DarkForces::Message::PDA_EXIT,		false, false, glm::vec4(0),glm::vec4(0),glm::vec4(0), textureAtlas, glm::vec2(0), glm::vec2(0)}
 	};
 
 	addButton(m_pda->texture(0), pda_buttons[0]);
-	ui_background->addButtons(pda_buttons);
+	m_background->addButtons(pda_buttons);
 
 	// -------------------------- final build
-	m_root = ui_background;
-		ui_background->add(tab);
-			tab->setPanel(panel);
+	m_root = m_background;
+		m_background->addChild(tab);
 			tab->addTab(map, map_tab);
 			tab->addTab(weapons, m_ui_weapons);
 			tab->addTab(inv, m_ui_inventory);
-			tab->addTab(obj, m_ui_goals);
+			tab->addTab(obj, goal_tab);
 			tab->addTab(mis, mission_tab);
-		ui_background->add(panel);
 
 	m_root->link(this);
 	tab->tab(weapons);	// force the tab original panel
@@ -512,7 +585,18 @@ void DarkForces::Component::PDA::dispatchMessage(gaMessage* message)
 	GameEngine::UI::dispatchMessage(message);
 }
 
+/**
+ *
+ */
+Framework::Mesh2D* DarkForces::Component::PDA::ui(void)
+{
+	return m_background;
+}
+
 #ifdef _DEBUG
+/**
+ *
+ */
 void DarkForces::Component::PDA::debugGUIinline(void)
 {
 	if (ImGui::TreeNode("dfCPDA")) {
@@ -521,6 +605,9 @@ void DarkForces::Component::PDA::debugGUIinline(void)
 }
 #endif
 
+/**
+ *
+ */
 DarkForces::Component::PDA::~PDA(void)
 {
 	if (m_pda != nullptr) {

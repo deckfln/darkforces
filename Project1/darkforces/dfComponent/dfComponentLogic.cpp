@@ -12,8 +12,8 @@
 #include <imgui.h>
 
 // unique Items
-static DarkForces::Item g_Plans("darkforce:plans", dfLogic::PLANS);
-static DarkForces::Headlight g_Goggles("darkforce:goggles");
+static DarkForces::Item g_Plans("darkforce:item:plans", dfLogic::PLANS);
+static DarkForces::Headlight g_Goggles("darkforce:item:goggles");
 
 dfComponentLogic::dfComponentLogic() :
 	gaComponent(DF_COMPONENT_LOGIC),

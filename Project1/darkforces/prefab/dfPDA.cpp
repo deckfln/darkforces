@@ -28,7 +28,7 @@ DarkForces::Prefab::PDA::PDA(void):
 	addComponent(&m_pda);
 }
 
-GameEngine::UI* DarkForces::Prefab::PDA::ui(void)
+Framework::Mesh2D* DarkForces::Prefab::PDA::ui(void)
 {
-	return &m_pda;
+	return m_pda.ui();
 }

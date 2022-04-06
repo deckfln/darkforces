@@ -15,6 +15,7 @@ Framework::Mesh2D::Mesh2D(const std::string& name):
 	m_id(g_ids++),
 	m_name(name)
 {
+	add_uniform("transformation", m_transformation);
 }
 
 Framework::Mesh2D::Mesh2D(fwGeometry* geometry, fwMaterial* material, GLenum render):
@@ -23,6 +24,7 @@ Framework::Mesh2D::Mesh2D(fwGeometry* geometry, fwMaterial* material, GLenum ren
 	m_material(material),
 	m_rendering(render)
 {
+	add_uniform("transformation", m_transformation);
 }
 
 void Framework::Mesh2D::set(fwGeometry* geometry, fwMaterial* material, GLenum render)
@@ -30,6 +32,8 @@ void Framework::Mesh2D::set(fwGeometry* geometry, fwMaterial* material, GLenum r
 	m_geometry = geometry;
 	m_material = material;
 	m_rendering = render;
+
+	add_uniform("transformation", m_transformation);
 }
 
 /**
@@ -78,6 +82,33 @@ void Framework::Mesh2D::set_uniforms(glProgram* program)
 		uniform->set_uniform(program);
 	}
 
+}
+
+/**
+ * update world matrix
+ */
+void Framework::Mesh2D::updateWorld(Framework::Mesh2D* parent, bool force)
+{
+	if (m_dirty || force) {
+		m_dirty = false;
+		if (parent != nullptr) {
+			m_gscale = parent->m_gscale * m_scale;
+			m_gtranslation = parent->m_gtranslation + m_translation * parent->m_gscale;
+		}
+		else {
+			m_gscale = m_scale;
+			m_gtranslation = m_translation;
+		}
+
+		m_transformation.x = m_gscale.x;
+		m_transformation.y = m_gscale.y;
+		m_transformation.w = m_gtranslation.x;
+		m_transformation.z = m_gtranslation.y;
+
+		for (auto child : m_children) {
+			child->updateWorld(this, true);
+		}
+	}
 }
 
 /**

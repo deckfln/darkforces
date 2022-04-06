@@ -9,6 +9,8 @@
 
 #include "../dfFileLFD.h"
 
+class fwScene;
+
 namespace DarkForces {
 	namespace Component {
 		class PDA : public GameEngine::UI
@@ -18,6 +20,7 @@ namespace DarkForces {
 			DarkForces::ANIM* m_items=nullptr;
 			DarkForces::DELT* m_pda_background=nullptr;
 
+			GameEngine::UI_picture* m_background = nullptr;
 			GameEngine::UI_widget *m_ui_weapons = nullptr;
 			GameEngine::UI_widget* m_ui_inventory = nullptr;
 			GameEngine::UI_widget* m_ui_goals = nullptr;
@@ -57,6 +60,7 @@ namespace DarkForces {
 			// debugger
 			void debugGUIinline(void) override;					// Add dedicated component debug the entity
 #endif
+			Framework::Mesh2D* ui(void);
 			~PDA(void);
 		};
 	}

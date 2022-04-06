@@ -8,6 +8,7 @@
 #include "../../gaEngine/gaUI.h"
 
 #include "../dfComponent/dfCPDA.h"
+#include "../../framework/fwMesh2D.h"
 
 namespace DarkForces {
 	namespace Prefab {
@@ -16,7 +17,7 @@ namespace DarkForces {
 			Component::PDA m_pda = Component::PDA("pda");
 		public:
 			PDA(void);
-			GameEngine::UI* ui(void);
+			Framework::Mesh2D* ui(void);
 		};
 	}
 }

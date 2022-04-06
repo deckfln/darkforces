@@ -1,5 +1,6 @@
 #include "gaUI.h"
 #include "gaUI.h"
+#include "gaUI.h"
 
 #include <map>
 
@@ -14,15 +15,15 @@
 #include "gaEntity.h"
 #include "World.h"
 
-static fwFlatPanel* g_hudPanel = nullptr;
-static fwMaterial* g_material = nullptr;
-static fwUniform* g_uniformTexture = nullptr;
-static glm::vec4 g_screen;
-
 static std::map<ShaderType, std::string> g_subShaders = {
 	{VERTEX_SHADER, "gaEngine/shaders/gui_vs.glsl"},
 	{FRAGMENT_SHADER, "gaEngine/shaders/gui_fs.glsl"}
 };
+
+static fwFlatPanel* g_hudPanel = nullptr;
+static fwMaterial g_material(g_subShaders);
+static fwUniform* g_uniformTexture = nullptr;
+static glm::vec4 g_screen;
 
 //-------------------------------------------------------
 
@@ -55,6 +56,7 @@ static glm::vec4 g_positionsize;
 static glm::vec4 g_imagepos;
 static fwUniform g_uni_ps("positionsize", &g_positionsize);
 static fwUniform g_uni_ip("imagepos", &g_imagepos);
+static fwUniform g_uni_tr("transformation", &g_positionsize);
 
 //-------------------------------------------------------
 
@@ -63,12 +65,12 @@ static fwUniform g_uni_ip("imagepos", &g_imagepos);
  */
 void GameEngine::UI::onMouseDown(gaMessage* message)
 {
-	float x = message->m_v3value.x;
-	float y = message->m_v3value.y;
+	// convert from 0:1 space to -1:1 space
+	const glm::vec2 glCursor = glm::vec2(message->m_v3value.x, -message->m_v3value.y) * 2.0f - glm::vec2(1, -1);
 	uint32_t button = message->m_value;
 
 	// find the widget that is under the cursor
-	m_currentButton = m_root->findWidgetAt(x, y);
+	m_currentButton = m_root->findWidgetAt(glCursor);
 	if (m_currentButton != nullptr) {
 		m_currentButton->onMouseDown();
 	}
@@ -87,10 +89,8 @@ void GameEngine::UI::onMouseUp(gaMessage*)
  */
 void GameEngine::UI::onMouseMove(gaMessage* message)
 {
-	float x = message->m_v3value.x;
-	float y = message->m_v3value.y;
-
-	UI_widget* m_current = m_root->findWidgetAt(x, y);
+	const glm::vec2 glCursor = glm::vec2(message->m_v3value.x, -message->m_v3value.y) * 2.0f - glm::vec2(1, -1);
+	UI_widget* m_current = m_root->findWidgetAt(glCursor);
 
 	if (m_currentButton != m_current) {
 		// moving to a new button
@@ -126,9 +126,28 @@ void GameEngine::UI::onTimer(gaMessage*)
  * create an UI
  */
 GameEngine::UI::UI(const std::string& name, bool visible):
-	fwHUD(name, &g_subShaders, visible),
 	gaComponent(gaComponent::Gui)
 {
+	m_visible = true; //  visible;
+
+	g_material.addTexture("image", (fwTexture*)nullptr);
+	g_material.addUniform(&g_uni_ps);
+	g_material.addUniform(&g_uni_ip);
+	g_material.addUniform(&g_uni_tr);
+
+	std::string vs = g_material.load_shader(FORWARD_RENDER, VERTEX_SHADER, "");
+	std::string fs = g_material.load_shader(FORWARD_RENDER, FRAGMENT_SHADER, "");
+	std::string gs = g_material.load_shader(FORWARD_RENDER, GEOMETRY_SHADER, "");
+
+	g_program = new glProgram(vs, fs, gs, "");
+
+	g_geometry = new fwGeometry();
+	g_geometry->addVertices("aPos", quadVertices, 2, sizeof(quadVertices), sizeof(float), false);
+	g_geometry->addAttribute("aTex", GL_ARRAY_BUFFER, quadUvs, 2, sizeof(quadUvs), sizeof(float), false);
+
+	g_vertexArray = new glVertexArray();
+	g_geometry->enable_attributes(g_program);
+	g_vertexArray->unbind();
 }
 
 /**
@@ -138,27 +157,6 @@ void GameEngine::UI::draw(void)
 {
 	if (!m_visible) {
 		return;
-	}
-
-	if (g_material == nullptr) {
-		g_material = new fwMaterial(g_subShaders);
-		g_material->addTexture("image", m_textures->texture());
-		g_material->addUniform(&g_uni_ps);
-		g_material->addUniform(&g_uni_ip);
-
-		std::string vs = g_material->load_shader(FORWARD_RENDER, VERTEX_SHADER, "");
-		std::string fs = g_material->load_shader(FORWARD_RENDER, FRAGMENT_SHADER, "");
-		std::string gs = g_material->load_shader(FORWARD_RENDER, GEOMETRY_SHADER, "");
-
-		g_program = new glProgram(vs, fs, gs, "");
-
-		g_geometry = new fwGeometry();
-		g_geometry->addVertices("aPos", quadVertices, 2, sizeof(quadVertices), sizeof(float), false);
-		g_geometry->addAttribute("aTex", GL_ARRAY_BUFFER, quadUvs, 2, sizeof(quadUvs), sizeof(float), false);
-
-		g_vertexArray = new glVertexArray();
-		g_geometry->enable_attributes(g_program);
-		g_vertexArray->unbind();
 	}
 
 	if (m_dirty) {
@@ -180,7 +178,7 @@ void GameEngine::UI::draw(void)
 void GameEngine::UI::draw_widget(const glm::vec4& position_size)
 {
 	g_positionsize = position_size;
-	g_material->set_uniforms(g_program);
+	g_material.set_uniforms(g_program);
 	g_geometry->draw(GL_TRIANGLES, g_vertexArray);
 }
 
@@ -245,11 +243,12 @@ void GameEngine::UI_widget::sendMessage(UI_widget* from, uint32_t imessage)
 	}
 }
 
-GameEngine::UI_widget::UI_widget(const std::string& name, const glm::vec4& position, bool visible) :
-	m_name(name),
-	m_position_size(position),
-	m_visible(visible)
+GameEngine::UI_widget::UI_widget(const std::string& name, const glm::vec4& position, fwTexture* texture, bool visible) :
+	GameEngine::Image2D(name, position, texture, &g_material),
+	m_position_size(position)
 {
+	m_visible = visible;
+	add_uniform("positionsize", m_position_size);
 }
 
 /**
@@ -258,7 +257,7 @@ GameEngine::UI_widget::UI_widget(const std::string& name, const glm::vec4& posit
 void GameEngine::UI_widget::add(GameEngine::UI_widget* widget)
 {
 	widget->m_parent = this;
-	m_widgets.push_back(widget);
+	addChild(widget);
 }
 
 /**
@@ -280,31 +279,32 @@ void GameEngine::UI_widget::update(const glm::vec4& parent)
  */
 void GameEngine::UI_widget::update(void)
 {
-	for (auto widget : m_widgets) {
-		widget->update(m_screen_position_size);
+	for (auto widget : m_children) {
+		dynamic_cast<GameEngine::UI_widget*>(widget)->update(m_screen_position_size);
 	}
 }
 
 /**
  * find relative widget
  */
-GameEngine::UI_widget* GameEngine::UI_widget::findWidgetAt(float x, float y)
+GameEngine::UI_widget* GameEngine::UI_widget::findWidgetAt(const glm::vec2& cursor)
 {
 	if (!m_visible) {
 		return nullptr;
 	}
 
-	if (x >= m_screen_position_size.x && x <= m_screen_position_size.x + m_screen_position_size.z &&
-		y >= m_screen_position_size.y && y <= m_screen_position_size.y + m_screen_position_size.w
-		) {
-		if (m_widgets.size() == 0) {
+	// convert from parent coordinates to the widget corrdinates
+	const glm::vec2 p = (cursor - m_gtranslation) / m_gscale ;
+
+	if (p.x >= -1.0f && p.x <= 1.0f && p.y >= -1.0f && p.y <= 1.0f) {
+		if (m_children.size() == 0) {
 			return this;
 		}
 
 		GameEngine::UI_widget* w = nullptr;
 
-		for (auto widget : m_widgets) {
-			w = widget->findWidgetAt(x, y);
+		for (auto widget : m_children) {
+			w = dynamic_cast<GameEngine::UI_widget*>(widget)->findWidgetAt(cursor);
 			if (w != nullptr) {
 				return w;
 			}
@@ -319,8 +319,8 @@ GameEngine::UI_widget* GameEngine::UI_widget::findWidgetAt(float x, float y)
 void GameEngine::UI_widget::link(UI* ui)
 {
 	m_ui = ui;
-	for (auto widget : m_widgets) {
-		widget->link(ui);
+	for (auto widget : m_children) {
+		dynamic_cast<GameEngine::UI_widget*>(widget)->link(ui);
 	}
 }
 
@@ -336,12 +336,28 @@ void GameEngine::UI_widget::addButtons(std::vector<struct UI_def_button>& button
 			button.position_size,
 			button.img_release_position_size,
 			button.img_press_position_size,
+			button.texture,
 			button.message,
 			button.repeater
 		);
+		b->scale(button.scale);
+		b->translate(button.translation);
 
 		add(b);
 	}
+}
+
+/**
+ * get a specific widget
+ */
+UI_widget* GameEngine::UI_widget::widget(const std::string& name)
+{
+	for (auto widget : m_children) {
+		if (widget->name() == name) {
+			return dynamic_cast<UI_widget*>(widget);
+		}
+	}
+	return nullptr;
 }
 
 /**
@@ -359,8 +375,8 @@ void GameEngine::UI_widget::draw(void)
 		);
 	}
 
-	for (auto widget : m_widgets) {
-		widget->draw();
+	for (auto widget : m_children) {
+		dynamic_cast<GameEngine::UI_widget*>(widget)->draw();
 	}
 }
 
@@ -385,8 +401,10 @@ void GameEngine::UI_tab::sendMessage(UI_widget* from, uint32_t imessage)
  * create
  */
 GameEngine::UI_tab::UI_tab(const std::string& name, const glm::vec4& position):
-	UI_widget(name, position)
+	UI_widget(name, position, nullptr)
 {
+	m_geometry = nullptr;	// virtual container, shall not be drawn
+	m_material = nullptr;
 }
 
 /**
@@ -396,18 +414,17 @@ void GameEngine::UI_tab::tab(UI_button* current)
 {
 	if (m_activeTab != nullptr) {
 		dynamic_cast<UI_button*>(m_activeTab)->release();	// deactivate the previous button
+		m_tabs[m_activeTab]->visible(false);
 	}
 	m_activeTab = current;
 	m_activeTab->press();			// force the current button to 'press' image
 
 	// clear the old tab
-	m_panel->clear();
+	//m_panel->clear();
 
 	if (m_tabs[m_activeTab] != nullptr) {
 		// and bind the the block to the display panel
-		m_panel->add(m_tabs[m_activeTab]);
-		m_panel->link(m_ui);
-		m_panel->update();
+		m_tabs[m_activeTab]->visible(true);
 	}
 }
 
@@ -418,8 +435,11 @@ void GameEngine::UI_tab::addTab(UI_button* button, UI_widget* panel)
 {
 	m_tabs[button] = panel;
 
+	panel->visible(false);
+
 	// register the widget
 	add(button);
+	add(panel);
 }
 
 /**
@@ -432,11 +452,12 @@ void GameEngine::UI_tab::setPanel(UI_widget* panel)
 
 //-------------------------------------------------------
 
-GameEngine::UI_picture::UI_picture(const std::string& name, const glm::vec4& panel, const glm::vec4& textureIndex, bool visible):
-	UI_widget(name, panel, visible),
+GameEngine::UI_picture::UI_picture(const std::string& name, const glm::vec4& panel, const glm::vec4& textureIndex, fwTexture* texture, bool visible):
+	UI_widget(name, panel, texture, visible),
 	m_textureIndex(textureIndex)
 {
 	m_draw = true;
+	add_uniform("imagepos", m_textureIndex);
 }
 
 void GameEngine::UI_picture::draw(void)
@@ -450,10 +471,12 @@ void GameEngine::UI_picture::draw(void)
 GameEngine::UI_button::UI_button(const std::string& name, 
 	const glm::vec4& position, 
 	const glm::vec4& textureOffIndex, const glm::vec4& textureOnIndex, 
+	fwTexture* texture,
 	uint32_t message,
 	bool repeater,
-	bool visible):
-	UI_picture(name, position, textureOffIndex, visible),
+	bool visible
+):
+	UI_picture(name, position, textureOffIndex, texture, visible),
 	m_texture_on(textureOnIndex),
 	m_texture_off(textureOffIndex),
 	m_message(message),
@@ -544,12 +567,19 @@ void GameEngine::UI_button::onTimer(void)
 GameEngine::UI_ZoomPicture::UI_ZoomPicture(const std::string& name, const glm::vec4& panel, const glm::vec4& textureIndex,
 	const glm::ivec2& imageSize,
 	const glm::ivec2& viewPort,
+	fwTexture* texture,
 	bool visible):
-	UI_picture(name, panel, textureIndex, visible),
+	UI_picture(name, panel, textureIndex, texture, visible),
 	m_imageSize(imageSize),
 	m_viewPort(viewPort),
-	m_scroll(0, imageSize.y)
+	m_scroll(0, imageSize.y),
+	m_size(textureIndex)
 {
+	m_draw = true;
+	add_uniform("imagepos", m_textureIndex);
+
+	m_textureIndex.w = m_viewPort.y * m_size.w / m_imageSize.y;
+	m_textureIndex.y = m_size.y + m_scroll.y * m_size.w / m_imageSize.y - m_textureIndex.w;
 }
 
 void GameEngine::UI_ZoomPicture::draw(void)
@@ -564,6 +594,8 @@ void GameEngine::UI_ZoomPicture::scrollUp(void)
 {
 	if (m_scroll.y < m_imageSize.y) {
 		m_scroll.y++;
+		m_textureIndex.w = m_viewPort.y * m_size.w / m_imageSize.y;
+		m_textureIndex.y = m_size.y + m_scroll.y * m_size.w / m_imageSize.y - m_textureIndex.w;
 	}
 }
 
@@ -571,5 +603,16 @@ void GameEngine::UI_ZoomPicture::scrollDown(void)
 {
 	if (m_scroll.y > m_viewPort.y) {
 		m_scroll.y--;
+		m_textureIndex.w = m_viewPort.y * m_size.w / m_imageSize.y;
+		m_textureIndex.y = m_size.y + m_scroll.y * m_size.w / m_imageSize.y - m_textureIndex.w;
 	}
+}
+
+// ------------------------------------------------------
+
+GameEngine::UI_container::UI_container(const std::string& name, const glm::vec4& panel, bool visible):
+	UI_widget(name, panel, nullptr, visible)
+{
+	m_geometry = nullptr;	// virtual container, shall not be drawn
+	m_material = nullptr;
 }
