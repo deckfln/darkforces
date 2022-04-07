@@ -49,14 +49,11 @@ static float quadUvs[] = { // vertex attributes for a quad that fills the entire
 	0.0f, 0.0f
 };
 
-static glProgram* g_program = nullptr;
-static fwGeometry* g_geometry = nullptr;
-static glVertexArray* g_vertexArray = nullptr;
 static glm::vec4 g_positionsize;
 static glm::vec4 g_imagepos;
-static fwUniform g_uni_ps("positionsize", &g_positionsize);
+static glm::vec4 g_transformation;
 static fwUniform g_uni_ip("imagepos", &g_imagepos);
-static fwUniform g_uni_tr("transformation", &g_positionsize);
+static fwUniform g_uni_tr("transformation", &g_transformation);
 
 //-------------------------------------------------------
 
@@ -128,58 +125,9 @@ void GameEngine::UI::onTimer(gaMessage*)
 GameEngine::UI::UI(const std::string& name, bool visible):
 	gaComponent(gaComponent::Gui)
 {
-	m_visible = true; //  visible;
-
 	g_material.addTexture("image", (fwTexture*)nullptr);
-	g_material.addUniform(&g_uni_ps);
 	g_material.addUniform(&g_uni_ip);
 	g_material.addUniform(&g_uni_tr);
-
-	std::string vs = g_material.load_shader(FORWARD_RENDER, VERTEX_SHADER, "");
-	std::string fs = g_material.load_shader(FORWARD_RENDER, FRAGMENT_SHADER, "");
-	std::string gs = g_material.load_shader(FORWARD_RENDER, GEOMETRY_SHADER, "");
-
-	g_program = new glProgram(vs, fs, gs, "");
-
-	g_geometry = new fwGeometry();
-	g_geometry->addVertices("aPos", quadVertices, 2, sizeof(quadVertices), sizeof(float), false);
-	g_geometry->addAttribute("aTex", GL_ARRAY_BUFFER, quadUvs, 2, sizeof(quadUvs), sizeof(float), false);
-
-	g_vertexArray = new glVertexArray();
-	g_geometry->enable_attributes(g_program);
-	g_vertexArray->unbind();
-}
-
-/**
- * draw the GUI
- */
-void GameEngine::UI::draw(void)
-{
-	if (!m_visible) {
-		return;
-	}
-
-	if (m_dirty) {
-		m_dirty = false;
-		m_root->update(glm::vec4(0, 0, 1, 1));
-	}
-	// always draw on top of screen
-	glDisable(GL_DEPTH_TEST);								// disable depth test so screen-space quad isn't discarded due to depth test.
-
-	g_program->run();
-
-	m_root->draw();
-	glEnable(GL_DEPTH_TEST);
-}
-
-/**
- * draw a widget
- */
-void GameEngine::UI::draw_widget(const glm::vec4& position_size)
-{
-	g_positionsize = position_size;
-	g_material.set_uniforms(g_program);
-	g_geometry->draw(GL_TRIANGLES, g_vertexArray);
 }
 
 /**
@@ -249,6 +197,12 @@ GameEngine::UI_widget::UI_widget(const std::string& name, const glm::vec4& posit
 {
 	m_visible = visible;
 	add_uniform("positionsize", m_position_size);
+}
+
+GameEngine::UI_widget::UI_widget(const std::string& name, const glm::vec2& scale, const glm::vec2& translate, fwTexture* texture, bool visible):
+	GameEngine::Image2D(name, scale, translate, texture, &g_material)
+{
+	m_visible = visible;
 }
 
 /**
@@ -333,7 +287,8 @@ void GameEngine::UI_widget::addButtons(std::vector<struct UI_def_button>& button
 
 		GameEngine::UI_button *b = new GameEngine::UI_button(
 			button.name,
-			button.position_size,
+			button.scale,
+			button.translation,
 			button.img_release_position_size,
 			button.img_press_position_size,
 			button.texture,
@@ -360,26 +315,6 @@ UI_widget* GameEngine::UI_widget::widget(const std::string& name)
 	return nullptr;
 }
 
-/**
- * draw the GUI
- */
-void GameEngine::UI_widget::draw(void)
-{
-	if (!m_visible) {
-		return;
-	}
-
-	if (m_draw) {
-		GameEngine::UI::draw_widget(
-			m_screen_position_size
-		);
-	}
-
-	for (auto widget : m_children) {
-		dynamic_cast<GameEngine::UI_widget*>(widget)->draw();
-	}
-}
-
 //-------------------------------------------------------
 
 /**
@@ -400,8 +335,8 @@ void GameEngine::UI_tab::sendMessage(UI_widget* from, uint32_t imessage)
 /**
  * create
  */
-GameEngine::UI_tab::UI_tab(const std::string& name, const glm::vec4& position):
-	UI_widget(name, position, nullptr)
+GameEngine::UI_tab::UI_tab(const std::string& name, const glm::vec2& scale, const glm::vec2& translate):
+	UI_widget(name, scale, translate, nullptr)
 {
 	m_geometry = nullptr;	// virtual container, shall not be drawn
 	m_material = nullptr;
@@ -452,31 +387,38 @@ void GameEngine::UI_tab::setPanel(UI_widget* panel)
 
 //-------------------------------------------------------
 
-GameEngine::UI_picture::UI_picture(const std::string& name, const glm::vec4& panel, const glm::vec4& textureIndex, fwTexture* texture, bool visible):
-	UI_widget(name, panel, texture, visible),
+GameEngine::UI_picture::UI_picture(const std::string& name, 
+	const glm::vec2& scale,
+	const glm::vec2& translate,
+	const glm::vec4& textureIndex, 
+	fwTexture* texture, 
+	bool visible
+):
+	UI_widget(name, scale, translate, texture, visible),
 	m_textureIndex(textureIndex)
 {
-	m_draw = true;
 	add_uniform("imagepos", m_textureIndex);
 }
 
-void GameEngine::UI_picture::draw(void)
+GameEngine::UI_picture::UI_picture(const std::string& name, const glm::vec4& position, const glm::vec4& textureIndex, fwTexture* texture, bool visible):
+	UI_widget(name, position, texture, visible),
+	m_textureIndex(textureIndex)
 {
-	g_imagepos = m_textureIndex;
-	UI_widget::draw();
+	add_uniform("imagepos", m_textureIndex);
 }
 
 // ------------------------------------------------------
 
 GameEngine::UI_button::UI_button(const std::string& name, 
-	const glm::vec4& position, 
-	const glm::vec4& textureOffIndex, const glm::vec4& textureOnIndex, 
+	const glm::vec2& scale,
+	const glm::vec2& translate,
+	const glm::vec4& textureOffIndex, const glm::vec4& textureOnIndex,
 	fwTexture* texture,
 	uint32_t message,
 	bool repeater,
 	bool visible
 ):
-	UI_picture(name, position, textureOffIndex, texture, visible),
+	UI_picture(name, scale, translate, textureOffIndex, texture, visible),
 	m_texture_on(textureOnIndex),
 	m_texture_off(textureOffIndex),
 	m_message(message),
@@ -564,12 +506,15 @@ void GameEngine::UI_button::onTimer(void)
 
 // ------------------------------------------------------
 
-GameEngine::UI_ZoomPicture::UI_ZoomPicture(const std::string& name, const glm::vec4& panel, const glm::vec4& textureIndex,
+GameEngine::UI_ZoomPicture::UI_ZoomPicture(const std::string& name, 
+	const glm::vec2& scale, 
+	const glm::vec2& translation,
+	const glm::vec4& textureIndex,
 	const glm::ivec2& imageSize,
 	const glm::ivec2& viewPort,
 	fwTexture* texture,
 	bool visible):
-	UI_picture(name, panel, textureIndex, texture, visible),
+	UI_picture(name, scale, translation, textureIndex, texture, visible),
 	m_imageSize(imageSize),
 	m_viewPort(viewPort),
 	m_scroll(0, imageSize.y),
@@ -580,14 +525,6 @@ GameEngine::UI_ZoomPicture::UI_ZoomPicture(const std::string& name, const glm::v
 
 	m_textureIndex.w = m_viewPort.y * m_size.w / m_imageSize.y;
 	m_textureIndex.y = m_size.y + m_scroll.y * m_size.w / m_imageSize.y - m_textureIndex.w;
-}
-
-void GameEngine::UI_ZoomPicture::draw(void)
-{
-	g_imagepos = m_textureIndex;
-	g_imagepos.w = m_viewPort.y * m_textureIndex.w / m_imageSize.y;
-	g_imagepos.y = m_textureIndex.y + m_scroll.y * m_textureIndex.w / m_imageSize.y - g_imagepos.w ;
-	UI_widget::draw();
 }
 
 void GameEngine::UI_ZoomPicture::scrollUp(void)
@@ -610,8 +547,8 @@ void GameEngine::UI_ZoomPicture::scrollDown(void)
 
 // ------------------------------------------------------
 
-GameEngine::UI_container::UI_container(const std::string& name, const glm::vec4& panel, bool visible):
-	UI_widget(name, panel, nullptr, visible)
+GameEngine::UI_container::UI_container(const std::string& name, const glm::vec2& scale, const glm::vec2& translation, bool visible) :
+	UI_widget(name, scale, translation, nullptr, visible)
 {
 	m_geometry = nullptr;	// virtual container, shall not be drawn
 	m_material = nullptr;

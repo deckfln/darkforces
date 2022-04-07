@@ -26,7 +26,6 @@ namespace GameEngine
 		uint32_t message;
 		bool repeater;
 		bool visible;
-		glm::vec4 position_size;							// position and size of the button relative to its parent
 		glm::vec4 img_press_position_size;					// position and size of the 'pressed' image
 		glm::vec4 img_release_position_size;				// position and size of the 'released' image
 		fwTexture* texture;
@@ -37,7 +36,6 @@ namespace GameEngine
 	class UI : public gaComponent
 	{
 	protected:
-		bool m_visible = true;
 		UI_widget* m_root = nullptr;
 		Framework::TextureAtlas* m_textures=nullptr;
 		bool m_dirty = true;
@@ -51,8 +49,6 @@ namespace GameEngine
 	public:
 		UI(const std::string& name, bool m_visible=true);
 		inline void root(UI_widget* widget) { m_root = widget; };
-		void draw(void);														// draw the GUI
-		static void draw_widget(const glm::vec4& position_size);
 		void receiveMessage(UI_widget* from, uint32_t imessage);				// receive a message from a widget
 		void timer(bool b);														// (de)activate the timer
 		void dispatchMessage(gaMessage*) override;								// receive and dispatch controller messages
@@ -74,6 +70,7 @@ namespace GameEngine
 
 	public:
 		UI_widget(const std::string& name, const glm::vec4& position, fwTexture* texture, bool visible = true);
+		UI_widget(const std::string& name, const glm::vec2& scale,	const glm::vec2& translate, fwTexture* texture, bool visible = true);
 		void add(UI_widget* widget);										// add a widget on the panel
 		void update(const glm::vec4&);										// update screen position based on parent
 		void update(void);													// update children screen position
@@ -84,7 +81,6 @@ namespace GameEngine
 		inline void draw(bool b) { m_draw = b; };
 		UI_widget* widget(const std::string& name);							// get a specific widget
 
-		virtual void draw(void);											// draw the GUI
 		inline virtual void onMouseDown(void) { };							// click on the widget
 		inline virtual void onMouseUp(void) { };							// release the widget
 		inline virtual void onMouseMove(void) { };							// get cursor movement when captured
@@ -98,10 +94,8 @@ namespace GameEngine
 	 */
 	class UI_container : public UI_widget
 	{
-	protected:
-		glm::vec4 m_textureIndex;
 	public:
-		UI_container(const std::string& name, const glm::vec4& panel, bool visible = true);
+		UI_container(const std::string& name, const glm::vec2& scale, const glm::vec2& translation, bool visible = true);
 	};
 
 	/**
@@ -112,8 +106,17 @@ namespace GameEngine
 	protected:
 		glm::vec4 m_textureIndex;
 	public:
-		UI_picture(const std::string& name, const glm::vec4& panel, const glm::vec4& textureIndex, fwTexture* texture, bool visible=true);
-		void draw(void) override;											// draw the GUI
+		UI_picture(const std::string& name, 
+			const glm::vec2& scale,
+			const glm::vec2& translate,
+			const glm::vec4& textureIndex, 
+			fwTexture* texture, 
+			bool visible=true);
+		UI_picture(const std::string& name,
+			const glm::vec4& position,
+			const glm::vec4& textureIndex,
+			fwTexture* texture,
+			bool visible = true);
 	};
 
 	/**
@@ -126,7 +129,7 @@ namespace GameEngine
 		UI_widget* m_panel = nullptr;										// target panel
 		void sendMessage(UI_widget* from, uint32_t imessageu) override;		// send a message to the parent
 	public:
-		UI_tab(const std::string& name, const glm::vec4& position);
+		UI_tab(const std::string& name, const glm::vec2& scale, const glm::vec2& translate);
 		void tab(UI_button* current);										// force the current tab
 		void addTab(UI_button* button, UI_widget* panel);					// add a tab : button + panel
 		void setPanel(UI_widget* panel);									// define the display panel
@@ -144,8 +147,9 @@ namespace GameEngine
 
 	public:
 		UI_button(const std::string& name, 
-			const glm::vec4& position, 
-			const glm::vec4& textureOnIndex, 
+			const glm::vec2& scale,
+			const glm::vec2& translate,
+			const glm::vec4& textureOnIndex,
 			const glm::vec4& textureOffIndex, 
 			fwTexture* texture,
 			uint32_t message = 0,											// message sent when activated (none by default)
@@ -174,13 +178,13 @@ namespace GameEngine
 		float m_zoom = 1.0f;
 	public:
 		UI_ZoomPicture(const std::string& name, 
-			const glm::vec4& panel, 
-			const glm::vec4& textureIndex, 
+			const glm::vec2& scale, 
+			const glm::vec2& translation,
+			const glm::vec4& textureIndex,
 			const glm::ivec2& imageSize, 
 			const glm::ivec2& viewPort,
 			fwTexture* texture,
 			bool visible = true);
-		void draw(void) override;											// draw the GUI
 		void scrollUp(void);
 		void scrollDown(void);
 	};

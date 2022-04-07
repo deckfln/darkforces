@@ -22,10 +22,21 @@ namespace GameEngine
 			const glm::vec4& position,
 			fwTexture* texture = nullptr
 		);
+		Image2D(const std::string& name,
+			const glm::vec2& scale,
+			const glm::vec2& translate,
+			fwTexture* texture = nullptr
+		);
 
 		// create with a material
 		Image2D(const std::string& name,
 			const glm::vec4& position,
+			fwTexture* texture = nullptr,
+			fwMaterial* material = nullptr
+		);
+		Image2D(const std::string& name,
+			const glm::vec2& scale,
+			const glm::vec2& translate,
 			fwTexture* texture = nullptr,
 			fwMaterial* material = nullptr
 		);

@@ -79,6 +79,18 @@ GameEngine::Image2D::Image2D(const std::string& name, const glm::vec4& position,
 	setUniforms();
 }
 
+GameEngine::Image2D::Image2D(const std::string& name, const glm::vec2& _scale, const glm::vec2& _translate, fwTexture* texture):
+	Framework::Mesh2D(name),
+	m_texture(texture)
+{
+	scale(_scale);
+	translate(_translate);
+
+	setGeometry();
+	setMaterial();
+	setUniforms();
+}
+
 GameEngine::Image2D::Image2D(const std::string& name, const glm::vec4& position, fwTexture* texture, fwMaterial* material):
 	Framework::Mesh2D(name),
 	m_onscreen(position),
@@ -93,6 +105,24 @@ GameEngine::Image2D::Image2D(const std::string& name, const glm::vec4& position,
 		setMaterial();
 	}
 
+	setUniforms();
+}
+
+GameEngine::Image2D::Image2D(const std::string& name, const glm::vec2& _scale, const glm::vec2& _translate, fwTexture* texture, fwMaterial* material) :
+	Framework::Mesh2D(name),
+	m_texture(texture)
+{
+	scale(_scale);
+	translate(_translate);
+
+	setGeometry();
+
+	if (material != nullptr) {
+		m_material = material;
+	}
+	else {
+		setMaterial();
+	}
 	setUniforms();
 }
 

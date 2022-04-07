@@ -2,7 +2,6 @@
 
 layout (location = 0) in vec2 aPos;
 
-uniform vec4 positionsize;
 uniform vec4 imagepos;
 uniform vec4 transformation;
 out vec2 TexCoords;
