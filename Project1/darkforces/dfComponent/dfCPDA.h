@@ -31,6 +31,8 @@ namespace DarkForces {
 			glm::vec2 m_pda_panel_size;							// size of the PDA panel (in pixel)
 			glm::vec2 m_pda_panel_position;						// position of the panel (in pixel) on the PDA
 
+			float m_ratio = 1.0f;								// screen ratio
+
 			GameEngine::UI_button* buildButton(
 				const std::string& name,
 				uint32_t pressed,
@@ -43,7 +45,7 @@ namespace DarkForces {
 				uint32_t image,
 				uint32_t textureIndex
 			);													// add an image on the panel
-			void addButton(
+			void completeButtonDef(
 				DarkForces::DELT* parent,
 				GameEngine::UI_def_button& button
 			);													// add a button to the panel
@@ -52,6 +54,7 @@ namespace DarkForces {
 			void onAddItem(gaMessage*);							// addItem on the PDA
 			void onKeyDown(gaMessage*);							// deal with UI keyboard
 			void onCompleteGoal(gaMessage*);					// when the player reached a goal
+			void onScreenResize(gaMessage*);					// when the screen gets resized
 
 		public:
 			PDA(const std::string& name);

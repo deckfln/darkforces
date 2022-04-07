@@ -58,7 +58,7 @@ static std::map<uint32_t, std::string> g_dfInventoryRev = {
  */
 void DarkForces::Component::PDA::onShowPDA(gaMessage*)
 {
-	if (m_root->visible()) {
+	if (m_background->visible()) {
 		m_background->visible(false);
 		GameEngine::World::popState();				// restart the game
 		GameEngine::App::popControl();				// restore the correct controler
@@ -111,6 +111,18 @@ void DarkForces::Component::PDA::onCompleteGoal(gaMessage* message)
 	// display the DELT of the given goal
 	__debugbreak();
 	m_ui_goals->widget("DarkForces:goal:" + std::to_string(message->m_value))->visible(true);
+}
+
+/**
+ * set the new screen ratio
+ */
+void DarkForces::Component::PDA::onScreenResize(gaMessage* message)
+{
+	if (m_ratio != message->m_fvalue) {
+		// the PDA was originaly designed for 320x200 ratio
+		m_ratio = message->m_fvalue;
+		m_background->scale(glm::vec2(1.6f / m_ratio, 1.0f));
+	}
 }
 
 //------------------------------------------------------
@@ -193,7 +205,7 @@ GameEngine::UI_button* DarkForces::Component::PDA::buildButton(
 /**
  * add a button on a panel
  */
-void DarkForces::Component::PDA::addButton(
+void DarkForces::Component::PDA::completeButtonDef(
 	DarkForces::DELT* parent,
 	GameEngine::UI_def_button& button
 )
@@ -445,7 +457,7 @@ DarkForces::Component::PDA::PDA(const std::string& name):
 
 	// convert DarkForces UI to GameEngine::UI
 	for (auto& button : mission_buttons) {
-		addButton(m_pda->texture(1), button);
+		completeButtonDef(m_pda->texture(1), button);
 	}
 	mission_tab->addButtons(mission_buttons);
 
@@ -500,7 +512,7 @@ DarkForces::Component::PDA::PDA(const std::string& name):
 	};
 
 	for (auto& button : automap_buttons) {
-		addButton(m_pda->texture(1), button);
+		completeButtonDef(m_pda->texture(1), button);
 	}
 	map_tab->addButtons(automap_buttons);
 
@@ -509,7 +521,7 @@ DarkForces::Component::PDA::PDA(const std::string& name):
 		{"exit", 		PDA_BUTTONS::Exit_press,		DarkForces::Message::PDA_EXIT,		false, false, glm::vec4(0),glm::vec4(0), textureAtlas, glm::vec2(0), glm::vec2(0)}
 	};
 
-	addButton(m_pda->texture(0), pda_buttons[0]);
+	completeButtonDef(m_pda->texture(0), pda_buttons[0]);
 	m_background->addButtons(pda_buttons);
 
 	// -------------------------- final build
@@ -562,6 +574,10 @@ void DarkForces::Component::PDA::dispatchMessage(gaMessage* message)
 
 		case DarkForces::Message::COMPLETE:
 			onCompleteGoal(message);
+			break;
+
+		case gaMessage::Action::SCREEN_RESIZE:
+			onScreenResize(message);
 			break;
 
 	}
