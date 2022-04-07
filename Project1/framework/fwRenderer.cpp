@@ -345,8 +345,10 @@ void fwRenderer::sortMeshes(std::list<fwMesh *>& meshes, const glm::vec3& camera
 
 //--------------------------------------------------------
 
+using mesh_per_material = std::map<fwMaterial*, std::vector<Framework::Mesh2D*>>;
+
 static std::map<uint32_t, std::map<uint32_t, glVertexArray*>> g_vaos;
-static std::map<fwMaterial*, std::vector<Framework::Mesh2D*>> g_meshesByMaterial;
+static std::map<int32_t, mesh_per_material> g_layers;
 static std::map<uint32_t, fwMaterial*> m_materials;
 static std::map<fwMaterial*, glProgram*> g_programs;
 
@@ -406,7 +408,8 @@ void fwRenderer::draw2D(fwScene* scene)
 	}
 
 	// update the global list of mesh per material
-	g_meshesByMaterial.clear();
+	g_layers.clear();
+
 	for (auto mesh : meshes) {
 		fwMaterial* material = mesh->material();
 
@@ -414,7 +417,7 @@ void fwRenderer::draw2D(fwScene* scene)
 		if (material) {
 			fwGeometry* geometry= mesh->geometry();
 			if (geometry) {
-				g_meshesByMaterial[material].push_back(mesh);
+				g_layers[mesh->zOrder()][material].push_back(mesh);
 			}
 		}
 	}
@@ -426,33 +429,36 @@ void fwRenderer::draw2D(fwScene* scene)
 	glPushDebugGroup(GL_DEBUG_SOURCE_APPLICATION, 0, GLsizei(strlen(s7)), s7);
 	glDisable(GL_DEPTH_TEST);								// disable depth test so screen-space quad isn't discarded due to depth test.
 
-	// render meshed per materials
-	for (auto& materialMeshes : g_meshesByMaterial) {
-		fwMaterial* material = materialMeshes.first;
+	// render meshes per layers
+	for (auto& layer : g_layers) {
+		// render meshes per material
+		for (auto& materialMeshes : layer.second) {
+			fwMaterial* material = materialMeshes.first;
 
-		// compile the program if it is missing
-		glProgram* program = g_programs[materialMeshes.first];
-		if (program == nullptr) {
-			std::string vs = material->load_shader(FORWARD_RENDER, VERTEX_SHADER, "");
-			std::string fs = material->load_shader(FORWARD_RENDER, FRAGMENT_SHADER, "");
-			std::string gs = material->load_shader(FORWARD_RENDER, GEOMETRY_SHADER, "");
+			// compile the program if it is missing
+			glProgram* program = g_programs[materialMeshes.first];
+			if (program == nullptr) {
+				std::string vs = material->load_shader(FORWARD_RENDER, VERTEX_SHADER, "");
+				std::string fs = material->load_shader(FORWARD_RENDER, FRAGMENT_SHADER, "");
+				std::string gs = material->load_shader(FORWARD_RENDER, GEOMETRY_SHADER, "");
 
-			program = new glProgram(vs, fs, gs, "");
+				program = new glProgram(vs, fs, gs, "");
 
-			g_programs[materialMeshes.first] = program;
-		}
+				g_programs[materialMeshes.first] = program;
+			}
 
-		program->run();
-		material->set_uniforms(program);
+			program->run();
+			material->set_uniforms(program);
 
-		// parse all meshes
-		for (auto& mesh : materialMeshes.second) {
-			mesh->set_uniforms(program);
-			fwGeometry* geometry = mesh->geometry();
+			// parse all meshes
+			for (auto& mesh : materialMeshes.second) {
+				mesh->set_uniforms(program);
+				fwGeometry* geometry = mesh->geometry();
 
-			// build the VAO if it is missing
-			glVertexArray* vao = getVAO(geometry, program, mesh->name());
-			mesh->draw(vao);
+				// build the VAO if it is missing
+				glVertexArray* vao = getVAO(geometry, program, mesh->name());
+				mesh->draw(vao);
+			}
 		}
 	}
 	glEnable(GL_DEPTH_TEST);

@@ -15,7 +15,7 @@ namespace Framework
 			uint32_t m_type;
 			const void* m_value;
 		};
-		int m_id = 0;
+		int32_t m_id = 0;
 
 		// local transformation matrix
 		bool m_dirty = false;
@@ -29,8 +29,6 @@ namespace Framework
 		std::string m_name;
 		bool m_always_draw = false;						// ignore frustum visibility and always draw
 		bool m_transparent = false;
-		int32_t m_zorder = 0;							// 0 => sort meshed by distance to the camera
-														// 1... => the app is sorting the meshes. 1 is drawn first, then 2 ....
 		std::map<std::string, struct uniform> m_materialUniforms;// local values of material uniforms
 		std::vector<fwUniform*> m_uniforms;				// uniforms dedicated to the mesh
 
@@ -45,6 +43,8 @@ namespace Framework
 		fwMaterial* m_material = nullptr;
 
 		std::list <Mesh2D*> m_children;
+
+		int32_t m_zorder = 0;
 
 	public:
 		Mesh2D();
