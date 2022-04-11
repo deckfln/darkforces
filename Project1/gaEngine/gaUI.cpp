@@ -191,18 +191,6 @@ void GameEngine::UI_widget::sendMessage(UI_widget* from, uint32_t imessage)
 	}
 }
 
-/**
- * create
- */
-GameEngine::UI_widget::UI_widget(const std::string& name, const glm::vec4& position, fwTexture* texture, bool visible) :
-	GameEngine::Image2D(name, position, texture, &g_material),
-	m_position_size(position)
-{
-	m_visible = visible;
-	add_uniform("positionsize", m_position_size);
-	m_zorder = 999;
-}
-
 GameEngine::UI_widget::UI_widget(const std::string& name, const glm::vec2& scale, const glm::vec2& translate, fwTexture* texture, bool visible):
 	GameEngine::Image2D(name, scale, translate, texture, &g_material)
 {
@@ -400,13 +388,6 @@ GameEngine::UI_picture::UI_picture(const std::string& name,
 	bool visible
 ):
 	UI_widget(name, scale, translate, texture, visible),
-	m_textureIndex(textureIndex)
-{
-	add_uniform("imagepos", m_textureIndex);
-}
-
-GameEngine::UI_picture::UI_picture(const std::string& name, const glm::vec4& position, const glm::vec4& textureIndex, fwTexture* texture, bool visible):
-	UI_widget(name, position, texture, visible),
 	m_textureIndex(textureIndex)
 {
 	add_uniform("imagepos", m_textureIndex);

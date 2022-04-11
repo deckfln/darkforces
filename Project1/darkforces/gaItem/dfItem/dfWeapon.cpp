@@ -23,7 +23,7 @@ DarkForces::Weapon g_concussion = DarkForces::Weapon(
 	100,
 	{ "concuss1.bm" },
 	{ nullptr },
-	glm::vec2(0.0, 0.0)
+	{ glm::vec2(0x82, 0x83), glm::vec2(0xbf, 0x81), glm::vec2(0xbc, 0x84) }	// basic screen position
 );
 DarkForces::Weapon g_FusionCutter = DarkForces::Weapon(
 	DarkForces::Weapon::Kind::FusionCutter,
@@ -36,7 +36,7 @@ DarkForces::Weapon g_FusionCutter = DarkForces::Weapon(
 	100, 
 	{ "fusion1.bm" },
 	{ nullptr },
-	glm::vec2(0.0, 0.0)
+	{ glm::vec2(0x13, 0x98), glm::vec2(0x17, 0x9b), glm::vec2(0x17, 0x9b), glm::vec2(0x17, 0xb) }	// basic screen position
 );
 DarkForces::Weapon g_Missile = DarkForces::Weapon(
 	DarkForces::Weapon::Kind::Missile,
@@ -49,7 +49,7 @@ DarkForces::Weapon g_Missile = DarkForces::Weapon(
 	100,
 	{ "assault1.bm" },
 	{ nullptr },
-	glm::vec2(0.0, 0.0)
+	{  }	// basic screen position
 );
 DarkForces::Weapon g_MortarGun = DarkForces::Weapon(
 	DarkForces::Weapon::Kind::MortarGun,
@@ -62,7 +62,7 @@ DarkForces::Weapon g_MortarGun = DarkForces::Weapon(
 	100,
 	{ "mortar1.bm" },
 	{ nullptr },
-	glm::vec2(0.0, 0.0)
+	{ glm::vec2(0x7b, 0x77), glm::vec2(0x7e, 0x75), glm::vec2(0x7f, 0x77), glm::vec2(0x7b, 0x74) }	// basic screen position
 );
 DarkForces::Weapon g_Pistol = DarkForces::Weapon(
 	DarkForces::Weapon::Kind::Pistol,
@@ -75,7 +75,7 @@ DarkForces::Weapon g_Pistol = DarkForces::Weapon(
 	200,		// maximum energy on new pistol
 	{ "pistol1.bm", "pistol2.bm", "pistol3.bm" },
 	{ nullptr, nullptr, nullptr },
-	glm::vec2(0.3, -0.9)
+	{ glm::vec2(0xa5, 0x8e - 14), glm::vec2(0xa9, 0x88) , glm::vec2(0xa9, 0x88) }	// basic screen position
 );
 DarkForces::Weapon g_PlasmaCannon = DarkForces::Weapon(
 	DarkForces::Weapon::Kind::PlasmaCannon,
@@ -88,7 +88,7 @@ DarkForces::Weapon g_PlasmaCannon = DarkForces::Weapon(
 	100,
 	{ "assault1.bm" },
 	{ nullptr },
-	glm::vec2(0.0, 0.0)
+	{ glm::vec2(206, 74), glm::vec2(208, 60), glm::vec2(224, 81), glm::vec2(230, 86) }	// basic screen position
 );
 DarkForces::Weapon g_Repeater = DarkForces::Weapon(
 	DarkForces::Weapon::Kind::Repeater,
@@ -101,7 +101,7 @@ DarkForces::Weapon g_Repeater = DarkForces::Weapon(
 	100,
 	{ "autogun1" },
 	{ nullptr },
-	glm::vec2(0.2, 0.8)
+	{ glm::vec2(0x9c, 0x8a), glm::vec2(0xa3, 0x8c), glm::vec2(0xa3, 0x8c) }	// basic screen position
 );
 DarkForces::Weapon g_Rifle = DarkForces::Weapon(
 	DarkForces::Weapon::Kind::Rifle,
@@ -114,7 +114,7 @@ DarkForces::Weapon g_Rifle = DarkForces::Weapon(
 	200,		// maximum energy 
 	{ "rifle1.bm", "rifle2.bm" },
 	{ nullptr, nullptr },
-	glm::vec2(0.17, -0.83)
+	{ glm::vec2(0x71, 0x7f - 14), glm::vec2(0x70, 0x72) }	// basic screen position
 );
 
 /**
@@ -165,7 +165,7 @@ void DarkForces::Weapon::clone(DarkForces::Weapon* source)
 	m_rate = source->m_rate;
 	m_HUDfiles = source->m_HUDfiles;
 	m_HUDbmps = source->m_HUDbmps;
-	m_HUDposition = source->m_HUDposition;
+	m_screenPosition = source->m_screenPosition;
 	m_energy = source->m_energy;
 	m_maxEnergy = source->m_maxEnergy;
 }

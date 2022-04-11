@@ -69,7 +69,6 @@ namespace GameEngine
 		virtual void sendMessage(UI_widget* from, uint32_t imessage);	// send a message to the parent
 
 	public:
-		UI_widget(const std::string& name, const glm::vec4& position, fwTexture* texture, bool visible = true);
 		UI_widget(const std::string& name, const glm::vec2& scale,	const glm::vec2& translate, fwTexture* texture, bool visible = true);
 		void add(UI_widget* widget);										// add a widget on the panel
 		void update(const glm::vec4&);										// update screen position based on parent

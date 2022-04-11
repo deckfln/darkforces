@@ -53,7 +53,6 @@ void GameEngine::Image2D::setMaterial(void)
 	if (g_material == nullptr) {
 		g_material = new fwMaterial(g_subShaders);
 		g_material->addTexture("image", (glTexture*)nullptr);
-		g_material->addUniform(new fwUniform("onscreen", &g_screen));
 		g_material->addUniform(new fwUniform("transformation", &g_screen));
 	}
 	m_material = g_material;
@@ -63,41 +62,18 @@ void GameEngine::Image2D::setUniforms(void)
 {
 	// define per mesh value of the materials uniforms
 	add_uniform("image", m_texture);
-	add_uniform("onscreen", m_onscreen);
 }
 
-/**
- * create
- */
-GameEngine::Image2D::Image2D(const std::string& name, const glm::vec4& position, fwTexture* texture) :
+
+GameEngine::Image2D::Image2D(const std::string& name, const glm::vec2& _scale, const glm::vec2& _translate, fwTexture* texture, fwMaterial* material):
 	Framework::Mesh2D(name),
-	m_onscreen(position),
 	m_texture(texture)
 {
 	setGeometry();
-	setMaterial();
-	setUniforms();
-}
 
-GameEngine::Image2D::Image2D(const std::string& name, const glm::vec2& _scale, const glm::vec2& _translate, fwTexture* texture):
-	Framework::Mesh2D(name),
-	m_texture(texture)
-{
 	scale(_scale);
 	translate(_translate);
 
-	setGeometry();
-	setMaterial();
-	setUniforms();
-}
-
-GameEngine::Image2D::Image2D(const std::string& name, const glm::vec4& position, fwTexture* texture, fwMaterial* material):
-	Framework::Mesh2D(name),
-	m_onscreen(position),
-	m_texture(texture)
-{
-	setGeometry();
-
 	if (material != nullptr) {
 		m_material = material;
 	}
@@ -105,56 +81,23 @@ GameEngine::Image2D::Image2D(const std::string& name, const glm::vec4& position,
 		setMaterial();
 	}
 
-	setUniforms();
-}
-
-GameEngine::Image2D::Image2D(const std::string& name, const glm::vec2& _scale, const glm::vec2& _translate, fwTexture* texture, fwMaterial* material) :
-	Framework::Mesh2D(name),
-	m_texture(texture)
-{
-	scale(_scale);
-	translate(_translate);
-
-	setGeometry();
-
-	if (material != nullptr) {
-		m_material = material;
-	}
-	else {
-		setMaterial();
-	}
-	setUniforms();
-}
-
-GameEngine::Image2D::Image2D(const std::string& name, float x, float y, float width, float height, fwTexture* texture, fwMaterial* material):
-	Framework::Mesh2D(name),
-	m_onscreen(x, y, width, height),
-	m_texture(texture)
-{
-	setGeometry();
-
-	if (material != nullptr) {
-		m_material = material;
-	}
-	else {
-		setMaterial();
-	}
 	setUniforms();
 }
 
 /**
  * create with a shader
  */
-GameEngine::Image2D::Image2D(const std::string& name, float x, float y, float width, float height, fwTexture* texture, const std::map<ShaderType, std::string>& shaders) :
+GameEngine::Image2D::Image2D(const std::string& name, const glm::vec2& _scale, const glm::vec2& _translate, fwTexture* texture, const std::map<ShaderType, std::string>& shaders) :
 	Framework::Mesh2D(name),
-	m_onscreen(x, y, width, height),
 	m_texture(texture)
 {
 	setGeometry();
 
+	scale(_scale);
+	translate(_translate);
+
 	m_material = new fwMaterial(shaders);
 	m_material->addTexture("image", (glTexture*)nullptr);
-	m_material->addUniform(new fwUniform("onscreen", &m_onscreen));
 	g_material->addUniform(new fwUniform("transformation", &g_screen));
 
 	setUniforms();

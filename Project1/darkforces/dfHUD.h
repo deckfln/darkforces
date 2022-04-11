@@ -18,6 +18,8 @@ namespace GameEngine {
 }
 
 namespace DarkForces {
+	class Weapon;
+
 	class HUD : public fwHUD {
 		// hud display
 		dfBitmap* m_health_bmp = nullptr;	// health and shield
@@ -29,11 +31,11 @@ namespace DarkForces {
 		// weapon needs a dedicated panel
 		dfBitmap* m_weapon_bmp = nullptr;	// animated weapon
 		GameEngine::Image2D* m_weapon = nullptr;
+		fwTexture* m_weapon_texture = nullptr;
 		glm::vec4 m_materialWeapon = glm::vec4(0);
 		//fwUniform* m_uniWeapon = nullptr;
 		//fwFlatPanel* m_panel = nullptr;
 		fwMaterial* m_weaponMaterial = nullptr;
-		glm::vec4 m_weaponImage;
 
 		// default data for the HUD
 		glm::vec4 m_material = glm::vec4(0);
@@ -44,11 +46,16 @@ namespace DarkForces {
 		gaEntity m_entText = gaEntity(DarkForces::ClassID::_HUD, "hud");
 		Component::HUDtext m_compText;
 
+		// screen ration
+		float m_ratio = 1.0f;
+
 	public:
 		HUD(GameEngine::Level*, fwScene* scene);
 		void setWeapon(fwTexture* texture, float x, float y, float w, float h);	// change the weapon texture and X position (-1::1)
+		void setWeapon(fwTexture* texture, DarkForces::Weapon* weapon, float delatx, float deltay);
 		void setGoggle(bool onoff);
 		void setAmbient(float ambient);
+		void setScreenSize(float ratio);
 		void setHeadlight(bool onoff);
 		~HUD();
 	};

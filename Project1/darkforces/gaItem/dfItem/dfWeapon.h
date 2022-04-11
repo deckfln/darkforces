@@ -41,7 +41,7 @@ namespace DarkForces {
 		time_t m_rate;							// how many bullets per seconds
 		std::vector<const char*> m_HUDfiles;	// name of the HUD images
 		std::vector<dfBitmap*> m_HUDbmps;
-		glm::vec2 m_HUDposition;
+		std::vector<glm::vec2> m_screenPosition;	// basic screen position
 
 		DarkForces::Weapon(void):
 			DarkForces::Item("none", dfLogic::NONE)
@@ -58,8 +58,8 @@ namespace DarkForces {
 			m_rate(source->m_rate),
 			m_HUDfiles(source->m_HUDfiles),
 			m_HUDbmps(source->m_HUDbmps),
-			m_HUDposition(source->m_HUDposition),
-			m_energy(source->m_energy)
+			m_energy(source->m_energy),
+			m_screenPosition(source->m_screenPosition)
 		{
 		};
 
@@ -74,7 +74,7 @@ namespace DarkForces {
 			const uint32_t maxEnergy,	// maximum energy
 			const std::vector<const char*>& HUDfiles,
 			const std::vector<dfBitmap*>& HUDbmps,
-			const glm::vec2& HUDposition
+			const std::vector<glm::vec2>& screenPosition
 		) :
 			DarkForces::Item(debug, dfLogic::WEAPON),
 			m_kind(kind),
@@ -87,7 +87,7 @@ namespace DarkForces {
 			m_maxEnergy(maxEnergy),
 			m_HUDfiles(HUDfiles),
 			m_HUDbmps(HUDbmps),
-			m_HUDposition(HUDposition)
+			m_screenPosition(screenPosition)
 		{
 		};
 

@@ -31,6 +31,7 @@ namespace DarkForces {
 		// predefined items
 		DarkForces::Headlight m_headlight = DarkForces::Headlight("headlight");
 		DarkForces::Weapon m_pistol;
+		DarkForces::Weapon m_rifle;
 		DarkForces::EnergyClip m_clip;
 
 		dfLevel* m_level = nullptr;
@@ -62,6 +63,7 @@ namespace DarkForces {
 		void onShowPDA(gaMessage* message);		// display the PDA
 		void onShowAutomap(gaMessage* message);	// display/hide the automap
 		void onCompleteGoal(gaMessage* message);// when a goal is complete
+		void onScreenResize(gaMessage* message);// when the screen gets resized
 
 	public:
 		Player(

@@ -25,8 +25,8 @@ namespace DarkForces {
 static std::map<DarkForces::Weapon::Kind, DarkForces::weaponTexture> g_hud;
 
 static std::map<uint32_t, std::string> g_WeaponKeys = {
-	{GLFW_KEY_1, "Pistol"},
-	{GLFW_KEY_2, "Rifle"}
+	{GLFW_KEY_1, "DarkForces:weapon:pistol"},
+	{GLFW_KEY_2, "DarkForces:weapon:rifle"}
 };
 
 /**
@@ -38,6 +38,7 @@ DarkForces::Player::Player(int mclass, const std::string& name, fwCylinder& cyli
 	m_className = g_className;
 
 	m_pistol.clone(&g_Pistol);
+	m_rifle.clone(&g_Rifle);
 
 	addComponent(&m_defaultAI);
 	addComponent(&m_sound);
@@ -111,14 +112,7 @@ void DarkForces::Player::placeWeapon(DarkForces::Weapon* weapon,
 		fire_y = 0;
 	}
 
-	int w, h, ch;
-	texture->get_info(&w, &h, &ch);
-
-	// darkforces draws in 320x200 but divide by 2
-	float width = 2.0f * w / 640.0f;
-	float height = 2.0f * h / 400.0f;
-
-	g_dfHUD->setWeapon(texture, weapon->m_HUDposition.x + delta.x, weapon->m_HUDposition.y + delta.y, width, height);
+	g_dfHUD->setWeapon(texture, weapon, delta.x, delta.y);
 }
 
 /**
@@ -163,7 +157,6 @@ void DarkForces::Player::onChangeWeapon(int kweapon)
 	if (m_currentWeapon == weapon) {
 		return;
 	}
-
 	setWeapon(dynamic_cast<DarkForces::Weapon*>(weapon));
 }
 
@@ -231,18 +224,22 @@ void DarkForces::Player::onLookAt(gaMessage* message)
 	// show more or less of the weapon based on the player look
 	float y = message->m_v3value.y;
 
-	float y1 = m_currentWeapon->m_HUDposition.y + m_wobbling.y - y;
+	// convert from opengl -1:+1, to vga 0:200
+	float dfy = y * 100.0f;
+
+	float y1 = (1.0f - m_currentWeapon->m_screenPosition[0].y / 100.0f) + m_wobbling.y + y;
 
 	if (y1 > -0.51f) {
-		m_wobbling.z = 0.51f + m_currentWeapon->m_HUDposition.y + m_wobbling.y;
+		m_wobbling.z = 0.51f + m_wobbling.y;
 	}
 	else if (y1 < -1.1) {
-		m_wobbling.z = 1.1f + m_currentWeapon->m_HUDposition.y + m_wobbling.y;
+		m_wobbling.z = 1.1f + m_wobbling.y;
 	}
 	else {
 		m_wobbling.z = y;
 	}
-	placeWeapon(m_currentWeapon, glm::vec2(m_wobbling.x, m_wobbling.y - m_wobbling.z));
+//	placeWeapon(m_currentWeapon, glm::vec2(m_wobbling.x, m_wobbling.y - m_wobbling.z));
+	placeWeapon(m_currentWeapon, glm::vec2(0, dfy));
 }
 
 /**
@@ -367,6 +364,14 @@ void DarkForces::Player::onCompleteGoal(gaMessage* message)
 }
 
 /**
+ * when the screen gets resized
+ */
+void DarkForces::Player::onScreenResize(gaMessage* message)
+{
+	g_dfHUD->setScreenSize(message->m_fvalue);
+}
+
+/**
  * let an entity deal with a situation
  */
 void DarkForces::Player::dispatchMessage(gaMessage* message)
@@ -454,6 +459,9 @@ void DarkForces::Player::dispatchMessage(gaMessage* message)
 		onCompleteGoal(message);
 		break;
 
+	case gaMessage::Action::SCREEN_RESIZE:
+		onScreenResize(message);
+		break;
 	}
 
 	gaActor::dispatchMessage(message);
