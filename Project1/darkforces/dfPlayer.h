@@ -51,7 +51,6 @@ namespace DarkForces {
 		void onMove(gaMessage* message);		// when the player moves
 		void onFire(gaMessage* message);		// when the player fires
 		void onAlarm(gaMessage* message);		// time to display the fire texture is over
-		//void onLookAt(gaMessage* message);		// when the player looks somewhere
 		void onHitBullet(gaMessage* mmessage);	// when the player gets hit by a laser
 		void onBulletMiss(gaMessage* mmessage);	// a bullet passed by the player
 		void onTogleGogle(gaMessage* mmessage);	// Togle the gogles

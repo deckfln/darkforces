@@ -165,28 +165,6 @@ void DarkForces::Player::onChangeWeapon(int kweapon)
  */
 void DarkForces::Player::onMove(gaMessage* message)
 {
-	/*
-	// detect when we start moving
-	if (message->m_frame > m_frameStartMove + 2) {
-		m_wobblingT = 0.0f;
-		m_wobblingDirection = +0.0872665f;
-	}
-	m_frameStartMove = message->m_frame;
-
-	m_wobbling.x = sin(m_wobblingT)/8.0f;
-	m_wobbling.y = cos(m_wobblingT)/8.0f;
-
-	m_wobblingT += m_wobblingDirection;
-
-	if (m_wobblingT > 0.959931f) {
-		m_wobblingDirection = -0.0872665f;
-	}
-	else if (m_wobblingT < -0.959931f) {
-		m_wobblingDirection = +0.0872665f;
-	}
-	placeWeapon(m_currentWeapon, glm::vec2(m_wobbling.x, m_wobbling.y - m_wobbling.z));
-	*/
-
 	// extract our sector and get the lighthing for the hud
 	dfSector* sector = static_cast<dfLevel*>(g_gaLevel)->findSector(position());
 	if (sector != nullptr) {
@@ -217,33 +195,6 @@ void DarkForces::Player::onAlarm(gaMessage* message)
 	m_weaponFiring = false;
 	placeWeapon(m_currentWeapon, glm::vec2(m_wobbling.x, m_wobbling.y - m_wobbling.z));
 }
-
-/**
- * when the player looks somewhere
- *
-void DarkForces::Player::onLookAt(gaMessage* message)
-{
-	// show more or less of the weapon based on the player look
-	float y = message->m_v3value.y;
-
-	// convert from opengl -1:+1, to vga 0:200
-	float dfy = y * 100.0f;
-
-	float y1 = (1.0f - m_currentWeapon->m_screenPosition[0].y / 100.0f) + m_wobbling.y + y;
-
-	if (y1 > -0.51f) {
-		m_wobbling.z = 0.51f + m_wobbling.y;
-	}
-	else if (y1 < -1.1) {
-		m_wobbling.z = 1.1f + m_wobbling.y;
-	}
-	else {
-		m_wobbling.z = y;
-	}
-//	placeWeapon(m_currentWeapon, glm::vec2(m_wobbling.x, m_wobbling.y - m_wobbling.z));
-	placeWeapon(m_currentWeapon, glm::vec2(0, dfy));
-}
-*/
 
 /**
  * when the player gets hit by a laser
@@ -437,12 +388,6 @@ void DarkForces::Player::dispatchMessage(gaMessage* message)
 	case gaMessage::Action::ALARM:
 		onAlarm(message);
 		break;
-
-		/*
-	case gaMessage::Action::LOOK_AT:
-		onLookAt(message);
-		break;
-		*/
 
 	case gaMessage::Action::BULLET_HIT:
 		onHitBullet(message);
