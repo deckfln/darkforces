@@ -16,6 +16,7 @@
 
 class dfSector;
 class dfLevel;
+class fwScene;
 
 namespace DarkForces {
 	/**
@@ -38,7 +39,6 @@ namespace DarkForces {
 
 		DarkForces::Weapon* m_currentWeapon=nullptr;	// current weapon
 		bool m_weaponFiring = false;					// weapon is on fire position
-		bool m_inMove = false;							// currently moving
 		uint32_t m_frameStartMove = 0;					// when did the move start
 		float m_wobblingT=0;							// time of wobbling
 		float m_wobblingDirection = 1;
@@ -51,7 +51,7 @@ namespace DarkForces {
 		void onMove(gaMessage* message);		// when the player moves
 		void onFire(gaMessage* message);		// when the player fires
 		void onAlarm(gaMessage* message);		// time to display the fire texture is over
-		void onLookAt(gaMessage* message);		// when the player looks somewhere
+		//void onLookAt(gaMessage* message);		// when the player looks somewhere
 		void onHitBullet(gaMessage* mmessage);	// when the player gets hit by a laser
 		void onBulletMiss(gaMessage* mmessage);	// a bullet passed by the player
 		void onTogleGogle(gaMessage* mmessage);	// Togle the gogles
@@ -87,13 +87,17 @@ namespace DarkForces {
 
 		void setWeapon(DarkForces::Weapon* weapon);			// Change the current weapon
 		void setWeapon();									// force the default weapon (pistol)
+		void setScene(fwScene* scene);						// add component on screen
 
+		// flight recorder
 		int recordSize(void) override {
 			return sizeof(flightRecorder::DarkForces::Actor);
 		};														// size of one record
 
 		uint32_t recordState(void* record) override;			// return a record of an actor state (for debug)
 		void loadState(void* record) override;					// reload an actor state from a record
+
+		// debugger
 		void debugGUIChildClass(void) override;					// Add dedicated component debug the entity
 	};
 }

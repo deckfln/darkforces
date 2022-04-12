@@ -51,6 +51,7 @@ DarkForces::HUD::HUD(GameEngine::Level* level, fwScene* scene) :
 	);
 	scene->addMesh2D(m_ammo);							// add the healthbar on the HUD
 
+	/*
 	// weapon display using a dedicated material
 	m_weaponMaterial = new fwMaterial(g_subShaders);
 	m_weaponMaterial->addTexture("image", (glTexture*)nullptr);
@@ -65,6 +66,7 @@ DarkForces::HUD::HUD(GameEngine::Level* level, fwScene* scene) :
 		m_weaponMaterial
 	);
 	scene->addMesh2D(m_weapon);							// add the healthbar on the HUD
+	*/
 
 	// text display using default image2D
 	int32_t h, w, ch;
@@ -96,7 +98,7 @@ DarkForces::HUD::HUD(GameEngine::Level* level, fwScene* scene) :
 
 /**
  * Put the weapon texture on screen
- */
+ *
 void DarkForces::HUD::setWeapon(fwTexture* texture, float x, float y, float w, float h)
 {
 	m_weapon_texture = texture;
@@ -143,6 +145,7 @@ void DarkForces::HUD::setWeapon(fwTexture* texture, DarkForces::Weapon* weapon, 
 	m_weapon->translate(glm::vec2(px, py));
 	m_weapon->add_uniform("image", m_weapon_texture);
 }
+*/
 
 /**
  * activate thre goggle green shader
@@ -155,11 +158,12 @@ void DarkForces::HUD::setGoggle(bool onoff)
 
 /**
  * change the weapon texture colo rbased on the current sector lightning
- */
+ *
 void DarkForces::HUD::setAmbient(float ambient)
 {
 	m_materialWeapon.r = ambient;
 }
+*/
 
 /**
  *
@@ -183,6 +187,7 @@ void DarkForces::HUD::setScreenSize(float ratio)
 	m_ammo->scale(glm::vec2(w1, h1));
 	m_ammo->translate(glm::vec2(1.0f - w1, -1.0f + h1));
 
+	/*
 	// relocate the weapon
 	int32_t h, w, ch;
 	m_weapon_texture->get_info(&h, &w, &ch);
@@ -190,6 +195,7 @@ void DarkForces::HUD::setScreenSize(float ratio)
 	h1 = h / 200.0f;
 	//m_weapon->scale(glm::vec2(w1, h1));
 	//m_weapon->translate(glm::vec2(0, -1.0 + h1));
+	*/
 }
 
 void DarkForces::HUD::setHeadlight(bool onoff)
@@ -201,11 +207,11 @@ DarkForces::HUD::~HUD()
 {
 	delete m_health;
 	delete m_ammo;
-	delete m_weapon;
+	//delete m_weapon;
 	delete m_ammo_bmp;
 	delete m_health_bmp;
 	//delete m_panel;
-	delete m_weaponMaterial;
+	//delete m_weaponMaterial;
 	delete m_materialUniform;
 	//delete m_uniWeapon;
 }

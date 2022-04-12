@@ -24,6 +24,41 @@ static std::map<DarkForces::Weapon::Kind, DarkForces::Weapon*> g_Weapons = {
 };
 
 /**
+ * define image position on screen
+ */
+void DarkForces::Component::Weapon::setImage(void)
+{
+	// change the texture of the Imagde2D
+	fwTexture* texture = m_current->getStillTexture(static_cast<dfLevel*>(g_gaLevel)->palette());
+
+	int32_t h1, w1, ch1;
+	texture->get_info(&w1, &h1, &ch1);
+
+	// 320x200 top-left corner of the texture
+	const glm::vec2& p = m_current->m_screenPosition[0];
+
+	const float ratio = m_ratio / 1.6f;
+	const float w = w1 / 320.0f / ratio;
+	const float h = h1 / 200.0f;
+
+	const float px = (p.x + (float)w1 / 2.0f - 160.0f) / 320.0f / ratio + m_wobbling.x;
+	float py = -(p.y + m_lookDownUp + h1 / 2.0f) / 200.0f + m_wobbling.y;
+
+	// when looking down, limit the weapon sprite at the bottom of the sprite
+	if (py > -1.0f + h1 / 200.0f) {
+		py = -1.0f + h1 / 200.0f;
+	}
+
+	// when looking up, limit the weapon sprite at the top of the sprite
+	if (py < -1.0f - h1 / 200.0f) {
+		py = -1.0f - h1 / 200.0f;
+	}
+
+	m_image->scale(glm::vec2(w, h));
+	m_image->translate(glm::vec2(px, py));
+}
+
+/**
  *
  */
 DarkForces::Component::Weapon::Weapon(void) :
@@ -51,10 +86,18 @@ DarkForces::Weapon* DarkForces::Component::Weapon::set(DarkForces::Weapon* curre
 	m_current = current;
 	m_kind = current->m_kind;
 	if (g_Weapons.count(m_kind) > 0) {
-		DarkForces::Weapon* w = g_Weapons.at(m_kind);
-		m_entity->sendMessage(gaMessage::Action::REGISTER_SOUND, DarkForces::Component::Actor::Sound::FIRE, loadVOC(w->m_fireSound)->sound());
+		if (m_image != nullptr) {
+			// add the sound of the weapon to the sound component
+			m_entity->sendMessage(gaMessage::Action::REGISTER_SOUND, DarkForces::Component::Actor::Sound::FIRE, loadVOC(current->m_fireSound)->sound());
 
-		return w;
+			// change the texture of the Imagde2D
+			fwTexture* texture = current->getStillTexture(static_cast<dfLevel*>(g_gaLevel)->palette());
+			m_image->add_uniform("image", texture);
+
+			setImage();
+		}
+
+		return current;
 	}
 
 	return nullptr;
@@ -138,12 +181,124 @@ void DarkForces::Component::Weapon::onStopFire(gaMessage* message)
 }
 
 /**
+ * when the player enter a new sector light
+ */
+void DarkForces::Component::Weapon::onChangeLightning(gaMessage* message)
+{
+	if (m_image) {
+		m_material.r = message->m_fvalue;
+	}
+}
+
+/**
+ * when the screen gets resized
+ */
+void DarkForces::Component::Weapon::onScreenResize(gaMessage* message)
+{
+	if (m_image) {
+		m_ratio = message->m_fvalue;
+
+		fwTexture* texture = m_current->getStillTexture(static_cast<dfLevel*>(g_gaLevel)->palette());
+
+		// relocate the weapon
+		int32_t h, w, ch;
+		texture->get_info(&h, &w, &ch);
+
+		float w1, h1;
+		w1 = w / 320.0f / m_ratio;
+		h1 = h / 200.0f;
+		m_image->scale(glm::vec2(w1, h1));
+		//m_weapon->translate(glm::vec2(0, -1.0 + h1));
+	}
+}
+
+/**
+ * when the player looks somewhere
+ */
+void DarkForces::Component::Weapon::onLookAt(gaMessage* message)
+{
+	if (m_image) {
+		// show more or less of the weapon based on the player look
+		// convert from opengl -1:+1, to vga 0:200
+		m_lookDownUp = message->m_v3value.y * 100.0f;
+		setImage();
+	}
+}
+
+/**
+ * when the player moves
+ */
+void DarkForces::Component::Weapon::onMove(gaMessage* message)
+{
+	if (m_image) {
+			// detect when we start moving
+		if (message->m_frame > m_frameStartMove + 2) {
+			m_wobblingT = 0.0f;
+			m_wobblingDirection = +0.0872665f;
+		}
+		m_frameStartMove = message->m_frame;
+
+		m_wobbling.x = sin(m_wobblingT) / 8.0f;
+		m_wobbling.y = cos(m_wobblingT) / 8.0f;
+
+		printf("%f**\n", m_wobbling.y);
+
+		m_wobblingT += m_wobblingDirection;
+
+		if (m_wobblingT > 0.959931f) {
+			m_wobblingDirection = -0.0872665f;
+		}
+		else if (m_wobblingT < -0.959931f) {
+			m_wobblingDirection = +0.0872665f;
+		}
+
+		setImage();
+	}
+}
+
+//---------------------------------------
+
+/**
  * Increase or decrease the energy and update the HUD
  */
 void DarkForces::Component::Weapon::addEnergy(int32_t value)
 {
 	uint32_t nbAmmo = m_current->addEnergy(value);
 	m_entity->sendMessage(DarkForces::Message::AMMO, nbAmmo);
+}
+
+
+/**
+ * build and return an Image2D for the HUD
+ */
+GameEngine::Image2D* DarkForces::Component::Weapon::getImage(void)
+{
+	// date for display
+	static std::map<ShaderType, std::string> g_subShaders = {
+		{VERTEX_SHADER, "darkforces/shaders/hud/hud_vs.glsl"},
+		{FRAGMENT_SHADER, "darkforces/shaders/hud/hud_fs.glsl"}
+	};
+
+	static fwMaterial* g_weaponMaterial = nullptr;
+	static glm::vec4 g_weaponTranform;
+
+	if (g_weaponMaterial == nullptr) {
+		// weapon display using a dedicated material
+		g_weaponMaterial = new fwMaterial(g_subShaders);
+		g_weaponMaterial->addTexture("image", (glTexture*)nullptr);
+		g_weaponMaterial->addUniform(new fwUniform("material", &m_material));
+		g_weaponMaterial->addUniform(new fwUniform("transformation", &g_weaponTranform));
+	}
+
+	m_image = new GameEngine::Image2D(
+		"darkforce:weapon",
+		glm::vec2(0.4, 0.4),
+		glm::vec2(-0.2f, 0.4f - 1.0f),	// position
+		nullptr,
+		g_weaponMaterial
+	);
+
+	return m_image;
 }
 
 /**
@@ -166,6 +321,22 @@ void DarkForces::Component::Weapon::dispatchMessage(gaMessage* message)
 
 	case DarkForces::Message::ADD_ENERGY:
 		addEnergy(message->m_value);
+		break;
+
+	case DarkForces::Message::AMBIENT:
+		onChangeLightning(message);
+		break;
+
+	case gaMessage::Action::SCREEN_RESIZE:
+		onScreenResize(message);
+		break;
+
+	case gaMessage::Action::LOOK_AT:
+		onLookAt(message);
+		break;
+
+	case gaMessage::Action::MOVE:
+		onMove(message);
 		break;
 	}
 }

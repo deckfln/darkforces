@@ -112,7 +112,7 @@ void DarkForces::Player::placeWeapon(DarkForces::Weapon* weapon,
 		fire_y = 0;
 	}
 
-	g_dfHUD->setWeapon(texture, weapon, delta.x, delta.y);
+	//g_dfHUD->setWeapon(texture, weapon, delta.x, delta.y);
 }
 
 /**
@@ -165,9 +165,9 @@ void DarkForces::Player::onChangeWeapon(int kweapon)
  */
 void DarkForces::Player::onMove(gaMessage* message)
 {
+	/*
 	// detect when we start moving
 	if (message->m_frame > m_frameStartMove + 2) {
-		m_inMove = true;
 		m_wobblingT = 0.0f;
 		m_wobblingDirection = +0.0872665f;
 	}
@@ -185,12 +185,14 @@ void DarkForces::Player::onMove(gaMessage* message)
 		m_wobblingDirection = +0.0872665f;
 	}
 	placeWeapon(m_currentWeapon, glm::vec2(m_wobbling.x, m_wobbling.y - m_wobbling.z));
+	*/
 
 	// extract our sector and get the lighthing for the hud
 	dfSector* sector = static_cast<dfLevel*>(g_gaLevel)->findSector(position());
 	if (sector != nullptr) {
 		float ambient = sector->ambient() / 32.0f;
-		g_dfHUD->setAmbient(ambient);
+		sendMessage(DarkForces::Message::AMBIENT, 0, ambient);
+		//g_dfHUD->setAmbient(ambient);
 	}
 }
 
@@ -218,7 +220,7 @@ void DarkForces::Player::onAlarm(gaMessage* message)
 
 /**
  * when the player looks somewhere
- */
+ *
 void DarkForces::Player::onLookAt(gaMessage* message)
 {
 	// show more or less of the weapon based on the player look
@@ -241,6 +243,7 @@ void DarkForces::Player::onLookAt(gaMessage* message)
 //	placeWeapon(m_currentWeapon, glm::vec2(m_wobbling.x, m_wobbling.y - m_wobbling.z));
 	placeWeapon(m_currentWeapon, glm::vec2(0, dfy));
 }
+*/
 
 /**
  * when the player gets hit by a laser
@@ -372,6 +375,14 @@ void DarkForces::Player::onScreenResize(gaMessage* message)
 }
 
 /**
+ * add component on screen
+ */
+void DarkForces::Player::setScene(fwScene* scene)
+{
+	scene->addMesh2D(m_weapon.getImage());
+}
+
+/**
  * let an entity deal with a situation
  */
 void DarkForces::Player::dispatchMessage(gaMessage* message)
@@ -427,9 +438,11 @@ void DarkForces::Player::dispatchMessage(gaMessage* message)
 		onAlarm(message);
 		break;
 
+		/*
 	case gaMessage::Action::LOOK_AT:
 		onLookAt(message);
 		break;
+		*/
 
 	case gaMessage::Action::BULLET_HIT:
 		onHitBullet(message);

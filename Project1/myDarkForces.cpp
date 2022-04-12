@@ -226,8 +226,10 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 	bindControl((fwControl*)controller);
 	m_player->addComponent(controller, gaEntity::Flag::DONT_DELETE);
 
-
 	GameEngine::World::add(m_player);
+
+	// load needed data on screen
+	static_cast<DarkForces::Player*>(m_player)->setScene(m_scene);
 
 	// PDA
 	g_pda = new DarkForces::Prefab::PDA();
