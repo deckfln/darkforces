@@ -263,7 +263,6 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 
 	// and put the player in position
 	static_cast<DarkForces::Player*>(m_player)->bind(static_cast<dfLevel*>(m_level));
-	static_cast<DarkForces::Player*>(m_player)->setWeapon();
 
 	// init the m_scene
 	glm::vec3* yellow = new glm::vec3(255, 255, 0);

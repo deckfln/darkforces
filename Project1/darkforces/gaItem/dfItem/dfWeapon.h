@@ -94,6 +94,8 @@ namespace DarkForces {
 		void clone(DarkForces::Weapon* source);			// clone the weapon
 		void loadClip(void);							// load the clip with energy
 
+		fwTexture* image(uint32_t nb, dfPalette* palette);	// return image #nb
+		inline uint32_t images(void) { return m_HUDfiles.size(); };	// return number of images for the weapon
 		fwTexture* getStillTexture(dfPalette* palette) {
 			if (m_HUDbmps[0] == nullptr) {
 				m_HUDbmps[0] = new dfBitmap(g_dfFiles, m_HUDfiles[0], palette);

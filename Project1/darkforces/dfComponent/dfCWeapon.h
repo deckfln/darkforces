@@ -19,6 +19,8 @@ namespace DarkForces {
 			float m_wobblingT = 0;									// time of wobbling
 			float m_wobblingDirection = 1;
 
+			uint32_t m_currentImage = 0;							// display image #i from the weapon images
+			uint32_t m_timer = 0;									// number of frames before changing the image
 			void setImage(void);									// define image position on screen
 
 
@@ -56,6 +58,7 @@ namespace DarkForces {
 			void onScreenResize(gaMessage* message);			// when the screen gets resized
 			void onLookAt(gaMessage* message);					// when the player looks somewhere, move the position of the weapon
 			void onMove(gaMessage* message);					// when the player moves
+			void onTimer(gaMessage* message);					// change the weapon image after XX frames
 		};
 	}
 }

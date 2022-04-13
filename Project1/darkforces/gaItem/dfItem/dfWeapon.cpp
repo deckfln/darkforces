@@ -75,7 +75,7 @@ DarkForces::Weapon g_Pistol = DarkForces::Weapon(
 	200,		// maximum energy on new pistol
 	{ "pistol1.bm", "pistol2.bm", "pistol3.bm" },
 	{ nullptr, nullptr, nullptr },
-	{ glm::vec2(0xa5, 0x8e - 14), glm::vec2(0xa9, 0x88) , glm::vec2(0xa9, 0x88) }	// basic screen position
+	{ glm::vec2(0xa5, 0x8e - 14), glm::vec2(0xa9, 0x88 - 14) , glm::vec2(0xa9, 0x88 - 14) }	// basic screen position
 );
 DarkForces::Weapon g_PlasmaCannon = DarkForces::Weapon(
 	DarkForces::Weapon::Kind::PlasmaCannon,
@@ -114,7 +114,7 @@ DarkForces::Weapon g_Rifle = DarkForces::Weapon(
 	200,		// maximum energy 
 	{ "rifle1.bm", "rifle2.bm" },
 	{ nullptr, nullptr },
-	{ glm::vec2(0x71, 0x7f - 14), glm::vec2(0x70, 0x72) }	// basic screen position
+	{ glm::vec2(0x71, 0x7f - 14), glm::vec2(0x70, 0x72 - 14) }	// basic screen position
 );
 
 /**
@@ -180,6 +180,23 @@ void DarkForces::Weapon::loadClip(void)
 	clip->addEnergy(m_energy);
 	clip->maxEnergy(m_maxEnergy);
 
+}
+
+/**
+ * return image #nb
+ */
+fwTexture* DarkForces::Weapon::image(uint32_t nb, dfPalette* palette)
+{
+	if (nb >= m_HUDbmps.size()) {
+		return nullptr;
+	}
+
+	if (m_HUDbmps[nb] == nullptr) {
+		m_HUDbmps[nb] = new dfBitmap(g_dfFiles, m_HUDfiles[nb], palette);
+	}
+	return m_HUDbmps[nb]->fwtexture();
+
+	return nullptr;
 }
 
 /**

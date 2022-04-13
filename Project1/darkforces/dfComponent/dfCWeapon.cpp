@@ -29,13 +29,13 @@ static std::map<DarkForces::Weapon::Kind, DarkForces::Weapon*> g_Weapons = {
 void DarkForces::Component::Weapon::setImage(void)
 {
 	// change the texture of the Imagde2D
-	fwTexture* texture = m_current->getStillTexture(static_cast<dfLevel*>(g_gaLevel)->palette());
+	fwTexture* texture = m_current->image(m_currentImage, static_cast<dfLevel*>(g_gaLevel)->palette());
 
 	int32_t h1, w1, ch1;
 	texture->get_info(&w1, &h1, &ch1);
 
 	// 320x200 top-left corner of the texture
-	const glm::vec2& p = m_current->m_screenPosition[0];
+	const glm::vec2& p = m_current->m_screenPosition[m_currentImage];
 
 	const float ratio = m_ratio / 1.6f;
 	const float w = w1 / 320.0f / ratio;
@@ -56,6 +56,7 @@ void DarkForces::Component::Weapon::setImage(void)
 
 	m_image->scale(glm::vec2(w, h));
 	m_image->translate(glm::vec2(px, py));
+	m_image->setTexture(texture);
 }
 
 /**
@@ -89,11 +90,6 @@ DarkForces::Weapon* DarkForces::Component::Weapon::set(DarkForces::Weapon* curre
 		if (m_image != nullptr) {
 			// add the sound of the weapon to the sound component
 			m_entity->sendMessage(gaMessage::Action::REGISTER_SOUND, DarkForces::Component::Actor::Sound::FIRE, loadVOC(current->m_fireSound)->sound());
-
-			// change the texture of the Imagde2D
-			fwTexture* texture = current->getStillTexture(static_cast<dfLevel*>(g_gaLevel)->palette());
-			m_image->add_uniform("image", texture);
-
 			setImage();
 		}
 
@@ -170,6 +166,15 @@ void DarkForces::Component::Weapon::onFire(const glm::vec3& direction, time_t ti
 
 	m_entity->sendMessage(gaMessage::Action::PLAY_SOUND, DarkForces::Component::Actor::Sound::FIRE);
 	m_entity->sendMessage(DarkForces::Message::FIRE);
+
+	// change the weapon texture if there is one and trigger a timer to change back to still image
+	if (m_image) {
+		m_entity->timer(true);
+		m_timer = 2;				// delay between images
+		m_wobbling = glm::vec3(0);	// reset back to still
+		m_currentImage = 1;			// display the firing image
+		setImage();
+	}
 }
 
 /**
@@ -197,18 +202,7 @@ void DarkForces::Component::Weapon::onScreenResize(gaMessage* message)
 {
 	if (m_image) {
 		m_ratio = message->m_fvalue;
-
-		fwTexture* texture = m_current->getStillTexture(static_cast<dfLevel*>(g_gaLevel)->palette());
-
-		// relocate the weapon
-		int32_t h, w, ch;
-		texture->get_info(&h, &w, &ch);
-
-		float w1, h1;
-		w1 = w / 320.0f / m_ratio;
-		h1 = h / 200.0f;
-		m_image->scale(glm::vec2(w1, h1));
-		//m_weapon->translate(glm::vec2(0, -1.0 + h1));
+		setImage();
 	}
 }
 
@@ -241,8 +235,6 @@ void DarkForces::Component::Weapon::onMove(gaMessage* message)
 		m_wobbling.x = sin(m_wobblingT) / 8.0f;
 		m_wobbling.y = cos(m_wobblingT) / 8.0f;
 
-		printf("%f**\n", m_wobbling.y);
-
 		m_wobblingT += m_wobblingDirection;
 
 		if (m_wobblingT > 0.959931f) {
@@ -253,6 +245,31 @@ void DarkForces::Component::Weapon::onMove(gaMessage* message)
 		}
 
 		setImage();
+	}
+}
+/**
+ * change the weapon image after XX frames
+ */
+void DarkForces::Component::Weapon::onTimer(gaMessage* message)
+{
+	if (m_currentImage == 0) {
+		// the weapon is still, timers are not for us
+		return;
+	}
+
+	if (m_timer == 0) {
+		m_currentImage++;
+		if (m_currentImage >= m_current->images()) {
+			m_currentImage = 0;
+			m_entity->timer(false);
+		}
+		else {
+			m_timer = 2;
+		}
+		setImage();
+	}
+	else {
+		m_timer--;
 	}
 }
 
@@ -337,6 +354,10 @@ void DarkForces::Component::Weapon::dispatchMessage(gaMessage* message)
 
 	case gaMessage::Action::MOVE:
 		onMove(message);
+		break;
+
+	case gaMessage::Action::TIMER:
+		onTimer(message);
 		break;
 	}
 }

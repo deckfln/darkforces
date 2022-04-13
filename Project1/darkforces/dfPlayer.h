@@ -44,13 +44,8 @@ namespace DarkForces {
 		float m_wobblingDirection = 1;
 		glm::vec3 m_wobbling = glm::vec3(0);			// wobbling the weapon when moving
 
-		void placeWeapon(DarkForces::Weapon* weapon,
-			const glm::vec2& delta);			// place the weapon on screen
-
 		void onChangeWeapon(int kweapon);		// Change the current weapon
 		void onMove(gaMessage* message);		// when the player moves
-		void onFire(gaMessage* message);		// when the player fires
-		void onAlarm(gaMessage* message);		// time to display the fire texture is over
 		void onHitBullet(gaMessage* mmessage);	// when the player gets hit by a laser
 		void onBulletMiss(gaMessage* mmessage);	// a bullet passed by the player
 		void onTogleGogle(gaMessage* mmessage);	// Togle the gogles
@@ -84,8 +79,6 @@ namespace DarkForces {
 
 		void dispatchMessage(gaMessage* message) override;	//
 
-		void setWeapon(DarkForces::Weapon* weapon);			// Change the current weapon
-		void setWeapon();									// force the default weapon (pistol)
 		void setScene(fwScene* scene);						// add component on screen
 
 		// flight recorder

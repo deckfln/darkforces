@@ -55,6 +55,7 @@ DarkForces::Player::Player(int mclass, const std::string& name, fwCylinder& cyli
 	m_defaultAI.setClass("player");
 	sendMessage("hud", DarkForces::Message::AMMO, m_clip.energy());
 	sendMessage("pda", gaMessage::ADD_ITEM, 0, &m_pistol);
+	sendMessage(DarkForces::Message::CHANGE_WEAPON, 0, &m_pistol);
 }
 
 /**
@@ -95,50 +96,6 @@ void DarkForces::Player::addItem(Item* item)
 }
 
 /**
- * place the weapon on screen
- */
-void DarkForces::Player::placeWeapon(DarkForces::Weapon* weapon,
-	const glm::vec2& delta)
-{
-	fwTexture* texture;
-	float fire_y;				// move the weapon up if the weapon is firing
-
-	if (m_weaponFiring) {
-		texture = g_hud[weapon->kind()].m_fire;
-		fire_y = 0.1;
-	}
-	else {
-		texture = g_hud[weapon->kind()].m_still;
-		fire_y = 0;
-	}
-
-	//g_dfHUD->setWeapon(texture, weapon, delta.x, delta.y);
-}
-
-/**
- * Change the current weapon
- */
-void DarkForces::Player::setWeapon(DarkForces::Weapon* weapon)
-{
-	m_currentWeapon = weapon;
-
-	m_weapon.set(weapon);
-
-	if (g_hud.count(weapon->kind()) == 0) {
-		g_hud[weapon->kind()].m_still = weapon->getStillTexture(static_cast<dfLevel*>(m_level)->palette());
-		g_hud[weapon->kind()].m_fire = weapon->getFireTexture(static_cast<dfLevel*>(m_level)->palette());
-	}
-
-	// compute the size of the texture in glspace
-	placeWeapon(weapon, glm::vec2(0, 0));
-}
-
-void DarkForces::Player::setWeapon()
-{
-	setWeapon(&m_pistol);
-}
-
-/**
  * Change the current weapon
  */
 void DarkForces::Player::onChangeWeapon(int kweapon)
@@ -157,7 +114,6 @@ void DarkForces::Player::onChangeWeapon(int kweapon)
 	if (m_currentWeapon == weapon) {
 		return;
 	}
-	setWeapon(dynamic_cast<DarkForces::Weapon*>(weapon));
 }
 
 /**
@@ -172,28 +128,6 @@ void DarkForces::Player::onMove(gaMessage* message)
 		sendMessage(DarkForces::Message::AMBIENT, 0, ambient);
 		//g_dfHUD->setAmbient(ambient);
 	}
-}
-
-/**
- * when the player fires
- */
-void DarkForces::Player::onFire(gaMessage* message)
-{
-	m_weaponFiring = true;
-	placeWeapon(m_currentWeapon, glm::vec2(m_wobbling.x, m_wobbling.y - m_wobbling.z));
-
-	// reset the fire position after 10 frames
-	GameEngine::Alarm alarm(this, 10, gaMessage::Action::ALARM);
-	g_gaWorld.registerAlarmEvent(alarm);
-}
-
-/**
- * time to display the fire texture is over
- */
-void DarkForces::Player::onAlarm(gaMessage* message)
-{
-	m_weaponFiring = false;
-	placeWeapon(m_currentWeapon, glm::vec2(m_wobbling.x, m_wobbling.y - m_wobbling.z));
 }
 
 /**
@@ -377,16 +311,8 @@ void DarkForces::Player::dispatchMessage(gaMessage* message)
 		}
 		break;
 
-	case DarkForces::Message::FIRE:
-		onFire(message);
-		break;
-
 	case gaMessage::Action::MOVE:
 		onMove(message);
-		break;
-
-	case gaMessage::Action::ALARM:
-		onAlarm(message);
 		break;
 
 	case gaMessage::Action::BULLET_HIT:

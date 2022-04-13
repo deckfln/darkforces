@@ -13,5 +13,5 @@ void main()
 
     vec2 p = aPos * transformation.xy + transformation.wz;
 
-    gl_Position = glm::vec4(p, 0, 1);
+    gl_Position = vec4(p, 0, 1);
 } 

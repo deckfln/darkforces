@@ -31,5 +31,5 @@ void main()
         break;
     }
 
-    gl_Position = glm::vec4(p, 0, 1);
+    gl_Position = vec4(p, 0, 1);
 } 
