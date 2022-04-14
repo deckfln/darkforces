@@ -17,8 +17,8 @@ namespace DarkForces {
 			glm::vec3 m_wobbling = glm::vec3(0);					// waving when moving
 			uint32_t m_frameStartMove = 0;							// when did the move start
 			float m_wobblingT = 0;									// time of wobbling
-			float m_wobblingDirection = 1;
-
+			float m_wobblingDirection = 1;							//
+			bool m_walking = false;									// entity is walking, activate the wobling
 			uint32_t m_currentImage = 0;							// display image #i from the weapon images
 			uint32_t m_timer = 0;									// number of frames before changing the image
 			void setImage(void);									// define image position on screen
@@ -57,7 +57,9 @@ namespace DarkForces {
 			void onChangeLightning(gaMessage* message);			// when the player enter a new sector light
 			void onScreenResize(gaMessage* message);			// when the screen gets resized
 			void onLookAt(gaMessage* message);					// when the player looks somewhere, move the position of the weapon
-			void onMove(gaMessage* message);					// when the player moves
+			void onMove(gaMessage* message);					// when the player walks, move the weapon
+			void onWalkStart(gaMessage* message);				// start the wobling
+			void onWalkStop(gaMessage* message);				// reset the wobling
 			void onTimer(gaMessage* message);					// change the weapon image after XX frames
 		};
 	}

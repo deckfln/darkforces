@@ -224,14 +224,7 @@ void DarkForces::Component::Weapon::onLookAt(gaMessage* message)
  */
 void DarkForces::Component::Weapon::onMove(gaMessage* message)
 {
-	if (m_image) {
-			// detect when we start moving
-		if (message->m_frame > m_frameStartMove + 2) {
-			m_wobblingT = 0.0f;
-			m_wobblingDirection = +0.0872665f;
-		}
-		m_frameStartMove = message->m_frame;
-
+	if (m_image && m_walking) {
 		m_wobbling.x = sin(m_wobblingT) / 8.0f;
 		m_wobbling.y = cos(m_wobblingT) / 8.0f;
 
@@ -247,6 +240,30 @@ void DarkForces::Component::Weapon::onMove(gaMessage* message)
 		setImage();
 	}
 }
+
+/**
+ * init rhe weapong wobling
+ */
+void DarkForces::Component::Weapon::onWalkStart(gaMessage* message)
+{
+	if (m_image) {
+		// detect when we start moving
+		m_wobblingT = 0.0f;
+		m_wobblingDirection = +0.0872665f;
+		m_walking = true;
+	}
+}
+
+/**
+ * move the weapon at default position
+ */
+void DarkForces::Component::Weapon::onWalkStop(gaMessage* message)
+{
+	m_walking = false;
+	m_wobbling = glm::vec3(0);
+	setImage();
+}
+
 /**
  * change the weapon image after XX frames
  */
@@ -354,6 +371,14 @@ void DarkForces::Component::Weapon::dispatchMessage(gaMessage* message)
 
 	case gaMessage::Action::MOVE:
 		onMove(message);
+		break;
+
+	case gaMessage::Action::WALK_START:
+		onWalkStart(message);
+		break;
+
+	case gaMessage::Action::WALK_STOP:
+		onWalkStop(message);
 		break;
 
 	case gaMessage::Action::TIMER:

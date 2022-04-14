@@ -17,6 +17,11 @@ GameEngine::Component::Controller::Controller(fwCamera* camera,
 	fwControlThirdPerson(camera, position, height, phi, radius),
 	m_keys(keys)
 {
+	// add game controler keys
+	/*
+	m_keys.push_back({ GLFW_KEY_UP, GameEngine::Component::Controller::KeyInfo::Msg::onPress });		// start/stop walking forward walk
+	m_keys.push_back({ GLFW_KEY_DOWN, GameEngine::Component::Controller::KeyInfo::Msg::onPress });		// start/stop walking backward walk
+	*/
 }
 
 GameEngine::Component::Controller::~Controller()
@@ -54,6 +59,7 @@ bool GameEngine::Component::Controller::checkKeys(time_t delta)
 	}
 #endif
 
+	// inform the entity of the keys it asked for
 	for (auto& key : m_keys) {
 		switch (key.m_msh) {
 		case KeyInfo::Msg::onPressDown:
@@ -80,6 +86,20 @@ bool GameEngine::Component::Controller::checkKeys(time_t delta)
 			}
 			break;
 		}
+	}
+
+	// deal with walk_start/walk_stop
+	if (m_currentKeys[GLFW_KEY_UP] && !m_prevKeys[GLFW_KEY_UP]) {
+		m_entity->sendMessage(gaMessage::Action::WALK_START);
+	}
+	if (!m_currentKeys[GLFW_KEY_UP] && m_prevKeys[GLFW_KEY_UP]) {
+		m_entity->sendMessage(gaMessage::Action::WALK_STOP);
+	}
+	if (m_currentKeys[GLFW_KEY_DOWN] && !m_prevKeys[GLFW_KEY_DOWN]) {
+		m_entity->sendMessage(gaMessage::Action::WALK_START);
+	}
+	if (!m_currentKeys[GLFW_KEY_DOWN] && m_prevKeys[GLFW_KEY_DOWN]) {
+		m_entity->sendMessage(gaMessage::Action::WALK_STOP);
 	}
 
 	return true;

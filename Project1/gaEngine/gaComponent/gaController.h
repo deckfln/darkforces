@@ -38,7 +38,7 @@ namespace GameEngine {
 		private:
 			glm::vec3 m_oldEye;
 			glm::vec3 m_oldLookAt;
-			const std::vector<KeyInfo>	m_keys;						// keys to monitor
+			std::vector<KeyInfo>	m_keys;						// keys to monitor
 
 		};
 	}

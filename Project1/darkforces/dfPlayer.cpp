@@ -114,6 +114,9 @@ void DarkForces::Player::onChangeWeapon(int kweapon)
 	if (m_currentWeapon == weapon) {
 		return;
 	}
+
+	// confirm the weapon change to components
+	sendMessage(DarkForces::Message::CHANGE_WEAPON, 0, weapon);
 }
 
 /**

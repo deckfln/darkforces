@@ -84,7 +84,9 @@ public:
 		VOLUME_TRANSPARENCY, // change the sound transparency of a volume
 		ADD_ITEM,		// add item to the entity inventory
 		DROP_ITEM,		// entity shall drop an item
-		SCREEN_RESIZE	// provide the screen ration after a resize
+		SCREEN_RESIZE,	// provide the screen ration after a resize
+		WALK_START,		// the entity starts moving forward or backward
+		WALK_STOP		// the entity stops moving forward or backward
 	};
 
 	// flags stored in messages
