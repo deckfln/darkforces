@@ -37,7 +37,6 @@
 #include "darkforces/dfLogicTrigger.h"
 #include "darkforces/dfBullet.h"
 #include "darkforces/dfObject/dfBulletExplode.h"
-#include "darkforces/dfHUD.h"
 #include "darkforces/dfPlugin/dfSprites.h"
 #include "darkforces/dfVOC.h"
 #include "darkforces/dfMsg.h"
@@ -245,9 +244,6 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 
 	// mandatory to get all data together
 	resizeEvent(width, height);
-
-	// hud display
-	g_dfHUD = new DarkForces::HUD(m_level, m_scene);
 
 	m_scene->addMesh2D(automap);							// add the automap on the HUD
 

@@ -12,6 +12,9 @@
 #include "../dfObject/Enemy.h"
 #include "../dfComponent.h"
 
+static fwMaterial* g_weaponMaterial = nullptr;
+static glm::vec4 g_weaponTranform;
+
 static std::map<DarkForces::Weapon::Kind, DarkForces::Weapon*> g_Weapons = {
 	{DarkForces::Weapon::Kind::Concussion, &g_concussion},
 	{DarkForces::Weapon::Kind::FusionCutter, &g_FusionCutter},
@@ -295,6 +298,26 @@ void DarkForces::Component::Weapon::onTimer(gaMessage* message)
 	}
 }
 
+/**
+ * Togle the gogles
+ */
+void DarkForces::Component::Weapon::onTogleGogle(gaMessage* message)
+{
+	if (m_image) {
+		m_material.b = (message->m_action == DarkForces::Message::GOGGLES_ON) ? 1.0f : 0.0f;
+	}
+}
+
+/**
+ * Togle the headlight
+ */
+void DarkForces::Component::Weapon::onTogleHeadlight(gaMessage* message)
+{
+	if (m_image) {
+		m_material.g = (message->m_action == DarkForces::Message::HEADLIGHT_ON) ? 1.0f : 0.0f;
+	}
+}
+
 //---------------------------------------
 
 /**
@@ -317,9 +340,6 @@ GameEngine::Image2D* DarkForces::Component::Weapon::getImage(void)
 		{VERTEX_SHADER, "darkforces/shaders/hud/hud_vs.glsl"},
 		{FRAGMENT_SHADER, "darkforces/shaders/hud/hud_fs.glsl"}
 	};
-
-	static fwMaterial* g_weaponMaterial = nullptr;
-	static glm::vec4 g_weaponTranform;
 
 	if (g_weaponMaterial == nullptr) {
 		// weapon display using a dedicated material
@@ -388,6 +408,16 @@ void DarkForces::Component::Weapon::dispatchMessage(gaMessage* message)
 
 	case gaMessage::Action::TIMER:
 		onTimer(message);
+		break;
+
+	case DarkForces::Message::GOGGLES_OFF:
+	case DarkForces::Message::GOGGLES_ON:
+		onTogleGogle(message);
+		break;
+
+	case DarkForces::Message::HEADLIGHT_OFF:
+	case DarkForces::Message::HEADLIGHT_ON:
+		onTogleHeadlight(message);
 		break;
 	}
 }

@@ -9,7 +9,6 @@
 #include "dfFileSystem.h"
 #include "dfSector.h"
 #include "dfLevel.h"
-#include "dfHUD.h"
 #include "dfVOC.h"
 #include "gaItem/dfItem/dfHeadlight.h"
 
@@ -170,11 +169,11 @@ void DarkForces::Player::onTogleGogle(gaMessage* mmessage)
 	if (item) {
 		if (item->on()) {
 			item->set(false);
-			g_dfHUD->setGoggle(false);
+			sendMessage("*", DarkForces::Message::GOGGLES_ON);
 		}
 		else {
 			item->set(true);
-			g_dfHUD->setGoggle(true);
+			sendMessage("*", DarkForces::Message::GOGGLES_OFF);
 		}
 	}
 }
@@ -188,40 +187,13 @@ void DarkForces::Player::onTogleHeadlight(gaMessage* mmessage)
 	if (item) {
 		if (item->on()) {
 			item->set(false);
-			g_dfHUD->setHeadlight(false);
+			sendMessage("*", DarkForces::Message::HEADLIGHT_ON);
 		}
 		else {
 			item->set(true);
-			g_dfHUD->setHeadlight(true);
+			sendMessage("*", DarkForces::Message::HEADLIGHT_OFF);
 		}
 	}
-}
-
-/**
- * display number of ammo
- */
-void DarkForces::Player::onAmmo(gaMessage* message)
-{
-	// only the entity player catches the AMMO message to passthrough to the hud
-	sendMessage("hud", DarkForces::Message::AMMO, message->m_value);
-}
-
-/**
- * display number of shield
- */
-void DarkForces::Player::onShield(gaMessage* message)
-{
-	// only the entity player catches the AMMO message to passthrough to the hud
-	sendMessage("hud", DarkForces::Message::SHIELD, message->m_value);
-}
-
-/**
- * display live status
- */
-void DarkForces::Player::onLife(gaMessage* message)
-{
-	// only the entity player catches the LIFE message to passthrough to the hud
-	sendMessage("hud", DarkForces::Message::LIFE, message->m_value);
 }
 
 /**
@@ -255,14 +227,6 @@ void DarkForces::Player::onShowAutomap(gaMessage* message)
 void DarkForces::Player::onCompleteGoal(gaMessage* message)
 {
 	sendMessage("pda", DarkForces::Message::COMPLETE, message->m_value);
-}
-
-/**
- * when the screen gets resized
- */
-void DarkForces::Player::onScreenResize(gaMessage* message)
-{
-	g_dfHUD->setScreenSize(message->m_fvalue);
 }
 
 /**
@@ -332,28 +296,12 @@ void DarkForces::Player::dispatchMessage(gaMessage* message)
 		onBulletMiss(message);
 		break;
 
-	case DarkForces::Message::AMMO:
-		onAmmo(message);
-		break;
-
-	case DarkForces::Message::SHIELD:
-		onShield(message);
-		break;
-
-	case DarkForces::Message::LIFE:
-		onLife(message);
-		break;
-
 	case gaMessage::ADD_ITEM:
 		onAddItem(message);
 		break;
 
 	case DarkForces::Message::COMPLETE:
 		onCompleteGoal(message);
-		break;
-
-	case gaMessage::Action::SCREEN_RESIZE:
-		onScreenResize(message);
 		break;
 	}
 

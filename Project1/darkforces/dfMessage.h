@@ -48,7 +48,11 @@ namespace DarkForces {
 		PDA_FLOOR_UP,
 		PDA_FLOOR_DOWN,
 		AUTOMAP,			// display/hide the automap
-		AMBIENT				// change the ambient lightning
+		AMBIENT,			// change the ambient lightning
+		GOGGLES_ON,
+		GOGGLES_OFF,
+		HEADLIGHT_ON,
+		HEADLIGHT_OFF
 	};
 
 	enum MessageEvent {

@@ -62,6 +62,8 @@ namespace DarkForces {
 			void onWalkStart(gaMessage* message);				// start the wobling
 			void onWalkStop(gaMessage* message);				// reset the wobling
 			void onTimer(gaMessage* message);					// change the weapon image after XX frames
+			void onTogleGogle(gaMessage* mmessage);				// Togle the gogles
+			void onTogleHeadlight(gaMessage* mmessage);			// Togle the headlight
 		};
 	}
 }

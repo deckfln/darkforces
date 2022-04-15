@@ -56,9 +56,6 @@ namespace DarkForces {
 		void onBulletMiss(gaMessage* mmessage);	// a bullet passed by the player
 		void onTogleGogle(gaMessage* mmessage);	// Togle the gogles
 		void onTogleHeadlight(gaMessage* mmessage);	// Togle the headlight
-		void onAmmo(gaMessage* message);		// display number of ammo
-		void onShield(gaMessage* message);		// display number of shield
-		void onLife(gaMessage* message);		// display live status
 		void onAddItem(gaMessage* message);		// add item on the PDA
 		void onShowPDA(gaMessage* message);		// display the PDA
 		void onShowAutomap(gaMessage* message);	// display/hide the automap
