@@ -10,6 +10,7 @@
 #include "dfComponent/dfComponentLogic.h"
 #include "dfComponent/dfCAutoMap.h"
 #include "dfComponent/dfCHUDLeft.h"
+#include "dfComponent/dfCHUDRight.h"
 #include "gaItem/dfItem/dfEnergyClip.h"
 #include "gaItem/dfItem/dfHeadlight.h"
 
@@ -30,6 +31,7 @@ namespace DarkForces {
 		GameEngine::Component::Sound m_sound;
 		DarkForces::Component::AutoMap m_automap;
 		DarkForces::Component::HUDLeft m_health;
+		DarkForces::Component::HUDRight m_ammo;
 
 		// predefined items
 		DarkForces::Headlight m_headlight = DarkForces::Headlight("headlight");

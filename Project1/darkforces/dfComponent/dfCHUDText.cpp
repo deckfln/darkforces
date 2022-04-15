@@ -53,17 +53,6 @@ void DarkForces::Component::HUDtext::onAlarm(gaMessage* message)
 static char tmp[32];
 
 /**
- * display number of ammo
- */
-void DarkForces::Component::HUDtext::onAmmo(gaMessage* message)
-{
-	// clear the ammo box and draw the new ammo count
-	m_ammo->box(11, 21, 37, 11, glm::ivec4(0, 0, 0, 255));
-	snprintf(tmp, sizeof(tmp), "%03d", message->m_value);
-	DarkForces::FNT::draw(m_ammo, tmp, "AMONUM.FNT", 13, 21);
-}
-
-/**
  * create
  */
 DarkForces::Component::HUDtext::HUDtext(void) :
@@ -91,9 +80,6 @@ void DarkForces::Component::HUDtext::dispatchMessage(gaMessage* message)
 		break;
 	case gaMessage::ALARM:
 		onAlarm(message);
-		break;
-	case DarkForces::Message::AMMO:
-		onAmmo(message);
 		break;
 	}
 }

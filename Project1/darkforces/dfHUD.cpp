@@ -23,21 +23,6 @@ DarkForces::HUD::HUD(GameEngine::Level* level, fwScene* scene) :
 {
 	g_dfHUD = this;
 
-	float w1, h1;
-
-	// ammo display using default image2D
-	m_ammo_bmp = new dfBitmap(g_dfFiles, "STATUSRT.BM", static_cast<dfLevel*>(level)->palette());
-	dfBitmapImage* image = m_ammo_bmp->getImage(0);
-	w1 = image->m_width / 320.0f;
-	h1 = image->m_height / 200.0f;
-	m_ammo = new GameEngine::Image2D(
-		"darkforce:statusrt", 
-		glm::vec2(w1, h1),					// width
-		glm::vec2(1.0f - w1, h1 - 1.0f),	// position
-		m_ammo_bmp->fwtexture()
-	);
-	scene->addMesh2D(m_ammo);							// add the healthbar on the HUD
-
 	// text display using default image2D
 	int32_t h, w, ch;
 	uint8_t* data = m_text_bmp.get_info(&h, &w, &ch);
@@ -56,7 +41,6 @@ DarkForces::HUD::HUD(GameEngine::Level* level, fwScene* scene) :
 
 	// prepare the entity part of the HUD
 	m_compText.texture(&m_text_bmp);
-	m_compText.ammo(m_ammo_bmp->fwtexture());
 
 	m_entText.addComponent(&m_compText);
 
@@ -79,15 +63,7 @@ void DarkForces::HUD::setGoggle(bool onoff)
  */
 void DarkForces::HUD::setScreenSize(float ratio)
 {
-	float w1, h1;
 	m_ratio = ratio / 1.6f;
-
-	// relocate the ammno
-	dfBitmapImage* image = m_ammo_bmp->getImage(0);
-	w1 = image->m_width / 320.0f / m_ratio;
-	h1 = image->m_height / 200.0f;
-	m_ammo->scale(glm::vec2(w1, h1));
-	m_ammo->translate(glm::vec2(1.0f - w1, -1.0f + h1));
 }
 
 void DarkForces::HUD::setHeadlight(bool onoff)

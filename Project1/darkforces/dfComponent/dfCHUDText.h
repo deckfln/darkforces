@@ -17,8 +17,6 @@ namespace DarkForces {
 			void onText(gaMessage* message);					// display a text
 			void onAlarm(gaMessage* message);					// remove the text
 			void onAmmo(gaMessage* message);					// display number of ammo
-			void onShield(gaMessage* message);					// display number of shield
-			void onLife(gaMessage* message);					// display number of life
 
 		public:
 			HUDtext(void);
@@ -26,8 +24,6 @@ namespace DarkForces {
 			void dispatchMessage(gaMessage* message) override;
 			// getter/setter
 			inline void texture(fwTexture* texture) { m_hud = texture; };
-			inline void ammo(fwTexture* texture) { m_ammo = texture; };
-			inline void shield(fwTexture* texture) { m_left = texture; };
 
 #ifdef _DEBUG
 			// debugger
