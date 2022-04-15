@@ -139,6 +139,7 @@
     <ClCompile Include="darkforces\dfComponent\dfCActor.cpp" />
     <ClCompile Include="darkforces\dfComponent\AIMouseBot.cpp" />
     <ClCompile Include="darkforces\dfComponent\dfCAutoMap.cpp" />
+    <ClCompile Include="darkforces\dfComponent\dfCHUDLeft.cpp" />
     <ClCompile Include="darkforces\dfComponent\dfCHUDText.cpp" />
     <ClCompile Include="darkforces\dfComponent\dfCPDA.cpp" />
     <ClCompile Include="darkforces\dfComponent\dfCSprite.cpp" />
@@ -381,6 +382,7 @@
     <ClInclude Include="darkforces\dfComponent\dfCActor.h" />
     <ClInclude Include="darkforces\dfComponent\AIMouseBot.h" />
     <ClInclude Include="darkforces\dfComponent\dfCAutoMap.h" />
+    <ClInclude Include="darkforces\dfComponent\dfCHUDLeft.h" />
     <ClInclude Include="darkforces\dfComponent\dfCHUDText.h" />
     <ClInclude Include="darkforces\dfComponent\dfCPDA.h" />
     <ClInclude Include="darkforces\dfComponent\dfCSprite.h" />

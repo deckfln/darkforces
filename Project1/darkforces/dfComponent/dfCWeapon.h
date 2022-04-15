@@ -27,6 +27,7 @@ namespace DarkForces {
 		public:
 			Weapon(void);
 			Weapon(DarkForces::Weapon* current);
+			~Weapon(void);
 			DarkForces::Weapon* set(DarkForces::Weapon* weapon);	// set the kind of weapon and return filename of HUD
 			DarkForces::Weapon* get(void);							// return data on weapons
 

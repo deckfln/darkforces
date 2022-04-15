@@ -64,28 +64,6 @@ void DarkForces::Component::HUDtext::onAmmo(gaMessage* message)
 }
 
 /**
- * display number of shield
- */
-void DarkForces::Component::HUDtext::onShield(gaMessage* message)
-{
-	// clear the shieldbox and draw the new shield count
-	m_left->box(15, 25, 15, 9, glm::ivec4(0, 0, 0, 255));
-	snprintf(tmp, sizeof(tmp), "%03d", message->m_value);
-	DarkForces::FNT::draw(m_left, tmp, "ArmNum.fnt", 16, 26);
-}
-
-/**
- * display number of life
- */
-void DarkForces::Component::HUDtext::onLife(gaMessage* message)
-{
-	// clear the shieldbox and draw the new shield count
-	m_left->box(32, 25, 15, 9, glm::ivec4(0, 0, 0, 255));
-	snprintf(tmp, sizeof(tmp), "%03d", message->m_value);
-	DarkForces::FNT::draw(m_left, tmp, "HelNum.fnt", 33, 26);
-}
-
-/**
  * create
  */
 DarkForces::Component::HUDtext::HUDtext(void) :
@@ -116,12 +94,6 @@ void DarkForces::Component::HUDtext::dispatchMessage(gaMessage* message)
 		break;
 	case DarkForces::Message::AMMO:
 		onAmmo(message);
-		break;
-	case DarkForces::Message::SHIELD:
-		onShield(message);
-		break;
-	case DarkForces::Message::LIFE:
-		onLife(message);
 		break;
 	}
 }

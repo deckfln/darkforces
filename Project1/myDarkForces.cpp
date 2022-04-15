@@ -228,9 +228,6 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 
 	GameEngine::World::add(m_player);
 
-	// load needed data on screen
-	static_cast<DarkForces::Player*>(m_player)->setScene(m_scene);
-
 	// PDA
 	g_pda = new DarkForces::Prefab::PDA();
 	GameEngine::World::add(g_pda);
@@ -256,6 +253,9 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 
 	// PDA GUI
 	m_scene->addMesh2D(g_pda->ui());
+
+	// load needed data on screen
+	static_cast<DarkForces::Player*>(m_player)->setScene(m_scene);
 
 	// add the sprites manager to the world
 	g_gaWorld.registerPlugin(&g_dfSpritesEngine);

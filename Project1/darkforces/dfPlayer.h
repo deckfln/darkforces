@@ -9,6 +9,7 @@
 #include "dfComponent/dfCWeapon.h"
 #include "dfComponent/dfComponentLogic.h"
 #include "dfComponent/dfCAutoMap.h"
+#include "dfComponent/dfCHUDLeft.h"
 #include "gaItem/dfItem/dfEnergyClip.h"
 #include "gaItem/dfItem/dfHeadlight.h"
 
@@ -28,6 +29,7 @@ namespace DarkForces {
 		GameEngine::Component::Inventory m_inventory;
 		GameEngine::Component::Sound m_sound;
 		DarkForces::Component::AutoMap m_automap;
+		DarkForces::Component::HUDLeft m_health;
 
 		// predefined items
 		DarkForces::Headlight m_headlight = DarkForces::Headlight("headlight");

@@ -51,6 +51,7 @@ DarkForces::Player::Player(int mclass, const std::string& name, fwCylinder& cyli
 		m_inventory.add(&m_pistol);
 			m_pistol.loadClip();
 	addComponent(&m_automap);
+	addComponent(&m_health);
 
 	m_defaultAI.setClass("player");
 	sendMessage("hud", DarkForces::Message::AMMO, m_clip.energy());
@@ -268,6 +269,7 @@ void DarkForces::Player::onScreenResize(gaMessage* message)
 void DarkForces::Player::setScene(fwScene* scene)
 {
 	scene->addMesh2D(m_weapon.getImage());
+	scene->addMesh2D(m_health.getImage());
 }
 
 /**

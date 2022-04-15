@@ -79,6 +79,11 @@ DarkForces::Component::Weapon::Weapon(DarkForces::Weapon* current) :
 	}
 }
 
+DarkForces::Component::Weapon::~Weapon(void)
+{
+	delete m_image;
+}
+
 /**
  *
  */
