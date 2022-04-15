@@ -53,7 +53,7 @@ void GameEngine::Image2D::setMaterial(void)
 	if (g_material == nullptr) {
 		g_material = new fwMaterial(g_subShaders);
 		g_material->addTexture("image", (glTexture*)nullptr);
-		g_material->addUniform(new fwUniform("transformation", &g_screen));
+		g_material->addVariable("transformation", g_screen);
 	}
 	m_material = g_material;
 }
@@ -98,7 +98,7 @@ GameEngine::Image2D::Image2D(const std::string& name, const glm::vec2& _scale, c
 
 	m_material = new fwMaterial(shaders);
 	m_material->addTexture("image", (glTexture*)nullptr);
-	g_material->addUniform(new fwUniform("transformation", &g_screen));
+	g_material->addVariable("transformation", g_screen);
 
 	setUniforms();
 }

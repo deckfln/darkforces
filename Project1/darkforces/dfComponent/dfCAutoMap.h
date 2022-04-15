@@ -29,10 +29,6 @@ namespace DarkForces {
 			float m_ratio = 1.0f;					// screen ratio
 			int32_t m_layer=1;						// layer of the player
 
-			fwUniform m_uniPosition;
-			fwUniform m_uniRatio;
-			fwUniform m_uniLayer;
-
 			void onEnterSector(gaMessage* message);	// display a sector when the player enters
 			void onScreenResize(gaMessage* message);// set the new screen ratio
 			void onShowAutomap(gaMessage* message);	// hide/display the automap

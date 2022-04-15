@@ -345,8 +345,8 @@ GameEngine::Image2D* DarkForces::Component::Weapon::getImage(void)
 		// weapon display using a dedicated material
 		g_weaponMaterial = new fwMaterial(g_subShaders);
 		g_weaponMaterial->addTexture("image", (glTexture*)nullptr);
-		g_weaponMaterial->addUniform(new fwUniform("material", &m_material));
-		g_weaponMaterial->addUniform(new fwUniform("transformation", &g_weaponTranform));
+		g_weaponMaterial->addVariable("material", m_material);
+		g_weaponMaterial->addVariable("transformation", g_weaponTranform);
 	}
 
 	m_image = new GameEngine::Image2D(

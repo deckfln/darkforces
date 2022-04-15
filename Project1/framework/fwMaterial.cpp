@@ -113,6 +113,44 @@ fwMaterial &fwMaterial::addUniform(fwUniform *uniform)
 }
 
 /**
+ * add a variable to the material
+ */
+void fwMaterial::addVariable(const std::string& variable, glm::vec2& v2)
+{
+	if (m_uniforms.count(variable) == 0) {
+		m_uniforms[variable] = new fwUniform(variable, &v2);
+	}
+}
+
+void fwMaterial::addVariable(const std::string& variable, glm::vec3& v3)
+{
+	if (m_uniforms.count(variable) == 0) {
+		m_uniforms[variable] = new fwUniform(variable, &v3);
+	}
+}
+
+void fwMaterial::addVariable(const std::string& variable, glm::vec4& v4)
+{
+	if (m_uniforms.count(variable) == 0) {
+		m_uniforms[variable] = new fwUniform(variable, &v4);
+	}
+}
+
+void fwMaterial::addVariable(const std::string& variable, float& f)
+{
+	if (m_uniforms.count(variable) == 0) {
+		m_uniforms[variable] = new fwUniform(variable, &f);
+	}
+}
+
+void fwMaterial::addVariable(const std::string& variable, int32_t& i)
+{
+	if (m_uniforms.count(variable) == 0) {
+		m_uniforms[variable] = new fwUniform(variable, &i);
+	}
+}
+
+/**
  * Activate uniforms on the given program
  */
 void fwMaterial::set_uniforms(glProgram *program)
@@ -261,7 +299,7 @@ std::string fwMaterial::hashCode(void)
 
 fwMaterial::~fwMaterial()
 {
-	for (auto texture: m_textures) {
+	for (auto& texture: m_textures) {
 		delete texture.second;
 	}
 
@@ -269,7 +307,7 @@ fwMaterial::~fwMaterial()
 		delete texture;
 	}
 
-	for (auto uniform : m_uniforms) {
+	for (auto& uniform : m_uniforms) {
 		delete uniform.second;
 	}
 }

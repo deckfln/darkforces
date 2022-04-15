@@ -19,6 +19,13 @@ fwUniform::fwUniform(const std::string& _name, glm::vec4 *v4):
 	m_type = GL_FLOAT_VEC4;
 }
 
+fwUniform::fwUniform(const std::string& _name, glm::vec3* v3):
+	m_name(_name)
+{
+	m_data = v3;
+	m_type = GL_FLOAT_VEC3;
+}
+
 fwUniform::fwUniform(const std::string& _name, glm::vec2 *v2) :
 	m_name(_name)
 {
@@ -30,7 +37,7 @@ fwUniform::fwUniform(const std::string& _name, GLint *id):
 	m_name(_name)
 {
 	m_data = id;
-	m_type = GL_SAMPLER_2D;
+	m_type = GL_INT;
 }
 
 fwUniform::fwUniform(const std::string& _name, GLfloat *f) :
@@ -214,6 +221,9 @@ void fwUniform::set_uniform(glProgram *program)
 		break;
 	case GL_FLOAT_VEC2:
 		program->set_uniform(m_name, *(glm::vec2 *)m_data);
+		break;
+	case GL_FLOAT_VEC3:
+		program->set_uniform(m_name, *(glm::vec3*)m_data);
 		break;
 	case GL_SAMPLER_2D:
 		program->set_uniform(m_name, (glTexture *)m_data);

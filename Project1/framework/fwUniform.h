@@ -22,8 +22,9 @@ class fwUniform
 
 public:
 	fwUniform();
-	fwUniform(const std::string& _name, glm::vec4 *_v4);
-	fwUniform(const std::string& _name, glm::vec2 *_v2);
+	fwUniform(const std::string& _name, glm::vec4*_v4);
+	fwUniform(const std::string& _name, glm::vec3* v3);
+	fwUniform(const std::string& _name, glm::vec2* v2);
 	fwUniform(const std::string& _name, GLint *id);
 	fwUniform(const std::string& _name, GLfloat *f);
 	fwUniform(const std::string& _name, glTexture *y);

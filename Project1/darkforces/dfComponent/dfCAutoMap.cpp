@@ -91,13 +91,10 @@ void DarkForces::Component::AutoMap::set(dfLevel* level)
 	};
 
 	m_material = new fwMaterial(g_subShaders);
-	m_uniPosition.set("player", &m_playerPosition);
-	m_uniRatio.set("ratio", &m_ratio);
-	m_uniLayer.set("playerLayer", &m_layer);
 
-	m_material->addUniform(&m_uniPosition);
-	m_material->addUniform(&m_uniRatio);
-	m_material->addUniform(&m_uniLayer);
+	m_material->addVariable("player", m_playerPosition);
+	m_material->addVariable("ratio", m_ratio);
+	m_material->addVariable("playerLayer", m_layer);
 
 	m_geometry = new fwGeometry();
 	m_geometry->addVertices("aPos",
