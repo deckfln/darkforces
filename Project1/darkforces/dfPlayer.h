@@ -11,6 +11,7 @@
 #include "dfComponent/dfCAutoMap.h"
 #include "dfComponent/dfCHUDLeft.h"
 #include "dfComponent/dfCHUDRight.h"
+#include "dfComponent/dfCHUDtext.h"
 #include "gaItem/dfItem/dfEnergyClip.h"
 #include "gaItem/dfItem/dfHeadlight.h"
 
@@ -32,6 +33,7 @@ namespace DarkForces {
 		DarkForces::Component::AutoMap m_automap;
 		DarkForces::Component::HUDLeft m_health;
 		DarkForces::Component::HUDRight m_ammo;
+		DarkForces::Component::HUDtext m_text;
 
 		// predefined items
 		DarkForces::Headlight m_headlight = DarkForces::Headlight("headlight");

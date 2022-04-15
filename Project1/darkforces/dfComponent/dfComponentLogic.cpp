@@ -64,7 +64,7 @@ void dfComponentLogic::dispatchMessage(gaMessage* message)
 				m_entity->sendMessageToWorld(gaMessage::DELETE_ENTITY, 0, nullptr);
 
 				// and display the proper message on screen
-				m_entity->sendMessage("hud", DarkForces::Message::TEXT, DarkForces::Msg::SHIELD);
+				m_entity->sendMessage("player", DarkForces::Message::TEXT, DarkForces::Msg::SHIELD);
 			}
 			else if (m_logics & dfLogic::ITEM_ENERGY) {
 				// ADD ENERGY
@@ -76,7 +76,7 @@ void dfComponentLogic::dispatchMessage(gaMessage* message)
 				m_entity->sendMessageToWorld(gaMessage::DELETE_ENTITY, 0, nullptr);
 
 				// and display the proper message on screen
-				m_entity->sendMessage("hud", DarkForces::Message::TEXT, DarkForces::Msg::ENERGY);
+				m_entity->sendMessage("player", DarkForces::Message::TEXT, DarkForces::Msg::ENERGY);
 			}
 			else if (m_logics & dfLogic::ITEM_RIFLE) {
 				DarkForces::Object* object = dynamic_cast<DarkForces::Object*>(m_entity);
@@ -92,7 +92,7 @@ void dfComponentLogic::dispatchMessage(gaMessage* message)
 				m_entity->sendMessageToWorld(gaMessage::DELETE_ENTITY, 0, nullptr);
 
 				// and display the proper message on screen
-				m_entity->sendMessage("hud", DarkForces::Message::TEXT, DarkForces::Msg::RIFLE);
+				m_entity->sendMessage("player", DarkForces::Message::TEXT, DarkForces::Msg::RIFLE);
 			}
 			else if (m_logics & dfLogic::ITEM_BATTERY) {
 				// pick a rifle and bullets
@@ -104,7 +104,7 @@ void dfComponentLogic::dispatchMessage(gaMessage* message)
 				m_entity->sendMessageToWorld(gaMessage::DELETE_ENTITY, 0, nullptr);
 
 				// and display the proper message on screen
-				m_entity->sendMessage("hud", DarkForces::Message::TEXT, DarkForces::Msg::BATTERY);
+				m_entity->sendMessage("player", DarkForces::Message::TEXT, DarkForces::Msg::BATTERY);
 			}
 			else if (m_logics & dfLogic::GOGGLES) {
 				// pick the googles and add to the inventory
@@ -114,7 +114,7 @@ void dfComponentLogic::dispatchMessage(gaMessage* message)
 				m_entity->sendMessageToWorld(gaMessage::DELETE_ENTITY, 0, nullptr);
 
 				// and display the proper message on screen
-				m_entity->sendMessage("hud", DarkForces::Message::TEXT, DarkForces::Msg::GOGGLES);
+				m_entity->sendMessage("player", DarkForces::Message::TEXT, DarkForces::Msg::GOGGLES);
 			}
 			else if (m_logics & dfLogic::RED_KEY) {
 				// transfert the redkey to collider
@@ -126,7 +126,7 @@ void dfComponentLogic::dispatchMessage(gaMessage* message)
 				m_entity->sendMessageToWorld(gaMessage::DELETE_ENTITY, 0, nullptr);
 
 				// and display the proper message on screen
-				m_entity->sendMessage("hud", DarkForces::Message::TEXT, DarkForces::Msg::RED);
+				m_entity->sendMessage("player", DarkForces::Message::TEXT, DarkForces::Msg::RED);
 			}
 			else if (m_logics & dfLogic::PLANS) {
 				// transfert the plans to collider
@@ -142,7 +142,7 @@ void dfComponentLogic::dispatchMessage(gaMessage* message)
 				m_entity->sendMessageToWorld(gaMessage::DELETE_ENTITY, 0, nullptr);
 
 				// and display the proper message on screen
-				m_entity->sendMessage("hud", DarkForces::Message::TEXT, DarkForces::Msg::PLANS);
+				m_entity->sendMessage("player", DarkForces::Message::TEXT, DarkForces::Msg::PLANS);
 			}
 		}
 		break;

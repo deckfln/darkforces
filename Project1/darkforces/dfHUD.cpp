@@ -22,31 +22,6 @@ DarkForces::HUD::HUD(GameEngine::Level* level, fwScene* scene) :
 	fwHUD("DarkForces::HUD", &g_subShaders)
 {
 	g_dfHUD = this;
-
-	// text display using default image2D
-	int32_t h, w, ch;
-	uint8_t* data = m_text_bmp.get_info(&h, &w, &ch);
-	if (data == nullptr) {
-		m_text_bmp.data(new uint8_t[h * w * ch]);
-		m_text_bmp.clear();
-	}
-
-	m_text = new GameEngine::Image2D(
-		"text", 
-		glm::vec2(1.0f, 0.05f),
-		glm::vec2(0.0f, 0.95f),
-		&m_text_bmp
-	);
-	scene->addMesh2D(m_text);							// add the healthbar on the HUD
-
-	// prepare the entity part of the HUD
-	m_compText.texture(&m_text_bmp);
-
-	m_entText.addComponent(&m_compText);
-
-	m_entText.physical(false);
-	m_entText.gravity(false);
-	GameEngine::World::add(&m_entText);
 }
 
 /**
@@ -73,7 +48,5 @@ void DarkForces::HUD::setHeadlight(bool onoff)
 
 DarkForces::HUD::~HUD()
 {
-	delete m_ammo;
-	delete m_ammo_bmp;
 	delete m_materialUniform;
 }
