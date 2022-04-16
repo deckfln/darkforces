@@ -159,7 +159,7 @@ void GameEngine::Behavior::Sound::debugGUInode(GameEngine::Component::BehaviorTr
 	}
 
 	if (ImGui::TreeNode(tmp)) {
-		for (auto i = 0; i < m_sounds.size(); i++) {
+		for (size_t i = 0; i < m_sounds.size(); i++) {
 			ImGui::Text("%d: %s", m_ids[i], m_sounds[i]->source().c_str());
 		}
 		ImGui::TreePop();

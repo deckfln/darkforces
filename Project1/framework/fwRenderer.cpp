@@ -37,7 +37,7 @@ void fwRenderer::getAllChildren(fwObject3D* root, std::vector<std::list <fwMesh*
 			continue;
 		}
 
-		if (mesh->is_visible()) {
+		if (mesh->visible()) {
 			// if the parent mesh is not visible, ignore the children
 			getAllChildren(child, meshes);
 
@@ -122,7 +122,7 @@ void fwRenderer::parseChildren(fwObject3D* root, std::list <fwMesh *> meshes[], 
 	fwSprites* sprites;
 	fwParticles* particles;
 
-	std::list <fwObject3D*> _children = root->get_children();
+	const std::list <fwObject3D*>& _children = root->get_children();
 
 	for (auto child : _children) {
 		// only display meshes
@@ -131,7 +131,7 @@ void fwRenderer::parseChildren(fwObject3D* root, std::list <fwMesh *> meshes[], 
 			continue;
 		}
 
-		if (mesh->is_visible() && (mesh->always_draw() || camera->is_inFrustum(mesh))) {
+		if (mesh->visible() && (mesh->always_draw() || camera->is_inFrustum(mesh))) {
 			// if the parent mesh is not visible, ignore the children
 			parseChildren(child, meshes, camera);
 

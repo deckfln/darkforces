@@ -466,7 +466,7 @@ void GameEngine::Behavior::MoveTo::debug(void)
 	m_mesh->translate(glm::vec3(0.0f, 0.0f, 0.0f));
 	m_mesh->name("navpoints");
 
-	m_mesh->set_visible(false);
+	m_mesh->visible(false);
 	g_gaWorld.add2scene(m_mesh);
 }
 
@@ -525,10 +525,10 @@ void GameEngine::Behavior::MoveTo::debugGUInode(GameEngine::Component::BehaviorT
 	// display or not the debug mesh
 	if (m_old_debug != m_debug) {
 		if (m_debug) {
-			m_mesh->set_visible(true);
+			m_mesh->visible(true);
 		}
 		else {
-			m_mesh->set_visible(false);
+			m_mesh->visible(false);
 		}
 	}
 }

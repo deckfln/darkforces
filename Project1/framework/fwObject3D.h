@@ -68,6 +68,7 @@ protected:
 
 	bool m_castShadow = false;
 	bool m_receiveShadow = false;
+	bool m_visible = true;
 
 	bool updated(void) { return m_updated; };
 	void updated(bool b) { m_updated = b; };
@@ -114,24 +115,25 @@ public:
 
 	void updateWorldMatrix(fwObject3D *parent, bool force = false);
 
-	bool castShadow(void) { return m_castShadow; }
+	// getter setter
+	inline bool castShadow(void) { return m_castShadow; }
 	virtual bool castShadow(bool s) { m_castShadow = s; return s; }
-
-	bool receiveShadow(void) { return m_receiveShadow; }
-	bool receiveShadow(bool s) { m_receiveShadow = s; return s; }
-
-	const glm::mat4& worldMatrix(void) { 
+	inline bool receiveShadow(void) { return m_receiveShadow; }
+	inline bool receiveShadow(bool s) { m_receiveShadow = s; return s; }
+	bool visible(void);
+	inline void visible(bool b) { m_visible = b; };
+	inline const glm::mat4& worldMatrix(void) { 
 		updateWorldMatrix(nullptr);
 		return m_worldMatrix; 
 	}
-	const glm::mat4& inverseWorldMatrix(void) { 
+	inline const glm::mat4& inverseWorldMatrix(void) { 
 		return m_inverseWorldMatrix; 
 	}
-	glm::mat4* pWorldMatrix(void) { 
+	inline glm::mat4* pWorldMatrix(void) { 
 		updateWorldMatrix(nullptr);
 		return &m_worldMatrix; 
 	}
-	glm::mat4* pInverseWorldMatrix(void) { 
+	inline glm::mat4* pInverseWorldMatrix(void) { 
 		return &m_inverseWorldMatrix; 
 	}
 

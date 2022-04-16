@@ -24,7 +24,6 @@ class fwMesh: public fwObject3D
 {
 	int m_id = 0;
 
-	bool visible = true;					// object is displayed in the scene
 	bool m_always_draw = false;				// ignore frustum visibility and always draw
 	bool outlined = false;
 	bool normalHelper = false;
@@ -60,9 +59,6 @@ public:
 	std::string getMaterialHash(void);
 	fwMaterial *get_material(void);
 	fwGeometry *get_geometry(void);
-
-	fwMesh &set_visible(bool _visible = true);
-	bool is_visible(void);					// return the visibility of the object, if the parents are invisible, the object is considered as invisible
 
 	fwMesh &outline(bool _outlined);
 	bool is_outlined(void);

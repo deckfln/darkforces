@@ -302,6 +302,14 @@ void fwObject3D::updateWorldMatrix(fwObject3D *parent, bool force)
 	}
 }
 
+bool fwObject3D::visible(void)
+{
+	if (m_parent) {
+		return m_visible && m_parent->visible();
+	}
+	return m_visible;
+}
+
 const glm::vec3 &fwObject3D::get_position(void)
 {
 	return m_position;
@@ -433,6 +441,7 @@ void fwObject3D::debugGUIChildClass(void)
 		ImGui::Text("Position %.2f %.2f %.2f", m_position.x, m_position.y, m_position.z);
 		ImGui::Text("Rotation %.2f %.2f %.2f", m_rotation.x, m_rotation.y, m_rotation.z);
 		ImGui::Text("Scale    %.2f %.2f %.2f", m_scale.x, m_scale.y, m_scale.z);
+		ImGui::Checkbox("Visible", &m_visible);
 		ImGui::TreePop();
 	}
 }

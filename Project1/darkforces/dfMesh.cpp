@@ -85,7 +85,7 @@ void dfMesh::display(fwScene* scene, bool visibility)
 			scene->addChild(this);
 		// no need to add the mesh if the supersector is invisible
 	}
-	set_visible(visibility);
+	visible(visibility);
 }
 
 /**

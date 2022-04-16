@@ -27,7 +27,7 @@ namespace GameEngine
 		inline const fwAABBox& modelAABB(void) { return m_mesh->modelAABB(); };
 		inline const glm::vec3& position(void) { return m_mesh->position(); };
 		inline fwGeometry* get_geometry(void) { return m_mesh->get_geometry(); };
-		inline void visibility(bool v) { m_mesh->set_visible(v); };
+		inline void visibility(bool v) { m_mesh->visible(v); };
 		void clone(fwMesh* source);
 		void set(fwGeometry* geometry, fwMaterial* material);
 		inline void set_scale(float f) { m_mesh->set_scale(f); };

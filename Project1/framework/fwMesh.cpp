@@ -23,7 +23,6 @@ fwMesh::fwMesh():
 fwMesh::fwMesh(fwGeometry *_geometry, fwMaterial *_material):
 	m_geometry(_geometry),
 	m_material(_material),
-	visible(true),
 	outlined(false),
 	m_id(g_ids++)
 {
@@ -81,7 +80,6 @@ void fwMesh::clone(fwMesh* source)
  */
 void fwMesh::set(fwGeometry* geometry, fwMaterial* material)
 {
-	visible = true;
 	outlined = false;
 	m_geometry = geometry;
 	m_material = material;
@@ -101,23 +99,6 @@ void fwMesh::set(fwGeometry* geometry, fwMaterial* material)
 const fwAABBox& fwMesh::modelAABB(void)
 {
 	return m_geometry->aabbox();
-}
-
-fwMesh &fwMesh::set_visible(bool _visible)
-{
-	visible = _visible;
-	return *this;
-}
-
-/**
- * return the visibility of the object, if the parents are invisible, the object is considered as invisible
- */
-bool fwMesh::is_visible(void)
-{
-	if (m_parent)
-		return visible && static_cast<fwMesh*>(m_parent)->is_visible();
-
-	return visible;
 }
 
 fwMesh &fwMesh::outline(bool _outlined)
@@ -274,7 +255,6 @@ void fwMesh::debugGUIChildClass(void)
 	fwObject3D::debugGUIChildClass();
 	if (ImGui::TreeNode("fwMesh")) {
 		ImGui::Text("Id: %d", m_id);
-		ImGui::Checkbox("Visible", &visible);
 		ImGui::Checkbox("Always Draw", &m_always_draw);
 		ImGui::Checkbox("Outlined", &outlined);
 		ImGui::Checkbox("Transparent", &m_transparent);

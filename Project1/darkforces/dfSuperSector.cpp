@@ -287,7 +287,7 @@ dfSuperSector* dfSuperSector::buildGeometry(std::vector<dfSector*>& sectors)
 void dfSuperSector::visible(bool v)
 {
 	m_visible = v;
-	m_dfmesh->set_visible(v);
+	m_dfmesh->visible(v);
 }
 
 /**
