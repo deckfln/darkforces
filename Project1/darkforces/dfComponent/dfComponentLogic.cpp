@@ -16,7 +16,7 @@ static DarkForces::Item g_Plans("darkforce:item:plans", dfLogic::PLANS);
 static DarkForces::Headlight g_Goggles("darkforce:item:goggles");
 
 dfComponentLogic::dfComponentLogic() :
-	gaComponent(DF_COMPONENT_LOGIC),
+	gaComponent(DF_COMPONENT_LOGIC, "dfComponentLogic"),
 	m_logics(0)
 {
 }

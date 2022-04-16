@@ -16,7 +16,7 @@ static uint32_t g_spriteID = 0;
  * create from an image
  */
 DarkForces::Component::Sprite::Sprite(dfFME* fme, float ambient) :
-	gaComponent(DF_COMPONENT_SPRITE),
+	gaComponent(DF_COMPONENT_SPRITE, "dfSprite"),
 	m_source(fme),
 	m_ambient(ambient)
 {
@@ -26,21 +26,21 @@ DarkForces::Component::Sprite::Sprite(dfFME* fme, float ambient) :
  * create from a model
  */
 DarkForces::Component::Sprite::Sprite(dfModel* model, float ambient) :
-	gaComponent(DF_COMPONENT_SPRITE),
+	gaComponent(DF_COMPONENT_SPRITE, "dfSprite"),
 	m_source(model),
 	m_ambient(ambient)
 {
 }
 
 DarkForces::Component::Sprite::Sprite(const std::string& model, float ambient):
-	gaComponent(DF_COMPONENT_SPRITE),
+	gaComponent(DF_COMPONENT_SPRITE, "dfSprite"),
 	m_source(static_cast<dfModel*>(g_gaWorld.getModel(model))),
 	m_ambient(ambient)
 {
 }
 
 DarkForces::Component::Sprite::Sprite(void) :
-	gaComponent(DF_COMPONENT_SPRITE)
+	gaComponent(DF_COMPONENT_SPRITE, "dfSprite")
 {
 }
 

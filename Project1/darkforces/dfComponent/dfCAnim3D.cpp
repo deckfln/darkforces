@@ -21,7 +21,7 @@ DarkForces::Component::Anim3D::Anim3D(void) :
 }
 
 DarkForces::Component::Anim3D::Anim3D(dfVue* vue) :
-	gaComponent(DF_COMPONENT_3DO),
+	gaComponent(DF_COMPONENT_3DO, "dfAnim3D"),
 	m_vue(vue)
 {
 }

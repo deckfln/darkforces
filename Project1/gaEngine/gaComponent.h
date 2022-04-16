@@ -11,6 +11,7 @@ protected:
 	gaEntity* m_entity = nullptr;						// parent entity
 	uint32_t m_id = 0;									// position of the component in the entity components list
 	int m_type = NONE;
+	const std::string m_name;
 
 public:
 	enum {
@@ -30,7 +31,7 @@ public:
 		Gui
 	};
 
-	gaComponent(int m_type);
+	gaComponent(int m_type, const std::string& name="gaComponent");
 
 	// getter/setter
 	inline bool is(int type) { return type == m_type; };
@@ -42,11 +43,14 @@ public:
 
 	virtual void dispatchMessage(gaMessage* message) {};	// let a component deal with a situation
 
+#ifdef  _DEBUG
+	virtual void debugGUIinline(void);
+#endif //  _DEBUG
+
 	// flight recorder status
 	virtual inline uint32_t recordSize(void) { return sizeof(uint32_t); };// size of the component record
 	virtual uint32_t recordState(void* record);				// save the component state in a record
 	virtual inline uint32_t loadState(void* record) { return sizeof(uint32_t); };	// reload a component state from a record
 
-	virtual inline void debugGUIinline(void) {};			// display the component in the debugger
 	~gaComponent();
 };

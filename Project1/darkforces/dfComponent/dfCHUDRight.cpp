@@ -53,9 +53,8 @@ void DarkForces::Component::HUDRight::onAmmo(gaMessage* message)
  *
  */
 DarkForces::Component::HUDRight::HUDRight(void) :
-	gaComponent(DF_COMPONENT_HUD_LEFT)
+	gaComponent(DF_COMPONENT_HUD_LEFT, "dfHUDright")
 {
-
 }
 
 /**

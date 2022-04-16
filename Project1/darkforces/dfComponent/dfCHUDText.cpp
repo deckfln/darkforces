@@ -88,7 +88,7 @@ void DarkForces::Component::HUDtext::onScreenSize(gaMessage* message)
  * create
  */
 DarkForces::Component::HUDtext::HUDtext(void) :
-	gaComponent(DF_COMPONENT_HUDTEXT)
+	gaComponent(DF_COMPONENT_HUDTEXT, "dfHUDtext")
 {
 }
 

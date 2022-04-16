@@ -64,9 +64,8 @@ void DarkForces::Component::HUDLeft::onShield(gaMessage* message)
  *
  */
 DarkForces::Component::HUDLeft::HUDLeft(void) : 
-	gaComponent(DF_COMPONENT_HUD_LEFT)
+	gaComponent(DF_COMPONENT_HUD_LEFT, "dfHUDleft")
 {
-
 }
 
 /**

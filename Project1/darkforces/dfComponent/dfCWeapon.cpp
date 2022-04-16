@@ -66,12 +66,12 @@ void DarkForces::Component::Weapon::setImage(void)
  *
  */
 DarkForces::Component::Weapon::Weapon(void) :
-	gaComponent(DF_COMPONENT_WEAPON)
+	gaComponent(DF_COMPONENT_WEAPON, "dfWeapon")
 {
 }
 
 DarkForces::Component::Weapon::Weapon(DarkForces::Weapon* current) :
-	gaComponent(DF_COMPONENT_WEAPON),
+	gaComponent(DF_COMPONENT_WEAPON, "dfWeapon"),
 	m_current(current),
 	m_kind(current->kind())
 {

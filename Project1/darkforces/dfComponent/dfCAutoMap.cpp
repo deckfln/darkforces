@@ -156,7 +156,7 @@ void DarkForces::Component::AutoMap::onShowAutomap(gaMessage* message)
  * create empty
  */
 DarkForces::Component::AutoMap::AutoMap(void):
-	gaComponent(DF_COMPONENT_AUTOMAP),
+	gaComponent(DF_COMPONENT_AUTOMAP, "dfAutoMap"),
 	Framework::Mesh2D("DarkForces:automap")
 {
 	m_visible = false;	// hidden at start

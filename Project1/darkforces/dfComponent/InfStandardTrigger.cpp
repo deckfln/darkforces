@@ -31,7 +31,7 @@ void InfStandardTrigger::execute(void)
 }
 
 InfStandardTrigger::InfStandardTrigger(const std::string& trigger, const std::string& sector) :
-	gaComponent(DF_COMPONENT_INF)
+	gaComponent(DF_COMPONENT_INF, "dfStdTrigger")
 {
 	m_class = _triggers[trigger];
 	m_sector = sector;

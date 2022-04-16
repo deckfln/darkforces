@@ -19,7 +19,7 @@
 static const uint32_t MouseEeek = 1024;
 
 DarkForces::AIMouseBot::AIMouseBot():
-	gaComponent(DF_COMPONENT_AI)
+	gaComponent(DF_COMPONENT_AI, "dfAIMouseBot")
 {
 	// find the sector the mousebot is running into
 	m_direction = glm::normalize(m_direction);

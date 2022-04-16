@@ -34,7 +34,7 @@ void DarkForces::Component::Trigger::onTrigger(gaMessage* message)
  *
  */
 DarkForces::Component::Trigger::Trigger(const std::string& key):
-	gaComponent(DF_COMPONENT_TRIGGER)
+	gaComponent(DF_COMPONENT_TRIGGER, "dfTrigger")
 {
 	if (g_keys.count(key) > 0) {
 		// convert he INF file key to a darkforces:item key

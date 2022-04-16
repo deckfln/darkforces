@@ -237,7 +237,7 @@ void DarkForces::Component::InfElevator::stopTimer(void)
  * init the object
  */
 DarkForces::Component::InfElevator::InfElevator(const std::string& sector, bool smart):
-	gaComponent(DF_COMPONENT_INF_ELEVATOR),
+	gaComponent(DF_COMPONENT_INF_ELEVATOR, "dfInvElevator"),
 	m_sector(sector),
 	m_smart(smart)
 {
@@ -247,7 +247,7 @@ DarkForces::Component::InfElevator::InfElevator(const std::string& sector, bool 
  * create from a record
  */
 DarkForces::Component::InfElevator::InfElevator(DarkForces::Component::InfElevator::Type kind, dfSector* sector, bool smart):
-	gaComponent(DF_COMPONENT_INF_ELEVATOR),
+	gaComponent(DF_COMPONENT_INF_ELEVATOR, "dfInfElevator"),
 	m_sector(sector->name()),
 	m_type(kind),
 	m_smart(smart)

@@ -9,7 +9,7 @@
 #include "../dfComponent.h"
 
 DarkForces::Component::Sign::Sign(dfMesh* mesh, dfSector* sector, dfWall* wall, float z, float z1):
-	gaComponent(DF_COMPONENT_SIGN),
+	gaComponent(DF_COMPONENT_SIGN, "dfSign"),
 	m_mesh(mesh),
 	m_position(0),
 	m_normal(0)
