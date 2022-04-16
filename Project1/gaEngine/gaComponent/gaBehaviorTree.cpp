@@ -210,6 +210,8 @@ void GameEngine::Component::BehaviorTree::debugGUIinline(void)
 			draw_list->AddRect(ImVec2(p.x, p.y), ImVec2(p.x + 100, p.y + 40), col32);
 			ImGui::Dummy(ImVec2(100.0, 40.0));
 		*/
+		ImGui::TreePop();
+
 		if (m_context == nullptr) {
 			m_context = ImNodes::EditorContextCreate();
 		}
@@ -225,8 +227,6 @@ void GameEngine::Component::BehaviorTree::debugGUIinline(void)
 		ImGui::End();
 
 		m_debug = true;
-
-		ImGui::TreePop();
 	}
 	else {
 		if (m_context != nullptr) {
