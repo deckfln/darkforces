@@ -56,6 +56,7 @@ public:
 	void addVariable(const std::string&, glm::vec4& v4);	// add a variable to the material
 	void addVariable(const std::string&, float& f);	// add a variable to the material
 	void addVariable(const std::string&, int32_t& i);	// add a variable to the material
+	void addVariable(const std::string& uniform, fwTexture* texture);
 
 	fwMaterial &addShader(int shader, const std::string& file, RenderType render = FORWARD_RENDER);
 

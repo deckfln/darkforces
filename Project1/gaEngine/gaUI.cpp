@@ -52,8 +52,6 @@ static float quadUvs[] = { // vertex attributes for a quad that fills the entire
 static glm::vec4 g_positionsize;
 static glm::vec4 g_imagepos;
 static glm::vec4 g_transformation;
-static fwUniform g_uni_ip("imagepos", &g_imagepos);
-static fwUniform g_uni_tr("transformation", &g_transformation);
 
 //-------------------------------------------------------
 
@@ -125,9 +123,9 @@ void GameEngine::UI::onTimer(gaMessage*)
 GameEngine::UI::UI(const std::string& name, bool visible):
 	gaComponent(gaComponent::Gui)
 {
-	g_material.addTexture("image", (fwTexture*)nullptr);
-	g_material.addUniform(&g_uni_ip);
-	g_material.addUniform(&g_uni_tr);
+	g_material.addVariable("image", (fwTexture*)nullptr);
+	g_material.addVariable("imagepos", g_imagepos);
+	g_material.addVariable("transformation", g_transformation);
 }
 
 /**

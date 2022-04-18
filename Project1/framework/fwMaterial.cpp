@@ -150,6 +150,19 @@ void fwMaterial::addVariable(const std::string& variable, int32_t& i)
 	}
 }
 
+void fwMaterial::addVariable(const std::string& variable, fwTexture* texture)
+{
+	if (m_uniforms.count(variable) == 0) {
+		glTexture* glTex = nullptr;
+		if (texture != nullptr) {
+			glTex = new glTexture(texture);
+			m_textures[texture->id()] = glTex;
+		}
+
+		m_uniforms[variable] = new fwUniform(variable, glTex);
+	}
+}
+
 /**
  * Activate uniforms on the given program
  */
