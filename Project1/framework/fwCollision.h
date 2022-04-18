@@ -87,9 +87,11 @@ namespace Framework
      */
     bool intersectSphereTriangle(
         const glm::vec3& center_es,
-        const glm::vec3& a, const glm::vec3 b, const glm::vec3 c,
+        const glm::vec3& a, const glm::vec3& b, const glm::vec3& c,
         glm::vec3& p);
-
+    bool intersectSphereOriginTriangle(
+        const glm::vec3& a, const glm::vec3& b, const glm::vec3& c,
+        glm::vec3& p);
     /*
      * Real-Time Collision Detection
      */

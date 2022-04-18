@@ -593,8 +593,15 @@ void gaEntity::debugGUI(const std::string& display, bool* close)
 	if (ImGui::TreeNode(display.c_str())) {
 		if (ImGui::TreeNode("Entity")) {
 			ImGui::Text("Id:%d", m_entityID);
-			ImGui::Checkbox("Physical", &m_physical);
 			ImGui::Text("Timers : %d", m_timer);
+			ImGui::Checkbox("Physical", &m_physical);
+			if (ImGui::Checkbox("AABBox", &m_displayAABB)) {
+				if (m_displayAABB)
+					g_gaBoundingBoxes.add(&m_worldBounding);
+				else
+					g_gaBoundingBoxes.remove(&m_worldBounding);
+			}
+
 			ImGui::TreePop();
 		}
 		debugGUIChildClass();

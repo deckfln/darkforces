@@ -125,6 +125,11 @@ void Physics::testEntities(gaEntity* entity, const Transform& tranform, std::vec
 		}
 
 		if (target->name() != entity->name()) {
+			/*
+			if (target->name() == "blocker2" && entity->name() == "player") {
+				printf("Physics::testEntities blocker2 vs player\n");
+			}
+			*/
 			size = collisions.size();
 			if (entity->collide(target, tranform.m_forward, tranform.m_downward, collisions)) {
 				for (auto i = size; i < collisions.size(); i++) {
@@ -372,21 +377,25 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 		GameEngine::Transform& tranform = entity->transform();
 
  		glm::vec3 old_position = entity->position();
-
+		
+		// test after 5 move
 		/*
-		static bool first = true;
-		if (entity->name() == "OFFCFIN.WAX(21)" && first) {
-			first = false;
-			old_position = glm::vec3(-22.500357, 0.400000, 29.281124);
-			tranform.m_position = glm::vec3(-22.521852, 0.400000, 29.292812);
-			g_gaWorld.m_entities["elev3-5"].front()->translate(glm::vec3(-28.0000057, 0.178759009, 29.2000008));
-			g_gaWorld.m_entities["elev3-5"].front()->updateWorldAABB();
-			g_gaWorld.m_entities["elev3-5"].front()->physical(true);
+		static uint32_t first = 0;
+		if (entity->name() == "player") {
+			first++;
+			if (first == 5) {
+				old_position = glm::vec3(-23.360874, 0.007, 34.76);
+				tranform.m_position = glm::vec3(-23.312984, 0.007, 34.76);
+				
+				g_gaWorld.m_entities["elev3-5"].front()->translate(glm::vec3(-28.0000057, 0.178759009, 29.2000008));
+				g_gaWorld.m_entities["elev3-5"].front()->updateWorldAABB();
+				g_gaWorld.m_entities["elev3-5"].front()->physical(true);
+				
+			}
 		}
 		*/
-
 #ifdef _DEBUG
-		if (entity->name() == "XXXX") {
+		if (entity->name() == "player") {
 			gaDebugLog(1, "GameEngine::Physics::wantToMove", entity->name() + " to " + std::to_string(tranform.m_position.x)
 				+ " " + std::to_string(tranform.m_position.y)
 				+ " " + std::to_string(tranform.m_position.z));
@@ -871,7 +880,10 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 				}
 				else {
 					glm::vec3 p1(nearest_collision->m_position.x, new_position.y, nearest_collision->m_position.z);
-					tranform.m_position = p1 - glm::vec3(delta2d.x, 0, delta2d.y);
+					tranform.m_position = p1 - glm::vec3(
+						nearest_collision->m_position.x - new_position.x, 
+						0, 
+						nearest_collision->m_position.z - new_position.z);
 
 					const std::string& name = entity->name();
 
@@ -886,10 +898,12 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 
 						if (name == "player") {
 							gaDebugLog(1, "GameEngine::Physics::wantToMove", entity->name() + " pushed by sector");
+							/*
 							printf("%.4f,%.4f,%.4f,%.4f,%.4f,%.4f\n",
 								new_position.x, new_position.z,
 								nearest_collision->m_position.x, nearest_collision->m_position.z,
 								delta2d.x, delta2d.y);
+							*/
 						}
 					}
 				}

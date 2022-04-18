@@ -619,17 +619,15 @@ bool Collider::collision_cylinder_geometry(
 {
 	glm::vec3 ellipsoid_space;
 	glm::vec3 center_gs;
-	glm::vec3 center_es;
+	glm::vec3 center_es(0,0,0);
 	fwAABBox cyl_aabb_gs;	// AABB enclosing the cylinder translated to the geometry space
 
-	init_elipsoide(
-		static_cast<fwCylinder*>(cylinder.m_source),
-		*cylinder.m_worldMatrix,
-		*geometry.m_inverseWorldMatrix,
-		ellipsoid_space,
-		center_gs,
-		center_es,
-		cyl_aabb_gs);
+	// extract the ellipsoid from the cylinder
+	fwCylinder* fwc = static_cast<fwCylinder*>(cylinder.m_source);
+	glm::vec3 ellipsoid(fwc->radius(), fwc->height() / 2.0f, fwc->radius());
+	// deform the model_space to make the ellipsoid  sphere
+	ellipsoid_space = glm::vec3(1.0 / ellipsoid.x, 1.0 / ellipsoid.y, 1.0 / ellipsoid.z);
+	glm::vec3 center_cs(0, fwc->height() / 2.0f, 0);
 
 	// test each triangle vs the ellipsoid
 	glm::vec3 v1_es, v2_es, v3_es;
@@ -640,26 +638,46 @@ bool Collider::collision_cylinder_geometry(
 	glm::vec3 intersection_gs;
 	glm::vec3 intersection_ws;
 
+	// convert from geometry space to cylinder space
+	glm::mat4 geometry_2_cylinder = *cylinder.m_inverseWorldMatrix * *geometry.m_worldMatrix;
 	glm::vec3 triangle_ws[3];
 
 	for (unsigned int i = 0; i < nbVertices; i += 3) {
 
-		// convert each model space vertex to ellipsoid space
-		v1_es = vertices_gs[i] * ellipsoid_space;
-		v2_es = vertices_gs[i + 1] * ellipsoid_space;
-		v3_es = vertices_gs[i + 2] * ellipsoid_space;
+		// convert each geometry space vertex to cylinder space and to ellipsoid space
+		const glm::vec3 a1 = vertices_gs[i];
+		const glm::vec3 a2 = vertices_gs[i+1];
+		const glm::vec3 a3 = vertices_gs[i+2];
+		
+		/*
+		const glm::vec3 w1(*geometry.m_worldMatrix * glm::vec4(a1, 1.0));
+		const glm::vec3 w2(*geometry.m_worldMatrix * glm::vec4(a2, 1.0));
+		const glm::vec3 w3(*geometry.m_worldMatrix * glm::vec4(a3, 1.0));
+		
+		const glm::vec3 c1(*cylinder.m_inverseWorldMatrix * glm::vec4(w1, 1.0));
+		const glm::vec3 c2(*cylinder.m_inverseWorldMatrix * glm::vec4(w2, 1.0));
+		const glm::vec3 c3(*cylinder.m_inverseWorldMatrix * glm::vec4(w3, 1.0));
+		*/
+		const glm::vec3 p1(geometry_2_cylinder * glm::vec4(a1, 1.0));
+		const glm::vec3 p2(geometry_2_cylinder * glm::vec4(a2, 1.0));
+		const glm::vec3 p3(geometry_2_cylinder * glm::vec4(a3, 1.0));
 
-		if (Framework::intersectSphereTriangle(center_es, v1_es, v2_es, v3_es, intersection_es)) {
+		v1_es = (p1 - center_cs) * ellipsoid_space;
+		v2_es = (p2 - center_cs) * ellipsoid_space;
+		v3_es = (p3 - center_cs) * ellipsoid_space;
+
+		if (Framework::intersectSphereOriginTriangle(v1_es, v2_es, v3_es, intersection_es)) {
 			// the intersection point is inside the triangle
 
 			// convert the intersection from ellipsoid-space to cylinder-space
-			intersection_gs = intersection_es / ellipsoid_space;
-
 			// convert from cylinder-space => world-space
-			intersection_ws = glm::vec3(*geometry.m_worldMatrix * glm::vec4(intersection_gs, 1.0));
-			triangle_ws[0] = glm::vec3(*geometry.m_worldMatrix * glm::vec4(vertices_gs[i], 1.0));
-			triangle_ws[1] = glm::vec3(*geometry.m_worldMatrix * glm::vec4(vertices_gs[i+1], 1.0));
-			triangle_ws[2] = glm::vec3(*geometry.m_worldMatrix * glm::vec4(vertices_gs[i+2], 1.0));
+			intersection_gs = intersection_es / ellipsoid_space + center_cs;
+			intersection_ws = glm::vec3(*cylinder.m_worldMatrix * glm::vec4(intersection_gs, 1.0));
+
+			// convert triangke from geometry-space to world-space
+			triangle_ws[0] = glm::vec3(*cylinder.m_worldMatrix * glm::vec4(vertices_gs[i], 1.0));
+			triangle_ws[1] = glm::vec3(*cylinder.m_worldMatrix * glm::vec4(vertices_gs[i+1], 1.0));
+			triangle_ws[2] = glm::vec3(*cylinder.m_worldMatrix * glm::vec4(vertices_gs[i+2], 1.0));
 
 			// inform if the collision point in world space(let the entity decide what to do with the collision)
 			collisions.push_back(gaCollisionPoint(fwCollisionLocation::COLLIDE, intersection_ws, triangle_ws));
