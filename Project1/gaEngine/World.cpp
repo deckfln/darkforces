@@ -456,6 +456,23 @@ gaMessage* World::sendMessageDelayed(const std::string& from, const std::string&
 	return ptr;
 }
 
+gaMessage* GameEngine::World::sendMessageDelayed(const std::string& from, const std::string& to, int action, int value, float fvalue, void* extra)
+{
+	gaMessage* ptr = allocateMessage();
+
+	ptr->m_server = from;
+	ptr->m_client = to;
+	ptr->m_action = action;
+	ptr->m_value = value;
+	ptr->m_fvalue = fvalue;
+	ptr->m_extra = extra;
+
+	m_for_next_frame.push_back(ptr);
+
+	return ptr;
+}
+
+
 /**
  * send message for immediate dispatch
  */

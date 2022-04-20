@@ -67,6 +67,7 @@ void dfBullet::tryToMove(void)
 
 	sendDelayedMessage(gaMessage::WANT_TO_MOVE,
 		gaMessage::Flag::WANT_TO_MOVE_LASER,
+		0.0f,
 		&m_transforms);
 }
 
@@ -131,6 +132,7 @@ void dfBullet::dispatchMessage(gaMessage* message)
 	case gaMessage::Action::WORLD_INSERT:
 		sendDelayedMessage(gaMessage::WANT_TO_MOVE,
 			gaMessage::Flag::WANT_TO_MOVE_LASER,
+			0.0f,
 			&m_transforms);
 		break;
 
@@ -179,6 +181,7 @@ void dfBullet::dispatchMessage(gaMessage* message)
 
 			sendDelayedMessage(gaMessage::WANT_TO_MOVE,
 				gaMessage::Flag::WANT_TO_MOVE_LASER,
+				0.0f,
 				&m_transforms);
 		}
 		else {

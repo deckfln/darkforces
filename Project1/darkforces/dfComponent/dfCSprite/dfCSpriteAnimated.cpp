@@ -176,7 +176,7 @@ void DarkForces::Component::SpriteAnimated::onTimer(gaMessage* message)
 		}
 		else {
 
-			m_entity->sendMessage(DarkForces::Message::ANIM_NEXT_FRAME, m_frame);
+			m_entity->sendMessage(DarkForces::Message::ANIM_NEXT_FRAME, (uint32_t)m_state, &m_frame);
 
 			m_lastFrame = (m_currentFrame / frameTime) * frameTime;
 			m_dirtyAnimation = true;

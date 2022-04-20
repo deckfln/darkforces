@@ -324,9 +324,9 @@ void gaEntity::sendInternalMessage(int action, const glm::vec3& value)
 /**
  * Send a delayed message to myself
  */
-gaMessage* gaEntity::sendDelayedMessage(int action, int value, void* extra)
+gaMessage* gaEntity::sendDelayedMessage(int action, int value, float fvalue, void* extra)
 {
-	return g_gaWorld.sendMessageDelayed(m_name, m_name, action, value, extra);
+	return g_gaWorld.sendMessageDelayed(m_name, m_name, action, value, fvalue, extra);
 }
 
 /**

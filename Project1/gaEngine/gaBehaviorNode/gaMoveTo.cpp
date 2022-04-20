@@ -95,6 +95,7 @@ void GameEngine::Behavior::MoveTo::init(void *data)
 	gaMessage *msg = m_entity->sendDelayedMessage(
 		gaMessage::WANT_TO_MOVE,
 		gaMessage::Flag::WANT_TO_MOVE_BREAK_IF_FALL,
+		0.0f,
 		m_transforms);
 	m_moveID = msg->m_id;
 
@@ -140,6 +141,7 @@ void GameEngine::Behavior::MoveTo::triggerMove(void)
 	gaMessage* msg = m_entity->sendDelayedMessage(
 		gaMessage::WANT_TO_MOVE,
 		gaMessage::Flag::WANT_TO_MOVE_BREAK_IF_FALL,
+		0.0f,
 		m_transforms);
 	m_moveID = msg->m_id;
 }
@@ -416,6 +418,7 @@ void GameEngine::Behavior::MoveTo::dispatchMessage(gaMessage* message, Action *r
 
 	case gaMessage::Action::MOVE:
 		if (conditionMet()) {
+			m_entity->sendMessage(gaMessage::END_MOVE);
 			return failed(r);
 		}
 		onMove(message);
@@ -423,6 +426,7 @@ void GameEngine::Behavior::MoveTo::dispatchMessage(gaMessage* message, Action *r
 
 	case gaMessage::Action::COLLIDE: 
 		if (conditionMet()) {
+			m_entity->sendMessage(gaMessage::END_MOVE);
 			return failed(r);
 		}
 		onCollide(message);
@@ -430,6 +434,7 @@ void GameEngine::Behavior::MoveTo::dispatchMessage(gaMessage* message, Action *r
 
 	case gaMessage::Action::WOULD_FALL:
 		// find an other path
+		m_entity->sendMessage(gaMessage::END_MOVE);
 		return failed(r);
 		break;
 	}

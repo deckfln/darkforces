@@ -192,6 +192,7 @@ public:
 		const glm::vec3& value);						// send internal message to all components of the current entity
 	gaMessage* sendDelayedMessage(int action,
 		int value = 0,
+		float fvalue = 0.0f,
 		void* extra = nullptr);							// send a delayed message to myself
 
 	virtual void add2scene(fwScene* scene);				// if the entity has a mesh, add to the scene

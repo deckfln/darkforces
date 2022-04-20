@@ -58,6 +58,7 @@ void DarkForces::AIMouseBot::tryToMove(void)
 
 	m_entity->sendDelayedMessage(gaMessage::WANT_TO_MOVE, 
 		gaMessage::Flag::WANT_TO_MOVE_BREAK_IF_FALL, 
+		0.0f,
 		m_transforms);
 }
 

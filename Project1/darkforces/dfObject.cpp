@@ -363,6 +363,11 @@ void DarkForces::Object::dispatchMessage(gaMessage* message)
 		onStateChange(dfState::ENEMY_ATTACK, true);
 		break;
 
+		/*
+	case DarkForces::Message::STOP_FIRE:
+		onStateChange(dfState::NONE, true);
+		break;
+		*/
 	case gaMessage::START_MOVE:
 		onStateChange(dfState::ENEMY_MOVE, false);
 		break;

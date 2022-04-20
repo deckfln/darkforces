@@ -131,7 +131,8 @@ namespace GameEngine {
 		gaMessage* sendMessage(const std::string& from,	const std::string& to,	int action,	const glm::vec3& value,	void* extra);
 		gaMessage* sendMessage(flightRecorder::Message *message);
 
-		gaMessage* sendMessageDelayed(const std::string& from,	const std::string& to,	int action,		int value,		void* extra);		// send message for next frame
+		gaMessage* sendMessageDelayed(const std::string& from, const std::string& to, int action, int value, void* extra);		// send message for next frame
+		gaMessage* sendMessageDelayed(const std::string& from, const std::string& to, int action, int value, float fvalue, void* extra);		// send message for next frame
 		gaMessage* sendImmediateMessage(const std::string& from,	const std::string& to,	int action,	int value,	void* extra);			// send message for immediate dispatch
 
 		bool deleteMessage(uint32_t id);					// delete a previously submitted message

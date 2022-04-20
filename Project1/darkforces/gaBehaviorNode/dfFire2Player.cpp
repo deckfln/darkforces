@@ -19,6 +19,11 @@ void DarkForces::Behavior::Fire2Player::fireNow(void)
 	const glm::vec3& p = playerLastPositions.back();
 	m_direction = glm::normalize(p - m_entity->position());
 
+#ifdef _DEBUG
+	m_from = m_entity->position();
+	m_to = p;
+#endif
+
 	//printf("%.2f,%.2f,%.2f,%.2f,%.2f,%.2f\n", p.x, p.z, m_entity->position().x, m_entity->position().z, m_direction.x, m_direction.z);
 
 	m_entity->sendMessage(DarkForces::Message::START_FIRE, 0, (void*)&m_direction);
@@ -53,7 +58,7 @@ BehaviorNode* DarkForces::Behavior::Fire2Player::create(const char* name, tinyxm
  */
 void DarkForces::Behavior::Fire2Player::init(void* data)
 {
-	m_entity->sendMessage(DarkForces::Message::FORCE_STATE, (uint32_t)dfState::ENEMY_ATTACK, 1.0f);
+	m_entity->sendDelayedMessage(DarkForces::Message::FORCE_STATE, (uint32_t)dfState::ENEMY_ATTACK, 1.0f);
 
 	GameEngine::BehaviorNode::init(data);
 }
@@ -77,7 +82,8 @@ void DarkForces::Behavior::Fire2Player::dispatchMessage(gaMessage* message, Acti
 
 	case DarkForces::Message::ANIM_NEXT_FRAME:
 		if (message->m_value == (uint32_t)dfState::ENEMY_ATTACK) {
-			if (message->m_value == m_firingFrames - 1) {
+			uint32_t frame = *(uint32_t*)message->m_extra;
+			if (frame == m_firingFrames - 1) {
 				fireNow();
 			}
 		}
@@ -94,6 +100,9 @@ void DarkForces::Behavior::Fire2Player::dispatchMessage(gaMessage* message, Acti
 	BehaviorNode::execute(r);
 }
 
+//--------------------------------------------------------
+
+#ifdef _DEBUG
 /**
  * debugger
  */
@@ -102,6 +111,9 @@ void DarkForces::Behavior::Fire2Player::debugGUInode(GameEngine::Component::Beha
 	ImGui::Text("from:%.2f %.2f %.2f", m_from.x, m_from.y, m_from.z);
 	ImGui::Text("to:%.2f %.2f %.2f", m_to.x, m_to.y, m_to.z);
 }
+#endif
+
+//--------------------------------------------------------
 
 namespace DarkForces {
 	namespace FlightRecorder {

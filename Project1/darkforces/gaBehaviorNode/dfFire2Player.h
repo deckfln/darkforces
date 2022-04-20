@@ -14,8 +14,10 @@ namespace DarkForces {
 			uint32_t m_firingFrames = 0;
 			uint32_t m_firingFrame = 0;
 
-			glm::vec3 m_from;											// player position
-			glm::vec3 m_to;											// player position
+#ifdef _DEBUG
+			glm::vec3 m_from;											// actor position
+			glm::vec3 m_to;												// target position
+#endif
 
 			void fireNow(void);
 
@@ -29,8 +31,10 @@ namespace DarkForces {
 			// Behavior engine
 			static BehaviorNode* create(const char* name, tinyxml2::XMLElement* element, GameEngine::BehaviorNode* used);// create a node
 
+#ifdef _DEBUG
 			//debugger
 			void debugGUInode(GameEngine::Component::BehaviorTree* tree) override;		// display the component in the debugger
+#endif
 
 			// flight recorder status
 			uint32_t recordState(void* record) override;				// save the component state in a record

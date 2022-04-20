@@ -37,6 +37,7 @@ void GameEngine::Component::SatNav::triggerMove(void)
 	m_entity->sendDelayedMessage(
 		gaMessage::WANT_TO_MOVE,
 		gaMessage::Flag::WANT_TO_MOVE_BREAK_IF_FALL,
+		0.0f,
 		m_transforms);
 }
 
@@ -89,6 +90,7 @@ void GameEngine::Component::SatNav::dispatchMessage(gaMessage* message)
 			m_entity->sendDelayedMessage(
 				gaMessage::WANT_TO_MOVE,
 				gaMessage::Flag::WANT_TO_MOVE_BREAK_IF_FALL,
+				0.0f,
 				m_transforms);
 
 			m_status = Status::MOVE_TO_NEXT_WAYPOINT;
