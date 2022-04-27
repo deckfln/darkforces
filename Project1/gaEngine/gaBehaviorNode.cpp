@@ -120,6 +120,7 @@ bool GameEngine::BehaviorNode::conditionMet(void)
 {
 	for (size_t i = 0; i < m_if_variables.size(); i++) {
 		if (m_if_variables[i].equal(m_tree, m_if_value[i])) {
+			//printf("GameEngine::BehaviorNode::conditionMet %s\n", m_if_variables[i].name());
 			return true;
 		}
 	}
@@ -328,6 +329,7 @@ void GameEngine::BehaviorNode::dispatchMessage(gaMessage*message, BehaviorNode::
 
 //*********************************************************
 
+#ifdef _DEBUG
 /**
  * Debugger
  */
@@ -436,6 +438,15 @@ void GameEngine::BehaviorNode::debugGUIinline(GameEngine::Component::BehaviorTre
 void GameEngine::BehaviorNode::debugGUInode(GameEngine::Component::BehaviorTree* tree)
 {
 }
+
+/**
+ * // display on the console
+ */
+std::string GameEngine::BehaviorNode::debugConsole(GameEngine::Component::BehaviorTree* tree)
+{
+	return "";
+}
+#endif
 
 //*********************************************************
 

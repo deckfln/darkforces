@@ -125,6 +125,8 @@ void GameEngine::Component::BehaviorTree::dispatchMessage(gaMessage* message)
 		return;
 	}
 
+	m_debug = true;
+
 	// use general purpose message handlers
 	if (m_handlers.count(message->m_action)) {
 		(this->*m_handlers[message->m_action])(message);
@@ -144,6 +146,15 @@ void GameEngine::Component::BehaviorTree::dispatchMessage(gaMessage* message)
 			m_current = m_current->m_children[m_current->m_runningChild];
 
 			m_current->init(r.data);
+
+#ifdef _DEBUG
+			if (m_debug) {
+				gaDebugLog(1, "GameEngine::BehaviorTree",
+					std::to_string(message->m_frame) + " " +
+					m_entity->name() + " start  " + m_current->name() + m_current->debugConsole(this)
+				);
+			}
+#endif
 
 			r.action = BehaviorNode::Status::EXECUTE;
 			break;
@@ -173,12 +184,14 @@ void GameEngine::Component::BehaviorTree::dispatchMessage(gaMessage* message)
 		case BehaviorNode::Status::EXECUTE:
 			count++;
 #ifdef _DEBUG
+			/*
 			if (m_debug) {
 				gaDebugLog(1, "GameEngine::BehaviorTree",
 					std::to_string(message->m_frame) + " " +
 					m_entity->name() + " execute " + m_current->name()
 				);
 			}
+			*/
 #endif
 			m_current->execute(&r);
 			break;

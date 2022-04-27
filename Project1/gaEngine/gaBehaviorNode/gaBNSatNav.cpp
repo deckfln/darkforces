@@ -139,16 +139,23 @@ void GameEngine::Behavior::SatNav::dispatchMessage(gaMessage* message, Action *r
 
 //----------------------------------
 
+#ifdef _DEBUG
 /**
  * display the component in the debugger
  */
 void GameEngine::Behavior::SatNav::debugGUInode(GameEngine::Component::BehaviorTree* tree)
 {
 	if (m_move2variable) {
-		ImGui::Text("%s", m_destName.name());
+		ImGui::Text("%s=%s", m_destName.name(), m_destName.value(tree));
 	}
 	GameEngine::Behavior::MoveTo::debugGUInode(tree);
 }
+
+std::string GameEngine::Behavior::SatNav::debugConsole(GameEngine::Component::BehaviorTree* tree)
+{
+	return " " + std::string(m_destName.name()) + "=" + std::string(m_destName.value(tree));
+}
+#endif
 
 //----------------------------------
 

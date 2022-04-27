@@ -131,6 +131,8 @@ void DarkForces::Behavior::SetVar::init(void* data)
 		gaEntity* collided;
 		for (size_t i = 0; i < collidedList.size; i++) {
 			collided = collidedList.entities[i];
+			//printf("DarkForces::Behavior::SetVar::findElevator=%s\n", collided->name().c_str());
+
 			elevator = dynamic_cast<DarkForces::Component::InfElevator*>(collided->findComponent(DF_COMPONENT_INF_ELEVATOR));
 
 			if (elevator != nullptr) {

@@ -76,9 +76,12 @@ namespace GameEngine {
 			tinyxml2::XMLElement* element, 
 			GameEngine::BehaviorNode* used=nullptr);				// create a node or poupulate a node
 
+#ifdef _DEBUG
 		// debugger
 		virtual void debugGUIinline(GameEngine::Component::BehaviorTree* tree, BehaviorNode* current, float x, float& y);	// display the component in the debugger
 		virtual void debugGUInode(GameEngine::Component::BehaviorTree* tree);	// display the component in the debugger
+		virtual std::string debugConsole(GameEngine::Component::BehaviorTree* tree);	// display on the console
+#endif
 
 		// flight recorder status
 		virtual uint32_t recordState(void* record);					// save the component state in a record

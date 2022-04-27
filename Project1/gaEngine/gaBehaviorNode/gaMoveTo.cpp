@@ -311,7 +311,7 @@ void GameEngine::Behavior::MoveTo::onCollide(gaMessage* message)
 		uint32_t count = 0;
 		glm::vec2 barycenter(0);
 
-		for (uint32_t i = 0; i < 4; i++) {
+		for (uint32_t i = 1; i < 5; i++) {
 			j = m_previous_current - i;
 
 			// Move back one step and wait for next turn to retry
@@ -324,7 +324,7 @@ void GameEngine::Behavior::MoveTo::onCollide(gaMessage* message)
 		}
 		barycenter /= 4.0f;
 		float move_radius = 0;
-		for (uint32_t i = 0; i < 4; i++) {
+		for (uint32_t i = 1; i < 5; i++) {
 			j = m_previous_current - i;
 
 			// Move back one step and wait for next turn to retry
@@ -337,7 +337,7 @@ void GameEngine::Behavior::MoveTo::onCollide(gaMessage* message)
 		}
 		move_radius /= 4.0f;
 
-		if (move_radius < radius / 2.0f) {
+		if (move_radius < radius / 10.0f) {
 			// give up, we are facing a not planned object that refuses to move
 			return onBlockedWay(message);
 		}
