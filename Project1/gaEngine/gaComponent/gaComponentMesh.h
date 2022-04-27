@@ -33,10 +33,12 @@ namespace GameEngine
 		inline void set_scale(float f) { m_mesh->set_scale(f); };
 		inline void worldMatrix(glm::mat4* m) { m_mesh->worldMatrix(m); };
 		inline void addUniform(fwUniform* uniform) { m_mesh->addUniform(uniform); };
-		// debugger
 		void dispatchMessage(gaMessage* message) override;	// let a component deal with a situation
-		void debugGUIinline(void) override;					// display the component in the debugger
 
+#ifdef _DEBUG
+		// debugger
+		void debugGUIinline(void) override;					// display the component in the debugger
+#endif
 			// flight recorder status
 		inline uint32_t recordSize(void);					// size of the component record
 		uint32_t recordState(void* record);					// save the component state in a record

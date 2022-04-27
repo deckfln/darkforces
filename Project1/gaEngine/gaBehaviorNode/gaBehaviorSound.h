@@ -24,9 +24,10 @@ namespace GameEngine {
 
 			// Behavior engine
 			static BehaviorNode* create(const char* name, tinyxml2::XMLElement* element, GameEngine::BehaviorNode* used);// create a node
-
+#ifdef _DEBUG
 			//debugger
 			void debugGUInode(GameEngine::Component::BehaviorTree* tree) override;	// display the component in the debugger
+#endif
 		protected:
 			Condition m_condition = Condition::IN_ORDER;			// how do we play the sounds
 			std::vector<alSound*> m_sounds;							// list of sounds to play

@@ -55,9 +55,11 @@ void GameEngine::Component::ActiveProbe::dispatchMessage(gaMessage* message)
 	}
 }
 
+#ifdef _DEBUG
 void GameEngine::Component::ActiveProbe::debugGUIinline(void)
 {
 	if (ImGui::TreeNode("Mesh")) {
 		ImGui::TreePop();
 	}
 }
+#endif

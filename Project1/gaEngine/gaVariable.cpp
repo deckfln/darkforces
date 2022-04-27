@@ -45,10 +45,12 @@ bool GameEngine::Variable::create(tinyxml2::XMLElement* element)
  */
 glm::vec3& GameEngine::Variable::getv3(GameEngine::Component::BehaviorTree* tree)
 {
+#ifdef _DEBUG
 	if (m_type != GameEngine::Variable::Type::VEC3) {
 		gaDebugLog(1, "GameEngine::Variable::getv3", "incompatible type requested for " + m_name);
 		exit(-1);
 	}
+#endif
 	return tree->blackboard().get<glm::vec3>(m_name, GameEngine::Variable::Type::VEC3);
 }
 
@@ -57,10 +59,12 @@ glm::vec3& GameEngine::Variable::getv3(GameEngine::Component::BehaviorTree* tree
  */
 std::string& GameEngine::Variable::gets(GameEngine::Component::BehaviorTree* tree)
 {
+#ifdef _DEBUG
 	if (m_type != GameEngine::Variable::Type::STRING) {
 		gaDebugLog(1, "GameEngine::Variable::gets", "incompatible type requested for " + m_name);
 		exit(-1);
 	}
+#endif
 	return tree->blackboard().get<std::string>(m_name, GameEngine::Variable::Type::STRING);
 }
 
@@ -69,10 +73,12 @@ std::string& GameEngine::Variable::gets(GameEngine::Component::BehaviorTree* tre
  */
 bool& GameEngine::Variable::getb(GameEngine::Component::BehaviorTree* tree)
 {
+#ifdef _DEBUG
 	if (m_type != GameEngine::Variable::Type::BOOL) {
 		gaDebugLog(1, "GameEngine::Variable::getb", "incompatible type requested for " + m_name);
 		exit(-1);
 	}
+#endif
 	return tree->blackboard().get<bool>(m_name, GameEngine::Variable::Type::BOOL);
 }
 
@@ -81,10 +87,12 @@ bool& GameEngine::Variable::getb(GameEngine::Component::BehaviorTree* tree)
  */
 int32_t& GameEngine::Variable::geti(GameEngine::Component::BehaviorTree* tree)
 {
+#ifdef _DEBUG
 	if (m_type != GameEngine::Variable::Type::INT32) {
 		gaDebugLog(1, "GameEngine::Variable::geti", "incompatible type requested for " + m_name);
 		exit(-1);
 	}
+#endif
 	return tree->blackboard().get<int32_t>(m_name, GameEngine::Variable::Type::INT32);
 }
 
@@ -93,10 +101,12 @@ int32_t& GameEngine::Variable::geti(GameEngine::Component::BehaviorTree* tree)
  */
 float& GameEngine::Variable::getf(GameEngine::Component::BehaviorTree* tree)
 {
+#ifdef _DEBUG
 	if (m_type != GameEngine::Variable::Type::FLOAT) {
 		gaDebugLog(1, "GameEngine::Variable::getf", "incompatible type requested for " + m_name);
 		exit(-1);
 	}
+#endif
 	return tree->blackboard().get<float>(m_name, GameEngine::Variable::Type::FLOAT);
 }
 
@@ -105,10 +115,12 @@ float& GameEngine::Variable::getf(GameEngine::Component::BehaviorTree* tree)
  */
 void* GameEngine::Variable::getp(GameEngine::Component::BehaviorTree* tree)
 {
+#ifdef _DEBUG
 	if (m_type != GameEngine::Variable::Type::PTR) {
 		gaDebugLog(1, "GameEngine::Variable::getp", "incompatible type requested for " + m_name);
 		exit(-1);
 	}
+#endif
 	return tree->blackboard().pGet<void*>(m_name, GameEngine::Variable::Type::PTR);
 }
 
@@ -117,10 +129,12 @@ void* GameEngine::Variable::getp(GameEngine::Component::BehaviorTree* tree)
  */
 void GameEngine::Variable::set(GameEngine::Component::BehaviorTree* tree, void* ptr)
 {
+#ifdef _DEBUG
 	if (m_type != GameEngine::Variable::Type::PTR) {
 		gaDebugLog(1, "GameEngine::Variable::set", "incompatible type requested for " + m_name);
 		exit(-1);
 	}
+#endif
 	tree->blackboard().pSet(m_name, ptr);
 }
 
@@ -129,10 +143,12 @@ void GameEngine::Variable::set(GameEngine::Component::BehaviorTree* tree, void* 
  */
 void GameEngine::Variable::set(GameEngine::Component::BehaviorTree* tree, bool b)
 {
+#ifdef _DEBUG
 	if (m_type != GameEngine::Variable::Type::BOOL) {
 		gaDebugLog(1, "GameEngine::Variable::set", "incompatible type requested for " + m_name);
 		exit(-1);
 	}
+#endif
 	tree->blackboard().set<int32_t>(m_name, b, GameEngine::Variable::Type::BOOL);
 }
 
@@ -141,10 +157,12 @@ void GameEngine::Variable::set(GameEngine::Component::BehaviorTree* tree, bool b
  */
 void GameEngine::Variable::set(GameEngine::Component::BehaviorTree* tree, int32_t i)
 {
+#ifdef _DEBUG
 	if (m_type != GameEngine::Variable::Type::INT32) {
 		gaDebugLog(1, "GameEngine::Variable::set", "incompatible type requested for " + m_name);
 		exit(-1);
 	}
+#endif
 	tree->blackboard().set<int32_t>(m_name, i, GameEngine::Variable::Type::INT32);
 }
 
@@ -153,10 +171,12 @@ void GameEngine::Variable::set(GameEngine::Component::BehaviorTree* tree, int32_
  */
 void GameEngine::Variable::set(GameEngine::Component::BehaviorTree* tree, float f)
 {
+#ifdef _DEBUG
 	if (m_type != GameEngine::Variable::Type::FLOAT) {
 		gaDebugLog(1, "GameEngine::Variable::set", "incompatible type requested for " + m_name);
 		exit(-1);
 	}
+#endif
 	tree->blackboard().set<float>(m_name, f, GameEngine::Variable::Type::FLOAT);
 }
 
@@ -165,10 +185,12 @@ void GameEngine::Variable::set(GameEngine::Component::BehaviorTree* tree, float 
  */
 void GameEngine::Variable::set(GameEngine::Component::BehaviorTree* tree, const glm::vec3& v)
 {
+#ifdef _DEBUG
 	if (m_type != GameEngine::Variable::Type::VEC3) {
 		gaDebugLog(1, "GameEngine::Variable::set", "incompatible type requested for " + m_name);
 		exit(-1);
 	}
+#endif
 	tree->blackboard().set<glm::vec3>(m_name, v, GameEngine::Variable::Type::VEC3);
 }
 
@@ -177,10 +199,12 @@ void GameEngine::Variable::set(GameEngine::Component::BehaviorTree* tree, const 
  */
 void GameEngine::Variable::set(GameEngine::Component::BehaviorTree* tree, const std::string& s)
 {
+#ifdef _DEBUG
 	if (m_type != GameEngine::Variable::Type::STRING) {
 		gaDebugLog(1, "GameEngine::Variable::set", "incompatible type requested for " + m_name);
 		exit(-1);
 	}
+#endif
 	tree->blackboard().set<std::string>(m_name, s, GameEngine::Variable::Type::STRING);
 }
 

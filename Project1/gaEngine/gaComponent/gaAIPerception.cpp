@@ -24,6 +24,7 @@ GameEngine::Component::AIPerception::AIPerception(bool view, bool audio, float d
 	}
 }
 
+#ifdef _DEBUG
 void GameEngine::Component::AIPerception::debugGUIinline(void)
 {
 	if (ImGui::TreeNode("AIPerception")) {
@@ -39,6 +40,7 @@ void GameEngine::Component::AIPerception::debugGUIinline(void)
 		ImGui::TreePop();
 	}
 }
+#endif
 
 void GameEngine::Component::AIPerception::registerEvents(void)
 {

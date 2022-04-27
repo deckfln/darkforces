@@ -148,6 +148,7 @@ void ComponentMesh::dispatchMessage(gaMessage* message)
 
 //****************************************************
 
+#ifdef _DEBUG
 /**
  * display the component in the debugger
  */
@@ -158,7 +159,7 @@ void ComponentMesh::debugGUIinline(void)
 		ImGui::TreePop();
 	}
 }
-
+#endif
 //*********************************************
 
 inline uint32_t GameEngine::ComponentMesh::recordSize(void)

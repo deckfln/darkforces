@@ -60,6 +60,7 @@ void GameEngine::Component::Actor::dispatchMessage(gaMessage* message)
 
 //-------------------------------------
 
+#ifdef _DEBUG
 void GameEngine::Component::Actor::debugGUIinline(void)
 {
 	if (ImGui::TreeNode("Actor")) {
@@ -76,6 +77,7 @@ void GameEngine::Component::Actor::debugGUIinline(void)
 		ImGui::TreePop();
 	}
 }
+#endif
 
 //---------------------------------------
 

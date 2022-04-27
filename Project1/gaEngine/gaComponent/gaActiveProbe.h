@@ -20,7 +20,9 @@ namespace GameEngine {
 		public:
 			ActiveProbe(void);
 			void dispatchMessage(gaMessage* message) override;	// let a component deal with a situation
+#ifdef _DEBUG
 			void debugGUIinline(void) override;					// display the component in the debugger
+#endif
 		};
 	}
 }

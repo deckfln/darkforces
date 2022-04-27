@@ -21,7 +21,9 @@ namespace GameEngine {
 			uint32_t addSound(alSound* sound);					// add a sound to the library and return the ID
 			void position(const glm::vec3 &position);			// define the position of the source
 			void dispatchMessage(gaMessage* message) override;	// let a component deal with a situation
+#ifdef _DEBUG
 			void debugGUIinline(void) override;					// display the component in the debugger
+#endif
 			~Sound();
 		};
 	}

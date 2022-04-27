@@ -29,9 +29,11 @@ void GameEngine::Blackboard::assign(const std::string& variable, const std::stri
 		}
 	}
 
+#ifdef _DEBUG
 	if (m_type[variable] != m_type[source]) {
 		gaDebugLog(1, "GameEngine::Blackboard::set", "incompatible type for " + variable);
 	}
+#endif
 
 	switch (m_type[source]) {
 	case GameEngine::Variable::Type::BOOL:

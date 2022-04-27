@@ -94,9 +94,11 @@ void GameEngine::Behavior::Alarm::init(void*)
 
 //----------------------------------------------
 
+#ifdef _DEBUG
 void GameEngine::Behavior::Alarm::debugGUInode(GameEngine::Component::BehaviorTree* tree)
 {
 	ImGui::Text("max:%d", m_maxDelay);
 	ImGui::Text("min:%d", m_minDelay);
 	ImGui::Text("rnd:%d", m_timer);
 }
+#endif

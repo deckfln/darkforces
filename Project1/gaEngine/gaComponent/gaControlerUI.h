@@ -27,9 +27,10 @@ namespace GameEngine {
 			void _mouseButton(int action) override;				// convert mouse actions to messages
 			void _mouseMove(float x, float y) override;			// convert mouse actions to messages
 
+#ifdef _DEBUG
 			// debugger
 			void debugGUIinline(void) override;					// display the component in the debugger
-
+#endif
 		private:
 			const std::vector<KeyInfo>	m_keys;					// keys to monitor
 			bool m_left_mouse_down = false;						// real-time status of the button

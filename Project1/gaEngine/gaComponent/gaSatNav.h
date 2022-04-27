@@ -36,8 +36,10 @@ namespace GameEngine {
 			uint32_t recordState(void* record);					// save the component state in a record
 			uint32_t loadState(void* record);					// reload a component state from a record
 
+#ifdef _DEBUG
 			// debugger
 			void debugGUIinline(void) override;					// display the component in the debugger
+#endif
 		};
 	}
 }

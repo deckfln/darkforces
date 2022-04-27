@@ -208,6 +208,7 @@ void GameEngine::Component::BehaviorTree::dispatchMessage(gaMessage* message)
 
 //---------------------------------------------
 
+#ifdef _DEBUG
 /**
  * display the component in the debugger
  */
@@ -253,7 +254,7 @@ void GameEngine::Component::BehaviorTree::debugGUIinline(void)
 		m_debug = false;
 	}
 }
-
+#endif
 //---------------------------------------------
 
 /**

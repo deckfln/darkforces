@@ -46,6 +46,7 @@ void GameEngine::Component::Listener::dispatchMessage(gaMessage* message)
 	}
 }
 
+#ifdef _DEBUG
 /**
  * display the component in the debugger
  */
@@ -55,3 +56,4 @@ void GameEngine::Component::Listener::debugGUIinline(void)
 		ImGui::TreePop();
 	}
 }
+#endif

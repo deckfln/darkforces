@@ -28,10 +28,12 @@ void GameEngine::Value::set(tinyxml2::XMLElement* xmlVar)
 		}
 	}
 
+#ifdef _DEBUG
 	if (m_type == Type::NONE) {
 		gaDebugLog(1, "GameEngine::Value", "unknown type " + (std::string)type);
 		exit(-1);
 	}
+#endif
 
 	const char* v = xmlVar->GetText();
 
@@ -192,6 +194,7 @@ std::string& GameEngine::Value::gets(GameEngine::Component::BehaviorTree* tree) 
 
 //----------------------------------------------------
 
+#ifdef _DEBUG
 /**
  *
  */
@@ -220,3 +223,4 @@ const char* GameEngine::Value::debug(void)
 
 	return tmp;
 }
+#endif

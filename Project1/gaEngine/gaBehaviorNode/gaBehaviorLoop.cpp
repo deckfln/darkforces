@@ -200,6 +200,7 @@ void GameEngine::Behavior::Loop::dispatchMessage(gaMessage* message, Action* r)
 	r->action = BehaviorNode::Status::EXECUTE;
 }
 
+#ifdef _DEBUG
 /**
  * display the node data in the debugger
  */
@@ -223,3 +224,4 @@ void GameEngine::Behavior::Loop::debugGUInode(GameEngine::Component::BehaviorTre
 		break;
 	}
 }
+#endif

@@ -125,6 +125,7 @@ void GameEngine::Behavior::Sequence::execute(Action* r)
 	return startChild(r, m_runningChild, m_data);
 }
 
+#ifdef _DEBUG
 /**
  * display the node data in the debugger
  */
@@ -142,3 +143,4 @@ void GameEngine::Behavior::Sequence::debugGUInode(GameEngine::Component::Behavio
 		break;
 	}
 }
+#endif

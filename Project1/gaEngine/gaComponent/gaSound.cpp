@@ -50,6 +50,7 @@ void GameEngine::Component::Sound::dispatchMessage(gaMessage* message)
 	}
 }
 
+#ifdef _DEBUG
 /**
  * display the component in the debugger
  */
@@ -62,6 +63,7 @@ void GameEngine::Component::Sound::debugGUIinline(void)
 		ImGui::TreePop();
 	}
 }
+#endif
 
 /**
  * register sounds by name

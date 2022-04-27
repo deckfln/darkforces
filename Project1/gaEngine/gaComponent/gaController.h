@@ -30,8 +30,9 @@ namespace GameEngine {
 			~Controller();
 
 			void dispatchMessage(gaMessage* message) override;	// let a component deal with a situation
+#ifdef _DEBUG
 			void debugGUIinline(void) override;					// display the component in the debugger
-
+#endif
 			bool checkKeys(time_t delta) override;
 			void updatePlayer(time_t delta) override;
 

@@ -37,12 +37,17 @@ void GameEngine::Component::Controller::dispatchMessage(gaMessage* message)
 	}
 }
 
+#ifdef _DEBUG
+/**
+ *
+ */
 void GameEngine::Component::Controller::debugGUIinline(void)
 {
 	if (ImGui::TreeNode("Controller")) {
 		ImGui::TreePop();
 	}
 }
+#endif
 
 /**
  * deal with movement keys

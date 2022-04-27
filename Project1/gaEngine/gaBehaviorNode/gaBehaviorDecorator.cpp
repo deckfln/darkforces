@@ -116,6 +116,7 @@ void GameEngine::Behavior::Decorator::execute(Action* r)
 	}
 }
 
+#ifdef _DEBUG
 /**
  * Debugger
  */
@@ -129,3 +130,4 @@ void GameEngine::Behavior::Decorator::debugGUInode(GameEngine::Component::Behavi
 	};
 	ImGui::Text("%s", conditions[(uint32_t)m_condition]);
 }
+#endif

@@ -142,6 +142,7 @@ void GameEngine::Behavior::Sound::addSound(const char* file, uint32_t id)
 
 //-----------------------------------------------
 
+#ifdef _DEBUG
 /**
  * display the node data in the debugger
  */
@@ -165,3 +166,4 @@ void GameEngine::Behavior::Sound::debugGUInode(GameEngine::Component::BehaviorTr
 		ImGui::TreePop();
 	}
 }
+#endif

@@ -265,6 +265,7 @@ uint32_t GameEngine::Component::SatNav::loadState(void* record)
 	return sizeof(GameEngine::flightRecorder::PathFinding);
 }
 
+#ifdef _DEBUG
 /**
  * debugger
  */
@@ -294,3 +295,4 @@ void GameEngine::Component::SatNav::debugGUIinline(void)
 		ImGui::TreePop();
 	}
 }
+#endif

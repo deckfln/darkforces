@@ -46,7 +46,9 @@ namespace GameEngine {
 			inline const std::vector<uint32_t> heardSound(void) { return m_soundID; };
 
 			~AIPerception();
+#ifdef _DEBUG
 			void debugGUIinline(void) override;					// display the component in the debugger
+#endif
 		};
 	}
 }
