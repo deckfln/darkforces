@@ -33,7 +33,7 @@ void DarkForces::Component::HUDtext::onText(gaMessage* message)
 {
 	Msg& msg = g_dfMsg.get(message->m_value);
 
-	if (msg.importance() > m_importance) {
+	if (msg.importance() < m_importance) {
 		uint32_t ticks;
 
 		m_text_bmp.clear();	// clear the background
@@ -63,7 +63,7 @@ void DarkForces::Component::HUDtext::onAlarm(gaMessage* message)
 {
 	if (m_alarmID >= 0) {
 		m_alarmID = -1;
-		m_importance = -1;
+		m_importance = 99999;
 		m_text_bmp.clear();
 	}
 }

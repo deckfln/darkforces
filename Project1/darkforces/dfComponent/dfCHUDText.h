@@ -10,7 +10,7 @@ namespace DarkForces {
 		class HUDtext : public gaComponent
 		{
 			int32_t m_alarmID = -1;								// registered alarm
-			int32_t m_importance = -1;							// importance of currently displayed message
+			int32_t m_importance = 99999;						// importance of currently displayed message
 			fwTexture m_text_bmp = fwTexture(320, 12, 4);
 			GameEngine::Image2D* m_image = nullptr;
 
