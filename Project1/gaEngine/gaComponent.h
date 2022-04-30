@@ -28,7 +28,8 @@ public:
 		Actor,
 		Listener,
 		Inventory,
-		Gui
+		Gui,
+		Imposter		// physic imposter
 	};
 
 	gaComponent(int m_type, const std::string& name="gaComponent");

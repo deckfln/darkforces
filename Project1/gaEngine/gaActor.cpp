@@ -48,10 +48,9 @@ gaActor::gaActor(
 	m_hasCollider = true;
 	m_collider.set(&m_cylinder, &m_worldMatrix, &m_inverseWorldMatrix, &m_modelAABB);
 
-	GameEngine::Component::ActiveProbe* probe = new GameEngine::Component::ActiveProbe();
-	addComponent(probe, gaEntity::Flag::DELETE_AT_EXIT);
-
+	addComponent(&m_probe);
 	addComponent(&m_listener);
+	addComponent(&m_imposter);
 
 	g_gaSoundEngine.registerHearEvents(this);	// wants to receive sound events
 }

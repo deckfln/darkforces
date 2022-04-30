@@ -675,9 +675,9 @@ bool Collider::collision_cylinder_geometry(
 			intersection_ws = glm::vec3(*cylinder.m_worldMatrix * glm::vec4(intersection_gs, 1.0));
 
 			// convert triangke from geometry-space to world-space
-			triangle_ws[0] = glm::vec3(*cylinder.m_worldMatrix * glm::vec4(vertices_gs[i], 1.0));
-			triangle_ws[1] = glm::vec3(*cylinder.m_worldMatrix * glm::vec4(vertices_gs[i+1], 1.0));
-			triangle_ws[2] = glm::vec3(*cylinder.m_worldMatrix * glm::vec4(vertices_gs[i+2], 1.0));
+			triangle_ws[0] = glm::vec3(*geometry.m_worldMatrix * glm::vec4(vertices_gs[i], 1.0));
+			triangle_ws[1] = glm::vec3(*geometry.m_worldMatrix * glm::vec4(vertices_gs[i+1], 1.0));
+			triangle_ws[2] = glm::vec3(*geometry.m_worldMatrix * glm::vec4(vertices_gs[i+2], 1.0));
 
 			// inform if the collision point in world space(let the entity decide what to do with the collision)
 			collisions.push_back(gaCollisionPoint(fwCollisionLocation::COLLIDE, intersection_ws, triangle_ws));

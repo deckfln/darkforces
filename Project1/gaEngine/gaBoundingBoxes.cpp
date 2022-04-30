@@ -85,7 +85,7 @@ void gaBoundingBoxes::draw(fwScene* scene)
 	}
 
 	// build the mesh if it doesn't exists yet
-	if (!m_added2scene) {
+	if (m_boxes.size() > 0 && !m_added2scene) {
 		m_added2scene = true;
 
 		m_geometry = new fwGeometry();

@@ -304,6 +304,7 @@
     <ClCompile Include="gaEngine\gaCollisionPoint.cpp" />
     <ClCompile Include="gaEngine\gaComponent.cpp" />
     <ClCompile Include="gaEngine\gaComponent\ComponentControler.cpp" />
+    <ClCompile Include="gaEngine\gaComponent\gaCImposter.cpp" />
     <ClCompile Include="gaEngine\gaComponent\gaCInventory.cpp" />
     <ClCompile Include="gaEngine\gaComponent\gaActiveProbe.cpp" />
     <ClCompile Include="gaEngine\gaComponent\gaCActor.cpp" />
@@ -575,6 +576,7 @@
     <ClInclude Include="gaEngine\gaCollisionPoint.h" />
     <ClInclude Include="gaEngine\gaComponent.h" />
     <ClInclude Include="gaEngine\gaComponent\ComponentControler.h" />
+    <ClInclude Include="gaEngine\gaComponent\gaCImposter.h" />
     <ClInclude Include="gaEngine\gaComponent\gaCInventory.h" />
     <ClInclude Include="gaEngine\gaComponent\gaActiveProbe.h" />
     <ClInclude Include="gaEngine\gaComponent\gaCActor.h" />

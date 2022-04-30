@@ -11,6 +11,7 @@
 #include "gaCollisionPoint.h"
 #include "gaDebug.h"
 #include "gaActor.h"
+#include "gaComponent/gaCImposter.h"
 
 #include "../config.h"
 
@@ -125,13 +126,13 @@ void Physics::testEntities(gaEntity* entity, const Transform& tranform, std::vec
 		}
 
 		if (target->name() != entity->name()) {
-			/*
-			if (target->name() == "blocker2" && entity->name() == "player") {
-				printf("Physics::testEntities blocker2 vs player\n");
-			}
-			*/
 			size = collisions.size();
 			if (entity->collide(target, tranform.m_forward, tranform.m_downward, collisions)) {
+				/*
+				if (target->name() == "elev3-5" && entity->name() == "player") {
+					printf("Physics::testEntities blocker2 vs player\n");
+				}
+				*/
 				for (auto i = size; i < collisions.size(); i++) {
 					collisions[i].m_source = target;
 				}
@@ -363,6 +364,8 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 	std::map<std::string, bool> pushedEntities;	// list of entities we are pushing, only push an entity once per run
 	std::map<std::string, gaEntity*>& sittingOnTop = entity->sittingOnTop();
 	std::vector<gaEntity*> verticalCollision;
+	GameEngine::Component::Imposter* pMover=nullptr;
+	GameEngine::Component::Imposter* pCollided = nullptr;
 
 	// kick start actions
 	actions.push(entity);
@@ -375,6 +378,12 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 		actions.pop();
 
 		GameEngine::Transform& tranform = entity->transform();
+
+		// as the objects is moving remove references to previous 'sitting on'
+		pMover = dynamic_cast<GameEngine::Component::Imposter*>(entity->findComponent(gaComponent::Imposter));
+		if (pMover) {
+			pMover->clearEntitiesBelow();
+		}
 
  		glm::vec3 old_position = entity->position();
 		
@@ -395,7 +404,7 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 		}
 		*/
 #ifdef _DEBUG
-		if (entity->name() == "XXXX") {
+		if (entity->name() == "elev3-5") {
 			gaDebugLog(1, "GameEngine::Physics::wantToMove", entity->name() + " to " + std::to_string(tranform.m_position.x)
 				+ " " + std::to_string(tranform.m_position.y)
 				+ " " + std::to_string(tranform.m_position.z));
@@ -599,9 +608,18 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 							}
 						}
 
+						pCollided = dynamic_cast<GameEngine::Component::Imposter*>(collidedEntity->findComponent(gaComponent::Imposter));
+
 						fwAABBox& entityAABB = (fwAABBox&)entity->worldAABB();
 						const fwAABBox& colliderAABB = collidedEntity->worldAABB();
 						if (entityAABB.isAbove(colliderAABB)) {
+							if (pCollided) {
+								pCollided->addEntityOnTop(entity);
+							}
+							if (pMover) {
+								pMover->addEntityBelow(collidedEntity);
+							}
+
 							std::map<std::string, gaEntity*>& _sittingOnTop = collidedEntity->sittingOnTop();
 
 							if (_sittingOnTop.count(entity->name()) == 0) {
@@ -609,6 +627,12 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 							}
 						}
 						else {
+							if (pMover) {
+								pMover->addEntityOnTop(collidedEntity);
+							}
+							if (pCollided) {
+								pCollided->addEntityBelow(entity);
+							}
 							if (sittingOnTop.count(collidedEntity->name()) == 0) {
 								sittingOnTop[collidedEntity->name()] = collidedEntity;
 							}
@@ -1051,6 +1075,18 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 		// inform all objects that are sitting on that one
 		lifted = tranform.m_position.y - old_position.y;
 		if (lifted < 0) {
+			if (pMover) {
+				const std::vector<gaEntity*>& entities = pMover->entitiesOnTop();
+				for (auto entity : entities) {
+					if (entity->movable()) {
+						actions.push(entity);
+						GameEngine::Transform& t = entity->transform();
+						t.m_position = entity->position();
+					}
+				}
+				pMover->clearEntitiesOnTop();
+			}
+
 			for (auto& entry : sittingOnTop) {
 				// unless the object entered ballistic mode, then let it run individually
 				if (m_ballistics.count(entry.first) > 0) {

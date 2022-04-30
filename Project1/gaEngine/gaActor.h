@@ -9,7 +9,8 @@
 #include "gaEntity.h"
 #include "Physics.h"
 #include "gaComponent/gaListener.h"
-#include "gaComponent/gaAIPerception.h"
+#include "gaComponent/gaCImposter.h"
+#include "gaComponent/gaActiveProbe.h"
 
 #include "../flightRecorder/Actor.h"
 
@@ -32,8 +33,10 @@ protected:
 	glm::mat3x3 m_physic = glm::mat3x3(0);
 	time_t m_animation_time = 0;				// start of the physic driven movement
 
-	gaPlayer* m_parent = nullptr;				// parent player
+	gaPlayer* m_parent = nullptr;						// parent player
 	GameEngine::Component::Listener m_listener;			// play the sound for real
+	GameEngine::Component::Imposter m_imposter;			// physic imposter
+	GameEngine::Component::ActiveProbe m_probe;			// forward probe
 
 public:
 	gaActor(

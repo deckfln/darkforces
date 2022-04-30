@@ -7,6 +7,7 @@
 
 #include "../gaEngine/gaComponent/gaSound.h"
 #include "../gaEngine/gaComponent/gaComponentMesh.h"
+#include "../gaEngine/gaComponent/gaCImposter.h"
 
 #include "../config.h"
 #include "dfParseINF.h"
@@ -346,6 +347,7 @@ void dfParseINF::parseSector(std::istringstream& infile, const std::string& sect
 	std::string key;
 
 	int nbStops = -1;
+	bool withImposter = false;							// the elevator needs a physical imposter
 
 	while (std::getline(infile, line))
 	{
@@ -382,6 +384,12 @@ void dfParseINF::parseSector(std::istringstream& infile, const std::string& sect
 				pSector->addElevator(inv);
 				pSector->addComponent(m_component, gaEntity::Flag::DELETE_AT_EXIT);
 
+				// add a physical imposter component
+				if (withImposter) {
+					gaComponent* imposter = new GameEngine::Component::Imposter();
+					pSector->addComponent(imposter, gaEntity::Flag::DELETE_AT_EXIT);
+				}
+
 				// move the elevator at the default position at first run
 				pSector->sendMessage(DarkForces::Message::GOTO_STOP_FORCE, 0);
 
@@ -401,27 +409,35 @@ void dfParseINF::parseSector(std::istringstream& infile, const std::string& sect
 			if (tokens[1] == "elevator") {
 				if (tokens[2] == "change_light") {
 					light = new DarkForces::Component::InfElevatorLight(pSector);
+					withImposter = false;
 				}
 				else if (tokens[2] == "inv") {
 					inv = new DarkForces::Component::InfElevatorInv(pSector);
+					withImposter = true;
 				}
 				else if (tokens[2] == "move_floor") {
 					inv = new DarkForces::Component::InfElevatorMoveFloor(pSector);
+					withImposter = true;
 				}
 				else if (tokens[2] == "basic") {
 					inv = new DarkForces::Component::InfElevatorBasic(pSector);
+					withImposter = true;
 				}
 				else if (tokens[2] == "move_ceiling") {
 					inv = new DarkForces::Component::InfElevatorMoveCeiling(pSector);
+					withImposter = true;
 				}
 				else if (tokens[2] == "morph_spin1") {
 					inv = new DarkForces::Component::InfElevatorMorphSpin1(pSector);
+					withImposter = true;
 				}
 				else if (tokens[2] == "morph_spin2") {
 					inv = new DarkForces::Component::InfElevatorMorphSpin2(pSector);
+					withImposter = true;
 				}
 				else if (tokens[2] == "morph_move1") {
 					inv = new DarkForces::Component::InfElevatorMorphMove1(pSector);
+					withImposter = true;
 				}
 				else {
 					// TODO remove onces all elevators are converted to components
