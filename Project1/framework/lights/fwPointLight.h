@@ -16,5 +16,4 @@ public:
 	fwPointLight(glm::vec3 _position, glm::vec3 _color, glm::vec3 _diffuse, glm::vec3 _specular, float constant, float linear, float quadatric);
 	bool castShadow(bool s);
 	std::string set_uniform(glProgram *program, int index = -1);
-	~fwPointLight();
 };

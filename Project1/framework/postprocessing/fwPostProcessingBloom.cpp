@@ -128,7 +128,3 @@ void fwPostProcessingBloom::draw(glColorMap *colorMap)
 	glEnable(GL_DEPTH_TEST); 
 	glDisable(GL_BLEND);
 }
-
-fwPostProcessingBloom::~fwPostProcessingBloom()
-{
-}

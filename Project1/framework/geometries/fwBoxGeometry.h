@@ -6,6 +6,5 @@ class fwBoxGeometry :
 {
 public:
 	fwBoxGeometry();
-	~fwBoxGeometry();
 };
 

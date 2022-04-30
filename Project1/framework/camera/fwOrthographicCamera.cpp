@@ -4,8 +4,3 @@ fwOrthographicCamera::fwOrthographicCamera(float size, float near_plane, float f
 {
 	m_projection = glm::ortho(-size, size, -size, size, near_plane, far_plane);
 }
-
-fwOrthographicCamera::~fwOrthographicCamera()
-{
-
-}

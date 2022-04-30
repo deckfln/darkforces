@@ -103,8 +103,3 @@ void fwOrbitControl::translateCamera(const glm::vec3& pos)
 	m_lookAt = m_center = pos;
 	updateCamera(0);
 }
-
-fwOrbitControl::~fwOrbitControl()
-{
-
-}

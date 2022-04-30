@@ -483,7 +483,3 @@ void fwRenderer::stop(void)
 {
 	m_colorMap->unbind();
 }
-
-fwRenderer::~fwRenderer()
-{
-}

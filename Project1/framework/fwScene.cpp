@@ -85,10 +85,6 @@ void fwScene::debugGUI(void)
 }
 #endif
 
-fwScene::~fwScene()
-{
-}
-
 /**
  * add a 2D element
  */

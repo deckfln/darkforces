@@ -66,8 +66,3 @@ void fwSphere::applyMatrix4(glm::mat4& matrix)
 
 	m_radius = m_radius * maxScaleOnAxis;
 }
-
-fwSphere::~fwSphere()
-{
-
-}

@@ -15,5 +15,4 @@ public:
 
 	inline const glm::vec3& normal(void)  const { return m_normal; };
 	inline const float constant(void)  const { return m_constant; };
-	~fwPlane();
 };

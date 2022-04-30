@@ -28,5 +28,4 @@ public:
 	void radius(double r) { m_radius = r; };
 	void setFromCamera(void);					// set center & lookAt from the current camera
 	void translateCamera(const glm::vec3& pos);	// move the center of the orbit camera
-	~fwOrbitControl();
 };

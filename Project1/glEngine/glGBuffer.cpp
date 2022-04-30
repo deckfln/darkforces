@@ -36,4 +36,8 @@ glGBuffer::glGBuffer(int _width, int _height):
 
 glGBuffer::~glGBuffer()
 {
+	delete colors[GBUFFER_COLOR];
+	delete colors[GBUFFER_NORMAL];
+	delete colors[GBUFFER_WORLD];
+	delete colors[GBUFFER_MATERIAL];
 }

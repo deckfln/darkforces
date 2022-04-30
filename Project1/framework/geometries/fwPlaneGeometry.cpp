@@ -92,8 +92,3 @@ fwPlaneGeometry::fwPlaneGeometry(float width, float height, int widthSegments, i
 
 	addIndex(indices, 1,len_indices, sizeof(unsigned int));
 }
-
-
-fwPlaneGeometry::~fwPlaneGeometry()
-{
-}

@@ -21,5 +21,4 @@ public:
 	fwPostProcessingBloom(int _width, int _height);
 	glTexture* get_bloom_texture(void);
 	void draw(glColorMap *map);
-	~fwPostProcessingBloom();
 };

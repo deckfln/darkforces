@@ -21,5 +21,4 @@ public:
 	GLint location(void);
 	const std::string& name(void);
 	void EnableVertex(glBufferAttribute *vba);
-	~glVertexAttribute();
 };

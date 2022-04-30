@@ -46,8 +46,3 @@ const glm::vec3& fwBox3::center(void)
 
 	return m_center;
 }
-
-fwBox3::~fwBox3()
-{
-
-}

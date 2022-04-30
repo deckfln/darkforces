@@ -13,5 +13,4 @@ public:
 	fwBox3();
 	fwBox3 &setFromBufferAttribute(glBufferAttribute *attribute);
 	const glm::vec3& center(void);
-	~fwBox3();
 };

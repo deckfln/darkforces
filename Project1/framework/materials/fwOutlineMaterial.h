@@ -9,5 +9,4 @@ class fwOutlineMaterial : public fwMaterial
 public:
 	fwOutlineMaterial();
 	fwOutlineMaterial(glm::vec4 *_color);
-	~fwOutlineMaterial();
 };

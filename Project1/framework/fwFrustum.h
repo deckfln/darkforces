@@ -13,5 +13,4 @@ public:
 	fwFrustum &setFromMatrix(glm::mat4 matrix);
 	bool intersectsObject(fwMesh *object);
 	bool intersectsSphere(fwSphere& sphere, fwSphere& source);
-	~fwFrustum();
 };

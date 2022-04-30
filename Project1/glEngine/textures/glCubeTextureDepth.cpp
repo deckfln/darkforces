@@ -5,8 +5,3 @@ glCubeTextureDepth::glCubeTextureDepth(int width, int height):
 {
 
 }
-
-glCubeTextureDepth::~glCubeTextureDepth()
-{
-
-}

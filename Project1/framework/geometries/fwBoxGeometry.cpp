@@ -150,8 +150,3 @@ fwBoxGeometry::fwBoxGeometry()
 	addAttribute("aTexCoord", GL_ARRAY_BUFFER, uvs, 2, sizeof(_uvs), ARRAY_SIZE_OF_ELEMENT(_uvs));
 	addAttribute("aNormal", GL_ARRAY_BUFFER, normals, 3, sizeof(_normals), ARRAY_SIZE_OF_ELEMENT(_normals));
 }
-
-
-fwBoxGeometry::~fwBoxGeometry()
-{
-}

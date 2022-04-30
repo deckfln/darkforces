@@ -66,7 +66,3 @@ fwSkyline::fwSkyline(unsigned char* data, int width, int height, int channels, i
 	m_uniforms.push_back(new fwUniform("skyline", m_texture));
 	m_uniforms.push_back(new fwUniform("repeat", &m_repeat));
 }
-
-fwSkyline::~fwSkyline()
-{
-}

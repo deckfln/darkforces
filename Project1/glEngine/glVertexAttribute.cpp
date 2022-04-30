@@ -108,7 +108,3 @@ void glVertexAttribute::EnableVertex(glBufferAttribute *vba)
 	}
 
 }
-
-glVertexAttribute::~glVertexAttribute()
-{
-}

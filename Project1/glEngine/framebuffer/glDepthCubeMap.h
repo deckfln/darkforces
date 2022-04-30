@@ -7,5 +7,4 @@ class glDepthCubeMap : public glDepthMap
 {
 public:
 	glDepthCubeMap(int width, int height);
-	~glDepthCubeMap();
 };

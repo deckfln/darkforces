@@ -23,5 +23,4 @@ public:
 	void set(glm::vec3& center, float radius) { m_center = center; m_radius = radius; };
 	void applyMatrix4From(const glm::mat4 &matrix, fwSphere *source);
 	void applyMatrix4(glm::mat4& matrix);
-	~fwSphere();
 };

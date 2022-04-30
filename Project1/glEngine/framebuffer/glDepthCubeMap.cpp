@@ -13,7 +13,3 @@ glDepthCubeMap::glDepthCubeMap(int width, int height) :
 	glReadBuffer(GL_NONE);
 	unbind();
 }
-
-glDepthCubeMap::~glDepthCubeMap()
-{
-}

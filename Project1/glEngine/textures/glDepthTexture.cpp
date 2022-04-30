@@ -10,8 +10,3 @@ glDepthTexture::glDepthTexture(int width, int height):
 	glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
-
-glDepthTexture::~glDepthTexture()
-{
-
-}

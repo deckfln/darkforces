@@ -48,5 +48,4 @@ public:
 	virtual void update(time_t);
 	bool isKeyPressed(int key);
 	fwCamera* bindCamera(fwCamera* camera);		// bind the controller to another camera
-	~fwControl();
 };

@@ -12,7 +12,3 @@ fwOutlineMaterial::fwOutlineMaterial(glm::vec4 *_color):
 	color = new fwUniform("color", _color);
 	addUniform(color);
 }
-
-fwOutlineMaterial::~fwOutlineMaterial()
-{
-}

@@ -60,5 +60,5 @@ glTextureArray::glTextureArray(fwTextures* textures)
 
 glTextureArray::~glTextureArray()
 {
-
+	glDeleteTextures(1, &id);
 }

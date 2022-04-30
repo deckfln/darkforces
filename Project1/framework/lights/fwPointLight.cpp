@@ -65,7 +65,3 @@ std::string fwPointLight::set_uniform(glProgram *program, int index)
 	}
 	return prefix;
 }
-
-fwPointLight::~fwPointLight()
-{
-}

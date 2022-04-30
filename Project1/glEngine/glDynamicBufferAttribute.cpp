@@ -15,5 +15,5 @@ glDynamicBufferAttribute::glDynamicBufferAttribute(const std::string& _name,
 
 glDynamicBufferAttribute::~glDynamicBufferAttribute()
 {
-
+	delete m_vbo;
 }

@@ -66,7 +66,3 @@ bool fwFrustum::intersectsSphere(fwSphere &sphere, fwSphere& source)
 	source.cache(-1);
 	return true;
 }
-
-fwFrustum::~fwFrustum()
-{
-}

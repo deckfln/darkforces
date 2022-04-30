@@ -72,5 +72,4 @@ public:
 	inline void customLight(const std::string& shader) { m_customLightning = shader; };
 	inline void customDefine(const std::string& define, bool defined) { m_customDefines[define] = defined; };
 
-	~fwRenderer();
 };

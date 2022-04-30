@@ -6,5 +6,4 @@ class glDepthTexture : public glTexture
 {
 public:
 	glDepthTexture(int width, int height);
-	~glDepthTexture();
 };

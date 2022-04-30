@@ -127,8 +127,3 @@ fwCamera* fwControl::bindCamera(fwCamera* camera)
 	m_camera = camera; 
 	return old;
 }
-
-fwControl::~fwControl()
-{
-
-}

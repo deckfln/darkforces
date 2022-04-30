@@ -29,7 +29,3 @@ std::string fwSpotLight::set_uniform(glProgram *program, int index)
 
 	return prefix;
 }
-
-fwSpotLight::~fwSpotLight()
-{
-}

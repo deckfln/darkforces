@@ -404,7 +404,7 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 		}
 		*/
 #ifdef _DEBUG
-		if (entity->name() == "elev3-5") {
+		if (entity->name() == "XXXX") {
 			gaDebugLog(1, "GameEngine::Physics::wantToMove", entity->name() + " to " + std::to_string(tranform.m_position.x)
 				+ " " + std::to_string(tranform.m_position.y)
 				+ " " + std::to_string(tranform.m_position.z));

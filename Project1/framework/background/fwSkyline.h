@@ -20,5 +20,4 @@ class fwSkyline : public fwBackground
 
 public:
 	fwSkyline(unsigned char* data, int width, int height, int channels, int repeat_x=1, int repeat_y=1);
-	~fwSkyline();
 };
