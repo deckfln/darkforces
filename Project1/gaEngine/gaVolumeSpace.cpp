@@ -11,10 +11,13 @@
 
 static uint32_t g_ids = 0;
 
-GameEngine::Sound::Volume::Volume(const fwAABBox& aabb):
+GameEngine::Sound::Volume::Volume(const fwAABBox& aabb, gaEntity* entity):
 	m_id(g_ids++),
 	m_worldAABB(aabb)
 {
+#ifdef _DEBUG
+	m_entity = entity;
+#endif
 }
 
 /**
@@ -37,10 +40,10 @@ GameEngine::VolumeSpace::VolumeSpace(void)
 /**
  * create a new volume on the list
  */
-uint32_t GameEngine::VolumeSpace::add(const fwAABBox& aabb)
+uint32_t GameEngine::VolumeSpace::add(const fwAABBox& aabb, gaEntity *entity)
 {
 	m_volumes.push_back(
-		Sound::Volume(aabb)
+		Sound::Volume(aabb, entity)
 	);
 
 	return m_volumes.back().id();
@@ -155,6 +158,11 @@ void GameEngine::VolumeSpace::path(const glm::vec3& source, const glm::vec3& lis
 		old_position = node.soundOrigin;
 		frontier.pop();
 
+		// break here is the volume is opaque
+		if (m_volumes[current].transparency() == 0) {
+			continue;
+		}
+
 		uint32_t nbPortals = m_volumes[current].portal();
 		for (int32_t i = 0; i < nbPortals; i++) {
 			GameEngine::Sound::Portal& p = m_volumes[current].portal(i);
@@ -191,15 +199,16 @@ void GameEngine::VolumeSpace::path(const glm::vec3& source, const glm::vec3& lis
 			// under 40DB drop the path
 			// https://www.wkcgroup.com/tools-room/inverse-square-law-sound-calculator/
 			// https://www.earq.com/hearing-health/decibels
+			// http://hyperphysics.phy-astr.gsu.edu/hbase/Acoustic/invsqs.html
 
-			new_cost = data[current].cost_so_far + glm::distance(old_position, p.center());
+			new_cost = data[current].cost_so_far + glm::distance(data[current].came_from_portal, p.center()) / m_volumes[current].transparency();
 			current_loundness = loundness - 20 * log10(new_cost);
 
 			// only continue the tree if the current sound is lound enough and the next portal is not blocked (transparency=0)
-			if (current_loundness > 25.0f && m_volumes[next].transparency() > 0) {
+			if (current_loundness > 25.0f) {
 				data[next] = Data(
 					current,
-					new_cost * m_volumes[next].transparency() * p.absorption(),
+					new_cost,
 					p.center()
 				);
 

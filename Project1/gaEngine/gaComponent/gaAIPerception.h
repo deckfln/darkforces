@@ -42,8 +42,8 @@ namespace GameEngine {
 				return m_viewNotView[entityID]; 
 			};
 
-			inline const std::vector<std::string> viewedEntities(void) { return m_viewEntities; };
-			inline const std::vector<uint32_t> heardSound(void) { return m_soundID; };
+			inline const std::vector<std::string>& viewedEntities(void) { return m_viewEntities; };
+			inline const std::vector<uint32_t>& heardSound(void) { return m_soundID; };
 
 			~AIPerception();
 #ifdef _DEBUG

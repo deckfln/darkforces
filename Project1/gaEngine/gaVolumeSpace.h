@@ -4,6 +4,10 @@
 #include <glm/vec3.hpp>
 #include "../framework/fwAABBox.h"
 
+#ifdef _DEBUG
+#include "gaEntity.h"
+#endif
+
 namespace GameEngine {
 	namespace Sound {
 		/**
@@ -42,14 +46,17 @@ namespace GameEngine {
 		};
 
 		class Volume {
-			uint32_t m_id;
+			uint32_t m_id=0;
+#ifdef _DEBUG
+			gaEntity* m_entity = nullptr;
+#endif
 			fwAABBox m_worldAABB;
 			float m_transparency = 1.0f;			// 1 = block all, 0 = block none
-			std::vector<Portal> m_portals;
-			float m_volume = 0;
+			std::vector<Portal> m_portals;			// list of portals to other volumes
+			float m_volume = 0;						// volume of the space
 
 		public:
-			Volume(const fwAABBox& aabb);
+			Volume(const fwAABBox& aabb, gaEntity* entity);
 			inline float vol(void);	// volume of the volume
 			inline bool isPointInside(const glm::vec3& p) { return m_worldAABB.inside(p); };
 
@@ -70,7 +77,7 @@ namespace GameEngine {
 		int32_t findVolume(const glm::vec3& p);							// find the smallest volume that has the point inside
 	public:
 		VolumeSpace(void);
-		uint32_t add(const fwAABBox& aabb);								// create a new volume on the list
+		uint32_t add(const fwAABBox& aabb, gaEntity* entity);							// create a new volume on the list
 		void link(uint32_t id, uint32_t id1, const glm::vec3& center, float surface);	// one way portal from id to id1
 		void link2(uint32_t id, uint32_t id1, const glm::vec3& center, float surface);	// two way portal from id to id1
 		void path(

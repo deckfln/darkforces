@@ -395,7 +395,7 @@ void dfLevel::createSoundVolumes(void)
 
 	// load all sectors wAABB as volumes in the sound volume
 	for (auto sector : m_sectorsID) {
-		volumeID = m_soundVolumes.add(sector->m_worldAABB);
+		volumeID = m_soundVolumes.add(sector->m_worldAABB, sector);
 		sector2Volume[sector->m_id] = volumeID;
 		sector->soundVolume(volumeID);
 	}

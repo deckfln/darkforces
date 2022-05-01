@@ -26,30 +26,30 @@ void GameEngine::Plugins::Sounds::onPropagateSound(gaEntity* from, gaMessage* me
 
 		// if the entity register the sounds it wants to hear
 		if (perception) {
-			const std::vector<uint32_t> sounds = perception->heardSound();
+			const std::vector<uint32_t>& sounds = perception->heardSound();
 
 			// if there are sound registered, only run the process for these sounds
 			if (sounds.size() > 0) {
 				bool process = false;
 				for (auto s : sounds) {
 					if (soundID == s) {
-						process = true;
+						/*
+						if (entity->name() == "OFFCFIN.WAX(21)") {
+							__debugbreak();
+						}
+						*/
+						virtualSources.clear();
+						g_gaLevel->volume().path(p, entity->position(), 50.0f, virtualSources);
+
+						// ask the player to play the sound
+						if (virtualSources.size() > 0) {
+							for (auto& vs : virtualSources) {
+								from->sendMessage(entity->name(), gaMessage::Action::HEAR_SOUND, soundID, vs.loundness, vs.origin, sound);
+							}
+						}
 						break;
 					}
 				}
-				if (!process) {
-					continue;
-				}
-			}
-		}
-
-		virtualSources.clear();
-		g_gaLevel->volume().path(p, entity->position(), 50.0f, virtualSources);
-
-		// ask the player to play the sound
-		if (virtualSources.size() > 0) {
-			for (auto& vs : virtualSources) {
-				from->sendMessage(entity->name(), gaMessage::Action::HEAR_SOUND, soundID, vs.loundness, vs.origin, sound);
 			}
 		}
 	}
