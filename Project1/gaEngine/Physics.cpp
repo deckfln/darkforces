@@ -362,7 +362,6 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 
 	std::queue<gaEntity *> actions;
 	std::map<std::string, bool> pushedEntities;	// list of entities we are pushing, only push an entity once per run
-	std::map<std::string, gaEntity*>& sittingOnTop = entity->sittingOnTop();
 	std::vector<gaEntity*> verticalCollision;
 	GameEngine::Component::Imposter* pMover=nullptr;
 	GameEngine::Component::Imposter* pCollided = nullptr;
@@ -474,7 +473,6 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 		bool fix_y = false;						// do we enter the ground and need Y to be fixed
 		bool block_move = false;				// we found a collision that needs to block the request
 
-		sittingOnTop.clear();
 		verticalCollision.clear();
 
 		gaEntity* collidedEntity;
@@ -608,6 +606,7 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 							}
 						}
 
+						// optimization for the physics, link together entities sitting on top of each others
 						pCollided = dynamic_cast<GameEngine::Component::Imposter*>(collidedEntity->findComponent(gaComponent::Imposter));
 
 						fwAABBox& entityAABB = (fwAABBox&)entity->worldAABB();
@@ -619,12 +618,6 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 							if (pMover) {
 								pMover->addEntityBelow(collidedEntity);
 							}
-
-							std::map<std::string, gaEntity*>& _sittingOnTop = collidedEntity->sittingOnTop();
-
-							if (_sittingOnTop.count(entity->name()) == 0) {
-								_sittingOnTop[entity->name()] = entity;
-							}
 						}
 						else {
 							if (pMover) {
@@ -632,9 +625,6 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 							}
 							if (pCollided) {
 								pCollided->addEntityBelow(entity);
-							}
-							if (sittingOnTop.count(collidedEntity->name()) == 0) {
-								sittingOnTop[collidedEntity->name()] = collidedEntity;
 							}
 						}
 					}
@@ -1086,22 +1076,6 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 				}
 				pMover->clearEntitiesOnTop();
 			}
-
-			for (auto& entry : sittingOnTop) {
-				// unless the object entered ballistic mode, then let it run individually
-				if (m_ballistics.count(entry.first) > 0) {
-					continue;
-				}
-
-				gaEntity* pushed = entry.second;
-				if (pushed->movable()) {
-					actions.push(pushed);
-					GameEngine::Transform& t = pushed->transform();
-					t.m_position = pushed->position();
-					t.m_position.y += lifted;
-				}
-			}
-			sittingOnTop.clear();	// clear the cache, it will be reimplemented by the object if it is still on top
 		}
 	}
 }

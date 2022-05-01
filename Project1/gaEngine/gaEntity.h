@@ -71,8 +71,6 @@ protected:
 	float m_radius = -1;							// radius of the collision box (can be different from the AABB)
 	float m_height = -1;							// height of the collision box (can be different from the AABB)
 
-	std::map<std::string, gaEntity*> m_sittingOnTop;// cached list of the entities sitting on top of that one
-
 public:
 	enum Flag {
 		DONT_DELETE,
@@ -116,7 +114,6 @@ public:
 	inline fwAABBox& worldAABB(void) { return m_worldBounding; };
 	inline void worldAABB(const glm::vec3 p1, glm::vec3 p2) { m_worldBounding.set(p1, p2); };
 	inline const fwAABBox& modelAABB(void) { return m_modelAABB; };
-	inline std::map<std::string, gaEntity*>& sittingOnTop(void) { return m_sittingOnTop; };
 	inline GameEngine::Transform& transform(void) { return m_transforms; };
 	inline GameEngine::Transform* pTransform(void) { return &m_transforms; };
 	inline void superSector(dfSuperSector* s) { m_supersector = s; };
