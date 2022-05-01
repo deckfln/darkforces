@@ -39,8 +39,19 @@ void GameEngine::Behavior::SetVar::init(void*)
 {
 	Var::init(nullptr);
 
-	//m_variable.set(m_tree);
-	m_variable.set(m_tree, m_value);
+	if (m_value.type() == GameEngine::Value::Type::VAR) {
+		if (m_value.var() == "entity.position") {
+			m_variable.set(m_tree, m_tree->entity()->position());
+		}
+		else {
+			m_variable.set(m_tree, m_value);
+		}
+	}
+	else {
+		//m_variable.set(m_tree);
+		m_variable.set(m_tree, m_value);
+	}
+
 
 	m_status = GameEngine::BehaviorNode::Status::SUCCESSED;
 }

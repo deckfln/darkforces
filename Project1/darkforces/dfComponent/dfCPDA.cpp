@@ -276,7 +276,7 @@ GameEngine::UI_picture* DarkForces::Component::PDA::addImage(
 		translation,
 		texel,
 		m_textures->texture(),
-		true	// hide weapons by default
+		false	// hide weapons by default
 	);
 
 	return picture;

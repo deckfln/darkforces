@@ -103,8 +103,8 @@ public:
 
 	const glm::vec3& get_scale(void);
 	const glm::vec3& get_position(void);
-	const glm::vec3& position(void) { return m_position; };
-	const glm::quat& quaternion(void) { return m_quaternion; };
+	inline const glm::vec3& position(void) { return m_position; };
+	inline const glm::quat& quaternion(void) { return m_quaternion; };
 
 	float distanceTo(fwObject3D* other);				// distance between the 2 objects
 	float distanceTo(const glm::vec3& p);				// distance from the entity position to the point
