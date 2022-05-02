@@ -33,6 +33,7 @@ void GameEngine::Component::Controller::dispatchMessage(gaMessage* message)
 	switch (message->m_action) {
 	case gaMessage::MOVE:
 		m_position = m_entity->position();
+		m_dirty = true;
 		break;
 	}
 }

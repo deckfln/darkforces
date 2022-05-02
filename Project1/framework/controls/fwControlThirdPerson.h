@@ -23,8 +23,6 @@ class fwControlThirdPerson : public fwControl
 	float m_height = 1;					// player eye position
 	float m_radius = 1;					// player cylinder radius 
 
-	bool m_dirty = true;				// dirty when the player moves
-
 	glm::mat3 m_physic = glm::mat3(0);	// matrices for physic engine when in 'free fall'
 	time_t m_animation_time = 0;
 
@@ -44,6 +42,7 @@ protected:
 	glm::vec3 m_lookDirection = glm::vec3(0);	// direction of the look
 	glm::vec3 m_lookAt = glm::vec3(0);			// same but origin the eyes
 	glm::vec3 m_eye = glm::vec3(0);
+	bool m_dirty = true;					// dirty when the player moves
 
 	virtual bool checkKeys(time_t delta);
 	virtual void updatePlayer(time_t delta);
