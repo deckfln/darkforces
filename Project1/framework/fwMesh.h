@@ -63,20 +63,18 @@ public:
 	fwMesh &outline(bool _outlined);
 	bool is_outlined(void);
 
-	fwMesh& always_draw(bool al) { m_always_draw = al; return *this; };
-	bool always_draw(void) { return m_always_draw; };
-
-	fwMesh &transparent(bool _transparent) { m_transparent = _transparent; return *this; };
-	bool is_transparent(void) { return m_transparent; };
-
-	fwMesh &extra(void *data) { m_pExtra = data; return *this;  }
-	void *extra(void) { return m_pExtra; }
+	inline fwMesh& always_draw(bool al) { m_always_draw = al; return *this; };
+	inline bool always_draw(void) { return m_always_draw; };
+	inline fwMesh &transparent(bool _transparent) { m_transparent = _transparent; return *this; };
+	inline bool is_transparent(void) { return m_transparent; };
+	inline fwMesh &extra(void *data) { m_pExtra = data; return *this;  }
+	inline void *extra(void) { return m_pExtra; }
 
 	fwMesh &show_normalHelper(bool _helper);
 	bool is_normalHelper(void);
 
-	int zOrder(void) { return m_zorder; };
-	void zOrder(int z) { m_zorder = z; };
+	inline int zOrder(void) { return m_zorder; };
+	inline void zOrder(int z) { m_zorder = z; };
 
 	void updateVertices(int offset = 0, int size = -1);
 	void updateAttribute(const std::string &attribute, int offset = 0, int size = -1);
@@ -84,7 +82,7 @@ public:
 	float sqDistance2boundingSphere(glm::vec3 position);
 
 	void rendering(fwMeshRendering render);
-	void pointSize(float p) { m_pointSize = p; };
+	inline void pointSize(float p) { m_pointSize = p; };
 
 	void centerOnGeometry(void);
 

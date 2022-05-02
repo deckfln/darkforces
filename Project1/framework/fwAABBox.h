@@ -98,9 +98,9 @@ public:
 	void apply(const fwAABBox& source, const glm::mat4& matrix);
 	void apply(fwAABBox const *pSource, const glm::mat4& matrix);
 	fwAABBox& copy(fwAABBox& source);
-	fwAABBcollision collisionSide(void) { return m_collisionSide; };
-	bool collision(fwAABBcollision side) { return (int)m_collisionSide & (int)side; };
-	void collisionSide(fwAABBcollision side) { m_collisionSide = side; };
+	inline fwAABBcollision collisionSide(void) { return m_collisionSide; };
+	inline bool collision(fwAABBcollision side) { return (int)m_collisionSide & (int)side; };
+	inline void collisionSide(fwAABBcollision side) { m_collisionSide = side; };
 	glm::vec3 to(const fwAABBox& to);
 	fwMesh *draw(void);
 	bool updateMeshVertices(glm::vec3* vertices, glm::vec3* colors=nullptr);

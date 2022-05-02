@@ -70,8 +70,8 @@ protected:
 	bool m_receiveShadow = false;
 	bool m_visible = true;
 
-	bool updated(void) { return m_updated; };
-	void updated(bool b) { m_updated = b; };
+	inline bool updated(void) { return m_updated; };
+	inline void updated(bool b) { m_updated = b; };
 
 public:
 	fwObject3D();
@@ -81,7 +81,7 @@ public:
 	void popTransformations(void);						// pop the transformations
 
 	bool is_class(uint32_t classID);
-	uint32_t mclass(void) { return m_classID; };
+	inline 	uint32_t mclass(void) { return m_classID; };
 	fwObject3D &set_name(const std::string& _name);
 	inline const std::string& name(void) { return m_name; };
 	inline fwObject3D& name(const std::string& name) { m_name = name; return *this; }
