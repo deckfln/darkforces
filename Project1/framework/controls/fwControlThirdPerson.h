@@ -9,19 +9,21 @@
 
 class fwControlThirdPerson : public fwControl
 {
-	double m_radSpeed = pi / 2;	// map mouse move 0..1 to 0..pi/2
-	double m_theta = pi / 2;		// current up/down angle
-	double m_phi = -pi / 2;		// current left/right angle
+	double m_radSpeed = pi / 2;			// map mouse move 0..1 to 0..pi/2
+	double m_theta = pi / 2;			// current up/down angle
+	double m_phi = -pi / 2;				// current left/right angle
 
-	double m_theta_start = 0;	// value when the mouse was clicked
+	double m_theta_start = 0;			// value when the mouse was clicked
 	double m_phi_start = 0;
 
-	double m_theta_lock_down = 0;	// minimum and maximum value to lock down and up
+	double m_theta_lock_down = 0;		// minimum and maximum value to lock down and up
 	double m_theta_lock_up = M_PI;
 
 	float m_speed = 0.015f;
-	float m_height = 1;			// player eye position
-	float m_radius = 1;			// player cylinder radius 
+	float m_height = 1;					// player eye position
+	float m_radius = 1;					// player cylinder radius 
+
+	bool m_dirty = true;				// dirty when the player moves
 
 	glm::mat3 m_physic = glm::mat3(0);	// matrices for physic engine when in 'free fall'
 	time_t m_animation_time = 0;

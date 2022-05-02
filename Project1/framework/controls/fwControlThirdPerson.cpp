@@ -25,6 +25,7 @@ void fwControlThirdPerson::_mouseButton(int action)
 			m_theta_start = m_theta;
 		}
 		else {
+			m_dirty = true;
 			updateDirection();
 		}
 		break;
@@ -48,6 +49,7 @@ void fwControlThirdPerson::_mouseMove(float xdir, float ydir)
 			return;
 		}
 		m_theta = t;
+		m_dirty = true;
 		break;
 	}
 }
@@ -63,9 +65,11 @@ bool fwControlThirdPerson::checkKeys(time_t delta)
 	if (!m_locked) {
 		if (m_currentKeys[GLFW_KEY_UP]) {
 			m_velocity = m_direction * running;
+			m_dirty = true;
 		}
 		if (m_currentKeys[GLFW_KEY_DOWN]) {
 			m_velocity = -m_direction * running;
+			m_dirty = true;
 		}
 
 		if (!m_currentKeys[GLFW_KEY_DOWN] && !m_currentKeys[GLFW_KEY_UP]) {
@@ -73,10 +77,12 @@ bool fwControlThirdPerson::checkKeys(time_t delta)
 		}
 		if (m_currentKeys[GLFW_KEY_LEFT]) {
 			m_phi -= 0.003 * delta;
+			m_dirty = true;
 			updateDirection();
 		}
 		if (m_currentKeys[GLFW_KEY_RIGHT]) {
 			m_phi += 0.003 * delta;
+			m_dirty = true;
 			updateDirection();
 		}
 	}
@@ -110,21 +116,24 @@ void fwControlThirdPerson::updatePlayer(time_t delta)
  */
 void fwControlThirdPerson::updateCamera(time_t delta)
 {
+	if (m_dirty) {
+		m_eye = m_position;
+		m_eye.y += m_height;
 
-	m_eye = m_position;
-	m_eye.y += m_height;
+		m_lookDirection = glm::vec3(
+			2 * cos(m_phi) * sin(m_theta),
+			cos(m_theta),
+			2 * sin(m_phi) * sin(m_theta)
+		);
 
-	m_lookDirection = glm::vec3(
-		2 * cos(m_phi) * sin(m_theta),
-		cos(m_theta),
-		2 * sin(m_phi) * sin(m_theta)
-	);
+		m_lookAt = m_lookDirection + m_eye;
 
-	m_lookAt = m_lookDirection + m_eye;
+		//std::cout << m_phi << " " << tmp.x << " " << tmp.y << std::endl;
+		m_camera->lookAt(m_lookAt);
+		m_camera->translate(m_eye);
 
-	//std::cout << m_phi << " " << tmp.x << " " << tmp.y << std::endl;
-	m_camera->lookAt(m_lookAt);
-	m_camera->translate(m_eye);
+		m_dirty = false;
+	}
 }
 
 /**

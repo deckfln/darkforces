@@ -23,9 +23,9 @@ void fwCamera::set_ratio(int width, int height)
 {
 	m_projection = glm::perspective(glm::radians(45.0f), (float)width / (float)height, 0.1f, 400.0f);
 	m_matrix = m_projection * view;
-	m_projScreenMatrix = m_projection * inverse(m_matrix);
-
-	m_frustum.setFromMatrix(m_projScreenMatrix);
+	//m_projScreenMatrix = m_projection * inverse(m_matrix);
+	//m_frustum.setFromMatrix(m_projScreenMatrix);
+	update();
 }
 
 void fwCamera::translate(const glm::vec3 &translation)
