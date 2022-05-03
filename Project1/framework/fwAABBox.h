@@ -76,7 +76,7 @@ public:
 	bool not_init(void);
 
 	bool intersect(const fwAABBox& box);				// intersect with another AABB
-	bool intersect(fwAABBox* box);				// intersect with another AABB
+	bool intersect(fwAABBox* box);						// intersect with another AABB
 	bool intersect(
 		const glm::vec3& ray_orig, const glm::vec3& ray_dir, 
 		glm::vec3 &point);								// intersect with a ray
@@ -105,8 +105,10 @@ public:
 	fwMesh *draw(void);
 	bool updateMeshVertices(glm::vec3* vertices, glm::vec3* colors=nullptr);
 	bool verticalAlign(const glm::vec3& point);
+
 	glm::vec3& color(void);								// get the debug color 
-	fwAABBox& color(const glm::vec3&);			// set the debug color
+	fwAABBox& color(const glm::vec3&);					// set the debug color
+	inline void dirty(void) { m_dirty = true; };		// for the vertices to update
 
 	void recordState(flightRecorder::AABBox* record);	// record the state of the AABBox
 	void loadState(flightRecorder::AABBox* record);		// reload the state of the AABBox

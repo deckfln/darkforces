@@ -20,14 +20,16 @@ class gaBoundingBoxes
 	std::vector<glm::vec3> m_vertices;
 	std::vector<glm::vec3> m_colors;
 
+	bool m_dirty = false;
+
 	fwMesh* m_mesh = nullptr;
 	fwGeometry* m_geometry = nullptr;
 	fwMaterialBasic* m_material = nullptr;
 
 public:
 	gaBoundingBoxes();
-	void add(const fwAABBox* box);
-	void remove(const fwAABBox* box);
+	void add(fwAABBox* box);
+	void remove(fwAABBox* box);
 	void draw(fwScene* scene);
 	~gaBoundingBoxes();
 };

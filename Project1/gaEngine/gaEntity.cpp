@@ -34,8 +34,9 @@ gaEntity::gaEntity(uint32_t mclass, const std::string& name) :
 	m_className = g_className;
 
 #ifdef _DEBUG
-	m_displayAABB = true;
-	//g_gaBoundingBoxes.add(&m_worldBounding);
+	if (m_displayAABB) {
+		g_gaBoundingBoxes.add(&m_worldBounding);
+	}
 #endif
 
 	m_collider.set(&m_modelAABB, &m_worldMatrix, &m_inverseWorldMatrix);

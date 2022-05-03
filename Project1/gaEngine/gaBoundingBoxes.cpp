@@ -15,25 +15,39 @@ gaBoundingBoxes::gaBoundingBoxes()
 /**
  * Add a boundingbox on the list
  */
-void gaBoundingBoxes::add(const fwAABBox* box)
+void gaBoundingBoxes::add(fwAABBox* box)
 {
 	bool f = false;
-	for (auto b : m_boxes) {
-		if (b == box) {
+	int32_t lastEmpty = -1;
+
+	for (size_t i = 0; i < m_boxes.size(); i++) {
+		const fwAABBox* b = m_boxes[i];
+
+		if (b == nullptr) {
+			lastEmpty = i;
+		}
+		else if (b == box) {
 			f = true;
 			break;
 		}
 	}
 
 	if (f == false) {
-		m_boxes.push_back(box);
+		if (lastEmpty < 0) {
+			m_boxes.push_back(box);
+		}
+		else {
+			m_boxes[lastEmpty] = box;
+		}
+		box->dirty();	// mark the AABB as dirty to refresh the vertices
+		m_dirty = true;
 	}
 }
 
 /**
  * Remove the mesh from the current scene
  */
-void gaBoundingBoxes::remove(const fwAABBox* box)
+void gaBoundingBoxes::remove(fwAABBox* box)
 {
 	for (unsigned i = 0; i < m_boxes.size(); i++) {
 		if (m_boxes[i] == box) {
@@ -46,6 +60,8 @@ void gaBoundingBoxes::remove(const fwAABBox* box)
 					m_vertices[k + j] = glm::vec3(0);
 				}
 			}
+
+			m_dirty = true;
 			break;
 		}
 	}
@@ -57,15 +73,16 @@ void gaBoundingBoxes::remove(const fwAABBox* box)
 void gaBoundingBoxes::draw(fwScene* scene)
 {
 	// extend the storage if needed
-	int sz = m_boxes.size() * 26;
+	if (m_dirty) {
+		int sz = m_boxes.size() * 26;
+		if (m_vertices.size() < sz) {
+			m_vertices.resize(sz);
+			m_colors.resize(sz);
 
-	if (m_vertices.size() < sz) {
-		m_vertices.resize(sz);
-		m_colors.resize(sz);
-
-		if (m_geometry != nullptr) {
-			m_geometry->resizeAttribute("aPos", &m_vertices[0], m_vertices.size());
-			m_geometry->resizeAttribute("aColor", &m_colors[0], m_colors.size());
+			if (m_geometry != nullptr) {
+				m_geometry->resizeAttribute("aPos", &m_vertices[0], m_vertices.size());
+				m_geometry->resizeAttribute("aColor", &m_colors[0], m_colors.size());
+			}
 		}
 	}
 
@@ -103,7 +120,8 @@ void gaBoundingBoxes::draw(fwScene* scene)
 
 		scene->addChild(m_mesh);
 	}
-	else if (dirty) {
+	else if (dirty || m_dirty) {
+		m_dirty = false;
 		m_geometry->update();
 	}
 }
