@@ -78,9 +78,12 @@ void DarkForces::Goals::onTrigger(gaMessage* message)
 /**
  *
  */
+static const char* g_className = "DarkForces:Goals";
+
 DarkForces::Goals::Goals(const std::string& file):
 	gaEntity(DarkForces::ClassID::_Goals, "DarkForces:Goals")
 {
+	m_className = g_className;
 	m_physical = false;
 	m_gravity = false;
 

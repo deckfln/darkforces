@@ -7,6 +7,7 @@ static const char* g_className = "df3D";
 
 void DarkForces::Anim::ThreeD::init(const std::string& model)
 {
+	m_classID |= DarkForces::ClassID::_3DO;
 	m_className = g_className;
 
 	df3DO* tdo = (df3DO*)g_gaWorld.getModel(model);

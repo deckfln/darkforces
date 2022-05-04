@@ -30,6 +30,7 @@ void DarkForces::Enemy::onDie(gaMessage* message)
 DarkForces::Enemy::Enemy(dfWAX* model, const glm::vec3& position, float ambient, uint32_t objectID):
 	DarkForces::Object(model, position, ambient, OBJECT_WAX, objectID)
 {
+	m_classID |= DarkForces::ClassID::_ENEMY;
 	m_className = g_className;
 	m_physical = true;
 	m_canStep = true;
