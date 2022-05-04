@@ -109,7 +109,6 @@ void DarkForces::Component::PDA::onKeyDown(gaMessage* message)
 void DarkForces::Component::PDA::onCompleteGoal(gaMessage* message)
 {
 	// display the DELT of the given goal
-	__debugbreak();
 	m_ui_goals->widget("DarkForces:goal:" + std::to_string(message->m_value))->visible(true);
 }
 
@@ -480,11 +479,12 @@ DarkForces::Component::PDA::PDA(const std::string& name):
 	);
 
 	// add the completed goals
+	// goal "0" is not an extra goal, it is the background
 	for (size_t i = 1; i < goals->size(); i++) {
 		m_ui_goals->add(
 			addImage(
 				goals->texture(0),
-				"DarkForces:goal:"+std::to_string(i),
+				"DarkForces:goal:"+std::to_string(i-1),
 				goals,
 				i,
 				pgoals

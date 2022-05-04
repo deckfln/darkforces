@@ -425,7 +425,7 @@ void DarkForces::Component::InfElevator::onMaster(gaMessage* message)
 void DarkForces::Component::InfElevator::onComplete(gaMessage* message)
 {
 	// inform the goal entity of the completion
-	m_entity->sendMessage("goal", message->m_value);
+	m_entity->sendMessage("DarkForces:Goals", DarkForces::Message::TRIGGER, message->m_value);
 }
 
 //*******************************************************

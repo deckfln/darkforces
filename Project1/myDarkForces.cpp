@@ -174,12 +174,12 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 	//glm::vec3 start = glm::vec3(-22.65f, 2.0f, 21.3);	// gen_d
 	//glm::vec3 start = glm::vec3(-20.8f, 0.4f, 29.7f);	// stage
 	//glm::vec3 start = glm::vec3(-21.29, -0.3, 16.6);	// post_e
-	//glm::vec3 start = glm::vec3(-17.60, -2.0, 27.77);	// projector
+	glm::vec3 start = glm::vec3(-17.60, -2.0, 27.77);	// projector
 	//glm::vec3 start = glm::vec3(-20, 2.0, 34);	// mousebot(40)
 	//glm::vec3 start = glm::vec3(-28.65f, -2.0, 34.83f);	// spinner
 	//glm::vec3 start = glm::vec3(-28.0287533, -2.0, 27.4463711);	// projector
 	//glm::vec3 start = glm::vec3(-56.25, -0.9, 23.65);	// super secret 2
-	glm::vec3 start = glm::vec3(-24.52, 0.07, 31.75);	// enthall
+	//glm::vec3 start = glm::vec3(-24.52, 0.07, 31.75);	// enthall
 	//glm::vec3 start = glm::vec3(-38.80, 2.41, 39.7);	// switch_cover
 	//glm::vec3 start = glm::vec3(-29.06, -2.0, 24.75);	// cage
 	//glm::vec3 start = glm::vec3(-26.57, 0.0, 29.12);	// elev-3-5

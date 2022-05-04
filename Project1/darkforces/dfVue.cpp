@@ -4,6 +4,7 @@
 #include <fstream>
 #include <iostream>
 #include <vector>
+#include <string>
 #include <glm/gtx/matrix_decompose.hpp>
 #include <glm/gtx/euler_angles.hpp>
 #include <glm/gtc/matrix_transform.hpp> 
@@ -23,6 +24,15 @@ dfVue::dfVue(dfFileSystem* fs, const std::string& file, const std::string& compo
 	std::map<std::string, std::string> tokenMap;
 	unsigned int frame = 0;
 
+	// get ride of " in the string
+	std::string c = component;
+	if (c[0] == '"') {
+		c = c.substr(1);
+	}
+	if (c[c.length()-1] == '"') {
+		c = c.substr(0, c.length()-1);
+	}
+
 	while (std::getline(infile, line))
 	{
 		// ignore comment
@@ -39,7 +49,7 @@ dfVue::dfVue(dfFileSystem* fs, const std::string& file, const std::string& compo
 		if (tokens[0] == "frame") {
 			frame = std::stoi(tokens[1]);
 		}
-		else if (tokens[0] == "transform" && tokens[1] == component) {
+		else if (tokens[0] == "transform" && tokens[1] == c) {
 			if (frame + 1 > m_animations.size()) {
 				m_animations.resize(frame + 1);
 			}
