@@ -158,13 +158,18 @@ void GameEngine::VolumeSpace::path(const glm::vec3& source, const glm::vec3& lis
 		old_position = node.soundOrigin;
 		frontier.pop();
 
-		// break here is the volume is opaque
-		if (m_volumes[current].transparency() == 0) {
+		// break here is the volume is opaque, unless the sound originates from a closed door
+		float t = m_volumes[current].transparency();
+		if (current == vSource) {
+			t = 1.0f;
+		}
+
+		if (current != vSource && t == 0) {
 			continue;
 		}
 
 		uint32_t nbPortals = m_volumes[current].portal();
-		for (int32_t i = 0; i < nbPortals; i++) {
+		for (size_t i = 0; i < nbPortals; i++) {
 			GameEngine::Sound::Portal& p = m_volumes[current].portal(i);
 			next = p.volumeID();
 			if (next < 0) {
@@ -201,7 +206,7 @@ void GameEngine::VolumeSpace::path(const glm::vec3& source, const glm::vec3& lis
 			// https://www.earq.com/hearing-health/decibels
 			// http://hyperphysics.phy-astr.gsu.edu/hbase/Acoustic/invsqs.html
 
-			new_cost = data[current].cost_so_far + glm::distance(data[current].came_from_portal, p.center()) / m_volumes[current].transparency();
+			new_cost = data[current].cost_so_far + glm::distance(data[current].came_from_portal, p.center()) / t;
 			current_loundness = loundness - 20 * log10(new_cost);
 
 			// only continue the tree if the current sound is lound enough and the next portal is not blocked (transparency=0)

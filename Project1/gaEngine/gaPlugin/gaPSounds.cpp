@@ -4,6 +4,7 @@
 
 #include "../gaEntity.h"
 #include "../gaComponent/gaAIPerception.h"
+#include "../gaComponent/gaListener.h"
 #include "../gaVolumeSpace.h"
 #include "../gaLevel.h"
 
@@ -48,6 +49,21 @@ void GameEngine::Plugins::Sounds::onPropagateSound(gaEntity* from, gaMessage* me
 							}
 						}
 						break;
+					}
+				}
+			}
+		}
+		else {
+			// if there is a listener of all sounds
+			Component::Listener* listener = dynamic_cast<Component::Listener*>(entity->findComponent(gaComponent::Listener));
+			if (listener) {
+ 				virtualSources.clear();
+ 				g_gaLevel->volume().path(p, entity->position(), 50.0f, virtualSources);
+
+				// ask the player to play the sound
+				if (virtualSources.size() > 0) {
+					for (auto& vs : virtualSources) {
+						from->sendMessage(entity->name(), gaMessage::Action::HEAR_SOUND, soundID, vs.loundness, vs.origin, sound);
 					}
 				}
 			}
