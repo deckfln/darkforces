@@ -284,6 +284,7 @@ void fwObject3D::updateWorldMatrix(fwObject3D *parent, bool force)
 	//}
 
 	if (m_updated || force) {
+
 		if (parent) {
 			m_worldMatrix = parent->m_worldMatrix * m_modelMatrix;
 			m_inverseWorldMatrix = glm::inverse(m_worldMatrix);

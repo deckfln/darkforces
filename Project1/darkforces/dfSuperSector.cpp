@@ -32,7 +32,7 @@ dfSuperSector::dfSuperSector(dfSector* sector, fwMaterialBasic* material, std::v
 
 	m_className = g_className;
 	m_worldBounding = sector->m_worldAABB;
-	m_name = sector->name();
+	m_name = sector->name() +";";
 
 	m_hasCollider = true;	// can collide
 	m_physical = true;		// need to be tested for collision
@@ -66,7 +66,7 @@ void dfSuperSector::extend(dfSuperSector* ssector)
 		sector->supersector(this);
 	}
 
-	m_name += ";" + ssector->m_name;
+	m_name += ssector->m_name;
 
 	// drop the portals between the 2 super sectors
 	m_portals.remove_if([ssector](dfPortal& portal) { return portal.m_target == ssector;});
