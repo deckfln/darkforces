@@ -82,7 +82,7 @@ bool Physics::warpThrough(gaEntity* entity,
 		}
 		else {
 			// block move and move to previous position
-			entity->popTransformations();
+			entity->undoTransform();
 
 			// or move away from the bad position
 //			glm::vec3 d = glm::normalize(near_c - old_position);
@@ -121,6 +121,16 @@ void Physics::testEntities(gaEntity* entity, const Transform& tranform, std::vec
 			continue;
 		}
 
+		/*
+		if (target->name() == "player" && entity->name() == "spinner") {
+			static int c = 0;
+			if (++c == 8) {
+				__debugbreak();
+				printf("Physics::testEntities blocker2 vs player\n");
+			}
+		}
+		*/
+
 		if (!entity->collideAABB(target->worldAABB())) {
 			continue;
 		}
@@ -128,11 +138,7 @@ void Physics::testEntities(gaEntity* entity, const Transform& tranform, std::vec
 		if (target->name() != entity->name()) {
 			size = collisions.size();
 			if (entity->collide(target, tranform.m_forward, tranform.m_downward, collisions)) {
-				/*
-				if (target->name() == "elev3-5" && entity->name() == "player") {
-					printf("Physics::testEntities blocker2 vs player\n");
-				}
-				*/
+				
 				for (auto i = size; i < collisions.size(); i++) {
 					collisions[i].m_source = target;
 				}
@@ -325,7 +331,7 @@ void Physics::moveBullet(gaEntity* entity, gaMessage* message)
 
 	if (collidedEntity != nullptr) {
 		// refuse the move and inform ONLY the bullet of the collision
-		entity->popTransformations();				// restore previous position
+		entity->undoTransform();				// restore previous position
 
 		collidedEntity->sendMessage(
 			entity->name(),
@@ -386,31 +392,14 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 
  		glm::vec3 old_position = entity->position();
 		
-		// test after 5 move
-		/*
-		static uint32_t first = 0;
-		if (entity->name() == "player") {
-			first++;
-			if (first == 5) {
-				old_position = glm::vec3(-23.360874, 0.007, 34.76);
-				tranform.m_position = glm::vec3(-23.312984, 0.007, 34.76);
-				
-				g_gaWorld.m_entities["elev3-5"].front()->translate(glm::vec3(-28.0000057, 0.178759009, 29.2000008));
-				g_gaWorld.m_entities["elev3-5"].front()->updateWorldAABB();
-				g_gaWorld.m_entities["elev3-5"].front()->physical(true);
-				
-			}
-		}
-		*/
 #ifdef _DEBUG
-		if (entity->name() == "XXXX") {
+		if (entity->name() == "spinner") {
 			gaDebugLog(1, "GameEngine::Physics::wantToMove", entity->name() + " to " + std::to_string(tranform.m_position.x)
 				+ " " + std::to_string(tranform.m_position.y)
 				+ " " + std::to_string(tranform.m_position.z));
 		}
 #endif
 
-		entity->pushTransformations();
 		entity->transform(&tranform);
 		glm::vec3 new_position = entity->position();
 		glm::vec3 direction = glm::normalize(old_position - new_position);
@@ -736,7 +725,7 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 									+ " " + std::to_string(tranform.m_position.y)
 									+ " " + std::to_string(tranform.m_position.z));
 
-							entity->popTransformations();				// restore previous position
+							entity->undoTransform();				// restore previous position
 							block_move = true;
 						}
 						else {
@@ -792,7 +781,7 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 								+ " " + std::to_string(tranform.m_position.z));
 
 						// if the entity wants to be informed of falling
-						entity->popTransformations();			// restore previous position
+						entity->undoTransform();			// restore previous position
 						g_gaWorld.sendMessage(
 							entity->name(),
 							entity->name(),
@@ -841,12 +830,11 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 					gaDebugLog(1, "GameEngine::Physics::wantToMove", entity->name() + " pushes " + pushed->name());
 
 				GameEngine::Transform& t = pushed->transform();
-				glm::vec3 p(new_position.x, 0, new_position.z),
+				glm::vec3 p(pushed->position().x, 0, pushed->position().z),
 						  p1(nearest_collision->m_position.x, 0, nearest_collision->m_position.z);
 
-				pushed_aside = p1 - p;
-				t.m_position = pushed->position();
-				t.m_position += pushed_aside;
+				pushed_aside = glm::normalize(p - p1) * pushed->radius();
+				t.m_position = pushed->position() + pushed_aside;
 			}
 			else if (entity->movable() && !pushed->movable()) {
 
@@ -874,7 +862,7 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 								+ " " + std::to_string(tranform.m_position.y)
 								+ " " + std::to_string(tranform.m_position.z));
 
-						entity->popTransformations();				// restore previous position
+						entity->undoTransform();				// restore previous position
 						block_move = true;
 
 						if (m_ballistics.count(entity->name()) != 0) {
@@ -943,7 +931,7 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 			}
 			else {
 				// both objects are non movable, deny move
-				entity->popTransformations();				// restore previous position
+				entity->undoTransform();				// restore previous position
 				block_move = true;
 			}
 		}
@@ -961,7 +949,7 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 							+ " " + std::to_string(tranform.m_position.y)
 							+ " " + std::to_string(tranform.m_position.z));
 
-					entity->popTransformations();				// restore previous position
+					entity->undoTransform();				// restore previous position
 				}
 				else {
 					if (entity->name() == "player")
@@ -975,7 +963,7 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 			}
 			else {
 				//non-movable entities always block the movement
-				entity->popTransformations();				// restore previous position
+				entity->undoTransform();				// restore previous position
 
 				// stop ballistic move
 				if (m_ballistics.count(entity->name()) > 0 && m_ballistics[entity->name()].m_inUse) {

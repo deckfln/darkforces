@@ -649,11 +649,24 @@ bool Collider::collision_cylinder_geometry(
 		const glm::vec3 a2 = vertices_gs[i+1];
 		const glm::vec3 a3 = vertices_gs[i+2];
 		
-		/*
+		
+		// geometry triangle converted to world
 		const glm::vec3 w1(*geometry.m_worldMatrix * glm::vec4(a1, 1.0));
 		const glm::vec3 w2(*geometry.m_worldMatrix * glm::vec4(a2, 1.0));
 		const glm::vec3 w3(*geometry.m_worldMatrix * glm::vec4(a3, 1.0));
 		
+		// distance entity with plane
+		glm::vec3 scale_cylinder, translation, skew;
+		glm::vec4 perspective;
+		glm::quat orientation;
+		glm::decompose(*cylinder.m_worldMatrix, scale_cylinder, orientation, translation, skew, perspective);
+
+		const glm::vec3 normal = glm::normalize(glm::cross(w2 - w1, w3 - w1));
+		const glm::vec4 plane = glm::vec4(normal.x, normal.y, normal.z, -(normal.x * w1.x + normal.y * w1.y + normal.z * w1.z));
+		const float signedDistance = abs((translation.x - w1.x) * normal.x + (translation.y - w1.y) * normal.y + (translation.z - w1.z) * normal.z);
+		const float d = (translation.x * plane.x + translation.y * plane.y + translation.z * plane.z + plane.w) / sqrt(plane.x * plane.x + plane.y * plane.y + plane.z * plane.z);
+
+		/*
 		const glm::vec3 c1(*cylinder.m_inverseWorldMatrix * glm::vec4(w1, 1.0));
 		const glm::vec3 c2(*cylinder.m_inverseWorldMatrix * glm::vec4(w2, 1.0));
 		const glm::vec3 c3(*cylinder.m_inverseWorldMatrix * glm::vec4(w3, 1.0));
@@ -661,6 +674,18 @@ bool Collider::collision_cylinder_geometry(
 		const glm::vec3 p1(geometry_2_cylinder * glm::vec4(a1, 1.0));
 		const glm::vec3 p2(geometry_2_cylinder * glm::vec4(a2, 1.0));
 		const glm::vec3 p3(geometry_2_cylinder * glm::vec4(a3, 1.0));
+
+		/*
+		// first, test the intersection with the triangle plane
+		glm::vec3 scale_cylinder, translation, skew;
+		glm::vec4 perspective;
+		glm::quat orientation;
+		glm::decompose(*cylinder.m_worldMatrix, scale_cylinder, orientation, translation, skew, perspective);
+
+		const glm::vec3 p(*cylinder.m_inverseWorldMatrix * glm::vec4(translation, 1.0));
+		const glm::vec3 normal = glm::normalize(glm::cross(p2 - p1, p3 - p1));
+		const float signedDistance = (center_cs.x - p1.x) * normal.x + (center_cs.y - p1.y) * normal.y + (center_cs.z - p1.z) * normal.z;
+		*/
 
 		v1_es = (p1 - center_cs) * ellipsoid_space;
 		v2_es = (p2 - center_cs) * ellipsoid_space;

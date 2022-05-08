@@ -10,7 +10,12 @@ void DarkForces::Component::InfElevatorTranslate::moveTo(float z_lvl)
 {
 	// move the sector the elevator is based on (for collision detection)
 	GameEngine::Transform* tr = m_entity->pTransform();
+
+	// copy the original values
 	tr->m_position = m_entity->position();
+	tr->m_scale = m_entity->get_scale();
+	tr->m_quaternion = m_entity->quaternion();
+
 	tr->m_position.y = z_lvl / 10.0f;
 	m_entity->sendMessage(m_entity->name(), gaMessage::Action::WANT_TO_MOVE, 0, &tr->m_position);
 

@@ -132,6 +132,7 @@ public:
 	void* get(const std::string& v) { return m_attributes[v]; };
 
 	void transform(GameEngine::Transform* transform);	// apply a transformation and update the worldAABB
+	void undoTransform(void);							// cancel the last transformation
 
 	float radius(void);									// maximum radius of the entity (radius of the AABB if not initialized)
 	float height(void);									// maximum height of the entity (height of the AABB if not initialized)

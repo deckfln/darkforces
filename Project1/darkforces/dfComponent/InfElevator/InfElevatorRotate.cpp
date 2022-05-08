@@ -6,8 +6,16 @@
 void DarkForces::Component::InfElevatorRotate::moveTo(float z_lvl)
 {
 	GameEngine::Transform* tr = m_entity->pTransform();
-	tr->m_position = glm::vec3(0, glm::radians(z_lvl), 0);
-	m_entity->sendMessage(gaMessage::ROTATE, gaMessage::Flag::ROTATE_VEC3, tr);
+
+	tr->m_position = m_entity->position();
+	tr->m_scale = m_entity->get_scale();
+	tr->m_quaternion = m_entity->quaternion();
+
+	//tr->m_position = glm::vec3(0, glm::radians(z_lvl), 0);
+	tr->m_quaternion = glm::quat(glm::vec3(0, glm::radians(z_lvl), 0));
+	m_entity->sendMessage(m_entity->name(), gaMessage::Action::WANT_TO_MOVE, 0);
+
+	//m_entity->sendMessage(gaMessage::ROTATE, gaMessage::Flag::ROTATE_VEC3, tr);
 
 	// change the sound 'opacity' of the elevator (door) base don openess
 	dfSector* sector = dynamic_cast<dfSector*>(m_entity);
