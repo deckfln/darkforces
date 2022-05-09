@@ -5,6 +5,7 @@
 #include <glm/gtx/normal.hpp>
 #include <glm/gtx/intersect.hpp>
 
+#include "../framework/geometries/fwGeometrySphere.h"
 #include "World.h"
 #include "gaMessage.h"
 #include "gaEntity.h"
@@ -830,11 +831,16 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 					gaDebugLog(1, "GameEngine::Physics::wantToMove", entity->name() + " pushes " + pushed->name());
 
 				GameEngine::Transform& t = pushed->transform();
-				glm::vec3 p(pushed->position().x, 0, pushed->position().z),
-						  p1(nearest_collision->m_position.x, 0, nearest_collision->m_position.z);
+				const glm::vec3& p = pushed->position();
+				const glm::vec3 p1(nearest_collision->m_position.x, pushed->position().y, nearest_collision->m_position.z);
 
-				pushed_aside = glm::normalize(p - p1) * pushed->radius();
-				t.m_position = pushed->position() + pushed_aside;
+				pushed_aside = glm::normalize(p - p1) * (pushed->radius() + 0.001f);
+				t.m_position = p1 + pushed_aside;
+				t.m_scale = pushed->get_scale();
+				t.m_quaternion = pushed->quaternion();
+
+				// always inform the source entity
+				informCollision(message, entity, pushed, nearest_collision->m_position, verticalCollision);
 			}
 			else if (entity->movable() && !pushed->movable()) {
 
@@ -1022,29 +1028,31 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 				);
 			}
 
-			if (nearest_ground) {
-				// register the sector the entity walks on
-				dfSuperSector* ss;
+			// register the sector the entity walks on if the entity is sensible to gravity
+			if (entity->gravity()) {
+				if (nearest_ground) {
+					dfSuperSector* ss;
 
-				collidedEntity = static_cast<gaEntity*>(nearest_ground->m_source);
-				ss = dynamic_cast<dfSuperSector*>(collidedEntity);
-				if (ss != nullptr) {
-					entity->superSector(ss);
-				}
-				else {
-					dfSector* s = dynamic_cast<dfSector*>(collidedEntity);
-					if (s != nullptr) {
-						entity->superSector(s->supersector());
+					collidedEntity = static_cast<gaEntity*>(nearest_ground->m_source);
+					ss = dynamic_cast<dfSuperSector*>(collidedEntity);
+					if (ss != nullptr) {
+						entity->superSector(ss);
+					}
+					else {
+						dfSector* s = dynamic_cast<dfSector*>(collidedEntity);
+						if (s != nullptr) {
+							entity->superSector(s->supersector());
+						}
 					}
 				}
-			}
-			else {
-				// if not walking on a supersector, run a full search
-				std::vector<gaEntity*> ss;
-				g_gaWorld.getEntities(GameEngine::ClassID::Sector, ss);
-				for (auto sector : ss) {
-					if (sector->isPointInside(new_position)) {
-						entity->superSector(static_cast<dfSuperSector*>(sector));
+				else {
+					// if not walking on a supersector, run a full search
+					std::vector<gaEntity*> ss;
+					g_gaWorld.getEntities(GameEngine::ClassID::Sector, ss);
+					for (auto sector : ss) {
+						if (sector->isPointInside(new_position)) {
+							entity->superSector(static_cast<dfSuperSector*>(sector));
+						}
 					}
 				}
 			}

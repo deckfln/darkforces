@@ -459,6 +459,11 @@ void DarkForces::Component::InfElevator::dispatchMessage(gaMessage* message)
 	case gaMessage::TIMER:
 		onTimer(message);
 		break;
+
+	case DarkForces::Message::DONE:
+		stopTimer();
+		break;
+
 	}
 }
 
