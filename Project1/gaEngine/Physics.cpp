@@ -122,18 +122,12 @@ void Physics::testEntities(gaEntity* entity, const Transform& tranform, std::vec
 			continue;
 		}
 
-		/*
-		if (target->name() == "player" && entity->name() == "spinner") {
-			static int c = 0;
-			if (++c == 8) {
-				__debugbreak();
-				printf("Physics::testEntities blocker2 vs player\n");
-			}
-		}
-		*/
-
 		if (!entity->collideAABB(target->worldAABB())) {
 			continue;
+		}
+
+		if (entity->name() == "player" && target->name() == "enthall;blocker1;72;70;blocker2;69;67;watchwhat;") {
+			printf("Physics::testEntities blocker2 vs player\n");
 		}
 
 		if (target->name() != entity->name()) {
@@ -394,10 +388,12 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
  		glm::vec3 old_position = entity->position();
 		
 #ifdef _DEBUG
-		if (entity->name() == "spinner") {
+		if (entity->name() == "XXXX") {
 			gaDebugLog(1, "GameEngine::Physics::wantToMove", entity->name() + " to " + std::to_string(tranform.m_position.x)
 				+ " " + std::to_string(tranform.m_position.y)
 				+ " " + std::to_string(tranform.m_position.z));
+
+			tranform.m_position = glm::vec3(-27.4306755f, 1.12386632f, 29.1956005f);
 		}
 #endif
 
@@ -834,7 +830,7 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 				const glm::vec3& p = pushed->position();
 				const glm::vec3 p1(nearest_collision->m_position.x, pushed->position().y, nearest_collision->m_position.z);
 
-				pushed_aside = glm::normalize(p - p1) * (pushed->radius() + 0.001f);
+				pushed_aside = glm::normalize(p - p1) * (pushed->radius() + EPSILON);
 				t.m_position = p1 + pushed_aside;
 				t.m_scale = pushed->get_scale();
 				t.m_quaternion = pushed->quaternion();
@@ -844,6 +840,25 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 			}
 			else if (entity->movable() && !pushed->movable()) {
 
+				// the entity (non movable) pushes the collided (movable)
+				actions.push(entity);
+
+				if (entity->name() == "player")
+					gaDebugLog(1, "GameEngine::Physics::wantToMove", pushed->name() + " pushes " + entity->name());
+
+				GameEngine::Transform& t = entity->transform();
+				const glm::vec3& p = entity->position();
+				const glm::vec3 p1(nearest_collision->m_position.x, entity->position().y, nearest_collision->m_position.z);
+
+				pushed_aside = glm::normalize(p - p1) * (entity->radius() + EPSILON);
+				t.m_position = p1 + pushed_aside;
+				t.m_scale = entity->get_scale();
+				t.m_quaternion = entity->quaternion();
+
+				// always inform the source entity
+				informCollision(message, pushed, entity, nearest_collision->m_position, verticalCollision);
+
+				/*
 				// the entity (movable) is being pushed by collided (non movable)
 				// push by an average radius
 				float radius = entity->radius();
@@ -906,15 +921,11 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 
 						if (name == "player") {
 							gaDebugLog(1, "GameEngine::Physics::wantToMove", entity->name() + " pushed by sector");
-							/*
-							printf("%.4f,%.4f,%.4f,%.4f,%.4f,%.4f\n",
-								new_position.x, new_position.z,
-								nearest_collision->m_position.x, nearest_collision->m_position.z,
-								delta2d.x, delta2d.y);
-							*/
+							//printf("%.4f,%.4f,%.4f,%.4f,%.4f,%.4f\n",	new_position.x, new_position.z,nearest_collision->m_position.x, nearest_collision->m_position.z,	delta2d.x, delta2d.y);
 						}
 					}
 				}
+				*/
 			}
 			else if (entity->movable() && pushed->movable()) {
 				// both objects can be pushed, so "share" the delta
@@ -934,6 +945,10 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 				pushed_aside = p - p1;
 				tranform.m_position = new_position + pushed_aside;
 				entity->transform(&tranform);
+				actions.push(entity);
+
+				if (entity->name() == "player")
+					gaDebugLog(1, "GameEngine::Physics::wantToMove", pushed->name() + " collision " + entity->name());
 			}
 			else {
 				// both objects are non movable, deny move

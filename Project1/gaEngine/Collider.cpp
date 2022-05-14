@@ -410,7 +410,7 @@ static void init_aabb_triangles(
 /**
  * test an AABB (in model space) vs triangles in a geometry
  */
-static void aabb_triangles(
+static bool aabb_triangles(
 	const glm::mat4& worldMatrix,
 	const glm::vec3& forward_geometry_space,
 	const glm::vec3& dwsensor,
@@ -424,6 +424,7 @@ static void aabb_triangles(
 	fwAABBox triangle;
 	glm::vec3 p2;
 	glm::vec3 collision;
+	bool bCollision = false;
 
 	for (uint32_t i = 0; i < nbVertices; i += 3) {
 		triangle.set(vertices + i, 3);
@@ -453,6 +454,7 @@ static void aabb_triangles(
 				fwCollision::Test::WITH_BORDERS, 
 				collision)) {
 				collisions.push_back(gaCollisionPoint(fwCollisionLocation::FRONT, collision, &vertices[i]));
+				bCollision = true;
 			};
 
 			p2 = center + dwsensor;
@@ -462,9 +464,12 @@ static void aabb_triangles(
 				fwCollision::Test::WITH_BORDERS,
 				collision)) {
 				collisions.push_back(gaCollisionPoint(fwCollisionLocation::BOTTOM, collision, &vertices[i]));
+				bCollision = true;
 			};
 		}
 	}
+
+	return bCollision;
 }
 
 /**
@@ -499,7 +504,7 @@ bool Collider::collision_fwAABB_geometry(const Collider& aabb,
 	);
 
 	// for each triangle, extract the AABB in geometry space and check collision with the source AABB in geometry space
-	aabb_triangles(
+	bool collision = aabb_triangles(
 		*geometry.m_worldMatrix,
 		forward_geometry_space,
 		dwsensor,
@@ -510,7 +515,7 @@ bool Collider::collision_fwAABB_geometry(const Collider& aabb,
 		collisions
 	);
 
-	return collisions.size() != 0;
+	return collision;
 }
 
 /**
@@ -550,8 +555,9 @@ bool Collider::collision_fwAABB_gaAABB(const Collider& fwAABB,
 		return false;
 	}
 
+	bool collision = false;
 	for (auto aabb : hits) {
-		aabb_triangles(
+		collision |= aabb_triangles(
 			*gaAABB.m_worldMatrix,
 			forward_geometry_space,
 			dwsensor,
@@ -563,7 +569,7 @@ bool Collider::collision_fwAABB_gaAABB(const Collider& fwAABB,
 		);
 	}
 
-	return collisions.size() != 0;
+	return collision;
 }
 
 /************************************************
@@ -642,6 +648,7 @@ bool Collider::collision_cylinder_geometry(
 	glm::mat4 geometry_2_cylinder = *cylinder.m_inverseWorldMatrix * *geometry.m_worldMatrix;
 	glm::vec3 triangle_ws[3];
 
+	bool collision = false;
 	for (unsigned int i = 0; i < nbVertices; i += 3) {
 
 		// convert each geometry space vertex to cylinder space and to ellipsoid space
@@ -706,10 +713,12 @@ bool Collider::collision_cylinder_geometry(
 
 			// inform if the collision point in world space(let the entity decide what to do with the collision)
 			collisions.push_back(gaCollisionPoint(fwCollisionLocation::COLLIDE, intersection_ws, triangle_ws));
+
+			collision = true;
 		}
 	}
 
-	return collisions.size() != 0;
+	return collision;
 }
 
 /******************************************************************************
@@ -750,6 +759,7 @@ bool Collider::collision_cylinder_aabb_tree(const Collider& cylinder,
 	glm::vec3 intersection_gs;
 	glm::vec3 intersection_ws;
 	fwAABBox triangle;
+	bool collided = false;
 
 	for (auto aabb : hits) {
 		vertices_gs = aabb->vertices();
@@ -783,11 +793,12 @@ bool Collider::collision_cylinder_aabb_tree(const Collider& cylinder,
 
 				// inform if the collision point in world space(let the entity decide what to do with the collision)
 				collisions.push_back(gaCollisionPoint(fwCollisionLocation::COLLIDE, intersection_ws, &vertices_gs[i], i));
+				collided = true;
 			}
 		}
 	}
 
-	return collisions.size() != 0;
+	return collided;
 }
 
 /************************************************************************************************
@@ -1060,6 +1071,7 @@ bool Collider::collision_cylinder_cylinder(const Collider& cylinder1,
 		convertVertexSphere(i, mat);
 	}
 
+	bool collision = false;
 	for (unsigned int i = 0, j=0; i < sizeof(_indexSphere)/sizeof(uint32_t); i += 3, j++) {
 		// extract triangle
 		_triangles[j][0] = _vertexSphere[_indexSphere[i]];
@@ -1086,10 +1098,12 @@ bool Collider::collision_cylinder_cylinder(const Collider& cylinder1,
 
 			// inform if the collision point in world space(let the entity decide what to do with the collision)
 			collisions.push_back(gaCollisionPoint(fwCollisionLocation::COLLIDE, intersection_ws, _triangles[j]));
+
+			collision = true;
 		}
 	}
 
-	return collisions.size() != 0;
+	return collision;
 }
 
 /******************************************************************************
@@ -1119,6 +1133,8 @@ bool Collider::collision_geometry_segment(const Collider& geometry,
 	glm::vec3 const* vertices_gs = pGeometry->vertices();
 	uint32_t nbVertices = pGeometry->nbvertices();
 
+	bool bCollision = false;
+
 	for (unsigned int i = 0; i < nbVertices; i += 3) {
 		if (testSensor(*geometry.m_inverseWorldMatrix,
 			p1, p2,
@@ -1128,10 +1144,12 @@ bool Collider::collision_geometry_segment(const Collider& geometry,
 		{
 			collision = glm::vec3(*geometry.m_worldMatrix * glm::vec4(collision, 1.0));
 			collisions.push_back(gaCollisionPoint(fwCollisionLocation::COLLIDE, collision, vertices_gs + i));
+
+			bCollision = true;
 		}
 	}
 
-	return collisions.size() != 0;
+	return bCollision;
 }
 
 /******************************************************************************
@@ -1163,6 +1181,8 @@ bool Collider::collision_aabbTree_segment(const Collider& aabbtree,
 	uint32_t nbVertices = pAabbTree->nbVertices();
 	glm::vec3 collision;
 
+	bool bCollision = false;
+
 	for (auto aabb : hits) {
 		vertices_gs = aabb->vertices();
 		nbVertices = aabb->nbVertices();
@@ -1176,11 +1196,13 @@ bool Collider::collision_aabbTree_segment(const Collider& aabbtree,
 			{
 				collision = glm::vec3(*aabbtree.m_worldMatrix * glm::vec4(collision, 1.0));
 				collisions.push_back(gaCollisionPoint(fwCollisionLocation::COLLIDE, collision, vertices_gs + i));
+
+				bCollision = true;
 			}
 		}
 	}
 
-	return collisions.size() != 0;
+	return bCollision;
 }
 
 /******************************************************************************
@@ -1212,6 +1234,7 @@ bool Collider::collision_cylinder_segment(const Collider& cylinder,
 	p2 *= ellipsoid_space;
 	center *= ellipsoid_space;
 
+	bool collision = false;
 	if (glm::intersectLineSphere(p1, p2,
 		center,
 		1.0f,
@@ -1226,9 +1249,11 @@ bool Collider::collision_cylinder_segment(const Collider& cylinder,
 
 		collisions.push_back(gaCollisionPoint(fwCollisionLocation::COLLIDE, position1, nullptr));
 		collisions.push_back(gaCollisionPoint(fwCollisionLocation::COLLIDE, position2, nullptr));
+
+		collision = true;
 	}
 
-	return collisions.size() != 0;
+	return collision;
 }
 
 /******************************************************************************
@@ -1249,13 +1274,15 @@ bool GameEngine::Collider::collision_fwAABB_segment(const Collider& aabb,
 	glm::vec3 p;
 	Framework::Segment segment_gs(p1, p2);
 
+	bool collision = false;
 	if (pAABB->intersect(segment_gs, p) != fwAABBox::Intersection::NONE) {
 		// convert back the collision point to world
 		p = glm::vec3(*aabb.m_worldMatrix * glm::vec4(p, 1.0));
 		collisions.push_back(gaCollisionPoint(fwCollisionLocation::COLLIDE, p, nullptr));
+		collision = true;
 	}
 
-	return collisions.size() != 0;
+	return collision;
 }
 
 /******************************************************************************
