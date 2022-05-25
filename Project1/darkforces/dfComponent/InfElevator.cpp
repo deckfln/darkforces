@@ -123,6 +123,7 @@ void DarkForces::Component::InfElevator::moveToNextStop(void)
  */
 bool DarkForces::Component::InfElevator::animate(time_t delta)
 {
+	m_previous_z = m_tick;	// save the current position if we have to roll back
 	m_tick += delta;
 
 	switch (m_status) {
@@ -428,6 +429,15 @@ void DarkForces::Component::InfElevator::onComplete(gaMessage* message)
 	m_entity->sendMessage("DarkForces:Goals", DarkForces::Message::TRIGGER, message->m_value);
 }
 
+/**
+ * request to move was denied
+ */
+void DarkForces::Component::InfElevator::onCantMove(gaMessage* message)
+{
+	// move the elevator one position back
+	m_tick = m_previous_z;
+}
+
 //*******************************************************
 
 /**
@@ -458,6 +468,10 @@ void DarkForces::Component::InfElevator::dispatchMessage(gaMessage* message)
 
 	case gaMessage::TIMER:
 		onTimer(message);
+		break;
+
+	case gaMessage::CANT_MOVE:
+		onCantMove(message);
 		break;
 
 	case DarkForces::Message::DONE:

@@ -347,11 +347,18 @@ void Physics::moveBullet(gaEntity* entity, gaMessage* message)
 	);
 }
 
+struct Solver {
+	glm::vec3 collision;
+};
+
 /**
  * An entity wants to move
  */
 void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 {
+	std::map<gaEntity*, std::map<gaEntity*, glm::vec3>> solvers;	// list of entities moving (or trying to move)
+	std::map<gaEntity*, uint32_t> entityMsg;						// Messages to send to involved entities
+
 	// bullets are special case
 	if (message->m_value == gaMessage::Flag::WANT_TO_MOVE_LASER) {
 		moveBullet(entity, message);
@@ -688,10 +695,12 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 							+ " " + std::to_string(tranform.m_position.z));
 
 					// give it an other try
+					entityMsg[entity] = gaMessage::MOVE;
 					continue;
 				}
 				else if (abs(deltaY) < EPSILON) {
 					// the entity is 'nearly' on the ground, all is OK
+					entityMsg[entity] = gaMessage::MOVE;
 				}
 				else if (deltaY < static_cast<gaActor*>(entity)->step()) {
 
@@ -710,6 +719,7 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 									+ " " + std::to_string(tranform.m_position.z));
 
 							// give it an other try
+							entityMsg[entity] = gaMessage::MOVE;
 							continue;
 						}
 					}
@@ -732,6 +742,7 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 									+ " " + std::to_string(tranform.m_position.z));
 						}
 						// always inform the source entity
+						entityMsg[entity] = gaMessage::COLLIDE;
 						informCollision(message, pushed, entity, nearest_ground->m_position, verticalCollision);
 					}
 				}
@@ -820,9 +831,6 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 
 			if (!entity->movable() && pushed->movable()) {
 
-				// the entity (non movable) pushes the collided (movable)
-				actions.push(pushed);
-
 				if (entity->name() == "player")
 					gaDebugLog(1, "GameEngine::Physics::wantToMove", entity->name() + " pushes " + pushed->name());
 
@@ -835,13 +843,32 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 				t.m_scale = pushed->get_scale();
 				t.m_quaternion = pushed->quaternion();
 
-				// always inform the source entity
-				informCollision(message, entity, pushed, nearest_collision->m_position, verticalCollision);
+				// check if the collision is already registered, means the entity is moving between 2 imuatble enntity
+				if (solvers[pushed][entity] == nearest_collision->m_position) {
+					entity->sendMessage(pushed->name(), gaMessage::CANT_MOVE);
+					pushed->sendMessage(entity->name(), gaMessage::CANT_MOVE);
+
+					entity->undoTransform();				// restore previous position
+					block_move = true;
+
+					entityMsg[pushed] = gaMessage::CANT_MOVE;
+
+					__debugbreak();
+				}
+				else {
+					solvers[pushed][entity] = nearest_collision->m_position;
+					solvers[entity][pushed] = nearest_collision->m_position;
+
+					// the entity (non movable) pushes the collided (movable)
+					actions.push(pushed);
+
+					// always inform the source entity
+					entityMsg[pushed] = gaMessage::COLLIDE;
+
+					//informCollision(message, entity, pushed, nearest_collision->m_position, verticalCollision);
+				}
 			}
 			else if (entity->movable() && !pushed->movable()) {
-
-				// the entity (non movable) pushes the collided (movable)
-				actions.push(entity);
 
 				if (entity->name() == "player")
 					gaDebugLog(1, "GameEngine::Physics::wantToMove", pushed->name() + " pushes " + entity->name());
@@ -855,8 +882,29 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 				t.m_scale = entity->get_scale();
 				t.m_quaternion = entity->quaternion();
 
-				// always inform the source entity
-				informCollision(message, pushed, entity, nearest_collision->m_position, verticalCollision);
+				// check if the collision is already registered, means the entity is moving between 2 imutable enntities
+				if (solvers[entity][pushed] == nearest_collision->m_position) {
+					entity->sendMessage(pushed->name(), gaMessage::CANT_MOVE);
+					pushed->sendMessage(entity->name(), gaMessage::CANT_MOVE);
+
+					entity->undoTransform();				// restore previous position
+					block_move = true;
+
+					entityMsg[entity] = gaMessage::CANT_MOVE;
+
+					__debugbreak();
+				}
+				else {
+					solvers[entity][pushed] = nearest_collision->m_position;
+					solvers[pushed][entity] = nearest_collision->m_position;
+
+					// the entity (non movable) pushes the collided (movable)
+					actions.push(entity);
+
+					// always inform the source entity
+					entityMsg[entity] = gaMessage::COLLIDE;
+					//informCollision(message, pushed, entity, nearest_collision->m_position, verticalCollision);
+				}
 
 				/*
 				// the entity (movable) is being pushed by collided (non movable)
@@ -947,13 +995,17 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 				entity->transform(&tranform);
 				actions.push(entity);
 
+				entityMsg[entity] = gaMessage::COLLIDE;
+				entityMsg[entity] = gaMessage::COLLIDE;
+
 				if (entity->name() == "player")
 					gaDebugLog(1, "GameEngine::Physics::wantToMove", pushed->name() + " collision " + entity->name());
 			}
 			else {
-				// both objects are non movable, deny move
+ 				// both objects are non movable, deny move
 				entity->undoTransform();				// restore previous position
 				block_move = true;
+				entityMsg[entity] = gaMessage::CANT_MOVE;
 			}
 		}
 
@@ -1070,6 +1122,12 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 						}
 					}
 				}
+			}
+		}
+
+		if (block_move) {
+			for (auto& ent : entityMsg) {
+				ent.first->sendMessage(ent.first->name(), ent.second);
 			}
 		}
 

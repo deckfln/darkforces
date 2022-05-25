@@ -40,14 +40,15 @@ public:
 		COLLIDE = 0,	// entity collides with another one
 		TIMER,			// animation message
 		DELETE_ENTITY,	// delete the given entity
-		MOVE,			// move the entity to an absolution position
+		WANT_TO_MOVE,	// the entity want to move in a direction (sent to the world)
+		MOVE,			// the entity requested a move and moved to an absolution position
+		CANT_MOVE,		// the entity requested a move but can't actually move
 		MOVE_ROTATE,	// move and rotatet the entity using a mat4x4
 		ROTATE,			// rotate the entity
 		REGISTER_SOUND,	// bind a sound to an ID
 		PLAY_SOUND,		// play sound bound to ID
 		PROPAGATE_SOUND,// propagate a sound in the level
 		STOP_SOUND,		// stop sound bound to ID
-		WANT_TO_MOVE,	// the entity want to move in a direction (sent to the world)
 		COLLISION,		// the entity cannot move, it would collide with ...
 		MOVE_TO,		// Move the entity in a direction (m_extra)
 		WORLD_INSERT,	// an entity is added to the world

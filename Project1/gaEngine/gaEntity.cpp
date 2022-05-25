@@ -603,6 +603,7 @@ void gaEntity::debugGUI(const std::string& display, bool* close)
 			ImGui::Text("Id:%d", m_entityID);
 			ImGui::Text("Timers : %d", m_timer);
 			ImGui::Checkbox("Physical", &m_physical);
+			ImGui::Checkbox("Movable", &m_movable);
 			if (ImGui::Checkbox("AABBox", &m_displayAABB)) {
 				if (m_displayAABB)
 					g_gaBoundingBoxes.add(&m_worldBounding);

@@ -135,7 +135,8 @@ namespace DarkForces {
 
 			float m_current = 0;							// current position
 			float m_direction = 0;							// direction and speed of the move
-			float m_target = 0;								// target altitude
+			float m_target = 0;								// next stop value
+			float m_previous_z = 0;							// previous position (if we have to roll back)
 
 			dfLevel* m_parent = nullptr;					// level the elevator is on
 
@@ -153,6 +154,7 @@ namespace DarkForces {
 			void onTimer(gaMessage* message);				// animate the elevator
 			void onMaster(gaMessage* message);				// change the master status
 			void onComplete(gaMessage* message);			// complete a goal
+			void onCantMove(gaMessage* message);			// request to move was denied
 		};
 	}
 }
