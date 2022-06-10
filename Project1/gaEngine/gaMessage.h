@@ -123,7 +123,7 @@ public:
 	float m_fvalue = 0.0f;			// float value
 	glm::vec3 m_v3value = glm::vec3(0.0f); // vec3 value
 	void* m_extra = nullptr;		// pointer to extra data
-	uint64_t m_data[16];			// store some basic data
+	uint64_t m_data[16]={0,0,0,0,0,0,0,0,0,0,0,0,0,0};			// store some basic data
 
 	time_t m_delta = 0;				// time since the last frame
 	uint32_t m_frame=0;				// current frame the message runs in

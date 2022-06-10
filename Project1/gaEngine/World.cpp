@@ -282,7 +282,9 @@ void World::getModelsByClass(uint32_t myclass, std::list<GameEngine::Model*>& r)
 
 gaMessage* GameEngine::World::sendMessage(gaMessage* msg)
 {
-	m_queue.push_back(msg);
+	gaMessage* ptr = allocateMessage();
+	*ptr = *msg;
+	m_queue.push_back(ptr);
 	return msg;
 }
 

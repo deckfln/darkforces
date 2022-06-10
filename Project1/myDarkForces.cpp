@@ -105,14 +105,15 @@ void myDarkForces::myDarkForces::registerDebugger(void)
 		{DarkForces::Message::ADD_ENERGY, "DF_ADD_ENERGY"},
 		{DarkForces::Message::DYING, "DF_DYING"},
 		{DarkForces::Message::DEAD, "DF_DEAD"},
+		{DarkForces::Message::STATE, "dfState"},
 		{DarkForces::Message::FORCE_STATE,		"DF_FORCE_STATE"},
-		{DarkForces::Message::STATE,			"DF_STATE"},
 		{DarkForces::Message::ADD_BATTERY, "DF_ADD_BATTERY"},
 		{DarkForces::Message::EVENT, "DF_EVENT"},
 		{DarkForces::Message::CHANGE_WEAPON, "CHANGE_WEAPON"},
 		{DarkForces::Message::FIRE, "df_FIRE"},
 		{DarkForces::Message::START_FIRE, "df_START_FIRE"},
 		{DarkForces::Message::STOP_FIRE, "df_STOP_FIRE"},
+		{DarkForces::Message::SatNav_Wait, "dfSatNavWait"},
 		{DarkForces::Message::SET_ANIM, "df_setAnim"},
 		{DarkForces::Message::ANIM_START, "df_AnimStart"},
 		{DarkForces::Message::ANIM_NEXT_FRAME, "df_AnimNextFrame"},
@@ -123,7 +124,27 @@ void myDarkForces::myDarkForces::registerDebugger(void)
 		{DarkForces::Message::ANIM_VUE, "df_AnimVUE"},
 		{DarkForces::Message::MASTER, "df_Master"},
 		{DarkForces::Message::COMPLETE, "df_Complete"},
-		{DarkForces::Message::WAKEUP, "df_Wakeup"}
+		{DarkForces::Message::WAKEUP, "df_Wakeup"},
+		{DarkForces::Message::TEXT,	"dfText"},
+		{DarkForces::Message::AMMO,	"dfAmmo"},
+		{DarkForces::Message::SHIELD, "dfShield"},
+		{DarkForces::Message::LIFE, "dfLife"},
+		{DarkForces::Message::PDA,	"dfPda"},
+		{DarkForces::Message::PDA_EXIT, "dfPDAExit"},
+		{DarkForces::Message::PDA_UP, "dfPDAup"},
+		{DarkForces::Message::PDA_DOWN,	"dfPDAdown"},
+		{DarkForces::Message::PDA_LEFT, "dfPDAleft}"},
+		{DarkForces::Message::PDA_RIGHT, "dfPDAright"},
+		{DarkForces::Message::PDA_ZOOM_DOWN,"dfPDAZoomDown"},
+		{DarkForces::Message::PDA_ZOOM_UP, "dfPDAZoomUp"},
+		{DarkForces::Message::PDA_FLOOR_UP,"dfPDAFloorUp"},
+		{DarkForces::Message::PDA_FLOOR_DOWN,"dfPDAFloorDown"},
+		{DarkForces::Message::AUTOMAP, "dfAutomap"},
+		{DarkForces::Message::AMBIENT, "dfAmbient"},
+		{DarkForces::Message::GOGGLES_ON, "dfGogglesOn"},
+		{DarkForces::Message::GOGGLES_OFF,"dfGogglesOff"},
+		{DarkForces::Message::HEADLIGHT_ON,"dfHeadlightOn"},
+		{DarkForces::Message::HEADLIGHT_OFF, "dfHeadlightOff"}
 	};
 
 	static std::map<int32_t, const std::map<int32_t, const char*>> g_def = {
@@ -171,7 +192,7 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 	//glm::vec3 start = glm::vec3(-20.82f, 0.07f, 33.43f);	// westwing
 	//glm::vec3 start = glm::vec3(-46, 0.9, 26.8); // super secret
 	//glm::vec3 start = glm::vec3(-29.5f, 2.0f, 30.808f);	// gen_d
-	//glm::vec3 start = glm::vec3(-22.65f, 2.0f, 21.3);	// gen_d
+	glm::vec3 start = glm::vec3(-22.65f, 2.0f, 21.3);	// gen_d
 	//glm::vec3 start = glm::vec3(-20.8f, 0.4f, 29.7f);	// stage
 	//glm::vec3 start = glm::vec3(-21.29, -0.3, 16.6);	// post_e
 	//glm::vec3 start = glm::vec3(-17.60, -2.0, 27.77);	// projector
@@ -183,7 +204,7 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 	//glm::vec3 start = glm::vec3(-38.80, 2.41, 39.7);	// switch_cover
 	//glm::vec3 start = glm::vec3(-29.06, -2.0, 24.75);	// cage
 	//glm::vec3 start = glm::vec3(-26.57, 0.0, 29.12);	// elev-3-5
-	glm::vec3 start = glm::vec3(-34, -2.0, 35.654);	// spinner
+	//glm::vec3 start = glm::vec3(-34, -2.0, 35.654);	// spinner
 
 	fwCylinder bounding(glm::vec3(0), c_radius, c_height); // stage
 

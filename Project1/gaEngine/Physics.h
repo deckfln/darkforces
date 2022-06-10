@@ -99,6 +99,7 @@ namespace GameEngine
 		std::map<std::string, Ballistic> m_ballistics;					// falling objects
 		std::vector<std::string> m_remove;								// list of objects to remove from the falling
 		gaEntity* m_lastEntityTested = nullptr;							// to pass information between functions
+		std::map<gaEntity*, gaMessage> m_entityMsg;						// Messages to send to involved entities
 
 		bool warpThrough(gaEntity* entity,
 			const glm::vec3& old_position,

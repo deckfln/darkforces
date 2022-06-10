@@ -100,6 +100,7 @@ void GameEngine::App::registerDebugger(void)
 		{ gaMessage::Action::TIMER, "TIMER"},
 		{ gaMessage::Action::DELETE_ENTITY, "DELETE_ENTITY"},
 		{ gaMessage::Action::MOVE, "MOVE"},
+		{ gaMessage::Action::CANT_MOVE, "CANT_MOVE"},
 		{ gaMessage::Action::ROTATE, "ROTATE"},
 		{ gaMessage::Action::REGISTER_SOUND, "REGISTER_SOUND"},
 		{ gaMessage::Action::PLAY_SOUND, "PLAY_SOUND"},
