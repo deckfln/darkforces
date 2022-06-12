@@ -402,18 +402,17 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 		// register the original position of the entity
 		if (originalMatrices.count(entity) == 0) {
 			originalMatrices[entity] = entity->worldMatrix();
+			entity->pushTransformations();
 		}
 
 		// extract the position of the entity during THAT run
  		glm::vec3 old_position = entity->position();
 
 #ifdef _DEBUG
-		if (entity->name() == "XXXX") {
+		if (entity->name() == "OFFCFIN.WAX(21)") {
 			gaDebugLog(1, "GameEngine::Physics::wantToMove", entity->name() + " to " + std::to_string(tranform.m_position.x)
 				+ " " + std::to_string(tranform.m_position.y)
 				+ " " + std::to_string(tranform.m_position.z));
-
-			tranform.m_position = glm::vec3(-27.4306755f, 1.12386632f, 29.1956005f);
 		}
 #endif
 
@@ -833,7 +832,8 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 				t.m_quaternion = pushed->quaternion();
 
 				// check if the collision is already registered, means the entity is moving between 2 imuatble enntity
-				if (solvers[pushed][entity] == nearest_collision->m_position) {
+				float d = glm::length2(nearest_collision->m_position - solvers[entity][pushed]);
+				if (d < EPSILON) {
 					entity->undoTransform();				// restore previous position
 					block_move = true;
 					__debugbreak();
@@ -861,7 +861,8 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 				t.m_quaternion = entity->quaternion();
 
 				// check if the collision is already registered, means the entity is moving between 2 imutable enntities
-				if (solvers[entity][pushed] == nearest_collision->m_position) {
+				float d = glm::length2(nearest_collision->m_position - solvers[entity][pushed]);
+				if (d < EPSILON) {
 					entity->undoTransform();				// restore previous position
 					block_move = true;
 				}
@@ -1100,20 +1101,6 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 		}
 	}
 
-	// inform entities that moved
-	for (auto& entry : originalMatrices) {
-		gaEntity* entity = entry.first;
-		const glm::mat4x4& matrix = entity->worldMatrix();
-		if (entry.second == matrix) {
-			// the entity was handled by cannot moved
-			entry.first->sendMessage(entity->name(), gaMessage::Action::CANT_MOVE);
-		}
-		else {
-			// the entity moved
-			entry.first->sendMessage(entity->name(), gaMessage::Action::MOVE, 0, nullptr);
-		}
-	}
-
 	// inform entities that collided
 	for (auto& entry : solvers) {
 		gaEntity* entity = entry.first;
@@ -1137,9 +1124,38 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 
 			// check duplicated
 			data->entities[i] = collided;
+			data->collision[i] = collision.second;
 			i++;
 		}
 		g_gaWorld.sendMessage(&msg);
+	}
+
+	// inform entities that moved
+	for (auto& entry : originalMatrices) {
+		gaEntity* entity = entry.first;
+		const glm::mat4x4& matrix = entity->worldMatrix();
+		if (entry.second == matrix) {
+			// the entity was handled by cannot moved
+			gaMessage *msg = entry.first->sendMessage(entity->name(), gaMessage::Action::CANT_MOVE);
+			struct CollisionList* data = (struct CollisionList*)&msg->m_data[0];
+
+			uint32_t i = 0;
+			data->size = solvers[entity].size();
+			for (auto& collision : solvers[entity]) {
+				gaEntity* collided = collision.first;
+
+				// check duplicated
+				data->entities[i] = collided;
+				data->collision[i] = collision.second;
+				i++;
+
+				msg->m_v3value = collision.second;
+			}
+		}
+		else {
+			// the entity moved
+			entry.first->sendMessage(entity->name(), gaMessage::Action::MOVE, 0, nullptr);
+		}
 	}
 }
 

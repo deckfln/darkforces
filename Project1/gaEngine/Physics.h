@@ -90,8 +90,8 @@ namespace GameEngine
 
 		struct CollisionList {
 			uint32_t size;
-			gaEntity* entities[8];
-
+			gaEntity* entities[4];
+			glm::vec3 collision[4];
 			CollisionList(void) { size = 0; };
 		};
 

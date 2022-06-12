@@ -44,7 +44,8 @@ namespace GameEngine {
 			void onBlockedWay(gaMessage* message);				// cancel the satnav because there is a obstable in front
 
 			void onMove(gaMessage* message);
-			void onCollide(gaMessage* message);
+			void onCollide(gaMessage* message);					// entity collided with something, next message will say is moved or not
+			void onCantMove(gaMessage* message);				// entity cannot move as requested
 			void onCancel(gaMessage* message);
 		public:
 			MoveTo(void);

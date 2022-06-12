@@ -386,7 +386,6 @@ void gaEntity::displayAABBox(void)
  */
 void gaEntity::transform(GameEngine::Transform* transform)
 {
-	pushTransformations();
 	fwObject3D::transform(transform);
 	updateWorldAABB();
 }

@@ -87,20 +87,14 @@ void GameEngine::Behavior::MoveTo::init(void *data)
 	}
 
 	// there is a path
-	m_currentNavPoint = m_navpoints->size() - 1;
+	m_currentNavPoint = m_navpoints->size() - 2;	// the last navpoint is the current position
 
 	// trigger the move
-	m_speed = 0.035f;
-	m_transforms->m_position = m_entity->position(); //m_navpoints->at(m_currentNavPoint);
-	gaMessage *msg = m_entity->sendDelayedMessage(
-		gaMessage::WANT_TO_MOVE,
-		gaMessage::Flag::WANT_TO_MOVE_BREAK_IF_FALL,
-		0.0f,
-		m_transforms);
-	m_moveID = msg->m_id;
-
 	m_status = Status::MOVE_TO_NEXT_WAYPOINT;
 	BehaviorNode::m_status = BehaviorNode::Status::RUNNING;
+
+	m_speed = 0.035f;
+	onMove(nullptr);
 
 	// broadcast the beginning of the move (for animation)
 	m_entity->sendDelayedMessage(gaMessage::START_MOVE);
@@ -298,7 +292,7 @@ void GameEngine::Behavior::MoveTo::onMove(gaMessage* message)
 /**
  *
  */
-void GameEngine::Behavior::MoveTo::onCollide(gaMessage* message)
+void GameEngine::Behavior::MoveTo::onCantMove(gaMessage* message)
 {
 	float radius = m_entity->radius();
 	glm::vec3 position = m_entity->position();
@@ -340,6 +334,19 @@ void GameEngine::Behavior::MoveTo::onCollide(gaMessage* message)
 		if (move_radius < radius / 10.0f) {
 			// give up, we are facing a not planned object that refuses to move
 			return onBlockedWay(message);
+		}
+	}
+	else {
+		// record the current position (to be able to backtrack)
+		m_previous[m_previous_current] = position;
+		m_previous_current++;
+
+		if (m_previous_size < m_previous.size()) {
+			m_previous_size++;
+		}
+
+		if (m_previous_current >= m_previous.size()) {
+			m_previous_current = 0;
 		}
 	}
 
@@ -390,6 +397,13 @@ void GameEngine::Behavior::MoveTo::onCollide(gaMessage* message)
 }
 
 /**
+ *  entity cannot move as requested
+ */
+void GameEngine::Behavior::MoveTo::onCollide(gaMessage* message)
+{
+}
+
+/**
  * cancel the move
  */
 void GameEngine::Behavior::MoveTo::onCancel(gaMessage* message)
@@ -425,11 +439,15 @@ void GameEngine::Behavior::MoveTo::dispatchMessage(gaMessage* message, Action *r
 		break;
 
 	case gaMessage::Action::COLLIDE: 
+		onCollide(message);
+		break;
+
+	case gaMessage::Action::CANT_MOVE:
 		if (conditionMet()) {
 			m_entity->sendMessage(gaMessage::END_MOVE);
 			return failed(r);
 		}
-		onCollide(message);
+		onCantMove(message);
 		break;
 
 	case gaMessage::Action::WOULD_FALL:

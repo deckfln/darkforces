@@ -13,6 +13,7 @@
 			<node type='SatNav' name='go directy to final position'>
 				<variable type='vec3'>satnav_target</variable>
 				<exit>
+					<!--
 					<if>
 						<variable type='bool'>player_visible</variable>
 						<value type='bool'>true</value>
@@ -25,10 +26,7 @@
 						<variable type='bool'>heard_sound</variable>
 						<value type='bool'>true</value>
 					</if>
-					<if>
-						<variable type='bool'>heard_sound</variable>
-						<value type='bool'>true</value>
-					</if>
+					-->
 				</exit>
 			</node>
 		</task>
@@ -55,6 +53,7 @@
 							</node>
 						</tree>
 					</node>
+					
 					<node type='GameEngine:CheckVar' name='player is visible'>
 						<variable type='bool'>player_visible</variable>
 						<value type='bool'>true</value>
@@ -63,6 +62,7 @@
 						<variable type='bool'>hit_bullet</variable>
 						<value type='bool'>true</value>
 					</node>
+					
 					<node type='Decorator' name='invert'>
 						<condition>invert</condition>
 						<tree>
@@ -226,12 +226,20 @@
 			<variable type='bool'>hit_bullet</variable>
 			<value type='bool'>false</value>
 		</node>
-		<!--	-->
+		<!-- FORCE MOVE -->
+		<node type='GameEngine:SetVar' name='force target'>
+			<variable type='vec3'>static_position</variable>
+			<value type='vec3'>-21.29,-0.3,16.6</value>
+		</node>
+		<node type='task' task ='moveAndOpenDoor' name='walk back to wait position'></node>
+		<!-- FORCE MOVE -->
+		<!--
 		<node type='task' task ='attackAndTrack' name='attack the player and track him when losing sight'></node>
 		<node type='GameEngine:SetVar' name='reset hit_bullet'>
 			<variable type='bool'>hit_bullet</variable>
 			<value type='bool'>false</value>
 		</node>
+		-->
 		<node type='GameEngine:SetVar' name='define waiting position'>
 			<variable type='vec3'>static_position</variable>
 			<value type='vec3'>=wait_position</value>
