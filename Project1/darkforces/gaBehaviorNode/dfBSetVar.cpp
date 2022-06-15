@@ -93,7 +93,7 @@ void DarkForces::Behavior::SetVar::init(void* data)
 		// if the trigger is a dfSign, move in front of the object, on ON the object
 		Component::Sign* sign = dynamic_cast<Component::Sign*>(targetTrigger->findComponent(DF_COMPONENT_SIGN));
 		if (sign) {
-			v3 += sign->normal();
+			v3 += sign->normal() * m_entity->radius();
 		}
 
 		m_variable.set(m_tree, v3);

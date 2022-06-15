@@ -80,7 +80,7 @@ void GameEngine::Component::SatNav::dispatchMessage(gaMessage* message)
 			m_destination = *(static_cast<glm::vec3*>(message->m_extra));
 		}
 
-		if (g_navMesh.findPath(m_entity->position(), m_destination, m_navpoints) > 0) {
+		if (g_navMesh.findPath(m_entity, m_destination, m_navpoints) > 0) {
 			// there is a path
 			m_currentNavPoint = m_navpoints.size() - 1;
 

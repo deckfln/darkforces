@@ -93,7 +93,7 @@ void GameEngine::Behavior::SatNav::init(void *data)
 	}
 
 	m_navpoints.clear();
-	float l = g_navMesh.findPath(m_entity->position(), m_destination, m_navpoints);
+	float l = g_navMesh.findPath(m_entity, m_destination, m_navpoints);
 
 	if ( l > 0) {
 		MoveTo::init(&m_navpoints);

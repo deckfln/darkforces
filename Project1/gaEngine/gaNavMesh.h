@@ -7,6 +7,8 @@
 #include "../framework/math/fwSegment2D.h"
 #include "../framework/math/fwAABBox2D.h"
 
+#include "gaEntity.h"
+
 // The index type. Defaults to uint32_t, but you can also pass uint16_t if you know that your
 // data won't have more than 65536 vertices.
 using N = uint32_t;
@@ -51,22 +53,35 @@ namespace GameEngine {
 	 *
 	 */
 	class NavMesh {
+
+		/**
+		 *
+		 */
+		struct navpoint {
+			glm::vec3 p = glm::vec3(0);
+			int32_t next = -1;
+		};
+
 		std::vector<satNavTriangle> m_triangles;
 		bool m_debug = false;
 
 		int32_t findTriangle(const glm::vec3& p, float z, float z1);// find the nearest triangle to the position
+		int32_t findTriangle(const glm::vec2& p, float z);		// find the nearest triangle to the position
+		bool crossTriangles(const Framework::Segment2D& line, float Fromy, float Toy);
+		bool checkSegment(const glm::vec2& from, const glm::vec2& to, float Fromy, float Toy, float radius);
+
 		bool lineOfSight(
 			const Framework::Segment2D& line,
 			satNavTriangle* from, satNavTriangle* to);			// is there a direct line of sight (x,y) -> (x1,y1) over the triangles
-		bool findDirectPath(uint32_t from, 
+		bool findDirectPath(uint32_t from,
 			uint32_t to,
-			std::vector<glm::vec3>& graphPath,
-			std::vector<glm::vec3>& directPath);				// build a new direct path from->to using the graph path
+			float radius,
+			std::vector<navpoint>& graphPath);					// build a new direct path from->to using the graph path
 
 	public:
 		void addFloor(std::vector<std::vector<Point>>& polygons, float z);
 		void buildMesh(void);
-		float findPath(const glm::vec3& from, 
+		float findPath(gaEntity *entity, 
 			const glm::vec3& to,
 			std::vector<glm::vec3>& path);						// build a path from/to
 	};

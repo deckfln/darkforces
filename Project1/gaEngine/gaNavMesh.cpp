@@ -36,13 +36,33 @@ int32_t GameEngine::NavMesh::findTriangle(const glm::vec3& p, float z, float z1)
 	return -1;
 }
 
-/**
- * is there a direct line of sight (x,y) -> (x1,y1) over the triangles
- */
-bool GameEngine::NavMesh::lineOfSight(const Framework::Segment2D& line, satNavTriangle* from, satNavTriangle* to)
+int32_t GameEngine::NavMesh::findTriangle(const glm::vec2& p, float z)
 {
-	satNavTriangle* current = from;
-	int32_t portal;
+	for (uint32_t i = 0; i < m_triangles.size(); i++) {
+		float d = abs(z - m_triangles[i].m_center.y);
+
+		if (m_triangles[i].inside(p)) {
+			if (d <= 8) {
+				return i;
+			}
+		}
+	}
+
+	return -1;
+}
+
+/**
+ *
+ */
+bool GameEngine::NavMesh::crossTriangles(const Framework::Segment2D& line, float Fromy, float Toy)
+{
+	int32_t trFrom = findTriangle(line.start(), Fromy);
+	int32_t trTo = findTriangle(line.end(), Toy);
+
+	satNavTriangle* current = &m_triangles[trFrom];
+	satNavTriangle* to = &m_triangles[trTo];
+
+	int32_t portal, portal1;
 	std::vector<uint32_t> previousTriangles;
 
 	while (current != to) {
@@ -55,9 +75,89 @@ bool GameEngine::NavMesh::lineOfSight(const Framework::Segment2D& line, satNavTr
 		printf("\n");
 		*/
 
+		// test left and right line
 		portal = current->findPortal(line);
 		if (portal < 0) {
 			return false;
+		}
+		current = &m_triangles[portal];
+	}
+
+	return true;
+
+}
+
+/**
+ * 
+ */
+bool GameEngine::NavMesh::checkSegment(const glm::vec2& from, const glm::vec2& to, float Fromy, float Toy, float radius)
+{
+	const glm::vec2 d = glm::normalize(to - from);
+
+	Framework::Segment2D left(
+		from + glm::vec2(-d.y, d.x) * radius,
+		to + glm::vec2(-d.y, d.x) * radius
+	);
+
+	if (!crossTriangles(left, Fromy, Toy)) {
+		return false;
+	}
+
+	Framework::Segment2D right(
+		from + glm::vec2(+d.y, -d.x) * radius,
+		to + glm::vec2(+d.y, -d.x) * radius
+	);
+
+	if (!crossTriangles(right, Fromy, Toy)) {
+		return false;
+	}
+
+	return true;
+}
+
+/**
+ * is there a direct line of sight (x,y) -> (x1,y1) over the triangles
+ */
+bool GameEngine::NavMesh::lineOfSight(const Framework::Segment2D& line, satNavTriangle* from, satNavTriangle* to)
+{
+	satNavTriangle* current = from;
+	int32_t portal, portal1;
+	std::vector<uint32_t> previousTriangles;
+
+	// extend the start and the end of the line on a circle
+	glm::vec2 d = line.end() - line.start();
+	d = glm::normalize(d);
+
+	Framework::Segment2D left(
+		line.start() + glm::vec2(-d.y, d.x) * 0.2f,
+		line.end() + glm::vec2(-d.y, d.x) * 0.2f
+		);
+	Framework::Segment2D right(
+		line.start() + glm::vec2(+d.y, -d.x) * 0.2f,
+		line.end() + glm::vec2(+d.y, -d.x) * 0.2f
+	);
+
+	while (current != to) {
+		/*
+		for (uint32_t i = 0; i < 3; i++) {
+			printf("triangle:%.0f,%.0f, ",
+				current->m_vertices[i].x,
+				current->m_vertices[i].y);
+		}
+		printf("\n");
+		*/
+
+		// test left and right line
+		portal = current->findPortal(left);
+		if (portal < 0) {
+			return false;
+		}
+		portal1 = current->findPortal(right);
+		if (portal1 < 0) {
+			return false;
+		}
+		if (portal != portal1) {
+			__debugbreak();
 		}
 		current = &m_triangles[portal];
 	}
@@ -68,42 +168,41 @@ bool GameEngine::NavMesh::lineOfSight(const Framework::Segment2D& line, satNavTr
 /**
  * build a new direct path from->to using the graph path
  */
-bool GameEngine::NavMesh::findDirectPath(uint32_t from, uint32_t to, 
-	std::vector<glm::vec3>& graphPath, 
-	std::vector<glm::vec3>& directPath)
+bool GameEngine::NavMesh::findDirectPath(uint32_t from, uint32_t to,
+	float radius,
+	std::vector<navpoint>& graphPath)
 {
 	// try to find a direct path from,to [ converted to 2D ]
-	glm::vec3 from3D = graphPath[from] * 10.0f;
-	glm::vec3 to3D = graphPath[to] * 10.0f;
+	glm::vec3 from3D = graphPath[from].p * 10.0f;
+	glm::vec3 to3D = graphPath[to].p * 10.0f;
 
 	glm::vec2 from2D(from3D.x, from3D.z);
 	glm::vec2 to2D(to3D.x, to3D.z);
-	Framework::Segment2D line(from2D, to2D);
 
-	/*
-	printf("LOS: %f,%f,%f,%f\n",
-		from2D.x, from2D.y,
-		to2D.x, to2D.y);
-	*/
-	int32_t trFrom = findTriangle(from3D, from3D.y, to3D.y);
-	int32_t trTo = findTriangle(to3D, from3D.y, to3D.y);
-
-	if (lineOfSight(line, &m_triangles[trFrom], &m_triangles[trTo])) {
-		directPath.push_back(graphPath[to]);
+	if (checkSegment(from2D, to2D, from3D.y, to3D.y, radius*10.0f)) {
+		/*
+		printf("[\"sucess\", %f,%f,%f,%f],\n",
+			from2D.x / 10.0f, from2D.y / 10.0f,
+			to2D.x / 10.0f, to2D.y / 10.0f);
+		*/
+		graphPath[from].next = to;
 		return true;
 	}
 
 	// else split the graph in half and try to build 2 direct paths
-
 	uint32_t mid = from + (to - from) / 2;
 
 	if (mid - from == 1) {
-		directPath.push_back(graphPath[from]);
-		directPath.push_back(graphPath[to]);
+		graphPath[from].next = to;
 	}
 	else {
-		findDirectPath(from, mid, graphPath, directPath);
-		findDirectPath(mid, to, graphPath, directPath);
+		/*
+		printf("[\"fails\", %f,%f,%f,%f],\n",
+			from2D.x/10.0f, from2D.y / 10.0f,
+			to2D.x / 10.0f, to2D.y / 10.0f);
+		*/
+		findDirectPath(from, mid, radius, graphPath);
+		findDirectPath(mid, to, radius, graphPath);
 	}
 	return false;
 }
@@ -260,10 +359,11 @@ bool operator> (const Node& node1, const Node& node2)
 }
 
 
-float GameEngine::NavMesh::findPath(const glm::vec3& from, const glm::vec3& to, std::vector<glm::vec3>& directPath)
+float GameEngine::NavMesh::findPath(gaEntity* entity, const glm::vec3& to, std::vector<glm::vec3>& directPath)
 {
-	std::vector<glm::vec3> graphPath;		// path computed from the navmesh graph
+	std::vector<navpoint> graphPath;		// path computed from the navmesh graph
 
+	const glm::vec3& from = entity->position();
 	glm::vec3 from3D = from * 10.0f;
 	glm::vec3 to3D = to * 10.0f;
 
@@ -326,7 +426,7 @@ float GameEngine::NavMesh::findPath(const glm::vec3& from, const glm::vec3& to, 
 	}
 
 	// back track from end to start
-	graphPath.push_back(to);
+	graphPath.push_back({ to, -1 });
 	glm::vec2 portal;
 	float len = 0;
 	glm::vec3 from1 = to, to1;
@@ -340,7 +440,7 @@ float GameEngine::NavMesh::findPath(const glm::vec3& from, const glm::vec3& to, 
 			//to1 = m_triangles[current].m_center;
 
 			//path.push_back(glm::vec3(portal.x, m_triangles[current].m_center.y, portal.y) / 10.0f);
-			graphPath.push_back( to1 / 10.0f);
+			graphPath.push_back({ to1 / 10.0f, -1 });
 
 			len += glm::distance(from1, to1);
 
@@ -349,11 +449,25 @@ float GameEngine::NavMesh::findPath(const glm::vec3& from, const glm::vec3& to, 
 	};
 
 	len += glm::distance(from1, from);
-	graphPath.push_back(from);
+	graphPath.push_back({ from, -1 });
+
+	/*
+	printf("gaNavMesh::unoptimized path\n");
+	for (auto& n : graphPath) {
+		printf("%f,%f,\n", n.p.x, n.p.z);
+	}
+	printf("gaNavMesh::unoptimized path\n");
+	*/
 
 	// and now optimize the path using direct paths
-	directPath.push_back(to);
-	findDirectPath(0, graphPath.size() - 1, graphPath, directPath);
+	//printf("gaNavMesh::optimize\n");
+	findDirectPath(0, graphPath.size() - 1, entity->radius(), graphPath);
+	//printf("gaNavMesh::optimize\n");
+	int32_t n = 0;
+	while (n >= 0) {
+		directPath.push_back(graphPath[n].p);
+		n = graphPath[n].next;
+	}
 	
 	/*
 	printf("gaNavMesh::findPath\n");
