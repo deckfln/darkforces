@@ -136,7 +136,7 @@ bool DarkForces::Component::InfElevator::animate(time_t delta)
 		m_tick = 0;
 
 		moveToNextStop();
-		break;
+		// explicitely fall through, the move shall start IMMEDIATELY
 
 	case Status::MOVE: {
 		if (m_direction != 0) {
@@ -146,8 +146,6 @@ bool DarkForces::Component::InfElevator::animate(time_t delta)
 			m_current = m_target;
 		}
 
-		moveTo(m_current);
-
 		bool reached = false;
 		if (m_direction < 0) {
 			reached = m_target >= m_current;
@@ -156,7 +154,10 @@ bool DarkForces::Component::InfElevator::animate(time_t delta)
 			reached = m_current >= m_target;
 		}
 
-		if (reached) {
+		if (!reached) {
+			moveTo(m_current);
+		}
+		else {
 			dfLogicStop* stop;
 
 			m_currentStop = m_nextStop;
