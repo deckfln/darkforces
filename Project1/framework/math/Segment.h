@@ -16,5 +16,6 @@ namespace Framework
 
 		void set(const glm::vec3& start, const glm::vec3& end);
 		float length(void);
+		Segment& add(const glm::vec3& v);
 	};
 }

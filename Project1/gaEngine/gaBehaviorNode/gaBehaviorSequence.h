@@ -31,6 +31,7 @@ namespace GameEngine {
 
 		private:
 			uint32_t m_failed = 0;
+			int32_t m_while = -1;	// loop the sequence if child #m_child is SUCCESS
 		};
 	}
 }

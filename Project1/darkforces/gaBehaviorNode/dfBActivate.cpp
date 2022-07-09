@@ -63,9 +63,9 @@ void DarkForces::Behavior::Activate::init(void *data)
 	// we are on a natural move, to the elevator can be activated
 	// test all triggers of the object
 
-	const std::string& trigger = m_tree->blackboard().get<std::string>(m_variable, GameEngine::Variable::Type::STRING);
+	gaEntity* trigger = m_tree->blackboard().pGet<gaEntity>(m_variable, GameEngine::Variable::Type::PTR);
 
-	m_entity->sendMessage(trigger, DarkForces::Message::TRIGGER);
+	m_entity->sendMessage(trigger->name(), DarkForces::Message::TRIGGER);
 
 	// broadcast the end of the move (for animation)
 	m_entity->sendMessage(gaMessage::END_MOVE);

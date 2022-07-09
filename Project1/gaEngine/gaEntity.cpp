@@ -363,15 +363,18 @@ void gaEntity::hasCollider(bool p)
 void gaEntity::timer(bool onOff)
 {
 	if (onOff) {
+		if (m_timer == 0) {
+			g_gaWorld.registerTimerEvents(this, true);
+		}
 		m_timer++;
-		g_gaWorld.registerTimerEvents(this, true);
 	}
 	else if (m_timer > 0) {
 		m_timer--;
-		g_gaWorld.registerTimerEvents(this, false);
+		if (m_timer == 0) {
+			g_gaWorld.registerTimerEvents(this, false);
+		}
 	}
 }
-
 
 /**
  * display the world AABBox on screen

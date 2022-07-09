@@ -30,6 +30,7 @@ GameEngine::BehaviorNode* GameEngine::Behavior::Sequence::clone(GameEngine::Beha
 	}
 	GameEngine::BehaviorNode::clone(cl);
 	cl->m_condition = m_condition;
+	cl->m_while = m_while;
 	return cl;
 }
 
@@ -57,6 +58,12 @@ GameEngine::BehaviorNode* GameEngine::Behavior::Sequence::create(const char* nam
 				break;
 			}
 		}
+	}
+
+	tinyxml2::XMLElement* xmlwhile = element->FirstChildElement("while");
+	if (xmlwhile) {
+		const char* t = xmlwhile->GetText();
+		node->m_while = std::stoi(t);
 	}
 	return node;
 }
@@ -109,7 +116,13 @@ void GameEngine::Behavior::Sequence::execute(Action* r)
 	}
 	else if (status == Status::SUCCESSED) {
 		if (m_condition == Condition::EXIT_FIRST_SUCCESS) {
-			// drop out of the loop
+			// drop out of the sequence
+			// unless there is a repeat decorator
+			if (m_while >= 0 && m_while < m_children.size() && m_while == m_runningChild) {
+				m_runningChild = 0;
+				onChildStart(m_runningChild);
+				return startChild(r, m_runningChild, m_data);
+			}
 			return succeeded(r);
 		}
 	}

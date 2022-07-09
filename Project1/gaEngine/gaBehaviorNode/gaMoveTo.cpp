@@ -54,6 +54,8 @@ GameEngine::BehaviorNode* GameEngine::Behavior::MoveTo::clone(GameEngine::Behavi
 	else {
 		cl = new GameEngine::Behavior::MoveTo(m_name);
 	}
+
+	cl->m_collisionDistance = m_collisionDistance;
 	GameEngine::BehaviorNode::clone(cl);
 	return cl;
 }
@@ -67,6 +69,11 @@ GameEngine::BehaviorNode* GameEngine::Behavior::MoveTo::create(const char* name,
 	}
 	else {
 		node = dynamic_cast<GameEngine::Behavior::MoveTo*>(used);
+	}
+
+	tinyxml2::XMLElement* xmlColl = element->FirstChildElement("collisionExit");
+	if (xmlColl) {
+		node->m_collisionDistance = std::stof(xmlColl->GetText());
 	}
 
 	GameEngine::BehaviorNode::create(name, element, node);
@@ -98,6 +105,9 @@ void GameEngine::Behavior::MoveTo::init(void *data)
 
 	// broadcast the beginning of the move (for animation)
 	m_entity->sendDelayedMessage(gaMessage::START_MOVE);
+
+	// clear the collision flag
+	m_tree->blackboard().pSet<gaEntity*>("futureCollision", nullptr);
 
 	m_previous_current = 0;
 	m_previous_size = 0;
@@ -222,6 +232,9 @@ void GameEngine::Behavior::MoveTo::onMove(gaMessage* message)
 
 	// how far from the navpoint
 	glm::vec3 p = m_navpoints->at(m_currentNavPoint);
+	Segment path(m_entity->position(), p);
+	path.add(glm::vec3(0, m_entity->height(), 0));
+
 	glm::vec3 direction = p - m_entity->position();
 	direction.y = 0;	// move forward, physics will take care of problems
 
@@ -283,6 +296,33 @@ void GameEngine::Behavior::MoveTo::onMove(gaMessage* message)
 
 	// and take action
 	if (m_status == Status::MOVE_TO_NEXT_WAYPOINT) {
+
+		// check if there is a collision ahead (with a moving entity)
+		std::vector<gaEntity*> collisions;
+		if (g_gaWorld.intersectWithEntity(path, collisions)) {
+
+			// pick the nearest collisions
+			float distance = 9999;
+			gaEntity* collision = nullptr;
+			for (auto entity : collisions) {
+				if (entity == m_entity) {
+					continue;
+				}
+				float d = glm::length(entity->position() - m_entity->position());
+				if (d < distance) {
+					distance = d;
+					collision = entity;
+				}
+			}
+
+			if (distance < m_collisionDistance) {
+				// break out of the movement if there is a nearby entity we will collide with
+				m_tree->blackboard().pSet<gaEntity>("futureCollision", collision);
+				BehaviorNode::m_status = BehaviorNode::Status::FAILED;
+				return;
+			}
+		}
+
 		m_transforms->m_position = m_entity->position() + direction;
 		triggerMove(direction);
 		//printf("%.04f,%.04f,%.4f,%.4f,\n", m_entity->position().x, m_entity->position().z, direction.x, direction.z);

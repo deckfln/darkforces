@@ -192,6 +192,11 @@ std::string& GameEngine::Value::gets(GameEngine::Component::BehaviorTree* tree) 
 	}
 }
 
+void* GameEngine::Value::getp(GameEngine::Component::BehaviorTree* tree)
+{
+	return tree->blackboard().pGet<void>(m_svalue, GameEngine::Variable::Type::PTR);
+}
+
 //----------------------------------------------------
 
 #ifdef _DEBUG

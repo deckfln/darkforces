@@ -39,6 +39,7 @@ namespace GameEngine {
 		float& getf(GameEngine::Component::BehaviorTree* tree) ;
 		glm::vec3& getv3(GameEngine::Component::BehaviorTree* tree) ;
 		std::string& gets(GameEngine::Component::BehaviorTree* tree) ;
+		void* getp(GameEngine::Component::BehaviorTree* tree);
 
 #ifdef _DEBUG
 		// debugger

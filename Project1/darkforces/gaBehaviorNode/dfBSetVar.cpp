@@ -1,7 +1,9 @@
 #include "dfBSetVar.h"
 
+#include "../../gaEngine/gaNavMesh.h"
 #include "../../gaEngine/gaComponent/gaBehaviorTree.h"
 #include "../dfComponent.h"
+
 #include "../dfSector.h"
 #include "../dfLogicTrigger.h"
 #include "../dfComponent/InfElevator.h"
@@ -56,7 +58,119 @@ GameEngine::BehaviorNode* DarkForces::Behavior::SetVar::create(const char* name,
  */
 void DarkForces::Behavior::SetVar::init(void* data)
 {
-	if (m_value.var() == "elevator.triggers.count") {
+	// list of possible position for triggers
+	static std::vector<gaEntity*> triggers;
+
+	if (m_value.var() == "elevator.triggers") {
+		// extract the future collision
+		gaEntity* entity = m_tree->blackboard().pGet<gaEntity>("futureCollision", GameEngine::Variable::Type::PTR);
+		if (entity == nullptr) {
+			m_status = Status::FAILED;
+			return;
+		}
+		DarkForces::Component::InfElevator* elevator = dynamic_cast<DarkForces::Component::InfElevator*>(entity->findComponent(DF_COMPONENT_INF_ELEVATOR));
+		if (elevator == nullptr) {
+			m_status = Status::FAILED;
+			return;
+		}
+
+		// convert the Trigger elevator to the parent entity
+		const std::vector<Component::Trigger*>& cTriggers = elevator->getTriggers();
+
+		if (cTriggers.size() == 1 && cTriggers[0]->entity() == entity) {
+			// oops, the elevator is a DOOR, so trigger position is inside the object
+			// we need to move in front of the door
+			__debugbreak();
+		}
+		else {
+			// test if there valid path to each trigger (eliminate triggers that are on the other side of the door)
+
+			for (auto trigger : cTriggers) {
+				std::vector<glm::vec3> m_navpoints;
+				gaEntity* target = trigger->entity();
+				float l = g_navMesh.findPath(m_entity, target->position(), m_navpoints);
+
+				if (l > 0) {
+					// if a path can be found
+
+					// foreach segment of the path, check if there is a closed elevator on the way
+					bool possible = true;
+					DarkForces::Component::InfElevator* obstable;
+					for (auto i = 0; i < m_navpoints.size() - 1; i++) {
+						// test collision from chest height
+						Framework::Segment segment(m_navpoints[i], m_navpoints[i + 1]);
+						segment.add(glm::vec3(0, m_entity->height() / 2.0f, 0));
+
+						std::vector<gaEntity*> collisions;
+						if (g_gaWorld.intersectWithEntity(segment, collisions)) {
+
+							for (auto entity : collisions) {
+								// ignore self
+								if (entity == m_entity) {
+									continue;
+								}
+
+								obstable = dynamic_cast<DarkForces::Component::InfElevator*>(entity->findComponent(DF_COMPONENT_INF_ELEVATOR));
+								if (obstable) {
+									// a closed elevator that is NOT the current target in on the way, ignore that trigger
+									possible = false;
+									break;		// blocked path, no need to test the others
+								}
+							}
+						}
+						if (!possible) {
+							break;
+						}
+					}
+
+					if (possible) {
+						// record the path
+						triggers.push_back(target);
+					}
+				}
+			}
+		}
+
+		// if there if no trigger available
+		if (triggers.size() == 0) {
+			m_status = Status::FAILED;
+			return;
+		}
+
+		m_variable.set(m_tree, &triggers);
+		m_status = GameEngine::BehaviorNode::Status::SUCCESSED;
+		return;
+	}
+	else if (m_value.var() == "elevator.triggers.next") {
+		if (triggers.size() == 0) {
+			m_status = Status::FAILED;
+			return;
+		}
+
+		gaEntity* target = triggers.back();
+		triggers.pop_back();
+
+		m_variable.set(m_tree, target);
+		m_status = GameEngine::BehaviorNode::Status::SUCCESSED;
+		return;
+	}
+	else if (m_value.var() == "trigger.position") {
+		gaEntity* target = m_tree->blackboard().pGet<gaEntity>("trigger", GameEngine::Variable::Type::PTR);
+
+		// position of the trigger
+		glm::vec3 v3 = target->position();
+
+		// if the trigger is a dfSign, move in front of the object, on ON the object
+		Component::Sign* sign = dynamic_cast<Component::Sign*>(target->findComponent(DF_COMPONENT_SIGN));
+		if (sign) {
+			v3 += sign->normal() * m_entity->radius();
+		}
+
+		m_variable.set(m_tree, v3);
+		m_status = GameEngine::BehaviorNode::Status::SUCCESSED;
+		return;
+	}
+	else if (m_value.var() == "elevator.triggers.count") {
 		// we are on a natural move, to the elevator can be activated
 		// test all triggers of the object
 		Component::InfElevator* elevator = m_tree->blackboard().pGet<Component::InfElevator>("wait_elevator", GameEngine::Variable::Type::PTR);

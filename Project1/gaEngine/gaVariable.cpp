@@ -246,6 +246,11 @@ void GameEngine::Variable::set(GameEngine::Component::BehaviorTree* tree, Value&
 		set(tree, s);
 		break;
 	}
+	case Type::PTR: {
+		void *p = v.getp(tree);
+		set(tree, p);
+		break;
+	}
 	}
 }
 

@@ -7,6 +7,7 @@
 #include "../../gaEngine/gaComponent/gaBehaviorTree.h"
 
 #include "../dfComponent/InfElevator.h"
+#include "../dfComponent.h"
 
 static const char* g_className = "DarkForces:waitDoor";
 
@@ -55,12 +56,13 @@ BehaviorNode* DarkForces::Behavior::WaitDoor::create(const char* name, tinyxml2:
 void DarkForces::Behavior::WaitDoor::init(void* data)
 {
 //	DarkForces::Component::InfElevator* m_elevator = m_tree->blackboard().pGet<DarkForces::Component::InfElevator>("wait_elevator", GameEngine::Variable::Type::PTR);
-	DarkForces::Component::InfElevator* elevator = static_cast<DarkForces::Component::InfElevator *>(m_elevator.getp(m_tree));
+	gaEntity* entity = static_cast<gaEntity*>(m_elevator.getp(m_tree));
+	DarkForces::Component::InfElevator* elevator = dynamic_cast<DarkForces::Component::InfElevator *>(entity->findComponent(DF_COMPONENT_INF_ELEVATOR));
 
 	switch (elevator->status()) {
 	case Component::InfElevator::Status::MOVE:
 		// wait for the elevator to finish its move, maybe it is opening
-		m_entity->sendDelayedMessage(gaMessage::Action::TICK);
+		m_entity->timer(true);
 		break;
 
 	case Component::InfElevator::Status::WAIT:
@@ -77,18 +79,14 @@ void DarkForces::Behavior::WaitDoor::init(void* data)
  */
 void DarkForces::Behavior::WaitDoor::dispatchMessage(gaMessage* message, Action* r)
 {
-//	DarkForces::Component::InfElevator* m_elevator = m_tree->blackboard().pGet<DarkForces::Component::InfElevator>("wait_elevator", GameEngine::Variable::Type::PTR);
-	DarkForces::Component::InfElevator* elevator = static_cast<DarkForces::Component::InfElevator*>(m_elevator.getp(m_tree));
+	if (message->m_action == gaMessage::Action::TIMER) {
+		gaEntity* entity = static_cast<gaEntity*>(m_elevator.getp(m_tree));
+		DarkForces::Component::InfElevator* elevator = dynamic_cast<DarkForces::Component::InfElevator*>(entity->findComponent(DF_COMPONENT_INF_ELEVATOR));
 
-	if (message->m_action == gaMessage::Action::TICK) {
 		switch (elevator->status()) {
-		case Component::InfElevator::Status::MOVE:
-			// wait for the elevator to finish its move, maybe it is opening
-			m_entity->sendDelayedMessage(gaMessage::Action::TICK);
-			break;
-
 		case Component::InfElevator::Status::WAIT:
 		case Component::InfElevator::Status::HOLD:
+			m_entity->timer(false);
 			return succeeded(r);
 			break;
 		}

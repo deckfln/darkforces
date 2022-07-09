@@ -30,3 +30,11 @@ float Framework::Segment::length(void)
 {
 	return glm::length(m_end - m_start);
 }
+
+Framework::Segment& Framework::Segment::add(const glm::vec3& v)
+{
+	m_start += v;
+	m_end += v;
+
+	return *this;
+}

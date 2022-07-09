@@ -954,6 +954,40 @@ bool GameEngine::World::intersectWithEntity(Framework::Segment& segment,
 }
 
 /**
+ * Return the nearest collision point
+ */
+gaEntity* GameEngine::World::rayIntersect(Framework::Segment& segment, glm::vec3& collision)
+{
+	fwAABBox aabb(segment);
+	glm::mat4 worldMatrix(1);
+	glm::mat4 inverse = glm::inverse(worldMatrix);
+	GameEngine::Collider collider(&segment, &worldMatrix, &inverse, &aabb);
+
+	glm::vec3 forward(0), down(0);
+	std::vector<gaCollisionPoint> collisions;
+
+	gaEntity* collidedEntity = nullptr;
+
+	// test again entities
+	for (auto& entry : m_entitiesByID) {
+		// ignore ghosts and itself
+		if (!entry.second->physical()) {
+			continue;
+		}
+
+		// quick test
+		if (entry.second->collideAABB(aabb)) {
+			// extended test
+			collisions.clear();
+			if (entry.second->collide(collider, forward, down, collisions)) {
+
+				entCollisions.push_back(entry.second);
+			}
+		}
+	}
+}
+
+/**
  * return all entities with a special components
  */
 void GameEngine::World::getEntitiesWithComponents(uint32_t componentID, std::vector<gaEntity*>& entities)

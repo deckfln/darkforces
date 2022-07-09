@@ -57,7 +57,12 @@ int32_t GameEngine::NavMesh::findTriangle(const glm::vec2& p, float z)
 bool GameEngine::NavMesh::crossTriangles(const Framework::Segment2D& line, float Fromy, float Toy)
 {
 	int32_t trFrom = findTriangle(line.start(), Fromy);
+	if (trFrom < 0)
+		return false;
 	int32_t trTo = findTriangle(line.end(), Toy);
+	if (trTo < 0)
+		return false;
+
 
 	satNavTriangle* current = &m_triangles[trFrom];
 	satNavTriangle* to = &m_triangles[trTo];
@@ -450,7 +455,6 @@ float GameEngine::NavMesh::findPath(gaEntity* entity, const glm::vec3& to, std::
 
 	len += glm::distance(from1, from);
 	graphPath.push_back({ from, -1 });
-
 	/*
 	printf("gaNavMesh::unoptimized path\n");
 	for (auto& n : graphPath) {
@@ -458,7 +462,6 @@ float GameEngine::NavMesh::findPath(gaEntity* entity, const glm::vec3& to, std::
 	}
 	printf("gaNavMesh::unoptimized path\n");
 	*/
-
 	// and now optimize the path using direct paths
 	//printf("gaNavMesh::optimize\n");
 	findDirectPath(0, graphPath.size() - 1, entity->radius(), graphPath);
@@ -469,13 +472,12 @@ float GameEngine::NavMesh::findPath(gaEntity* entity, const glm::vec3& to, std::
 		n = graphPath[n].next;
 	}
 	
-	/*
 	printf("gaNavMesh::findPath\n");
 	for (auto& p : directPath) {
 		printf("%f,%f,\n", p.x, p.z);
 	}
 	printf("<\n");
-	*/
+
 	return len;
 }
 
