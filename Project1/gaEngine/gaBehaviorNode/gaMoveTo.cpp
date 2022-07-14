@@ -297,29 +297,52 @@ void GameEngine::Behavior::MoveTo::onMove(gaMessage* message)
 	// and take action
 	if (m_status == Status::MOVE_TO_NEXT_WAYPOINT) {
 
-		// check if there is a collision ahead (with a moving entity)
-		std::vector<gaEntity*> collisions;
-		if (g_gaWorld.intersectWithEntity(path, collisions)) {
-
-			// pick the nearest collisions
-			float distance = 9999;
-			gaEntity* collision = nullptr;
-			for (auto entity : collisions) {
-				if (entity == m_entity) {
-					continue;
-				}
-				float d = glm::length(entity->position() - m_entity->position());
-				if (d < distance) {
-					distance = d;
-					collision = entity;
-				}
+		// check if there is a collision ahead (with a moving entity), within the predefined range
+		float range = m_collisionDistance;
+		Framework::Segment segment;
+		glm::vec3 previous = m_entity->position();
+		int32_t nextwp = m_currentNavPoint;
+		std::vector<Framework::Segment> segmentsToCheck;
+		do {
+			segment.set(previous, m_navpoints->at(nextwp));
+			if (segment.length() <= range) {
+				// records the segment if it is shorter than the checking distance
+				segment.add(glm::vec3(0, m_entity->height(), 0));	// check from the entity head
+				segmentsToCheck.push_back(segment);
 			}
+			range -= segment.length();
+			previous = m_navpoints->at(nextwp);
+			if (--nextwp < 0) {
+				// reached the end of the path
+				break;
+			}
+		} while (range > 0);
 
-			if (distance < m_collisionDistance) {
+		// for every segment of the path that fits in the defined testing range, check for collision
+		std::vector<gaEntity*> collisions;
+		for (auto& segment : segmentsToCheck) {
+			if (g_gaWorld.intersectWithEntity(segment, collisions)) {
+
+				// pick the nearest collisions
+				float distance = 9999;
+				gaEntity* collision = nullptr;
+				for (auto entity : collisions) {
+					if (entity == m_entity) {
+						continue;
+					}
+					float d = glm::length(entity->position() - m_entity->position());
+					if (d < distance) {
+						distance = d;
+						collision = entity;
+					}
+				}
+
 				// break out of the movement if there is a nearby entity we will collide with
-				m_tree->blackboard().pSet<gaEntity>("futureCollision", collision);
-				BehaviorNode::m_status = BehaviorNode::Status::FAILED;
-				return;
+				if (distance < 9999) {
+					m_tree->blackboard().pSet<gaEntity>("futureCollision", collision);
+					BehaviorNode::m_status = BehaviorNode::Status::FAILED;
+					return;
+				}
 			}
 		}
 
