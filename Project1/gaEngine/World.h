@@ -166,9 +166,10 @@ namespace GameEngine {
 			std::vector<gaEntity*>& collision);				// find all entities intersecting with the segment
 		bool intersectWithEntity(
 			Framework::Segment& segment,
-			std::vector<gaEntity*>& entCollisions);
-
-		gaEntity* rayIntersect(Framework::Segment& segment, glm::vec3& collision);
+			std::vector<gaEntity*>& entCollisions);			// return a list of entities
+		bool intersectWithEntity(
+			Framework::Segment& segment,
+			std::vector<gaCollisionPoint>& entCollisions);	// return a list of entities and collision points
 
 		void getEntitiesWithComponents(uint32_t componentID,
 			std::vector<gaEntity*>& entities);				// return all entities with a special components

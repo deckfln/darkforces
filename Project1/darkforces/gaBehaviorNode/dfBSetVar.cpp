@@ -77,56 +77,59 @@ void DarkForces::Behavior::SetVar::init(void* data)
 		// convert the Trigger elevator to the parent entity
 		const std::vector<Component::Trigger*>& cTriggers = elevator->getTriggers();
 
-		if (cTriggers.size() == 1 && cTriggers[0]->entity() == entity) {
-			// oops, the elevator is a DOOR, so trigger position is inside the object
-			// we need to move in front of the door
-			__debugbreak();
-		}
-		else {
-			// test if there valid path to each trigger (eliminate triggers that are on the other side of the door)
+		std::vector<glm::vec3> m_navpoints;
+		gaEntity* target = nullptr;
+		float l;
 
-			for (auto trigger : cTriggers) {
-				std::vector<glm::vec3> m_navpoints;
-				gaEntity* target = trigger->entity();
-				float l = g_navMesh.findPath(m_entity, target->position(), m_navpoints);
+		// test if there valid path to each trigger (eliminate triggers that are on the other side of the door)
+		for (auto trigger : cTriggers) {
+			target = trigger->entity();
+			l = g_navMesh.findPath(m_entity, target->position(), m_navpoints);
 
-				if (l > 0) {
-					// if a path can be found
+			if (l > 0) {
+				// if a path can be found
 
-					// foreach segment of the path, check if there is a closed elevator on the way
-					bool possible = true;
-					DarkForces::Component::InfElevator* obstable;
-					for (auto i = 0; i < m_navpoints.size() - 1; i++) {
-						// test collision from chest height
-						Framework::Segment segment(m_navpoints[i], m_navpoints[i + 1]);
-						segment.add(glm::vec3(0, m_entity->height() / 2.0f, 0));
+				// foreach segment of the path, check if there is a closed elevator on the way
+				bool possible = true;
+				DarkForces::Component::InfElevator* obstable=nullptr;
+				gaEntity* tentity = nullptr;
+				for (size_t i = 0; i < m_navpoints.size() - 1; i++) {
+					// test collision from chest height
+					Framework::Segment segment(m_navpoints[i], m_navpoints[i + 1]);
+					segment.add(glm::vec3(0, m_entity->height() / 2.0f, 0));
 
-						std::vector<gaEntity*> collisions;
-						if (g_gaWorld.intersectWithEntity(segment, collisions)) {
+					std::vector<gaCollisionPoint> collisions;
+					if (g_gaWorld.intersectWithEntity(segment, collisions)) {
 
-							for (auto entity : collisions) {
-								// ignore self
-								if (entity == m_entity) {
-									continue;
-								}
+						for (auto& c : collisions) {
+							tentity = static_cast<gaEntity*>(c.m_source);
 
-								obstable = dynamic_cast<DarkForces::Component::InfElevator*>(entity->findComponent(DF_COMPONENT_INF_ELEVATOR));
-								if (obstable) {
-									// a closed elevator that is NOT the current target in on the way, ignore that trigger
-									possible = false;
-									break;		// blocked path, no need to test the others
-								}
+							// ignore self
+							if (tentity == m_entity) {
+								continue;
+							}
+
+							// ignore the final elevator (a door is an elevator, and it will collide)
+							if (tentity == trigger->entity()) {
+								continue;
+							}
+
+							obstable = dynamic_cast<DarkForces::Component::InfElevator*>(tentity->findComponent(DF_COMPONENT_INF_ELEVATOR));
+							if (obstable) {
+								// a closed elevator that is NOT the current target in on the way, ignore that trigger
+								possible = false;
+								break;		// blocked path, no need to test the others
 							}
 						}
-						if (!possible) {
-							break;
-						}
 					}
+					if (!possible) {
+						break;
+					}
+				}
 
-					if (possible) {
-						// record the path
-						triggers.push_back(target);
-					}
+				if (possible) {
+					// record the path
+					triggers.push_back(target);
 				}
 			}
 		}
@@ -164,6 +167,31 @@ void DarkForces::Behavior::SetVar::init(void* data)
 		Component::Sign* sign = dynamic_cast<Component::Sign*>(target->findComponent(DF_COMPONENT_SIGN));
 		if (sign) {
 			v3 += sign->normal() * m_entity->radius();
+		}
+
+		// if the trigger is ALSO an elevator (like DOORS), also move in front of the door, not to tne center of the door
+		DarkForces::Component::InfElevator* elevator = dynamic_cast<DarkForces::Component::InfElevator*>(target->findComponent(DF_COMPONENT_INF_ELEVATOR));
+		if (elevator != nullptr) {
+			glm::vec3 head = m_entity->position();
+			head.y += m_entity->height(); // check collision from the entity head
+
+			Framework::Segment segment(head, v3);
+			std::vector<gaCollisionPoint> collisions;
+			if (!g_gaWorld.intersectWithEntity(segment, collisions)) {
+				// as the end of the segment is in the middle of the door, there MUST be a collision
+				__debugbreak();
+			}
+
+			// parse the collision until we find a collision that is not the entity itself
+			glm::vec3 collision;
+			for (auto& c : collisions) {
+				if (c.m_source != m_entity) {
+					collision = c.m_position;
+					break;
+				}
+			}
+			const glm::vec3 direction = glm::normalize(segment.m_end - collision);
+			v3 = collision - direction * m_entity->radius();
 		}
 
 		m_variable.set(m_tree, v3);

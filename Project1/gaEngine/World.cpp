@@ -920,6 +920,10 @@ bool GameEngine::World::intersectWithEntity(
 	return false;
 }
 
+/**
+ * find the all entities intersecting with the segment
+ * return a list of entities
+ */
 bool GameEngine::World::intersectWithEntity(Framework::Segment& segment,
 	std::vector<gaEntity*>& entCollisions)
 {
@@ -954,9 +958,11 @@ bool GameEngine::World::intersectWithEntity(Framework::Segment& segment,
 }
 
 /**
- * Return the nearest collision point
+ * find the all entities intersecting with the segment
+ * return a list of entities and collision points sorted by nearest first
  */
-gaEntity* GameEngine::World::rayIntersect(Framework::Segment& segment, glm::vec3& collision)
+bool GameEngine::World::intersectWithEntity(Framework::Segment& segment,
+	std::vector<gaCollisionPoint>& entCollisions)
 {
 	fwAABBox aabb(segment);
 	glm::mat4 worldMatrix(1);
@@ -969,6 +975,7 @@ gaEntity* GameEngine::World::rayIntersect(Framework::Segment& segment, glm::vec3
 	gaEntity* collidedEntity = nullptr;
 
 	// test again entities
+	float d;
 	for (auto& entry : m_entitiesByID) {
 		// ignore ghosts and itself
 		if (!entry.second->physical()) {
@@ -980,11 +987,20 @@ gaEntity* GameEngine::World::rayIntersect(Framework::Segment& segment, glm::vec3
 			// extended test
 			collisions.clear();
 			if (entry.second->collide(collider, forward, down, collisions)) {
-
-				entCollisions.push_back(entry.second);
+				for (auto& c : collisions) {
+					d = glm::distance2(segment.m_start, c.m_position);
+					c.m_source = entry.second;
+					c.m_distance = d;
+					entCollisions.push_back(c);
+				}
 			}
 		}
 	}
+
+	// sort the final result
+	std::sort(entCollisions.begin(), entCollisions.end(),
+		[](const gaCollisionPoint& a, const gaCollisionPoint& b) { return a.m_distance < b.m_distance; });
+	return entCollisions.size() > 0;
 }
 
 /**
