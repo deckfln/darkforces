@@ -62,7 +62,6 @@ void DarkForces::Behavior::Activate::init(void *data)
 {
 	// we are on a natural move, to the elevator can be activated
 	// test all triggers of the object
-
 	gaEntity* trigger = m_tree->blackboard().pGet<gaEntity>(m_variable, GameEngine::Variable::Type::PTR);
 
 	m_entity->sendMessage(trigger->name(), DarkForces::Message::TRIGGER);
@@ -90,14 +89,16 @@ void DarkForces::Behavior::Activate::dispatchMessage(gaMessage* message, Action*
 
 //---------------------------
 
+#ifdef _DEBUG
 /**
  * Debugger
  */
 void DarkForces::Behavior::Activate::debugGUInode(GameEngine::Component::BehaviorTree* tree)
 {
-	const std::string& trigger = m_tree->blackboard().get<std::string>(m_variable, GameEngine::Variable::Type::STRING);
+	gaEntity* trigger = m_tree->blackboard().pGet<gaEntity>(m_variable, GameEngine::Variable::Type::PTR);
 
-	if (trigger != "") {
-		ImGui::Text("Activate: %s", trigger.c_str());
+	if (trigger != nullptr) {
+		ImGui::Text("Activate: %s", trigger->name().c_str());
 	}
 }
+#endif

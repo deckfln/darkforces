@@ -67,7 +67,8 @@ void DarkForces::Behavior::WaitDoor::init(void* data)
 
 	case Component::InfElevator::Status::WAIT:
 	case Component::InfElevator::Status::HOLD:
-		m_status = Status::FAILED;
+		// the door is already open, so get out successfuly
+		m_status = Status::SUCCESSED;
 		return;
 	}
 
@@ -102,11 +103,14 @@ void DarkForces::Behavior::WaitDoor::dispatchMessage(gaMessage* message, Action*
  */
 void DarkForces::Behavior::WaitDoor::debugGUInode(GameEngine::Component::BehaviorTree* tree)
 {
-//	DarkForces::Component::InfElevator* elevator = m_tree->blackboard().pGet<DarkForces::Component::InfElevator>("wait_elevator", GameEngine::Variable::Type::PTR);
-	DarkForces::Component::InfElevator* elevator = static_cast<DarkForces::Component::InfElevator*>(m_elevator.getp(m_tree));
-	if (elevator != nullptr) {
-		gaEntity* entity = elevator->entity();
-		ImGui::Text("Wait elevator: %s", entity->name().c_str());
+	gaEntity* entity = static_cast<gaEntity*>(m_elevator.getp(m_tree));
+	if (entity != nullptr) {
+		DarkForces::Component::InfElevator* elevator = dynamic_cast<DarkForces::Component::InfElevator*>(entity->findComponent(DF_COMPONENT_INF_ELEVATOR));
+
+		if (elevator != nullptr) {
+			gaEntity* entity = elevator->entity();
+			ImGui::Text("Wait elevator: %s", entity->name().c_str());
+		}
 	}
 }
 

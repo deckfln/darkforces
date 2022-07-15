@@ -44,9 +44,12 @@ namespace GameEngine {
 			m_type[variable] = t;
 		}
 
+#ifdef _DEBUG
 		if (m_type[variable] != t) {
 			gaDebugLog(1, "GameEngine::Blackboard::set", "incompatible type for " + variable);
+			__debugbreak();
 		}
+#endif
 		*(static_cast<T*>(m_value[variable])) = value;
 	}
 
@@ -57,9 +60,12 @@ namespace GameEngine {
 			m_type[variable] = t;
 		}
 		
+#ifdef _DEBUG
 		if (m_type[variable] != t) {
 			gaDebugLog(1, "GameEngine::Blackboard::set", "incompatible type for " + variable);
+			__debugbreak();
 		}
+#endif
 		m_value[variable] = (void *)pointer;
 		m_type[variable] = t;
 	}
@@ -72,9 +78,12 @@ namespace GameEngine {
 			m_type[variable] = t;
 		}
 
+#ifdef _DEBUG
 		if (m_type[variable] != t) {
 			gaDebugLog(1, "GameEngine::Blackboard::get", "incompatible type for " + variable);
+			__debugbreak();
 		}
+#endif
 
 		return *(static_cast<T*>(m_value[variable]));
 	}
@@ -86,9 +95,12 @@ namespace GameEngine {
 			m_type[variable] = t;
 		}
 
+#ifdef _DEBUG
 		if (m_type[variable] != t) {
 			gaDebugLog(1, "GameEngine::Blackboard::set", "incompatible type for " + variable);
+			__debugbreak();
 		}
+#endif
 		return static_cast<T*>(m_value[variable]);
 	}
 
@@ -99,10 +111,11 @@ namespace GameEngine {
 			m_type[variable] = GameEngine::Variable::Type::PTR;
 		}
 
+#ifdef _DEBUG
 		if (m_type[variable] != GameEngine::Variable::Type::PTR) {
 			gaDebugLog(1, "GameEngine::Blackboard::pSet", "incompatible type for " + variable);
-			exit(-1);
 		}
+#endif
 		m_value[variable] = ptr;
 	}
 

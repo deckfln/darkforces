@@ -23,8 +23,10 @@ namespace DarkForces {
 
 			void dispatchMessage(gaMessage* message, Action* r) override;	// let a component deal with a situation
 
+#ifdef _DEBUG
 			//debugger
 			void debugGUInode(GameEngine::Component::BehaviorTree* tree) override;			// display the component in the debugger
+#endif
 		};
 	}
 }
