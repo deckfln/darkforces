@@ -10,30 +10,25 @@
 	<!-- ******************************************************************** -->
 	<tasks>
 		<task class='moveEnemyToUnless' description='move enemy to a position unless there is an interruption'>
-			<node type='Sequence' name='wait for door or open door'>
-				<condition>exit_first_success</condition>
-				<tree>
-					<node type='SatNav' name='go directy to final position'>
-						<variable type='vec3'>satnav_target</variable>
-						<collisionExit>5.0</collisionExit>
-						<exit>
-							<!--
-					<if>
-						<variable type='bool'>player_visible</variable>
-						<value type='bool'>true</value>
-					</if>
-					<if>
-						<variable type='bool'>hit_bullet</variable>
-						<value type='bool'>true</value>
-					</if>
-					<if>
-						<variable type='bool'>heard_sound</variable>
-						<value type='bool'>true</value>
-					</if>
-					-->
-						</exit>
-					</node>
-				</tree>
+			<node type='SatNav' name='go directy to final position'>
+				<variable type='vec3'>satnav_target</variable>
+				<collisionExit>5.0</collisionExit>
+				<exit>
+					<!--
+			<if>
+				<variable type='bool'>player_visible</variable>
+				<value type='bool'>true</value>
+			</if>
+			<if>
+				<variable type='bool'>hit_bullet</variable>
+				<value type='bool'>true</value>
+			</if>
+			<if>
+				<variable type='bool'>heard_sound</variable>
+				<value type='bool'>true</value>
+			</if>
+			-->
+				</exit>
 			</node>
 		</task>
 		<task class='moveAndOpenDoor' description=''>

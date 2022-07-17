@@ -126,10 +126,6 @@ void Physics::testEntities(gaEntity* entity, const Transform& tranform, std::vec
 			continue;
 		}
 
-		if (entity->name() == "player" && target->name() == "enthall;blocker1;72;70;blocker2;69;67;watchwhat;") {
-			printf("Physics::testEntities blocker2 vs player\n");
-		}
-
 		if (target->name() != entity->name()) {
 			size = collisions.size();
 			if (entity->collide(target, tranform.m_forward, tranform.m_downward, collisions)) {
@@ -814,12 +810,12 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 			// if there is a collision
 			gaEntity* pushed = static_cast<gaEntity*>(nearest_collision->m_source);
 
-			if (entity->name() == "player")
+			if (entity->name() == "OFFCFIN.WAX(21)")
 				gaDebugLog(1, "GameEngine::Physics::wantToMove", entity->name() + " trying to pushe");
 
 			if (!entity->movable() && pushed->movable()) {
 
-				if (entity->name() == "player")
+				if (entity->name() == "OFFCFIN.WAX(21)")
 					gaDebugLog(1, "GameEngine::Physics::wantToMove", entity->name() + " pushes " + pushed->name());
 
 				GameEngine::Transform& t = pushed->transform();
@@ -848,7 +844,7 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 			}
 			else if (entity->movable() && !pushed->movable()) {
 
-				if (entity->name() == "player")
+				if (entity->name() == "OFFCFIN.WAX(21)")
 					gaDebugLog(1, "GameEngine::Physics::wantToMove", pushed->name() + " pushes " + entity->name());
 
 				GameEngine::Transform& t = entity->transform();
@@ -966,7 +962,7 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 				solvers[entity][pushed] = nearest_collision->m_position;
 				solvers[pushed][entity] = nearest_collision->m_position;
 
-				if (entity->name() == "player")
+				if (entity->name() == "OFFCFIN.WAX(21)")
 					gaDebugLog(1, "GameEngine::Physics::wantToMove", pushed->name() + " collision " + entity->name());
 			}
 			else {
@@ -1019,13 +1015,13 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 					actions.push(entity);	// fix the entity altitude
 					fix_y = true;
 
-					if (entity->name() == "player")
+					if (entity->name() == "OFFCFIN.WAX(21)")
 						gaDebugLog(1, "GameEngine::Physics::wantToMove", entity->name() + " falling to ground " + std::to_string(tranform.m_position.x)
 							+ " " + std::to_string(tranform.m_position.y)
 							+ " " + std::to_string(tranform.m_position.z));
 				}
 
-				if (entity->name() == "player")
+				if (entity->name() == "OFFCFIN.WAX(21)")
 					gaDebugLog(1, "GameEngine::Physics::wantToMove", entity->name() + " hit sector ceiling " + std::to_string(tranform.m_position.x)
 					+ " " + std::to_string(tranform.m_position.y)
 					+ " " + std::to_string(tranform.m_position.z));

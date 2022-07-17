@@ -166,7 +166,7 @@ void DarkForces::Behavior::SetVar::init(void* data)
 		// if the trigger is a dfSign, move in front of the object, on ON the object
 		Component::Sign* sign = dynamic_cast<Component::Sign*>(target->findComponent(DF_COMPONENT_SIGN));
 		if (sign) {
-			v3 += sign->normal() * m_entity->radius();
+			v3 += sign->normal() * m_entity->radius() * 1.01f;
 		}
 
 		// if the trigger is ALSO an elevator (like DOORS), also move in front of the door, not to tne center of the door
@@ -191,7 +191,10 @@ void DarkForces::Behavior::SetVar::init(void* data)
 				}
 			}
 			const glm::vec3 direction = glm::normalize(segment.m_end - collision);
-			v3 = collision - direction * m_entity->radius();
+
+			// move the entity slight BEHIND the target position
+			// this will avoid future collision detection
+			v3 = collision - direction * m_entity->radius() * 1.05f;
 		}
 
 		m_variable.set(m_tree, v3);

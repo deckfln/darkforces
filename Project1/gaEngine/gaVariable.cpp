@@ -329,7 +329,7 @@ const char* GameEngine::Variable::value(GameEngine::Component::BehaviorTree* tre
 	}
 	case Type::VEC3: {
 		const glm::vec3& v3a = getv3(tree);
-		snprintf(tmp1, 64, "%.2f %.2f %.2f", v3a.x, v3a.x, v3a.y);
+		snprintf(tmp1, 64, "%.2f %.2f %.2f", v3a.x, v3a.y, v3a.z);
 		break;
 	}
 	case Type::STRING: {
