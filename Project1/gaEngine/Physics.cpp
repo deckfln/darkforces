@@ -405,7 +405,9 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
  		glm::vec3 old_position = entity->position();
 
 #ifdef _DEBUG
-		if (entity->name() == "XXX") {
+		if (entity->name() == "OFFCFIN.WAX(21)") {
+//			entity->transform(&tranform);
+//			tranform.m_position = glm::vec3(-25.497410, 0.007000, 24.253742);
 			gaDebugLog(1, "GameEngine::Physics::wantToMove", entity->name() + " to " + std::to_string(tranform.m_position.x)
 				+ " " + std::to_string(tranform.m_position.y)
 				+ " " + std::to_string(tranform.m_position.z));
@@ -844,8 +846,9 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 			}
 			else if (entity->movable() && !pushed->movable()) {
 
-				if (entity->name() == "OFFCFIN.WAX(21)")
+				if (entity->name() == "OFFCFIN.WAX(21)") {
 					gaDebugLog(1, "GameEngine::Physics::wantToMove", pushed->name() + " pushes " + entity->name());
+				}
 
 				GameEngine::Transform& t = entity->transform();
 				const glm::vec3& p = entity->position();

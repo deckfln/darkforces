@@ -733,6 +733,7 @@ bool Collider::collision_cylinder_aabb_tree(const Collider& cylinder,
 	glm::vec3 center_es;
 	fwAABBox cyl_aabb_gs;
 
+	/*
 	init_elipsoide(
 		static_cast<fwCylinder*>(cylinder.m_source),
 		*cylinder.m_worldMatrix,
@@ -741,12 +742,25 @@ bool Collider::collision_cylinder_aabb_tree(const Collider& cylinder,
 		center_gs,
 		center_es,
 		cyl_aabb_gs);
+	*/
+	fwCylinder* pCylinder = static_cast<fwCylinder*>(cylinder.m_source);
+	glm::vec3 ellipsoid(pCylinder->radius(), pCylinder->height() / 2.0f, pCylinder->radius());
 
-	GameEngine::AABBoxTree* pAabbTree = static_cast<GameEngine::AABBoxTree*>(aabb_tree.m_source);
+	// deform the model_space to make the ellipsoid  sphere
+	ellipsoid_space = glm::vec3(1.0 / ellipsoid.x, 1.0 / ellipsoid.y, 1.0 / ellipsoid.z);
+
+	// convert cylinder space (opengl world space) into the geometry space (model space)
+	glm::mat4 mat = *cylinder.m_worldMatrix;
+	glm::vec3 center_cs(0, pCylinder->height() / 2.0f, 0);
+	center_gs = glm::vec3(mat * glm::vec4(center_cs, 1.0));
+	center_es = center_gs*ellipsoid_space;
+
+	cyl_aabb_gs = fwAABBox(* cylinder.m_aabb, mat);
 
 	// find the smallest set of gaAABB intersecting with the fwAABB
 	// and test only the included triangles
 	// for each triangle, extract the AABB in geometry space and check collision with the source AABB in geometry space
+	GameEngine::AABBoxTree* pAabbTree = static_cast<GameEngine::AABBoxTree*>(aabb_tree.m_source);
 	std::vector<GameEngine::AABBoxTree*> hits;
 	if (!pAabbTree->find(cyl_aabb_gs, hits)) {
 		return false;
