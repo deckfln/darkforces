@@ -1,5 +1,7 @@
 #include "dfBSetVar.h"
 
+#include <glm/gtx/normal.hpp>
+
 #include "../../gaEngine/gaNavMesh.h"
 #include "../../gaEngine/gaComponent/gaBehaviorTree.h"
 #include "../dfComponent.h"
@@ -184,17 +186,26 @@ void DarkForces::Behavior::SetVar::init(void* data)
 
 			// parse the collision until we find a collision that is not the entity itself
 			glm::vec3 collision;
+			glm::vec3 normal;
 			for (auto& c : collisions) {
 				if (c.m_source != m_entity) {
 					collision = c.m_position;
+					normal = glm::triangleNormal(
+						c.m_triangle[0],
+						c.m_triangle[1],
+						c.m_triangle[2]
+					);
 					break;
 				}
 			}
-			const glm::vec3 direction = glm::normalize(segment.m_end - collision);
 
-			// move the entity slight BEHIND the target position
-			// this will avoid future collision detection
-			v3 = collision - direction * m_entity->radius() * 1.05f;
+			// and move ahead of the collision based on the triangle normal
+			v3 = collision + normal * m_entity->radius() * 1.01f;
+			/*
+			printf("DarkForces::Behavior::SetVar::init\n");
+			printf("%.02f,%.02f,%.02f\n", collision.x, collision.y, collision.z);
+			printf("%.02f,%.02f,%.02f\n", v3.x, v3.y, v3.z);
+			*/
 		}
 
 		m_variable.set(m_tree, v3);

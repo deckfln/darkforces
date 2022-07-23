@@ -190,17 +190,20 @@ void GameEngine::Behavior::MoveTo::onReachedNextWayPoint(gaMessage *message)
  */
 void GameEngine::Behavior::MoveTo::onBlockedWay(gaMessage *message)
 {
-	// broadcast the end of the move
-	m_status = Status::STILL;
-	m_entity->sendMessage(gaMessage::END_MOVE);
+	//distance from the destination on the floor (in heigh the target may be at arms level)
+	glm::vec2 a(m_entity->position().x, m_entity->position().z);
+	glm::vec2 b(m_navpoints->at(m_currentNavPoint).x, m_navpoints->at(m_currentNavPoint).z);
+	float distance = glm::distance(a, b);
 
-	float distance = glm::distance(m_entity->position(), m_destination);
-
-	// check how far we are from the destination
-	if (distance < m_entity->radius() * 1.5f) {
+	// check how far we are from the destination in the plane
+	if (distance < m_entity->radius()) {
 		BehaviorNode::m_status = BehaviorNode::Status::SUCCESSED;
 	}
 	else {
+		// broadcast the end of the move
+		m_status = Status::STILL;
+		m_entity->sendMessage(gaMessage::END_MOVE);
+
 		// we are blocked and jumped over all waypoints
 		struct GameEngine::Physics::CollisionList& collisions = *(struct GameEngine::Physics::CollisionList *)&message->m_data;
 		m_tree->blackboard().set<struct GameEngine::Physics::CollisionList>("lastCollision", collisions, GameEngine::Variable::Type::OBJECT);
@@ -594,10 +597,10 @@ void GameEngine::Behavior::MoveTo::debugGUInode(GameEngine::Component::BehaviorT
 		for (size_t i = 0, j=0; i < m_navpoints->size()-1; i++) {
 			ImGui::Text("%d: %.2f %.2f %.2f", i, m_navpoints->at(i).x, m_navpoints->at(i).y, m_navpoints->at(i).z);
 			m_vertices[j++] = m_navpoints->at(i).x;
-			m_vertices[j++] = m_navpoints->at(i).y+0.5;
+			m_vertices[j++] = m_navpoints->at(i).y+0.01;
 			m_vertices[j++] = m_navpoints->at(i).z;
 			m_vertices[j++] = m_navpoints->at(i+1).x;
-			m_vertices[j++] = m_navpoints->at(i+1).y+0.5;
+			m_vertices[j++] = m_navpoints->at(i+1).y+0.01;
 			m_vertices[j++] = m_navpoints->at(i+1).z;
 		}
 		m_geometry->update();
