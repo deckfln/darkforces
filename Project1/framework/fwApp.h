@@ -10,15 +10,16 @@
 #include "fwControl.h"
 #include "fwRenderer.h"
 
+#ifdef _DEBUG
 #include "fwDebug.h"
+#include <imgui.h>
+#endif
 
 class fwApp
 {
 protected:
 	fwCamera* m_camera = nullptr;
 	fwScene* m_scene = nullptr;;
-
-	Framework::Debug* m_debugger = nullptr;
 
 	int m_height = 0;
 	int m_width = 0;
@@ -30,6 +31,11 @@ protected:
 	fwRenderer* m_renderer = nullptr;
 
 	friend Framework::Debug;
+
+#ifdef _DEBUG
+	Framework::Debug* m_debugger = nullptr;
+	void virtual createDocks(ImGuiID dockspace_id);		// create the initial docking model
+#endif
 
 public:
 	fwApp(std::string name, int _width, int _height, std::string post_processing, std::string defines);

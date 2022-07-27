@@ -26,6 +26,10 @@
 #include "gaBehaviorNode/gaBCheckVar.h"
 #include "gaBehaviorNode//gaBAlarm.h"
 
+#ifdef _DEBUG
+#include <imgui_internal.h>
+#endif
+
 /**
  *
  */
@@ -143,6 +147,29 @@ void GameEngine::App::registerDebugger(void)
 	static const std::map<int32_t, const std::map<int32_t, const char*>>  g_definitions_values;
 
 	gaMessage::declareMessages(g_definitions, g_definitions_values);
+}
+
+/**
+ * create the initial docking model
+ */
+void GameEngine::App::createDocks(ImGuiID dockspace_id)
+{
+	// split the dockspace into 2 nodes -- DockBuilderSplitNode takes in the following args in the following order
+	//   window ID to split, direction, fraction (between 0 and 1), the final two setting let's us choose which id we want (which ever one we DON'T set as NULL, will be returned by the function)
+	//   out_id_at_dir is the id of the node in the direction we specified earlier, out_id_at_opposite_dir is in the opposite direction
+	auto topbar = ImGui::DockBuilderSplitNode(dockspace_id, ImGuiDir_Up, 0.1f, nullptr, &dockspace_id);
+	auto menu = ImGui::DockBuilderSplitNode(topbar, ImGuiDir_Left, 0.2f, nullptr, &topbar);
+	auto dock_id_left = ImGui::DockBuilderSplitNode(dockspace_id, ImGuiDir_Left, 0.2f, nullptr, &dockspace_id);
+	auto dock_id_right = ImGui::DockBuilderSplitNode(dockspace_id, ImGuiDir_Right, 0.2f, nullptr, &dockspace_id);
+	auto dock_id_down = ImGui::DockBuilderSplitNode(dockspace_id, ImGuiDir_Down, 0.25f, nullptr, &dockspace_id);
+
+	// we now dock our windows into the docking node we made above
+	ImGui::DockBuilderDockWindow("3D View", dockspace_id);
+	ImGui::DockBuilderDockWindow("Explorer", dock_id_left);
+	ImGui::DockBuilderDockWindow("Inspector", dock_id_right);
+	ImGui::DockBuilderDockWindow("Messages", dock_id_down);
+	ImGui::DockBuilderDockWindow("Menu", menu);
+	ImGui::DockBuilderDockWindow("flightRecorder v2", topbar);
 }
 #endif
 

@@ -3,9 +3,12 @@
 #include <direct.h>
 #include <limits.h>
 
+#ifdef _DEBUG
 #include <imgui.h>
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
+#include <imgui_internal.h>
+#endif
 
 #include <iostream>
 #include <chrono>
@@ -82,6 +85,23 @@ static void rootfolder(void)
 	}
 }
 
+/**
+ * create the initial docking model
+ */
+void fwApp::createDocks(ImGuiID dockspace_id)
+{
+	// split the dockspace into 2 nodes -- DockBuilderSplitNode takes in the following args in the following order
+	//   window ID to split, direction, fraction (between 0 and 1), the final two setting let's us choose which id we want (which ever one we DON'T set as NULL, will be returned by the function)
+	//   out_id_at_dir is the id of the node in the direction we specified earlier, out_id_at_opposite_dir is in the opposite direction
+	auto dock_id_left = ImGui::DockBuilderSplitNode(dockspace_id, ImGuiDir_Left, 0.2f, nullptr, &dockspace_id);
+	auto dock_id_right = ImGui::DockBuilderSplitNode(dockspace_id, ImGuiDir_Right, 0.2f, nullptr, &dockspace_id);
+
+	// we now dock our windows into the docking node we made above
+	ImGui::DockBuilderDockWindow("3D View", dockspace_id);
+	ImGui::DockBuilderDockWindow("Explorer", dock_id_left);
+	ImGui::DockBuilderDockWindow("Inspector", dock_id_right);
+}
+
 /***
  *
  */
@@ -131,20 +151,21 @@ fwApp::fwApp(std::string name, int _width, int _height, std::string post_process
 	ImGuiIO& io = ImGui::GetIO();
 	//io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
 	//io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
-	io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
+	//io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 
 	// Setup Dear ImGui style
 	ImGui::StyleColorsDark();
 	//ImGui::StyleColorsClassic();
-
+	// 
 	// Setup Platform/Renderer backends
 	ImGui_ImplGlfw_InitForOpenGL(window, true);
 	ImGui_ImplOpenGL3_Init(glsl_version);
-#endif
 
 	// setup the backend render
-	glfwMakeContextCurrent(window);
+	//glfwMakeContextCurrent(window);
+
+#endif
 
 	m_renderer = new fwRendererDefered(SCR_WIDTH, SCR_HEIGHT);
 
@@ -156,11 +177,13 @@ fwApp::fwApp(std::string name, int _width, int _height, std::string post_process
 	postProcessing = new fwPostProcessing(post_processing + "/vertex.glsl", post_processing + "/fragment.glsl", source, defines);
 	postProcessing->addUniform(pixelsize);
 
+	/*
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 	glfwSetCursorPosCallback(window, cursor_position_callback);
 	glfwSetMouseButtonCallback(window, mouse_button_callback);
 	glfwSetScrollCallback(window, scroll_callback);
 	glfwSetKeyCallback(window, key_callback);
+	*/
 }
 
 void fwApp::bindControl(fwControl *_control)
@@ -294,7 +317,7 @@ void fwApp::run(void)
 
 		// 3rd pass : post-processing
 		//glCullFace(GL_BACK);
-		postProcessing->draw(color);
+		//postProcessing->draw(color);
 
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
 		// -------------------------------------------------------------------------------
@@ -306,10 +329,95 @@ void fwApp::run(void)
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
 
+		// We are using the ImGuiWindowFlags_NoDocking flag to make the parent window not dockable into,
+		// because it would be confusing to have two docking targets within each others.
+		ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
+
+		ImGuiViewport* viewport = ImGui::GetMainViewport();
+		ImGui::SetNextWindowPos(viewport->Pos);
+		ImGui::SetNextWindowSize(viewport->Size);
+		ImGui::SetNextWindowViewport(viewport->ID);
+		//ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
+		//ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+		window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
+		window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
+
+		// Important: note that we proceed even if Begin() returns false (aka window is collapsed).
+		// This is because we want to keep our DockSpace() active. If a DockSpace() is inactive, 
+		// all active windows docked into it will lose their parent and become undocked.
+		// We cannot preserve the docking relationship between an active window and an inactive docking, otherwise 
+		// any change of dockspace/settings would lead to windows being stuck in limbo and never being visible.
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
+		ImGui::Begin("DockSpace Demo", nullptr, window_flags);
+		ImGui::PopStyleVar();
+		//ImGui::PopStyleVar(2);
+
+		// DockSpace
+		ImGuiIO& io = ImGui::GetIO();
+		ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
+		
+		if (ImGui::DockBuilderGetNode(dockspace_id) == nullptr) {
+
+			ImGui::DockBuilderRemoveNode(dockspace_id); // clear any previous layout
+			ImGui::DockBuilderAddNode(dockspace_id, ImGuiDockNodeFlags_DockSpace);
+			//ImGui::DockBuilderGetNode(dockspace_id)->LocalFlags &= ~ImGuiDockNodeFlags_CentralNode;
+			ImGui::DockBuilderSetNodeSize(dockspace_id, viewport->Size);
+
+			createDocks(dockspace_id);
+
+			ImGui::DockBuilderFinish(dockspace_id);
+		}
+		dockspace_id = ImGui::GetID("MyDockSpace");
+		ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f));
+
+		if (ImGui::BeginMenuBar())
+		{
+			if (ImGui::BeginMenu("File"))
+			{
+				// Disabling fullscreen would allow the window to be moved to the front of other windows, 
+				// which we can't undo at the moment without finer window depth/z control.
+				//ImGui::MenuItem("Fullscreen", NULL, &opt_fullscreen_persistant);1
+				if (ImGui::MenuItem("New", "Ctrl+N")) {
+
+				}
+
+				if (ImGui::MenuItem("Open...", "Ctrl+O")) {
+				}
+
+				if (ImGui::MenuItem("Save", "Ctrl+S")) {
+
+				}
+
+				if (ImGui::MenuItem("Save As...", "Ctrl+Shift+S")) {
+
+				}
+
+				if (ImGui::MenuItem("Exit")) {
+				}
+				ImGui::EndMenu();
+			}
+			ImGui::EndMenuBar();
+		}
+		ImGui::End();	// DockSpace Demo
+
 		// render your GUI
 		if (m_debugger)
 			m_debugger->render();
-
+		
+		ImGui::Begin("3D View");
+		float view3d_height = ImGui::GetWindowSize().x;
+		float view3d_width = ImGui::GetWindowSize().y;
+		ImVec2 pos = ImGui::GetCursorScreenPos();
+		ImGui::GetWindowDrawList()->AddImage(
+			(void*)color->getID(),
+			ImVec2(ImGui::GetCursorScreenPos()),
+			ImVec2(ImGui::GetCursorScreenPos().x + ImGui::GetWindowSize().x - 15,
+				ImGui::GetCursorScreenPos().y + ImGui::GetWindowSize().y - 35),
+			ImVec2(0, 1),
+			ImVec2(1, 0)
+		);
+		ImGui::End();
+		
 		// Render dear imgui into screen
 		ImGui::Render();
 

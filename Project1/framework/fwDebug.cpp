@@ -36,24 +36,23 @@ void Framework::Debug::render(void)
 {
 	bool old_state = m_debug;
 
-	ImGui::Begin("Menu");                          // Create a window called "Hello, world!" and append into it.
+	ImGui::Begin("flightRecorder v2");                          // Create a window called "Hello, world!" and append into it.
 
 	if (m_debug) {
-		if (ImGui::Button("Exit debug")) {
+		if (ImGui::Button(">")) {
 			m_debug = false;
 			m_requestDebug = false;
 		}
-		else {
-			m_app->m_scene->debugGUI();
-		}
 	}
 	else {
-		if (ImGui::Button("Enter debug") || m_requestDebug) {
+		if (ImGui::Button("||") || m_requestDebug) {
 			m_debug = true;
 			m_requestDebug = false;
 		}
 	}
+	ImGui::SameLine();
 	ImGui::End();
+	m_app->m_scene->debugGUI(m_debug);
 }
 
 Framework::Debug::~Debug()

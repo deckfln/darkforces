@@ -1144,48 +1144,52 @@ void GameEngine::World::add(gaEntity* entity)
 /**
  * Render the list of entities on the debug imGUI
  */
-void GameEngine::World::debugGUI(void)
+void GameEngine::World::debugGUI(bool b)
 {
 	// list entities to pick from
 	static bool eclose = false;
 	const char* classname;
 
 	if (!eclose && ImGui::Begin("Explorer", &eclose)) {
-		if (ImGui::TreeNode("gaEntities")) {
-			for (auto& mclass : m_entitiesByClass) {
-				classname = g_entityClassName[mclass.first];
-				if (ImGui::TreeNode(classname)) {
-					mclass.second.sort(
-						[](gaEntity* a, gaEntity* b) { return a->name() < b->name(); }
-					);
-					for (auto entity : mclass.second) {
-						const std::string& name = entity->name() + "##" + std::to_string(entity->entityID());
-						bool old = m_watch[name].m_display;
-						m_watch[name].m_entity = entity;
-						ImGui::Checkbox(name.c_str(), &m_watch[name].m_display);
-						if (old != m_watch[name].m_display) {
-							m_watchName[entity->name()] = m_watch[name].m_display;
-							if (m_watch[name].m_display) {
-								entity->worldAABB().color(glm::vec3(1.0f, 0.0f, 0.0f));
-							}
-							else {
-								entity->worldAABB().color(glm::vec3(1.0f, 1.0f, 1.0f));
+		if (b) {
+			if (ImGui::TreeNode("gaEntities")) {
+				for (auto& mclass : m_entitiesByClass) {
+					classname = g_entityClassName[mclass.first];
+					if (ImGui::TreeNode(classname)) {
+						mclass.second.sort(
+							[](gaEntity* a, gaEntity* b) { return a->name() < b->name(); }
+						);
+						for (auto entity : mclass.second) {
+							const std::string& name = entity->name() + "##" + std::to_string(entity->entityID());
+							bool old = m_watch[name].m_display;
+							m_watch[name].m_entity = entity;
+							ImGui::Checkbox(name.c_str(), &m_watch[name].m_display);
+							if (old != m_watch[name].m_display) {
+								m_watchName[entity->name()] = m_watch[name].m_display;
+								if (m_watch[name].m_display) {
+									entity->worldAABB().color(glm::vec3(1.0f, 0.0f, 0.0f));
+								}
+								else {
+									entity->worldAABB().color(glm::vec3(1.0f, 1.0f, 1.0f));
+								}
 							}
 						}
+						ImGui::TreePop();
 					}
-					ImGui::TreePop();
 				}
+				ImGui::TreePop();
 			}
-			ImGui::TreePop();
 		}
 		ImGui::End();
-
 	}
+
 	// display entities monitored
 	ImGui::Begin("Inspector");
-	for (auto& watch : m_watch) {
-		if (watch.second.m_display) {
-			watch.second.m_entity->debugGUI(watch.first, &m_watch[watch.first].m_display);
+	if (b) {
+		for (auto& watch : m_watch) {
+			if (watch.second.m_display) {
+				watch.second.m_entity->debugGUI(watch.first, &m_watch[watch.first].m_display);
+			}
 		}
 	}
 	ImGui::End();

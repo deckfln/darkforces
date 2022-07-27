@@ -34,7 +34,8 @@ namespace GameEngine {
 
 #ifdef _DEBUG
 		friend Debug;
-		virtual void registerDebugger(void);	// register messages & classed for debugger
+		virtual void registerDebugger(void);					// register messages & classed for debugger
+		void createDocks(ImGuiID dockspace_id) override;		// create the initial docking model
 #endif
 
 	public:

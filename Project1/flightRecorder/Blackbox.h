@@ -82,9 +82,9 @@ namespace flightRecorder {
 
 		inline int len(void) { return m_len; }
 
-		bool debugGUI(void);		// display the flight recorder data on the debugger
-		void debugGUImessages(void);	// display messages from the queue
-		void debugGUIinframe(void);	// display messages inframe
+		bool debugGUI(bool b);		// display the flight recorder data on the debugger
+		void debugGUImessages(bool b);	// display messages from the queue
+		void debugGUIinframe(bool b);	// display messages inframe
 
 		~Blackbox();
 	};

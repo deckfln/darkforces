@@ -68,17 +68,21 @@ void fwScene::drawUI(void)
 /**
  * Display the scene content on the debugger
  */
-void fwScene::debugGUI(void)
+void fwScene::debugGUI(bool debug)
 {
 	ImGui::Begin("Explorer");
-	debugGUItree(m_inspector);
+	if (debug) {
+		debugGUItree(m_inspector);
+	}
 	ImGui::End();
 
 	// display entities monitored
 	ImGui::Begin("Inspector");
-	for (auto& watch : m_inspector) {
-		if (watch.second && watch.first != this) {
-			watch.first->debugGUI();
+	if (debug) {
+		for (auto& watch : m_inspector) {
+			if (watch.second && watch.first != this) {
+				watch.first->debugGUI();
+			}
 		}
 	}
 	ImGui::End();

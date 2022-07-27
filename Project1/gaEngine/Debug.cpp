@@ -59,61 +59,10 @@ void GameEngine::Debug::render(void)
 	myDarkForces* app = static_cast<myDarkForces *>(m_app);
 
 	// create defaul layout	
-	/*
-	ImGuiWindowFlags windowFlags = ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoTitleBar |
-		ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove |
-		ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus |
-		ImGuiWindowFlags_NoBackground;
-
-	ImGuiViewport* viewport = ImGui::GetMainViewport();
-	ImGui::SetNextWindowPos(viewport->Pos);
-	ImGui::SetNextWindowSize(viewport->Size);
-	ImGui::SetNextWindowViewport(viewport->ID);
-
-	ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
-	ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
-	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
-	ImGui::Begin("InvisibleWindow", nullptr, windowFlags); // This is basically the background window that contains all the dockable windows
-	ImGui::PopStyleVar(3);
-
-	ImGuiID dockSpaceId = ImGui::GetID("InvisibleWindowDockSpace");
-	if (!ImGui::DockBuilderGetNode(dockSpaceId)) {
-		ImGui::DockBuilderRemoveNode(dockSpaceId);
-		ImGuiDockNodeFlags dockSpaceFlags = ImGuiDockNodeFlags_None;;
-		dockSpaceFlags |= ImGuiDockNodeFlags_PassthruCentralNode;
-		ImGui::DockBuilderAddNode(dockSpaceId, ImGuiDockNodeFlags_DockSpace);
-
-		ImGuiID dockMain = dockSpaceId;
-		ImGuiID dockLeft = ImGui::DockBuilderSplitNode(dockMain, ImGuiDir_Left, 0.40f, NULL, &dockMain);
-		ImGuiID dockRight = ImGui::DockBuilderSplitNode(dockMain, ImGuiDir_Right, 0.40f, NULL, &dockMain);
-		ImGuiID dockBottom = ImGui::DockBuilderSplitNode(dockMain, ImGuiDir_Down, 0.40f, NULL, &dockMain);
-
-		ImGui::DockBuilderDockWindow("MainWindow", dockMain);
-		ImGui::DockBuilderDockWindow("Player", dockBottom);
-		ImGui::DockBuilderDockWindow("Explorer", dockLeft);
-		ImGui::DockBuilderDockWindow("Inspector", dockRight);
-		ImGui::DockBuilderDockWindow("Messages", dockRight);
-		ImGui::DockBuilderFinish(dockSpaceId);
-	}
-	*/
 	Framework::Debug::render();
 
-	/*
-	if (ImGui::BeginMainMenuBar()) {
-		if (ImGui::BeginMenu("xView")) {
-			if (ImGui::MenuItem("xExplorer")) {
-				//Do something
-			}
-			if (ImGui::MenuItem("xInspector")) {
-				//Do something
-			}
-			ImGui::EndMenu();
-		}
-		ImGui::EndMainMenuBar();
-	}
-	*/
 	bool b = true;
-	if (ImGui::Begin("Menu", &b)) {
+	if (ImGui::Begin("Menu")) {
 		glm::vec3 p = app->m_player->position();
 		ImGui::Text("Player x:%.3f y:%.3f z:%.3f", p.x, p.y, p.z);
 
@@ -128,6 +77,9 @@ void GameEngine::Debug::render(void)
 		ImGui::End();
 	}
 
+	// display the flight recorder
+	bool loadedFrame = g_Blackbox.debugGUI(m_debug);
+
 	if (m_debug || m_framebyframe) {
 		if (m_framebyframe) {
 			g_gaWorld.suspend();
@@ -140,14 +92,6 @@ void GameEngine::Debug::render(void)
 			g_Blackbox.previousFrame();
 		}
 
-		// display the flight recorder
-		bool loadedFrame = g_Blackbox.debugGUI();
-
-		// display all elements currently on the queue
-		g_gaWorld.debugGUI();
-		g_Blackbox.debugGUImessages();
-		g_Blackbox.debugGUIinframe();
-
 		// and update the world
 		if (loadedFrame) {
 			g_gaWorld.process(0, true, true);	// force execution in debug mode
@@ -156,7 +100,8 @@ void GameEngine::Debug::render(void)
 	}
 	else {
 		if (m_replay) {
-			playRecorderV1();
+			/*
+			/playRecorderV1();
 			ImGui::Begin("FlightRecorder v1");
 			ImGui::SameLine(); if (ImGui::Button("||")) {
 				m_debug = true;
@@ -164,8 +109,14 @@ void GameEngine::Debug::render(void)
 			}
 			ImGui::SameLine(); ImGui::SliderInt("frame", &m_recorder_end, 0, m_recorder_len);;
 			ImGui::End();
+			*/
 		}
 	}
+
+	// display all elements currently on the queue
+	g_gaWorld.debugGUI(m_debug);
+	g_Blackbox.debugGUImessages(m_debug);
+	g_Blackbox.debugGUIinframe(m_debug);
 
 	// if we are entering debug state, 
 	// save the game camera & control

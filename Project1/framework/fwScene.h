@@ -48,7 +48,7 @@ public:
 	void addMesh2D(Framework::Mesh2D*);				// add a 2D element
 
 #ifdef _DEBUG
-	void debugGUI(void);
+	void debugGUI(bool debug);
 #endif
 
 };

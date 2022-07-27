@@ -198,7 +198,7 @@ namespace GameEngine {
 
 #ifdef _DEBUG
 		// debugger
-		void debugGUI(void);								// render the imGUI debug
+		void debugGUI(bool b);								// render the imGUI debug
 		void debugGUImsg(uint32_t nb, flightRecorder::Message* msg);			// render the imGUI debug messages
 		void debugGUImessages(std::list<gaMessage>& l);		// render the imGUI debug in-frame messages
 #endif

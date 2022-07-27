@@ -441,59 +441,63 @@ void flightRecorder::Blackbox::previousFrame(void)
 /*/
  * display the flight recorder data on the debugger
  */
-bool flightRecorder::Blackbox::debugGUI(void)
+bool flightRecorder::Blackbox::debugGUI(bool b)
 {
 	bool loadedFrame = false;
 
 	ImGui::Begin("flightRecorder v2");
-	if (ImGui::Button("Load")) {
-		// load a flight recorder and position as frame 0
-		loadStates();
-		setFrame(0);
-	}
-	ImGui::SameLine(); if (ImGui::Button("Save")) {
-		saveStates();
-	}
-	if (m_len > 0) {
-		if (ImGui::Button(">")) {
-			if (!m_replay) {
-				m_replay = true;
-			}
-			g_gaWorld.run();
+	if (b) {
+		if (ImGui::Button("Load")) {
+			// load a flight recorder and position as frame 0
+			loadStates();
+			setFrame(0);
 		}
-
-		if (m_currentFrame < 0) {
-			m_currentFrame = m_len - 1;
+		ImGui::SameLine(); 
+		if (ImGui::Button("Save")) {
+			saveStates();
 		}
-
-		int old_frame = m_currentFrame;
-		ImGui::SameLine(); ImGui::SliderInt("frame", &m_currentFrame, 0, m_len);
-		if (old_frame != m_currentFrame) {
-			// convert the absolute frame number to the circular buffer
-			int convertFrame = (m_first + m_currentFrame) % m_len;
-
-			// Set the game state
-			setFrame(convertFrame);
-
-			// set the debug camera based on the player position
-			//m_control->translateCamera(
-			//	dark->m_player->position()
-			//	);
-			loadedFrame = true;
-		}
-		else {
-			if (m_currentFrame > 0) {
-				// display frame by frame up to the last frame
-				ImGui::SameLine(); if (ImGui::Button("<<")) {
-					previousFrame();
-					loadedFrame = true;
+		ImGui::SameLine();
+		if (m_len > 0) {
+			if (ImGui::Button(">")) {
+				if (!m_replay) {
+					m_replay = true;
 				}
+				g_gaWorld.run();
 			}
-			if (m_currentFrame < m_len) {
-				// display frame by frame up to the last frame
-				ImGui::SameLine(); if (ImGui::Button(">>")) {
-					nextFrame();
-					loadedFrame = true;
+
+			if (m_currentFrame < 0) {
+				m_currentFrame = m_len - 1;
+			}
+
+			int old_frame = m_currentFrame;
+			ImGui::SameLine(); ImGui::SliderInt("frame", &m_currentFrame, 0, m_len);
+			if (old_frame != m_currentFrame) {
+				// convert the absolute frame number to the circular buffer
+				int convertFrame = (m_first + m_currentFrame) % m_len;
+
+				// Set the game state
+				setFrame(convertFrame);
+
+				// set the debug camera based on the player position
+				//m_control->translateCamera(
+				//	dark->m_player->position()
+				//	);
+				loadedFrame = true;
+			}
+			else {
+				if (m_currentFrame > 0) {
+					// display frame by frame up to the last frame
+					ImGui::SameLine(); if (ImGui::Button("<<")) {
+						previousFrame();
+						loadedFrame = true;
+					}
+				}
+				if (m_currentFrame < m_len) {
+					// display frame by frame up to the last frame
+					ImGui::SameLine(); if (ImGui::Button(">>")) {
+						nextFrame();
+						loadedFrame = true;
+					}
 				}
 			}
 		}
@@ -506,7 +510,7 @@ bool flightRecorder::Blackbox::debugGUI(void)
 /**
  * display messages from the queue
  */
-void flightRecorder::Blackbox::debugGUImessages(void)
+void flightRecorder::Blackbox::debugGUImessages(bool b)
 {
 	// convert the absolute frame number to the circular buffer
 	int convertFrame = (m_first + m_currentFrame) % m_len;
@@ -522,7 +526,7 @@ void flightRecorder::Blackbox::debugGUImessages(void)
 /**
  * display messages inframe
  */
-void flightRecorder::Blackbox::debugGUIinframe(void)
+void flightRecorder::Blackbox::debugGUIinframe(bool b)
 {
 	// convert the absolute frame number to the circular buffer
 	int convertFrame = (m_first + m_currentFrame) % m_len;
