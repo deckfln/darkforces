@@ -141,6 +141,12 @@ fwApp::fwApp(std::string name, int _width, int _height, std::string post_process
 		std::cout << "Failed to initialize GLAD" << std::endl;
 	}
 
+	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+	glfwSetCursorPosCallback(window, cursor_position_callback);
+	glfwSetMouseButtonCallback(window, mouse_button_callback);
+	glfwSetScrollCallback(window, scroll_callback);
+	glfwSetKeyCallback(window, key_callback);
+
 #ifdef _DEBUG
 	// Setup Dear ImGui context
 	const char* glsl_version = "#version 130";
@@ -151,7 +157,7 @@ fwApp::fwApp(std::string name, int _width, int _height, std::string post_process
 	ImGuiIO& io = ImGui::GetIO();
 	//io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
 	//io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
-	//io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
+	io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 
 	// Setup Dear ImGui style
@@ -164,7 +170,6 @@ fwApp::fwApp(std::string name, int _width, int _height, std::string post_process
 
 	// setup the backend render
 	//glfwMakeContextCurrent(window);
-
 #endif
 
 	m_renderer = new fwRendererDefered(SCR_WIDTH, SCR_HEIGHT);
@@ -176,14 +181,6 @@ fwApp::fwApp(std::string name, int _width, int _height, std::string post_process
 
 	postProcessing = new fwPostProcessing(post_processing + "/vertex.glsl", post_processing + "/fragment.glsl", source, defines);
 	postProcessing->addUniform(pixelsize);
-
-	/*
-	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
-	glfwSetCursorPosCallback(window, cursor_position_callback);
-	glfwSetMouseButtonCallback(window, mouse_button_callback);
-	glfwSetScrollCallback(window, scroll_callback);
-	glfwSetKeyCallback(window, key_callback);
-	*/
 }
 
 void fwApp::bindControl(fwControl *_control)
@@ -315,10 +312,6 @@ void fwApp::run(void)
 		glTexture *color = draw(last_frame_time, m_renderer);
 		m_renderer->stop();
 
-		// 3rd pass : post-processing
-		//glCullFace(GL_BACK);
-		//postProcessing->draw(color);
-
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
 		// -------------------------------------------------------------------------------
 
@@ -337,8 +330,8 @@ void fwApp::run(void)
 		ImGui::SetNextWindowPos(viewport->Pos);
 		ImGui::SetNextWindowSize(viewport->Size);
 		ImGui::SetNextWindowViewport(viewport->ID);
-		//ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
-		//ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
 		window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
 		window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
 
@@ -350,7 +343,7 @@ void fwApp::run(void)
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
 		ImGui::Begin("DockSpace Demo", nullptr, window_flags);
 		ImGui::PopStyleVar();
-		//ImGui::PopStyleVar(2);
+		ImGui::PopStyleVar(2);
 
 		// DockSpace
 		ImGuiIO& io = ImGui::GetIO();
@@ -416,6 +409,14 @@ void fwApp::run(void)
 			ImVec2(0, 1),
 			ImVec2(1, 0)
 		);
+
+		// when the mouse is in the window, pass events to the App
+		bool isHovered = ImGui::IsItemHovered();
+		if (isHovered) {
+			ImVec2 mousePositionAbsolute = ImGui::GetMousePos();
+			ImVec2 screenPositionAbsolute = ImGui::GetItemRectMin();
+			ImVec2 mousePositionRelative = ImVec2(mousePositionAbsolute.x - screenPositionAbsolute.x, mousePositionAbsolute.y - screenPositionAbsolute.y);
+		}
 		ImGui::End();
 		
 		// Render dear imgui into screen
@@ -431,6 +432,10 @@ void fwApp::run(void)
 			ImGui::RenderPlatformWindowsDefault();
 			glfwMakeContextCurrent(backup_current_context);
 		}
+#else
+		// 3rd pass : post-processing and render on screen
+		//glCullFace(GL_BACK);
+		postProcessing->draw(color);
 #endif
 		// render the game
 		glfwSwapBuffers(window);
