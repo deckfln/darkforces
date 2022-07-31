@@ -235,6 +235,7 @@ void GameEngine::Component::BehaviorTree::debugGUIinline(void)
 		ImNodes::BeginNodeEditor();
 		float y = 0;
 		m_root->debugGUIinline(this, m_current, 0, y);
+		ImNodes::MiniMap(0.2f, ImNodesMiniMapLocation_BottomLeft);
 		ImNodes::EndNodeEditor();
 
 		ImGui::End();

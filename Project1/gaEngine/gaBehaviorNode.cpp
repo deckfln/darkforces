@@ -333,7 +333,7 @@ void GameEngine::BehaviorNode::dispatchMessage(gaMessage*message, BehaviorNode::
 /**
  * Debugger
  */
-void GameEngine::BehaviorNode::debugGUIinline(GameEngine::Component::BehaviorTree* tree, BehaviorNode* current, float x, float& y)
+uint32_t GameEngine::BehaviorNode::debugGUIinline(GameEngine::Component::BehaviorTree* tree, BehaviorNode* current, float x, float& y)
 {
 	static uint32_t attr = 0;
 	static char tmp[64];
@@ -344,7 +344,7 @@ void GameEngine::BehaviorNode::debugGUIinline(GameEngine::Component::BehaviorTre
 		snprintf(tmp, sizeof(tmp), ">%s", m_name);
 		p = tmp;
 	}
-	
+
 	switch (m_status) {
 	case Status::RUNNING:
 		ImNodes::PushColorStyle(ImNodesCol_TitleBar, IM_COL32(40, 210, 204, 255));
@@ -374,7 +374,7 @@ void GameEngine::BehaviorNode::debugGUIinline(GameEngine::Component::BehaviorTre
 	float lx = ImGui::CalcTextSize(tmp).x;
 	if (lx > 200) {
 		uint32_t l = strlen(tmp) / 2;
-		for (char* c = tmp + l; *c != 0 ; c++) {
+		for (char* c = tmp + l; *c != 0; c++) {
 			if (*c == ' ') {
 				*c = '\n';
 				break;
@@ -388,7 +388,7 @@ void GameEngine::BehaviorNode::debugGUIinline(GameEngine::Component::BehaviorTre
 	debugGUInode(tree);
 	ImNodes::EndInputAttribute();
 
-	uint32_t i=0;
+	uint32_t i = 0;
 	for (auto n : m_children) {
 		ImNodes::BeginOutputAttribute(m_childrenID[i]);
 
@@ -415,21 +415,34 @@ void GameEngine::BehaviorNode::debugGUIinline(GameEngine::Component::BehaviorTre
 		ImNodes::PopColorStyle();
 	}
 
-	if (!m_pined) {
-		m_pined = true;
-		ImNodes::SetNodeGridSpacePos(m_id, ImVec2(x, y));
+	ImVec2 hw = ImNodes::GetNodeDimensions(m_id);
+	if (m_children.size() == 0) {
+		if (!m_pined) {
+			m_pined = true;
+			ImNodes::SetNodeGridSpacePos(m_id, ImVec2(x, y));
+		}
+		y += (hw.y + 10.0f); // next line
+		return y;
 	}
 
-	if (m_children.size() == 0) {
-		y += 100.0f; // next line
-	}
+	uint32_t firstChild = y;
+	uint32_t lastChild = y;
 
 	i = 0;
 	for (auto n : m_children) {
-		m_children[i]->debugGUIinline(tree, current, x + 300, y);
+		lastChild = n->debugGUIinline(tree, current, x + 300, y);
+		if (i == 0) {
+			firstChild = lastChild;
+		}
 		ImNodes::Link(m_childrenID[i], m_childrenID[i], m_children[i]->m_entryAttr);
 		i++;
 	}
+	uint32_t mid = (lastChild + firstChild) / 2.0;
+	if (!m_pined) {
+		m_pined = true;
+		ImNodes::SetNodeGridSpacePos(m_id, ImVec2(x, mid - hw.y / 2.0));
+	}
+	return mid;
 }
 
 /**

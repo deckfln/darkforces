@@ -78,7 +78,7 @@ namespace GameEngine {
 
 #ifdef _DEBUG
 		// debugger
-		virtual void debugGUIinline(GameEngine::Component::BehaviorTree* tree, BehaviorNode* current, float x, float& y);	// display the component in the debugger
+		virtual uint32_t debugGUIinline(GameEngine::Component::BehaviorTree* tree, BehaviorNode* current, float x, float& y);	// display the component in the debugger
 		virtual void debugGUInode(GameEngine::Component::BehaviorTree* tree);	// display the component in the debugger
 		virtual std::string debugConsole(GameEngine::Component::BehaviorTree* tree);	// display on the console
 #endif
