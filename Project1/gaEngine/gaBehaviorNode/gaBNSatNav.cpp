@@ -95,14 +95,14 @@ void GameEngine::Behavior::SatNav::init(void *data)
 	m_navpoints.clear();
 	float l = g_navMesh.findPath(m_entity, m_destination, m_navpoints);
 
-	if ( l > 0) {
+	if ( l >= FLT_EPSILON) {
 		MoveTo::init(&m_navpoints);
 	}
-	else if (l == 0) {
+	else if (l > -FLT_EPSILON) {
 		// we are already on final point
 		BehaviorNode::m_status = BehaviorNode::Status::SUCCESSED;
 	}
-	else if (l <= 0) {
+	else {
 		// we can't move
 		BehaviorNode::m_status = BehaviorNode::Status::ERR;
 	}
@@ -151,9 +151,13 @@ void GameEngine::Behavior::SatNav::debugGUInode(GameEngine::Component::BehaviorT
 	GameEngine::Behavior::MoveTo::debugGUInode(tree);
 }
 
-std::string GameEngine::Behavior::SatNav::debugConsole(GameEngine::Component::BehaviorTree* tree)
+void GameEngine::Behavior::SatNav::debugConsoleIn(GameEngine::Component::BehaviorTree* tree)
 {
-	return " " + std::string(m_destName.name()) + "=" + std::string(m_destName.value(tree));
+	printf("Start \'%s\' %s (%s) GameEngine::Behavior::SatNav\n", m_name, m_destName.name(),  m_destName.value(tree));
+}
+void GameEngine::Behavior::SatNav::debugConsoleOut(GameEngine::Component::BehaviorTree* tree)
+{
+	printf("Exit \'%s\' %s(%d) GameEngine::Behavior::SatNav\n", m_name, m_destName.name(), GameEngine::BehaviorNode::m_status);
 }
 #endif
 

@@ -33,7 +33,8 @@ namespace GameEngine {
 #ifdef _DEBUG
 			// debugger
 			void debugGUInode(GameEngine::Component::BehaviorTree* tree) override;
-			std::string debugConsole(GameEngine::Component::BehaviorTree* tree) override;	// display on the console
+			void debugConsoleIn(GameEngine::Component::BehaviorTree* tree) override;	// display on the console
+			void debugConsoleOut(GameEngine::Component::BehaviorTree* tree) override;	// display on the console
 #endif
 
 			// flight recorder status

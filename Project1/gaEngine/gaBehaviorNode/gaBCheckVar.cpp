@@ -62,3 +62,13 @@ void GameEngine::Behavior::CheckVar::init(void*)
 		m_status = GameEngine::BehaviorNode::Status::FAILED;
 	}
 }
+
+#ifdef _DEBUG
+/**
+ * // display on the console
+ */
+void GameEngine::Behavior::CheckVar::debugConsoleOut(GameEngine::Component::BehaviorTree* tree)
+{
+	printf("Exit \'%s\' %s=%d GameEngine::Behavior::CheckVar\n", m_name, m_variable.name(), m_status);
+}
+#endif

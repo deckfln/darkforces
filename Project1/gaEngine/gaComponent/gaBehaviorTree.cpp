@@ -149,23 +149,31 @@ void GameEngine::Component::BehaviorTree::dispatchMessage(gaMessage* message)
 
 #ifdef _DEBUG
 			if (m_debug) {
-				gaDebugLog(1, "GameEngine::BehaviorTree",
+				/*
+					gaDebugLog(1, "GameEngine::BehaviorTree",
 					std::to_string(message->m_frame) + " " +
-					m_entity->name() + " start  " + m_current->name() + m_current->debugConsole(this)
+					m_entity->name() + " start  " + m_current->name()
 				);
+				*/
+				m_current->debugConsoleIn(this);
 			}
+			m_depth++;
 #endif
 
 			r.action = BehaviorNode::Status::EXECUTE;
 			break;
 
 		case BehaviorNode::Status::EXIT:
+			m_depth--;
 #ifdef _DEBUG
 			if (m_debug) {
+				/*
 				gaDebugLog(1, "GameEngine::BehaviorTree",
 					std::to_string(message->m_frame) + " " +
 					m_entity->name() + " exit " + m_current->name() + " with status " + std::to_string((int)r.status)
 				);
+				*/
+				m_current->debugConsoleOut(this);
 			}
 #endif
 			if (m_current->m_parent) {

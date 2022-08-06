@@ -41,7 +41,10 @@ GameEngine::Behavior::MoveTo::MoveTo(const char *name, float speed) :
 	GameEngine::BehaviorNode(name),
 	m_speed(speed)
 {
+#ifdef _DEBUG
+	m_className = g_className;
 	debug();
+#endif
 }
 
 GameEngine::BehaviorNode* GameEngine::Behavior::MoveTo::clone(GameEngine::BehaviorNode* p)

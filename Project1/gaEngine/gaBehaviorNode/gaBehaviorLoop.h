@@ -26,6 +26,8 @@ namespace GameEngine {
 #ifdef _DEBUG
 			//debugger
 			void debugGUInode(GameEngine::Component::BehaviorTree* tree) override;	// display the component in the debugger
+			void debugConsoleIn(GameEngine::Component::BehaviorTree* tree) override;	// display on the console
+			void debugConsoleOut(GameEngine::Component::BehaviorTree* tree) override;	// display on the console
 #endif
 		protected:
 			Condition m_condition = Condition::UNTIL_ALL_FAIL;

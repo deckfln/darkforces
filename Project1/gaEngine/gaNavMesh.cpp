@@ -464,9 +464,14 @@ float GameEngine::NavMesh::findPath(gaEntity* entity, const glm::vec3& to, std::
 	*/
 
 	// and now optimize the path using direct paths
-	//printf("gaNavMesh::optimize\n");
-	findDirectPath(0, graphPath.size() - 1, entity->radius(), graphPath);
-	//printf("gaNavMesh::optimize\n");
+	if (graphPath.size() > 2) {
+		//printf("gaNavMesh::optimize\n");
+		findDirectPath(0, graphPath.size() - 1, entity->radius(), graphPath);
+		//printf("gaNavMesh::optimize\n");
+	}
+	else {
+		graphPath[0].next = 1;
+	}
 
 	directPath.clear();
 	int32_t n = 0;

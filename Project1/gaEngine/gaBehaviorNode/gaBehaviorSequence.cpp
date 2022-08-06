@@ -138,6 +138,14 @@ void GameEngine::Behavior::Sequence::execute(Action* r)
 	return startChild(r, m_runningChild, m_data);
 }
 
+/**
+ * if the sequenceis running alone, force it to execute the children
+ */
+void GameEngine::Behavior::Sequence::dispatchMessage(gaMessage* message, Action* r)
+{
+	r->action = BehaviorNode::Status::EXECUTE;
+}
+
 #ifdef _DEBUG
 /**
  * display the node data in the debugger

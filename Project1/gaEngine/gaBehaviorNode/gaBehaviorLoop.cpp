@@ -224,4 +224,13 @@ void GameEngine::Behavior::Loop::debugGUInode(GameEngine::Component::BehaviorTre
 		break;
 	}
 }
+void GameEngine::Behavior::Loop::debugConsoleIn(GameEngine::Component::BehaviorTree* tree)
+{
+	printf("Start \'%s\' GameEngine::Behavior::Loop\n", m_name);
+}
+void GameEngine::Behavior::Loop::debugConsoleOut(GameEngine::Component::BehaviorTree* tree)
+{
+	printf("Exit \'%s\' (%d) GameEngine::Behavior::Loop\n", m_name, GameEngine::BehaviorNode::m_status);
+}
+
 #endif

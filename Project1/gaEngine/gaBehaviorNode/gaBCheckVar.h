@@ -16,6 +16,9 @@ namespace GameEngine {
 
 			// Behavior engine, GameEngine::BehaviorNode* used
 			static BehaviorNode* create(const char* name, tinyxml2::XMLElement* element, GameEngine::BehaviorNode* used);// create a node
+#ifdef _DEBUG
+			void debugConsoleOut(GameEngine::Component::BehaviorTree* tree) override;	// display on the console
+#endif
 		};
 	}
 }

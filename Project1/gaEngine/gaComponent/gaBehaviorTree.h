@@ -47,11 +47,15 @@ namespace GameEngine {
 #ifdef _DEBUG
 			// debugger
 			void debugGUIinline(void) override;					// display the component in the debugger
+			ImNodesEditorContext* m_context = nullptr;
+			bool m_debug = false;
+			inline int32_t depth(void) { return m_depth; };
 #endif
 		protected:
 			uint32_t m_nbnodes = 0;								// number of nodes in the tree
 			BehaviorNode* m_root = nullptr;
 			BehaviorNode* m_current = nullptr;
+			int32_t m_depth = 0;		// depth of the tree
 			bool m_instanciated = false;
 			bool m_active = false;								// AI is activated or not
 
@@ -60,11 +64,6 @@ namespace GameEngine {
 			std::map<uint32_t, msgHandler> m_handlers;
 			static uint32_t m_lastId;
 			static uint32_t m_lastNode;
-
-#ifdef _DEBUG
-			ImNodesEditorContext* m_context = nullptr;
-			bool m_debug = false;
-#endif // _DEBUG
 
 			// blackboard
 			GameEngine::Blackboard m_blackboard;
