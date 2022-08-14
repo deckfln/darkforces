@@ -82,12 +82,30 @@ bool GameEngine::Component::BehaviorTree::onNotViewPlayer(gaMessage*)
 }
 
 /**
- * hear a blaster
+ * last message 'hear' a blaster
  */
 bool GameEngine::Component::BehaviorTree::onHearSound(gaMessage* message)
 {
-	blackboard().set<glm::vec3>("last_heard_sound", message->m_v3value, GameEngine::Variable::Type::VEC3);
+	float previous_loundness = blackboard().get<float>("last_heard_sound_loundness", GameEngine::Variable::Type::FLOAT);
+	if (previous_loundness < message->m_fvalue) {
+		blackboard().set<glm::vec3>("last_heard_sound", message->m_v3value, GameEngine::Variable::Type::VEC3);
+	}
+
 	blackboard().set<bool>("heard_sound", true, GameEngine::Variable::Type::BOOL);
+	blackboard().set<float>("last_heard_sound_loundness", -1.0f, GameEngine::Variable::Type::FLOAT);
+	return true;
+}
+
+/**
+ * partial message hear
+ */
+bool GameEngine::Component::BehaviorTree::onHearSoundNext(gaMessage* message)
+{
+	float previous_loundness = blackboard().get<float>("last_heard_sound_loundness", GameEngine::Variable::Type::FLOAT);
+	if (previous_loundness < message->m_fvalue) {
+		blackboard().set<float>("last_heard_sound_loundness", message->m_fvalue, GameEngine::Variable::Type::FLOAT);
+		blackboard().set<glm::vec3>("last_heard_sound", message->m_v3value, GameEngine::Variable::Type::VEC3);
+	}
 
 	return true;
 }

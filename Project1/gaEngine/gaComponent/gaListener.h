@@ -7,7 +7,10 @@ namespace GameEngine {
 	namespace Component {
 		class Listener : public gaComponent {
 			static alSource m_source;							// source to play the sound for real
-			void onHearSound(gaMessage* message);
+			float m_source_loundness = -1.0f;
+			glm::vec3 m_source_position = glm::vec3(0);
+			void onHearSoundNext(gaMessage* message);			// sound in a list of sound
+			void onHearSound(gaMessage* message);				// last sound of the batch
 			void onHearStop(gaMessage* message);
 		public:
 			Listener(void);

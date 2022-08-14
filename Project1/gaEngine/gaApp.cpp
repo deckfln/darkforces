@@ -53,11 +53,13 @@ void GameEngine::App::registerBThandlers(void)
 	GameEngine::Behavior::registerHandler("GameEngine:onViewPlayer", &GameEngine::Component::BehaviorTree::onViewPlayer);
 	GameEngine::Behavior::registerHandler("GameEngine:onNotViewPlayer", &GameEngine::Component::BehaviorTree::onNotViewPlayer);
 	GameEngine::Behavior::registerHandler("GameEngine:onHearSound", &GameEngine::Component::BehaviorTree::onHearSound);
+	GameEngine::Behavior::registerHandler("GameEngine:onHearSoundNext", &GameEngine::Component::BehaviorTree::onHearSoundNext);
 	GameEngine::Behavior::registerHandler("GameEngine:onBulletHit", &GameEngine::Component::BehaviorTree::onBulletHit);
 
 	GameEngine::Behavior::registerMessage("GameEngine:VIEW", gaMessage::Action::VIEW);
 	GameEngine::Behavior::registerMessage("GameEngine:NOT_VIEW", gaMessage::Action::NOT_VIEW);
 	GameEngine::Behavior::registerMessage("GameEngine:HEAR_SOUND", gaMessage::Action::HEAR_SOUND);
+	GameEngine::Behavior::registerMessage("GameEngine:HEAR_SOUND_NEXT", gaMessage::Action::HEAR_SOUND_NEXT);
 	GameEngine::Behavior::registerMessage("GameEngine:BULLET_HIT", gaMessage::Action::BULLET_HIT);
 	GameEngine::Behavior::registerMessage("GameEngine:SatNav_CANCEL", gaMessage::Action::SatNav_CANCEL);
 }
@@ -137,6 +139,7 @@ void GameEngine::App::registerDebugger(void)
 		{ gaMessage::Action::NOT_VIEW, "NOT_VIEW"},
 		{ gaMessage::Action::BULLET_HIT, "BULLERT_HIT"},
 		{ gaMessage::Action::BULLET_MISS, "BULLET_MISS"},
+		{ gaMessage::Action::HEAR_SOUND_NEXT, "HEAR_SOUND_NEXT"},
 		{ gaMessage::Action::HEAR_SOUND, "HEAR_SOUND"},
 		{ gaMessage::Action::HEAR_STOP, "HEAR_STOP"},
 		{ gaMessage::Action::VOLUME_TRANSPARENCY, "VolumeTransparency"},

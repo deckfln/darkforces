@@ -2,6 +2,7 @@
 	<!-- ******************************************************************** -->
 	<messages>
 		<message id='GameEngine:HEAR_SOUND'>GameEngine:onHearSound</message>
+		<message id='GameEngine:HEAR_SOUND_NEXT'>GameEngine:onHearSoundNext</message>
 		<message id='GameEngine:VIEW'>GameEngine:onViewPlayer</message>
 		<message id='GameEngine:NOT_VIEW'>GameEngine:onNotViewPlayer</message>
 		<message id='GameEngine:BULLET_HIT'>GameEngine:onBulletHit</message>
@@ -236,6 +237,28 @@
 					</node>
 					-->
 
+					<node type='Sequence' name='patrol last position a bullet was fired from'>
+						<tree>
+							<node type='GameEngine:CheckVar' name='if hit by bullet'>
+								<variable type='bool'>hit_bullet</variable>
+								<value type='bool'>true</value>
+							</node>
+							<node type='GameEngine:SetVar' name='reset hit_bullet'>
+								<variable type='bool'>hit_bullet</variable>
+								<value type='bool'>false</value>
+							</node>
+							<node type='Sequence' name='move to bullet position'>
+								<tree>
+									<node type='GameEngine:SetVar' name='set bullet starting point'>
+										<variable type='vec3'>static_position</variable>
+										<value type='vec3'>=last_bullet</value>
+									</node>
+									<node type='task' task='moveAndOpenDoor' name='move to player last known position'></node>
+								</tree>
+							</node>
+						</tree>
+					</node>
+
 					<node type='Sequence' name='attack if visible'>
 						<tree>
 							<node type='GameEngine:CheckVar' name='if player visible'>
@@ -246,34 +269,28 @@
 						</tree>
 					</node>
 
-					<!--
-		<node type='GameEngine:SetVar' name='reset hit_bullet'>
-			<variable type='bool'>hit_bullet</variable>
-			<value type='bool'>false</value>
-		</node>
-		-->
 					<node type='Sequence' name='patrol last position player seen or heard'>
 						<tree>
 							<node type='GameEngine:CheckVar' name='if heard sound'>
 								<variable type='bool'>heard_sound</variable>
 								<value type='bool'>true</value>
 							</node>
-							<node type='GameEngine:SetVar' name='ezqzt heard sound'>
+							<node type='GameEngine:SetVar' name='reset heard sound'>
 								<variable type='bool'>heard_sound</variable>
 								<value type='bool'>false</value>
 							</node>
 							<node type='Sequence' name='move to player last known position'>
 								<tree>
+									<!--
 									<node type='GameEngine:SetVar' name='force target'>
 										<variable type='vec3'>static_position</variable>
 										<value type='vec3'>-21.29,-0.3,16.6</value>
 									</node>
-									<!--
-				<node type='DarkForces:SetVar' name='set player last known position (view/soud)'>
-					<variable type='vec3'>static_position</variable>
-					<value type='vec3'>=playerEstimatedPosition()</value>
-				</node>
-				-->
+									-->
+									<node type='DarkForces:SetVar' name='set player last known position (view/soud)'>
+										<variable type='vec3'>static_position</variable>
+										<value type='vec3'>=playerEstimatedPosition()</value>
+									</node>
 									<node type='task' task='moveAndOpenDoor' name='move to player last known position'></node>
 								</tree>
 							</node>

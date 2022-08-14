@@ -42,11 +42,15 @@ void GameEngine::Plugins::Sounds::onPropagateSound(gaEntity* from, gaMessage* me
 						virtualSources.clear();
 						g_gaLevel->volume().path(p, entity->position(), 50.0f, virtualSources);
 
-						// ask the player to play the sound
+						// inform the entity with a batch of messages
 						if (virtualSources.size() > 0) {
-							for (auto& vs : virtualSources) {
-								from->sendMessage(entity->name(), gaMessage::Action::HEAR_SOUND, soundID, vs.loundness, vs.origin, sound);
+							size_t l = virtualSources.size() - 1;
+							// first messages
+							for (size_t i = 0; i < l; i++) {
+								from->sendMessage(entity->name(), gaMessage::Action::HEAR_SOUND_NEXT, soundID, virtualSources[i].loundness, virtualSources[i].origin, sound);
 							}
+							// last message
+							from->sendMessage(entity->name(), gaMessage::Action::HEAR_SOUND, soundID, virtualSources[l].loundness, virtualSources[l].origin, sound);
 						}
 						break;
 					}
@@ -62,9 +66,11 @@ void GameEngine::Plugins::Sounds::onPropagateSound(gaEntity* from, gaMessage* me
 
 				// ask the player to play the sound
 				if (virtualSources.size() > 0) {
-					for (auto& vs : virtualSources) {
-						from->sendMessage(entity->name(), gaMessage::Action::HEAR_SOUND, soundID, vs.loundness, vs.origin, sound);
+					size_t l = virtualSources.size() - 1;
+					for (size_t i = 0; i < l; i++) {
+						from->sendMessage(entity->name(), gaMessage::Action::HEAR_SOUND_NEXT, soundID, virtualSources[i].loundness, virtualSources[i].origin, sound);
 					}
+					from->sendMessage(entity->name(), gaMessage::Action::HEAR_SOUND, soundID, virtualSources[l].loundness, virtualSources[l].origin, sound);
 				}
 			}
 		}

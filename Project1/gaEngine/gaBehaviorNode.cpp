@@ -120,7 +120,7 @@ bool GameEngine::BehaviorNode::conditionMet(void)
 {
 	for (size_t i = 0; i < m_if_variables.size(); i++) {
 		if (m_if_variables[i].equal(m_tree, m_if_value[i])) {
-			// printf("GameEngine::BehaviorNode::conditionMet %s\n", m_if_variables[i].name());
+			printf("GameEngine::BehaviorNode::conditionMet %s\n", m_if_variables[i].name());
 			return true;
 		}
 	}

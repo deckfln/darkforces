@@ -80,7 +80,8 @@ public:
 		NOT_VIEW,		// an entity is not visible
 		BULLET_HIT,		// the entity was hit by a bullet
 		BULLET_MISS,	// a bullet passed by the entity
-		HEAR_SOUND,		// inform a sound is heard
+		HEAR_SOUND_NEXT,	// a sound is heard in a batch of sounds
+		HEAR_SOUND,		// last sound is heard
 		HEAR_STOP,		// actualy not
 		VOLUME_TRANSPARENCY, // change the sound transparency of a volume
 		ADD_ITEM,		// add item to the entity inventory
