@@ -101,16 +101,19 @@ struct Data {
 	int32_t came_from;
 	glm::vec3 came_from_portal;
 	float cost_so_far;
+	float loundness;
 
-	inline Data(const int32_t v, const float c, const glm::vec3& p) { 
+	inline Data(const int32_t v, const float c, const glm::vec3& p, float l) { 
 		came_from = v; 
 		cost_so_far = c; 
 		came_from_portal = p; 
+		loundness = l;
 	};
 	inline Data(void) { 
 		came_from = -1; 
 		cost_so_far = 0; 
 		came_from_portal = glm::vec3(0); 
+		loundness = 0.0f;
 	};
 };
 
@@ -135,7 +138,11 @@ void GameEngine::VolumeSpace::path(const glm::vec3& source, const glm::vec3& lis
 
 	// if the 2 objects are in the same volume, stop there
 	if (vSource == vListener) {
-		xSolutions.push_back(Sound::Virtual(source, d));
+		Sound::Virtual v;
+		v.m_nbPoints = 1;
+		v.m_points[0].origin = source;
+		v.m_points[0].loundness = current_loundness;
+		xSolutions.push_back(v);
 		return;
 	}
 
@@ -146,7 +153,7 @@ void GameEngine::VolumeSpace::path(const glm::vec3& source, const glm::vec3& lis
 
 	std::map<uint32_t, Data> data;
 
-	data[vSource] = Data(-1, 0, source);
+	data[vSource] = Data(-1, 0, source, -1.0f);
 
 	int32_t current = -1, next, prev = -1;
 	float new_cost;
@@ -177,20 +184,37 @@ void GameEngine::VolumeSpace::path(const glm::vec3& source, const glm::vec3& lis
 			}
 
 			if (next == vListener) {
-				std::vector<uint32_t> mypath;
-				int32_t c = current;
-				while (c > 0) {
-					mypath.push_back(c);
-					c = data[c].came_from;
-				}
+				Sound::Virtual v;
+
 				float dx = glm::distance(listener, source);
 				float d1 = glm::distance(listener, p.center());
 				float d2 = glm::distance(source, data[vSource].came_from_portal);
 				float d = data[current].cost_so_far + d1 + d2;
 				current_loundness = loundness - 20 * log10(d);
 
+				v.m_points[0].origin = p.center();
+				v.m_points[0].loundness = current_loundness;
+				v.m_nbPoints = 1;
+
+				std::vector<uint32_t> mypath;
+				int32_t c = current;
+				int32_t i = 3;
+				while (c > 0) {
+					mypath.push_back(c);
+					v.m_points[v.m_nbPoints].origin = data[c].came_from_portal;
+					v.m_points[v.m_nbPoints].loundness = data[c].loundness;
+					v.m_nbPoints++;
+
+					// limit to the first 3 points
+					if (v.m_nbPoints++ > 2) {
+						break;
+					}
+
+					c = data[c].came_from;
+				}
+
 				if (current_loundness > 25.0f) {
-					xSolutions.push_back(Sound::Virtual(p.center(), current_loundness));
+					xSolutions.push_back(v);
 				}
 				continue;
 			}
@@ -214,7 +238,8 @@ void GameEngine::VolumeSpace::path(const glm::vec3& source, const glm::vec3& lis
 				data[next] = Data(
 					current,
 					new_cost,
-					p.center()
+					p.center(),
+					current_loundness
 				);
 
 				frontier.push(Node(next, p.center()));

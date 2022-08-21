@@ -15,9 +15,15 @@ namespace GameEngine {
 		 */
 		class Virtual {
 		public:
-			glm::vec3 origin;
-			float loundness;
-			inline Virtual(const glm::vec3& p, const float d) { origin = p; loundness = d; }
+			struct pointInSpace {
+				glm::vec3 origin;
+				float loundness;
+			};
+			uint32_t m_nbPoints;
+			struct pointInSpace m_points[3];
+			inline Virtual(void) {
+				m_nbPoints = 0;
+			}
 		};
 
 		class Portal {

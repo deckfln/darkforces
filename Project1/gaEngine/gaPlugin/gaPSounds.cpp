@@ -47,10 +47,10 @@ void GameEngine::Plugins::Sounds::onPropagateSound(gaEntity* from, gaMessage* me
 							size_t l = virtualSources.size() - 1;
 							// first messages
 							for (size_t i = 0; i < l; i++) {
-								from->sendMessage(entity->name(), gaMessage::Action::HEAR_SOUND_NEXT, soundID, virtualSources[i].loundness, virtualSources[i].origin, sound);
+								from->sendMessage(entity->name(), gaMessage::Action::HEAR_SOUND_NEXT, soundID, virtualSources[i].m_points[0].loundness, virtualSources[i].m_points[0].origin, sound);
 							}
 							// last message
-							from->sendMessage(entity->name(), gaMessage::Action::HEAR_SOUND, soundID, virtualSources[l].loundness, virtualSources[l].origin, sound);
+							from->sendMessage(entity->name(), gaMessage::Action::HEAR_SOUND, soundID, virtualSources[l].m_points[0].loundness, virtualSources[l].m_points[0].origin, sound);
 						}
 						break;
 					}
@@ -68,9 +68,9 @@ void GameEngine::Plugins::Sounds::onPropagateSound(gaEntity* from, gaMessage* me
 				if (virtualSources.size() > 0) {
 					size_t l = virtualSources.size() - 1;
 					for (size_t i = 0; i < l; i++) {
-						from->sendMessage(entity->name(), gaMessage::Action::HEAR_SOUND_NEXT, soundID, virtualSources[i].loundness, virtualSources[i].origin, sound);
+						from->sendMessage(entity->name(), gaMessage::Action::HEAR_SOUND_NEXT, soundID, virtualSources[i].m_points[0].loundness, virtualSources[i].m_points[0].origin, sound);
 					}
-					from->sendMessage(entity->name(), gaMessage::Action::HEAR_SOUND, soundID, virtualSources[l].loundness, virtualSources[l].origin, sound);
+					from->sendMessage(entity->name(), gaMessage::Action::HEAR_SOUND, soundID, virtualSources[l].m_points[0].loundness, virtualSources[l].m_points[0].origin, sound);
 				}
 			}
 		}
