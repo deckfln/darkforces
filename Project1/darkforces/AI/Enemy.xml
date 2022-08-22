@@ -29,10 +29,12 @@
 				<variable type='vec3'>satnav_target</variable>
 				<collisionExit>5.0</collisionExit>
 				<exit>
+					<!--
 					<if>
 						<variable type='bool'>player_visible</variable>
 						<value type='bool'>true</value>
 					</if>
+					-->
 					<if>
 						<variable type='bool'>hit_bullet</variable>
 						<value type='bool'>true</value>
@@ -91,10 +93,12 @@
 							<variable type='vec3'>satnav_target</variable>
 							<collisionExit>5.0</collisionExit>
 							<exit>
+								<!--
 								<if>
 									<variable type='bool'>player_visible</variable>
 									<value type='bool'>true</value>
 								</if>
+								-->
 								<if>
 									<variable type='bool'>hit_bullet</variable>
 									<value type='bool'>true</value>
@@ -196,10 +200,12 @@
 				<tree>
 					<node type="Sequence" name="sit idle if there is no interaction">
 						<tree>
+							<!--
 							<node type='GameEngine:CheckVar' name='if player not visible'>
 								<variable type='bool'>player_visible</variable>
 								<value type='bool'>false</value>
 							</node>
+							-->
 							<node type='GameEngine:CheckVar' name='and no sound heard'>
 								<variable type='bool'>heard_sound</variable>
 								<value type='bool'>false</value>
@@ -299,10 +305,12 @@
 
 					<node type='Sequence' name='move back to wait position if no activity'>
 						<tree>
+							<!--
 							<node type='GameEngine:CheckVar' name='if player not visible'>
 								<variable type='bool'>player_visible</variable>
 								<value type='bool'>false</value>
 							</node>
+							-->
 							<node type='GameEngine:CheckVar' name='and no sound heard'>
 								<variable type='bool'>heard_sound</variable>
 								<value type='bool'>false</value>

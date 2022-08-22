@@ -199,16 +199,12 @@ void GameEngine::VolumeSpace::path(const glm::vec3& source, const glm::vec3& lis
 				std::vector<uint32_t> mypath;
 				int32_t c = current;
 				int32_t i = 3;
-				while (c > 0) {
+				// only register 3 points
+				while (c > 0 && v.m_nbPoints < 3) {
 					mypath.push_back(c);
 					v.m_points[v.m_nbPoints].origin = data[c].came_from_portal;
 					v.m_points[v.m_nbPoints].loundness = data[c].loundness;
 					v.m_nbPoints++;
-
-					// limit to the first 3 points
-					if (v.m_nbPoints++ > 2) {
-						break;
-					}
 
 					c = data[c].came_from;
 				}
