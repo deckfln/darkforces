@@ -18,22 +18,29 @@ GameEngine::NavMesh g_navMesh;
 const float my_EPSILON = 4 * FLT_EPSILON;
 
 /**
- * // find the nearest triangle to the position
+ * find the nearest triangle to the position
+ * keep the triangle with the smallest vertical distance
  */
 int32_t GameEngine::NavMesh::findTriangle(const glm::vec3& p, float z, float z1)
 {
 	glm::vec2 p2D(p.x, p.z);
-	for (uint32_t i = 0; i < m_triangles.size(); i++) {
+	float dmax = 8.1f;
+	int32_t tmax = -1;
+
+	for (size_t i = 0; i < m_triangles.size(); i++) {
 		float d = abs(p.y - m_triangles[i].m_center.y);
 
 		if (m_triangles[i].inside(p2D)) {
 			if (d <= 8) {
-				return i;
+				if (d < dmax) {
+					dmax = d;
+					tmax = i;
+				}
 			}
 		}
 	}
 
-	return -1;
+	return tmax;
 }
 
 int32_t GameEngine::NavMesh::findTriangle(const glm::vec2& p, float z)

@@ -265,6 +265,7 @@
 						</tree>
 					</node>
 
+					<!--
 					<node type='Sequence' name='attack if visible'>
 						<tree>
 							<node type='GameEngine:CheckVar' name='if player visible'>
@@ -274,7 +275,8 @@
 							<node type='task' task ='attackAndTrack' name='attack the player and track him when losing sight'></node>
 						</tree>
 					</node>
-
+					-->
+					
 					<node type='Sequence' name='patrol last position player seen or heard'>
 						<tree>
 							<node type='GameEngine:CheckVar' name='if heard sound'>

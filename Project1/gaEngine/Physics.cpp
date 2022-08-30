@@ -1134,6 +1134,9 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 		gaEntity* entity = entry.first;
 		const glm::mat4x4& matrix = entity->worldMatrix();
 		if (entry.second == matrix) {
+			if (entity->name() == "OFFCFIN.WAX(21)") {
+				__debugbreak();
+			}
 			// the entity was handled by cannot moved
 			gaMessage *msg = entry.first->sendMessage(entity->name(), gaMessage::Action::CANT_MOVE);
 			struct CollisionList* data = (struct CollisionList*)&msg->m_data[0];
