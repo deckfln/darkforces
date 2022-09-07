@@ -117,6 +117,12 @@ struct Data {
 	};
 };
 
+// Compares two intervals according to starting times.
+static bool compareSound(GameEngine::Sound::Virtual& i1, GameEngine::Sound::Virtual& i2)
+{
+	return (i1.m_points[0].loundness < i2.m_points[0].loundness);
+}
+
 void GameEngine::VolumeSpace::path(const glm::vec3& source, const glm::vec3& listener, float loundness, std::vector<GameEngine::Sound::Virtual>& xSolutions)
 {
 	// only do a volume navigation if the listener is likely to hear the sound
@@ -242,6 +248,9 @@ void GameEngine::VolumeSpace::path(const glm::vec3& source, const glm::vec3& lis
 			}
 		}
 	}
+
+	// sort sounds by loundness
+	sort(xSolutions.begin(), xSolutions.end(), compareSound);
 }
 
 /**

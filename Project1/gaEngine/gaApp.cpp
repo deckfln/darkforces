@@ -24,7 +24,8 @@
 #include "gaBehaviorNode/gaBTurn.h"
 #include "gaBehaviorNode/gaBSetVar.h"
 #include "gaBehaviorNode/gaBCheckVar.h"
-#include "gaBehaviorNode//gaBAlarm.h"
+#include "gaBehaviorNode/gaBAlarm.h"
+#include "gaBehaviorNode/gaBSounds.h"
 
 #ifdef _DEBUG
 #include <imgui_internal.h>
@@ -87,7 +88,8 @@ void GameEngine::App::registerBTNodes(void)
 		{"GameEngine:Turn", GameEngine::Behavior::Turn::create},
 		{"GameEngine:SetVar", GameEngine::Behavior::SetVar::create},
 		{"GameEngine:CheckVar", GameEngine::Behavior::CheckVar::create},
-		{"GameEngine:Alarm", GameEngine::Behavior::Alarm::create}
+		{"GameEngine:Alarm", GameEngine::Behavior::Alarm::create},
+		{"GameEngine:Sounds", GameEngine::Behavior::Sounds::create},
 	};
 
 	for (auto& b : g_createNodes) {

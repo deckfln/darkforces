@@ -277,7 +277,7 @@
 					</node>
 					-->
 					
-					<node type='Sequence' name='patrol last position player seen or heard'>
+					<node type='Sequence' name='patrol last position gunshot'>
 						<tree>
 							<node type='GameEngine:CheckVar' name='if heard sound'>
 								<variable type='bool'>heard_sound</variable>
@@ -287,19 +287,17 @@
 								<variable type='bool'>heard_sound</variable>
 								<value type='bool'>false</value>
 							</node>
-							<node type='Sequence' name='move to player last known position'>
+							<node type='GameEngine:Sounds' name='first gunshot location'>
+								<variable type='vec3'>static_position</variable>
+								<value type='vec3'>=sounds.first</value>
+							</node>
+							<node type='Loop' name='move to each gunshots'>
 								<tree>
-									<!--
-									<node type='GameEngine:SetVar' name='force target'>
-										<variable type='vec3'>static_position</variable>
-										<value type='vec3'>-21.29,-0.3,16.6</value>
-									</node>
-									-->
-									<node type='DarkForces:SetVar' name='set player last known position (view/soud)'>
-										<variable type='vec3'>static_position</variable>
-										<value type='vec3'>=playerEstimatedPosition()</value>
-									</node>
 									<node type='task' task='moveAndOpenDoor' name='move to player last known position'></node>
+									<node type='GameEngine:Sounds' name='pick next gunshot location'>
+										<variable type='vec3'>static_position</variable>
+										<value type='vec3'>=sounds.next</value>
+									</node>
 								</tree>
 							</node>
 						</tree>

@@ -31,7 +31,8 @@ int32_t GameEngine::NavMesh::findTriangle(const glm::vec3& p, float z, float z1)
 		float d = abs(p.y - m_triangles[i].m_center.y);
 
 		if (m_triangles[i].inside(p2D)) {
-			if (d <= 8) {
+			// FIXME: change the value from 8 to something more dynamic
+			if (d <= 8.0f) {
 				if (d < dmax) {
 					dmax = d;
 					tmax = i;
