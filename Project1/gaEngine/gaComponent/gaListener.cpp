@@ -7,6 +7,15 @@ static const char* g_componentName = "Listener";
 alSource GameEngine::Component::Listener::m_source;
 
 /**
+ * first sound in a list of sound
+ */
+void GameEngine::Component::Listener::onHearSoundFirst(gaMessage* message)
+{
+	m_source_loundness = message->m_fvalue;
+	m_source_position = message->m_v3value;
+}
+
+/**
  * sound in a list of sound
  */
 void GameEngine::Component::Listener::onHearSoundNext(gaMessage* message)
@@ -21,14 +30,9 @@ void GameEngine::Component::Listener::onHearSoundNext(gaMessage* message)
 /**
  * last sound of the batch
  */
-void GameEngine::Component::Listener::onHearSound(gaMessage* message)
+void GameEngine::Component::Listener::onHearSoundLast(gaMessage* message)
 {
 	// Start playing a sound or check if it plays
-	if (message->m_fvalue > m_source_loundness) {
-		m_source_loundness = message->m_fvalue;
-		m_source_position = message->m_v3value;
-	}
-
 	alSound* sound = static_cast<alSound*>(message->m_extra);
 	if (sound) {
 		m_source.play(sound, m_source_position);
@@ -56,14 +60,15 @@ GameEngine::Component::Listener::Listener(void):
 void GameEngine::Component::Listener::dispatchMessage(gaMessage* message)
 {
 	switch (message->m_action) {
+	case gaMessage::HEAR_SOUND_FIRST:
+		onHearSoundFirst(message);
+		break;
 	case gaMessage::HEAR_SOUND_NEXT:
 		onHearSoundNext(message);
 		break;
-
-	case gaMessage::HEAR_SOUND:
-		onHearSound(message);
+	case gaMessage::HEAR_SOUND_LAST:
+		onHearSoundLast(message);
 		break;
-
 	case gaMessage::HEAR_STOP:
 		onHearStop(message);
 		break;

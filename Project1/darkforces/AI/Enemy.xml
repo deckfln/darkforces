@@ -1,8 +1,9 @@
 <behaviortree>
 	<!-- ******************************************************************** -->
 	<messages>
-		<message id='GameEngine:HEAR_SOUND'>GameEngine:onHearSound</message>
+		<message id='GameEngine:HEAR_SOUND_FIRST'>GameEngine:onHearSoundFirst</message>
 		<message id='GameEngine:HEAR_SOUND_NEXT'>GameEngine:onHearSoundNext</message>
+		<message id='GameEngine:HEAR_SOUND_LAST'>GameEngine:onHearSoundLast</message>
 		<message id='GameEngine:VIEW'>GameEngine:onViewPlayer</message>
 		<message id='GameEngine:NOT_VIEW'>GameEngine:onNotViewPlayer</message>
 		<message id='GameEngine:BULLET_HIT'>GameEngine:onBulletHit</message>

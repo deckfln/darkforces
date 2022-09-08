@@ -44,13 +44,17 @@ void GameEngine::Plugins::Sounds::onPropagateSound(gaEntity* from, gaMessage* me
 
 						// inform the entity with a batch of messages
 						if (virtualSources.size() > 0) {
-							size_t l = virtualSources.size() - 1;
+							// First message
+							from->sendMessage(entity->name(), gaMessage::Action::HEAR_SOUND_FIRST, soundID, virtualSources[0].m_points[0].loundness, virtualSources[0].m_points[0].origin, sound);
+
+							size_t l = virtualSources.size();
 							// first messages
-							for (size_t i = 0; i < l; i++) {
+							for (size_t i = 1; i < l; i++) {
 								from->sendMessage(entity->name(), gaMessage::Action::HEAR_SOUND_NEXT, soundID, virtualSources[i].m_points[0].loundness, virtualSources[i].m_points[0].origin, sound);
 							}
+
 							// last message
-							from->sendMessage(entity->name(), gaMessage::Action::HEAR_SOUND, soundID, virtualSources[l].m_points[0].loundness, virtualSources[l].m_points[0].origin, sound);
+							from->sendMessage(entity->name(), gaMessage::Action::HEAR_SOUND_LAST, soundID, sound);
 						}
 						break;
 					}
@@ -66,11 +70,17 @@ void GameEngine::Plugins::Sounds::onPropagateSound(gaEntity* from, gaMessage* me
 
 				// ask the player to play the sound
 				if (virtualSources.size() > 0) {
-					size_t l = virtualSources.size() - 1;
-					for (size_t i = 0; i < l; i++) {
+					// First message
+					from->sendMessage(entity->name(), gaMessage::Action::HEAR_SOUND_FIRST, soundID, virtualSources[0].m_points[0].loundness, virtualSources[0].m_points[0].origin, sound);
+
+					size_t l = virtualSources.size();
+					// first messages
+					for (size_t i = 1; i < l; i++) {
 						from->sendMessage(entity->name(), gaMessage::Action::HEAR_SOUND_NEXT, soundID, virtualSources[i].m_points[0].loundness, virtualSources[i].m_points[0].origin, sound);
 					}
-					from->sendMessage(entity->name(), gaMessage::Action::HEAR_SOUND, soundID, virtualSources[l].m_points[0].loundness, virtualSources[l].m_points[0].origin, sound);
+
+					// last message
+					from->sendMessage(entity->name(), gaMessage::Action::HEAR_SOUND_LAST, soundID, sound);
 				}
 			}
 		}

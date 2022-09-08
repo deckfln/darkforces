@@ -82,23 +82,14 @@ bool GameEngine::Component::BehaviorTree::onNotViewPlayer(gaMessage*)
 }
 
 /**
- * last message 'hear' a blaster
+ * first message 'hear' a blaster, reset the list of sounds
  */
-bool GameEngine::Component::BehaviorTree::onHearSound(gaMessage* message)
+bool GameEngine::Component::BehaviorTree::onHearSoundFirst(gaMessage* message)
 {
-	// only keep the loudest sound in single value mode
-	float previous_loundness = blackboard().get<float>("last_heard_sound_loundness", GameEngine::Variable::Type::FLOAT);
-	if (previous_loundness < message->m_fvalue) {
-		blackboard().set<glm::vec3>("last_heard_sound", message->m_v3value, GameEngine::Variable::Type::VEC3);
-		blackboard().set<float>("last_heard_sound_loundness", -1.0f, GameEngine::Variable::Type::FLOAT);
-	}
-
 	// keep all sounds in list mode, messages are ALREADY sorted by volume
 	std::vector<glm::vec3>& sounds = blackboard().get<std::vector<glm::vec3>>("sounds", GameEngine::Variable::Type::OBJECT);
+	sounds.clear();
 	sounds.push_back(message->m_v3value);
-
-	// mark the sound heard only at the last message
-	blackboard().set<bool>("heard_sound", true, GameEngine::Variable::Type::BOOL);
 
 	return true;
 }
@@ -108,16 +99,20 @@ bool GameEngine::Component::BehaviorTree::onHearSound(gaMessage* message)
  */
 bool GameEngine::Component::BehaviorTree::onHearSoundNext(gaMessage* message)
 {
-	// only keep the loudest sound in single value mode
-	float previous_loundness = blackboard().get<float>("last_heard_sound_loundness", GameEngine::Variable::Type::FLOAT);
-	if (previous_loundness < message->m_fvalue) {
-		blackboard().set<float>("last_heard_sound_loundness", message->m_fvalue, GameEngine::Variable::Type::FLOAT);
-		blackboard().set<glm::vec3>("last_heard_sound", message->m_v3value, GameEngine::Variable::Type::VEC3);
-	}
-
 	// keep all sounds in list mode, messages are ALREADY sorted by volume
 	std::vector<glm::vec3>& sounds = blackboard().get<std::vector<glm::vec3>>("sounds", GameEngine::Variable::Type::OBJECT);
 	sounds.push_back(message->m_v3value);
+
+	return true;
+}
+
+/**
+ * partial message hear
+ */
+bool GameEngine::Component::BehaviorTree::onHearSoundLast(gaMessage* message)
+{
+	// mark the sound heard only at the last message
+	blackboard().set<bool>("heard_sound", true, GameEngine::Variable::Type::BOOL);
 
 	return true;
 }

@@ -36,8 +36,9 @@ namespace GameEngine {
 			// preset message handlers
 			bool onViewPlayer(gaMessage*);						// player is viewed
 			bool onNotViewPlayer(gaMessage*);					// player is not viewed
+			bool onHearSoundFirst(gaMessage*);					// hear the first sound from a list
 			bool onHearSoundNext(gaMessage*);					// hear a sound in a list of sounds
-			bool onHearSound(gaMessage*);						// hear the last sound from a list
+			bool onHearSoundLast(gaMessage*);					// hear the last sound from a list
 			bool onBulletHit(gaMessage*);						// hit by a bullet
 
 			// flight recorder status
