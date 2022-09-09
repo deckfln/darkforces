@@ -379,6 +379,16 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 	// kick start actions
 	actions.push(entity);
 
+#ifdef _DEBUG
+	if (entity->debugPhysic()) {
+		GameEngine::Transform& tranform = entity->transform();
+		gaDebugLog(1, "GameEngine::Physics::moveEntity", entity->name() + " to " + std::to_string(tranform.m_position.x)
+			+ " " + std::to_string(tranform.m_position.y)
+			+ " " + std::to_string(tranform.m_position.z));
+
+	}
+#endif
+
 	bool first = true;
 	while (actions.size() != 0) {
 		collisions.clear();
@@ -855,11 +865,6 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 				}
 			}
 			else if (entity->movable() && !pushed->movable()) {
-#ifdef _DEBUG
-				if (entity->debugPhysic()) {
-					gaDebugLog(1, "GameEngine::Physics::wantToMove", pushed->name() + " pushes " + entity->name());
-				}
-#endif // _DEBUG
 				GameEngine::Transform& t = entity->transform();
 				const glm::vec3& p = entity->position();
 				const glm::vec3 p1(nearest_collision->m_position.x, entity->position().y, nearest_collision->m_position.z);
@@ -874,6 +879,11 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 				if (d < EPSILON) {
 					entity->undoTransform();				// restore previous position
 					block_move = true;
+#ifdef _DEBUG
+					if (entity->debugPhysic()) {
+						gaDebugLog(1, "GameEngine::Physics::wantToMove", pushed->name() + " cannot push " + entity->name());
+					}
+#endif // _DEBUG
 				}
 				else {
 					solvers[entity][pushed] = nearest_collision->m_position;
@@ -881,6 +891,11 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 
 					// the entity (non movable) pushes the collided (movable)
 					actions.push(entity);
+#ifdef _DEBUG
+					if (entity->debugPhysic()) {
+						gaDebugLog(1, "GameEngine::Physics::wantToMove", pushed->name() + " pushes " + entity->name());
+					}
+#endif // _DEBUG
 				}
 
 				/*

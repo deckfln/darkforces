@@ -195,6 +195,7 @@ namespace GameEngine {
 		static void add(gaEntity*);								// add an entity to the world
 		static gaMessage* send(const std::string& from, const std::string& to, int action, int value, void* extra=nullptr);	// send message an the queue
 		static gaMessage* send(const std::string& from, const std::string& to, int action, float value, void* extra=nullptr);
+		static gaEntity* FindEntity(const std::string& name);
 
 #ifdef _DEBUG
 		// debugger

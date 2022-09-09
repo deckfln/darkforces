@@ -286,6 +286,10 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 	// init the m_scene
 	glm::vec3* yellow = new glm::vec3(255, 255, 0);
 
+#ifdef _DEBUG
+	gaEntity* entity = GameEngine::World::FindEntity("OFFCFIN.WAX(21)");
+	entity->debugPhysic(true);
+#endif // _DEBUG
 }
 
 /**

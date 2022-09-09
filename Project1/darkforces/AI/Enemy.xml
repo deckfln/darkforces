@@ -293,8 +293,23 @@
 								<value type='vec3'>=sounds.first</value>
 							</node>
 							<node type='Loop' name='move to each gunshots'>
+								<exit>
+									<if>
+										<variable type='bool'>hit_bullet</variable>
+										<value type='bool'>true</value>
+									</if>
+									<if>
+										<variable type='bool'>heard_sound</variable>
+										<value type='bool'>true</value>
+									</if>
+								</exit>
 								<tree>
-									<node type='task' task='moveAndOpenDoor' name='move to player last known position'></node>
+									<node type='Decorator' name='ignore failed move'>
+										<condition>false</condition>
+										<tree>
+											<node type='task' task='moveAndOpenDoor' name='move to player last known position'></node>
+										</tree>
+									</node>
 									<node type='GameEngine:Sounds' name='pick next gunshot location'>
 										<variable type='vec3'>static_position</variable>
 										<value type='vec3'>=sounds.next</value>

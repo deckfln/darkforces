@@ -303,6 +303,11 @@ gaMessage* GameEngine::World::send(const std::string& from, const std::string& t
 	return g_gaWorld.sendMessage(from, to, action, fvalue, extra);
 }
 
+gaEntity* GameEngine::World::FindEntity(const std::string& name)
+{
+	return g_gaWorld.getEntity(name);
+}
+
 //---------------------------------------------------------------
 
 /**
