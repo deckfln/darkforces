@@ -49,6 +49,7 @@ protected:
 	bool m_falling = false;							// the physic engine is falling the entity
 #ifdef _DEBUG
 	bool m_displayAABB=false;						// display collision box
+	bool m_debugPhysics = false;					// physic engine logs
 #endif
 	uint32_t m_timer = 0;							// number of components waiting for a gaMessage::TIMER every frame
 
@@ -124,6 +125,8 @@ public:
 	inline bool processMessages(void) { return m_processMessages; };	// shall we process incoming message
 #ifdef _DEBUG
 	inline void debugAABB(bool b) { m_displayAABB = b; };				// display or not the collision box of the object
+	inline bool debugPhysic(void) { return m_debugPhysics; };
+	inline void debugPhysic(bool b) { m_debugPhysics = true; };
 #endif
 
 	void displayAABBox(void);							// display the world AABBox on screen

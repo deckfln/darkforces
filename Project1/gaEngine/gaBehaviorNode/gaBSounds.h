@@ -7,6 +7,11 @@ namespace GameEngine {
 		class Sounds : public GameEngine::Behavior::SetVar
 		{
 		public:
+			struct Origin {
+				glm::vec3 m_position;
+				float m_loundness;
+			};
+
 			Sounds(const char* name);
 			BehaviorNode* clone(GameEngine::BehaviorNode* p) override;
 			void init(void*) override;

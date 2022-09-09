@@ -7,6 +7,7 @@
 #include "../gaEntity.h"
 #include "../gaBehaviorNode.h"
 #include "../gaBehavior.h"
+#include "../gaBehaviorNode/gaBSounds.h"
 #include "../flightRecorder/frBehaviorTree.h"
 
 static const char* g_className = "BehaviorTree";
@@ -87,9 +88,10 @@ bool GameEngine::Component::BehaviorTree::onNotViewPlayer(gaMessage*)
 bool GameEngine::Component::BehaviorTree::onHearSoundFirst(gaMessage* message)
 {
 	// keep all sounds in list mode, messages are ALREADY sorted by volume
-	std::vector<glm::vec3>& sounds = blackboard().get<std::vector<glm::vec3>>("sounds", GameEngine::Variable::Type::OBJECT);
+	std::vector<GameEngine::Behavior::Sounds::Origin>& sounds = blackboard().get<std::vector<GameEngine::Behavior::Sounds::Origin>>("sounds", GameEngine::Variable::Type::OBJECT);
 	sounds.clear();
-	sounds.push_back(message->m_v3value);
+	GameEngine::Behavior::Sounds::Origin l = { message->m_v3value, message->m_fvalue };
+	sounds.push_back(l);
 
 	return true;
 }
@@ -100,8 +102,9 @@ bool GameEngine::Component::BehaviorTree::onHearSoundFirst(gaMessage* message)
 bool GameEngine::Component::BehaviorTree::onHearSoundNext(gaMessage* message)
 {
 	// keep all sounds in list mode, messages are ALREADY sorted by volume
-	std::vector<glm::vec3>& sounds = blackboard().get<std::vector<glm::vec3>>("sounds", GameEngine::Variable::Type::OBJECT);
-	sounds.push_back(message->m_v3value);
+	std::vector<GameEngine::Behavior::Sounds::Origin>& sounds = blackboard().get<std::vector<GameEngine::Behavior::Sounds::Origin>>("sounds", GameEngine::Variable::Type::OBJECT);
+	GameEngine::Behavior::Sounds::Origin l = { message->m_v3value, message->m_fvalue };
+	sounds.push_back(l);
 
 	return true;
 }

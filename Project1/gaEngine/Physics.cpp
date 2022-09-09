@@ -405,7 +405,7 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
  		glm::vec3 old_position = entity->position();
 
 #ifdef _DEBUG
-		if (entity->name() == "XXX") {
+		if (entity->debugPhysic()) {
 //			entity->transform(&tranform);
 //			tranform.m_position = glm::vec3(-25.497410, 0.007000, 24.253742);
 			gaDebugLog(1, "GameEngine::Physics::wantToMove", entity->name() + " to " + std::to_string(tranform.m_position.x)
@@ -586,9 +586,10 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 
 					if (collidedEntity) {
 						if (abs(dBottom) > EPSILON) {
-							if (entity->name() == "player")
+#ifdef _DEBUG
+							if (entity->debugPhysic())
 								debugCollision(collision, entity, "on bottom");
-
+#endif // _DEBUG
 							// for pushing objects (like elevators)
 							// push the other entity (but do it only once)
 							if (collidedEntity->movable() &&
@@ -628,9 +629,10 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 					}
 				}
 				else if (isCelling) {			// TOP
-					if (entity->name() == "player")
+#ifdef _DEBUG
+					if (entity->debugPhysic())
 						debugCollision(collision, entity, " hit ceiling");
-
+#endif // _DEBUG
 					if (collision.m_position.y < nearest_ceiling_y) {
 						nearest_ceiling = &collision;
 						nearest_ceiling_y = collision.m_position.y;
@@ -663,10 +665,10 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 					if (!b) {
 						verticalCollision.push_back(collidedEntity);
 					}
-
-					if (entity->name() == "player")
+#ifdef _DEBUG
+					if (entity->debugPhysic())
 						debugCollision(collision, entity, " on edge " + std::to_string(facing) + " ");
-
+#endif // _DEBUG
 					d = entity->distanceTo(collision.m_position);
 					if (d < distance) {
 						nearest_collision = &collision;
@@ -690,12 +692,12 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 
 					tranform.m_position.y = nearest_ground->m_triangle[0].y;
 					actions.push(entity);
-
-					if (entity->name() == "player")
+#ifdef _DEBUG
+					if (entity->debugPhysic())
 						gaDebugLog(1, "GameEngine::Physics::wantToMove", entity->name() + " falling to ground " + std::to_string(tranform.m_position.x)
 							+ " " + std::to_string(tranform.m_position.y)
 							+ " " + std::to_string(tranform.m_position.z));
-
+#endif // _DEBUG
 					continue;	// deal directly with the request
 				}
 				else if (abs(deltaY) < EPSILON) {
@@ -709,11 +711,12 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 							tranform.m_position.y = nearest_ground->m_triangle[0].y;
 
 							actions.push(entity);	// fix the entity altitude
-
-							if (entity->name() == "player")
+#ifdef _DEBUG
+							if (entity->debugPhysic())
 								gaDebugLog(1, "GameEngine::Physics::wantToMove", entity->name() + " fixed ground " + std::to_string(tranform.m_position.x)
 									+ " " + std::to_string(tranform.m_position.y)
 									+ " " + std::to_string(tranform.m_position.z));
+#endif // _DEBUG
 							continue;	// deal directly with the request
 						}
 					}
@@ -721,19 +724,22 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 						// convert the down collision to a nearest
 						gaEntity* down = static_cast<gaEntity*>(nearest_ground->m_source);
 						if (down->physical()) {
-							if (entity->name() == "player")
+#ifdef _DEBUG
+							if (entity->debugPhysic())
 								gaDebugLog(1, "GameEngine::Physics::wantToMove", entity->name() + " deny move " + std::to_string(tranform.m_position.x)
 									+ " " + std::to_string(tranform.m_position.y)
 									+ " " + std::to_string(tranform.m_position.z));
-
+#endif // _DEBUG
 							entity->undoTransform();				// restore previous position
 							block_move = true;
 						}
 						else {
-							if (entity->name() == "player")
+#ifdef _DEBUG
+							if (entity->debugPhysic())
 								gaDebugLog(1, "GameEngine::Physics::wantToMove", entity->name() + " collide " + std::to_string(tranform.m_position.x)
 									+ " " + std::to_string(tranform.m_position.y)
 									+ " " + std::to_string(tranform.m_position.z));
+#endif // _DEBUG
 						}
 
 						solvers[entity][down] = nearest_ground->m_position;
@@ -758,11 +764,12 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 							actions.push(entity);
 
 							// fix the entity altitude and give it another try
-							if (entity->name() == "player")
+#ifdef _DEBUG
+							if (entity->debugPhysic())
 								gaDebugLog(1, "GameEngine::Physics::wantToMove", entity->name() + " step down to ground " + std::to_string(tranform.m_position.x)
 									+ " " + std::to_string(tranform.m_position.y)
 									+ " " + std::to_string(tranform.m_position.z));
-
+#endif // _DEBUG
 							// give it an other try
 							continue; // deal directly with the request
 						}
@@ -776,12 +783,12 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 					// OK we definitely need to fall
 					switch (tranform.m_flag) {
 					case gaMessage::Flag::WANT_TO_MOVE_BREAK_IF_FALL: {
-
-						if (entity->name() == "player")
+#ifdef _DEBUG
+						if (entity->debugPhysic())
 							gaDebugLog(1, "GameEngine::Physics::wantToMove", entity->name() + " would fall " + std::to_string(tranform.m_position.x)
 								+ " " + std::to_string(tranform.m_position.y)
 								+ " " + std::to_string(tranform.m_position.z));
-
+#endif // _DEBUG
 						// if the entity wants to be informed of falling
 						entity->undoTransform();			// restore previous position
 						block_move = true;
@@ -798,9 +805,10 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 							entity->falling(true);
 							m_ballistics[entity->name()] = Ballistic(tranform.m_position, old_position);
 						}
-
-						if (entity->name() == "player")
+#ifdef _DEBUG
+						if (entity->debugPhysic())
 							gaDebugLog(1, "GameEngine::Physics::wantToMove", entity->name() + " falling");
+#endif // _DEBUG
 					}
 					// check lateral collision even when falling
 				}
@@ -812,14 +820,16 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 			// if there is a collision
 			gaEntity* pushed = static_cast<gaEntity*>(nearest_collision->m_source);
 
-			if (entity->name() == "OFFCFIN.WAX(21)")
+#ifdef _DEBUG
+			if (entity->debugPhysic())
 				gaDebugLog(1, "GameEngine::Physics::wantToMove", entity->name() + " trying to pushe");
+#endif // _DEBUG
 
 			if (!entity->movable() && pushed->movable()) {
-
-				if (entity->name() == "OFFCFIN.WAX(21)")
+#ifdef _DEBUG
+				if (entity->debugPhysic())
 					gaDebugLog(1, "GameEngine::Physics::wantToMove", entity->name() + " pushes " + pushed->name());
-
+#endif // _DEBUG
 				GameEngine::Transform& t = pushed->transform();
 				const glm::vec3& p = pushed->position();
 				const glm::vec3 p1(nearest_collision->m_position.x, pushed->position().y, nearest_collision->m_position.z);
@@ -845,11 +855,11 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 				}
 			}
 			else if (entity->movable() && !pushed->movable()) {
-
-				if (entity->name() == "OFFCFIN.WAX(21)") {
+#ifdef _DEBUG
+				if (entity->debugPhysic()) {
 					gaDebugLog(1, "GameEngine::Physics::wantToMove", pushed->name() + " pushes " + entity->name());
 				}
-
+#endif // _DEBUG
 				GameEngine::Transform& t = entity->transform();
 				const glm::vec3& p = entity->position();
 				const glm::vec3 p1(nearest_collision->m_position.x, entity->position().y, nearest_collision->m_position.z);
@@ -965,8 +975,10 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 				solvers[entity][pushed] = nearest_collision->m_position;
 				solvers[pushed][entity] = nearest_collision->m_position;
 
-				if (entity->name() == "OFFCFIN.WAX(21)")
+#ifdef _DEBUG
+				if (entity->debugPhysic())
 					gaDebugLog(1, "GameEngine::Physics::wantToMove", pushed->name() + " collision " + entity->name());
+#endif // _DEBUG
 			}
 			else {
  				// both objects are non movable, deny move
@@ -983,18 +995,21 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 			if (collisionWith->movable()) {
 				// ONLY refuse the move if the entity is a physical one
 				if (collisionWith->physical()) {
-					if (entity->name() == "player")
+#ifdef _DEBUG
+					if (entity->debugPhysic())
 						gaDebugLog(1, "GameEngine::Physics::wantToMove", entity->name() + " deny move upward " + std::to_string(tranform.m_position.x)
 							+ " " + std::to_string(tranform.m_position.y)
 							+ " " + std::to_string(tranform.m_position.z));
-
+#endif // _DEBUG
 					entity->undoTransform();				// restore previous position
 				}
 				else {
-					if (entity->name() == "player")
+#ifdef _DEBUG
+					if (entity->debugPhysic())
 						gaDebugLog(1, "GameEngine::Physics::wantToMove", entity->name() + " collide upward " + std::to_string(tranform.m_position.x)
 							+ " " + std::to_string(tranform.m_position.y)
 							+ " " + std::to_string(tranform.m_position.z));
+#endif // _DEBUG
 				}
 
 				// always inform the source entity 
@@ -1017,18 +1032,21 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 
 					actions.push(entity);	// fix the entity altitude
 					fix_y = true;
-
-					if (entity->name() == "OFFCFIN.WAX(21)")
+#ifdef _DEBUG
+					if (entity->debugPhysic())
 						gaDebugLog(1, "GameEngine::Physics::wantToMove", entity->name() + " falling to ground " + std::to_string(tranform.m_position.x)
 							+ " " + std::to_string(tranform.m_position.y)
 							+ " " + std::to_string(tranform.m_position.z));
+#endif // _DEBUG
 				}
 
-				if (entity->name() == "OFFCFIN.WAX(21)")
+#ifdef _DEBUG
+				if (entity->debugPhysic())
 					gaDebugLog(1, "GameEngine::Physics::wantToMove", entity->name() + " hit sector ceiling " + std::to_string(tranform.m_position.x)
-					+ " " + std::to_string(tranform.m_position.y)
-					+ " " + std::to_string(tranform.m_position.z));
+						+ " " + std::to_string(tranform.m_position.y)
+						+ " " + std::to_string(tranform.m_position.z));
 
+#endif // _DEBUG
 				g_gaWorld.sendMessage(
 					static_cast<dfSuperSector*>(nearest_ceiling->m_source)->name(),
 					entity->name(),
@@ -1134,9 +1152,11 @@ void Physics::moveEntity(gaEntity* entity, gaMessage* message)
 		gaEntity* entity = entry.first;
 		const glm::mat4x4& matrix = entity->worldMatrix();
 		if (entry.second == matrix) {
-			if (entity->name() == "OFFCFIN.WAX(21)") {
+#ifdef _DEBUG
+			if (entity->debugPhysic()) {
 				__debugbreak();
 			}
+#endif // _DEBUG
 			// the entity was handled by cannot moved
 			gaMessage *msg = entry.first->sendMessage(entity->name(), gaMessage::Action::CANT_MOVE);
 			struct CollisionList* data = (struct CollisionList*)&msg->m_data[0];
