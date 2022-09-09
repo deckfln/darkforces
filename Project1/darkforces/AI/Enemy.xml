@@ -12,21 +12,21 @@
 	<!-- ******************************************************************** -->
 	<tasks>
 		<task class='moveAndOpenDoor' description=''>
-			<node type='Sequence' name='moveAndOpenDoor'>
+			<Sequence name='moveAndOpenDoor'>
 			<condition>exit_first_success</condition>
 			<while>2</while>	<!-- loop if child #2 is true -->
 			<tree>
-				<node type='Decorator' name='force the satnav target'>
+				<Decorator name='force the satnav target'>
 				<condition>false</condition>
 				<tree>
-					<node type='GameEngine:SetVar' name='define satnav target'>
+					<GameEngine:SetVar name='define satnav target'>
 						<variable type='vec3'>satnav_target</variable>
 						<value type='vec3'>=static_position</value>
-					</node>
+					</GameEngine:SetVar>
 				</tree>
-				</node>
+				</Decorator>
 				
-				<node type='SatNav' name='move enemy to a position unless there is an interruption'>
+				<SatNav name='move enemy to a position unless there is an interruption'>
 				<variable type='vec3'>satnav_target</variable>
 				<collisionExit>5.0</collisionExit>
 				<exit>
@@ -45,7 +45,7 @@
 						<value type='bool'>true</value>
 					</if>
 				</exit>
-				</node>
+				</SatNav>
 				
 				<!--
 				<node type='Decorator' name='collided and not with an elevator'>
@@ -68,29 +68,29 @@
 				-->
 
 				<!-- detect door ahead -->
-				<node type='Sequence' name='if door ahead, go to the triggers'>
+				<Sequence name='if door ahead, go to the triggers'>
 				<condition>exit_first_failure</condition>
 				<tree>
-					<node type='DarkForces:SetVar' name='closed door, find triggers'>
+					<DarkForces:SetVar name='closed door, find triggers'>
 						<variable type='ptr'>elevator_triggers</variable>
 						<value type='ptr'>=elevator.triggers</value>
-					</node>
-					<node type='Sequence' name='go to each trigger'>
+					</DarkForces:SetVar>
+					<Sequence name='go to each trigger'>
 					<condition>exit_first_failure</condition>
 					<tree>
-						<node type='DarkForces:SetVar' name='get next trigger or exit'>
+						<DarkForces:SetVar name='get next trigger or exit'>
 							<variable type='ptr'>trigger</variable>
 							<value type='ptr'>=elevator.triggers.next</value>
-						</node>
-						<node type='GameEngine:SetVar' name='copy elevator entity'>
+						</DarkForces:SetVar>
+						<GameEngine:SetVar name='copy elevator entity'>
 							<variable type='ptr'>elevator</variable>
 							<value type='ptr'>=futureCollision</value>
-						</node>
-						<node type='DarkForces:SetVar' name='set next trigger position'>
+						</GameEngine:SetVar>
+						<DarkForces:SetVar name='set next trigger position'>
 							<variable type='vec3'>satnav_target</variable>
 							<value type='vec3'>=trigger.position</value>
-						</node>
-						<node type='SatNav' name='go to next trigger'>
+						</DarkForces:SetVar>
+						<SatNav name='go to next trigger, exit IF'>
 							<variable type='vec3'>satnav_target</variable>
 							<collisionExit>5.0</collisionExit>
 							<exit>
@@ -109,54 +109,54 @@
 									<value type='bool'>true</value>
 								</if>
 							</exit>
-						</node>
-						<node type='DarkForces:Activate' name='push the trigger'>
+						</SatNav>
+						<DarkForces:Activate name='push the trigger'>
 							<variable>trigger</variable>
-						</node>
-						<node type='DarkForces:WaitDoor' name='wait for door to open'>
+						</DarkForces:Activate>
+						<DarkForces:WaitDoor name='wait for door to open'>
 							<variable type='ptr'>elevator</variable>
-						</node>
+						</DarkForces:WaitDoor>
 					</tree>
-					</node>
+					</Sequence>
 				</tree>
-				</node>
+				</Sequence>
 			</tree>
-			</node>
+			</Sequence>
 		</task>
 		
 		<!-- Move toward the player to shoot him, until we stop seing the player-->
 		<task class='attackAndTrack'>
-			<node type='Loop' name='attack and track'>
+			<Loop name='attack and track'>
 			<condition>until_all_fail</condition>
 			<tree>
-				<node type='Loop' name='find the player, move toward him and shoot at him'>
+				<Loop name='find the player, move toward him and shoot at him'>
 				<condition>until_one_fail</condition>
 				<tree>
-					<node type='GameEngine:CheckVar' name='if player is visible'>
+					<GameEngine:CheckVar name='if player is visible'>
 						<variable type='bool'>player_visible</variable>
 						<value type='bool'>true</value>
-					</node>
-					<node type='darkForces:sound' name='then tease the player'>
+					</GameEngine:CheckVar>
+					<darkForces:sound name='then tease the player'>
 						<sounds>
 							<include file='sounds.inc'/>
 						</sounds>
-					</node>
-					<node type='Fire2Player' name='then Shoot player'></node>
-					<node type='GameEngine:SetVar' name='ignore sound in the midst of the battle'>
+					</darkForces:sound>
+					<Fire2Player name='then Shoot player'></Fire2Player>
+					<GameEngine:SetVar name='ignore sound in the midst of the battle'>
 						<variable type='bool'>heard_sound</variable>
 						<value type='bool'>false</value>
-					</node>
-					<node type='Sequence' name='Move to player'>
+					</GameEngine:SetVar>
+					<Sequence name='Move to player'>
 					<tree>
-						<node type='DarkForces:SetVar' name='set the player nearby position'>
+						<DarkForces:SetVar name='set the player nearby position'>
 							<variable type='vec3'>satnav_target</variable>
 							<value type='vec3'>=playerLastPosition</value>
-						</node>
-						<node type='GameEngine:Alarm' name='walk for limited time'>
+						</DarkForces:SetVar>
+						<GameEngine:Alarm name='walk for limited time'>
 							<message>GameEngine:SatNav_CANCEL</message>
 							<timer max='3000' min='1500' />
-						</node>
-						<node type='SatNav' name='go to player last position'>
+						</GameEngine:Alarm>
+						<SatNav name='go to player last position'>
 							<variable type='vec3'>satnav_target</variable>
 							<exit>
 								<if>
@@ -164,13 +164,13 @@
 									<value type='bool'>true</value>
 								</if>
 							</exit>
-						</node>
+						</SatNav>
 					</tree>
-					</node>
+					</Sequence>
 				</tree>
-				</node>
+				</Loop>
 			</tree>
-			</node>
+			</Loop>
 		</task>
 	</tasks>
 	<!-- ******************************************************************** -->
@@ -189,17 +189,17 @@
 		</variable>
 	</blackboard>
 	<!-- ******************************************************************** -->
-	<node type="Sequence" name="main loop">
+	<Sequence name="main loop">
 		<tree>
-			<node type='GameEngine:SetVar' name='define waiting position'>
+			<GameEngine:SetVar name='define waiting position'>
 				<variable type='vec3'>wait_position</variable>
 				<value type='vec3'>=entity.position</value>
-			</node>
-			<node type='Loop' name='main control'>
+			</GameEngine:SetVar>
+			<Loop name='main control'>
 				<onerror action='failed'/>
 				<condition>until_all_fail</condition>
 				<tree>
-					<node type="Sequence" name="sit idle if there is no interaction">
+					<Sequence name="sit idle if there is no interaction">
 						<tree>
 							<!--
 							<node type='GameEngine:CheckVar' name='if player not visible'>
@@ -207,14 +207,14 @@
 								<value type='bool'>false</value>
 							</node>
 							-->
-							<node type='GameEngine:CheckVar' name='and no sound heard'>
+							<GameEngine:CheckVar name='and no sound heard'>
 								<variable type='bool'>heard_sound</variable>
 								<value type='bool'>false</value>
-							</node>
-							<node type='DarkForces:State' name='change animation  to static pose'>
+							</GameEngine:CheckVar>
+							<DarkForces:State name='change animation  to static pose'>
 								<state>ENEMY_STAY_STILL</state>
-							</node>
-							<node type='WaitIdle' name='then Wait for action'>
+							</DarkForces:State>
+							<WaitIdle name='then Wait for action'>
 								<exit>
 									<if>
 										<variable type='bool'>player_visible</variable>
@@ -229,42 +229,32 @@
 										<value type='bool'>true</value>
 									</if>
 								</exit>
-							</node>
+							</WaitIdle>
 						</tree>
-					</node>
+					</Sequence>
 					
-					<!--
-					<node type='GameEngine:SetVar' name='reset heard sound'>
-						<variable type='bool'>heard_sound</variable>
-						<value type='bool'>false</value>
-					</node>
-					<node type='GameEngine:SetVar' name='reset hit_bullet'>
-						<variable type='bool'>hit_bullet</variable>
-						<value type='bool'>false</value>
-					</node>
-					-->
 
-					<node type='Sequence' name='patrol last position a bullet was fired from'>
+					<Sequence name='patrol last position a bullet was fired from'>
 						<tree>
-							<node type='GameEngine:CheckVar' name='if hit by bullet'>
+							<GameEngine:CheckVar name='if hit by bullet'>
 								<variable type='bool'>hit_bullet</variable>
 								<value type='bool'>true</value>
-							</node>
-							<node type='GameEngine:SetVar' name='reset hit_bullet'>
+							</GameEngine:CheckVar>
+							<GameEngine:SetVar name='reset hit_bullet'>
 								<variable type='bool'>hit_bullet</variable>
 								<value type='bool'>false</value>
-							</node>
-							<node type='Sequence' name='move to bullet position'>
+							</GameEngine:SetVar>
+							<Sequence name='move to bullet position'>
 								<tree>
-									<node type='GameEngine:SetVar' name='set bullet starting point'>
+									<GameEngine:SetVar name='set bullet starting point'>
 										<variable type='vec3'>static_position</variable>
 										<value type='vec3'>=last_bullet</value>
-									</node>
-									<node type='task' task='moveAndOpenDoor' name='move to player last known position'></node>
+									</GameEngine:SetVar>
+									<task task='moveAndOpenDoor' name='move to player last known position'></task>
 								</tree>
-							</node>
+							</Sequence>
 						</tree>
-					</node>
+					</Sequence>
 
 					<!--
 					<node type='Sequence' name='attack if visible'>
@@ -278,21 +268,21 @@
 					</node>
 					-->
 					
-					<node type='Sequence' name='patrol last position gunshot'>
+					<Sequence name='patrol last position gunshot'>
 						<tree>
-							<node type='GameEngine:CheckVar' name='if heard sound'>
+							<GameEngine:CheckVar name='if heard sound'>
 								<variable type='bool'>heard_sound</variable>
 								<value type='bool'>true</value>
-							</node>
-							<node type='GameEngine:SetVar' name='reset heard sound'>
+							</GameEngine:CheckVar>
+							<GameEngine:SetVar name='reset heard sound'>
 								<variable type='bool'>heard_sound</variable>
 								<value type='bool'>false</value>
-							</node>
-							<node type='GameEngine:Sounds' name='first gunshot location'>
+							</GameEngine:SetVar>
+							<GameEngine:Sounds name='first gunshot location'>
 								<variable type='vec3'>static_position</variable>
 								<value type='vec3'>=sounds.first</value>
-							</node>
-							<node type='Loop' name='move to each gunshots'>
+							</GameEngine:Sounds>
+							<Loop name='move to each gunshots'>
 								<exit>
 									<if>
 										<variable type='bool'>hit_bullet</variable>
@@ -304,22 +294,22 @@
 									</if>
 								</exit>
 								<tree>
-									<node type='Decorator' name='ignore failed move'>
+									<Decorator name='ignore failed move'>
 										<condition>false</condition>
 										<tree>
-											<node type='task' task='moveAndOpenDoor' name='move to player last known position'></node>
+											<task task='moveAndOpenDoor' name='move to player last known position'></task>
 										</tree>
-									</node>
-									<node type='GameEngine:Sounds' name='pick next gunshot location'>
+									</Decorator>
+									<GameEngine:Sounds name='pick next gunshot location'>
 										<variable type='vec3'>static_position</variable>
 										<value type='vec3'>=sounds.next</value>
-									</node>
+									</GameEngine:Sounds>
 								</tree>
-							</node>
+							</Loop>
 						</tree>
-					</node>
+					</Sequence>
 
-					<node type='Sequence' name='move back to wait position if no activity'>
+					<Sequence name='move back to wait position if no activity'>
 						<tree>
 							<!--
 							<node type='GameEngine:CheckVar' name='if player not visible'>
@@ -327,19 +317,19 @@
 								<value type='bool'>false</value>
 							</node>
 							-->
-							<node type='GameEngine:CheckVar' name='and no sound heard'>
+							<GameEngine:CheckVar name='and no sound heard'>
 								<variable type='bool'>heard_sound</variable>
 								<value type='bool'>false</value>
-							</node>
-							<node type='GameEngine:SetVar' name='define waiting position'>
+							</GameEngine:CheckVar>
+							<GameEngine:SetVar name='define waiting position'>
 								<variable type='vec3'>static_position</variable>
 								<value type='vec3'>=wait_position</value>
-							</node>
-							<node type='task' task ='moveAndOpenDoor' name='then walk back to wait position'></node>
+							</GameEngine:SetVar>
+							<task task ='moveAndOpenDoor' name='then walk back to wait position'></task>
 						</tree>
-					</node>
+					</Sequence>
 				</tree>
-			</node>
+			</Loop>
 		</tree>
-	</node>
+	</Sequence>
 </behaviortree>

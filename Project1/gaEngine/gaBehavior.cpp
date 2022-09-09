@@ -143,11 +143,12 @@ static GameEngine::BehaviorNode* loadNode(tinyxml2::XMLElement* node)
 	GameEngine::BehaviorNode* bchild = nullptr;
 
 	// get the attributes
+	const char* value = node->Value();
 	const char* type = node->Attribute("type");
 	const char* name = node->Attribute("name");
 
 	// task node are managed locally
-	if (strcmp(type, "task")==0) {
+	if (strcmp(value, "task")==0) {
 		const char* task = node->Attribute("task");
 		if (g_tasks.count(task) == 0) {
 			gaDebugLog(1, "GameEngine::Behavior::loadNode", "task " + std::string(task) + " not defined");
@@ -158,25 +159,24 @@ static GameEngine::BehaviorNode* loadNode(tinyxml2::XMLElement* node)
 	}
 	else {
 
-		if (g_createNodes[type] == nullptr) {
-			gaDebugLog(1, "GameEngine::Behavior::loadTree", "unknwon type " + std::string(type) + " in file");
+		if (g_createNodes[value] == nullptr) {
+			gaDebugLog(1, "GameEngine::Behavior::loadTree", "unknwon type " + std::string(value) + " in file");
 			exit(-1);
 		}
 
 		// and create the node
-		bnode = (*g_createNodes[type])(_strdup(name), node, nullptr);
+		bnode = (*g_createNodes[value])(_strdup(name), node, nullptr);
 	}
 
 	// and create an bind the children
 	tinyxml2::XMLElement* tree = node->FirstChildElement("tree");
 	if (tree) {
-		tinyxml2::XMLElement* pNodeElement = tree->FirstChildElement("node");
-
+		tinyxml2::XMLElement* pNodeElement = tree->FirstChildElement();
 		while (pNodeElement != nullptr) {
 			bchild = loadNode(pNodeElement);
 			bnode->addNode(bchild);
 
-			pNodeElement = pNodeElement->NextSiblingElement("node");
+			pNodeElement = pNodeElement->NextSiblingElement();
 		}
 	}
 
@@ -199,7 +199,7 @@ static void loadTasks(tinyxml2::XMLElement* bt, const std::string& data)
 
 		while (xmlTask != nullptr) {
 			const char* cclass = xmlTask->Attribute("class");
-			tinyxml2::XMLElement* xmlNode = xmlTask->FirstChildElement("node");
+			tinyxml2::XMLElement* xmlNode = xmlTask->FirstChildElement();
 			g_tasks[cclass] = loadNode(xmlNode);
 
 			xmlTask = xmlTask->NextSiblingElement("task");
@@ -287,7 +287,7 @@ GameEngine::BehaviorNode* GameEngine::Behavior::loadTree(const std::string& data
 	loadBlackboard(bt, data);	// load in the cache
 
 	// create the node
-	tinyxml2::XMLElement* pRoot = bt->FirstChildElement("node");
+	tinyxml2::XMLElement* pRoot = bt->FirstChildElement("Sequence");
 
 	g_cache[data] = loadNode(pRoot);
 
