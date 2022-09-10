@@ -49,15 +49,14 @@ void GameEngine::Behavior::Sounds::init(void* data)
 {
 	Var::init(nullptr);
 
-	std::vector<Origin>& sounds = m_tree->blackboard().get<std::vector<Origin>>("sounds", GameEngine::Variable::Type::OBJECT);
+	Origins& sounds = m_tree->blackboard().get<Origins>("sounds", GameEngine::Variable::Type::OBJECT);
 
 	if (sounds.size() == 0) {
 		m_status = GameEngine::BehaviorNode::Status::FAILED;
 		return;
 	}
 
-	Origin& p = sounds.back();
+	const Origin& p = sounds.front();
 	m_variable.set(m_tree, p.m_position);
 	m_status = GameEngine::BehaviorNode::Status::SUCCESSED;
-	sounds.pop_back();
 }

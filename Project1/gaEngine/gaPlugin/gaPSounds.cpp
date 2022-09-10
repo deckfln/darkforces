@@ -34,11 +34,6 @@ void GameEngine::Plugins::Sounds::onPropagateSound(gaEntity* from, gaMessage* me
 				bool process = false;
 				for (auto s : sounds) {
 					if (soundID == s) {
-						/*
-						if (entity->name() == "OFFCFIN.WAX(21)") {
-							__debugbreak();
-						}
-						*/
 						virtualSources.clear();
 						g_gaLevel->volume().path(p, entity->position(), 50.0f, virtualSources);
 
@@ -55,6 +50,13 @@ void GameEngine::Plugins::Sounds::onPropagateSound(gaEntity* from, gaMessage* me
 
 							// last message
 							from->sendMessage(entity->name(), gaMessage::Action::HEAR_SOUND_LAST, soundID, sound);
+
+							if (entity->name() == "OFFCFIN.WAX(21)") {
+								for (size_t i = 0; i < l; i++) {
+									printf("%f,%f\n", virtualSources[i].m_points[0].origin.x, virtualSources[i].m_points[0].origin.z);
+								}
+								__debugbreak();
+							}
 						}
 						break;
 					}

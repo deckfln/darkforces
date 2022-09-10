@@ -88,10 +88,9 @@ bool GameEngine::Component::BehaviorTree::onNotViewPlayer(gaMessage*)
 bool GameEngine::Component::BehaviorTree::onHearSoundFirst(gaMessage* message)
 {
 	// keep all sounds in list mode, messages are ALREADY sorted by volume
-	std::vector<GameEngine::Behavior::Sounds::Origin>& sounds = blackboard().get<std::vector<GameEngine::Behavior::Sounds::Origin>>("sounds", GameEngine::Variable::Type::OBJECT);
+	GameEngine::Behavior::Sounds::Origins& sounds = blackboard().get<GameEngine::Behavior::Sounds::Origins>("sounds", GameEngine::Variable::Type::OBJECT);
 	sounds.clear();
-	GameEngine::Behavior::Sounds::Origin l = { message->m_v3value, message->m_fvalue };
-	sounds.push_back(l);
+	sounds.push_back(message->m_v3value, message->m_fvalue);
 
 	return true;
 }
@@ -102,9 +101,8 @@ bool GameEngine::Component::BehaviorTree::onHearSoundFirst(gaMessage* message)
 bool GameEngine::Component::BehaviorTree::onHearSoundNext(gaMessage* message)
 {
 	// keep all sounds in list mode, messages are ALREADY sorted by volume
-	std::vector<GameEngine::Behavior::Sounds::Origin>& sounds = blackboard().get<std::vector<GameEngine::Behavior::Sounds::Origin>>("sounds", GameEngine::Variable::Type::OBJECT);
-	GameEngine::Behavior::Sounds::Origin l = { message->m_v3value, message->m_fvalue };
-	sounds.push_back(l);
+	GameEngine::Behavior::Sounds::Origins& sounds = blackboard().get<GameEngine::Behavior::Sounds::Origins>("sounds", GameEngine::Variable::Type::OBJECT);
+	sounds.push_back(message->m_v3value, message->m_fvalue);
 
 	return true;
 }

@@ -288,7 +288,7 @@ myDarkForces::myDarkForces(std::string name, int width, int height) :
 
 #ifdef _DEBUG
 	gaEntity* entity = GameEngine::World::FindEntity("OFFCFIN.WAX(21)");
-	entity->debugPhysic(true);
+	//entity->debugPhysic(true);
 #endif // _DEBUG
 }
 
