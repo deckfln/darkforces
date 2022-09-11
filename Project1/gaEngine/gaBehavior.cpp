@@ -12,6 +12,7 @@
 #include "gaBehaviorNode.h"
 #include "gaVariable.h"
 #include "gaValue.h"
+#include "gaBehaviorPlugin.h"
 
 struct char_cmp {
 	bool operator () (const char* a, const char* b) const
@@ -32,17 +33,35 @@ void GameEngine::Behavior::registerNode(const char* name, createFunction create)
  */
 static std::map<const std::string, uint32_t> g_createMessage;
 static std::map<const std::string, GameEngine::Component::BehaviorTree::msgHandler> g_createHandler;
+static std::map<const std::string, GameEngine::Behavior::Plugin::Base::pluginHandler> g_createPlugin;
 
+/**
+ * register all messages that can be used in XML files
+ */
 void GameEngine::Behavior::registerMessage(const char* name, uint32_t id)
 {
 	g_createMessage[name] = id;
 }
 
+/**
+ * register all message handlers that can be used in XML files
+ */
 void GameEngine::Behavior::registerHandler(const char* name, GameEngine::Component::BehaviorTree::msgHandler handler)
 {
 	g_createHandler[name] = handler;
 }
 
+/**
+ * register all message plugins that can be used in XML files
+ */
+void GameEngine::Behavior::registerPlugin(const char* name, GameEngine::Behavior::Plugin::Base::pluginHandler handler)
+{
+	g_createPlugin[name] = handler;
+}
+
+/**
+ *
+ */
 int32_t GameEngine::Behavior::getMessage(const char* message)
 {
 	if (g_createMessage.count(message) == 0) {
@@ -56,6 +75,7 @@ int32_t GameEngine::Behavior::getMessage(const char* message)
  * load static plugins
  */
 static std::map<std::string, std::vector<std::pair<std::string, std::string>>> g_plugins;
+static std::map<std::string, std::vector<std::string>> g_mplugins;
 
 static void loadPlugins(tinyxml2::XMLElement* bt, const std::string& data)
 {
@@ -76,6 +96,20 @@ static void loadPlugins(tinyxml2::XMLElement* bt, const std::string& data)
 			pNodeElement = pNodeElement->NextSiblingElement("message");
 		}
 	}
+
+	// and create an bind the children
+	messages = bt->FirstChildElement("plugins");
+	if (messages) {
+		tinyxml2::XMLElement* pNodeElement = messages->FirstChildElement("plugin");
+
+		while (pNodeElement != nullptr) {
+			const char* handler = pNodeElement->GetText();
+
+			g_mplugins[data].push_back(handler);
+
+			pNodeElement = pNodeElement->NextSiblingElement("plugin");
+		}
+	}
 }
 
 static void loadPlugins(GameEngine::Component::BehaviorTree* tree, const std::string& data)
@@ -85,7 +119,24 @@ static void loadPlugins(GameEngine::Component::BehaviorTree* tree, const std::st
 		const std::string& id = handler.first;
 		const std::string& h = handler.second;
 
+		if (g_createMessage.count(id) == 0) {
+			gaDebugLog(1, "GameEngine::Behavior::loadPlugins", "message " + std::string(id) + " not defined");
+			exit(-1);
+		}
+
 		tree->handlers(g_createMessage[id], g_createHandler[h]);
+	}
+}
+
+static void activatePlugins(GameEngine::Component::BehaviorTree* tree, const std::string& data)
+{
+	std::vector<std::string>& plugins = g_mplugins[data];
+	for (auto& plugin : plugins) {
+		if (g_createPlugin[plugin] == nullptr) {
+			gaDebugLog(1, "GameEngine::Behavior::activatePlugins", "plugin " + std::string(plugin) + " not defined");
+			exit(-1);
+		}
+		tree->plugins(g_createPlugin[plugin]);
 	}
 }
 
@@ -224,6 +275,7 @@ GameEngine::BehaviorNode* GameEngine::Behavior::loadTree(const std::string& data
 	// check built hash in the cache
 	if (g_cache.count(data) > 0) {
 		loadPlugins(tree, data);
+		activatePlugins(tree, data);
 		activateBlackboard(tree, data);
 
 		GameEngine::BehaviorNode* cl = g_cache[data];
@@ -291,7 +343,9 @@ GameEngine::BehaviorNode* GameEngine::Behavior::loadTree(const std::string& data
 
 	g_cache[data] = loadNode(pRoot);
 
-	loadPlugins(tree, data);
+	// activate plugins for the behavior tree
+	loadPlugins(tree, data);	
+	activatePlugins(tree, data);
 	activateBlackboard(tree, data);
 	return g_cache[data]->deepClone();
 }

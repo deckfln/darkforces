@@ -202,6 +202,12 @@
     <Filter Include="Fichiers de ressources\gaEngine\shaders">
       <UniqueIdentifier>{5cab9472-ef42-4d3e-838a-de2fe908b33a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Fichiers d%27en-tête\gaEngine\gaBevaviorPlugin">
+      <UniqueIdentifier>{7ced4205-c156-445b-b9cf-7782ecb7939f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers sources\gaEngine\gaBehaviorPlugin">
+      <UniqueIdentifier>{970f8e2b-1889-4776-b944-b6b21559da77}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source.cpp">
@@ -926,6 +932,18 @@
     </ClCompile>
     <ClCompile Include="gaEngine\gaBehaviorNode\gaBSounds.cpp">
       <Filter>Fichiers sources\gaEngine\gaBehaviorNode</Filter>
+    </ClCompile>
+    <ClCompile Include="gaEngine\gaBehaviorPlugin.cpp">
+      <Filter>Fichiers sources\gaEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="gaEngine\gaBehaviorPlugin\gaBPSound.cpp">
+      <Filter>Fichiers sources\gaEngine\gaBehaviorPlugin</Filter>
+    </ClCompile>
+    <ClCompile Include="gaEngine\gaBehaviorPlugin\gaBPview.cpp">
+      <Filter>Fichiers sources\gaEngine\gaBehaviorPlugin</Filter>
+    </ClCompile>
+    <ClCompile Include="gaEngine\gaBehaviorPlugin\gaBPHit.cpp">
+      <Filter>Fichiers sources\gaEngine\gaBehaviorPlugin</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1753,6 +1771,18 @@
     </ClInclude>
     <ClInclude Include="gaEngine\gaBehaviorNode\gaBSounds.h">
       <Filter>Fichiers d%27en-tête\gaEngine\gaBehaviorNode</Filter>
+    </ClInclude>
+    <ClInclude Include="gaEngine\gaBehaviorPlugin.h">
+      <Filter>Fichiers d%27en-tête\gaEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="gaEngine\gaBehaviorPlugin\gaBPsound.h">
+      <Filter>Fichiers d%27en-tête\gaEngine\gaBevaviorPlugin</Filter>
+    </ClInclude>
+    <ClInclude Include="gaEngine\gaBehaviorPlugin\gaBPview.h">
+      <Filter>Fichiers d%27en-tête\gaEngine\gaBevaviorPlugin</Filter>
+    </ClInclude>
+    <ClInclude Include="gaEngine\gaBehaviorPlugin\gaBPHit.h">
+      <Filter>Fichiers d%27en-tête\gaEngine\gaBevaviorPlugin</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -14,6 +14,10 @@
 #include "gaPlugin/gaPSounds.h"
 #include "gaPlugin/gaPView.h"
 
+#include "gaBehaviorPlugin/gaBPsound.h"
+#include "gaBehaviorPlugin/gaBPview.h"
+#include "gaBehaviorPlugin/gaBPhit.h"
+
 #include "gaBehaviorNode/gaBehaviorDecorator.h"
 #include "gaBehaviorNode/gaBehaviorLoop.h"
 #include "gaBehaviorNode/gaBehaviorSequence.h"
@@ -51,20 +55,11 @@ void GameEngine::App::registerFRclasses(void)
  */
 void GameEngine::App::registerBThandlers(void)
 {
-	GameEngine::Behavior::registerHandler("GameEngine:onViewPlayer", &GameEngine::Component::BehaviorTree::onViewPlayer);
-	GameEngine::Behavior::registerHandler("GameEngine:onNotViewPlayer", &GameEngine::Component::BehaviorTree::onNotViewPlayer);
-	GameEngine::Behavior::registerHandler("GameEngine:onHearSoundFirst", &GameEngine::Component::BehaviorTree::onHearSoundFirst);
-	GameEngine::Behavior::registerHandler("GameEngine:onHearSoundNext", &GameEngine::Component::BehaviorTree::onHearSoundNext);
-	GameEngine::Behavior::registerHandler("GameEngine:onHearSoundLast", &GameEngine::Component::BehaviorTree::onHearSoundLast);
-	GameEngine::Behavior::registerHandler("GameEngine:onBulletHit", &GameEngine::Component::BehaviorTree::onBulletHit);
-
-	GameEngine::Behavior::registerMessage("GameEngine:VIEW", gaMessage::Action::VIEW);
-	GameEngine::Behavior::registerMessage("GameEngine:NOT_VIEW", gaMessage::Action::NOT_VIEW);
-	GameEngine::Behavior::registerMessage("GameEngine:HEAR_SOUND_FIRST", gaMessage::Action::HEAR_SOUND_FIRST);
-	GameEngine::Behavior::registerMessage("GameEngine:HEAR_SOUND_NEXT", gaMessage::Action::HEAR_SOUND_NEXT);
-	GameEngine::Behavior::registerMessage("GameEngine:HEAR_SOUND_LAST", gaMessage::Action::HEAR_SOUND_LAST);
-	GameEngine::Behavior::registerMessage("GameEngine:BULLET_HIT", gaMessage::Action::BULLET_HIT);
 	GameEngine::Behavior::registerMessage("GameEngine:SatNav_CANCEL", gaMessage::Action::SatNav_CANCEL);
+
+	GameEngine::Behavior::registerPlugin("GameEngine:Plugin:View",  GameEngine::Behavior::Plugin::View::Create);
+	GameEngine::Behavior::registerPlugin("GameEngine:Plugin:Sound", GameEngine::Behavior::Plugin::Sounds::Create);
+	GameEngine::Behavior::registerPlugin("GameEngine:Plugin:Hit", GameEngine::Behavior::Plugin::Hit::Create);
 }
 
 /**

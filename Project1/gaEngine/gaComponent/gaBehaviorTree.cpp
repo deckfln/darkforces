@@ -56,77 +56,11 @@ void GameEngine::Component::BehaviorTree::handlers(uint32_t message, msgHandler 
 }
 
 /**
- * check if see the player in the cone of vision
+ * manage plugins handling messages
  */
-bool GameEngine::Component::BehaviorTree::onViewPlayer(gaMessage* message)
+void GameEngine::Component::BehaviorTree::plugins(GameEngine::Behavior::Plugin::Base::pluginHandler plugin)
 {
-	std::deque<glm::vec3>& playerLastPositions = blackboard().get<std::deque<glm::vec3>>("player_last_positions", GameEngine::Variable::Type::OBJECT);
-
-	// player is visible, because we just received a notification
-	if (playerLastPositions.size() >= 32) {
-		playerLastPositions.pop_front();
-	}
-	playerLastPositions.push_back(message->m_v3value);
-
-	blackboard().set<bool>("player_visible", true, GameEngine::Variable::Type::BOOL);
-
-	return true;
-}
-
-/**
- * player is viewed
- */
-bool GameEngine::Component::BehaviorTree::onNotViewPlayer(gaMessage*)
-{
-	blackboard().set<bool>("player_visible", false, GameEngine::Variable::Type::BOOL);
-	return true;
-}
-
-/**
- * first message 'hear' a blaster, reset the list of sounds
- */
-bool GameEngine::Component::BehaviorTree::onHearSoundFirst(gaMessage* message)
-{
-	// keep all sounds in list mode, messages are ALREADY sorted by volume
-	GameEngine::Behavior::Sounds::Origins& sounds = blackboard().get<GameEngine::Behavior::Sounds::Origins>("sounds", GameEngine::Variable::Type::OBJECT);
-	sounds.clear();
-	sounds.push_back(message->m_v3value, message->m_fvalue);
-
-	return true;
-}
-
-/**
- * partial message hear
- */
-bool GameEngine::Component::BehaviorTree::onHearSoundNext(gaMessage* message)
-{
-	// keep all sounds in list mode, messages are ALREADY sorted by volume
-	GameEngine::Behavior::Sounds::Origins& sounds = blackboard().get<GameEngine::Behavior::Sounds::Origins>("sounds", GameEngine::Variable::Type::OBJECT);
-	sounds.push_back(message->m_v3value, message->m_fvalue);
-
-	return true;
-}
-
-/**
- * partial message hear
- */
-bool GameEngine::Component::BehaviorTree::onHearSoundLast(gaMessage* message)
-{
-	// mark the sound heard only at the last message
-	blackboard().set<bool>("heard_sound", true, GameEngine::Variable::Type::BOOL);
-
-	return true;
-}
-
-/**
- * shot by a bullet
- */
-bool GameEngine::Component::BehaviorTree::onBulletHit(gaMessage* message)
-{
-	blackboard().set<glm::vec3>("last_bullet", message->m_v3value, GameEngine::Variable::Type::VEC3);
-	blackboard().set<bool>("hit_bullet", true, GameEngine::Variable::Type::BOOL);
-
-	return true;
+	m_plugins.push_back((*plugin)());
 }
 
 //---------------------------------------------
@@ -152,6 +86,11 @@ void GameEngine::Component::BehaviorTree::dispatchMessage(gaMessage* message)
 	}
 
 	m_debug = true;
+
+	// pass the message to all plugins
+	for (auto plugin : m_plugins) {
+		plugin->dispatchMessage(m_blackboard, message);
+	}
 
 	// use general purpose message handlers
 	if (m_handlers.count(message->m_action)) {

@@ -300,6 +300,10 @@
     <ClCompile Include="gaEngine\gaBehaviorNode\gaBTurn.cpp" />
     <ClCompile Include="gaEngine\gaBehaviorNode\gaBVar.cpp" />
     <ClCompile Include="gaEngine\gaBehaviorNode\gaMoveTo.cpp" />
+    <ClCompile Include="gaEngine\gaBehaviorPlugin.cpp" />
+    <ClCompile Include="gaEngine\gaBehaviorPlugin\gaBPHit.cpp" />
+    <ClCompile Include="gaEngine\gaBehaviorPlugin\gaBPSound.cpp" />
+    <ClCompile Include="gaEngine\gaBehaviorPlugin\gaBPview.cpp" />
     <ClCompile Include="gaEngine\gaBlackboard.cpp" />
     <ClCompile Include="gaEngine\gaBoundingBoxes.cpp" />
     <ClCompile Include="gaEngine\gaCollisionPoint.cpp" />
@@ -573,6 +577,10 @@
     <ClInclude Include="gaEngine\gaBehaviorNode\gaBTurn.h" />
     <ClInclude Include="gaEngine\gaBehaviorNode\gaBVar.h" />
     <ClInclude Include="gaEngine\gaBehaviorNode\gaMoveTo.h" />
+    <ClInclude Include="gaEngine\gaBehaviorPlugin.h" />
+    <ClInclude Include="gaEngine\gaBehaviorPlugin\gaBPHit.h" />
+    <ClInclude Include="gaEngine\gaBehaviorPlugin\gaBPsound.h" />
+    <ClInclude Include="gaEngine\gaBehaviorPlugin\gaBPview.h" />
     <ClInclude Include="gaEngine\gaBlackboard.h" />
     <ClInclude Include="gaEngine\gaBoundingBoxes.h" />
     <ClInclude Include="gaEngine\gaCollisionPoint.h" />

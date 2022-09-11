@@ -8,6 +8,7 @@
 
 #include "../gaComponent.h"
 #include "../gaBlackboard.h"
+#include "../gaBehaviorPlugin.h"
 
 namespace GameEngine {
 	class BehaviorNode;
@@ -31,15 +32,8 @@ namespace GameEngine {
 			inline GameEngine::Blackboard& blackboard(void) { return m_blackboard; };
 
 			void handlers(uint32_t, msgHandler);				// manager message handlers
+			void plugins(GameEngine::Behavior::Plugin::Base::pluginHandler);	// manager plugins handling messages
 
-
-			// preset message handlers
-			bool onViewPlayer(gaMessage*);						// player is viewed
-			bool onNotViewPlayer(gaMessage*);					// player is not viewed
-			bool onHearSoundFirst(gaMessage*);					// hear the first sound from a list
-			bool onHearSoundNext(gaMessage*);					// hear a sound in a list of sounds
-			bool onHearSoundLast(gaMessage*);					// hear the last sound from a list
-			bool onBulletHit(gaMessage*);						// hit by a bullet
 
 			// flight recorder status
 			inline uint32_t recordSize(void);					// size of the component record
@@ -66,6 +60,7 @@ namespace GameEngine {
 			std::map<uint32_t, msgHandler> m_handlers;
 			static uint32_t m_lastId;
 			static uint32_t m_lastNode;
+			std::vector<GameEngine::Behavior::Plugin::Base*>  m_plugins;
 
 			// blackboard
 			GameEngine::Blackboard m_blackboard;
