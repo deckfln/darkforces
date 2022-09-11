@@ -439,10 +439,13 @@ float GameEngine::NavMesh::findPath(gaEntity* entity, const glm::vec3& to, std::
 	}
 
 	// back track from end to start
-	graphPath.push_back({ to, -1 });
+	glm::vec3 fixedTo = to;
+	fixedTo.y = m_triangles[end].m_center.y / 10.0f;
+
+	graphPath.push_back({ fixedTo, -1 });
 	glm::vec2 portal;
 	float len = 0;
-	glm::vec3 from1 = to, to1;
+	glm::vec3 from1 = fixedTo, to1;
 
 	while (current != start) {
 		current = came_from[current];
@@ -487,13 +490,14 @@ float GameEngine::NavMesh::findPath(gaEntity* entity, const glm::vec3& to, std::
 		directPath.push_back(graphPath[n].p);
 		n = graphPath[n].next;
 	}
-	
+
+/*
 	printf("gaNavMesh::findPath\n");
 	for (auto& p : directPath) {
 		printf("%f,%f,\n", p.x, p.z);
 	}
 	printf("<\n");
-
+*/
 	return len;
 }
 

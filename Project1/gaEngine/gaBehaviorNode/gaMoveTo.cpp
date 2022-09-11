@@ -303,7 +303,7 @@ void GameEngine::Behavior::MoveTo::onMove(gaMessage* message)
 	// and take action
 	if (m_status == Status::MOVE_TO_NEXT_WAYPOINT) {
 
-		// check if there is a collision ahead (with a moving entity), within the predefined range
+		// check if there is a collision ahead (with a moving entity), within the predefined range, at entity head level
 		float range = m_collisionDistance;
 		Framework::Segment segment;
 		glm::vec3 previous = m_entity->position();
@@ -311,9 +311,9 @@ void GameEngine::Behavior::MoveTo::onMove(gaMessage* message)
 		std::vector<Framework::Segment> segmentsToCheck;
 		do {
 			segment.set(previous, m_navpoints->at(nextwp));
+			segment.add(glm::vec3(0, m_entity->height(), 0));	// check from the entity head
 			if (segment.length() <= range) {
 				// records the segment if it is shorter than the checking distance
-				segment.add(glm::vec3(0, m_entity->height(), 0));	// check from the entity head
 				segmentsToCheck.push_back(segment);
 			}
 			range -= segment.length();
