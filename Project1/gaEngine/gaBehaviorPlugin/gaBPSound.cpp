@@ -37,6 +37,10 @@ bool GameEngine::Behavior::Plugin::Sounds::onHearSoundNext(GameEngine::Blackboar
  */
 bool GameEngine::Behavior::Plugin::Sounds::onHearSoundLast(GameEngine::Blackboard& blackboard, gaMessage* message)
 {
+	// sort the result
+	GameEngine::Behavior::Sounds::Origins& sounds = blackboard.get<GameEngine::Behavior::Sounds::Origins>("sounds", GameEngine::Variable::Type::OBJECT);
+	sounds.sort();
+
 	// mark the sound heard only at the last message
 	blackboard.set<bool>("heard_sound", true, GameEngine::Variable::Type::BOOL);
 

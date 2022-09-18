@@ -32,9 +32,23 @@ namespace GameEngine {
 						m_last++;
 					}
 				}
+				static int cmp(const void* a, const void* b) {
+					Origin* pa = (Origin*)a;
+					Origin* pb = (Origin*)b;
+					float d = pa->m_loundness - pb->m_loundness;
+					if (d < 0) return -1;
+					if (d > 0) return 1;
+					return 0;
+				}
+				inline void sort(void) {
+					qsort((void*)m_sounds, m_last, sizeof(Origin), cmp);
+				}
 				inline const Origin& front(void) {
 					m_size--;
 					return m_sounds[m_first++];
+				}
+				inline Origin& at(size_t i) {
+					return m_sounds[i];
 				}
 			};
 

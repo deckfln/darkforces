@@ -491,13 +491,12 @@ float GameEngine::NavMesh::findPath(gaEntity* entity, const glm::vec3& to, std::
 		n = graphPath[n].next;
 	}
 
-/*
 	printf("gaNavMesh::findPath\n");
 	for (auto& p : directPath) {
 		printf("%f,%f,\n", p.x, p.z);
 	}
 	printf("<\n");
-*/
+
 	return len;
 }
 

@@ -39,25 +39,24 @@ void GameEngine::Plugins::Sounds::onPropagateSound(gaEntity* from, gaMessage* me
 
 						// inform the entity with a batch of messages
 						if (virtualSources.size() > 0) {
+							size_t l = virtualSources.size();
+
 							// First message
 							from->sendMessage(entity->name(), gaMessage::Action::HEAR_SOUND_FIRST, soundID, virtualSources[0].m_points[0].loundness, virtualSources[0].m_points[0].origin, sound);
+							if (virtualSources[0].m_nbPoints > 1) {
+								from->sendMessage(entity->name(), gaMessage::Action::HEAR_SOUND_NEXT, soundID, virtualSources[0].m_points[1].loundness, virtualSources[0].m_points[1].origin, sound);
+							}
 
-							size_t l = virtualSources.size();
 							// first messages
 							for (size_t i = 1; i < l; i++) {
 								from->sendMessage(entity->name(), gaMessage::Action::HEAR_SOUND_NEXT, soundID, virtualSources[i].m_points[0].loundness, virtualSources[i].m_points[0].origin, sound);
+								if (virtualSources[i].m_nbPoints > 1) {
+									from->sendMessage(entity->name(), gaMessage::Action::HEAR_SOUND_NEXT, soundID, virtualSources[i].m_points[1].loundness, virtualSources[i].m_points[1].origin, sound);
+								}
 							}
 
 							// last message
 							from->sendMessage(entity->name(), gaMessage::Action::HEAR_SOUND_LAST, soundID, sound);
-/*
-							if (entity->name() == "OFFCFIN.WAX(21)") {
-								for (size_t i = 0; i < l; i++) {
-									printf("%f,%f\n", virtualSources[i].m_points[0].origin.x, virtualSources[i].m_points[0].origin.z);
-								}
-								__debugbreak();
-							}
-*/
 						}
 						break;
 					}
